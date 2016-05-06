@@ -1,0 +1,199 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml"
+    login-required="true">
+
+<ui:define name="body">
+
+	<h1>#{messages['ParkingRent']}</h1>
+    <h:form id="ParkingRentSearch" styleClass="edit">	
+        <rich:simpleTogglePanel label="#{messages['ParkingRent.filter']}" switchType="ajax">
+			
+			<ui:debug id="uidebug"/>
+            
+            <s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['parkingLot']}</ui:define>
+                <h:selectOneMenu value="#{parkingRentList.parkingRent.parkingLot}">
+                	<s:selectItems value="#{parkingLotList.resultList}" var="parkingLot" label="#{parkingLot.name}" noSelectionLabel="#{messages['common.chooseOption']}"/>
+                	<s:convertEntity></s:convertEntity>
+                </h:selectOneMenu>
+            </s:decorate>
+            
+            <s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['parkingLot.criteria']}</ui:define>
+                <h:inputText value="#{parkingRentList.criteria}" />
+            </s:decorate>
+            
+            <s:decorate template="../layout/display.xhtml" rendered="false">
+                <ui:define name="label">#{messages['common.Match']}</ui:define>
+                <h:selectOneRadio id="logic" value="#{parkingRentList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="#{messages['common.All']}" itemValue="and"/>
+                    <f:selectItem itemLabel="#{messages['common.Any']}" itemValue="or"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="#{messages['common.search']}" action="ParkingRentList.xhtml">
+                <f:param name="firstResult" value="0"/>
+            </h:commandButton>
+            <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
+        </div>
+
+    </h:form>
+    
+    <rich:panel>
+        <f:facet name="header">
+        	<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText value="#{messages['parkingRent.Results']}(#{empty parkingRentList.resultList ? 0 : (parkingRentList.paginated ? parkingRentList.resultCount : parkingRentList.resultList.size)})" />
+					<h:panelGroup>
+					 	<s:div styleClass="actionButtons" rendered="#{empty from}">
+					        <s:button view="/parking/ParkingRentEdit.xhtml"
+					                    id="create"
+					           propagation="none"
+					                 value="#{messages['common.create']}">
+					            <f:param name="parkingRentId"></f:param>
+					            <f:param name="parkingLot" value="#{parkingRentList.parkingRent.parkingLot.id}"/>
+					        </s:button>
+					    </s:div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</f:facet>
+			
+    <div class="results" id="parkingRentList">
+
+    <h:outputText value="#{messages['parkingRent.ResultsNotFound']}"
+               rendered="#{empty parkingRentList.resultList}"/>
+
+    <rich:dataTable id="parkingLotList"
+                var="_parkingRent"
+              value="#{parkingRentList.resultList}"
+           rendered="#{not empty parkingRentList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{parkingLotList}"/>
+                    <ui:param name="propertyLabel" value="Id"/>
+                    <ui:param name="propertyPath" value="parkingRent.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_parkingRent.id}"/>
+        </h:column>
+        
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{parkingRentList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['person.name']}"/>
+                    <ui:param name="propertyPath" value="parkingRent.contract.subscriber.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_parkingRent.contract.subscriber.name}"/>
+        </h:column>
+        
+         <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{parkingRentList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['parkingLot']}"/>
+                    <ui:param name="propertyPath" value="parkingRent.parkingLot.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_parkingRent.parkingLot.name}"/>
+        </h:column>
+        
+         <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{parkingRentList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['parking.journal.start']}"/>
+                    <ui:param name="propertyPath" value="parkingRent.contract.subscriptionDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_parkingRent.contract.subscriptionDate}">
+            	<f:convertDateTime pattern="#{messages['common.dateYearMonth']}"/>
+            </h:outputText>
+        </h:column>
+        
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{parkingRentList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['parking.journal.end']}"/>
+                    <ui:param name="propertyPath" value="parkingRent.contract.expirationDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_parkingRent.contract.expirationDate}">
+            	<f:convertDateTime pattern="#{messages['common.dateYearMonth']}"/>
+            </h:outputText>
+        </h:column>
+
+        <rich:column styleClass="action">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            
+            <s:link view="/#{empty from ? 'ParkingRent' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="businessViewId"
+                      rendered="false">
+                <f:param name="parkingRentId"
+                        value="#{_parkingRent.id}"/>
+            </s:link>
+             #{' '}
+            <s:button view="/parking/ParkingRentEdit.xhtml"
+                   value="#{messages['common.view']}"
+             propagation="none"
+                      id="parkingRentEdit"
+                rendered="#{empty from}">
+                <f:param name="parkingRentId" value="#{_parkingRent.id}"/>
+                <f:param name="readOnly" value="#{true}"/>
+            </s:button>
+        </rich:column>
+    </rich:dataTable>
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/parking/ParkingRentList.xhtml"
+            rendered="#{parkingRentList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/parking/ParkingRentList.xhtml"
+            rendered="#{parkingRentList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{parkingRentList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/parking/ParkingRentList.xhtml"
+            rendered="#{parkingRentList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{parkingRentList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/parking/ParkingRentList.xhtml"
+            rendered="#{parkingRentList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{parkingRentList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,68 @@
+<e:workbook xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:f="http://java.sun.com/jsf/core"> 
+	<e:worksheet value="#{bankHome.reports}" var="report">
+ 
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['workDeal.id']}" />
+			</f:facet>
+			<e:cell value="#{report.id}" />
+		</e:column>
+
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['date']}" />
+			</f:facet>
+			<e:cell value="#{report.date}" />
+		</e:column>
+
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['payment.time']}" />
+			</f:facet> 
+			<e:cell  value="#{report.liquidationTime}" />
+		</e:column>
+
+
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['municipalBond.number']}" />
+			</f:facet> 			
+			<e:cell value="#{report.number}"/>
+		</e:column>
+
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['common.identificationNumber']}" />
+			</f:facet>  
+			<e:cell  value="#{report.identificationNumber}" />
+		</e:column>
+
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['bankReport.entry_id']}" />
+			</f:facet> 			
+			<e:cell value="#{report.entry_id}" />
+		</e:column>
+
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['bankReport.groupingcode']}" />
+			</f:facet> 			
+			<e:cell value="#{report.groupingcode}" />
+		</e:column>
+
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['property.waterMetersNumber']}" />
+			</f:facet> 				
+			<e:cell value="#{report.watermeternumber}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['electronicVoucher.value']}" />
+			</f:facet>
+			<e:cell value="#{report.value}" />
+		</e:column>
+	</e:worksheet>
+</e:workbook>

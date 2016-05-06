@@ -1,0 +1,93 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel>
+		<rich:messages styleClass="errors"/>
+		<h:panelGrid columns="3">
+			<s:decorate id="periodField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['appraisalPeriod.name']}:</ui:define>
+				<h:selectOneMenu id="period" readonly="true"
+					value="#{propertyHome.appraisalPeriod}" disabled="true">
+					<s:selectItems value="#{appraisalPeriods}" var="period"
+						label="#{period.name}"
+						noSelectionLabel="#{messages['common.shouldSelected']}" />
+					<s:convertEntity />
+					<a:support event="onchange" ajaxSingle="true"
+						reRender="periodField" />
+				</h:selectOneMenu>
+			</s:decorate>
+
+			<s:decorate id="yearAppraisalField" template="../../layout/vertical-edit.xhtml" >
+				<ui:define name="label">#{messages['appraisal.yearAppraisal']}:</ui:define>
+				<rich:inputNumberSpinner id="yearAppraisal" minValue="2014" disabled="true"
+					inputSize="4" maxValue="2020" value="#{propertyHome.anioAppraisal}">
+					<a:support event="onchange" ajaxSingle="true" 
+					reRender="appraisalValues" ></a:support>
+				</rich:inputNumberSpinner>
+			</s:decorate>
+
+			<a:commandButton id="appraisalValue"
+				reRender="appraisalValues, propertyAppraisalPanel"
+				value="#{messages['appraisal.calculateAppraisal']}"
+				action="#{propertyHome.calculateUrbanAppraisalOnlyProperty(propertyHome.instance)}" />
+
+		</h:panelGrid>
+
+		<div style="clear: both">
+			<span class="required">*</span> #{messages['common.requiredFields']}
+		</div>
+
+				<div class="results" id="appraisalValuesDiv">
+
+					<rich:dataTable id="appraisalValues" var="_appraisalProperty"
+						value="#{propertyHome.instance}" readOnly="true" >
+
+						<rich:column styleClass="right" >
+							<f:facet name="header">#{messages['appraisal.valueSquareMeterSH']}</f:facet>
+							<h:outputText
+								value="#{_appraisalProperty.currentDomain.valueBySquareMeter}" />
+						</rich:column>
+
+						<rich:column styleClass="right" >
+							<f:facet name="header">#{messages['appraisal.valueSquareMeterDomain']}</f:facet>
+							<h:outputText
+								value="#{_appraisalProperty.valueBySquareMeterForDomain}" />
+						</rich:column>
+
+						<rich:column styleClass="right" label="#{messages['appraisal.area']}">
+							<f:facet name="header">#{messages['appraisal.area']}</f:facet>
+							<h:outputText value="#{_appraisalProperty.area}" />
+						</rich:column>
+
+						<rich:column styleClass="right" >
+							<f:facet name="header">#{messages['appraisal.lotAppraisal']}</f:facet>
+							<h:outputText
+								value="#{_appraisalProperty.currentDomain.lotAppraisal}" />
+						</rich:column>
+
+						<rich:column styleClass="right" >
+							<f:facet name="header">#{messages['appraisal.buildingAppraisal']}</f:facet>
+							<h:outputText
+								value="#{_appraisalProperty.currentDomain.buildingAppraisal}" />
+						</rich:column>
+
+						<rich:column styleClass="right" >
+							<f:facet name="header">#{messages['appraisal.commercialAppraisal']}</f:facet>
+							<h:outputText
+								value="#{_appraisalProperty.currentDomain.commercialAppraisal}" />
+						</rich:column>
+
+					</rich:dataTable>
+				</div>
+
+	</rich:panel>
+</ui:composition>

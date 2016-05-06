@@ -1,0 +1,28 @@
+#created on: Dic 03, 2012
+package gim.src.rules.ec.gob.gim.pf2011.tax
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
+import java.util.Date;
+import java.math.BigDecimal;
+
+
+#declare any global variables here
+rule "Impuesto solares no edificados"
+	no-loop true
+	salience 200
+	when
+		$itemBase : Item(entry.code == "00061");
+		$mb : MunicipalBond();
+		$appraisal : PropertyAppraisal();		
+	then			
+	    Date serviceDate = $mb.getServiceDate();
+		$itemBase.setTotal(new BigDecimal(0.5).multiply($itemBase.getValue()));	
+		$mb.setExpirationDate(new Date(serviceDate.getYear(), 11, 31));
+end
+
+

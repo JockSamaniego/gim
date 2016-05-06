@@ -1,0 +1,72 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core" xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel rendered="#{!marketHome.enabledToRent}" id="concessionPanel">
+		<f:facet name="header">#{messages['concession.generalData']}</f:facet>
+
+		<a:outputPanel id="paymentTotalPanel">
+			<g:residentChooser id="residentChooser"
+				resident="#{marketHome.resident}"
+				residentsList="#{marketHome.residents}"
+				identificationNumber="#{marketHome.identificationNumber}"
+				criteria="#{marketHome.criteria}" bean="#{marketHome}"
+				searchByCriteriaAction="searchByCriteria"
+				clearSearchPanelAction="clearSearchPanel" searchAction="search"
+				residentChosenListenerName="residentSelectedListener" />
+		</a:outputPanel>
+
+		<s:decorate id="startDateField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['concession.startDate']}</ui:define>
+			<rich:calendar id="startDate"
+				value="#{marketHome.concession.startDate}"
+				datePattern="#{messages['common.datePattern']}" ajaxSingle="true"
+				mode="ajax">
+				<a:support event="onchanged" ajaxSingle="true" />
+			</rich:calendar>
+		</s:decorate>
+
+		<s:decorate id="endDateField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['concession.endDate']}</ui:define>
+			<rich:calendar id="endDate" value="#{marketHome.concession.endDate}"
+				datePattern="#{messages['common.datePattern']}">
+				<a:support event="onchanged" ajaxSingle="true" />
+
+			</rich:calendar>
+		</s:decorate>
+
+		<s:decorate id="activeField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['concession.isActive']}</ui:define>
+			<h:selectBooleanCheckbox id="active"
+				value="#{marketHome.concession.isActive}">
+				<a:support event="onblur" ajaxSingle="true" />
+			</h:selectBooleanCheckbox>
+		</s:decorate>
+
+		<s:decorate template="../../layout/display.xhtml">
+			<a:commandButton value="#{messages['concession.add']}"
+				ajaxSingle="true" action="#{marketHome.addConcession()}"
+				reRender="market, paymentTotalPanel, startDateField, endDateField, activeField, concessionTable" />
+				
+			<a:commandButton value="#{messages['concession.new']}"
+				ajaxSingle="true" action="#{marketHome.newConcession()}"
+				reRender="market, paymentTotalPanel, startDateField, endDateField, activeField, concessionTable" />
+
+			<a:commandButton value="#{messages['common.history']}"
+				oncomplete="Richfaces.showModalPanel('concessionHistoryPanel',{width:622, top:150})"
+				reRender="concessionRecordForm" />
+		</s:decorate>
+
+		<div style="clear: both">
+			<span class="required">*</span> #{messages['common.requiredFields']}
+		</div>
+
+	</rich:panel>
+</ui:composition>

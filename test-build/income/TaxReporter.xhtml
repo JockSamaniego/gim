@@ -1,0 +1,98 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="taxSearch" styleClass="edit">
+    
+    	<h:outputText styleClass="formTitle" value="#{messages['taxReporter.manager']}" />
+
+        <rich:simpleTogglePanel label="#{messages['taxReporter.searchFilter']}" switchType="ajax">
+
+            <s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['taxReporter.startDate']}</ui:define>
+                <rich:calendar id="name" value="#{taxReporter.startDate}" datePattern="#{messages['common.datePattern']}"/>
+            </s:decorate>
+
+            <s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['taxReporter.endDate']}</ui:define>
+                <rich:calendar id="name" value="#{taxReporter.endDate}" datePattern="#{messages['common.datePattern']}"/>
+            </s:decorate>
+            
+            <s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['taxReporter.status']}</ui:define>
+              		<h:selectOneMenu id="status" value="#{taxReporter.finantialStatus}">
+					<s:selectItems
+						value="#{taxReporter.financialStatuses}" var="status"
+						label="#{messages[status.name()]}"/>
+					<s:convertEnum />
+				</h:selectOneMenu>
+            </s:decorate>
+
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="#{messages['common.search']}" action="#{taxReporter.findReceipts}" reRendered="createXml"/>
+            <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" reRendered="createXml"/>
+        </div>
+
+    <rich:panel>
+    	<f:facet name="header">
+        	<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText
+						value="#{messages['tax.searchResults']} (#{taxReporter.receipts.size})" />
+				<s:div styleClass="actionButtons" rendered="#{empty from}">
+
+						<h:commandButton 
+							id="createXml"					
+							action="#{taxReporter.generateXml}" 
+							value="#{messages['taxReporter.generateXml']}"
+							rendered="#{not empty taxReporter.receipts}"/>
+
+				</s:div>
+			</h:panelGrid>        
+        </f:facet>
+    
+	    <rich:dataTable id="taxList"
+	                var="_receipt"
+	              value="#{taxReporter.receipts}"
+	           rendered="#{not empty taxReporter.receipts}">
+	        
+	        <h:column>
+	            <f:facet name="header">#{messages['receipt.date']}</f:facet>
+	            <h:outputText value="#{_receipt.date}"/>
+	        </h:column>
+	        
+	        <h:column>
+	            <f:facet name="header">#{messages['receipt.number']}</f:facet>
+	            <h:outputText value="#{_receipt}"/>
+	        </h:column>
+	        
+	        <h:column>
+	            <f:facet name="header">#{messages['receipt.client']}</f:facet>
+	            <h:outputText value="#{_receipt.municipalBond.resident.name}"/>
+	        </h:column>
+	        
+	        <h:column>
+	            <f:facet name="header">#{messages['receipt.totalTaxes']}</f:facet>
+	            <h:outputText value="#{_receipt.municipalBond.taxesTotal}"/>
+	        </h:column>
+	        
+	        <h:column>
+	            <f:facet name="header">#{messages['receipt.paidTotal']}</f:facet>
+	            <h:outputText value="#{_receipt.municipalBond.paidTotal}"/>
+	        </h:column>		        
+	    </rich:dataTable>
+	</rich:panel>
+	    </h:form>
+	
+</ui:define>
+
+</ui:composition>

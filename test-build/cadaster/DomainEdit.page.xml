@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page login-required="true"
+ no-conversation-view-id="/PropertyList.xhtml"
+ xmlns="http://jboss.com/products/seam/pages"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
+ <begin-conversation flush-mode="MANUAL" join="true"/>
+ <action execute="#{domainHome.wireEdit()}"/>
+ <param name="domainFrom"/>
+ <param name="domainId" value="#{domainHome.domainId}"/>
+ <param name="propertyFrom"/> 
+ <param name="propertyId" value="#{propertyHome.propertyId}"/>
+ <param name="confirm" value="#{propertyHome.confirmChangeOwner}"/>
+ <param name="addMortgage" value="#{propertyHome.fromAddMortgage}"/>
+ <param name="isUrban" value="#{propertyHome.urban}"/>
+ <action execute="#{propertyHome.loadValues()}"/>
+ 
+ <navigation>
+  <rule if-outcome="updated">
+   <end-conversation/>
+   <redirect view-id="#{propertyHome.urban ? '/cadaster/PropertyList.xhtml' : '/cadaster/RusticPropertyList.xhtml'}">
+   <param name="isUrban" value="#{isUrban}"/>
+   </redirect>
+  </rule>
+ </navigation> 
+ <navigation from-action="#{domainHome.remove}">
+  <rule if-outcome="removed">
+   <end-conversation/>
+   <redirect view-id="#{propertyHome.urban ? '/cadaster/PropertyList.xhtml' : '/cadaster/RusticPropertyList.xhtml'}">
+   <param name="isUrban" value="#{isUrban}"/>
+   </redirect>
+  </rule>
+ </navigation>
+</page>

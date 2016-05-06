@@ -1,0 +1,34 @@
+10
+
+dir
+211
+svn://190.214.14.229/gadloja/gim/trunk/src/hot/org/gob/loja/gim
+svn://190.214.14.229/gadloja
+
+
+
+2013-08-09T13:12:06.328129Z
+10
+ronald
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+890a1ab3-fbd5-48d4-9fbc-43c15126970b
+
+ws
+dir
+
+wsrest
+dir
+

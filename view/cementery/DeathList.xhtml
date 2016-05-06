@@ -1,0 +1,143 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="deathSearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['cementery.deaths']}" />
+
+			<rich:simpleTogglePanel
+				label="#{messages['death.searchFilter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['cementery.deceased']}</ui:define>
+					<h:inputText id="deceasedCriteria" maxlength="60" size="45"
+						value="#{deathList.deceasedCriteria}" />
+				</s:decorate>
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/cementery/DeathList.xhtml">
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['death.deathSearchResults']} (#{empty deathList.resultList ? 0 : (deathList.paginated ? deathList.resultCount : deathList.resultList.size)})" />
+					<s:button view="/cementery/DeathEdit.xhtml" id="create"
+						propagation="none" value="#{messages['death.createDeath']}">
+						<f:param name="deathId" />
+						<f:param name="renewContract" value="false" />
+					</s:button>
+				</h:panelGrid>
+			</f:facet>
+			<div class="results" id="deathList">
+
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty deathList.resultList}" />
+
+				<rich:dataTable id="deathList" var="_death"
+					value="#{deathList.resultList}"
+					rendered="#{not empty deathList.resultList}">
+					<rich:column>
+						<f:facet name="header">Id</f:facet>
+						<h:outputText value="#{_death.id}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['resident.identificationNumber']}</f:facet>
+						<h:outputText value="#{_death.deceased.identificationNumber}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['cementery.deceased']}</f:facet>
+						<h:outputText value="#{_death.deathName}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['cementery.debtor']}</f:facet>
+						<h:outputText value="#{_death.currentContract.subscriber.name}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['cementery.cementery']}</f:facet>
+						<h:outputText value="#{_death.cementery.name}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['death.observations']}</f:facet>
+						<h:outputText value="#{_death.observations}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['unitDeath.dateOfDeath']}</f:facet>
+						<h:outputText value="#{_death.dateOfDeath}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<s:button view="/cementery/CementeryEdit.xhtml"
+							value="#{messages['death.certification']}" propagation="none"
+							id="deathCertification" rendered="#{empty from}">
+							<f:param name="deathId" value="#{_death.id}" />
+						</s:button>
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/cementery/DeathList.xhtml"
+				rendered="#{deathList.previousExists}"
+				value="#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/cementery/DeathList.xhtml"
+				rendered="#{deathList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult" value="#{deathList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/cementery/DeathList.xhtml"
+				rendered="#{deathList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult" value="#{deathList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/cementery/DeathList.xhtml"
+				rendered="#{deathList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult" value="#{deathList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,99 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:include src="fragment/AppraisalItemTypeEditPanel.xhtml" />
+
+		<h:form id="street" styleClass="edit">
+			<h:outputText styleClass="formTitle"
+				value="#{messages['appraisal.editFormTitle']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{messages['appraisal.edit']}</f:facet>
+				<rich:messages />
+				<ui:debug id="debug" />
+
+					<h:panelGrid columns="1">
+						<s:decorate id="groupField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['appraisal.type']}</ui:define>
+							<h:selectOneMenu id="groupPosition"
+								value="#{appraisalItemBaseHome.instance.appraisalItemType}">
+								<s:selectItems value="#{appraisalItemBaseHome.findAppraisalItemType()}" required="true"
+									var="group" label="#{group.name}"
+									noSelectionLabel="#{messages['common.chooseOption']}" />
+								<s:convertEntity />
+								<a:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
+						</s:decorate>	
+
+						<a:commandButton id="createGroupPosition"
+							action="#{appraisalItemBaseHome.createAppraisalItemType()}" reRender="appraisalItemTypeEditPanel"
+							ajaxSingle="true" eventsQueue="gimEventsQueue"
+							oncomplete="Richfaces.showModalPanel('appraisalItemTypeEditPanel',{width:400, height:250})"
+							value="#{messages['appraisal.createType']}" />
+
+				<h:panelGrid columns="2">
+					<s:decorate id="nameField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['appraisal.name']}</ui:define>
+						<h:inputText value="#{appraisalItemBaseHome.instance.name}" id="nameId"
+							required="true">
+							<a:support event="onblur" reRender="nameField" ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+					<s:decorate id="unitMedField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['appraisal.unit']}</ui:define>
+						<h:inputText value="#{appraisalItemBaseHome.instance.unitMed}" id="unitMedId"
+							required="true">
+							<a:support event="onblur" reRender="unitMedField" ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="4">
+					<s:decorate id="costeField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['appraisal.coste']}</ui:define>
+						<h:inputText value="#{appraisalItemBaseHome.instance.coste}" id="costeId"
+							required="true">
+							<a:support event="onblur" reRender="costeField" ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+				
+					</h:panelGrid>
+					</h:panelGrid>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{appraisalItemBaseHome.persist}" disabled="#{!appraisalItemBaseHome.wired}"
+					rendered="#{!appraisalItemBaseHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{appraisalItemBaseHome.update}" rendered="#{appraisalItemBaseHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/appraisal/AppraisalItemBaseList.xhtml" />
+
+			</div>
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

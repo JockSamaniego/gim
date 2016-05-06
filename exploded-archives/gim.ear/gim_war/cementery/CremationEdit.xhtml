@@ -1,0 +1,189 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml" xmlns:g="http://gim.gob.ec/jsf">
+
+	<ui:define name="body">
+
+		<ui:include src="fragment/SectionCementeryEditPanel.xhtml" />
+		<h:form id="cremationForm" styleClass="edit">
+			<h:outputText styleClass="formTitle"
+				value="#{cremationHome.managed ? messages['common.edit'] : messages['common.add']} #{messages['cremation.cremation']}" />
+
+			<h:panelGrid width="100%">
+				<rich:panel>
+					<f:facet name="header">#{messages['cremation.generalData']}</f:facet>
+					<h:panelGrid columns="2">
+						<s:decorate id="crematoriumField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['cremation.crematorium']}:</ui:define>
+							<h:selectOneMenu id="crematorium" required="true"
+								value="#{cremationHome.instance.crematorium}">
+								<s:selectItems value="#{crematoriums}" var="_crematorium"
+									label="#{_crematorium.name}" noSelectionLabel="#{messages['common.chooseOption']}" />
+								<s:convertEntity />
+								<a:support event="onblur" reRender="crematoriumField"
+									bypassUpdates="true" ajaxSingle="true" />
+							</h:selectOneMenu>
+						</s:decorate>
+	
+						<s:decorate id="nullField" template="../layout/edit.xhtml">
+						</s:decorate>
+	
+						<s:decorate id="nameField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['cremation.name']}:</ui:define>
+							<h:inputText id="name" required="true" size="60" maxlength="60"
+								value="#{cremationHome.instance.name}"
+								style="text-transform: uppercase">
+								<a:support event="onblur" reRender="nameField"
+									bypassUpdates="true" ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
+	
+						<s:decorate id="bodyTypeField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['cremation.bodyType']}:</ui:define>
+							<h:selectOneMenu id="bodyType" required="true"
+								value="#{cremationHome.instance.bodyType}">
+								<s:selectItems value="#{bodyTypes}" var="bodyType"
+									label="#{messages[bodyType.name()]}" noSelectionLabel="#{messages['common.chooseOption']}" />
+								<s:convertEnum />
+								<a:support event="onblur" reRender="bodyTypeField"
+									bypassUpdates="true" ajaxSingle="true" />
+							</h:selectOneMenu>
+						</s:decorate>
+		
+
+						<s:decorate id="deathDateField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['cremation.deathDate']}:</ui:define>
+							<rich:calendar id="deathDate" required="true" 
+								ajaxSingle="true" enableManualInput="true"
+								value="#{cremationHome.instance.dateOfDeath}"
+								currentDate="#{currentDate}"
+								datePattern="#{messages['common.datePattern']}" />
+						</s:decorate>
+		
+						<s:decorate id="dateField" template="../layout/edit.xhtml" >
+							<ui:define name="label">#{messages['cremation.date']}:</ui:define>
+							<rich:calendar id="dateNumber" required="true" 
+								ajaxSingle="true" enableManualInput="true"
+								value="#{cremationHome.instance.date}"
+								currentDate="#{currentDate}"
+								datePattern="#{messages['common.datePattern']}"
+								reRender="dateField" />
+						</s:decorate>
+		
+						<rich:panel>
+							<f:facet name="header">#{messages['cremation.bloodRelation']}</f:facet>
+							<g:residentChooser id="bloodRelationCremation"
+								resident="#{cremationHome.instance.bloodRelation}"
+								residentsList="#{cremationHome.residents}"
+								identificationNumber="#{cremationHome.identificationNumber}"
+								criteria="#{cremationHome.criteria}" bean="#{cremationHome}"
+								searchAction="searchBloodRelationCremation"
+								searchByCriteriaAction="searchBloodRelationCremationByCriteria"
+								clearSearchPanelAction="clearSearchResidentPanel"
+								residentChosenListenerName="residentSelectedListener" />
+		
+							<div style="clear: both" />
+						</rich:panel>
+		
+						<s:decorate id="kinshipField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['cremation.kinship']}:</ui:define>
+							<h:inputText id="kinship" required="true" size="30" maxlength="20"
+								value="#{cremationHome.instance.kinship}"
+								style="text-transform: uppercase">
+								<a:support event="onblur" reRender="kinshipField"
+									bypassUpdates="true" ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
+	
+						<h:panelGrid columns="2">
+							<s:decorate id="freeDayField" template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['cremation.freeDay']}:</ui:define>
+								<h:selectBooleanCheckbox id="freeDay" value="#{cremationHome.instance.freeDay}">
+								<a:support event="onchange" reRender="cremationOrderField"
+									ajaxSingle="true" />
+								</h:selectBooleanCheckbox>
+							</s:decorate>
+
+							<s:decorate id="cremationOrderField" template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['cremation.cremationOrder']}:</ui:define>
+								<h:inputText id="cremationOrder" required="#{!cremationHome.instance.freeDay}" 
+									disabled="#{cremationHome.instance.freeDay}" style="text-align: right"
+									value="#{cremationHome.instance.cremationOrder}" >
+								</h:inputText>
+							</s:decorate>
+						</h:panelGrid>
+
+						<s:decorate id="incomeOrderField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['cremation.incomeOrder']}:</ui:define>
+							<h:inputText id="incomeOrder" required="true" style="text-align: right"
+								value="#{cremationHome.instance.incomeOrder}" >
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate id="valueField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['cremation.value']}:</ui:define>
+							<h:inputText id="valueOrder" required="true" style="text-align: right"
+								value="#{cremationHome.instance.value}" >
+								<a:support event="onblur" reRender="rateValueField"
+								action="#{cremationHome.updateRateValue()}" />
+							</h:inputText>
+						</s:decorate>
+	
+						<s:decorate id="rateValueField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['cremation.rateValue']}:</ui:define>
+							<h:inputText id="rateValue" required="true" disabled="true" style="text-align: right"
+								value="#{cremationHome.instance.rateValue}" >
+							</h:inputText>
+						</s:decorate>
+	
+						<s:decorate id="observationsField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['cremation.observations']}:</ui:define>
+							<h:inputTextarea id="observations" cols="50" rows="4"
+								value="#{cremationHome.instance.observations}" />
+						</s:decorate>
+		
+					</h:panelGrid>
+
+					<div style="clear: both">
+						<span class="required">*</span>
+						#{messages['common.requiredFields']}
+					</div>
+				</rich:panel>
+
+			</h:panelGrid>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{cremationHome.save()}"
+					disabled="#{!cremationHome.wired}"
+					view="/cementery/CremationList.xhtml"
+					rendered="#{!cremationHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{cremationHome.save()}"
+					view="/cementery/CremationList.xhtml"
+					rendered="#{cremationHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/cementery/CremationList.xhtml"
+					rendered="#{cremationHome.managed}" />
+
+				<s:button id="cancelAdd" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/cementery/#{empty cremationFrom ? 'CremationList' : cremationFrom}.xhtml"
+					rendered="#{!cremationHome.managed}" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

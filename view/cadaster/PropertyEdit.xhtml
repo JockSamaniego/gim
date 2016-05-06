@@ -1,0 +1,199 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:g="http://gim.gob.ec/jsf"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+    <ui:include src="fragment/TipoDeTramite.xhtml">			</ui:include>
+
+	<ui:include src="fragment/BuildingEditPanel.xhtml" />
+
+    <h:form id="property" styleClass="edit">    	
+    	<rich:messages errorClass="errors"/>
+    	<h:outputText styleClass="formTitle"
+    		value="#{propertyHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['cadaster.property']}" />
+    	
+    	<h:panelGrid columns="1" width="100%">
+    	<ui:include src="fragment/PropertyPositionPanel.xhtml">
+    		<ui:param name="disabled" value="false"/>
+    	</ui:include>	
+    	
+    	<g:residentChooser id="residentChooser"
+					resident="#{propertyHome.instance.currentDomain.resident}"
+					criteria="#{propertyHome.criteria}" 
+					bean="#{propertyHome}"
+					searchAction="searchResident"
+					residentsList="#{propertyHome.residents}"
+					identificationNumber="#{propertyHome.identificationNumber}"
+					searchByCriteriaAction="searchResidentByCriteria"
+					clearSearchPanelAction="clearSearchResidentPanel"
+					disabled="#{propertyHome.managed}" 
+					residentChosenListenerName="residentSelectedListener"/>
+    	<a:outputPanel>
+    		<rich:messages errorClass="errors" ajaxRendered="false"/>
+    	</a:outputPanel>    	
+    	
+    	<rich:tabPanel switchType="client" bypassDisabled="true">   	
+    		
+    		<rich:tab label="#{messages['domain']}" switchType="client" bypassDisabled="true">    			
+     			<ui:include src="fragment/DomainPanel.xhtml"/>		
+    		</rich:tab>
+    		
+    		<rich:tab label="#{messages['propertyLanduse']}" switchType="client" bypassDisabled="true">
+    			<ui:include src="fragment/PropertyLandUsePanel.xhtml"/>		
+    		</rich:tab>
+    		
+    		<rich:tab label="#{messages['lotFeature']}" switchType="client" bypassDisabled="true">
+    			<ui:include src="fragment/LotFeaturesPanel.xhtml"/>		
+    		</rich:tab>
+    		
+    		<rich:tab label="#{messages['property.building']}" switchType="client" bypassDisabled="true">   			
+	    		<ui:include src="fragment/BuildingPanel.xhtml"/>
+    		</rich:tab>
+    		
+    		<rich:tab label="#{messages['property.boundary']}" switchType="client" bypassDisabled="true">   			
+	    		<ui:include src="fragment/BoundaryPanel.xhtml"/>
+    		</rich:tab>
+    		
+    		<rich:tab label="#{messages['property.image']}" switchType="client" bypassDisabled="true">
+     			<ui:include src="fragment/ImagePropertyPanel.xhtml"/>		 
+    		</rich:tab>
+    		
+    		<rich:tab label="#{messages['appraisal.calculateAppraisal']}" switchType="client" bypassDisabled="true">   			
+	    		<ui:include src="fragment/CalculateAppraisalPanel.xhtml"/>
+    		</rich:tab>
+    	
+    		<rich:tab label="#{messages['property.appraisals']}" switchType="client" bypassDisabled="true">   			
+	    		<ui:include src="fragment/PropertyAppraisalPanel.xhtml"/>
+    		</rich:tab>
+    	
+    		<rich:tab label="#{messages['property.historyChange']}" switchType="client" bypassDisabled="true">   			
+	    		<ui:include src="fragment/HistoryChangePanel.xhtml"/>
+    		</rich:tab>
+    	
+    	</rich:tabPanel>
+    	</h:panelGrid>
+            
+		<rich:panel>
+
+            <s:decorate id="phoneNumberField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['property.phoneNumber']}</ui:define>
+                <h:inputText id="phoneNumber" styleClass="right" 
+                           size="15"
+                      maxlength="15"
+                          value="#{propertyHome.instance.phoneNumber}"/>
+            </s:decorate>
+            
+             <s:decorate id="observationField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['property.historyChange']}</ui:define>
+                <h:inputTextarea id="observation" cols="40" rows="5" required="true"                     
+                          value="#{propertyHome.editObservation}">
+			    	<f:validateLength minimum="#{messages['config.minLenghtHistoryChange']}" maximum="255" />
+			    </h:inputTextarea>
+            </s:decorate>
+
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                #{messages['common.requiredFields']}
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                    value="#{messages['common.save']}"
+                    action="#{propertyHome.save()}"
+                    disabled="#{!propertyHome.wired}"
+                    rendered="#{!propertyHome.managed and !readOnly}"/>
+
+            <h:commandButton id="update"
+                    value="#{messages['common.save']}"
+                    action="#{propertyHome.save()}"
+					rendered="#{propertyHome.managed and !readOnly}"/>                       
+
+            <s:button id="cancelEdit"
+                   	value="#{messages['common.cancel']}"
+             		propagation="none"
+                    view="/cadaster/PropertyList.xhtml"
+                	rendered="#{propertyHome.managed and !readOnly}"/>
+
+            <s:button id="cancelAdd"
+                   	value="#{messages['common.cancel']}"
+             		propagation="none"
+                    view="/cadaster/#{empty propertyFrom ? 'PropertyList' : propertyFrom}.xhtml"
+                	rendered="#{!propertyHome.managed and !readOnly}"/>
+                
+             <s:button id="back" bypassDisabled="true" 
+                   	value="#{messages['common.back']}"
+             		propagation="none"
+                    view="#{isFromRevenue ? '/revenue/SearchProperty.xhtml' : '/cadaster/PropertyList.xhtml'}"
+	                rendered="#{readOnly}">
+            </s:button>
+              
+            <h:commandButton id="delete"
+                    value="#{messages['common.delete']}"
+                    action="#{propertyHome.deleteProperty()}"
+                    rendered="#{propertyHome.managed and !readOnly}"/>
+
+           	<a:region>
+				<a:commandButton id="prints" action="#{propertyHome.generateChangeOwnerReport(propertyHome.instance)}"
+					rendered="#{propertyHome.needConfirmChange()}"			
+					value="#{messages['common.print']}">
+				</a:commandButton>
+			</a:region>
+			
+			<s:button view="/cadaster/ChangeOwnerProperty.xhtml" rendered="#{!propertyHome.needConfirmChange() and !readOnly}"
+					value="#{messages['domain.changeOwner']}" propagation="none" includePageParams="false"
+					id="propertyChangeOwner">
+					<f:param name="propertyId" value="#{propertyHome.instance.id}" />
+					<f:param name="confirm" value="false" />
+					<f:param name="isUrban" value="true" />
+					<f:param name="changeOwner" value="true" />		
+					<f:param name="domainId"/>
+			</s:button> 
+            #{' '}
+            <s:button view="/cadaster/DomainEdit.xhtml"
+					value="#{messages['property.confirmChangeOwner']}" propagation="none" includePageParams="false"
+					id="changeOwner" rendered="#{propertyHome.needConfirmChange()}">
+					<f:param name="confirm" value="true" />		
+					<f:param name="propertyId" value="#{propertyHome.instance.id}"/>
+					<f:param name="isUrban" value="true" />
+					<f:param name="domainId" value="#{propertyHome.lastDomainOfProperty(propertyHome.instance).id}" />			
+			</s:button>
+			
+            <s:button view="/cadaster/DomainEdit.xhtml" rendered="#{!propertyHome.needConfirmChange() and false}"
+				value="#{messages['domain.addMortgage']}" propagation="none"
+				id="propertyAddMortgage" includePageParams="false" >
+				<f:param name="addMortgage" value="true" />	
+				<f:param name="propertyId" value="#{propertyHome.instance.id}"/>
+				<f:param name="isUrban" value="true" />
+				<f:param name="domainId" value="#{propertyHome.instance.currentDomain.id}"/>
+			</s:button>					
+
+             <!-- BOTON PARA IMPRIMIR REPORTE -->
+			       <a:commandButton id="print"  propagation="join"
+							includePageParams="false"  
+							reRender="tipoDeTramite" ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('tipoDeTramite')"
+							value="#{messages['common.print']}"   >
+					</a:commandButton>
+
+		
+
+
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

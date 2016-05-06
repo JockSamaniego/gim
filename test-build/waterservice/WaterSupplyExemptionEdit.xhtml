@@ -1,0 +1,119 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="waterSupplyForm" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['waterSupply.applyExemptions']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{messages['waterSupply.serviceOwner']}</f:facet>
+
+				<h:panelGrid width="100%">
+					<rich:panel style="height:50px; width:100%; overflow:auto;">
+						<rich:messages errorClass="errors" />
+					</rich:panel>
+				</h:panelGrid>
+
+				<h:panelGrid>
+					<g:residentChooser id="residentChooser"
+						resident="#{waterSupplyHome.residentExemption}"
+						criteria="#{waterSupplyHome.criteria}" bean="#{waterSupplyHome}"
+						searchAction="searchResidentExemption"
+						residentsList="#{waterSupplyHome.residents}"
+						identificationNumber="#{waterSupplyHome.identificationNumber}"
+						searchByCriteriaAction="searchResidentByCriteria"
+						clearSearchPanelAction="clearSearchResdientExemptionPanel"
+						residentChosenListenerName="recipeResidentExemptionSelectedListener" 
+						reRender="waterSupplyTable"/>
+
+					<a:commandButton id="searchServices"
+						action="#{waterSupplyHome.searchWaterSupplies()}"
+						value="#{messages['waterSupply.searchServices']}"
+						reRender="waterSupplyTable" />
+				</h:panelGrid>
+				<div style="clear: both">
+					<span class="required">*</span>"#{messages['common.requiredFields']}"
+				</div>
+			</rich:panel>
+
+			<rich:panel id="waterMetersPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="#{messages['waterSupplies']}" />
+					</h:panelGrid>
+				</f:facet>
+				<rich:dataTable id="waterSupplyTable" var="_waterSupply"
+					rowClasses="odd-row, even-row"
+					value="#{waterSupplyHome.waterSupplies}">
+
+					<h:column>
+						<f:facet name="header">#{messages['waterSupply.route']}</f:facet>
+						<h:outputText value="#{_waterSupply.route.name}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">#{messages['waterSupply.serviceNumber']}</f:facet>
+						<h:outputText value="#{_waterSupply.serviceNumber}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">#{messages['waterSupply.ncalle']}</f:facet>
+						<h:outputText value="#{_waterSupply.ncalle}" />
+					</h:column>
+
+					<rich:column styleClass="center">
+						<f:facet name="header">#{messages['waterSupply.applyElderlyExemption']}</f:facet>
+						<h:selectBooleanCheckbox
+							value="#{_waterSupply.applyElderlyExemption}">
+							<a:support event="onchange" ajaxSingle="true" />
+						</h:selectBooleanCheckbox>
+					</rich:column>
+
+					<rich:column styleClass="center">
+						<f:facet name="header">#{messages['waterSupply.applySpecialExemption']}</f:facet>
+						<h:selectBooleanCheckbox
+							value="#{_waterSupply.applySpecialExemption}">
+							<a:support event="onchange" ajaxSingle="true" />
+						</h:selectBooleanCheckbox>
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<a:commandButton id="maintenancebtn"
+							action="#{waterSupplyHome.applyExemption(_waterSupply)}"
+							ajaxSingle="true" reRender="waterSupplyTable"
+							value="#{messages['waterSupply.applyExemption']}">
+						</a:commandButton>
+						<a:commandButton
+							action="#{waterSupplyHome.removeExemption(_waterSupply)}"
+							ajaxSingle="true" reRender="waterSupplyTable"
+							value="#{messages['waterSupply.removeExemption']}">
+						</a:commandButton>
+					</rich:column>
+
+				</rich:dataTable>
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<s:button id="cancelAdd" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/waterservice/#{empty waterSupplyFrom ? 'WaterSupplyList' : waterSupplyFrom}.xhtml" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

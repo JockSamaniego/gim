@@ -1,0 +1,155 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<ui:debug />
+	<rich:modalPanel 
+		id="compensationAccountStatePanel"
+		minHeight="540" minWidth="800"
+		height="540" width="800">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['payment.compensationAccountState']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hideCompensationAccountStatePanelLink" />
+				<rich:componentControl for="compensationAccountStatePanel" attachTo="hideCompensationAccountStatePanelLink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="showCompensationAccount" styleClass="edit">
+			<a:region>
+			<rich:panel style="height:460px; padding">
+				<rich:panel id="errorCompensationAccountPanel"
+					style="height:60px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" ajaxRendered="true" />
+				</rich:panel>
+				
+				<div style="clear: both" />
+				
+				<!-- BEGIN TABLE -->
+				
+				<rich:extendedDataTable  height="380px" 
+					id="compensationAccountState" var="_municipalBond"
+					value="#{paymentHome.selectedBonds}"
+					columnClasses="left, right, right, right, right, right, right ">
+					<f:facet name="header">
+						<h:outputText value="#{messages['payment.detail']}" />
+					</f:facet>
+					<f:facet name="footer">
+						<rich:columnGroup>
+												
+							<rich:column colspan="5">
+								<h:outputText value="#{messages['payment.value']}:" style="font-weight:bold; font-size:1.5em;"/>
+							</rich:column>
+							<rich:column colspan="2" styleClass="right">
+								<h:outputText id="value" value="#{paymentHome.instance.value}"
+									styleClass="right" style="font-weight:bold; font-size:1.5em;"
+									size="12" readonly="true">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+						</rich:columnGroup>
+					</f:facet>
+
+					<rich:column width="40%">
+						<f:facet name="header">#{messages['municipalBond.observation']}</f:facet>
+						<h:outputText value="#{_municipalBond.receipt != null ? _municipalBond.receipt : _municipalBond.number}" /><br/>
+						<h:outputText value="#{_municipalBond.entry.name}" /><br/>
+						<h:outputText value="#{_municipalBond.transformedServiceDate} #{_municipalBond.groupingCode}" /><br/>
+						<h:outputText value="#{messages['municipalBond.address']} #{_municipalBond.address}" /><br/>
+						<h:outputText value="#{messages['municipalBond.emissionDate']}: #{_municipalBond.emisionDate}" /><br/>
+						<h:outputText value="#{messages['municipalBond.expirationDate']}: #{_municipalBond.expirationDate}" />
+					</rich:column>
+	
+					<rich:column width="10%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.value']}</f:facet>
+						<h:outputText value="#{_municipalBond.value}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column width="10%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.interestsTotal']}</f:facet>
+						<h:outputText value="#{_municipalBond.interest}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+	
+					<rich:column width="10%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.discountsTotal']}</f:facet>
+						<h:outputText value="#{_municipalBond.discount}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+	
+					<rich:column width="10%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.surchargesTotal']}</f:facet>
+						<h:outputText value="#{_municipalBond.surcharge}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column width="10%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.taxesTotal']}</f:facet>
+						<h:outputText value="#{_municipalBond.taxesTotal}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+	
+					<rich:column width="10%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.paidTotal']}</f:facet>
+						<h:outputText value="#{_municipalBond.paidTotal}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+					
+				</rich:extendedDataTable>
+				
+				<!-- END TABLE -->
+				<div style="clear: both" />
+			</rich:panel>
+
+			<div class="actionButtons">
+				<a:commandButton 
+					id="savePaymentBtn" 
+					action="#{paymentHome.saveForCompensationPayment}"
+					 
+					value="#{messages['payment.save']}"
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'compensationAccountStatePanel\');' : ''}" />
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('compensationAccountStatePanel');"
+					bypassUpdates="true" /> 
+			</div>
+			</a:region>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

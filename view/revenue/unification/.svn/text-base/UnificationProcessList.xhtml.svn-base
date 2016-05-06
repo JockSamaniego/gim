@@ -1,0 +1,199 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="budgetSearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['unificationProcess.manage']}" />
+
+			<rich:simpleTogglePanel
+				label="#{messages['unificationProcess.searchFilter']}"
+				switchType="ajax">
+
+				<s:decorate template="../../layout/display.xhtml">
+					<ui:define name="label">#{messages['common.criteria']}</ui:define>
+					<h:inputText id="name" value="#{unificationProcessList.criteria}" />
+				</s:decorate>
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/revenue/unification/UnificationProcessList.xhtml" />
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['unificationProcess.searchResults']} (#{empty unificationProcessList.resultList ? 0 : (unificationProcessList.paginated ? unificationProcessList.resultCount : unificationProcessList.resultList.size)})" />
+						
+						<s:button view="/revenue/unification/UnificationProcessEdit.xhtml"
+							id="create" propagation="none"
+							value="#{messages['unificationProcess']}"
+							rendered="#{unificationProcessHome.hasNormalUnificationRole}">
+							<f:param name="unificationProcessId" />
+						</s:button>
+
+						<s:button view="/revenue/unification/UnificationProcessWaterService.xhtml"
+							id="createWater" propagation="none"
+							value="#{messages['unificationProcessWater']}"
+							rendered="#{unificationProcessHome.hasWaterUnificationRole}">
+							<f:param name="unificationProcessId" />
+						</s:button>
+
+					</h:panelGrid>
+				</f:facet>
+				<div class="results" id="unificationProcessList">
+
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty unificationProcessList.resultList}" />
+
+					<rich:dataTable id="unificationProcessList" var="_unification"
+						value="#{unificationProcessList.resultList}"
+						rendered="#{not empty unificationProcessList.resultList}"
+						onRowMouseOver="this.style.backgroundColor='#f4f4ff'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+						<rich:column>
+							<f:facet name="header">
+								<ui:include src="../../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{unificationProcessList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['unificationProcess.id']}" />
+									<ui:param name="propertyPath" value="unificationProcess.id" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_unification.id}" />
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">
+								<ui:include src="../../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{unificationProcessList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['unificationProcess.date']}" />
+									<ui:param name="propertyPath" value="unificationProcess.date" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_unification.date}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">
+								<ui:include src="../../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{unificationProcessList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['unificationProcess.time']}" />
+									<ui:param name="propertyPath" value="unificationProcess.time" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_unification.time}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.timePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<ui:include src="../../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{unificationProcessList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['unificationProcess.description']}" />
+									<ui:param name="propertyPath"
+										value="unificationProcess.property.id" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_unification.description}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<ui:include src="../../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{unificationProcessList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['unificationProcess.performer']}" />
+									<ui:param name="propertyPath" value="unificationProcess.id" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_unification.performChange.name}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<ui:include src="../../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{unificationProcessList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['unificationType']}" />
+									<ui:param name="propertyPath" value="unificationProcess.unificationType" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{messages[_unification.unificationType.name()]}" />
+						</rich:column>
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+
+							<s:button
+								view="/revenue/unification/UnificationProcessEdit.xhtml"
+								value="#{messages['common.view']}" propagation="none"
+								id="budgetEdit">
+								<f:param name="unificationProcessId" value="#{_unification.id}" />
+							</s:button>
+
+						</rich:column>
+					</rich:dataTable>
+
+				</div>
+			</rich:panel>
+
+			<div class="tableControl">
+
+				<s:link view="/revenue/unification/UnificationProcessList.xhtml"
+					rendered="#{unificationProcessList.previousExists}"
+					value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+					id="firstPage">
+					<f:param name="firstResult" value="0" />
+				</s:link>
+
+				<s:link view="/revenue/unification/UnificationProcessList.xhtml"
+					rendered="#{unificationProcessList.previousExists}"
+					value="#{messages.left} #{messages['common.previousPage']}"
+					id="previousPage">
+					<f:param name="firstResult"
+						value="#{unificationProcessList.previousFirstResult}" />
+				</s:link>
+
+				<s:link view="/revenue/unification/UnificationProcessList.xhtml"
+					rendered="#{unificationProcessList.nextExists}"
+					value="#{messages['common.nextPage']} #{messages.right}"
+					id="nextPage">
+					<f:param name="firstResult"
+						value="#{unificationProcessList.nextFirstResult}" />
+				</s:link>
+
+				<s:link view="/revenue/unification/UnificationProcessList.xhtml"
+					rendered="#{unificationProcessList.nextExists}"
+					value="#{messages['common.lastPage']}  #{messages.right}#{messages.right}"
+					id="lastPage">
+					<f:param name="firstResult"
+						value="#{unificationProcessList.lastFirstResult}" />
+				</s:link>
+
+			</div>
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

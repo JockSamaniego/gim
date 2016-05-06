@@ -1,0 +1,73 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="standHistoryPanel" width="650" height="300">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['stand.history']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkmort" />
+				<rich:componentControl for="standHistoryPanel"
+					attachTo="hidelinkmort" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="building" styleClass="edit">
+
+
+			<div class="results" id="contractList">
+
+				<h:outputText value="#{messages['space.contractsNoResults']}"
+					rendered="#{empty marketHome.standHistory.contracts}" />
+
+				<rich:dataTable id="contractList" var="_contract"
+					value="#{marketHome.standHistory.contracts}"
+					rendered="#{not empty marketHome.standHistory.contracts}">
+
+					<h:column>
+						<f:facet name="header">#{messages['resident']}</f:facet>
+						<h:outputText
+							value="#{_contract.subscriber.identificationNumber} - #{_contract.subscriber.name}">
+						</h:outputText>
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">#{messages['common.from']}</f:facet>
+						<h:outputText value="#{_contract.subscriptionDate}">
+							<s:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</h:column>
+					<h:column>
+						<f:facet name="header">#{messages['common.until']}</f:facet>
+						<h:outputText value="#{_contract.expirationDate}">
+							<s:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">#{messages['common.description']}</f:facet>
+						<h:outputText value="#{_contract.description}">
+						</h:outputText>
+					</h:column>
+
+				</rich:dataTable>
+
+			</div>
+
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

@@ -1,0 +1,24 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.tax
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.revenue.model.adjunct.pindal.BusinessLocal;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Adjunct;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+
+
+#declare any global variables here
+rule "FORMULARIO PATENTE"
+	no-loop true
+	salience 45
+	when
+		$itemBase : Item(entry.code == "IPT-PTF");
+		$mb : MunicipalBond();
+		$local : BusinessLocal();
+		eval($local.getCollectPaperValue() == true)		
+	then				
+		$itemBase.setTotal(new BigDecimal(0.50));
+end

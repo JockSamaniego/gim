@@ -1,0 +1,158 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+	
+
+	<ui:define name="body">
+			<ui:include src="fragment/LocalEditPanel.xhtml" />
+	
+			<h:form id="fireManSearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['fireMan.manageFireMan']}" />
+
+			<rich:simpleTogglePanel switchType="ajax">
+				<f:facet name="header">#{messages['fireMan.searchFilter']}</f:facet>
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['fireMan.name']}</ui:define>
+					<h:inputText id="criteria" value="#{fireManList.fireMan.name}" style="text-transform: uppercase" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/firestation/FireManList.xhtml">
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['fireMan.searchResults']} (#{empty fireManList.resultList ? 0 : (fireManList.paginated ? fireManList.resultCount : fireManList.resultList.size)})" />
+					<s:div styleClass="actionButtons" rendered="#{empty from}">
+						<s:button view="/firestation/FireManEdit.xhtml" id="create"
+							propagation="none" value="#{messages['common.create']}">
+							<f:param name="fireMand" />
+						</s:button>
+					</s:div>
+				</h:panelGrid>
+
+			</f:facet>
+			
+			<div class="results" id="FireManList">
+
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty fireManList.resultList}" />
+				<rich:dataTable id="fireManList" var="_fireMan"
+					value="#{fireManList.resultList}"
+					rendered="#{not empty fireManList.resultList}">
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{fireManList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['fireMan.id']}" />
+								<ui:param name="propertyPath" value="fireMan.id" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_fireMan.id}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{fireManList}" />
+								<ui:param name="propertyLabel" value="Name" />
+								<ui:param name="propertyPath" value="fireMan.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_fireMan.name}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{fireManList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['fireMan.fireManInspector']}" />
+								<ui:param name="propertyPath" value="fireMan.fireMan.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_fireMan.fireMan.name}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{fireManList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['fireMan.fireManIdentificationNumber']}" />
+								<ui:param name="propertyPath" value="fireMan.fireMan.identificationNumber" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_fireMan.fireMan.identificationNumber}" />
+					</h:column>
+					
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+
+						<s:button view="/firestation/FireManEdit.xhtml"
+							value="#{messages['common.edit']}" propagation="none"
+							id="fireManEdit" rendered="#{empty from}">
+							<f:param name="fireManId" value="#{_fireMan.id}" />
+						</s:button>
+						
+					</rich:column>
+				</rich:dataTable>
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/market/fireManList.xhtml"
+				rendered="#{fireManList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/firestation/FireManList.xhtml"
+				rendered="#{fireManList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult"
+					value="#{fireManList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/firestation/FireManList.xhtml"
+				rendered="#{fireManList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult"
+					value="#{fireManList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/firestation/FireManList.xhtml"
+				rendered="#{fireManList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult"
+					value="#{fireManList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

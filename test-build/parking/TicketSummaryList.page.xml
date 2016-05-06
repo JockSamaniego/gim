@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page login-required="true" xmlns="http://jboss.com/products/seam/pages"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
+	
+	<begin-conversation join="true" flush-mode="MANUAL"/>
+	
+	<param name="isOnlyReport" value="#{ticketCashClosingList.onlyReport}" />
+
+	<navigation from-action="#{ticketCashClosingList.cashClosing()}">
+		<rule if-outcome="failed">					
+			<redirect view-id="/parking/TicketSummaryList.xhtml"/>
+		</rule>
+		<rule if-outcome="closed">
+			<redirect view-id="/parking/report/TicketSummary.xhtml">
+				<param name="parkingLot" value="#{ticketCashClosingList.parkingLot}" />
+				<param name="start" value="#{ticketCashClosingList.coming}" />
+				<param name="end" value="#{ticketCashClosingList.going}" />
+				<param name="isOnlyReport" value="#{isOnlyReport}" />
+				<param name="userReport" value="#{ticketCashClosingList.userReport}" />
+				<param name="ticketIds" value="#{ticketCashClosingList.ids}" />
+			</redirect>
+		</rule>
+
+		<rule if-outcome="reportByUser">
+			<redirect view-id="/parking/report/TicketSummaryByCashier.xhtml">
+				<param name="parkingLot" value="#{ticketCashClosingList.parkingLot}" />
+				<param name="start" value="#{ticketCashClosingList.coming}" />
+				<param name="end" value="#{ticketCashClosingList.going}" />
+				<param name="isOnlyReport" value="#{isOnlyReport}" />
+				<param name="userReport" value="#{ticketCashClosingList.userReport}" />
+			</redirect>
+		</rule>
+	</navigation>
+</page>

@@ -1,0 +1,77 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="streetType" styleClass="edit">
+
+		<h:outputText styleClass="formTitle" value="#{streetTypeHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['streetType']}"/>
+        <rich:panel>
+            <s:decorate id="nameField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['streetType.name']}:</ui:define>
+                <h:inputText id="name"
+                       required="true"
+                           size="25"
+                      maxlength="25"
+                          value="#{streetTypeHome.instance.name}"/>
+            </s:decorate>
+            <s:decorate id="codeField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['streetType.code']}</ui:define>
+                <h:inputText id="code"
+                       required="true"
+                           size="10"
+                      maxlength="2"
+                          value="#{streetTypeHome.instance.code}"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                #{messages['common.requiredFields']}
+            </div>
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{streetTypeHome.persist}"
+                       disabled="#{!streetTypeHome.wired}"
+                       rendered="#{!streetTypeHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{streetTypeHome.update}"
+                       rendered="#{streetTypeHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="#{messages['common.delete']}"
+                         action="#{streetTypeHome.remove}"
+                      immediate="true"
+                       rendered="#{streetTypeHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/cadaster/StreetTypeList.xhtml"
+                rendered="#{streetTypeHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/cadaster/#{empty streetTypeFrom ? 'StreetTypeList' : streetTypeFrom}.xhtml"
+                rendered="#{!streetTypeHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

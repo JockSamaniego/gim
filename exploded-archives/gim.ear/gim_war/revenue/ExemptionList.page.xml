@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd" login-required="true">
+
+   <param name="firstResult" value="#{exemptionList.firstResult}"/>
+   <param name="sort" value="#{exemptionList.orderColumn}"/>
+   <param name="dir" value="#{exemptionList.orderDirection}"/>
+   <param name="logic" value="#{exemptionList.restrictionLogicOperator}"/>
+
+   <param name="from"/>
+   <param name="fiscalPeriod" value="#{exemptionList.fiscalPeriod}" converterId="org.jboss.seam.ui.EntityConverter"/>
+   <param name="exemptionType" value="#{exemptionList.exemptionType}" converterId="#{org.jboss.seam.ui.EntityConverter}"/>
+   <param name="resident" value="#{exemptionList.resident}"/>
+
+</page>

@@ -1,0 +1,58 @@
+#created on: Nov 04, 2014
+package gim.src.rules.ec.gob.gim.pf2011.waterservice
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.Domain;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+import ec.gob.gim.waterservice.model.Consumption;
+import ec.gob.gim.waterservice.model.WaterSupply;
+import ec.gob.gim.waterservice.model.WaterSupplyCategory;
+import ec.gob.gim.revenue.model.adjunct.WaterServiceReference;
+
+dialect "java"
+
+rule "Alcantarillado"
+	no-loop true
+	salience 0
+	when
+		$item : Item(entry.code == "00459");
+		$mb : MunicipalBond(items contains $item);
+		$wsr : WaterServiceReference();
+	then
+		Item $itemBase = $mb.getItems().get(0);
+		tasaAlcantarillado($wsr.getConsumption(),$item, $itemBase);
+end
+
+function void tasaAlcantarillado(Consumption $c, Item $subItem, Item $itemBase){
+
+	if($c.getWaterSupply().getHasSewerage()){
+		if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("RESIDENCIAL")){
+			$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.25)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}else
+		if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("COMERCIAL")){
+			$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.50)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}else
+		if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("INDUSTRIAL")){
+			$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.75)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}else
+		if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("OFICIAL")){
+			$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.40)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}else
+		if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("OFICIAL MEDIO")){
+			$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.20)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+	}else{
+		$subItem.setValue(new BigDecimal(0));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}	
+	
+}

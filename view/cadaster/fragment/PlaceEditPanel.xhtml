@@ -1,0 +1,87 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="placeEditPanel" width="300" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['place']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="placeEditPanel"
+					attachTo="hidelink" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="groupPosition" styleClass="edit">
+
+			<rich:panel>
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+
+				<div style="clear: both">
+					#{messages['place']}
+					<rich:separator height="1" />
+				</div>
+
+				<h:panelGrid columns="2" width="100%" rendered="#{streetHome.place != null}">
+					<s:decorate id="placeFieldId"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['place.name']}</ui:define>
+						<h:inputText id="placeId" required="true"
+							value="#{streetHome.place.name}" size="20"/>
+					</s:decorate>
+					
+
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2" width="100%" rendered="#{neighborhoodHome.place != null}">
+					<s:decorate id="placeField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['place.name']}</ui:define>
+						<h:inputText id="placeId2" required="true"
+							value="#{neighborhoodHome.place.name}" size="20"/>
+					</s:decorate>
+					
+
+				</h:panelGrid>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+				<a:commandButton action="#{streetHome.persistPlace()}" rendered="#{streetHome.place != null}"
+					value="#{messages['common.accept']}" reRender="groupField"
+					oncomplete="#{(facesContext.maximumSeverity == null or streetHome.correctPersist) ? 'Richfaces.hideModalPanel(\'placeEditPanel\');' : ''}"/>
+					
+						<a:commandButton action="#{neighborhoodHome.persistPlace()}" rendered="#{neighborhoodHome.place != null}"
+					value="#{messages['common.accept']}" reRender="groupField"
+					oncomplete="#{(facesContext.maximumSeverity == null or neighborhoodHome.correctPersist) ? 'Richfaces.hideModalPanel(\'placeEditPanel\');' : ''}" />
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}" reRender="groupField"
+					oncomplete="Richfaces.hideModalPanel('placeEditPanel');"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

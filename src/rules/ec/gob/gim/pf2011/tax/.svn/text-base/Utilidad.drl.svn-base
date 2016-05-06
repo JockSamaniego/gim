@@ -1,0 +1,64 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.tax
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.Domain;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+
+
+#declare any global variables here
+rule "Impuesto utilidad con valor de transaccion con obra nueva"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00001");			
+		$domain: Domain();
+		$property: Property(hasNewWork == true && totalYearsFromLastChangeOwner < 20)        		
+	then
+		$itemBase.setValue($domain.getValueForCalculate().subtract($property.getCurrentDomain().getValueForCalculate()));				
+		$itemBase.setValue($itemBase.getValue().subtract($property.getCurrentDomain().getBuildingAppraisal().multiply(new BigDecimal(0.8))));		
+		$itemBase.setValue($itemBase.getValue().subtract($itemBase.getValue().multiply(new BigDecimal($domain.getCreationDate().getYear() - $property.getCurrentDomain().getDate().getYear())).multiply(new BigDecimal(0.05))));
+		$itemBase.setValue($itemBase.getValue().subtract($domain.getSpecialContribution()));
+		$itemBase.setValue($itemBase.getValue().multiply(new BigDecimal(0.1)));		
+		$itemBase.setTotal($itemBase.getValue());
+		$itemBase.setTotal($itemBase.getTotal().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : $itemBase.getTotal());
+		$itemBase.setValue($itemBase.getValue().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : $itemBase.getValue());		
+		#calculateTotal();
+end
+
+rule "Impuesto utilidad con valor de transaccion sin obra nueva"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00001");		
+		$domain: Domain();
+		$property: Property(hasNewWork == false && totalYearsFromLastChangeOwner < 20)        					
+	then 		
+		$itemBase.setValue($domain.getValueForCalculate().subtract($property.getCurrentDomain().getValueForCalculate()));					
+		$itemBase.setValue($itemBase.getValue().subtract($itemBase.getValue().multiply(new BigDecimal($domain.getCreationDate().getYear() - $property.getCurrentDomain().getDate().getYear())).multiply(new BigDecimal(0.05))));		
+		$itemBase.setValue($itemBase.getValue().subtract($domain.getSpecialContribution()));
+		$itemBase.setValue($itemBase.getValue().multiply(new BigDecimal(0.1)));				
+		$itemBase.setTotal($itemBase.getValue());
+		$itemBase.setTotal($itemBase.getTotal().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : $itemBase.getTotal());
+		$itemBase.setValue($itemBase.getValue().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : $itemBase.getValue());
+		#calculateTotal();
+end
+
+rule "Impuesto utilidad mayor o igual a 20 años"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00001");		
+		$domain: Domain();
+		$property: Property(totalYearsFromLastChangeOwner >= 20)       
+	then 		
+		$itemBase.setValue(new BigDecimal(1));				
+		$itemBase.setTotal($itemBase.getValue());
+		$itemBase.setTotal($itemBase.getTotal().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : $itemBase.getTotal());
+		$itemBase.setValue($itemBase.getValue().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : $itemBase.getValue());
+		#calculateTotal();
+end

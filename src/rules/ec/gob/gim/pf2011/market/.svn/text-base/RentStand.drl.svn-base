@@ -1,0 +1,96 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.market
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.revenue.model.Item;
+import ec.gob.gim.market.model.Stand;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.market.model.StandType;
+import java.math.BigDecimal;
+
+dialect "java"
+
+rule "Alguiler local valor fijo"
+        no-loop true
+        salience 1
+        when
+                $itemBase : Item(entry.code == "00027");
+                $mb : MunicipalBond();
+                #$stand : Stand();
+                $stand : Stand(standType.name == "PUESTOS");
+                #eval($stand.getIsCalculated()==false);
+        then
+                $itemBase.setValue($stand.getValue());
+                $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+                System.out.println("...................................LOCAL valor fijo: " + $itemBase.getTotal());
+end
+
+rule "Alguiler bodega valor fijo"
+        no-loop true
+        salience 2
+        when
+                $itemBase : Item(entry.code == "00023");
+                $mb : MunicipalBond();
+                #$stand : Stand();
+                $stand : Stand(standType.name == "BODEGAS");
+                #eval($stand.getIsCalculated()==false);
+        then
+                $itemBase.setValue($stand.getValue());
+                $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+                System.out.println("...................................BODEGA valor fijo: " + $itemBase.getTotal());
+end
+
+
+
+rule "Alguiler local valor fijo ventanilla"
+        no-loop true
+        salience 1
+        when
+                $itemBase : Item(entry.code == "00027");
+                $mb : MunicipalBond();
+        then
+                #$itemBase.setValue($mb.getValue());
+                $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx LOCAL valor fijo ventanilla : xxxxxxxxxxxxx " + $itemBase.getTotal());
+end
+
+rule "Alguiler bodega valor fijo ventanilla"
+        no-loop true
+        salience 2
+        when
+                $itemBase : Item(entry.code == "00023");
+                $mb : MunicipalBond();
+        then
+                #$itemBase.setValue($mb.getValue());
+                $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx BDEGA valor fijo ventanilla : xxxxxxxxxxxxx " + $itemBase.getTotal());
+end
+
+
+#rule "Alquilar stand tipo local calculado"
+#       no-loop true
+#       salience 50
+#       when
+#               $itemBase : Item(entry.code == "00027");
+#               $stand : Stand(standType.name == "LOCAL");
+#               eval($stand.getIsCalculated()==true);
+#               $mb : MunicipalBond();
+#       then 
+#               $itemBase.setValue(new java.math.BigDecimal($stand.getArea() * 1.5));           
+#               $mb.setDescription("ALQUILER DE STAND TIPO LOCAL");
+#               $itemBase.setTotal($itemBase.getValue());
+#end
+
+#rule "Alquilar stand tipo bodega"
+#       no-loop true
+#       salience 50
+#       when
+##              $stand : Stand(standType.name == "BODEGA");
+#               eval($stand.getIsCalculated()==true);                   
+#               $mb : MunicipalBond();
+#       then 
+#               $itemBase.setValue(new java.math.BigDecimal($stand.getArea() * 3.5));           
+#               $mb.setDescription("ALQUILER DE STAND TIPO BODEGA");
+#               $itemBase.setTotal($itemBase.getValue());
+#end

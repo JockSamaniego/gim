@@ -1,0 +1,26 @@
+#created on: Oct 31, 2011
+package ec.gob.gim.rules.pf2011
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.common.model.FiscalPeriod;
+import ec.gob.gim.revenue.model.Item;
+import ec.gob.gim.common.model.LegalEntity;
+import java.math.BigDecimal;
+import java.util.Calendar;
+import ec.gob.gim.revenue.model.adjunct.BusinessLocalReference;
+import ec.gob.gim.revenue.model.adjunct.DomainTransfer;
+
+#list any import classes here.
+
+rule "Descuento prestamo hipotecario IESS"
+	no-loop true
+	when
+		$itemBase : Item(entry.code == "00058");
+		$itemDescuento : Item(entry.name == "REBAJA POR CREDITO HIPOTECARIO");
+		$mb : MunicipalBond();
+		$transfer : DomainTransfer();
+		eval($transfer.getMortgageDiscount());
+	then
+		BigDecimal discount = $itemBase.getTotal().multiply(new BigDecimal(0.5)); 
+		$itemDescuento.setValue(discount);
+		$itemDescuento.setTotal(discount);
+end

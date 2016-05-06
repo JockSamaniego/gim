@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      no-conversation-view-id="/parking/ParkingLotList.xhtml"
+      login-required="true">
+
+   <begin-conversation join="true" flush-mode="MANUAL"/>
+
+   <action execute="#{parkingLotHome.wire}"/>
+
+   <param name="parkingLotFrom"/>
+   <param name="parkingLotId" value="#{parkingLotHome.parkingLotId}"/>
+   <param name="identificationNumber" value="#{parkingLotHome.identificationNumber}"/>
+
+
+   <navigation from-action="#{parkingLotHome.addJournal}">
+      <rule if-outcome="updated">
+         <end-conversation/>
+         <redirect view-id="/parking/ParkingLotJournalEdit.xhtml"/>
+      </rule>
+      
+      <rule if-outcome="failed">         
+         <redirect view-id="/parking/ParkingLotJournalEdit.xhtml"/>
+      </rule>
+      
+   </navigation>
+
+   <navigation from-action="#{parkingLotHome.removeJournal}">
+      <rule if-outcome="removed">
+         <end-conversation/>
+         <redirect view-id="/parking/ParkingLotJournalEdit.xhtml"/>
+      </rule>
+   </navigation>
+
+
+</page>

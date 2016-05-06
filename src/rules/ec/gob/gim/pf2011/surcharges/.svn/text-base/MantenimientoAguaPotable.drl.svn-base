@@ -1,0 +1,20 @@
+#created on: Oct 31, 2011
+package ec.gob.gim.rules.pf2011
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+import ec.gob.gim.waterservice.model.MaintenanceEntryDTO;
+import ec.gob.gim.revenue.model.adjunct.WaterServiceReference;
+
+
+
+rule "Recargo Mantenimiento Agua Potable"
+	no-loop true
+	salience 0
+	when
+		$item : Item(entry.code == "00449");
+		$mb : MunicipalBond();
+		$wsr : WaterServiceReference(maintenanceEntryDTO != null && maintenanceEntryDTO.value > 0);
+	then
+		$item.setTotal($wsr.getMaintenanceEntryDTO().getValue());
+end

@@ -1,0 +1,96 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<style type="text/css">
+.foo td {
+	vertical-align: top;
+}
+</style>
+		<h:form id="retention" styleClass="edit">
+			<h:outputText styleClass="formTitle"
+				value="#{messages['provider.title']}" />
+
+			<rich:panel>
+
+				<f:facet name="header">
+					#{messages['provider.companyData']}
+				</f:facet>
+
+				<s:decorate id="identificationTypeDec" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['electronicVoucher.retentionTax']}</ui:define>
+						<h:selectOneMenu id="identificationType" required="true"
+							value="#{providerHome.instance.identificationtype}" 
+							noSelectionLabel="#{messages['common.chooseOption']}">
+							<s:selectItems value="#{providerHome.identificationTypes}" var="identificationType" label="#{messages[identificationType.name()]}"/>
+							<s:convertEnum/>
+							<a:support event="onchange" ajaxSingle="true"  /> 
+					</h:selectOneMenu>
+				</s:decorate>
+					
+				<s:decorate id="identificationDec" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['provider.identificationNumber']}</ui:define>
+					<h:inputText id="identificationNumber" required="true" size="60" maxlength="60"
+						value="#{providerHome.instance.identificationNumber}">
+					</h:inputText>
+				</s:decorate>
+						
+				<s:decorate id="nameDec" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.name']}</ui:define>
+					<h:inputText id="name" required="true" size="60" style="text-transform: uppercase"
+						value="#{providerHome.instance.name}">
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="lastnameDec" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.lastname']}</ui:define>
+					<h:inputText id="name" required="true" size="60"  style="text-transform: uppercase"
+						value="#{providerHome.instance.lastname}">
+					</h:inputText>
+				</s:decorate>
+ 
+				<s:decorate id="emailDec" template="../layout/edit.xhtml" >
+					<ui:define name="label">#{messages['provider.email']}</ui:define>
+					<h:inputText id="email" required="true" size="60" 
+						value="#{providerHome.instance.email}">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="addressDec" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['institutionService.address']}</ui:define>
+					<h:inputText id="address" required="true" size="60" maxlength="60"
+						value="#{providerHome.instance.address}">
+					</h:inputText>
+				</s:decorate>
+ 
+				<div style="clear: both"></div>
+			</rich:panel> 
+			
+			<div class="actionButtons">
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{providerHome.persist}"
+					disabled="#{!providerHome.wired}"
+					rendered="#{!providerHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{providerHome.update}"
+					rendered="#{providerHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/electronicvoucher/ProviderList.xhtml" />
+			</div>
+		</h:form>
+
+
+		 
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,297 @@
+<p:document xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	title="#{messages['payment.receipts']}" subject="report" type="pdf"
+	pageSize="A4" margins="20 20 20 20"
+	keywords="printing receipts invoices" author="loxageek"
+	creator="loxageek">
+	<f:facet name="header">
+		<p:font size="9">
+			<p:header borderWidthBottom="0" borderWidthTop="0">
+				<p:paragraph>
+					<p:table columns="2" widthPercentage="100" spacingAfter="20"
+						widths="1 9">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:image value="#{gim.institution.logo}" alignment="center" widht="1" height="1">
+                                <s:transformImageSize height="70" maintainRatio="true"/>
+                            </p:image>
+                        </p:cell>
+						<p:cell>
+							<p:font size="12" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+							</p:font>
+							<p:font size="8" style="bold">
+								<p:paragraph alignment="center">#{messages['receipt.subtitle']}</p:paragraph>
+							</p:font>
+							<p:font size="8">
+								<p:paragraph alignment="center">#{gim.institution.address}. #{messages['institution.phone']}: #{gim.institution.phone} -  #{messages['institution.fax']}: #{gim.institution.fax}</p:paragraph>
+							</p:font>
+							<p:font size="9">
+								<p:paragraph alignment="center">#{messages['institution.ruc']}: #{gim.institution.number}</p:paragraph>
+							</p:font>
+						</p:cell>
+					</p:table>
+				</p:paragraph>
+
+				<p:table columns="2" widthPercentage="100" spacingAfter="25"
+					widths="1 6">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" />
+					</f:facet>
+					<p:cell horizontalAlignment="right" borderWidthTop="0.2"
+						borderColorTop="#000000" spacingAfter="15">
+						<p:font size="9" style="bold">
+							<p:paragraph alignment="right">#{messages['common.resident']}:</p:paragraph>
+						</p:font>
+					</p:cell>
+					<p:cell horizontalAlignment="left" colspan="3" borderWidthTop="0.2"
+						borderColorTop="#000000">
+						<p:font size="9">
+							<p:paragraph alignment="left">#{paymentHome.resident.name}</p:paragraph>
+						</p:font>
+					</p:cell>
+					<p:cell horizontalAlignment="right">
+						<p:font size="9" style="bold">
+							<p:paragraph alignment="right">#{messages['common.identificationNumber']}:</p:paragraph>
+						</p:font>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:font size="9">
+							<p:paragraph alignment="left">#{paymentHome.resident.identificationNumber}</p:paragraph>
+						</p:font>
+					</p:cell>
+					<p:cell horizontalAlignment="right">
+						<p:font size="9" style="bold">
+							<p:paragraph alignment="right">#{messages['common.address']}:</p:paragraph>
+						</p:font>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:font size="9">
+							<p:paragraph alignment="left">#{paymentHome.resident.currentAddress.street} #{paymentHome.resident.currentAddress.neighborhood}</p:paragraph>
+						</p:font>
+					</p:cell>
+					<p:cell horizontalAlignment="right">
+						<p:font size="9" style="bold">
+							<p:paragraph alignment="right">#{messages['Responsable']}:</p:paragraph>
+						</p:font>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:font size="9">
+							<p:paragraph alignment="left">#{paymentHome.userSession.user.resident.name}</p:paragraph>
+						</p:font>
+					</p:cell>
+					<p:cell horizontalAlignment="right">
+						<p:font size="9" style="bold">
+							<p:paragraph alignment="right">#{messages['Fecha']}:</p:paragraph>
+						</p:font>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:font size="8">
+							<p:text value="#{currentDatetime}">
+								<f:convertDateTime
+									pattern="#{messages['common.dateFullTimePattern']}" />
+							</p:text>
+						</p:font>
+					</p:cell>
+				</p:table>
+			</p:header>
+
+			<p:footer borderWidthBottom="0" borderWidthTop="0.3"
+				alignment="center">
+				<p:paragraph>#{gim.institution.slogan}</p:paragraph>
+			</p:footer>
+		</p:font>
+	</f:facet>
+
+
+
+	<p:table columns="8" widthPercentage="100"
+		widths="15 25 10 10 10 10 10 10">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0.2" borderColor="#000000" grayFill="0.90"
+				horizontalAlignment="center" verticalAlignment="middle" />
+		</f:facet>
+
+		<p:font size="7" style="bold">
+			<p:cell>
+				<p:paragraph alignment="center">#{messages['receipt.number']}</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph alignment="center">#{messages['municipalBond.observation']}</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph alignment="center">#{messages['municipalBond.value']}</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph alignment="center">#{messages['municipalBond.interestsTotal']}</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph alignment="center">#{messages['municipalBond.discountsTotal']}</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph alignment="center">#{messages['municipalBond.surchargesTotal']}</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph alignment="center">#{messages['municipalBond.taxesTotal']}</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph alignment="center">#{messages['municipalBond.paidTotal']}</p:paragraph>
+			</p:cell>
+		</p:font>
+	</p:table>
+
+
+	<p:table columns="8" widthPercentage="100" spacingAfter="10"
+		widths="15 25 10 10 10 10 10 10">
+
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0.2" borderColor="#000000"
+				horizontalAlignment="right" verticalAlignment="middle" />
+		</f:facet>
+		<p:font size="6">
+			<ui:repeat var="_municipalBond" value="#{paymentHome.selectedBonds}">
+				<p:cell horizontalAlignment="center">
+					<f:facet name="header">#{messages['receipt.number']}</f:facet>
+					<p:paragraph alignment="center" rendered="#{not empty _municipalBond.receipt}">
+						#{_municipalBond.receipt}
+					</p:paragraph>
+					<p:paragraph alignment="center" rendered="#{not empty _municipalBond.receipt}">
+						<p:font size="5" style="bold">#{messages['receipt.authorization']}: #{_municipalBond.receipt.authorizationNumber}</p:font>
+					</p:paragraph>
+					<p:paragraph
+					alignment="center"
+					rendered="#{not empty _municipalBond.receipt and _municipalBond.receipt.statusElectronicReceipt eq 'AUTOIMPRESOR'}">
+						<p:font size="4">#{messages['receiptAuthorization.from']}#{' '}<p:text value="#{receiptPrintingManager.getReceiptAuthorization(_municipalBond.receipt.authorizationNumber).startDate}"><f:convertDateTime pattern="#{messages['common.SRIDatePattern']}" /></p:text>#{' '}#{messages['receiptAuthorization.until']}#{' '}<p:text value="#{receiptPrintingManager.getReceiptAuthorization(_municipalBond.receipt.authorizationNumber).endDate}"><f:convertDateTime pattern="#{messages['common.SRIDatePattern']}" /></p:text></p:font>
+					</p:paragraph>
+					<p:paragraph alignment="center" rendered="#{not empty _municipalBond.receipt  and _municipalBond.receipt.statusElectronicReceipt eq 'AUTHORIZED'}">
+						<p:font size="4">#{messages['receiptAuthorization.from']}#{' '}<p:text value="#{_municipalBond.receipt.sriAuthorizationDate}"><f:convertDateTime pattern="#{messages['common.SRIDatePattern']}" /></p:text></p:font>
+					</p:paragraph>
+					<p:paragraph alignment="center" rendered="#{empty _municipalBond.receipt}">#{_municipalBond.number}</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.entry.name}" />
+					</p:paragraph>
+					<p:paragraph>
+						<p:text value="#{_municipalBond.description}" />
+					</p:paragraph>
+					<p:paragraph>
+						<p:text
+							value="#{_municipalBond.transformedServiceDate} #{_municipalBond.groupingCode}" />
+					</p:paragraph>
+					<p:paragraph>
+						<p:text value="#{_municipalBond.address}" />
+					</p:paragraph>
+					
+					<p:paragraph>
+						<p:font  style="bold">
+						<p:text value="#{messages['date']}: "/>
+						</p:font>						
+						<p:text value="#{empty _municipalBond.receipt ? currentDate : _municipalBond.receipt.date}">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</p:text>
+					</p:paragraph>
+					
+					<p:paragraph>
+						<p:font  style="bold">
+						<p:text value="#{messages['municipalBond.emissionDate']} Obligación: "/>
+						</p:font>						
+						<p:text value="#{_municipalBond.emisionDate}">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</p:text>
+					</p:paragraph>
+					
+					<p:paragraph>
+						<p:font  style="bold">
+						<p:text value="#{messages['municipalBond.expirationDate']}: "/>
+						</p:font>
+						<p:text value="#{_municipalBond.expirationDate}">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{_municipalBond.value}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell>
+					<f:facet name="header">#{messages['municipalBond.interestsTotal']}</f:facet>
+					<p:paragraph>
+						<p:text value="#{_municipalBond.interest}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell>
+					<f:facet name="header">#{messages['municipalBond.discountsTotal']}</f:facet>
+					<p:paragraph>
+						<p:text value="#{_municipalBond.discount}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell>
+					<f:facet name="header">#{messages['municipalBond.surchargesTotal']}</f:facet>
+					<p:paragraph>
+						<p:text value="#{_municipalBond.surcharge}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell>
+					<f:facet name="header">#{messages['municipalBond.taxesTotal']}</f:facet>
+					<p:paragraph>
+						<p:text value="#{_municipalBond.taxesTotal}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell>
+					<f:facet name="header">#{messages['municipalBond.paidTotal']}</f:facet>
+					<p:paragraph>
+						<p:text value="#{_municipalBond.paidTotal}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+			</ui:repeat>
+		</p:font>
+	</p:table>
+</p:document>

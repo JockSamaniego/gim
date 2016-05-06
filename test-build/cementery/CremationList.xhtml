@@ -1,0 +1,177 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" 
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="cremationSearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['cremation.manageCremation']}" />
+
+			<rich:simpleTogglePanel label="#{messages['cremation.searchFilter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['cremation.crematorium']}</ui:define>
+					<h:selectOneMenu id="crematorium" value="#{cremationList.crematorium}" >
+						<s:selectItems value="#{crematoriumNames}" var="_crematorium"
+							label="#{_crematorium}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['cremation.name']}</ui:define>
+					<h:inputText id="name" value="#{cremationList.criteriaName}" />
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['cremation.nameResident']}</ui:define>
+					<h:inputText id="name" value="#{cremationList.criteriaNameResident}" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/cementery/CremationList.xhtml">
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['cremation.searchResults']} (#{empty cremationList.resultList ? 0 : (cremationList.paginated ? cremationList.resultCount : cremationList.resultList.size)})" />
+					<s:button view="/cementery/CremationEdit.xhtml" id="create"
+						propagation="none" value="#{messages['cremation.createCremation']}">
+						<f:param name="cremationId" />
+					</s:button>
+				</h:panelGrid>
+			</f:facet>
+		<div class="results" id="cremationList">
+
+			<h:outputText value="#{messages['common.noResultsReturned']}"
+				rendered="#{empty cremationList.resultList}" />
+
+			<rich:dataTable id="cremationList" var="_cremation"
+				value="#{cremationList.resultList}"
+				rendered="#{not empty cremationList.resultList}">
+				<h:column>
+					<f:facet name="header">
+						<ui:include src="../layout/sort.xhtml">
+							<ui:param name="entityList" value="#{cremationList}" />
+							<ui:param name="propertyLabel" value="#{messages['cremation.id']}" />
+							<ui:param name="propertyPath" value="cremation.id" />
+						</ui:include>
+					</f:facet>
+					<h:outputText value="#{_cremation.id}" />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header">
+						<ui:include src="../layout/sort.xhtml">
+							<ui:param name="entityList" value="#{cremationList}" />
+							<ui:param name="propertyLabel" value="#{messages['cremation.crematorium']}" />
+							<ui:param name="propertyPath" value="cremation.crematorium.name" />
+						</ui:include>
+					</f:facet>
+					<h:outputText value="#{_cremation.crematorium.name}" />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header">
+						<ui:include src="../layout/sort.xhtml">
+							<ui:param name="entityList" value="#{cremationList}" />
+							<ui:param name="propertyLabel" value="#{messages['cremation.name']}" />
+							<ui:param name="propertyPath" value="cremation.name" />
+						</ui:include>
+					</f:facet>
+					<h:outputText value="#{_cremation.name}" />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header">
+						<ui:include src="../layout/sort.xhtml">
+							<ui:param name="entityList" value="#{cremationList}" />
+							<ui:param name="propertyLabel" value="#{messages['cremation.bloodRelation']}" />
+							<ui:param name="propertyPath" value="cremation.bloodRelation.name" />
+						</ui:include>
+					</f:facet>
+					<h:outputText value="#{_cremation.bloodRelation.name}" />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header">
+						<ui:include src="../layout/sort.xhtml">
+							<ui:param name="entityList" value="#{cremationList}" />
+							<ui:param name="propertyLabel" value="#{messages['cremation.date']}" />
+							<ui:param name="propertyPath" value="cremation.date" />
+						</ui:include>
+					</f:facet>
+					<h:outputText value="#{_cremation.date}" >
+						<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+					</h:outputText>
+				</h:column>
+				
+				<rich:column styleClass="action">
+					<f:facet name="header">#{messages['common.action']}</f:facet>
+					<s:button view="/cementery/CremationEdit.xhtml"
+						value="#{messages['cremation.edit']}" propagation="none"
+						id="cremationEdit" rendered="#{empty from}">
+						<f:param name="cremationId" value="#{_cremation.id}" />
+					</s:button>
+				</rich:column>
+			</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/cementery/CremationList.xhtml"
+				rendered="#{cremationList.previousExists}"
+				value="#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/cementery/CremationList.xhtml"
+				rendered="#{cremationList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult" value="#{cremationList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/cementery/CremationList.xhtml"
+				rendered="#{cremationList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult" value="#{cremationList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/cementery/CremationList.xhtml"
+				rendered="#{cremationList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult" value="#{cremationList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

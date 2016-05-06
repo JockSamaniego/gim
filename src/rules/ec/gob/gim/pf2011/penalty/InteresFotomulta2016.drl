@@ -1,0 +1,73 @@
+#created on: Feb 15, 2016
+package ec.gob.gim.rules.pf2011.penalty;
+
+import ec.gob.gim.income.model.InterestRate;
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.common.model.Person;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.joda.time.DateTime;
+import org.joda.time.Period;
+
+dialect "java"
+
+function BigDecimal getInterest(Date $expirationDate, float $percentage, BigDecimal $base){
+ 	 	Calendar $c = Calendar.getInstance();
+	$c.set(Calendar.HOUR, 0);
+	$c.set(Calendar.MINUTE, 0);
+	$c.set(Calendar.SECOND, 0);
+	
+	System.out.println("Fecha actual: "+$c.getTime());
+	DateTime $expirationDT = new DateTime($expirationDate);
+	DateTime $currentDT = new DateTime($c.getTime());
+	
+	Period $period = new Period( $currentDT,  $expirationDT);
+	int $anios = $period.getYears();
+	int $meses = $period.getMonths(); 
+	int $dias = $period.getDays();
+	
+	System.out.println("anios: "+$anios);
+	System.out.println("meses: "+$meses);
+	System.out.println("dias: "+$dias);
+	
+	float $interest = 1;
+	
+	if($dias > 0){
+		$meses += 1;
+	}
+	
+	if( $anios > 0 ){
+		$meses = $meses + $anios*12;
+	}
+		
+	$interest = $interest * $percentage*$meses;
+	
+	if ($interest >= 100) {
+		$interest = 100;
+	}
+					
+	return new BigDecimal($interest).multiply($base)
+				.divide(new BigDecimal(100))
+				.setScale(2, BigDecimal.ROUND_HALF_UP); 
+}	
+
+
+rule "Interes FotoMulta"
+        no-loop true
+        #salience 9
+        when
+                $itemBase : Item(entry.code == '00649');
+                $mb : MunicipalBond();                          
+        then
+                System.out.println("Ejecutando regla de Interest...fotomultas------------- " ); 
+                BigDecimal $value = getInterest($mb.getExpirationDate(), 2, $mb.getBase() );
+				System.out.println("-----------------------$value "+$value );
+                $itemBase.setValue($value);
+                $itemBase.setTotal($value);
+end 
+

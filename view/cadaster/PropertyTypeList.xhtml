@@ -1,0 +1,143 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="propertyTypeSearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['propertyTypeList.manager']}" />
+
+			<rich:simpleTogglePanel
+				label="#{messages['propertyType.searchFilter']}" switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['propertyType.name']}</ui:define>
+					<h:inputText id="name"
+						value="#{propertyTypeList.propertyType.name}" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/cadaster/PropertyTypeList.xhtml">
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['propertyType.searchResults']} (#{empty propertyTypeList.resultList ? 0 : (propertyTypeList.paginated ? propertyTypeList.resultCount : propertyTypeList.resultList.size)})" />
+					<s:div styleClass="actionButtons" rendered="#{empty from}">
+						<s:button view="/cadaster/PropertyTypeEdit.xhtml" id="create"
+							propagation="none"
+							value="#{messages['common.create']} #{messages['propertyType']}">
+							<f:param name="propertyTypeId" />
+						</s:button>
+					</s:div>
+				</h:panelGrid>
+			</f:facet>
+
+			<div class="results" id="propertyTypeListDiv">
+
+				<h:outputText
+					value="#{messages['propertyType.searchReturnedNoResults']}."
+					rendered="#{empty propertyTypeList.resultList}" />
+
+				<rich:dataTable id="propertyTypeList" var="_propertyType"
+					value="#{propertyTypeList.resultList}"
+					rendered="#{not empty propertyTypeList.resultList}">
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{propertyTypeList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['common.id']}" />
+								<ui:param name="propertyPath" value="propertyType.id" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_propertyType.id}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{propertyTypeList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['propertyType.name']}" />
+								<ui:param name="propertyPath" value="propertyType.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_propertyType.name}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{propertyTypeList}" />
+								<ui:param name="propertyLabel" value="#{messages['entry']}" />
+								<ui:param name="propertyPath" value="propertyType.entry.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_propertyType.entry.name}" />
+					</h:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<s:button view="/cadaster/PropertyTypeEdit.xhtml"
+							value="#{messages['common.edit']}" propagation="none"
+							id="propertyTypeViewId">
+							<f:param name="propertyTypeId" value="#{_propertyType.id}" />
+						</s:button>
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/PropertyTypeList.xhtml"
+				rendered="#{propertyTypeList.previousExists}"
+				value="#{messages.left}#{messages.left} First Page" id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/PropertyTypeList.xhtml"
+				rendered="#{propertyTypeList.previousExists}"
+				value="#{messages.left} Previous Page" id="previousPage">
+				<f:param name="firstResult"
+					value="#{propertyTypeList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/PropertyTypeList.xhtml"
+				rendered="#{propertyTypeList.nextExists}"
+				value="Next Page #{messages.right}" id="nextPage">
+				<f:param name="firstResult"
+					value="#{propertyTypeList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/PropertyTypeList.xhtml"
+				rendered="#{propertyTypeList.nextExists}"
+				value="Last Page #{messages.right}#{messages.right}" id="lastPage">
+				<f:param name="firstResult"
+					value="#{propertyTypeList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

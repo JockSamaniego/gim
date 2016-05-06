@@ -1,0 +1,132 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:a="http://richfaces.org/a4j"
+                xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"	
+                template="../layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <h:form id="tax" styleClass="edit">
+
+            <h:outputText styleClass="formTitle"
+                          value="#{messages['municipalBond.transfer']}" />
+            <rich:panel>
+                <f:facet name="header">#{messages['municipalBondTransfer.Tittle']}</f:facet>
+                <h:panelGrid columns="2" width="100%">
+                    <h:panelGrid>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['previousResident']}" />
+                        </f:facet>
+                        <g:residentChooser id="residentChooser"
+                                           resident="#{statusChangeHome.previousResident}"
+                                           criteria="#{statusChangeHome.criteria}"
+                                           bean="#{statusChangeHome}" searchAction="searchResidentPrevious"
+                                           residentsList="#{statusChangeHome.residents}"
+                                           identificationNumber="#{statusChangeHome.identificationNumberPrevious}"
+                                           searchByCriteriaAction="searchResidentByCriteria"
+                                           clearSearchPanelAction="clearSearchResidentPanel"
+                                           residentChosenListenerName="previousResidentSelectedListener"
+                                           required="true"
+                                           reRender="municipalBondPanel,previousResidentField" />
+                    </h:panelGrid>
+                    <h:panelGrid>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['currentResident']}" />
+                        </f:facet>
+                        <g:residentChooser id="doneByChooser"
+                                           resident="#{statusChangeHome.currentResident}"
+                                           criteria="#{statusChangeHome.criteria}"
+                                           bean="#{statusChangeHome}" searchAction="searchResidentCurrent"
+                                           residentsList="#{statusChangeHome.residents}"
+                                           identificationNumber="#{statusChangeHome.identificationNumberCurrent}"
+                                           searchByCriteriaAction="searchResidentByCriteria"
+                                           clearSearchPanelAction="clearSearchResidentPanel"
+                                           residentChosenListenerName="currentSelectedListener"
+                                           required="true" />
+                    </h:panelGrid>
+                </h:panelGrid>
+
+                <s:decorate id="dateField" template="../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['statusChange.date']}:</ui:define>
+                    <rich:calendar id="birthday"
+                                   value="#{statusChangeHome.instance.date}"
+                                   datePattern="#{messages['common.datePattern']}" readonly="true" />
+                </s:decorate>
+
+                <s:decorate id="explanationField" template="../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['statusChange.explanation']}:</ui:define>
+                    <h:inputTextarea id="razon"
+                                     value="#{statusChangeHome.instance.explanation}" required="true">
+                    </h:inputTextarea>
+                </s:decorate>
+                <s:decorate id="previousResidentField"
+                            template="../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['statusChange.previousResident']}:</ui:define>
+                    <h:inputText value="#{statusChangeHome.previousResident.name}"
+                                 maxlength="20" size="20" readonly="true" />
+                </s:decorate>
+
+                <div style="clear: both">
+                    <span class="required">*</span>
+                    #{messages['common.requiredFields']}
+                </div>
+
+            </rich:panel>
+
+            <rich:panel id="municipalBondPanel">
+
+                <f:facet name="header">
+
+                    <h:panelGrid columns="3" columnClasses="headerTitle,">
+                        <h:outputText
+                            value="#{messages['municipalBond']} (#{empty statusChangeHome.statusChangeLst ? 0 : statusChangeHome.statusChangeLst.size})" />
+                        <a:commandButton value="#{messages['common.search']}"
+                                         ajaxSingle="true"
+                                         action="#{statusChangeHome.searchMunicipalBond()}"
+                                         reRender="municipalBondPanel" />
+                    </h:panelGrid>
+
+                </f:facet>
+
+                <h:outputText value="#{messages['common.noResultsReturned']}"
+                              rendered="#{empty statusChangeHome.statusChangeListGroup}" />
+
+
+
+
+                <g:municipalBondViewerTrans id="municipalBondsViewerCmp" bean="#{statusChangeHome}" 
+                                            title="#{messages['municipalBond.list']} --> #{messages['income.totalPendingBonds']}: #{statusChangeHome.pendingTotal}"
+                                            municipalBondItems="#{statusChangeHome.statusChangeListGroup}"
+                                            selectable="true"                                            
+                                            disabled="false">
+
+                </g:municipalBondViewerTrans>
+
+            </rich:panel>
+
+
+            <div class="actionButtons">
+
+                <h:commandButton id="save" value="#{messages['common.save']}"
+                                 action="#{statusChangeHome.startTransfering}"
+                                 rendered="#{!statusChangeHome.managed}" />				
+
+                <s:button id="cancelEdit" value="#{messages['common.cancel']}"
+                          propagation="end" view="/home.xhtml" />
+
+            </div>
+            
+            <g:municipalBondViewer
+			resident="#{municipalBondsViewerHome.resident}"
+			municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}"
+			deposits="#{municipalBondsViewerHome.deposits}" />
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

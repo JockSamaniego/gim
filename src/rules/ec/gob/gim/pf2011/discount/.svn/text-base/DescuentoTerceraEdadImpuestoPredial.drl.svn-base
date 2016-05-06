@@ -1,0 +1,20 @@
+#created on: Oct 31, 2011
+package ec.gob.gim.rules.pf2011
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.common.model.FiscalPeriod;
+import ec.gob.gim.revenue.model.Exemption;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+
+#list any import classes here.
+
+rule "Descuento por tercera edad Impuesto predial"
+	no-loop true
+	salience 0
+	when		
+		$itemExemption : Item(entry.code == "00526");		
+		$exemption : Exemption (discountPercentage > 0)
+		$mb : MunicipalBond();
+	then				
+		$itemExemption.setTotal($mb.getItems().get(0).getTotal().multiply($exemption.getDiscountPercentage().divide(new BigDecimal(100))));		
+end

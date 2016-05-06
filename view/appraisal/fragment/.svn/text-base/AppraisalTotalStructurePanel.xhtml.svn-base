@@ -1,0 +1,113 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel>
+		<s:decorate id="structureField" template="../../layout/display.xhtml">
+		    <ui:define name="label">#{messages['appraisal.Structure']}:</ui:define>
+		    <h:selectOneMenu id="structure" 
+		    	value="#{appraisalPeriodHome.appraisalTotalStructure}" >
+		    	<ui:debug id="debugStructure"/>
+		    	<s:selectItems value="#{appraisalPeriodHome.instance.appraisalTotalStructure}" var="_appraisalTotalStructure" 
+		    		label="#{messages[_appraisalTotalStructure.structureMaterial.name()]}" 
+		    		noSelectionLabel="Seleccione uno"/>
+		    	<s:convertEntity/>
+		    	<a:support event="onchange" 
+		    		ajaxSingle="true"  inmediate="true" 
+		    		reRender="structureField, appraisalTotalStructureList, structureList" />
+		    </h:selectOneMenu> 
+		</s:decorate>
+		<div style="clear: both" />
+	</rich:panel>
+	<rich:panel>
+		<f:facet name="header">
+    		<h:panelGrid columns="2" columnClasses="headerTitle" id="structureList">
+				<h:outputText
+               		value="#{messages['appraisalItemsStructureList']} (#{empty appraisalPeriodHome.appraisalTotalStructure.appraisalItemsStructure ? 0 : appraisalPeriodHome.appraisalTotalStructure.appraisalItemsStructure.size})"/>
+				    <s:div styleClass="actionButtons" rendered="#{empty from}">
+				    	<a:commandButton value="#{messages['common.add']}"
+				    		rendered="#{appraisalPeriodHome.instance.open}"
+							action="#{appraisalPeriodHome.createAppraisalItemStructure()}"
+						  	oncomplete="Richfaces.showModalPanel('appraisalItemEditPanel')" 
+				    		reRender="appraisalItemEditPanel" ajaxSingle="true">
+				    	</a:commandButton>
+				    </s:div>
+			</h:panelGrid>        
+        </f:facet>
+        
+        <a:outputPanel styleClass="results" id="appraisalTotalStructureList" >
+        	
+        	<rich:dataTable id="appraisalItemsStructureTable"
+              		value="#{appraisalPeriodHome.appraisalTotalStructure.appraisalItemsStructure}"
+					rendered="#{!empty appraisalPeriodHome.appraisalTotalStructure.appraisalItemsStructure}"
+                	var="_appraisalItemStructure"
+              		rowClasses="rvgRowOne,rvgRowTwo" >
+           		<rich:column>
+                    <f:facet name="header">
+                    	<h:outputText value="#{messages['appraisalcommon.id']}"/>
+                    </f:facet>
+                    <h:outputText value="#{_appraisalItemStructure.id}" />
+                </rich:column>
+
+           		<rich:column>
+                    <f:facet name="header">
+                    	<h:outputText value="#{messages['appraisalcommon.name']}"/>
+                    </f:facet>
+                    <h:outputText value="#{_appraisalItemStructure.appraisalItemBase.name}" />
+                </rich:column>
+
+           		<rich:column styleClass="center">
+                    <f:facet name="header">
+                    	<h:outputText value="#{messages['appraisalcommon.unitMedition']}"/>
+                    </f:facet>
+                    <h:outputText value="#{_appraisalItemStructure.appraisalItemBase.unitMed}" />
+                </rich:column>
+
+           		<rich:column styleClass="right">
+                    <f:facet name="header">
+                    	<h:outputText value="#{messages['appraisalcommon.coste']}"/>
+                    </f:facet>
+                    <h:outputText value="#{_appraisalItemStructure.coste}" />
+                </rich:column>
+
+           		<rich:column styleClass="right">
+                    <f:facet name="header">
+                    	<h:outputText value="#{messages['appraisalcommon.coeficiente']}"/>
+                    </f:facet>
+                    <h:outputText value="#{_appraisalItemStructure.coeficiente}" />
+                </rich:column>
+
+           		<rich:column styleClass="right">
+                    <f:facet name="header">
+                    	<h:outputText value="#{messages['appraisal.subtotal']}"/>
+                    </f:facet>
+                    <h:outputText value="#{_appraisalItemStructure.subtotal}" />
+                </rich:column>
+
+
+ 				<rich:column styleClass="action" rendered="#{appraisalPeriodHome.instance.open}" >
+                    <f:facet name="header">#{messages['common.action']}</f:facet>
+                    <a:commandButton 
+							id="editAppraisalItem"
+							action="#{appraisalPeriodHome.editAppraisalItemStructure(_appraisalItemStructure)}"
+							rendered="#{appraisalPeriodHome.instance.open}"
+						  	reRender="appraisalItemEditPanel" 
+						  	ajaxSingle="true" 
+						  	oncomplete="Richfaces.showModalPanel('appraisalItemEditPanel')" 
+						  	value="#{messages['common.edit']}"/>
+                </rich:column>
+ 				
+           </rich:dataTable>
+        
+        </a:outputPanel>
+
+	</rich:panel>
+</ui:composition>

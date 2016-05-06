@@ -1,0 +1,29 @@
+#created on: Oct 31, 2011
+package ec.gob.gim.rules.pf2011
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.common.model.FiscalPeriod;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+
+
+function BigDecimal calculateDiscount(java.util.Date expirationDate){
+	java.util.Date actual = java.util.Calendar.getInstance().getTime();
+		
+	if(expirationDate.getYear() == actual.getYear() && actual.getMonth() < 6){
+		return new java.math.BigDecimal(0.1);
+	}	
+	return new BigDecimal(0);	
+}
+
+
+#list any import classes here.
+
+rule "Descuento Impuesto predial rustico"
+	no-loop true
+	salience 0
+	when		
+		$itemPredio : Item(entry.name == "DESCUENTO IMPUESTO PREDIAL RUSTICO");		
+		$mb : MunicipalBond();
+	then		
+		$itemPredio.setTotal($mb.getItems().get(0).getTotal().multiply(calculateDiscount($mb.getExpirationDate())));		
+end

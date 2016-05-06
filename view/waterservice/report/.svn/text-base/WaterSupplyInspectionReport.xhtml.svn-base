@@ -1,0 +1,257 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	title="#{messages['domain.changeOwner']}" subject="report" type="pdf"
+	size="A5" keywords="mykeyword" author="gadml_ra" creator="gadml_ra">
+
+	<f:facet name="header">
+		<p:font size="9" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="1" widthPercentage="100" spacingAfter="30">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:paragraph alignment="center">
+								<p:text value="#{gim.institution.name.toUpperCase()}" />
+							</p:paragraph>
+							<p:paragraph alignment="center">
+								<p:text value="SISTEMA DE PLANILLAJE DE AGUA POTABLE" />
+							</p:paragraph>
+							<p:paragraph alignment="center">
+								<p:text value="REPORTE DE INSPECCIONES" />
+							</p:paragraph>
+						</p:cell>
+					</p:table>
+
+					<p:table columns="2" widthPercentage="100" headerRows="0"
+						spacingAfter="5" widths="1 4">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:paragraph>
+								<p:text value="CONTRIBUYENTE: " />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="left">
+							<p:paragraph>
+								<p:text value="#{waterSupplyHome.instance.serviceOwner.identificationNumber} - #{waterSupplyHome.instance.serviceOwner.name}"/>
+							</p:paragraph>
+						</p:cell>
+					</p:table>
+
+					<p:table columns="4" widthPercentage="100" headerRows="0"
+						spacingAfter="5" widths="1.5 4 1.5 4">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:paragraph>
+								<p:text value="DIRECCION: " />
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="left">
+							<p:paragraph>
+								<p:text value="#{waterSupplyHome.instance.ncalle}">
+								</p:text>
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell>
+							<p:paragraph>
+								<p:text value="Nro. Casa: " />
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="left">
+							<p:paragraph>
+								<p:text
+									value="#{waterSupplyHome.instance.property.location.houseNumber}" />
+							</p:paragraph>
+						</p:cell>
+
+					</p:table>
+
+					<p:table columns="6" widthPercentage="100" headerRows="0"
+						spacingAfter="20" widths="1.5 4 1 4 1 4">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:paragraph>
+								<p:text value="Servicio: " />
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="left">
+							<p:paragraph>
+								<p:text value="#{waterSupplyHome.instance.serviceNumber}" />
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell>
+							<p:paragraph>
+								<p:text value="Ruta: " />
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="left">
+							<p:paragraph>
+								<p:text value="#{waterSupplyHome.instance.route.name}" />
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell>
+							<p:paragraph>
+								<p:text value="Tipo: " />
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="left">
+							<p:paragraph>
+								<p:text
+									value="#{waterSupplyHome.instance.waterSupplyCategory.name}" />
+							</p:paragraph>
+						</p:cell>
+					</p:table>
+				</p:paragraph>
+
+			</p:header>
+
+		</p:font>
+	</f:facet>
+
+	<p:paragraph spacingAfter="20">
+	</p:paragraph>
+
+	<p:font size="10" name="HELVETICA">
+
+		<p:table columns="9" widthPercentage="100" headerRows="0"
+			widths="0.7 1 1.5 0.7 0.7 0.7 1 1 0.7">
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['consumption.year']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['consumption.month']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['consumption.waterMeter']}" />
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['consumption.waterMeterState']}" />
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['consumption.previousReading']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['consumption.currentReading']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['consumption.amount']}" />
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['consumption.municipalBondState']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['consumption.value']}" />
+				</p:paragraph>
+			</p:cell>
+
+
+			<ui:repeat value="#{waterSupplyHome.consumptions}" var="_consumption">
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{_consumption.year}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages[_consumption.monthType.name()]}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text
+							value="#{_consumption.waterSupply.waterMeters.get(0).serial}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{_consumption.waterMeterStatus.name.subSequence(0,3)}"/>
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_consumption.previousReading}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_consumption.currentReading}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_consumption.amount}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="left">
+					<p:font size="9" name="HELVETICA">
+						<p:paragraph>
+							<p:text value="#{_consumption.municipalBondState}" />
+						</p:paragraph>
+					</p:font>
+				</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_consumption.paidTotal}" />
+					</p:paragraph>
+				</p:cell>
+
+			</ui:repeat>
+		</p:table>
+
+		<p:paragraph spacingAfter="10">
+		</p:paragraph>
+
+	</p:font>
+
+
+</p:document>

@@ -1,0 +1,78 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+	<ui:define name="body">
+
+		<h:form id="debitBankAuthorizationForm" styleClass="edit">
+			<rich:messages errorClass="errors" />
+			<h:outputText styleClass="formTitle" 
+				value="#{messages['debitBank.titleList']}" />
+
+			<rich:simpleTogglePanel label="#{messages['death.searchFilter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['debits.serviceDebit']}</ui:define>
+					<h:selectOneMenu id="serviceDebit" value="#{debitBankAuthorizationList.serviceDebit}" >
+						<s:selectItems value="#{debitServices}" var="serviceDebit"
+							label="#{messages[serviceDebit.entry.name]}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/cementery/DebitBankAuthorizationList.xhtml">
+					<f:param name="firstResult" value="0" />
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['death.deathSearchResults']} (#{empty debitBankAuthorizationList.resultList ? 0 : (debitBankAuthorizationList.paginated ? debitBankAuthorizationList.resultCount : debitBankAuthorizationList.resultList.size)})" />
+				</h:panelGrid>
+			</f:facet>
+
+			<a:region>
+			<a:outputPanel styleClass="results" >
+				<rich:dataTable id="authDebitTable" var="_authDebit"
+					value="#{debitBankAuthorizationList.resultList}"
+					rendered="#{not empty debitBankAuthorizationList.resultList}">
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{debitBankAuthorizationList}" />
+								<ui:param name="propertyLabel" value="#{messages['Id']}" />
+								<ui:param name="propertyPath" value="debitBankAuthorization.id" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_authDebit.id}" />
+					</h:column>
+					
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+								
+					</rich:column>
+				</rich:dataTable>
+			</a:outputPanel>
+			</a:region>
+			
+		</rich:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

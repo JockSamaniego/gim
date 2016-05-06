@@ -1,0 +1,117 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="finantialStatementForm" styleClass="edit">
+
+			<rich:panel label="#{messages['finantialStatement.searchFilter']}">
+				<f:facet name="header">
+					<h:outputText styleClass="formTitle"
+						value="#{messages['finantialStatement.title']}" />
+				</f:facet>OverduePortafolio
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['finantialStatement.startDate']}:</ui:define>
+					<rich:calendar id="startDate"
+						value="#{finantialStatement.criteria.startDate}"
+						datePattern="#{messages['common.datePattern']}" inputSize="6">
+						<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['finantialStatement.endDate']}:</ui:define>
+					<rich:calendar id="endDate"
+						value="#{finantialStatement.criteria.endDate}"
+						datePattern="#{messages['common.datePattern']}" inputSize="6">
+						<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+					</rich:calendar>
+				</s:decorate>
+
+				<div style="clear: both" />
+
+			</rich:panel>
+
+			<div class="actionButtons">
+				<a:commandButton id="search" value="#{messages['common.search']}"
+					action="#{finantialStatement.generateOverduePortafolio()}"
+					reRender="resultsPanel, finantialStatement" />
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none" />
+				<s:button id="home" view="/home.xhtml"
+					value="#{messages['common.quit']}" propagation="end" />
+			</div>
+
+			<a:outputPanel id="resultsPanel" ajaxRendered="true">
+
+				<rich:dataTable id="finantialStatement"
+					value="#{finantialStatement.overdues}" var="_overdue"
+					columnClasses="left tableCellFont, left tableCellFont, right tableCellFont, right tableCellFont, right tableCellFont, center"
+					rendered="#{finantialStatement.overdues.size() > 0}">
+
+					<f:facet name="header">
+						<h:panelGrid columns="3" columnClasses="headerTitle left, ">
+							<h:outputText
+								value="#{messages['finantialStatement.accountBalance']}" />
+
+							<s:button view="/accounting/report/OverduePortafolioExcel.xhtml"
+								id="printId" rendered="#{not empty finantialStatement.overdues}"
+								propagation="join" value="#{messages['common.print']}" />
+
+							<s:button view="/accounting/report/OverduePortafolioExcel.xhtml"
+								id="downloadId" rendered="#{not empty finantialStatement.overdues}"
+								propagation="join" value="#{messages['common.download']}" />
+
+						</h:panelGrid>
+
+					</f:facet>
+
+					<rich:column width="15%">
+						<f:facet name="header">#{messages['accountItem.accountNumber']}</f:facet>
+						<h:outputText value="#{_overdue.accountcode}" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">#{messages['accountItem.accountName']}</f:facet>
+						<h:outputText value="#{_overdue.accountname}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">#{messages['accountItem.total']}</f:facet>
+						<h:outputText value="#{_overdue.total}">
+							<f:convertNumber maxFractionDigits="2" pattern="#,##,##0.00" />
+						</h:outputText>
+					</rich:column>
+
+
+					<f:facet name="footer">
+						<rich:columnGroup columnClasses=",number">
+							<rich:column colspan="2">
+								<h:outputText value="#{messages['item.total']}:"
+									styleClass="labelBold" />
+							</rich:column>
+
+							<rich:column styleClass="number tableCellFont">
+								<h:outputText value="#{finantialStatement.total}">
+									<f:convertNumber maxFractionDigits="2" type="currency"
+										currencySymbol="$" />
+								</h:outputText>
+							</rich:column>
+						</rich:columnGroup>
+					</f:facet>
+				</rich:dataTable>
+			</a:outputPanel>
+		</h:form>
+
+		<ui:include src="fragment/AccountDetailPanel.xhtml" />
+	</ui:define>
+</ui:composition>

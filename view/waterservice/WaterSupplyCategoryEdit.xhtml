@@ -1,0 +1,134 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="waterSupplyCategory" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{waterSupplyCategoryHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['waterSupplyCategory']}" />
+
+			<rich:panel>
+				<s:decorate id="idField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['waterSupplyCategory.id']}:</ui:define>
+					<h:inputText id="name" required="true" size="20" maxlength="20"
+						value="#{waterSupplyCategoryHome.instance.id}" disabled="true">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['waterSupplyCategory.name']}:</ui:define>
+					<h:inputText id="name" required="true" size="20" maxlength="20"
+						value="#{waterSupplyCategoryHome.instance.name}"
+						style="text-transform: uppercase">
+						<a:support event="onblur" reRender="nameField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+			<!-- rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="4" columnClasses="headerTitle,">
+						<h:outputText value="#{messages['waterSupplyCategory.tariffs']}" />
+						<h:commandButton value="#{messages['tariff.preview']}"
+							reRender="tariffsTable">
+							<a:support event="onclick" reRender="tariffsTable" />
+						</h:commandButton>
+						<h:commandButton value="#{messages['tariff.copy']}"
+							reRender="tariffsTable">
+							<a:support event="onclick" reRender="tariffsTable" />
+						</h:commandButton>
+						<h:commandButton value="#{messages['tariff.addTariff']}"
+							action=" # { waterSupplyCategoryHome.add()}" reRender="tariffsTable">
+							<a:support event="onclick" reRender="tariffsTable" />
+						</h:commandButton>
+					</h:panelGrid>
+				</f:facet>
+				<h:messages errorClass="errors" />
+				<rich:dataTable value="#{waterSupplyCategoryHome.tariffs}"
+					var="_tariff" id="tariffsTable">
+					<rich:column sortBy="#{_tariff.isActive}" width="5%">
+						<f:facet name="header">#{messages['tariff.isActive']}</f:facet>
+						<h:selectBooleanCheckbox value="#{_tariff.isActive}" id="isActive" />
+					</rich:column>
+					<rich:column sortBy="#{_tariff.startDate}" width="20%">
+						<f:facet name="header">#{messages['tariff.startDate']}</f:facet>
+						<rich:calendar id="startDate" value="#{_tariff.startDate}"
+							popup="true" datePattern="#{messages['common.datePattern']}"
+							required="true">
+						</rich:calendar>
+					</rich:column>
+					<rich:column sortBy="#{_tariff.endDate}" width="20%">
+						<f:facet name="header">#{messages['tariff.endDate']}</f:facet>
+						<rich:calendar id="endDate" value="#{_tariff.endDate}"
+							popup="true" datePattern="#{messages['common.datePattern']}"
+							required="true">
+						</rich:calendar>
+					</rich:column>
+					<rich:column sortBy="#{_tariff.initialRange}">
+						<f:facet name="header">#{messages['tariff.initialRange']}</f:facet>
+						<h:inputText value="#{_tariff.initialRange}" size="10"
+							required="true" style="text-align:right;" />
+					</rich:column>
+					<rich:column sortBy="#{_tariff.finalRange}">
+						<f:facet name="header">#{messages['tariff.finalRange']}</f:facet>
+						<h:inputText value="#{_tariff.finalRange}" size="10"
+							required="true" style="text-align:right;" />
+					</rich:column>
+					<rich:column sortBy="#{_tariff.base}">
+						<f:facet name="header">#{messages['tariff.base']}</f:facet>
+						<h:inputText value="#{_tariff.base}" size="10" required="true"
+							style="text-align:right;" />
+					</rich:column>
+					<rich:column sortBy="#{_tariff.valueByMeter}">
+						<f:facet name="header">#{messages['tariff.valueByMeter']}</f:facet>
+						<h:inputText value="#{_tariff.valueByMeter}" size="10"
+							required="true" style="text-align:right;" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<h:commandButton value="#{messages['tariff.deleteTariff']}"
+							action=" # { waterSupplyCategoryHome.remove(_tariff)}"
+							reRender="tariffsTable" id="btDeleteTariff"
+							rendered="#{_tariff.id == null }">
+							<a:support event="onclick" reRender="tariffsTable" />
+						</h:commandButton>
+					</rich:column>
+				</rich:dataTable>
+			</rich:panel-->
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{waterSupplyCategoryHome.persist}"
+					disabled="#{!waterSupplyCategoryHome.wired}"
+					rendered="#{!waterSupplyCategoryHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{waterSupplyCategoryHome.update}"
+					rendered="#{waterSupplyCategoryHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/waterservice/WaterSupplyCategoryList.xhtml" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

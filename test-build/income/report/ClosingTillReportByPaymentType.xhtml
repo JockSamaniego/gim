@@ -1,0 +1,653 @@
+<p:document xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	title="#{messages['closingTill']}" subject="report" type="pdf"
+	pageSize="A4" margins="30 20 30 20">
+
+	<f:facet name="header">
+		<p:font size="7" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="2" widthPercentage="100" spacingAfter="15"
+						widths="1 10">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:image value="#{gim.institution.logo}" alignment="center" widht="1" height="1">
+                                <s:transformImageSize height="70" maintainRatio="true"/>
+                            </p:image>
+                        </p:cell>
+						<p:cell>
+							<p:font size="8" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+							</p:font>
+
+							<p:font size="7" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.address}. #{messages['institution.phone']}: #{gim.institution.phone} -  #{messages['institution.fax']}: #{gim.institution.fax}</p:paragraph>
+							</p:font>
+
+							<p:font size="8" style="bold">
+								<p:paragraph alignment="center">#{messages['closingTill'].toUpperCase()}</p:paragraph>
+							</p:font>
+						</p:cell>
+					</p:table>
+				</p:paragraph>
+			</p:header>
+			<p:footer borderWidthTop="1" borderColorTop="blue"
+				borderWidthBottom="0" alignment="center">
+	 			[<p:pageNumber />]
+			</p:footer>
+		</p:font>
+	</f:facet>
+
+	<p:font size="8" name="HELVETICA">
+
+
+		<p:paragraph alignment="right" spacingAfter="10">
+			<p:font size="8" name="HELVETICA">
+				<p:text value="#{messages['common.date']}: " style="bold"/>
+				<p:text value="#{currentDatetime}">
+					<f:convertDateTime
+						pattern="#{messages['common.dateFullTimePattern']}" />
+				</p:text>
+			</p:font>
+		</p:paragraph>
+
+
+		<p:table columns="2" widthPercentage="100" headerRows="0" widths="1 1"
+			spacingAfter="10">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell colspan="2">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['tillPermission.printReportBy']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{userSession.user.resident.name}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['till']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{tillPermissionHome.tillPermission.till.number}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['payment.cashier']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{tillPermissionHome.tillPermission.person.name}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['tillPermission.endBalance']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{tillPermissionHome.totalCollectedByTill}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['till.servedPeople']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{tillPermissionHome.totalServedPeople}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['till.numberTransactions']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{tillPermissionHome.totalTransactions}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell colspan="1"/>
+
+			<p:cell colspan="1"
+				rendered="#{tillPermissionHome.startDate != null}">
+				<p:paragraph>
+					<p:font size="8" style="bold" rendered="#{empty tillPermissionHome.endDate}">
+						<p:text value="#{messages['report.startDate']}: " />
+					</p:font>
+					<p:font size="8" style="bold" rendered="#{not empty tillPermissionHome.endDate}">
+						<p:text value="#{messages['date']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{tillPermissionHome.startDate}">
+							<f:convertDateTime pattern="yyyy-MM-dd" />
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1" rendered="#{not empty tillPermissionHome.endDate}">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['report.endDate']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{tillPermissionHome.endDate}">
+							<f:convertDateTime pattern="yyyy-MM-dd" />
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+		</p:table>
+		
+			<p:table columns="2" widthPercentage="50" headerRows="0"
+					widths="4 2">
+					<p:font size="8" style="bold">
+						<p:cell>
+							<p:paragraph borderWidth="1">
+								<p:font size="8" style="bold">
+									<p:text value="#{messages['payment.paymentType']}: " />
+								</p:font>								
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph borderWidth="1" >
+								<p:font size="8" style="bold">
+									<p:text value="#{messages['item.total']}: " />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+			</p:table>
+		
+			<c:forEach var="_item" items="#{tillPermissionHome.orderPaymentType()}">
+				<p:table columns="2" widthPercentage="50" headerRows="0"
+					widths="4 2">
+					<p:font size="8">
+						<p:cell>
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{messages[_item.name()]}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+		
+						<p:cell horizontalAlignment="right">
+							<p:paragraph>
+								<p:font size="8">
+									<p:text value="#{tillPermissionHome.fractionValues.get(_item.name())}">
+										<f:convertNumber pattern="#0.00" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+				</p:table>
+			</c:forEach>
+		
+		<p:table columns="1" widthPercentage="100" headerRows="0" rendered="#{not empty tillPermissionHome.bills and not empty tillPermissionHome.coins}"
+			spacingBefore="20">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+			<p:font size="8" style="bold">
+				<p:cell colspan="1" horizontalAlignment="center" borderWidth="0">
+					<p:paragraph>
+						<p:font size="8" style="bold">
+							<p:text value="#{messages['CASHDETAILCOLLECTED']}: " />
+						</p:font>
+						<p:font size="8">
+							<p:text value="#{tillPermissionHome.totalCashCollected}">
+								<f:convertNumber pattern="#0.00" />
+							</p:text>
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+
+		<p:table columns="2" widthPercentage="100" headerRows="0" border="0" spacingAfter="20">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+			
+			<p:table columns="1" widthPercentage="50" headerRows="0" rendered="#{not empty tillPermissionHome.bills or not empty tillPermissionHome.coins}"
+				spacingBefore="20">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>				
+				<p:table columns="1" widthPercentage="50" headerRows="0"
+					spacingBefore="20">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" />
+					</f:facet>
+					<p:font size="8" style="bold">
+						<p:cell colspan="1" horizontalAlignment="center" borderWidth="0">
+							<p:paragraph>
+								<p:font size="8" style="bold">
+									<p:text value="#{messages['BILL']}: " />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+				</p:table>
+			
+				<p:table rendered="#{not empty tillPermissionHome.bills or not empty tillPermissionHome.coins}"
+					columns="3" widthPercentage="50" headerRows="0" spacingAfter="15">
+					<p:font size="8" style="bold">
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['money.denomination']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['cashRecord.amount']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['cashRecord.total']}" />
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+
+
+					<ui:repeat value="#{tillPermissionHome.bills}" var="_bill">
+
+						<p:cell horizontalAlignment="right"
+							rendered="#{_bill.amount != null and _bill.amount > 0}">
+							<p:paragraph>
+								<p:text value="#{_bill.money.denomination}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="right"
+							rendered="#{_bill.amount != null and _bill.amount > 0}">
+							<p:paragraph>
+								<p:text value="#{_bill.amount}" />
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="right"
+							rendered="#{_bill.amount != null and _bill.amount > 0}">
+							<p:paragraph>
+								<p:text value="#{_bill.total}" />
+							</p:paragraph>
+						</p:cell>
+
+
+					</ui:repeat>
+					
+						<p:font size="8" style="bold">
+							<p:cell borderWidth="0"/>
+							<p:cell horizontalAlignment="center">
+								<p:paragraph>
+									<p:text value="#{messages['cashRecord.total']}" />
+								</p:paragraph>
+							</p:cell>
+							<p:cell horizontalAlignment="right">
+								<p:paragraph>
+									<p:text value="#{tillPermissionHome.totalBillsCollected}" />
+								</p:paragraph>
+							</p:cell>										
+						</p:font>
+					
+				</p:table>
+			</p:table>
+
+			<p:table columns="1" widthPercentage="50" headerRows="0" rendered="#{not empty tillPermissionHome.bills or not empty tillPermissionHome.coins}"
+				spacingBefore="20">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+				<p:table columns="1" widthPercentage="50" headerRows="0"
+					spacingBefore="20">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" />
+					</f:facet>
+					<p:font size="8" style="bold">
+						<p:cell colspan="1" horizontalAlignment="center" borderWidth="0">
+							<p:paragraph>
+								<p:font size="8" style="bold">
+									<p:text value="#{messages['COIN']}: " />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+				</p:table>
+
+
+
+
+				<p:table rendered="#{not empty tillPermissionHome.bills or not empty tillPermissionHome.coins}"
+					columns="3" widthPercentage="50" headerRows="0">
+					<p:font size="8" style="bold">
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['money.denomination']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['cashRecord.amount']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['cashRecord.total']}" />
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+
+
+					<ui:repeat value="#{tillPermissionHome.coins}" var="_coin">
+
+						<p:cell horizontalAlignment="right"
+							rendered="#{_coin.amount != null and _coin.amount > 0}">
+							<p:paragraph>
+								<p:text value="#{_coin.money.denomination}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="right"
+							rendered="#{_coin.amount != null and _coin.amount > 0}">
+							<p:paragraph>
+								<p:text value="#{_coin.amount}" />
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="right"
+							rendered="#{_coin.amount != null and _coin.amount > 0}">
+							<p:paragraph>
+								<p:text value="#{_coin.total}" />
+							</p:paragraph>
+						</p:cell>
+
+
+					</ui:repeat>
+					
+					<p:font size="8" style="bold">
+						<p:cell borderWidth="0"/>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['cashRecord.total']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="right">
+							<p:paragraph>
+								<p:text value="#{tillPermissionHome.totalCoinsCollected}" />
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+				</p:table>
+			</p:table>
+
+		</p:table>
+
+		<p:table columns="1" widthPercentage="50" headerRows="0">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+			<p:font size="8" style="bold">
+				<p:cell colspan="1" horizontalAlignment="center" borderWidth="0">
+					<p:paragraph>
+						<p:font size="8" style="bold">
+							<p:text value="DETALLE DE VALORES PARA EL DEPÓSITO" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+		<p:table 
+				columns="4" widthPercentage="75" headerRows="0" border="1" spacingAfter="15" widths="2.5 1 1 1.5">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0.5" />
+			</f:facet>
+			
+			<p:font size="8" style="bold">
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['Institución']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['SubTotal']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['Comisión']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['Total']}" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+
+
+			<ui:repeat value="#{tillPermissionHome.tillInstitutionDetails}" var="_tillInst">
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_tillInst.name}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_tillInst.subTotal}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_tillInst.commission}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_tillInst.total}" />
+					</p:paragraph>
+				</p:cell>
+			</ui:repeat>
+			<p:font size="8" style="bold">
+				<p:cell borderWidth="0"/>
+				<p:cell borderWidth="0"/>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['cashRecord.total']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{tillPermissionHome.getTotalByInstitutions()}" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+
+
+		<p:table columns="1" widthPercentage="50" headerRows="0">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+			<p:font size="8" style="bold">
+				<p:cell colspan="1" horizontalAlignment="center" borderWidth="0">
+					<p:paragraph>
+						<p:font size="8" style="bold">
+							<p:text value="#{messages['municipalbond.reversedMunicipalBonds']}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+		<p:table columns="9" widthPercentage="100" headerRows="0" border="1" spacingAfter="15" widths="1 1 1 1 1 2 1 1 2">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0.5" />
+			</f:facet>
+			
+			<p:font size="8" style="bold">
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['date']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['common.time']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['municipalBond.number']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['entry']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['resident.identificationNumber']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['resident.name']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['municipalBond.value']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['municipalBond.concept']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['common.responsable']}" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+
+			<ui:repeat value="#{tillPermissionHome.reversedDeposits}" var="_reversedDeposit">
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_reversedDeposit.reversedDate}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_reversedDeposit.reversedTime}" >
+							<f:convertDateTime pattern="#{messages['common.timePattern']}" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_reversedDeposit.reversedMunicipalBond.number}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_reversedDeposit.reversedMunicipalBond.entry.name}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_reversedDeposit.reversedMunicipalBond.resident.identificationNumber}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_reversedDeposit.reversedMunicipalBond.resident.name}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_reversedDeposit.value}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_reversedDeposit.concept}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_reversedDeposit.reversedResident.name}" />
+					</p:paragraph>
+				</p:cell>
+			</ui:repeat>
+		</p:table>
+
+
+		<p:table columns="1" widthPercentage="30" headerRows="0" spacingBefore="50" >
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="center" />
+			</f:facet>
+			<p:cell colspan="1" borderWidth="0" horizontalAlignment="center">
+				<p:paragraph alignment="center">
+					<p:font size="7" style="bold">
+						<p:text value="_______________________________________" />
+					</p:font>
+				</p:paragraph>
+				<p:paragraph alignment="center">
+					<p:font size="7" style="bold">
+						<p:text
+							value="#{tillPermissionHome.tillPermission.person.name}" />
+					</p:font>
+				</p:paragraph>				
+				<p:paragraph alignment="center">
+					<p:font size="7" style="bold">
+						<p:text
+							value="#{messages['payment.cashier']}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+
+	</p:font>
+
+</p:document>

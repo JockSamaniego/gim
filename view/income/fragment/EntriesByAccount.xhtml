@@ -1,0 +1,103 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	
+	<rich:modalPanel id="entriesByAccountEditPanel" width="400" height="400">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText
+					value="#{messages['account.entriesByAccount']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="entriesHidelink" />
+				<rich:componentControl for="entriesByAccountEditPanel" attachTo="entriesHidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+		
+		
+		<a:form id="entries" styleClass="edit">
+
+			<rich:panel id="entriesDataPanel">
+
+				<s:decorate id="nameField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.accountName']}:</ui:define>
+					<h:outputText id="name" value="#{accountHome.newAccount.accountName}" size="50" />
+				</s:decorate>
+
+				<s:decorate id="codeField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.accountCode']}:</ui:define>
+					<h:outputText id="code" required="true" value="#{accountHome.newAccount.accountCode}" size="50"/>
+				</s:decorate>
+
+				<s:decorate id="budgetCodeField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.budgetCertificateCode']}:</ui:define>
+					<h:outputText id="budgetCode" required="true" value="#{accountHome.newAccount.budgetCertificateCode}" size="50"/>
+				</s:decorate>
+				
+				<div style="clear: both"></div>
+				
+								<a:outputPanel id="entriesPanel">
+					
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty accountHome.newAccount.entries}" />
+
+				<rich:dataTable id="entryTable" var="_entry"
+					value="#{accountHome.newAccount.entries}"
+					rendered="#{not empty accountHome.newAccount.entries}">
+					
+					<rich:column styleClass="action" style="align:center;">
+						<f:facet name="header">#{messages['entry.isActive']}</f:facet>
+						<h:selectBooleanCheckbox id="hasWater" value="#{_entry.isActive}" disabled="true" />
+					</rich:column>
+				
+					<rich:column>
+						<f:facet name="header">#{messages['entry.code']}</f:facet>
+						<h:outputText value="#{_entry.code}" />
+					</rich:column>
+						
+					<rich:column>
+						<f:facet name="header">#{messages['entry.name']}</f:facet>
+						<h:outputText value="#{_entry.name}" />
+					</rich:column>
+					
+					<rich:column>
+						<f:facet name="header">#{messages['entry.creationDate']}</f:facet>
+						<h:outputText value="#{_entry.creationDate}">
+			            	<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</rich:column>					
+					
+				</rich:dataTable>
+				
+					
+				</a:outputPanel>				
+				
+
+			</rich:panel>
+			
+			<div class="actionButtons">			
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('entriesByAccountEditPanel');"
+					bypassUpdates="true" />
+			</div>
+		
+
+		</a:form>
+		
+
+	</rich:modalPanel>
+
+</ui:composition>

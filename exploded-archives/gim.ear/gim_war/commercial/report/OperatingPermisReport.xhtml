@@ -1,0 +1,147 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	title="#{messages['commercial.operatingPermis']}" subject="report"
+	type="pdf" size="A5" margins="40 20 30 20" keywords="mykeyword"
+	creator="loxageek">
+
+	<f:facet name="header">
+		<p:font size="7" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph spacingAfter="15">
+					<p:table columns="3" widthPercentage="100" spacingAfter="15"
+						widths="1 5 2">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell fixedHeight="100">
+
+						</p:cell>
+						<p:cell fixedHeight="100">
+							<p:font size="8" style="bold">
+								<p:paragraph alignment="center">
+								</p:paragraph>
+							</p:font>
+						</p:cell>
+
+						<p:cell fixedHeight="100">
+						</p:cell>
+
+						<p:cell>
+						</p:cell>
+					</p:table>
+				</p:paragraph>
+			</p:header>
+		</p:font>
+	</f:facet>
+
+	<p:paragraph alignment="justify">
+		<p:table spacingBefore="310">
+			<p:cell borderWidth="0" />
+		</p:table>
+	</p:paragraph>
+
+
+	<p:font size="9" name="HELVETICA">
+		<p:paragraph spacingAfter="0" spacingBefore="10" alignment="left">
+			<p:table columns="2" widthPercentage="95" headerRows="0">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" horizontalAlignment="left" />
+				</f:facet>
+
+				<p:cell colspan="2" fixedHeight="40">
+					<p:text
+						value="#{businessHome.instance.owner.name.toString().toUpperCase()}" />
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="30">
+					<p:text value="#{businessHome.local.name.toUpperCase()}" />
+				</p:cell>
+
+				<p:cell colspan="1" horizontalAlignment="center" fixedHeight="30"
+					verticalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{businessHome.local.address.city.toUpperCase()}" />
+					</p:paragraph>
+
+				</p:cell>
+
+				<p:cell colspan="2" fixedHeight="38">
+					<p:text value="#{businessHome.local.address.street.toUpperCase()}" />
+				</p:cell>
+
+			</p:table>
+		</p:paragraph>
+
+		<p:paragraph spacingAfter="15" spacingBefore="0" alignment="right">
+
+			<p:table columns="1" widthPercentage="25" headerRows="0"
+				horizontalAlignment="right">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" horizontalAlignment="right" />
+				</f:facet>
+
+				<p:cell colspan="1">
+					<p:text value="#{businessHome.fiscalPeriod.endDate}">
+						<f:convertDateTime type="date" pattern="yyyy" />
+					</p:text>
+				</p:cell>
+
+			</p:table>
+		</p:paragraph>
+
+
+		<p:paragraph spacingAfter="2" spacingBefore="7" alignment="right">
+			<p:table columns="3" widthPercentage="70" headerRows="0"
+				horizontalAlignment="right">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" horizontalAlignment="right" />
+				</f:facet>
+
+				<p:cell colspan="1">
+					<p:text value="#{currentDatetime}">
+						<f:convertDateTime pattern="dd" />
+					</p:text>
+				</p:cell>
+
+				<p:cell colspan="1">
+					<p:text value="#{messages[businessHome.currentMonth]}" />
+				</p:cell>
+
+				<p:cell colspan="1">
+					<p:text value="#{currentDatetime}">
+						<f:convertDateTime pattern="yyyy" />
+					</p:text>
+				</p:cell>
+
+			</p:table>
+		</p:paragraph>
+
+		<p:paragraph spacingAfter="2" spacingBefore="30" alignment="right">
+			<p:table columns="1" widthPercentage="90" headerRows="0"
+				spacingBefore="5">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" horizontalAlignment="center" />
+				</f:facet>
+
+				<p:cell colspan="1">
+					<p:paragraph>
+						<p:font size="11" style="bold">
+							<p:text
+								value="#{businessHome.sanitationDelegate.name.toUpperCase()}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+
+			</p:table>
+		</p:paragraph>
+
+	</p:font>
+</p:document>

@@ -1,0 +1,75 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	
+	   	
+      	<h:panelGrid width="100%">			
+			<s:decorate id="#{id}_taxField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['tax']}:</ui:define>
+                
+                <a:region renderRegionOnly="false">
+                <h:inputText id="#{id}_tax"
+                               size="55"
+                              value="#{criteria}">
+					<a:support event="onblur" ajaxSingle="true" reRender="#{id}_taxField"/>	                              
+                </h:inputText>
+                
+                <rich:suggestionbox for="#{id}_tax" minChars="2" 
+                	suggestionAction="#{bean[suggestionAction]}"  width="375" 
+                	var="_tax" eventsQueue="gimQueue" fetchValue="#{_tax.name}">
+                	<h:column>
+                		<h:outputText value="#{_tax.name} - _#{_tax.description}"/>
+                	</h:column>
+                	<a:support event="onselect" reRender="#{id}_taxField" ajaxSingle="true" action="#{bean[beforeAutoComplete]}">
+                		<f:setPropertyActionListener target="#{tax}" value="#{_tax}"/>
+                	</a:support>
+                	<a:support event="onobjectchange" reRender="#{id}_taxField" ajaxSingle="true" action="#{bean[beforeAutoComplete]}">
+                		<f:setPropertyActionListener target="#{tax}" value="#{_tax}"/>
+                	</a:support>
+                	
+                </rich:suggestionbox>
+                </a:region>
+                <a:commandButton id="#{id}_taxAdd" value="#{messages['common.add']}" 
+                	action="#{bean[addTaxAction]}"
+                	disabled="#{tax.id == null}"
+                	reRender="#{id}_taxTable, #{id}_taxField">	
+                </a:commandButton>
+                
+            </s:decorate>
+            
+            <a:outputPanel id="#{id}_taxListPanel" ajaxRendered="true" layout="block">
+            
+	            <rich:dataTable id="#{id}_taxTable"
+			                var="_tax"
+			              value="#{taxList}"
+			           rendered="#{not empty taxList}"
+			           width="100%">
+			        <h:column>
+			            <f:facet name="header">
+			                <h:outputText value="#{messages['tax.name']}" />
+			            </f:facet>
+			            <h:outputText value="#{_tax.name}"/>
+			        </h:column>		        
+			        
+			        <rich:column styleClass="action">
+			            <f:facet name="header">#{messages['common.action']}</f:facet>
+			            <a:commandButton action="#{bean[removeTaxAction]}" 
+			            	value="#{messages['common.remove']}" 
+			            	ajaxSingle="true" reRender="#{id}_taxTable">
+			            	<f:setPropertyActionListener target="#{taxSelected}" value="#{_tax}" />					            
+			            </a:commandButton>
+			        </rich:column>
+			    </rich:dataTable>
+		    
+		    </a:outputPanel>
+		    
+		</h:panelGrid>		            	
+	
+</ui:composition>

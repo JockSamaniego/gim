@@ -1,0 +1,370 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="concessionPlace" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{concessionPlaceHome.managed ? 'Edit' : 'Add'} Concession place</f:facet>
+
+
+
+
+            <s:decorate id="concessionStatusField" template="layout/edit.xhtml">
+                <ui:define name="label">Concession status</ui:define>
+                <h:inputText id="concessionStatus"
+                          value="#{concessionPlaceHome.instance.concessionStatus}">
+                    <a:support event="onblur" reRender="concessionStatusField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+
+
+
+            <s:decorate id="isActiveField" template="layout/edit.xhtml">
+                <ui:define name="label">Is active</ui:define>
+                <h:selectBooleanCheckbox id="isActive"
+                                      value="#{concessionPlaceHome.instance.isActive}"/>
+            </s:decorate>
+
+
+            <s:decorate id="nameField" template="layout/edit.xhtml">
+                <ui:define name="label">Name</ui:define>
+                <h:inputText id="name"
+                       required="true"
+                           size="30"
+                      maxlength="30"
+                          value="#{concessionPlaceHome.instance.name}">
+                    <a:support event="onblur" reRender="nameField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="orderField" template="layout/edit.xhtml">
+                <ui:define name="label">Order</ui:define>
+                <h:inputText id="order"
+                          value="#{concessionPlaceHome.instance.order}">
+                    <a:support event="onblur" reRender="orderField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{concessionPlaceHome.persist}"
+                       disabled="#{!concessionPlaceHome.wired}"
+                       rendered="#{!concessionPlaceHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{concessionPlaceHome.update}"
+                       rendered="#{concessionPlaceHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{concessionPlaceHome.remove}"
+                      immediate="true"
+                       rendered="#{concessionPlaceHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/ConcessionPlace.xhtml"
+                rendered="#{concessionPlaceHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty concessionPlaceFrom ? 'ConcessionPlaceList' : concessionPlaceFrom}.xhtml"
+                rendered="#{!concessionPlaceHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="Concession group">
+    <div class="association" id="concessionGroupParent">
+
+        <h:outputText value="There is no concessionGroup associated with this concessionPlace."
+                   rendered="#{concessionPlaceHome.instance.concessionGroup == null}"/>
+
+        <rich:dataTable var="_concessionGroup"
+                   value="#{concessionPlaceHome.instance.concessionGroup}"
+                rendered="#{concessionPlaceHome.instance.concessionGroup != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="concessionGroupTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_concessionGroup.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Clasification id</f:facet>
+                <h:outputText value="#{_concessionGroup.clasification.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Is active</f:facet>
+                <h:outputText value="#{_concessionGroup.isActive}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_concessionGroup.name}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{concessionPlaceHome.instance.concessionGroup != null ? 'changeParent' : 'selectParent'}" value="#{concessionPlaceHome.instance.concessionGroup != null ? 'Change' : 'Select'} concessionGroup"
+                       view="/ConcessionGroupList.xhtml">
+                <f:param name="from" value="ConcessionPlaceEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab label="Consession type">
+    <div class="association" id="consessionTypeParent">
+
+        <h:outputText value="There is no consessionType associated with this concessionPlace."
+                   rendered="#{concessionPlaceHome.instance.consessionType == null}"/>
+
+        <rich:dataTable var="_concessionType"
+                   value="#{concessionPlaceHome.instance.consessionType}"
+                rendered="#{concessionPlaceHome.instance.consessionType != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="consessionTypeTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_concessionType.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Entry id</f:facet>
+                <h:outputText value="#{_concessionType.entry.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Is active</f:facet>
+                <h:outputText value="#{_concessionType.isActive}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_concessionType.name}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reason</f:facet>
+                <h:outputText value="#{_concessionType.reason}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{concessionPlaceHome.instance.consessionType != null ? 'changeParent' : 'selectParent'}" value="#{concessionPlaceHome.instance.consessionType != null ? 'Change' : 'Select'} consessionType"
+                       view="/ConcessionTypeList.xhtml">
+                <f:param name="from" value="ConcessionPlaceEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab label="Contracts">
+        <h:form styleClass="association" id="contractsChildren">
+
+            <h:outputText value="There are no contracts associated with this concessionPlace."
+                       rendered="#{empty concessionPlaceHome.contracts}"/>
+
+            <rich:dataTable value="#{concessionPlaceHome.contracts}"
+                           var="_contract"
+                      rendered="#{not empty concessionPlaceHome.contracts}"
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="contractsTable">
+                <rich:column sortBy="#{_contract.id}">
+                    <f:facet name="header">Id</f:facet>
+                    <h:outputText value="#{_contract.id}"/>
+                </rich:column>
+                <rich:column sortBy="#{_contract.creationDate}">
+                    <f:facet name="header">Creation date</f:facet>
+                    <h:outputText value="#{_contract.creationDate}">
+                        <s:convertDateTime type="date" dateStyle="short"/>
+                    </h:outputText>
+                </rich:column>
+                <rich:column sortBy="#{_contract.description}">
+                    <f:facet name="header">Description</f:facet>
+                    <h:outputText value="#{_contract.description}"/>
+                </rich:column>
+                <rich:column sortBy="#{_contract.expirationDate}">
+                    <f:facet name="header">Expiration date</f:facet>
+                    <h:outputText value="#{_contract.expirationDate}">
+                        <s:convertDateTime type="date" dateStyle="short"/>
+                    </h:outputText>
+                </rich:column>
+                <rich:column sortBy="#{_contract.subscriptionDate}">
+                    <f:facet name="header">Subscription date</f:facet>
+                    <h:outputText value="#{_contract.subscriptionDate}">
+                        <s:convertDateTime type="date" dateStyle="short"/>
+                    </h:outputText>
+                </rich:column>
+            </rich:dataTable>
+
+        </h:form>
+
+        <f:subview rendered="#{concessionPlaceHome.managed}" id="contracts">
+        <div class="actionButtons">
+            <s:button id="addcontract"
+                   value="Add contract"
+                    view="/ContractEdit.xhtml"
+             propagation="none">
+                 <f:param name="concessionPlaceId"
+                         value="#{concessionPlaceHome.instance.id}"/>
+                 <f:param name="contractFrom" value="ConcessionPlace"/>
+            </s:button>
+        </div>
+        </f:subview>
+    </rich:tab>
+
+    <rich:tab label="Current contract">
+    <div class="association" id="currentContractParent">
+
+        <h:outputText value="There is no currentContract associated with this concessionPlace."
+                   rendered="#{concessionPlaceHome.instance.currentContract == null}"/>
+
+        <rich:dataTable var="_contract"
+                   value="#{concessionPlaceHome.instance.currentContract}"
+                rendered="#{concessionPlaceHome.instance.currentContract != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="currentContractTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_contract.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Contract type id</f:facet>
+                <h:outputText value="#{_contract.contractType.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Creation date</f:facet>
+                <h:outputText value="#{_contract.creationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Death id</f:facet>
+                <h:outputText value="#{_contract.death.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_contract.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Expiration date</f:facet>
+                <h:outputText value="#{_contract.expirationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Subscriber id</f:facet>
+                <h:outputText value="#{_contract.subscriber.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Subscription date</f:facet>
+                <h:outputText value="#{_contract.subscriptionDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{concessionPlaceHome.instance.currentContract != null ? 'changeParent' : 'selectParent'}" value="#{concessionPlaceHome.instance.currentContract != null ? 'Change' : 'Select'} currentContract"
+                       view="/ContractList.xhtml">
+                <f:param name="from" value="ConcessionPlaceEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab label="Resident">
+    <div class="association" id="residentParent">
+
+        <h:outputText value="There is no resident associated with this concessionPlace."
+                   rendered="#{concessionPlaceHome.instance.resident == null}"/>
+
+        <rich:dataTable var="_resident"
+                   value="#{concessionPlaceHome.instance.resident}"
+                rendered="#{concessionPlaceHome.instance.resident != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="residentTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_resident.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Category</f:facet>
+                <h:outputText value="#{_resident.category}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Current address id</f:facet>
+                <h:outputText value="#{_resident.currentAddress.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Email</f:facet>
+                <h:outputText value="#{_resident.email}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identification number</f:facet>
+                <h:outputText value="#{_resident.identificationNumber}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identification type</f:facet>
+                <h:outputText value="#{_resident.identificationType}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Is enabled for deferred payments</f:facet>
+                <h:outputText value="#{_resident.isEnabledForDeferredPayments}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_resident.name}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Register date</f:facet>
+                <h:outputText value="#{_resident.registerDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">User id</f:facet>
+                <h:outputText value="#{_resident.user.id}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{concessionPlaceHome.instance.resident != null ? 'changeParent' : 'selectParent'}" value="#{concessionPlaceHome.instance.resident != null ? 'Change' : 'Select'} resident"
+                       view="/ResidentList.xhtml">
+                <f:param name="from" value="ConcessionPlaceEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

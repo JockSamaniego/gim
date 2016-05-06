@@ -1,0 +1,104 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+
+	<rich:panel id="contentPanel">
+		<f:facet name="header">
+			<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText id="issuerCount"
+					value="#{messages['issuer']} (#{empty entryHome.issuers ? 0 : entryHome.issuers.size})" />
+				<s:div styleClass="actionButtons" rendered="#{empty from}">
+					<a:commandButton
+						value="#{messages['common.add']} #{messages['issuer']}"
+						action="#{entryHome.addIssuer()}" reRender="contentPanel"
+						ajaxSingle="true" immediate="true">
+
+					</a:commandButton>
+				</s:div>
+			</h:panelGrid>
+		</f:facet>
+
+		<a:outputPanel styleClass="results" id="issuersList">
+			<h:messages errorClass="errors" />
+			<h:outputText value="#{messages['issuer.returnedNoResults']}"
+				rendered="#{empty entryHome.issuers}" />
+
+
+			<rich:dataTable id="issuersTable" var="_issuer"
+				value="#{entryHome.issuers}" rowClasses="rvgRowOne,rvgRowTwo"
+				rendered="#{not empty entryHome.issuers}">
+
+				<rich:column sortBy="#{_issuer.startDate}" styleClass="action">
+					<f:facet name="header">
+						<h:outputText value="#{messages['issuer.startDate']}" />
+					</f:facet>
+					<rich:calendar value="#{_issuer.startDate}"
+						datePattern="#{messages['common.datePattern']}" ajaxSingle="true">
+						<a:support event="onchanged"
+							action="#{entryHome.reloadEndDateLast(_issuer)}"
+							ajaxSingle="true" reRender="issuersTable" />
+						<a:support event="oninputblur"
+							action="#{entryHome.reloadEndDateLast(_issuer)}"
+							ajaxSingle="true" reRender="issuersTable" />
+					</rich:calendar>
+				</rich:column>
+
+				<rich:column sortBy="#{_issuer.endDate}" styleClass="action">
+					<f:facet name="header">
+						<h:outputText value="#{messages['issuer.endDate']}" />
+					</f:facet>
+					<rich:calendar value="#{_issuer.endDate}" disabled="true"
+						readonly="true" datePattern="#{messages['common.datePattern']}"
+						ajaxSingle="true">
+					</rich:calendar>
+				</rich:column>
+
+				<rich:column styleClass="action" style="align:center;">
+					<f:facet name="header">
+						<h:outputText value="#{messages['issuer.isActive']}" />
+					</f:facet>
+					<h:selectBooleanCheckbox value="#{_issuer.isActive}"
+						disabled="true">
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>
+				</rich:column>
+
+				<rich:column sortBy="#{_issuer.taxpayerRecord.name}"
+					styleClass="action">
+					<f:facet name="header">
+						<h:outputText value="#{messages['taxpayerRecord']}" />
+					</f:facet>
+					<h:selectOneMenu id="taxpayerRecord" required="true"
+						value="#{_issuer.taxpayerRecord}">
+						<s:selectItems value="#{taxpayerRecords}" required="true"
+							var="type" label="#{messages[type.name]}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<s:convertEntity />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</rich:column>
+
+				<rich:column styleClass="action">
+					<f:facet name="header">#{messages['common.action']}</f:facet>
+					<a:commandButton action="#{entryHome.removeIssuer(_issuer)}"
+						id="removeIssuer" value="#{messages['common.remove']}"
+						immediate="true" reRender="contentPanel" ajaxSingle="true">
+					</a:commandButton>
+				</rich:column>
+
+			</rich:dataTable>
+
+		</a:outputPanel>
+
+	</rich:panel>
+
+
+</ui:composition>

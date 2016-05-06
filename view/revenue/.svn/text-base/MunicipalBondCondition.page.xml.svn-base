@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd" 
+      login-required="true">
+      
+    <begin-conversation join="true" flush-mode="MANUAL"/>
+
+	<action execute="#{municipalBondCondition.initDates()}"/>
+	
+   <param name="firstResult" value="#{municipalBondCondition.firstResult}"/>
+   <param name="sort" value="#{municipalBondCondition.orderColumn}"/>
+   <param name="dir" value="#{municipalBondCondition.orderDirection}"/>
+   <param name="logic" value="#{municipalBondCondition.restrictionLogicOperator}"/>
+   <param name="readOnly"/>
+   
+   <param name="from"/>
+   <param name="resident" value="#{municipalBondCondition.identificationNumber}"/>
+   <param name="startDate" value="#{municipalBondCondition.startDate}" converterId="org.jboss.seam.ui.DateTimeConverter"/>
+   <param name="entry" value="#{municipalBondCondition.entryCode}"/>  
+   
+   
+</page>
+
+

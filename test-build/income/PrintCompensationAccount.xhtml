@@ -1,0 +1,159 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="printCompensationAccount" styleClass="edit">
+
+				<rich:dataTable  
+					id="compensationAccountState" var="_municipalBond"
+					value="#{paymentHome.selectedBonds}"
+					columnClasses="center, left, right, right, right, right, right, right ">
+					
+					<f:facet name="header">
+						<h:panelGrid columnClasses="headerTitle left," columns="2">
+							<h:outputText styleClass="tableTitle"
+								value="#{messages['deposit.toPrint']}" />
+							<a:region>
+								<s:button id="printCompensationAccountBtn"
+									action="#{paymentHome.printCompensationAccount}"
+									propagation="join"
+									disabled="#{paymentHome.enableButtonPrint()}"
+									value="#{messages['deposit.printCompensationAccount']}"
+									onclick="Richfaces.showModalPanel('printConfirmPanel',{width:250, height:150})" />
+							</a:region>
+						</h:panelGrid>
+					</f:facet>
+
+					<f:facet name="footer">
+						<rich:columnGroup>
+												
+							<rich:column colspan="6">
+								<h:outputText value="#{messages['payment.value']}:" style="font-weight:bold; font-size:1.5em;"/>
+							</rich:column>
+							<rich:column colspan="2" styleClass="right">
+								<h:outputText id="value" value="#{paymentHome.instance.value}"
+									styleClass="right" style="font-weight:bold; font-size:1.5em;"
+									size="12" readonly="true">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+						</rich:columnGroup>
+					</f:facet>
+
+					<rich:column width="12%">
+						<f:facet name="header">#{messages['receipt.number']}</f:facet>
+						<h:outputText value="#{_municipalBond.receipt}" rendered="#{not empty _municipalBond.receipt}"/><br/>
+						<h:outputText value="#{_municipalBond.number}" rendered="#{empty _municipalBond.receipt}"/><br/>
+						<h:outputText value="#{_municipalBond.receipt.authorizationNumber}" rendered="#{not empty _municipalBond.receipt}"/><br/>
+					</rich:column>
+
+					<rich:column width="28%">
+						<f:facet name="header">#{messages['municipalBond.observation']}</f:facet>
+						<h:outputText value="#{_municipalBond.entry.name}" /><br/>
+						<h:outputText value="#{_municipalBond.description}" /><br/>
+						<h:outputText value="#{_municipalBond.transformedServiceDate} #{_municipalBond.groupingCode}" /><br/>
+						<h:outputText value="#{_municipalBond.address}" /><br/>
+						<h:outputText value="#{messages['date']}: #{empty _municipalBond.receipt ? currentDate : _municipalBond.receipt.date}" /><br/>
+						<h:outputText value="#{messages['municipalBond.emissionDate']} Obligación: #{_municipalBond.emisionDate}" /><br/>
+						<h:outputText value="#{messages['municipalBond.expirationDate']}: #{_municipalBond.expirationDate}" />
+					</rich:column>
+	
+					<rich:column width="10%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.value']}</f:facet>
+						<h:outputText value="#{_municipalBond.value}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column width="10%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.interestsTotal']}</f:facet>
+						<h:outputText value="#{_municipalBond.interest}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+	
+					<rich:column width="10%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.discountsTotal']}</f:facet>
+						<h:outputText value="#{_municipalBond.discount}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+	
+					<rich:column width="10%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.surchargesTotal']}</f:facet>
+						<h:outputText value="#{_municipalBond.surcharge}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column width="10%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.taxesTotal']}</f:facet>
+						<h:outputText value="#{_municipalBond.taxesTotal}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+	
+					<rich:column width="10%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.paidTotal']}</f:facet>
+						<h:outputText value="#{_municipalBond.paidTotal}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+					
+				</rich:dataTable>
+
+		</h:form>
+
+		<rich:modalPanel id="printConfirmPanel" width="250" height="150">
+			<f:facet name="header">#{messages['common.printingConfirmation']}</f:facet>
+			<h:form id="printConfirm">
+				<h:panelGrid>
+					<h:panelGrid columns="2">
+						<h:graphicImage value="/img/alert.png" />
+						<h:outputText value="#{messages['common.isPrintingOk']}"
+							style="font-size:large;" />
+					</h:panelGrid>
+					<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton style="width:50px" id="printingSuccessBtn"
+								action="#{paymentHome.confirmCompensationPrinting}"
+								value="#{messages['common.yes']}"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'printConfirmPanel\');' : ''}" />
+
+							<a:commandButton id="printingFailureBtn" ajaxSingle="true"
+								style="width:50px" value="#{messages['common.no']}"
+								oncomplete="Richfaces.hideModalPanel('printConfirmPanel');"
+								bypassUpdates="true" />
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+
+		</rich:modalPanel>
+
+	</ui:define>
+
+</ui:composition>

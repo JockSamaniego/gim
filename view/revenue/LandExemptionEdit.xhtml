@@ -1,0 +1,94 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="exemption" styleClass="edit">
+			<ui:debug id="debug"/>
+
+			<h:outputText styleClass="formTitle"
+				value="#{landExemptionHome.managed ? messages['common.edit'] : messages['common.add']} #{messages['landExemption.title']}" />
+
+			<rich:panel id="richPanelId">
+
+					<h:panelGrid columns="2" styleClass="center" width="100%"
+						columnClasses="topAligned,topAligned">
+
+						<h:panelGrid columns="1" width="100%">
+							<rich:panel styleClass="left">
+								<f:facet name="header">#{messages['property']}</f:facet>
+								<g:propertyChooser id="propertyChooser"
+									property="#{landExemptionHome.instance.property}"
+									criteria="#{landExemptionHome.criteriaProperty}"
+									bean="#{landExemptionHome}" searchAction="searchPropertyByCriteria"
+									propertyList="#{landExemptionHome.properties}"
+									searchByCriteriaAction="searchPropertyByCriteria"
+									clearSearchPanelAction="clearSearchPropertyPanel"
+									propertyChosenListenerName="propertySelectedListener" />							
+								<div style="clear: both" />
+							</rich:panel>
+						</h:panelGrid>
+					</h:panelGrid>
+					
+					<s:decorate id="typeField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['fiscalPeriod.title']}</ui:define>
+						<h:selectOneMenu id="fiscalPeriodId" required="true"
+							value="#{landExemptionHome.instance.fiscalPeriod}">
+							<s:selectItems value="#{fiscalPeriods}" required="true" var="fiscalPeriod"
+								label="#{fiscalPeriod.name}" noSelectionLabel="#{messages['common.chooseOption']}"/>
+							<s:convertEntity/>
+						</h:selectOneMenu>
+					</s:decorate>					
+					
+					<s:decorate id="dateName" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['common.date']}</ui:define>
+						<h:inputText id="name" size="15" readonly="true"
+							value="#{landExemptionHome.instance.date}">
+c							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:inputText>
+					</s:decorate>
+
+				<div style="clear:both">
+                <span class="required">*</span>
+                #{messages['common.requiredFields']}
+            </div>		
+
+				
+
+			</rich:panel>
+
+			<a:outputPanel ajaxRendered="false" id="buttonsId">
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{landExemptionHome.save()}" 
+					rendered="#{!landExemptionHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{landExemptionHome.save()}" rendered="#{landExemptionHome.managed}" />
+
+				<h:commandButton id="delete" value="#{messages['common.delete']}"
+					action="#{landExemptionHome.remove}" immediate="true"
+					rendered="#{landExemptionHome.managed and false}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/revenue/LandExemptionList.xhtml"/>
+
+			</div>
+			</a:outputPanel>
+		</h:form>
+
+
+
+	</ui:define>
+
+</ui:composition>

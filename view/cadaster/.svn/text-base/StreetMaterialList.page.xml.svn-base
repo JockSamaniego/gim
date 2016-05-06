@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd" login-required="true">
+
+   <param name="firstResult" value="#{streetMaterialList.firstResult}"/>
+   <param name="sort" value="#{streetMaterialList.orderColumn}"/>
+   <param name="dir" value="#{streetMaterialList.orderDirection}"/>
+   <param name="logic" value="#{streetMaterialList.restrictionLogicOperator}"/>
+
+   <param name="from"/>
+   <param name="code" value="#{streetMaterialList.streetMaterial.code}"/>
+   <param name="name" value="#{streetMaterialList.streetMaterial.name}"/>
+
+</page>

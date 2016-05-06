@@ -1,0 +1,234 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="economicActivity" styleClass="edit">
+    
+    	<h1>
+			#{economicActivityHome.managed ? messages['common.edit'] : messages['common.add']} #{messages['economicActivity']}    		
+    	</h1>
+    	
+    	<rich:panel>
+    		<f:facet name="header">#{messages['economicActivity.current']}</f:facet>
+    		
+    		<h:panelGrid columns="2">
+    		
+    		<s:decorate id="typeLabelInfo" template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['economicActivity.type']}:</ui:define>
+                <h:inputText id="typeLabel"
+                       required="true"
+                           size="15"
+                      maxlength="15"
+                      disabled="true"
+                          value="#{messages[economicActivityHome.instance.economicActivityType.name()]}">                    
+                </h:inputText>
+            </s:decorate>
+    		
+    		<s:decorate id="codeLabelInfo" template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['economicActivity.code']}:</ui:define>
+                <h:inputText id="codeLabel"
+                       required="true"
+                           size="15"
+                      maxlength="15"
+                      value="#{economicActivityHome.instance.code}">
+                	<a:support event="onblur" reRender="codeLabel,codeField" ajaxSingle="true"
+                		action="#{economicActivityHome.updateCode}"/>                    
+                </h:inputText>
+            </s:decorate>
+    		</h:panelGrid>
+    		
+    		<h:panelGrid>
+    		
+    		<s:decorate id="nameLabelInfo" template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['economicActivity.name']}:</ui:define>
+                <h:inputTextarea id="nameLabel"
+                       required="true"
+                           cols="80"
+                           rows="3"
+                           value="#{economicActivityHome.instance.name}">
+                	<a:support event="onblur" reRender="nameLabel" bypassUpdates="true" ajaxSingle="true"/>                    
+                </h:inputTextarea>
+            </s:decorate>
+            
+            </h:panelGrid>
+            
+            <div style="clear:both">
+                <span class="required">*</span>
+                #{messages['common.requiredFields']}
+            </div>
+            
+    	</rich:panel>
+    	    	
+    	<a:outputPanel id="economicActivityPanel" ajaxRendered="true">
+    	<rich:panel rendered="#{economicActivityHome.economicActivityChild != null}">
+    		<f:facet name="header">#{economicActivityHome.economicActivityChild.id != null ? messages['common.edit'] : messages['common.add']} #{messages['economicActivity']}</f:facet>
+    		
+    		<s:decorate id="typeField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['economicActivity.type']}:</ui:define>
+                <h:inputText id="type"
+                       required="true"
+                           size="35"
+                      maxlength="35"
+                          value="#{messages[economicActivityHome.economicActivityChild.economicActivityType.name()]}"
+                          disabled="true">                    
+                </h:inputText>
+            </s:decorate>
+    		
+    		<s:decorate id="codeField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['economicActivity.code']}:</ui:define>
+                <h:inputText id="code"
+                       required="true"
+                           size="25"
+                      maxlength="25"
+                          value="#{economicActivityHome.economicActivityChild.code}">
+                    <a:support event="onblur" reRender="codeField" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+    		
+    		<s:decorate id="nameField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['economicActivity.name']}:</ui:define>
+                <h:inputTextarea id="name"
+                       required="true"
+                           cols="80"
+                           rows="3"
+                          value="#{economicActivityHome.economicActivityChild.name}">
+                    <a:support event="onblur" reRender="nameField" ajaxSingle="true"/>
+                </h:inputTextarea>
+            </s:decorate>
+    		
+            
+            <div style="clear:both">
+                <span class="required">*</span>
+                #{messages['common.requiredFields']}
+            </div>
+            
+			<div class="actionButtons">
+				<a:commandButton id="saveEconomicActivityChild"
+					disabled="#{(economicActivityHome.economicActivityChild.name == null or
+								economicActivityHome.economicActivityChild.name == '') and
+								economicActivityHome.economicActivityChild.code == null 
+								 }" 
+					value="#{economicActivityHome.economicActivityChild.id == null ? messages['common.add'] : messages['common.save']}" 
+					action="#{economicActivityHome.saveEconomicActivityChild}"
+					reRender="economicActivityPanel, economicActivityListPanel">					
+				</a:commandButton>			
+			</div>    		
+    	</rich:panel>
+    	</a:outputPanel>
+
+		<a:outputPanel id="economicActivityListPanel" ajaxRendered="true">
+		
+		<rich:panel rendered="#{economicActivityHome.economicActivityChild != null}">
+			<f:facet name="header">
+        		#{messages['economicActivity.list']}
+        	</f:facet>
+        	
+        	<rich:dataTable id="economicActivityList"
+			                var="_economicActivity"
+			              value="#{economicActivityHome.children}"
+			           rendered="#{not empty economicActivityHome.children}">
+				<h:column>
+		            <f:facet name="header">
+		                <ui:include src="../layout/sort.xhtml">
+		                    <ui:param name="entityList" value="#{economicActivityList}"/>
+		                    <ui:param name="propertyLabel" value="Id"/>
+		                    <ui:param name="propertyPath" value="economicActivity.id"/>
+		                </ui:include>
+		            </f:facet>
+		            <h:outputText value="#{_economicActivity.id}"/>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">
+		                <ui:include src="../layout/sort.xhtml">
+		                    <ui:param name="entityList" value="#{economicActivityList}"/>
+		                    <ui:param name="propertyLabel" value="#{messages['economicActivity.code']}"/>
+		                    <ui:param name="propertyPath" value="economicActivity.code"/>
+		                </ui:include>
+		            </f:facet>
+		            <h:outputText value="#{_economicActivity.code}"/>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">
+		                <ui:include src="../layout/sort.xhtml">
+		                    <ui:param name="entityList" value="#{economicActivityList}"/>
+		                    <ui:param name="propertyLabel" value="#{messages['economicActivity.name']}"/>
+		                    <ui:param name="propertyPath" value="economicActivity.name"/>
+		                </ui:include>
+		            </f:facet>
+		            <h:outputText value="#{_economicActivity.name}"/>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">
+		                <ui:include src="../layout/sort.xhtml">
+		                    <ui:param name="entityList" value="#{economicActivityList}"/>
+		                    <ui:param name="propertyLabel" value="#{messages['economicActivity.type']}"/>
+		                    <ui:param name="propertyPath" value="economicActivity.economicActivityType"/>
+		                </ui:include>
+		            </f:facet>
+		            <h:outputText value="#{messages[_economicActivity.economicActivityType.name()]}"/>
+		        </h:column>
+		        
+		        <rich:column styleClass="action">
+		            <f:facet name="header">#{messages['common.action']}</f:facet>
+		            
+		            <a:commandButton value="#{messages['common.edit']}" 
+			            	action="#{economicActivityHome.setEconomicActivityChild(_economicActivity)}"
+			            	immediate="true" reRender="economicActivityPanel" 
+			            	ajaxSingle="true">
+			            </a:commandButton>
+			            #{' '}
+			            <a:commandButton value="#{messages['common.remove']}" 
+			            	action="#{economicActivityHome.remove(_economicActivity)}"
+			            	immediate="true" ajaxSingle="true" 
+			            	reRender="economicActivityPanel,economicActivityListPanel">
+			            	
+			            </a:commandButton>
+		        </rich:column>	
+			</rich:dataTable>
+        		
+		</rich:panel>		
+		</a:outputPanel>    	
+
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                          immediate="true"
+                         action="#{economicActivityHome.persist}"
+                       disabled="#{!economicActivityHome.wired}"
+                       rendered="#{!economicActivityHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                          immediate="true"
+                         action="#{economicActivityHome.update}"
+                       rendered="#{economicActivityHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/commercial/EconomicActivityList.xhtml"
+                rendered="#{economicActivityHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/commercial/#{empty economicActivityFrom ? 'EconomicActivityList' : economicActivityFrom}.xhtml"
+                rendered="#{!economicActivityHome.managed}"/>
+        </div>
+    </h:form>
+
+
+</ui:define>
+
+</ui:composition>

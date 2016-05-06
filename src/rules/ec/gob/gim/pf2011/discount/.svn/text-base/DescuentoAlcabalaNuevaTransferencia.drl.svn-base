@@ -1,0 +1,27 @@
+#created on: Oct 31, 2011
+package ec.gob.gim.rules.pf2011
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.common.model.FiscalPeriod;
+import ec.gob.gim.revenue.model.Item;
+import ec.gob.gim.common.model.LegalEntity;
+import java.math.BigDecimal;
+import java.util.Calendar;
+import ec.gob.gim.revenue.model.adjunct.DomainTransfer;
+import ec.gob.gim.revenue.model.adjunct.detail.EarlyTransferDiscount; 
+
+#list any import classes here.
+
+rule "Descuento alcabalas nueva transferencia"
+	no-loop true
+	when
+		$itemBase : Item(entry.code == "00058");
+		$itemDescuento : Item(entry.name == "REBAJA POR NUEVA TRANSFERENCIA");
+		$mb : MunicipalBond();
+		$transfer : DomainTransfer();
+		eval($transfer.getEarlyTransferDiscount() != EarlyTransferDiscount.NOT_APPLICABLE);
+	then
+		Double discountFactor = $transfer.getEarlyTransferDiscount().getPercentage(); 
+		BigDecimal discount = $itemBase.getTotal().multiply(new BigDecimal(discountFactor)); 
+		$itemDescuento.setValue(discount);
+		$itemDescuento.setTotal(discount);
+end

@@ -1,0 +1,70 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="freeConcessionImtePanel" width="600" height="500">
+
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['concessionItem.free']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkFree" />
+				<rich:componentControl for="freeConcessionImtePanel"
+					attachTo="hidelinkFree" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="freeConcessionImtePanelForm">
+			<h:panelGrid width="100%">
+
+				<rich:dataTable id="concessionPlaceList" var="_concessionPlace"
+					value="#{concessionGroupHome.findFreeConcessionPlaces()}" rows="10">
+					<h:column>
+						<f:facet name="header">#{messages['concessionPlace.id']}</f:facet>
+
+						<h:outputText value="#{_concessionPlace.id}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">#{messages['concessionPlace.name']}</f:facet>
+						<h:outputText value="#{_concessionPlace.name}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">#{messages['concessionPlace.internalOrder']}</f:facet>
+						<h:outputText value="#{_concessionPlace.internalOrder}" />
+					</h:column>
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<a:commandButton ajaxSingle="true"
+							action="#{concessionGroupHome.useConcessionPlace(_concessionPlace)}"
+							oncomplete="Richfaces.showModalPanel('editConcessionItemPlacePanel')"
+							reRender="editConcessionItemPlacePanelForm,tittleInfoPanelEdit"
+							value="#{messages['common.rent']}" />
+					</rich:column>
+				</rich:dataTable>
+
+				<rich:datascroller align="center" for="concessionPlaceList"
+					maxPages="2" id="sc2" ajaxSingle="true" />
+
+			</h:panelGrid>
+
+			<h:panelGrid columns="10" style="text-align:right">
+
+				<a:commandButton value="#{messages['common.quit']}" ajaxSingle="true"
+					oncomplete="Richfaces.hideModalPanel('freeConcessionImtePanel');" />
+
+			</h:panelGrid>
+
+		</h:form>
+
+	</rich:modalPanel>
+</ui:composition>

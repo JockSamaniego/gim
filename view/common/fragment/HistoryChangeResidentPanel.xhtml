@@ -1,0 +1,67 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="historyChangeResidentPanel" width="550" height="350">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText
+					value="#{messages['resident.historyChangeResident']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="historyChangeResidentPanel" attachTo="hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="historyChangeResidentForm">
+			<h:panelGrid width="100%">
+				<rich:dataTable id="historyChangeResidentTable" var="_historyChangeResident"
+					value="#{residentHome.historyChangeResidentList}" >
+					<rich:column >
+						<f:facet name="header">#{messages['common.id']}</f:facet>
+						<h:outputText value="#{_historyChangeResident.idRevision}" />
+					</rich:column>
+
+					<rich:column >
+						<f:facet name="header">#{messages['resident.name']}</f:facet>
+						<h:outputText value="#{_historyChangeResident.name}" />
+					</rich:column>
+
+					<rich:column >
+						<f:facet name="header">#{messages['auditInspector.transactionType']}</f:facet>
+						<h:outputText value="#{messages[residentHome.getTransactionTypeKey(_historyChangeResident.revType)]}" />
+					</rich:column>
+
+					<rich:column >
+						<f:facet name="header">#{messages['common.date']}</f:facet>
+						<h:outputText value="#{_historyChangeResident.date}" >
+							<f:convertDateTime pattern="#{messages['common.dateFullTimePattern']}" />
+						</h:outputText>
+					</rich:column>
+
+				</rich:dataTable>
+
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" style="text-align:right">
+				<a:commandButton 
+					value="#{messages['common.quit']}" 
+					oncomplete="Richfaces.hideModalPanel('historyChangeResidentPanel');"
+					bypassUpdates="true"/>
+			</h:panelGrid>
+
+		</h:form>
+
+	</rich:modalPanel>
+</ui:composition>

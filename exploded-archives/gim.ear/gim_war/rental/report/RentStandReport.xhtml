@@ -1,0 +1,131 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	title="#{messages['domain.changeOwner']}" subject="report" type="pdf"
+	size="A4" margins="40 20 30 20" keywords="mykeyword" author="loxageek"
+	creator="loxageek">
+
+	<f:facet name="header">
+		<p:font size="7" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="1" widthPercentage="100" spacingAfter="15">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+
+							<p:paragraph alignment="right" spacingAfter="10">
+							<p:font size="12" name="HELVETICA">
+								<p:text
+									value="#{messages['common.date']}: " />
+								<p:text
+									value="#{currentDatetime}">
+									<f:convertDateTime pattern="dd/MM/yyyy"/>
+									</p:text>
+									</p:font>
+							</p:paragraph>	
+
+							<p:paragraph alignment="center" spacingAfter="15">
+								<p:font size="14" style="bold" name="HELVETICA">
+									<p:text
+										value="#{messages['PERMISO VALIDO POR:']} #{spaceHome.instance.currentContract.totalMonths} #{spaceHome.instance.currentContract.totalMonths > 1 ? 'MESES' : 'MES'}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+					</p:table>
+				</p:paragraph>
+			</p:header>
+			<p:footer borderWidthTop="1" borderColorTop="blue"
+				borderWidthBottom="0" alignment="center">
+	 			[<p:pageNumber />]
+			</p:footer>
+		</p:font>
+	</f:facet>
+
+	<p:font size="12" name="HELVETICA">
+
+		<p:paragraph spacingAfter="15">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="left" />
+			</f:facet>
+		</p:paragraph>
+
+		<p:paragraph spacingAfter="15">
+			<p:font size="12" style="bold">
+				<p:text value="#{messages['common.detail']}: " />
+			</p:font>
+		</p:paragraph>
+
+
+
+
+		<p:paragraph spacingAfter="40">
+		</p:paragraph>
+
+
+		<p:table columns="2" widthPercentage="80" headerRows="0">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="center" />
+			</f:facet>
+
+			<p:cell colspan="1">
+				<p:paragraph spacingBefore="80">
+					<p:font size="12" style="bold">
+						<p:text value="____________________________" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>			
+			
+			<p:cell colspan="1">
+				<p:paragraph spacingBefore="80">
+					<p:font size="12" style="bold">
+						<p:text value="____________________________" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="12" style="bold">
+						<p:text value="ARQ. SIXTO LOMAS BOZMEDIANO" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="12" style="bold">
+						<p:text value="SR. HIGINIO LOZANO" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+
+		<p:paragraph spacingAfter="5" spacingBefore="5" alignment="justify">
+			<p:font size="11">
+				<p:text
+					value="NOTA: ES OBLIGACIÓN DE LA PARTE INTERESADA PRESENTAR ESTE PERMISO AL INSPECTOR DE ORNATO PARA SU VERIFICACIÓN" />
+			</p:font>
+		</p:paragraph>
+
+
+	</p:font>
+
+
+</p:document>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page login-required="true" xmlns="http://jboss.com/products/seam/pages"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
+ <param name="firstResult" value="#{taxList.firstResult}"/>
+ <param name="sort" value="#{interestRateList.orderColumn}"/>
+ <param name="dir" value="#{interestRateList.orderDirection}"/>
+ <param name="logic" value="#{interestRateList.restrictionLogicOperator}"/>
+ <param name="from"/>
+ <param converterId="org.jboss.seam.ui.DateTimeConverter"
+  name="beginDate" value="#{interestRateList.beginDate}"/>
+ <param converterId="org.jboss.seam.ui.DateTimeConverter" name="endDate" value="#{interestRateList.endDate}"/>
+ <param name="firstTime" value="#{interestRateList.firstTime}"/>
+ <action execute="#{interestRateList.setCurrentDate()}"/>
+</page>

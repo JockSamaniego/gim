@@ -1,0 +1,133 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel id="buildingsPanel">
+		<f:facet name="header">
+			<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText value="#{messages['building.feature']}" />
+				<a:commandButton id="createBuilding"
+					action="#{propertyHome.createBuilding()}"
+					reRender="buildingEditPanel" ajaxSingle="true"
+					eventsQueue="gimEventsQueue"
+					oncomplete="Richfaces.showModalPanel('buildingEditPanel',{width:800, height:475})"
+					value="#{messages['property.addBuilding']}" />
+			</h:panelGrid>
+		</f:facet>
+
+
+		<h:outputText value="#{messages['property.notBuildingsAssociated']}."
+			rendered="#{empty propertyHome.buildings}" />
+
+		<rich:dataTable value="#{propertyHome.buildings}" var="_building"
+			rendered="#{not empty propertyHome.buildings}"
+			rowClasses="rvgRowOne,rvgRowTwo" id="buildingsTable">
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['building.number']}" />
+				</f:facet>
+				<h:outputText value="#{_building.number}" />
+			</rich:column>
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['building.floorsNumber']}" />
+				</f:facet>
+				<h:outputText value="#{_building.floorsNumber}" />
+			</rich:column>
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['building.area']}" />
+				</f:facet>
+				<h:outputText value="#{_building.area}" />
+			</rich:column>
+
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['building.totalArea']}" />
+				</f:facet>
+				<h:outputText value="#{_building.totalArea}" />
+
+			</rich:column>
+
+			<rich:column styleClass="center">
+				<f:facet name="header">
+					<h:outputText value="#{messages['building.isFinished']}" />
+				</f:facet>
+				<h:selectBooleanCheckbox value="#{_building.isFinished}"
+					disabled="true" />
+			</rich:column>
+			<rich:column styleClass="center">
+				<f:facet name="header">
+					<h:outputText value="#{messages['building.hasEquipment']}" />
+				</f:facet>
+				<h:selectBooleanCheckbox value="#{_building.hasEquipment}"
+					disabled="true" />
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="#{messages['building.structureMaterial']}" />
+				</f:facet>
+				<h:outputText
+					value="#{messages[_building.structureMaterial.name()]}" />
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="#{messages['building.wallMaterial']}" />
+				</f:facet>
+				<h:outputText value="#{messages[_building.wallMaterial.name()]}" />
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="#{messages['building.roofMaterial']}" />
+				</f:facet>
+				<h:outputText value="#{messages[_building.roofMaterial.name()]}" />
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="#{messages['building.externalFinishing']}" />
+				</f:facet>
+				<h:outputText
+					value="#{messages[_building.externalFinishing.name()]}" />
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="#{messages['building.preservationState']}" />
+				</f:facet>
+				<h:outputText
+					value="#{messages[_building.preservationState.name()]}" />
+			</rich:column>
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['building.buildingYear']}" />
+				</f:facet>
+				<h:outputText value="#{_building.buildingYear}" />
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="#{messages['common.action']}" />
+				</f:facet>
+				<a:commandButton id="editBuilding"
+					action="#{propertyHome.editBuilding(_building)}"
+					reRender="buildingEditPanel" ajaxSingle="true"
+					eventsQueue="gimEventsQueue"
+					oncomplete="Richfaces.showModalPanel('buildingEditPanel',{width:800, height:475})"
+					value="#{messages['common.edit']}" />
+					
+				<a:commandButton id="removeBuilding"
+					action="#{propertyHome.removeBuilding(_building)}"
+					reRender="buildingsPanel" ajaxSingle="true"
+					value="#{messages['common.delete']}" />
+			</rich:column>
+		</rich:dataTable>
+
+
+	</rich:panel>
+
+</ui:composition>

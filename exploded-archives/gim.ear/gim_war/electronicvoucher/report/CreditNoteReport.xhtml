@@ -1,0 +1,294 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	title="#{messages['domain.changeOwner']}" subject="report" type="pdf"
+	size="LETTER" keywords="mykeyword" author="gadml_ra" creator="gadml_ra"
+	orientation="landscape" margins="10 10 50 50">
+ 
+	<f:facet name="header">
+		<p:font size="9" name="ARIAL"  style="bold">
+			<p:header borderWidthTop="0" borderWidthBottom="1" alignment="center">
+				<p:paragraph>
+					<p:table columns="8" widthPercentage="100" spacingAfter="5">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell colspan="8">
+
+							<p:paragraph alignment="center" spacingAfter="5">
+								<p:text value="#{gim.institution.name.toUpperCase()}" />
+							</p:paragraph>
+							<p:paragraph alignment="center" spacingAfter="5">
+								<p:text value="NOTA DE CRÉDITO - Nro.: #{creditNoteElectHome.instance.sequentialNumber}" />	
+							</p:paragraph>
+						</p:cell>
+						
+						<p:cell colspan="8">
+							<p:paragraph alignment="left" spacingAfter="5">
+								<p:text value="Clave de acceso: #{creditNoteElectHome.instance.accessCode}" /> 
+							</p:paragraph>
+						</p:cell>
+						
+						
+						<p:cell colspan="8">
+							<p:paragraph alignment="left" spacingAfter="5">
+								<p:text value="Nro. autorización SRI: #{creditNoteElectHome.instance.authorizationCode}" /> 
+							</p:paragraph>
+						</p:cell>
+						
+						<p:cell colspan="8">
+							<p:paragraph alignment="left" spacingAfter="5">
+								<p:text value="Fecha de authorización: #{creditNoteElectHome.instance.authorizationDate}" /> 
+							</p:paragraph>
+						</p:cell>
+						
+						<p:cell colspan="8">
+							<p:paragraph alignment="left" spacingAfter="5">
+								<p:text value="#{messages['electronicVoucher.voucherNro']}: #{creditNoteElectHome.instance.documentNumber}" /> 
+							</p:paragraph>
+						</p:cell>
+						 
+						
+						<p:cell colspan="8">
+							<p:paragraph alignment="left" spacingAfter="5">
+								<p:text value="#{messages['electronicVoucher.emissionDate']}: #{creditNoteElectHome.instance.emissionDate} #{creditNoteElectHome.instance.emisionTime}" /> 
+							</p:paragraph>
+						</p:cell> 
+						
+						<p:cell colspan="8">
+							<p:paragraph alignment="left" spacingAfter="5">
+								<p:text value="#{messages['common.resident']}: #{creditNoteElectHome.instance.resident.name}" /> 
+							</p:paragraph>
+						</p:cell>
+						
+						<p:cell colspan="8">
+							<p:paragraph alignment="left" spacingAfter="5">
+								<p:text value="#{messages['common.identificationNumber']}: #{creditNoteElectHome.instance.resident.identificationNumber}" /> 
+							</p:paragraph>
+						</p:cell>
+						 
+												
+						<p:cell colspan="8">
+							<p:paragraph alignment="left" spacingAfter="5">
+								<p:text value="#{messages['emisor']}: #{creditNoteElectHome.instance.emitter.name}" /> 
+							</p:paragraph>
+						</p:cell>
+					</p:table>
+				</p:paragraph>
+				PAG.:<p:pageNumber />
+			</p:header>
+		</p:font>
+	</f:facet>
+
+	<p:paragraph spacingAfter="15">
+	</p:paragraph>
+	
+	<p:font size="9" name="Draft" style="NORMAL">
+
+		<p:table columns="4" widthPercentage="100" headerRows="0"
+			widths="0.5 3 1.5 1">
+
+			<p:cell horizontalAlignment="center">
+				<p:font size="9" name="ARIAL" style="bold">
+					<p:paragraph>
+						<p:text value="#{messages['cashRecord.amount']}" />
+					</p:paragraph>
+				</p:font>	
+			</p:cell>
+			
+			<p:cell horizontalAlignment="center">
+				<p:font size="9" name="ARIAL" style="bold">
+					<p:paragraph>
+						<p:text value="#{messages['paymentAgreement.description']}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+
+				<p:font size="9" name="ARIAL" style="bold">
+					<p:paragraph>
+						<p:text value="#{messages['creditNote.unitaryPrice']}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+			
+			<p:cell horizontalAlignment="center">
+				<p:font size="9" name="ARIAL" style="bold">
+					<p:paragraph>
+						<p:text value="#{messages['cashRecord.total']}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+ 
+			<ui:repeat value="#{creditNoteElectHome.instance.items}" var="item">
+
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{item.amount}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{item.entry.name}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{item.value}" >
+							<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell>
+					<p:paragraph> 
+							<p:text value="#{item.total}" >
+								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+							</p:text> 
+					</p:paragraph>
+				</p:cell>
+				 
+			</ui:repeat>
+			<p:cell colspan="3">
+					<p:paragraph> 
+							<p:text value="#{messages['creditNote.subtotal']}" >
+								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+							</p:text> 
+					</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+					<p:paragraph> 
+							<p:text value="#{creditNoteElectHome.instance.total}" >
+								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+							</p:text> 
+					</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="3">
+					<p:paragraph> 
+							<p:text value="#{messages['creditNote.base12']}" >
+								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+							</p:text> 
+					</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+					<p:paragraph> 
+							<p:text value="#{creditNoteElectHome.instance.taxableTotal}" >
+								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+							</p:text> 
+					</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="3">
+					<p:paragraph> 
+							<p:text value="#{messages['creditNote.base0']}" >
+								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+							</p:text> 
+					</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+					<p:paragraph> 
+							<p:text value="#{creditNoteElectHome.instance.nonTaxableTotal}" >
+								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+							</p:text> 
+					</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="3">
+					<p:paragraph> 
+							<p:text value="#{messages['creditNote.iva']}" >
+								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+							</p:text> 
+					</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+					<p:paragraph> 
+							<p:text value="#{creditNoteElectHome.instance.totalTaxes}" >
+								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+							</p:text> 
+					</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="3">
+					<p:paragraph> 
+							<p:text value="#{messages['cashRecord.total']}" >
+								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+							</p:text> 
+					</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+					<p:paragraph> 
+							<p:text value="#{creditNoteElectHome.instance.totalPaid}" >
+								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+							</p:text> 
+					</p:paragraph>
+			</p:cell>
+		</p:table>
+		  
+	</p:font>
+	
+	<p:paragraph spacingAfter="15">
+	</p:paragraph>   
+				<p:paragraph>
+					<p:table columns="8" widthPercentage="100" spacingAfter="5">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell colspan="8"> 
+							<p:paragraph alignment="left" spacingAfter="5">
+								<p:text value="Detalles adicionales" />	 
+							</p:paragraph>
+						</p:cell>
+					</p:table>
+				</p:paragraph>  
+ 
+	<p:paragraph spacingAfter="15">
+	</p:paragraph>  
+	<p:font size="9" name="Draft" style="NORMAL">
+		
+		<p:table columns="2" widthPercentage="100" headerRows="0"
+			widths="2 3">
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['branch.name']}" />
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['payment.collectedValue']}" />
+				</p:paragraph>
+			</p:cell>
+			
+			<ui:repeat value="#{creditNoteElectHome.instance.fields}" var="field">
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{field.label}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{field.value}" />
+					</p:paragraph>
+				</p:cell>
+			</ui:repeat>
+		</p:table>
+	</p:font>
+	
+</p:document>

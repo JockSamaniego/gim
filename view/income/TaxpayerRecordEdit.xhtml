@@ -1,0 +1,405 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+	
+		<ui:include src="fragment/DelegateEditPanel.xhtml" />
+		<ui:include src="fragment/DelegateListPanel.xhtml" />		
+
+		<h:form id="taxpayerRecord" styleClass="edit">		
+			<ui:debug id="uidebug"/>
+			<h:outputText styleClass="formTitle"
+				value="#{taxpayerRecordHome.managed ? messages['common.edit'] : messages['common.edit']} #{messages['taxpayerRecord']}" />
+			<rich:panel>
+
+				<f:facet name="header">
+            	#{messages['taxpayerRecord']}
+            </f:facet>
+
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['taxpayerRecord.name']}:</ui:define>
+					<h:inputText id="name" size="50" maxlength="50"
+						value="#{taxpayerRecordHome.instance.name}" required="true">						
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="numberField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['taxpayerRecord.number']}:</ui:define>
+					<h:inputText id="number" size="15" styleClass="right"
+						value="#{taxpayerRecordHome.instance.number}" required="true">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="phoneField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['taxpayerRecord.phone']}:</ui:define>
+					<h:inputText id="phone" size="15" styleClass="right"
+						value="#{taxpayerRecordHome.instance.phone}" required="true">
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="faxField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['institution.fax']}</ui:define>
+					<h:inputText value="#{taxpayerRecordHome.instance.fax}" id="faxId" styleClass="right"
+						size="15" required="true"/>
+				</s:decorate>
+
+				<s:decorate id="defaultField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['taxpayerRecord.isDefault']}:</ui:define>
+					<h:selectBooleanCheckbox value="#{taxpayerRecordHome.instance.isDefault}" />
+				</s:decorate>
+
+				<s:decorate id="addresField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['taxpayerRecord.address']}:</ui:define>
+					<h:inputTextarea id="address"
+						value="#{taxpayerRecordHome.instance.address}" cols="50" rows="4"
+						required="true">
+					</h:inputTextarea>
+				</s:decorate>
+				
+				<s:decorate id="isSpecialTaxpayerField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['taxpayerRecord.isSpecialTaxpayer']}:</ui:define>
+					<h:selectBooleanCheckbox value="#{taxpayerRecordHome.instance.isSpecialTaxpayer}">
+						<a:support event="onclick" reRender="specialTaxpayerResolutionField, specialTaxpayerDateField" ajaxSingle="true"/>
+					</h:selectBooleanCheckbox>
+				</s:decorate>
+				
+				<s:decorate id="specialTaxpayerResolutionField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['taxpayerRecord.specialTaxpayerResolution']}</ui:define>
+					<h:inputText id="specialTaxpayerResolution" value="#{taxpayerRecordHome.instance.specialTaxpayerResolution}" 
+						size="20" disabled="#{!taxpayerRecordHome.instance.isSpecialTaxpayer}"/>
+				</s:decorate>
+				
+				<s:decorate id="specialTaxpayerDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['taxpayerRecord.specialTaxpayerDate']}</ui:define>
+					<rich:calendar id="specialTaxpayerDate" value="#{taxpayerRecordHome.instance.specialTaxpayerDate}"
+								datePattern="#{messages['common.datePattern']}"
+								enableManualInput="true"
+								disabled="#{!taxpayerRecordHome.instance.isSpecialTaxpayer}" />
+				</s:decorate>				
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<rich:panel id="contentPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText id="taxpayerRecordCount"
+							value="#{messages['receiptAuthorization']} (#{empty taxpayerRecordHome.instance.receiptAuthorizations ? 0 : taxpayerRecordHome.instance.receiptAuthorizations.size})" />
+						<s:div styleClass="actionButtons" rendered="#{empty from}">
+							<a:commandButton
+								value="#{messages['common.add']} #{messages['receiptAuthorization']}"
+								action="#{taxpayerRecordHome.addReceiptAuthorization()}"
+								reRender="taxpayerRecordCount, contentPanel" ajaxSingle="true"
+								immediate="true">
+
+							</a:commandButton>
+						</s:div>
+					</h:panelGrid>
+				</f:facet>
+
+				<a:outputPanel styleClass="results" id="receiptAuthorizationsList">
+				<h:messages errorClass="errors" />
+					<h:outputText
+						value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty taxpayerRecordHome.instance.receiptAuthorizations}" />
+					
+
+					<rich:dataTable id="receiptAuthorizationsTable"
+						var="_receiptAuthorization"
+						value="#{taxpayerRecordHome.instance.receiptAuthorizations}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty taxpayerRecordHome.instance.receiptAuthorizations}">
+
+<!-- 
+						<rich:column sortBy="#{_receiptAuthorization.startNumber}"
+							styleClass="action">
+							<f:facet name="header">
+								<h:outputText
+									value="#{messages['receiptAuthorization.startNumber']}" />
+							</f:facet>
+							<h:inputText value="#{_receiptAuthorization.startNumber}"
+								size="12" styleClass="right" required="true">
+								<a:support event="onblur" ajaxSingle="true" />
+							</h:inputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_receiptAuthorization.endNumber}"
+							styleClass="action">
+							<f:facet name="header">
+								<h:outputText
+									value="#{messages['receiptAuthorization.endNumber']}" />
+							</f:facet>
+							<h:inputText value="#{_receiptAuthorization.endNumber}" size="12"
+								styleClass="right" required="true">
+								<a:support event="onblur" ajaxSingle="true" />
+							</h:inputText>
+						</rich:column>
+ -->
+
+						<rich:column sortBy="#{_receiptAuthorization.authorizationNumber}"
+							styleClass="action">
+							<f:facet name="header">
+								<h:outputText
+									value="#{messages['receiptAuthorization.authorizationNumber']}" />
+							</f:facet>
+							<h:inputText value="#{_receiptAuthorization.authorizationNumber}"
+								size="12" styleClass="right" required="true">
+								
+							</h:inputText>
+						</rich:column>
+
+						<rich:column
+							id="startDateColumn"
+							sortBy="#{_receiptAuthorization.startDate}"
+							styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['receiptAuthorization.startDate']}"/>
+							</f:facet>
+							<rich:calendar
+								id="startDate" 
+								value="#{_receiptAuthorization.startDate}"
+								datePattern="#{messages['common.datePattern']}"
+								enableManualInput="false" 
+								ajaxSingle="true">
+								<a:support 
+									event="onchanged" 
+									action="#{taxpayerRecordHome.calculateDates(_receiptAuthorization)}" 
+									reRender="startDateColumn, endDateColumn" 
+									ajaxSingle="true"/>
+							</rich:calendar>
+						</rich:column>
+
+						<rich:column 
+							id="endDateColumn" 
+							sortBy="#{_receiptAuthorization.endDate}"
+							styleClass="action">
+							<f:facet name="header">
+								<h:outputText
+									value="#{messages['receiptAuthorization.endDate']}" />
+							</f:facet>
+							<rich:calendar id="endDate" value="#{_receiptAuthorization.endDate}"
+								datePattern="#{messages['common.datePattern']}"
+								enableManualInput="true"
+								ajaxSingle="true" readonly="true">
+							</rich:calendar>
+						</rich:column>
+
+<!-- 
+						<rich:column sortBy="#{_receiptAuthorization.receiptType.name}"
+							styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['receiptType']}" />
+							</f:facet>
+							<h:selectOneMenu id="receiptType" required="true"
+								value="#{_receiptAuthorization.receiptType}">
+								<s:selectItems value="#{receiptTypes}" required="true"
+									var="type" label="#{messages[type.name]}"
+									noSelectionLabel="#{messages['common.chooseOption']}" />
+								<s:convertEntity />
+								<a:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
+						</rich:column>
+
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<a:commandButton
+								action="#{taxpayerRecordHome.removeReceiptAuthorization(_receiptAuthorization)}"
+								id="removereceiptAuthorization"
+								value="#{messages['common.remove']}" immediate="true"
+								reRender="contentPanel" ajaxSingle="true">
+							</a:commandButton>
+						</rich:column>
+ -->
+					</rich:dataTable>
+
+				</a:outputPanel>
+			</rich:panel>
+			
+			<rich:panel id="chargesPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['institution.charges']} (#{empty taxpayerRecordHome.instance.charges ? 0 : taxpayerRecordHome.instance.charges.size})" />
+						<s:div styleClass="actionButtons" rendered="#{empty from}">
+							<a:commandButton value="#{messages['common.add']}"
+								action="#{taxpayerRecordHome.addCharge()}"
+								reRender="chargesList" ajaxSingle="true"
+								immediate="true">
+
+							</a:commandButton>
+						</s:div>
+					</h:panelGrid>
+				</f:facet>
+
+				<a:outputPanel styleClass="results" id="chargesList">
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty taxpayerRecordHome.instance.charges}" />
+					<h:messages errorClass="errors" globalOnly="true" />
+
+					<rich:dataTable id="chargeTable" var="_charge"
+						value="#{taxpayerRecordHome.instance.charges}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty taxpayerRecordHome.instance.charges}">
+						
+						<rich:column sortBy="#{_charge.name}"
+							styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['institution.charge']}" />
+							</f:facet>
+							<h:inputText value="#{_charge.name}" required="true" size="50" style="text-transform: uppercase">
+								<a:support event="onblur" ajaxSingle="true" />
+							</h:inputText>
+						</rich:column>
+						
+						<rich:column sortBy="#{_charge.department}"
+							styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['institution.department']}" />
+							</f:facet>
+							<h:inputText value="#{_charge.department}" required="true" size="50" style="text-transform: uppercase">
+								<a:support event="onblur" ajaxSingle="true" />
+							</h:inputText>
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<a:commandButton
+								action="#{taxpayerRecordHome.instance.remove(_charge)}"
+								id="removeCharge" value="#{messages['common.remove']}"
+								immediate="true" reRender="chargesList,chargesPanel"
+								ajaxSingle="true">
+							</a:commandButton>
+													
+							<a:commandButton
+								action="#{taxpayerRecordHome.addDelegate(_charge)}"
+								id="changeDelegateCharge" value="#{messages['charge.putDelegate']}"
+								reRender="delegateEditPanel" eventsQueue="gimEventsQueue"
+								immediate="true" oncomplete="Richfaces.showModalPanel('delegateEditPanel',{width:600, height:400})"
+								ajaxSingle="true">
+							</a:commandButton>
+												
+							<a:commandButton
+								action="#{taxpayerRecordHome.editDelegate(_charge)}"
+								id="editarDelegateCharge" value="#{messages['charge.editDelegate']}"
+								reRender="delegateEditPanel" eventsQueue="gimEventsQueue"
+								immediate="true" oncomplete="Richfaces.showModalPanel('delegateEditPanel',{width:600, height:400})"
+								ajaxSingle="true">
+							</a:commandButton>
+
+							<a:commandButton
+								action="#{taxpayerRecordHome.changeCharge(_charge)}"
+								id="historyDelegateCharge" value="#{messages['charge.historyDelegates']}"
+								reRender="delegateListPanel" eventsQueue="gimEventsQueue"
+								immediate="true" oncomplete="Richfaces.showModalPanel('delegateListPanel',{width:600, height:400})"
+								ajaxSingle="true">
+							</a:commandButton>
+							
+						</rich:column>
+
+					</rich:dataTable>
+
+				</a:outputPanel>
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+			
+		<rich:panel>
+			<f:facet name="header">#{messages['taxpayerRecord.images']}</f:facet>
+
+			<h:panelGrid id="panelId" columns="2" columnClasses="topAligned">
+				<h:panelGrid id="logoPanelId" columns="1">
+					<s:decorate id="logoField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['taxpayerRecord.logo']}:</ui:define>
+						<rich:fileUpload fileUploadListener="#{taxpayerRecordHome.logoListener}"
+							maxFilesQuantity="1" id="uploadLogo" immediateUpload="true"
+							acceptedTypes="jpg, gif, png, jpeg"
+							uploadControlLabel="#{messages['taxpayerRecord.logo']}"
+							addControlLabel="#{messages['common.uploadFile']}"
+							progressLabel="#{messages['common.uploading']}"
+							doneLabel="#{messages['common.done']}"
+							clearAllControlLabel="#{messages['common.clearAll']}"
+							clearControlLabel="#{messages['common.clear']}"
+							stopControlLabel="#{messages['common.stop']}" ajaxSingle="true"
+							listHeight="75px">
+							<f:facet name="label">
+								<h:outputText value="{_KB}KB desde {MB}MB uploaded --- {mm}:{ss}" />
+							</f:facet>
+							<a:support event="onuploadcomplete" reRender="panelId" />
+							<a:support event="onclear" reRender="logoImage, uploadLogo"
+								action="#{taxpayerRecordHome.clearLogo()}" />
+						</rich:fileUpload>
+
+					</s:decorate>
+					<s:decorate id="logoFieldDecorate" template="../layout/display.xhtml">
+					<s:graphicImage id="logoImage"
+						rendered="#{not empty taxpayerRecordHome.instance.logo}"
+						value="#{taxpayerRecordHome.instance.logo}" width="75%" />
+					</s:decorate>
+				</h:panelGrid>
+				<h:panelGrid id="flagPanelId" columns="1">
+					<s:decorate id="flagField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['taxpayerRecord.flag']}:</ui:define>
+
+						<rich:fileUpload
+							fileUploadListener="#{taxpayerRecordHome.flagListener}"
+							maxFilesQuantity="1" id="uploadFlag" immediateUpload="true"
+							acceptedTypes="jpg, gif, png, jpeg"
+							uploadControlLabel="#{messages['taxpayerRecord.flag']}"
+							addControlLabel="#{messages['common.uploadFile']}"
+							progressLabel="#{messages['common.uploading']}"
+							doneLabel="#{messages['common.done']}"
+							clearAllControlLabel="#{messages['common.clearAll']}"
+							clearControlLabel="#{messages['common.clear']}"
+							stopControlLabel="#{messages['common.stop']}" ajaxSingle="true"
+							listHeight="75px">
+							<f:facet name="label">
+								<h:outputText value="{_KB}KB desde {MB}MB uploaded --- {mm}:{ss}" />
+							</f:facet>
+							<a:support event="onuploadcomplete" reRender="panelId" />
+							<a:support event="onclear" reRender="flagImage, uploadFlag"
+								action="#{taxpayerRecordHome.clearFlag()}" />
+						</rich:fileUpload>
+
+					</s:decorate>
+					<s:decorate id="flagFieldDecorate" template="../layout/display.xhtml">
+						<s:graphicImage id="flagImage"
+							rendered="#{not empty taxpayerRecordHome.instance.flag}"
+							value="#{taxpayerRecordHome.instance.flag}" width="75%" />
+					</s:decorate>
+			</h:panelGrid>
+		</h:panelGrid>
+
+		<div style="clear: both">
+			<span class="required">*</span> #{messages['common.requiredFields']}
+		</div>
+
+	</rich:panel>
+			
+			<div class="actionButtons">
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{taxpayerRecordHome.save}"/>
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/income/TaxpayerRecordList.xhtml" />
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
+

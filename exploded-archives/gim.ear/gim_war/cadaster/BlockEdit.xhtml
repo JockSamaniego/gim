@@ -1,0 +1,284 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:include src="fragment/BlockLimitEditPanel.xhtml" />
+
+		<h:form id="block" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{blockHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['block']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{messages['block.territorialIdentification']}</f:facet>
+				<rich:messages errorClass="errors"/>
+				<ui:debug id="debug" />
+				<h:panelGrid columns="7">
+
+					<s:decorate id="provinceField"
+						template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{territorialDivisionTypes.get(0).name}</ui:define>
+						<h:inputText value="#{defaultProvince.name}" disabled="true" />
+					</s:decorate>
+
+					<s:decorate id="cantonField"
+						template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{territorialDivisionTypes.get(1).name}</ui:define>
+						<h:inputText value="#{defaultCanton.name}" disabled="true" />
+					</s:decorate>
+
+					<s:decorate id="parishField"
+						template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{territorialDivisionTypes.get(2).name}</ui:define>
+						<h:selectOneMenu id="parish" value="#{blockHome.parish}">
+							<s:selectItems
+								value="#{blockHome.findParishes(defaultCanton.id)}" var="parish"
+								label="#{parish.name}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEntity />
+							<a:support event="onchange"
+								reRender="zoneField, sector, code, builtCode, blockIdField" ajaxSingle="true"
+								action="#{blockHome.resetAll()}" />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="zoneField" template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{territorialDivisionTypes.get(3).name}</ui:define>
+						<h:selectOneMenu id="zone" value="#{blockHome.zone}" >
+							<s:selectItems value="#{blockHome.findZones()}"
+								var="territorialDivisionType"
+								label="#{messages[territorialDivisionType.name]}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEntity />
+							<a:support event="onchange" reRender="sector, builtCode, blockIdField"
+								ajaxSingle="true" action="#{blockHome.resetSectorAndCode()}" />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="sectorField"
+						template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{territorialDivisionTypes.get(4).name}</ui:define>
+						<h:selectOneMenu id="sector" value="#{blockHome.sector}"
+							required="true">
+							<s:selectItems value="#{blockHome.findSectors()}"
+								var="territorialDivisionSector"
+								label="#{messages[territorialDivisionSector.name]}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEntity />
+							<a:support event="onchange" reRender="builtCode, blockIdField"
+								ajaxSingle="true" action="#{blockHome.generateBlockCode}" />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="blockField"
+						template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.code']}</ui:define>
+						<h:inputText id="code" value="#{blockHome.instance.code}" 
+							required="true" size="5" maxlength="3">
+							<a:support event="onblur" reRender="builtCode, blockField, blockIdField" ajaxSingle="true"
+								action="#{blockHome.generateBlockCode}" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="valueSquareField"
+						template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.valueSquareMeter']}</ui:define>
+						<h:inputText id="valueSquareMeter" required="true"
+							value="#{blockHome.instance.valueBySquareMeter}" size="5"
+							maxlength="3">
+							<f:convertNumber pattern="#0.00" />
+						</h:inputText>
+					</s:decorate>
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+				
+				<s:decorate id="blockIdField"
+						template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.territorialId']}</ui:define>
+						<h:inputText id="builtCode" size="20" maxlength="20"
+						value="#{blockHome.instance.cadastralCode}" required="true"
+						readonly="true" />
+					</s:decorate>
+					
+					<s:decorate id="previousCodeField"
+						template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.previousCode']}</ui:define>
+						<h:inputText id="previousCode" size="20" maxlength="20"
+						value="#{blockHome.instance.previousCode}" />
+					</s:decorate>
+					
+					<s:decorate id="neighborhoodField"
+						template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['property.neighborhood']}</ui:define>
+						<h:selectOneMenu id="neighborhoodId" required="true"
+							value="#{blockHome.instance.neighborhood}">
+							<s:selectItems value="#{blockHome.findNeighborhoods()}"
+								var="neighborhood"
+								label="#{neighborhood.name} #{neighborhood.place == null ? '' : ' - '} #{neighborhood.place == null ? '' : neighborhood.place}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEntity />
+						</h:selectOneMenu>
+					</s:decorate>
+
+				</h:panelGrid>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+			</rich:panel>
+
+			<rich:panel>
+				<f:facet name="header">#{messages['block.sketch']}</f:facet>
+				<h:panelGrid columns="2" columnClasses="topAligned" width="100%">
+					<h:panelGrid width="100%">
+						<h:panelGrid columns="2">
+							<h:outputText value="#{messages['block.propertyLimit']}" />
+							<rich:inputNumberSpinner
+								value="#{blockHome.instance.propertyLimit}" inputSize="4"
+								maxValue="100" />
+						</h:panelGrid>
+						<ui:include src="fragment/BlockCoordinates.xhtml" />
+						#{messages['block.sketch']}
+						<rich:fileUpload fileUploadListener="#{blockHome.sketchListener}"
+							maxFilesQuantity="1" reRender="table" id="upload"
+							immediateUpload="true" acceptedTypes="jpg, gif, png, jpeg"
+							uploadControlLabel="#{messages['block.sketch']}"
+							addControlLabel="#{messages['common.uploadFile']}"
+							progressLabel="#{messages['common.uploading']}"
+							doneLabel="#{messages['common.done']}"
+							clearAllControlLabel="#{messages['common.clearAll']}"
+							clearControlLabel="#{messages['common.clear']}"
+							stopControlLabel="#{messages['common.stop']}" listHeight="75px"
+							ajaxSingle="true">
+							<a:support event="onuploadcomplete" reRender="sketchImage" />
+							<a:support event="onclear" reRender="sketchImage, upload"
+								action="#{blockHome.clearSketch()}" />
+						</rich:fileUpload>
+					</h:panelGrid>
+
+					<s:graphicImage id="sketchImage"
+						value="#{blockHome.instance.sketch.data}" width="100%" />
+				</h:panelGrid>
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<rich:panel id="blockLimitsPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="#{messages['block.limits']}" />
+
+						<a:commandButton id="createBlockLimit"
+							action="#{blockHome.createBlockLimit()}"
+							reRender="blockLimitEditPanel" ajaxSingle="true"
+							eventsQueue="gimEventsQueue"
+							oncomplete="Richfaces.showModalPanel('blockLimitEditPanel',{width:600, height:500})"
+							value="#{messages['block.addLimit']}" />
+					</h:panelGrid>
+				</f:facet>
+
+				<h:outputText value="#{messages['block.nolimitsassociated']}"
+					rendered="#{empty blockHome.limits}" />
+
+				<rich:dataTable value="#{blockHome.limits}" var="_blockLimit"
+					rendered="#{not empty blockHome.limits}"
+					rowClasses="rvgRowOne,rvgRowTwo" id="limitsTable">
+					<rich:column>
+						<f:facet name="header">#{messages['blockLimit.name']}</f:facet>
+						<h:outputText
+							value="#{_blockLimit.street.name} #{_blockLimit.street.place == null ? '' :  ' - '} #{_blockLimit.street.place == null ? '' :  _blockLimit.street.place}" />
+					</rich:column>
+					<rich:column styleClass="right">
+						<f:facet name="header">#{messages['block.blockFront']}</f:facet>
+						<h:outputText value="#{_blockLimit.blockFront}">
+						</h:outputText>
+					</rich:column>
+					<rich:column styleClass="right">
+						<f:facet name="header">#{messages['block.sidewalkWidth']}</f:facet>
+						<h:outputText value="#{_blockLimit.sidewalkWidth}">
+						</h:outputText>
+					</rich:column>
+					<rich:column styleClass="right">
+						<f:facet name="header">#{messages['block.streetWidth']}</f:facet>
+						<h:outputText value="#{_blockLimit.streetWidth}">
+						</h:outputText>
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">#{messages['block.waterType']}</f:facet>
+						<h:selectBooleanCheckbox value="#{_blockLimit.hasWater}" disabled="true"
+							readonly="true" />
+						<h:outputText value="#{messages[_blockLimit.waterType.name()]}" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">#{messages['block.sewerageType']}</f:facet>
+						<h:selectBooleanCheckbox value="#{_blockLimit.hasSewerage}" disabled="true"
+							readonly="true" />
+						<h:outputText value="#{messages[_blockLimit.sewerageType.name()]}" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">#{messages['block.electricLineType']}</f:facet>
+						<h:selectBooleanCheckbox value="#{_blockLimit.hasElectricity}" disabled="true"
+							readonly="true" />
+						<h:outputText
+							value="#{messages[_blockLimit.electricLineType.name()]}" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">#{messages['block.telephonyLineType']}</f:facet>
+						<h:selectBooleanCheckbox value="#{_blockLimit.hasTelephony}" disabled="true"
+							readonly="true" />
+						<h:outputText
+							value="#{messages[_blockLimit.telephonyLineType.name()]}" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<a:commandButton id="editBlockLimit"
+							action="#{blockHome.beforeEditLimit(_blockLimit)}"
+							reRender="blockLimitEditPanel" ajaxSingle="true"
+							eventsQueue="gimEventsQueue"
+							oncomplete="Richfaces.showModalPanel('blockLimitEditPanel',{width:600, height:500})"
+							value="#{messages['block.editLimit']}" />
+					</rich:column>
+
+				</rich:dataTable>
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{blockHome.save()}" disabled="#{!blockHome.wired}"
+					rendered="#{!blockHome.managed and !readOnly}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{blockHome.save()}" rendered="#{blockHome.managed and !readOnly}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/cadaster/BlockList.xhtml" rendered="#{!readOnly}"/>
+					
+			<s:button id="back" bypassDisabled="true"
+                   value="#{messages['common.back']}"
+             propagation="none"
+                    view="/cadaster/BlockList.xhtml"
+                rendered="#{readOnly}">                
+                </s:button>
+
+			</div>
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

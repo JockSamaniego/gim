@@ -1,0 +1,83 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="standType" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['standType.editFormTitle']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{messages['standType']}</f:facet>
+
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['standType.name']}</ui:define>
+					<h:inputText id="name" required="true" size="25" maxlength="25"
+						value="#{standTypeHome.instance.name}"
+						style="text-transform: uppercase">
+						<a:support event="onblur" reRender="nameField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<!-- s:decorate id="isActiveField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['standType.isActive']}</ui:define>
+					<h:selectBooleanCheckbox id="isActive"
+						value=" # { standTypeHome.instance.isActive}" />
+				</s:decorate-->
+				<s:decorate id="descriptionField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['standType.reason']}</ui:define>
+					<h:inputTextarea id="description" cols="80" rows="3"
+						value="#{standTypeHome.instance.reason}" />
+				</s:decorate>
+
+				<g:entryChooser id="entryChooser" label="#{messages['entry']}"
+					reasonLabel="#{messages['entry.reason']}"
+					criteria="#{standTypeHome.criteriaEntry}"
+					entry="#{standTypeHome.instance.entry}"
+					entryCode="#{standTypeHome.entryCode}" bean="#{standTypeHome}"
+					searchAction="searchEntry" entriesList="#{standTypeHome.entries}"
+					searchByCriteriaAction="searchEntryByCriteria"
+					clearSearchPanelAction="clearSearchEntryPanel"
+					entryChosenListenerName="entrySelectedListener" />
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{standTypeHome.persist}"
+					disabled="#{!standTypeHome.wired}"
+					rendered="#{!standTypeHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{standTypeHome.update}"
+					rendered="#{standTypeHome.managed}" />
+
+				<!-- h:commandButton id="delete" value="Delete"
+					action="# { standTypeHome.remove}" immediate="true"
+					rendered="# { standTypeHome.managed}" /-->
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/market/StandTypeList.xhtml" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

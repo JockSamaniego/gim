@@ -1,0 +1,150 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core" xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="waterMeterAddPanel" width="800" height="500"
+		style="overflow:auto" moveable="false">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['waterSupply.editWaterMeter']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkWMAP" />
+				<rich:componentControl for="waterMeterAddPanel"
+					attachTo="hidelinkWMAP" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="waterMeterAddForm">
+			<h:panelGrid width="100%">
+
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+			</h:panelGrid>
+			<h:panelGrid width="100%" columns="3" id="waterMeterpanel">
+				<s:decorate id="waterMeterSerialField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">#{messages['waterMeter.serial']}</ui:define>
+					<h:inputText value="#{waterSupplyHome.waterMeter.serial}" size="10"
+						required="true">
+						<a:support event="onblur" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="waterMeterDigitsNumberField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">#{messages['waterMeter.disgistNumber']}</ui:define>
+					<h:inputText value="#{waterSupplyHome.waterMeter.digitsNumber}"
+						size="10" required="true">
+						<a:support event="onblur" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="waterMeterDimensionField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">#{messages['waterMeter.dimension']}</ui:define>
+					<h:inputText value="#{waterSupplyHome.waterMeter.dimension}"
+						size="10" required="true">
+						<a:support event="onblur" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="waterMeterIsActiveField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">#{messages['waterMeter.active']}</ui:define>
+					<h:selectBooleanCheckbox
+						value="#{waterSupplyHome.waterMeter.isActive}" size="10"
+						required="true">
+						<a:support event="onblur" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>
+				</s:decorate>
+
+				<s:decorate id="waterMeterStatusField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">#{messages['waterMeter.status']}</ui:define>
+					<h:selectOneMenu id="waterMeterStatusName" required="true"
+						value="#{waterSupplyHome.waterMeter.waterMeterStatus}">
+						<s:selectItems value="#{waterMeterStatuses}"
+							var="_waterMeterStatus" label="#{_waterMeterStatus.name}" />
+						<s:convertEntity />
+						<a:support event="onblur" reRender="waterMeterStatusField"
+							ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+			</h:panelGrid>
+
+			<div class="actionButtons">
+				<a:commandButton
+					action="#{waterSupplyHome.addWaterMeterConsumption()}"
+					value="#{messages['common.accept']}"
+					reRender="waterMetersPanel, waterMeterTable, waterMeterpanel, actualMeterId" />
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}" reRender="waterMetersPanel"
+					oncomplete="Richfaces.hideModalPanel('waterMeterAddPanel');"
+					bypassUpdates="true" />
+
+			</div>
+
+			<rich:panel id="waterMetersPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="#{messages['waterSupply.meters']}" />
+					</h:panelGrid>
+				</f:facet>
+
+				<rich:dataTable id="waterMeterTable" var="_waterMeters"
+					rowClasses="odd-row, even-row"
+					value="#{waterSupplyHome.waterMeters}" rows="4">
+
+					<f:facet name="footer">
+						<g:dataScroller maxPages="10" for="waterMeterTable"
+							style="float:right;" />
+					</f:facet>
+
+					<rich:column sortBy="#{_waterMeters.serial}" styleClass="action">
+						<f:facet name="header">#{messages['waterMeter.serial']}</f:facet>
+						<h:outputText value="#{_waterMeters.serial}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_waterMeters.digitsNumber}"
+						styleClass="action">
+						<f:facet name="header">#{messages['waterMeter.disgistNumber']}</f:facet>
+						<h:outputText value="#{_waterMeters.digitsNumber}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_waterMeters.dimension}" styleClass="action">
+						<f:facet name="header">#{messages['waterMeter.dimension']}</f:facet>
+						<h:outputText value="#{_waterMeters.dimension}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_waterMeters.isActive}" styleClass="action">
+						<f:facet name="header">#{messages['waterMeter.active']}</f:facet>
+						<h:selectBooleanCheckbox value="#{_waterMeters.isActive}"
+							disabled="true" />
+					</rich:column>
+
+					<rich:column sortBy="#{_waterMeters.waterMeterStatus.name}"
+						styleClass="action">
+						<f:facet name="header">#{messages['waterMeter.status']}</f:facet>
+						<h:outputText value="#{_waterMeters.waterMeterStatus.name}" />
+					</rich:column>					
+
+				</rich:dataTable>
+			</rich:panel>
+
+		</h:form>
+	</rich:modalPanel>
+</ui:composition>

@@ -1,0 +1,30 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.tax
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.Domain;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
+import ec.gob.gim.revenue.model.adjunct.WaterServiceReference;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+
+
+#declare any global variables here
+rule "Servicio de alcantarillado"
+	no-loop true
+	salience 0
+	when
+		$itemAlcantarillado : Item(entry.code == "IAP-APB");
+		$mb : MunicipalBond();
+		$wsr : WaterServiceReference(consumption.waterSupply.hasSewerage == Boolean.TRUE);
+	then
+		Item itemBase = $mb.getItems().get(0);
+		System.out.println("ALCANTARILLADO ---> Amount: "+itemBase.getAmount()+" Value: "+itemBase.getValue());
+		$itemAlcantarillado.setValue(new BigDecimal(0.25).multiply(itemBase.getValue()));
+		$itemAlcantarillado.setTotal($itemAlcantarillado.getValue());		
+end
+
+

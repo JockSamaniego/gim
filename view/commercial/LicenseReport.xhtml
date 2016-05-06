@@ -1,0 +1,422 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<h:form id="reportLicense" styleClass="edit">
+			<ui:debug id="uiDebug" />
+			<rich:panel>
+				<f:facet name="header">Reporte de permisos de funcionamiento
+	            </f:facet>
+				<s:decorate id="licenseField" template="../layout/edit.xhtml" >
+					<ui:define name="label">Criterio de búsqueda: </ui:define>
+					<h:selectOneMenu id="operating" value="#{businessHome.licenseCriteria}">
+						<f:selectItem itemValue="nulo" itemLabel="-seleccione uno-" />
+						<f:selectItem itemValue="con permiso actual" itemLabel="con permiso actual" />
+		   				<f:selectItem itemValue="sin permiso actual" itemLabel="sin permiso actual" />
+		   				<f:selectItem itemValue="inactivos" itemLabel="inactivos" />
+					</h:selectOneMenu>
+				</s:decorate>
+				<div style="clear: both">	
+				</div>
+				<div class="actionButtons">
+					<a:commandButton id="generateReport"
+						reRender="localLicenseList, localNoLicenseList, localNoActiveList, detailPanel2, reportLicense"
+						value="#{messages['income.generateReport']}"
+						action="#{businessHome.licenseSelected}" />
+				</div>
+			</rich:panel>
+			
+			
+			
+			
+			
+			
+			<rich:panel id="localLicenseList" width="100%" rendered="#{businessHome.licenseState == 1}" >
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{businessHome.messageLicense} (#{empty localLicenseList.resultList ? 0 : (localLicenseList.paginated ? localLicenseList.resultCount : localLicenseList.resultList.size)})" />
+					</h:panelGrid>
+				</f:facet>
+
+				<div class="results" id="licenseList">
+
+	
+				<rich:panel rendered="#{empty localLicenseList.resultList}">
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty localLicenseList.resultList}" />
+				</rich:panel>
+
+				<rich:dataTable id="localListTable" var="_local"
+					width="100%" value="#{localLicenseList.resultList}"
+					columnClasses="left, left, left, left, left, left, left, left"
+					rendered="#{not empty localLicenseList.resultList}">
+		
+					<rich:column>
+						<f:facet name="header">
+						id
+					</f:facet>
+						<h:outputText value="#{_local.id}" />
+					</rich:column>
+					
+					<rich:column>
+						<f:facet name="header">
+						local comercial
+					</f:facet>
+						<h:outputText value="#{_local.business.name}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">
+						nombre del local
+					</f:facet>
+						<h:outputText value="#{_local.name}" />
+					</rich:column>
+					
+					<rich:column styleClass="center">
+						<f:facet name="header">
+						está activo?
+					</f:facet>
+						<h:selectBooleanCheckbox value="#{_local.isActive}"
+								disabled="true" />
+					</rich:column>
+						
+					<rich:column>
+						<f:facet name="header">
+						propietario
+					</f:facet>
+						<h:outputText value="#{_local.business.owner.name}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">
+						dirección 
+					</f:facet>
+						<h:outputText value="#{_local.address.street}" />
+					</rich:column>
+
+					<rich:column styleClass="center">
+						<f:facet name="header">
+						ced/ruc
+					</f:facet>
+						<h:outputText value="#{_local.business.cedruc}" />
+					</rich:column>
+					
+					<rich:column styleClass="center">
+						<f:facet name="header">
+						último permiso
+					</f:facet>
+						<h:outputText value="#{_local.licenseyear}" />
+					</rich:column>
+
+				</rich:dataTable>
+				</div>
+				<div class="tableControl">
+
+					<s:link view="/commercial/LicenseReport.xhtml"
+						rendered="#{localLicenseList.previousExists}"
+						value="#{messages.left} #{messages['common.firstPage']}"
+						id="firstPage">
+						<f:param name="firstResult" value="0" />
+					</s:link>
+		
+					<s:link view="/commercial/LicenseReport.xhtml"
+						rendered="#{localLicenseList.previousExists}"
+						value="#{messages.left} #{messages['common.previousPage']}"
+						id="previousPage">
+						<f:param name="firstResult"
+							value="#{localLicenseList.previousFirstResult}" />
+					</s:link>
+		
+					<s:link view="/commercial/LicenseReport.xhtml"
+						rendered="#{localLicenseList.nextExists}"
+						value="#{messages['common.nextPage']} #{messages.right}"
+						id="nextPage">
+						<f:param name="firstResult" value="#{localLicenseList.nextFirstResult}" />
+					</s:link>
+		
+					<s:link view="/commercial/LicenseReport.xhtml"
+						rendered="#{localLicenseList.nextExists}"
+						value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+						id="lastPage">
+						<f:param name="firstResult" value="#{localLicenseList.lastFirstResult}" />
+					</s:link>
+		
+				</div>
+			</rich:panel>
+			
+			
+			
+			
+			
+			
+			
+			
+			<rich:panel id="localNoLicenseList" width="100%" rendered="#{businessHome.licenseState == 2}" >
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{businessHome.messageLicense} (#{empty localNoLicenseList.resultList ? 0 : (localNoLicenseList.paginated ? localNoLicenseList.resultCount : localNoLicenseList.resultList.size)})" />
+					</h:panelGrid>
+				</f:facet>
+
+				<div class="results" id="NolicenseList">
+
+	
+				<rich:panel rendered="#{empty localNoLicenseList.resultList}">
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty localNoLicenseList.resultList}" />
+				</rich:panel>
+
+				<rich:dataTable id="localNoLicenseListTable" var="_local"
+					width="100%" value="#{localNoLicenseList.resultList}"
+					columnClasses="left, left, left, left, left, left, left, left"
+					rendered="#{not empty localNoLicenseList.resultList}">
+		
+					<rich:column>
+						<f:facet name="header">
+						id
+					</f:facet>
+						<h:outputText value="#{_local.id}" />
+					</rich:column>
+					
+					<rich:column>
+						<f:facet name="header">
+						local comercial
+					</f:facet>
+						<h:outputText value="#{_local.business.name}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">
+						nombre del local
+					</f:facet>
+						<h:outputText value="#{_local.name}" />
+					</rich:column>
+					
+					<rich:column styleClass="center">
+						<f:facet name="header">
+						está activo?
+					</f:facet>
+						<h:selectBooleanCheckbox value="#{_local.isActive}"
+								disabled="true" />
+					</rich:column>
+						
+					<rich:column>
+						<f:facet name="header">
+						propietario
+					</f:facet>
+						<h:outputText value="#{_local.business.owner.name}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">
+						dirección 
+					</f:facet>
+						<h:outputText value="#{_local.address.street}" />
+					</rich:column>
+
+					<rich:column styleClass="center">
+						<f:facet name="header">
+						ced/ruc
+					</f:facet>
+						<h:outputText value="#{_local.business.cedruc}" />
+					</rich:column>
+					
+					<rich:column styleClass="center">
+						<f:facet name="header">
+						último permiso
+					</f:facet>
+						<h:outputText value="#{_local.licenseyear}" />
+					</rich:column>
+
+				</rich:dataTable>
+				</div>
+				<div class="tableControl">
+
+					<s:link view="/commercial/LicenseReport.xhtml"
+						rendered="#{localNoLicenseList.previousExists}"
+						value="#{messages.left} #{messages['common.firstPage']}"
+						id="firstPage2">
+						<f:param name="firstResult2" value="0" />
+					</s:link>
+		
+					<s:link view="/commercial/LicenseReport.xhtml"
+						rendered="#{localNoLicenseList.previousExists}"
+						value="#{messages.left} #{messages['common.previousPage']}"
+						id="previousPage2">
+						<f:param name="firstResult2"
+							value="#{localNoLicenseList.previousFirstResult}" />
+					</s:link>
+		
+					<s:link view="/commercial/LicenseReport.xhtml"
+						rendered="#{localNoLicenseList.nextExists}"
+						value="#{messages['common.nextPage']} #{messages.right}"
+						id="nextPage2">
+						<f:param name="firstResult2" value="#{localNoLicenseList.nextFirstResult}" />
+					</s:link>
+		
+					<s:link view="/commercial/LicenseReport.xhtml"
+						rendered="#{localNoLicenseList.nextExists}"
+						value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+						id="lastPage2">
+						<f:param name="firstResult2" value="#{localNoLicenseList.lastFirstResult}" />
+					</s:link>
+		
+				</div>
+			</rich:panel>
+			
+			
+			
+			
+			
+			
+			<rich:panel id="localNoActiveList" width="100%" rendered="#{businessHome.licenseState == 0}" >
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{businessHome.messageLicense} (#{empty localNoActiveList.resultList ? 0 : (localNoActiveList.paginated ? localNoActiveList.resultCount : localNoActiveList.resultList.size)})" />
+					</h:panelGrid>
+				</f:facet>
+
+				<div class="results" id="NoActiveList">
+
+	
+				<rich:panel rendered="#{empty localNoActiveList.resultList}">
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty localNoActiveList.resultList}" />
+				</rich:panel>
+
+				<rich:dataTable id="localNoActiveListTable" var="_local"
+					width="100%" value="#{localNoActiveList.resultList}"
+					columnClasses="left, left, left, left, left, left, left, left"
+					rendered="#{not empty localNoActiveList.resultList}">
+		
+					<rich:column>
+						<f:facet name="header">
+						id
+					</f:facet>
+						<h:outputText value="#{_local.id}" />
+					</rich:column>
+					
+					<rich:column>
+						<f:facet name="header">
+						local comercial
+					</f:facet>
+						<h:outputText value="#{_local.business.name}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">
+						nombre del local
+					</f:facet>
+						<h:outputText value="#{_local.name}" />
+					</rich:column>
+					
+					<rich:column styleClass="center">
+						<f:facet name="header">
+						está activo?
+					</f:facet>
+						<h:selectBooleanCheckbox value="#{_local.isActive}"
+								disabled="true" />
+					</rich:column>
+						
+					<rich:column>
+						<f:facet name="header">
+						propietario
+					</f:facet>
+						<h:outputText value="#{_local.business.owner.name}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">
+						dirección 
+					</f:facet>
+						<h:outputText value="#{_local.address.street}" />
+					</rich:column>
+
+					<rich:column styleClass="center">
+						<f:facet name="header">
+						ced/ruc
+					</f:facet>
+						<h:outputText value="#{_local.business.cedruc}" />
+					</rich:column>
+					
+					<rich:column styleClass="center">
+						<f:facet name="header">
+						último permiso
+					</f:facet>
+						<h:outputText value="#{_local.licenseyear}" />
+					</rich:column>
+
+				</rich:dataTable>
+				</div>
+				<div class="tableControl">
+
+					<s:link view="/commercial/LicenseReport.xhtml"
+						rendered="#{localNoActiveList.previousExists}"
+						value="#{messages.left} #{messages['common.firstPage']}"
+						id="firstPage3">
+						<f:param name="firstResult3" value="0" />
+					</s:link>
+		
+					<s:link view="/commercial/LicenseReport.xhtml"
+						rendered="#{localNoActiveList.previousExists}"
+						value="#{messages.left} #{messages['common.previousPage']}"
+						id="previousPage3">
+						<f:param name="firstResult3"
+							value="#{localNoActiveList.previousFirstResult}" />
+					</s:link>
+		
+					<s:link view="/commercial/LicenseReport.xhtml"
+						rendered="#{localNoActiveList.nextExists}"
+						value="#{messages['common.nextPage']} #{messages.right}"
+						id="nextPage3">
+						<f:param name="firstResult3" value="#{localNoActiveList.nextFirstResult}" />
+					</s:link>
+		
+					<s:link view="/commercial/LicenseReport.xhtml"
+						rendered="#{localNoActiveList.nextExists}"
+						value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+						id="lastPage3">
+						<f:param name="firstResult3" value="#{localNoActiveList.lastFirstResult}" />
+					</s:link>
+		
+				</div>
+			</rich:panel>
+			
+
+			<rich:panel id="localNullList" width="100%" rendered="#{businessHome.licenseState == 4}" >
+				
+			</rich:panel>
+			
+			<h:panelGrid id="detailPanel2" columns="3">
+ 				<s:button id="printReport" rendered="#{not empty localLicenseList.resultList and businessHome.licenseState == 1}"
+						view="/commercial/report/LocalsLicenseReport.xhtml"
+						value="#{messages['common.print']}"/>
+				<s:button id="printReport2" rendered="#{not empty localNoLicenseList.resultList and businessHome.licenseState == 2}"
+						view="/commercial/report/LocalsLicenseReport.xhtml"
+						value="#{messages['common.print']}"/>
+				<s:button id="printReport3" rendered="#{not empty localNoActiveList.resultList and businessHome.licenseState == 0}"
+						view="/commercial/report/LocalsLicenseReport.xhtml"
+						value="#{messages['common.print']}"/>
+						
+				<s:button id="back" value="#{messages['common.back']}"
+					propagation="end" view="/home.xhtml" />
+			</h:panelGrid>
+		</h:form>
+		
+		
+		
+		
+	</ui:define>
+
+</ui:composition>

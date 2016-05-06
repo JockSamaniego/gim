@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      login-required="true" >
+
+   <begin-conversation join="true" flush-mode="MANUAL" />
+ <param name="firstResult" value="#{localLicenseList.firstResult}" />
+ <param name="firstResult2" value="#{localNoLicenseList.firstResult}" />
+ <param name="firstResult3" value="#{localNoActiveList.firstResult}" />
+ <param name="sort" value="#{localLicenseList.orderColumn}" />
+ <param name="dir" value="#{localLicenseList.orderDirection}" />
+ <param name="logic" value="#{localLicenseList.restrictionLogicOperator}" />
+
+</page>

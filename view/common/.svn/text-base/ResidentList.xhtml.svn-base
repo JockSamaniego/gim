@@ -1,0 +1,191 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:debug id="debug" />
+		<ui:include src="fragment/HistoryChangeResidentPanel.xhtml" />
+		
+		<h:form id="residentSearch" styleClass="edit">
+					<ui:debug id="debug" />
+
+			<h:outputText styleClass="formTitle" value="#{messages['resident.manageResidents']}" />
+
+			<rich:simpleTogglePanel label="#{messages['resident.searchFilter']}"
+				switchType="ajax">
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['resident.criteria']}</ui:define>
+					<h:inputText id="criteria" value="#{residentList.criteria}" size="40" maxlength="40"/>
+				</s:decorate>
+				
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['resident.residentType']}</ui:define>
+					<h:selectOneMenu id="residentType" value="#{residentList.residentType}">
+						<s:selectItems value="#{residentTypes}" var="type"
+							label="#{messages[type.name()]}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/common/ResidentList.xhtml" >
+					<f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" />
+			</div>
+
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+
+				<h:panelGrid columns="3" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['resident.searchResults']} (#{empty residentList.resultList ? 0 : (residentList.paginated ? residentList.resultCount : residentList.resultList.size)})" />
+					<s:button view="/common/ResidentEdit.xhtml" id="createPerson"
+						propagation="none" value="#{messages['resident.createPerson']}"
+						rendered="#{empty from}">
+						<f:param name="residentId" />
+						<f:param name="residentType" value="Person"/>
+					</s:button>
+					<s:button view="/common/ResidentEdit.xhtml" id="createLegalEntity"
+						propagation="none" value="#{messages['resident.createLegalEntity']}"
+						rendered="#{empty from}">
+						<f:param name="residentId" />
+						<f:param name="residentType" value="LegalEntity"/>
+					</s:button>
+				</h:panelGrid>
+			</f:facet>
+			<div class="results" id="residentList">
+
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty residentList.resultList}" />
+
+				<rich:dataTable id="residentList" var="_resident"
+					value="#{residentList.resultList}"
+					rendered="#{not empty residentList.resultList}">
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{residentList}" />
+								<ui:param name="propertyLabel" value="#{messages['resident.id']}" />
+								<ui:param name="propertyPath"
+									value="resident.id" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_resident.id}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{residentList}" />
+								<ui:param name="propertyLabel" value="#{messages['resident.identificationNumber']}" />
+								<ui:param name="propertyPath"
+									value="resident.identificationNumber" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_resident.identificationNumber}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{residentList}" />
+								<ui:param name="propertyLabel" value="#{messages['resident.name']}" />
+								<ui:param name="propertyPath" value="resident.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_resident.name}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{residentList}" />
+								<ui:param name="propertyLabel" value="#{messages['resident.identificationType']}" />
+								<ui:param name="propertyPath"
+									value="resident.identificationType" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{messages[_resident.identificationType.name()]}" />
+					</h:column>
+					
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{residentList}" />
+								<ui:param name="propertyLabel" value="#{messages['resident.registerDate']}" />
+								<ui:param name="propertyPath" value="resident.registerDate" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_resident.registerDate}">
+							<s:convertDateTime type="date" dateStyle="short" pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</h:column>
+					<rich:column styleClass="action">
+					<h:form>
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+            			<s:button view="/common/ResidentEdit.xhtml" value="#{messages['common.edit']}"
+							propagation="none" id="residentEdit" rendered="#{empty from}">
+							<f:param name="residentId" value="#{_resident.id}" />
+							<f:param name="residentType" value="#{_resident.class.simpleName}"/>
+						</s:button>
+						<s:button view="/common/ResidentEdit.xhtml" value="#{messages['resident.unifyAccounts']}"
+							propagation="none" id="unifyAccounts" rendered="false">
+							<f:param name="residentId" value="#{_resident.id}" />
+						</s:button>
+						<a:commandButton id="history"
+								action="#{residentHome.loadHistoryChangeForResident(_resident.id)}"
+								reRender="historyChangeResidentPanel" ajaxSingle="true"
+								oncomplete="Richfaces.showModalPanel('historyChangeResidentPanel')"
+								value="#{messages['common.history']}" />
+					</h:form>
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/common/ResidentList.xhtml"
+				rendered="#{residentList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}" id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/common/ResidentList.xhtml"
+				rendered="#{residentList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}" id="previousPage">
+				<f:param name="firstResult"
+					value="#{residentList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/common/ResidentList.xhtml"
+				rendered="#{residentList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}" id="nextPage">
+				<f:param name="firstResult" value="#{residentList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/common/ResidentList.xhtml"
+				rendered="#{residentList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}" id="lastPage">
+				<f:param name="firstResult" value="#{residentList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,141 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="consumptionTablePanel" width="800" height="600"
+		style="overflow:auto" moveable="false">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['consumption.table']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkCT" />
+				<rich:componentControl for="consumptionTablePanel"
+					attachTo="hidelinkCT" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<a:form id="consumptionTableForm">
+
+			<h:panelGrid width="100%">
+
+				<a:region>
+					<rich:dataTable id="recordReadingList" var="service"
+						value="#{routeHome.consumptions}"
+						onRowMouseOver="this.style.backgroundColor='#f4f4ff'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+						<rich:column>
+							<f:facet name="header">#{messages['route.order']}</f:facet>
+							<h:outputText value="#{service.waterSupply.routeOrder}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">#{messages['waterSupply.serviceOwner']}</f:facet>
+							<a:commandLink
+								value="#{service.waterSupply.contract.subscriber.name}"
+								action="#{routeHome.selectInfoConsumption(service)}"
+								oncomplete="Richfaces.showModalPanel('waterMeterInfoPanel')"
+								title="Detalle del servicio"
+								reRender="panelResident, panelProperty" />
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['route.serviceNumber']}</f:facet>
+							<a:commandLink id="actualMeterId"
+								value="#{service.waterSupply.serviceNumber}"
+								action="#{routeHome.selectInfoConsumption(service)}"
+								oncomplete="Richfaces.showModalPanel('waterMeterAddPanel',{width:800, height:500})"
+								title="Medidores" reRender="waterMeterTable, waterMetersPanel"
+								disabled="#{!service.disabled}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['route.waterMeterState']}</f:facet>
+							<h:selectOneMenu id="status" value="#{service.waterMeterStatus}"
+								disabled="#{!service.disabled}">
+								<s:selectItems value="#{waterMeterStatuses}" var="stat"
+									label="#{stat.name}" />
+								<a:support event="onblur" ajaxSingle="true" reRender="status" />
+								<s:convertEntity />
+							</h:selectOneMenu>
+						</rich:column>
+						<rich:column style="text-align:right;">
+							<f:facet name="header">#{messages['route.previousReading']}</f:facet>
+
+							<h:outputText value="#{service.previousReading}"
+								rendered="#{!routeHome.hasEditionReadingRole}" />
+
+							<h:inputText id="preRead" value="#{service.previousReading}"
+								disabled="#{!service.disabled}" size="8"
+								style="text-align:right;"
+								rendered="#{routeHome.hasEditionReadingRole}">
+								<a:support event="onblur" ajaxSingle="true" />
+							</h:inputText>
+
+						</rich:column>
+
+						<rich:column style="text-align:right;">
+							<f:facet name="header">#{messages['route.currentReading']}</f:facet>
+							<h:inputText id="curRead" value="#{service.currentReading}"
+								size="8" style="text-align:right;"
+								disabled="#{!service.disabled}">
+								<a:support event="onblur" ajaxSingle="true"
+									action="#{routeHome.saveRecordReading(service)}"
+									reRender="diffRead,consStat,errMess,isValidRead" />
+							</h:inputText>
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['route.edit']}</f:facet>
+							<h:selectBooleanCheckbox value="#{service.disabled}"
+								disabled="#{routeHome.shoudPreEmit}">
+								<a:support event="onchange" ajaxSingle="true"
+									reRender="preRead,curRead,status,actualMeterId" />
+							</h:selectBooleanCheckbox>
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">#{messages['route.consumptionState']}</f:facet>
+							<h:outputText value="#{service.consumptionState.name}"
+								id="consStat" />
+						</rich:column>
+
+						<rich:column style="text-align:right;">
+							<f:facet name="header">#{messages['route.differenceInReading']}</f:facet>
+							<h:outputText value="#{service.amount}" id="diffRead" />
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['route.validRecord']}</f:facet>
+							<h:graphicImage
+								value="/img/#{service.isValidReading ? 'true.png' : 'error.gif'}"
+								id="isValidRead" />
+						</rich:column>
+						<h:column>
+							<f:facet name="header">#{messages['route.error']}</f:facet>
+							<h:outputText value="#{service.errorMessage}" id="errMess" />
+						</h:column>
+					</rich:dataTable>
+				</a:region>
+			</h:panelGrid>
+
+			<div class="actionButtons">
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('consumptionTablePanel');"
+					bypassUpdates="true" eventsQueue="default" />
+			</div>
+		</a:form>
+	</rich:modalPanel>
+</ui:composition>

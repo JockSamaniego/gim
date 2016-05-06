@@ -1,0 +1,52 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.waterservice
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.Domain;
+import java.math.BigDecimal;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+import ec.gob.gim.waterservice.model.Consumption;
+import ec.gob.gim.waterservice.model.WaterSupply;
+import ec.gob.gim.waterservice.model.WaterSupplyCategory;
+import ec.gob.gim.revenue.model.adjunct.WaterServiceReference;
+
+dialect "java"
+
+rule "Basura"
+	no-loop true
+	salience 0
+	when
+		$item : Item(entry.code == "00043");
+		$mb : MunicipalBond(items contains $item);
+		$wsr : WaterServiceReference();
+	then
+		Item $itemBase = $mb.getItems().get(0);
+		tasaAseoBasura($wsr.getConsumption(),$item, $itemBase);
+end
+
+function void tasaAseoBasura(Consumption $c, Item $subItem, Item $itemBase){
+	BigDecimal $factor = BigDecimal.ZERO;
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("RESIDENCIAL")){
+		$factor = new BigDecimal(0.20);	
+	}else
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("COMERCIAL")){
+		$factor = new BigDecimal(0.30);
+	}else
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("INDUSTRIAL")){
+		$factor = new BigDecimal(0.30);
+	}else
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("OFICIAL")){
+		$factor = new BigDecimal(0.30);
+	}else
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("OFICIAL MEDIO")){
+		$factor = new BigDecimal(0.10);
+	}
+		
+	$subItem.setValue($itemBase.getValue().multiply($factor));	
+	$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+}
+

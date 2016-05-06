@@ -1,0 +1,95 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel>
+		<f:facet name="header">#{messages['property.image']}</f:facet>
+
+		<h:panelGrid id="panelId" columns="2" columnClasses="topAligned">
+		
+			<h:panelGrid id="photoPanelId" columns="1">
+			
+				<s:decorate id="photoField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['property.photo']}:</ui:define>
+					<rich:fileUpload fileUploadListener="#{propertyHome.photoListener}"
+						maxFilesQuantity="1" id="uploadPhoto" immediateUpload="true"
+						acceptedTypes="jpg, gif, png, jpeg"
+						uploadControlLabel="#{messages['property.photo']}"
+						addControlLabel="#{messages['common.uploadFile']}"
+						progressLabel="#{messages['common.uploading']}"
+						doneLabel="#{messages['common.done']}"
+						clearAllControlLabel="#{messages['common.clearAll']}"
+						clearControlLabel="#{messages['common.clear']}"
+						stopControlLabel="#{messages['common.stop']}" ajaxSingle="true"
+						listHeight="75px">
+						<f:facet name="label">
+							<h:outputText value="{_KB}KB desde {MB}MB uploaded --- {mm}:{ss}" />
+						</f:facet>
+						<a:support event="onuploadcomplete" reRender="panelId" />
+						<a:support event="onclear" reRender="photoImage, uploadPhoto"
+							action="#{propertyHome.clearPhoto()}" />
+					</rich:fileUpload>
+				</s:decorate>
+
+				<a:commandButton value="#{messages['property.uploadImage']}"
+					action="#{propertyHome.uploadImage()}"
+					reRender="photoFieldDecorate" immediate="true" />
+
+				<s:decorate id="photoFieldDecorate"
+					template="../../layout/edit.xhtml">
+					<s:graphicImage id="photoImage"
+						rendered="#{propertyHome.statusImage == false and propertyHome.instance.photo.size > 0}"
+						value="#{propertyHome.instance.photo.data}" width="75%" />
+				</s:decorate>
+				
+			</h:panelGrid>
+			
+			<h:panelGrid id="sketchPanelId" columns="1">
+			
+				<s:decorate id="sketchField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['property.sketch']}:</ui:define>
+
+					<rich:fileUpload
+						fileUploadListener="#{propertyHome.sketchListener}"
+						maxFilesQuantity="1" id="uploadSketch" immediateUpload="true"
+						acceptedTypes="jpg, gif, png, jpeg"
+						uploadControlLabel="#{messages['property.sketch']}"
+						addControlLabel="#{messages['common.uploadFile']}"
+						progressLabel="#{messages['common.uploading']}"
+						doneLabel="#{messages['common.done']}"
+						clearAllControlLabel="#{messages['common.clearAll']}"
+						clearControlLabel="#{messages['common.clear']}"
+						stopControlLabel="#{messages['common.stop']}" ajaxSingle="true"
+						listHeight="75px">
+						<f:facet name="label">
+							<h:outputText value="{_KB}KB desde {MB}MB uploaded --- {mm}:{ss}" />
+						</f:facet>
+						<a:support event="onuploadcomplete" reRender="panelId" />
+						<a:support event="onclear" reRender="sketchImage, uploadSketch"
+							action="#{propertyHome.clearSketch()}" />
+					</rich:fileUpload>
+
+				</s:decorate>
+
+				<s:decorate id="skecthFieldDecorate"
+					template="../../layout/edit.xhtml">
+					<s:graphicImage id="sketchImage"
+						rendered="#{propertyHome.instance.sketch.size > 0}"
+						value="#{propertyHome.instance.sketch.data}" width="75%" />
+				</s:decorate>
+				
+			</h:panelGrid>
+			
+		</h:panelGrid>
+
+
+
+	</rich:panel>
+</ui:composition>

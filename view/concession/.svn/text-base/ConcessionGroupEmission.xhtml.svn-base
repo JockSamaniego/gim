@@ -1,0 +1,250 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<a:loadStyle src="/stylesheet/floating_menu.css" />
+
+		<ui:include src="fragment/NewConcessionItemPanel.xhtml" />
+		<ui:include src="fragment/EditConcessionItemPanel.xhtml" />
+		<ui:include src="fragment/FreeConcessionItemPanel.xhtml" />
+		<ui:include src="fragment/EditConcessionItemPlacePanel.xhtml" />
+		<ui:include src="fragment/ChangeConceptItemPlacePanel.xhtml" />
+
+		<h:form id="concessionGroup" styleClass="edit">
+
+			<ui:include src="fragment/ConfirmPreEmissionPanel.xhtml" />
+
+			<!--div class="banner">
+				<p>
+					<a rel="nofollow" href="#">#{messages['market.managementLocals']}</a>
+
+
+				</p>
+			</div-->
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['concessionGroup.preEmission']}" />
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="4" columnClasses="headerTitle," border="0">
+						<h:outputText value="#{messages['concessionGroup']}" />
+
+						<h:panelGrid columns="2">
+							<h:outputText value="#{messages['route.year']}:" />
+							<h:selectOneMenu id="yearaTypes"
+								value="#{concessionGroupHome.year}">
+								<s:selectItems value="#{routeHome.years}" var="year"
+									label="#{year}"
+									noSelectionLabel="#{messages['common.chooseOption']}" />
+								<a:support event="onchange" ajaxSingle="true"
+									action="#{concessionGroupHome.cleanForPrint()}" />
+							</h:selectOneMenu>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<h:outputText value="#{messages['route.month']}:" />
+							<h:selectOneMenu id="monthTypes"
+								value="#{concessionGroupHome.month}">
+								<s:selectItems value="#{monthTypes}" var="month"
+									label="#{messages[month.name()]}"
+									noSelectionLabel="#{messages['common.chooseOption']}" />
+								<s:convertEnum />
+								<a:support event="onchange" ajaxSingle="true"
+									action="#{concessionGroupHome.cleanForPrint()}" />
+							</h:selectOneMenu>
+						</h:panelGrid>
+
+					</h:panelGrid>
+
+				</f:facet>
+
+				<h:panelGrid columns="2">
+					<s:decorate id="concessionClasificationField"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['concessionClasification']}:</ui:define>
+						<h:inputText size="50" maxlength="50"
+							value="#{concessionGroupHome.instance.clasification.name}"
+							readonly="true" />
+					</s:decorate>
+
+					<s:decorate id="nameField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['concessionGroup']}</ui:define>
+						<h:inputText id="name" size="50" maxlength="50"
+							value="#{concessionGroupHome.instance.name}" readonly="true">
+						</h:inputText>
+					</s:decorate>
+
+				</h:panelGrid>
+
+				<rich:dataTable id="standTypeList" var="_standType"
+					value="#{concessionGroupHome.findConcessionPlaceTypeByPlace()}"
+					onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+					<f:facet name="header">
+						<h:outputText value="Rubros"></h:outputText>
+					</f:facet>
+
+					<rich:column>
+						<f:facet name="header">#{messages['standType.name']}</f:facet>
+						<h:outputText value="#{_standType.name}" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">#{messages['standType.reason']}</f:facet>
+						<h:outputText value="#{_standType.reason}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['standType.entry']}</f:facet>
+						<h:outputText
+							value="#{_standType.entry.code} - #{_standType.entry.name}" />
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<a:commandButton value="Cargar" ajaxSingle="true"
+							reRender="concessionItemList, panelInfoRubro"
+							action="#{concessionGroupHome.loadRecords(_standType)}" />
+					</rich:column>
+				</rich:dataTable>
+			</rich:panel>
+
+			<rich:panel id="panelItemList">
+				<f:facet name="header">
+					<h:panelGrid columns="5" columnClasses="headerTitle,">
+
+						<h:panelGrid columns="4"
+							style="background-color:#00ff00;font-size:15px;"
+							id="panelInfoRubro">
+							<h:outputText
+								value="#{messages['concessionPlaces']} (#{concessionGroupHome.items.size()})" />
+
+							<h:outputText
+								value=" - #{concessionGroupHome.concessionPlaceType.name} -" />
+
+							<h:outputText value=" #{concessionGroupHome.year} -" />
+							<h:outputText
+								value=" #{messages[concessionGroupHome.month.name()]}" />
+						</h:panelGrid>
+
+
+						<a:commandButton value="#{messages['common.create']}"
+							eventsQueue="gimEventsQueue" ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('newConcessionItemPanel')"
+							reRender="newConcessionItemPanelForm,tittleInfoPanel"
+							title="Crear nuevo local"
+							action="#{concessionGroupHome.clearNewConcessionItemPanel()}" />
+
+						<a:commandButton value="#{messages['concessionItem.freeItems']}"
+							eventsQueue="gimEventsQueue" ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('freeConcessionImtePanel')"
+							reRender="freeConcessionImtePanelForm" title="Locales libres" />
+
+						<a:commandButton
+							value="#{messages['concessionItem.changeConcept']}"
+							eventsQueue="gimEventsQueue" ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('changeConceptItemPlacePanel')"
+							reRender="changeConceptItemPlacePanelForm,tittleChangePanelEdit"
+							title="Cambiar concepto a todos los items"
+							action="#{concessionGroupHome.clearNewConcessionItemPanel()}" />
+
+
+					</h:panelGrid>
+				</f:facet>
+
+				<rich:dataTable id="concessionItemList" var="_concessionItem"
+					value="#{concessionGroupHome.items}"
+					onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+					<rich:column sortBy="#{_concessionItem.place.internalOrder}">
+						<f:facet name="header">#{messages['place']}</f:facet>
+						<h:outputText value="#{_concessionItem.place.name}" />
+					</rich:column>
+					<rich:column sortBy="#{_concessionItem.place.resident.name}">
+						<f:facet name="header">#{messages['resident']}</f:facet>
+						<h:outputText
+							value="#{_concessionItem.place.resident.identificationNumber} - #{_concessionItem.place.resident.name}" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">#{messages['concessionItem.concept']}</f:facet>
+						<h:outputText value="#{_concessionItem.concept.substring(0,20)}"
+							style="font-size:10px;"
+							rendered="#{_concessionItem.concept.length() gt 20}" />
+						<h:outputText value="#{_concessionItem.concept}"
+							style="font-size:10px;"
+							rendered="#{_concessionItem.concept.length() le 20}" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">#{messages['concessionItem.explanation']}</f:facet>
+						<h:outputText
+							value="#{_concessionItem.explanation.substring(0,20)}"
+							style="font-size:10px;"
+							rendered="#{_concessionItem.explanation.length() gt 20}" />
+						<h:outputText value="#{_concessionItem.explanation}"
+							style="font-size:10px;"
+							rendered="#{_concessionItem.explanation.length() le 20}" />
+					</rich:column>
+
+					<!--h:column>
+						<f:facet name="header">#{messages['concessionItem.consessionPlaceType']}</f:facet>
+						<h:outputText value="#{_concessionItem.place.consessionPlaceType.name}" />
+					</h:column-->
+
+					<rich:column sortBy="#{_concessionItem.productType.name}">
+						<f:facet name="header">#{messages['concessionItem.productType']}</f:facet>
+						<h:outputText value="#{_concessionItem.productType.name}" />
+					</rich:column>
+					<rich:column style="text-align:right;"
+						sortBy="#{_concessionItem.amount}">
+						<f:facet name="header">#{messages['concessionItem.amount']}</f:facet>
+						<h:outputText value="#{_concessionItem.amount}" />
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+
+						<a:commandButton value="#{messages['common.edit']}"
+							action="#{concessionGroupHome.editItemPlace(_concessionItem)}"
+							eventsQueue="gimEventsQueue" ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('editConcessionItemPanel')"
+							reRender="editConcessionItemPanelForm,tittleInfoPanelKEIP"
+							title="Editar" style="font-size:10px;" />
+
+						<a:commandButton value="#{messages['common.noRenovate']}"
+							ajaxSingle="true"
+							action="#{concessionGroupHome.noRenovateAction(_concessionItem)}"
+							reRender="concessionItemList" id="noRenovateSpace"
+							style="font-size:10px;" />
+
+					</rich:column>
+				</rich:dataTable>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<a:commandButton value="#{messages['concessionItem.preEmit']}"
+					eventsQueue="gimEventsQueue" ajaxSingle="true"
+					oncomplete="Richfaces.showModalPanel('confirmPreEmissionPanel')"
+					reRender="panelBotones" title="Locales libres" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/concession/ConcessionGroupListEmission.xhtml" />
+
+			</div>
+		</h:form>
+
+
+	</ui:define>
+
+</ui:composition>

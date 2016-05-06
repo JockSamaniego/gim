@@ -1,0 +1,156 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">		
+
+		<h:form id="moneySearch" styleClass="edit">
+			<ui:debug id="debug" />
+			<rich:simpleTogglePanel label="#{messages['moneyDenomination.searchFilter']}"
+				switchType="ajax">
+								
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['money.moneyType']}</ui:define>
+					<h:selectOneMenu id="moneyType" value="#{moneyList.moneyType}">
+						<s:selectItems value="#{moneyTypes}" var="type"
+							label="#{messages[type.name()]}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+				
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['money.denomination']}</ui:define>
+					<h:inputText id="name" value="#{moneyList.money.denomination}" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/income/MoneyList.xhtml">
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+
+
+			<rich:panel id="moneyListPanelId">
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['money.searchResults']} (#{empty moneyList.resultList ? 0 : (moneyList.paginated ? moneyList.resultCount : moneyList.resultList.size)})" />
+						<s:button view="/income/MoneyEdit.xhtml" id="create"
+							propagation="none" value="#{messages['common.create']}">
+							<f:param name="moneyId" />
+						</s:button>
+					</h:panelGrid>
+				</f:facet>
+				<div class="results" id="moneyList">
+
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty moneyList.resultList}" />
+
+					<rich:dataTable id="moneyList" var="_money"
+						value="#{moneyList.resultList}"
+						rendered="#{not empty moneyList.resultList}">
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{moneyList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['money.moneyType']}" />
+									<ui:param name="propertyPath" value="money.moneyType" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{messages[_money.moneyType.name()]}"/>
+						</h:column>
+						
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{moneyList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['money.denomination']}" />
+									<ui:param name="propertyPath" value="money.denomination" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_money.denomination}"/>
+						</h:column>
+						
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{moneyList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['money.value']}" />
+									<ui:param name="propertyPath" value="money.value" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_money.value}">
+								<f:convertNumber pattern="#0.00"/>
+							</h:outputText>
+						</h:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+
+							<s:button view="/income/MoneyEdit.xhtml"
+								value="#{messages['common.edit']}" propagation="none"
+								id="moneyEdit">
+								<f:param name="moneyId" value="#{_money.id}" />
+							</s:button>
+
+							
+						</rich:column>
+					</rich:dataTable>
+
+				</div>
+			</rich:panel>
+
+			<div class="tableControl">
+
+				<s:link view="/income/MoneyList.xhtml"
+					rendered="#{moneyList.previousExists}"
+					value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+					id="firstPage">
+					<f:param name="firstResult" value="0" />
+				</s:link>
+
+				<s:link view="/income/MoneyList.xhtml"
+					rendered="#{moneyList.previousExists}"
+					value="#{messages.left} #{messages['common.previousPage']}"
+					id="previousPage">
+					<f:param name="firstResult"
+						value="#{moneyList.previousFirstResult}" />
+				</s:link>
+
+				<s:link view="/income/MoneyList.xhtml"
+					rendered="#{moneyList.nextExists}"
+					value="#{messages['common.nextPage']} #{messages.right}"
+					id="nextPage">
+					<f:param name="firstResult" value="#{moneyList.nextFirstResult}" />
+				</s:link>
+
+				<s:link view="/income/MoneyList.xhtml"
+					rendered="#{moneyList.nextExists}"
+					value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+					id="lastPage">
+					<f:param name="firstResult" value="#{moneyList.lastFirstResult}" />
+				</s:link>
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	no-conversation-view-id="/firestation/FireManList.xhtml" login-required="true">
+
+	<begin-conversation join="true" flush-mode="MANUAL" />
+
+	<action execute="#{fireManHome.wire}" />
+
+
+	<param name="fireManFrom"/>
+   	<param name="fireManId" value="#{fireManHome.fireManId}"/>
+   	<param name="personFrom"/>
+   	<param name="personId" value="#{personHome.personId}"/>
+
+   	<param name="residentFrom"/>
+  	 <param name="residentId" value="#{residentHome.residentId}"/>
+
+
+
+
+	<navigation from-action="#{fireManHome.persist}">
+		<rule if-outcome="persisted">
+			<end-conversation />
+			<redirect view-id="/firestation/FireManList.xhtml" />
+		</rule>
+	</navigation>
+
+	<navigation from-action="#{fireManHome.update}">
+		<rule if-outcome="updated">
+			<end-conversation />
+			<redirect view-id="/firestation/FireManList.xhtml" />
+		</rule>
+	</navigation>
+
+	<navigation from-action="#{fireManHome.remove}">
+		<rule if-outcome="removed">
+			<end-conversation />
+			<redirect view-id="/firestation/FireManList.xhtml" />
+		</rule>
+	</navigation>
+
+</page>

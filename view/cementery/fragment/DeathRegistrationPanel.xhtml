@@ -1,0 +1,43 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:g="http://gim.gob.ec/jsf" >
+
+	<rich:panel id="deathRegistrationPanel"  rendered = "#{!unitDeathHome.idDefined}" enabled="#{!unitDeathHome.idDefined}">
+		<f:facet name="header">#{messages['death.generalData']}</f:facet>
+
+		<s:decorate id="deathField" template="../../layout/edit.xhtml" >
+			<ui:define name="label">#{messages['cementery.dateOfDeath']}:</ui:define>
+			<rich:calendar id="deathCalendar" required="true"
+				value="#{deathHome.instance.dateOfDeath}"
+				datePattern="#{messages['common.datePattern']}" />
+		</s:decorate>
+
+		<s:decorate id="unitCementeryField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['cementery.cementery']}:</ui:define>
+			<h:selectOneMenu id="cementeryName" required="true" 
+				value="#{deathHome.instance.cementery}">
+				<s:selectItems value="#{cementeries}"
+				var="_cementery"
+				label="#{_cementery.code} - #{_cementery.name}"/>
+				<s:convertEntity />
+			</h:selectOneMenu>
+		</s:decorate>
+
+		<s:decorate id="obsField" template="../../layout/edit.xhtml" >
+			<ui:define name="label">#{messages['death.observations']}:</ui:define>
+			<h:inputTextarea id="obsDeath"
+				value="#{deathHome.instance.observations}" />
+		</s:decorate>
+
+		<div style="clear: both">
+			<span class="required">*</span>"#{messages['common.requiredFields']}"
+		</div>
+	</rich:panel>
+</ui:composition>

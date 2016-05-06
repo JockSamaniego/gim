@@ -1,0 +1,254 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="blockLimitEditPanel" width="300" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['block.editBlockLimit']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="blockLimitEditPanel" attachTo="hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="blockLimit" styleClass="edit">
+
+			<rich:panel>
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+
+				<div style="clear: both">
+					#{messages['block.streetIdentification']}
+					<rich:separator height="1" />
+				</div>
+
+				<h:panelGrid columns="2" width="100%">
+				<a:region>
+					<s:decorate id="streetField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.street']}</ui:define>
+						<h:inputText id="street" value="#{blockHome.streetName}" size="50"
+							required="true">
+						</h:inputText>
+						<rich:suggestionbox id="suggestionId" for="street" width="240"
+							var="_street" usingSuggestObjects="true"
+							nothingLabel="#{messages['block.streetNotFound']}"
+							suggestionAction="#{blockHome.findStreets}" rules="none"
+							fetchValue="#{_street.name}">
+							<a:support event="onselect" ajaxSingle="true" immediate="true" reRender="streetField"
+								action="#{blockHome.beforeAutcomplete(_street)}"></a:support>
+							<a:support event="onobjectchange" ajaxSingle="true" 
+								immediate="true"
+								action="#{blockHome.beforeAutcomplete(_street)}"></a:support>
+							<h:column>
+								<h:outputText
+									value="#{_street.name} #{_street.place == null ? '' :  ' - '} #{_street.place == null ? '' :  _street.place}" />
+							</h:column>
+						</rich:suggestionbox>
+					</s:decorate>
+					</a:region>
+
+					<s:decorate id="streetTypeField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.streetType']}</ui:define>
+						<h:selectOneMenu id="streetType"
+							value="#{blockHome.blockLimit.streetType}">
+							<s:selectItems value="#{streetTypes}" var="streetType"
+								label="#{streetType.code} - #{streetType.name}" />
+							<s:convertEntity />
+						</h:selectOneMenu>
+					</s:decorate>
+				</h:panelGrid>
+
+
+				<div style="clear: both">
+					#{messages['block.roadDetails']}
+					<rich:separator height="1" />
+				</div>
+
+				<h:panelGrid columns="3" width="100%">
+					<s:decorate id="streetMaterialField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.streetMaterial']}</ui:define>
+						<h:selectOneMenu id="streetMaterial"
+							value="#{blockHome.blockLimit.streetMaterial}">
+							<s:selectItems value="#{streetMaterials}" var="streetMaterial"
+								label="#{streetMaterial.code} - #{streetMaterial.name}" />
+							<s:convertEntity />
+						</h:selectOneMenu>
+					</s:decorate>
+
+
+					<s:decorate id="streetWidthField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.streetWidth']}</ui:define>
+						<h:inputText id="streetWidth" styleClass="right"
+							value="#{blockHome.blockLimit.streetWidth}" size="6">
+							<f:convertNumber pattern="#0.00" />
+						</h:inputText>
+					</s:decorate>
+
+
+					<s:decorate id="blockFrontField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.blockFront']}</ui:define>
+						<h:inputText id="blockFront" styleClass="right"
+							value="#{blockHome.blockLimit.blockFront}" size="6">
+							<f:convertNumber pattern="#0.00" />
+						</h:inputText>
+					</s:decorate>
+				</h:panelGrid>
+
+				<div style="clear: both">
+					#{messages['block.sidewalkDetails']}
+					<rich:separator height="1" />
+				</div>
+
+
+				<h:panelGrid columns="2" width="100%">
+					<s:decorate id="sidewalkMaterialField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.sidewalkMaterial']}</ui:define>
+						<h:selectOneMenu id="sidewalkMaterial"
+							value="#{blockHome.blockLimit.sidewalkMaterial}">
+							<s:selectItems value="#{sidewalkMaterials}"
+								var="sidewalkMaterial"
+								label="#{sidewalkMaterial.code} - #{sidewalkMaterial.name}" />
+							<s:convertEntity />
+						</h:selectOneMenu>
+					</s:decorate>
+
+
+					<s:decorate id="sidewalkWidthField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.sidewalkWidth']}</ui:define>
+						<h:inputText id="sidewalkWidth" styleClass="right"
+							value="#{blockHome.blockLimit.sidewalkWidth}" size="6">
+							<f:convertNumber pattern="#0.00" />
+						</h:inputText>
+					</s:decorate>
+				</h:panelGrid>
+
+				<div style="clear: both">
+					#{messages['block.infrastructure']}
+					<rich:separator height="1" />
+				</div>
+
+				<h:panelGrid columns="2" width="100%">
+
+					<s:decorate id="waterTypeField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.waterType']}</ui:define>
+						<h:selectBooleanCheckbox id="hasWater"
+							value="#{blockHome.blockLimit.hasWater}">
+							<a:support event="onchange" reRender="waterType"
+								ajaxSingle="true" />
+						</h:selectBooleanCheckbox>
+
+						<h:selectOneMenu id="waterType"
+							value="#{blockHome.blockLimit.waterType}"
+							disabled="#{!blockHome.blockLimit.hasWater}" required="true">
+							<s:selectItems value="#{waterTypes}" var="waterType"
+								label="#{waterType.ordinal()} - #{messages[waterType.name()]}"
+								noSelectionLabel="#{messages['blockLimit.selectWaterType']}" />
+							<s:convertEnum />
+						</h:selectOneMenu>
+					</s:decorate>
+
+
+					<s:decorate id="sewerageTypeField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.sewerageType']}</ui:define>
+						<h:selectBooleanCheckbox id="hasSewerage"
+							value="#{blockHome.blockLimit.hasSewerage}">
+							<a:support event="onchange" reRender="sewerageType"
+								ajaxSingle="true" />
+						</h:selectBooleanCheckbox>
+						<h:selectOneMenu id="sewerageType"
+							value="#{blockHome.blockLimit.sewerageType}"
+							disabled="#{!blockHome.blockLimit.hasSewerage}" required="true">
+							<s:selectItems value="#{sewerageTypes}" var="sewerageType"
+								label="#{sewerageType.ordinal()} - #{messages[sewerageType.name()]}"
+								noSelectionLabel="#{messages['blockLimit.selectSewerageType']}" />
+							<s:convertEnum />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="electricLineTypeField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.electricLineType']}</ui:define>
+						<h:selectBooleanCheckbox id="hasElectricity"
+							value="#{blockHome.blockLimit.hasElectricity}" required="true">
+							<a:support event="onchange" reRender="electricLineType"
+								ajaxSingle="true" />
+						</h:selectBooleanCheckbox>
+						<h:selectOneMenu id="electricLineType"
+							value="#{blockHome.blockLimit.electricLineType}"
+							disabled="#{!blockHome.blockLimit.hasElectricity}"
+							required="true">
+							<s:selectItems value="#{lineTypes}" var="lineType"
+								label="#{lineType.ordinal()} - #{messages[lineType.name()]}"
+								noSelectionLabel="#{messages['blockLimit.selectElectricLineType']}" />
+							<s:convertEnum />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="telephonyLineTypeField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['block.telephonyLineType']}</ui:define>
+						<h:selectBooleanCheckbox id="hasTelephony"
+							value="#{blockHome.blockLimit.hasTelephony}">
+							<a:support event="onchange" reRender="telephonyLineType"
+								ajaxSingle="true" />
+						</h:selectBooleanCheckbox>
+						<h:selectOneMenu id="telephonyLineType"
+							value="#{blockHome.blockLimit.telephonyLineType}"
+							disabled="#{!blockHome.blockLimit.hasTelephony}" required="true">
+							<s:selectItems value="#{lineTypes}" var="lineType"
+								label="#{lineType.ordinal()} - #{messages[lineType.name()]}"
+								noSelectionLabel="#{messages['blockLimit.selectTelephonyLineType']}" />
+							<s:convertEnum />
+						</h:selectOneMenu>
+					</s:decorate>
+
+				</h:panelGrid>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+				<a:commandButton 
+					action="#{blockHome.addBlockLimit()}"
+					value="#{messages['common.accept']}"
+					reRender="blockLimitsPanel,streetField"
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'blockLimitEditPanel\');' : ''}" />
+
+				<a:commandButton ajaxSingle="true" action="#{blockHome.beforeOut()}"
+					value="#{messages['common.quit']}" reRender="blockLimitsPanel"
+					oncomplete="Richfaces.hideModalPanel('blockLimitEditPanel');"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

@@ -1,0 +1,54 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="../layout/template.xhtml" login-required="true">
+
+	<ui:define name="body">
+
+		<h1>#{ticketCashClosingList.onlyReport ? messages['TicketSummary'] : messages['common.preEmit']}</h1>
+		<h:form id="TicketSummarySearch" styleClass="edit">
+			<rich:simpleTogglePanel label="#{messages['TicketSummary.filter']}"
+				switchType="ajax">
+
+				<s:decorate id="parkingLot" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['parkingLot']}</ui:define>
+					<h:selectOneMenu value="#{ticketCashClosingList.parkingLot}"
+						required="true">
+						<s:selectItems value="#{parkingLotList.resultList}"
+							var="parkingLot" label="#{parkingLot.name}" />
+						<s:convertEntity></s:convertEntity>
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['TicketSummary.start']}</ui:define>
+					<rich:calendar id="start" value="#{ticketCashClosingList.coming}" required="true"></rich:calendar>
+				</s:decorate>
+
+				<s:decorate template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['TicketSummary.end']}</ui:define>
+					<rich:calendar id="start" value="#{ticketCashClosingList.going}" required="true"></rich:calendar>
+				</s:decorate>
+
+				<s:decorate id="userReportField" template="../layout/edit.xhtml" rendered="#{ticketCashClosingList.onlyReport}">
+					<ui:define name="label">#{messages['ticketSummary.detailByUser']}?:</ui:define>
+					<h:selectBooleanCheckbox id="isUserReport" value="#{ticketCashClosingList.userReport}" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons"><h:commandButton id="print"
+				value="#{ticketCashClosingList.onlyReport ? messages['common.print'] : messages['common.preEmit']}"
+				action="#{ticketCashClosingList.cashClosing()}" /> <s:button id="reset"
+				value="#{messages['common.reset']}" includePageParams="false" /></div>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

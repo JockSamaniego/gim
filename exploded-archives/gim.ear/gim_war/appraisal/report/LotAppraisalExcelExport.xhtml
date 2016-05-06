@@ -1,0 +1,46 @@
+<e:workbook filename="#{messages['appraisal.file.appraisalLotValuesReport']}.xls" 
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+	<e:worksheet name="#{messages['appraisal.lotValuesReport']}" value="#{appraisalBlockHome.properties}" var="_appraisalProperty" 
+		startRow="6">
+
+		<e:mergeCells startColumn="0" startRow="1" endColumn="3" endRow="1"/>
+		<e:cell style="xls-alignment:centre; xls-font-bold:'true'; " column="0" row="1" value="#{gim.institution.name.toUpperCase()}"/>
+		
+		<e:mergeCells startColumn="0" startRow="2" endColumn="3" endRow="2"/>
+		<e:cell style="xls-alignment:centre; xls-font-bold:'true'; " column="0" row="2" value="#{gim.institution.address}. #{messages['institution.phone']}: #{gim.institution.phone} -  #{messages['institution.fax']}: #{gim.institution.fax}"/>
+		
+		<e:mergeCells startColumn="0" startRow="3" endColumn="3" endRow="3"/>
+		<e:cell style="xls-alignment:centre; xls-font-bold:'true'; " column="0" row="3" value="#{messages['appraisal.lotValuesReport']}"/>
+		
+		<e:mergeCells startColumn="0" startRow="4" endColumn="3" endRow="4"/>
+		<e:cell style="xls-alignment:right; xls-font-bold:'true'; " column="0" row="4" value="Procesado: #{currentDatetime}"/>
+		
+		<e:column autoSize="true">
+			<f:facet name="header"><e:cell value="#{messages['property.cadastralCode']}" /></f:facet>
+			<e:cell autoSize="true" value="#{_appraisalProperty.cadastralCode}" />
+		</e:column>
+		
+		<e:column autoSize="true">
+			<f:facet name="header"><e:cell value="#{messages['property.previousCadastralCode']}" /></f:facet>
+			<e:cell value="#{_appraisalProperty.previousCadastralCode}" />
+		</e:column>
+		
+		<e:column autoSize="true" rendered="#{!appraisalBlockHome.temporalValues}">
+			<f:facet name="header"><e:cell value="#{messages['appraisal.valueSquareMeter']}" /></f:facet>
+			<e:cell
+				value="#{_appraisalProperty.currentDomain.valueBySquareMeter}" />
+		</e:column>
+		
+		<e:column autoSize="true" rendered="#{appraisalBlockHome.temporalValues}">
+			<f:facet name="header"><e:cell value="#{messages['appraisal.valueSquareMeterTmp']}" /></f:facet>
+			<e:cell
+				value="#{_appraisalProperty.currentDomain.valueBySquareMeterTmp}" />
+		</e:column>
+		
+	</e:worksheet>
+
+
+</e:workbook>

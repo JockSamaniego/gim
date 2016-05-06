@@ -1,0 +1,65 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="consumptionValidatePanel" width="300" height="222">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['consumption.ValidatePanel']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkCV" />
+				<rich:componentControl for="consumptionValidatePanel"
+					attachTo="hidelinkCV" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="consumptionValidateForm">
+			<h:panelGrid width="100%">
+				<rich:panel>
+					<h:selectOneRadio value="#{routeHome.validationSearchType}">
+						<f:selectItem itemValue="over"
+							itemLabel="#{messages['consumption.overLimit']}" />
+						<f:selectItem itemValue="down"
+							itemLabel="#{messages['consumption.downLimit']}" />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneRadio>
+					<s:decorate id="criteriaField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['consumption.criteria']}:</ui:define>
+						<h:inputText value="#{routeHome.valueValidation}">
+							<a:support event="onblur" ajaxSingle="true"
+								reRender="criteriaField" />
+						</h:inputText>
+					</s:decorate>
+					<div style="clear: both">
+						<span class="required"></span>
+					</div>
+				</rich:panel>
+
+			</h:panelGrid>
+			<div class="actionButtons">
+
+				<s:button id="print" value="#{messages['common.print']}"
+					propagation="end" action="#{routeHome.validateConsumtionsReport()}"
+					view="/waterservice/report/OverConsumptionReport.xhtml">
+				</s:button>
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('consumptionValidatePanel');"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+	</rich:modalPanel>
+</ui:composition>

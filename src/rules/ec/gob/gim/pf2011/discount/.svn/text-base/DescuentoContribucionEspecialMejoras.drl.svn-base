@@ -1,0 +1,38 @@
+#created on: Oct 31, 2011
+package ec.gob.gim.rules.pf2011
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.common.model.FiscalPeriod;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+import org.gob.gim.common.DateUtils;
+import java.util.Calendar;
+import java.util.Date;
+
+function BigDecimal findDiscountFactor(Date expiration){
+	Calendar paymentDate = DateUtils.getTruncatedInstance(new Date());
+	Calendar expirationDate = DateUtils.getTruncatedInstance(expiration);
+	
+	if(paymentDate.before(expirationDate)){
+		Integer months = (expirationDate.get(Calendar.YEAR) - paymentDate.get(Calendar.YEAR)) * 12 +
+			 		     (expirationDate.get(Calendar.MONTH)- paymentDate.get(Calendar.MONTH));
+		System.out.println("MONTHS DIFF -----> " + months);
+	
+		if( months < 10){
+			return new java.math.BigDecimal(0.01).multiply(new BigDecimal(months));
+		} else {
+			return new java.math.BigDecimal(0.1);
+		}
+	}
+	return new BigDecimal(0);
+}
+
+
+rule "Descuento por pronto pago de contribucion especial de mejoras"
+	no-loop true
+	salience 0
+	when		
+		$itemPredio : Item(entry.name == "DESCUENTO CONTRIBUCION ESPECIAL MEJORAS");
+		$mb : MunicipalBond();
+	then		
+		$itemPredio.setTotal($mb.getItems().get(0).getTotal().multiply(findDiscountFactor($mb.getExpirationDate())));		
+end

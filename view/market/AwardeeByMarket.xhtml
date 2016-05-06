@@ -1,0 +1,146 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="market" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['market.reportTitle']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{messages['market']}</f:facet>
+
+				<h:panelGrid width="100%" columns="5">
+
+
+					<s:decorate id="marketField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['markets']}:</ui:define>
+						<h:selectOneMenu id="monthTypes" value="#{marketHome.market}">
+							<s:selectItems value="#{marketsActive}" var="market"
+								label="#{market.name}" />
+							<s:convertEntity />
+							<a:support event="onchange"
+								reRender="statusField,marketField,yearField,monthField" />
+						</h:selectOneMenu>
+
+					</s:decorate>
+
+					<s:decorate id="yearField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['route.year']}:</ui:define>
+						<h:selectOneMenu id="year" value="#{marketHome.year}">
+							<f:selectItems value="#{routeReport.years}" />
+							<a:support event="onchange"
+								reRender="statusField,marketField,yearField,monthField" />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="monthField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['route.month']}:</ui:define>
+						<h:selectOneMenu id="monthTypes" value="#{marketHome.month}">
+							<s:selectItems value="#{monthTypes}" var="month"
+								label="#{messages[month.name()]}" />
+							<s:convertEnum />
+							<a:support event="onchange"
+								reRender="statusField,marketField,yearField,monthField" />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="statusField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['municipalBondStatus']}:</ui:define>
+						<h:selectOneMenu id="year" value="#{marketHome.status}">
+							<f:selectItems value="#{mBStatuses}" />
+							<a:support event="onchange"
+								reRender="statusField,marketField,yearField,monthField" />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="buttons" template="../layout/display.xhtml">
+
+						<a:commandButton id="load"
+							value="#{messages['market.loadMunicipalBond']}"
+							action="#{marketHome.findAwardeeByMarket()}"
+							reRender="marketField,yearField,monthField,standList"
+							focus="currentReading" />
+					</s:decorate>
+				</h:panelGrid>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+			</rich:panel>
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="#{messages['stands']}" />
+
+						<s:button id="print" value="#{messages['common.print']}"
+							propagation="join"
+							view="/market/report/MarketReport.xhtml">
+						</s:button>
+					</h:panelGrid>
+				</f:facet>
+				<div class="results" id="standList">
+
+					<rich:dataTable id="standList" var="_repView"
+						value="#{marketHome.marketReportViews}"
+						onRowMouseOver="this.style.backgroundColor='#{messages['rowBackgroundColor']}'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+						<rich:column>
+							<f:facet name="header">#{messages['stand.number']}</f:facet>
+							<h:outputText value="#{_repView.standNumber}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['stand.name']}</f:facet>
+							<h:outputText value="#{_repView.standName}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['entry']}</f:facet>
+							<h:outputText value="#{_repView.entryName}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['resident.identificationNumber']}</f:facet>
+							<h:outputText value="#{_repView.identificationnumber}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['resident.name']}</f:facet>
+							<h:outputText value="#{_repView.residentName}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['municipalBondStatus']}</f:facet>
+							<h:outputText value="#{_repView.municipalbondstatus}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['productType']}</f:facet>
+							<h:outputText value="#{_repView.productType}" />
+						</rich:column>
+						<rich:column style="text-align:right;">
+							<f:facet name="header">#{messages['municipalBond.paidTotal']}</f:facet>
+							<h:outputText value="#{_repView.paidtotal}">
+								<f:convertNumber pattern="####.00" />
+							</h:outputText>
+						</rich:column>
+					</rich:dataTable>
+				</div>
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/market/MarketList.xhtml" />
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

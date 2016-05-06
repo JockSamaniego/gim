@@ -1,0 +1,58 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="consumptionState" styleClass="edit">
+
+
+			<h:outputText styleClass="formTitle"
+				value="#{consumptionStateHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['consumptionState']}" />
+
+			<rich:panel>
+
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['consumptionState.name']}</ui:define>
+					<h:inputText id="name" required="true" size="20" maxlength="20"
+						value="#{consumptionStateHome.instance.name}"/>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{consumptionStateHome.persist}"
+					disabled="#{!consumptionStateHome.wired}"
+					rendered="#{!consumptionStateHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{consumptionStateHome.update}"
+					rendered="#{consumptionStateHome.managed}" />
+
+				<h:commandButton id="delete" value="#{messages['common.delete']}"
+					action="#{consumptionStateHome.remove}" immediate="true"
+					rendered="#{consumptionStateHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/waterservice/ConsumptionStateList.xhtml" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

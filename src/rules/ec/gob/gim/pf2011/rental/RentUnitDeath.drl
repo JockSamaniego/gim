@@ -1,0 +1,125 @@
+package gim.src.rules.ec.gob.gim.pf2011.rental
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.revenue.model.Item;
+import ec.gob.gim.cementery.model.Unit;
+import ec.gob.gim.revenue.model.MunicipalBond;
+
+#declare any global variables here
+
+#================================================CEMENTERIO GENERAL=======================================================
+rule "Alquiler de Boveda Cementerio General"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00024");
+		$unitDeath : Unit(unitType.name == "Boveda");
+		eval($unitDeath.getSection().getCementery().getName().compareTo("GENERAL") == 0);
+		$mb : MunicipalBond();
+	then 
+		$itemBase.setValue(new java.math.BigDecimal($unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() * 3.4970));
+		$mb.setDescription("ALQUILER DE BOVEDA CEMENTERIO GENERAL POR " + $unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() + " MESES");
+		System.out.println($mb.getDescription());
+		$itemBase.setTotal($itemBase.getValue());
+		#calculateTotal();
+end
+
+rule "Alquiler de Tumba Cementerio General"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00024");
+		$unitDeath : Unit(unitType.name == "Tumba");
+		eval($unitDeath.getSection().getCementery().getName().compareTo("GENERAL") == 0);
+		$mb : MunicipalBond();
+	then 
+		$itemBase.setValue(new java.math.BigDecimal($unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() * 3.4970));
+		$mb.setDescription("ALQUILER DE TUMBA CEMENTERIO GENERAL POR " + $unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() + " MESES");
+		$itemBase.setTotal($itemBase.getValue());
+		#calculateTotal();
+end
+
+rule "Alquiler de Nicho Cementerio General"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00024");
+		$unitDeath : Unit(unitType.name == "Nicho");
+		eval($unitDeath.getSection().getCementery().getName().compareTo("GENERAL") == 0);
+		$mb : MunicipalBond();
+	then 
+		$itemBase.setValue(new java.math.BigDecimal($unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() * 1.5045));
+		$mb.setDescription("ALQUILER DE NICHO CEMENTERIO GENERAL POR " + $unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() + " MESES");
+		$itemBase.setTotal($itemBase.getValue());
+		#calculateTotal();
+end
+
+
+
+#================================================CEMENTERIO YANACOCHA=======================================================
+rule "Alquiler de Boveda Cementerio Yanacocha"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00024");
+		$unitDeath : Unit(unitType.name == "Boveda");
+		eval($unitDeath.getSection().getCementery().getName().compareTo("YANACOCHA") == 0);
+		$mb : MunicipalBond();
+	then 
+		$itemBase.setValue(new java.math.BigDecimal($unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() * 2.8754));
+		$mb.setDescription("ALQUILER DE BOVEDA CEMENTERIO YANACOCHA POR " + $unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() + " MESES");
+		System.out.println($mb.getDescription());
+		$itemBase.setTotal($itemBase.getValue());
+		#calculateTotal();
+end
+
+rule "Alquiler de Nicho Cementerio Yanacocha"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00024");
+		$unitDeath : Unit(unitType.name == "Nicho");
+		eval($unitDeath.getSection().getCementery().getName().compareTo("YANACOCHA") == 0);
+		$mb : MunicipalBond();
+	then 
+		$itemBase.setValue(new java.math.BigDecimal($unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() * 1.2341));
+		$mb.setDescription("ALQUILER DE NICHO CEMENTERIO YANACOCHA POR " + $unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() + " MESES");
+		$itemBase.setTotal($itemBase.getValue());
+		#calculateTotal();
+end
+
+
+
+#================================================CEMENTERIO OBRAPIA=======================================================
+rule "Alquiler de Boveda Cementerio Obrapia"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00024");
+		$unitDeath : Unit(unitType.name == "Boveda");
+		eval($unitDeath.getSection().getCementery().getName().compareTo("OBRAPIA") == 0);
+		$mb : MunicipalBond();
+	then 
+		$itemBase.setValue(new java.math.BigDecimal($unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() * 2.7317));
+		$mb.setDescription("ALQUILER DE BOVEDA CEMENTERIO OBRAPIA POR " + $unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() + " MESES");
+		System.out.println($mb.getDescription());
+		$itemBase.setTotal($itemBase.getValue());
+		#calculateTotal();
+end
+
+rule "Alquiler de Nicho Cementerio Obrapia"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00024");
+		$unitDeath : Unit(unitType.name == "Nicho");
+		eval($unitDeath.getSection().getCementery().getName().compareTo("OBRAPIA") == 0);
+		$mb : MunicipalBond();
+	then 
+		$itemBase.setValue(new java.math.BigDecimal($unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() * 1.1673));
+		$mb.setDescription("ALQUILER DE NICHO CEMENTERIO OBRAPIA POR " + $unitDeath.getCurrentDeath().getCurrentContract().getTotalMonths() + " MESES");
+		$itemBase.setTotal($itemBase.getValue());
+		#calculateTotal();
+end
+

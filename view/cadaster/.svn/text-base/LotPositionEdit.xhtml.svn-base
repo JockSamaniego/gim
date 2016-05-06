@@ -1,0 +1,69 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="lotPosition" styleClass="edit">
+
+		<h:outputText styleClass="formTitle" value="#{lotPositionHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['lotPosition']}" />
+        <rich:panel>
+            <s:decorate id="nameField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['lotPosition.name']}:</ui:define>
+                <h:inputText id="name"
+                       required="true"
+                           size="25"
+                      maxlength="25"
+                          value="#{lotPositionHome.instance.name}"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                #{messages['common.requiredFields']}
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{lotPositionHome.persist}"
+                       disabled="#{!lotPositionHome.wired}"
+                       rendered="#{!lotPositionHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{lotPositionHome.update}"
+                       rendered="#{lotPositionHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="#{messages['common.delete']}"
+                         action="#{lotPositionHome.remove}"
+                      immediate="true"
+                       rendered="#{lotPositionHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/cadaster/LotPositionList.xhtml"
+                rendered="#{lotPositionHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/cadaster/#{empty lotPositionFrom ? 'LotPositionList' : lotPositionFrom}.xhtml"
+                rendered="#{!lotPositionHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

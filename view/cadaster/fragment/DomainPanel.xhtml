@@ -1,0 +1,202 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel>
+		<f:facet name="header">#{messages['domain']}</f:facet>
+		<h:panelGrid columns="2">
+
+			<h:panelGrid columns="1">
+				<s:decorate id="purchaseTypeField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.purchaseType']}:</ui:define>
+					<h:selectOneMenu id="purchaseType" required="true"
+						value="#{propertyHome.instance.currentDomain.purchaseType}">
+						<s:selectItems value="#{purchaseTypes}" var="purchaseType"
+							label="#{purchaseType.id} - #{purchaseType.name}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="hasDeedField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.deed']}:</ui:define>
+					<h:selectBooleanCheckbox id="hasDeed"
+						value="#{propertyHome.instance.currentDomain.hasDeed}"/>
+				</s:decorate>
+
+
+
+				<s:decorate id="dateDomainField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.date']}:</ui:define>
+					<rich:calendar id="dateDomainNumber" 
+						ajaxSingle="true" enableManualInput="true"
+						value="#{propertyHome.instance.currentDomain.date}"
+						currentDate="#{currentDate}"
+						datePattern="#{messages['common.datePattern']}"
+						reRender="dateDomainField" />
+				</s:decorate>
+
+				<s:decorate id="inscriptionProvinceField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.inscriptionProvince']}:</ui:define>
+					<h:selectOneMenu id="inscriptionProvince" required="true"
+						value="#{propertyHome.instance.currentDomain.notarysProvince}">
+						<s:selectItems value="#{provinces}" var="notarysProvince"
+							label="#{notarysProvince.name}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<s:convertEntity />
+						<a:support event="onchange" ajaxSingle="true"
+							reRender="inscriptionCanton" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="lotAppraisalField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.lotAppraisal']}:</ui:define>
+					<h:inputText id="lotAppraisal" disabled="true"
+						value="#{propertyHome.instance.currentDomain.lotAppraisal}"
+						style="text-align: right" size="10">
+						<f:convertNumber pattern="#0.00" />
+						<a:support event="onblur" reRender="lotAppraisalField,commercialAppraisalField" action="#{propertyHome.calculateCommercialAppraisal()}"
+							ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="buildingAppraisalField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.buildingAppraisal']}:</ui:define>
+					<h:inputText id="buildingAppraisal" disabled="true"
+						value="#{propertyHome.instance.currentDomain.buildingAppraisal}"
+						style="text-align: right" size="10">
+						<f:convertNumber pattern="#0.00" />
+						<a:support event="onblur" reRender="buildingAppraisalField,commercialAppraisalField" action="#{propertyHome.calculateCommercialAppraisal()}"
+							ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="buildingAliquotField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['property.buildingAliquot']}:</ui:define>
+					<h:inputText id="buildingAliquot"
+						value="#{propertyHome.instance.buildingAliquot}"
+						style="text-align: right" size="10">
+						<f:convertNumber pattern="#{messages['common.patternNumber4d']}" />
+						<a:support event="onblur" ajaxSingle="true" reRender="buildingAliquotField"/>
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="propertyUseField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['property.propertyUse']}:</ui:define>
+					<h:selectOneMenu id="propertyUse" required="true"
+						value="#{propertyHome.instance.currentDomain.propertyUse}">
+						<s:selectItems value="#{propertyUses}" var="propertyUse"
+							label="#{messages[propertyUse.name()].toUpperCase()}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<s:convertEnum/>
+					</h:selectOneMenu>
+				</s:decorate>
+				
+			</h:panelGrid>
+
+
+
+			<h:panelGrid columns="1">
+				<s:decorate id="valueBySquareMeterField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.landValueSH']}:</ui:define>
+					<h:inputText id="valueBySquareMeter" size="10"
+						maxlength="10" style="text-align: right"
+						value="#{propertyHome.instance.currentDomain.valueBySquareMeter}">
+						<f:convertNumber pattern="#{messages['common.patternNumber6d']}" />
+						<a:support event="onblur" ajaxSingle="true" reRender="valueBySquareMeterField"/>
+					</h:inputText>
+				#{messages['domain.BySquareMeters']}
+				</s:decorate>
+
+				<s:decorate id="realStateNumberField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.realStateNumber']}:</ui:define>
+					<h:inputText id="realStateNumber" required="true" size="10"
+						maxlength="10" style="text-align: right"
+						value="#{propertyHome.instance.currentDomain.realStateNumber}">
+					</h:inputText>
+				</s:decorate>
+
+
+				<s:decorate id="notaryNumberField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.notaryNumber']}:</ui:define>
+					<h:inputText id="notaryNumber" size="10"
+						maxlength="10" style="text-align: right"
+						value="#{propertyHome.instance.currentDomain.notaryNumber}"/>
+				</s:decorate>
+
+
+
+				<s:decorate id="inscriptionCantonField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.inscriptionCanton']}:</ui:define>
+					<h:selectOneMenu id="inscriptionCanton" 
+						value="#{propertyHome.instance.currentDomain.notarysCity}">
+						<s:selectItems value="#{propertyHome.cantons}" var="notarysCity"
+							label="#{notarysCity.name}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<s:convertEntity />						
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="ownerTypeField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['property.ownerType']}:</ui:define>
+					<h:inputText id="ownerType" disabled="true" size="20"
+						maxlength="10" value="#{propertyHome.ownerType}"
+						style="text-transform: uppercase">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="commercialAppraisalField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.commercialAppraisal']}:</ui:define>
+					<h:inputText id="commercialAppraisal"
+						value="#{propertyHome.instance.currentDomain.commercialAppraisal}"
+						disabled="true" style="text-align: right" size="10">
+						<f:convertNumber pattern="#0.00" />
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="lotAliquotField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['property.lotAliquot']}:</ui:define>
+					<h:inputText id="lotAliquot"
+						value="#{propertyHome.instance.lotAliquot}"
+						style="text-align: right" size="10">
+						<f:convertNumber pattern="#{messages['common.patternNumber4d']}" />
+						<a:support event="onblur" ajaxSingle="true" reRender="lotAliquotField"/>
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="tramitIdField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.tramitNumber']}:</ui:define>
+					<h:inputText id="tramitNumber" disabled="true" 
+						value="#{propertyHome.instance.currentDomain.tramitNumber}"
+						style="text-align: right" size="10">
+					</h:inputText>
+				</s:decorate>
+				
+			</h:panelGrid>
+
+		</h:panelGrid>
+		<div style="clear: both">
+			<span class="required">*</span> #{messages['common.requiredFields']}
+		</div>
+
+	</rich:panel>
+</ui:composition>

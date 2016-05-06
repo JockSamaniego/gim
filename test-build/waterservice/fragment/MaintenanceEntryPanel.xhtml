@@ -1,0 +1,189 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<ui:debug />
+	<rich:modalPanel id="maintenanceEntryPanel" 
+		minHeight="600" minWidth="800" moveable="false"
+		resizeable="false" height="600" width="800"> 
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['waterSupply.maintenance']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="maintenanceEntryPanel"
+					attachTo="hidelink" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="maintenanceEntry" styleClass="edit">
+
+			<rich:panel style="height:500px;">
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+				
+				<rich:panel>	
+				
+					<h:panelGrid columns="2">
+					<s:decorate id="identificationField"
+						template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['resident.identificationNumber']}:</ui:define>
+						<h:outputText id="identification" value="#{maintenanceEntryHome.waterSupply.serviceOwner.identificationNumber}">
+						</h:outputText>
+					</s:decorate>
+					
+					<s:decorate id="nameField"
+						template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['resident.name']}:</ui:define>
+						<h:outputText id="name" value="#{maintenanceEntryHome.waterSupply.serviceOwner.name}"/>
+					</s:decorate>
+					
+					<s:decorate id="serviceField"
+						template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['waterSupply.serviceNumber']}:</ui:define>
+						<h:outputText id="service" value="#{maintenanceEntryHome.waterSupply.serviceNumber}"/>
+					</s:decorate>
+					
+					<s:decorate id="routeField"
+						template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['route']}:</ui:define>
+						<h:outputText id="route" value="#{maintenanceEntryHome.waterSupply.route.name}"/>
+					</s:decorate>
+					</h:panelGrid>		
+
+					<div style="clear: both" />
+		
+				</rich:panel>
+
+				<h:panelGrid columns="4" width="90%">
+
+					<s:decorate id="dateField"
+						template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['maintenanceEntry.date']}:</ui:define>
+						<h:outputText id="date" 	value="#{maintenanceEntryHome.instance.date}" styleClass="right"
+							style="font-weight:bold;" size="12" readonly="true">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</s:decorate>
+					
+					<s:decorate id="timeField"
+						template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['maintenanceEntry.time']}:</ui:define>
+						<h:outputText id="time" 	value="#{maintenanceEntryHome.instance.time}" styleClass="center"
+							style="font-weight:bold;" size="12" readonly="true">
+							<f:convertDateTime pattern="#{messages['common.fullTimePattern']}"/>
+						</h:outputText>
+					</s:decorate>
+
+					<s:decorate id="valueField"
+						template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['maintenanceEntry.value']}:</ui:define>
+						<h:inputText id="value"
+							value="#{maintenanceEntryHome.instance.value}"
+							styleClass="right" style="font-weight:bold;" size="12" required="true">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+							<a:support event="onblur" ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+
+
+					<s:decorate id="calculateField"
+						template="../../layout/vertical-edit.xhtml">
+						<a:commandButton id="calculate"
+							action="#{maintenanceEntryHome.addNewMaintenance()}"
+							value="#{messages['common.add']}"
+							reRender="maintenanceEntry" />
+					</s:decorate>
+				</h:panelGrid>
+
+				<rich:panel>
+					<f:facet name="header">
+						<h:outputText value="#{messages['waterSupply.maintenance']}" />
+					</f:facet>
+				
+					<rich:extendedDataTable 
+						height="200px" width="100%"
+						id="maintenanceEntriesTable" var="_maintenanceEntry"
+						value="#{maintenanceEntryHome.maintenanceEntries}"
+						rendered="#{maintenanceEntryHome.maintenanceEntries.size() > 0}"
+						columnClasses="center, center,center,center, right, center">
+	
+						<rich:column width="150">
+							<f:facet name="header">#{messages['maintenanceEntry.date']}</f:facet>
+							<h:outputText value="#{_maintenanceEntry.date}" styleClass="action">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column width="150">
+							<f:facet name="header">#{messages['maintenanceEntry.time']}</f:facet>
+							<h:outputText value="#{_maintenanceEntry.time}" styleClass="action">
+								<f:convertDateTime pattern="#{messages['common.fullTimePattern']}"/>
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column width="150"> 
+							<f:facet name="header">#{messages['maintenanceEntry.status']}</f:facet>
+							<h:outputText value="#{messages['maintenanceEntry.emitted']}" styleClass="center" rendered="#{_maintenanceEntry.emitted}"/>
+							<h:outputText value="#{messages['maintenanceEntry.noEmitted']}" styleClass="center" rendered="#{not _maintenanceEntry.emitted}"/>
+						</rich:column>
+						
+						<rich:column width="100"> 
+							<f:facet name="header">#{messages['maintenanceEntry.valid']}</f:facet>
+							<h:selectBooleanCheckbox value="#{_maintenanceEntry.isValid}" readonly="true" disabled="true"/>
+						</rich:column>
+						
+						<rich:column width="70"> 
+							<f:facet name="header">#{messages['maintenanceEntry.value']}</f:facet>
+							<h:outputText value="#{_maintenanceEntry.value}" styleClass="right"/>
+						</rich:column>
+						
+						<rich:column styleClass="action" width="100">
+							<f:facet name="header">#{messages['common.action']}</f:facet>						
+							<a:commandButton rendered="#{_maintenanceEntry.isValid and not _maintenanceEntry.emitted}"
+								id="invalidbtn"
+								action="#{maintenanceEntryHome.invalidMaintenanceEntry(_maintenanceEntry)}"
+							  	ajaxSingle="true" 
+							  	reRender="maintenanceEntry"
+							  	value="#{messages['maintenanceEntry.invalid']}">
+							</a:commandButton>
+						</rich:column>					
+						
+					</rich:extendedDataTable>
+				</rich:panel>
+
+				<div style="clear: both" />
+			</rich:panel>
+
+			<div class="actionButtons"
+				style="align: right; width: 100%; bottom: 10px; right: 10px;">
+				<a:commandButton id="savePaymentBtn" immediate="true"
+					action="#{maintenanceEntryHome.saveAll()}"
+					value="#{messages['common.save']}"
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'maintenanceEntryPanel\');' : ''}" />
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('maintenanceEntryPanel');"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>
+

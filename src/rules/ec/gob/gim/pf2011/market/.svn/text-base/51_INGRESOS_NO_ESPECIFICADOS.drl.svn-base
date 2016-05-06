@@ -1,0 +1,40 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.market
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.revenue.model.Item;
+import ec.gob.gim.market.model.Stand;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.market.model.StandType;
+import java.math.BigDecimal;
+
+dialect "java"
+
+rule "Emision 00051 valor fijo desde listado"
+    no-loop true
+    salience 2
+    when
+        $itemBase : Item(entry.code == "00051");
+        $mb : MunicipalBond();
+        $stand : Stand(standType.name == "INGRESOS NO ESPECIFICADOS");
+        #eval($stand.getIsCalculated()==false);
+    then
+        $itemBase.setValue($stand.getValue());
+        $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+        System.out.println("...................................INGRESOS NO ESPECIFICADOS: " + $itemBase.getTotal());
+end
+
+##########################################
+
+rule "Emision 00051 valor fijo desde ventanilla"
+        no-loop true
+        salience 4
+        when
+                $itemBase : Item(entry.code == "00051");
+                $mb : MunicipalBond();
+        then
+                #$itemBase.setValue($mb.getValue());
+                $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx INGRESOS NO ESPECIFICADOS valor fijo ventanilla : xxxxxxxxxxxxx " + $itemBase.getTotal());
+end

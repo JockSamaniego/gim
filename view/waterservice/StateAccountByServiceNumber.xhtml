@@ -1,0 +1,134 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<h:form id="routeRecording" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['route.readingOrder']}" />
+			<rich:panel>
+				<f:facet name="header">#{messages['route.generalData']}</f:facet>
+
+				<h:panelGrid width="100%">
+					<rich:panel style="height:50px; width:100%; overflow:auto;">
+						<rich:messages errorClass="errors" />
+					</rich:panel>
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+
+					<s:decorate id="startDateField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['common.startDate']}:</ui:define>
+						<rich:calendar id="startDate" enableManualInput="false"
+							value="#{routeReport.startDate}"
+							datePattern="#{messages['common.datePattern']}" ajaxSingle="true">
+						</rich:calendar>
+					</s:decorate>
+
+					<s:decorate id="serviceNumberField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['waterSupply.serviceNumber']}:</ui:define>
+						<h:inputText id="name" required="true" size="40" maxlength="40"
+							value="#{routeReport.serviceNumber}">
+							<a:support event="onblur" ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+
+
+					<a:commandButton value="#{messages['route.load']}"
+						reRender="municipalBondList,results,resultsPanel"
+						actionListener="#{routeReport.findMunicipalBondByServiceNumber()}" />
+				</h:panelGrid>
+
+				<h:panelGrid id="resultsPanel">
+
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty routeReport.municipalBondsNotPayed}"
+						id="results" />
+
+					<rich:dataTable id="municipalBondList" var="_municipalBond"
+						value="#{routeReport.municipalBondsNotPayed}" width="100%"
+						rendered="#{not empty routeReport.municipalBondsNotPayed}">
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.id']}" />
+							</f:facet>
+							<h:outputText value="#{_municipalBond.id}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.number']}" />
+							</f:facet>
+							<h:outputText value="#{_municipalBond.number}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.status']}" />
+							</f:facet>
+							<h:outputText value="#{_municipalBond.municipalBondStatus.name}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['resident']}" />
+							</f:facet>
+							<h:outputText value="#{_municipalBond.resident.name}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.serviceDate']}" />
+							</f:facet>
+							<h:outputText value="#{_municipalBond.serviceDate}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.detail']}" />
+							</f:facet>
+							<ui:repeat value="#{_municipalBond.adjunct != null ? 1 : null}">
+								<ui:repeat value="#{_municipalBond.adjunct.details}"
+									var="_detail">
+									<h:outputText value="#{_detail.label}: #{_detail.value}" />
+								#{' '}
+							</ui:repeat>
+							</ui:repeat>
+						</rich:column>
+						<rich:column style="text-align: right;">
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.value']}" />
+							</f:facet>
+							<h:outputText value="#{_municipalBond.value}">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+
+					</rich:dataTable>
+				</h:panelGrid>
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<s:button id="cancelAdd" value="#{messages['common.exit']}"
+					propagation="end" view="/home.xhtml" />
+			</div>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

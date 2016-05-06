@@ -1,0 +1,102 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h1>#{parkingLotHome.managed ? messages['common.edit'] :
+			messages['common.add']} #{messages['parkingLot']}
+			#{parkingLotHome.managed ? parkingLotHome.instance.name : ''}</h1>
+
+		<h:form id="parkingLotForm" styleClass="edit">
+
+			<rich:panel id="parkingLotEditPanel">
+				<f:facet name="header">#{parkingLotHome.managed ? messages['common.edit'] : messages['common.add']} #{messages['parkingLot']}</f:facet>
+
+				<s:decorate id="Name" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.name']}</ui:define>
+					<h:inputText value="#{parkingLotHome.instance.name}" size="60"
+						required="true" />
+				</s:decorate>
+
+				<s:decorate id="Parkings" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['parking.parkings']}</ui:define>
+					<h:inputText value="#{parkingLotHome.instance.parkings}" size="5"
+						required="true" />
+				</s:decorate>
+
+
+				<s:decorate id="Description" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.comment']}</ui:define>
+					<h:inputTextarea id="razon" rows="5" cols="50"
+						value="#{parkingLotHome.instance.description}" required="false">
+					</h:inputTextarea>
+				</s:decorate>
+
+
+				<g:entryChooser id="entryChooser"
+					label="#{messages['parking.entry']}" required="true"
+					criteria="#{parkingLotHome.criteriaEntry}"
+					entry="#{parkingLotHome.entry}"
+					entryCode="#{parkingLotHome.entryCode}" disabled="false"
+					bean="#{parkingLotHome}" searchAction="searchEntry"
+					entriesList="#{parkingLotHome.entries}"
+					searchByCriteriaAction="searchEntryByCriteria"
+					clearSearchPanelAction="clearSearchEntryPanel"
+					entryChosenListenerName="entrySelectedListener"/>
+					
+				<g:entryChooser id="cashClosingEntryChooser"
+					label="#{messages['parking.cashClosingEntry']}"
+					criteria="#{parkingLotHome.criteriaEntry}" required="true"
+					entry="#{parkingLotHome.cashClosingEntry}"
+					entryCode="#{parkingLotHome.cashClosingEntryCode}" disabled="false"
+					bean="#{parkingLotHome}" searchAction="searchCashClosingEntry"
+					entriesList="#{parkingLotHome.entries}"
+					searchByCriteriaAction="searchEntryByCriteria"
+					clearSearchPanelAction="clearSearchEntryPanel"
+					entryChosenListenerName="cashClosingEntrySelectedListener"/>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{parkingLotHome.persist}"
+					disabled="#{!parkingLotHome.wired}"
+					rendered="#{!parkingLotHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{parkingLotHome.update}"
+					rendered="#{parkingLotHome.managed}" />
+
+				<h:commandButton id="delete" value="#{messages['common.delete']}"
+					action="#{parkingLotHome.remove}" immediate="true"
+					rendered="#{parkingLotHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/parking/ParkingLotList.xhtml"
+					rendered="#{parkingLotHome.managed}" />
+
+				<s:button id="cancelAdd" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/#{empty assessmentFrom ? '/parking/ParkingLotList' : parkingLotFrom}.xhtml"
+					rendered="#{!parkingLotHome.managed}" />
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

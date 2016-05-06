@@ -1,0 +1,185 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="branch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{branchHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['branch']}" />
+
+			<rich:panel>
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['branch.name']}:</ui:define>
+					<h:inputText id="name" required="true" size="50" maxlength="50"
+						value="#{branchHome.instance.name}">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="numberField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['branch.number']}:</ui:define>
+					<h:inputText id="number" required="true" size="5" maxlength="5"
+						value="#{branchHome.instance.number}"
+						disabled="#{branchHome.managed}">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="addressField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['branch.address']}:</ui:define>
+					<h:inputTextarea id="address" required="true" maxlength="5"
+						cols="40" rows="4" value="#{branchHome.instance.address}">
+					</h:inputTextarea>
+				</s:decorate>
+
+				<s:decorate id="compensationField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['branch.isPaidByCompensation']}:</ui:define>
+					<h:selectBooleanCheckbox
+						value="#{branchHome.instance.isPaidByCompensation}">
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>
+				</s:decorate>
+
+				<s:decorate id="isMainField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['branch.isMain']}:</ui:define>
+					<h:selectBooleanCheckbox value="#{branchHome.instance.isMain}">
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<rich:panel id="contentPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText id="branchCount"
+							value="#{messages['tills']} (#{empty branchHome.tills ? 0 : branchHome.tills.size})" />
+						<s:div styleClass="actionButtons" rendered="#{empty from}">
+							<a:commandButton value="#{messages['common.add']}"
+								action="#{branchHome.addTill()}" reRender="contentPanel, errors" />
+						</s:div>
+					</h:panelGrid>
+				</f:facet>
+
+				<a:outputPanel styleClass="results" id="tillsList">
+					<rich:messages errorClass="errors" ajaxRendered="true" />
+					<h:outputText value="#{messages['till.returnedNoResults']}"
+						rendered="#{empty branchHome.tills}" />
+
+					<rich:dataTable id="tillsTable" var="_till"
+						value="#{branchHome.tills}" rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty branchHome.tills}">
+
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['till.isActive']}" />
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{_till.active}">
+								<!-- a:support event="onchange" ajaxSingle="true" / -->
+							</h:selectBooleanCheckbox>
+						</rich:column>
+
+						<rich:column sortBy="#{_till.number}" styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['till.number']}" />
+							</f:facet>
+							<h:inputText value="#{_till.number}" size="12" styleClass="right"
+								disabled="#{_till.id != null}" required="true" />
+						</rich:column>
+
+						<rich:column sortBy="#{_till.windowNumber}" styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['till.windowNumber']}" />
+							</f:facet>
+							<h:inputText value="#{_till.windowNumber}" size="10"
+								styleClass="right" />
+						</rich:column>
+
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['till.isTillBank']}" />
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{_till.tillBank}"><!-- a:support event="onchange" ajaxSingle="true" / -->
+							</h:selectBooleanCheckbox>
+						</rich:column>
+
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['till.emissionElectronicOnLine']}" />
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{_till.emissionElectronicOnLine}">
+							</h:selectBooleanCheckbox>
+						</rich:column>
+
+
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['till.isElectronicInvoice']}" />
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{_till.electronicInvoiceEnable}">
+							</h:selectBooleanCheckbox>
+						</rich:column>
+
+						<rich:column sortBy="#{_till.address}" styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['till.ipAddress']}" />
+							</f:facet>
+							<h:inputText value="#{_till.address}" size="15"
+								styleClass="right" />
+						</rich:column>
+
+						<rich:column sortBy="#{_till.person}" styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['user']}" />
+							</f:facet>
+							<h:selectOneMenu id="user" value="#{_till.person}">
+								<s:selectItems value="#{branchHome.findCashiers()}"
+									var="_person" label="#{messages[_person.name]}"
+									noSelectionLabel="#{messages['common.chooseOption']}" />
+								<s:convertEntity />
+								<!-- a:support event="onchange" ajaxSingle="true" / -->
+							</h:selectOneMenu>
+						</rich:column>
+
+
+
+
+
+					</rich:dataTable>
+
+				</a:outputPanel>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{branchHome.save()}" disabled="#{!branchHome.wired}"
+					rendered="#{!branchHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{branchHome.save()}" rendered="#{branchHome.managed}" />
+
+				<h:commandButton id="delete" value="#{messages['common.delete']}"
+					action="#{branchHome.remove}" immediate="true"
+					rendered="#{branchHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/income/BranchList.xhtml" />
+
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

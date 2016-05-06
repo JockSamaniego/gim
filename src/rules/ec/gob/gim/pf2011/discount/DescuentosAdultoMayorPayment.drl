@@ -1,0 +1,52 @@
+#created on: Oct 31, 2011
+package ec.gob.gim.rules.pf2011.common
+
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.common.model.Person;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+
+dialect "java"
+
+rule "Descuento a las personas adulta mayores al momento de pagar"
+	no-loop true
+	salience 9
+	when
+		$itemDiscount : Item(entry.code == "00005");
+		$mb : MunicipalBond(resident.class == Person, discountItems contains $itemDiscount);
+		eval(((Person)$mb.getResident()).getAge().get(Person.YEAR) > 64);
+		
+	then
+		System.out.println("Ejecutando regla Descuento a las personas Adulto Mayor... " + ((Person)$mb.getResident()).getAgeToString());
+				
+		System.out.println("Valor Total... " + $mb.getValue());
+		
+		$itemDiscount.setValue(new java.math.BigDecimal(0.25));
+		$itemDiscount.setAmount($mb.getValue());
+		$itemDiscount.setTotal($itemDiscount.getValue().multiply($itemDiscount.getAmount()));	
+		$itemDiscount.setObservations("Descuento por Adulto Mayor");
+				
+end 
+
+
+rule "Descuento a las personas discapacitadas"
+	no-loop true
+	salience 10
+	when
+		$itemDiscount : Item(entry.code == "00005");
+		$mb : MunicipalBond(resident.class == Person, discountItems contains $itemDiscount);
+		eval(((Person)$mb.getResident()).getIsHandicaped() == true);
+		
+	then
+		System.out.println("Ejecutando regla Descuento a las personas discapacitadas... " + ((Person)$mb.getResident()).getAgeToString());
+		
+		Number $total = $mb.getValue();
+		System.out.println("valor Totall... " + $mb.getValue());
+		
+		$itemDiscount.setValue(new java.math.BigDecimal(0.10));
+		$itemDiscount.setAmount($mb.getValue());
+		$itemDiscount.setTotal($itemDiscount.getValue().multiply($itemDiscount.getAmount()));			
+		$itemDiscount.setObservations("Persona con habilidades especiales");
+		
+end 
+

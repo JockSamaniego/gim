@@ -1,0 +1,105 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.waterservice
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.Domain;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+import ec.gob.gim.waterservice.model.Consumption;
+import ec.gob.gim.waterservice.model.WaterSupply;
+import ec.gob.gim.waterservice.model.WaterSupplyCategory;
+import ec.gob.gim.revenue.model.adjunct.WaterServiceReference;
+
+dialect "java"
+
+rule "Proteccion Mirocuencas"
+	no-loop true
+	salience 0
+	when
+		$item : Item(entry.code == "00450");
+		$mb : MunicipalBond(items contains $item);
+		$wsr : WaterServiceReference();
+	then
+		Item $itemBase = $mb.getItems().get(0);
+		tasaProteccionMicrocuencas($wsr.getConsumption(),$item, $itemBase);
+end
+
+function void tasaProteccionMicrocuencas(Consumption $c, Item $subItem, Item $itemBase){
+	BigDecimal $factor = BigDecimal.ZERO;
+	
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("RESIDENCIAL")){
+		# rango del 0 al 50 por q son iguales
+		if($c.getAmount().doubleValue() >= 0 && $c.getAmount().doubleValue() <=50){
+			$factor = new BigDecimal(0.03);
+		}
+		if($c.getAmount().doubleValue() >= 51 && $c.getAmount().doubleValue() <=70){
+			$factor = new BigDecimal(0.04);
+		}
+		if($c.getAmount().doubleValue() >= 71 && $c.getAmount().doubleValue() <=90){
+			$factor = new BigDecimal(0.05);			
+		}
+		if($c.getAmount().doubleValue() >= 91 && $c.getAmount().doubleValue() <=100){
+			$factor = new BigDecimal(0.06);
+		}
+		if($c.getAmount().doubleValue() >= 101 ){
+			$factor = new BigDecimal(0.07);			
+		}		
+	}
+	
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("TERCERA EDAD")){
+		# rango del 0 al 50 por q son iguales
+		if($c.getAmount().doubleValue() >= 0 && $c.getAmount().doubleValue() <=50){
+			$factor = new BigDecimal(0.03);
+		}
+		if($c.getAmount().doubleValue() >= 51 && $c.getAmount().doubleValue() <=70){
+			$factor = new BigDecimal(0.04);
+		}
+		if($c.getAmount().doubleValue() >= 71 && $c.getAmount().doubleValue() <=90){
+			$factor = new BigDecimal(0.05);
+		}
+		if($c.getAmount().doubleValue() >= 91 && $c.getAmount().doubleValue() <=100){
+			$factor = new BigDecimal(0.06);
+		}
+		if($c.getAmount().doubleValue() >= 101 ){
+			$factor = new BigDecimal(0.07);
+		}
+	}
+	
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("ESPECIAL")){
+		# rango del 0 al 50 por q son iguales
+		if($c.getAmount().doubleValue() >= 0 && $c.getAmount().doubleValue() <=50){
+			$factor = new BigDecimal(0.03);
+		}
+		if($c.getAmount().doubleValue() >= 51 && $c.getAmount().doubleValue() <=70){
+			$factor = new BigDecimal(0.04);
+		}
+		if($c.getAmount().doubleValue() >= 71 && $c.getAmount().doubleValue() <=90){
+			$factor = new BigDecimal(0.05);
+		}
+		if($c.getAmount().doubleValue() >= 91 && $c.getAmount().doubleValue() <=100){
+			$factor = new BigDecimal(0.06);
+		}
+		if($c.getAmount().doubleValue() >= 101 ){
+			$factor = new BigDecimal(0.07);
+		}
+	}
+	
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("COMERCIAL")){
+		$factor = new BigDecimal(0.07);
+	}
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("INDUSTRIAL")){
+		$factor = new BigDecimal(0.07);
+	}
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("OFICIAL")){
+		$factor = new BigDecimal(0.05);
+	}
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("OFICIAL MEDIO")){
+		$factor = new BigDecimal(0.05);
+	}
+	
+	$subItem.setValue($c.getAmount().multiply($factor));
+	$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+}

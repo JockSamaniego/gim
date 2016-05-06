@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd" login-required="true">
+     <begin-conversation join="true" flush-mode="MANUAL"/>
+
+  <!--<param name="firstResult" value="#{paymentAgreementList.firstResult}"/>
+   <param name="sort" value="#{paymentAgreementList.orderColumn}"/>
+   <param name="dir" value="#{paymentAgreementList.orderDirection}"/>
+   <param name="logic" value="#{paymentAgreementList.restrictionLogicOperator}"/>
+
+    <param name="from"/>
+    <param name="criteria" value="#{paymentAgreementList.criteria}"/>-->
+   
+    <param name="endDate" value="#{paymentHome.date}"/>
+    
+    <navigation from-action="#{paymentHome.printReport()}">
+      <rule if-outcome="print">         
+         <redirect view-id="/income/report/PaymentAgreementExpiredListReport.xhtml"/>
+      </rule>
+    </navigation>
+    <navigation from-action="#{paymentHome.listAgreed()}">
+        <rule if-outcome="ok">       
+            <redirect view-id="/income/PaymentAgreementExpiredList.seam">				     
+            </redirect>
+        </rule>
+    </navigation>
+</page>

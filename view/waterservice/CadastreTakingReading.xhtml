@@ -1,0 +1,81 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+
+		<h:form id="routeRecording" styleClass="edit">
+			<rich:messages errorClass="errors" id="messages" />
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['route.manageRecordReading']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{messages['route.generalData']}</f:facet>
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['route.name']}:</ui:define>
+					<h:inputText id="name" required="true" size="40" maxlength="40"
+						value="#{routeHome.instance.name}" readonly="true">
+					</h:inputText>
+				</s:decorate>
+				<s:decorate id="yearField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['route.year']}:</ui:define>
+					<h:selectOneMenu id="year" value="#{routeHome.year}"
+						required="true">
+						<f:selectItems value="#{routeHome.years}" />
+						<a:support event="onchange" action="#{routeHome.cleanForPrint()}"
+							reRender="yearField" />
+					</h:selectOneMenu>
+				</s:decorate>
+				<s:decorate id="monthField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['route.month']}:</ui:define>
+					<h:selectOneMenu id="monthTypes" value="#{routeHome.month}"
+						required="true">
+						<s:selectItems value="#{monthTypes}" var="month"
+							label="#{messages[month.name()]}" />
+						<s:convertEnum />
+						<a:support event="onchange" action="#{routeHome.cleanForPrint()}"
+							reRender="monthField" />
+					</h:selectOneMenu>
+
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+			</rich:panel>
+
+			<div class="actionButtons">
+				<a:region>
+					<a:commandButton value="#{messages['common.print']}"
+						reRender="messages, contentPanel"
+						action="#{routeHome.loadPreviousRecordReading()}" />
+				</a:region>
+				
+				<s:button id="bt_cance" value="#{messages['common.exit']}"
+					propagation="end"
+					view="/waterservice/#{empty routeFrom ? 'RouteList' : routeFrom}.xhtml" />
+			</div>
+
+			<rich:panel id="contentPanel">
+				<a:outputPanel ajaxRendered="true">
+					<h:outputText
+						style="font-weight:bold; font-size:25px; color:#FF0000"
+						rendered="#{empty routeHome.consumptions and not empty routeHome.readyForPrint and !routeHome.readyForPrint}"
+						value="#{messages['route.notPreviousConsumptions']}" />
+				</a:outputPanel>
+			</rich:panel>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

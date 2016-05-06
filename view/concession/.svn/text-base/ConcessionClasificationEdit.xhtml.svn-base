@@ -1,0 +1,61 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="concessionClasification" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['concessionClasification.editFormTitle']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{concessionClasificationHome.managed ? 'Edit' : 'Add'} Concession clasification</f:facet>
+
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">Name</ui:define>
+					<h:inputText id="name" required="true" size="50" maxlength="50"
+						value="#{concessionClasificationHome.instance.name}" style="text-transform: uppercase">
+						<a:support event="onblur" reRender="nameField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>"#{messages['common.requiredFields']}"
+				</div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{concessionClasificationHome.persist}"
+					disabled="#{!concessionClasificationHome.wired}"
+					rendered="#{!concessionClasificationHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{concessionClasificationHome.update}"
+					rendered="#{concessionClasificationHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}" propagation="end"
+					view="/concession/ConcessionClasificationList.xhtml"
+					rendered="#{concessionClasificationHome.managed}" />
+
+				<s:button id="cancelAdd" value="#{messages['common.cancel']}" propagation="end"
+					view="/concession/#{empty concessionClasificationFrom ? 'ConcessionClasificationList' : concessionClasificationFrom}.xhtml"
+					rendered="#{!concessionClasificationHome.managed}" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

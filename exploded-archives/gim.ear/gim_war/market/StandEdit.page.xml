@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	no-conversation-view-id="/market/StandList.xhtml" login-required="true">
+
+	<begin-conversation join="true" flush-mode="MANUAL" />
+
+	<action execute="#{standHome.wire}" />
+
+	<param name="standFrom" />
+	<param name="standId" value="#{standHome.standId}" />
+	<param name="residentId" value="#{standHome.residentId}" />
+	<param name="marketFrom" />
+	<param name="marketId" value="#{marketHome.marketId}" />
+
+	<param name="standTypeFrom" />
+	<param name="standTypeId" value="#{standTypeHome.standTypeId}" />
+	
+	<param name="operationType" value="#{standHome.operationType}"/>
+
+	
+	<navigation from-action="#{standHome.rentStand1()}">
+		<rule if-outcome="complete">
+			<end-conversation />
+			<redirect view-id="/market/StandList.xhtml" />
+		</rule>
+	</navigation>
+
+</page>

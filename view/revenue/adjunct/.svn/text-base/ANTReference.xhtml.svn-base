@@ -1,0 +1,59 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<a:outputPanel id="ANTPanel">
+		<s:decorate id="codeField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['vehicle.plate']}:</ui:define>
+			<h:inputText id="code" required="true"
+				style="text-transform: uppercase"
+				value="#{adjunctHome.instance.numberPlate}" size="10">
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="speedingField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['vehicle.speeding']}:</ui:define>
+			<h:inputText id="code" required="true"
+				style="text-transform: uppercase"
+				value="#{adjunctHome.instance.speeding}" size="10">
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="vehicleTypeField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['vehicle.vehicleType']}:</ui:define>
+			<h:inputText id="code" required="true"
+				style="text-transform: uppercase"
+				value="#{adjunctHome.instance.vehicleType}" size="10">
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="serviceTypeField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['vehicle.serviceType']}:</ui:define>
+			<h:inputText id="code" required="true"
+				style="text-transform: uppercase"
+				value="#{adjunctHome.instance.serviceType}" size="10">
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="citationDateField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['vehicle.citationDate']}:</ui:define>
+
+			<rich:calendar id="citationDate"
+				value="#{adjunctHome.instance.citationDate}"
+				required="true"
+				enableManualInput="true"
+				datePattern="#{messages['common.datePattern']}" ajaxSingle="true"
+				inputSize="10">
+			</rich:calendar>
+						
+		</s:decorate>
+
+	</a:outputPanel>
+
+</ui:composition>

@@ -1,0 +1,218 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:include src="fragment/AccountEditPanel.xhtml" />
+		<ui:include src="fragment/EntriesByAccount.xhtml" />
+
+		<rich:tabPanel switchType="client">
+		
+		<rich:tab label="#{messages['accounting']}" switchType="client">
+				<h:form id="accountSearch1" styleClass="edit">
+					<div class="process-tree">
+						<a4j:outputPanel id="treePanel"
+							style="height:300px;width:100%;overflow-y:scroll;overflow-x:scroll"
+							layout="block">
+							<rich:tree value="#{accountList.treeNode}" var="item"
+								treeNodeVar="treeNode" switchType="client">
+								<rich:treeNode>
+									<h:outputText id="newId"
+										value="#{item.accountCode} - #{item.accountName}" />
+									<rich:contextMenu event="oncontextmenu" submitMode="ajax"
+										attachTo="newId">
+										<rich:menuItem action="#{accountHome.changeParent(item)}"
+											reRender="accountEditPanel" eventsQueue="gimEventsQueue"
+											ajaxSingle="true" rendered="#{accountHome.canAddChild(item)}"
+											oncomplete="Richfaces.showModalPanel('accountEditPanel',{width:600, height:600})"
+											value="#{messages['common.create']}" />
+										<rich:menuItem action="#{accountHome.changeInstance(item)}"
+											reRender="accountEditPanel" eventsQueue="gimEventsQueue"
+											ajaxSingle="true"
+											oncomplete="Richfaces.showModalPanel('accountEditPanel',{width:600, height:600})"
+											value="#{messages['common.edit']}" />
+
+										<rich:menuItem action="#{accountHome.changeInstance(item)}"
+											reRender="entriesByAccountEditPanel"
+											eventsQueue="gimEventsQueue" ajaxSingle="true"
+											rendered="#{not empty item.entries}"
+											oncomplete="Richfaces.showModalPanel('entriesByAccountEditPanel',{width:600, height:600})"
+											value="#{messages['entry.entries']}" />
+
+
+										<rich:menuItem ajaxSingle="true"
+											oncomplete="Richfaces.showModalPanel('_confirmDialog',{width:250, height:200})"
+											value="#{messages['common.delete']}"
+											action="#{accountHome.changeAccountForRemove(item)}" />
+									</rich:contextMenu>
+								</rich:treeNode>
+							</rich:tree>
+						</a4j:outputPanel>
+					</div>
+
+					<div style="clear: both"></div>
+
+					
+
+				</h:form>
+
+			</rich:tab>
+
+			<rich:tab label="#{messages['account.list']}" switchType="client">
+				<h:form id="accountSearch" styleClass="edit">
+					<h:panelGrid columns="1">
+						<s:decorate template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['common.criteria']}</ui:define>
+							<h:inputText id="criteria" value="#{accountHome.criteria}"
+								size="40" maxlength="40"
+								onkeypress="if (event.keyCode == 13){onchange(); return false;}">
+								<a4j:support event="onchange" ajaxSingle="true"
+									action="#{accountHome.searchAccounts()}"
+									reRender="accountsPanel" />
+							</h:inputText>
+						</s:decorate>
+						
+						<h:panelGrid columns="2">
+						
+							<a4j:commandButton id="search" value="#{messages['common.search']}"
+								action="#{accountHome.searchAccounts()}"
+								reRender="accountsPanel" />
+	
+							<a4j:commandButton id="reset" value="#{messages['common.reset']}"
+								action="#{accountHome.cleanAccounts()}"
+								reRender="accountsPanel, criteria" />
+							
+						</h:panelGrid>
+
+					</h:panelGrid>
+
+					<a4j:outputPanel id="accountsPanel">
+
+						<h:outputText value="#{messages['common.noResultsReturned']}"
+							rendered="#{empty accountHome.accounts}" />
+
+						<rich:dataTable id="accountTable" var="_account" rows="25"
+							value="#{accountHome.accounts}"
+							rendered="#{not empty accountHome.accounts}">
+
+							<f:facet name="header">
+								<h:outputText
+									value="#{messages['account.searchResults']} (#{empty accountHome.accounts ? 0 : (accountHome.accounts.size)})" />
+							</f:facet>
+
+
+							<rich:column sortBy="#{_account.accountCode}">
+								<f:facet name="header">#{messages['accountCode']}</f:facet>
+								<h:outputText value="#{_account.accountCode}" />
+							</rich:column>
+
+							<rich:column sortBy="#{_account.accountName}">
+								<f:facet name="header">#{messages['account.accountName']}</f:facet>
+								<h:outputText value="#{_account.accountName}" />
+							</rich:column>
+
+							<rich:column sortBy="#{_account.parent.accountCode}">
+								<f:facet name="header">#{messages['account.parent']}</f:facet>
+								<h:outputText
+									value="#{_account.parent.accountCode} - #{_account.parent.accountName}" />
+							</rich:column>
+
+
+							<rich:column styleClass="action">
+								<f:facet name="header">#{messages['common.action']}</f:facet>
+								<a4j:commandButton
+									action="#{accountHome.changeInstance(_account)}"
+									reRender="accountEditPanel" eventsQueue="gimEventsQueue"
+									ajaxSingle="true"
+									oncomplete="Richfaces.showModalPanel('accountEditPanel',{width:600, height:600})"
+									value="#{messages['common.edit']}" />
+
+								<a4j:commandButton
+									action="#{accountHome.changeInstance(_account)}"
+									rendered="#{not empty _account.entries}"
+									reRender="entriesByAccountEditPanel"
+									eventsQueue="gimEventsQueue" ajaxSingle="true"
+									oncomplete="Richfaces.showModalPanel('entriesByAccountEditPanel',{width:600, height:600})"
+									value="#{messages['entry.entries']}" />
+
+								<a4j:commandButton
+									action="#{accountHome.changeParent(_account)}"
+									reRender="accountEditPanel" eventsQueue="gimEventsQueue"
+									ajaxSingle="true"
+									rendered="#{accountHome.canAddChild(_account)}"
+									oncomplete="Richfaces.showModalPanel('accountEditPanel',{width:600, height:600})"
+									value="#{messages['common.add']}" />
+
+
+								<a4j:commandButton
+									action="#{accountHome.changeAccountForRemove(_account)}"
+									ajaxSingle="true"
+									oncomplete="Richfaces.showModalPanel('_confirmDialog',{width:250, height:200})"
+									value="#{messages['common.delete']}" />
+
+							</rich:column>
+						</rich:dataTable>
+
+						<rich:datascroller id="tableScroller" page="1"
+							renderIfSinglePage="false" align="center" for="accountTable"
+							maxPages="20">
+							<f:facet name="first">
+								<h:outputText value="#{messages['common.firstPage']}"
+									style="font-size:10px" />
+							</f:facet>
+							<f:facet name="last">
+								<h:outputText value="#{messages['common.lastPage']}"
+									style="font-size:10px" />
+							</f:facet>
+						</rich:datascroller>
+
+					</a4j:outputPanel>
+				</h:form>
+
+			</rich:tab>
+
+
+			
+
+
+		</rich:tabPanel>
+		
+		<h:form>
+		<rich:panel>
+			<div class="actionButtons">			
+					
+				<a4j:commandButton id="createAccount"
+					rendered="#{accountList.mainAccount != null}"
+					action="#{accountHome.createNewAccount()}"
+					reRender="accountEditPanel" ajaxSingle="true"
+					eventsQueue="gimEventsQueue"
+					oncomplete="Richfaces.showModalPanel('accountEditPanel',{width:600, height:600})"
+					value="#{messages['common.create']} #{messages['account.rootAccount']}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.quit']}"
+					includePageParams="false" propagation="none" view="/home.xhtml" />
+
+			</div>
+		</rich:panel>
+		</h:form>
+
+
+		<g:confirmDialog dialogTitle="#{messages['common.delete']}"
+			bean="#{accountHome}"
+			oncomplete="#{(facesContext.maximumSeverity == null || facesContext.maximumSeverity == 'INFO 0') ? 'Richfaces.hideModalPanel(\'_confirmDialog\');' : ''}"
+			message="#{messages['account.deleteConfirmacion']}"
+			reRenderComponents="treePanel,accountsPanel,criteria" yesAction="removeAccount" />
+
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page login-required="true" no-conversation-view-id="/RusticPropertyList.xhtml"
+	xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">	
+	<begin-conversation flush-mode="MANUAL" join="true" />
+	<action execute="#{propertyHome.rusticWire()}" />
+	<action execute="#{propertyHome.loadCharge()}" />
+
+	<param name="propertyFrom" />
+	<param name="propertyId" value="#{propertyHome.propertyId}" />
+	<param name="isUrban" value="#{propertyHome.urban}" />
+	<param name="territorialDivisionFrom" />
+	<param name="territorialDivisionId" value="#{territorialDivisionHome.territorialDivisionId}" />
+	<param name="territorialDivisionTypeFrom" />
+	<param name="territorialDivisionTypeId"
+		value="#{territorialDivisionTypeHome.territorialDivisionTypeId}" />
+	<param name="propertyTypeFrom" />
+	<param name="propertyTypeId" value="#{propertyTypeHome.propertyTypeId}" />
+	<param name="entryFrom" />
+	<param name="entryId" value="#{entryHome.entryId}" />
+	<param name="domainFrom" />
+	<param name="domainId" value="#{domainHome.domainId}" />
+	<param name="purchaseTypeFrom" />
+	<param name="purchaseTypeId" value="#{purchaseTypeHome.purchaseTypeId}" />
+	<param name="residentFrom" />
+	<param name="residentId" value="#{residentHome.residentId}" />
+		
+	<navigation from-action="#{propertyHome.ComprobarValores()}">
+		<rule if-outcome="true">
+			<end-conversation />
+			<redirect view-id="/cadaster/report/GenerarReportePredioRustico">
+				<param name="isUrban" value="#{isUrban}" />
+				<param name="propertyId" value="#{_property.id}" />
+			</redirect>
+		</rule>	
+	</navigation>
+	
+	<navigation from-action="#{propertyHome.save()}">
+		<rule if-outcome="persisted">
+			<end-conversation />
+			<redirect view-id="/cadaster/RusticPropertyList.xhtml">
+				<param name="isUrban" value="#{isUrban}" />
+			</redirect>
+		</rule>
+		<rule if-outcome="updated">
+			<end-conversation />
+			<redirect view-id="/cadaster/RusticPropertyList.xhtml">
+				<param name="isUrban" value="#{isUrban}" />
+			</redirect>
+		</rule>
+		<rule if-outcome="failed">         
+        	<redirect view-id="/cadaster/RusticPropertyEdit.xhtml"/>
+      	</rule>
+	</navigation>
+
+	<navigation from-action="#{propertyHome.deleteProperty()}">
+		<rule if-outcome="updated">
+			<end-conversation />
+			<redirect view-id="/cadaster/RusticPropertyList.xhtml">
+				<param name="isUrban" value="#{isUrban}" />
+			</redirect>
+		</rule>
+	</navigation>
+
+	<navigation from-action="#{propertyHome.remove}">
+		<rule if-outcome="removed">
+			<end-conversation />
+			<redirect view-id="/cadaster/RusticPropertyList.xhtml">
+				<param name="isUrban" value="#{isUrban}" />
+			</redirect>
+		</rule>
+	</navigation>
+</page>

@@ -1,0 +1,99 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="businessCatalogPanel" width="600" height="430">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['businessCatalog']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkBC" />
+				<rich:componentControl for="businessCatalogPanel"
+					attachTo="hidelinkBC" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="businessCatalog" styleClass="edit">
+				<h:panelGrid width="100%" id="economicActivity">				
+					<rich:panel style="height:60px; width:100%; overflow:auto;">
+					<br />
+						<h:outputText value="Actividades Económicas:" ></h:outputText>
+							<h:selectOneMenu id="name" style="margin-left: 3em">
+								<s:selectItems id="business" value="#{businessNames}" var="businessName"
+										       label="#{businessName}"
+											noSelectionLabel="Seleccione uno" />
+							</h:selectOneMenu>			
+					</rich:panel>
+				</h:panelGrid>	
+				
+				<rich:panel id="activityCreated" style="height:200px; width:100%; overflow:auto;">
+				<f:facet name="header">
+					<h:panelGrid columns="1" columnClasses="headerTitle,">
+						<h:outputText
+							value="Crear nueva actividad comercial" />						
+					</h:panelGrid>
+				</f:facet>
+				<br />				
+					<h:outputText value="Nombre de la actividad:"></h:outputText>
+					<h:inputText id="inputArea1" size="55" maxlength="55" required="true"
+						style="text-transform: uppercase; margin-left: 3em"
+						value="#{businessHome.addActivity}" >
+					</h:inputText>
+					<br />
+					<br />
+					<br />
+					<h:outputText value="Es actividad turística?:"></h:outputText>
+							<h:selectBooleanCheckbox id="tourist" value="#{businessHome.tourist}" style="margin-left: 3em" >
+							</h:selectBooleanCheckbox>							
+					<br />
+					<br />
+					<br />					
+					<h:outputText value="Clave de seguridad:"></h:outputText>
+					<h:inputText id="inputArea2" size="10" 
+								 maxlength="10" style="margin-left: 4em"
+								 value="#{businessHome.securityKey}" >
+					</h:inputText>
+					<br />
+					<br />
+					<br />
+					<h:outputText id="messageError" value="#{businessHome.activityMessage} " style="font-weight:bold; font-size:10px; color:black" />
+					<br />	
+						
+		            <div style="clear: both">			             
+		       		</div>		        
+			</rich:panel>
+				
+		
+					<div style="clear: both">
+						<span class="required">*</span>
+						#{messages['common.requiredFields']}
+					</div>
+
+
+				<div class="actionButtons">
+					<a:commandButton value="#{messages['common.add']}" 
+								action="#{businessHome.createdEconomicActivity()}"
+								includePageParams="false"  propagation="join"
+								reRender="businessCatalog,economicActivity,name,business" />
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.quit']}" reRender="localsPanel"
+						oncomplete="Richfaces.hideModalPanel('businessCatalogPanel');"
+						bypassUpdates="true" />
+
+				</div>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

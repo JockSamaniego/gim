@@ -1,0 +1,327 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<ui:include src="fragment/DeathHistoryPanel.xhtml" />
+		<ui:include src="fragment/ReserveAndExhumationPanel.xhtml" />
+
+		<h:form id="deathSearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['cementery.deathContracts']}" />
+
+			<rich:simpleTogglePanel label="#{messages['death.searchFilter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['cementery.cementery']}</ui:define>
+					<h:inputText id="cementery" value="#{unitDeathList.cementeryName}" />
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['sectionCementery.section']}</ui:define>
+					<h:inputText id="sectionName" value="#{unitDeathList.sectionName}" />
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['cementery.deceased']}</ui:define>
+					<h:inputText id="deceasedCriteria"
+						value="#{unitDeathList.deceasedCriteria}" />
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['cementery.debtor']}</ui:define>
+					<h:inputText id="debtorCriteria"
+						value="#{unitDeathList.debtorCriteria}" />
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['unitDeath.dateOfDeath']}</ui:define>
+					<rich:calendar id="dateOfDeath"
+						value="#{unitDeathList.dateOfDeath}"
+						datePattern="#{messages['common.datePattern']}" />
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['unit.unitStatus']}</ui:define>
+					<h:selectOneMenu id="unitStatus" value="#{unitDeathList.unitStatus}" >
+						<s:selectItems value="#{unitStatuses}" var="unitStatus"
+							label="#{messages[unitStatus.name()]}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['unit.unitType']}</ui:define>
+					<h:selectOneMenu id="unitTypeList" value="#{unitDeathList.unitType}" >
+						<s:selectItems value="#{unitTypesName}" var="unitType"
+							label="#{unitType}" 
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/cementery/UnitDeathList.xhtml">
+					<f:param name="firstResult" value="0" />
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['death.deathSearchResults']} (#{empty unitDeathList.resultList ? 0 : (unitDeathList.paginated ? unitDeathList.resultCount : unitDeathList.resultList.size)})" />
+				</h:panelGrid>
+			</f:facet>
+
+			<a:region>
+			<a:outputPanel id = "resultsDeathPanel" styleClass="results" >
+				<rich:dataTable id="unitDeathListTable" var="_unitDeath"
+					value="#{unitDeathList.resultList}"
+					rendered="#{not empty unitDeathList.resultList}">
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{unitDeathList}" />
+								<ui:param name="propertyLabel" value="#{messages['Id']}" />
+								<ui:param name="propertyPath" value="unit.id" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_unitDeath.id}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{unitDeathList}" />
+								<ui:param name="propertyLabel" value="#{messages['cementery.cementery']}" />
+								<ui:param name="propertyPath" value="unit.section.cementery.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_unitDeath.section.cementery.name}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{unitDeathList}" />
+								<ui:param name="propertyLabel" value="#{messages['sectionCementery.section']}" />
+								<ui:param name="propertyPath" value="unit.section.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_unitDeath.section.name}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{unitDeathList}" />
+								<ui:param name="propertyLabel" value="#{messages['unitDeath.code']}" />
+								<ui:param name="propertyPath" value="unit.code" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_unitDeath.code}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{unitDeathList}" />
+								<ui:param name="propertyLabel" value="#{messages['unit.unitType']}" />
+								<ui:param name="propertyPath" value="unit.unitType.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_unitDeath.unitType.name}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{unitDeathList}" />
+								<ui:param name="propertyLabel" value="#{messages['unit.unitStatus']}" />
+								<ui:param name="propertyPath" value="unit.unitStatus" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{messages[_unitDeath.unitStatus.name()]}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{unitDeathList}" />
+								<ui:param name="propertyLabel" value="#{messages['cementery.deceased']}" />
+								<ui:param name="propertyPath" value="unit.currentDeath.deathName" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_unitDeath.currentDeath.deathName}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{unitDeathList}" />
+								<ui:param name="propertyLabel" value="#{messages['cementery.debtor']}" />
+								<ui:param name="propertyPath" value="unit.currentDeath.currentContract.subscriber.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_unitDeath.currentDeath.currentContract.subscriber.name}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{unitDeathList}" />
+								<ui:param name="propertyLabel" value="#{messages['unitDeath.dateOfDeath']}" />
+								<ui:param name="propertyPath" value="unit.currentDeath.dateOfDeath" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_unitDeath.currentDeath.dateOfDeath}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{unitDeathList}" />
+								<ui:param name="propertyLabel" value="#{messages['unitDeath.subscriptionDate']}" />
+								<ui:param name="propertyPath" value="unit.currentDeath.currentContract.subscriptionDate" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_unitDeath.currentDeath.currentContract.subscriptionDate}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{unitDeathList}" />
+								<ui:param name="propertyLabel" value="#{messages['unitDeath.expirationDate']}" />
+								<ui:param name="propertyPath" value="unit.currentDeath.currentContract.expirationDate" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_unitDeath.currentDeath.currentContract.expirationDate}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header" >
+							<h:outputLabel value="#{messages['unitDeath.renovations']}" />
+						</f:facet>
+						<h:outputText value="#{_unitDeath.currentDeath.contracts.size()}" />
+					</h:column>
+					
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+					
+						<s:button view="/cementery/DeathEdit.xhtml"
+							value="#{messages['cementery.addContract']}" propagation="none"
+							id="addContract"
+							rendered="#{_unitDeath.unitStatus == 'FREE' or _unitDeath.unitStatus == 'RESERVED'}" >
+							<f:param name="deathId" />
+							<f:param name="unitDeathId" value="#{_unitDeath.id}" />
+							<f:param name="renewContract" value="false" />
+						</s:button>
+						#{' '}
+						<s:button view="/cementery/DeathEdit.xhtml"
+							value="#{messages['cementery.renewContract']}" propagation="none"
+							id="renewContract"
+							rendered="#{_unitDeath.unitStatus == 'RENTED'}">
+							<f:param name="unitDeathId" value="#{_unitDeath.id}" />
+							<f:param name="deathId" value="#{_unitDeath.currentDeath.id}" />
+							<f:param name="renewContract" value="true" />
+						</s:button>
+						<h:form>
+							<a:commandButton id="reserve"  
+								value="#{messages['cementery.reserve']}" 
+								rendered="#{_unitDeath.unitStatus == 'FREE'}"
+								reRender="reserveAndExhumationPanel" ajaxSingle="true"
+								oncomplete="#{rich:component('reserveAndExhumationPanel')}.show()" >
+							<f:setPropertyActionListener target="#{unitDeathHome.instanceReserve}" value="#{_unitDeath}" />
+							</a:commandButton>
+							#{' '}
+							<a:commandButton id="toExhume"  
+								value="#{messages['cementery.toExhume']}" 
+								rendered="#{_unitDeath.unitStatus == 'RENTED'}"
+								reRender="reserveAndExhumationPanel" ajaxSingle="true"
+								oncomplete="#{rich:component('reserveAndExhumationPanel')}.show()" >
+							<f:setPropertyActionListener target="#{unitDeathHome.instanceForExhumation}" value="#{_unitDeath}" />
+							</a:commandButton>
+							#{' '}
+							<a:commandButton id="exhume"  
+								value="#{messages['cementery.exhume']}" 
+								rendered="#{_unitDeath.unitStatus == 'TO_EXHUME'}"
+								reRender="reserveAndExhumationPanel" ajaxSingle="true"
+								oncomplete="#{rich:component('reserveAndExhumationPanel')}.show()" >
+							<f:setPropertyActionListener target="#{unitDeathHome.instanceExhumation}" value="#{_unitDeath}" />
+							</a:commandButton>
+							#{' '}
+							<a:commandButton id="history"
+									rendered="#{_unitDeath.deathsHistory.size() > 0}"
+									action="#{unitDeathHome.setInstance(_unitDeath)}"
+									reRender="deathHistoryPanel" ajaxSingle="true"
+									eventsQueue="gimEventsQueue"
+									oncomplete="Richfaces.showModalPanel('deathHistoryPanel')"
+									value="#{messages['common.history']}" />
+						</h:form>
+								
+					</rich:column>
+				</rich:dataTable>
+			</a:outputPanel>
+			</a:region>
+			
+		</rich:panel>
+		</h:form>
+
+		<div class="tableControl">
+
+			<s:link view="/cementery/UnitDeathList.xhtml"
+				rendered="#{unitDeathList.previousExists}"
+				value="#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/cementery/UnitDeathList.xhtml"
+				rendered="#{unitDeathList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult"
+					value="#{unitDeathList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/cementery/UnitDeathList.xhtml"
+				rendered="#{unitDeathList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult" value="#{unitDeathList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/cementery/UnitDeathList.xhtml"
+				rendered="#{unitDeathList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult" value="#{unitDeathList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

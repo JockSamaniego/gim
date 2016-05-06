@@ -1,0 +1,69 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="unbuiltLot" styleClass="edit">
+			<ui:debug id="debug"/>
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['unbuiltLot.createCopy']}" />
+
+			<rich:panel id="richPanelId">
+					
+					<s:decorate id="previousFiscalPeriodField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['fiscalPeriod.previous']}</ui:define>
+						<h:selectOneMenu id="fiscalPeriodId" required="true"
+							value="#{unbuiltLotHome.previousFiscalPeriod}">
+							<s:selectItems value="#{fiscalPeriods}" required="true" var="fiscalPeriod"
+								label="#{fiscalPeriod.name}" noSelectionLabel="#{messages['common.chooseOption']}"/>
+							<s:convertEntity/>
+							<a:support event="onchange" ajaxSingle="true"/>
+						</h:selectOneMenu>
+					</s:decorate>
+					
+					<s:decorate id="currentFiscalPeriodField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['fiscalPeriod.current']}</ui:define>
+						<h:selectOneMenu id="fiscalPeriodId" required="true"
+							value="#{unbuiltLotHome.currentFiscalPeriod}">
+							<s:selectItems value="#{fiscalPeriods}" required="true" var="fiscalPeriod"
+								label="#{fiscalPeriod.name}" noSelectionLabel="#{messages['common.chooseOption']}"/>
+							<s:convertEntity/>
+							<a:support event="onchange" ajaxSingle="true"/>
+						</h:selectOneMenu>
+					</s:decorate>
+
+				<div style="clear:both">
+                <span class="required">*</span>
+                #{messages['common.requiredFields']}
+            </div>						
+
+			</rich:panel>
+
+			<div class="actionButtons">
+			
+				<a:commandButton id="copy"
+						ajaxSingle="true"
+						value="#{messages['common.copy']}"
+						action="#{unbuiltLotHome.createCopy()}" />
+						
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/cadaster/UnbuiltLotList.xhtml"/>
+
+			</div>
+
+		</h:form>
+		
+
+
+	</ui:define>
+
+</ui:composition>

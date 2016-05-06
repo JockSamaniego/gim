@@ -1,0 +1,42 @@
+#created on: Oct 31, 2011
+package ec.gob.gim.rules.pf2011
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.common.model.FiscalPeriod;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+import java.util.Calendar;
+
+rule "Subsidio recoleccion de basura Categoria B"
+	no-loop true
+	salience 10
+	when
+		$itemDescuento : Item(entry.name == "SUBSIDIO RECOLECCION BASURA");
+		$mb : MunicipalBond(serviceDate < "30-Nov-2009");		
+		eval("B".equalsIgnoreCase($mb.getResident().getCategory().name()) && $mb.getValue().doubleValue() > 1.67)
+	then		
+		Item $itemBase = $mb.getItems().get(0);
+		$itemDescuento.setTotal(new BigDecimal(2.00));			
+end
+
+rule "Subsidio recoleccion de basura Categoria C"
+	no-loop true 
+	salience 10
+	when
+		$itemDescuento : Item(entry.name == "SUBSIDIO RECOLECCION BASURA");
+		$mb : MunicipalBond(serviceDate < "30-Nov-2009");		
+		eval("C".equalsIgnoreCase($mb.getResident().getCategory().name()) && $mb.getValue().doubleValue() > 1.67)
+	then		
+		Item $itemBase = $mb.getItems().get(0);
+		$itemDescuento.setTotal(new BigDecimal(1.67));			
+end
+
+
+rule "Subsidio recoleccion de basura"
+	no-loop true
+	salience 30
+	when
+		$itemDescuento : Item(entry.name == "SUBSIDIO RECOLECCION BASURA");
+		$mb : MunicipalBond();
+	then
+		$itemDescuento.setTotal(BigDecimal.ZERO);			
+end

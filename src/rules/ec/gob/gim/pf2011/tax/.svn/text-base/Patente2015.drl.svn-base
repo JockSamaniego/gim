@@ -1,0 +1,230 @@
+#created on: Dic 23, 2014
+# Ronald-Municipio de Loja 
+package gim.src.rules.ec.gob.gim.pf2011.tax
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import org.gob.gim.revenue.view.EntryValueItem;
+import ec.gob.gim.common.model.Person;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+import java.util.Date;
+import ec.gob.gim.common.model.FiscalPeriod;
+import java.math.BigDecimal;
+
+function Date calculateExpirationDate(Date a, MunicipalBond m){
+	if(m.getIsExpirationDateDefined()) return m.getExpirationDate(); 	
+	return new Date(a.getYear(),4,31);	
+}
+
+
+#declare any global variables here
+rule "Impuesto patente entre 1 y 500"
+	no-loop true
+	salience 50
+	when		
+		$itemBase : Item(entry.code == "00008" && value  >= 1 &&  value <= 500);		
+		$mb : MunicipalBond();		
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));
+		$itemBase.setTotal(new BigDecimal(10));
+		$itemBase.setValue($itemBase.getTotal());		
+end
+
+rule "Impuesto patente entre 500.01 y 1000"
+	no-loop true
+	salience 50
+	when		
+		$itemBase : Item(entry.code == "00008" && value > 500 &&  value <= 1000);
+		$mb : MunicipalBond();
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 
+		$itemBase.setTotal(new BigDecimal(10).add($itemBase.getValue().subtract(new BigDecimal(500.01)).multiply(new BigDecimal(0.0070))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));
+		$itemBase.setValue($itemBase.getTotal());
+end
+
+rule "Impuesto patente entre 1000.01 y 2000"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00008" && value > 1000 &&  value <= 2000);
+		$mb : MunicipalBond();
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then
+		$itemBase.setTotal(new BigDecimal(13.50).add($itemBase.getValue().subtract(new BigDecimal(1000.01)).multiply(new BigDecimal(0.0069))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));
+		$itemBase.setValue($itemBase.getTotal());
+end
+
+rule "Impuesto patente entre 2000.01 y 4000"
+	no-loop true
+	salience 50
+	when		
+		$itemBase : Item(entry.code == "00008" && value > 2000 &&  value <= 4000);
+		$mb : MunicipalBond();		
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 		
+		$itemBase.setTotal(new BigDecimal(20.40).add($itemBase.getValue().subtract(new BigDecimal(2000.01)).multiply(new BigDecimal(0.0068))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));	
+		$itemBase.setValue($itemBase.getTotal());		
+end
+
+rule "Impuesto patente entre 4000.01 y 8000"
+	no-loop true
+	salience 50
+	when		
+		$itemBase : Item(entry.code == "00008" && value > 4000 &&  value <= 8000);
+		$mb : MunicipalBond();		
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 		
+		$itemBase.setTotal(new BigDecimal(34).add($itemBase.getValue().subtract(new BigDecimal(4000.01)).multiply(new BigDecimal(0.0067))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));	
+		$itemBase.setValue($itemBase.getTotal());
+end
+
+rule "Impuesto patente entre 8000.01 y 12000"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00008" && value > 8000 &&  value <= 12000);
+		$mb : MunicipalBond();		
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 		
+		$itemBase.setTotal(new BigDecimal(60.80).add($itemBase.getValue().subtract(new BigDecimal(8000.01)).multiply(new BigDecimal(0.0060))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));	
+		$itemBase.setValue($itemBase.getTotal());
+end
+
+rule "Impuesto patente entre 12000.01 y 20000"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00008" && value > 12000 &&  value <= 20000);
+		$mb : MunicipalBond();	
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 		
+		$itemBase.setTotal(new BigDecimal(84.80).add($itemBase.getValue().subtract(new BigDecimal(12000.01)).multiply(new BigDecimal(0.0055))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));	
+		$itemBase.setValue($itemBase.getTotal());
+end
+
+rule "Impuesto patente entre 20000.01 y 30000"
+	no-loop true
+	salience 10000
+	when
+		$itemBase : Item(entry.code == "00008" && value > 20000 &&  value <= 30000);
+		$mb : MunicipalBond();	
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 		
+		$itemBase.setTotal(new BigDecimal(128.80).add($itemBase.getValue().subtract(new BigDecimal(20000.01)).multiply(new BigDecimal(0.0050))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));	
+		$itemBase.setValue($itemBase.getTotal());		
+end
+
+rule "Impuesto patente entre 30000.01 y 50000"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00008" && value > 30000 &&  value <= 50000);
+		$mb : MunicipalBond();	
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 		
+		$itemBase.setTotal(new BigDecimal(178.8).add($itemBase.getValue().subtract(new BigDecimal(30000.01)).multiply(new BigDecimal(0.0045))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));	
+		$itemBase.setValue($itemBase.getTotal());
+end
+
+rule "Impuesto patente entre 50000.01 y 100000"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00008" && value > 50000 &&  value <= 100000);
+		$mb : MunicipalBond();		
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 
+		$itemBase.setTotal(new BigDecimal(268.80).add($itemBase.getValue().subtract(new BigDecimal(50000.01)).multiply(new BigDecimal(0.0035))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));	
+		$itemBase.setValue($itemBase.getTotal());
+end
+
+rule "Impuesto patente entre 100000.01 y 500000"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00008" && value > 100000 &&  value <= 500000);
+		$mb : MunicipalBond();		
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 
+		$itemBase.setTotal(new BigDecimal(443.80).add($itemBase.getValue().subtract(new BigDecimal(100000.01)).multiply(new BigDecimal(0.0030))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));	
+		$itemBase.setValue($itemBase.getTotal());		
+end
+
+rule "Impuesto patente entre 500000.01 y 1000000"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00008" && value > 500000 &&  value <= 1000000);
+		$mb : MunicipalBond();	
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 		
+		$itemBase.setTotal(new BigDecimal(1643.80).add($itemBase.getValue().subtract(new BigDecimal(500000.01)).multiply(new BigDecimal(0.0025))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));	
+		$itemBase.setValue($itemBase.getTotal());
+end
+
+rule "Impuesto patente entre 1000000.01 y 2000000"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00008" && value > 1000000 &&  value <= 2000000);
+		$mb : MunicipalBond();		
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 		
+		$itemBase.setTotal(new BigDecimal(2893.80).add($itemBase.getValue().subtract(new BigDecimal(1000000.01)).multiply(new BigDecimal(0.0020))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));	
+		$itemBase.setValue($itemBase.getTotal());		
+end
+
+rule "Impuesto patente entre 2000000 y 2500000"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00008" && value > 2000000 &&  value <= 2500000);
+		$mb : MunicipalBond();		
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 		
+		$itemBase.setTotal(new BigDecimal(4893.80).add($itemBase.getValue().subtract(new BigDecimal(2000000.01)).multiply(new BigDecimal(0.0015))));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));	
+		$itemBase.setValue($itemBase.getTotal());
+end
+
+rule "Impuesto patente de 2500000 en adelante"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00008" && value > 2500000);
+		$mb : MunicipalBond();		
+		eval($mb.getExempt()==false && $mb.getIsNoPasiveSubject()==false);
+	then 		
+		$itemBase.setTotal(new BigDecimal(5643.80).add($itemBase.getValue().subtract(new BigDecimal(2500000.01)).multiply(new BigDecimal(0.0010))));
+		if ($itemBase.getTotal().compareTo(new BigDecimal(25000)) > 0 ) $itemBase.setTotal(new BigDecimal(25000));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(), $mb));	
+		$itemBase.setValue($itemBase.getTotal());
+end
+
+rule "Impuesto patente totales exento"
+	no-loop true
+	salience 100
+	when
+		$itemBase : Item(entry.code == "00008");
+		$mb : MunicipalBond();
+		eval($mb.getExempt() || $mb.getIsNoPasiveSubject());
+	then	
+		$itemBase.setValue(new BigDecimal(1.0));
+		$itemBase.setTotal(new BigDecimal(1.0));
+		$mb.setExpirationDate(calculateExpirationDate($mb.getServiceDate(),$mb));	
+		$mb.setDescription($mb.getDescription() + ". NO PAGA POR "+($mb.getExempt() ? "ESTAR EXENTO" : "")+($mb.getIsNoPasiveSubject() ? "NO SER SUJETO PASIVO" : ""));
+end

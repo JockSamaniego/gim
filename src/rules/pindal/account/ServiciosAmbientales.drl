@@ -1,0 +1,28 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.tax
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.Domain;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
+import ec.gob.gim.revenue.model.adjunct.WaterServiceReference;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+
+
+#declare any global variables here
+rule "Servicios ambientales"
+	no-loop true
+	salience 0
+	when
+		$itemAmbiental : Item(entry.code == "IAP-API");
+		$mb : MunicipalBond();
+		$wsr : WaterServiceReference(consumption.amount > 0);
+	then		
+		$itemAmbiental.setValue(new BigDecimal(1.5));
+		$itemAmbiental.setTotal($itemAmbiental.getValue());		
+end
+
+

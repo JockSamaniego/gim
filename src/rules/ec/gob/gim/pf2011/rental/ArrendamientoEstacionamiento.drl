@@ -1,0 +1,59 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.tax
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.EntryDefinition;
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.income.model.TaxRate;
+import ec.gob.gim.parking.model.Ticket;
+import ec.gob.gim.revenue.model.Item;
+import ec.gob.gim.parking.model.ParkingRent;
+import ec.gob.gim.rental.model.Space;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.rental.model.SpaceType;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+
+#declare any global variables here
+rule "Arrendamiento a empleado municipal"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00030");	
+		$mb : MunicipalBond();	
+		$parkingRent : ParkingRent(isMunicipalEmployee == true);		
+	then 
+		$itemBase.setValue(new BigDecimal(15));		
+		$mb.setDescription("ARRENDAMIENTO DE ESTACIONAMIENTO A EMPLEADO MUNICIPAL");
+		$itemBase.setTotal($itemBase.getValue());
+end
+
+rule "Arrendamiento a externos"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00030");
+		$mb : MunicipalBond();		
+		$parkingRent : ParkingRent(isMunicipalEmployee == false);		
+	then 
+		$itemBase.setValue(new BigDecimal(30));		
+		$mb.setDescription("ARRENDAMIENTO DE ESTACIONAMIENTO A EXTERNOS");
+		$itemBase.setTotal($itemBase.getValue());
+end
+
+rule "Emision de recaudaciones"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00030");
+		$mb : MunicipalBond();
+		$entryDefinition : EntryDefinition();
+		$taxRate : TaxRate();				
+		$ticket : Ticket( isTotalCollected == true);			
+	then				
+		$itemBase.setValue($itemBase.getValue().subtract($entryDefinition.getValue()));		
+		$itemBase.setValue($itemBase.getValue().divide(new BigDecimal(1).add($taxRate.getRate()),4,RoundingMode.HALF_EVEN));		
+		$mb.setBase($itemBase.getValue());
+		$itemBase.setTotal($itemBase.getValue());
+end

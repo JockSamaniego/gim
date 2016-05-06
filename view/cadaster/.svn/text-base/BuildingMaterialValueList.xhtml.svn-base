@@ -1,0 +1,164 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="buildingMaterialSearch" styleClass="edit">
+			<ui:debug id="uidebug"/>
+			<h:outputText styleClass="formTitle"
+				value="#{messages['buildingMaterialValueList.manager']}" />
+
+			<rich:simpleTogglePanel>
+				<f:facet name="header">#{messages['buildingMaterialValue.searchFilter']}</f:facet>
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['fiscalPeriod.label']}</ui:define>
+					<h:selectOneMenu id="fiscalPeriodId"
+						value="#{buildingMaterialValueList.fiscalPeriod}">
+						<s:selectItems value="#{fiscalPeriods}" noSelectionLabel="#{messages['common.chooseOption']}" 
+							var="_fiscalPeriod"
+							label="#{_fiscalPeriod.name}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['building.structureMaterial']}</ui:define>
+					<h:selectOneMenu id="structureId"
+						value="#{buildingMaterialValueList.structureMaterial}">
+						<s:selectItems value="#{structureMaterials}" noSelectionLabel="#{messages['common.chooseOption']}" 
+							var="_structure"
+							label="#{messages[_structure.name()]}" />						
+					</h:selectOneMenu>
+				</s:decorate>
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/cadaster/BuildingMaterialValueList.xhtml">
+					<f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}" action="#{buildingMaterialValueList.cleanFiscalPeriod()}"
+					includePageParams="false" />
+			</div>
+
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['buildingMaterialValue.searchResults']} (#{empty buildingMaterialValueList.resultList ? 0 : (buildingMaterialValueList.paginated ? buildingMaterialValueList.resultCount : buildingMaterialValueList.resultList.size)})" />
+					<s:div styleClass="actionButtons" rendered="#{empty from}">
+						<s:button view="/cadaster/BuildingMaterialValueEdit.xhtml"
+							id="create" propagation="none"
+							value="#{messages['common.create']} #{messages['buildingMaterialValue']}">
+							<f:param name="buildingMaterialValueId" />
+						</s:button>
+					</s:div>
+				</h:panelGrid>
+			</f:facet>
+
+			<div class="results" id="buildingMaterialValueList">
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty buildingMaterialValueList.resultList}" />
+
+				<rich:dataTable id="buildingMaterialValueList"
+					var="_buildingMaterialValue"
+					value="#{buildingMaterialValueList.resultList}"
+					rendered="#{not empty buildingMaterialValueList.resultList}">
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{buildingMaterialValueList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['building.structureMaterial']}" />
+								<ui:param name="propertyPath"
+									value="buildingMaterialValue.structureMaterial" />
+							</ui:include>
+						</f:facet>
+						<h:outputText
+							value="#{messages[_buildingMaterialValue.structureMaterial.name()]}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{buildingMaterialValueList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['fiscalPeriod.label']}" />
+								<ui:param name="propertyPath"
+									value="buildingMaterialValue.fiscalPeriod" />
+							</ui:include>
+						</f:facet>
+						<h:outputText
+							value="#{_buildingMaterialValue.fiscalPeriod.name}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{buildingMaterialValueList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['buildingMaterialValue.valueBySquareMeter']}" />
+								<ui:param name="propertyPath"
+									value="buildingMaterialValue.valueBySquareMeter" />
+							</ui:include>
+						</f:facet>
+						<h:outputText
+							value="#{_buildingMaterialValue.valueBySquareMeter}" />
+					</h:column>
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<s:button view="/cadaster/BuildingMaterialValueEdit.xhtml"
+							value="#{messages['common.edit']}" propagation="none"
+							id="buildingMaterialValueEdit" rendered="#{empty from}">
+							<f:param name="buildingMaterialValueId"
+								value="#{_buildingMaterialValue.id}" />
+						</s:button>
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/buildingMaterialValueList.xhtml"
+				rendered="#{buildingMaterialValueList.previousExists}"
+				value="#{messages.left}#{messages.left} First Page" id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/buildingMaterialValueList.xhtml"
+				rendered="#{buildingMaterialValueList.previousExists}"
+				value="#{messages.left} Previous Page" id="previousPage">
+				<f:param name="firstResult"
+					value="#{buildingMaterialValueList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/buildingMaterialValueList.xhtml"
+				rendered="#{buildingMaterialValueList.nextExists}"
+				value="Next Page #{messages.right}" id="nextPage">
+				<f:param name="firstResult"
+					value="#{buildingMaterialValueList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/buildingMaterialValueList.xhtml"
+				rendered="#{buildingMaterialValueList.nextExists}"
+				value="Last Page #{messages.right}#{messages.right}" id="lastPage">
+				<f:param name="firstResult"
+					value="#{buildingMaterialValueList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

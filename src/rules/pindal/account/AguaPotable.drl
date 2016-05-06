@@ -1,0 +1,395 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.tax
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+import java.util.Date;
+import java.math.BigDecimal;
+import ec.gob.gim.waterservice.model.Consumption;
+import ec.gob.gim.waterservice.model.WaterSupply;
+import ec.gob.gim.common.model.LegalEntity;
+import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.common.model.LegalEntityType;
+import java.util.Calendar;
+import ec.gob.gim.revenue.model.adjunct.WaterServiceReference;
+
+rule "Provisional de agua potable CATEGORIA A"
+	no-loop true
+	salience 20
+	when
+		$itemBase : Item(entry.code == "IAP-APA");
+		$mb : MunicipalBond();
+		$wsr : WaterServiceReference();
+		eval("A".equalsIgnoreCase($mb.getResident().getCategory().name()) && $wsr.getConsumption().getAmount().doubleValue() > 0)
+	then
+	    Date $emisionDate = $mb.getEmisionDate();
+		$itemBase.setTotal($itemBase.getValue());
+		Calendar $calendar = Calendar.getInstance();
+		$calendar.setTime($emisionDate);
+		$calendar.add(Calendar.MONTH, 1);
+		$itemBase.setValue(categoriaA($wsr.getConsumption(), $mb));
+		$itemBase.setValue($itemBase.getValue().subtract(descuentoCategoriaA($wsr, $wsr.getConsumption(), $mb)));		
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));		
+		$mb.setExpirationDate($calendar.getTime());
+		
+end
+
+function BigDecimal categoriaA(Consumption $comp, MunicipalBond $mb){
+		Double amount = $comp.getAmount().doubleValue();		
+		Boolean publicEntity = (($mb.getResident() != null) && ($mb.getResident().getClass() == LegalEntity.class) && (((LegalEntity)$mb.getResident()).getLegalEntityType().name() == "PUBLIC"));		
+		BigDecimal total = BigDecimal.ZERO;		
+		
+		if(amount > 25){
+			amount = amount -25;
+			total = total.add(new BigDecimal(25).multiply(new BigDecimal(0.066)));
+		}else{
+			total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.066)));
+			if(publicEntity) total = total.divide(new BigDecimal(2));
+			return total;
+		}
+			
+		if(amount > 15){
+			amount = amount -15;
+			total = total.add(new BigDecimal(15).multiply(new BigDecimal(0.13)));
+		}else{
+			total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.13)));
+			if(publicEntity) total = total.divide(new BigDecimal(2));
+			return total;
+		}
+			
+		if(amount > 20){
+			amount = amount -20;
+			total = total.add(new BigDecimal(20).multiply(new BigDecimal(0.16)));
+		}else{
+			total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.16)));
+			if(publicEntity) total = total.divide(new BigDecimal(2));
+			return total;
+		}
+			
+		total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.21)));		
+		if(publicEntity) total = total.divide(new BigDecimal(2));
+		return total;		
+	
+}
+
+function BigDecimal descuentoCategoriaA(WaterServiceReference $wsr, Consumption $comp, MunicipalBond $mb){
+ 		if($wsr.getExemption() == null || !$wsr.getConsumption().getWaterSupply().getApplyExemptions()){
+ 			return BigDecimal.ZERO;
+ 		}
+		Double discountBase = 25.00;
+		
+		Double amount = $comp.getAmount().doubleValue();			
+		Boolean publicEntity = (($mb.getResident() != null) && ($mb.getResident().getClass() == LegalEntity.class) && (((LegalEntity)$mb.getResident()).getLegalEntityType().name() == "PUBLIC"));		
+		BigDecimal total = BigDecimal.ZERO;		
+		
+		if(amount > 25){
+			amount = amount -25;
+			if(discountBase < 25){
+				total = total.add(new BigDecimal(discountBase).multiply(new BigDecimal(0.066)));				
+			}else{
+				total = total.add(new BigDecimal(25).multiply(new BigDecimal(0.066)));
+			}	
+				
+		}else{
+		
+			if(discountBase < amount){
+				total = total.add(new BigDecimal(discountBase).multiply(new BigDecimal(0.066)));				
+			}else{				
+				total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.066)));
+			}			
+		}
+		
+		total = total.divide(new BigDecimal(2));
+		total = total.setScale(2,BigDecimal.ROUND_HALF_UP);
+		return total;		
+	
+}
+
+
+
+
+
+rule "Provisional de agua potable CATEGORIA B"
+	no-loop true
+	salience 20
+	when
+		$itemBase : Item(entry.code == "IAP-APA");
+		$mb : MunicipalBond();
+		$wsr : WaterServiceReference();
+		eval("B".equalsIgnoreCase($mb.getResident().getCategory().name()) && $wsr.getConsumption().getAmount().doubleValue() > 0)
+	then
+	    Date $emisionDate = $mb.getEmisionDate();
+		$itemBase.setTotal($itemBase.getValue());
+		Calendar $calendar = Calendar.getInstance();
+		$calendar.setTime($emisionDate);
+		$calendar.add(Calendar.MONTH, 1);
+		$itemBase.setValue(categoriaB($wsr.getConsumption(), $mb));	
+		$itemBase.setValue($itemBase.getValue().subtract(descuentoCategoriaB($wsr, $wsr.getConsumption(), $mb)));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));		
+		$mb.setExpirationDate($calendar.getTime());
+		
+end
+
+function BigDecimal categoriaB(Consumption $comp, MunicipalBond $mb){
+		Double amount = $comp.getAmount().doubleValue();				
+		Boolean publicEntity = (($mb.getResident() != null) && ($mb.getResident().getClass() == LegalEntity.class) && (((LegalEntity)$mb.getResident()).getLegalEntityType().name() == "PUBLIC"));		
+		BigDecimal total = BigDecimal.ZERO;		
+		
+		if(amount > 25){
+			amount = amount -25;
+			total = total.add(new BigDecimal(25).multiply(new BigDecimal(0.098)));
+		}else{
+			total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.098)));
+			if(publicEntity) total = total.divide(new BigDecimal(2));
+			return total;
+		}
+			
+		if(amount > 15){
+			amount = amount -15;
+			total = total.add(new BigDecimal(15).multiply(new BigDecimal(0.14)));
+		}else{
+			total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.14)));
+			if(publicEntity) total = total.divide(new BigDecimal(2));
+			return total;
+		}
+			
+		if(amount > 20){
+			amount = amount -20;
+			total = total.add(new BigDecimal(20).multiply(new BigDecimal(0.17)));
+		}else{
+			total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.17)));
+			if(publicEntity) total = total.divide(new BigDecimal(2));
+			return total;
+		}
+			
+		total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.22)));		
+		if(publicEntity) total = total.divide(new BigDecimal(2));
+		return total;
+	
+}
+
+function BigDecimal descuentoCategoriaB(WaterServiceReference $wsr, Consumption $comp, MunicipalBond $mb){
+		if($wsr.getExemption() == null || !$wsr.getConsumption().getWaterSupply().getApplyExemptions()){
+ 			return BigDecimal.ZERO;
+ 		}
+		Double discountBase = 25.00;
+		
+		Double amount = $comp.getAmount().doubleValue();				
+		Boolean publicEntity = (($mb.getResident() != null) && ($mb.getResident().getClass() == LegalEntity.class) && (((LegalEntity)$mb.getResident()).getLegalEntityType().name() == "PUBLIC"));		
+		BigDecimal total = BigDecimal.ZERO;		
+		
+		if(amount > 25){
+			amount = amount -25;
+			if(discountBase < 25){
+				total = total.add(new BigDecimal(discountBase).multiply(new BigDecimal(0.098)));				
+			}else{
+				total = total.add(new BigDecimal(25).multiply(new BigDecimal(0.098)));
+			}	
+				
+		}else{
+		
+			if(discountBase < amount){
+				total = total.add(new BigDecimal(discountBase).multiply(new BigDecimal(0.098)));				
+			}else{				
+				total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.098)));
+			}			
+		}
+		
+		total = total.divide(new BigDecimal(2));
+		total = total.setScale(2,BigDecimal.ROUND_HALF_UP);
+		return total;
+			
+}
+
+
+
+
+
+rule "Provisional de agua potable CATEGORIA C"
+	no-loop true
+	salience 20
+	when
+		$itemBase : Item(entry.code == "IAP-APA");
+		$mb : MunicipalBond();
+		$wsr : WaterServiceReference();
+		eval("C".equalsIgnoreCase($mb.getResident().getCategory().name()) && $wsr.getConsumption().getAmount().doubleValue() > 0)
+	then
+	    Date $emisionDate = $mb.getEmisionDate();
+		$itemBase.setTotal($itemBase.getValue());
+		Calendar $calendar = Calendar.getInstance();
+		$calendar.setTime($emisionDate);
+		$calendar.add(Calendar.MONTH, 1);
+		$itemBase.setValue(categoriaC($wsr.getConsumption(), $mb));	
+		$itemBase.setValue($itemBase.getValue().subtract(descuentoCategoriaC($wsr, $wsr.getConsumption(), $mb)));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));		
+		$mb.setExpirationDate($calendar.getTime());
+		
+end
+
+function BigDecimal categoriaC(Consumption $comp, MunicipalBond $mb){
+		Double amount = $comp.getAmount().doubleValue();				
+		Boolean publicEntity = (($mb.getResident() != null) && ($mb.getResident().getClass() == LegalEntity.class) && (((LegalEntity)$mb.getResident()).getLegalEntityType().name() == "PUBLIC"));		
+		BigDecimal total = BigDecimal.ZERO;		
+		
+		if(amount > 25){
+			amount = amount -25;
+			total = total.add(new BigDecimal(25).multiply(new BigDecimal(0.11)));
+		}else{
+			total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.11)));
+			if(publicEntity) total = total.divide(new BigDecimal(2));
+			return total;
+		}
+			
+		if(amount > 15){
+			amount = amount -15;
+			total = total.add(new BigDecimal(15).multiply(new BigDecimal(0.16)));
+		}else{
+			total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.16)));
+			if(publicEntity) total = total.divide(new BigDecimal(2));
+			return total;
+		}
+			
+		if(amount > 20){
+			amount = amount -20;
+			total = total.add(new BigDecimal(20).multiply(new BigDecimal(0.19)));
+		}else{
+			total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.19)));
+			if(publicEntity) total = total.divide(new BigDecimal(2));
+			return total;
+		}
+			
+		total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.24)));		
+		if(publicEntity) total = total.divide(new BigDecimal(2));
+		return total;
+	
+}
+
+function BigDecimal descuentoCategoriaC(WaterServiceReference $wsr, Consumption $comp, MunicipalBond $mb){
+		if($wsr.getExemption() == null || !$wsr.getConsumption().getWaterSupply().getApplyExemptions()){
+ 			return BigDecimal.ZERO;
+ 		}
+		Double discountBase = 25.00;
+
+		Double amount = $comp.getAmount().doubleValue();				
+		Boolean publicEntity = (($mb.getResident() != null) && ($mb.getResident().getClass() == LegalEntity.class) && (((LegalEntity)$mb.getResident()).getLegalEntityType().name() == "PUBLIC"));		
+		BigDecimal total = BigDecimal.ZERO;		
+		
+		if(amount > 25){
+			amount = amount -25;
+			if(discountBase < 25){
+				total = total.add(new BigDecimal(discountBase).multiply(new BigDecimal(0.11)));				
+			}else{
+				total = total.add(new BigDecimal(25).multiply(new BigDecimal(0.11)));
+			}	
+				
+		}else{
+		
+			if(discountBase < amount){
+				total = total.add(new BigDecimal(discountBase).multiply(new BigDecimal(0.11)));				
+			}else{				
+				total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.11)));
+			}			
+		}
+		
+		total = total.divide(new BigDecimal(2));
+		total = total.setScale(2,BigDecimal.ROUND_HALF_UP);
+		return total;
+			
+}
+
+
+
+
+rule "Provisional de agua potable CATEGORIA D"
+	no-loop true
+	salience 20
+	when
+		$itemBase : Item(entry.code == "IAP-APA");
+		$mb : MunicipalBond();
+		$wsr : WaterServiceReference();
+		eval("D".equalsIgnoreCase($mb.getResident().getCategory().name()) && $wsr.getConsumption().getAmount().doubleValue() > 0)
+	then
+	    Date $emisionDate = $mb.getEmisionDate();
+		$itemBase.setTotal($itemBase.getValue());
+		Calendar $calendar = Calendar.getInstance();
+		$calendar.setTime($emisionDate);
+		$calendar.add(Calendar.MONTH, 1);
+		$itemBase.setValue(categoriaD($wsr.getConsumption(), $mb));	
+		$itemBase.setValue($itemBase.getValue().subtract(descuentoCategoriaD($wsr, $wsr.getConsumption(), $mb)));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));		
+		$mb.setExpirationDate($calendar.getTime());
+		
+end
+
+function BigDecimal categoriaD(Consumption $comp, MunicipalBond $mb){
+		Double amount = $comp.getAmount().doubleValue();				
+		Boolean publicEntity = (($mb.getResident() != null) && ($mb.getResident().getClass() == LegalEntity.class) && (((LegalEntity)$mb.getResident()).getLegalEntityType().name() == "PUBLIC"));		
+		BigDecimal total = BigDecimal.ZERO;		
+		
+		if(amount > 25){
+			amount = amount -25;
+			total = total.add(new BigDecimal(25).multiply(new BigDecimal(0.13)));
+		}else{
+			total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.13)));
+			if(publicEntity) total = total.divide(new BigDecimal(2));
+			return total;
+		}
+			
+		if(amount > 15){
+			amount = amount -15;
+			total = total.add(new BigDecimal(15).multiply(new BigDecimal(0.19)));
+		}else{
+			total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.19)));
+			if(publicEntity) total = total.divide(new BigDecimal(2));
+			return total;
+		}
+			
+		if(amount > 20){
+			amount = amount -20;
+			total = total.add(new BigDecimal(20).multiply(new BigDecimal(0.22)));
+		}else{
+			total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.22)));
+			if(publicEntity) total = total.divide(new BigDecimal(2));
+			return total;
+		}
+			
+		total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.27)));
+		if(publicEntity) total = total.divide(new BigDecimal(2));
+		return total;
+		
+}
+
+function BigDecimal descuentoCategoriaD(WaterServiceReference $wsr, Consumption $comp, MunicipalBond $mb){
+		if($wsr.getExemption() == null || !$wsr.getConsumption().getWaterSupply().getApplyExemptions()){
+ 			return BigDecimal.ZERO;
+ 		}
+		Double discountBase = 25.00;
+
+		Double amount = $comp.getAmount().doubleValue();				
+		Boolean publicEntity = (($mb.getResident() != null) && ($mb.getResident().getClass() == LegalEntity.class) && (((LegalEntity)$mb.getResident()).getLegalEntityType().name() == "PUBLIC"));		
+		BigDecimal total = BigDecimal.ZERO;		
+		
+		if(amount > 25){
+			amount = amount -25;
+			if(discountBase < 25){
+				total = total.add(new BigDecimal(discountBase).multiply(new BigDecimal(0.13)));				
+			}else{
+				total = total.add(new BigDecimal(25).multiply(new BigDecimal(0.13)));
+			}	
+				
+		}else{
+		
+			if(discountBase < amount){
+				total = total.add(new BigDecimal(discountBase).multiply(new BigDecimal(0.13)));				
+			}else{				
+				total = total.add(new BigDecimal(amount).multiply(new BigDecimal(0.13)));
+			}			
+		}
+		
+		total = total.divide(new BigDecimal(2));
+		total = total.setScale(2,BigDecimal.ROUND_HALF_UP);
+		return total;
+		
+}

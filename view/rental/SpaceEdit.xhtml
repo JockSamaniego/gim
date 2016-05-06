@@ -1,0 +1,112 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="space" styleClass="edit">
+			<h:outputText styleClass="formTitle"
+				value="#{messages['space.editFormTitle']}" />
+
+			<rich:panel id="richpanelId">
+				<f:facet name="header">#{messages['space']}</f:facet>				
+				<ui:debug id="debug" />
+				<h:panelGrid columns="1">
+					<s:decorate id="typeField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['space.spaceType']}</ui:define>
+						<h:selectOneMenu id="spaceType" required="true"
+							value="#{spaceHome.instance.spaceType}">
+							<s:selectItems value="#{spaceTypes}" required="true" var="type"
+								label="#{messages[type.name]}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEntity />
+							<a:support event="onchange" ajaxSingle="true"
+								reRender="richpanelId" action="#{spaceHome.cleanValues()}" />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="statusField" template="../layout/edit.xhtml" rendered="#{spaceHome.managed}">
+						<ui:define name="label">#{messages['space.spaceStatus']}</ui:define>
+						<h:selectOneMenu id="spaceStatus" required="true"
+							value="#{spaceHome.instance.spaceStatus}">
+							<s:selectItems value="#{spaceStatus}" required="true"
+								var="status" label="#{messages[status.name()]}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEnum />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="compassField" template="../layout/edit.xhtml"
+						rendered="#{!spaceHome.antenna}">
+						<ui:define name="label">#{messages['space.compassPoint']}</ui:define>
+						<h:selectOneMenu id="compassId" required="true"
+							value="#{spaceHome.instance.compassPoint}">
+							<s:selectItems value="#{compassPoints}" required="true"
+								var="compass" label="#{messages[compass.name()]}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEnum />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="widthField" template="../layout/edit.xhtml"
+						rendered="#{!spaceHome.antenna}">
+						<ui:define name="label">#{messages['space.width']}</ui:define>
+						<h:inputText value="#{spaceHome.instance.width}" id="widthId"
+							styleClass="right" required="true">
+							<f:convertNumber pattern="#0.00" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="heightField" template="../layout/edit.xhtml"
+						rendered="#{!spaceHome.antenna}">
+						<ui:define name="label">#{messages['space.height']}</ui:define>
+						<h:inputText value="#{spaceHome.instance.height}" id="heightId"
+							styleClass="right" required="true">
+							<f:convertNumber pattern="#0.00" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="addressField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['space.address']}</ui:define>
+						<h:inputTextarea value="#{spaceHome.instance.address}"
+							id="addressId" cols="50" required="true">
+						</h:inputTextarea>
+					</s:decorate>
+
+
+					<div style="clear: both">
+						<span class="required">*</span>
+						#{messages['common.requiredFields']}
+					</div>
+				</h:panelGrid>
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{spaceHome.persist}" disabled="#{!spaceHome.wired}"
+					rendered="#{!spaceHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{spaceHome.update}" rendered="#{spaceHome.managed}" />
+
+				<h:commandButton id="remove" value="#{messages['common.delete']}"
+					action="#{spaceHome.remove}" rendered="#{spaceHome.instance.contracts.size() == 0 and spaceHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/rental/SpaceList.xhtml" />
+
+			</div>
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

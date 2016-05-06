@@ -1,0 +1,16 @@
+#Wed Aug 06 19:35:32 BST 2008
+action.package=org.loxageek.gim.action
+action.sources=/gim/src/hot
+eclipse.preferences.version=1
+model.package=org.loxageek.gim.model
+model.sources=/gim/src/main
+seam.ejb.project=gim
+seam.project.connection.profile=
+seam.project.deployment.type=ear
+seam.project.settings.version=1.1
+seam.project.web.root.folder=/gim/view
+seam.runtime.name=
+seam.test.creating=true
+seam.test.project=gim
+test.package=org.loxageek.gim.test
+test.sources=/gim/src/test

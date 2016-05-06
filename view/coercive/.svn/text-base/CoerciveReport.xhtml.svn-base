@@ -1,0 +1,138 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="route" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['municipalBond.pendingStatus']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{messages['municipalBond.pendingStatusPanel']}</f:facet>
+
+				<h:panelGrid columns="4">
+
+					<s:decorate id="quantityField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['coercive.quantity']}:</ui:define>
+						<rich:inputNumberSpinner id="months" minValue="3"
+							value="#{coerciveReportHome.quantity}" inputSize="4"
+							maxValue="100">
+							<a:support event="onchange" ajaxSingle="true" />
+						</rich:inputNumberSpinner>
+					</s:decorate>
+
+					<s:decorate id="dateReportField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['coercive.dateReport']}:</ui:define>
+						<rich:calendar id="startDate"
+							value="#{coerciveReportHome.dateReport}"
+							datePattern="#{messages['common.datePattern']}">
+							<a:support event="onchanged" ajaxSingle="true"
+								reRender="startDate" />
+						</rich:calendar>
+					</s:decorate>
+
+					<a:commandButton id="createRoutePeriod" ajaxSingle="true"
+						action="#{coerciveReportHome.listPendingByQuantity()}"
+						value="#{messages['common.search']}"
+						reRender="obligationsList,readingManPanel,printId" />
+				</h:panelGrid>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<rich:panel id="readingManPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['municipalBond.pendingStatusResident']} (#{coerciveReportHome.expiredObligations.size()})" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<h:outputText value="#{messages['route.notRoutePeriods']}."
+					rendered="#{empty coerciveReportHome.expiredObligations}" />
+
+				<rich:dataTable id="obligationsList" var="_mb"
+					rendered="#{not empty coerciveReportHome.expiredObligations}"
+					value="#{coerciveReportHome.expiredObligations}" rows="100"
+					columnClasses="none,none,right,right"
+					onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+					<rich:column>
+						<f:facet name="header">#{messages['resident.identificationNumber']}</f:facet>
+						<h:outputText value="#{_mb.resident.identificationNumber}" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">#{messages['resident']}</f:facet>
+						<h:outputText value="#{_mb.resident.name}" />
+					</rich:column>
+					<rich:column sortBy="#{_mb.account}">
+						<f:facet name="header">#{messages['municipalBond.quantity']}</f:facet>
+						<h:outputText value="#{_mb.account}">
+						</h:outputText>
+					</rich:column>
+					<rich:column sortBy="#{_mb.subTotal}">
+						<f:facet name="header">#{messages['municipalBond.pendingValue']}</f:facet>
+						<h:outputText value="#{_mb.subTotal}">
+							<f:convertNumber currencySymbol="$" groupingUsed="true"
+								maxFractionDigits="2" type="currency" />
+						</h:outputText>
+					</rich:column>
+
+					<f:facet name="footer">
+
+						<rich:columnGroup>
+							<rich:column colspan="2" style="text-align:right;">Totales</rich:column>
+							<rich:column style="text-align:right;">
+								<h:outputText value="#{coerciveReportHome.quantity}"
+									style="text-align:right;">
+								</h:outputText>
+							</rich:column>
+							<rich:column style="text-align:right;">
+								<h:outputText value="#{coerciveReportHome.total}"
+									style="text-align:right;">
+									<f:convertNumber currencySymbol="$" groupingUsed="true"
+										maxFractionDigits="2" type="currency" />
+								</h:outputText>
+							</rich:column>
+						</rich:columnGroup>
+					</f:facet>
+				</rich:dataTable>
+				<rich:datascroller align="center" for="obligationsList"
+					maxPages="20" id="sc2" />
+				<div style="clear: both" />
+			</rich:panel>
+
+
+			<div class="actionButtons">
+
+				<!-- h:commandButton
+					action=" # { excelExporter.export('route:obligationsList')}"
+					value="Export" / -->
+
+				<s:button view="/coercive/report/PendingMunicipalBondExcel.xhtml"
+					id="printId" propagation="join"
+					value="#{messages['common.download.excel']}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/home.xhtml" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

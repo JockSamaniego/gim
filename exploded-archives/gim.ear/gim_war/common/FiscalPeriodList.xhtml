@@ -1,0 +1,150 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="fiscalPeriodSearch" styleClass="edit">
+
+		<h:outputText styleClass="formTitle" value="#{messages['fiscalPeriod.manageFiscalPeriods']}" />
+		
+        <rich:simpleTogglePanel label="#{messages['fiscalPeriod.searchFilter']}" switchType="ajax">
+
+            <s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['fiscalPeriod.name']}</ui:define>
+                <h:inputText id="name" value="#{fiscalPeriodList.fiscalPeriod.name}" size="40"/>
+            </s:decorate>
+
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="#{messages['common.search']}" action="/common/FiscalPeriodList.xhtml">
+            	    <f:param name="firstResult" value="0"/>
+            </h:commandButton>
+            <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">
+        	<h:panelGrid columns="3" columnClasses="headerTitle,">
+				<h:outputText
+					value="#{messages['fiscalPeriod.searchResults']} (#{empty fiscalPeriodList.resultList ? 0 : (fiscalPeriodList.paginated ? fiscalPeriodList.resultCount : fiscalPeriodList.resultList.size)})" />
+		        <s:button view="/common/FiscalPeriodEdit.xhtml"
+		                    id="create"
+		           propagation="none"
+		                 value="#{messages['common.create']}">
+		            <f:param name="fiscalPeriodId"/>
+		        </s:button>
+		    </h:panelGrid>
+        </f:facet>
+        
+    <div class="results" id="fiscalPeriodList">
+
+    <h:outputText value="#{messages['common.noResultsReturned']}"
+               rendered="#{empty fiscalPeriodList.resultList}"/>
+
+    <rich:dataTable id="fiscalPeriodList"
+                var="_fiscalPeriod"
+              value="#{fiscalPeriodList.resultList}"
+           rendered="#{not empty fiscalPeriodList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{fiscalPeriodList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['fiscalPeriod.id']}"/>
+                    <ui:param name="propertyPath" value="fiscalPeriod.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_fiscalPeriod.id}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{fiscalPeriodList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['fiscalPeriod.name']}"/>
+                    <ui:param name="propertyPath" value="fiscalPeriod.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_fiscalPeriod.name}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{fiscalPeriodList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['fiscalPeriod.startDate']}"/>
+                    <ui:param name="propertyPath" value="fiscalPeriod.startDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_fiscalPeriod.startDate}">
+                <s:convertDateTime type="date" dateStyle="short" pattern="#{messages['common.datePattern']}"/>
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{fiscalPeriodList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['fiscalPeriod.endDate']}"/>
+                    <ui:param name="propertyPath" value="fiscalPeriod.endDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_fiscalPeriod.endDate}">
+                <s:convertDateTime type="date" dateStyle="short" pattern="#{messages['common.datePattern']}"/>
+            </h:outputText>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            <s:button view="/common/FiscalPeriodEdit.xhtml"
+                   value="#{messages['common.edit']}"
+             propagation="none"
+                      id="fiscalPeriodEdit"
+                rendered="#{empty from}">
+                <f:param name="fiscalPeriodId"
+                        value="#{_fiscalPeriod.id}"/>
+            </s:button>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/common/FiscalPeriodList.xhtml"
+				rendered="#{fiscalPeriodList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}" id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/common/FiscalPeriodList.xhtml"
+				rendered="#{fiscalPeriodList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}" id="previousPage">
+				<f:param name="firstResult"
+					value="#{fiscalPeriodList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/common/FiscalPeriodList.xhtml"
+				rendered="#{fiscalPeriodList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}" id="nextPage">
+				<f:param name="firstResult" value="#{fiscalPeriodList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/common/FiscalPeriodList.xhtml"
+				rendered="#{fiscalPeriodList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}" id="lastPage">
+				<f:param name="firstResult" value="#{fiscalPeriodList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+
+</ui:define>
+
+</ui:composition>

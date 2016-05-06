@@ -1,0 +1,365 @@
+<p:document xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	title="#{messages['APPRAISALPERIODREPORT']}" subject="report" type="pdf" orientation="portrait"
+	pageSize="A4" margins="20 20 20 20" author="GADM-L"
+	creator="GADM-L">
+
+	<f:facet name="header">
+		<p:font size="9" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="2" widthPercentage="100" spacingAfter="15"
+						widths="1 10">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:image value="#{gim.institution.logo}" alignment="center" widht="1" height="1">
+                                <s:transformImageSize height="70" maintainRatio="true"/>
+                            </p:image>
+                        </p:cell>
+						<p:cell>
+							<p:font size="8" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+							</p:font>
+
+							<p:font size="7" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.address}. #{messages['institution.phone']}: #{gim.institution.phone} -  #{messages['institution.fax']}: #{gim.institution.fax}</p:paragraph>
+							</p:font>
+
+							<p:font size="9" style="bold">
+								<p:paragraph alignment="center">#{messages['appraisal.AppraisalPeriodReportTitle']}</p:paragraph>
+							</p:font>
+						</p:cell>
+					</p:table>
+				</p:paragraph>
+			</p:header>
+			<p:footer borderWidthTop="1" borderColorTop="blue"
+				borderWidthBottom="0" alignment="center">
+	 			[<p:pageNumber />]
+			</p:footer>
+		</p:font>
+	</f:facet>
+
+	<p:font size="9" name="HELVETICA">
+		<p:table columns="2" widthPercentage="100" headerRows="0" widths="1 1"
+			spacingAfter="10">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['user']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{userSession.user.resident.name}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph alignment="right" spacingAfter="10">
+					<p:font size="8" name="HELVETICA" style="bold">
+						<p:text value="#{messages['common.date']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{currentDatetime}">
+							<f:convertDateTime pattern="#{messages['common.dateFullTimePattern']}" />
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+		</p:table>
+
+		<p:paragraph>
+			<p:font size="8" style="bold">
+				<p:text value="#{messages['appraisalPeriod.code']}: " />
+			</p:font>
+			<p:font size="8">
+				<p:text
+					value="#{appraisalPeriodHome.instance.code}" />
+			</p:font>
+		</p:paragraph>
+
+		<p:paragraph>
+			<p:font size="8" style="bold">
+				<p:text value="#{messages['appraisalPeriod.name']}: " />
+			</p:font>
+			<p:font size="8">
+				<p:text
+					value="#{appraisalPeriodHome.instance.name}" />
+			</p:font>
+		</p:paragraph>
+
+		<p:paragraph spacingBefore="2">
+			<p:font size="10" style="bold">
+				<p:text value="#{messages['appraisal.factor']}" />
+			</p:font>
+		</p:paragraph>
+
+		<p:paragraph spacingBefore="2" spacingAfter="2">
+			<p:table columns="8" widthPercentage="100" >
+				<p:font size="8" name="HELVETICA" style="bold">
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{messages['appraisalPeriod.factorHasEquipment']}:" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{appraisalPeriodHome.instance.factorHasEquipment}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{messages['appraisalPeriod.factorHasntEquipment']}:" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{appraisalPeriodHome.instance.factorHasntEquipment}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{messages['appraisalPeriod.factorHasSewerage']}:" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{appraisalPeriodHome.instance.factorHasSewerage}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{messages['appraisalPeriod.factorHasntSewerage']}:" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{appraisalPeriodHome.instance.factorHasntSewerage}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{messages['appraisalPeriod.factorHasWater']}:" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{appraisalPeriodHome.instance.factorHasWater}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{messages['appraisalPeriod.factorHasntWater']}:" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{appraisalPeriodHome.instance.factorHasntWater}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{messages['appraisalPeriod.factorHasEnergy']}:" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{appraisalPeriodHome.instance.factorHasEnergy}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{messages['appraisalPeriod.factorHasntEnergy']}:" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{appraisalPeriodHome.instance.factorHasntEnergy}" />
+						</p:paragraph>
+					</p:cell>
+
+				</p:font>
+			</p:table>
+		</p:paragraph>
+	
+		<p:paragraph spacingBefore="2">
+			<p:font size="10" style="bold">
+				<p:text value="#{messages['appraisal.Structure']}" />
+			</p:font>
+		</p:paragraph>
+
+		<p:paragraph spacingBefore="2" spacingAfter="2">
+			<p:table columns="2" widthPercentage="100" >
+				<p:font size="8" name="HELVETICA" style="bold">
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['appraisalPeriod.material']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['appraisalPeriod.coeficienteTotal']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<ui:repeat value="#{appraisalPeriodHome.instance.appraisalTotalStructure}" var="_var">
+					<p:cell> 
+						<p:paragraph>
+							<p:text value="#{messages[_var.structureMaterial.name()]}" />
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_var.total}" />
+						</p:paragraph>
+					</p:cell>
+					
+				</ui:repeat>
+				</p:font>
+			</p:table>
+		</p:paragraph>
+
+
+		<p:paragraph spacingBefore="2">
+			<p:font size="10" style="bold">
+				<p:text value="#{messages['appraisal.Wall']}" />
+			</p:font>
+		</p:paragraph>
+
+		<p:paragraph spacingBefore="2" spacingAfter="2">
+			<p:table columns="2" widthPercentage="100" >
+				<p:font size="8" name="HELVETICA" style="bold">
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['appraisalPeriod.material']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['appraisalPeriod.coeficienteTotal']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<ui:repeat value="#{appraisalPeriodHome.instance.appraisalTotalWall}" var="_var">
+					<p:cell> 
+						<p:paragraph>
+							<p:text value="#{messages[_var.wallMaterial.name()]}" />
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_var.total}" />
+						</p:paragraph>
+					</p:cell>
+					
+				</ui:repeat>
+				</p:font>
+			</p:table>
+		</p:paragraph>
+
+
+
+		<p:paragraph spacingBefore="2">
+			<p:font size="10" style="bold">
+				<p:text value="#{messages['appraisal.Roof']}" />
+			</p:font>
+		</p:paragraph>
+
+		<p:paragraph spacingBefore="2" spacingAfter="2">
+			<p:table columns="2" widthPercentage="100" >
+				<p:font size="8" name="HELVETICA" style="bold">
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['appraisalPeriod.material']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['appraisalPeriod.coeficienteTotal']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<ui:repeat value="#{appraisalPeriodHome.instance.appraisalTotalRoof}" var="_var">
+					<p:cell> 
+						<p:paragraph>
+							<p:text value="#{messages[_var.roofMaterial.name()]}" />
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_var.total}" />
+						</p:paragraph>
+					</p:cell>
+					
+				</ui:repeat>
+				</p:font>
+			</p:table>
+		</p:paragraph>
+
+
+
+		<p:paragraph spacingBefore="2">
+			<p:font size="10" style="bold">
+				<p:text value="#{messages['appraisal.ExternalFinishing']}" />
+			</p:font>
+		</p:paragraph>
+
+		<p:paragraph spacingBefore="2" spacingAfter="2">
+			<p:table columns="2" widthPercentage="100" >
+				<p:font size="8" name="HELVETICA" style="bold">
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['appraisalPeriod.material']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['appraisalPeriod.coeficienteTotal']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<ui:repeat value="#{appraisalPeriodHome.instance.appraisalTotalExternal}" var="_var">
+					<p:cell> 
+						<p:paragraph>
+							<p:text value="#{messages[_var.externalFinishing.name()]}" />
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_var.total}" />
+						</p:paragraph>
+					</p:cell>
+					
+				</ui:repeat>
+				</p:font>
+			</p:table>
+		</p:paragraph>
+
+	</p:font>
+</p:document>

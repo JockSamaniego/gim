@@ -1,0 +1,112 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="mortgageEditPanel" width="300" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText
+					value="#{domainHome.mortgage.id != null ? messages['common.edit'] : messages['common.create']} #{messages['domain.mortgage']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkmort" />
+				<rich:componentControl for="mortgageEditPanel" attachTo="hidelinkmort"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="building" styleClass="edit">
+
+			<rich:panel>
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+				
+				
+				<h:panelGrid columns="2" width="100%">
+				
+				<s:decorate id="startDateField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['mortgage.startDate']}:</ui:define>						
+						<rich:calendar id="startDateMortgageId" required="true"
+							ajaxSingle="true"
+							value="#{domainHome.mortgage.startDate}" currentDate="#{currentDate}"
+							datePattern="#{messages['common.datePattern']}" />
+					</s:decorate>
+					
+					<s:decorate id="endDateField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['mortgage.endDate']}:</ui:define>						
+						<rich:calendar id="endDateMortgageId" required="true"
+							ajaxSingle="true"
+							value="#{domainHome.mortgage.endDate}" currentDate="#{currentDate}"
+							datePattern="#{messages['common.datePattern']}" />
+					</s:decorate>
+				
+					<s:decorate id="isActiveField1"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['mortgage.isActive']}:</ui:define>
+						<h:selectBooleanCheckbox id="isActiveId"
+							value="#{domainHome.mortgage.isActive}" />
+					</s:decorate>
+					
+					
+					<s:decorate id="financialInstitutionField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['mortgage.financialInstitution']}:</ui:define>
+						<h:selectOneMenu id="financialInstitutionId" required="true"
+								value="#{domainHome.mortgage.financialInstitution}">
+								<s:selectItems value="#{banks}" 
+									var="financialInstitution" label="#{financialInstitution.name}"
+									noSelectionLabel="#{messages['common.chooseOption']}" />
+								<s:convertEntity />
+							</h:selectOneMenu>						
+					</s:decorate>
+
+					<s:decorate id="amountField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['mortgage.amount']}:</ui:define>
+						<h:inputText id="amountId" required="true"  styleClass="right"
+							value="#{domainHome.mortgage.amount}" size="10">							
+							 <f:convertNumber pattern="#0.00" />
+						</h:inputText>
+					</s:decorate>
+					
+					<s:decorate id="typeField" template="../../layout/vertical-edit.xhtml">
+		                <ui:define name="label">#{messages['mortgage.mortgageType']}:</ui:define>
+		                <h:selectOneMenu id="type"  
+		                	value="#{domainHome.mortgage.mortgageType}" required="true">
+		                	<s:selectItems value="#{mortgageTypes}" var="_mortgageType" label="#{_mortgageType.ordinal()} - #{messages[_mortgageType.name()]}"/>
+		                	<s:convertEnum/>		                	
+		                </h:selectOneMenu> 
+		            </s:decorate>
+
+				</h:panelGrid>
+	</rich:panel>
+
+				<div class="actionButtons">
+					<a:commandButton action="#{domainHome.addMortgage()}"
+						value="#{messages['common.accept']}" reRender="mortgagePanel"
+						oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'mortgageEditPanel\');' : ''}" />
+
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.quit']}" reRender="buildingsPanel"
+						oncomplete="Richfaces.hideModalPanel('mortgageEditPanel');"
+						bypassUpdates="true" />
+				</div>
+			
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

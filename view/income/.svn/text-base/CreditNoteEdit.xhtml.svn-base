@@ -1,0 +1,225 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="creditNote" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['creditNote.editFormTitle']}" />
+
+			<rich:panel id="creditNotePanel">
+				<f:facet name="header">#{messages['creditNote.title']}</f:facet>
+
+				<g:residentChooser id="residentChooser"
+					disabled="#{creditNoteHome.resident != null}"
+					resident="#{creditNoteHome.resident}"
+					residentsList="#{creditNoteHome.residents}"
+					identificationNumber="#{creditNoteHome.identificationNumber}"
+					criteria="#{creditNoteHome.criteria}" bean="#{creditNoteHome}"
+					searchByCriteriaAction="searchByCriteria"
+					clearSearchPanelAction="clearSearchPanel" searchAction="search"
+					reRender="addBtn"
+					residentChosenListenerName="residentSelectedListener" />
+				
+				<!-- s:decorate id="paymentTypeField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['creditNote.paymentType']}:</ui:define>
+					<h:selectOneMenu id="paymentType"
+						value="#-{creditNoteHome.instance.paymentType}" required="true">
+						<s:selectItems value="#-{devolutionPaymentTypes}" var="paymentType"
+							label="#-{messages[paymentType.getDevolutionName(paymentType)]}" />
+						<s:convertEnum />
+					</h:selectOneMenu>
+				</s:decorate -->				
+
+				<s:decorate id="creditNoteTypeField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['creditNoteType']}:</ui:define>
+					<h:selectOneMenu id="paymentType"
+						value="#{creditNoteHome.instance.creditNoteType}" 
+						required="true"
+						disabled="#{creditNoteHome.managed}">
+						<s:selectItems value="#{creditNoteTypes}" var="creditNoteType"
+							label="#{creditNoteType.name}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+				
+				<s:decorate id="legalStatusField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['creditNote.legalStatus']}:</ui:define>
+					<h:selectOneMenu id="legalStatus"
+						value="#{creditNoteHome.legalStatus}"
+						disabled="#{creditNoteHome.managed}">
+						<s:selectItems value="#{legalStatuses}" var="legalStatus"
+							label="#{messages[legalStatus.name()]}" />
+						<s:convertEnum />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="useToPayField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['creditNote.useToPay']}:</ui:define>
+					<h:selectBooleanCheckbox id="useToPay" value="#{creditNoteHome.instance.useToPay}" 
+						disabled="#{creditNoteHome.managed}"/>
+				</s:decorate>
+
+				<s:decorate id="dateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['creditNote.date']}:</ui:define>
+					<rich:calendar id="date" enableManualInput="true"
+						value="#{creditNoteHome.instance.date}"
+						datePattern="#{messages['common.datePattern']}" required="true" 
+						disabled="#{creditNoteHome.managed}"/>
+				</s:decorate>
+
+				<s:decorate id="referenceField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['creditNote.reference']}:</ui:define>
+					<h:inputText id="reference"
+						value="#{creditNoteHome.instance.reference}" maxlength="50" size="55"
+						required="true" 
+						disabled="#{creditNoteHome.managed}"/>
+				</s:decorate>
+
+				<s:decorate id="resolutionNumberField"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['creditNote.resolutionNumber']}:</ui:define>
+					<h:inputText id="resolutionNumber"
+						value="#{creditNoteHome.instance.resolutionNumber}" maxlength="15"
+						required="true" 
+						disabled="#{creditNoteHome.managed}"/>
+				</s:decorate>
+
+				<s:decorate id="descriptionField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['creditNote.description']}:</ui:define>
+					<h:inputTextarea id="description"
+						value="#{creditNoteHome.instance.description}" maxlength="250" cols="40" rows="4"
+						required="true" 
+						disabled="#{creditNoteHome.managed}"/>
+				</s:decorate>
+
+				<s:decorate id="valueField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['creditNote.value']}:</ui:define>
+					<h:inputText id="value" value="#{creditNoteHome.instance.value}"
+						required="true" size="15"
+						disabled="#{creditNoteHome.managed}" >
+						<f:convertNumber
+							maxFractionDigits="#{messages['common.maxFractionDigits']}"
+							minFractionDigits="#{messages['common.minFractionDigits']}" />
+						<a:support event="onchange" action="#{creditNoteHome.instance.setAvailableAmount(creditNoteHome.instance.value)}" reRender="availableAmountField" />
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="availableAmountField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['creditNote.availableAmount']}:</ui:define>
+					<h:inputText id="availableAmount" value="#{creditNoteHome.instance.availableAmount}"
+						size="15"
+						disabled="true">
+						<f:convertNumber
+							maxFractionDigits="#{messages['common.maxFractionDigits']}"
+							minFractionDigits="#{messages['common.minFractionDigits']}" />
+					</h:inputText>
+				</s:decorate>				
+				
+				<div style="clear: both" />
+
+			</rich:panel>
+			
+			<rich:messages id="messages" ajaxRendered="true"/>
+
+			<rich:dataTable id="municipalBondList" var="_municipalBond"
+				value="#{creditNoteHome.instance.municipalBonds}"
+				columnClasses="center, left, left, center, right, center, left">
+				<f:facet name="header">
+					<h:panelGrid columns="4" columnClasses="left headerTitle,">
+						<h:outputText value="#{messages['municipalBond.number']}" />
+					
+						<h:outputText value="#{messages['municipalBond.number']}"
+							rendered="#{!creditNoteHome.managed}" />
+
+						<h:inputText id="municipalBondNumber"
+							value="#{creditNoteHome.municipalBondNumber}"
+							rendered="#{!creditNoteHome.managed}" >
+							<a:support event="onblur" ajaxSingle="true"/>	
+						</h:inputText>
+
+						<a:commandButton id="addBtn"
+							action="#{creditNoteHome.addMunicipalBond()}"
+							value="#{messages['common.add']}"
+							reRender="municipalBondList, messages"
+							rendered="#{!creditNoteHome.managed}" 
+							disabled="#{empty creditNoteHome.resident}"
+							ajaxSingle="true"/>
+					</h:panelGrid>
+				</f:facet>
+
+				<rich:column>
+					<f:facet name="header">#{messages['municipalBond.number']}</f:facet>
+					<h:outputText value="#{_municipalBond.number}" />
+				</rich:column>
+
+				<rich:column>
+					<f:facet name="header">#{messages['entry']}</f:facet>
+					<h:outputText value="#{_municipalBond.entry.name}" />
+				</rich:column>
+
+				<rich:column>
+					<f:facet name="header">#{messages['resident']}</f:facet>
+					<h:outputText value="#{_municipalBond.resident.name}" />
+				</rich:column>
+
+				<rich:column>
+					<f:facet name="header">#{messages['municipalBond.status']}</f:facet>
+					<h:outputText value="#{_municipalBond.municipalBondStatus.name}" />
+				</rich:column>
+
+				<rich:column>
+					<f:facet name="header">#{messages['municipalBond.value']}</f:facet>
+					<h:outputText value="#{_municipalBond.paidTotal}">
+						<f:convertNumber />
+					</h:outputText>
+				</rich:column>
+
+				<rich:column>
+					<f:facet name="header">#{messages['municipalBond.emisionDate']}</f:facet>
+					<h:outputText value="#{_municipalBond.emisionDate}">
+						<s:convertDateTime type="date" dateStyle="short"
+							pattern="#{messages['common.datePattern']}" />
+					</h:outputText>
+				</rich:column>
+
+				<rich:column styleClass="action">
+					<f:facet name="header">#{messages['common.action']}</f:facet>
+					<a:commandButton id="removeBtn" action="#{creditNoteHome.remove(_municipalBond)}"
+						value="#{messages['common.remove']}" reRender="resultsPanel" />
+				</rich:column>
+
+			</rich:dataTable>
+
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{creditNoteHome.persist}"
+					rendered="#{!creditNoteHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{creditNoteHome.update}"
+					rendered="#{creditNoteHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/income/CreditNoteList.xhtml" />
+
+			</div>
+		</h:form>
+		
+
+		
+		
+	</ui:define>
+
+</ui:composition>

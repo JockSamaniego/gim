@@ -1,0 +1,171 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="territorialDivisionSearch" styleClass="edit">
+		
+			<h:outputText styleClass="formTitle" value="#{messages['territorialDivision.manageTerritorialDivisions']}" />
+
+			<rich:simpleTogglePanel
+				label="#{messages['territorialDivision.searchFilter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['territorialDivision.territorialDivisiontype']}</ui:define>
+					<h:selectOneMenu id="territorialDivisionType"
+						value="#{territorialDivisionList.territorialDivisionType}">
+						<s:selectItems value="#{territorialDivisionTypes}"
+							var="territorialDivisionType"
+							label="#{messages[territorialDivisionType.name]}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['territorialDivision.criteria']}</ui:define>
+					<h:inputText id="name" value="#{territorialDivisionList.criteria}" />
+				</s:decorate>
+
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['territorialDivision.search']}"
+					action="/cadaster/TerritorialDivisionList.xhtml">
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['territorialDivision.reset']}" includePageParams="false" />
+			</div>
+
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+        		<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['territorialDivision.searchResults']} (#{empty territorialDivisionList.resultList ? 0 : (territorialDivisionList.paginated ? territorialDivisionList.resultCount : territorialDivisionList.resultList.size)})" />
+					<s:button view="/cadaster/TerritorialDivisionEdit.xhtml" id="create"
+						propagation="none" value="#{messages['common.create']} #{territorialDivisionList.defaultTerritorialDivisionType.name}">
+						<f:param name="territorialDivisionId" />
+					</s:button>
+				</h:panelGrid>
+			</f:facet>
+			<div class="results" id="territorialDivisionList">
+
+				<h:outputText
+					value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty territorialDivisionList.resultList}" />
+
+				<rich:dataTable id="territorialDivisionList"
+					var="_territorialDivision"
+					value="#{territorialDivisionList.resultList}"
+					rendered="#{not empty territorialDivisionList.resultList}">
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{territorialDivisionList}" />
+								<ui:param name="propertyLabel" value="#{messages['territorialDivision.id']}" />
+								<ui:param name="propertyPath" value="territorialDivision.id" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_territorialDivision.id}" />
+					</h:column>
+					<h:column styleClass="action">
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{territorialDivisionList}" />
+								<ui:param name="propertyLabel" value="#{messages['territorialDivision.territorialDivisionType']}" />
+								<ui:param name="propertyPath"
+									value="territorialDivision.territorialDivisionType.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_territorialDivision.territorialDivisionType.name}" />
+					</h:column>
+					<h:column styleClass="action">
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{territorialDivisionList}" />
+								<ui:param name="propertyLabel" value="#{messages['territorialDivision.code']}" />
+								<ui:param name="propertyPath" value="territorialDivision.code" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_territorialDivision.code}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{territorialDivisionList}" />
+								<ui:param name="propertyLabel" value="#{messages['territorialDivision.route']}" />								
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_territorialDivision.route}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{territorialDivisionList}" />
+								<ui:param name="propertyLabel" value="#{messages['territorialDivision.name']}" />
+								<ui:param name="propertyPath" value="territorialDivision.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_territorialDivision.name}" />
+					</h:column>
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+            			<s:button view="/cadaster/TerritorialDivisionEdit.xhtml" value="#{messages['common.edit']}"
+							propagation="none" id="territorialDivisionEdit"
+							rendered="#{empty from}">
+							<f:param name="territorialDivisionId"
+								value="#{_territorialDivision.id}" />
+						</s:button>
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/cadaster/TerritorialDivisionList.xhtml"
+				rendered="#{territorialDivisionList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/cadaster/TerritorialDivisionList.xhtml"
+				rendered="#{territorialDivisionList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult"
+					value="#{territorialDivisionList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/cadaster/TerritorialDivisionList.xhtml"
+				rendered="#{territorialDivisionList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult" value="#{territorialDivisionList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/cadaster/TerritorialDivisionList.xhtml"
+				rendered="#{territorialDivisionList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult" value="#{territorialDivisionList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      no-conversation-view-id="/AppraisalList.xhtml"
+      login-required="true">
+
+   <begin-conversation join="true" flush-mode="MANUAL"/>
+
+   <action execute="#{appraisalHome.wire}"/>
+
+   <param name="appraisalFrom"/>
+   <param name="appraisalId" value="#{appraisalHome.appraisalId}"/>
+   <param name="domainFrom"/>
+   <param name="domainId" value="#{domainHome.domainId}"/>
+   <param name="propertyFrom"/>
+   <param name="propertyId" value="#{propertyHome.propertyId}"/>
+   <param name="blockFrom"/>
+   <param name="blockId" value="#{blockHome.blockId}"/>
+   <param name="territorialDivisionFrom"/>
+   <param name="territorialDivisionId" value="#{territorialDivisionHome.territorialDivisionId}"/>
+   <param name="territorialDivisionTypeFrom"/>
+   <param name="territorialDivisionTypeId" value="#{territorialDivisionTypeHome.territorialDivisionTypeId}"/>
+
+
+
+   <param name="fenceMaterialFrom"/>
+   <param name="fenceMaterialId" value="#{fenceMaterialHome.fenceMaterialId}"/>
+
+   <param name="locationFrom"/>
+   <param name="locationId" value="#{locationHome.locationId}"/>
+   <param name="streetFrom"/>
+   <param name="streetId" value="#{streetHome.streetId}"/>
+   <param name="sidewalkMaterialFrom"/>
+   <param name="sidewalkMaterialId" value="#{sidewalkMaterialHome.sidewalkMaterialId}"/>
+
+   <param name="streetMaterialFrom"/>
+   <param name="streetMaterialId" value="#{streetMaterialHome.streetMaterialId}"/>
+
+   <param name="streetTypeFrom"/>
+   <param name="streetTypeId" value="#{streetTypeHome.streetTypeId}"/>
+
+
+   <param name="neighborhoodFrom"/>
+   <param name="neighborhoodId" value="#{neighborhoodHome.neighborhoodId}"/>
+
+
+   <param name="lotPositionFrom"/>
+   <param name="lotPositionId" value="#{lotPositionHome.lotPositionId}"/>
+
+   <param name="propertyTypeFrom"/>
+   <param name="propertyTypeId" value="#{propertyTypeHome.propertyTypeId}"/>
+   <param name="entryFrom"/>
+   <param name="entryId" value="#{entryHome.entryId}"/>
+
+
+
+   <param name="purchaseTypeFrom"/>
+   <param name="purchaseTypeId" value="#{purchaseTypeHome.purchaseTypeId}"/>
+
+   <param name="residentFrom"/>
+   <param name="residentId" value="#{residentHome.residentId}"/>
+
+
+   <param name="fiscalPeriodFrom"/>
+   <param name="fiscalPeriodId" value="#{fiscalPeriodHome.fiscalPeriodId}"/>
+
+
+
+   <navigation from-action="#{appraisalHome.persist}">
+      <rule if-outcome="persisted">
+         <end-conversation/>
+         <redirect view-id="/cadaster/AppraisalList.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{appraisalHome.update}">
+      <rule if-outcome="updated">
+         <end-conversation/>
+         <redirect view-id="/cadaster/AppraisalList.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{appraisalHome.remove}">
+      <rule if-outcome="removed">
+         <end-conversation/>
+         <redirect view-id="/cadaster/AppraisalList.xhtml"/>
+      </rule>
+   </navigation>
+
+</page>

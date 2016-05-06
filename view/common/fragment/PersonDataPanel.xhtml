@@ -1,0 +1,109 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+
+	<rich:panel rendered="#{residentHome.instance.class.simpleName.equalsIgnoreCase('Person')}" id="contentPanel">
+		<f:facet name="header">#{messages['resident.personData']}</f:facet>
+		
+		<s:decorate id="isForeingField"
+			template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.isForeing']}:</ui:define>
+			
+			<h:selectBooleanCheckbox id="isForeing"
+				value="#{residentHome.instance.isForeign}" required="true">
+				<a:support event="onchange" reRender="isForeingField"
+					bypassUpdates="true" ajaxSingle="true" />
+			</h:selectBooleanCheckbox>
+						
+		</s:decorate>
+
+		<s:decorate id="firstNameField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.firstName']}:</ui:define>
+			<h:inputText id="firstName" required="true" size="25" maxlength="25"
+				value="#{residentHome.instance.firstName}" 
+				style="text-transform: uppercase">
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="lastNameField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.lastName']}:</ui:define>
+			<h:inputText id="lastName" required="true" size="25" maxlength="25"
+				value="#{residentHome.instance.lastName}"
+				style="text-transform: uppercase">
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="birthdayField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.birthday']}:</ui:define>
+			<rich:calendar id="birthday" enableManualInput="true"
+				value="#{residentHome.instance.birthday}" datePattern="#{messages['common.datePattern']}"
+				/>
+		</s:decorate>
+
+		<s:decorate id="genderField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.gender']}:</ui:define>
+			<h:selectOneMenu id="gender" value="#{residentHome.instance.gender}">
+				<s:selectItems value="#{genders}" var="gender" label="#{messages[gender.name()]}" />
+				<s:convertEnum/>
+			</h:selectOneMenu>
+		</s:decorate>
+
+		<s:decorate id="maritalStatusField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.maritalStatus']}:</ui:define>
+			<h:selectOneMenu id="maritalStatus"
+				value="#{residentHome.instance.maritalStatus}">
+				<s:selectItems value="#{maritalStatuses}" var="maritalStatus" label="#{messages[maritalStatus.name()]}" />
+				<s:convertEnum/>
+			</h:selectOneMenu>
+		</s:decorate>
+						
+		<s:decorate id="isDeadField"
+			template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.isDead']}:</ui:define>
+			<h:selectBooleanCheckbox value="#{residentHome.instance.isDead}" />
+		</s:decorate>
+		
+		<s:decorate id="isHandicapedField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.isHandicaped']}:</ui:define>
+			<h:selectBooleanCheckbox id="isHandicaped"
+				value="#{residentHome.instance.isHandicaped}" >
+				<a:support event="onclick" reRender="handicapedNumberField,percentageHandicapedField"
+					ajaxSingle="true" />				
+			</h:selectBooleanCheckbox>
+		</s:decorate>
+
+		<s:decorate id="handicapedNumberField"
+			template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.handicapedNumber']}:</ui:define>
+			<h:inputText id="handicapedNumber" size="15" maxlength="15"
+				value="#{residentHome.instance.handicapedNumber}" disabled="#{not residentHome.instance.isHandicaped}">
+				<a:support event="onblur" reRender="handicapedNumberField"
+					bypassUpdates="true" ajaxSingle="true" />
+			</h:inputText>
+		</s:decorate>
+						
+		<s:decorate id="percentageHandicapedField"
+			template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.handicapedPercentage']}:</ui:define>
+			<h:inputText id="percentageHandicaped" size="15" maxlength="15"
+				value="#{residentHome.instance.handicapedPercentage}" disabled="#{not residentHome.instance.isHandicaped}">
+				<a:support event="onblur" reRender="percentageHandicapedField"
+					bypassUpdates="true" ajaxSingle="true" />
+				<f:convertNumber pattern="#0.00"/>
+			</h:inputText>
+		</s:decorate>
+
+		<div style="clear: both"><span class="required">*</span>
+		#{messages['common.requiredFields']}</div>
+
+	</rich:panel>
+
+
+</ui:composition>

@@ -1,0 +1,79 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:include src="fragment/PlaceEditPanel.xhtml" />
+
+		<h:form id="street" styleClass="edit">
+			<h:outputText styleClass="formTitle"
+				value="#{messages['street.editFormTitle']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{messages['street']}</f:facet>				
+				<ui:debug id="debug" />
+				<h:panelGrid columns="1">
+					<s:decorate id="nameField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['street.name']}</ui:define>
+						<h:inputText value="#{streetHome.instance.name}" id="nameId"
+							required="true"/>
+					</s:decorate>
+
+					<h:panelGrid columns="2">
+						<s:decorate id="groupField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['street.place']}</ui:define>
+							<h:selectOneMenu id="groupPosition"
+								value="#{streetHome.instance.place}">
+								<s:selectItems value="#{streetHome.findPlace()}" required="true"
+									var="group" label="#{group.name}"
+									noSelectionLabel="#{messages['common.chooseOption']}" />
+								<s:convertEntity />
+							</h:selectOneMenu>
+						</s:decorate>
+
+						<a:commandButton id="createGroupPosition"
+							action="#{streetHome.createPlace()}" reRender="placeEditPanel"
+							ajaxSingle="true" eventsQueue="gimEventsQueue"
+							oncomplete="Richfaces.showModalPanel('placeEditPanel',{width:400, height:250})"
+							value="#{messages['street.createPlace']}" />
+
+					</h:panelGrid>
+
+
+				</h:panelGrid>
+
+
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{streetHome.persist}" disabled="#{!streetHome.wired}"
+					rendered="#{!streetHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{streetHome.update}" rendered="#{streetHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/cadaster/StreetList.xhtml" />
+
+			</div>
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

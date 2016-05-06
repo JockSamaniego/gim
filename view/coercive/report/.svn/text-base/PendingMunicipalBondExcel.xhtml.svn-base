@@ -1,0 +1,42 @@
+<e:workbook xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:f="http://java.sun.com/jsf/core"
+	filename="ObligacionesPendientes.xls" workbookProtected="false">
+
+	<e:worksheet value="#{coerciveReportHome.expiredObligations}" var="_mb">
+		<e:header>
+
+			<f:facet name="left">
+                        El documento ha sido creado el #date# y tiene #total_pages# pages
+                     </f:facet>
+			<f:facet name="right">
+                        #time#
+                     </f:facet>
+
+		</e:header>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['resident.identificationNumber']}" />
+			</f:facet>
+			<e:cell value="#{_mb.resident.identificationNumber}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['resident']}" />
+			</f:facet>
+			<e:cell value="#{_mb.resident.name}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['municipalBond.quantity']}" />
+			</f:facet>
+			<e:cell value="#{_mb.account}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="#{messages['municipalBond.pendingValue']}" />
+			</f:facet>
+			<e:cell value="#{_mb.subTotal}" />
+		</e:column>
+	</e:worksheet>
+
+</e:workbook>

@@ -1,0 +1,973 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.waterservice
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.Domain;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+import ec.gob.gim.waterservice.model.Consumption;
+import ec.gob.gim.waterservice.model.WaterSupply;
+import ec.gob.gim.waterservice.model.WaterSupplyCategory;
+
+dialect "java"
+
+function void determineOtherItems(Consumption $c, Item $itemBase, MunicipalBond $mb){
+	
+	for (Item $subItem : $mb.getItems()){
+		if($subItem.getEntry().getCode().equals("00546")){
+			tasaAlcantarillado($c, $subItem, $itemBase);
+		}
+		if($subItem.getEntry().getCode().equals("00043")){
+			tasaAseoBasura($c, $subItem, $itemBase);
+		}
+		if($subItem.getEntry().getCode().equals("00547")){
+			aportePlanMaestro($subItem, $itemBase);
+		}
+		if($subItem.getEntry().getCode().equals("00464")){
+			tasaSeguridadCiudadana($c, $subItem, $itemBase);
+		}
+		if($subItem.getEntry().getCode().equals("00450")){
+			tasaProteccionMicrocuencas($c, $subItem, $itemBase);
+		}
+	}
+}
+
+function void tasaAlcantarillado(Consumption $c, Item $subItem, Item $itemBase){
+
+	if($c.getWaterSupply().getHasSewerage()){
+		if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("RESIDENCIAL")){
+			$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.25)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("COMERCIAL")){
+			$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.50)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("INDUSTRIAL")){
+			$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.75)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("OFICIAL")){
+			$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.40)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("MEDIA OFICIAL")){
+			$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.20)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		
+		if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("TERCERA EDAD")){
+			$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.25)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		
+		if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("ESPECIAL")){
+			$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.25)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+	}else{
+		$subItem.setValue(new BigDecimal(0));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}		
+	System.out.println("::::::::::::::::::::alcantarillado:::::::::::::::::::::. " + $subItem.getTotal());
+}
+
+function void tasaAseoBasura(Consumption $c, Item $subItem, Item $itemBase){
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("RESIDENCIAL")){
+		$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.20)));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("COMERCIAL")){
+		$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.30)));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("INDUSTRIAL")){
+		$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.30)));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("OFICIAL")){
+		$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.30)));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("MEDIA OFICIAL")){
+		$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.10)));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}
+	
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("TERCERA EDAD")){
+		$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.20)));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}
+	
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("ESPECIAL")){
+		$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.20)));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}
+	
+	System.out.println("::::::::::::::::::::basura:::::::::::::::::::::. " + $subItem.getTotal());
+}
+
+#20%
+function void aportePlanMaestro(Item $subItem, Item $itemBase){
+	$subItem.setValue($itemBase.getValue().multiply(new BigDecimal(0.20)));
+	$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	System.out.println("::::::::::::::::::::plan maestro:::::::::::::::::::::. " + $subItem.getTotal());
+}
+
+#0.02/M3
+function void tasaSeguridadCiudadana(Consumption $c, Item $subItem, Item $itemBase){
+	$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.02)));
+	$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	System.out.println("::::::::::::::::::::tasa segurdad:::::::::::::::::::::. " + $subItem.getTotal());
+}
+
+function void tasaProteccionMicrocuencas(Consumption $c, Item $subItem, Item $itemBase){
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("RESIDENCIAL")){
+		# rango del 0 al 50 por q son iguales
+		if($c.getAmount().doubleValue() >= 0 && $c.getAmount().doubleValue() <=50){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.03)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getAmount().doubleValue() >= 51 && $c.getAmount().doubleValue() <=70){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.04)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getAmount().doubleValue() >= 71 && $c.getAmount().doubleValue() <=90){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.05)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getAmount().doubleValue() >= 91 && $c.getAmount().doubleValue() <=100){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.06)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getAmount().doubleValue() >= 101 ){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.07)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+	}
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("COMERCIAL")){
+		$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.07)));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("INDUSTRIAL")){
+		$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.07)));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("OFICIAL")){
+		$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.05)));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("MEDIA OFICIAL")){
+		$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.05)));
+		$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+	}
+	
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("TERCERA EDAD")){
+		# rango del 0 al 50 por q son iguales
+		if($c.getAmount().doubleValue() >= 0 && $c.getAmount().doubleValue() <=50){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.03)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getAmount().doubleValue() >= 51 && $c.getAmount().doubleValue() <=70){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.04)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getAmount().doubleValue() >= 71 && $c.getAmount().doubleValue() <=90){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.05)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getAmount().doubleValue() >= 91 && $c.getAmount().doubleValue() <=100){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.06)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getAmount().doubleValue() >= 101 ){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.07)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+	}
+	
+	if($c.getWaterSupply().getWaterSupplyCategory().getName().equals("ESPECIAL")){
+		# rango del 0 al 50 por q son iguales
+		if($c.getAmount().doubleValue() >= 0 && $c.getAmount().doubleValue() <=50){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.03)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getAmount().doubleValue() >= 51 && $c.getAmount().doubleValue() <=70){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.04)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getAmount().doubleValue() >= 71 && $c.getAmount().doubleValue() <=90){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.05)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getAmount().doubleValue() >= 91 && $c.getAmount().doubleValue() <=100){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.06)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+		if($c.getAmount().doubleValue() >= 101 ){
+			$subItem.setValue($c.getAmount().multiply(new BigDecimal(0.07)));
+			$subItem.setTotal($subItem.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		}
+	}
+		
+	System.out.println("::::::::::::::::::::micro cuencas:::::::::::::::::::::. " + $subItem.getTotal());
+}
+
+#================================================TARIFA RESIDENCIAL=======================================================
+#=========================================================================================================================
+
+rule "Impuesto agua residencial de 0 a 10"
+	no-loop true
+	salience 1
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="RESIDENCIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 0 && $comp.getAmount().doubleValue() <=10))
+	then
+		$itemBase.setValue(new BigDecimal(1.516));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::Residencial:::::::::::::::::::::. " + $itemBase.getTotal());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+#declare any global variables here
+rule "Impuesto agua residencial de 11 a 20"
+	no-loop true
+	salience 2
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="RESIDENCIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 11 && $comp.getAmount().doubleValue() <=20))
+	then 		
+		$itemBase.setValue(new BigDecimal(2.330));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(11)).multiply(new BigDecimal(0.090))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::Residencial:::::::::::::::::::::. " + $itemBase.getTotal());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+
+rule "Impuesto agua residencial de 21 a 50"
+	no-loop true
+	salience 3
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="RESIDENCIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 21 && $comp.getAmount().doubleValue() <=50))
+	then 		
+		$itemBase.setValue(new BigDecimal(3.338));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(21)).multiply(new BigDecimal(0.166))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::Residencial:::::::::::::::::::::. " + $itemBase.getTotal());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua residencial de 51 a 70"
+	no-loop true
+	salience 4
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="RESIDENCIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 51 && $comp.getAmount().doubleValue() <=70))
+	then 		
+		$itemBase.setValue(new BigDecimal(10.481));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(51)).multiply(new BigDecimal(0.204))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::Residencial:::::::::::::::::::::. " + $itemBase.getTotal());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua residencial de 71 a 90"
+	no-loop true
+	salience 5
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="RESIDENCIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 71 && $comp.getAmount().doubleValue() <=90))
+	then 		
+		$itemBase.setValue(new BigDecimal(18.310));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(71)).multiply(new BigDecimal(0.237))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::Residencial:::::::::::::::::::::. " + $itemBase.getTotal());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua residencial de 91 a 100"
+	no-loop true
+	salience 6
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="RESIDENCIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 91 && $comp.getAmount().doubleValue() <=100))
+	then 		
+		$itemBase.setValue(new BigDecimal(23.729));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(91)).multiply(new BigDecimal(0.328))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::Residencial:::::::::::::::::::::. " + $itemBase.getTotal());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+
+rule "Impuesto agua residencial de mas de 101"
+	no-loop true
+	salience 7
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="RESIDENCIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 101))
+	then 		
+		$itemBase.setValue(new BigDecimal(28.902));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(101)).multiply(new BigDecimal(0.390))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::Residencial:::::::::::::::::::::. " + $itemBase.getTotal());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+#================================================TARIFA COMERCIAL=======================================================
+#=========================================================================================================================
+
+rule "Impuesto agua comercial de 0 a 10"
+	no-loop true
+	salience 1
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="COMERCIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 0 && $comp.getAmount().doubleValue() <=10))
+	then 		
+		$itemBase.setValue(new BigDecimal(6.493));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::comercial:::::::::::::::::::::. " + $itemBase.getTotal());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua comercial de 11 a 20"
+	no-loop true
+	salience 2
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="COMERCIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 11 && $comp.getAmount().doubleValue() <=20))
+	then 		
+		$itemBase.setValue(new BigDecimal(6.493));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(10)).multiply(new BigDecimal(0.328))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::comercial:::::::::::::::::::::. " + $itemBase.getTotal());
+		determineOtherItems($comp, $itemBase, $mb);
+		
+end
+
+rule "Impuesto agua comercial de 21 a 50"
+	no-loop true
+	salience 3
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="COMERCIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 21 && $comp.getAmount().doubleValue() <=50))
+	then 		
+		$itemBase.setValue(new BigDecimal(9.773));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(20)).multiply(new BigDecimal(0.518))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::comercial:::::::::::::::::::::. " + $itemBase.getTotal());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua comercial de 51 a 100"
+	no-loop true
+	salience 4
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="COMERCIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 51 && $comp.getAmount().doubleValue() <=100))
+	then 		
+		$itemBase.setValue(new BigDecimal(25.313));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(50)).multiply(new BigDecimal(0.645))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::comercial:::::::::::::::::::::. " + $itemBase.getTotal());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua comercial de mas de 101"
+	no-loop true
+	salience 5
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="COMERCIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 101 ))
+	then 		
+		$itemBase.setValue(new BigDecimal(57.563));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(100)).multiply(new BigDecimal(0.973))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::comercial:::::::::::::::::::::. " + $itemBase.getTotal());
+		determineOtherItems($comp, $itemBase, $mb);		
+end
+
+#================================================TARIFA INDUSTRIAL=======================================================
+#=====================================================================================================================
+
+rule "Impuesto agua industrial de 0 a 10"
+	no-loop true
+	salience 1
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="INDUSTRIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 0 && $comp.getAmount().doubleValue() <=10))
+	then 		
+		$itemBase.setValue(new BigDecimal(9.495));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA INDUSTRIAL:::::::::::::::::::::. " + $itemBase.getTotal() + "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua industrial de 11 a 20"
+	no-loop true
+	salience 2
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="INDUSTRIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 11 && $comp.getAmount().doubleValue() <=20))
+	then 		
+		$itemBase.setValue(new BigDecimal(9.495));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(10)).multiply(new BigDecimal(0.487))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA INDUSTRIAL:::::::::::::::::::::. " + $itemBase.getTotal() + "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua industrial de 21 a 50"
+	no-loop true
+	salience 3
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="INDUSTRIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 21 && $comp.getAmount().doubleValue() <=50))
+	then 		
+		$itemBase.setValue(new BigDecimal(14.365));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(20)).multiply(new BigDecimal(0.783))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA INDUSTRIAL:::::::::::::::::::::. " + $itemBase.getTotal() + "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua industrial de 51 a 100"
+	no-loop true
+	salience 4
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="INDUSTRIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 51 && $comp.getAmount().doubleValue() <=100))
+	then 		
+		$itemBase.setValue(new BigDecimal(37.855));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(50)).multiply(new BigDecimal(0.973))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA INDUSTRIAL:::::::::::::::::::::. " + $itemBase.getTotal() + "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua industrial de mas de 101"
+	no-loop true
+	salience 5
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="INDUSTRIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 101 ))
+	then 		
+		$itemBase.setValue(new BigDecimal(86.505));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(100)).multiply(new BigDecimal(1.463))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA INDUSTRIAL:::::::::::::::::::::. " + $itemBase.getTotal() + "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+
+#================================================TARIFA OFICIAL=======================================================
+#=====================================================================================================================
+
+rule "Impuesto agua oficial de 0 a 10"
+	no-loop true
+	salience 1
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="OFICIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 0 && $comp.getAmount().doubleValue() <=10))
+	then 		
+		$itemBase.setValue(new BigDecimal(3.010));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA OFICIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);		
+end
+
+rule "Impuesto agua oficial de 11 a 20"
+	no-loop true
+	salience 2
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="OFICIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 11 && $comp.getAmount().doubleValue() <=20))
+	then 		
+		$itemBase.setValue(new BigDecimal(3.010));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(10)).multiply(new BigDecimal(0.329))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA OFICIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua oficial de 21 a 50"
+	no-loop true
+	salience 3
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="OFICIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 21 && $comp.getAmount().doubleValue() <=50))
+	then 		
+		$itemBase.setValue(new BigDecimal(6.300));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(20)).multiply(new BigDecimal(0.340))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA OFICIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua oficial de 51 a 100"
+	no-loop true
+	salience 4
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="OFICIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 51 && $comp.getAmount().doubleValue() <=100))
+	then 		
+		$itemBase.setValue(new BigDecimal(16.500));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(30)).multiply(new BigDecimal(0.397))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA OFICIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua oficial de mas de 101"
+	no-loop true
+	salience 5
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="OFICIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 101 ))
+	then 		
+		$itemBase.setValue(new BigDecimal(36.35));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(100)).multiply(new BigDecimal(0.448))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA OFICIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+#================================================TARIFA OFICIAL MEDIA=======================================================
+#===========================================================================================================================
+
+rule "Impuesto agua oficial media de 0 a 10"
+	no-loop true
+	salience 1
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="OFICIAL MEDIO");
+		eval(
+			($comp.getAmount().doubleValue() >= 0 && $comp.getAmount().doubleValue() <=10))
+	then 		
+		$itemBase.setValue(new BigDecimal(1.516));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA OFICIAL MEDIA:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua oficial media de 11 a 20"
+	no-loop true
+	salience 2
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="OFICIAL MEDIO");
+		eval(
+			($comp.getAmount().doubleValue() >= 11 && $comp.getAmount().doubleValue() <=20))
+	then 		
+		$itemBase.setValue(new BigDecimal(1.516));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(10)).multiply(new BigDecimal(0.164))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA OFICIAL MEDIA:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua oficial media de 21 a 50"
+	no-loop true
+	salience 3
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="OFICIAL MEDIO");
+		eval(
+			($comp.getAmount().doubleValue() >= 21 && $comp.getAmount().doubleValue() <=50))
+	then 		
+		$itemBase.setValue(new BigDecimal(3.156));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(20)).multiply(new BigDecimal(0.173))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA OFICIAL MEDIA:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua oficial media de 51 a 100"
+	no-loop true
+	salience 4
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="OFICIAL MEDIO");
+		eval(
+			($comp.getAmount().doubleValue() >= 51 && $comp.getAmount().doubleValue() <=100))
+	then 		
+		$itemBase.setValue(new BigDecimal(8.346));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(50)).multiply(new BigDecimal(0.200))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA OFICIAL MEDIA:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua oficial media de mas de 101"
+	no-loop true
+	salience 5
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="OFICIAL MEDIO");
+		eval(
+			($comp.getAmount().doubleValue() >= 101 ))
+	then 		
+		$itemBase.setValue(new BigDecimal(18.346));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(100)).multiply(new BigDecimal(0.223))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::TARIFA OFICIAL MEDIA:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+#====================================================3 EDAD===============================================================
+#=========================================================================================================================
+
+rule "3 edad de 0 a 10"
+	no-loop true
+	salience 1
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="TERCERA EDAD");
+		eval(
+			($comp.getAmount().doubleValue() >= 0 && $comp.getAmount().doubleValue() <=10))
+	then 		
+		$itemBase.setValue(new BigDecimal(0.760));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::3 EDAD:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+#declare any global variables here
+rule "3 edad de 11 a 20"
+	no-loop true
+	salience 2
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="TERCERA EDAD");
+		eval(
+			($comp.getAmount().doubleValue() >= 11 && $comp.getAmount().doubleValue() <=20))
+	then 		
+		$itemBase.setValue(new BigDecimal(1.165));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(11)).multiply(new BigDecimal(0.045))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::3 EDAD:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);		
+end
+
+
+rule "3 edad de 21 a 30"
+	no-loop true
+	salience 3
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="TERCERA EDAD");
+		eval(
+			($comp.getAmount().doubleValue() >= 21 && $comp.getAmount().doubleValue() <=30))
+	then 		
+		$itemBase.setValue(new BigDecimal(1.768));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(21)).multiply(new BigDecimal(0.166))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::3 EDAD:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "3 edad de 31 a 50"
+	no-loop true
+	salience 3
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="TERCERA EDAD");
+		eval(
+			($comp.getAmount().doubleValue() >= 31 && $comp.getAmount().doubleValue() <=50))
+	then 		
+		$itemBase.setValue(new BigDecimal(4.260));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(31)).multiply(new BigDecimal(0.166))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::3 EDAD:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "3 edad de 51 a 70"
+	no-loop true
+	salience 4
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="TERCERA EDAD");
+		eval(
+			($comp.getAmount().doubleValue() >= 51 && $comp.getAmount().doubleValue() <=70))
+	then 		
+		$itemBase.setValue(new BigDecimal(9.184));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(51)).multiply(new BigDecimal(0.204))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::3 EDAD:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "3 edad de 71 a 90"
+	no-loop true
+	salience 5
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="TERCERA EDAD");
+		eval(
+			($comp.getAmount().doubleValue() >= 71 && $comp.getAmount().doubleValue() <=90))
+	then 		
+		$itemBase.setValue(new BigDecimal(16.738));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(71)).multiply(new BigDecimal(0.237))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::3 EDAD:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "3 edad de 91 a 100"
+	no-loop true
+	salience 6
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="TERCERA EDAD");
+		eval(
+			($comp.getAmount().doubleValue() >= 91 && $comp.getAmount().doubleValue() <=100))
+	then 		
+		$itemBase.setValue(new BigDecimal(21.876));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(91)).multiply(new BigDecimal(0.328))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::3 EDAD:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+
+rule "3 edad de mas de 101"
+	no-loop true
+	salience 7
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="TERCERA EDAD");
+		eval(
+			($comp.getAmount().doubleValue() >= 101))
+	then 		
+		$itemBase.setValue(new BigDecimal(27.328));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(101)).multiply(new BigDecimal(0.390))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::3 EDAD:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+#================================================CATEGORIA ESPECIAL=======================================================
+#=========================================================================================================================
+
+rule "Impuesto agua especial de 0 a 10"
+	no-loop true
+	salience 1
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="ESPECIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 0 && $comp.getAmount().doubleValue() <=10))
+	then 		
+		$itemBase.setValue(new BigDecimal(0.760));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::CATEGORIA ESPECIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+#declare any global variables here
+rule "Impuesto agua especial de 11 a 20"
+	no-loop true
+	salience 2
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="ESPECIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 11 && $comp.getAmount().doubleValue() <=20))
+	then 		
+		$itemBase.setValue(new BigDecimal(1.165));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(11)).multiply(new BigDecimal(0.045))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::CATEGORIA ESPECIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);		
+end
+
+
+rule "Impuesto agua especial de 21 a 30"
+	no-loop true
+	salience 3
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="ESPECIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 21 && $comp.getAmount().doubleValue() <=30))
+	then 		
+		$itemBase.setValue(new BigDecimal(1.768));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(21)).multiply(new BigDecimal(0.166))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::CATEGORIA ESPECIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua especial de 31 a 50"
+	no-loop true
+	salience 3
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="ESPECIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 31 && $comp.getAmount().doubleValue() <=50))
+	then 		
+		$itemBase.setValue(new BigDecimal(4.260));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(31)).multiply(new BigDecimal(0.166))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::CATEGORIA ESPECIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua especial de 51 a 70"
+	no-loop true
+	salience 4
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="ESPECIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 51 && $comp.getAmount().doubleValue() <=70))
+	then 		
+		$itemBase.setValue(new BigDecimal(9.184));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(51)).multiply(new BigDecimal(0.204))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::CATEGORIA ESPECIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua especial de 71 a 90"
+	no-loop true
+	salience 5
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="ESPECIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 71 && $comp.getAmount().doubleValue() <=90))
+	then 		
+		$itemBase.setValue(new BigDecimal(16.738));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(71)).multiply(new BigDecimal(0.237))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::CATEGORIA ESPECIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+rule "Impuesto agua especial de 91 a 100"
+	no-loop true
+	salience 6
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="ESPECIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 91 && $comp.getAmount().doubleValue() <=100))
+	then 		
+		$itemBase.setValue(new BigDecimal(21.876));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(91)).multiply(new BigDecimal(0.328))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::CATEGORIA ESPECIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end
+
+
+rule "Impuesto agua especial de mas de 101"
+	no-loop true
+	salience 7
+	when
+		$itemBase : Item(entry.code == "00531");
+		$mb : MunicipalBond(items contains $itemBase);		
+		$comp : Consumption(waterSupply.waterSupplyCategory.name=="ESPECIAL");
+		eval(
+			($comp.getAmount().doubleValue() >= 101))
+	then 		
+		$itemBase.setValue(new BigDecimal(27.328));
+		$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract(new BigDecimal(101)).multiply(new BigDecimal(0.390))));
+		$itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+		System.out.println("::::::::::::::::::::CATEGORIA ESPECIAL:::::::::::::::::::::. " + $itemBase.getTotal()+ "........ "+$itemBase.getValue());
+		determineOtherItems($comp, $itemBase, $mb);
+end

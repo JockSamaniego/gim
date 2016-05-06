@@ -1,0 +1,143 @@
+#created on: Oct 21, 2015
+package ec.gob.gim.rules.pf2011.penalty;
+
+import ec.gob.gim.income.model.InterestRate;
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.common.model.Person;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+import ec.gob.gim.common.model.HolyDays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.ArrayList;
+
+import org.joda.time.DateTime;
+import org.joda.time.Period;
+
+import java.util.Date;
+import java.math.BigDecimal;
+
+
+dialect "java"
+
+function boolean IsHolyDays(Calendar $date){
+	
+	List<Integer> october = new ArrayList();
+	october.add(9);
+		
+	List<Integer> november = new ArrayList();
+	november.add(2);
+	november.add(3);
+	november.add(18);		
+		
+	List<Integer> december = new ArrayList();
+	december.add(8);
+	december.add(25);
+	december.add(31);
+		
+	List<HolyDays> dates = new ArrayList<HolyDays>();
+	dates.add(new HolyDays(9,   october));
+	dates.add(new HolyDays(10,  november));
+	dates.add(new HolyDays(11,  december)); 
+		
+	HolyDays hDays = null;
+	int $month = $date.get(Calendar.MONTH);
+	int $day = $date.get(Calendar.DAY_OF_MONTH);
+	for(HolyDays hd : dates){
+		if(hd.getMonth() == $month){
+			hDays = hd;
+			break;
+		}
+	}
+		
+	if(hDays==null){
+		return false;
+	}else{
+		return (hDays.getDays().contains($day))? true:false;
+	}
+		 
+}
+	
+	 function BigDecimal getInterest2(Date emission, float $percentage,
+			int $numberDays, BigDecimal $base) {
+ 
+		Calendar $emissionTime = Calendar.getInstance();
+		$emissionTime.setTime(emission);
+		$emissionTime.set(Calendar.HOUR, 0);
+		$emissionTime.set(Calendar.MINUTE, 0);
+		$emissionTime.set(Calendar.SECOND, 0);
+		
+		
+		Calendar $c = Calendar.getInstance();
+		$c.set(Calendar.HOUR, 0);
+		$c.set(Calendar.MINUTE, 0);
+		$c.set(Calendar.SECOND, 0);
+		
+		int daysMulta = 0; 
+		while ( ($emissionTime.before($c) ||  $emissionTime.equals($c)) && daysMulta < $numberDays) {
+			boolean $vacacion = IsHolyDays($emissionTime);
+			if (($emissionTime.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
+					&& $emissionTime.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) && !$vacacion) {
+				++daysMulta;
+			}
+			$emissionTime.add(Calendar.DAY_OF_MONTH, 1);
+		} 
+		
+		#$emissionTime.add(Calendar.DAY_OF_MONTH, -1); 
+		$c.add(Calendar.DAY_OF_MONTH, daysMulta);
+
+		DateTime $dt = new DateTime($c.getTime());
+		DateTime $emissionDT = new DateTime($emissionTime);
+		
+		Period $period = new Period($emissionDT, $dt);
+
+		int $numberMonths = 0; 
+		
+		int $anios = $period.getYears();
+		int $meses = $period.getMonths(); 
+		int $dias = $period.getDays();
+		
+		if ($anios > 0) {
+			$numberMonths = $anios * 12;
+		}
+		
+		int $days = $period.getWeeks() * 7;
+		$days += $dias;
+		if ($meses > 0) {
+			$numberMonths += $meses;
+			if($days>0){
+				$numberMonths++;
+			}
+		}else{
+			 
+			if($anios==0 && $meses==0 && $days > $numberDays){
+				$numberMonths ++;
+			}
+		}
+
+		float $interest = $numberMonths * $percentage;
+
+		if ($interest >= 100) {
+			$interest = 100;
+		}
+
+		return new BigDecimal($interest).multiply($base)
+				.divide(new BigDecimal(100))
+				.setScale(2, BigDecimal.ROUND_HALF_UP);
+	}
+	
+	
+rule "Interes FotoMulta"
+        no-loop true
+        #salience 9
+        when
+                $itemBase : Item(entry.code == '00646');
+                $mb : MunicipalBond();                          
+        then
+                #System.out.println("Ejecutando regla de Interest... " ); 
+                
+                $itemBase.setValue( getInterest2($mb.getServiceDate(), 2, 10, $mb.getBase() ));
+                $itemBase.setTotal( getInterest2($mb.getServiceDate(), 2, 10, $mb.getBase() ));
+end 
+

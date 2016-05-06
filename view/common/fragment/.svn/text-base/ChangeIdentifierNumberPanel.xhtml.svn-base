@@ -1,0 +1,71 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="changeIdentificationPanel" width="300" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText
+					value="#{messages['resident.changeIdentificationNumber']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="changeIdentificationPanel" attachTo="hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="changeIdentificationForm">
+			<h:panelGrid width="100%">
+				<s:decorate id="identificationTypeField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['resident.identificationType']}:</ui:define>
+					<h:selectOneMenu id="identificationType"
+						value="#{residentHome.instance.identificationType}">
+						<s:selectItems value="#{residentHome.identificationTypes}"
+							var="identificationType"
+							label="#{messages[identificationType.name()]}" />
+						<s:convertEnum />
+						<a:support event="onselect" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="identificationNumberField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['resident.dni']}:</ui:define>
+					<h:inputText id="identificationNumber" required="true" size="15"
+						maxlength="15"
+						value="#{residentHome.instance.identificationNumber}"
+						validator="identificationNumberValidator">
+						<a:support event="onblur" reRender="identificationNumberField"
+							bypassUpdates="true" ajaxSingle="true" />
+						<f:validator validatorId="identificationNumberUniquenessValidator" />
+					</h:inputText>
+				</s:decorate>
+			</h:panelGrid>
+			<h:panelGrid columns="2" style="text-align:right">
+				<a:commandButton 
+					value="#{messages['common.accept']}"
+					reRender="resident"
+					oncomplete="Richfaces.hideModalPanel('changeIdentificationPanel');"/>
+
+				<a:commandButton 
+					value="#{messages['common.quit']}" 
+					reRender="resident"
+					oncomplete="Richfaces.hideModalPanel('changeIdentificationPanel');"
+					bypassUpdates="true"/>
+			</h:panelGrid>
+
+		</h:form>
+
+	</rich:modalPanel>
+</ui:composition>

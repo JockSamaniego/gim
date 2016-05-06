@@ -1,0 +1,57 @@
+#created on: Oct 31, 2011
+package ec.gob.gim.rules.pf2011.common
+
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.common.model.Person;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+
+dialect "java"
+
+rule "Descuento a las personas adulta mayores"
+	no-loop true
+	salience 9
+	when
+		$itemDiscount : Item(entry.name == "DESCUENTO");
+		$mb : MunicipalBond(resident.class == Person, items contains $itemDiscount);
+		eval(((Person)$mb.getResident()).getAge().get(java.util.Calendar.YEAR) > 64);
+		
+	then
+		System.out.println("Ejecutando regla Descuento a las personas de la tercera edad... " + ((Person)$mb.getResident()).getAgeToString());
+		$mb.calculateTaxesTotal();
+		#System.out.println("SubTotlParcial... " + );
+		#Item itemBase = (Item)$mb.getItems().get(0);
+		
+		#Item itemDiscount = new Item();
+		$itemDiscount.setValue(new java.math.BigDecimal(-0.50));
+		#itemDiscount.setAmount(itemBase.getTotal());
+		$itemDiscount.setAmount($mb.getTaxesTotal());
+		$itemDiscount.setTotal($itemDiscount.getValue().multiply($itemDiscount.getAmount()));		
+		$mb.calculateTaxesTotal();
+		$mb.calculateValue();
+				
+end 
+
+
+rule "Descuento a las personas discapacitadas"
+	no-loop true
+	salience 10
+	when
+		$itemDiscount : Item(entry.name == "DESCUENTO");
+		$mb : MunicipalBond(resident.class == Person, items contains $itemDiscount);
+		eval(((Person)$mb.getResident()).getIsHandicaped() == true);
+		
+	then
+		System.out.println("Ejecutando regla Descuento a las personas discapacitadas... " + ((Person)$mb.getResident()).getAgeToString());
+		$mb.calculateTaxesTotal();
+		#Item itemBase = (Item)$mb.getItems().get(0);
+		#Item itemDiscount = new Item();
+		$itemDiscount.setValue(new java.math.BigDecimal(-0.25));
+		#itemDiscount.setAmount(itemBase.getTotal());
+		$itemDiscount.setAmount($mb.getTaxesTotal());
+		$itemDiscount.setTotal($itemDiscount.getValue().multiply($itemDiscount.getAmount()));	
+		#$mb.setSubTotal($mb.getSubTotal().add($itemDiscount.getTotal()));
+		$mb.calculateTaxesTotal();
+		$mb.calculateValue();
+end 
+

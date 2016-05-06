@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page login-required="true" no-conversation-view-id="/waterservice/RouteList.xhtml"
+	xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
+	
+	<begin-conversation flush-mode="MANUAL" join="true" />
+	<action execute="#{coerciveReportHome.wire}" />
+	<param name="routeFrom" />
+	<param name="routeId" value="#{coerciveReportHome.routeId}" />
+	
+	<navigation from-action="#{coerciveReportHome.persist}">
+		<rule if-outcome="persisted">
+			<end-conversation />
+			<redirect view-id="/waterservice/RouteList.xhtml" />
+		</rule>
+	</navigation>
+	<navigation from-action="#{coerciveReportHome.update}">
+		<rule if-outcome="updated">
+			<end-conversation />
+			<redirect view-id="/waterservice/RouteList.xhtml" />
+		</rule>
+	</navigation>
+	<navigation from-action="#{coerciveReportHome.remove}">
+		<rule if-outcome="removed">
+			<end-conversation />
+			<redirect view-id="/waterservice/RouteList.xhtml" />
+		</rule>
+	</navigation>
+</page>

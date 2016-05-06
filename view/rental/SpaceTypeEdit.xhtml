@@ -1,0 +1,63 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="contractType" styleClass="edit">
+			<h:outputText styleClass="formTitle"
+				value="#{messages['spaceType.editFormTitle']}" />
+			<ui:debug id="uiDebug"/>
+			<rich:panel>
+				<f:facet name="header">#{messages['spaceType']}</f:facet>
+
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['spaceType.name']}</ui:define>
+					<h:inputText id="name" size="50" maxlength="50" required="true" style="text-transform: uppercase"
+						value="#{spaceTypeHome.instance.name}"/>
+				</s:decorate>
+
+				<s:decorate id="descriptionField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['spaceType.reason']}</ui:define>
+					<h:inputTextarea id="description" cols="80" rows="3"
+						required="true" value="#{spaceTypeHome.instance.reason}" />
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{spaceTypeHome.persist}"
+					disabled="#{!spaceTypeHome.wired}"
+					rendered="#{!spaceTypeHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{spaceTypeHome.update}"
+					rendered="#{spaceTypeHome.managed}" />
+
+				<h:commandButton id="delete" value="#{messages['common.delete']}"
+					action="#{spaceTypeHome.remove}" immediate="true"
+					rendered="#{spaceTypeHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}" propagation="end"
+					view="/rental/SpaceTypeList.xhtml" />
+
+			</div>
+		</h:form>
+				
+	</ui:define>
+
+</ui:composition>

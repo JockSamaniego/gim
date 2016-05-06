@@ -1,0 +1,125 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<a:form id="municipalBondSearch" styleClass="edit">
+			<ui:debug id="uiDebug" />
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:outputText value="#{messages['municipalBond.condition']}"
+						styleClass="formTitle" />
+				</f:facet>
+
+				<s:decorate id="startDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.startDate']}:</ui:define>
+					<rich:calendar id="startDate" enableManualInput="false"
+						value="#{municipalBondCondition.startDate}"
+						datePattern="#{messages['common.datePattern']}" ajaxSingle="true">
+					</rich:calendar>
+				</s:decorate>
+
+				<g:residentChooser resident="#{municipalBondCondition.resident}"
+					criteria="#{municipalBondCondition.criteria}"
+					bean="#{municipalBondCondition}" searchAction="searchResident"
+					residentsList="#{municipalBondCondition.residents}"
+					identificationNumber="#{municipalBondCondition.identificationNumber}"
+					searchByCriteriaAction="searchResidentByCriteria"
+					clearSearchPanelAction="clearSearchResidentPanel"
+					residentChosenListenerName="residentSelectedListener"
+					reRender="entryChooserPanel,contentPanel">
+					<s:convertEntity />
+				</g:residentChooser>
+
+				<a:outputPanel id="entryChooserPanel" ajaxRendered="false">
+				<g:entryChooser id="entryChooser" label="#{messages['entry']}"
+					criteria="#{municipalBondCondition.criteriaEntry}"
+					entry="#{municipalBondCondition.entry}"
+					entryCode="#{municipalBondCondition.entryCode}"
+					bean="#{municipalBondCondition}" searchAction="searchEntry"
+					entriesList="#{municipalBondCondition.entries}"
+					searchByCriteriaAction="searchEntryByCriteria"
+					clearSearchPanelAction="clearSearchEntryPanel" reRender="contentPanel"
+					entryChosenListenerName="entrySelectedListener" 
+					disabled="#{empty municipalBondCondition.resident}">
+					<s:convertEntity />
+				</g:entryChooser>
+				</a:outputPanel>
+
+				<div style="clear: both" />
+			</rich:panel>
+
+			<div class="actionButtons">
+				<a:outputPanel ajaxRendered="true">					
+					
+					<a:commandButton id="search" value="#{messages['common.search']}"
+						action="#{municipalBondCondition.chargeResults()}" reRender="contentPanel, messages" disabled="#{municipalBondCondition.resident == null}">						
+					</a:commandButton>
+					
+					<s:button id="reset" value="#{messages['common.reset']}"
+						includePageParams="false" propagation="none" />
+				</a:outputPanel>
+			</div>
+
+		</a:form>
+		<h:form>
+			<div class="results">
+				
+				<rich:panel id="contentPanel">
+					<a:outputPanel ajaxRendered="false">		
+				<h:outputText
+					value="#{messages['municipalBond.searchReturnedNoResults']}."
+					rendered="#{empty municipalBondCondition.result}" />
+
+
+				<g:municipalBondsViewer id="municipalBondsViewerCmp"
+					title="#{messages['municipalBond.list']} --> #{messages['income.totalPendingBonds']}: #{municipalBondCondition.pendingTotal}"
+					bean="municipalBondCondition"
+					municipalBondItems="#{municipalBondCondition.municipalBondItemsResult}"
+					selectable="false"
+					allBondsSelectedProperty="#{municipalBondsViewer.allBondsSelected}"
+					allBondsSelectedAction="selectAllItems"
+					onSelectAction="calculatePaidTotal"
+					reRender="municipalBondsViewerCmp" disabled="false">
+					<s:div styleClass="actionButtons"
+						rendered="#{not empty municipalBondCondition.result}">
+						<h:panelGrid columns="2">
+							<s:button
+								view="/revenue/report/ResidentMunicipalBondConditionReport.xhtml"
+								id="print" propagation="join" value="#{messages['common.print']}">
+							</s:button>
+							
+							<h:commandButton id="senMail" 
+								value="#{messages['common.sendAccountState']}"
+								action="#{municipalBondCondition.notifyPendingBonds()}" 
+								disabled="#{empty municipalBondCondition.resident.email}"/>							
+							
+						</h:panelGrid>
+												
+					</s:div>
+				</g:municipalBondsViewer>
+				<ui:include src="fragment/MunicipalBondsFutureTable.xhtml" />
+				</a:outputPanel>
+				</rich:panel>
+			</div>
+		</h:form>
+		
+		<g:municipalBondViewer
+			resident="#{municipalBondsViewerHome.resident}"
+			municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}"
+			deposits="#{municipalBondsViewerHome.deposits}" />
+		
+
+	</ui:define>
+
+</ui:composition>

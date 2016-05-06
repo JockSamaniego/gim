@@ -1,0 +1,874 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	title="#{messages['domain.changeOwner']}" subject="report" type="pdf"
+	size="A4" margins="40 20 30 20" >
+
+	<f:facet name="header">
+		<p:font size="7" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="3" widthPercentage="100" spacingAfter="15"
+						widths="1 5 2">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:image value="#{gim.institution.logo}" alignment="center" widht="1" height="1">
+                                <s:transformImageSize height="70" maintainRatio="true"/>
+                            </p:image>
+                        </p:cell>
+						<p:cell>
+							<p:font size="14" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+							</p:font>
+
+							<p:font size="12" style="bold">
+								<p:paragraph alignment="center">#{propertyHome.appraisalCharge.department}</p:paragraph>
+							</p:font>
+
+							<p:font size="12" style="bold">
+								<p:paragraph alignment="center">#{messages['INFORME DE TRASPASO DE DOMINIO']} #{messages[propertyHome.instance.propertyType.name.toUpperCase()]}</p:paragraph>
+							</p:font>
+						</p:cell>
+						<p:cell>
+							<p:paragraph alignment="right" spacingAfter="10">
+								<p:font size="10" name="HELVETICA">
+									<p:text value="#{messages['Impresión']}: " />
+									<p:text value="#{currentDatetime}">
+										<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+
+							<p:paragraph alignment="right">
+								<p:font size="10" style="bold">
+									<p:text value="Trámite: " />
+								</p:font>
+								<p:font size="10">
+									<p:text value="#{domainHome.instance.tramitNumber}" />
+								</p:font>
+							</p:paragraph>
+
+						</p:cell>
+
+					</p:table>
+				</p:paragraph>
+			</p:header>
+		</p:font>
+	</f:facet>
+
+	<p:font size="8" name="HELVETICA">
+		<p:table columns="2" widthPercentage="100" headerRows="0" widths="1 1">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+			
+			<p:cell horizontalAlignment="left" borderWidth="0.4"
+				borderColorTop="#000000" colspan="2">
+				<p:paragraph spacingAfter="5">
+					<p:font size="8" style="bold; upperCase">
+						<p:text value="#{messages['residentsTitle']}: " style="uppercase"/>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.owner']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{propertyHome.instance.currentDomain.resident.name}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['resident.identificationNumber']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{propertyHome.instance.currentDomain.resident.identificationNumber}" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.newOwner']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{domainHome.instance.resident.name} " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph spacingAfter="5">
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['resident.identificationNumber']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{domainHome.instance.resident.identificationNumber}" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+		</p:table>
+
+		<p:paragraph spacingAfter="5">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+		</p:paragraph>
+
+
+
+		<p:table columns="2" widthPercentage="100" headerRows="0" widths="1 1">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="left" />
+			</f:facet>
+
+			<p:cell horizontalAlignment="left" borderWidth="0.4"
+				borderColorTop="#000000" colspan="2">
+				<p:paragraph spacingAfter="5">
+					<p:font size="8" style="bold">
+						<p:text value="a) #{messages['domain.data']}: " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.dateRegistration']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{propertyHome.instance.currentDomain.date}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.transactionValue']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{propertyHome.instance.currentDomain.valueTransaction}" >
+							<f:convertNumber pattern="#0.00"/>
+						</p:text>
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.notaryNumber']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{propertyHome.instance.currentDomain.notaryNumber} " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['property.propertyType']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{messages[propertyHome.instance.propertyType.name]}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['property.previousCadastralCode']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{propertyHome.instance.previousCadastralCode}" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['property.cadastralCode']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{propertyHome.instance.cadastralCode}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.purchaseType']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{messages[propertyHome.instance.currentDomain.purchaseType.name]}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+
+			<p:cell colspan="2">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['property.propertyUse']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{messages[propertyHome.instance.currentDomain.propertyUse.name()]}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+		</p:table>
+
+		<p:paragraph spacingAfter="5">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+		</p:paragraph>
+
+		<p:table columns="2" widthPercentage="100" headerRows="0" widths="1 1">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="left" />
+			</f:facet>
+
+			<p:cell horizontalAlignment="left" borderWidth="0.4"
+				borderColorTop="#000000" colspan="2">
+				<p:paragraph spacingAfter="5">
+					<p:font size="8" style="bold">
+						<p:text value="b) #{messages['domain.dataTransfer']}: " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.dateSell']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{domainHome.instance.creationDate}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph spacingAfter="5" widthPercentage="90">
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.contractualValue']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{domainHome.instance.valueTransaction}" >
+							<f:convertNumber pattern="#0.00"/>
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.purchaseType']}: " />
+					</p:font>
+					<p:font size="9" style="bold">
+						<p:text
+							value="#{messages[domainHome.instance.purchaseType.name]}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['property.propertyUse']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{messages[domainHome.instance.propertyUse.name()]}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.lotAppraisal']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{domainHome.instance.lotAppraisal}" >
+							<f:convertNumber pattern="#0.00"/>
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.buildingAppraisal']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{domainHome.instance.buildingAppraisal}" >
+							<f:convertNumber pattern="#0.00"/>
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="2">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.commercialAppraisal']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{domainHome.instance.commercialAppraisal}" >
+							<f:convertNumber pattern="#0.00"/>
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="2">
+				<p:paragraph spacingAfter="5">
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.legalRevision']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{domainHome.instance.legalRevision}" >
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+		</p:table>
+
+		<p:paragraph spacingAfter="5">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+		</p:paragraph>
+
+		<p:table rendered="#{domainHome.instance.mortgages.size() > 0}"
+			columns="2" widthPercentage="60" headerRows="0">
+			<p:font size="8" style="bold">
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['mortgage.financialInstitution']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{messages['mortgage.amount']}" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+			<ui:repeat value="#{domainHome.instance.mortgages}" var="_mortgage">
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{_mortgage.financialInstitution.name}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{_mortgage.amount}">
+							<f:convertNumber pattern="#0.00"/>
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+			</ui:repeat>
+		</p:table>
+
+		<p:paragraph spacingAfter="5">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="left" />
+			</f:facet>
+		</p:paragraph>
+
+		<p:table columns="3" widthPercentage="100" headerRows="0">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="left" />
+			</f:facet>
+			<p:cell colspan="3" horizontalAlignment="left" borderWidth="0.4"
+				borderColorTop="#000000">
+				<p:paragraph spacingAfter="5">
+					<p:font size="8" style="bold">
+						<p:text value="c) #{messages['domain.location']}: " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell colspan="1" rendered="#{propertyHome.urban}">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['block.parish']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{propertyHome.parish.name}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="3" rendered="#{!propertyHome.urban}">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['block.parish']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{propertyHome.parish.name}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1" rendered="#{propertyHome.urban}">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.urbanization']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{domainHome.instance.urbanizationTransfer}" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+			<p:cell colspan="1" rendered="#{propertyHome.urban}">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.streetTransfer']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{domainHome.instance.streetTransfer}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1" rendered="#{propertyHome.urban}">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.blockNumberTransfer']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{domainHome.instance.blockNumberTransfer}" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell colspan="1" rendered="#{propertyHome.urban}">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.lotNumberTransfer']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{domainHome.instance.lotNumberTransfer}" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['property.description']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{domainHome.instance.description}" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.lotAreaTransfer']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{domainHome.instance.lotAreaTransfer}" >
+							<f:convertNumber pattern="#0.00"/>
+						</p:text>
+						<p:text value="m2" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell colspan="2">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.buildingAreaTransfer']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{domainHome.instance.buildingAreaTransfer}" >
+							<f:convertNumber pattern="#0.00"/>
+						</p:text>
+						<p:text value="m2" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+		</p:table>
+
+		<p:paragraph spacingAfter="5">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="left" />
+			</f:facet>
+		</p:paragraph>
+
+		<p:paragraph>
+			<p:font size="8" style="bold">
+				<p:text value="#{messages['property.boundaries']}: " />
+			</p:font>
+			<p:font rendered="#{domainHome.instance.boundaries.size() == 0}"
+				size="8">
+				<p:text value="#{messages['property.noBoundariesAssociated']}" />
+			</p:font>
+		</p:paragraph>
+
+		<p:paragraph spacingAfter="10">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="left" />
+			</f:facet>
+		</p:paragraph>
+
+		<p:table rendered="#{domainHome.instance.boundaries.size() > 0}" widths="1 4 1"
+			columns="3" widthPercentage="80" headerRows="0">
+			<p:font size="8" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['boundary.compassPoint']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['boundary.description']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['boundary.length']}" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+			<ui:repeat value="#{domainHome.instance.boundaries}" var="_boundary">
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{messages[_boundary.compassPoint.name()]}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_boundary.description}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_boundary.length}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+			</ui:repeat>
+		</p:table>
+
+		<p:paragraph spacingAfter="5">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="left" />
+			</f:facet>
+		</p:paragraph>
+
+		<p:table columns="2" widthPercentage="100" headerRows="0"
+			spacinfAfter="5" spacingBefore="5">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="left" />
+			</f:facet>
+			<p:cell colspan="2" horizontalAlignment="left" borderWidth="0.4"
+				borderColorTop="#000000">
+				<p:paragraph spacinfAfter="5" spacingBefore="5">
+					<p:font size="8" style="bold">
+						<p:text value="d) #{messages['dispatchReasons']}: " />
+					</p:font>
+					<p:font
+						rendered="#{domainHome.instance.dispatchReasons.size() == 0}"
+						size="8">
+						<p:text value="#{messages['property.noDispatchReasonAssociated']}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell colspan="1">
+				<p:table
+					rendered="#{domainHome.instance.dispatchReasons.size() > 0}"
+					columns="1" widthPercentage="100" headerRows="0" spacinfAfter="5"
+					spacingBefore="5">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" horizontalAlignment="left" />
+					</f:facet>
+					<ui:repeat value="#{domainHome.instance.dispatchReasons}"
+						var="_dispatch">
+						<p:cell>
+							<p:paragraph>
+								<p:font style="bold">
+									<p:text style="bold"
+										value="#{messages[_dispatch.dispatchReasonType.name()]}: " />
+								</p:font>
+								<p:text value="#{_dispatch.observation}" />
+							</p:paragraph>
+						</p:cell>
+					</ui:repeat>
+				</p:table>
+			</p:cell>
+			<p:cell colspan="1">
+				<p:table columns="1" widthPercentage="100" headerRows="0">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" horizontalAlignment="left" />
+					</f:facet>
+					<p:cell colspan="1" horizontalAlignment="left">
+						<p:paragraph>
+							<p:font size="8" style="bold">
+								<p:text value="#{messages['domain.deductions']} " />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="8" style="bold">
+								<p:text value="#{messages['domain.purchaseValue']}: " />
+							</p:font>
+							<p:font size="8">
+								<p:text
+									value="#{propertyHome.instance.currentDomain.valueTransaction}" >
+									<f:convertNumber pattern="#0.00" />
+								</p:text>
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="8" style="bold">
+								<p:text value="#{messages['domain.salesValue']}: " />
+							</p:font>
+							<p:font size="8">
+								<p:text value="#{domainHome.instance.valueTransaction}">
+									<f:convertNumber pattern="#0.00" />
+								</p:text>
+							</p:font>
+						</p:paragraph>
+
+					</p:cell>
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="8" style="bold">
+								<p:text style="uppercase"
+									value="#{messages['domain.titleNewWork']}: " />
+							</p:font>
+							<p:font size="8">
+								<p:text
+									value="#{domainHome.instance.newBuildingValue}">
+									<f:convertNumber pattern="#0.00" />
+								</p:text>
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph spacingAfter="5">
+							<p:font size="8" style="bold">
+								<p:text value="#{messages['domain.titleSpecialContribution']}: " />
+							</p:font>
+							<p:font size="8">
+								<p:text value="#{domainHome.instance.specialContribution}">
+									<f:convertNumber pattern="#0.00" />
+								</p:text>
+							</p:font>
+						</p:paragraph>
+
+					</p:cell>
+
+				</p:table>
+			</p:cell>
+		</p:table>
+
+		<p:table columns="2" widthPercentage="100" headerRows="0">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="left" />
+			</f:facet>
+
+			<p:cell colspan="1" horizontalAlignment="left" borderWidthTop="0.2"
+				borderColorTop="#000000">
+				<p:paragraph spacingAfter="5">
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['domain.titleObservations']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{domainHome.instance.observations}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:table columns="1" widthPercentage="100" headerRows="0">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" horizontalAlignment="left" />
+				</f:facet>
+	
+				<p:cell colspan="1">
+					<p:paragraph spacingAfter="3">
+						<p:font size="8" style="bold">
+							<p:text value="#{messages['Fecha Entrega  ']}: ______________________" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell colspan="1">
+					<p:paragraph spacingAfter="2">
+						<p:font size="8" style="bold">
+							<p:text value="#{messages['Titulo Alcabala ']}: ______________________" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell colspan="1">
+					<p:paragraph spacingAfter="2">
+						<p:font size="8" style="bold">
+							<p:text value="#{messages['Titulo Utilidad  ']}: ______________________" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell colspan="1">
+					<p:paragraph spacingAfter="2">
+						<p:font size="8" style="bold">
+							<p:text value="#{messages['Recibe              ']}: ______________________" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell colspan="1">
+					<p:paragraph spacingAfter="2">
+						<p:font size="8" style="bold">
+							<p:text value="#{messages['Cédula              ']}: ______________________" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell colspan="1">
+					<p:paragraph spacingBefore="15">
+						<p:font size="8" style="bold">
+							<p:text value=" " />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+				<p:cell colspan="1">
+					<p:paragraph spacingBefore="15">
+						<p:font size="8" style="bold">
+							<p:text value="#{messages['Firma                ']}: ______________________" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+			</p:table>
+
+		</p:table>
+
+		<p:paragraph spacingAfter="20" spacingBefore="25">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="left" />
+			</f:facet>
+		</p:paragraph>
+
+		<p:table columns="2" widthPercentage="80" headerRows="0">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="center" />
+			</f:facet>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text value="____________________________" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text value="____________________________" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text
+							value="#{propertyHome.appraisalDelegate.name.toUpperCase()}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text value="#{domainHome.instance.userRegister.resident.name.toUpperCase()}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text value="#{propertyHome.appraisalCharge.name}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text value="INFORME" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+
+	</p:font>
+
+
+</p:document>

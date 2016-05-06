@@ -1,0 +1,23 @@
+#created on: Oct 31, 2011
+package ec.gob.gim.rules.pf2011
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.common.model.FiscalPeriod;
+import ec.gob.gim.revenue.model.Item;
+import ec.gob.gim.common.model.LegalEntity;
+import java.math.BigDecimal;
+import java.util.Calendar;
+
+#list any import classes here.
+
+rule "Descuento Impuesto predial instituciones publicas"
+	no-loop true
+	salience 0
+	when		
+		$itemPredio : Item(entry.name == "DESCUENTO IMPUESTO PREDIAL INSTITUCIONES PUBLICAS");
+		$mb : MunicipalBond();
+		$legalEntity : LegalEntity();
+		eval($legalEntity.getLegalEntityType().name().equals("PUBLIC")==true);
+	then		
+		$mb.calculateValue();		
+		$itemPredio.setTotal($mb.getItems().get(0).getTotal());			
+end

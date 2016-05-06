@@ -1,0 +1,81 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel rendered="#{!propertyHome.urban}">
+		<f:facet name="header">#{messages['property.location']}</f:facet>
+		<ui:debug id="debug" />
+		<h:panelGrid columns="4">
+
+			<s:decorate template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{territorialDivisionTypes.get(0).name}:</ui:define>
+				<h:inputText value="#{defaultProvince.name}" readonly="true" />
+			</s:decorate>
+
+			<s:decorate template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{territorialDivisionTypes.get(1).name}:</ui:define>
+				<h:inputText value="#{defaultCanton.name}" readonly="true" />
+			</s:decorate>
+
+			<s:decorate id="parishField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{territorialDivisionTypes.get(2).name}:</ui:define>
+				<h:selectOneMenu id="parish" value="#{propertyHome.parish}"
+					required="true" disabled="#{disabled}">
+					<s:selectItems
+						value="#{propertyHome.findParishes(defaultCanton.id)}"
+						var="parish" label="#{parish.code} - #{parish.name}"
+						noSelectionLabel="#{messages['common.shouldSelected']}" />
+					<s:convertEntity />
+					<a:support event="onchange" ajaxSingle="true"
+						reRender="cadastralCodeField1,rusticPreviousCadastralCodeField"
+						action="#{propertyHome.updateCadastralCode()}" />
+				</h:selectOneMenu>
+			</s:decorate>
+			
+			
+			<s:decorate id="cadastralCodeField1"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.cadastralCode']}:</ui:define>
+				<h:inputText id="cadastralCode1"
+					value="#{propertyHome.instance.cadastralCode}" disabled="true"
+					required="true" size="25" maxlength="25"
+					styleClass="cadasterCodeLabel">
+					<a:support event="onblur" reRender="cadastralCodeField1,rusticPreviousCadastralCodeField"
+						bypassUpdates="true" ajaxSingle="true" />
+				</h:inputText>
+			</s:decorate>
+			
+			<s:decorate id="rusticPreviousCadastralCodeField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.previousCadastralCode']}:</ui:define>
+				<h:inputText id="previousCadastralCode" disabled="true"
+					value="#{propertyHome.instance.previousCadastralCode}"
+					size="20" >
+				</h:inputText>
+			</s:decorate>
+
+			<s:decorate id="rusticAddressReferenceField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.addressReference']}:</ui:define>
+				<h:inputText id="addressReference"
+					value="#{propertyHome.instance.addressReference}"
+					size="40" maxlength="80" >
+				</h:inputText>
+			</s:decorate>
+
+		</h:panelGrid>
+				
+		<div style="clear: both">
+			<span class="required">*</span> #{messages['common.requiredFields']}
+		</div>
+
+	</rich:panel>
+</ui:composition>

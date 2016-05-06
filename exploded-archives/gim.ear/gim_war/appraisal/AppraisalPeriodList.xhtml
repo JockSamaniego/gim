@@ -1,0 +1,164 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		
+		<ui:include src="fragment/AppraisalPeriodTotalPanel.xhtml" />
+		
+		<h:form id="appraisalPeriodSearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['appraisal.manageAppraisalPeriod']}" />
+
+			<rich:simpleTogglePanel
+				label="#{messages['appraisalPeriod.searchFilter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['appraisalPeriod.name']}</ui:define>
+					<h:inputText id="name" value="#{appraisalPeriodList.criteriaName}" />
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['appraisalPeriod.code']}</ui:define>
+					<h:inputText id="code" value="#{appraisalPeriodList.criteriaCode}" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/appraisal/AppraisalPeriodList.xhtml" />
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['appraisalPeriod.searchResults']} (#{empty appraisalPeriodList.resultList ? 0 : (appraisalPeriodList.paginated ? appraisalPeriodList.resultCount : appraisalPeriodList.resultList.size)})" />
+				</h:panelGrid>
+			</f:facet>
+			<div class="results" id="appraisalPeriodList">
+
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty appraisalPeriodList.resultList}" />
+
+				<rich:dataTable id="appraisalPeriodList" var="_appraisalPeriod"
+					value="#{appraisalPeriodList.resultList}"
+					rendered="#{not empty appraisalPeriodList.resultList}">
+
+					<h:column>
+						<f:facet name="header">#{messages['appraisalPeriod.id']}</f:facet>
+						<h:outputText value="#{_appraisalPeriod.id}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">#{messages['appraisalPeriod.code']}</f:facet>
+						<h:outputText value="#{_appraisalPeriod.code}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">#{messages['appraisalPeriod.name']}</f:facet>
+						<h:outputText value="#{_appraisalPeriod.name}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">#{messages['appraisalPeriod.status']}
+						</f:facet>
+						<h:selectBooleanCheckbox value="#{_appraisalPeriod.open}"
+							disabled="true" />
+					</h:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<s:button view="/appraisal/AppraisalPeriodEdit.xhtml"
+							rendered="#{_appraisalPeriod.open}"
+							value="#{messages['appraisalPeriod.edit']}" propagation="none"
+							id="appraisalPeriodEdit" >
+							<f:param name="appraisalPeriodId" value="#{_appraisalPeriod.id}" />
+						</s:button>
+						#{' '}
+						<h:form>
+		                    <a:commandButton id="totalPeriod"
+		                    	action="#{appraisalPeriodHome.setInstance(_appraisalPeriod)}"
+								reRender="appraisalPeriodTotalPanel" ajaxSingle="true"
+								oncomplete="Richfaces.showModalPanel('appraisalPeriodTotalPanel')"
+								value="#{messages['appraisal.totalPeriod']}" />
+							#{' '}
+		                    <a:commandButton id="updatePeriod"
+								rendered="#{_appraisalPeriod.open}"
+		                    	action="#{appraisalPeriodHome.updateCostes(_appraisalPeriod)}"
+								reRender="appraisalPeriodTotalPanel" ajaxSingle="true"
+								oncomplete="Richfaces.showModalPanel('appraisalPeriodTotalPanel')"
+								value="#{messages['appraisal.updatePeriod']}" />
+							#{' '}
+		                    <a:commandButton id="copyPeriod"
+		                    	action="#{appraisalPeriodHome.copyPeriod(_appraisalPeriod)}"
+								reRender="appraisalPeriodList" ajaxSingle="true"
+								oncomplete="Richfaces.showModalPanel('appraisalPeriodTotalPanel')"
+								value="#{messages['appraisal.copyPeriod']}" />
+							#{' '}
+		                    <s:button id="printPeriod"
+		                    	view="/appraisal/report/AppraisalPeriodReport.xhtml"
+								value="#{messages['appraisal.printPeriod']}" 
+								action="#{appraisalPeriodHome.changePeriod(_appraisalPeriod)}"
+								propagation="none">
+				                <f:param name="appraisalPeriodId"
+				                        value="#{_appraisalPeriod.id}"/>
+							</s:button>
+						</h:form>
+
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/appraisal/AppraisalPeriodList.xhtml"
+				rendered="#{appraisalPeriodList.previousExists}"
+				value="#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/appraisal/AppraisalPeriodList.xhtml"
+				rendered="#{appraisalPeriodList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult"
+					value="#{appraisalPeriodList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/appraisal/AppraisalPeriodList.xhtml"
+				rendered="#{appraisalPeriodList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult"
+					value="#{appraisalPeriodList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/appraisal/AppraisalPeriodList.xhtml"
+				rendered="#{appraisalPeriodList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult"
+					value="#{appraisalPeriodList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

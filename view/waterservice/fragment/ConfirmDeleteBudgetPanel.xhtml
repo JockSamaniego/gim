@@ -1,0 +1,50 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+
+	<rich:modalPanel id="confirmDeleteBudgetPanel" width="250" height="200">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['budget.deleteBudget']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+
+
+		<h:panelGrid width="100%">
+			<rich:panel id="panelBotones" style="width:100%">
+				<rich:messages errorClass="errors" />
+				<div
+					style="border: 1px solid; margin: 10px 0px; padding: 15px 10px 15px 50px; background-repeat: no-repeat; background-position: 10px center; color: #D8000C; background-color: #FFBABA;">
+					<h:outputText value="¿Desea eliminar Presupuesto?"
+						style="font-size:14px;" />
+					<br />
+					<h:outputText
+						value="N°: #{budgetHome.instance.code} - #{budgetHome.instance.year}"
+						style="font-size:14px;" />
+				</div>
+
+				<div class="actionButtons">
+
+					<s:button value="#{messages['common.accept']}"
+						propagation="end" view="/waterservice/BudgetDTOList.xhtml"
+						action="#{budgetHome.deleteBudget()}" />
+
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.quit']}"
+						oncomplete="Richfaces.hideModalPanel('confirmDeleteBudgetPanel');"
+						bypassUpdates="true" />
+				</div>
+			</rich:panel>
+
+		</h:panelGrid>
+
+	</rich:modalPanel>
+</ui:composition>

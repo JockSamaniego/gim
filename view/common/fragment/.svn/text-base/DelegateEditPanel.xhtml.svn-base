@@ -1,0 +1,82 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="delegateEditPanel" width="300" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText
+					value="#{institutionHome.delegate.id != null ? messages['common.edit'] : messages['common.create']} #{messages['charge.delegate']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkmort" />
+				<rich:componentControl for="delegateEditPanel"
+					attachTo="hidelinkmort" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="delegate" styleClass="edit">
+
+			<rich:panel>
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+
+
+				<h:panelGrid columns="1" width="100%">
+
+					<s:decorate id="nameField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['delegate.name']}:</ui:define>
+						<h:inputText id="nameId" required="true"
+							value="#{institutionHome.delegate.name}" size="50">
+							<a:support event="onblur" ajaxSingle="true" bypassUpdates="true"
+								reRender="nameId" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="startDateField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['delegate.startDate']}:</ui:define>
+						<rich:calendar id="startDateDelegateId" required="true"
+							ajaxSingle="true" value="#{institutionHome.delegate.startDate}"
+							currentDate="#{currentDate}"
+							datePattern="#{messages['common.datePattern']}" />
+					</s:decorate>
+
+					<s:decorate id="endDateField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['delegate.endDate']}:</ui:define>
+						<rich:calendar id="endDateDelegateId" required="true"
+							ajaxSingle="true" value="#{institutionHome.delegate.endDate}"
+							currentDate="#{currentDate}"
+							datePattern="#{messages['common.datePattern']}" />
+					</s:decorate>
+
+				</h:panelGrid>
+			</rich:panel>
+
+			<div class="actionButtons">
+				<a:commandButton action="#{institutionHome.saveAddDelegate()}"
+					value="#{messages['common.accept']}" reRender="chargesList"
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'delegateEditPanel\');' : ''}" />
+
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}" reRender="chargesList"
+					oncomplete="Richfaces.hideModalPanel('delegateEditPanel');"
+					bypassUpdates="true" />
+			</div>
+
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

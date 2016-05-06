@@ -1,0 +1,83 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="municipalBondStatus" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{municipalBondStatusHome.managed ? messages['common.edit'] : messages['common.add']} #{messages['municipalBondStatus']}</f:facet>
+            
+            <s:decorate id="nameField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['municipalBondStatus.name']}:</ui:define>
+                <h:inputText id="name"
+                       required="true"
+                           size="50"
+                      maxlength="50"
+                      style="text-transform: uppercase"
+                          value="#{municipalBondStatusHome.instance.name}">
+                    <a:support event="onblur" reRender="nameField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+            
+
+            <s:decorate id="descriptionField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['municipalBondStatus.description']}:</ui:define>
+                <h:inputTextarea id="description"
+                               cols="80"
+                               rows="3"
+                              value="#{municipalBondStatusHome.instance.description}"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                #{messages['common.requiredFields']}
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{municipalBondStatusHome.persist}"
+                       disabled="#{!municipalBondStatusHome.wired}"
+                       rendered="#{!municipalBondStatusHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{municipalBondStatusHome.update}"
+                       rendered="#{municipalBondStatusHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="#{messages['common.delete']}"
+                         action="#{municipalBondStatusHome.remove}"
+                      immediate="true"
+                       rendered="#{municipalBondStatusHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/revenue/MunicipalBondStatusList.xhtml"
+                rendered="#{municipalBondStatusHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/revenue/#{empty municipalBondStatusFrom ? 'MunicipalBondStatusList' : municipalBondStatusFrom}.xhtml"
+                rendered="#{!municipalBondStatusHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

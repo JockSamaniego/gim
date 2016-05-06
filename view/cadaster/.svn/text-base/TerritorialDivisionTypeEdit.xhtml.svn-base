@@ -1,0 +1,62 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="territorialDivisionType" styleClass="edit">
+
+			<rich:panel>
+				<f:facet name="header">#{messages['territorialDivisionType.title']}</f:facet>
+
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['territorialDivisionType.name']}</ui:define>
+					<h:inputText id="name" required="true" size="25" maxlength="25"
+						value="#{territorialDivisionTypeHome.instance.name}"/>
+				</s:decorate>
+
+
+				<s:decorate id="priorityField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['territorialDivisionType.priority']}</ui:define>
+					<h:inputText id="priority"
+						value="#{territorialDivisionTypeHome.instance.priority}" size="5"/>
+				</s:decorate>
+
+				<s:decorate id="isUrbanField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['territorialDivisionType.isUrban']}</ui:define>
+					<h:selectBooleanCheckbox id="isUrban"
+						value="#{territorialDivisionTypeHome.instance.isUrban}" />
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{territorialDivisionTypeHome.persist}" disabled="#{!territorialDivisionTypeHome.wired}"
+					rendered="#{!territorialDivisionTypeHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{territorialDivisionTypeHome.update}" rendered="#{territorialDivisionTypeHome.managed}" />					
+				
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/cadaster/TerritorialDivisionTypeList.xhtml" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

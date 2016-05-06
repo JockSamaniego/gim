@@ -1,0 +1,77 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="concessionGroup" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['concessionGroupHome.editFormTitle']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{concessionGroupHome.managed ? 'Edit' : 'Add'} Concession group</f:facet>
+
+				<s:decorate id="concessionClasificationField"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['concessionClasification']}:</ui:define>
+					<h:selectOneMenu id="concessionClasification"
+						value="#{concessionGroupHome.instance.clasification}">
+						<s:selectItems value="#{concessionClasifications}" var="cc"
+							label="#{cc.name}" />
+						<a:support event="onchange" ajaxSingle="true"
+							reRender="concessionClasificationField" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['concessionGroup.name']}</ui:define>
+					<h:inputText id="name" required="true" size="50" maxlength="50"
+						value="#{concessionGroupHome.instance.name}" style="text-transform: uppercase">
+						<a:support event="onblur" reRender="nameField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="isActiveField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['concessionGroup.isActive']}</ui:define>
+					<h:selectBooleanCheckbox id="isActive"
+						value="#{concessionGroupHome.instance.isActive}" />
+				</s:decorate>
+
+
+				<div style="clear: both">
+					<span class="required">*</span>"#{messages['common.requiredFields']}"
+				</div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{concessionGroupHome.persist}"
+					disabled="#{!concessionGroupHome.wired}"
+					rendered="#{!concessionGroupHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{concessionGroupHome.update}"
+					rendered="#{concessionGroupHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/concession/ConcessionGroupList.xhtml" />
+
+			</div>
+		</h:form>
+
+
+	</ui:define>
+
+</ui:composition>

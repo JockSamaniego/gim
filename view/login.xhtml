@@ -1,0 +1,59 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+    <ui:include src="recoverPassword.xhtml"></ui:include>
+    <h:form id="loginForm">
+
+        <rich:panel style="width:50%; margin-left:25%;">
+            <f:facet name="header">
+                <h:panelGrid columns="1" width="100%" columnClasses="left headerTitle,">
+                    <h:outputText value="#{messages['login.title']}" />                                                                                                    
+                 </h:panelGrid>
+            </f:facet>
+            <p>#{messages['login.description']}</p>
+            <div class="dialog">
+                <h:panelGrid columns="2">
+                    <h:panelGrid>
+                        <h:graphicImage value="/img/password.png" alt="Login logo"
+                                style="border:15px solid transparent" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" rowClasses="prop">
+                        <h:outputLabel for="username" style="font-weight:bold">#{messages['login.username']}:</h:outputLabel>
+                        <h:inputText id="username"
+                                  value="#{credentials.username}"/>
+                        <h:outputLabel for="password" style="font-weight:bold">#{messages['login.password']}:</h:outputLabel>
+                        <h:inputSecret id="password"
+                                    value="#{credentials.password}"/>
+                        <h:commandButton id="submit" value="#{messages['login.action']}" action="#{identity.login}"/>
+
+
+                    </h:panelGrid>
+                    <h:panelGrid >
+                            <a:commandLink  value="¿Olvidaste tu contraseña?"  id="passChange"
+                            style="float:right"
+                            reRender="recoverPassword"
+                            oncomplete="Richfaces.showModalPanel('recoverPassword')" />
+                    </h:panelGrid>
+                </h:panelGrid>
+
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+            <!--h:commandButton id="submit" value="#-{messages['login.action']}" action="#-{identity.login}"/-->
+        </div>
+
+    </h:form>
+
+ </ui:define>
+</ui:composition>

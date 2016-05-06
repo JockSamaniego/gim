@@ -1,0 +1,197 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="municipalBondFormalizeEmissions" styleClass="edit">
+			<ui:debug id="debug" />
+			<h:outputText styleClass="formTitle"
+				value="#{messages['municipalBond.managerFormalizeEmission']}" />
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:outputText
+						value="Emisiones Futuras a Formalizar (#{municipalBondManager.numberMunicipalBondsFormalize})" />
+				</f:facet>
+
+
+
+				<a:outputPanel id="resultsPanel" ajaxRendered="false">
+
+					<rich:panel
+						rendered="#{empty municipalBondManager.municipalBondsFormalizing}">
+						<h:outputText value="#{messages['common.noResultsReturned']}"
+							rendered="#{empty municipalBondManager.municipalBondsFormalizing}" />
+					</rich:panel>
+
+					<rich:dataTable id="municipalBondsTable" var="_municipalBond"
+						width="100%"
+						value="#{municipalBondManager.municipalBondsFormalizing}"
+						columnClasses="center, center, left, left, center, right, center, left"
+						rows="25"
+						rendered="#{not empty municipalBondManager.municipalBondsFormalizing}">
+						<f:facet name="header">
+							<rich:columnGroup>
+
+								<rich:column colspan="9">
+									<h:panelGrid columns="1" columnClasses="left formTitle,right,"
+										width="100%">
+										<h:outputText
+											value="#{messages['municipalBond.searchResults']}" />
+									</h:panelGrid>
+								</rich:column>
+
+								<rich:column colspan="9" breakBefore="true" styleClass="right">
+									<g:dataScroller maxPages="10" for="municipalBondsTable"
+										style="float:right;" />
+								</rich:column>
+
+							</rich:columnGroup>
+						</f:facet>
+
+						<f:facet name="footer">
+							<g:dataScroller maxPages="10" for="municipalBondsTable"
+								style="float:right;" />
+						</f:facet>
+
+						<rich:column
+							styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
+							<f:facet name="header">
+						#{messages['municipalBond.number']}
+					</f:facet>
+							<h:outputText value="#{_municipalBond.number}" />
+						</rich:column>
+
+						<rich:column
+							styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
+							<f:facet name="header">
+						#{messages['entry']}
+					</f:facet>
+							<h:outputText value="#{_municipalBond.entry.name}" />
+						</rich:column>
+
+						<rich:column
+							styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
+							<f:facet name="header">
+						#{messages['resident']} 
+					</f:facet>
+							<h:outputText value="#{_municipalBond.resident.name}" />
+						</rich:column>
+
+						<rich:column
+							styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
+							<f:facet name="header">
+						#{messages['municipalBond.status']}
+					</f:facet>
+							<h:outputText value="#{_municipalBond.municipalBondStatus.name}" />
+						</rich:column>
+
+						<rich:column
+							styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
+							<f:facet name="header">
+						#{messages['municipalBond.value']}
+					</f:facet>
+							<h:outputText value="#{_municipalBond.paidTotal}">
+								<f:convertNumber />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column
+							styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
+							<f:facet name="header">
+						#{messages['municipalBond.emision']}
+					</f:facet>
+							<h:outputText value="#{_municipalBond.emisionDate}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column
+							styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
+							<f:facet name="header">
+						#{messages['municipalBond.expiration']}
+					</f:facet>
+							<h:outputText value="#{_municipalBond.expirationDate}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+
+							<a:commandButton id="viewer" ajaxSingle="true"
+								action="#{municipalBondsViewerHome.loadMunicipalBond(_municipalBond.id)}"
+								eventsQueue="gimEventsQueue" reRender="_municipalBondViewer"
+								oncomplete="Richfaces.showModalPanel('_municipalBondViewer',{width:600, height:500})"
+								value="#{messages['common.view']}" />
+
+						</rich:column>
+
+					</rich:dataTable>
+				</a:outputPanel>
+			</rich:panel>
+
+
+			<h:panelGroup>
+				<div class="actionButtons">
+					<a:commandButton id="emitButton"
+						action="#{municipalBondManager.emitAllFuture()}"
+						value="Formalizar todo"
+						oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelSelected\');' : ''}"
+						reRender="resultsPanel" 
+						rendered="#{municipalBondManager.numberMunicipalBondsFormalize>0}"/>
+
+					<a:commandButton id="cancelBtnSelected" ajaxSingle="true"
+						value="#{messages['common.cancel']}"
+						oncomplete="Richfaces.hideModalPanel('confirmPanelSelected');"
+						bypassUpdates="true" reRender="resultsPanel" />
+				</div>
+			</h:panelGroup>
+
+		</h:form>
+
+		<g:municipalBondViewer resident="#{municipalBondsViewerHome.resident}"
+			municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}"
+			deposits="#{municipalBondsViewerHome.deposits}" />
+
+		<rich:modalPanel id="confirmPanelSelected" width="350" height="250">
+			<f:facet name="header">#{messages['municipalBond.confirmReverseSelected']}</f:facet>
+			<h:form id="confirmReverseSelected">
+				<h:panelGrid>
+					<s:decorate id="conceptFieldSelected"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['municipalBond.observation']}:</ui:define>
+						<h:inputTextarea id="observationSelected" cols="40" rows="6"
+							value="#{municipalBondManager.observation}" required="true" />
+					</s:decorate>
+
+					<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="closingBtnSelected"
+								action="#{municipalBondManager.updateReversedSelected(municipalBondManager.reversedBondStatus)}"
+								value="#{messages['municipalBond.reverse']}"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelSelected\');' : ''}"
+								reRender="resultsPanel" />
+
+							<a:commandButton id="cancelBtnSelected" ajaxSingle="true"
+								value="#{messages['common.cancel']}"
+								oncomplete="Richfaces.hideModalPanel('confirmPanelSelected');"
+								bypassUpdates="true" reRender="resultsPanel" />
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
+	</ui:define>
+
+</ui:composition>

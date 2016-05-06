@@ -1,0 +1,701 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<h:form id="business" styleClass="edit">
+			<h:outputText styleClass="formTitle"
+				value="#{messages['reportTechnical.fireMan']}" />
+
+			<rich:tabPanel switchType="client">
+				<rich:tab label="#{messages['report.fireMan']}">
+					<h:panelGrid columns="2" styleClass="center" width="100%">
+						<h:panelGrid columns="2" styleClass="center" width="100%"
+							columnClasses="topAligned,topAligned">
+							<h:panelGrid columns="1" width="100%">
+								<rich:panel styleClass="left">
+
+									<f:facet name="header">#{messages['reportTechnical.ownerData']}</f:facet>
+
+									<s:decorate id="ownerName" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.ownerName']}</ui:define>
+										<h:inputText id="name" size="60" maxlength="60"
+											value="#{inspectionsHome.instance.local.business.owner.name}"
+											style="text-transform: uppercase">
+											<a:support event="onblur" reRender="ownerName"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+
+									<s:decorate id="technicalInformationIdentificationNumber"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.identificationNumber']}</ui:define>
+										<h:inputText id="name" size="20" maxlength="60"
+											value="#{inspectionsHome.instance.local.business.owner.identificationNumber}"
+											style="text-transform: uppercase">
+											<a:support event="onblur"
+												reRender="technicalInformationIdentificationNumber"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+
+									<s:decorate id="technicalInformationPhoneNumber"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.phoneNumber']}</ui:define>
+										<h:inputText id="name" size="20" maxlength="60"
+											value="#{inspectionsHome.instance.local.address.phoneNumber}"
+											style="text-transform: uppercase">
+											<a:support event="onblur"
+												reRender="technicalInformationPhoneNumber"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+
+
+
+
+
+									<!-- s:decorate id="ownerAddress" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.ownerAddress']}</ui:define>
+										<h:inputText id="name" size="60" maxlength="60"
+											value="#{inspectionsHome.instance.local.business.owner.currentAddress.name}"
+											style="text-transform: uppercase">
+											<a:support event="onblur" reRender="ownerAddress"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate-->
+
+									<div style="clear: both" />
+								</rich:panel>
+							</h:panelGrid>
+							<h:panelGrid columns="1" width="100%">
+								<rich:panel styleClass="left">
+
+									<f:facet name="header">#{messages['reportTechnical.businessData']}</f:facet>
+
+									<s:decorate id="numberTechnicalInformation"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['technicalInformation.numberTechnicalInformation']}</ui:define>
+										<h:inputText id="name" size="15" maxlength="15"
+											value="#{inspectionsHome.technicalInformation.numberTechnicalInformation}"
+											required="true" style="text-transform: uppercase">
+											<a:support event="onblur"
+												reRender="numberTechnicalInformation" bypassUpdates="true"
+												ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+
+
+									<s:decorate id="typeInformationField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportType.fireMan']}:</ui:define>
+										<h:selectOneMenu id="typeInformation"
+											value="#{inspectionsHome.technicalInformation.typeInformation}"
+											required="true">
+											<s:selectItems value="#{typesInformation}"
+												var="typeInformation"
+												label="#{typeInformation.ordinal() + 1} - #{messages[typeInformation.name()]}" />
+											<s:convertEnum />
+											<a:support event="onchange" ajaxSingle="true" />
+										</h:selectOneMenu>
+									</s:decorate>
+
+									<s:decorate id="technicalInformationDateField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.date']}</ui:define>
+										<rich:calendar id="technicalInformationDate" required="true"
+											ajaxSingle="true"
+											value="#{inspectionsHome.technicalInformation.technicalInformationDate}"
+											datePattern="#{messages['common.datePattern']}" />
+									</s:decorate>
+
+									<s:decorate id="parish" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['technicalInformation.parish']}</ui:define>
+										<h:inputText id="name" size="60" maxlength="60"
+											value="#{inspectionsHome.technicalInformation.parish}"
+											required="true" style="text-transform: uppercase">
+											<a:support event="onblur" reRender="parish"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+
+
+									<!-- s:decorate id="parishField"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{territorialDivisionTypes.get(2).name}:</ui:define>
+					<h:selectOneMenu id="parish" value="#{propertyHome.parish}"
+						required="true" disabled="#{disabled}">
+						<s:selectItems
+							value="#{propertyHome.findParishes(defaultCanton.id)}"
+							var="parish" label="#{parish.code} - #{parish.name}"
+							noSelectionLabel="#{messages['common.shouldSelected']}" />
+						<s:convertEntity />
+						<a:support event="onchange" ajaxSingle="true"
+							reRender="cadastralCodeField1"
+							action="#{propertyHome.updateCadastralCode()}" />
+					</h:selectOneMenu>
+				</s:decorate-->
+
+
+
+
+
+
+									<s:decorate id="localName" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.localName']}</ui:define>
+										<h:inputText id="name" size="60" maxlength="60"
+											value="#{inspectionsHome.instance.local.name}"
+											required="true" style="text-transform: uppercase">
+											<a:support event="onblur" reRender="localName"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+
+									<s:decorate id="localType" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.localType']}</ui:define>
+										<h:inputText id="name" size="60" maxlength="60"
+											value="#{inspectionsHome.instance.local.business.businessType.name}"
+											required="true" style="text-transform: uppercase">
+											<a:support event="onblur" reRender="localType"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+
+									<s:decorate id="localAddress" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.localAddress']}</ui:define>
+										<h:inputText id="name" size="60"
+											value="#{inspectionsHome.instance.local.address}"
+											style="text-transform: uppercase" disabled="true">
+											<a:support event="onblur" reRender="localAddress"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+
+									<s:decorate id="intervenedArea" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['technicaInformation.intervenedArea']}</ui:define>
+										<h:inputText id="area" size="20" maxlength="60"
+											value="#{inspectionsHome.technicalInformation.intervenedArea}"
+											required="true" style="text-transform: uppercase">
+											<a:support event="onblur" reRender="intervenedArea"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+
+									<s:decorate id="totalArea" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['technicaInformation.totalArea']}</ui:define>
+										<h:inputText id="area" size="20" maxlength="60"
+											value="#{inspectionsHome.technicalInformation.totalArea}"
+											required="true" style="text-transform: uppercase">
+											<a:support event="onblur" reRender="totalArea"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+
+									<s:decorate id="numberOcupants" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['technicaInformation.numberOcupants']}</ui:define>
+										<h:inputText id="area" size="20" maxlength="60"
+											value="#{inspectionsHome.technicalInformation.numberOccupants}"
+											required="true" style="text-transform: uppercase">
+											<a:support event="onblur" reRender="numberOcupants"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+
+									<s:decorate id="riskPlace" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['technicalInformation.riskPlace']}</ui:define>
+										<h:inputText id="name" size="60" maxlength="60"
+											value="#{inspectionsHome.technicalInformation.riskPlace}"
+											required="true" style="text-transform: uppercase">
+											<a:support event="onblur" reRender="riskPlace"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+
+									<!-- s:decorate id="isActiveField" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['productType.isActive']}</ui:define>
+										<h:selectBooleanCheckbox id="isActive"
+											value="#{productTypeHome.instance.isActive}" />
+									</s:decorate-->
+									<div style="clear: both"></div>
+								</rich:panel>
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" styleClass="center" width="100%">
+						<h:panelGrid columns="2" styleClass="center" width="100%"
+							columnClasses="topAligned,topAligned">
+							<h:panelGrid columns="1" width="100%">
+								<rich:panel styleClass="left">
+									<f:facet name="header">#{messages['reportTechnical.electricSystem']}</f:facet>
+
+									<s:decorate id="isInternalElectricalInstallationsField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isInternalElectricalInstallations']}</ui:define>
+										<h:selectBooleanCheckbox id="isActive"
+											value="#{inspectionsHome.technicalInformation.isInternalElectricalInstallations}" />
+									</s:decorate>
+
+									<s:decorate id="isExternalElectricalInstallationsField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isExternalElectricalInstallations']}</ui:define>
+										<h:selectBooleanCheckbox id="isActive"
+											value="#{inspectionsHome.technicalInformation.isExternalElectricalInstallations}" />
+									</s:decorate>
+
+									<s:decorate id="isImprovisedElectricalInstallationsField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isImprovisedElectricalInstallations']}</ui:define>
+										<h:selectBooleanCheckbox
+											id="isImprovisedElectricalInstallations"
+											value="#{inspectionsHome.technicalInformation.isImprovisedElectricalInstallations}" />
+									</s:decorate>
+
+									<s:decorate id="isDefectiveElectricalInstallationsField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isDefectiveElectricalInstallations']}</ui:define>
+										<h:selectBooleanCheckbox
+											id="isDefectiveElectricalInstallations"
+											value="#{inspectionsHome.technicalInformation.isDefectiveElectricalInstallations}" />
+									</s:decorate>
+									<s:decorate id="isOpenBoxesField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isOpenBoxes']}</ui:define>
+										<h:selectBooleanCheckbox id="isOpenBoxes"
+											value="#{inspectionsHome.technicalInformation.isOpenBoxes}" />
+									</s:decorate>
+
+									<s:decorate id="isApropiateCablesBrekersField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isApropiateCablesBrekers']}</ui:define>
+										<h:selectBooleanCheckbox id="isApropiateCablesBrekers"
+											value="#{inspectionsHome.technicalInformation.isApropiateCablesBrekers}" />
+									</s:decorate>
+
+									<s:decorate id="isCleaningOrderField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isCleaningOrder']}</ui:define>
+										<h:selectBooleanCheckbox id="isCleaningOrder"
+											value="#{inspectionsHome.technicalInformation.isCleaningOrder}" />
+									</s:decorate>
+
+									<div style="clear: both" />
+								</rich:panel>
+							</h:panelGrid>
+							<h:panelGrid columns="1" width="100%">
+								<rich:panel styleClass="left">
+									<f:facet name="header">#{messages['reportTechnical.fireRisk']}</f:facet>
+
+									<s:decorate id="isGLPStorageField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isGLPStorage']}</ui:define>
+										<h:selectBooleanCheckbox id="isGLPStorage"
+											value="#{inspectionsHome.technicalInformation.isGLPStorage}" />
+									</s:decorate>
+
+									<s:decorate id="isInflammableLiquidsField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isInflammableLiquids']}</ui:define>
+										<h:selectBooleanCheckbox id="isInflammableLiquids"
+											value="#{inspectionsHome.technicalInformation.isInflammableLiquids}" />
+									</s:decorate>
+
+									<s:decorate id="isSolidFuelsField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isSolidFuels']}</ui:define>
+										<h:selectBooleanCheckbox id="isSolidFuels"
+											value="#{inspectionsHome.technicalInformation.isSolidFuels}" />
+									</s:decorate>
+
+									<s:decorate id="isAdequateAccumulationField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isAdequateAccumulation']}</ui:define>
+										<h:selectBooleanCheckbox id="isAdequateAccumulation"
+											value="#{inspectionsHome.technicalInformation.isAdequateAccumulation}" />
+									</s:decorate>
+
+									<s:decorate id="isWarehousingField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isWarehousing']}</ui:define>
+										<h:selectBooleanCheckbox id="isWarehousing"
+											value="#{inspectionsHome.technicalInformation.isWarehousing}" />
+									</s:decorate>
+									<div style="clear: both"></div>
+
+								</rich:panel>
+								<s:decorate id="otherInstallationsField"
+									template="../layout/edit.xhtml">
+									<ui:define name="label">#{messages['reportTechnical.otherInstallations']}</ui:define>
+									<h:inputText id="name" size="60" maxlength="60"
+										value="#{inspectionsHome.technicalInformation.otherInstallations}"
+										style="text-transform: uppercase">
+										<a:support event="onblur" reRender="otherInstallations"
+											bypassUpdates="true" ajaxSingle="true" />
+									</h:inputText>
+								</s:decorate>
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" styleClass="center" width="100%">
+						<h:panelGrid columns="2" styleClass="center" width="100%"
+							columnClasses="topAligned,topAligned">
+							<h:panelGrid columns="1" width="100%">
+								<rich:panel styleClass="left">
+									<f:facet name="header">#{messages['reportTechnical.fireExtinguishingSystem']}</f:facet>
+
+									<s:decorate id="stateFireInstallationField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.stateFireInstallation']}:</ui:define>
+										<h:selectOneMenu id="stateFireInstallation"
+											value="#{inspectionsHome.technicalInformation.stateFireInstallation}"
+											required="true">
+											<s:selectItems value="#{statesFireInstallation}"
+												var="stateFireInstallation"
+												label="#{stateFireInstallation.ordinal() + 1} - #{messages[stateFireInstallation.name()]}" />
+											<s:convertEnum />
+											<a:support event="onchange" ajaxSingle="true" />
+										</h:selectOneMenu>
+									</s:decorate>
+
+									<s:decorate id="numberExtinguishersField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.numberExtinguishers']}</ui:define>
+										<h:inputText id="area" size="20" maxlength="60"
+											value="#{inspectionsHome.technicalInformation.numberExtinguishers}"
+											required="true" style="text-transform: uppercase">
+											<a:support event="onblur" reRender="numberExtinguishers"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+									<s:decorate id="isSiameseField" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isSiamese']}</ui:define>
+										<h:selectBooleanCheckbox id="isSiamese"
+											value="#{inspectionsHome.technicalInformation.isSiamese}" />
+									</s:decorate>
+
+									<s:decorate id="isBoxes" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isBoxes']}</ui:define>
+										<h:selectBooleanCheckbox id="isBoxes"
+											value="#{inspectionsHome.technicalInformation.isBoxes}" />
+									</s:decorate>
+
+									<s:decorate id="isAlarmField" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isAlarm']}</ui:define>
+										<h:selectBooleanCheckbox id="isAlarm"
+											value="#{inspectionsHome.technicalInformation.isAlarm}" />
+									</s:decorate>
+
+									<s:decorate id="isWaterReserveField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isWaterReserve']}</ui:define>
+										<h:selectBooleanCheckbox id="isWaterReserve"
+											value="#{inspectionsHome.technicalInformation.isWaterReserve}" />
+									</s:decorate>
+
+									<s:decorate id="isSprayersField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isSprayers']}</ui:define>
+										<h:selectBooleanCheckbox id="isSprayers"
+											value="#{inspectionsHome.technicalInformation.isSprayers}" />
+									</s:decorate>
+
+									<s:decorate id="isDetectorsField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isDetectors']}</ui:define>
+										<h:selectBooleanCheckbox id="isDetectors"
+											value="#{inspectionsHome.technicalInformation.isDetectors}" />
+									</s:decorate>
+
+									<div style="clear: both" />
+								</rich:panel>
+							</h:panelGrid>
+							<h:panelGrid columns="1" width="100%">
+								<rich:panel styleClass="left">
+									<f:facet name="header">#{messages['reportTechnical.fireExtinguishingSystem']}</f:facet>
+
+									<s:decorate id="isAutoProtectionPlanField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isAutoProtectionPlan']}</ui:define>
+										<h:selectBooleanCheckbox id="isAutoProtectionPlan"
+											value="#{inspectionsHome.technicalInformation.isAutoProtectionPlan}" />
+									</s:decorate>
+
+									<s:decorate id="isFireBrigadesField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isFireBrigades']}</ui:define>
+										<h:selectBooleanCheckbox id="isFireBrigades"
+											value="#{inspectionsHome.technicalInformation.isFireBrigades}" />
+									</s:decorate>
+
+									<s:decorate id="isFirstAidField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isFirstAid']}</ui:define>
+										<h:selectBooleanCheckbox id="isFirstAid"
+											value="#{inspectionsHome.technicalInformation.isFirstAid}" />
+									</s:decorate>
+
+									<s:decorate id="isRescueEvacuationField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isRescueEvacuation']}</ui:define>
+										<h:selectBooleanCheckbox id="isRescueEvacuation"
+											value="#{inspectionsHome.technicalInformation.isRescueEvacuation}" />
+									</s:decorate>
+
+									<s:decorate id="isTypeConcreteConstructionField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isTypeConcreteConstruction']}</ui:define>
+										<h:selectBooleanCheckbox id="isTypeConcreteConstruction"
+											value="#{inspectionsHome.technicalInformation.isTypeConcreteConstruction}" />
+									</s:decorate>
+									<s:decorate id="isTypeConstructionMetalStructureField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isTypeConstructionMetalStructure']}</ui:define>
+										<h:selectBooleanCheckbox id="isTypeConstructionMetalStructure"
+											value="#{inspectionsHome.technicalInformation.isTypeConstructionMetalStructure}" />
+									</s:decorate>
+
+									<s:decorate id="isTypeConstructionMixedField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isTypeConstructionMixed']}</ui:define>
+										<h:selectBooleanCheckbox id="isTypeConstructionMixed"
+											value="#{inspectionsHome.technicalInformation.isTypeConstructionMixed}" />
+									</s:decorate>
+									<div style="clear: both"></div>
+								</rich:panel>
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" styleClass="center" width="100%">
+						<h:panelGrid columns="2" styleClass="center" width="100%"
+							columnClasses="topAligned,topAligned">
+							<h:panelGrid columns="1" width="100%">
+								<rich:panel styleClass="left">
+									<f:facet name="header">#{messages['reportTechnical.gasInstallations']}</f:facet>
+
+									<s:decorate id="stateGasInstallationField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.stateGasInstallation']}:</ui:define>
+										<h:selectOneMenu id="stateGasInstallation"
+											value="#{inspectionsHome.technicalInformation.stateGasInstallation}"
+											required="true">
+											<s:selectItems value="#{statesGasInstallation}"
+												var="stateGasInstallation"
+												label="#{stateGasInstallation.ordinal() + 1} - #{messages[stateGasInstallation.name()]}" />
+											<s:convertEnum />
+											<a:support event="onchange" ajaxSingle="true" />
+										</h:selectOneMenu>
+									</s:decorate>
+
+									<div style="clear: both" />
+								</rich:panel>
+							</h:panelGrid>
+							<h:panelGrid columns="1" width="100%">
+								<rich:panel styleClass="left">
+									<f:facet name="header">#{messages['reportTechnical.stateSystemEvacuationEscape']}</f:facet>
+
+									<s:decorate id="stateSystemEvacuationEscapeField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.stateSystemEvacuationEscape']}:</ui:define>
+										<h:selectOneMenu id="stateSystemEvacuationEscape"
+											value="#{inspectionsHome.technicalInformation.stateSystemEvacuationEscape}"
+											required="true">
+											<s:selectItems value="#{statesSystemEvacuationEscape}"
+												var="stateSystemEvacuationEscape"
+												label="#{stateSystemEvacuationEscape.ordinal() + 1} - #{messages[stateSystemEvacuationEscape.name()]}" />
+											<s:convertEnum />
+											<a:support event="onchange" ajaxSingle="true" />
+										</h:selectOneMenu>
+									</s:decorate>
+
+									<s:decorate id="isEscapeRoutesField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isEscapeRoutes']}</ui:define>
+										<h:selectBooleanCheckbox id="isEscapeRoutes"
+											value="#{inspectionsHome.technicalInformation.isEscapeRoutes}" />
+									</s:decorate>
+
+									<s:decorate id="isSignalingField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isSignaling']}</ui:define>
+										<h:selectBooleanCheckbox id="isSignaling"
+											value="#{inspectionsHome.technicalInformation.isSignaling}" />
+									</s:decorate>
+
+									<s:decorate id="isEmergencyDoorsField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isEmergencyDoors']}</ui:define>
+										<h:selectBooleanCheckbox id="isEmergencyDoors"
+											value="#{inspectionsHome.technicalInformation.isEmergencyDoors}" />
+									</s:decorate>
+
+									<s:decorate id="isEmergencyLightsField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isEmergencyLights']}</ui:define>
+										<h:selectBooleanCheckbox id="isEmergencyLights"
+											value="#{inspectionsHome.technicalInformation.isEmergencyLights}" />
+									</s:decorate>
+
+									<s:decorate id="othersField" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.others']}</ui:define>
+										<h:inputText id="name" size="60" maxlength="60"
+											value="#{inspectionsHome.technicalInformation.others}"
+											style="text-transform: uppercase">
+											<a:support event="onblur" reRender="others"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+									<div style="clear: both"></div>
+								</rich:panel>
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" styleClass="center" width="100%">
+						<h:panelGrid columns="2" styleClass="center" width="100%"
+							columnClasses="topAligned,topAligned">
+							<h:panelGrid columns="1" width="100%">
+								<rich:panel styleClass="left">
+									<f:facet name="header">#{messages['reportTechnical.systemVentilationContamination']}</f:facet>
+
+									<s:decorate id="stateSystemVentilationContaminationField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.stateSystemVentilationContamination']}:</ui:define>
+										<h:selectOneMenu id="stateSystemVentilationContamination"
+											value="#{inspectionsHome.technicalInformation.stateSystemVentilationContamination}"
+											required="true">
+											<s:selectItems
+												value="#{statesSystemVentilationContamination}"
+												var="stateSystemVentilationContamination"
+												label="#{stateSystemVentilationContamination.ordinal() + 1} - #{messages[stateSystemVentilationContamination.name()]}" />
+											<s:convertEnum />
+											<a:support event="onchange" ajaxSingle="true" />
+										</h:selectOneMenu>
+									</s:decorate>
+									<s:decorate id="isSmokeField" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isSmoke']}</ui:define>
+										<h:selectBooleanCheckbox id="isSmoke"
+											value="#{inspectionsHome.technicalInformation.isSmoke}" />
+									</s:decorate>
+
+									<s:decorate id="isGasesField" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isGases']}</ui:define>
+										<h:selectBooleanCheckbox id="isGases"
+											value="#{inspectionsHome.technicalInformation.isGases}" />
+									</s:decorate>
+									<s:decorate id="isNoiseField" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.isNoise']}</ui:define>
+										<h:selectBooleanCheckbox id="isNoise"
+											value="#{inspectionsHome.technicalInformation.isNoise}" />
+									</s:decorate>
+
+									<s:decorate id="othersSystemVentilationContaminationField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.othersSystemVentilationContamination']}</ui:define>
+										<h:inputText id="name" size="60" maxlength="60"
+											value="#{inspectionsHome.technicalInformation.othersSystemVentilationContamination}"
+											style="text-transform: uppercase">
+											<a:support event="onblur"
+												reRender="othersSystemVentilationContamination"
+												bypassUpdates="true" ajaxSingle="true" />
+										</h:inputText>
+									</s:decorate>
+									<div style="clear: both" />
+								</rich:panel>
+							</h:panelGrid>
+							<h:panelGrid columns="1" width="100%">
+								<rich:panel styleClass="left">
+									<f:facet name="header">#{messages['reportTechnical.recomendations']}</f:facet>
+
+									<s:decorate id="recommendationsField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['reportTechnical.recomendations']}</ui:define>
+										<!-- h:inputTextArea id="recommendations" size="60" maxlength="60" cols="80" rows="3"
+											value="#{inspectionsHome.technicalInformation.recommendations}" required="true" style="text-transform: uppercase"-->
+										<h:inputTextarea id="description" cols="80" rows="3"
+											value="#{inspectionsHome.technicalInformation.recommendations}"
+											style="text-transform: uppercase" />
+
+										<!-- a:support event="onblur" reRender="recommendations"
+											bypassUpdates="true" ajaxSingle="true" /-->
+										<!-- /h:inputTextArea-->
+									</s:decorate>
+
+									<div style="clear: both"></div>
+								</rich:panel>
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+				</rich:tab>
+
+				<rich:tab label="#{messages['reportTechnical.observations']}">
+
+					<rich:panel id="panelSearch">
+						<f:facet name="header">
+							<h:panelGrid columns="2" columnClasses="headerTitle,">
+								<h:outputText value="#{messages['property']}" />
+
+								<a:commandButton ajaxSingle="true"
+									action="#{inspectionsHome.addObservation()}"
+									value="#{messages['common.add']}" reRender="observationsList" />
+							</h:panelGrid>
+						</f:facet>
+
+						<rich:dataTable id="observationsList" var="_observation"
+							value="#{inspectionsHome.technicalInformation.observations}"
+							onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+							onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+							<h:column>
+								<f:facet name="header">#{messages['observation.date']}</f:facet>
+								<h:outputText value="#{_observation.date}">
+									<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+								</h:outputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">#{messages['observation.detail']}</f:facet>
+								<h:inputText size="122" maxlength="122"
+									value="#{_observation.detail}"
+									style="text-transform: uppercase">
+
+								</h:inputText>
+							</h:column>
+							<rich:column styleClass="action">
+								<f:facet name="header">#{messages['common.action']}</f:facet>
+
+								<a:commandButton ajaxSingle="true"
+									action="#{inspectionsHome.removeObservation(_observation)}"
+									value="#{messages['common.remove']}"
+									reRender="observationsList" />
+
+							</rich:column>
+						</rich:dataTable>
+
+
+					</rich:panel>
+				</rich:tab>
+			</rich:tabPanel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{inspectionsHome.saveOrUpdateTechnicalInfomation()}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/firestation/InspectionsList.xhtml" />
+
+
+			</div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

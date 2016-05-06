@@ -1,0 +1,174 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel id="contentPanel"
+		rendered="#{(propertyHome.confirmChangeOwner and !propertyHome.fromAddMortgage) or propertyHome.changeOwner}">
+		<f:facet name="header">
+			<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText id="boundarySize"
+					value="#{messages['property.boundary']} (#{empty domainHome.boundaries ? 0 : domainHome.boundaries.size})" />
+				<s:div styleClass="actionButtons" rendered="#{empty from}">
+				<a:region>
+					<a:commandButton value="#{messages['common.add']}" rendered="#{!propertyHome.confirmChangeOwner and !propertyHome.changedOwnerComplete}"
+						action="#{domainHome.addBoundary()}" reRender="domainBoundaryList,boundarySize"
+						ajaxSingle="true" immediate="true">
+					</a:commandButton>
+				</a:region>
+				</s:div>
+			</h:panelGrid>
+		</f:facet>
+		
+		<a:region>
+
+		<a:outputPanel styleClass="results" id="domainBoundaryList">
+			<h:outputText value="#{messages['property.noBoundariesAssociated']}"
+				rendered="#{empty domainHome.boundaries}" />			
+			<rich:dataTable id="domainBoundaryTable" var="_boundary" 
+				value="#{domainHome.boundaries}" rowClasses="rvgRowOne,rvgRowTwo"
+				rendered="#{not empty domainHome.boundaries}">
+				<rich:column sortBy="#{_boundary.compassPoint.name}" styleClass="center">
+					<f:facet name="header">
+						<h:outputText value="#{messages['boundary.compassPoint']}" />
+					</f:facet>
+					<h:selectOneMenu value="#{_boundary.compassPoint}" required="true" disabled="#{propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}">
+						<s:selectItems value="#{compassPoints}" var="_compassPoint"
+							label="#{messages[_compassPoint.name()]}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEnum />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+
+				</rich:column>
+				<rich:column sortBy="#{_boundary.description}"  styleClass="center">
+					<f:facet name="header">
+						<h:outputText value="#{messages['boundary.description']}" />
+					</f:facet>
+					<h:inputText value="#{_boundary.description}" required="true" disabled="#{propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}"
+						size="30">
+						<a:support event="onblur" ajaxSingle="true" />
+					</h:inputText>
+				</rich:column>
+
+				<rich:column sortBy="#{_boundary.length}"  styleClass="center">
+					<f:facet name="header">
+						<h:outputText value="#{messages['boundary.length']}" />
+					</f:facet>
+					<s:decorate id="domainlengthId"
+						template="../../layout/edit.xhtml">
+						<h:inputText value="#{_boundary.length}" disabled="#{propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}"
+							required="true" styleClass="right" size="8">
+							<a:support event="onblur" ajaxSingle="true" 
+								reRender="domainlengthId" />
+							<f:convertNumber pattern="#0.00" />
+						</h:inputText>
+					</s:decorate>
+
+				</rich:column>
+				<rich:column styleClass="action" rendered="#{!propertyHome.confirmChangeOwner and !propertyHome.changedOwnerComplete}">
+					<f:facet name="header">#{messages['common.action']}</f:facet>
+					<a:commandButton action="#{domainHome.remove(_boundary)}"
+						id="domainRemoveBoundary" value="#{messages['common.remove']}"
+						immediate="true" reRender="boundaryList, domainBoundaryList,boundarySize,contentPanel" ajaxSingle="true">
+					</a:commandButton>
+				</rich:column>
+
+			</rich:dataTable>
+
+		</a:outputPanel>
+		</a:region>
+		<div style="clear: both">
+			<span class="required">*</span> #{messages['common.requiredFields']}
+		</div>
+
+	</rich:panel>
+
+	<rich:panel id="contentPanel2"
+		rendered="#{!propertyHome.confirmChangeOwner and !propertyHome.fromAddMortgage and !propertyHome.changeOwner}">
+		<f:facet name="header">
+			<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText
+					value="#{messages['property.boundary']} (#{empty propertyHome.boundaries ? 0 : propertyHome.boundaries.size})" />
+				<s:div styleClass="actionButtons" rendered="#{empty from}">
+				<a:region>
+					<a:commandButton value="#{messages['common.add']}" rendered="#{!propertyHome.confirmChangeOwner}"
+						action="#{propertyHome.addBoundary()}" reRender="boundaryList, contentPanel2"
+						ajaxSingle="true" immediate="true">
+					</a:commandButton>
+					</a:region>
+				</s:div>
+			</h:panelGrid>
+		</f:facet>
+		
+		<a:region>
+
+		<a:outputPanel styleClass="results" id="boundaryList">
+			<h:outputText value="#{messages['property.noBoundariesAssociated']}"
+				rendered="#{empty propertyHome.boundaries}" />
+			
+
+			<rich:dataTable id="boundaryTable" var="_boundary"
+				value="#{propertyHome.boundaries}" rowClasses="rvgRowOne,rvgRowTwo"
+				rendered="#{not empty propertyHome.boundaries}">
+				<rich:column sortBy="#{_boundary.compassPoint.name}"
+					styleClass="action">
+					<f:facet name="header">
+						<h:outputText value="#{messages['boundary.compassPoint']}" />
+					</f:facet>
+					<h:selectOneMenu value="#{_boundary.compassPoint}" required="true">
+						<s:selectItems value="#{compassPoints}" var="_compassPoint"
+							label="#{messages[_compassPoint.name()]}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEnum />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+
+				</rich:column>
+				<rich:column sortBy="#{_boundary.description}" styleClass="action">
+					<f:facet name="header">
+						<h:outputText value="#{messages['boundary.description']}" />
+					</f:facet>
+					<h:inputText value="#{_boundary.description}" required="true"
+						size="30">
+						<a:support event="onblur" ajaxSingle="true" />
+					</h:inputText>
+				</rich:column>
+
+				<rich:column sortBy="#{_boundary.length}" styleClass="action">
+					<f:facet name="header">
+						<h:outputText value="#{messages['boundary.length']}" />
+					</f:facet>
+					<h:inputText value="#{_boundary.length}" id="lengthId"
+						required="true" styleClass="right" size="8">
+						<a:support event="onblur" reRender="boundaryTable"
+							ajaxSingle="true" />
+						<f:convertNumber pattern="#0.00" />
+					</h:inputText>
+				</rich:column>
+
+				<rich:column styleClass="action" rendered="#{!propertyHome.confirmChangeOwner and !propertyHome.changedOwnerComplete}">
+					<f:facet name="header">#{messages['common.action']}</f:facet>
+					<a:commandButton action="#{propertyHome.remove(_boundary)}" rendered="#{!propertyHome.confirmChangeOwner and !propertyHome.changedOwnerComplete}"
+						id="removeBoundary" value="#{messages['common.remove']}"
+						immediate="true" reRender="contentPanel2, boundarySize" ajaxSingle="true">
+					</a:commandButton>
+				</rich:column>
+
+			</rich:dataTable>
+
+		</a:outputPanel>
+		</a:region>
+		<div style="clear: both">
+			<span class="required">*</span> #{messages['common.requiredFields']}
+		</div>
+
+	</rich:panel>
+</ui:composition>

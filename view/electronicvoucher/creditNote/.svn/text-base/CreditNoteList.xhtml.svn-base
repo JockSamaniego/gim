@@ -1,0 +1,231 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="creditNoteElectListSearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['creditNote.titleh1']}" />
+
+			<rich:simpleTogglePanel switchType="ajax">
+				<f:facet name="header">#{messages['creditNote.searchFilter']}</f:facet>
+ 
+				<s:decorate template="../../layout/display.xhtml">
+					<ui:define name="label">#{messages['electronicRetention.sequential']}</ui:define>
+					<h:inputText id="name"
+						value="#{creditNoteElectList.sequentialNumber}" />
+				</s:decorate>
+				<s:decorate template="../../layout/display.xhtml">
+					<ui:define name="label">#{messages['electronicRetention.date']}</ui:define>
+					<rich:calendar value="#{creditNoteElectList.emissionDate}" >
+						<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+					</rich:calendar>
+				</s:decorate>
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/electronicvoucher/creditNote/CreditNoteList.xhtml">
+					<f:param name="firstResult" value="0" />
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+		
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['electronicVoucher.searchResults']} (#{empty creditNoteElectList.resultList ? 0 : (creditNoteElectList.paginated ? creditNoteElectList.resultCount : creditNoteElectList.resultList.size)})" />
+					<s:div styleClass="actionButtons" rendered="#{empty from}">
+						<s:button view="/electronicvoucher/creditNote/CreditNoteEdit.xhtml"
+							id="create" propagation="none"
+							value="#{messages['common.create']}">
+							<f:param name="creditNoteId" />
+						</s:button>
+					</s:div>
+				</h:panelGrid>
+			</f:facet>
+			<div class="results" id="electronicRetentionList1">
+
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty creditNoteElectList.resultList}" />
+
+
+					<rich:dataTable id="electronicVoucherList" var="electronicVoucher"
+					value="#{creditNoteElectList.resultList}"
+					rendered="#{not empty creditNoteElectList.resultList}"
+					onRowMouseOver="this.style.backgroundColor='#{messages['rowBackgroundColor']}'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+ 
+ 					<h:column>
+						<f:facet name="header">
+							<ui:include src="../../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{electronicRetentionList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['electronicVoucher.emissionDate']}" />
+								<ui:param name="propertyPath"
+									value="electronicVoucher.emissionDate" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{electronicVoucher.emissionDate}" >
+							<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{creditNoteElectList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['electronicRetention.sequential']}" />
+								<ui:param name="propertyPath"
+									value="electronicVoucher.sequentialNumber" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{electronicVoucher.sequentialNumber}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{electronicRetentionList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['electronicVoucher.authorizationCode']}" />
+								<ui:param name="propertyPath"
+									value="electronicVoucher.authorizationCode" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{electronicVoucher.authorizationCode}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{electronicRetentionList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['electronicVoucher.electronicStatus']}" />
+								<ui:param name="propertyPath"
+									value="electronicVoucher.electronicStatus" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{electronicVoucher.electronicStatus}" />
+					</h:column> 
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{creditNoteElectList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['electronicVoucher.total']}" />
+								<ui:param name="propertyPath" value="electronicVoucher.totalPaid" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{electronicVoucher.totalPaid}" >
+							<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+						</h:outputText>
+					</h:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet> 
+						 <s:button view="/electronicvoucher/creditNote/CreditNoteEdit.xhtml"
+							value="#{messages['common.edit']}" propagation="none"
+							id="electronicVoucherEdit" rendered="#{creditNoteElectHome.isEnabled(electronicVoucher)}">
+							<f:param name="creditNoteId"
+								value="#{electronicVoucher.id}" />
+						</s:button>
+						
+						<a:commandButton id="print" value="#{messages['common.print']}"
+							action="#{creditNoteElectHome.prePrint(electronicVoucher.id)}">
+						</a:commandButton>
+						
+						<a:commandButton id="cancelVoucher" value="#{messages['electronicVoucher.cancel']}"
+							action="#{creditNoteElectHome.setCancelVoucher(electronicVoucher)}"
+							rendered="#{creditNoteElectHome.canCancel(electronicVoucher)}"
+							oncomplete="Richfaces.showModalPanel('cancelViewer');" />
+							
+					</rich:column>
+				</rich:dataTable>
+			</div>
+		</rich:panel>
+		</h:form>
+		
+		
+		<div class="tableControl">
+			<s:link view="/electronicvoucher/creditNote/CreditNoteList.xhtml"
+				rendered="#{creditNoteElectList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/electronicvoucher/creditNote/CreditNoteList.xhtml"
+				rendered="#{creditNoteElectList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult"
+					value="#{creditNoteElectList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/electronicvoucher/creditNote/CreditNoteList.xhtml"
+				rendered="#{creditNoteElectList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult"
+					value="#{creditNoteElectList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/electronicvoucher/ElectronicRetentionList.xhtml"
+				rendered="#{creditNoteElectList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult"
+					value="#{creditNoteElectList.lastFirstResult}" />
+			</s:link>
+		</div>
+		
+		 	 
+	 <!-- Dialogo para confirmar anular comprobante -->
+	<rich:modalPanel id="cancelViewer" width="400" height="100" style="overflow:auto">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText styleClass="formTitle" value="#{messages['electronicVoucher.confirm']}" />				
+			</h:panelGroup>
+		</f:facet>
+		<h:form id="cancelView">		
+
+			<h:panelGrid columns="1">
+						<h:outputText value="#{messages['electronicVoucher.confirmquestion']}" /> 
+					</h:panelGrid>
+					<div style="clear: both" />
+				<h:panelGroup>
+					<div class="actionButtons">		
+						<a:commandButton id="yes" style="width:50px" 
+							value="#{messages['common.yes']}"
+							action="#{creditNoteElectHome.cancelVoucher()}"
+							oncomplete="Richfaces.hideModalPanel('cancelViewer');"
+							bypassUpdates="true" />	
+
+						<a:commandButton id="no" style="width:50px" 
+							value="#{messages['common.no']}"
+							oncomplete="Richfaces.hideModalPanel('cancelViewer');"
+							bypassUpdates="true" />					
+					</div>
+				</h:panelGroup>	
+			</h:form>		
+		</rich:modalPanel>
+	</ui:define>
+</ui:composition>

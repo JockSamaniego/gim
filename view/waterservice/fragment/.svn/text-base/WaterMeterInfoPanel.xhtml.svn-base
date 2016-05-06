@@ -1,0 +1,111 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="waterMeterInfoPanel" width="600" height="322">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['waterSupply.infoWaterMeter']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="waterMeterInfoPanel" attachTo="hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="waterMeterEditForm">
+			<rich:panel id="panelResident">
+				<h:panelGrid width="100%" columns="2">
+					<s:decorate id="identificationNumberField"
+						template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['resident.identificationNumber']}:</ui:define>
+						<h:outputText
+							value="#{routeHome.infoConsumption.waterSupply.contract.subscriber.identificationNumber}" />
+					</s:decorate>
+
+					<s:decorate id="nameResidentField"
+						template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['resident.name']}:</ui:define>
+						<h:outputText
+							value="#{routeHome.infoConsumption.waterSupply.contract.subscriber.name}" />
+					</s:decorate>
+				</h:panelGrid>
+
+				<div style="clear: both">
+					<span class="required"></span>
+				</div>
+			</rich:panel>
+
+			<rich:panel id="panelProperty">
+				<h:panelGrid width="100%" columns="2">
+					<s:decorate id="cadastralCodeField"
+						template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['property.cadastralCode']}:</ui:define>
+						<h:outputText
+							value="#{routeHome.infoConsumption.waterSupply.property.cadastralCode}" />
+					</s:decorate>
+
+					<s:decorate id="numberField" template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['property.houseNumber']}:</ui:define>
+						<h:outputText
+							value="#{routeHome.infoConsumption.waterSupply.property.number}" />
+					</s:decorate>
+
+					<s:decorate id="waterSupplyStreetField"
+						template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['waterSupply.connectionStreet']}</ui:define>
+						<h:outputText
+							value="#{routeHome.infoConsumption.waterSupply.street.name}" />
+					</s:decorate>
+
+					<s:decorate id="waterSupplyCategoryNameField"
+						template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['waterSupply.waterSupplyCategory']}</ui:define>
+						<h:outputText
+							value="#{routeHome.infoConsumption.waterSupply.waterSupplyCategory.name}" />
+					</s:decorate>
+
+
+
+
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['waterMeter.serial']}</ui:define>
+						<h:outputText
+							value="#{routeHome.infoConsumption.waterSupply.numberActualMeter}" />
+					</s:decorate>
+
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">#{messages['waterMeter.disgistNumber']}</ui:define>
+						<h:outputText
+							value="#{routeHome.infoConsumption.waterSupply.digitsActualMeter}" />
+					</s:decorate>
+
+				</h:panelGrid>
+
+				<div style="clear: both">
+					<span class="required"></span>
+				</div>
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}" reRender="waterMeterInfoPanel"
+					oncomplete="Richfaces.hideModalPanel('waterMeterInfoPanel');"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+	</rich:modalPanel>
+</ui:composition>

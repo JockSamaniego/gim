@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd" login-required="true">
+
+   <param name="firstResult" value="#{territorialDivisionList.firstResult}"/>
+   <param name="sort" value="#{territorialDivisionList.orderColumn}"/>
+   <param name="dir" value="#{territorialDivisionList.orderDirection}"/>
+   <param name="logic" value="#{territorialDivisionList.restrictionLogicOperator}"/>
+
+   <param name="from"/>
+   <param name="criteria" value="#{territorialDivisionList.criteria}"/>
+   <param name="territorialDivisionType" value="#{territorialDivisionList.territorialDivisionType}" converterId="org.jboss.seam.ui.EntityConverter"/>
+
+</page>

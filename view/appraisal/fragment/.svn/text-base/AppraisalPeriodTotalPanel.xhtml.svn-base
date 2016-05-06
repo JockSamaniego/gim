@@ -1,0 +1,120 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="appraisalPeriodTotalPanel" width="600" height="500">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['appraisal.periodTotal']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="appraisalPeriodTotalPanel" attachTo="hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+ 		<h:form id="itemStructureEditForm" width="100%" >
+			<h:panelGrid width="100%">
+				<ui:include src="AppraisalPeriodPanel.xhtml" />
+	
+		    	<rich:tabPanel switchType="client" >
+		    		
+		    		<rich:tab id="tabStructure" label="#{messages['appraisal.Structure']}" switchType="client" >
+						<rich:dataTable id="totalStructureList" var="_totalStructure"
+							value="#{appraisalPeriodHome.instance.appraisalTotalStructure}"
+							rendered="#{not empty appraisalPeriodHome.instance.appraisalTotalStructure}">
+		
+							<rich:column>
+								<f:facet name="header">#{messages['appraisalPeriod.material']}</f:facet>
+								<h:outputText value="#{messages[_totalStructure.structureMaterial.name()]}" />
+							</rich:column>
+
+							<rich:column styleClass="right">
+								<f:facet name="header">#{messages['appraisalPeriod.coeficienteTotal']}</f:facet>
+								<h:outputText value="#{_totalStructure.total}" />
+							</rich:column>
+							
+						</rich:dataTable>
+		    		</rich:tab>
+		    		
+		    		<rich:tab id="tabWall" label="#{messages['appraisal.Wall']}" switchType="client" >
+						<rich:dataTable id="totalWallList" var="_totalWall"
+							value="#{appraisalPeriodHome.instance.appraisalTotalWall}"
+							rendered="#{not empty appraisalPeriodHome.instance.appraisalTotalWall}">
+		
+							<rich:column>
+								<f:facet name="header">#{messages['appraisalPeriod.material']}</f:facet>
+								<h:outputText value="#{messages[_totalWall.wallMaterial.name()]}" />
+							</rich:column>
+
+							<rich:column styleClass="right">
+								<f:facet name="header">#{messages['appraisalPeriod.coeficienteTotal']}</f:facet>
+								<h:outputText value="#{_totalWall.total}" />
+							</rich:column>
+							
+						</rich:dataTable>
+		    		</rich:tab>
+		    		
+		    		<rich:tab id="tabRoof" label="#{messages['appraisal.Roof']}" switchType="client" >
+						<rich:dataTable id="totalRoofList" var="_totalRoof"
+							value="#{appraisalPeriodHome.instance.appraisalTotalRoof}"
+							rendered="#{not empty appraisalPeriodHome.instance.appraisalTotalRoof}">
+		
+							<rich:column>
+								<f:facet name="header">#{messages['appraisalPeriod.material']}</f:facet>
+								<h:outputText value="#{messages[_totalRoof.roofMaterial.name()]}" />
+							</rich:column>
+
+							<rich:column styleClass="right">
+								<f:facet name="header">#{messages['appraisalPeriod.coeficienteTotal']}</f:facet>
+								<h:outputText value="#{_totalRoof.total}" />
+							</rich:column>
+							
+						</rich:dataTable>
+		    		</rich:tab>
+		    		
+		    		<rich:tab id="tabExternal" label="#{messages['appraisal.ExternalFinishing']}" switchType="client" >
+						<rich:dataTable id="totalExternalList" var="_totalExternal"
+							value="#{appraisalPeriodHome.instance.appraisalTotalExternal}" 
+							rendered="#{not empty appraisalPeriodHome.instance.appraisalTotalExternal}">
+		
+							<rich:column>
+								<f:facet name="header">#{messages['appraisalPeriod.material']}</f:facet>
+								<h:outputText value="#{messages[_totalExternal.externalFinishing.name()]}" />
+							</rich:column>
+
+							<rich:column styleClass="right">
+								<f:facet name="header">#{messages['appraisalPeriod.coeficienteTotal']}</f:facet>
+								<h:outputText value="#{_totalExternal.total}" />
+							</rich:column>
+							
+						</rich:dataTable>
+					</rich:tab>
+		    		
+				</rich:tabPanel>
+			</h:panelGrid>
+			<div class="actionButtons">
+				<a:commandButton 
+					ajaxSingle="true" 
+					value="#{messages['common.quit']}"
+					reRender="appraisalTotalStructureList"
+					oncomplete="Richfaces.hideModalPanel('appraisalPeriodTotalPanel');"
+					bypassUpdates="true" />
+
+			</div>
+ 		</h:form>
+ 		
+ 		
+	</rich:modalPanel>
+</ui:composition>

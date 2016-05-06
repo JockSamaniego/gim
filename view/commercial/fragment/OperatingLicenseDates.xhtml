@@ -1,0 +1,181 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+	
+	<rich:modalPanel id="operatingLicenseDates" width="620" height="620">
+	
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText
+					value="Impresión del permiso de funcionamiento" />
+			</h:panelGroup>
+		</f:facet>
+		
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkx" />
+				<rich:componentControl for="operatingLicenseDates"
+					attachTo="hidelinkx" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form>			
+		  <h:panelGrid width="100%" id="tramitex">
+			
+				<rich:panel id="contentPanel">
+				<h:outputText value="Año de permiso:" ></h:outputText>
+					<h:selectOneMenu id="currentFiscalPeriod"  style="margin-left: 2em"
+						value="#{businessHome.fiscalYear}" disabled="true" >
+						<f:selectItem itemValue="#{businessHome.year1}" itemLabel="#{businessHome.year1}" />
+		   				<f:selectItem itemValue="#{businessHome.year2}" itemLabel="#{businessHome.year2}" />
+		   				<f:selectItem itemValue="#{businessHome.year3}" itemLabel="#{businessHome.year3}" />
+		   				<f:selectItem itemValue="#{businessHome.year4}" itemLabel="#{businessHome.year4}" />
+		   				<f:selectItem itemValue="#{businessHome.year5}" itemLabel="#{businessHome.year5}" />
+		   				<a:support event="onchange" ajaxSingle="true" action="#{businessHome.dates}"  reRender="emissionDate, validityDate"  />
+					</h:selectOneMenu>
+					<h:outputText value="Número de especie:" style="margin-left: 4em"></h:outputText>
+					<h:inputText id="inputArea11" size="10" maxlength="10" required="true" style="margin-left: 2em"
+						value="#{businessHome.codePaper}" >
+					</h:inputText>
+				</rich:panel>
+
+						
+		  </h:panelGrid>		 
+		  <h:outputText value="* #{businessHome.message}" style="color:red" id="message" />
+		  <rich:panel id="contentPanelx">
+				<f:facet name="header">
+					<h:panelGrid columns="1" columnClasses="headerTitle,">
+						<h:outputText
+							value="Datos del local para la impresión" />						
+					</h:panelGrid>
+				</f:facet>					
+					<h:outputText value="Nombre o razón social del establecimiento:"></h:outputText>
+					<br />
+					<h:inputText id="inputArea1" size="87" maxlength="87" required="true" 
+						style="text-transform: uppercase"
+						value="#{businessHome.local.name}" >
+					</h:inputText>
+					<br />
+
+					<br />					
+					<h:outputText value="Nombre del propietario o representante legal:"></h:outputText>
+					<h:inputText id="inputArea2" size="87"  required="true" 
+						maxlength="87"
+						style="text-transform: uppercase"
+						value="#{businessHome.instance.owner.name}" >
+					</h:inputText>
+					<br />	
+					<br />	
+					<h:outputText value="Número de R.U.C. del establecimiento:"></h:outputText>
+					<h:inputText id="inputArea3" size="28"  style="margin-left: 2em" required="true" 
+						maxlength="28"
+						value="#{businessHome.local.business.cedruc}" >
+					</h:inputText>
+					<br />
+					<br />
+					<h:outputText value="Provincia:"></h:outputText>
+					<h:inputText id="inputArea4" size="21"  style="margin-left: 2em" required="true" 
+						maxlength="21" 
+						disabled = "true"
+						value="LOJA" >
+					</h:inputText>
+
+					<h:outputText value="Cantón:"  style="margin-left: 9em"></h:outputText>
+					<h:inputText id="inputArea5" size="21"  style="margin-left: 2em; text-transform: uppercase" required="true" 
+						maxlength="21" 
+						value="#{businessHome.local.address.city}" >
+					</h:inputText>
+
+					<br />
+					<br />
+					<h:outputText value="Parroquia:"></h:outputText>
+					<h:selectOneMenu id="parishNames"  required="true" style="margin-left: 2em" rendered="#{businessHome.local!=null}"
+									value="#{businessHome.local.address.parish}" >
+						<s:selectItems value="#{businessHome.addParish()}" var="parishName"
+										label="#{parishName}" 
+										noSelectionLabel="Seleccione uno" />	
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+	
+					<h:outputText value="Barrio:"  style="margin-left: 4em"></h:outputText>
+					<h:inputText id="inputArea7"  size="21" maxlength="30" required="true" 
+						style="text-transform: uppercase; margin-left: 2em"
+						value="#{businessHome.local.address.neighborhood}" >
+					</h:inputText>
+
+					<br />
+					<br />
+					<h:outputText value="Dirección:"></h:outputText>
+					<h:inputText id="inputArea8"  size="74" maxlength="83" required="true" 
+						style="text-transform: uppercase; margin-left: 2em"
+						value="#{businessHome.local.address.street}" >
+					</h:inputText>								
+					<br />
+					<br />
+					<h:outputText value="Código del establecimiento:"></h:outputText>
+					<h:inputText id="inputArea9" size="38" style="margin-left: 2em; text-transform: uppercase" required="true" 
+						maxlength="38" 
+						value="#{businessHome.local.code}" >
+					</h:inputText>	
+					<br />
+					<br />
+					<h:outputText value="Actividad(es)/tipo(s) de establecimiento(s):"></h:outputText>
+					<h:inputTextarea id="inputArea10" style=" width : 460px; text-transform: uppercase" required="true" 
+						disabled = "false"
+						value="#{businessHome.economic_Activity}" >
+					</h:inputTextarea>
+					<br />
+					<br />
+					<h:outputText value="Fecha de emisión:"></h:outputText>
+					<rich:calendar id="emissionDate" required="true" ajaxSingle="true"
+							value="#{businessHome.emissionDate}"
+							disabled="true"
+							datePattern="#{messages['common.datePattern']}" />
+
+					<h:outputText value="Fecha de vigencia:"  style="margin-left: 2em"></h:outputText>
+					<rich:calendar id="validityDate" required="true" ajaxSingle="true"
+							value="#{businessHome.validityDate}"
+							disabled="true"
+							datePattern="#{messages['common.datePattern']}" />
+						
+					
+		        <div style="clear: both">
+				
+		             
+		        </div>		        
+			</rich:panel>
+
+		  <br />		  	  		  
+		  
+
+		<div class="actionButtons">	 
+			<a:commandButton 
+							 id="printreport" value="#{messages['common.print']}" 
+							 
+							 includePageParams="false"  propagation="join" 
+							 action="#{businessHome.printLicense}"
+							 reRender="localsPanel, message"  >
+							 
+			</a:commandButton>
+				
+			 <a:region> 
+				    <a:commandButton id="cancelx" ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					reRender="operatingLicenseDates"
+					oncomplete="Richfaces.hideModalPanel('operatingLicenseDates');"
+					bypassUpdates="true" />
+			 
+			</a:region>
+		</div>
+		</h:form>
+
+	</rich:modalPanel>
+</ui:composition>

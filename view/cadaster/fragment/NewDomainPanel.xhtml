@@ -1,0 +1,212 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:g="http://gim.gob.ec/jsf">
+
+
+	<h:panelGrid columns="1" width="100%" style="width: 100%; height: 100%" columnClasses="topAligned,topAligned">
+	<rich:panel rendered="#{!domainHome.managed or propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}" styleClass="left" size="100%">	
+	<f:facet name="header">#{messages['property.buyer']}</f:facet>
+		<g:residentChooser id="residentChooser" disabled="#{propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}" 
+					resident="#{domainHome.instance.resident}"
+					criteria="#{domainHome.criteria}" 
+					bean="#{domainHome}"
+					searchAction="searchResident"
+					residentsList="#{domainHome.residents}"
+					identificationNumber="#{domainHome.identificationNumber}"
+					searchByCriteriaAction="searchResidentByCriteria"
+					clearSearchPanelAction="clearSearchResidentPanel" 	
+					reRender="beneficiariesField"				 
+					residentChosenListenerName="residentSelectedListener"/>
+
+		<s:decorate id="beneficiariesField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['domain.beneficiaries']}:</ui:define>
+			<h:inputText id="beneficiaries" size="50" disabled="#{propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}"
+				styleClass="left" required="true"
+				value="#{domainHome.instance.beneficiaries}">
+			</h:inputText>
+		</s:decorate>
+		<div style="clear: both"/>						
+	</rich:panel>
+	
+		
+		
+
+		<rich:panel  styleClass="left"
+			rendered="#{!domainHome.managed or propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}">
+			<f:facet name="header">#{messages['domain.newDomain']}</f:facet>
+			<h:panelGrid columns="2">
+			<h:panelGrid columns="1">
+			
+
+			<s:decorate id="purchaseTypeField" template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['domain.purchaseType']}:</ui:define>
+				<h:selectOneMenu id="lastPurchaseType" required="true" disabled="#{propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}"
+					value="#{domainHome.instance.purchaseType}">
+					<s:selectItems value="#{purchaseTypes}" var="_purchaseType"
+						label="#{_purchaseType.id} - #{_purchaseType.name}"
+						noSelectionLabel="#{messages['common.chooseOption']}" />
+					<s:convertEntity />
+					<a:support event="onchange" ajaxSingle="true" />
+				</h:selectOneMenu>
+			</s:decorate>
+			
+			<s:decorate id="propertyUseField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['property.propertyUse']}:</ui:define>
+					<h:selectOneMenu id="propertyUse" required="true" disabled="#{propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}"
+						value="#{domainHome.instance.propertyUse}">
+						<s:selectItems value="#{propertyUses}" var="propertyUse"
+							label="#{messages[propertyUse.name()].toUpperCase()}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<s:convertEnum/>
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+			</s:decorate>
+				
+			<s:decorate id="tramitNumberField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['domain.tramitNumber']}:</ui:define>
+				<h:inputText id="tramitNumber" size="20" maxlength="40" disabled="#{propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}"		
+					style="text-transform: uppercase" required="true"
+					value="#{domainHome.instance.tramitNumber}">
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>
+			</s:decorate>
+			
+			<s:decorate id="valueBySquareMeterField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['domain.landValue']}:</ui:define>
+				<h:inputText id="valueBySquareMeter" size="10" maxlength="10"
+					styleClass="right" disabled="true"
+					value="#{domainHome.instance.valueBySquareMeter}">
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>		
+				#{messages['domain.BySquareMeters']}		
+			</s:decorate>
+
+			<s:decorate id="transactionValueField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['domain.transactionValue']}:</ui:define>
+				<h:inputText id="transactionValue" required="true" size="10" disabled="#{propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}"
+					maxlength="10" styleClass="right"
+					value="#{domainHome.instance.valueTransaction}">
+					<a:support event="onblur" ajaxSingle="true" reRender="newTransactionValueField, transactionValueField" />
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+			</s:decorate>
+
+			<s:decorate id="lotAppraisalField" template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['domain.lotAppraisal']}:</ui:define>
+				<h:inputText id="lotAppraisal"
+					value="#{domainHome.instance.lotAppraisal}" disabled="true"
+					style="text-align: right" size="10">
+					<f:convertNumber pattern="#0.00" />
+					<a:support event="onblur"
+						reRender="lotAppraisalField,commercialAppraisalField"
+						action="#{domainHome.calculateCommercialAppraisal()}"
+						ajaxSingle="true" />
+				</h:inputText>
+			</s:decorate>
+
+			<s:decorate id="buildingAppraisalField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['domain.buildingAppraisal']}:</ui:define>
+				<h:inputText id="buildingAppraisal"
+					value="#{domainHome.instance.buildingAppraisal}" disabled="true"
+					style="text-align: right" size="10">
+					<f:convertNumber pattern="#0.00" />
+					<a:support event="onblur"
+						reRender="buildingAppraisalField,commercialAppraisalField"
+						action="#{domainHome.calculateCommercialAppraisal()}"
+						ajaxSingle="true" />
+				</h:inputText>
+			</s:decorate>
+
+			<s:decorate id="commercialAppraisalField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['domain.commercialAppraisal']}:</ui:define>
+				<h:inputText id="commercialAppraisal"
+					value="#{domainHome.instance.commercialAppraisal}" disabled="true"
+					style="text-align: right" size="10">
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+			</s:decorate>
+			
+			</h:panelGrid>
+			<h:panelGrid columns="1">
+			<s:decorate id="hasDeedField" template="../../layout/edit.xhtml" rendered= "#{propertyHome.confirmChangeOwner and !addMortgage}">				<ui:define name="label">#{messages['domain.deed']}:</ui:define>
+				<h:selectBooleanCheckbox id="hasDeed" 			
+					value="#{domainHome.instance.hasDeed}"/>
+			</s:decorate>
+			
+			<s:decorate id="realStateNumberField"
+					template="../../layout/edit.xhtml" rendered= "#{propertyHome.confirmChangeOwner and !addMortgage}">
+					<ui:define name="label">#{messages['domain.realStateNumber']}:</ui:define>
+					<h:inputText id="realStateNumber" size="10"
+						maxlength="10" style="text-align: right"
+						value="#{domainHome.instance.realStateNumber}"/>
+				</s:decorate>
+
+
+				<s:decorate id="notaryNumberField"
+					template="../../layout/edit.xhtml" rendered= "#{propertyHome.confirmChangeOwner and !addMortgage}">
+					<ui:define name="label">#{messages['domain.notaryNumber']}:</ui:define>
+					<h:inputText id="notaryNumber" size="10"
+						maxlength="10" style="text-align: right"
+						value="#{domainHome.instance.notaryNumber}"/>
+				</s:decorate>
+			
+			<s:decorate id="dateDomainField" template="../../layout/edit.xhtml" rendered= "#{propertyHome.confirmChangeOwner and !addMortgage}">
+					<ui:define name="label">#{messages['domain.date']}:</ui:define>
+					<rich:calendar id="dateDomainNumber"
+						ajaxSingle="true"
+						value="#{domainHome.instance.date}"
+						currentDate="#{currentDate}"
+						datePattern="#{messages['common.datePattern']}"
+						reRender="dateDomainField" />
+				</s:decorate>
+				
+				<s:decorate id="inscriptionProvinceField"
+					template="../../layout/edit.xhtml" rendered= "#{propertyHome.confirmChangeOwner and !addMortgage}">
+					<ui:define name="label">#{messages['domain.inscriptionProvince']}:</ui:define>
+					<h:selectOneMenu id="inscriptionProvince" 
+						value="#{domainHome.instance.notarysProvince}">
+						<s:selectItems value="#{provinces}" var="notarysProvince"
+							label="#{notarysProvince.name}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<s:convertEntity />
+						<a:support event="onchange" ajaxSingle="true"
+							reRender="inscriptionCanton" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="inscriptionCantonField"
+					template="../../layout/edit.xhtml" rendered= "#{propertyHome.confirmChangeOwner and !addMortgage}">
+					<ui:define name="label">#{messages['domain.inscriptionCanton']}:</ui:define>
+					<h:selectOneMenu id="inscriptionCanton" 
+						value="#{domainHome.instance.notarysCity}">
+						<s:selectItems value="#{domainHome.cantons}" var="notarysCity"
+							label="#{notarysCity.name}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>				
+			
+			</h:panelGrid>
+
+			<div style="clear: both">
+				<span class="required">*</span> #{messages['common.requiredFields']}
+			</div>
+		</h:panelGrid>
+
+		</rich:panel>		
+	</h:panelGrid>
+</ui:composition>

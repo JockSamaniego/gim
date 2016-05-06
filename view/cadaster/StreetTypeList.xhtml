@@ -1,0 +1,142 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="streetTypeSearch" styleClass="edit">
+
+		<h:outputText styleClass="formTitle" value="#{messages['streetType.manager']}"/>
+		
+        <rich:simpleTogglePanel>
+				<f:facet name="header">#{messages['streetType.searchFilter']}</f:facet>
+				<s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['streetType.name']}</ui:define>
+                <h:inputText id="name" value="#{streetTypeList.streetType.name}"/>
+            </s:decorate>
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="#{messages['common.search']}" action="/cadaster/StreetTypeList.xhtml">
+                <f:param name="firstResult" value="0"/>
+            </h:commandButton>
+            <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+    <f:facet name="header">
+        	<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText
+						value="#{messages['streetType.searchResults']} (#{empty streetTypeList.resultList ? 0 : (streetTypeList.paginated ? streetTypeList.resultCount : streetTypeList.resultList.size)})" />
+				<s:div styleClass="actionButtons" rendered="#{empty from}">
+			        <s:button view="/cadaster/StreetTypeEdit.xhtml"
+			                    id="create"
+			           propagation="none"
+			                 value="#{messages['common.create']} #{messages['streetType']}">
+			            <f:param name="streetTypeId"/>
+			        </s:button>
+			    </s:div>
+			</h:panelGrid>        
+        </f:facet>
+      
+    <div class="results" id="streetTypeList">
+    <h:outputText value="#{messages['common.noResultsReturned']}"
+               rendered="#{empty streetTypeList.resultList}"/>
+
+    <rich:dataTable id="streetTypeList"
+                var="_streetType"
+              value="#{streetTypeList.resultList}"
+           rendered="#{not empty streetTypeList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{streetTypeList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['streetType.Id']}"/>
+                    <ui:param name="propertyPath" value="streetType.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_streetType.id}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{streetTypeList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['streetType.code']}"/>
+                    <ui:param name="propertyPath" value="streetType.code"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_streetType.code}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{streetTypeList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['streetType.name']}"/>
+                    <ui:param name="propertyPath" value="streetType.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_streetType.name}"/>
+        </h:column>
+        
+        <rich:column styleClass="action">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            <s:button view="/cadaster/StreetTypeEdit.xhtml"
+                   value="#{messages['common.edit']}"
+             propagation="none"
+                      id="streetTypeEdit"
+                rendered="#{empty from}">
+                <f:param name="streetTypeId"
+                        value="#{_streetType.id}"/>
+            </s:button>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/StreetTypeList.xhtml"
+            rendered="#{streetTypeList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/StreetTypeList.xhtml"
+            rendered="#{streetTypeList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{streetTypeList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/StreetTypeList.xhtml"
+            rendered="#{streetTypeList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{streetTypeList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/StreetTypeList.xhtml"
+            rendered="#{streetTypeList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{streetTypeList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,207 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml"
+	xmlns:g="http://gim.gob.ec/jsf" >
+	
+
+	<ui:define name="body">
+
+		<h:form id="changePropertyAndBondsForm" styleClass="edit">
+		
+			<rich:messages />
+			<h:panelGrid id="panelGrid" columns="2" width="100%" >
+				<f:facet name="header">
+					<h:outputText styleClass="formTitle" value="Datos de Busqueda" />
+				</f:facet>
+				
+	        	<rich:panel id="searchPanel" >
+					<f:facet name="header">Contribuyente Actual</f:facet>
+					
+					<s:decorate>
+						<g:residentChooser id="residentChooser" 
+							resident="#{changePropertyAndBondsHome.residentLast}"
+							residentsList="#{changePropertyAndBondsHome.residents}"
+							identificationNumber="#{changePropertyAndBondsHome.identificationResidentLast}"
+							criteria="#{changePropertyAndBondsHome.criteriaResidentLast}" bean="#{changePropertyAndBondsHome}"
+							searchAction="searchResidentLast"
+							searchByCriteriaAction="searchResidentLastByCriteria"
+							clearSearchPanelAction="clearSearchResidentPanel"
+							residentChosenListenerName="residentLastSelectedListener"/>
+					</s:decorate>
+		
+					<s:decorate template="../layout/display.xhtml">
+						<ui:define name="label">Clave Catastral:</ui:define>
+						<h:inputText id="groupingCode" value="#{changePropertyAndBondsHome.groupingCode}" size="30" />
+					</s:decorate>
+					
+					<div style="clear: both" />
+	
+					<div class="actionButtons">
+						<a:commandButton id="search" 
+										 value="#{messages['common.search']}"
+										 action="#{changePropertyAndBondsHome.findBondsByResidentAndGroupingCode()}"
+										 reRender="resultsPanel, resultsPanelProperties, bondsTable, newResident, panelGrid" />
+						<s:button id="reset" 
+								  value="#{messages['common.reset']}"
+								  includePageParams="false" 
+								  propagation="none" />
+						<s:button id="home" 
+								  view="/home.xhtml"
+								  value="#{messages['common.quit']}"
+								  propagation="end" />
+					</div>			
+		
+				</rich:panel>
+	
+	        	<rich:panel id="newResident" rendered="#{not empty changePropertyAndBondsHome.bonds}">
+					<f:facet name="header">Nuevo Contribuyente</f:facet>
+					
+					<s:decorate>
+						<g:residentChooser id="residentNewChooser" 
+							resident="#{changePropertyAndBondsHome.residentNew}"
+							residentsList="#{changePropertyAndBondsHome.residents}"
+							identificationNumber="#{changePropertyAndBondsHome.identificationResidentNew}"
+							criteria="#{changePropertyAndBondsHome.criteriaResidentNew}" bean="#{changePropertyAndBondsHome}"
+							searchAction="searchResidentNew"
+							searchByCriteriaAction="searchResidentNewByCriteria"
+							clearSearchPanelAction="clearSearchResidentPanel"
+							residentChosenListenerName="residentNewSelectedListener"
+							reRender="change"/>
+					</s:decorate>
+		
+					<s:decorate template="../layout/display.xhtml">
+						<ui:define name="label"></ui:define>
+					</s:decorate>
+					
+					<s:decorate template="../layout/display.xhtml">
+						<ui:define name="label"></ui:define>
+					</s:decorate>
+					
+					<div style="clear: both" />
+	
+					<div class="actionButtons">
+						<a:commandButton id="change" 
+										disabled="#{changePropertyAndBondsHome.residentNew == null ? true : false}"
+										value="#{messages['common.change']}"
+										action="#{changePropertyAndBondsHome.updateBonds()}"
+										reRender="panelGrid, resultsPanel, resultsPanelProperties, bondsTable, newResident" 
+										ajaxSingle="true" inmediate="true"/>
+						<s:button id="cancel" 
+								  value="#{messages['common.cancel']}"
+								  includePageParams="false" 
+								  propagation="none" />
+						<s:button id="homeNew" 
+								  view="/home.xhtml"
+								  value="#{messages['common.quit']}"
+								  propagation="end" />
+					</div>			
+		
+				</rich:panel>
+			</h:panelGrid>
+			
+			
+			<a:outputPanel id="resultsPanelProperties" ajaxRendered="#{not empty changePropertyAndBondsHome.properties}" >
+				<rich:dataTable id="propertiesTable" rendered = "#{not empty changePropertyAndBondsHome.properties}"
+					value="#{changePropertyAndBondsHome.properties}"
+					var="_property">
+					
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle left, ">
+							<h:outputText value="Lista de Propiedades" />
+						</h:panelGrid>
+					</f:facet>
+		
+					<rich:column sortBy="#{_property.cadastralCode}" styleClass="action">
+						<f:facet name="header">Código Territorial</f:facet>
+						<h:outputText value="#{_property.cadastralCode}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_property.previousCadastralCode}" styleClass="action">
+						<f:facet name="header">Clave Catastral</f:facet>
+						<h:outputText value="#{_property.previousCadastralCode}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_property.area}" styleClass="action">
+						<f:facet name="header">Area</f:facet>
+						<h:outputText value="#{_property.area}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_property.currentDomain.resident.name}" styleClass="action">
+						<f:facet name="header">Contribuyente Actual</f:facet>
+						<h:outputText value="#{_property.currentDomain.resident.name}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_property.currentDomain.resident.identificationNumber}" styleClass="action">
+						<f:facet name="header">Identificación</f:facet>
+						<h:outputText value="#{_property.currentDomain.resident.identificationNumber}" />
+					</rich:column>
+
+				</rich:dataTable>
+
+			</a:outputPanel>
+
+			<div style="clear: both" />
+
+			<a:outputPanel id="resultsPanel" ajaxRendered="#{not empty changePropertyAndBondsHome.bonds}" >
+				<rich:dataTable id="bondsTable" rendered = "#{not empty changePropertyAndBondsHome.bonds}"
+					value="#{changePropertyAndBondsHome.bonds}"
+					var="_bond">
+					
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle left, ">
+							<h:outputText value="Lista de Obligaciones" />
+						</h:panelGrid>
+					</f:facet>
+		
+					<rich:column sortBy="#{_bond.entry.name}" styleClass="action">
+						<f:facet name="header">Cuenta</f:facet>
+						<h:outputText value="#{_bond.entry.name}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_bond.number}" styleClass="action">
+						<f:facet name="header">Numero de Obligacion</f:facet>
+						<h:outputText value="#{_bond.number}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_bond.emisionDate}" styleClass="action">
+						<f:facet name="header">Fecha de Emision</f:facet>
+						<h:outputText value="#{_bond.emisionDate}">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</rich:column>
+
+					<rich:column sortBy="#{_bond.number}" styleClass="action">
+						<f:facet name="header">Grupo</f:facet>
+						<h:outputText value="#{_bond.groupingCode}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_bond.address}" styleClass="action">
+						<f:facet name="header">Direccion</f:facet>
+						<h:outputText value="#{_bond.address}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_bond.resident.name}" styleClass="action">
+						<f:facet name="header">Contribuyente Actual</f:facet>
+						<h:outputText value="#{_bond.resident.name}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_bond.resident.identificationNumber}" styleClass="action">
+						<f:facet name="header">Identificación</f:facet>
+						<h:outputText value="#{_bond.resident.identificationNumber}" />
+					</rich:column>
+				</rich:dataTable>
+
+				<div style="clear: both" />
+			</a:outputPanel>
+
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

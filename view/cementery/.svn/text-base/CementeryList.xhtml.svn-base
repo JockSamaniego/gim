@@ -1,0 +1,174 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="cementerySearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['cementery.manageCementery']}" />
+
+			<rich:simpleTogglePanel label="#{messages['cementery.searchFilter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['cementery.name']}</ui:define>
+					<h:inputText id="name" value="#{cementeryList.criteriaName}" />
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['cementery.manager']}</ui:define>
+					<h:inputText id="managerName" value="#{cementeryList.criteriaManagerName}" />
+				</s:decorate>
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/cementery/CementeryList.xhtml">
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['cementery.searchResults']} (#{empty cementeryList.resultList ? 0 : (cementeryList.paginated ? cementeryList.resultCount : cementeryList.resultList.size)})" />
+					<s:button view="/cementery/CementeryEdit.xhtml" id="create"
+						propagation="none" value="#{messages['cementery.createCementery']}">
+						<f:param name="cementeryId" />
+					</s:button>
+				</h:panelGrid>
+			</f:facet>
+			<div class="results" id="cementeryList">
+
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty cementeryList.resultList}" />
+
+				<rich:dataTable id="cementeryList" var="_cementery"
+					value="#{cementeryList.resultList}"
+					rendered="#{not empty cementeryList.resultList}">
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{cementeryList}" />
+								<ui:param name="propertyLabel" value="#{messages['cementery.id']}" />
+								<ui:param name="propertyPath" value="cementery.id" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_cementery.id}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{cementeryList}" />
+								<ui:param name="propertyLabel" value="#{messages['cementery.code']}" />
+								<ui:param name="propertyPath" value="cementery.code" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_cementery.code}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{cementeryList}" />
+								<ui:param name="propertyLabel" value="#{messages['cementery.name']}" />
+								<ui:param name="propertyPath" value="cementery.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_cementery.name}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{cementeryList}" />
+								<ui:param name="propertyLabel" value="#{messages['cementery.address']}" />
+								<ui:param name="propertyPath" value="cementery.address" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_cementery.address}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{cementeryList}" />
+								<ui:param name="propertyLabel" value="#{messages['cementery.legalEntityType']}" />
+								<ui:param name="propertyPath" value="cementery.property" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{messages[_cementery.property.name()]}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{cementeryList}" />
+								<ui:param name="propertyLabel" value="#{messages['cementery.manager']}" />
+								<ui:param name="propertyPath" value="cementery.manager.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_cementery.manager.name}" />
+					</h:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<s:button view="/cementery/CementeryEdit.xhtml"
+							value="#{messages['cementery.edit']}" propagation="none"
+							id="cementeryEdit" rendered="#{empty from}">
+							<f:param name="cementeryId" value="#{_cementery.id}" />
+						</s:button>
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/cementery/CementeryList.xhtml"
+				rendered="#{cementeryList.previousExists}"
+				value="#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/cementery/CementeryList.xhtml"
+				rendered="#{cementeryList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult" value="#{cementeryList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/cementery/CementeryList.xhtml"
+				rendered="#{cementeryList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult" value="#{cementeryList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/cementery/CementeryList.xhtml"
+				rendered="#{cementeryList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult" value="#{cementeryList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

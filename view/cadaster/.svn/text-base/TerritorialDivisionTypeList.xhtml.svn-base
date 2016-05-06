@@ -1,0 +1,133 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="territorialDivisionTypeSearch" styleClass="edit">
+
+        <rich:simpleTogglePanel label="#{messages['territorialDivisionType.searchFilter']}" switchType="ajax">
+
+            <s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['territorialDivisionType.name']}</ui:define>
+                <h:inputText id="name" value="#{territorialDivisionTypeList.territorialDivisionType.name}"/>
+            </s:decorate>
+            
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="#{messages['common.search']}" action="/cadaster/TerritorialDivisionTypeList.xhtml">
+                <f:param name="firstResult" value="0"/>
+            </h:commandButton>
+            <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">
+        	<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['territorialDivisionType.searchResults']} (#{empty territorialDivisionTypeList.resultList ? 0 : (territorialDivisionTypeList.paginated ? territorialDivisionTypeList.resultCount : territorialDivisionTypeList.resultList.size)})" />
+			        <s:button view="/cadaster/TerritorialDivisionTypeEdit.xhtml"
+			                    id="create"
+			           propagation="none"
+			                 value="#{messages['common.create']}">
+			            <f:param name="territorialDivisionTypeId"/>
+			        </s:button>
+				</h:panelGrid>
+        </f:facet>
+    <div class="results" id="territorialDivisionTypeList">
+
+    <h:outputText value="#{messages['common.noResultsReturned']}"
+               rendered="#{empty territorialDivisionTypeList.resultList}"/>
+
+    <rich:dataTable id="territorialDivisionTypeList"
+                var="_territorialDivisionType"
+              value="#{territorialDivisionTypeList.resultList}"
+           rendered="#{not empty territorialDivisionTypeList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{territorialDivisionTypeList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['territorialDivisionType.id']}"/>
+                    <ui:param name="propertyPath" value="territorialDivisionType.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_territorialDivisionType.id}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{territorialDivisionTypeList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['territorialDivisionType.name']}"/>
+                    <ui:param name="propertyPath" value="territorialDivisionType.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_territorialDivisionType.name}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{territorialDivisionTypeList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['territorialDivisionType.priority']}"/>
+                    <ui:param name="propertyPath" value="territorialDivisionType.priority"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_territorialDivisionType.priority}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            <s:button view="/cadaster/TerritorialDivisionTypeEdit.xhtml"
+                   value="#{messages['common.edit']}"
+             propagation="none"
+                      id="territorialDivisionTypeEdit"
+                rendered="#{empty from}">
+                <f:param name="territorialDivisionTypeId"
+                        value="#{_territorialDivisionType.id}"/>
+            </s:button>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/cadaster/cadaster/TerritorialDivisionTypeList.xhtml"
+				rendered="#{territorialDivisionTypeList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}" id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/cadaster/cadaster/TerritorialDivisionTypeList.xhtml"
+				rendered="#{territorialDivisionTypeList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}" id="previousPage">
+				<f:param name="firstResult"
+					value="#{territorialDivisionTypeList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/cadaster/cadaster/TerritorialDivisionTypeList.xhtml"
+				rendered="#{territorialDivisionTypeList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}" id="nextPage">
+				<f:param name="firstResult" value="#{territorialDivisionTypeList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/cadaster/cadaster/TerritorialDivisionTypeList.xhtml"
+				rendered="#{territorialDivisionTypeList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}" id="lastPage">
+				<f:param name="firstResult" value="#{territorialDivisionTypeList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+
+</ui:define>
+
+</ui:composition>

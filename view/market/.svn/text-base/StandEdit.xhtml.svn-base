@@ -1,0 +1,190 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<style type="text/css">
+.alignTop {
+	vertical-align: top;
+}
+</style>
+
+		<h:form id="stand" styleClass="edit">
+
+			<rich:panel>
+				<f:facet name="header">#{messages['resident']}</f:facet>
+				<a:outputPanel id="paymentTotalPanel">
+					<g:residentChooser id="residentChooser"
+						resident="#{standHome.resident}"
+						residentsList="#{standHome.residents}"
+						identificationNumber="#{standHome.identificationNumber}"
+						criteria="#{standHome.criteria}" bean="#{standHome}"
+						searchByCriteriaAction="searchByCriteria"
+						clearSearchPanelAction="clearSearchPanel" searchAction="search"
+						residentChosenListenerName="residentSelectedListener" disabled="#{!standHome.activePanelResident}"/>
+				</a:outputPanel>
+				<div style="clear: both">
+					<span class="required"></span>
+
+				</div>
+			</rich:panel>
+
+
+			<rich:panel>
+				<f:facet name="header">#{messages['stand']}</f:facet>
+
+				<h:panelGrid columns="2" columnClasses="alignTop, alignTop">
+					<h:panelGrid columnClasses="alignTop, alignTopg">
+						<s:decorate id="nameField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['stand.name']}</ui:define>
+							<h:inputText id="name" required="true" size="30" maxlength="30"
+								value="#{standHome.instance.name}" disabled="true">
+								<a:support event="onblur" reRender="nameField"
+									bypassUpdates="true" ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate id="areaField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['stand.area']}</ui:define>
+							<h:inputText id="area" value="#{standHome.instance.area}"
+								disabled="true">
+								<a:support event="onblur" reRender="areaField"
+									bypassUpdates="true" ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate id="standStatusField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['stand.status']}</ui:define>
+							<h:inputText id="standStatus"
+								value="#{messages[standHome.instance.standStatus.name()]}"
+								disabled="true">
+								<a:support event="onblur" reRender="standStatusField"
+									bypassUpdates="true" ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate id="standTypeField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['stand.standType']}</ui:define>
+							<h:inputText id="standType"
+								value="#{standHome.instance.standType.name}" disabled="true">
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate id="isActiveField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['stand.isActive']}</ui:define>
+							<h:selectBooleanCheckbox id="isActive"
+								value="#{standHome.instance.isActive}" disabled="true" />
+						</s:decorate>
+					</h:panelGrid>
+					<!-- h:panelGrid columnClasses="alignTop, alignTop" width="400px">
+						<rich:dataTable value="#-{standHome.instance.sellProducts}"
+							var="_productType" rowClasses="rvgRowOne,rvgRowTwo"
+							id="sellProductsTable" width="100%">
+							<f:facet name="header">
+								<rich:columnGroup>
+									<rich:column colspan="2">
+										<h:outputText value="#{messages['productType']}" />
+									</rich:column>
+								</rich:columnGroup>
+							</f:facet>
+							<rich:column>
+								<f:facet name="header">#{messages['productType.id']}</f:facet>
+								<h:outputText value="#{_productType.id}" />
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">#{messages['productType.name']}</f:facet>
+								<h:outputText value="#{_productType.name}" />
+							</rich:column>
+						</rich:dataTable>
+					</h:panelGrid> -->
+				</h:panelGrid>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<rich:panel id="descriptionPanel">
+				<f:facet name="header">#{messages['rent.description']}</f:facet>
+
+				<s:decorate id="startDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.from']}:</ui:define>
+					<rich:calendar id="startDate" required="true" ajaxSingle="true"
+						value="#{standHome.instance.currentContract.subscriptionDate}"
+						currentDate="#{currentDate}"
+						datePattern="#{messages['common.datePattern']}"
+						reRender="startDateField">
+						<a:support event="onchanged" ajaxSingle="true"
+							reRender="startDateField"></a:support>
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate id="endDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.until']}:</ui:define>
+					<rich:calendar id="endDate" required="true" ajaxSingle="true"
+						value="#{standHome.instance.currentContract.expirationDate}"
+						currentDate="#{currentDate}"
+						datePattern="#{messages['common.datePattern']}"
+						reRender="endDateField">
+						<a:support event="onchanged" ajaxSingle="true"
+							reRender="endDateField"></a:support>
+					</rich:calendar>
+				</s:decorate>
+				<div style="clear: both"></div>
+			</rich:panel>
+
+			<div class="actionButtons">
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{standHome.rentStand1()}">
+				</h:commandButton>
+
+				<!-- a:commandButton value="HOOOLa" action=" # { standHome.preEmitStand()}"
+					ajaxSingle="true"></a:commandButton-->
+
+
+				<!-- s:button id="saveEdit" value="#{messages['common.save']}"
+					propagation="end" view="/market/MarketEdit.xhtml"
+					action=" # { standHome.rentStand1()}">
+					<f:param name="marketRentOperation" value="toRent" />
+				</s:button-->
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/market/StandList.xhtml">
+					<f:param name="marketRentOperation" value="toRent" />
+				</s:button>
+
+				<!-- h:commandButton id="save" value="Save"
+					action="# { standHome.persist}" disabled="#{!standHome.wired}"
+					rendered="#{!standHome.managed}" />
+
+				<h:commandButton id="update" value="Save"
+					action="# { standHome.update}" rendered="#{standHome.managed}" />
+
+				<h:commandButton id="delete" value="Delete"
+					action="# { standHome.remove}" immediate="true"
+					rendered="#{standHome.managed}" />
+
+				<s:button id="cancelEdit" value="Cancel" propagation="end"
+					view="/Stand.xhtml" rendered="#{standHome.managed}" />
+
+				<s:button id="cancelAdd" value="Cancel" propagation="end"
+					view="/# {empty standFrom ? 'StandList' : standFrom}.xhtml"
+					rendered="#{!standHome.managed}" /-->
+
+			</div>
+		</h:form>
+
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,134 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="spaceTypeSearch" styleClass="edit">
+
+			<rich:simpleTogglePanel
+				label="#{messages['spaceType.searchFilter']}" switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['spaceType.name']}</ui:define>
+					<h:inputText id="name" size="40"
+						value="#{spaceTypeList.spaceType.name}" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/rental/SpaceTypeList.xhtml">
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['spaceType.searchResults']} (#{empty spaceTypeList.resultList ? 0 : (spaceTypeList.paginated ? spaceTypeList.resultCount : spaceTypeList.resultList.size)})" />
+					<s:button view="/rental/SpaceTypeEdit.xhtml" id="create"
+						propagation="none" value="#{messages['common.create']}">
+						<f:param name="spaceTypeId" />
+					</s:button>
+				</h:panelGrid>
+			</f:facet>
+			<div class="results" id="spaceTypeList">
+
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty spaceTypeList.resultList}" />
+
+				<rich:dataTable id="spaceTypeList" var="_spaceType"
+					value="#{spaceTypeList.resultList}"
+					rendered="#{not empty spaceTypeList.resultList}">
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{spaceTypeList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['spaceType.name']}" />
+								<ui:param name="propertyPath" value="spaceType.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_spaceType.name}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{spaceTypeList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['spaceType.reason']}" />
+								<ui:param name="propertyPath" value="spaceType.reason" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_spaceType.reason}" />
+					</h:column>
+					
+
+					<rich:column styleClass="action">
+						
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+
+						<s:button view="/rental/SpaceTypeEdit.xhtml"
+							value="#{messages['common.edit']}" propagation="none"
+							id="spaceTypeEdit" rendered="#{empty from}">
+							<f:param name="spaceTypeId" value="#{_spaceType.id}" />
+						</s:button>
+
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+			<s:link view="/rental/SpaceTypeList.xhtml"
+				rendered="#{spaceTypeList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/rental/SpaceTypeList.xhtml"
+				rendered="#{spaceTypeList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult"
+					value="#{spaceTypeList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/rental/SpaceTypeList.xhtml"
+				rendered="#{spaceTypeList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult"
+					value="#{spaceTypeList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/rental/SpaceTypeList.xhtml"
+				rendered="#{spaceTypeList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult"
+					value="#{spaceTypeList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,209 @@
+#created on: Nov 04, 2014
+package gim.src.rules.ec.gob.gim.pf2011.waterservice
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.Domain;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+import ec.gob.gim.waterservice.model.Consumption;
+import ec.gob.gim.waterservice.model.WaterSupply;
+import ec.gob.gim.waterservice.model.WaterSupplyCategory;
+import ec.gob.gim.revenue.model.adjunct.WaterServiceReference;
+
+dialect "java"
+
+rule "Impuesto agua 00076"
+	no-loop true
+	salience 1
+	when
+		$itemBase : Item(entry.code == "00076");
+		$mb : MunicipalBond(items contains $itemBase);
+		$wsr : WaterServiceReference();
+	then
+		aguaPotable($wsr.getConsumption(), $itemBase, $wsr);
+		
+end
+
+
+function void aguaPotable(Consumption $comp, Item $itemBase, WaterServiceReference $wsr){	
+	BigDecimal $factorSubstract = BigDecimal.ZERO;
+	BigDecimal $factorMultiply = BigDecimal.ZERO;
+	if($comp.getWaterSupply().getWaterSupplyCategory().getName().equals("RESIDENCIAL")){
+			
+		if($comp.getAmount().doubleValue() >= 0 && $comp.getAmount().doubleValue() <=10){
+			$itemBase.setValue(new BigDecimal(2.025));			
+		}else		
+		if($comp.getAmount().doubleValue() >= 11 && $comp.getAmount().doubleValue() <=20){
+			$itemBase.setValue(new BigDecimal(3.113));
+			$factorSubstract = new BigDecimal(11);
+			$factorMultiply = new BigDecimal(0.120);
+		}else		
+		if($comp.getAmount().doubleValue() >= 21 && $comp.getAmount().doubleValue() <=50){
+			$itemBase.setValue(new BigDecimal(4.460));
+			$factorSubstract = new BigDecimal(21);
+			$factorMultiply = new BigDecimal(0.222);
+		}else		
+		if($comp.getAmount().doubleValue() >= 51 && $comp.getAmount().doubleValue() <=70){
+			$itemBase.setValue(new BigDecimal(14.003));
+			$factorSubstract = new BigDecimal(51);
+			$factorMultiply = new BigDecimal(0.273);
+		}else		
+		if($comp.getAmount().doubleValue() >= 71 && $comp.getAmount().doubleValue() <=90){
+			$itemBase.setValue(new BigDecimal(24.462));
+			$factorSubstract = new BigDecimal(71);
+			$factorMultiply = new BigDecimal(0.317);			
+		}else
+		if($comp.getAmount().doubleValue() >= 91 && $comp.getAmount().doubleValue() <=100){
+			$itemBase.setValue(new BigDecimal(31.702));
+			$factorSubstract = new BigDecimal(91);
+			$factorMultiply = new BigDecimal(0.438);
+		}else		
+		if($comp.getAmount().doubleValue() >= 101){
+			$itemBase.setValue(new BigDecimal(38.613));
+			$factorSubstract = new BigDecimal(101);
+			$factorMultiply = new BigDecimal(0.521);	
+		}				
+	}else	
+	if($comp.getWaterSupply().getWaterSupplyCategory().getName().equals("COMERCIAL")){
+			
+		if($comp.getAmount().doubleValue() >= 0 && $comp.getAmount().doubleValue() <=10){
+			$itemBase.setValue(new BigDecimal(8.675));
+		}else		
+		if($comp.getAmount().doubleValue() >= 11 && $comp.getAmount().doubleValue() <=20){
+			$itemBase.setValue(new BigDecimal(8.675));
+			$factorSubstract = new BigDecimal(10);
+			$factorMultiply = new BigDecimal(0.438);
+		}else		
+		if($comp.getAmount().doubleValue() >= 21 && $comp.getAmount().doubleValue() <=50){
+			$itemBase.setValue(new BigDecimal(13.055));
+			$factorSubstract = new BigDecimal(20);
+			$factorMultiply = new BigDecimal(0.692);
+		}else		
+		if($comp.getAmount().doubleValue() >= 51 && $comp.getAmount().doubleValue() <=100){
+			$itemBase.setValue(new BigDecimal(33.815));
+			$factorSubstract = new BigDecimal(50);
+			$factorMultiply = new BigDecimal(0.862);
+		}else		
+		if($comp.getAmount().doubleValue() >= 101){
+			$itemBase.setValue(new BigDecimal(76.915));
+			$factorSubstract = new BigDecimal(100);
+			$factorMultiply = new BigDecimal(1.300);
+		}				
+	}else	
+	if($comp.getWaterSupply().getWaterSupplyCategory().getName().equals("INDUSTRIAL")){
+			
+		if($comp.getAmount().doubleValue() >= 0 && $comp.getAmount().doubleValue() <=10){
+			$itemBase.setValue(new BigDecimal(12.685));
+		}else		
+		if($comp.getAmount().doubleValue() >= 11 && $comp.getAmount().doubleValue() <=20){
+			$itemBase.setValue(new BigDecimal(12.685));
+			$factorSubstract = new BigDecimal(10);
+			$factorMultiply = new BigDecimal(0.651);
+		}else		
+		if($comp.getAmount().doubleValue() >= 21 && $comp.getAmount().doubleValue() <=50){
+			$itemBase.setValue(new BigDecimal(19.195));
+			$factorSubstract = new BigDecimal(20);
+			$factorMultiply = new BigDecimal(1.046);
+		}else		
+		if($comp.getAmount().doubleValue() >= 51 && $comp.getAmount().doubleValue() <=100){
+			$itemBase.setValue(new BigDecimal(50.575));
+			$factorSubstract = new BigDecimal(50);
+			$factorMultiply = new BigDecimal(1.300);
+		}else		
+		if($comp.getAmount().doubleValue() >= 101){
+			$itemBase.setValue(new BigDecimal(115.575));
+			$factorSubstract = new BigDecimal(100);
+			$factorMultiply = new BigDecimal(1.955);
+		}			
+	}else	
+	if($comp.getWaterSupply().getWaterSupplyCategory().getName().equals("OFICIAL")){
+			
+		if($comp.getAmount().doubleValue() >= 0 && $comp.getAmount().doubleValue() <=10){
+			$itemBase.setValue(new BigDecimal(4.021));
+		}else		
+		if($comp.getAmount().doubleValue() >= 11 && $comp.getAmount().doubleValue() <=20){
+			$itemBase.setValue(new BigDecimal(4.021));
+			$factorSubstract = new BigDecimal(10);
+			$factorMultiply = new BigDecimal(0.440);
+		}else		
+		if($comp.getAmount().doubleValue() >= 21 && $comp.getAmount().doubleValue() <=50){
+			$itemBase.setValue(new BigDecimal(8.421));
+			$factorSubstract = new BigDecimal(20);
+			$factorMultiply = new BigDecimal(0.454);
+		}else		
+		if($comp.getAmount().doubleValue() >= 51 && $comp.getAmount().doubleValue() <=100){
+			$itemBase.setValue(new BigDecimal(22.041));
+			$factorSubstract = new BigDecimal(50);
+			$factorMultiply = new BigDecimal(0.530);
+		}else		
+		if($comp.getAmount().doubleValue() >= 101){
+			$itemBase.setValue(new BigDecimal(48.541));
+			$factorSubstract = new BigDecimal(100);
+			$factorMultiply = new BigDecimal(0.599);
+		}			
+	}else	
+	if($comp.getWaterSupply().getWaterSupplyCategory().getName().equals("OFICIAL MEDIO")){
+			
+		if($comp.getAmount().doubleValue() >= 0 && $comp.getAmount().doubleValue() <=10){
+			$itemBase.setValue(new BigDecimal(2.011));
+		}else		
+		if($comp.getAmount().doubleValue() >= 11 && $comp.getAmount().doubleValue() <=20){
+			$itemBase.setValue(new BigDecimal(2.011));
+			$factorSubstract = new BigDecimal(10);
+			$factorMultiply = new BigDecimal(0.220);
+		}else		
+		if($comp.getAmount().doubleValue() >= 21 && $comp.getAmount().doubleValue() <=50){
+			$itemBase.setValue(new BigDecimal(4.209));
+			$factorSubstract = new BigDecimal(20);
+			$factorMultiply = new BigDecimal(0.227);
+		}else		
+		if($comp.getAmount().doubleValue() >= 51 && $comp.getAmount().doubleValue() <=100){
+			$itemBase.setValue(new BigDecimal(11.023));
+			$factorSubstract = new BigDecimal(50);
+			$factorMultiply = new BigDecimal(0.265);
+		}else		
+		if($comp.getAmount().doubleValue() >= 101){
+			$itemBase.setValue(new BigDecimal(24.283));
+			$factorSubstract = new BigDecimal(100);
+			$factorMultiply = new BigDecimal(0.299);
+		}
+	}
+
+	BigDecimal $exemptionValue = BigDecimal.ZERO;
+	
+	$itemBase.setValue($itemBase.getValue().add($comp.getAmount().subtract($factorSubstract).multiply($factorMultiply)));	
+	
+	# tercera edad 
+	if($comp.getWaterSupply().getApplyElderlyExemption() && $comp.getWaterSupply().getWaterSupplyCategory().getName().equals("RESIDENCIAL")){
+		# 
+		if($comp.getAmount().doubleValue() <= 20){
+			$exemptionValue	= $itemBase.getValue().divide(new BigDecimal(2)).setScale(2,BigDecimal.ROUND_HALF_UP);
+		} 
+		if($comp.getAmount().doubleValue() > 20){
+			$exemptionValue = new BigDecimal(2.097).setScale(2,BigDecimal.ROUND_HALF_UP);
+		}
+	}
+	if($comp.getWaterSupply().getApplyElderlyExemption() && $comp.getWaterSupply().getWaterSupplyCategory().getName().equals("COMERCIAL")){
+		if($comp.getAmount().doubleValue() <= 20){
+			$exemptionValue = $itemBase.getValue().divide(new BigDecimal(2)).setScale(2,BigDecimal.ROUND_HALF_UP);
+		}
+		if($comp.getAmount().doubleValue() > 20){
+			$exemptionValue = new BigDecimal(6.528).setScale(2,BigDecimal.ROUND_HALF_UP);
+		}
+	}
+	# discapacitados la mitad de 10m3 consumidos
+	if($comp.getWaterSupply().getApplySpecialExemption() && $comp.getWaterSupply().getWaterSupplyCategory().getName().equals("RESIDENCIAL")){
+		$exemptionValue = new BigDecimal(1.013).setScale(2,BigDecimal.ROUND_HALF_UP);
+	}
+	if($comp.getWaterSupply().getApplySpecialExemption() && $comp.getWaterSupply().getWaterSupplyCategory().getName().equals("COMERCIAL")){
+		$exemptionValue = new BigDecimal(4.338).setScale(2,BigDecimal.ROUND_HALF_UP);
+	}
+	
+	$comp.setExemptionValue($exemptionValue);
+	$wsr.setExemptionValue($exemptionValue);
+	$itemBase.setTotal($itemBase.getValue().subtract($exemptionValue).setScale(2,BigDecimal.ROUND_HALF_UP));
+	
+}

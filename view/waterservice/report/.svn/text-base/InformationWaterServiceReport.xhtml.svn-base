@@ -1,0 +1,262 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	title="#{messages['waterSupply.informationWaterService']}" subject="report" type="pdf"
+	size="A4" keywords="mykeyword" author="gadml_rpc" creator="gadml_rpc">
+
+	<f:facet name="header">
+		<p:font size="7" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="1" widthPercentage="100" spacingAfter="15">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+
+							<p:paragraph alignment="center" spacingAfter="10">
+								<p:font size="13" style="bold" name="HELVETICA">
+									<p:text value="#{messages['common.GADNameShort']}" />
+								</p:font>
+							</p:paragraph>
+							<p:paragraph alignment="center" spacingAfter="10">
+								<p:font size="13" style="bold" name="HELVETICA">
+									<p:text
+										value="#{messages['common.umapalNameLarge']}" />
+								</p:font>
+							</p:paragraph>
+							<p:paragraph alignment="center" spacingAfter="5">
+								<p:font size="9" style="bold" name="HELVETICA">
+									<p:text 
+										value="#{messages['common.umapalNameShort']}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+					</p:table>
+				</p:paragraph>
+			</p:header>
+			<p:footer borderWidthTop="1" borderColorTop="black"
+				borderWidthBottom="0" alignment="center">
+	 			[<p:pageNumber />]
+			</p:footer>
+		</p:font>
+	</f:facet>
+
+
+
+
+	<p:font size="12" name="HELVETICA">
+
+		<p:paragraph alignment="center" spacingAfter="10">
+			<p:font size="9" style="bold" name="HELVETICA">
+				<p:text
+					value="#{messages['common.informationWaterServiceName']}" />
+			</p:font>
+		</p:paragraph>
+
+		<p:table columns="2" widthPercentage="100" headerRows="0">
+
+			<p:cell colspan="1">
+				<p:paragraph spacingAfter="10">
+					<p:font size="10" style="bold">
+						<p:text value="#{messages['resident']}: " />
+					</p:font>
+					<p:font size="10">
+						<p:text value="#{waterSupplyHome.instance.serviceOwner.name}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph spacingAfter="10">
+					<p:font size="10" style="bold">
+						<p:text value="#{messages['resident.identificationNumber']}: " />
+					</p:font>
+					<p:font size="10">
+						<p:text
+							value="#{budgetHome.instance.resident.identificationNumber}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="2">
+				<p:paragraph spacingAfter="10">
+					<p:font size="10" style="bold">
+						<p:text value="#{messages['property.cadastralCode']}: " />
+					</p:font>
+					<p:font size="10">
+						<p:text value="#{budgetHome.instance.property.cadastralCode} " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph spacingAfter="10">
+					<p:font size="10" style="bold">
+						<p:text value="#{messages['neighborhood']}: " />
+					</p:font>
+					<p:font size="10">
+						<p:text
+							value="#{budgetHome.instance.property.location.neighborhood.name} " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph spacingAfter="10">
+					<p:font size="10" style="bold">
+						<p:text value="#{messages['property.houseNumber']}: " />
+					</p:font>
+					<p:font size="10">
+						<p:text
+							value="#{budgetHome.instance.property.location.houseNumber} " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+
+		</p:table>
+
+		<p:paragraph spacingAfter="10">
+		</p:paragraph>
+
+		<p:table columns="6" widthPercentage="100" headerRows="0" widths="1 6 1 1 1 1">
+			<p:cell colspan="1" >
+				<p:paragraph spacingAfter="10">
+					<p:font size="9" style="bold">
+						<p:text value="#{messages['ITEM']}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell colspan="1">
+				<p:paragraph spacingAfter="10">
+					<p:font size="9" style="bold">
+						<p:text value=" " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell colspan="1">
+				<p:paragraph spacingAfter="10">
+					<p:font size="9" style="bold">
+						<p:text value="#{messages['U']}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell colspan="1">
+				<p:paragraph spacingAfter="10">
+					<p:font size="9" style="bold">
+						<p:text value="#{messages['CANT']}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell colspan="1">
+				<p:paragraph spacingAfter="10">
+					<p:font size="9" style="bold">
+						<p:text value="#{messages['P.UNIT']}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell colspan="1">
+				<p:paragraph spacingAfter="10">
+					<p:font size="9" style="bold">
+						<p:text value="#{messages['P.TOTAL']}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+
+			<ui:repeat value="#{budgetHome.instance.budgetItems}"
+				var="_budgetItem">
+				<p:cell colspan="1">
+					<p:paragraph spacingAfter="10">
+						<p:font size="9" style="bold">
+							<p:text value="#{_budgetItem.id}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell colspan="1">
+					<p:paragraph spacingAfter="10">
+						<p:font size="9" style="bold">
+							<p:text value="#{_budgetItem.budgetEntry.name}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell colspan="1">
+					<p:paragraph spacingAfter="10">
+						<p:font size="9" style="bold">
+							<p:text value="#{_budgetItem.budgetEntry.unity}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell colspan="1">
+					<p:paragraph spacingAfter="10">
+						<p:font size="9" style="bold">
+							<p:text value="#{_budgetItem.quantity}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell colspan="1">
+					<p:paragraph spacingAfter="10">
+						<p:font size="9" style="bold">
+							<p:text value="#{_budgetItem.value}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell colspan="1">
+					<p:paragraph spacingAfter="10">
+						<p:font size="9" style="bold">
+							<p:text value="#{_budgetItem.total}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+												
+			</ui:repeat>
+		</p:table>
+
+		<p:paragraph spacingAfter="40">
+		</p:paragraph>
+
+		<p:table columns="1" widthPercentage="90" headerRows="0">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="center" />
+			</f:facet>
+
+			<p:cell colspan="1">
+				<p:paragraph spacingBefore="80">
+					<p:font size="10" style="bold">
+						<p:text value="____________________________" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="10" style="bold">
+						<p:text value="#{userSession.person.name.toUpperCase()}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+
+	</p:font>
+
+</p:document>

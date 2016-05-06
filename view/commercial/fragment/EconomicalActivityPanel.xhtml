@@ -1,0 +1,148 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="economicalActivityPanel" width="700" height="500">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['economicActivity']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkEA" />
+				<rich:componentControl for="economicalActivityPanel"
+					attachTo="hidelinkEA" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="economicalActivity" styleClass="edit">
+
+			<a:region>
+				<rich:panel>
+					<rich:panel style="height:50px; width:100%; overflow:auto;">
+						<rich:messages errorClass="errors" />
+					</rich:panel>
+
+					<s:decorate id="businessTypeField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['economicActivity.search']}:</ui:define>
+
+						<h:panelGrid columns="2" border="0" cellpadding="0"
+							cellspacing="0">
+							<h:inputText id="entryChild" size="80"
+								value="#{businessHome.economicActivity}">
+							</h:inputText>
+
+							<a:region>
+								<rich:suggestionbox id="suggestion" for="entryChild"
+									minChars="3" title="#{messages['entrysearchkeyword']}"
+									nothingLabel="#{messages['economicActivity.searchReturnedNoResults']}"
+									suggestionAction="#{economicActivityList.findEconomicActivities}"
+									width="700" var="_entry">
+									<h:column>
+										<h:outputText
+											value="#{messages[_entry.economicActivityType.name()]}" />
+									</h:column>
+									<h:column>
+										<h:outputText value="#{_entry.name}" />
+									</h:column>
+									<a:support event="onclick"
+										action="#{businessHome.addEconomicActivity(_entry)}"
+										reRender="itemsTable,sc1" ajaxSingle="true" />
+									<a:support event="onselect"
+										action="#{businessHome.addEconomicActivity(_entry)}"
+										reRender="itemsTable,sc1" ajaxSingle="true" />
+									<a:support event="onobjectchange"
+										action="#{businessHome.addEconomicActivity(_entry)}"
+										reRender="itemsTable,sc1" ajaxSingle="true" />
+								</rich:suggestionbox>
+							</a:region>
+						</h:panelGrid>
+
+					</s:decorate>
+					<!-- rich:panel id="itemsTable" style="border:0px"
+						width="100%"-->
+
+					<rich:dataTable id="itemsTable" var="_item" styleClass="left"
+						value="#{businessHome.instance.economicActivities}"
+						columnClasses="number, number" rows="5">
+						<f:facet name="header">
+
+							<h:panelGrid columns="3" columnClasses="headerTitle,"
+								styleClass="left">
+								<h:outputText styleClass="left"
+									value="#{messages['commercial.EconomicActivities']}" />
+							</h:panelGrid>
+						</f:facet>
+
+						<h:outputText value="#{messages['items.resultsItemNotFound']}"
+							rendered="#{empty businessHome.instance.economicActivities}" />
+
+						<rich:column styleClass="center"
+							rendered="#{not empty businessHome.instance.economicActivities}">
+							<f:facet name="header">
+								<h:outputText value="#{messages['entry.name']}" />
+							</f:facet>
+							<h:outputText value="#{_item.name.substring(0,100)}"
+								style="font-size:10px;" rendered="#{_item.name.length() gt 100}" />
+							<h:outputText value="#{_item.name}" style="font-size:10px;"
+								rendered="#{_item.name.length() le 100}" />
+						</rich:column>
+						<rich:column styleClass="center"
+							rendered="#{not empty businessHome.instance.economicActivities}">
+							<f:facet name="header">
+								<h:outputText value="#{messages['entry.type']}" />
+							</f:facet>
+							<h:outputText
+								value="#{messages[_item.economicActivityType.name()]}" />
+						</rich:column>
+						<rich:column styleClass="center"
+							rendered="#{not empty businessHome.instance.economicActivities}">
+							<f:facet name="header">
+								<h:outputText value="#{messages['common.action']}" />
+							</f:facet>
+							<a:commandButton value="#{messages['common.delete']}"
+								id="deleteButton"
+								action="#{businessHome.removeEconomicActivity(_item)}"
+								ajaxSingle="true" rendered="true"
+								onclick="if (!confirm('#{messages['common.deleleteConfirm']}')) return false"
+								reRender="itemsTable,sc1">
+							</a:commandButton>
+						</rich:column>
+					</rich:dataTable>
+					<rich:datascroller align="center" for="itemsTable" maxPages="20"
+						id="sc1" />
+
+
+					<!-- /rich:panel-->
+
+					<div style="clear: both">
+						<span class="required">*</span>
+						#{messages['common.requiredFields']}
+					</div>
+
+				</rich:panel>
+
+				<div class="actionButtons">
+
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.quit']}"
+						oncomplete="Richfaces.hideModalPanel('economicalActivityPanel');"
+						bypassUpdates="true" />
+
+				</div>
+			</a:region>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

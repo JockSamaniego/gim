@@ -1,0 +1,222 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="role" styleClass="edit">
+
+	<h:outputText styleClass="formTitle" value="#{roleHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['role.tittle']}"/>
+	
+        <rich:panel>
+            <s:decorate id="nameField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['role.name']}</ui:define>
+                <h:inputText id="name" required="true" value="#{roleHome.instance.name}"/>
+            </s:decorate>
+	    
+ 	     <s:decorate id="descriptionField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['role.description']}</ui:define>
+                <h:inputTextarea id="description" value="#{roleHome.instance.description}" cols="50" rows="4"/>
+            </s:decorate>
+            
+	    <div style="clear:both">
+                <span class="required">*</span>
+                #{messages['common.requiredFields']}
+            </div>
+
+        </rich:panel>
+	<rich:tabPanel id="usersChildren" switchType="client" bypassDisabled="true">
+
+		<rich:tab label="#{messages['users.title']}" switchType="client" bypassDisabled="true" id="usersTab">
+				
+				<h:panelGrid columns="1" id="usersPanel" width="100%">
+		        <h:outputText value="#{messages['users.noResults']}"
+		                   rendered="#{empty roleHome.instance.users}"/>
+				
+				<h:panelGrid
+					width="100%" id="pnlAddUser">
+					<s:decorate template="../layout/display.xhtml">
+
+						<ui:define name="label">#{messages['users.add']}:</ui:define>
+						<h:inputText id="value" label="#{messages['criteria']}"
+							styleClass="uppercase" size="100">
+						</h:inputText>
+						
+						<a:region>
+						<rich:suggestionbox for="value"
+							suggestionAction="#{roleHome.searchUserByNameOrIdentifierOrResidentName}"
+							var="userItem" height="150" width="250">
+							<f:facet name="nothingLabel">
+								<h:outputText value="#{messages['user.nothingUsers']}" />
+							</f:facet>
+							<a:support event="onselect" reRender="usersPanel"
+								action="#{roleHome.addUser(userItem)}" />
+							<h:column>
+								<h:outputText value=" #{userItem.name} #{userItem.resident.identificationNumber} #{userItem.resident.name}" />
+							</h:column>
+						</rich:suggestionbox>
+						</a:region>
+					</s:decorate>
+				</h:panelGrid>
+					
+				<rich:dataTable value="#{roleHome.instance.users}"
+					           var="_user"
+					      rendered="#{not empty roleHome.instance.users}"
+					    rowClasses="rvgRowOne,rvgRowTwo"
+					            id="usersTable">
+					<rich:column sortBy="#{_user.name}">
+					    <f:facet name="header">#{messages['user.name']}</f:facet>
+					    <h:outputText value="#{_user.name}"/>
+					</rich:column>
+					<rich:column sortBy="#{_user.resident.identificationNumber}">
+					    <f:facet name="header">#{messages['person.identificationNumber']}</f:facet>
+					    <h:outputText value="#{_user.resident.identificationNumber}"/>
+					</rich:column>
+					<rich:column sortBy="#{_user.resident.name}">
+					    <f:facet name="header">#{messages['person.name']}</f:facet>
+					    <h:outputText value="#{_user.resident.name}"/>
+					</rich:column>
+					<rich:column sortBy="#{_user.isActive}" style="text-align: center;">
+					    <f:facet name="header">#{messages['user.isActive']}</f:facet>
+						<h:selectBooleanCheckbox disabled="true"
+							value="#{_user.isActive}" />
+					</rich:column>
+					<rich:column styleClass="action">
+					 	<f:facet name="header">#{messages['action']}</f:facet>
+						 <a:commandButton value="#{messages['common.remove']}"
+                                    action="#{roleHome.removeUser(_user)}"
+                                    reRender="usersPanel" ajaxSingle="true"/>
+					</rich:column>
+				</rich:dataTable>
+				</h:panelGrid>
+    </rich:tab>
+    
+    <rich:tab label="#{messages['permissions.title']}" switchType="client" bypassDisabled="true" id="actionsTab">
+				<h:panelGrid columns="1" id="actionsPanel" width="100%">
+		        <h:outputText value="#{messages['common.noResults']}"
+		                   rendered="#{empty roleHome.instance.permissions}"/>
+				
+				<h:panelGrid
+					width="100%" id="pnlAddAction">
+					<s:decorate template="../layout/display.xhtml">
+
+						<ui:define name="label">#{messages['actions.add']}:</ui:define>
+						<h:inputText id="value" label="#{messages['criteria']}"
+							styleClass="uppercase" size="100">
+						</h:inputText>
+						
+						<a:region>
+						<rich:suggestionbox for="value"
+							suggestionAction="#{roleHome.searchActionByName}"
+							var="actionItem" height="150" width="250">
+							<f:facet name="nothingLabel">
+								<h:outputText value="#{messages['action.nothingActions']}" />
+							</f:facet>
+							<a:support event="onselect" reRender="actionsPanel"
+								action="#{roleHome.addPermission(actionItem)}" />
+							<h:column>
+								<h:outputText value=" #{actionItem.name} #{actionItem.priority}" />
+							</h:column>
+						</rich:suggestionbox>
+						</a:region>
+					</s:decorate>
+				</h:panelGrid>
+					
+				<rich:dataTable value="#{roleHome.instance.permissions}"
+					           var="_per"
+					      rendered="#{not empty roleHome.instance.permissions}"
+					    rowClasses="rvgRowOne,rvgRowTwo"
+					            id="permissionsTable">
+					<rich:column sortBy="#{_per.name}" styleClass="left">
+					    <f:facet name="header">#{messages['action.name']}</f:facet>
+					    <h:outputText value="#{_per.action.name}"/>
+					</rich:column>
+					
+					<rich:column styleClass="left">
+					    <f:facet name="header">#{messages['permission.visibleFromMenu']}</f:facet>
+					    <h:selectBooleanCheckbox value="#{_per.visibleFromMenu}" >
+					    	<a:support event="onchange" ajaxSingle="true"/>
+					    </h:selectBooleanCheckbox>
+					</rich:column>
+										
+					<rich:column sortBy="#{_per.expirationDate}" styleClass="center">
+							<f:facet name="header">
+								<h:outputText
+									value="#{messages['permission.expirationDate']}" />
+							</f:facet>
+							<rich:calendar value="#{_per.expirationDate}"
+								datePattern="#{messages['common.datePattern']}"
+								enableManualInput="true"
+								ajaxSingle="true">
+							</rich:calendar>
+					</rich:column>
+					
+					<rich:column sortBy="#{_per.permissionType.name}" styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['permission.permissionType']}" />
+							</f:facet>
+							<h:selectOneMenu id="permissionType" required="true"
+								value="#{_per.permissionType}">
+								<s:selectItems value="#{permissionsType}" required="true"
+									var="type" label="#{messages[type.name()]}"
+									noSelectionLabel="#{messages['common.chooseOption']}" />
+								<s:convertEnum />
+								<a:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
+					</rich:column>
+					
+					<rich:column styleClass="action">
+					 	<f:facet name="header">#{messages['action']}</f:facet>
+						 <a:commandButton value="#{messages['common.remove']}"
+                                    action="#{roleHome.removePermission(_per)}"
+                                    reRender="actionsPanel" ajaxSingle="true"/>
+					</rich:column>
+				</rich:dataTable>
+				</h:panelGrid>
+    </rich:tab>
+ </rich:tabPanel>
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{roleHome.persist}"
+                       disabled="#{!roleHome.wired}"
+                       rendered="#{!roleHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{roleHome.update}"
+                       rendered="#{roleHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="#{messages['common.delete']}"
+                         action="#{roleHome.remove}"
+                      immediate="true"
+                       rendered="#{roleHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/common/RoleList.xhtml"
+                rendered="#{roleHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/common/#{empty roleFrom ? 'RoleList' : roleFrom}.xhtml"
+                rendered="#{!roleHome.managed}"/>
+
+        </div>
+
+
+ </h:form>
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,114 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="workDealFractionEditPanel" width="500" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{workDealHome.workDealFraction.id != null ? messages['common.edit'] : messages['common.create']} #{messages['workDealFraction']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="workDealFractionEditPanel" attachTo="hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="workDealFraction" styleClass="edit">
+			<a:region>			
+			
+			<rich:panel>
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+				
+				<rich:panel>
+				<f:facet name="header">
+					<h:outputText value="#{messages['municipalBond.conditionByProperty']}"
+						styleClass="formTitle" />
+				</f:facet>
+				
+				<g:propertyChooser id="propertyChooser"
+					property="#{workDealHome.workDealFraction.property}"
+					criteria="#{workDealHome.criteriaProperty}"
+					bean="#{workDealHome}" searchAction="searchProperty"
+					propertyList="#{workDealHome.properties}"
+					searchByCriteriaAction="searchPropertyByCriteria"
+					clearSearchPanelAction="clearSearchPropertyPanel"
+					propertyChosenListenerName="propertySelectedListener" reRender="addressField"/>
+				
+				<s:decorate id="addressField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['workDealFraction.address']}:</ui:define>
+					<h:inputTextarea id="address" cols="40" rows="2" required="true"
+						value="#{workDealHome.workDealFraction.address}" />
+				</s:decorate>
+				
+				<div style="clear: both" />
+				
+			</rich:panel>
+
+				<h:panelGrid columns="4" width="100%">
+					<s:decorate id="lengthField1" template="../../layout/vertical-edit.xhtml">
+		                <ui:define name="label">#{messages['workDealFraction.frontLength']}:</ui:define>
+		                <h:inputText id="length" required="true" style="text-align: right"
+		                          value="#{workDealHome.workDealFraction.frontLength}"
+		                           size="14">
+							<f:convertNumber pattern="0.00"/>
+       		                <a:support event="onblur" reRender="contributionField" action="#{workDealHome.calculateContributionFront()}" ajaxSingle="true"/>
+                        </h:inputText>
+		            </s:decorate>
+		            
+		            <s:decorate id="aliquotField1" template="../../layout/vertical-edit.xhtml">
+		                <ui:define name="label">#{messages['property.lotAliquot']}:</ui:define>
+		                <h:outputText id="aliquot" required="true" style="text-align: right"
+		                          value="#{workDealHome.workDealFraction.property.lotAliquot}"
+		                           size="14">
+							<f:convertNumber pattern="0.00"/>
+                        </h:outputText>
+		            </s:decorate>
+		            
+		            <s:decorate id="contributionField" template="../../layout/vertical-edit.xhtml">
+		                <ui:define name="label">#{messages['workDealFraction.contributionFront']}:</ui:define>
+		                <h:outputText id="contributionFront" required="true" style="text-align: right"
+		                          value="#{workDealHome.workDealFraction.contributionFront}"
+		                           size="14">
+           						<f:convertNumber pattern="0.00"/>
+		                </h:outputText>
+		            </s:decorate>
+		            
+		           </h:panelGrid>
+
+		    </rich:panel>
+			</a:region>
+
+			<div class="actionButtons">
+				<a:commandButton 
+					action="#{workDealHome.addWorkDealFraction()}"
+					value="#{messages['common.accept']}" 
+					reRender="workDealPanel"
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'workDealFractionEditPanel\');' : ''}" />
+
+				<a:commandButton 
+					ajaxSingle="true" 
+					value="#{messages['common.quit']}"
+					reRender="workDealPanel"
+					oncomplete="Richfaces.hideModalPanel('workDealFractionEditPanel');"
+					bypassUpdates="true" />
+			</div>
+			
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

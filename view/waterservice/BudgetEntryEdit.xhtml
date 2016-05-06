@@ -1,0 +1,115 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="budgetEntry" styleClass="edit">
+		
+
+			<h:outputText styleClass="formTitle"
+				value="#{budgetEntryHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['budgetEntry']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{messages['budgetEntry']}</f:facet>
+
+				<s:decorate template="../layout/display.xhtml"
+					id="budgetEntryTypeField">
+					<ui:define name="label">#{messages['budgetEntry.budgetEntryType']}</ui:define>
+					<h:selectOneMenu id="budgetEntryType"
+						value="#{budgetEntryHome.instance.budgetEntryType}">
+						<s:selectItems value="#{budgetEntryTypes}" var="_entryType"
+							label="#{_entryType.name}" />
+						<s:convertEntity />
+						<a:support event="onchange" reRender="budgetEntryTypeField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+				
+				<g:entryChooser id="entryChooser" label="#{messages['entry']}"
+					reasonLabel="#{messages['entry.reason']}"
+					criteria="#{budgetEntryHome.criteriaEntry}"
+					entry="#{budgetEntryHome.instance.entry}"
+					entryCode="#{budgetEntryHome.entryCode}"					
+					bean="#{budgetEntryHome}" searchAction="searchEntry"
+					entriesList="#{budgetEntryHome.entries}"
+					searchByCriteriaAction="searchEntryByCriteria"
+					clearSearchPanelAction="clearSearchEntryPanel"
+					entryChosenListenerName="entrySelectedListener"/>
+
+				
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['budgetEntry.name']}</ui:define>
+					<h:inputText id="name" required="true" size="60" maxlength="60"
+						value="#{budgetEntryHome.instance.name}"
+						style="text-transform: uppercase">
+						<a:support event="onblur" reRender="nameField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="descriptionField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['budgetEntry.description']}</ui:define>
+					<h:inputTextarea id="description" cols="80" rows="2"
+						value="#{budgetEntryHome.instance.description}" />
+				</s:decorate>
+
+				<s:decorate id="valueField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['budgetEntry.value']}</ui:define>
+					<h:inputText id="value" required="true" size="30" maxlength="30"
+						value="#{budgetEntryHome.instance.value}">
+						<a:support event="onblur" reRender="valueField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="isTaxableField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['budgetEntry.isTaxable']}:</ui:define>
+					<h:selectBooleanCheckbox id="isTaxable"
+						value="#{budgetEntryHome.instance.isTaxable}" />
+				</s:decorate>
+
+				<s:decorate id="unityField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['budgetEntry.unity']}</ui:define>
+					<h:inputText id="value" required="true" size="30" maxlength="30"
+						value="#{budgetEntryHome.instance.unity}"
+						style="text-transform: uppercase">
+						<a:support event="onblur" reRender="unityField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{budgetEntryHome.persist}"
+					disabled="#{!budgetEntryHome.wired}"
+					rendered="#{!budgetEntryHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{budgetEntryHome.update}"
+					rendered="#{budgetEntryHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/waterservice/BudgetEntryList.xhtml" />
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

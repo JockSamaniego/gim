@@ -1,0 +1,245 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="deposit" styleClass="edit">
+		<ui:debug id="debug"/>
+			<h:outputText styleClass="formTitle"
+				value="#{messages['deposit.manageReverses']}" />
+			<rich:panel bodyClass="topAligned">
+				<f:facet name="header">
+					<h:outputText value="#{messages['deposit.searchFilter']}" />
+				</f:facet>
+				<h:panelGrid columns="1">
+					<g:residentChooser id="residentChooser"
+						resident="#{depositHome.resident}"
+						residentsList="#{depositHome.residents}"
+						identificationNumber="#{depositHome.identificationNumber}"
+						criteria="#{depositHome.criteria}" bean="#{depositHome}"
+						searchByCriteriaAction="searchByCriteria"
+						clearSearchPanelAction="clearSearchPanel" searchAction="search"
+						residentChosenListenerName="residentSelectedListener" />
+
+					<s:decorate id="cashierField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['payment.cashier']}: </ui:define>
+						<h:selectOneMenu id="cashier" value="#{depositHome.cashier}" required="true">
+							<s:selectItems value="#{currentCashiers}"
+								noSelectionLabel="#{messages['common.chooseOption']}"
+								var="_person" label="#{_person.name}"/>							
+							<s:convertEntity />
+							<a:support ajaxSingle="true" event="onchange"></a:support>
+						</h:selectOneMenu>
+					</s:decorate>	
+				</h:panelGrid>
+
+				<div style="clear: both" />
+			</rich:panel>
+			
+			<a:commandButton id="search" reRender="depositsPanel,cashierField"
+				value="#{messages['common.search']}" 
+				action="#{depositHome.findDeposits()}" />
+			
+			<a:outputPanel id="depositsPanel" ajaxRendered="false">
+				<rich:panel style="margin-top:5px;"
+					rendered="#{empty depositHome.deposits and not empty depositHome.resident and not empty depositHome.cashier and depositHome.tillOpened}">
+					<h:outputText style="font-weight:bold; font-size:25px;"
+						value="#{messages['deposit.noDepositsFoundForToday']}" />
+				</rich:panel>
+				
+				<rich:panel style="margin-top:5px;"
+					rendered="#{not empty depositHome.resident and not empty depositHome.cashier and !depositHome.tillOpened}">
+					<h:outputText style="font-weight:bold; font-size:25px;"
+						value="#{messages['deposit.CantReverseClosingTill']}" />
+				</rich:panel>
+
+				<rich:panel bodyClass="topAligned"
+					rendered="#{not empty depositHome.deposits and depositHome.tillOpened}">
+					<f:facet name="header">
+						<h:panelGrid columns="2"
+							columnClasses="headerTitle tableCellFont," cellpadding="0"
+							cellspacing="0">
+							<h:outputText value="#{messages['deposit.dayList']}" />
+							<a:commandButton id="confirmReverseBtn"
+								action="#{depositHome.resetDialog()}"
+								reRender="confirmReversePanel" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('confirmReversePanel',{width:350, height:250})"
+								value="#{messages['deposit.reverse']}"
+								disabled="#{depositHome.selectedDeposits.size() == 0}"
+								focus="concept" />
+						</h:panelGrid>
+					</f:facet>
+
+					<rich:dataTable id="depositList" var="_deposit"
+						value="#{depositHome.deposits}"
+						rendered="#{not empty depositHome.deposits}"
+						columnClasses="center, right tableCellFont,right tableCellFont, left tableCellFont, center tableCellFont, center tableCellFont, center tableCellFont, right tableCellFont">
+						<h:column>
+							<f:facet name="header">
+								<h:selectBooleanCheckbox
+									value="#{depositHome.allDepositsSelected}">
+									<a:support event="onchange" eventsQueue="gimQueue"
+										action="#{depositHome.selectAllDeposits}" ajaxSingle="true"
+										reRender="depositsPanel, confirmReverseBtn" />
+								</h:selectBooleanCheckbox>
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{_deposit.isSelected}"
+								disabled="#{_deposit.status.name() == 'REVERSED'}">
+								<a:support event="onchange" eventsQueue="gimQueue"
+									action="#{depositHome.synchronizeAllDepositsSelected(_deposit.isSelected)}"
+									reRender="depositsPanel, confirmReverseBtn" />
+							</h:selectBooleanCheckbox>
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['payment.number']}" />
+							</f:facet>
+							<h:outputText value="#{_deposit.payment.id}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.number']}" />
+							</f:facet>
+							<h:outputText value="#{_deposit.municipalBond.number}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.concept']}" />
+							</f:facet>
+							<h:outputText value="#{_deposit.municipalBond.entry.name}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.liquidationDate']}" />
+							</f:facet>
+							<h:outputText value="#{_deposit.municipalBond.liquidationTime}" >
+								<f:convertDateTime pattern="#{messages['common.timePattern']}" />
+							</h:outputText>
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['deposit.type']}" />	
+							</f:facet>
+							<h:outputText
+								value="#{_deposit.balance == 0 ? messages['deposit.totalPayment'] : messages['deposit.dividend']}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['deposit.financialStatus']}" />
+							</f:facet>
+							<h:outputText value="#{messages[_deposit.status.name()]}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['receipt.number']}" />
+							</f:facet>
+							<h:outputText
+								value="#{_deposit.balance == 0 ? (_deposit.municipalBond.receipt != null ? _deposit.municipalBond.receipt : _deposit.municipalBond.number) : _deposit.id}" />
+						</h:column>
+						
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['receipt.electronicReceipt']}" />
+							</f:facet>
+							<h:selectBooleanCheckbox disabled="true"
+								value="#{_deposit.balance == 0 ? (_deposit.municipalBond.receipt != null ? _deposit.municipalBond.receipt.electronicReceipt : _deposit.municipalBond.number) : _deposit.id}" />
+						</h:column>
+						
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['deposit.value']}" />
+							</f:facet>
+							<h:outputText value="#{_deposit.value}" />
+						</rich:column>
+						<!-- 
+						<h:column styleClass="action">
+				            <f:facet name="header">Action</f:facet>
+				            <a:commandButton id="confirmEliminateReverseBtn"
+				            	action="#-{depositHome.setDeposit(_deposit)}"
+								reRender="eliminateReversePanel" 
+								ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('eliminateReversePanel',{width:350, height:150})"
+								value="#{messages['deposit.eliminateReverse']}"
+								rendered="#-{_deposit.status.name() == 'REVERSED'}" />
+				        </h:column>
+				        -->
+					</rich:dataTable>
+				</rich:panel>
+			</a:outputPanel>
+
+		</h:form>
+
+		<rich:modalPanel id="confirmReversePanel" width="350" height="250">
+			<f:facet name="header">#{messages['deposit.confirmReverse']}</f:facet>
+			<h:form id="confirmReverse">
+				<a:outputPanel id="errorPanel" >
+					<div class="border: solid 1px red; height:50px; width:100%; overflow:auto;">
+						<rich:messages errorClass="errors" />
+					</div>
+				</a:outputPanel>
+				<h:panelGrid>
+					<s:decorate id="conceptField" template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['deposit.concept']}:</ui:define>
+						<h:inputTextarea id="concept" cols="40" rows="3"
+							value="#{depositHome.concept}" required="true" />
+					</s:decorate>
+
+					<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="reverseBtn" action="#{depositHome.persist}"
+								value="#{messages['deposit.reverse']}"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmReversePanel\');' : ''}" 
+								reRender="errorPanel"/>
+
+							<a:commandButton id="cancelBtn" ajaxSingle="true"
+								value="#{messages['common.cancel']}"
+								oncomplete="Richfaces.hideModalPanel('confirmReversePanel');"
+								bypassUpdates="true" />
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
+
+		<rich:modalPanel id="eliminateReversePanel">
+			<f:facet name="header">#{messages['deposit.eliminateReverseDialogTitle']}</f:facet>
+			<h:form id="eliminateReverse">
+				<h:panelGrid>
+					<h:panelGrid columns="2">
+						<h:graphicImage value="/img/alert.png" />
+						<h:outputText value="#{messages['deposit.eliminateReverseMsg']}"
+							style="font-size:large;" />
+					</h:panelGrid>
+					<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton style="width:50px" id="eliminateReverseBtn"
+								action="#{depositHome.eliminateReverse}"
+								value="#{messages['common.yes']}"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'eliminateReversePanel\');' : ''}" />
+
+							<a:commandButton id="cancelBtn" ajaxSingle="true"
+								style="width:50px" value="#{messages['common.no']}"
+								oncomplete="Richfaces.hideModalPanel('eliminateReversePanel');"
+								bypassUpdates="true" />
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
+	</ui:define>
+
+</ui:composition>

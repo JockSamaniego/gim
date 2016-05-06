@@ -1,0 +1,43 @@
+10
+
+dir
+382
+svn://190.214.14.229/gadloja/gim/trunk/src/hot/org/gob/gim/revenue
+svn://190.214.14.229/gadloja
+
+
+
+2015-08-07T20:49:05.280044Z
+379
+manuel_cartuche
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+890a1ab3-fbd5-48d4-9fbc-43c15126970b
+
+action
+dir
+
+exception
+dir
+
+facade
+dir
+
+service
+dir
+
+view
+dir
+

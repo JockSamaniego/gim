@@ -1,0 +1,131 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="marketSearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['market.emission']}" />
+
+			<rich:simpleTogglePanel switchType="ajax">
+				<f:facet name="header">#{messages['market.searchFilter']}</f:facet>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['market.name']}</ui:define>
+					<h:inputText id="criteria" value="#{marketList.criteria}" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/market/MarketEmissionList.xhtml" >
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="3" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['market.searchResults']} (#{empty marketList.resultList ? 0 : (marketList.paginated ? marketList.resultCount : marketList.resultList.size)})" />
+					<s:div styleClass="actionButtons" rendered="#{empty from}">
+						<s:button view="/market/MarketEmited.xhtml" id="create"
+							propagation="none" value="Emisiones realizadas">
+						</s:button>
+					</s:div>
+				</h:panelGrid>
+			</f:facet>
+			<div class="results" id="marketList">
+
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty marketList.resultList}" />
+
+				<rich:dataTable id="marketList" var="_market"
+					value="#{marketList.resultList}"
+					rendered="#{not empty marketList.resultList}"
+					onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{marketList}" />
+								<ui:param name="propertyLabel" value="#{messages['market.id']}" />
+								<ui:param name="propertyPath" value="market.id" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_market.id}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{marketList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['market.name']}" />
+								<ui:param name="propertyPath" value="market.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_market.name}" />
+					</h:column>
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<s:button view="/market/MarketRent.xhtml"
+							value="#{messages['market.locals']}" propagation="none"
+							id="marketEdit" rendered="#{empty from}">
+							<f:param name="marketId" value="#{_market.id}" />
+							<f:param name="marketRentOperation" value="notToRent" />
+						</s:button>
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/market/MarketEmissionList.xhtml"
+				rendered="#{marketList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/market/MarketEmissionList.xhtml"
+				rendered="#{marketList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult"
+					value="#{marketList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/market/MarketEmissionList.xhtml"
+				rendered="#{marketList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult" value="#{marketList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/market/MarketEmissionList.xhtml"
+				rendered="#{marketList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult" value="#{marketList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

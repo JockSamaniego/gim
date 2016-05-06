@@ -1,0 +1,578 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Contravention Details</f:facet>
+
+        <s:decorate id="date" template="layout/display.xhtml">
+            <ui:define name="label">Date</ui:define>
+            <h:outputText value="#{contraventionHome.instance.date}">
+                <s:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="description" template="layout/display.xhtml">
+            <ui:define name="label">Description</ui:define>
+            <h:outputText value="#{contraventionHome.instance.description}"/>
+        </s:decorate>
+
+        <s:decorate id="detail" template="layout/display.xhtml">
+            <ui:define name="label">Detail</ui:define>
+            <h:outputText value="#{contraventionHome.instance.detail}"/>
+        </s:decorate>
+
+        <s:decorate id="hasEmited" template="layout/display.xhtml">
+            <ui:define name="label">Has emited</ui:define>
+            <h:outputText value="#{contraventionHome.instance.hasEmited}"/>
+        </s:decorate>
+
+        <s:decorate id="inactiveReason" template="layout/display.xhtml">
+            <ui:define name="label">Inactive reason</ui:define>
+            <h:outputText value="#{contraventionHome.instance.inactiveReason}"/>
+        </s:decorate>
+
+        <s:decorate id="isActive" template="layout/display.xhtml">
+            <ui:define name="label">Is active</ui:define>
+            <h:outputText value="#{contraventionHome.instance.isActive}"/>
+        </s:decorate>
+
+        <s:decorate id="number" template="layout/display.xhtml">
+            <ui:define name="label">Number</ui:define>
+            <h:outputText value="#{contraventionHome.instance.number}"/>
+        </s:decorate>
+
+        <s:decorate id="registerDate" template="layout/display.xhtml">
+            <ui:define name="label">Register date</ui:define>
+            <h:outputText value="#{contraventionHome.instance.registerDate}">
+                <s:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="sanctionDetail" template="layout/display.xhtml">
+            <ui:define name="label">Sanction detail</ui:define>
+            <h:outputText value="#{contraventionHome.instance.sanctionDetail}"/>
+        </s:decorate>
+
+        <s:decorate id="value" template="layout/display.xhtml">
+            <ui:define name="label">Value</ui:define>
+            <h:outputText value="#{contraventionHome.instance.value}">
+                <f:convertNumber/>
+            </h:outputText>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/ContraventionEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty contraventionFrom ? 'ContraventionList' : contraventionFrom}.xhtml"
+                    id="done"
+                 value="Done"/>
+
+    </div>
+
+    <rich:tabPanel switchType="ajax">
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Municipal bond</h:panelGroup>
+        </f:facet>
+    <div class="association" id="municipalBondParent">
+
+        <h:outputText value="There is no municipalBond associated with this contravention."
+                   rendered="#{contraventionHome.instance.municipalBond == null}"/>
+
+        <rich:dataTable var="_municipalBond"
+                   value="#{contraventionHome.instance.municipalBond}"
+                rendered="#{contraventionHome.instance.municipalBond != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="municipalBondTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_municipalBond.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Address</f:facet>
+                <h:outputText value="#{_municipalBond.address}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Adjunct id</f:facet>
+                <h:outputText value="#{_municipalBond.adjunct.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Apply interest</f:facet>
+                <h:outputText value="#{_municipalBond.applyInterest}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Balance</f:facet>
+                <h:outputText value="#{_municipalBond.balance}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Base</f:facet>
+                <h:outputText value="#{_municipalBond.base}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Bond address</f:facet>
+                <h:outputText value="#{_municipalBond.bondAddress}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Creation date</f:facet>
+                <h:outputText value="#{_municipalBond.creationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Creation time</f:facet>
+                <h:outputText value="#{_municipalBond.creationTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Credit note id</f:facet>
+                <h:outputText value="#{_municipalBond.creditNote.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_municipalBond.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Discount</f:facet>
+                <h:outputText value="#{_municipalBond.discount}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Emision date</f:facet>
+                <h:outputText value="#{_municipalBond.emisionDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Emision period</f:facet>
+                <h:outputText value="#{_municipalBond.emisionPeriod}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Emision time</f:facet>
+                <h:outputText value="#{_municipalBond.emisionTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Emitter id</f:facet>
+                <h:outputText value="#{_municipalBond.emitter.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Entry id</f:facet>
+                <h:outputText value="#{_municipalBond.entry.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Exempt</f:facet>
+                <h:outputText value="#{_municipalBond.exempt}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Expiration date</f:facet>
+                <h:outputText value="#{_municipalBond.expirationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Fiscal period id</f:facet>
+                <h:outputText value="#{_municipalBond.fiscalPeriod.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Grouping code</f:facet>
+                <h:outputText value="#{_municipalBond.groupingCode}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Institution id</f:facet>
+                <h:outputText value="#{_municipalBond.institution.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Interest</f:facet>
+                <h:outputText value="#{_municipalBond.interest}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Internal tramit</f:facet>
+                <h:outputText value="#{_municipalBond.internalTramit}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Is no pasive subject</f:facet>
+                <h:outputText value="#{_municipalBond.isNoPasiveSubject}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Legal status</f:facet>
+                <h:outputText value="#{_municipalBond.legalStatus}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Liquidation date</f:facet>
+                <h:outputText value="#{_municipalBond.liquidationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Liquidation time</f:facet>
+                <h:outputText value="#{_municipalBond.liquidationTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Municipal bond status id</f:facet>
+                <h:outputText value="#{_municipalBond.municipalBondStatus.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Municipal bond type</f:facet>
+                <h:outputText value="#{_municipalBond.municipalBondType}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Non taxable total</f:facet>
+                <h:outputText value="#{_municipalBond.nonTaxableTotal}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Notification id</f:facet>
+                <h:outputText value="#{_municipalBond.notification.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Number</f:facet>
+                <h:outputText value="#{_municipalBond.number}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Originator id</f:facet>
+                <h:outputText value="#{_municipalBond.originator.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Paid total</f:facet>
+                <h:outputText value="#{_municipalBond.paidTotal}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Payment agreement id</f:facet>
+                <h:outputText value="#{_municipalBond.paymentAgreement.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Previous payment</f:facet>
+                <h:outputText value="#{_municipalBond.previousPayment}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Printings number</f:facet>
+                <h:outputText value="#{_municipalBond.printingsNumber}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reference</f:facet>
+                <h:outputText value="#{_municipalBond.reference}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Resident id</f:facet>
+                <h:outputText value="#{_municipalBond.resident.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reversed date</f:facet>
+                <h:outputText value="#{_municipalBond.reversedDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reversed resolution</f:facet>
+                <h:outputText value="#{_municipalBond.reversedResolution}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reversed time</f:facet>
+                <h:outputText value="#{_municipalBond.reversedTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Service date</f:facet>
+                <h:outputText value="#{_municipalBond.serviceDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Surcharge</f:facet>
+                <h:outputText value="#{_municipalBond.surcharge}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Taxable total</f:facet>
+                <h:outputText value="#{_municipalBond.taxableTotal}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Taxes total</f:facet>
+                <h:outputText value="#{_municipalBond.taxesTotal}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Time period id</f:facet>
+                <h:outputText value="#{_municipalBond.timePeriod.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Value</f:facet>
+                <h:outputText value="#{_municipalBond.value}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Receipt id</f:facet>
+                <h:outputText value="#{_municipalBond.receipt.id}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewmunicipalBond"
+                     value="View"
+                      view="/MunicipalBond.xhtml">
+                    <f:param name="municipalBondId"
+                           value="#{_municipalBond.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Originator</h:panelGroup>
+        </f:facet>
+    <div class="association" id="originatorParent">
+
+        <h:outputText value="There is no originator associated with this contravention."
+                   rendered="#{contraventionHome.instance.originator == null}"/>
+
+        <rich:dataTable var="_person"
+                   value="#{contraventionHome.instance.originator}"
+                rendered="#{contraventionHome.instance.originator != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="originatorTable">
+            <h:column>
+                <f:facet name="header">Birthday</f:facet>
+                <h:outputText value="#{_person.birthday}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Country</f:facet>
+                <h:outputText value="#{_person.country}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">First name</f:facet>
+                <h:outputText value="#{_person.firstName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Gender</f:facet>
+                <h:outputText value="#{_person.gender}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Handicaped number</f:facet>
+                <h:outputText value="#{_person.handicapedNumber}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Handicaped percentage</f:facet>
+                <h:outputText value="#{_person.handicapedPercentage}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Is dead</f:facet>
+                <h:outputText value="#{_person.isDead}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Is handicaped</f:facet>
+                <h:outputText value="#{_person.isHandicaped}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Last name</f:facet>
+                <h:outputText value="#{_person.lastName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Marital status</f:facet>
+                <h:outputText value="#{_person.maritalStatus}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewperson"
+                     value="View"
+                      view="/Person.xhtml">
+                    <f:param name="personId"
+                           value="#{_person.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Provenance</h:panelGroup>
+        </f:facet>
+    <div class="association" id="provenanceParent">
+
+        <h:outputText value="There is no provenance associated with this contravention."
+                   rendered="#{contraventionHome.instance.provenance == null}"/>
+
+        <rich:dataTable var="_provenance"
+                   value="#{contraventionHome.instance.provenance}"
+                rendered="#{contraventionHome.instance.provenance != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="provenanceTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_provenance.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Is active</f:facet>
+                <h:outputText value="#{_provenance.isActive}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_provenance.name}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewprovenance"
+                     value="View"
+                      view="/Provenance.xhtml">
+                    <f:param name="provenanceId"
+                           value="#{_provenance.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Resident</h:panelGroup>
+        </f:facet>
+    <div class="association" id="residentParent">
+
+        <h:outputText value="There is no resident associated with this contravention."
+                   rendered="#{contraventionHome.instance.resident == null}"/>
+
+        <rich:dataTable var="_resident"
+                   value="#{contraventionHome.instance.resident}"
+                rendered="#{contraventionHome.instance.resident != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="residentTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_resident.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Current address id</f:facet>
+                <h:outputText value="#{_resident.currentAddress.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Email</f:facet>
+                <h:outputText value="#{_resident.email}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identification number</f:facet>
+                <h:outputText value="#{_resident.identificationNumber}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identification type</f:facet>
+                <h:outputText value="#{_resident.identificationType}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Is enabled for deferred payments</f:facet>
+                <h:outputText value="#{_resident.isEnabledForDeferredPayments}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_resident.name}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Register date</f:facet>
+                <h:outputText value="#{_resident.registerDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">User id</f:facet>
+                <h:outputText value="#{_resident.user.id}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewresident"
+                     value="View"
+                      view="/Resident.xhtml">
+                    <f:param name="residentId"
+                           value="#{_resident.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Sanction type</h:panelGroup>
+        </f:facet>
+    <div class="association" id="sanctionTypeParent">
+
+        <h:outputText value="There is no sanctionType associated with this contravention."
+                   rendered="#{contraventionHome.instance.sanctionType == null}"/>
+
+        <rich:dataTable var="_sanctionType"
+                   value="#{contraventionHome.instance.sanctionType}"
+                rendered="#{contraventionHome.instance.sanctionType != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="sanctionTypeTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_sanctionType.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_sanctionType.name}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewsanctionType"
+                     value="View"
+                      view="/SanctionType.xhtml">
+                    <f:param name="sanctionTypeId"
+                           value="#{_sanctionType.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>
