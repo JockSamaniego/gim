@@ -1,0 +1,140 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="awardedStandPanel" width="600" height="522">
+
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['stand.awarded']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink0" />
+				<rich:componentControl for="awardedStandPanel" attachTo="hidelink0"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="changeAwardedPanel">
+			<h:panelGrid width="100%">
+
+				<g:residentChooser id="residentChooser"
+					resident="#{standHome.instance.currentContract.subscriber}"
+					criteria="#{standHome.criteria}" bean="#{standHome}"
+					searchAction="searchResident"
+					residentsList="#{standHome.residents}"
+					identificationNumber="#{standHome.identificationNumber}"
+					searchByCriteriaAction="searchResidentByCriteria"
+					clearSearchPanelAction="clearSearchResidentPanel"
+					residentChosenListenerName="residentSelectedListener" />
+
+				<h:panelGrid columns="2">
+					<s:decorate id="nameField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['stand.name']}</ui:define>
+						<h:inputText id="name" required="true" size="20" maxlength="30"
+							value="#{standHome.instance.name}">
+							<a:support event="onblur" reRender="nameField" ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="numberField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['stand.number']}</ui:define>
+						<h:inputText id="number" required="true" size="20" maxlength="30"
+							value="#{standHome.instance.number}">
+							<a:support event="onblur" reRender="numberField"
+								ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+				</h:panelGrid>
+
+				<s:decorate id="productTypeField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['stand.productType']}</ui:define>
+					<h:selectOneMenu id="productType"
+						value="#{standHome.instance.productType}">
+						<s:selectItems value="#{productTypes}" var="_productType"
+							label="#{_productType.name}" />
+						<s:convertEntity />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="standTypeField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['stand.standType']}</ui:define>
+					<h:selectOneMenu id="standType"
+						value="#{standHome.instance.standType}">
+						<s:selectItems value="#{marketHome.standTypes}" var="type"
+							label="#{type.name}" />
+						<s:convertEntity />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<h:panelGrid columns="2">
+					<s:decorate id="valueField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['stand.value']}</ui:define>
+						<h:inputText id="value" value="#{standHome.instance.value}"
+							required="true">
+							<a:support event="onblur" reRender="valueField" ajaxSingle="true" />
+							<f:convertNumber pattern="#0.00" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="areaField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['stand.area']}</ui:define>
+						<h:inputText id="area" value="#{standHome.instance.area}"
+							required="true">
+							<a:support event="onblur" reRender="areaField" ajaxSingle="true" />
+							<f:convertNumber pattern="#0.00" />
+						</h:inputText>
+					</s:decorate>
+				</h:panelGrid>
+
+				<s:decorate id="explicacionEsp" template="../../layout/edit.xhtml">
+					<ui:define name="label">Explicación</ui:define>
+					<h:inputText id="area" value="#{standHome.instance.explicacion}"
+						required="true" size="50">
+						<a:support event="onblur" reRender="explicacionEsp"
+							ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="conceptoEsp" template="../../layout/edit.xhtml">
+					<ui:define name="label">Concepto</ui:define>
+					<h:inputText id="area" value="#{standHome.instance.concepto}"
+						required="true" size="50">
+						<a:support event="onblur" reRender="conceptoEsp" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+			</h:panelGrid>
+
+			<h:panelGrid columns="10" style="text-align:right">
+
+				<a:commandButton value="#{messages['common.accept']}"
+					reRender="market,standListFree," ajaxSingle="true"
+					oncomplete="Richfaces.hideModalPanel('awardedStandPanel');"
+					action="#{marketHome.updateStandContract()}" />
+
+				<a:commandButton value="#{messages['common.quit']}"
+					ajaxSingle="true"
+					oncomplete="Richfaces.hideModalPanel('awardedStandPanel');" />
+
+			</h:panelGrid>
+
+		</h:form>
+
+	</rich:modalPanel>
+</ui:composition>

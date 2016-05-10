@@ -1,0 +1,220 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+            xmlns:f="http://java.sun.com/jsf/core"
+            xmlns:p="http://jboss.com/products/seam/pdf"
+            xmlns:e="http://jboss.com/products/seam/excel"
+            xmlns="http://www.w3.org/1999/xhtml"
+            xmlns:h="http://java.sun.com/jsf/html"
+            xmlns:s="http://jboss.com/products/seam/taglib"
+            xmlns:rich="http://richfaces.org/rich"
+            xmlns:c="http://java.sun.com/jstl/core"
+            title="#{messages['paymentHome.AgreementExpire']}" subject="report" type="pdf"
+            size="LETTER" keywords="mykeyword" author="gadml_ra" creator="gadml_ra"
+            orientation="landscape"
+            margins="10 10 50 50">
+
+    <f:facet name="header">
+        <p:font size="9" name="ARIAL">
+            <p:header borderWidthTop="0" borderWidthBottom="1" alignment="center">
+                <p:paragraph>
+                    <p:table columns="6" widthPercentage="100" spacingAfter="5" widths="1 1 1 4 1 1" >
+                        <f:facet name="defaultCell">
+                            <p:cell borderWidth="0" />
+                        </f:facet>
+                        <p:cell colspan="6">
+
+                            <p:paragraph alignment="center" spacingAfter="5">
+                                <p:text value="#{gim.institution.name.toUpperCase()}" />
+                            </p:paragraph>
+                            <p:paragraph alignment="center" spacingAfter="5">
+                                <p:text value="CONVENIOS DE PAGO VENCIDOS" />
+                            </p:paragraph>
+
+                        </p:cell>
+                        <p:cell>
+
+                            <p:paragraph>
+                                <p:text value="#{messages['paymentHome.user']}: " />
+                            </p:paragraph>
+                        </p:cell>
+
+                        <p:cell>
+                            <p:paragraph>
+                                <p:text value="#{userSession.user.name}" />
+                            </p:paragraph>
+                        </p:cell>
+
+
+                        <p:cell>
+                            <p:paragraph>
+                                <p:text value="#{messages['paymentHome.name']}: " />
+                            </p:paragraph>
+                        </p:cell>
+                        <p:cell>
+                            <p:paragraph>
+                                <p:text value="#{userSession.user.resident.name}" />
+                            </p:paragraph>
+                        </p:cell>
+
+
+                        <p:cell>
+                            <p:paragraph>
+                                <p:text value="FECHA/HORA: " />
+                            </p:paragraph>
+                        </p:cell>
+                        <p:cell>
+                            <p:paragraph>
+                                <p:text value="#{paymentHome.hourReport}">
+                                    <f:convertDateTime pattern="#{messages['common.dateFullTimePattern']}" />
+                                </p:text>
+                            </p:paragraph>
+                        </p:cell>
+
+                    </p:table>
+
+                </p:paragraph>
+                PAG.:<p:pageNumber />
+
+               
+            </p:header>
+
+        </p:font>
+    </f:facet>
+
+    <p:paragraph spacingAfter="15">
+    </p:paragraph>
+
+    <p:font size="9" name="Draft" style="NORMAL">
+
+        <p:table columns="9" widthPercentage="100" headerRows="1"
+                 widths="1 1 1.5 3 3 1 1 1 1" >
+
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0"  paddingBottom="10" />
+            </f:facet>
+
+            <p:cell>
+                <p:paragraph>
+                    <p:text value="#{messages['paymentAgreement.id']}" />
+                </p:paragraph>
+            </p:cell>
+            <p:cell>
+                <p:paragraph>
+                    <p:text value="#{messages['paymentAgreement.firstpaymentdate']}" />
+                </p:paragraph>
+            </p:cell>
+            <p:cell horizontalAlignment="center">
+                <p:paragraph>
+                    <p:text value="#{messages['resident.identificationNumber']}" />
+                </p:paragraph>
+            </p:cell>
+            <p:cell horizontalAlignment="center">
+                <p:paragraph>
+                    <p:text value="#{messages['resident.name']}" />
+                </p:paragraph>
+            </p:cell>
+            <p:cell horizontalAlignment="center">
+                <p:paragraph>
+                    <p:text value="#{messages['paymentAgreement.description']}" />
+                </p:paragraph>
+            </p:cell>
+            <p:cell horizontalAlignment="center">
+                <p:paragraph>
+                    <p:text value="#{messages['paymentAgreement.dividendsnumber']}" />
+                </p:paragraph>
+            </p:cell>
+
+            <p:cell horizontalAlignment="center">
+                <p:paragraph>
+                    <p:text value="#{messages['paymentAgreement.count']}" />
+                </p:paragraph>
+            </p:cell>
+
+            <p:cell horizontalAlignment="center">
+                <p:paragraph>
+                    <p:text value="#{messages['paymentAgreement.suma']}" />
+                </p:paragraph>
+            </p:cell>
+
+            <p:cell horizontalAlignment="center">
+                <p:paragraph>
+                    <p:text value="#{messages['paymentAgreement.MaxDate']}" />
+                </p:paragraph>
+            </p:cell>
+
+            <ui:repeat value="#{paymentHome.lsr}" var="_paymentAgreement">
+
+                <p:cell>
+                    <p:paragraph>
+
+
+                        <p:text value="#{_paymentAgreement.agreement_id}">								
+                        </p:text>
+
+                    </p:paragraph>
+                </p:cell>
+
+                <p:cell>
+                    <p:paragraph>
+                        <p:text value="#{_paymentAgreement.firstpaymentdate}" />
+                    </p:paragraph>
+                </p:cell>
+                <p:cell noWrap="true">
+                    <p:paragraph>
+                        <p:font size="8" name="HELVETICA">
+                            <p:text value="#{_paymentAgreement.identificationnumber_ci}" />
+                        </p:font>
+                    </p:paragraph>
+                </p:cell>
+
+                <p:cell>
+                    <p:paragraph>
+                        <p:font size="8" name="HELVETICA">
+                            <p:text value="#{_paymentAgreement.name}" />
+                        </p:font>
+                    </p:paragraph>
+                </p:cell>
+
+                <p:cell noWrap="true">
+                    <p:paragraph>
+                        <p:font size="8" name="HELVETICA">
+                            <p:text value="#{_paymentAgreement.description}" />						
+                        </p:font>
+                    </p:paragraph>
+                </p:cell>
+
+                <p:cell horizontalAlignment="center">
+                    <p:paragraph>
+                        <p:text value="#{_paymentAgreement.dividendsnumber}" />
+                    </p:paragraph>
+                </p:cell>
+
+                <p:cell horizontalAlignment="center">
+                    <p:paragraph>
+                        <p:font size="8" name="HELVETICA">
+                            <p:text
+                                value="#{_paymentAgreement.count}" />
+                        </p:font>
+                    </p:paragraph>
+                </p:cell>
+
+                <p:cell horizontalAlignment="center">
+                    <p:paragraph>
+                        <p:font size="8" name="HELVETICA">
+                            <p:text
+                                value="#{_paymentAgreement.suma}" />
+                        </p:font>
+                    </p:paragraph>
+                </p:cell>
+                <p:cell horizontalAlignment="right">
+                    <p:paragraph>
+                        <p:text value="#{_paymentAgreement.date}" />
+                    </p:paragraph>
+                </p:cell>
+
+
+            </ui:repeat>
+        </p:table>
+
+    </p:font>
+
+</p:document>

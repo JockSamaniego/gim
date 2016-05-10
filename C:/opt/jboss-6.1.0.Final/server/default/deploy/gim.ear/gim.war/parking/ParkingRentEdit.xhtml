@@ -1,0 +1,126 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+	
+		<style type="text/css">
+			.special tr[id] {
+				display: none;
+			}
+		</style>
+
+		<h1>#{messages['parkingRent']}
+			#{parkingRentHome.managed ?
+			parkingRentHome.instance.contract.subscriber.name : ''}</h1>
+
+		<h:form id="parkingRentForm" styleClass="edit">
+
+			<rich:panel id="parkingRentEditPanel">
+				<f:facet name="header">#{messages['parkingRent']}</f:facet>
+								
+				<s:decorate id="parkingLot" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['parkingLot']}</ui:define>
+					<h:selectOneMenu value="#{parkingRentHome.instance.parkingLot}"
+						required="true">
+						<s:selectItems value="#{parkingLotList.resultList}"
+							var="parkingLot" label="#{parkingLot.name}" />
+						<s:convertEntity></s:convertEntity>
+					</h:selectOneMenu>
+				</s:decorate>
+			
+
+				<g:residentChooser id="subscriberChooser"
+						resident="#{parkingRentHome.instance.contract.subscriber}"
+						criteria="#{parkingRentHome.criteria}" bean="#{parkingRentHome}"
+						label="#{messages['parkingRent.subscriber']}"
+						searchAction="searchOwner"
+						residentsList="#{parkingRentHome.residents}"
+						identificationNumber="#{parkingRentHome.identificationNumber}"
+						searchByCriteriaAction="searchOperatorByCriteria"
+						clearSearchPanelAction="clearSearchPanel"
+						residentChosenListenerName="operatorSelectedListener" />
+
+				<s:decorate id="employeeField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['parking.isMunicipalEmployee']}?:</ui:define>
+					<h:selectBooleanCheckbox id="isMunicipalEmployee"
+						value="#{parkingRentHome.instance.isMunicipalEmployee}" />
+				</s:decorate>
+
+				<s:decorate id="referenceField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.reference']}:</ui:define>
+					<h:inputText id="referenceId" value="#{parkingRentHome.instance.reference}" size="60"/>
+				</s:decorate>
+
+				<s:decorate id="SuscriptionDate" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['parking.journal.start']}</ui:define>
+					<rich:calendar showWeekDaysBar="false" showFooter="false"
+						value="#{parkingRentHome.instance.contract.subscriptionDate}" datePattern="#{messages['common.dateYearMonth']}"						
+						styleClass="special" required="true" oncurrentdateselected="event.rich.component.selectDate(event.rich.date)">	
+						<a:support event="onchanged" ajaxSingle="true" reRender="ExpirationDate" action="#{parkingRentHome.calculateExpirationDate()}" ></a:support>					
+					</rich:calendar>
+				</s:decorate>
+				
+				<s:decorate id="paymentsField" template="../layout/edit.xhtml" rendered="#{!readOnly}">
+							<ui:define name="label">#{messages['parking.monthsNumber']}:</ui:define>
+							<rich:inputNumberSpinner id="months" minValue="1" required="true"
+								value="#{parkingRentHome.payments}"
+								inputSize="4" maxValue="48">
+								<a:support event="onchange" ajaxSingle="true"
+									reRender="ExpirationDate"
+									action="#{parkingRentHome.calculateExpirationDate()}"></a:support>
+							</rich:inputNumberSpinner>
+				</s:decorate>
+
+				<s:decorate id="ExpirationDate" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['parking.journal.end']}</ui:define>
+					<rich:calendar showWeekDaysBar="false" showFooter="false" datePattern="#{messages['common.dateYearMonth']}"
+						value="#{parkingRentHome.instance.contract.expirationDate}"						
+						oncurrentdateselected="event.rich.component.selectDate(event.rich.date)"
+						styleClass="special" required="true" disabled="true"
+						requiredMessage="Expiration month and year should be selected.">
+						<a:support event="onchanged" ajaxSingle="true"
+									></a:support>						
+					</rich:calendar>
+				</s:decorate>		
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+
+			<div class="actionButtons">
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{parkingRentHome.persist}"
+					disabled="#{!parkingRentHome.wired}"
+					rendered="#{!parkingRentHome.managed and !readOnly}" />
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{parkingRentHome.update}"
+					rendered="#{parkingRentHome.managed and !readOnly}" />
+				<h:commandButton id="delete" value="#{messages['common.delete']}"
+					action="#{parkingRentHome.remove}" immediate="true"
+					rendered="#{parkingRentHome.managed and !readOnly}" />
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/parking/ParkingRentList.xhtml"
+					rendered="#{parkingRentHome.managed and !readOnly}" />
+
+				<s:button id="back" bypassDisabled="true"
+					value="#{messages['common.back']}" propagation="none"
+					view="/parking/ParkingRentList.xhtml" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

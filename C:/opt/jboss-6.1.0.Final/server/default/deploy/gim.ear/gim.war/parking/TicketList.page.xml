@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd" 
+      login-required="true">
+      
+      <param name="firstResult" value="#{ticketList.firstResult}"/>
+   <param name="sort" value="#{ticketList.orderColumn}"/>
+   <param name="dir" value="#{ticketList.orderDirection}"/>
+   <param name="logic" value="#{ticketList.restrictionLogicOperator}"/>
+
+   <param name="from"/>
+   <param name="criteria" value="#{ticketList.criteria}"/>
+   <param name="id" value="#{ticketList.id}"/>
+   <param name="parkingLot" value="#{ticketList.parkingLot}"/>
+   <param name="invalidated" value="#{ticketList.invalidated}"/>
+   <param name="start" value="#{ticketList.coming}"/>
+   <param name="end" value="#{ticketList.going}"/>
+</page>

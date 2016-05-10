@@ -1,0 +1,134 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="territorialDivision" styleClass="edit">
+    	<h:outputText styleClass="formTitle" value="#{messages['territorialDivision.editFormTitle']}" />
+
+        <rich:panel>
+            <f:facet name="header">#{messages['territorialDivision.title']}</f:facet>
+
+            <s:decorate id="territorialDivisionTypeField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['territorialDivision.territorialDivisionType']}</ui:define>
+                <h:inputText id="territorialDivisionType"
+                       required="true"
+                           size="15"
+                      maxlength="15"
+                          value="#{territorialDivisionHome.instance.territorialDivisionType.name}"
+                          disabled="true">
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="codeField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['territorialDivision.code']}</ui:define>
+                <h:inputText id="code"
+                       required="true"
+                           size="10"
+                      maxlength="10"
+                          value="#{territorialDivisionHome.instance.code}"/>
+            </s:decorate>
+
+
+            <s:decorate id="nameField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['territorialDivision.name']}</ui:define>
+                <h:inputText id="name"
+                       required="true"
+                           size="25"
+                      maxlength="25"
+                          value="#{territorialDivisionHome.instance.name}"/>
+            </s:decorate>
+
+
+
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                #{messages['territorialDivision.requiredFields']}
+            </div>
+
+        </rich:panel>
+
+        
+    <rich:panel rendered="#{territorialDivisionHome.childrenTerritorialDivisionType != null}">
+    		<f:facet name="header">
+        	<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText value="#{messages['territorialDivision.territorialSubdivisions']}" />
+					<h:commandButton 
+						action="#{territorialDivisionHome.add}"
+						id="addTerritorialDivision"
+						value="#{messages['common.add']} #{territorialDivisionHome.childrenTerritorialDivisionType.name}">
+						<f:param name="territorialDivisionId" />
+						<a:support event="onclick" reRender="territorialDivisionsTable"/>
+					</h:commandButton>
+				</h:panelGrid>
+			</f:facet>
+
+            <h:outputText value="#{messages['territorialDivision.noTerritorialSubdivisions']}"
+                       rendered="#{empty territorialDivisionHome.territorialDivisions}"/>
+            <h:messages errorClass="errors"/>
+
+            <rich:dataTable value="#{territorialDivisionHome.territorialDivisions}"
+                           var="_territorialDivision"
+                      rendered="#{not empty territorialDivisionHome.territorialDivisions}"
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="territorialDivisionsTable">
+                <rich:column sortBy="#{_territorialDivision.name}" styleClass="action">
+                    <f:facet name="header">#{messages['territorialDivision.territorialDivisionType']}</f:facet>
+                    <h:outputText value="#{_territorialDivision.territorialDivisionType.name}" />
+                </rich:column>
+                <rich:column sortBy="#{_territorialDivision.code}" styleClass="action">
+                    <f:facet name="header">#{messages['territorialDivision.code']}</f:facet>
+                    <h:inputText value="#{_territorialDivision.code}" size="10" required="true"/>
+                </rich:column>
+                <rich:column sortBy="#{_territorialDivision.name}" styleClass="action">
+                    <f:facet name="header">#{messages['territorialDivision.name']}</f:facet>
+                    <h:inputText value="#{_territorialDivision.name}" size="25" required="true"/>	
+                </rich:column>
+                <rich:column styleClass="action">
+                    <f:facet name="header">#{messages['common.action']}</f:facet>
+                    <h:commandButton immediate="true" 
+						action="#{territorialDivisionHome.remove(_territorialDivision)}"
+						id="removeTerritorialDivision"
+						value="#{messages['common.remove']}">
+						<f:param name="territorialDivisionId" />
+						<a:support event="onclick" reRender="territorialDivisionsTable"/>
+					</h:commandButton>
+                </rich:column>
+            </rich:dataTable>
+
+    </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{territorialDivisionHome.persist}"
+                       disabled="#{!territorialDivisionHome.wired}"
+                       rendered="#{!territorialDivisionHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{territorialDivisionHome.update}"
+                       rendered="#{territorialDivisionHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/cadaster/TerritorialDivisionList.xhtml"/>
+
+        </div>
+
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,283 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<style type="text/css">
+.foo td {
+	vertical-align: top;
+}
+</style>
+		<h:form id="retention" styleClass="edit">
+			<h:outputText styleClass="formTitle"
+				value="#{messages['institutionServiceList.title']}" />
+
+			<rich:panel>
+
+				<f:facet name="header">
+					#{messages['institutionservice.companyData']}
+				</f:facet>
+
+				<s:decorate id="companyName" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.name']}</ui:define>
+					<h:inputText id="name" required="true" size="60" maxlength="60"
+						value="#{institutionServiceHome.instance.name}"
+						style="text-transform: uppercase">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="companyIsMatrix" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['institutionService.ismatrix']}</ui:define>
+					<h:selectBooleanCheckbox id="matrix"
+						value="#{institutionServiceHome.instance.isMatrix}" >
+						<a:support event="onclick" action="#{institutionServiceHome.fijarBranch}"
+						ajaxSingle="true" reRender="matrizSelecDec, companyResolution, rucNumber, companyEmail, companyHasAcoountingRecords"  />
+					</h:selectBooleanCheckbox>	
+				</s:decorate>
+ 
+
+				<s:decorate id="matrizSelecDec" template="../layout/edit.xhtml" >
+					<ui:define name="label">#{messages['institutionService.branch']}</ui:define>
+					<h:selectOneMenu id="matrizSelect" required="true"
+					 disabled="#{!institutionServiceHome.branch}"
+						value="#{institutionServiceHome.instance.parent}">
+						<s:selectItems value="#{institutionParent}" var="parent"
+							label="#{parent.name}" />
+						<a:support event="click" ajaxSingle="true" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="rucNumber" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['institutionService.ruc']}</ui:define>
+					<h:inputText id="ruc" required="#{!institutionServiceHome.branch}" size="60" maxlength="60"
+						value="#{institutionServiceHome.instance.ruc}" 
+						disabled="#{institutionServiceHome.branch}"
+						style="text-transform: uppercase">
+					</h:inputText>
+				</s:decorate>
+
+
+
+				<s:decorate id="companyAddress" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['institutionService.address']}</ui:define>
+					<h:inputText id="address" required="true" size="60" maxlength="60"
+						value="#{institutionServiceHome.instance.address}">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="companyEmail" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['institutionService.email']}</ui:define>
+					<h:inputText id="email" required="#{!institutionServiceHome.branch}" size="60" maxlength="60"
+						value="#{institutionServiceHome.instance.email}">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="companyPhone" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['institutionService.phone']}</ui:define>
+					<h:inputText id="email" required="true" size="60" maxlength="60"
+						value="#{institutionServiceHome.instance.phone}">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="companyResolution" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['institutionService.resolution']}</ui:define>
+					<h:inputText id="resolution" required="#{!institutionServiceHome.branch}" size="60"
+						maxlength="60" disabled="#{institutionServiceHome.branch}"
+						value="#{institutionServiceHome.instance.resolution}">
+					</h:inputText>
+				</s:decorate>
+
+
+
+				<s:decorate id="companyHasAcoountingRecords"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['institutionService.hasAccounting']}</ui:define>
+					<h:selectBooleanCheckbox id="matrix" disabled="#{institutionServiceHome.branch}"
+						value="#{institutionServiceHome.instance.accountingRecords}" />
+				</s:decorate>
+
+
+
+
+				<div style="clear: both"></div>
+			</rich:panel>
+
+			<rich:panel id="complementPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText id="complementVoucherCount"
+							value="#{messages['institutionService.complements']}" />
+						<s:div styleClass="actionButtons" rendered="#{empty from}">
+							<a:commandButton
+								value="#{messages['common.add']} #{messages['electronicVoucher.addDetail']}"
+								action="#{institutionServiceHome.newComplementVoucher()}"
+								ajaxSingle="true" reRender="complementDetailPanel"
+								oncomplete="Richfaces.showModalPanel('complementDetailPanel')">
+							</a:commandButton>
+						</s:div>
+					</h:panelGrid>
+				</f:facet>
+
+				<rich:dataTable id="complementList" var="complement"
+					value="#{institutionServiceHome.instance.complementVoucherList}"
+					onRowMouseOver="this.style.backgroundColor='#{messages['rowBackgroundColor']}'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+					<rich:column>
+						<f:facet name="header">#{messages['common.name']}</f:facet>
+						<h:outputText value="#{complement.name}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['institutionService.institutionnumber']}</f:facet>
+						<h:outputText value="#{complement.institutionNumber}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['institutionService.emisionPointNumber']}</f:facet>
+						<h:outputText value="#{complement.emisionPointNumber}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['institutionService.person']}</f:facet>
+						<h:outputText value="#{complement.person.name}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['institutionService.vouchers']}</f:facet>
+						<ui:repeat var="type" value="#{complement.typesemiEmissionPointsList}">
+							<h:outputText value="#{type.complementVoucherType.name}" />
+							<h:outputText value="&lt;br/&gt;" escape="false" />
+						</ui:repeat>
+					</rich:column>
+						 
+					 
+					<rich:column>
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<a:commandButton value="#{messages['common.remove']}"
+							action="#{institutionServiceHome.removeComplementVoucher(complement)}"
+							ajaxSingle="true" reRender="complementList">
+						</a:commandButton>
+					</rich:column>
+				</rich:dataTable>
+			</rich:panel>
+
+			<div class="actionButtons">
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{institutionServiceHome.persist}"
+					disabled="#{!institutionServiceHome.wired}"
+					rendered="#{!institutionServiceHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{institutionServiceHome.update}"
+					rendered="#{institutionServiceHome.managed}" />
+
+				<!-- h:commandButton id="delete" value="Delete"
+					action="# { marketHome.remove}" immediate="true"
+					rendered="# { electronicVoucherHome.managed}" / -->
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/electronicvoucher/InstitutionServiceList.xhtml" />
+			</div>
+		</h:form>
+
+
+		<!-- Cuadro de dialogo -->
+		<rich:modalPanel id="complementDetailPanel" width="700" height="340"
+			style="overflow:auto">
+			<h:form id="complementType" styleClass="edit">
+				<rich:panel>
+					<f:facet name="header">
+						<h:panelGroup>
+							<h:outputText
+								value="#{messages['institutionService.complementVoucher']}"></h:outputText>
+						</h:panelGroup>
+					</f:facet>
+					<s:decorate id="complementNameDec" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['common.name']}</ui:define>
+						<h:inputText id="complementName" required="true" size="60"
+							maxlength="60" value="#{institutionServiceHome.complement.name}"
+							style="text-transform: uppercase">
+							<a:support event="onblur" ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+					<s:decorate id="complementInstNumberDec"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['institutionService.institutionnumber']}</ui:define>
+						<h:inputText id="complementName" required="true" size="60"
+							maxlength="60"
+							value="#{institutionServiceHome.complement.institutionNumber}"
+							style="text-transform: uppercase">
+							<a:support event="onblur" ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+
+
+					<s:decorate id="complementEmissionPointDec"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['institutionService.emisionPointNumber']}</ui:define>
+						<h:inputText id="complementName" required="true" size="60"
+							maxlength="60"
+							value="#{institutionServiceHome.complement.emisionPointNumber}"
+							style="text-transform: uppercase">
+							<a:support event="onblur" ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="personDec" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['institutionService.person']}</ui:define>
+						<h:inputText id="value" label="#{messages['criteria']}"
+							styleClass="uppercase" size="50">
+						</h:inputText>
+
+						<a:region>
+							<rich:suggestionbox for="value"
+								suggestionAction="#{institutionServiceHome.searchResident}"
+								var="person" height="150" width="500">
+								<f:facet name="nothingLabel">
+									<h:outputText
+										value="#{messages['No_existe_usuario']}" />
+								</f:facet>
+								<a:support event="onselect"
+									action="#{institutionServiceHome.addResident(person)}" />
+								<h:column>
+									<h:outputText value=" #{person.name} #{person.lastName} - #{person.identificationNumber}" />
+								</h:column>
+							</rich:suggestionbox>
+						</a:region>
+					</s:decorate>
+					
+					<s:decorate id="complementTypeDec" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['institutionService.complementType']}</ui:define>
+						 <h:selectManyCheckbox 
+						 	id="complementTypeSelect" required="true"
+						 	value="#{institutionServiceHome.types}" layout="pageDirection">
+					        <s:selectItems value="#{typesEmission}" var="compType"
+								label="#{compType.name}" >
+							</s:selectItems>
+							<a:support event="onchange" ajaxSingle="true"/>
+							<s:convertEntity />
+					    </h:selectManyCheckbox> 
+					</s:decorate>
+
+					<div style="clear: both"></div>
+					<div class="actionButtons">
+						<a:commandButton ajaxSingle="true"
+							action="#{institutionServiceHome.addComplementVoucher()}"
+							value="#{messages['common.save']}" reRender="complementList"
+							oncomplete="Richfaces.hideModalPanel('complementDetailPanel');"
+							bypassUpdates="true" />
+					</div>
+				</rich:panel>
+			</h:form>
+		</rich:modalPanel>
+	</ui:define>
+</ui:composition>

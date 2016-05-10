@@ -1,0 +1,148 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="municipalBondSearch" styleClass="edit">
+			<h:outputText styleClass="formTitle" style="font-weight:bold; font-size:20px"
+				value="#{messages['revenue.solvencyCertificate']}" />
+
+		
+		<h:panelGrid columns="2" width="100%" columnClasses="topAligned,topAligned">
+		
+			<rich:panel id="mainPanel" >
+				<f:facet name="header">
+					<h:outputText styleClass="formTitle" style="font-weight:bold; font-size:15px"
+						value="Datos del Contribuyente" />
+				</f:facet>
+
+
+				<s:decorate id="typeField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['revenue.solvencyReportType']}</ui:define>
+					<h:selectOneMenu id="reportType" required="true"
+						value="#{solvencyReportHome.solvencyReportType}">
+						<s:selectItems value="#{solvencyReports}" required="true" var="type"
+							label="#{messages[type.name()]}"/>
+						<s:convertEnum></s:convertEnum>
+						<a:support event="onchange" ajaxSingle="true" reRender="mainPanel" />
+					</h:selectOneMenu>
+				</s:decorate>
+				
+				
+				<g:residentChooser id="residentChooser"
+					resident="#{solvencyReportHome.resident}"
+					criteria="#{solvencyReportHome.criteria}"
+					bean="#{solvencyReportHome}" searchAction="searchResident"
+					residentsList="#{solvencyReportHome.residents}"
+					identificationNumber="#{solvencyReportHome.identificationNumber}"
+					searchByCriteriaAction="searchResidentByCriteria"
+					clearSearchPanelAction="clearSearchResidentPanel"
+					residentChosenListenerName="residentSelectedListener"
+					reRender="entryChooser-name, entryChooser-entryCode, entryChooser-openSearchPanelBtn,contentPanel,search" />
+				
+				<a:outputPanel id="entryPanel" ajaxRendered="false" rendered="#{solvencyReportHome.solvencyReportType.equals(solvencyReportHome.solvencyReportByEntry)}">
+				<g:entryChooser id="entryChooser" label="#{messages['entry']}"
+					criteria="#{solvencyReportHome.criteriaEntry}"
+					entry="#{solvencyReportHome.entry}"					
+					entryCode="#{solvencyReportHome.entryCode}"
+					disabled="#{solvencyReportHome.resident == null}"
+					bean="#{solvencyReportHome}" searchAction="searchEntry"
+					entriesList="#{solvencyReportHome.entries}"
+					searchByCriteriaAction="searchEntryByCriteria"
+					clearSearchPanelAction="clearSearchEntryPanel"
+					entryChosenListenerName="entrySelectedListener"
+					reRender="messages,entryChooser-entryCode,entryChooser-name,codeField, mainPanel,contentPanel" />
+					</a:outputPanel>
+				
+				<s:decorate  id="codeField" template="../layout/display.xhtml" rendered="#{not empty solvencyReportHome.entry and false}">
+					<ui:define name="label">#{solvencyReportHome.entry.groupingCodeLabel}:</ui:define>
+					<h:inputText id="name" value="#{solvencyReportHome.code}">
+						<a:support event="onblur" ajaxSingle="true"/>
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="motivationField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['solvencyHistory.motivation']}:</ui:define>
+					<h:inputText id="motivation" size="25" maxlength="50"
+						value="#{solvencyReportHome.motivation}" required="true" disabled="true" />
+				</s:decorate>
+				
+				<s:decorate id="observation" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['solvencyHistory.observation']}:</ui:define>
+					<h:inputText id="obs" size="70" maxlength="100"
+						value="#{solvencyReportHome.observation}" >
+					</h:inputText>
+				</s:decorate>
+
+				<div style="clear: both" />
+			</rich:panel>
+
+			<rich:panel id="mainPanel2" columnClasses="topAligned">
+				<f:facet name="header">
+					<h:outputText styleClass="formTitle"  style="font-weight:bold; font-size:15px"
+						value="Datos del Solicitante" />
+				</f:facet>
+				
+				<g:residentChooser id="applicantChooser"
+					resident="#{solvencyReportHome.applicant}"
+					criteria="#{solvencyReportHome.criteria}"
+					bean="#{solvencyReportHome}" searchAction="searchApplicant"
+					residentsList="#{solvencyReportHome.residents}"
+					identificationNumber="#{solvencyReportHome.applicantIdentificationNumber}"
+					searchByCriteriaAction="searchResidentByCriteria"
+					clearSearchPanelAction="clearSearchResidentPanel"
+					residentChosenListenerName="applicantSelectedListener"
+					reRender="entryChooser-name, entryChooser-entryCode, entryChooser-openSearchPanelBtn,contentPanel,search" />
+				<div style="clear: both" />
+			</rich:panel>
+			
+				
+			<div style="clear: both" />
+		</h:panelGrid>
+
+			
+
+			<div class="actionButtons">
+			<a:region>
+				<h:commandButton id="search" value="Generar" reRender="messages, contentPanel, cleanMessage"
+					action="#{municipalBondHome.buildDirectMunicipalBonds()}"
+					disabled="#{empty solvencyReportHome.resident}" />
+			</a:region>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none" 
+					action="#{solvencyReportHome.enableButton()}" />
+					
+				<h:outputText id="cleanMessage" style="font-weight:bold; font-size:10px; color:red" 	
+						rendered="#{!solvencyReportHome.buttonGenerate}"
+						value="Limpie los datos" />
+			</div>
+			
+			<rich:panel id="contentPanel">
+				<a:outputPanel ajaxRendered="true">
+					<h:outputText style="font-weight:bold; font-size:25px; color:#FF0000" 	
+						rendered="#{not empty solvencyReportHome.municipalBonds and not empty solvencyReportHome.resident and solvencyReportHome.isReadyForPrint}"
+						value="#{messages['payment.cccountsReceivableFound']}" />
+						
+					<h:outputText style="font-weight:bold; font-size:25px; color:red" 	
+						rendered="#{solvencyReportHome.alertsActives}"
+						value="El contribuyente tiene alertas activas" />
+						<div style="clear: both" />
+					<h:outputText style="font-weight:bold; font-size:15px; color:black" 	
+						rendered="#{solvencyReportHome.alertsActives}"
+						value="Detalle: #{solvencyReportHome.alerts.get(0).openDetail}" />
+				</a:outputPanel>
+			</rich:panel>
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

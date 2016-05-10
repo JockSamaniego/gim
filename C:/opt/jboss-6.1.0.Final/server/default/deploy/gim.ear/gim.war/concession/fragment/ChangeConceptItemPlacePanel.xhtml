@@ -1,0 +1,70 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="changeConceptItemPlacePanel" width="550"
+		height="170">
+
+		<f:facet name="header">
+			<h:panelGroup style="background-color:#00ff00;font-size:13px;">
+				<h:outputText
+					value="(#{concessionGroupHome.year} - #{messages[concessionGroupHome.month.name()]} )"
+					id="tittleChangePanelEdit" />
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink2232" />
+				<rich:componentControl for="changeConceptItemPlacePanel"
+					attachTo="hidelink2232" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="changeConceptItemPlacePanelForm">
+
+			<a:region>
+
+				<fieldset>
+					<legend id="itmePanel">Cambio de concepto</legend>
+
+					<s:decorate id="conceptField" template="../../layout/edit.xhtml">
+						<ui:define name="label">Concepto</ui:define>
+						<h:inputText id="concept" required="true" size="45" maxlength="80"
+							value="#{concessionGroupHome.generalConcept}"
+							style="text-transform: uppercase">
+							<a:support event="onblur" reRender="conceptField"
+								ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+				</fieldset>
+			</a:region>
+
+			<div style="clear: both">
+				<span class="required">*</span> #{messages['common.requiredFields']}
+			</div>
+
+			<h:panelGrid columns="10" style="text-align:right">
+
+				<s:button value="#{messages['common.save']}"
+					view="/concession/ConcessionGroupListEmission.xhtml"
+					propagation="end"
+					action="#{concessionGroupHome.updateGeneralConcept()}"></s:button>
+
+				<a:commandButton value="#{messages['common.quit']}"
+					ajaxSingle="true"
+					oncomplete="Richfaces.hideModalPanel('changeConceptItemPlacePanel');"
+					action="#{concessionGroupHome.clearSearchResidentPanel()}" />
+
+			</h:panelGrid>
+
+		</h:form>
+
+	</rich:modalPanel>
+</ui:composition>

@@ -1,0 +1,77 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+		<f:verbatim>
+			<script type="text/javascript">
+
+			    function performScriptAction(modalPanelId, functionName){
+			    	Richfaces.hideModalPanel(modalPanelId);
+			    	if(functionName){
+			    		executeFunctionByName(functionName, window);
+				    }
+				}
+
+			    
+				function executeFunctionByName(functionName, context /*, args */) {
+				  var args = Array.prototype.slice.call(arguments).splice(2);
+				  var namespaces = functionName.split(".");
+				  var func = namespaces.pop();
+				  for(var i = 0; i != namespaces.length; i++) {
+				    context = context[namespaces[i]];
+				  }
+				  return context[func].apply(this); //, args);
+				}
+			</script>
+		</f:verbatim>
+
+
+	<rich:modalPanel id="#{id}_confirmDialog" width="300" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText
+					value="#{dialogTitle}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		
+		<h:form id="#{id}_confirm">
+			<h:panelGrid>
+				<!-- rich:panel style="height:40px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel -->
+				<h:panelGrid columns="2">
+					<h:graphicImage value="/img/alert.png" />
+					<h:outputText value="#{message}"
+						style="font-size:large;" />
+				</h:panelGrid>
+				
+				<h:panelGroup>
+					<div class="actionButtons">
+						<a:commandButton 
+							style="width:50px" 
+							id="#{id}_removeId"
+							action="#{bean[yesAction]}" 
+							reRender="#{not empty reRenderComponents ? reRenderComponents : null}"
+							value="#{messages['common.yes']}"
+							oncomplete="#{oncomplete}" 
+							ajaxSingle="true"/>
+
+						<a:commandButton id="#{id}_noRemoveId" ajaxSingle="true"
+							style="width:50px" value="#{messages['common.no']}"
+							oncomplete="Richfaces.hideModalPanel('#{id}_confirmDialog');"
+							bypassUpdates="true" />
+					</div>
+				</h:panelGroup>
+			</h:panelGrid>
+		</h:form>	
+		
+	</rich:modalPanel>
+
+</ui:composition>

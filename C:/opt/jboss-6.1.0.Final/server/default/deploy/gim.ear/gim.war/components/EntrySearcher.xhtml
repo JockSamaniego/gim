@@ -1,0 +1,55 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel id="#{id}">
+		<f:facet name="header">#{title}</f:facet>
+
+		<s:decorate id="#{id}-entryField" template="../layout/edit.xhtml">
+			<ui:define name="label">#{label}:</ui:define>
+			<h:inputText id="#{id}-entry" size="55" value="#{entry.name}" required="true"
+				disabled="#{not empty disabled ? disabled : 'false'}">
+				<a:support event="onblur" reRender="#{id}-entryField"
+					ajaxSingle="true" />
+			</h:inputText>
+
+			<rich:suggestionbox for="#{id}-entry"
+				suggestionAction="#{entryControl.findCriteria}" width="375" var="_entry"
+				fetchValue="#{_entry.name}"
+				nothingLabel="#{messages['revenue.shouldEntrySelect']}"
+				minChars="2">
+				<h:column>
+					<h:outputText value="#{_entry.name}" />
+				</h:column>
+				<h:column>
+					<h:outputText value="#{_entry.code}" />
+				</h:column>
+				<h:column>
+					<h:outputText value="#{_entry.account.budgetCertificateCode}" />
+				</h:column>
+				<a:support event="onselect"
+					action="#{ELEvaluator.evaluateMethodBinding(action)}"
+					reRender="#{id}-entry #{not empty reRender ? ',' : ''} #{not empty reRender ? reRender : ''}"
+					ajaxSingle="true" 
+					eventsQueue="gimQueue"/>
+				<a:support event="onobjectchange"
+					action="#{ELEvaluator.evaluateMethodBinding(action)}"
+					reRender="#{id}-entry #{not empty reRender ? ',' : ''} #{not empty reRender ? reRender : ''}"
+					ajaxSingle="true" 
+					eventsQueue="gimQueue"/>
+			</rich:suggestionbox>
+
+		</s:decorate>
+
+		<div style="clear: both"><span class="required">*</span>
+		#{messages['common.requiredFields']}</div>
+	</rich:panel>
+
+</ui:composition>

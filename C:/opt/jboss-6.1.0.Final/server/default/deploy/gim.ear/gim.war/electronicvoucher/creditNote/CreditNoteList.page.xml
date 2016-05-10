@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd" login-required="true">
+
+	<begin-conversation flush-mode="MANUAL" join="true" />
+	<param name="routeFrom" />
+	
+	<param name="firstResult" value="#{creditNoteElectList.firstResult}" />
+	<param name="sort" value="#{creditNoteElectList.orderColumn}" />
+	<param name="dir" value="#{creditNoteElectList.orderDirection}" />
+	<param name="logic" value="#{creditNoteElectList.restrictionLogicOperator}" />
+
+	<param name="from" /> 
+	<param name="sequentialNumber" value="#{creditNoteElectList.sequentialNumber}" />
+	<param name="emissionDate" value="#{creditNoteElectList.emissionDate}" />
+	
+</page>

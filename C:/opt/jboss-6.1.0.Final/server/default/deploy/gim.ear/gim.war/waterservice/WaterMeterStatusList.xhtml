@@ -1,0 +1,133 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="waterMeterStatusSearch" styleClass="edit">
+
+			<rich:simpleTogglePanel label="#{messages['waterMeterStatus.manageWaterMeterStatus']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['waterMeterStatus.name']}</ui:define>
+					<h:inputText id="name"
+						value="#{waterMeterStatusList.waterMeterStatus.name}" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/waterservice/WaterMeterStatusList.xhtml" >
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['waterMeterStatusList.searchResults']} (#{empty waterMeterStatusList.resultList ? 0 : (waterMeterStatusList.paginated ? waterMeterStatusList.resultCount : waterMeterStatusList.resultList.size)})" />
+					<s:div styleClass="actionButtons" rendered="#{empty from}">
+						<s:button view="/waterservice/WaterMeterStatusEdit.xhtml"
+							id="create" propagation="none"
+							value="#{messages['common.create']} #{messages['waterMeterStatus']}">
+							<f:param name="waterMeterStatusId" />
+						</s:button>
+					</s:div>
+				</h:panelGrid>
+			</f:facet>
+			<div class="results" id="waterMeterStatusList">
+
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty waterMeterStatusList.resultList}" />
+
+				<rich:dataTable id="waterMeterStatusList" var="_waterMeterStatus"
+					value="#{waterMeterStatusList.resultList}"
+					rendered="#{not empty waterMeterStatusList.resultList}">
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{waterMeterStatusList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['waterMeterStatus.id']}" />
+								<ui:param name="propertyPath" value="waterMeterStatus.id" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_waterMeterStatus.id}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{waterMeterStatusList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['waterMeterStatus.name']}" />
+								<ui:param name="propertyPath" value="waterMeterStatus.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_waterMeterStatus.name}" />
+					</h:column>
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+
+						<s:button view="/waterservice/WaterMeterStatusEdit.xhtml"
+							value="#{messages['common.edit']}" propagation="none"
+							id="waterMeterStatusEdit" rendered="#{empty from}">
+							<f:param name="waterMeterStatusId"
+								value="#{_waterMeterStatus.id}" />
+						</s:button>
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/waterservice/WaterMeterStatusEdit.xhtml"
+				rendered="#{waterMeterStatusList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/waterservice/WaterMeterStatusEdit.xhtml"
+				rendered="#{waterMeterStatusList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult"
+					value="#{waterMeterStatusList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/waterservice/WaterMeterStatusEdit.xhtml"
+				rendered="#{waterMeterStatusList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult"
+					value="#{waterMeterStatusList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/waterservice/WaterMeterStatusEdit.xhtml"
+				rendered="#{waterMeterStatusList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult"
+					value="#{waterMeterStatusList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

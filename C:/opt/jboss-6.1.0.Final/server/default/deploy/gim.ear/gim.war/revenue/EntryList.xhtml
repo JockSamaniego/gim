@@ -1,0 +1,206 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="entrySearch" styleClass="edit">
+    
+    	<h:outputText styleClass="formTitle" value="#{messages['entry.manager']}" />
+
+        <rich:simpleTogglePanel label="#{messages['entry.searchFilter']}" switchType="ajax">
+            
+            <s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['common.criteria']}</ui:define>
+					<h:inputText id="criteria" value="#{entryList.criteria}" size="50" maxlength="50"/>
+				</s:decorate>
+
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="#{messages['common.search']}" 
+            	action="/revenue/EntryList.xhtml">
+                <f:param name="firstResult" value="0"/>
+            </h:commandButton>
+            <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">
+        	<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText
+						value="#{messages['entry.searchResults']} (#{empty entryList.resultList ? 0 : (entryList.paginated ? entryList.resultCount : entryList.resultList.size)})" />
+				<s:div styleClass="actionButtons" rendered="#{empty from}">
+					<s:button view="/revenue/EntryEdit.xhtml" id="create"
+						propagation="none" value="#{messages['common.create']} #{messages['entry']}">
+						<f:param name="entryId" />						
+					</s:button>
+				</s:div>
+			</h:panelGrid>        
+        </f:facet>
+
+    	<div class="results" id="entryList">
+
+	    	<h:outputText value="#{messages['entry.searchReturnedNoResults']}."
+	               rendered="#{empty entryList.resultList}"/>
+	
+		    <rich:dataTable id="entryList"
+		                var="_entry"
+		              value="#{entryList.resultList}"
+		           rendered="#{not empty entryList.resultList}">
+		        <h:column>
+		            <f:facet name="header">
+		                <ui:include src="../layout/sort.xhtml">
+		                    <ui:param name="entityList" value="#{entryList}"/>
+		                    <ui:param name="propertyLabel" value="Id"/>
+		                    <ui:param name="propertyPath" value="entry.id"/>
+		                </ui:include>
+		            </f:facet>
+		            <h:outputText value="#{_entry.id}"/>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">
+		                <ui:include src="../layout/sort.xhtml">
+		                    <ui:param name="entityList" value="#{entryList}"/>
+		                    <ui:param name="propertyLabel" value="#{messages['entry.code']}"/>
+		                    <ui:param name="propertyPath" value="entry.code"/>
+		                </ui:include>
+		            </f:facet>
+		            <h:outputText value="#{_entry.code}"/>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">
+		                <ui:include src="../layout/sort.xhtml">
+		                    <ui:param name="entityList" value="#{entryList}"/>
+		                    <ui:param name="propertyLabel" value="cod Anterior"/>
+		                    <ui:param name="propertyPath" value="entry.previousCode"/>
+		                </ui:include>
+		            </f:facet>
+		            <h:outputText value="#{_entry.previousCode}"/>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">
+		                <ui:include src="../layout/sort.xhtml">
+		                    <ui:param name="entityList" value="#{entryList}"/>
+		                    <ui:param name="propertyLabel" value="#{messages['entry.name']}"/>
+		                    <ui:param name="propertyPath" value="entry.name"/>
+		                </ui:include>
+		            </f:facet>
+		            <h:outputText value="#{_entry.name}"/>
+		        </h:column>		        
+		        <h:column>
+		            <f:facet name="header">
+		                <ui:include src="../layout/sort.xhtml">
+		                    <ui:param name="entityList" value="#{entryList}"/>
+		                    <ui:param name="propertyLabel" value="#{messages['entry.budgetCertificate']}"/>
+		                    <ui:param name="propertyPath" value="entry.account.budgetCertificateCode"/>
+		                </ui:include>
+		            </f:facet>
+		            <h:outputText value="#{_entry.account.accountCode}"/>
+		        </h:column>
+		        
+		        <h:column>
+		            <f:facet name="header">
+		                <ui:include src="../layout/sort.xhtml">
+		                    <ui:param name="entityList" value="#{entryList}"/>
+		                    <ui:param name="propertyLabel" value="#{messages['entry.creationDate']}"/>
+		                    <ui:param name="propertyPath" value="entry.creationDate"/>
+		                </ui:include>
+		            </f:facet>
+		            <h:outputText value="#{_entry.creationDate}">
+		                <s:convertDateTime type="date" pattern="#{messages['common.datePattern']}" dateStyle="short"/>
+		            </h:outputText>
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">
+		                <ui:include src="../layout/sort.xhtml">
+		                    <ui:param name="entityList" value="#{entryList}"/>
+		                    <ui:param name="propertyLabel" value="#{messages['entry.type']}"/>
+		                    <ui:param name="propertyPath" value="entry.entryType"/>
+		                </ui:include>
+		            </f:facet>
+		            <h:outputText value="#{messages[_entry.entryType.name()]}"/>
+		        </h:column>
+		        
+		        <h:column>
+			            <f:facet name="header">
+			                <ui:include src="../layout/sort.xhtml">
+			                    <ui:param name="entityList" value="#{entryList}"/>
+			                    <ui:param name="propertyLabel" value="#{messages['timePeriod']}"/>
+			                    <ui:param name="propertyPath" value="entry.timePeriod.name"/>
+			                </ui:include>
+			            </f:facet>
+			            <h:outputText value="#{_entry.timePeriod.name}"/>
+			        </h:column>
+		        
+		        <rich:column styleClass="action">
+		            <f:facet name="header">#{messages['common.action']}</f:facet>
+		            <s:button view="/revenue/EntryEdit.xhtml"
+		                   value="#{messages['common.edit']} #{messages['entry']}"
+		             propagation="none"
+		                      id="entryEdit"
+		                rendered="#{empty from}">
+		                <f:param name="entryId"
+		                        value="#{_entry.id}"/>
+		            </s:button>
+		            #{' '}
+		            <s:button view="/revenue/EntryDefinitionEdit.xhtml"
+		                   value="#{messages['entryDefinition']}"
+		             propagation="none"
+		                      id="entryDefinitionEdit"
+		                rendered="#{empty from}">
+		                <f:param name="entryId"
+		                        value="#{_entry.id}"/>
+		            </s:button>
+		        </rich:column>
+		    </rich:dataTable>
+	
+	    </div>
+	</rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/revenue/EntryList.xhtml"
+            rendered="#{entryList.previousExists}"
+               value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/revenue/EntryList.xhtml"
+            rendered="#{entryList.previousExists}"
+               value="#{messages.left} #{messages['common.previousPage']}"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{entryList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/revenue/EntryList.xhtml"
+            rendered="#{entryList.nextExists}"
+               value="#{messages['common.nextPage']} #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{entryList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/revenue/EntryList.xhtml"
+            rendered="#{entryList.nextExists}"
+               value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{entryList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

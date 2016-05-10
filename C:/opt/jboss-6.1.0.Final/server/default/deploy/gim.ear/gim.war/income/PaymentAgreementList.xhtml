@@ -1,0 +1,132 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="paymentAgreementSearch" styleClass="edit">
+
+			<rich:simpleTogglePanel
+				label="#{messages['paymentAgreement.searcher']}" switchType="ajax">
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['paymentAgreement.criteria']}</ui:define>
+					<h:inputText id="criteria" value="#{paymentAgreementList.criteria}"
+						size="40" maxlength="40" />
+				</s:decorate>
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/income/PaymentAgreementList.xhtml">
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" />
+			</div>
+
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText value="#{messages['paymentAgreement.searchResults']}" />
+					<s:button view="/income/PaymentAgreementEdit.xhtml" id="create"
+						propagation="none" value="#{messages['paymentAgreement.create']}">
+						<f:param name="paymentAgreementId" />
+					</s:button>
+				</h:panelGrid>
+			</f:facet>
+			<div class="results" id="paymentAgreementAgreementList">
+
+				<h:outputText value="The payment search returned no results."
+					rendered="#{empty paymentAgreementList.resultList}" />
+
+				<rich:dataTable id="paymentAgreementAgreementList"
+					var="_paymentAgreement" value="#{paymentAgreementList.resultList}"
+					rendered="#{not empty paymentAgreementList.resultList}">
+					<h:column>
+						<f:facet name="header">
+            	#{messages['paymentAgreement.id']}
+            </f:facet>
+						<h:outputText value="#{_paymentAgreement.id}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+                #{messages['resident.identificationNumber']}
+            </f:facet>
+						<h:outputText
+							value="#{_paymentAgreement.resident.identificationNumber}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+                #{messages['resident.name']}
+            </f:facet>
+						<h:outputText value="#{_paymentAgreement.resident.name}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+            	#{messages['paymentAgreement.description']}
+            </f:facet>
+						<h:outputText value="#{_paymentAgreement.description}" />
+					</h:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+            			<s:button view="/income/PaymentAgreementEdit.xhtml"
+							value="#{messages['common.view']}" propagation="none"
+							id="paymentAgreementEdit" rendered="#{empty from}">
+							<f:param name="paymentAgreementId"
+								value="#{_paymentAgreement.id}" />
+						</s:button>
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/income/PaymentAgreementList.xhtml"
+				rendered="#{paymentAgreementList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}" id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/income/PaymentAgreementList.xhtml"
+				rendered="#{paymentAgreementList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}" id="previousPage">
+				<f:param name="firstResult"
+					value="#{paymentAgreementList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/income/PaymentAgreementList.xhtml"
+				rendered="#{paymentAgreementList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}" id="nextPage">
+				<f:param name="firstResult"
+					value="#{paymentAgreementList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/income/PaymentAgreementList.xhtml"
+				rendered="#{paymentAgreementList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}" id="lastPage">
+				<f:param name="firstResult"
+					value="#{paymentAgreementList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+		<s:div styleClass="actionButtons" rendered="#{empty from}">
+
+		</s:div>
+
+	</ui:define>
+
+</ui:composition>

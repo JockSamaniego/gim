@@ -1,0 +1,157 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="user" styleClass="edit">
+
+			<h:outputText styleClass="formTitle" value="#{messages['user.title']}" />
+			<rich:panel>
+			
+				<g:residentChooser 
+					id="residentChooser"
+					disabled="#{userHome.residentChooserHome.resident != null}"
+					resident="#{userHome.residentChooserHome.resident}"
+					residentsList="#{userHome.residentChooserHome.residents}"
+					identificationNumber="#{userHome.residentChooserHome.identificationNumber}"
+					criteria="#{userHome.residentChooserHome.criteria}" 
+					bean="#{userHome.residentChooserHome}"
+					searchByCriteriaAction="searchByCriteria"
+					clearSearchPanelAction="clearSearchPanel" 
+					searchAction="search"
+					residentChosenListenerName="residentSelectedListener"
+					reRender="emailField" />
+				
+				<s:decorate id="emailField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['resident.email']}</ui:define>
+					<h:inputText id="description" value="#{residentChooserHome.resident.email}" disabled="true"/>
+				</s:decorate>
+				
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['user.name']}</ui:define>
+					<h:inputText id="description" value="#{userHome.instance.name}" 
+						required="true" />
+				</s:decorate>
+
+				<s:decorate id="activeField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['user.isActive']}</ui:define>
+					<h:selectBooleanCheckbox id="active"
+						value="#{userHome.instance.isActive}" />
+				</s:decorate>
+				
+				<s:decorate id="blockedField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['user.isBlocked']}</ui:define>
+					<h:selectBooleanCheckbox id="blocked"
+						value="#{userHome.instance.isBlocked}" />
+				</s:decorate>
+
+				<s:decorate id="expirationDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['user.expirationDate']}</ui:define>
+					<rich:calendar id="expirationDate"
+						value="#{userHome.instance.expirationDate}"
+						datePattern="dd/MM/yyyy" />
+				</s:decorate>
+				
+				<s:decorate id="cashierField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['bank.cashier']}: </ui:define>
+					<h:inputText id="cashierid"
+						value="#{userHome.instance.cashierid}" />
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+
+			<rich:tabPanel id="rolesChildren">
+
+				<rich:tab label="#{messages['roles']}">
+
+					<h:outputText value="#{messages['roles.noResults']}"
+						rendered="#{empty userHome.instance.roles}" />
+
+					<h:panelGrid width="100%" id="pnlAddRole"
+						style="FONT-SIZE: xx-small;">
+						<s:decorate template="../layout/display.xhtml">
+
+							<ui:define name="label">#{messages['addRole']}:</ui:define>
+							<h:inputText id="value" label="#{messages['criteria']}"
+								styleClass="uppercase" size="100">
+							</h:inputText>
+							
+							<a:region>
+							<rich:suggestionbox for="value"
+								suggestionAction="#{userHome.searchRoleByName}" var="roleItem"
+								height="150" width="250">
+								<f:facet name="nothingLabel">
+									<h:outputText value="#{messages['nothingRoles']}" />
+								</f:facet>
+								<a:support event="onselect" reRender="rolesChildren"
+									action="#{userHome.addRole(roleItem)}" />
+								<h:column>
+									<h:outputText
+										value=" #{roleItem.name}  #{roleItem.description}" />
+								</h:column>
+							</rich:suggestionbox>
+							</a:region>
+						</s:decorate>
+					</h:panelGrid>
+
+					<rich:dataTable value="#{userHome.instance.roles}" var="_role"
+						rendered="#{not empty userHome.instance.roles}"
+						rowClasses="rvgRowOne,rvgRowTwo" id="rolesTable">
+						<rich:column sortBy="#{_role.name}">
+							<f:facet name="header">#{messages['role.name']}</f:facet>
+							<h:outputText value="#{_role.name}" />
+						</rich:column>
+						<rich:column sortBy="#{_role.description}">
+							<f:facet name="header">#{messages['role.description']}</f:facet>
+							<h:outputText value="#{_role.description}" />
+						</rich:column>
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<a:commandButton value="#{messages['common.remove']}"
+								action="#{userHome.removeRole(_role)}" reRender="rolesChildren"
+								ajaxSingle="true" />
+						</rich:column>
+					</rich:dataTable>
+
+				</rich:tab>
+			</rich:tabPanel>
+
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" 
+					value="#{messages['common.save']}" 
+					action="#{userHome.save()}"/>
+
+				<h:commandButton id="resetPassword" 
+					value="#{messages['common.resetPassword']}"
+					action="#{userHome.resetPassword()}" 
+					disabled="#{empty userHome.instance.resident.email}"
+					rendered="#{userHome.managed}" />
+
+				<s:button 
+					id="cancelEdit" 
+					view="/common/UserList.xhtml"
+					value="#{messages['common.cancel']}"
+					propagation="end" />
+			</div>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

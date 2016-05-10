@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      no-conversation-view-id="/ConnectionSiteList.xhtml"
+      login-required="true">
+
+   <begin-conversation join="true" flush-mode="MANUAL"/>
+
+   <action execute="#{connectionSiteHome.wire}"/>
+
+   <param name="connectionSiteFrom"/>
+   <param name="connectionSiteId" value="#{connectionSiteHome.connectionSiteId}"/>
+   <param name="streetFrom"/>
+   <param name="streetId" value="#{streetHome.streetId}"/>
+   <param name="sidewalkMaterialFrom"/>
+   <param name="sidewalkMaterialId" value="#{sidewalkMaterialHome.sidewalkMaterialId}"/>
+
+   <param name="streetMaterialFrom"/>
+   <param name="streetMaterialId" value="#{streetMaterialHome.streetMaterialId}"/>
+
+   <param name="streetTypeFrom"/>
+   <param name="streetTypeId" value="#{streetTypeHome.streetTypeId}"/>
+
+
+
+
+   <navigation from-action="#{connectionSiteHome.persist}">
+      <rule if-outcome="persisted">
+         <end-conversation/>
+         <redirect view-id="/ConnectionSite.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{connectionSiteHome.update}">
+      <rule if-outcome="updated">
+         <end-conversation/>
+         <redirect view-id="/ConnectionSite.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{connectionSiteHome.remove}">
+      <rule if-outcome="removed">
+         <end-conversation/>
+         <redirect view-id="/ConnectionSiteList.xhtml"/>
+      </rule>
+   </navigation>
+
+</page>

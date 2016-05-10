@@ -1,0 +1,298 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:include src="fragment/WaterMeterEditPanel.xhtml" />
+
+		<h:form id="waterSupplyForm" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['waterSupply.editFormTitle']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{messages['property']}</f:facet>
+				<g:propertyChooser id="propertyChooser"
+					property="#{waterSupplyHome.instance.property}"
+					criteria="#{waterSupplyHome.criteriaProperty}"
+					bean="#{waterSupplyHome}" searchAction="searchProperty"
+					propertyList="#{waterSupplyHome.properties}"
+					searchByCriteriaAction="searchPropertyByCriteria"
+					clearSearchPanelAction="clearSearchPropertyPanel"
+					propertyChosenListenerName="propertySelectedListener" />
+				<div style="clear: both"></div>
+			</rich:panel>
+
+			<h:panelGrid columns="2" width="100%">
+				<rich:panel>
+					<f:facet name="header">#{messages['waterSupply.serviceOwner']}</f:facet>
+
+
+					<g:residentChooser id="residentChooser"
+						resident="#{waterSupplyHome.instance.serviceOwner}"
+						criteria="#{waterSupplyHome.criteria}" bean="#{waterSupplyHome}"
+						searchAction="searchResident"
+						residentsList="#{waterSupplyHome.residents}"
+						identificationNumber="#{waterSupplyHome.identificationNumber}"
+						searchByCriteriaAction="searchResidentByCriteria"
+						clearSearchPanelAction="clearSearchResidentPanel"
+						residentChosenListenerName="residentSelectedListener" />
+					<div style="clear: both">
+						<span class="required">*</span>"#{messages['common.requiredFields']}"
+					</div>
+				</rich:panel>
+
+				<rich:panel>
+					<f:facet name="header">#{messages['waterSupply.recipeOwner']}</f:facet>
+					<g:residentChooser id="recipeOwner"
+						resident="#{waterSupplyHome.instance.recipeOwner}"
+						criteria="#{waterSupplyHome.criteria}" bean="#{waterSupplyHome}"
+						searchAction="searchRecipeOwner"
+						residentsList="#{waterSupplyHome.residents}"
+						identificationNumber="#{waterSupplyHome.identificationNumberRecipe}"
+						searchByCriteriaAction="searchResidentByCriteria"
+						clearSearchPanelAction="clearSearchRecipeOwnerPanel"
+						residentChosenListenerName="recipeOwnerSelectedListener" />
+					<div style="clear: both">
+						<span class="required">*</span>"#{messages['common.requiredFields']}"
+					</div>
+				</rich:panel>
+			</h:panelGrid>
+
+			<!--rich:panel>
+				<f:facet name="header">#{waterSupplyHome.managed ? messages['common.edit'] : messages['common.add']} #{messages['waterSupply.contract']}</f:facet>
+
+				<s:decorate id="subscriptionDateField"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['waterSupply.substractDate']}</ui:define>
+					<rich:calendar id="date" required="true"
+						value=" # { waterSupplyHome.instance.contract.subscriptionDate}"
+						datePattern="#{messages['common.datePattern']}"
+						renderer="#{waterSupplyHome.instance.contract!=null}" />
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>"#{messages['common.requiredFields']}"
+				</div>
+
+			</rich:panel-->
+
+			<rich:panel>
+				<f:facet name="header">#{messages['waterSupply.serviceInformation']}</f:facet>
+
+				<a:region>
+					<s:decorate id="streetField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['waterSupply.connectionStreet']}:</ui:define>
+						<h:inputText id="street" value="#{waterSupplyHome.streetName}"
+							size="40" />
+						<rich:suggestionbox id="suggestionId" for="street" width="300"
+							var="_street" usingSuggestObjects="true"
+							nothingLabel="#{messages['street.streetNotFound']}"
+							suggestionAction="#{waterSupplyHome.findStreets}" rules="none"
+							fetchValue="#{_street.name}">
+							<a:support event="onselect" ajaxSingle="true" immediate="true"
+								reRender="streetField"
+								action="#{waterSupplyHome.beforeAutcompleteStreet(_street)}" />
+							<a:support event="onobjectchange" ajaxSingle="true"
+								immediate="true"
+								action="#{waterSupplyHome.beforeAutcompleteStreet(_street)}" />
+							<h:column>
+								<h:outputText value="#{_street.name}" />
+							</h:column>
+						</rich:suggestionbox>
+					</s:decorate>
+				</a:region>
+
+
+				<s:decorate id="observationsField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['waterSupply.observations']}:</ui:define>
+					<h:inputTextarea id="observations"
+						value="#{waterSupplyHome.instance.observations}">
+					</h:inputTextarea>
+				</s:decorate>
+
+
+				<a:region>
+					<s:decorate id="routeField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['waterSupply.routeName']}:</ui:define>
+						<h:inputText id="route" value="#{waterSupplyHome.routeName}"
+							size="20" />
+						<rich:suggestionbox id="suggestionId" for="route" width="100"
+							var="_route" usingSuggestObjects="false"
+							nothingLabel="#{messages['route.routeNotFound']}"
+							suggestionAction="#{waterSupplyHome.autoCompleteRouteByName}"
+							rules="none" fetchValue="#{_route.name}">
+							<a:support event="onselect" ajaxSingle="true" immediate="true"
+								reRender="routeField"
+								action="#{waterSupplyHome.beforeAutcompleteRoute(_route)}" />
+							<a:support event="onobjectchange" ajaxSingle="true"
+								immediate="true"
+								action="#{waterSupplyHome.beforeAutcompleteRoute(_route)}" />
+							<h:column>
+								<h:outputText value="#{_route.name}" />
+							</h:column>
+						</rich:suggestionbox>
+					</s:decorate>
+				</a:region>
+
+
+				<s:decorate id="serviceNumberField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['waterSupply.serviceNumber']}:</ui:define>
+					<h:inputText id="serviceNumber" required="true"
+						value="#{waterSupplyHome.instance.serviceNumber}" readonly="true">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="routeOrderField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['waterSupply.routeOrder']}:</ui:define>
+					<h:inputText id="routeOrder"
+						value="#{waterSupplyHome.instance.routeOrder}">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="waterSupplyCategoryField"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['waterSupply.waterSupplyCategory']}:</ui:define>
+					<h:selectOneMenu id="waterSupplyCategoryName" required="true"
+						value="#{waterSupplyHome.instance.waterSupplyCategory}">
+						<s:selectItems value="#{waterSupplyCategories}"
+							var="_waterSupplyCategory" label="#{_waterSupplyCategory.name}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="ncalleField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['waterSupply.ncalle']}:</ui:define>
+					<h:inputText id="ncalle" value="#{waterSupplyHome.instance.ncalle}"
+						style="text-transform: uppercase" required="true">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="ncasaField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['waterSupply.ncasa']}:</ui:define>
+					<h:inputText id="ncasa" value="#{waterSupplyHome.instance.ncasa}"
+						style="text-transform: uppercase">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="hasSewerageField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['waterSupply.hasSewerage']}:</ui:define>
+					<h:selectBooleanCheckbox
+						value="#{waterSupplyHome.instance.hasSewerage}">
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>
+				</s:decorate>
+
+				<!-- s:decorate id="applyExemptionsField"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['waterSupply.applyExemptions']}:</ui:define>
+					<h:selectBooleanCheckbox
+						value=" # { waterSupplyHome.instance.applyExemptions}">
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>
+				</s:decorate-->
+
+
+				<s:decorate id="isCanceledField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['waterSupply.cancelService']}:</ui:define>
+					<h:selectBooleanCheckbox
+						value="#{waterSupplyHome.instance.isCanceled}">
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>"#{messages['common.requiredFields']}"
+				</div>
+
+			</rich:panel>
+			<rich:panel id="waterMetersPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="#{messages['waterSupply.meters']}" />
+						<a:commandButton id="createWaterMeter"
+							action="#{waterSupplyHome.createWaterMeter()}"
+							reRender="waterMeterEditPanel" ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('waterMeterEditPanel')"
+							value="#{messages['waterSupply.addWaterMeter']}" />
+					</h:panelGrid>
+				</f:facet>
+				<rich:dataTable id="waterMeterTable" var="_waterMeters"
+					rowClasses="odd-row, even-row"
+					value="#{waterSupplyHome.waterMeters}"
+					rendered="#{not empty waterSupplyHome.waterMeters}">
+					<rich:column sortBy="#{_waterMeters.serial}" styleClass="action">
+						<f:facet name="header">#{messages['waterMeter.serial']}</f:facet>
+						<h:outputText value="#{_waterMeters.serial}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_waterMeters.digitsNumber}"
+						styleClass="action">
+						<f:facet name="header">#{messages['waterMeter.disgistNumber']}</f:facet>
+						<h:outputText value="#{_waterMeters.digitsNumber}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_waterMeters.dimension}" styleClass="action">
+						<f:facet name="header">#{messages['waterMeter.dimension']}</f:facet>
+						<h:outputText value="#{_waterMeters.dimension}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_waterMeters.isActive}" styleClass="action">
+						<f:facet name="header">#{messages['waterMeter.active']}</f:facet>
+						<h:selectBooleanCheckbox value="#{_waterMeters.isActive}">
+							<a:support event="onchange" ajaxSingle="true" />
+						</h:selectBooleanCheckbox>
+					</rich:column>
+
+					<rich:column sortBy="#{_waterMeters.waterMeterStatus.name}"
+						styleClass="action">
+						<f:facet name="header">#{messages['waterMeter.status']}</f:facet>
+						<h:outputText value="#{_waterMeters.waterMeterStatus.name}" />
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<a:commandButton id="editWaterMeter"
+							action="#{waterSupplyHome.editWaterMeter(_waterMeters)}"
+							reRender="waterMeterEditPanel" ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('waterMeterEditPanel')"
+							value="#{messages['waterSupply.editWaterMeter']}" />
+					</rich:column>
+
+				</rich:dataTable>
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{waterSupplyHome.persist()}"
+					disabled="#{!waterSupplyHome.wired}"
+					rendered="#{!waterSupplyHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{waterSupplyHome.update()}"
+					rendered="#{waterSupplyHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/waterservice/WaterSupplyList.xhtml"
+					rendered="#{waterSupplyHome.managed}" />
+
+				<s:button id="cancelAdd" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/waterservice/#{empty waterSupplyFrom ? 'WaterSupplyList' : waterSupplyFrom}.xhtml"
+					rendered="#{!waterSupplyHome.managed}" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

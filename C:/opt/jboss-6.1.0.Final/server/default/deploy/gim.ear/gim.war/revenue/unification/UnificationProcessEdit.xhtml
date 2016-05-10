@@ -1,0 +1,255 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<style>
+.top-aligned-columns td {
+	vertical-align: top;
+}
+</style>
+
+		<h:form id="budget" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{unificationProcessHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['unificationProcess']}" />
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="#{messages['unificationProcess.detail']}" />
+					</h:panelGrid>
+				</f:facet>
+
+				<s:decorate template="../../layout/edit.xhtml"
+					id="unificationTypeField">
+					<ui:define name="label">#{messages['unificationType']}</ui:define>
+					<h:inputText id="performChange" required="true"
+						value="#{messages[unificationProcessHome.instance.unificationType.name()]}"
+						readonly="true" />
+				</s:decorate>
+
+				<s:decorate template="../../layout/edit.xhtml" id="dateField">
+					<ui:define name="label">#{messages['unificationProcess.date']}</ui:define>
+					<rich:calendar id="birthday" readonly="true"
+						value="#{unificationProcessHome.instance.date}"
+						datePattern="#{messages['common.datePattern']}" />
+				</s:decorate>
+
+				<s:decorate template="../../layout/edit.xhtml" id="timeField">
+					<ui:define name="label">#{messages['unificationProcess.time']}</ui:define>
+					<h:inputText id="performChange" required="true"
+						value="#{unificationProcessHome.instance.time}" readonly="true">
+						<s:convertDateTime type="date" dateStyle="short"
+							pattern="#{messages['common.timePattern']}" />
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate template="../../layout/edit.xhtml"
+					id="performChangeField">
+					<ui:define name="label">#{messages['unificationProcess.performer']}</ui:define>
+					<h:inputText id="performChange" required="true"
+						value="#{unificationProcessHome.instance.performChange.name}"
+						readonly="true" size="50" />
+				</s:decorate>
+
+				<s:decorate template="../../layout/edit.xhtml"
+					id="unifiedResdientField"
+					rendered="#{unificationProcessHome.managed}">
+					<ui:define name="label">#{messages['unificationProcess.unifiedResdient']}</ui:define>
+					<h:inputText id="actualResdientId" required="true"
+						value="#{unificationProcessHome.instance.unifiedResdient.name}"
+						readonly="true" size="50" />
+				</s:decorate>
+
+				<s:decorate template="../../layout/edit.xhtml"
+					id="previousResidentIdField"
+					rendered="#{unificationProcessHome.managed}">
+					<ui:define name="label">#{messages['unificationProcess.previousResidentId']}</ui:define>
+					<h:inputText id="previousResidentId" required="true"
+						value="#{unificationProcessHome.instance.previousResidentId}"
+						readonly="true" />
+				</s:decorate>
+
+				<s:decorate template="../../layout/edit.xhtml"
+					id="resdientDeletedIdField"
+					rendered="#{unificationProcessHome.managed}">
+					<ui:define name="label">#{messages['unificationProcess.resdientDeletedId']}</ui:define>
+					<h:inputText id="resdientDeletedId" required="true"
+						value="#{unificationProcessHome.instance.resdientDeletedId}"
+						readonly="true" />
+				</s:decorate>
+
+				<s:decorate template="../../layout/edit.xhtml" id="descriptionField">
+					<ui:define name="label">#{messages['unificationProcess.description']}</ui:define>
+					<h:inputTextarea id="description" required="true"
+						readonly="#{unificationProcessHome.managed}"
+						value="#{unificationProcessHome.instance.description}" cols="50">
+						<f:validateLength maximum="100"></f:validateLength>
+						<a:support event="onblur" reRender="descriptionField"
+							ajaxSingle="true" />
+					</h:inputTextarea>
+				</s:decorate>
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+			</rich:panel>
+
+			<h:panelGrid columns="2" width="100%"
+				styleClass="top-aligned-columns" columnClasses="top-aligned-columns"
+				rendered="#{!unificationProcessHome.managed}">
+
+				<rich:panel id="panelSearch1" columnClasses="topAligned">
+
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle,">
+							<h:outputText
+								value="#{messages['unificationProcess.leftResident']}" />
+						</h:panelGrid>
+					</f:facet>
+
+					<g:residentChooser id="residentChooser"
+						resident="#{unificationProcessHome.r1}"
+						criteria="#{unificationProcessHome.criteria}"
+						bean="#{unificationProcessHome}" searchAction="searchResident"
+						residentsList="#{unificationProcessHome.residents}"
+						identificationNumber="#{unificationProcessHome.identificationNumber}"
+						searchByCriteriaAction="searchResidentByCriteria"
+						clearSearchPanelAction="clearSearchResidentPanel"
+						residentChosenListenerName="residentSelectedListener"
+						required="true" />
+
+					<s:decorate id="btsR1" template="../../layout/edit.xhtml">
+						<a:commandButton value="#{messages['common.search']}"
+							action="#{unificationProcessHome.startCountingR1()}"
+							reRender="tableR1,toRightBt" ajaxSingle="true"></a:commandButton>
+
+						<a:commandButton value="#{messages['tableRight']}"
+							action="#{unificationProcessHome.updateToRight()}"
+							reRender="tableR1,tableR2" ajaxSingle="true"
+							disabled="#{empty unificationProcessHome.r1Count}"
+							id="toRightBt"></a:commandButton>
+
+						<a:commandButton
+							value="#{messages['common.delete']} #{messages['common.resident']}"
+							action="#{unificationProcessHome.deleteRight()}"
+							reRender="tableR1" ajaxSingle="true"></a:commandButton>
+					</s:decorate>
+
+					<rich:dataTable id="tableR1" var="_table"
+						value="#{unificationProcessHome.r1Count}">
+						<f:facet name="header">
+							<rich:columnGroup>
+								<rich:column colspan="3">
+									<h:outputText value="#{messages['table_matches']}" />
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+						<rich:column>
+							<f:facet name="header">#{messages['table']}</f:facet>
+							<h:outputText value="#{_table.tc_table_name}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['table_fk']}</f:facet>
+							<h:outputText value="#{_table.kcu_column_name}" />
+						</rich:column>
+						<rich:column style="text-align:right">
+							<f:facet name="header">#{messages['table_count']}</f:facet>
+							<h:outputText value="#{_table.count}" />
+						</rich:column>
+
+					</rich:dataTable>
+
+				</rich:panel>
+
+				<rich:panel id="panelSearch2" columnClasses="topAligned">
+
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle,">
+							<h:outputText
+								value="#{messages['unificationProcess.rightResident']}" />
+						</h:panelGrid>
+					</f:facet>
+
+					<g:residentChooser id="doneByChooser"
+						resident="#{unificationProcessHome.r2}"
+						criteria="#{unificationProcessHome.criteria}"
+						bean="#{unificationProcessHome}"
+						searchAction="searchResidentDoneBy"
+						residentsList="#{unificationProcessHome.residents}"
+						identificationNumber="#{unificationProcessHome.identificationNumberDoneBy}"
+						searchByCriteriaAction="searchResidentByCriteria"
+						clearSearchPanelAction="clearSearchResidentPanel"
+						residentChosenListenerName="doneBySelectedListener"
+						required="true" />
+
+					<s:decorate id="btsR2" template="../../layout/edit.xhtml">
+
+						<a:commandButton value="#{messages['common.search']}"
+							action="#{unificationProcessHome.startCountingR2()}"
+							reRender="tableR2,toLeftBt" ajaxSingle="true"></a:commandButton>
+
+						<a:commandButton value="#{messages['tableLeft']}"
+							action="#{unificationProcessHome.updateToLeft()}"
+							reRender="tableR1,tableR2" ajaxSingle="true"
+							disabled="#{empty unificationProcessHome.r2Count}"
+							id="toLeftBt"></a:commandButton>
+
+						<a:commandButton
+							value="#{messages['common.delete']} #{messages['common.resident']}"
+							action="#{unificationProcessHome.deleteLeft()}"
+							reRender="tableR1" ajaxSingle="true"></a:commandButton>
+					</s:decorate>
+
+					<rich:dataTable id="tableR2" var="_table"
+						value="#{unificationProcessHome.r2Count}">
+						<f:facet name="header">
+							<rich:columnGroup>
+								<rich:column colspan="3">
+									<h:outputText value="#{messages['table_matches']}" />
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+						<rich:column>
+							<f:facet name="header">#{messages['table']}</f:facet>
+							<h:outputText value="#{_table.tc_table_name}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['table_fk']}</f:facet>
+							<h:outputText value="#{_table.kcu_column_name}" />
+						</rich:column>
+						<rich:column style="text-align:right">
+							<f:facet name="header">#{messages['table_count']}</f:facet>
+							<h:outputText value="#{_table.count}" />
+						</rich:column>
+
+					</rich:dataTable>
+				</rich:panel>
+			</h:panelGrid>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{unificationProcessHome.persist}"
+					disabled="#{!unificationProcessHome.wired}"
+					rendered="#{!unificationProcessHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/revenue/unification/UnificationProcessList.xhtml" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

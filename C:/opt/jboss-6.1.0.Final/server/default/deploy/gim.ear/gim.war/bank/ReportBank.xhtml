@@ -1,0 +1,130 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<h:form id="reportBankSearch" styleClass="edit">
+			<h:outputText styleClass="formTitle"
+				value="#{messages['reportBank.title']}" />
+
+			<rich:simpleTogglePanel switchType="ajax">
+				<f:facet name="header">#{messages['provider.filter']}</f:facet>
+  
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['report.startDate']}</ui:define>
+					<rich:calendar value="#{bankHome.startDate}"  datePattern="#{messages['common.datePattern']}">
+						 
+						<a:support event="onchanged" ajaxSingle="true" />
+					</rich:calendar>
+				</s:decorate>
+				
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['report.endDate']}</ui:define>
+					<rich:calendar value="#{bankHome.endDate}" datePattern="#{messages['common.datePattern']}">
+						 
+						<a:support event="onchanged" ajaxSingle="true" />
+					</rich:calendar>
+				</s:decorate>
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">	
+				<a:commandButton ajaxSingle="true"
+								value="#{messages['common.search']}" 
+								action="#{bankHome.getReportData}"
+								bypassUpdates="true" reRender="dataPanel" />
+								
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+		
+
+		<rich:panel id="dataPanel">
+			<f:facet name="header"> 
+			</f:facet>
+			<div class="results" id="electronicRetentionList1">
+
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty electronicVoucherList.resultList}" /> 
+
+				<rich:dataTable id="reportList" var="report"
+					rendered="#{not empty bankHome.reports}"
+					value="#{bankHome.reports}" 
+					onRowMouseOver="this.style.backgroundColor='#{messages['rowBackgroundColor']}'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"> 
+
+					<f:facet name="header">
+						<h:panelGrid columns="3" columnClasses="headerTitle left, ">
+							<h:outputText
+								value="#{messages['bankReport.detail']}" />
+							<s:button view="/bank/report/ReportBankExcel.xhtml"
+								id="downloadId" rendered="#{not empty bankHome.reports}"
+								propagation="join" value="#{messages['common.download']}" />
+
+						</h:panelGrid>
+
+					</f:facet>
+					
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['workDeal.id']}</f:facet>
+						<h:outputText value="#{report.id}"></h:outputText>
+					</rich:column>
+					
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['date']}</f:facet>
+						<h:outputText value="#{report.date}">
+							<f:convertDateTime type="date" pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+									
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['payment.time']}</f:facet>
+						<h:outputText value="#{report.liquidationTime}"></h:outputText>
+					</rich:column>
+						
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['municipalBond.number']}</f:facet>
+						<h:outputText value="#{report.number}"></h:outputText>
+					</rich:column>
+					
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.identificationNumber']}</f:facet>
+						<h:outputText value="#{report.identificationNumber}"></h:outputText>
+					</rich:column>
+					 
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['bankReport.entry_id']}</f:facet>
+						<h:outputText value="#{report.entry_id}"></h:outputText>
+					</rich:column>
+					
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['bankReport.groupingcode']}</f:facet>
+						<h:outputText value="#{report.groupingcode}"></h:outputText>
+					</rich:column>
+					
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['property.waterMetersNumber']}</f:facet>
+						<h:outputText value="#{report.watermeternumber}"></h:outputText>
+					</rich:column>
+					
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['electronicVoucher.value']}</f:facet>
+						<h:outputText value="#{report.value}">
+							<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+						</h:outputText>
+					</rich:column>
+				</rich:dataTable>
+ 
+			</div>
+		</rich:panel>
+		</h:form> 
+	</ui:define>
+</ui:composition>

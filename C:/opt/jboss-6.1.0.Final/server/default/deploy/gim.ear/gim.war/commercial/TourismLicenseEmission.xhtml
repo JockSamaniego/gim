@@ -1,0 +1,203 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:include src="../revenue/fragment/ActiveLocals.xhtml"></ui:include>
+		<ui:include src="fragment/TourismLicenseItemInfoPanel.xhtml" />
+
+		<h:form id="business" styleClass="edit">
+
+			<ui:include src="fragment/ConfirmPreEmissionTourisLicensePanel.xhtml" />
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['tourismLicenseEmission']}" />
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+
+						<h:outputText value="#{messages['businessCatalog']}" />
+						<h:panelGroup>
+						<s:div styleClass="actionButtons" rendered="#{empty from}">
+							<s:button view="/commercial/BusinessEdit.xhtml" id="create"
+								propagation="none"
+								value="#{messages['common.create']} #{messages['commercial.bussines']}"
+								action="#{businessHome.navegation('tourist')}">
+								<f:param name="businessId" />
+							</s:button>
+						</s:div>
+					</h:panelGroup>
+					<h:panelGroup>
+						<s:div styleClass="actionButtons" rendered="#{empty from}">
+							<a:commandButton
+								action="#{localFeatureHome.viewTableTourist()}"
+								propagation="join"
+								value="Reactivar local"	
+								id="active"
+								reRender="activeLocals" ajaxSingle="true"
+								oncomplete="Richfaces.showModalPanel('activeLocals')">
+							</a:commandButton>
+						</s:div>
+					</h:panelGroup>
+
+					</h:panelGrid>
+				</f:facet>
+
+				<h:panelGrid columns="2">
+
+					<s:decorate id="yearField" template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['route.year']}:</ui:define>
+						<h:selectOneMenu id="year" value="#{localFeatureHome.year}"
+							disabled="#{routeHome.newLoad}">
+							<s:selectItems value="#{routeHome.years}" var="year"
+								label="#{year}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
+							<a:support event="onchange" ajaxSingle="true"
+								action="#{routeHome.cleanForPrint()}"
+								reRender="yearField, contentPanel" />
+						</h:selectOneMenu>
+					</s:decorate>
+					<s:decorate id="businessCatalogField"
+						template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['businessCatalog']}:</ui:define>
+						<h:selectOneMenu id="businessCatalog"
+							value="#{localFeatureHome.businessCatalog}">
+							<s:selectItems value="#{businessTouristNames}" var="businessName"
+									label="#{businessName.name}"
+								noSelectionLabel="Seleccione uno" />
+							<s:convertEntity />
+							<a:support event="onchange" ajaxSingle="true" />
+						</h:selectOneMenu>
+					</s:decorate>
+					<a:commandButton reRender="tourismLicenseItems" ajaxSingle="true"
+						action="#{localFeatureHome.generateRecords()}"
+						eventsQueue="gimEventsQueue" value="#{messages['common.search']}" />
+				</h:panelGrid>
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+			</rich:panel>
+
+			<rich:panel id="tourismLicenseItems">
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['concessionPlaces']} (#{localFeatureHome.items.size()})" />
+
+						<h:panelGrid columns="2">
+							<h:outputText value="Referencia" />
+
+							<h:inputText value="#{localFeatureHome.emissionReference}"
+								size="30" maxlength="50">
+								<a:support event="onblur" ajaxSingle="true"
+									eventsQueue="gimQueue" />
+							</h:inputText>
+						</h:panelGrid>
+					</h:panelGrid>
+				</f:facet>
+
+				<rich:dataTable id="tourismItemList" var="_item"
+					value="#{localFeatureHome.items}"
+					onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+					<rich:column style="text-align:right;" sortBy="#{_item.sequence}">
+						<f:facet name="header">#{messages['local.sequence']}</f:facet>
+						<a:region>
+							<h:inputText value="#{_item.sequence}" style="text-align:right;"
+								size="3" maxlength="4">
+								<a:support event="onblur" ajaxSingle="true"
+									eventsQueue="gimQueue"
+									action="#{localFeatureHome.updateTourisItem(_item)}" />
+							</h:inputText>
+						</a:region>
+					</rich:column>
+
+					<rich:column sortBy="#{_item.local.business}">
+						<f:facet name="header">#{messages['local']}</f:facet>
+						<h:outputText value="#{_item.local.name}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_item.local.business.owner.name}">
+						<f:facet name="header">#{messages['resident']}</f:facet>
+						<h:outputText
+							value="#{_item.local.business.owner.identificationNumber} - #{_item.local.business.owner.name}" />
+					</rich:column>
+
+					<rich:column
+						sortBy="#{_item.local.localFeature.featureCategory.name}">
+						<f:facet name="header">#{messages['featureCategory']}</f:facet>
+						<h:outputText
+							value="#{_item.local.localFeature.featureCategory.name}" />
+					</rich:column>
+
+					<rich:column style="text-align:right;">
+						<f:facet name="header">#{messages['local.adisionalDescription']}</f:facet>
+						<a:region>
+							<h:inputText value="#{_item.adisionalDescription}"
+								style="text-align:right;" size="12" maxlength="50">
+								<a:support event="onblur" ajaxSingle="true"
+									eventsQueue="gimQueue"
+									action="#{localFeatureHome.updateTourisItem(_item)}" />
+							</h:inputText>
+						</a:region>
+					</rich:column>
+
+					<rich:column style="text-align:right;">
+						<f:facet name="header">#{messages['local.value']}</f:facet>
+						<a:region>
+							<h:inputText value="#{_item.value}" style="text-align:right;"
+								size="8">
+								<a:support event="onblur" ajaxSingle="true"
+									eventsQueue="gimQueue"
+									action="#{localFeatureHome.updateTourisItem(_item)}" />
+							</h:inputText>
+						</a:region>
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+
+						<a:commandButton value="#{messages['common.detail']}"
+							action="#{localFeatureHome.selectInfoItem(_item)}"
+							eventsQueue="gimEventsQueue" ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('tourismLicenseItemInfoPanel')"
+							reRender="tourismLicenseItemInfo" title="Detalle del local"
+							style="font-size:10px;" />
+						<a:commandButton value="Desactivar"
+							action="#{localFeatureHome.disableLocalTourist(_item)}"
+							ajaxSingle="true"
+							reRender="tourismLicenseItems"
+							style="font-size:10px;" />
+
+					</rich:column>
+				</rich:dataTable>
+
+			</rich:panel>
+
+
+			<div class="actionButtons">
+
+				<a:commandButton value="#{messages['concessionItem.preEmit']}"
+					eventsQueue="gimEventsQueue" ajaxSingle="true"
+					oncomplete="Richfaces.showModalPanel('confirmPreEmissionTourisLicensePanel')"
+					reRender="panelBotones" title="Iniciar Pre-Emisión" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/home.xhtml" />
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

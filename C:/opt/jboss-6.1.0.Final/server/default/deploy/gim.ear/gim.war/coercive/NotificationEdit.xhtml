@@ -1,0 +1,224 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:include src="fragment/SearchResidentPanel.xhtml" />
+
+	<ui:define name="body">
+
+
+		<h1>#{notificationHome.managed ? messages['common.edit'] :
+			messages['common.add']} #{messages['notification']}:
+			#{notificationHome.instance.notified.name} #{messages['common.by']}
+			#{notificationHome.instance.entry.name}</h1>
+
+		<h1>
+			<h:outputText rendered="#{notificationHome.paid}"
+				value="#{messages['notification.isCanceled']} "></h:outputText>
+		</h1>
+
+		<rich:simpleTogglePanel label="#{messages['common.detail']}"
+			switchType="ajax">
+
+			<s:decorate template="../layout/display.xhtml" rendered="true">
+				<ui:define name="label">#{messages['resident']}:</ui:define>
+				<h:outputText value="#{notificationHome.instance.notified.name} ">
+				</h:outputText>
+			</s:decorate>
+			<s:decorate template="../layout/display.xhtml" rendered="true">
+				<ui:define name="label">#{messages['entry.entry']}:</ui:define>
+				<h:outputText
+					value="#{notificationHome.instance.entry.code} - #{notificationHome.instance.entry.name}">
+				</h:outputText>
+			</s:decorate>
+			<div class="actionButtons" align="right">
+				<s:button view="/coercive/DetailPendingMunicipalBonds.xhtml"
+					value="#{messages['common.detail']}"
+					action="#{notificationHome.loadBondsForDetail()}"
+					propagation="join" id="notificationDetail" rendered="#{empty from}">
+					<f:param name="residentId"
+						value="#{notificationHome.instance.notified.id}" />
+					<f:param name="entryId"
+						value="#{notificationHome.instance.entry.id}" />
+					<f:param name="fromNotificationDetail" value="#{true}" />
+					<f:param name="from" value="/coercive/NotificationEdit.xhtml" />
+				</s:button>
+			</div>
+		</rich:simpleTogglePanel>
+
+		<h:form id="business" styleClass="edit">
+
+			<rich:panel id="notificationTaskEditPanel" >
+				<f:facet name="header">#{notificationHome.notificationTask.id != null ? messages['common.edit'] : messages['common.add']} #{messages['coercive.notificationTask']}</f:facet>
+				
+<!-- 				 <rich:panel bodyClass="rich-laguna-panel-no-header"> -->
+<!-- 			        RichFaces is a library for adding rich user interface features to JSF -->
+<!-- 			        applications. It extends the Ajax4jsf framework to include a large  -->
+<!-- 			        (and growing) set of powerful rich AJAX-enabled components that come -->
+<!-- 			        with extensive skins support. -->
+<!-- 			    </rich:panel> -->
+							
+				<s:decorate id="notificationTaskName"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['notificationTask.creationDate']}</ui:define>
+					<rich:calendar id="creationDate"
+						value="#{notificationHome.notificationTask.creationDate}"
+						datePattern="#{messages['common.datePattern']}">
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate id="notificationTaskStatus"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.status']}</ui:define>
+					<h:selectOneMenu id="cmbStatus"
+						value="#{notificationHome.notificationTask.notificationTaskType}"
+						required="true"
+						disabled="#{notificationHome.notificationTask.id != null}"
+						onchange="#{notificationHome.reset()}">
+						<f:selectItems
+							value="#{notificationHome.notificationTaskTypeList}" />
+						<a:support event="onchange"
+							action="#{notificationHome.onChangeStatus}"
+							reRender="notificationTaskNumberJudgment, personField"
+							ajaxSingle="true" />
+						<s:convertEntity></s:convertEntity>
+					</h:selectOneMenu>
+
+				</s:decorate>
+
+				<s:decorate id="notificationTaskNumberJudgment"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['notificationTask.numberJudgment']}</ui:define>
+					<h:inputText id="numerojuicio"
+						value="#{notificationHome.notificationTask.numberJudgment}"
+						disabled="#{!notificationHome.isStateJuice}"
+						required="#{notificationHome.isStateJuice}">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="personField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['notification.responsible']}</ui:define>
+					<h:selectOneMenu id="person" value="#{notificationHome.person}"
+						required="true" 
+						disabled="#{not notificationHome.isStateJuice and not notificationHome.isStateNotify}"						
+						requiredMessage="responsable requerido">
+						<s:selectItems value="#{usersCoercives}" var="_user"
+							noSelectionLabel="#{messages['common.chooseOption']}"
+							label="#{_user.name}" />
+						<a:support event="onchange"	
+							ajaxSingle="true" />
+						<s:convertEntity></s:convertEntity>
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="notificationTaskCreationDate"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.comment']}</ui:define>
+					<h:inputTextarea id="razon"
+						value="#{notificationHome.notificationTask.razon}">
+					</h:inputTextarea>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+
+			<div class="actionButtons">
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{notificationHome.addNotificationTask}" rendered="#{true}" />
+
+				<s:button view="/coercive/NotificationList.xhtml"
+					value="#{messages['common.back']}" propagation="none"
+					id="GotoNotificationList" rendered="#{true}">
+				</s:button>
+			</div>
+
+			<rich:panel id="notificationTaskPanel">
+
+				<f:facet name="header">#{messages['notificationTasks']}</f:facet>
+
+				<div class="association" id="notificationTaskParent">
+
+					<h:outputText
+						value="There is no notificationTask associated with this notification."
+						rendered="#{notificationHome.instance.notificationTasks == null}" />
+
+					<rich:dataTable var="_notificationTask"
+						value="#{notificationHome.instance.notificationTasks}"
+						rendered="#{notificationHome.instance.notificationTasks != null}"
+						rowClasses="rvgRowOne,rvgRowTwo" id="notificationTaskTable">
+						<h:column>
+							<f:facet name="header">#{messages['common.id']}</f:facet>
+							<h:outputText value="#{_notificationTask.id}">
+							</h:outputText>
+						</h:column>
+						<h:column>
+							<f:facet name="header">#{messages['notificationTask.notificationTaskType']}</f:facet>
+							<h:outputText
+								value="#{_notificationTask.notificationTaskType.name}">
+							</h:outputText>
+						</h:column>
+						<h:column>
+							<f:facet name="header">#{messages['notificationTask.creationDate']}</f:facet>
+							<h:outputText value="#{_notificationTask.creationDate}">
+								<s:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</h:column>
+						<h:column>
+							<f:facet name="header">#{messages['notificationTask.notifiedDate']}</f:facet>
+							<h:outputText value="#{_notificationTask.notifiedDate}">
+								<s:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</h:column>
+						<h:column>
+							<f:facet name="header">#{messages['notificationTask.actuary']}</f:facet>
+							<h:outputText value="#{_notificationTask.actuary.name}">
+							</h:outputText>
+						</h:column>
+
+						<h:column>
+
+							<f:facet name="header">#{messages['notificationTask.responsible']}</f:facet>
+							<h:outputText
+								value="#{notificationHome.getReponsibleName(_notificationTask)}">
+							</h:outputText>
+						</h:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+
+							<a:commandButton value="#{messages['common.edit']}"
+								immediate="true"
+								action="#{notificationHome.setNotificationTask(_notificationTask)}"
+								reRender="notificationTaskEditPanel, notificationTaskPanel, notificationTaskNumberJudgment"
+								ajaxSingle="true" rendered="#{_notificationTask.editable}"
+								onclick="#{notificationHome.reset()}">
+							</a:commandButton>
+					            #{' '}
+					            <a:commandButton value="#{messages['common.remove']}"
+								action="#{notificationHome.removeNotificationTask(_notificationTask)}"
+								ajaxSingle="true"
+								onclick="if (!confirm('#{messages['common.deleleteConfirm']}')) return false"
+								reRender="notificationTaskEditPanel, notificationTaskPanel"
+								rendered="#{_notificationTask.editable}">
+
+							</a:commandButton>
+						</rich:column>
+					</rich:dataTable>
+				</div>
+			</rich:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

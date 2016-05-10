@@ -1,0 +1,212 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<a:form id="municipalBondSearch" styleClass="edit" >
+			<ui:debug id="uiDebug" />
+			<h:outputText styleClass="formTitle" value="" />
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:outputText id="title"
+						value="#{messages['municipalBondOutOfDate']}"
+						styleClass="formTitle" />
+				</f:facet>
+
+				<g:residentChooser
+					resident="#{residentWithMunicipalBondOutOfDateList.resident}"
+					bean="#{residentWithMunicipalBondOutOfDateList}" disabled="true"
+					identificationNumber="#{residentWithMunicipalBondOutOfDateList.identificationNumber}" />
+
+				<g:entryChooser id="entryChooser" label="#{messages['entry']}"
+					disabled="true"
+					entry="#{residentWithMunicipalBondOutOfDateList.entry}"
+					entryCode="#{residentWithMunicipalBondOutOfDateList.entryCode}"
+					bean="#{residentWithMunicipalBondOutOfDateList}" />
+
+				<s:decorate template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['DaysForOutOfData']}:</ui:define>					
+					<rich:calendar id="expirationDate" readonly="true"
+						value="#{residentWithMunicipalBondOutOfDateList.expirationDate}"
+						datePattern="yyyy-MM-dd">
+					</rich:calendar>
+				</s:decorate>
+				<s:decorate template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['Amount']}:</ui:define>
+					<h:inputText id="Amount" readonly="true"
+						value="#{residentWithMunicipalBondOutOfDateList.amount}" size="10"
+						maxlength="13">
+					</h:inputText>
+				</s:decorate>
+
+				<div style="clear: both" />
+			</rich:panel>
+			<a:region>
+
+				<a:outputPanel id="resultsPanel" ajaxRendered="true">
+
+
+
+					<rich:panel
+						rendered="#{residentWithMunicipalBondOutOfDateList.municipalBonds.size() == 0}">
+						<h:outputText value="#{messages['common.noResultsReturned']}"
+							rendered="#{residentWithMunicipalBondOutOfDateList.municipalBonds.size() == 0}" />
+
+					</rich:panel>
+
+					<rich:dataTable id="municipalBondsTable" var="_municipalBond"
+						width="100%"
+						value="#{residentWithMunicipalBondOutOfDateList.municipalBonds}"
+						columnClasses="center, center, left, left, center, right, center, left"
+						rows="25"
+						rendered="#{residentWithMunicipalBondOutOfDateList.municipalBonds.size() != 0}">
+
+						<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle,">
+							<h:outputText id="title"
+								value="#{messages['municipalBondOutOfDate']} - #{messages['income.totalPendingBonds'].toUpperCase()}: #{residentWithMunicipalBondOutOfDateList.total}"
+								styleClass="formTitle" />
+							<s:div styleClass="actionButtons">
+							
+							<a:region>
+							<s:button id="printAllBtn"
+								rendered="#{!from.equals('/coercive/ResidentWithMunicipalBondOutOfDateList.xhtml')}"
+								action="#{residentWithMunicipalBondOutOfDateList.printAll()}"
+								propagation="join"
+								value="#{messages['common.printAll']}"
+								onclick="Richfaces.showModalPanel('printConfirmPanel',{width:250, height:150})" />
+							</a:region>
+							</s:div>
+						</h:panelGrid>
+						</f:facet>
+
+						<f:facet name="footer">
+							<g:dataScroller maxPages="10" for="municipalBondsTable"
+								style="float:right;" />
+						</f:facet>
+
+						<rich:column>
+							<f:facet name="header">
+							#{messages['municipalBond.number']}
+						</f:facet>
+							<h:outputText value="#{_municipalBond.number}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+							#{messages['entry']}
+						</f:facet>
+							<h:outputText value="#{_municipalBond.entry.name}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+							#{messages['resident']} 
+						</f:facet>
+							<h:outputText value="#{_municipalBond.resident.name}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+							#{messages['municipalBond.status']}
+						</f:facet>
+							<h:outputText value="#{_municipalBond.municipalBondStatus.name}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+							#{messages['municipalBond.value']}
+						</f:facet>
+							<h:outputText value="#{_municipalBond.paidTotal}">
+								<f:convertNumber />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+							#{messages['municipalBond.emision']}
+						</f:facet>
+							<h:outputText value="#{_municipalBond.emisionDate}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+							#{messages['municipalBond.expiration']}
+						</f:facet>
+							<h:outputText value="#{_municipalBond.expirationDate}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+
+							<a:commandButton id="viewer" ajaxSingle="true"
+								action="#{municipalBondsViewerHome.loadMunicipalBond(_municipalBond.id)}"
+								eventsQueue="gimEventsQueue" reRender="_municipalBondViewer"
+								oncomplete="Richfaces.showModalPanel('_municipalBondViewer',{width:600, height:500})"
+								value="#{messages['common.view']}" />
+
+							<a:commandButton id="reprintId" ajaxSingle="true"
+								rendered="#{!from.equals('/coercive/ResidentWithMunicipalBondOutOfDateList.xhtml')}"
+								action="#{residentWithMunicipalBondOutOfDateList.print(_municipalBond.id)}"
+								value="#{messages['common.print']}"/>
+
+						</rich:column>
+
+					</rich:dataTable>
+				</a:outputPanel>
+			</a:region>
+		</a:form>
+		
+		     <s:button view="#{from}"
+		                   value="#{messages['common.back']}"
+		             propagation="none"
+		                      id="GotoNotificationList"
+		                rendered="#{true}">
+			</s:button>
+
+		<g:municipalBondViewer
+			resident="#{municipalBondsViewerHome.resident}"
+			municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}"
+			deposits="#{municipalBondsViewerHome.deposits}" />
+			
+		<rich:modalPanel id="printConfirmPanel" width="250" height="150">
+			<f:facet name="header">#{messages['common.printingConfirmation']}</f:facet>
+			<h:form id="printConfirm">
+				<h:panelGrid>
+					<h:panelGrid columns="2">
+						<h:graphicImage value="/img/alert.png" />
+						<h:outputText value="#{messages['common.isPrintingReady']}"
+							style="font-size:large;" />
+					</h:panelGrid>
+					<h:panelGroup>
+						<div style="">
+							<a:commandButton style="width:50px" id="printingSuccessBtn"
+								value="#{messages['common.yes']}"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'printConfirmPanel\');' : ''}" />
+
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+
+		</rich:modalPanel>
+			
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,79 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="deathHistoryPanel" width="650" height="400">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText
+					value="#{messages['common.history']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkInformation" />
+				<rich:componentControl for="deathHistoryPanel" attachTo="hidelinkInformation"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="deathHistoryForm" styleClass="edit">
+
+			<rich:panel>
+				<f:facet name="header">#{unitDeathHome.instance.unitType.name} #{unitDeathHome.instance.code} - #{messages['cementery.cementery']} #{unitDeathHome.instance.section.cementery.name} #{messages['cementery.section']} #{unitDeathHome.instance.section.name}</f:facet>
+				<div class="results" id="contractList">
+					<h:outputText value="#{messages['common.noResults']}"
+						rendered="#{empty unitDeathHome.instance.currentDeath.contracts}" />
+				</div>
+				<rich:dataTable id="unitDeathListTable" var="_unitDeath"
+					value="#{unitDeathHome.instance.deathsHistory}"
+					rendered="#{not empty unitDeathHome.instance.deathsHistory}">
+					<rich:column sortBy="#{_unitDeath.deathName}" styleClass="action">
+						<f:facet name="header">#{messages['cementery.deceased']}</f:facet>
+						<h:outputText value="#{_unitDeath.deathName}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_unitDeath.currentContract.currentContract.subscriber.name}" styleClass="action">
+						<f:facet name="header">#{messages['cementery.debtor']}</f:facet>
+						<h:outputText value="#{_unitDeath.currentContract.subscriber.name}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_unitDeath.dateOfDeath}" styleClass="action">
+						<f:facet name="header">#{messages['unitDeath.dateOfDeath']}</f:facet>
+						<h:outputText value="#{_unitDeath.dateOfDeath}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column sortBy="#{_unitDeath.currentContract.expirationDate}" styleClass="action">
+						<f:facet name="header">#{messages['unitDeath.expirationDate']}</f:facet>
+						<h:outputText value="#{_unitDeath.currentContract.expirationDate}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+
+				</rich:dataTable>
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<a:commandButton 
+					ajaxSingle="true" 
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('deathHistoryPanel');"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

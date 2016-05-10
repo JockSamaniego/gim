@@ -1,0 +1,25 @@
+<e:workbook xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<e:worksheet value="#{finantialStatement.overdues}" var="_overdue">
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Código" />
+			</f:facet>
+			<e:cell value="#{_overdue.accountcode}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Cuenta" />
+			</f:facet>
+			<e:cell value="#{_overdue.accountname}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Valor" />
+			</f:facet>
+			<e:cell value="#{_overdue.total}" />
+		</e:column>
+	</e:worksheet>
+
+</e:workbook>

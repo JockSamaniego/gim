@@ -1,0 +1,132 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="budgetEntryTypeSearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['budgetEntryType.manageBudgetEntryType']}" />
+
+			<rich:simpleTogglePanel
+				label="#{messages['budgetEntryType.serchFilter']}" switchType="ajax">
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['budgetEntryType.name']}</ui:define>
+					<h:inputText id="name" value="#{budgetEntryTypeList.criteria}" />
+				</s:decorate>
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/waterservice/BudgetEntryTypeList.xhtml" >
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="3" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['budgetEntryType.searchResults']} (#{empty budgetEntryTypeList.resultList ? 0 : (budgetEntryTypeList.paginated ? budgetEntryTypeList.resultCount : budgetEntryTypeList.resultList.size)})" />
+					<s:button view="/waterservice/BudgetEntryTypeEdit.xhtml"
+						id="create" 
+						propagation="none"
+						value="#{messages['common.create']} #{messages['budgetEntryType']}">
+						<f:param name="budgetEntryTypeId" />
+					</s:button>
+				</h:panelGrid>
+			</f:facet>
+			<div class="results" id="budgetEntryTypeList">
+
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty budgetEntryTypeList.resultList}" />
+
+				<rich:dataTable id="budgetEntryTypeList" var="_budgetEntryType"
+					value="#{budgetEntryTypeList.resultList}"
+					rendered="#{not empty budgetEntryTypeList.resultList}">
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{budgetEntryTypeList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['budgetEntryType.id']}" />
+								<ui:param name="propertyPath" value="budgetEntryType.id" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_budgetEntryType.id}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{budgetEntryTypeList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['budgetEntryType.name']}" />
+								<ui:param name="propertyPath" value="budgetEntryType.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_budgetEntryType.name}" />
+					</h:column>
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<s:button view="/waterservice/BudgetEntryTypeEdit.xhtml"
+							value="#{messages['common.edit']}" propagation="none"
+							id="budgetEntryTypeEdit" rendered="#{empty from}">
+							<f:param name="budgetEntryTypeId" value="#{_budgetEntryType.id}" />
+						</s:button>
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/waterservice/BudgetEntryTypeList.xhtml"
+				rendered="#{budgetEntryTypeList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/waterservice/BudgetEntryTypeList.xhtml"
+				rendered="#{budgetEntryTypeList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult"
+					value="#{budgetEntryTypeList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/waterservice/BudgetEntryTypeList.xhtml"
+				rendered="#{budgetEntryTypeList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult"
+					value="#{budgetEntryTypeList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/waterservice/BudgetEntryTypeList.xhtml"
+				rendered="#{budgetEntryTypeList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult"
+					value="#{budgetEntryTypeList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+
+
+	</ui:define>
+
+</ui:composition>

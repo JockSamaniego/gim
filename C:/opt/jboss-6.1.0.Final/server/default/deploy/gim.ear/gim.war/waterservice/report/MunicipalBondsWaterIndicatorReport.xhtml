@@ -1,0 +1,578 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	title="#{messages['domain.changeOwner']}" subject="report" type="pdf"
+	pageSize="A3" margins="20 20 20 20" keywords="mykeyword"
+	author="gadml_ra" creator="gadml_ra" orientation="landscape">
+
+	<f:facet name="header">
+		<p:font size="9" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="1" widthPercentage="100" spacingAfter="30">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:paragraph alignment="center">
+								<p:text value="#{gim.institution.name.toUpperCase()}" />
+							</p:paragraph>
+							<p:paragraph alignment="center">
+								<p:text value="AGUA POTABLE" />
+							</p:paragraph>
+							<p:paragraph alignment="center">
+								<p:text value="REPORTE DE BLOQUEOS Y RE-PLANILLAJE" />
+							</p:paragraph>
+						</p:cell>
+					</p:table>
+
+					<p:table columns="8" widthPercentage="100" headerRows="0"
+						spacingAfter="20" widths="1 2 1 2 1 2 1 2">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:paragraph>
+								<p:text value="USUARIO: " />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="left">
+							<p:paragraph>
+								<p:text value="#{userSession.person.name}" />
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell>
+							<p:paragraph>
+								<p:text value="F. DESDE: " />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="left">
+							<p:paragraph>
+								<p:text value="#{waterSupplyHome.starDate}">
+									<s:convertDateTime type="date" dateStyle="short"
+										pattern="#{messages['common.datePattern']}" />
+								</p:text>
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell>
+							<p:paragraph>
+								<p:text value="F. HASTA: " />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="left">
+							<p:paragraph>
+								<p:text value="#{waterSupplyHome.endDate}">
+									<s:convertDateTime type="date" dateStyle="short"
+										pattern="#{messages['common.datePattern']}" />
+								</p:text>
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell>
+							<p:paragraph>
+								<p:text value="F. IMPRESION: " />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="left">
+							<p:paragraph>
+								<p:text value="#{waterSupplyHome.printDate}">
+									<s:convertDateTime type="date" dateStyle="short"
+										pattern="yyyy-MM-dd, EEEE" />
+								</p:text>
+							</p:paragraph>
+						</p:cell>
+					</p:table>
+				</p:paragraph>
+			</p:header>
+
+			<p:footer borderWidthTop="1" borderColorTop="blue"
+				borderWidthBottom="0" alignment="center">
+	 			[<p:pageNumber />]
+			</p:footer>
+
+		</p:font>
+	</f:facet>
+
+	<p:paragraph spacingAfter="20">
+	</p:paragraph>
+
+	<p:font size="9" name="HELVETICA">
+
+		<p:table columns="16" widthPercentage="100" headerRows="0"
+			widths="0.3 0.7 0.7 1.2 2 2 4 1 1 1 1 1 1 1 1 1"
+			rendered="#{!waterSupplyHome.municipalBondStatus.equals(waterSupplyHome.blockedStatus)}">
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['route.sequence']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.year']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.month']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.number']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.status']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.serviceWater']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['resident']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.emisionDate']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.water']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.sewerage']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.plaMaestro']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.security']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.microWatersheds']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.basicCost']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.trash']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.paidTotal']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<ui:repeat value="#{waterSupplyHome.municipalBondsState}"
+				var="_municipalBond">
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{waterSupplyHome.sequence}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.serviceDate}">
+							<s:convertDateTime type="date" dateStyle="short" pattern="yyyy" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.serviceDate}">
+							<s:convertDateTime type="date" dateStyle="short" pattern="MM" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.number}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.municipalBondStatus.name}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{_municipalBond.adjunct.code}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{_municipalBond.resident.name}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{_municipalBond.emisionDate}">
+							<s:convertDateTime type="date" dateStyle="short"
+								pattern="#{messages['common.datePattern']}" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.items.get(0).total}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.items.get(1).total}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.items.get(2).total}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.items.get(3).total}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.items.get(4).total}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.items.get(5).total}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.items.get(6).total}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_municipalBond.value}" />
+					</p:paragraph>
+				</p:cell>
+
+			</ui:repeat>
+
+			<p:cell horizontalAlignment="right" colspan="14">
+				<p:paragraph>
+					<p:text value="Total" />
+				</p:paragraph>
+			</p:cell>
+
+
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{waterSupplyHome.paidTotal}" />
+				</p:paragraph>
+			</p:cell>
+
+		</p:table>
+
+		<p:table columns="2" widthPercentage="100" headerRows="0" widths="4 1"
+			rendered="#{!waterSupplyHome.municipalBondStatus.equals(waterSupplyHome.blockedStatus)}">
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="Total" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{waterSupplyHome.paidTotal}" />
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+
+
+
+
+
+
+		<p:table columns="17" widthPercentage="100" headerRows="0"
+			widths="0.3 0.5 0.4 0.7 1 1.5 3.5 0.8 1.6 0.6 0.8 0.6 0.6 0.6 0.6 0.6 0.6"
+			rendered="#{waterSupplyHome.municipalBondStatus.equals(waterSupplyHome.blockedStatus)}">
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['route.sequence']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.year']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.month']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.number']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.status']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.serviceWater']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['resident']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.blokedDate']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.observation']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.water']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.sewerage']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.plaMaestro']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.security']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.microWatersheds']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.basicCost']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.trash']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.paidTotal']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<ui:repeat value="#{waterSupplyHome.statusChanges}"
+				var="_statusChange">
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{waterSupplyHome.sequence}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{_statusChange.municipalBond.serviceDate}">
+							<s:convertDateTime type="date" dateStyle="short" pattern="yyyy" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{_statusChange.municipalBond.serviceDate}">
+							<s:convertDateTime type="date" dateStyle="short" pattern="MM" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{_statusChange.municipalBond.number}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text
+							value="#{_statusChange.municipalBond.municipalBondStatus.name}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{_statusChange.municipalBond.adjunct.code}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell>
+					<p:paragraph>
+						<p:text
+							value="#{_statusChange.municipalBond.resident.identificationNumber} - #{_statusChange.municipalBond.resident.name}"
+							rendered="#{_statusChange.municipalBond.resident.name.length() le 33}" />
+						<p:text
+							value="#{_statusChange.municipalBond.resident.identificationNumber} - #{_statusChange.municipalBond.resident.name.subSequence(0,33)}"
+							rendered="#{_statusChange.municipalBond.resident.name.length() gt 33}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{_statusChange.date}">
+							<s:convertDateTime type="date" dateStyle="short"
+								pattern="#{messages['common.datePattern']}" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_statusChange.explanation}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_statusChange.municipalBond.items.get(0).total}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_statusChange.municipalBond.items.get(1).total}" 
+						rendered="#{_statusChange.municipalBond.items.size()>1}"/>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_statusChange.municipalBond.items.get(2).total}" 
+						rendered="#{_statusChange.municipalBond.items.size()>2}"/>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_statusChange.municipalBond.items.get(3).total}"
+							rendered="#{_statusChange.municipalBond.items.size()>3}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_statusChange.municipalBond.items.get(4).total}"
+							rendered="#{_statusChange.municipalBond.items.size()>4}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_statusChange.municipalBond.items.get(5).total}"
+							rendered="#{_statusChange.municipalBond.items.size()>5}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_statusChange.municipalBond.items.get(6).total}"
+							rendered="#{_statusChange.municipalBond.items.size()>6}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_statusChange.municipalBond.value}" />
+					</p:paragraph>
+				</p:cell>
+
+			</ui:repeat>
+
+		</p:table>
+
+		<p:table columns="2" widthPercentage="100" headerRows="0" widths="4 1"
+			rendered="#{waterSupplyHome.municipalBondStatus.equals(waterSupplyHome.blockedStatus)}">
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="Total" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{waterSupplyHome.paidTotal}" />
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+
+		<p:paragraph spacingAfter="10">
+		</p:paragraph>
+
+	</p:font>
+
+
+</p:document>

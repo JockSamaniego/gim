@@ -1,0 +1,76 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<h:form id="routeRecording" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['route.readingOrder']}" />
+			<rich:panel>
+				<f:facet name="header">#{messages['route.generalData']}</f:facet>
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['route.name']}:</ui:define>
+					<h:inputText id="name" required="true" size="40" maxlength="40"
+						value="#{routeHome.instance.name}" readonly="true">
+					</h:inputText>
+				</s:decorate>
+				<s:decorate id="actionButton" template="../layout/display.xhtml">
+					<a:commandButton value="#{messages['route.load']}"
+						reRender="waterServiceList, actionButton"
+						actionListener="#{routeHome.loadWaterSupplyes}" />
+					<a:commandButton value="#{messages['route.reorganize']}"
+						disabled="#{routeHome.disablereorganizeButton}"
+						reRender="waterServiceList"
+						action="#{routeHome.updateServiceOrderAll()}" ajaxSingle="true" />
+				</s:decorate>
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+			</rich:panel>
+			<rich:panel>
+				<f:facet name="header">#{messages['route.recordReadingList']}</f:facet>
+				<rich:dataTable id="waterServiceList" var="supply"
+					value="#{routeHome.waterSupplies}">
+					<h:column>
+						<f:facet name="header">#{messages['route.order']}</f:facet>
+						<h:inputText value="#{supply.routeOrder}">
+							<a:support event="onblur" ajaxSingle="true"/>
+						</h:inputText>
+					</h:column>
+					<h:column>
+						<f:facet name="header">#{messages['route.contractNumber']}</f:facet>
+						<h:outputText value="#{supply.serviceNumber}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">#{messages['route.resident']}</f:facet>
+						<h:outputText value="#{supply.serviceOwner.name}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">#{messages['route.siteCorrection']}</f:facet>
+						<h:outputText value="#{supply.ncalle}" />
+					</h:column>
+				</rich:dataTable>
+				<div style="clear: both" />
+			</rich:panel>
+			<div class="actionButtons">
+			
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{routeHome.save()}"/>
+					
+				<s:button id="cancelAdd" value="#{messages['common.exit']}"
+					propagation="end"
+					view="/waterservice/#{empty routeFrom ? 'RouteList' : routeFrom}.xhtml" />
+			</div>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

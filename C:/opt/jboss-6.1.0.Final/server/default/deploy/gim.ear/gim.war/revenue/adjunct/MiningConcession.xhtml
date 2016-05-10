@@ -1,0 +1,24 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<a:outputPanel id="miningConcessionPanel">
+		
+		<s:decorate id="concessionTypeField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['concessionType']}: </ui:define>
+			<h:selectOneMenu id="concessionType" value="#{adjunctHome.instance.concessionType}">
+				<s:selectItems value="#{concessionTypes}" var="concession"
+					label="#{messages[concession.name()]}" />
+				<s:convertEnum/>
+			</h:selectOneMenu>
+		</s:decorate>
+	
+	</a:outputPanel>
+
+</ui:composition>
