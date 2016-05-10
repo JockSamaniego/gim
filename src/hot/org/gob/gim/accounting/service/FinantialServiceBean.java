@@ -861,7 +861,6 @@ public class FinantialServiceBean implements FinantialService{
 	}
 	
 	private AccountDetail createDetail(Object[] row){
-		System.out.println("el valor q llelelelelele es: "+row[4]);
 		AccountDetail detail = new AccountDetail();
 		Long accountNumber = ((BigInteger) row[0]).longValue();
 		detail.setBondNumber(accountNumber);

@@ -1,126 +1,140 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:s="http://jboss.com/products/seam/taglib"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:rich="http://richfaces.org/rich"
-                xmlns:a="http://richfaces.org/a4j"
-                template="../layout/template.xhtml">
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" template="../layout/template.xhtml">
 
-    <ui:define name="body">
+	<ui:define name="body">
 
-        <h:form id="paymentAgreementSearch" styleClass="edit">
+		<h:form id="paymentAgreementSearch" styleClass="edit">
 
-            <rich:simpleTogglePanel
-                label="#{messages['paymentAgreement.searcher']}" switchType="ajax">
-                <s:decorate template="../layout/display.xhtml">
-                    <ui:define name="label">#{messages['paymentAgreement.criteria']}</ui:define>
+			<rich:simpleTogglePanel
+				label="#{messages['paymentAgreement.searcher']}" switchType="ajax">
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['paymentAgreement.criteria']}</ui:define>
 
-                    <rich:calendar disabled="false" id="endDate" required="true"
-                                   value="#{paymentHome.date}"
-                                   datePattern="#{messages['common.datePattern']}" />                                                                                
-                </s:decorate>
-            </rich:simpleTogglePanel>
+					<rich:calendar disabled="false" id="endDate" required="true"
+						value="#{paymentHome.date}"
+						datePattern="#{messages['common.datePattern']}" />
+				</s:decorate>
+			</rich:simpleTogglePanel>
 
-            <div class="actionButtons">
-                <a:commandButton type="submit" id="search" value="#{messages['common.search']}"
-                                 action="#{paymentHome.listAgreed()}">				    
-                </a:commandButton>
-                <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" />
-            </div>
-
-
-
-            <rich:panel>
-                <f:facet name="header">
-                    <h:panelGrid columns="2" columnClasses="headerTitle,">
-                        <h:outputText value="#{messages['paymentAgreement.searchResults']} (#{empty paymentHome.lsr ? 0 : paymentHome.lsr.size})" />
-                        
-                        
-                        <a:commandButton id="print" rendered="#{not empty paymentHome.lsr}"
-                                 value="#{messages['paymentAgreement.print']}"
-                                 action="#{paymentHome.printReport()}">                            
-                        </a:commandButton>
-                    </h:panelGrid>
-                </f:facet>
-                <div class="results" id="paymentAgreementAgreementList">
-
-                    <h:outputText value="The payment search returned no results."
-                                  rendered="#{empty paymentHome.lsr}" />
+			<div class="actionButtons">
+				<a:commandButton type="submit" id="search"
+					value="#{messages['common.search']}"
+					action="#{paymentHome.listAgreed()}">
+				</a:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
 
 
 
-                    <rich:dataTable id="paymentAgreementAgreementList"
-                                    var="_paymentAgreement" value="#{paymentHome.lsr}"
-                                    rows="10" 
-                                    reRender="datascroller" width="650"
-                                    rendered="#{not empty paymentHome.lsr}">
-                        <rich:column sortBy="#{_paymentAgreement.agreement_id}" filterBy="#{_paymentAgreement.agreement_id}" filterEvent="onkeyup" >
-                            <f:facet name="header">
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['paymentAgreement.searchResults']} (#{empty paymentHome.lsr ? 0 : paymentHome.lsr.size})" />
+
+
+						<a:commandButton id="print"
+							rendered="#{not empty paymentHome.lsr}"
+							value="#{messages['paymentAgreement.print']}"
+							action="#{paymentHome.printReport()}">
+						</a:commandButton>
+					</h:panelGrid>
+				</f:facet>
+				<div class="results" id="paymentAgreementAgreementList">
+
+					<h:outputText value="The payment search returned no results."
+						rendered="#{empty paymentHome.lsr}" />
+
+
+
+					<rich:dataTable id="paymentAgreementAgreementList"
+						var="_paymentAgreement" value="#{paymentHome.lsr}" rows="10"
+						reRender="datascroller" width="650"
+						rendered="#{not empty paymentHome.lsr}">
+						<rich:column sortBy="#{_paymentAgreement.agreement_id}"
+							filterBy="#{_paymentAgreement.agreement_id}"
+							filterEvent="onkeyup">
+							<f:facet name="header">
                                 #{messages['paymentAgreement.id']}
                             </f:facet>
-                            <h:outputText value="#{_paymentAgreement.agreement_id}" />
-                        </rich:column>
+							<h:outputText value="#{_paymentAgreement.agreement_id}" />
+						</rich:column>
 
-                        <rich:column sortBy="#{_paymentAgreement.firstpaymentdate}" filterBy="#{_paymentAgreement.firstpaymentdate}" filterEvent="onkeyup" >
-                            <f:facet name="header">
+						<rich:column sortBy="#{_paymentAgreement.firstpaymentdate}"
+							filterBy="#{_paymentAgreement.firstpaymentdate}"
+							filterEvent="onkeyup">
+							<f:facet name="header">
                                 #{messages['paymentAgreement.firstpaymentdate']}
                             </f:facet>
-                            <h:outputText
-                                value="#{_paymentAgreement.firstpaymentdate}" />
-                        </rich:column>
-                        
-                        <rich:column sortBy="#{_paymentAgreement.identificationnumber_ci}" filterBy="#{_paymentAgreement.identificationnumber_ci}" filterEvent="onkeyup" >
-                            <f:facet name="header">
+							<h:outputText value="#{_paymentAgreement.firstpaymentdate}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_paymentAgreement.identificationnumber_ci}"
+							filterBy="#{_paymentAgreement.identificationnumber_ci}"
+							filterEvent="onkeyup">
+							<f:facet name="header">
                                 #{messages['resident.identificationNumber']}
                             </f:facet>
-                            <h:outputText
-                                value="#{_paymentAgreement.identificationnumber_ci}" />
-                        </rich:column>
-            	  
-                        <rich:column sortBy="#{_paymentAgreement.name}" filterBy="#{_paymentAgreement.name}" filterEvent="onkeyup" >
-                            <f:facet name="header">
+							<h:outputText
+								value="#{_paymentAgreement.identificationnumber_ci}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_paymentAgreement.name}"
+							filterBy="#{_paymentAgreement.name}" filterEvent="onkeyup">
+							<f:facet name="header">
                                 #{messages['resident.name']}
                             </f:facet>
-                            <h:outputText value="#{_paymentAgreement.name}" />
-                        </rich:column>
+							<h:outputText value="#{_paymentAgreement.name}" />
+						</rich:column>
 
-                        <rich:column sortBy="#{_paymentAgreement.description}" filterBy="#{_paymentAgreement.description}" filterEvent="onkeyup" >
-                            <f:facet name="header">
+						<rich:column sortBy="#{_paymentAgreement.description}"
+							filterBy="#{_paymentAgreement.description}" filterEvent="onkeyup">
+							<f:facet name="header">
                                 #{messages['paymentAgreement.description']}
                             </f:facet>
-                            <h:outputText value="#{_paymentAgreement.description}" />
-                        </rich:column>
-                        
-                        <rich:column sortBy="#{_paymentAgreement.dividendsnumber}" filterBy="#{_paymentAgreement.dividendsnumber}" filterEvent="onkeyup" >
-                            <f:facet name="header">
+							<h:outputText value="#{_paymentAgreement.description}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_paymentAgreement.dividendsnumber}"
+							filterBy="#{_paymentAgreement.dividendsnumber}"
+							filterEvent="onkeyup">
+							<f:facet name="header">
                                 #{messages['paymentAgreement.dividendsnumber']}
                             </f:facet>
-                            <h:outputText value="#{_paymentAgreement.dividendsnumber}" />
-                        </rich:column>
-                        
-                        <rich:column sortBy="#{_paymentAgreement.count}" filterBy="#{_paymentAgreement.count}" filterEvent="onkeyup" >
-                            <f:facet name="header">
+							<h:outputText value="#{_paymentAgreement.dividendsnumber}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_paymentAgreement.count}"
+							filterBy="#{_paymentAgreement.count}" filterEvent="onkeyup">
+							<f:facet name="header">
                                 #{messages['paymentAgreement.count']}
                             </f:facet>
-                            <h:outputText value="#{_paymentAgreement.count}" />
-                        </rich:column>
-                        
-                        <rich:column sortBy="#{_paymentAgreement.suma}" filterBy="#{_paymentAgreement.suma}" filterEvent="onkeyup" >
-                            <f:facet name="header">
+							<h:outputText value="#{_paymentAgreement.count}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_paymentAgreement.suma}"
+							filterBy="#{_paymentAgreement.suma}" filterEvent="onkeyup">
+							<f:facet name="header">
                                 #{messages['paymentAgreement.suma']}
                             </f:facet>
-                            <h:outputText value="#{_paymentAgreement.suma}" />
-                        </rich:column>
-                        
-                        <rich:column sortBy="#{_paymentAgreement.date}" filterBy="#{_paymentAgreement.date}" filterEvent="onkeyup" >
-                            <f:facet name="header">
+							<h:outputText value="#{_paymentAgreement.suma}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_paymentAgreement.date}"
+							filterBy="#{_paymentAgreement.date}" filterEvent="onkeyup">
+							<f:facet name="header">
                                 #{messages['paymentAgreement.MaxDate']}
                             </f:facet>
-                            <h:outputText value="#{_paymentAgreement.date}" />
-                        </rich:column>
+							<h:outputText value="#{_paymentAgreement.date}" />
+						</rich:column>
 
                          Integer dividendsnumber;
            BigInteger count;
@@ -128,31 +142,131 @@
 	   Date date;
                         
                         <rich:column styleClass="action">
-                            <f:facet name="header">#{messages['common.action']}</f:facet>
-                            <s:button view="/income/PaymentAgreementEdit.xhtml"
-                                      value="#{messages['common.view']}" propagation="none"
-                                      id="paymentAgreementEdit" rendered="#{empty from}">
-                                <f:param name="paymentAgreementId"
-                                         value="#{_paymentAgreement.agreement_id}" />
-                            </s:button>
-                        </rich:column>
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<s:button view="/income/PaymentAgreementEdit.xhtml"
+								value="#{messages['common.view']}" propagation="none"
+								id="paymentAgreementEdit" rendered="#{empty from}">
+								<f:param name="paymentAgreementId"
+									value="#{_paymentAgreement.agreement_id}" />
+							</s:button>
 
-                        <f:facet name="footer">
-                            <rich:datascroller id="datascroller" />
-                        </f:facet>
-                    </rich:dataTable>
+							<a:commandButton id="accountDetailBtn"
+								value="#{messages['finantialStatement.detail']}"
+								action="#{paymentHome.selectPaymentAgreement(_paymentAgreement.agreement_id)}"
+								eventsQueue="gimEventsQueue" ajaxSingle="true"
+								reRender="paymentAgreementList,sc3,paymentAgrrementDetailPanel"
+								oncomplete="Richfaces.showModalPanel('paymentAgrrementDetailPanel')" >
+							</a:commandButton>
+							
+						 
+							
+						</rich:column>
 
-                </div>
-            </rich:panel>
+						<f:facet name="footer">
+							<rich:datascroller id="datascroller" />
+						</f:facet>
+					</rich:dataTable>
+
+				</div>
+			</rich:panel>
 
 
+			<rich:modalPanel id="paymentAgrrementDetailPanel" minHeight="540"
+				minWidth="800" height="540" width="800">
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="Detalla del convenio"></h:outputText>
+					</h:panelGroup>
+				</f:facet>
+				<f:facet name="controls">
+					<h:panelGroup>
+						<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+							id="hidepaymentAgrrementDetailPanelLink" />
+						<rich:componentControl for="paymentAgrrementDetailPanel"
+							attachTo="hidepaymentAgrrementDetailPanelLink" operation="hide"
+							event="onclick" />
+					</h:panelGroup>
+				</f:facet>
 
-            <s:div styleClass="actionButtons" rendered="#{empty from}">
+				<rich:panel style="height:460px; padding">
+					<h:panelGrid columns="1">
+						<h:outputText value="Detalle del convenio" />
+						<h:outputText
+							value="#{coerciveReportHome.paymentAgreement.resident.identificationNumber}" />
+						<h:outputText
+							value="#{coerciveReportHome.paymentAgreement.resident.name}" />
+						<h:outputText
+							value="#{coerciveReportHome.paymentAgreement.description}" />
+						<h:outputText
+							value="#{coerciveReportHome.paymentAgreement.firstPaymentDate}">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</h:panelGrid>
 
-            </s:div>
-        </h:form>
+					<rich:dataTable id="paymentAgreementList" var="_paMb"
+						value="#{coerciveReportHome.bondsAgreement}" rows="15"
+						columnClasses="center,left,left,center,right"
+						onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+						<rich:column>
+							<f:facet name="header">#{messages['municipalBond.creationDate']}</f:facet>
+							<h:outputText value="#{_paMb.creationDate}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['entry']}</f:facet>
+							<h:outputText value="#{_paMb.entry.name}">
+							</h:outputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['municipalBondStatus']}</f:facet>
+							<h:outputText value="#{_paMb.municipalBondStatus.name}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['municipalBond.liquidationDate']}</f:facet>
+							<h:outputText value="#{_paMb.liquidationDate}"
+								rendered="#{_paMb.deposits.size() gt 0}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+							<h:outputText value="..."
+								rendered="#{_paMb.deposits.size() lt 0}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">#{messages['municipalBond.value']}</f:facet>
+							<h:outputText value="#{_paMb.value}" />
+						</rich:column>
+					</rich:dataTable>
+					<rich:datascroller align="center" for="paymentAgreementList"
+						maxPages="20" id="sc3" />
+
+					<div style="clear: both" />
+				</rich:panel>
+
+				<div class="actionButtons">
+
+					<s:button
+						view="/accounting/report/DetailFinantialStatementReportByAccount.xhtml"
+						id="printId"
+						rendered="#{not empty finantialStatement.accountDetails}"
+						action="#{finantialStatement.prePrintAction(true)}"
+						propagation="join" value="#{messages['common.print']}" />
+
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.quit']}"
+						oncomplete="Richfaces.hideModalPanel('paymentAgrrementDetailPanel');"
+						bypassUpdates="true" />
+				</div>
+
+			</rich:modalPanel>
 
 
-    </ui:define>
+			<s:div styleClass="actionButtons" rendered="#{empty from}">
+
+			</s:div>
+		</h:form>
+
+
+	</ui:define>
 
 </ui:composition>

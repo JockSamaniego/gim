@@ -161,8 +161,7 @@ public class NotificationList extends EntityQuery<Notification> {
 		if (this.selectedItems.isEmpty()) {
 			municipalBonds.clear();
 			return municipalBonds;
-		}
-		System.out.println("entra aquissssssssssssssss 1111111111111111111");
+		} 
 
 		for (Long id : Util.splitArrayString(selectedItems)) {
 			System.out.println("entra aquissssssssssssssss");

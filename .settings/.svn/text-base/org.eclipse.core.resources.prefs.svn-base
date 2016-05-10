@@ -1,9 +1,0 @@
-eclipse.preferences.version=1
-encoding//resources/import-dev.sql=UTF-8
-encoding//src/hot/org/gob/gim/waterservice/action/WaterSupplyHome.java=UTF-8
-encoding//src/main/ec/gob/gim/waterservice/model=UTF-8
-encoding//view/coercive/report/NotificationReport.xhtml=UTF-8
-encoding//view/common/PasswordMail.xhtml=UTF-8
-encoding//view/common/PendingBondsMail.xhtml=UTF-8
-encoding//view/income/report/ClosingTillReportByPaymentType.xhtml=UTF-8
-encoding/<project>=UTF-8
