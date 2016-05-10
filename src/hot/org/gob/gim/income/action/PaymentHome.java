@@ -3,6 +3,7 @@ package org.gob.gim.income.action;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -79,7 +80,7 @@ import javax.persistence.EntityManager;
 
 @Name("paymentHome")
 @Scope(ScopeType.CONVERSATION)
-public class PaymentHome extends EntityHome<Payment> {
+public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
@@ -179,6 +180,42 @@ public class PaymentHome extends EntityHome<Payment> {
 		return true;
 	}
 
+	
+	/** 
+	 * @author mack 
+	 * Agregado para obtener que deudas conforman el convenio 
+	 * @param pa 
+	 */
+	
+	private List <MunicipalBond> bondsAgreement;
+	
+	@SuppressWarnings("unchecked")
+	public void selectPaymentAgreement(BigInteger agreement_id){
+		
+		
+		this.paymentAgreement= (PaymentAgreement)getEntityManager().find(PaymentAgreement.class, agreement_id); 
+		String sentence="select mb from MunicipalBond mb " 
+				+ "left join FETCH mb.deposits deposit "
+				+ "left join FETCH deposit.payment payment "
+				+ "left join FETCH mb.entry entry "
+				+ "where mb.paymentAgreement.id=:paId "
+				+ "order by mb.creationDate";
+		
+		Query q=this.getEntityManager().createQuery(sentence);
+		bondsAgreement = q.setParameter("paId", agreement_id).getResultList();
+	}
+	 
+	 
+	
+	public List<MunicipalBond> getBondsAgreement() {
+		return bondsAgreement;
+	}
+
+	public void setBondsAgreement(List<MunicipalBond> bondsAgreement) {
+		this.bondsAgreement = bondsAgreement;
+	}
+
+	
 	public void initialize() {
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
@@ -1702,7 +1739,8 @@ public class PaymentHome extends EntityHome<Payment> {
 		System.out.println("====>" + disabled);
 		return disabled;
 	}
-
+	
+	
 	// ----------------IA---------------------------------------------
 
 	private Date date;
@@ -1735,6 +1773,11 @@ public class PaymentHome extends EntityHome<Payment> {
 		this.date = date;
 	}
 
+	
+	/**
+	 * @author ISMAEL
+	 * @return
+	 */
 	public String listAgreed() {
 		System.out.println("INICIO");
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -1885,4 +1928,7 @@ public class PaymentHome extends EntityHome<Payment> {
 		}
 
 	}
+	
+	
+
 }
