@@ -52,19 +52,9 @@
 	<classpathentry kind="lib" path="lib/jaxb-jxc.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-xjc.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jaxb2.2.7"/>
-	<classpathentry kind="lib" path="C:/opt/resteasy-jaxrs-3.0.7.Final/lib/jaxrs-api-3.0.7.Final.jar"/>
-	<classpathentry kind="lib" path="C:/opt/resteasy-jaxrs-3.0.7.Final/lib/resteasy-jaxrs-3.0.7.Final.jar"/>
-	<classpathentry kind="lib" path="C:/opt/resteasy-jaxrs-3.0.7.Final/lib/resteasy-json-p-provider-3.0.7.Final.jar"/>
-	<classpathentry kind="lib" path="C:/opt/resteasy-jaxrs-3.0.7.Final/lib/resteasy-jsapi-3.0.7.Final.jar"/>
-	<classpathentry kind="lib" path="C:/opt/resteasy-jaxrs-3.0.7.Final/lib/resteasy-client-3.0.7.Final.jar"/>
-	<classpathentry kind="lib" path="C:/opt/resteasy-jaxrs-3.0.7.Final/lib/resteasy-jaxb-provider-3.0.7.Final.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/commons-digester.jar"/>
 	<classpathentry kind="lib" path="lib/InvoiceClient.jar"/>
-	<classpathentry kind="lib" path="D:/eclipse_prj/gim/lib/poi-3.12.jar"/>
-	<classpathentry kind="lib" path="D:/eclipse_prj/gim/lib/poi-ooxml-3.12.jar"/>
-	<classpathentry kind="lib" path="D:/eclipse_prj/gim/lib/poi-ooxml-schemas-3.12.jar"/>
-	<classpathentry kind="lib" path="D:/eclipse_prj/gim/lib/xmlbeans-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-asl-1.9.11.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-jaxrs-1.9.11.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-mapper-asl-1.9.11.jar"/>
@@ -73,5 +63,13 @@
 	<classpathentry kind="lib" path="lib/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/lambdaj-2.4-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="lib/axis2-kernel-1.6.4.jar"/>
+	<classpathentry kind="lib" path="lib/poi-3.12.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-3.12.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-schemas-3.12.jar"/>
+	<classpathentry kind="lib" path="lib/resteasy-atom-provider.jar"/>
+	<classpathentry kind="lib" path="lib/resteasy-jaxb-provider.jar"/>
+	<classpathentry kind="lib" path="lib/resteasy-jaxrs.jar"/>
+	<classpathentry kind="lib" path="lib/resteasy-jettison-provider.jar"/>
+	<classpathentry kind="lib" path="lib/jaxrs-api.jar"/>
 	<classpathentry kind="output" path="test-build"/>
 </classpath>
