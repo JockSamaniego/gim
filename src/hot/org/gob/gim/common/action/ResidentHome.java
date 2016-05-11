@@ -430,9 +430,13 @@ public class ResidentHome extends EntityHome<Resident> {
         }
         return false;
     }
+<<<<<<< HEAD
     
     public void prueba(){
     	
     }
 
+=======
+     
+>>>>>>> 84c638905b3e83f95f959ecbb6a094cd0b805e12
 }
