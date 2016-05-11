@@ -63,6 +63,7 @@
 	<classpathentry kind="lib" path="lib/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/lambdaj-2.4-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="lib/axis2-kernel-1.6.4.jar"/>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/ant-antlr.jar"/>
 	<classpathentry kind="lib" path="lib/apache-commons-codec-1.4.jar"/>
@@ -144,10 +145,16 @@
 	<classpathentry kind="lib" path="lib/portlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/primefaces-3.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/quartz.jar"/>
+=======
+	<classpathentry kind="lib" path="lib/poi-3.12.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-3.12.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-schemas-3.12.jar"/>
+>>>>>>> 034d44411c72407ebfe176e7062980db48128edc
 	<classpathentry kind="lib" path="lib/resteasy-atom-provider.jar"/>
 	<classpathentry kind="lib" path="lib/resteasy-jaxb-provider.jar"/>
 	<classpathentry kind="lib" path="lib/resteasy-jaxrs.jar"/>
 	<classpathentry kind="lib" path="lib/resteasy-jettison-provider.jar"/>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="lib/richfaces-impl.jar"/>
 	<classpathentry kind="lib" path="lib/richfaces-ui.jar"/>
 	<classpathentry kind="lib" path="lib/saaj-api.jar"/>
@@ -164,5 +171,8 @@
 	<classpathentry kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="lib/xstream-1.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/yarfraw.jar"/>
+=======
+	<classpathentry kind="lib" path="lib/jaxrs-api.jar"/>
+>>>>>>> 034d44411c72407ebfe176e7062980db48128edc
 	<classpathentry kind="output" path="test-build"/>
 </classpath>
