@@ -192,8 +192,19 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	@SuppressWarnings("unchecked")
 	public void selectPaymentAgreement(BigInteger agreement_id){
 		
+		System.out.println("=============>"+agreement_id);
 		
-		this.paymentAgreement= (PaymentAgreement)getEntityManager().find(PaymentAgreement.class, agreement_id); 
+		this.paymentAgreement= (PaymentAgreement)getEntityManager().
+				find(PaymentAgreement.class, new Long(agreement_id.toString()));
+		
+//		Query q1 =
+//				this.getEntityManager().createQuery("Select pa from PaymentAgreement pa where pa.id=:id");
+//		q1.setParameter("id", new Long(agreement_id.toString()));
+//		List<PaymentAgreement> list = q1.getResultList();
+//		
+//		if(!list.isEmpty())
+//			this.paymentAgreement= list.get(0);
+		
 		String sentence="select mb from MunicipalBond mb " 
 				+ "left join FETCH mb.deposits deposit "
 				+ "left join FETCH deposit.payment payment "
@@ -202,7 +213,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				+ "order by mb.creationDate";
 		
 		Query q=this.getEntityManager().createQuery(sentence);
-		bondsAgreement = q.setParameter("paId", agreement_id).getResultList();
+		bondsAgreement = q.setParameter("paId", new Long(agreement_id.toString())).getResultList();
 	}
 	 
 	 
