@@ -124,11 +124,10 @@
 		<servlet-class>org.gob.loja.gim.ws.workday.WorkDayWs</servlet-class>
 	</servlet>
 	
-	<!-- servlet>
+	<servlet>
 		<servlet-name>ServicePayment</servlet-name>
-		<servlet-class>org.
-		 gob.loja.gim.ws.sde.ws.ServicePayment</servlet-class>
-	</servlet-->
+		<servlet-class>org.gob.loja.gim.ws.sde.ws.ServicePayment</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>Seam Resource Servlet</servlet-name>
@@ -155,13 +154,13 @@
 		<url-pattern>/WorkDayWs</url-pattern>
 	</servlet-mapping>
 	
-    <!--servlet-mapping>
+    <servlet-mapping>
 		<servlet-name>ServicePayment</servlet-name>
 		<url-pattern>/servicePayment</url-pattern>
-	</servlet-mapping-->
+	</servlet-mapping>
 	
 	<session-config>
-		<session-timeout>60</session-timeout>
+		<session-timeout>120</session-timeout>
 	</session-config>
 	<security-constraint>
 		<display-name>Restrict raw XHTML Documents</display-name>

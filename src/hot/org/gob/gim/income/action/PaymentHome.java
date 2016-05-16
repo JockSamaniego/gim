@@ -1,4 +1,4 @@
-package org.gob.gim.income.action;
+apackage org.gob.gim.income.action;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -193,17 +193,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	public void selectPaymentAgreement(BigInteger agreement_id){
 		
 		System.out.println("=============>"+agreement_id);
-		
+		//buscar el convenio en especifico
 		this.paymentAgreement= (PaymentAgreement)getEntityManager().
 				find(PaymentAgreement.class, new Long(agreement_id.toString()));
-		
-//		Query q1 =
-//				this.getEntityManager().createQuery("Select pa from PaymentAgreement pa where pa.id=:id");
-//		q1.setParameter("id", new Long(agreement_id.toString()));
-//		List<PaymentAgreement> list = q1.getResultList();
-//		
-//		if(!list.isEmpty())
-//			this.paymentAgreement= list.get(0);
 		
 		String sentence="select mb from MunicipalBond mb " 
 				+ "left join FETCH mb.deposits deposit "
@@ -1809,7 +1801,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				+ "where pag.id in (select pag1.id \n" + "			from gimprod.dividend div\n"
 				+ "			inner join gimprod.PaymentAgreement pag1 on div.PaymentAgreement_id=pag1.id\n"
 				+ "			group by pag1.id\n" + "			having max(div.date) <= '" + df.format(date) + "'\n"
-				+ "			order by max(div.date))\n" + "			--and pag.id  =417\n" + "\n"
+				+ "			order by max(div.date))\n" + "	and pag.id  =1478 \n" + "\n"
 				+ "group by pag.id, resident.id,resident.identificationnumber, \n" + "	resident.name, \n"
 				+ "	description, \n" + "	dividendsnumber, aux.count, aux.suma\n" + "order by pag.id";
 

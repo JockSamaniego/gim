@@ -1,3 +1,6 @@
 /exploded-archives/
 /test-build/
 /classes/
+/build.properties
+/resources/gim-dev-ds.xml
+/exploded-archives/gim.ear/gim_war/
