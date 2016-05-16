@@ -430,5 +430,9 @@ public class ResidentHome extends EntityHome<Resident> {
         }
         return false;
     }
-     
+    
+    public void prueba(){
+    	
+    }
+
 }

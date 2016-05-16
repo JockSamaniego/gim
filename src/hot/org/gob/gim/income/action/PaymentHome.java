@@ -192,8 +192,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	@SuppressWarnings("unchecked")
 	public void selectPaymentAgreement(BigInteger agreement_id){
 		
+		System.out.println("=============>"+agreement_id);
+		//buscar el convenio en especifico
+		this.paymentAgreement= (PaymentAgreement)getEntityManager().
+				find(PaymentAgreement.class, new Long(agreement_id.toString()));
 		
-		this.paymentAgreement= (PaymentAgreement)getEntityManager().find(PaymentAgreement.class, agreement_id); 
 		String sentence="select mb from MunicipalBond mb " 
 				+ "left join FETCH mb.deposits deposit "
 				+ "left join FETCH deposit.payment payment "
@@ -202,7 +205,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				+ "order by mb.creationDate";
 		
 		Query q=this.getEntityManager().createQuery(sentence);
-		bondsAgreement = q.setParameter("paId", agreement_id).getResultList();
+		bondsAgreement = q.setParameter("paId", new Long(agreement_id.toString())).getResultList();
 	}
 	 
 	 
@@ -1781,7 +1784,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	public String listAgreed() {
 		System.out.println("INICIO");
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-		String sql = "select pag.id as Agreement,\n" + "	firstpaymentdate,\n" + "	resident.id as resident,\n"
+		String sql = "select pag.id as Agreement,\n" + " firstpaymentdate,\n" + "	resident.id as resident,\n"
 				+ "	resident.identificationnumber as ci, \n" + "	resident.name, \n" + "	pag.description, \n"
 				+ "	dividendsnumber, aux.count, aux.suma,\n" + "	max(divi.date)\n"
 				+ "from gimprod.PaymentAgreement pag\n" + "inner join gimprod.resident on pag.resident_id=resident.id\n"
@@ -1798,7 +1801,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				+ "where pag.id in (select pag1.id \n" + "			from gimprod.dividend div\n"
 				+ "			inner join gimprod.PaymentAgreement pag1 on div.PaymentAgreement_id=pag1.id\n"
 				+ "			group by pag1.id\n" + "			having max(div.date) <= '" + df.format(date) + "'\n"
-				+ "			order by max(div.date))\n" + "			--and pag.id  =417\n" + "\n"
+				+ "			order by max(div.date))\n" + "	and pag.id  =1478 \n" + "\n"
 				+ "group by pag.id, resident.id,resident.identificationnumber, \n" + "	resident.name, \n"
 				+ "	description, \n" + "	dividendsnumber, aux.count, aux.suma\n" + "order by pag.id";
 

@@ -192,19 +192,19 @@
 					<h:panelGrid columns="1">
 						<h:outputText value="Detalle del convenio" />
 						<h:outputText
-							value="#{coerciveReportHome.paymentAgreement.resident.identificationNumber}" />
+							value="#{paymentHome.paymentAgreement.resident.identificationNumber}" />
 						<h:outputText
-							value="#{coerciveReportHome.paymentAgreement.resident.name}" />
+							value="#{paymentHome.paymentAgreement.resident.name}" />
 						<h:outputText
-							value="#{coerciveReportHome.paymentAgreement.description}" />
+							value="#{paymentHome.paymentAgreement.description}" />
 						<h:outputText
-							value="#{coerciveReportHome.paymentAgreement.firstPaymentDate}">
+							value="#{paymentHome.paymentAgreement.firstPaymentDate}">
 							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
 						</h:outputText>
 					</h:panelGrid>
 
 					<rich:dataTable id="paymentAgreementList" var="_paMb"
-						value="#{coerciveReportHome.bondsAgreement}" rows="15"
+						value="#{paymentHome.bondsAgreement}" rows="15"
 						columnClasses="center,left,left,center,right"
 						onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
 						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
