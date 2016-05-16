@@ -1784,7 +1784,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	public String listAgreed() {
 		System.out.println("INICIO");
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-		String sql = "select pag.id as Agreement,\n" + "	firstpaymentdate,\n" + "	resident.id as resident,\n"
+		String sql = "select pag.id as Agreement,\n" + " firstpaymentdate,\n" + "	resident.id as resident,\n"
 				+ "	resident.identificationnumber as ci, \n" + "	resident.name, \n" + "	pag.description, \n"
 				+ "	dividendsnumber, aux.count, aux.suma,\n" + "	max(divi.date)\n"
 				+ "from gimprod.PaymentAgreement pag\n" + "inner join gimprod.resident on pag.resident_id=resident.id\n"
