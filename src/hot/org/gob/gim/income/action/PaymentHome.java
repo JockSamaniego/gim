@@ -1,4 +1,4 @@
-apackage org.gob.gim.income.action;
+package org.gob.gim.income.action;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
