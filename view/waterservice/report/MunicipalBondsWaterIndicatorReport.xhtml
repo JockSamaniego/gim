@@ -30,6 +30,15 @@
 								<p:text value="REPORTE DE BLOQUEOS Y RE-PLANILLAJE" />
 							</p:paragraph>
 						</p:cell>
+						<p:cell>
+							<p:paragraph alignment="center">
+								<p:text value="Reporte de Emisión" 
+								rendered="#{!waterSupplyHome.municipalBondStatus.equals(waterSupplyHome.blockedStatus)}"/>
+
+								<p:text value="Reporte de Bloqueos" 
+								rendered="#{waterSupplyHome.municipalBondStatus.equals(waterSupplyHome.blockedStatus)}"/>
+							</p:paragraph>
+						</p:cell>
 					</p:table>
 
 					<p:table columns="8" widthPercentage="100" headerRows="0"
@@ -89,15 +98,7 @@
 								</p:text>
 							</p:paragraph>
 						</p:cell>
-						<p:cell>
-							<p:paragraph>
-								<p:text value="Reporte de Emisión" 
-								rendered="#{!waterSupplyHome.municipalBondStatus.equals(waterSupplyHome.blockedStatus)}"/>
 
-								<p:text value="Reporte de Bloqueos" 
-								rendered="#{waterSupplyHome.municipalBondStatus.equals(waterSupplyHome.blockedStatus)}"/>
-							</p:paragraph>
-						</p:cell>
 					</p:table>
 				</p:paragraph>
 			</p:header>
