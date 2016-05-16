@@ -2,7 +2,12 @@
 /test-build/
 /classes/
 /build.properties
+
 /bin/
 /exploded-archives/gim.ear/gim_war/
 /test-build/waterservice/report/
 
+/resources/gim-dev-ds.xml
+/exploded-archives/gim.ear/gim_war/
+
+/build.properties
