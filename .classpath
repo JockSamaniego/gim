@@ -114,6 +114,74 @@
 	<classpathentry kind="lib" path="lib/knowledge-internal-api-5.5.0.Final.jar"/>
 	<classpathentry kind="lib" path="lib/laguna.jar"/>
 	<classpathentry kind="lib" path="lib/lambdaj-2.4-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="lib/axis2-kernel-1.6.4.jar"/>
+	<classpathentry kind="lib" path="lib/activation.jar"/>
+	<classpathentry kind="lib" path="lib/ant-antlr.jar"/>
+	<classpathentry kind="lib" path="lib/apache-commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/backport-util-concurrent.jar"/>
+	<classpathentry kind="lib" path="lib/blazeds-common.jar"/>
+	<classpathentry kind="lib" path="lib/blazeds-core.jar"/>
+	<classpathentry kind="lib" path="lib/blazeds-proxy.jar"/>
+	<classpathentry kind="lib" path="lib/blazeds-remoting.jar"/>
+	<classpathentry kind="lib" path="lib/bsh.jar"/>
+	<classpathentry kind="lib" path="lib/cglib-nodep.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/concurrent.jar"/>
+	<classpathentry kind="lib" path="lib/darkX.jar"/>
+	<classpathentry kind="lib" path="lib/dbunit.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/ehcache.jar"/>
+	<classpathentry kind="lib" path="lib/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="lib/elecInvClient.jar"/>
+	<classpathentry kind="lib" path="lib/emma.jar"/>
+	<classpathentry kind="lib" path="lib/glassX.jar"/>
+	<classpathentry kind="lib" path="lib/groovy-all.jar"/>
+	<classpathentry kind="lib" path="lib/guice.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-servlet.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/htmlparser.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore.jar"/>
+	<classpathentry kind="lib" path="lib/itext-2.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/itext-rtf.jar"/>
+	<classpathentry kind="lib" path="lib/javassist.jar"/>
+	<classpathentry kind="lib" path="lib/jaxrs-api.jar"/>
+	<classpathentry kind="lib" path="lib/jaxws-api.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-common-core.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-deployers-client-spi.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-deployers-core-spi.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-jmx.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-logging-spi.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-seam-excel.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-seam-flex.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-seam-ioc.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-seam-jul.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-seam-mail.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-seam-pdf.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-seam-remoting.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-seam-resteasy.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-seam-rss.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-system.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-vfs.jar"/>
+	<classpathentry kind="lib" path="lib/jbosscache-core.jar"/>
+	<classpathentry kind="lib" path="lib/jcip-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/jcl-over-slf4j.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon.jar"/>
+	<classpathentry kind="lib" path="lib/jettison.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart.jar"/>
+	<classpathentry kind="lib" path="lib/jms.jar"/>
+	<classpathentry kind="lib" path="lib/jsf-impl.jar"/>
+	<classpathentry kind="lib" path="lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib/junit.jar"/>
+	<classpathentry kind="lib" path="lib/jxl.jar"/>
+	<classpathentry kind="lib" path="lib/laguna.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core.jar"/>
 	<classpathentry kind="lib" path="lib/mail.jar"/>
@@ -128,10 +196,6 @@
 	<classpathentry kind="lib" path="lib/openxri-client.jar"/>
 	<classpathentry kind="lib" path="lib/openxri-syntax.jar"/>
 	<classpathentry kind="lib" path="lib/persistence-api.jar"/>
-	<classpathentry kind="lib" path="lib/poi-3.12.jar"/>
-	<classpathentry kind="lib" path="lib/poi-ooxml-3.12.jar"/>
-	<classpathentry kind="lib" path="lib/poi-ooxml-schemas-3.12.jar"/>
-	<classpathentry kind="lib" path="lib/portlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/postgres.jar"/>
 	<classpathentry kind="lib" path="lib/primefaces-3.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/quartz.jar"/>
@@ -148,16 +212,7 @@
 	<classpathentry kind="lib" path="lib/spring.jar"/>
 	<classpathentry kind="lib" path="lib/stax-api.jar"/>
 	<classpathentry kind="lib" path="lib/testng-jdk15.jar"/>
-	<classpathentry kind="lib" path="lib/urlrewritefilter.jar"/>
-	<classpathentry kind="lib" path="lib/wicket-datetime.jar"/>
-	<classpathentry kind="lib" path="lib/wicket-extensions.jar"/>
-	<classpathentry kind="lib" path="lib/wicket-ioc.jar"/>
-	<classpathentry kind="lib" path="lib/wicket.jar"/>
-	<classpathentry kind="lib" path="lib/xml-apis-1.3.04.jar"/>
-	<classpathentry kind="lib" path="lib/xmlbeans-2.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
-	<classpathentry kind="lib" path="lib/xstream-1.4.1.jar"/>
-	<classpathentry kind="lib" path="lib/yarfraw.jar"/>
+	<classpathentry kind="output" path="test-build"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
