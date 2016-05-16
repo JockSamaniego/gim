@@ -7,23 +7,12 @@
    <local-tx-datasource>
       <jndi-name>gimDatasource</jndi-name>
       <use-java-context>false</use-java-context>
-<<<<<<< HEAD
+      
       <connection-url>jdbc:postgresql://localhost:5432/gim</connection-url>
       <driver-class>org.postgresql.Driver</driver-class>
       
       <user-name>postgres</user-name>
       <password>server</password>
-=======
-<<<<<<< HEAD
-      <connection-url>jdbc:postgresql://localhost:5432/gimloja7</connection-url>
-=======
-      <connection-url>jdbc:postgresql://localhost:5432/gimlojaDB8</connection-url>
->>>>>>> a106263ebef3f93738d2bb2dea66f9e5685b426b
-      <driver-class>org.postgresql.Driver</driver-class>
-      
-      <user-name>postgres</user-name>
-      <password>postgres</password>
->>>>>>> 84c638905b3e83f95f959ecbb6a094cd0b805e12
       
    </local-tx-datasource>
     
