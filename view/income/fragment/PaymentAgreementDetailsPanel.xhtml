@@ -33,11 +33,28 @@
 					<rich:messages errorClass="errors" />
 				</rich:panel>
 
-				<h:panelGrid width="100%">
-					<h:outputText value="#{messages['paymentAgreement.observation']}:" />
-					<h:inputTextarea id="observation"
-						style="height:20px; width:100%; overflow:auto;"
-						value="#{paymentAgreementHome.instance.description}" />
+				<h:panelGrid width="100%" columns="2">
+
+					<s:decorate id="descriptionField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['paymentAgreement.description']}:</ui:define>
+						<h:inputTextarea id="description"
+							style="height:20px; width:100%;"
+							value="#{paymentAgreementHome.instance.description}" 
+							requiered="#{paymentAgreementHome.instance.lowerPercentage}"/>
+					</s:decorate>
+
+
+					<s:decorate id="observationField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['paymentAgreement.observation']}:</ui:define>
+						<h:inputTextarea id="observation"
+							style="height:20px; width:100%;"
+							value="#{paymentAgreementHome.instance.observation}" 
+							requiered="true"
+							disabled="#{!paymentAgreementHome.instance.lowerPercentage}"/>
+					</s:decorate>
+		
 				</h:panelGrid>
 
 
@@ -60,7 +77,7 @@
 						<ui:define name="label">#{messages['paymentAgreement.lowerPercentage']}:</ui:define>
 						<h:selectBooleanCheckbox id="lowerPercentage"
 							value="#{paymentAgreementHome.instance.lowerPercentage}">
-							<a:support event="onchange" reRender="lowerPercentageField"
+							<a:support event="onchange" reRender="lowerPercentageField, observationField"
 								ajaxSingle="true" />
 						</h:selectBooleanCheckbox>
 					</s:decorate>
