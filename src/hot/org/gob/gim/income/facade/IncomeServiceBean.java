@@ -1098,8 +1098,8 @@ public class IncomeServiceBean implements IncomeService {
 				.findParameter(PENDING_BOND_STATUS);
 		Long PAYMENT_AGREEMENT_STATUS_ID = systemParameterService
 				.findParameter(IN_PAYMENT_AGREEMENT_BOND_STATUS);
-		boolean IS_ELECTRONIC_INVOIVE_ENABLE = systemParameterService
-				.findParameter(ELECTRONIC_INVOICE_ENABLE);
+		//boolean IS_ELECTRONIC_INVOIVE_ENABLE = systemParameterService
+		//		.findParameter(ELECTRONIC_INVOICE_ENABLE);
 		for (BigInteger biid : municipalBonds) {
 			Long municipalBondId = biid.longValue();
 			municipalBondIds.add(municipalBondId);
