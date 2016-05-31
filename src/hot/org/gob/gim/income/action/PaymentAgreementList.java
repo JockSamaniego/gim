@@ -23,6 +23,10 @@ public class PaymentAgreementList extends EntityQuery<PaymentAgreement> {
 		setEjbql(EJBQL);
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
 		setMaxResults(25);
+		
+		//rfarmijosm 2016-05-23
+		setOrderColumn("pa.id");
+        setOrderDirection("desc");
 	}
 	
 	public Boolean getIsActive(){
@@ -42,8 +46,8 @@ public class PaymentAgreementList extends EntityQuery<PaymentAgreement> {
 		this.criteria = criteria;
 	}
 	
-	@Override
+	/*@Override
 	public String getOrder() {
 		return "r.name";
-	}
+	}*/
 }

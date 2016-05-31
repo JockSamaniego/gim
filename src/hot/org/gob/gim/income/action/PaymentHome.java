@@ -1139,7 +1139,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void generateDeposits() {
-		System.out.println("GENERATE DEPOSITS -----> STARTS");
+		//System.out.println("GENERATE DEPOSITS -----> STARTS");
 		if (depositTotal.compareTo(BigDecimal.ZERO) < 0) {
 			depositTotal = BigDecimal.ZERO;
 			this.getInstance().setValue(BigDecimal.ZERO);
@@ -1151,14 +1151,14 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			hasConflict = Boolean.FALSE;
 			deactivatePaymentAgreement = Boolean.FALSE;
 			deposits = new LinkedList<Deposit>();
-			System.out.println("GENERATE DEPOSITS -----> municipalBonds.size() " + municipalBonds.size());
+			//System.out.println("GENERATE DEPOSITS -----> municipalBonds.size() " + municipalBonds.size());
 			BigDecimal remaining = depositTotal;
-			System.out.println("GENERATE DEPOSITS -----> depositTotal " + depositTotal);
+			//System.out.println("GENERATE DEPOSITS -----> depositTotal " + depositTotal);
 			Integer index = 0;
 
 			MunicipalBond municipalBond = null;
 			while (remaining.compareTo(BigDecimal.ZERO) > 0) {
-				System.out.println("GENERATE DEPOSITS -----> remaining " + remaining);
+				//System.out.println("GENERATE DEPOSITS -----> remaining " + remaining);
 
 				if (index < municipalBonds.size()) {
 					municipalBond = municipalBonds.get(index);
@@ -1190,12 +1190,22 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					this.getInstance().add(deposit);
 					municipalBond.add(deposit);
 				} else {
-					hasConflict = Boolean.TRUE;
-					deposit.setHasConflict(Boolean.TRUE);
-					conflictingBond = municipalBond;
-					deltaUp = interestToPay.subtract(remaining);
-					deltaDown = remaining;
-					break;
+					//rfarmijos 2016-05-23
+					//preguntar proceso de pago para fraccionar interes
+					/*if(paymentAgreement.getLowerPercentage()){
+						deposit.setInterest(interestToPay);
+						remaining = remaining.subtract(interestToPay);
+						this.getInstance().add(deposit);
+						municipalBond.add(deposit);
+					}else{*/
+						hasConflict = Boolean.TRUE;
+						deposit.setHasConflict(Boolean.TRUE);
+						conflictingBond = municipalBond;
+						deltaUp = interestToPay.subtract(remaining);
+						deltaDown = remaining;
+						break;	
+					//}
+					
 				}
 
 				BigDecimal capitalToPay = municipalBond.getBalance().subtract(municipalBond.getDiscount());
@@ -1250,7 +1260,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			}
 
 		}
-		System.out.println("GENERATE DEPOSITS -----> ENDS");
+		//System.out.println("GENERATE DEPOSITS -----> ENDS");
 	}
 
 	private Deposit createDeposit(Integer ordinal) {

@@ -280,7 +280,8 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 		subTotalTax = new BigDecimal(0);
 
 		// subTotal = new BigDecimal(0);
-		tax = new Long(12);		
+		//tax = new Long(12);
+		tax = new Long(14);
 		for (BudgetItem bi : this.getInstance().getBudgetItems()) {
 			if (bi != null) {
 				if (bi.getTotal() != null) {
@@ -298,7 +299,7 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 		 * BigDecimal taxTotal = subTotal.multiply(new BigDecimal(tax)).divide(
 		 * new BigDecimal(100));
 		 */
-
+		//iva a 14 rfarmijos 2016-05-29
 		total = total.add(subTotalNoTax).add(subTotalTax.add(subTotalTax.multiply(new BigDecimal(0.12))));
 		this.total = this.total.setScale(2, RoundingMode.HALF_UP);
 		this.getInstance().setTotal(total);
