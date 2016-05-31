@@ -573,7 +573,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			// Aplica las reglas
 			invokeRules(municipalBond, rulesToApply, itemFacts, facts);
 			roundItems(municipalBond);
-			municipalBond.setDiscount(calculateDiscount(municipalBond));
+//			municipalBond.setDiscount(calculateDiscount(municipalBond));
 			municipalBond.setSurcharge(calculateSurcharge(municipalBond));
 			municipalBond.calculateValue();
 			if (isNew && municipalBond.getPreviousPayment() != null
@@ -1052,6 +1052,12 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 									// interes
 									// guardarlo
 									CompensationReceipt compensationBilling = list.get(0);
+									
+									compensationBilling.setInterest(municipalBond.getInterest());
+									entityManager.merge(compensationBilling);
+									entityManager.flush();
+									
+									
 									BigDecimal interestSaved = compensationBilling.getInterest();
 									BigDecimal newInterest = interest.subtract(interestSaved);
 									
@@ -1065,6 +1071,19 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 									
 									if(compensationBilling.getInterest().compareTo(BigDecimal.ZERO)==1){ 
 										interest = compensationBilling.getInterest();
+									}
+									
+									
+									//aqui colocar la opcion para verificar el valor de factura electronica
+									if(municipalBond.getInterest().compareTo(BigDecimal.ZERO)==1){
+										BigDecimal interestTemp=municipalBond.getInterest();
+										
+										compensationBilling.setInterest(interestTemp);
+//										BigDecimal newResidual = interest.subtract(interestTemp);
+//										compensationBilling.setResidualInterest(newResidual);
+//										entityManager.merge(compensationBilling);
+//										entityManager.flush();
+										interest = interestTemp;
 									}
 								}else{
 									System.out.println("Creando nueva compensation");
