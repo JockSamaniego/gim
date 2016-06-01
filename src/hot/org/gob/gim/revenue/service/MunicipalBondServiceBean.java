@@ -573,7 +573,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			// Aplica las reglas
 			invokeRules(municipalBond, rulesToApply, itemFacts, facts);
 			roundItems(municipalBond);
-//			municipalBond.setDiscount(calculateDiscount(municipalBond));
+			municipalBond.setDiscount(calculateDiscount(municipalBond));
 			municipalBond.setSurcharge(calculateSurcharge(municipalBond));
 			municipalBond.calculateValue();
 			if (isNew && municipalBond.getPreviousPayment() != null
