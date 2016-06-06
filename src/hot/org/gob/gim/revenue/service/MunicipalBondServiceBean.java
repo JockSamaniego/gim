@@ -1047,12 +1047,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 										"Select cr from CompensationReceipt cr where cr.receipt =:receipt");
 								q.setParameter("receipt", municipalBond.getReceipt());
 								List<CompensationReceipt> list = q.getResultList();
-								if (list.size() > 0) {
+								if (list.size() > 0){
 									// fijar el interes anterior y el nuevo
 									// interes
 									// guardarlo
 									CompensationReceipt compensationBilling = list.get(0);
-									
 									compensationBilling.setInterest(municipalBond.getInterest());
 									entityManager.merge(compensationBilling);
 									entityManager.flush();
