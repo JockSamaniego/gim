@@ -38,5 +38,6 @@ public interface PaymentService {
 	public String saveEmoneyPayment(ServiceRequest request, Payout payout, String debtId, boolean isPaid, String idAgent);
 	public void updateEMoneyPayment(ServiceRequest request, EMoneyPayment paid);
 	public void reverse(ServiceRequest request, List<Long> depositsToReverse);
-	public boolean hasRolEmoney(ServiceRequest request);	
+	public boolean hasRolEmoney(ServiceRequest request);
+	public String searchPropertyByCadastralCode(ServiceRequest request, String cadastralCode);	
 }
