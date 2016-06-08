@@ -289,7 +289,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			this.criteria = this.identificationNumber;
 			// searchByCriteria();
 			findPaymentsBonds();
-
+			System.out.println("=======>");
+			
 		} catch (Exception e) {
 			this.setResident(null);
 			addFacesMessageFromResourceBundle("resident.notFound");
@@ -406,6 +407,43 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		this.items = items;
 	}
 
+	public Person person;	
+	public Person getPerson() {
+		return person;
+	}
+
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+	
+
+	private SystemParameterService systemParameterService;
+
+	private List<Person> cashiers;
+
+	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
+	
+	public List<Person> getCashiers() {
+		return cashiers;
+	}
+
+	public void setCashiers(List<Person> cashiers) {
+		this.cashiers = cashiers;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Person> findCashiers(){		
+		if(cashiers == null){			
+			if(systemParameterService == null){
+				systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+			}
+			String role_name = systemParameterService.findParameter("ROLE_NAME_CASHIER");			
+			Query query = getPersistenceContext().createNamedQuery("Person.findByRoleName").setParameter("roleName", role_name);
+			cashiers = query.getResultList();			
+		}
+		return cashiers != null ? cashiers : new ArrayList<Person>();
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void findPaymentsBonds() {
 
@@ -415,7 +453,6 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		time.set(Calendar.MINUTE, 0);
 		time.set(Calendar.SECOND, 0);
 
-		System.out.println("AQUIIII =============================>");
 
 		try {
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -423,14 +460,18 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			System.out.println("TIME " + time.getTime());
 
 			Query q1 = getEntityManager().createQuery("Select m from MunicipalBond m "
-					+ "where m.resident.id=:resident_id and m.liquidationDate >= :currentDate");
+					+ "JOIN m.deposits d "
+					+ "JOIN d.payment p "
+					+ "where m.resident.id=:resident_id and m.liquidationDate >= :currentDate and p.cashier =:cashier ");
 			q1.setParameter("resident_id", resident.getId());
 			q1.setParameter("currentDate", formatter.parse(formatter.format(time.getTime())));
-			System.out.println("=====>" + 123456);
+			q1.setParameter("cashier", person);
 
+			System.out.println("Persona=====================================>: "+person.getId());
 			paymentsBonds = q1.getResultList();
 			System.out.println("SIZE: " + paymentsBonds.size());
 		} catch (ParseException e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 		MunicipalBondItem root = new MunicipalBondItem(null);

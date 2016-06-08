@@ -67,6 +67,12 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 		+ "where property.cadastralCode like concat(:criteria,'%') or property.previousCadastralCode like concat(:criteria,'%') "
 		+ "or lower(resident.name) like lower(concat(:criteria,'%')) "
 		+ "or lower(resident.identificationNumber) like lower(concat(:criteria,'%')) order by property.cadastralCode"),
+		
+		@NamedQuery(name = "Property.findResidentByProperty", query = "select property from Property property "
+				+ "left join fetch property.currentDomain currentDomain "				
+				+ "left join fetch currentDomain.resident resident "				
+				+ "where  property.cadastralCode = :code"),
+				
 	@NamedQuery(name = "Property.findUrbanByCadastralCode", query = "select property from Property property "
 			+ "left join fetch property.currentDomain currentDomain "				
 			+ "left join fetch currentDomain.notarysProvince "		

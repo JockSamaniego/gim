@@ -41,6 +41,7 @@ import org.gob.loja.gim.ws.exception.NotOpenTill;
 import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 
+import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.EMoneyPayment;
@@ -540,4 +541,22 @@ public class PaymentServiceBean implements PaymentService {
 		User user = findUserByUsername(request, USERNAME_QUERY);
 		return (user.hasRole("ROLE_REVERSE_EMONEY"))? true : false; 		
 	}
+	
+	
+	
+	//by Jock Samaniego..
+	@Override
+	public String searchPropertyByCadastralCode(ServiceRequest request, String cadastralCode) {
+		List<Property> properties = new ArrayList<Property>();
+		Query query = em.createNamedQuery("Property.findResidentByProperty");	
+		query.setParameter("code", cadastralCode);
+		properties = query.getResultList();
+		if(properties.size()>0){
+			return properties.get(0).getCurrentDomain().getResident().getIdentificationNumber();
+		}else{
+			return "No existe la clave catastral";
+		}
+	}
+	
+	
 }

@@ -305,4 +305,15 @@ public class PaymentPlatform {
 		return service.hasRolEmoney(request);
 	}
 
+	
+	//by Jock Samaniego...
+	
+	@WebMethod
+	public String cadastralCodeDNI(ServiceRequest request, String cadastralCode) throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations {
+		String idNumber = service.searchPropertyByCadastralCode(request, cadastralCode);
+		InvalidateSession();
+		return idNumber;
+	}
+	
+	
 }
