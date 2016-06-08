@@ -2,16 +2,31 @@ package ec.gob.gim.wsrest.dto;
 
 import java.io.Serializable;
 
+import org.gob.gim.common.NativeQueryResultColumn;
+import org.gob.gim.common.NativeQueryResultEntity;
+
+@NativeQueryResultEntity
 public class DtoRoute implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	@NativeQueryResultColumn(index = 0)	
 	private Long routeId;
+	
+	@NativeQueryResultColumn(index = 1)
 	private String routeName;
-	private Long userId;
-	private Integer routeMonth;
+	
+	@NativeQueryResultColumn(index = 2)
 	private Integer routeYear;
+	
+	@NativeQueryResultColumn(index = 3)
+	private Integer routeMonth;
+	
+	@NativeQueryResultColumn(index = 4)
+	private Long userId;	
+	
 
 	public DtoRoute(){
 		

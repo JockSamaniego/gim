@@ -1,0 +1,167 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="tariffSearch" styleClass="edit">
+
+			<rich:simpleTogglePanel
+				label="#{messages['waterBlockLog.searchFilter']}" switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+
+
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/waterservice/WaterBlockLogList.xhtml">
+					<f:param name="firstResult" value="0" />
+				</h:commandButton>
+
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none"
+					view="/waterservice/WaterBlockLogList.xhtml" />
+			</div>
+
+
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['waterBlockLog.searchResults']} (#{empty waterBlockLogList.resultList ? 0 : (waterBlockLogList.resultList.size)})" />
+
+
+					</h:panelGrid>
+				</f:facet>
+				<div class="results" id="waterBlockLog">
+
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty waterBlockLogList.resultList}" />
+
+					<rich:dataTable id="waterBlockLogList" var="_wbl"
+						value="#{waterBlockLogList.resultList}"
+						rendered="#{not empty waterBlockLogList.resultList}">
+						<rich:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{waterBlockLogList}" />
+									<ui:param name="propertyLabel" value="Id" />
+									<ui:param name="propertyPath" value="waterBlockLog.id" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_wbl.id}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{waterBlockLogList}" />
+									<ui:param name="propertyLabel" value="Fecha" />
+									<ui:param name="propertyPath" value="waterBlockLog.date" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_wbl.date}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{waterBlockLogList}" />
+									<ui:param name="propertyLabel" value="Es Re-emision?" />
+									<ui:param name="propertyPath" value="waterBlockLog.isReEmision" />
+								</ui:include>
+							</f:facet>
+							<h:outputText
+								value="#{_wbl.isReEmision ? 'Re-emisión' : 'Bloqueo'}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{waterBlockLogList}" />
+									<ui:param name="propertyLabel" value="Contribuyente" />
+									<ui:param name="propertyPath" value="waterBlockLog.resident" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_wbl.resident.name}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{waterBlockLogList}" />
+									<ui:param name="propertyLabel" value="Usuario" />
+									<ui:param name="propertyPath" value="waterBlockLog.blocker" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_wbl.blocker.name}" />
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<a:region>
+								<a:commandButton id="prints"
+									action="#{waterSupplyHome.buildReportUnsubscribeRequest(_wbl)}" ajaxSingle="true"
+									value="#{messages['common.print']}">
+								</a:commandButton>
+							</a:region>
+
+						</rich:column>
+					</rich:dataTable>
+
+				</div>
+			</rich:panel>
+
+			<div class="tableControl">
+
+				<s:link view="/waterBlockLogList.xhtml"
+					rendered="#{waterBlockLogList.previousExists}"
+					value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+					id="firstPage">
+					<f:param name="firstResult" value="0" />
+				</s:link>
+
+				<s:link view="/waterBlockLogList.xhtml"
+					rendered="#{waterBlockLogList.previousExists}"
+					value="#{messages.left} #{messages['common.previousPage']}"
+					id="previousPage">
+					<f:param name="firstResult"
+						value="#{waterBlockLogList.previousFirstResult}" />
+				</s:link>
+
+				<s:link view="/waterBlockLogList.xhtml"
+					rendered="#{waterBlockLogList.nextExists}"
+					value="#{messages['common.nextPage']} #{messages.right}"
+					id="nextPage">
+					<f:param name="firstResult"
+						value="#{waterBlockLogList.nextFirstResult}" />
+				</s:link>
+
+				<s:link view="/waterBlockLogList.xhtml"
+					rendered="#{waterBlockLogList.nextExists}"
+					value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+					id="lastPage">
+					<f:param name="firstResult"
+						value="#{waterBlockLogList.lastFirstResult}" />
+				</s:link>
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

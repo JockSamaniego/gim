@@ -16,6 +16,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -40,8 +41,10 @@ import ec.gob.gim.waterservice.model.Consumption;
 import ec.gob.gim.waterservice.model.ConsumptionState;
 import ec.gob.gim.waterservice.model.Route;
 import ec.gob.gim.waterservice.model.RoutePreviewEmission;
+import ec.gob.gim.waterservice.model.WaterBlockLog;
 import ec.gob.gim.waterservice.model.WaterMeter;
 import ec.gob.gim.waterservice.model.WaterSupply;
+import ec.gob.gim.waterservice.model.dto.WaterBlockDTO;
 
 
 @Name("waterSupplyHome")
@@ -1596,4 +1599,192 @@ public void findMunicipalBondByState() {
 		MunicipalBondManager.listForReverseAll.clear();
 	}
 
+	//rfarmijosm 2016-06-02 implementacion de reporte para nueva solicitud de baja
+	private Date actualFromDate;
+	private Date actualToDate;
+	private Boolean isPreviosYear; 
+	private Date previousFromDate;
+	private Date previousToDate;
+	private Integer actualYear;
+	private Integer actualFromMonth;
+	private Integer actualToMonth;
+	
+	private Integer previousYear;
+	private Integer previousFromMonth;
+	private Integer previousToMonth;
+	
+	private WaterSupply wSupply;
+	private WaterBlockLog wblSelected;
+	
+	private List <WaterBlockDTO> blokingReport;
+	
+	
+	
+	/**
+	 * reporte de solicitud de baja
+	 * @param wbl
+	 */
+	public String buildReportUnsubscribeRequest(WaterBlockLog wbl){
+		
+		this.wblSelected = wbl;
+		//limpiar lista
+		blokingReport =new ArrayList<WaterBlockDTO>();
+		
+		wSupply = findWaterSupplyByServiceNumber(wbl);
+		//inicia fechas consulta
+		initializeReportDates();
+		//inicia reporte
+		String sql = getSqlReport();
+		
+		
+		System.out.println("---------------------------isPreviosYear "+isPreviosYear);
+		System.out.println("-------------- "+wbl.getId());
+		System.out.println("-------------- "+wSupply.getId()+" ----- "+wSupply.getServiceNumber());
+		System.out.println("-------------- "+actualYear);
+		System.out.println("-------------- "+actualFromMonth);
+		System.out.println("-------------- "+actualToMonth);
+		System.out.println("-------------- "+actualFromDate);
+		System.out.println("-------------- "+actualToDate);
+		System.out.println("--------------------------- ");
+		
+		if(isPreviosYear){
+			Query query = this.getEntityManager().createNativeQuery(sql);
+			blokingReport = NativeQueryResultsMapper.map(query.getResultList(), WaterBlockDTO.class);
+		}else{
+			Query query = this.getEntityManager().createNativeQuery(sql);
+			/*query.setParameter("sericeId", wSupply.getId());
+			query.setParameter("year", actualYear);
+			query.setParameter("startMonth", actualFromMonth);
+			query.setParameter("endMonth", actualToMonth);
+			query.setParameter("startDate", actualFromDate);
+			query.setParameter("endDate", actualToDate);
+			query.setParameter("sericeNumber", wSupply.getServiceNumber());*/
+			query.setParameter(1, wSupply.getId());
+			query.setParameter(2, actualYear);
+			query.setParameter(3, actualFromMonth);
+			query.setParameter(4, actualToMonth);
+			query.setParameter(5, actualFromDate);
+			query.setParameter(6, actualToDate);
+			query.setParameter(7, String.valueOf(wSupply.getServiceNumber()));
+			
+			blokingReport = NativeQueryResultsMapper.map(query.getResultList(), WaterBlockDTO.class);
+			
+			/*
+			 System.out.println("el tamaño es...........................ZZZZZ "+blokingReport.size());
+			 for(WaterBlockDTO br:blokingReport){
+				System.out.println(br.getEstado_consumption().substring(0, 4)+"\t"+br.getEstado_mb().substring(0, 4)+"\t"+br.getAct()+"\t"
+			+br.getAnt()+"\t"+br.getConsumo()+"\t"
+			+br.getTotal()+"\t"+br.getNumero()+"\t"
+			);
+			}*/
+		}
+		return "/waterservice/report/WaterSupplyBlockLogReport.xhtml";
+	}
+	
+	
+	public String getSqlReport(){
+		return "select "
+				+ "consumos.year anio, consumos.month mes, consumos.estado est_consumo, consumos.ant l_ante, consumos.act lect_act, consumos.consumo cons_mens, "
+				+ "obligaciones.numero numb_oblig, obligaciones.estado estadobond, obligaciones.total totalpago "
+				+ "from ( "
+				+ "		select c.year, c.month, wms.name estado, c.previousreading ant, c.currentreading act , c.amount consumo "
+				+ "		from Consumption c "
+				+ "		left join watersupply w on c.watersupply_id = w.id "
+				+ "		left join waterMeterStatus wms on c.watermeterstatus_id = wms.id "
+				+ "		WHERE w.id = ? and c.year = ? and c.month between ? and ? "
+				+ "		ORDER by c.month ASC "
+				+ ") consumos inner join ( "
+				+ "		select EXTRACT(MONTH FROM mb.serviceDate) mes, mb.number numero, mbs.name estado, mb.paidTotal total "
+				+ "		from municipalbond mb "
+				+ "		inner join municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id "
+				+ "		WHERE mb.serviceDate between ? and ? "
+				+ "		and mb.groupingCode like ? and mbs.id in (2,3,4,6,7,11,12) "
+				+ "		order by mes "
+				+ ") obligaciones on consumos.month = obligaciones.mes "
+				+ "order by consumos.year, consumos.month, obligaciones.numero";
+	}
+	
+	
+	public WaterSupply findWaterSupplyByServiceNumber(WaterBlockLog wbl){
+		
+		String query ="select ws from WaterSupply ws "
+				+ "where ws.serviceNumber =:serviceNumber";
+		try{
+			Query q=this.getEntityManager().createQuery(query);
+			q.setParameter("serviceNumber", wbl.getServiceNumber());
+			WaterSupply ws=	(WaterSupply) q.getSingleResult();
+			return ws;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public void initializeReportDates(){
+		Calendar actualDate = Calendar.getInstance();
+        actualDate.set(Calendar.DATE, actualDate.getActualMaximum(Calendar.DATE));
+        
+        Calendar previousDate = Calendar.getInstance();
+        previousDate.set(Calendar.DAY_OF_MONTH, 1);
+        previousDate.add(Calendar.MONTH, -4);
+                
+        SimpleDateFormat print = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println("actual fecha: " +print.format(actualDate.getTime()));
+        System.out.println("privia fecha: " +print.format(previousDate.getTime()));
+        
+        int actualYear = actualDate.get(Calendar.YEAR);
+		this.actualYear = actualYear;
+        int previousYear = previousDate.get(Calendar.YEAR);
+        
+        System.out.println("los años::::::... actual "+actualYear+"   previo "+previousYear );
+        
+		if (actualYear > previousYear) {
+			isPreviosYear=Boolean.TRUE;
+			//la fecha para el anio actual
+			Calendar auxFromDate = Calendar.getInstance();
+			auxFromDate.set(actualYear, 0, 1);
+			actualFromDate = auxFromDate.getTime();
+			//la fehca de inicil del anio previo
+			auxFromDate.set(actualYear, 0, 1);
+			previousFromDate = previousDate.getTime();
+			//la fecha de fin del anio previo
+			auxFromDate.set(previousYear, 11, 31);
+			previousToDate = auxFromDate.getTime();
+			
+        }else{
+        	isPreviosYear=Boolean.FALSE;
+        	actualFromDate = previousDate.getTime();
+        	actualYear = previousDate.get(Calendar.YEAR);
+        	actualFromMonth = previousDate.get(Calendar.MONTH) +1 ;
+        	
+        	actualToDate = actualDate.getTime();
+        	actualToMonth = actualDate.get(Calendar.MONTH) +1 ;
+        }
+	}
+
+	public WaterSupply getwSupply() {
+		return wSupply;
+	}
+
+	public void setwSupply(WaterSupply wSupply) {
+		this.wSupply = wSupply;
+	}
+
+	public List<WaterBlockDTO> getBlokingReport() {
+		return blokingReport;
+	}
+
+	public void setBlokingReport(List<WaterBlockDTO> blokingReport) {
+		this.blokingReport = blokingReport;
+	}
+
+	public WaterBlockLog getWblSelected() {
+		return wblSelected;
+	}
+
+	public void setWblSelected(WaterBlockLog wblSelected) {
+		this.wblSelected = wblSelected;
+	}
+		
+	
 }

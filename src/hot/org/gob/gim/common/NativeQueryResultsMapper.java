@@ -2,12 +2,13 @@ package org.gob.gim.common;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
-
 public class NativeQueryResultsMapper {
 
     //private static Logger log = LoggerFactory.getLogger(NativeQueryResultsMapper.class);
@@ -19,7 +20,14 @@ public class NativeQueryResultsMapper {
             for (Object[] objectArr : objectArrayList) {
                 T t = genericType.newInstance();
                 for (int i = 0; i < objectArr.length; i++) {
-                    BeanUtils.setProperty(t, mappingFields.get(i).getName(), objectArr[i]);
+                    //BeanUtils.setProperty(t, mappingFields.get(i).getName(), objectArr[i]);
+                	if (mappingFields.get(i).getType().toString().equals("class java.util.Date")) {
+                        Timestamp fecha = (Timestamp) objectArr[i];
+                        Date d = new Date(fecha.getTime());
+                        BeanUtils.setProperty(t, mappingFields.get(i).getName(), d);
+                    } else {
+                        BeanUtils.setProperty(t, mappingFields.get(i).getName(), objectArr[i]);
+                    }	
                 }
                 ret.add(t);
             }
