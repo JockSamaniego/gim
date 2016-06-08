@@ -38,18 +38,8 @@
 		</f:verbatim>
 		<h:form id="payment" styleClass="edit">
 			<a:queue></a:queue>
-			<h:outputText styleClass="formTitle"
-				rendered="#{userSession.tillPermission == null}"
-				value="#{messages['tillPermission.dontHavePermissions']}" />
-			<h:outputText styleClass="formTitle"
-				rendered="#{userSession.tillPermission != null and userSession.tillPermission.openingTime == null}"
-				value="#{messages['tillPermission.isNotOpeningTill']}" />
-			<h:outputText styleClass="formTitle"
-				rendered="#{userSession.tillPermission != null and userSession.tillPermission.closingTime != null}"
-				value="#{messages['tillPermission.hasClosingTime']}" />
 
-			<rich:panel bodyClass="topAligned"
-				rendered="#{userSession.tillPermission != null and userSession.tillPermission.openingTime != null and userSession.tillPermission.closingTime == null}">
+			<rich:panel bodyClass="topAligned">
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,"
 						cellpadding="0" cellspacing="0">
@@ -61,7 +51,22 @@
 				</f:facet>
 				<h:panelGrid columns="3" width="100%"
 					columnClasses="topAligned, topAligned right">
+
+					<h:panelGrid columns="2">
+						<h:outputText value="#{messages['user']}:" style="font-weight:bold" />
+						<h:selectOneMenu id="user" value="#{paymentHome.person}">
+							<s:selectItems value="#{paymentHome.findCashiers()}"
+									var="_person" label="#{_person}"
+									noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEntity />
+							<a:support event="onchange" ajaxSingle="true" />
+						</h:selectOneMenu>
+					</h:panelGrid>
+					<h:outputText value=""></h:outputText>
+					<h:outputText value=""></h:outputText>
+
 					<a:outputPanel id="paymentTotalPanel">
+
 						<g:residentChooser id="residentChooser"
 							disabled="#{paymentHome.resident != null}"
 							resident="#{paymentHome.resident}"
@@ -102,8 +107,6 @@
 			</rich:panel>
 
 			<a:outputPanel id="municipalBondsPanel" ajaxRendered="true">
-
-
 				<rich:tabPanel id="accountStatusPanel"
 					rendered="#{not empty paymentHome.items}" tabClass="tabTitle"
 					valueChangeListener="#{paymentHome.changeSelectedTab}"
@@ -125,9 +128,6 @@
 		<ui:include src="fragment/CompensationAccountStatePanel.xhtml" />
 		<ui:include src="fragment/DepositConfirmPanel.xhtml" />
 		<ui:include src="PrintPDFPanel.xhtml" />
-		<s:button id="back" value="#{messages['common.back']}"
-			rendered="#{userSession.tillPermission == null or userSession.tillPermission.openingTime == null}"
-			propagation="end" view="/home.xhtml" />
 	</ui:define>
 
 </ui:composition>
