@@ -43,6 +43,7 @@ import ec.gob.gim.waterservice.model.ConsumptionState;
 import ec.gob.gim.waterservice.model.MaintenanceEntryDTO;
 import ec.gob.gim.waterservice.model.Route;
 import ec.gob.gim.waterservice.model.RoutePreviewEmission;
+import ec.gob.gim.waterservice.model.WaterBlockLog;
 
 @Stateless(name = "WaterService")
 public class WaterServiceBean implements WaterService {
@@ -410,6 +411,11 @@ public class WaterServiceBean implements WaterService {
 			entityManager.persist(emissionOrder);
 		}
 	}
+	
+	@Override
+	public void saveWaterBlockLog(WaterBlockLog waterBlockLog) {
+		entityManager.persist(waterBlockLog);
+	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void saveEmissionOrderMerchandising(EmissionOrder emissionOrder,
@@ -653,5 +659,7 @@ public class WaterServiceBean implements WaterService {
 	public List<Consumption> getConsumptionsToUpdate() {
 		return consumptionsToUpdate;
 	}
+
+	
 
 }

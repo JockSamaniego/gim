@@ -9,6 +9,7 @@ import ec.gob.gim.common.model.Person;
 import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.waterservice.model.Consumption;
 import ec.gob.gim.waterservice.model.RoutePreviewEmission;
+import ec.gob.gim.waterservice.model.WaterBlockLog;
 
 @Local
 public interface WaterService {
@@ -17,6 +18,8 @@ public interface WaterService {
 	void saveEmissionOrder(EmissionOrder emissionOrder, Boolean preEmit,List<Long> waterSupplyIds);
 	void saveEmissionOrder(EmissionOrder emissionOrder, Boolean preEmit);
 	void saveEmissionOrderBudget(EmissionOrder emissionOrder, Boolean preEmit);
+	void saveWaterBlockLog(WaterBlockLog waterBlockLog);
+	
 	public void saveEmissionOrderMerchandising(EmissionOrder emissionOrder, Boolean preEmit, RoutePreviewEmission rpe, List<Long> waterSupplyIds);
 	
 

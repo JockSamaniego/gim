@@ -10,6 +10,24 @@
 	template="../layout/template.xhtml">
 
 	<ui:define name="body">
+	
+	<style>
+		.forty-percent {
+	     width: 40%;
+		}
+		
+		.fifty-percent {
+	     width: 40%;
+		}
+		
+		.sixty-percent {
+		     width: 60%;
+		}
+		
+		.top-alignment {
+		     vertical-align: top;
+		}
+	</style>
 
 		<h:form id="routeRecording" styleClass="edit">
 			<ui:debug id="debug" />
@@ -85,16 +103,51 @@
 						</h:panelGrid>
 					</f:facet>
 
-					<s:decorate id="ObservationField" template="../layout/edit.xhtml">
-						<ui:define name="label">#{messages['accountDetail.bondNumber']}:</ui:define>
-						<h:inputText size="40" maxlength="40" value="#{recordReadingHome.observation}">
-							<a:support event="onblur" ajaxSingle="true"	reRender="ObservationField" />
-						</h:inputText>
-					</s:decorate>
 
-					<s:decorate template="../layout/edit.xhtml">						
-					</s:decorate>
-					 <br/>
+					<h:panelGrid columns="2" columnClasses="fifty-percent top-alignment , fifty-percent top-alignment" 
+						style="width: 100%"
+						>
+						<s:decorate id="ObservationField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['accountDetail.bondNumber']}:</ui:define>
+							<h:inputText size="20" maxlength="40"
+								value="#{recordReadingHome.observation}">
+								<a:support event="onblur" ajaxSingle="true"
+									reRender="ObservationField" />
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate id="isReEmisionField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['waterBlock.isReEmision']}:</ui:define>
+
+							<h:selectBooleanCheckbox id="isReEmision"
+								value="#{recordReadingHome.isReEmision}">
+								<a:support event="onchange" ajaxSingle="true"
+									reRender="panelPropertyChooser,panelResidentChooser, panelSearch, tramitNumberField, blockDetailField, contentPanel" />
+							</h:selectBooleanCheckbox>
+						</s:decorate>
+
+						<s:decorate id="tramitNumberField" template="../layout/edit.xhtml"
+							rendered="#{!recordReadingHome.isReEmision}">
+							<ui:define name="label">#{messages['waterBlock.tramitNumber']}:</ui:define>
+							<h:inputText size="20" maxlength="40" id="tramitNumber"
+								value="#{recordReadingHome.tramitNumber}">
+								<a:support event="onblur" ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate id="blockDetailField" template="../layout/edit.xhtml"
+							rendered="#{!recordReadingHome.isReEmision}">
+							<ui:define name="label">#{messages['waterBlock.blockDetail']}:</ui:define>
+
+							<h:inputText size="30" maxlength="40" id="blockDetailField"
+								value="#{recordReadingHome.blockDetail}">
+								<a:support event="onblur" ajaxSingle="true" />
+							</h:inputText>
+
+						</s:decorate>
+					</h:panelGrid>
+
+					<br/>
 
 					<rich:dataTable id="recordReadingList" var="service"
 						value="#{recordReadingHome.consumptions}">
