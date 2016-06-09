@@ -15,7 +15,7 @@
 			<rich:simpleTogglePanel
 				label="#{messages['paymentAgreement.searcher']}" switchType="ajax">
 				<s:decorate template="../layout/display.xhtml">
-					<ui:define name="label">#{messages['paymentAgreement.criteria']}</ui:define>
+					<ui:define name="label">#{messages['dividend.date']}</ui:define>
 
 					<rich:calendar disabled="false" id="endDate" required="true"
 						value="#{paymentHome.date}"
@@ -28,13 +28,16 @@
 					value="#{messages['common.search']}"
 					action="#{paymentHome.listAgreed()}">
 				</a:commandButton>
-				<s:button id="reset" value="#{messages['common.reset']}"
-					includePageParams="false" />
+				<a:commandButton type="submit" id="clean"
+					value="#{messages['common.reset']}" 
+					reRender="paymentAgreementAgreementList" 
+					action="#{paymentHome.cleanSearch}">
+				</a:commandButton>
 			</div>
 
 
 
-			<rich:panel>
+			<rich:panel >
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
 						<h:outputText
@@ -50,7 +53,7 @@
 				</f:facet>
 				<div class="results" id="paymentAgreementAgreementList">
 
-					<h:outputText value="The payment search returned no results."
+					<h:outputText value="No hay datos."
 						rendered="#{empty paymentHome.lsr}" />
 
 
@@ -74,7 +77,9 @@
 							<f:facet name="header">
                                 #{messages['paymentAgreement.firstpaymentdate']}
                             </f:facet>
-							<h:outputText value="#{_paymentAgreement.firstpaymentdate}" />
+							<h:outputText value="#{_paymentAgreement.firstpaymentdate}" >
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
 						</rich:column>
 
 						<rich:column sortBy="#{_paymentAgreement.identificationnumber_ci}"
@@ -133,23 +138,13 @@
 							<f:facet name="header">
                                 #{messages['paymentAgreement.MaxDate']}
                             </f:facet>
-							<h:outputText value="#{_paymentAgreement.date}" />
+							<h:outputText value="#{_paymentAgreement.date}" >
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
 						</rich:column>
 
-                         Integer dividendsnumber;
-           BigInteger count;
-           BigDecimal suma;
-	   Date date;
-                        
                         <rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
-							<s:button view="/income/PaymentAgreementEdit.xhtml"
-								value="#{messages['common.view']}" propagation="none"
-								id="paymentAgreementEdit" rendered="#{empty from}">
-								<f:param name="paymentAgreementId"
-									value="#{_paymentAgreement.agreement_id}" />
-							</s:button>
-
 							<a:commandButton id="accountDetailBtn"
 								value="#{messages['finantialStatement.detail']}"
 								action="#{paymentHome.selectPaymentAgreement(_paymentAgreement.agreement_id)}"
@@ -157,9 +152,6 @@
 								reRender="paymentAgreementList,sc3,paymentAgrrementDetailPanel"
 								oncomplete="Richfaces.showModalPanel('paymentAgrrementDetailPanel')" >
 							</a:commandButton>
-							
-						 
-							
 						</rich:column>
 
 						<f:facet name="footer">
@@ -189,19 +181,28 @@
 				</f:facet>
 
 				<rich:panel style="height:460px; padding">
-					<h:panelGrid columns="1">
-						<h:outputText value="Detalle del convenio" />
+					<h:panelGrid columns="2">
+					    <h:outputText style="font-weight: bold;"
+					    	value="#{messages['paymentAgreement.criteria']}:" />
+					    <h:outputText
+							value="#{paymentHome.paymentAgreement.resident.name}" />
+					    <h:outputText style="font-weight: bold;"
+					    	value="#{messages['resident.dni']}:" />
 						<h:outputText
 							value="#{paymentHome.paymentAgreement.resident.identificationNumber}" />
-						<h:outputText
-							value="#{paymentHome.paymentAgreement.resident.name}" />
+						<h:outputText style="font-weight: bold;"
+							value="#{messages['paymentAgreement.description']}:"></h:outputText>
 						<h:outputText
 							value="#{paymentHome.paymentAgreement.description}" />
+						<h:outputText style="font-weight: bold;" 
+						value="#{messages['paymentAgreement.firstPaymentDate']}:" />
 						<h:outputText
 							value="#{paymentHome.paymentAgreement.firstPaymentDate}">
 							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
 						</h:outputText>
 					</h:panelGrid>
+
+					<div style="height:20px; display:block"></div>
 
 					<rich:dataTable id="paymentAgreementList" var="_paMb"
 						value="#{paymentHome.bondsAgreement}" rows="15"

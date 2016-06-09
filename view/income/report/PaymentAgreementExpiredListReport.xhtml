@@ -99,7 +99,9 @@
             </p:cell>
             <p:cell>
                 <p:paragraph>
-                    <p:text value="#{messages['paymentAgreement.firstpaymentdate']}" />
+                    <p:text value="#{messages['paymentAgreement.firstpaymentdate']}" >
+                        <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                    </p:text>
                 </p:paragraph>
             </p:cell>
             <p:cell horizontalAlignment="center">
@@ -137,7 +139,9 @@
 
             <p:cell horizontalAlignment="center">
                 <p:paragraph>
-                    <p:text value="#{messages['paymentAgreement.MaxDate']}" />
+                    <p:text value="#{messages['paymentAgreement.MaxDate']}" >
+                        <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                    </p:text>
                 </p:paragraph>
             </p:cell>
 
@@ -147,7 +151,7 @@
                     <p:paragraph>
 
 
-                        <p:text value="#{_paymentAgreement.agreement_id}">								
+                        <p:text value="#{_paymentAgreement.agreement_id}">                              
                         </p:text>
 
                     </p:paragraph>
@@ -155,7 +159,9 @@
 
                 <p:cell>
                     <p:paragraph>
-                        <p:text value="#{_paymentAgreement.firstpaymentdate}" />
+                        <p:text value="#{_paymentAgreement.firstpaymentdate}" >
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                        </p:text>
                     </p:paragraph>
                 </p:cell>
                 <p:cell noWrap="true">
@@ -177,7 +183,7 @@
                 <p:cell noWrap="true">
                     <p:paragraph>
                         <p:font size="8" name="HELVETICA">
-                            <p:text value="#{_paymentAgreement.description}" />						
+                            <p:text value="#{_paymentAgreement.description}" />                     
                         </p:font>
                     </p:paragraph>
                 </p:cell>
@@ -207,7 +213,9 @@
                 </p:cell>
                 <p:cell horizontalAlignment="right">
                     <p:paragraph>
-                        <p:text value="#{_paymentAgreement.date}" />
+                        <p:text value="#{_paymentAgreement.date}" >
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                        </p:text>
                     </p:paragraph>
                 </p:cell>
 

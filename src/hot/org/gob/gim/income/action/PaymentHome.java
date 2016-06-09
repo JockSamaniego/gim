@@ -1849,10 +1849,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				+ "						having max(div2.date) <= '" + df.format(date) + "'\n"
 				+ "						order by div2.PaymentAgreement_id)\n" + "		and municipalbondstatus_id=4\n"
 				+ "		group by mb.PaymentAgreement_id,resident_id)aux on aux.pay_id  = pag.id\n"
-				+ "where pag.id in (select pag1.id \n" + "			from gimprod.dividend div\n"
+				+ "where  pag.isactive=true and pag.id in (select pag1.id \n" + "			from gimprod.dividend div\n"
 				+ "			inner join gimprod.PaymentAgreement pag1 on div.PaymentAgreement_id=pag1.id\n"
 				+ "			group by pag1.id\n" + "			having max(div.date) <= '" + df.format(date) + "'\n"
-				+ "			order by max(div.date))\n" + "	and pag.id  =1478 \n" + "\n"
+				+ "			order by max(div.date))\n" + "	--and pag.id  =1478 \n" + "\n"
 				+ "group by pag.id, resident.id,resident.identificationnumber, \n" + "	resident.name, \n"
 				+ "	description, \n" + "	dividendsnumber, aux.count, aux.suma\n" + "order by pag.id";
 
@@ -1872,6 +1872,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					(Date) va[9]);
 			this.lsr.add(vd);
 		}
+	}
+	
+	public void cleanSearch(){
+		this.lsr = new LinkedList<>();
+		System.out.println("===))(&%%");
 	}
 
 	public class Data {
