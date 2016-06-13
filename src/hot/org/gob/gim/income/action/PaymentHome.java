@@ -1233,19 +1233,20 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				} else {
 					//rfarmijos 2016-05-23
 					//preguntar proceso de pago para fraccionar interes
-					/*if(paymentAgreement.getLowerPercentage()){
-						deposit.setInterest(interestToPay);
-						remaining = remaining.subtract(interestToPay);
+					if(paymentAgreement.getLowerPercentage()){
+						deposit.setInterest(remaining);
+						remaining = interestToPay.subtract(remaining);
+						//remaining = remaining.subtract(interestToPay);
 						this.getInstance().add(deposit);
 						municipalBond.add(deposit);
-					}else{*/
+					}else{
 						hasConflict = Boolean.TRUE;
 						deposit.setHasConflict(Boolean.TRUE);
 						conflictingBond = municipalBond;
 						deltaUp = interestToPay.subtract(remaining);
 						deltaDown = remaining;
 						break;	
-					//}
+					}
 					
 				}
 
@@ -1285,9 +1286,19 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				} else {
 					deposit.setCapital(remaining);
 					remaining = BigDecimal.ZERO;
+					
+					if(paymentAgreement.getLowerPercentage() && depositTotal.compareTo(interestToPay)<=0){
+						deposit.setCapital(remaining);
+					}
 				}
 				if (!deactivatePaymentAgreement) {
-					deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+					//modificacion macartuche
+					if(paymentAgreement.getLowerPercentage() && depositTotal.compareTo(interestToPay)<=0){
+						deposit.setBalance(municipalBond.getBalance());
+					}else{
+						deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+					}
+					
 				}
 				deposit.setValue(deposit.getCapital().add(deposit.getInterest()).add(deposit.getPaidTaxes())
 						.add(deposit.getSurcharge()).subtract(deposit.getDiscount()));
