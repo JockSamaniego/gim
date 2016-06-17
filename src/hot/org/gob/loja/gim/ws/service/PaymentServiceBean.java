@@ -18,7 +18,6 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.gob.gim.common.DateUtils;
-import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.NotActiveWorkdayException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
@@ -45,7 +44,6 @@ import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Person;
-import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.EMoneyPayment;
 import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.TillPermission;
@@ -67,7 +65,7 @@ public class PaymentServiceBean implements PaymentService {
 
 	public final String ACCOUNT_CODE_FOR_INTEREST = "ACCOUNT_CODE_FOR_INTEREST";
 
-	public final String ACCOUNT_CODE_FOR_SURCHARGE = "ACCOUNT_CODE_FOR_SURCHARGE";
+	public final String ACCOUNT_CODE_FOR_SURCHARGE = "ACCOUNT_CODE_FOR_SURCHARG	E";
 
 	public final String ACCOUNT_CODE_FOR_TAX = "ACCOUNT_CODE_FOR_TAX";
 
@@ -585,6 +583,40 @@ public class PaymentServiceBean implements PaymentService {
 		}else{
 			return "No existe la clave catastral";
 		}
+	}
+
+	@Override
+	public Statement debtConsult(ServiceRequest request) throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations {
+		String identificationNumber = request.getIdentificationNumber();
+		Taxpayer taxpayer = findTaxpayer(identificationNumber);
+		Date workDayDate = new GregorianCalendar().getTime();
+		/*if (request.getUsername().compareTo("dabetancourtc") == 0)
+			workDayDate = ;
+		else
+			workDayDate = findPaymentDate();*/
+		Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer.getId());
+		
+		/*if (inPaymentAgreementBondsNumber > 0) {
+			throw new PayoutNotAllowed();
+		} else {*/
+		List<Long> pendingBondIds = hasPendingBonds(taxpayer.getId());
+		List<Bond> bonds = new ArrayList<Bond>();
+		if (pendingBondIds.size() > 0) {
+			try {
+				incomeService.calculatePayment(workDayDate, pendingBondIds, true, true);
+				bonds = findPendingBonds(taxpayer.getId());
+				loadBondsDetail(bonds);
+			} catch (EntryDefinitionNotFoundException e) {
+				e.printStackTrace();
+				throw new PayoutNotAllowed();
+			}
+		}
+		//quitar los id's para q no se realicen pagos
+		for(Bond bd: bonds){
+			bd.setId(null);
+		}
+		Statement statement = new Statement(taxpayer, bonds, workDayDate);
+		return statement;
 	}
 	
 	
