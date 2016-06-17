@@ -328,7 +328,7 @@ public class PaymentServiceBean implements PaymentService {
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("pendingBondStatusId", pendingBondStatusId);
 		List<Bond> bonds = query.getResultList();
-		System.out.println("RECORRIENDO RESULTADOS");
+		//System.out.println("RECORRIENDO RESULTADOS");
 		for (Bond bond : bonds) { 
 			System.out.println("L===========>"+bond.getServiceDate());
 		}
