@@ -332,7 +332,7 @@ public class PaymentServiceBean implements PaymentService {
 		for (Bond bond : bonds) { 
 			System.out.println("L===========>"+bond.getServiceDate());
 		}
-		System.out.println("BONDS TOTAL ---->" + bonds.size());
+		//System.out.println("BONDS TOTAL ---->" + bonds.size());
 		return bonds;
 
 	}
