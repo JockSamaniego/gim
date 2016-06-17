@@ -51,7 +51,7 @@ public interface GimService {
 			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
 			AccountIsBlocked;
 	
-	Boolean generateEmissionOrder(String name, String password,
+	String generateEmissionOrder(String name, String password,
 			String identificationNumber, String accountCode, EmisionDetail emisionDetail)
 			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
 			FiscalPeriodNotFound, EmissionOrderNotGenerate,

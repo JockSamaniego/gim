@@ -49,6 +49,7 @@ import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNotSaved;
 import org.loxageek.common.ws.ReflectionUtil;
 
+import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.Street;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.common.model.Address;
@@ -277,14 +278,27 @@ public class GimServiceBean implements GimService{
 	
 	private Taxpayer findTaxpayer(String identificationNumber) throws TaxpayerNotFound, TaxpayerNonUnique{
 		Query query;
-		
-		if (identificationNumber.length() <= 10)
+		Taxpayer taxpayer = null;
+		if (identificationNumber.length() > 10){
 			query = em.createNamedQuery("Taxpayer.findPersonByIdentification");
-		else  
-			query = em.createNamedQuery("Taxpayer.findByIdentificationNumber");//query = em.createNamedQuery("Taxpayer.findLegalEntityFullByIdentification");
-		query.setParameter("identificationNumber", identificationNumber);
+			query.setParameter("identificationNumber", identificationNumber.substring(0, 10));
+			//taxpayer = (Taxpayer) query.getResultList();
+			if(query.getResultList().size()<=0){
+				query = em.createNamedQuery("Taxpayer.findByIdentificationNumber");
+				query.setParameter("identificationNumber", identificationNumber);
+				if(query.getResultList().size()>0){
+					taxpayer = (Taxpayer) query.getResultList().get(0);
+				}
+			}else{
+				taxpayer = (Taxpayer) query.getResultList().get(0);
+			}
+		}else{ 
+			query = em.createNamedQuery("Taxpayer.findPersonByIdentification");
+			query.setParameter("identificationNumber", identificationNumber);
+			//query = em.createNamedQuery("Taxpayer.findByIdentificationNumber");//query = em.createNamedQuery("Taxpayer.findLegalEntityFullByIdentification");
+		}
 		try{
-			Taxpayer taxpayer = (Taxpayer) query.getSingleResult();
+			taxpayer = (Taxpayer) query.getSingleResult();
 			if(taxpayer != null){
 				Address currentAddress = findCurrentAddressByTaxpayerId(taxpayer.getId());
 				if (currentAddress != null){
@@ -402,125 +416,137 @@ public class GimServiceBean implements GimService{
 	}
 
 	@Override
-	public Boolean generateEmissionOrder(String name, String password,
+	public String generateEmissionOrder(String name, String password,
 			String identificationNumber, String accountCode,
-			EmisionDetail emisionDetail) throws TaxpayerNotFound,
-			TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound,
-			EmissionOrderNotGenerate, EmissionOrderNotSave, InvalidUser,
-			AccountIsNotActive, AccountIsBlocked {
+			EmisionDetail emisionDetail) {
 		// TODO Auto-generated method stub
 		
-		try{
-			Resident resident = residentService.find(identificationNumber);
-			if (resident == null){
-				throw new TaxpayerNotFound();
-			}
-			//Entry entry = revenueService.findByAccountCode(accountCode);
-			Entry entry = revenueService.findEntryByCode(accountCode);
-			if (entry == null){
-				throw new EntryNotFound();
-			}
-			
-			Date currentDate = java.util.Calendar.getInstance().getTime();
-			List<FiscalPeriod> fiscalPeriods = revenueService.findFiscalPeriodCurrent(currentDate);
-			
-			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null && !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null; 
-			
-			if (fiscalPeriodCurrent == null){
-				throw new FiscalPeriodNotFound();
-			}
-			
-			EntryValueItem entryValueItem = new EntryValueItem();
-			entryValueItem.setDescription(entry.getName());
-			entryValueItem.setServiceDate(currentDate);
-			entryValueItem.setAmount(BigDecimal.ONE);
-			entryValueItem.setMainValue(emisionDetail.getTotal());
-			
-			MunicipalBondStatus preEmitBondStatus = systemParameterService.materialize(MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PREEMIT");
-							
-			MunicipalBond mb = revenueService.createMunicipalBond(resident, entry, fiscalPeriodCurrent, entryValueItem, true);
-			//mb.setGroupingCode(identificationNumber);
-			if (mb.getResident().getCurrentAddress() != null) {
-				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
-			}
-			User user = findUser(name, password);
-			if (user == null){
-				throw new InvalidUser();
-			}
-			Person emitter = findPersonFromUser(user.getId());
-			
-			mb.setEmitter(emitter);
-			mb.setOriginator(emitter);
-			
-			// start Adjunt
-			ANTReference ant = new ANTReference();
-			ant.setNumberPlate(emisionDetail.getNumberPlate());
-			ant.setAntNumber(emisionDetail.getAntNumber());
-			ant.setSpeeding(emisionDetail.getSpeeding());
-			ant.setVehicleType(emisionDetail.getVehicleType());
-			ant.setServiceType(emisionDetail.getServiceType());
-			ant.setCitationDate(emisionDetail.getCitationDate());
-			mb.setAdjunct(ant);
-			// end Adjunt
-			
-			mb.setReference(emisionDetail.getReference());
-			mb.setDescription(emisionDetail.getDescription());
-			mb.setBondAddress(emisionDetail.getAddress());
-			
-			mb.setServiceDate(new Date());
-			mb.setCreationTime(new Date());
-			mb.setGroupingCode(emisionDetail.getNumberPlate());
-
-			mb.setBase(emisionDetail.getTotal()); // cantidad de consumo
-			
-			mb.setTimePeriod(entry.getTimePeriod());
-			mb.calculateValue();
-			mb.setMunicipalBondStatus(preEmitBondStatus);
-			mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
-			//mb.setBondAddress(address);
-			mb.setEmisionPeriod(findEmisionPeriod());
-			
-			///
-			//revenueService.emit(mb, user);
-			///
-			System.out.println("=========> MUNICIPAL BOND: ");
-			System.out.println("===> RESIDENT: " + mb.getResident().getName());
-			System.out.println("===> DIRECCION: " + mb.getAddress());
-			System.out.println("===> DESCRIPCION: " + mb.getDescription());
-			System.out.println("===> BASE: " + mb.getBase());
-			System.out.println("===> CREATIONDATE: " + mb.getCreationDate());
-			System.out.println("===> EMISSIONDATE: " + mb.getEmisionDate());
-			System.out.println("===> EMITTER: " + mb.getEmitter().getName());
-			System.out.println("===> ORIGINATOR: " + mb.getOriginator().getName());
-			System.out.println("===> EXPIRATIONDATE: " + mb.getExpirationDate());
-			System.out.println("===> EMISSIONPERIOD: " + mb.getEmisionPeriod());
-			System.out.println("===> ENTRY: " + mb.getEntry().getName() + " - " + mb.getEntry().getCode());
-			System.out.println("===> FISCALPERIOD: " + mb.getFiscalPeriod().getName());
-			System.out.println("===> ITEMS: " + mb.getItems().size());
-			System.out.println("===> TOTAL: " + mb.getPaidTotal());
-			System.out.println("===> VALUE: " + mb.getValue());
-			System.out.println("===> NUMBER: " + mb.getNumber());
-			System.out.println("===> MUNICIPALBONDSTATUS: " + (mb.getMunicipalBondStatus() != null ? mb.getMunicipalBondStatus().getName():null));
-			System.out.println("===> MUNICIPALBONDTYPE: " + (mb.getMunicipalBondType() != null ? mb.getMunicipalBondType():null));
-			System.out.println("===> MUNICIPALBONDLEGALSTATUS: " + (mb.getLegalStatus() != null ? mb.getLegalStatus().name() : null));
-			
-			System.out.println("::::::generateEmissionOrder: SAVED OK!!");
-			
-			
-			EmissionOrder eo = createEmisionOrder(emitter, "Multas ANT - Rubro: " + entry.getCode());
-			eo.add(mb);
-			
-			em.persist(eo);
-			
-			return Boolean.TRUE;			
-		}catch(NonUniqueIdentificationNumberException e){
-			throw new TaxpayerNonUnique();
-		} catch (EntryDefinitionNotFoundException e) {
-			throw new EmissionOrderNotGenerate();
-		} catch (Exception e) {
-			throw new EmissionOrderNotSave();
-		}		
+		//List<ANTReference> AntRef = new ArrayList<ANTReference>();
+		Query query = em.createNamedQuery("ANTReference.findFoto-Multa");	
+		query.setParameter("antNumber", emisionDetail.getAntNumber());
+		//AntRef = query.getResultList();
+		if(query.getResultList().size()<=0){
 		
+			try{
+				Resident resident = residentService.find(identificationNumber);
+				if (resident == null){
+					//throw new TaxpayerNotFound();
+					return "Emisión fallida. Contribuyente No Encontrado";
+				}
+				//Entry entry = revenueService.findByAccountCode(accountCode);
+				Entry entry = revenueService.findEntryByCode(accountCode);
+				if (entry == null){
+					//throw new EntryNotFound();
+					return "Emisión fallida. Rubro No Encontrado";
+				}
+				
+				Date currentDate = java.util.Calendar.getInstance().getTime();
+				List<FiscalPeriod> fiscalPeriods = revenueService.findFiscalPeriodCurrent(currentDate);
+				
+				FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null && !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null; 
+				
+				if (fiscalPeriodCurrent == null){
+					//throw new FiscalPeriodNotFound();
+					return "Emisión fallida. Periódo Fiscal No Encontrado";
+				}
+				
+				EntryValueItem entryValueItem = new EntryValueItem();
+				entryValueItem.setDescription(entry.getName());
+				entryValueItem.setServiceDate(currentDate);
+				entryValueItem.setAmount(BigDecimal.ONE);
+				entryValueItem.setMainValue(emisionDetail.getTotal());
+				
+				MunicipalBondStatus preEmitBondStatus = systemParameterService.materialize(MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PREEMIT");
+								
+				MunicipalBond mb = revenueService.createMunicipalBond(resident, entry, fiscalPeriodCurrent, entryValueItem, true);
+				//mb.setGroupingCode(identificationNumber);
+				if (mb.getResident().getCurrentAddress() != null) {
+					mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+				}
+				User user = findUser(name, password);
+				if (user == null){
+					//throw new InvalidUser();
+					return "Emisión fallida. Usuario Inválido";
+				}
+				Person emitter = findPersonFromUser(user.getId());
+				
+				mb.setEmitter(emitter);
+				mb.setOriginator(emitter);
+				
+				// start Adjunt
+				ANTReference ant = new ANTReference();
+				ant.setNumberPlate(emisionDetail.getNumberPlate());
+				ant.setAntNumber(emisionDetail.getAntNumber());
+				ant.setSpeeding(emisionDetail.getSpeeding());
+				ant.setVehicleType(emisionDetail.getVehicleType());
+				ant.setServiceType(emisionDetail.getServiceType());
+				ant.setCitationDate(emisionDetail.getCitationDate());
+				mb.setAdjunct(ant);
+				// end Adjunt
+				
+				mb.setReference(emisionDetail.getReference());
+				mb.setDescription(emisionDetail.getDescription());
+				mb.setBondAddress(emisionDetail.getAddress());
+				
+				mb.setServiceDate(new Date());
+				mb.setCreationTime(new Date());
+				mb.setGroupingCode(emisionDetail.getNumberPlate());
+	
+				mb.setBase(emisionDetail.getTotal()); // cantidad de consumo
+				
+				mb.setTimePeriod(entry.getTimePeriod());
+				mb.calculateValue();
+				mb.setMunicipalBondStatus(preEmitBondStatus);
+				mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
+				//mb.setBondAddress(address);
+				mb.setEmisionPeriod(findEmisionPeriod());
+				
+				///
+				//revenueService.emit(mb, user);
+				///
+				System.out.println("=========> MUNICIPAL BOND: ");
+				System.out.println("===> RESIDENT: " + mb.getResident().getName());
+				System.out.println("===> DIRECCION: " + mb.getAddress());
+				System.out.println("===> DESCRIPCION: " + mb.getDescription());
+				System.out.println("===> BASE: " + mb.getBase());
+				System.out.println("===> CREATIONDATE: " + mb.getCreationDate());
+				System.out.println("===> EMISSIONDATE: " + mb.getEmisionDate());
+				System.out.println("===> EMITTER: " + mb.getEmitter().getName());
+				System.out.println("===> ORIGINATOR: " + mb.getOriginator().getName());
+				System.out.println("===> EXPIRATIONDATE: " + mb.getExpirationDate());
+				System.out.println("===> EMISSIONPERIOD: " + mb.getEmisionPeriod());
+				System.out.println("===> ENTRY: " + mb.getEntry().getName() + " - " + mb.getEntry().getCode());
+				System.out.println("===> FISCALPERIOD: " + mb.getFiscalPeriod().getName());
+				System.out.println("===> ITEMS: " + mb.getItems().size());
+				System.out.println("===> TOTAL: " + mb.getPaidTotal());
+				System.out.println("===> VALUE: " + mb.getValue());
+				System.out.println("===> NUMBER: " + mb.getNumber());
+				System.out.println("===> MUNICIPALBONDSTATUS: " + (mb.getMunicipalBondStatus() != null ? mb.getMunicipalBondStatus().getName():null));
+				System.out.println("===> MUNICIPALBONDTYPE: " + (mb.getMunicipalBondType() != null ? mb.getMunicipalBondType():null));
+				System.out.println("===> MUNICIPALBONDLEGALSTATUS: " + (mb.getLegalStatus() != null ? mb.getLegalStatus().name() : null));
+				
+				System.out.println("::::::generateEmissionOrder: SAVED OK!!");
+				
+				
+				EmissionOrder eo = createEmisionOrder(emitter, "Multas ANT - Rubro: " + entry.getCode());
+				eo.add(mb);
+				
+				em.persist(eo);
+				
+				return "Foto-multa emitida con éxito";			
+			}catch(NonUniqueIdentificationNumberException e){
+				//throw new TaxpayerNonUnique();
+				return "Emisión fallida. Número de identificación No Único";
+			} catch (EntryDefinitionNotFoundException e) {
+				//throw new EmissionOrderNotGenerate();
+				return "Emisión fallida. Orden de emisión No Generada";
+			} catch (Exception e) {
+				//throw new EmissionOrderNotSave();
+				return "Emisión fallida. Orden de emisión No Guardada";
+			}		
+		}else{
+			return "Emisión fallida. La Foto-multa ya ha sido emitida";
+		}
 	}
 	
 	private Date findEmisionPeriod() {
