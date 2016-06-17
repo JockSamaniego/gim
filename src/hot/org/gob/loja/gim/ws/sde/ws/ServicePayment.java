@@ -1,25 +1,12 @@
 package org.gob.loja.gim.ws.sde.ws;
 
-import java.util.Date;
-
-import javax.ejb.EJB;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
 import javax.jws.WebService;
 //import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElement;
-
-import org.apache.axis2.AxisFault;
-import org.gob.loja.gim.ws.sde.AccountDebtsResponse;
-import org.gob.loja.gim.ws.sde.DebtPaymentNotificationResponse;
-import org.gob.loja.gim.ws.sde.DebtPaymentReversal;
-import org.gob.loja.gim.ws.sde.DebtResponse; 
-import org.gob.loja.gim.ws.sde.service.EMoney;
 
 @WebService
 public class ServicePayment {
 
-	@EJB
+	/*@EJB
 	private EMoney service;
 
 	/**
@@ -31,7 +18,7 @@ public class ServicePayment {
 	 * @param queryDate
 	 * @param idAgent
 	 * @return
-	 */
+	 
 	@WebMethod
 	public DebtResponse queryDebt(@WebParam(name = "debtId") String debtId, 
 			@WebParam(name = "utfi")  String utfi, 
@@ -76,7 +63,7 @@ public class ServicePayment {
 	 * @param queryDate
 	 * @param idAgent
 	 * @return
-	 */
+	 
 	@WebMethod
 	public AccountDebtsResponse queryAccountDebts(
 			@WebParam(name = "accountId")  String accountId, 
@@ -93,7 +80,7 @@ public class ServicePayment {
 		}
 	}
 
-	/** ------- ****/
+	/** ------- ***
 	@WebMethod
 	public DebtPaymentReversal debtPaymentReversal(
 			@WebParam(name = "debtId")  String debtId, 
@@ -112,6 +99,6 @@ public class ServicePayment {
 			ex.printStackTrace();
 			return null;
 		}
-	}
+	}*/
 
 }

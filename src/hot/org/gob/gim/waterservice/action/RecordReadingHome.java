@@ -30,6 +30,7 @@ import ec.gob.gim.waterservice.model.ConsumptionState;
 import ec.gob.gim.waterservice.model.MonthType;
 import ec.gob.gim.waterservice.model.Route;
 import ec.gob.gim.waterservice.model.RoutePeriod;
+import ec.gob.gim.waterservice.model.WaterBlockLog;
 import ec.gob.gim.waterservice.model.WaterMeter;
 import ec.gob.gim.waterservice.model.WaterSupply;
 import ec.gob.gim.waterservice.model.WaterSupplyAverage;
@@ -1107,6 +1108,16 @@ public class RecordReadingHome extends EntityHome<Route> {
 			waterService.saveEmissionOrder(eo, true,findWaterSuppliesIds());
 			if (eo != null) {
 				// loadRecordReadings();
+				//rfarmijosm 2016-06-02
+				//guadar el detalle de bloqueo para luego dar la baja
+				WaterBlockLog wbl = initializeBlock();
+				wbl.setEmissionOrder_id(eo.getId());
+				wbl.setResident(eo.getMunicipalBonds().get(0).getResident());
+				System.out.println("-------------------->>>>>>>>> "+eo.getMunicipalBonds().get(0).getNumber());
+				
+				waterService.saveWaterBlockLog(wbl);
+				
+				
 				String message = Interpolator.instance().interpolate(
 						"El servicio " + this.waterSupplyServiceNumber
 								+ " ha sido pre-emitido", new Object[0]);
@@ -1127,6 +1138,25 @@ public class RecordReadingHome extends EntityHome<Route> {
 			facesMessages.addToControl("residentChooser",org.jboss.seam.international.StatusMessage.Severity.ERROR,message);
 			return null;
 		}
+	}
+	
+	/**
+	 * se inicializa con los datos ingresados 
+	 * @return
+	 */
+	public WaterBlockLog initializeBlock(){
+		
+		WaterBlockLog wbl=new WaterBlockLog();
+		wbl.setBlockDetail(this.blockDetail);
+		wbl.setBlocker(userSession.getPerson());
+		wbl.setIsReEmision(this.isReEmision);
+		wbl.setResident(resident);
+		wbl.setTramitNumber(this.tramitNumber);
+		wbl.setServiceNumber(waterSupplyServiceNumber);
+		if(observation!=null){
+			wbl.setUnsubscribeBond(Integer.parseInt(observation));	
+		}
+		return wbl;
 	}
 	
 	private void updateConsumption(List<Consumption> consumptionsToUpdate){
@@ -1183,5 +1213,44 @@ public class RecordReadingHome extends EntityHome<Route> {
 	public void setObservation(String observation) {
 		this.observation = observation;
 	}
+	
+	/**
+	 * rfarmijosm 2016-05-01
+	 */
+		
+	private String blockDetail;
+	
+	private String tramitNumber;
+
+	/**
+	 * identifcar si es re-emision o un bloqueo, en el bloqueo es necesario
+	 * solicitar el detalle de bloqueo
+	 */
+	private Boolean isReEmision = Boolean.TRUE;
+	
+	public String getBlockDetail() {
+		return blockDetail;
+	}
+
+	public void setBlockDetail(String blockDetail) {
+		this.blockDetail = blockDetail;
+	}
+
+	public Boolean getIsReEmision() {
+		return isReEmision;
+	}
+
+	public void setIsReEmision(Boolean isReEmision) {
+		this.isReEmision = isReEmision;
+	}
+
+	public String getTramitNumber() {
+		return tramitNumber;
+	}
+
+	public void setTramitNumber(String tramitNumber) {
+		this.tramitNumber = tramitNumber;
+	}	
+	
 	
 }

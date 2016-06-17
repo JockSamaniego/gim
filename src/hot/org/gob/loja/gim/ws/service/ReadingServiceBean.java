@@ -15,6 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.exception.InvalidUser;
 
@@ -39,16 +40,20 @@ public class ReadingServiceBean implements ReadingService{
 		query = em.createNamedQuery("User.findByUsername");
 		query.setParameter("name", request.getUsername());
 		User user = (User) query.getSingleResult();
+		
 		query = null;
 		query = em.createNativeQuery("SELECT DISTINCT r.id, r.name, c.year, c.month, rp.readingman_id "
 				+ "from gimprod.consumption c inner join gimprod.watersupply ws on ws.id = c.watersupply_id "
 				+ "inner join gimprod.route r on r.id = ws.route_id "
 				+ "inner join gimprod.routeperiod rp on r.id = rp.route_id "
-				+ "where c.readingdate is null and transferred = false and rp.readingman_id = " + user.getId());
+				+ "where c.readingdate is null and transferred = false and rp.readingman_id = " + user.getResident().getId());
 		List<DtoRoute> dtoRouteList = new ArrayList<DtoRoute>();
-		List<Object[]> results = query.getResultList();
 		
-		for(Object[] row : results){
+		//rfarmijosm 2016-06-07
+		dtoRouteList = NativeQueryResultsMapper.map(query.getResultList(), DtoRoute.class);
+				
+		//List<Object[]> results = query.getResultList();
+		/*for(Object[] row : results){
 			DtoRoute dtoRoute = new DtoRoute();
 			dtoRoute.setRouteId(Long.valueOf(row[0].toString()));
 			dtoRoute.setRouteName((String)row[1]);
@@ -57,8 +62,7 @@ public class ReadingServiceBean implements ReadingService{
 			dtoRoute.setUserId(Long.valueOf(row[4].toString()));
 			
 			dtoRouteList.add(dtoRoute);
-		}
-		
+		}*/		
 		RoutePackage routePack = new RoutePackage();
 		routePack.setDtoRouteList(dtoRouteList);
 		return routePack;
