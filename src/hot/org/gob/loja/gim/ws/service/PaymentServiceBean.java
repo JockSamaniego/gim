@@ -2,6 +2,7 @@ package org.gob.loja.gim.ws.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.gob.loja.gim.ws.exception.NotActiveWorkday;
 import org.gob.loja.gim.ws.exception.NotOpenTill;
 import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
+import org.gob.loja.gim.ws.exception.HasObligationsExpired;
 
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Person;
@@ -95,7 +97,13 @@ public class PaymentServiceBean implements PaymentService {
 					incomeService.calculatePayment(workDayDate, pendingBondIds,
 							true, true);
 					bonds = findPendingBonds(taxpayer.getId());
-					loadBondsDetail(bonds);
+					Boolean control = comparateBondsDates(bonds);
+					if(!control){
+						loadBondsDetail(bonds);
+					}else{
+						throw new PayoutNotAllowed();
+					}
+					//loadBondsDetail(bonds);
 				} catch (EntryDefinitionNotFoundException e) {
 					e.printStackTrace();
 					throw new PayoutNotAllowed();
@@ -327,6 +335,27 @@ public class PaymentServiceBean implements PaymentService {
 		System.out.println("BONDS TOTAL ---->" + bonds.size());
 		return bonds;
 
+	}
+	
+//by Jock Samaniego.......
+	private Boolean comparateBondsDates(List<Bond> bonds) {
+		Boolean expiratedDate = Boolean.FALSE;
+		Date today = new Date();
+		Calendar calendar = Calendar.getInstance();
+        calendar.setTime(today);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR, 0);
+
+		for (Bond bond : bonds) {
+			System.out.println("==============hoy===========>"+calendar.getTime()+"========expiracion=========>"+bond.getExpirationDate());
+			if(calendar.getTime().compareTo(bond.getExpirationDate())==1){
+				System.out.println("=======================> deuda expirada");
+				expiratedDate = Boolean.TRUE;	
+			}
+		}
+		return expiratedDate;
 	}
 
 	@SuppressWarnings("unchecked")
