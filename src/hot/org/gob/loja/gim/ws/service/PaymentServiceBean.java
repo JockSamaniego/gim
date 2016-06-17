@@ -41,7 +41,7 @@ import org.gob.loja.gim.ws.exception.NotActiveWorkday;
 import org.gob.loja.gim.ws.exception.NotOpenTill;
 import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
-import org.gob.loja.gim.ws.exception.HasObligationsExpired;
+//import org.gob.loja.gim.ws.exception.HasObligationsExpired;
 
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Person;
@@ -349,9 +349,9 @@ public class PaymentServiceBean implements PaymentService {
         calendar.set(Calendar.HOUR, 0);
 
 		for (Bond bond : bonds) {
-			System.out.println("==============hoy===========>"+calendar.getTime()+"========expiracion=========>"+bond.getExpirationDate());
+			//System.out.println("==============hoy===========>"+calendar.getTime()+"========expiracion=========>"+bond.getExpirationDate());
 			if(calendar.getTime().compareTo(bond.getExpirationDate())==1){
-				System.out.println("=======================> deuda expirada");
+				//System.out.println("=======================> deuda expirada");
 				expiratedDate = Boolean.TRUE;	
 			}
 		}
