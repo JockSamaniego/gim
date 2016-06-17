@@ -315,5 +315,46 @@ public class PaymentPlatform {
 		return idNumber;
 	}
 	
+	/**
+	 * @author rfarmijosm
+	 * @date 2016-06-12 16:44
+	 * Permite consultar la deuda se incluyen acuerdos de pago
+	 * con este objeto no es posible realizar pagos, sive solo de consulta. 
+	 * 
+	 * @param request
+	 * @return
+	 * @throws PayoutNotAllowed
+	 * @throws TaxpayerNotFound
+	 * @throws InvalidUser
+	 * @throws NotActiveWorkday
+	 * @throws HasNoObligations
+	 */
+	@WebMethod
+	public Statement debtConsult(ServiceRequest request)
+			throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations {
+		System.out.println(
+				"FINDING SATATEMENT FOR " + request.getIdentificationNumber() + " with USER: " + request.getUsername());
+		Statement statement = new Statement();
+		try {
+			statement = service.debtConsult(request);
+		} catch (PayoutNotAllowed e) {
+			InvalidateSession();
+			throw e;
+		} catch (TaxpayerNotFound e) {
+			InvalidateSession();
+			throw e;
+		} catch (InvalidUser e) {
+			InvalidateSession();
+			throw e;
+		} catch (NotActiveWorkday e) {
+			InvalidateSession();
+			throw e;
+		} catch (HasNoObligations e) {
+			InvalidateSession();
+			throw e;
+		}
+		InvalidateSession();
+		return statement;
+	}
 	
 }
