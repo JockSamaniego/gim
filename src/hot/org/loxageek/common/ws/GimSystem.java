@@ -206,11 +206,11 @@ public class GimSystem {
 	 * @throws AccountIsBlocked
 	 */
 	@WebMethod
-	public Boolean generateEmissionOrderANT(String name, String password, String identificationNumber, 
+	public String generateEmissionOrderANT(String name, String password, String identificationNumber, 
 			String accountCode, EmisionDetail emisionDetail) throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound, 
 			EmissionOrderNotGenerate, EmissionOrderNotSave, InvalidUser, AccountIsNotActive, AccountIsBlocked{
 		System.out.println("====> GENERATE EmissionOrder FOR: "+accountCode);
-		Boolean band = gimService.generateEmissionOrder(name, password, identificationNumber, accountCode, emisionDetail);
+		String band = gimService.generateEmissionOrder(name, password, identificationNumber, accountCode, emisionDetail);
 		InvalidateSession();
 		return band;
 	}

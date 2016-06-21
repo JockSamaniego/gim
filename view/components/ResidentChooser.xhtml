@@ -19,7 +19,8 @@
 			disabled="#{not empty disabled ? disabled : 'false'}"
 			style="font-size: 16px; font-weight:bold;">
 			<a:support event="onblur"
-				reRender="#{id}_handicapedPanel, #{id}_residentField, #{id}_nameField, #{id}_phoneField, #{id}_addressField 
+				reRender="#{id}_handicapedPercentageField, #{id}_residentField, #{id}_nameField, #{id}_phoneField, #{id}_emailField, 
+				#{id}_addressField 
 					#{not empty reRender ? ',' : ''} #{not empty reRender ? reRender : ''}"
 				ajaxSingle="true" eventsQueue="gimQueue"
 				action="#{bean[searchAction]}" />
@@ -52,20 +53,32 @@
 			style="text-transform: uppercase">
 		</h:inputText>
 	</s:decorate>
+	<div style="clear: both"></div>
 
-	<s:decorate id="#{id}_phoneField" template="../layout/edit.xhtml">
-		<ui:define name="label">#{messages['common.phone']}:</ui:define>
-		<h:inputText id="#{id}_phone" size="10" maxlength="10"
-			value="#{resident.currentAddress.phoneNumber}" readonly="true">
+	<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
+		<s:decorate id="#{id}_phoneField" template="../layout/edit.xhtml">
+			<ui:define name="label">#{messages['common.phone']}:</ui:define>
+			<h:inputText id="#{id}_phone" size="10" maxlength="10"
+				value="#{resident.currentAddress.phoneNumber}" readonly="true">
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="#{id}_handicapedPercentageField"
+			template="../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.handicapedPercentage']}:</ui:define>
+			<h:inputText id="#{id}_handicapedPercentage" size="10" maxlength="10"
+				value="#{residentChooserHome.getHandicapedPercentage(resident)}"
+				disabled="true">
+			</h:inputText>
+		</s:decorate>
+
+	</h:panelGrid>
+
+	<s:decorate id="#{id}_emailField" template="../layout/edit.xhtml">
+		<ui:define name="label">#{messages['resident.email']}:</ui:define>
+		<h:inputText id="#{id}_phone" size="40" maxlength="10"
+			value="#{resident.email}" readonly="true">
 		</h:inputText>
 	</s:decorate>
-	<a:outputPanel id="#{id}_handicapedPanel" ajaxRendered="true">
-	<s:decorate id="#{id}_handicapedPercentageField" template="../layout/edit.xhtml">
-		<ui:define name="label">#{messages['resident.handicapedPercentage']}:</ui:define>
-		<h:inputText id="#{id}_handicapedPercentage" size="10" maxlength="10"
-			value="#{residentChooserHome.getHandicapedPercentage(resident)}" disabled="true">
-		</h:inputText>
-	</s:decorate>
-	</a:outputPanel>
 
 </ui:composition>

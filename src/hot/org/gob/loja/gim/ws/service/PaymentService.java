@@ -27,6 +27,7 @@ public interface PaymentService {
 	public String LOCAL_NAME = "/gim/PaymentService/local";
 	
 	public Statement findStatement(ServiceRequest request) throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations;
+	public Statement debtConsult(ServiceRequest request) throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations;
 	public Boolean registerDeposit(ServiceRequest request, Payout payout) throws InvalidPayout, PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, NotOpenTill, HasNoObligations;
 	public ClosingStatement findDeposits(ServiceRequest request, Date paymentDate) throws InvalidUser;
 	public Boolean isTillOpen(ServiceRequest request) throws NotActiveWorkday, NotOpenTill, InvalidUser;

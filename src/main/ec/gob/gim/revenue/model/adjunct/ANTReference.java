@@ -7,12 +7,20 @@ import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.gob.gim.common.DateUtils;
 
 import ec.gob.gim.revenue.model.Adjunct;
+
+@NamedQueries(value = {
+		@NamedQuery(name = "ANTReference.findFoto-Multa", query = "select antRef.antNumber from ANTReference antRef "				
+				+ "where  antRef.antNumber = :antNumber")
+})
+
 
 @Entity
 @DiscriminatorValue("ANTR")
