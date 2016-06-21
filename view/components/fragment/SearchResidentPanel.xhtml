@@ -78,8 +78,9 @@
 					residentId="#{_resident.id}" 
 					identificationNumber="#{_resident.identificationNumber}"
 					resident="#{_resident}"
-					reRender="#{id}_handicapedPanel, #{id}_residentField, #{id}_nameField, #{id}_addressField, #{id}_phoneField
-							  #{not empty reRender ? ',' : ''} #{not empty reRender ? reRender : ''}"/>				
+					reRender="#{id}_handicapedPercentageField, #{id}_residentField, #{id}_nameField, #{id}_addressField, #{id}_emailField,  
+					#{id}_phoneField
+					#{not empty reRender ? ',' : ''} #{not empty reRender ? reRender : ''}"/>				
 			</rich:column>
 		</rich:dataTable>
 		<div class="actionButtons">
