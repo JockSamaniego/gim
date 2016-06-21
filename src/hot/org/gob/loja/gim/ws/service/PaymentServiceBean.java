@@ -65,7 +65,7 @@ public class PaymentServiceBean implements PaymentService {
 
 	public final String ACCOUNT_CODE_FOR_INTEREST = "ACCOUNT_CODE_FOR_INTEREST";
 
-	public final String ACCOUNT_CODE_FOR_SURCHARGE = "ACCOUNT_CODE_FOR_SURCHARG	E";
+	public final String ACCOUNT_CODE_FOR_SURCHARGE = "ACCOUNT_CODE_FOR_SURCHARGE";
 
 	public final String ACCOUNT_CODE_FOR_TAX = "ACCOUNT_CODE_FOR_TAX";
 
@@ -338,17 +338,23 @@ public class PaymentServiceBean implements PaymentService {
 //by Jock Samaniego.......
 	private Boolean comparateBondsDates(List<Bond> bonds) {
 		Boolean expiratedDate = Boolean.FALSE;
-		Date today = new Date();
-		Calendar calendar = Calendar.getInstance();
+						
+		Date now = DateUtils.truncate(new Date());
+		
+        /*         
+         rfarmijos 2016-06-21 quito estas lineas y dejo en una sola ya 
+         existe un clase q hace los mismo
+        Date today = new Date();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(today);
         calendar.set(Calendar.MILLISECOND, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.HOUR, 0);*/
 
 		for (Bond bond : bonds) {
 			//System.out.println("==============hoy===========>"+calendar.getTime()+"========expiracion=========>"+bond.getExpirationDate());
-			if(calendar.getTime().compareTo(bond.getExpirationDate())==1){
+			if(now.compareTo(bond.getExpirationDate())==1){
 				//System.out.println("=======================> deuda expirada");
 				expiratedDate = Boolean.TRUE;	
 			}
