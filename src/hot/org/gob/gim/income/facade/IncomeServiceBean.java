@@ -75,6 +75,7 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.adjunct.ValuePair;
+import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.loja.client.clients.ElectronicClient;
 import ec.gob.loja.client.model.DataWS;
 import ec.gob.loja.client.utility.FileUtilities;
@@ -378,8 +379,44 @@ public class IncomeServiceBean implements IncomeService {
 			MunicipalBond municipalBond = deposit.getMunicipalBond();
 			System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE "
 					+ municipalBond.getTaxableTotal() + " TAXES TOTAL "
-					+ municipalBond.getTaxesTotal());
+					+ municipalBond.getTaxesTotal()
+					//@author macartuche
+					//@tag recaudacionesCoactivas
+					+"Interes municBond: "+municipalBond.getInterest()
+					+"interes deposit: "+deposit.getInterest()
+					);
+			
+			
 			entityManager.persist(deposit);
+			//@author macartuche
+			//@date 2016-06-21
+			//@tag recaudacionesCoactivas
+			if(municipalBond.getPaymentAgreement()!=null &&
+					deposit.getInterest().compareTo(municipalBond.getInterest())<0){
+				
+				MunicipalbondAux munAux = new MunicipalbondAux();
+				munAux.setPayValue(deposit.getInterest());
+				munAux.setInterest(municipalBond.getInterest());
+				munAux.setItconverinterest(Boolean.FALSE);
+				munAux.setMunicipalbond(municipalBond);
+				munAux.setLiquidationDate(deposit.getDate());
+				munAux.setLiquidationTime(deposit.getTime());
+//				
+//				municipalBond.setInterestPaymentAgreement(municipalBond.getInterest());
+//				municipalBond.setInterestRegister();
+				entityManager.persist(munAux);
+			}else if(municipalBond.getPaymentAgreement()!=null &&
+					deposit.getInterest().compareTo(municipalBond.getInterest())>=0){
+				MunicipalbondAux munAux = new MunicipalbondAux();
+				munAux.setPayValue(deposit.getInterest());
+				munAux.setInterest(municipalBond.getInterest());
+				munAux.setItconverinterest(Boolean.TRUE);
+				munAux.setMunicipalbond(municipalBond);
+				munAux.setLiquidationDate(deposit.getDate());
+				munAux.setLiquidationTime(deposit.getTime());
+				
+				entityManager.persist(munAux);
+			}
 			if (deposit.getBalance().compareTo(BigDecimal.ZERO) == 0) {
 				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId,
 						deposit.getDate());

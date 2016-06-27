@@ -1056,8 +1056,6 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			Long paymentAgreementId = deactivatePaymentAgreement ? paymentAgreement.getId() : null;
 			
-			
-			
 			try {
 				org.jboss.seam.transaction.Transaction.instance().setTransactionTimeout(1800);
 				Long tillId = userSession.getTillPermission().getTill().getId();
@@ -1233,19 +1231,29 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				} else {
 					//rfarmijos 2016-05-23
 					//preguntar proceso de pago para fraccionar interes
-					/*if(paymentAgreement.getLowerPercentage()){
-						deposit.setInterest(interestToPay);
-						remaining = remaining.subtract(interestToPay);
+					if(paymentAgreement.getLowerPercentage()){
+						//deposit.setInterest(interestToPay);
+						//remaining = remaining.subtract(interestToPay);
+						//this.getInstance().add(deposit);
+						//municipalBond.add(deposit);
+												
+						//@author macartuche
+						//@date 2016-06-20T17:00:00
+						//@tag recaudacionCoactivas
+						deposit.setInterest(remaining);
+						deposit.setCapital(BigDecimal.ZERO);
 						this.getInstance().add(deposit);
 						municipalBond.add(deposit);
-					}else{*/
+						
+						
+					}else{
 						hasConflict = Boolean.TRUE;
 						deposit.setHasConflict(Boolean.TRUE);
 						conflictingBond = municipalBond;
 						deltaUp = interestToPay.subtract(remaining);
 						deltaDown = remaining;
 						break;	
-					//}
+					}
 					
 				}
 
@@ -1283,11 +1291,25 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					}
 
 				} else {
-					deposit.setCapital(remaining);
-					remaining = BigDecimal.ZERO;
+					//@author macartuche
+					//@date 2016-06-20T17:00:00
+					//@tag recaudacionCoactivas
+					if(deposit.getInterest().compareTo(municipalBond.getInterest())<0){
+						deposit.setCapital(BigDecimal.ZERO);
+						depositTotal = deposit.getInterest();
+						remaining = BigDecimal.ZERO;
+					}else{
+						deposit.setCapital(remaining);
+						remaining = BigDecimal.ZERO;
+					}
+					
 				}
 				if (!deactivatePaymentAgreement) {
-					deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+					if(deposit.getInterest().compareTo(municipalBond.getInterest())<0){
+						deposit.setBalance(municipalBond.getBalance());
+					}else{
+						deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+					}
 				}
 				deposit.setValue(deposit.getCapital().add(deposit.getInterest()).add(deposit.getPaidTaxes())
 						.add(deposit.getSurcharge()).subtract(deposit.getDiscount()));

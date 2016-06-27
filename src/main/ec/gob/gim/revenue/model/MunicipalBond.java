@@ -28,6 +28,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -51,6 +52,7 @@ import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.TaxItem;
 import ec.gob.gim.income.model.TaxpayerRecord;
+import ec.gob.gim.security.model.MunicipalbondAux;
 
 /**
  * @author gerson
@@ -1104,6 +1106,41 @@ public class MunicipalBond implements Serializable {
 			CascadeType.MERGE })
 	@JoinColumn(name = "adjunct_id")
 	private Adjunct adjunct;
+
+	//@author macartuche
+	//@date 2016-06-20T16:600:00
+	//@tag recaudacionCoactivas
+	private BigDecimal interestPaymentAgreement;
+	private BigDecimal interestRegister;
+	public BigDecimal getInterestPaymentAgreement() {
+		return interestPaymentAgreement;
+	}
+
+	public void setInterestPaymentAgreement(BigDecimal interestPaymentAgreement) {
+		this.interestPaymentAgreement = interestPaymentAgreement;
+	}
+
+	public BigDecimal getInterestRegister() {
+		return interestRegister;
+	}
+
+	public void setInterestRegister(BigDecimal interestRegister) {
+		this.interestRegister = interestRegister;
+	}
+
+	//@author macartuche
+	//@date 2016-06-21T10:26:00
+	//@tag recaudacionCoactivas
+	@OneToMany(mappedBy="municipalbond")
+	private List<MunicipalbondAux> auxBonds;
+
+	public List<MunicipalbondAux> getAuxBonds() {
+		return auxBonds;
+	}
+
+	public void setAuxBonds(List<MunicipalbondAux> auxBonds) {
+		this.auxBonds = auxBonds;
+	}
 
 	public MunicipalBond() {
 		// creationDate = Calendar.getInstance().getTime();

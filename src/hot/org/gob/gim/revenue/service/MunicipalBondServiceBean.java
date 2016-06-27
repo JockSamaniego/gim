@@ -74,6 +74,7 @@ import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.TimeToCalculate;
 import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
+import ec.gob.gim.security.model.MunicipalbondAux;
 
 /**
  * 
@@ -255,8 +256,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		} else {
 			paidTotal = paidTotal.subtract(municipalBond.getDiscount());
 		}
-		paidTotal = paidTotal.add(municipalBond.getTaxesTotal());
 		paidTotal = paidTotal.add(municipalBond.getInterest());
+		paidTotal = paidTotal.add(municipalBond.getTaxesTotal());
 		// paidTotal =
 		// paidTotal.subtract(municipalBond.getPreviousPayment()!=null ?
 		// municipalBond.getPreviousPayment() : BigDecimal.ZERO);
@@ -993,10 +994,33 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		// System.out.println("INTERESTS -----> Apply interest?
 		// "+municipalBond.getApplyInterest());
 		if (municipalBond.getApplyInterest() != null && municipalBond.getApplyInterest()) {
+			
 			Date expirationDate = DateUtils.truncate(municipalBond.getExpirationDate());
+			
+			
 			if (lastDeposit != null && lastDeposit.getDate().after(expirationDate)) {
 				expirationDate = DateUtils.truncate(lastDeposit.getDate());
 			}
+			
+
+			//@author macartuche
+			//@date 2016-06-20T16:600:00
+			//@tag recaudacionCoactivas
+			Query qaux = entityManager.createQuery(
+					"Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id");
+			System.out.println("===>"+municipalBond.getId());
+			qaux.setParameter("id", municipalBond.getId());
+			List<MunicipalbondAux> datalist = qaux.getResultList();
+			
+			if(!datalist.isEmpty()){
+				int lastIndex = datalist.size()-1;
+				MunicipalbondAux aux = datalist.get(lastIndex);
+				if(!aux.getItconverinterest()){
+					expirationDate = DateUtils.truncate(municipalBond.getExpirationDate());
+				}
+			}
+			
+			
 			paymentDate = DateUtils.truncate(paymentDate);
 			// System.out.println("INTERESTS -----> Expiration date?
 			// "+expirationDate);
