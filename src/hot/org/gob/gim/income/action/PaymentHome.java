@@ -1933,7 +1933,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 	
 	public void cleanSearch(){
-		this.lsr = new LinkedList<>();
+		this.lsr = new LinkedList<Data>();
 		System.out.println("===))(&%%");
 	}
 
