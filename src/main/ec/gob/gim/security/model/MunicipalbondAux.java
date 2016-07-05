@@ -48,7 +48,7 @@ public class MunicipalbondAux {
 	private Boolean itconverinterest;
 	
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "municipalbond_id")
 	private MunicipalBond municipalbond;
 
