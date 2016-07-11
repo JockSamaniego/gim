@@ -100,6 +100,7 @@ public class PaymentServiceBean implements PaymentService {
 						loadBondsDetail(bonds);
 					}else{
 						throw new PayoutNotAllowed();
+						
 					}
 					//loadBondsDetail(bonds);
 				} catch (EntryDefinitionNotFoundException e) {
