@@ -1051,10 +1051,13 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			//@date 2016-06-20T16:600:00
 			//@tag recaudacionCoactivas
 			Query qaux = entityManager.createQuery(
-					"Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id");
+					"Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id and ma.status=:status"); // 
 			qaux.setParameter("id", municipalBond.getId());
-			List<MunicipalbondAux> datalist = qaux.getResultList();
+			qaux.setParameter("status", "VALID");
+			
+			List<MunicipalbondAux> datalist = qaux.getResultList();			
 			if(!datalist.isEmpty()){
+				//tomar la ultima instancia almacenada
 				int lastIndex = datalist.size()-1;
 				MunicipalbondAux aux = datalist.get(lastIndex);
 				if(!aux.getItconverinterest()){

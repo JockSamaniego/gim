@@ -1183,6 +1183,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void generateDeposits() {
+		//agregado macartuche
+		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+		
 		//System.out.println("GENERATE DEPOSITS -----> STARTS");
 		if (depositTotal.compareTo(BigDecimal.ZERO) < 0) {
 			depositTotal = BigDecimal.ZERO;
@@ -1230,34 +1233,29 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				//@author macartuche
 				//@date 2016-07-04T16:30
 				//@tag recaudacionCoactivas
-				Query interestIsPayedQuery = getEntityManager().createQuery("Select mba from MunicipalbondAux mba "
-						+ "where mba.municipalbond.id=:munid and mba.itconverinterest=:cover");
-				interestIsPayedQuery.setParameter("munid", municipalBond.getId() );
-				interestIsPayedQuery.setParameter("cover", true );
-				List<MunicipalbondAux> list =interestIsPayedQuery.getResultList();
+				Boolean interestIsPayed=false;
+				BigDecimal sum = BigDecimal.ZERO;				 
+				
+				List<MunicipalbondAux> list = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID");
+				
 				if(list.isEmpty()){
-					//@author macartuche
-					//@date 2016-07-04T11:30
-					//@tag recaudacionCoactivas
-					//solo en el caso que no se cubra el interes
-					Query sumInterest = getEntityManager().createQuery("Select SUM(mba.payValue) from MunicipalbondAux mba "
-							+ "where mba.municipalbond.id=:munid and mba.itconverinterest=:cover");
-					sumInterest.setParameter("munid", municipalBond.getId() );
-					sumInterest.setParameter("cover", false );
-					BigDecimal sum = (BigDecimal)sumInterest.getSingleResult();
+					sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID");					
 					if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
-						BigDecimal temp = remaining.add(sum);
-						//temp = temp.add(depositTotal);
-						
-						if(temp.compareTo(municipalBond.getInterest()) >= 0){
-							remaining = temp;
-						}
+						BigDecimal temp = remaining.add(sum);			
+						if(temp.compareTo(municipalBond.getInterest()) >= 0)
+							interestIsPayed = true;						
 					}
 				}
 				
+				BigDecimal interestToPay = BigDecimal.ZERO;
+				if(interestIsPayed){
+					//el interes a pagar sera lo faltante de la sumatoria					
+					interestToPay = municipalBond.getInterest().subtract(sum);//============>  
+				}else{
+					interestToPay = municipalBond.getInterest();
+				}
 				
-				
-				BigDecimal interestToPay = municipalBond.getInterest();
+				//BigDecimal interestToPay = municipalBond.getInterest();
 				if (remaining.compareTo(interestToPay) >= 0) {
 					deposit.setInterest(interestToPay);
 					remaining = remaining.subtract(interestToPay);
@@ -1330,9 +1328,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					//@author macartuche
 					//@date 2016-06-20T17:00:00
 					//@tag recaudacionCoactivas
-					if(deposit.getInterest().compareTo(municipalBond.getInterest())<0){
+					if(deposit.getInterest().compareTo(interestToPay)<0){
 						deposit.setCapital(BigDecimal.ZERO);
-						depositTotal = deposit.getInterest();
 						remaining = BigDecimal.ZERO;
 					}else{
 						deposit.setCapital(remaining);
@@ -1341,9 +1338,19 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					
 				}
 				if (!deactivatePaymentAgreement) {
+					
+					
 					if(deposit.getInterest().compareTo(municipalBond.getInterest())<0){
 						deposit.setBalance(municipalBond.getBalance());
 					}else{
+						deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+					}
+					
+					//modificar tambien para el interes acumulado
+					//@author macartuche
+					//@date 2016-06-06T09:00:00
+					//@tag recaudacionCoactivas
+					if(interestIsPayed){
 						deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
 					}
 				}
@@ -1851,7 +1858,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		System.out.println("====>" + disabled);
 		return disabled;
 	}
-	
+
 	
 	// ----------------IA---------------------------------------------
 

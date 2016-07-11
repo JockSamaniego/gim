@@ -1,5 +1,6 @@
 package org.gob.gim.income.facade;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.loja.client.model.DataWS;
 
 @Local
@@ -116,4 +118,18 @@ public interface IncomeService {
 	//@tag InteresCeroInstPub
 	//No realizar el calculo de interes para instituciones publicas
 //	public void compensationPayment(List<Deposit> deposits);
+	
+	
+	//@author
+	//@tag recaudacionCoactivas
+	//@date 2016-07-06T12:27
+	//realizar el reverso en municipalbondaux - abonos compensaciones
+	public void reversePaymentAgreements(List<Long> depositIds) throws ReverseNotAllowedException; 
+
+	//@author
+	//@tag recaudacionesCoactivas
+	//@date 2016-07-08T15:25:11
+	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long id, Boolean coverInterest, String status);
+	
+	public BigDecimal sumAccumulatedInterest(Long id, Boolean coverInterest, String status);
 }
