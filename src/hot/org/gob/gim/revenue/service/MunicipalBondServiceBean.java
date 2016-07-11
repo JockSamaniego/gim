@@ -106,6 +106,12 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 	public static final String PENDING_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_PENDING";
 
+	 //@author macartuche  
+	  //@date 2016-06-27 11:42  
+	  //@tag InteresCeroInstPub  
+	  //No realizar el calculo de interes para instituciones publicas  
+	  public static final String COLLECT_INTEREST_PUBLIC_COMPANY = "INTEREST_PUBLIC_COMPANY_EQ_CERO";  
+
 	private static final String COUNT_EJBQL = "SELECT count(municipalBond) " + "FROM MunicipalBond municipalBond "
 			+ " WHERE ";
 
@@ -249,8 +255,40 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			municipalBond.setBalance(municipalBond.getValue());
 		}
 		// municipalBond.setBalance(municipalBond.getBalance().add(municipalBond.getSurcharge()).subtract(municipalBond.getDiscount()));
-		calculateInterest(municipalBond, deposit, paymentDate);//luego remover							
-		
+		calculateInterest(municipalBond, deposit, paymentDate);//luego de pruebas de coactivas y de interes cero remover ******           
+	     
+	   //@author macartuche  
+	   //@date 2016-06-27 10:33  
+	   //@tag InteresCeroInstPub  
+	   //No realizar el calculo de interes para instituciones publicas  
+	  Boolean interestCero_publiCompany = systemParameterService.findParameter(COLLECT_INTEREST_PUBLIC_COMPANY);  
+	  if(interestCero_publiCompany){  
+		Query publicEntityQuery = entityManager.createNativeQuery(" select id from resident where legalentitytype='PUBLIC' and id="+municipalBond.getResident().getId());  
+	    List<Object> lista = publicEntityQuery.getResultList();  
+	    if(!lista.isEmpty()){  
+	    	   System.out.println("Number: "+municipalBond.getNumber()+" Service: "+municipalBond.getGroupingCode()+" Interes anterior calculado "+municipalBond.getInterest()+" nuevo interes: 0.00");  
+	    	   municipalBond.setInterest(BigDecimal.ZERO);  
+		          //if(municipalBond.getReceipt()!=null){  
+		          //  Receipt receipt = municipalBond.getReceipt();  
+		          //  Query compensationQuery = entityManager.createQuery("Select cr from CompensationReceipt cr where cr.receipt.id=:receiptid");  
+		          //  compensationQuery.setParameter("receiptid", receipt.getId());  
+		          //  List<CompensationReceipt> list = compensationQuery.getResultList();  
+		          //  if(!list.isEmpty()){  
+		          //    CompensationReceipt cr = list.get(0);  
+		          //    System.out.println("Interes CompensationReceipt "+cr.getInterest());  
+		          //    if(cr.getInterest().compareTo(BigDecimal.ZERO)==1){  
+		          //      municipalBond.setInterest(cr.getInterest());  
+		          //      System.out.println("=======================>"+receipt.toString()+" interest CR: "+cr.getInterest());  
+		          //    }  
+		          //  }    
+		          //}  
+	      }else{  
+	          calculateInterest(municipalBond, deposit, paymentDate);  
+	      }  
+	   	}else{  
+	        calculateInterest(municipalBond, deposit, paymentDate);  
+	    }  		
+	  
 		roundItems(municipalBond);
 		BigDecimal paidTotal = municipalBond.getBalance();
 		paidTotal = paidTotal.add(municipalBond.getSurcharge());

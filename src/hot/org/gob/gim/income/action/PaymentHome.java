@@ -1065,7 +1065,12 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				receiptPrintingManager.print(deposits);
 				renderingDepositPDF(userSession.getUser().getId());
 				
-				incomeService.compensationPayment(deposits);
+				//@author macartuche  
+	            //@date 2016-07-01 11:16  
+	            //@tag InteresCeroInstPub  
+	            //No realizar el calculo de interes para instituciones publicas  
+	            //invocar al incomeservice  
+	            //incomeService.compensationPayment(deposits);  
 				
 			} catch (InvoiceNumberOutOfRangeException e) {
 				addFacesMessageFromResourceBundle(e.getClass().getSimpleName(), e.getInvoiceNumber());
