@@ -22,6 +22,11 @@ import org.jboss.seam.annotations.intercept.BypassInterceptors;
 @org.jboss.seam.annotations.faces.Validator
 public class EmailValidator implements javax.faces.validator.Validator, Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\." +
 			"[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*" +
 			"(\\.[A-Za-z]{2,})$";
@@ -30,13 +35,14 @@ public class EmailValidator implements javax.faces.validator.Validator, Serializ
 	private Matcher matcher;
  
 	public EmailValidator(){
-		  pattern = Pattern.compile(EMAIL_PATTERN);
+		  
 	}
  
 	@Override
 	public void validate(FacesContext context, UIComponent component,
 			Object value) throws ValidatorException {
  
+		pattern = Pattern.compile(EMAIL_PATTERN);
 		matcher = pattern.matcher(value.toString());
 		if(!matcher.matches()){
 			FacesMessage msg = new FacesMessage("Validación de Correo", "Formato de correo inválido.");

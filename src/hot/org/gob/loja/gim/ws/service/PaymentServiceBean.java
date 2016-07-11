@@ -336,12 +336,10 @@ public class PaymentServiceBean implements PaymentService {
 
 	}
 	
-//by Jock Samaniego.......
+	//by Jock Samaniego.......
 	private Boolean comparateBondsDates(List<Bond> bonds) {
-		Boolean expiratedDate = Boolean.FALSE;
-						
+		//Boolean expiratedDate = Boolean.FALSE;
 		Date now = DateUtils.truncate(new Date());
-		
         /*         
          rfarmijos 2016-06-21 quito estas lineas y dejo en una sola ya 
          existe un clase q hace los mismo
@@ -352,15 +350,18 @@ public class PaymentServiceBean implements PaymentService {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.HOUR, 0);*/
-
+		//comparar si 
+		
 		for (Bond bond : bonds) {
 			//System.out.println("==============hoy===========>"+calendar.getTime()+"========expiracion=========>"+bond.getExpirationDate());
-			if(now.compareTo(bond.getExpirationDate())==1){
+			if (now.compareTo(bond.getExpirationDate()) == 1) {
 				//System.out.println("=======================> deuda expirada");
-				expiratedDate = Boolean.TRUE;	
+				//expiratedDate = Boolean.TRUE;
+				return true;
 			}
 		}
-		return expiratedDate;
+		//return expiratedDate;
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")

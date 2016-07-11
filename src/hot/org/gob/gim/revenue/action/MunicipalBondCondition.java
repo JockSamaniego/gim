@@ -362,6 +362,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 			addFacesMessageFromResourceBundle("resident.notFound");
 		}	
 		municipalBondItemsResult = null;
+		futureBonds = null;
 	}
 	
 	List<MunicipalBondItem> municipalBondItemsResult;
@@ -406,6 +407,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		setResident(resident);
 		this.setIdentificationNumber(resident.getIdentificationNumber());		
 		municipalBondItemsResult = null;
+		futureBonds = null;
 	}
 
 	public void clearSearchResidentPanel() {
@@ -441,6 +443,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 				setEntryCodeForSearch(null);
 			}
 			municipalBondItemsResult = null;
+			futureBonds = null;
 		}		
 	}
 
@@ -513,6 +516,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		}
 		setEntryCodeForSearch(entry.getCode());
 		municipalBondItemsResult = null;
+		futureBonds = null;
 	}
 
 	public Entry getEntry() {

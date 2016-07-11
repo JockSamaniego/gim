@@ -13,14 +13,14 @@
    <navigation from-action="#{deferredMunicipalBond.emit}">
       <rule if-outcome="persisted">
          <end-conversation before-redirect="true" root="true"/>
-         <redirect view-id="/revenue/DeferredMunicipalBondEdit.xhtml"/>
+         <redirect view-id="/revenue/FutureMunicipalBondEdit.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{deferredMunicipalBond.cancelEmit}">
    	  <rule if-outcome="cancelEmit">
          <end-conversation before-redirect="true" root="true"/>
-         <redirect view-id="/revenue/DeferredMunicipalBondEdit.xhtml"/>   
+         <redirect view-id="/revenue/FutureMunicipalBondEdit.xhtml"/>   
       </rule>
    </navigation>
 
