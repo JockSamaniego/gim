@@ -69,6 +69,7 @@ import ec.gob.gim.revenue.model.FinancialInstitutionType;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.adjunct.ValuePair;
+import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.gim.security.model.User;
 
 import java.text.DateFormat;
@@ -1064,8 +1065,12 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				receiptPrintingManager.print(deposits);
 				renderingDepositPDF(userSession.getUser().getId());
 				
+				//@author macartuche
+				//@date 2016-07-01 11:16
+				//@tag InteresCeroInstPub
+				//No realizar el calculo de interes para instituciones publicas
 				//invocar al incomeservice
-				incomeService.compensationPayment(deposits);
+				//incomeService.compensationPayment(deposits);
 				
 			} catch (InvoiceNumberOutOfRangeException e) {
 				addFacesMessageFromResourceBundle(e.getClass().getSimpleName(), e.getInvoiceNumber());
@@ -1178,6 +1183,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void generateDeposits() {
+		//agregado macartuche
+		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+		
 		//System.out.println("GENERATE DEPOSITS -----> STARTS");
 		if (depositTotal.compareTo(BigDecimal.ZERO) < 0) {
 			depositTotal = BigDecimal.ZERO;
@@ -1222,7 +1230,32 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					deposit = createDeposit(municipalBond.getDeposits().size() + 1);
 				}
 
-				BigDecimal interestToPay = municipalBond.getInterest();
+				//@author macartuche
+				//@date 2016-07-04T16:30
+				//@tag recaudacionCoactivas
+				Boolean interestIsPayed=false;
+				BigDecimal sum = BigDecimal.ZERO;				 
+				
+				List<MunicipalbondAux> list = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID");
+				
+				if(list.isEmpty()){
+					sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID");					
+					if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+						BigDecimal temp = remaining.add(sum);			
+						if(temp.compareTo(municipalBond.getInterest()) >= 0)
+							interestIsPayed = true;						
+					}
+				}
+				
+				BigDecimal interestToPay = BigDecimal.ZERO;
+				if(interestIsPayed){
+					//el interes a pagar sera lo faltante de la sumatoria					
+					interestToPay = municipalBond.getInterest().subtract(sum);//============>  
+				}else{
+					interestToPay = municipalBond.getInterest();
+				}
+				
+				//BigDecimal interestToPay = municipalBond.getInterest();
 				if (remaining.compareTo(interestToPay) >= 0) {
 					deposit.setInterest(interestToPay);
 					remaining = remaining.subtract(interestToPay);
@@ -1236,7 +1269,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 						//remaining = remaining.subtract(interestToPay);
 						//this.getInstance().add(deposit);
 						//municipalBond.add(deposit);
-												
+						
+						
 						//@author macartuche
 						//@date 2016-06-20T17:00:00
 						//@tag recaudacionCoactivas
@@ -1294,9 +1328,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					//@author macartuche
 					//@date 2016-06-20T17:00:00
 					//@tag recaudacionCoactivas
-					if(deposit.getInterest().compareTo(municipalBond.getInterest())<0){
+					if(deposit.getInterest().compareTo(interestToPay)<0){
 						deposit.setCapital(BigDecimal.ZERO);
-						depositTotal = deposit.getInterest();
 						remaining = BigDecimal.ZERO;
 					}else{
 						deposit.setCapital(remaining);
@@ -1305,9 +1338,19 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					
 				}
 				if (!deactivatePaymentAgreement) {
+					
+					
 					if(deposit.getInterest().compareTo(municipalBond.getInterest())<0){
 						deposit.setBalance(municipalBond.getBalance());
 					}else{
+						deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+					}
+					
+					//modificar tambien para el interes acumulado
+					//@author macartuche
+					//@date 2016-06-06T09:00:00
+					//@tag recaudacionCoactivas
+					if(interestIsPayed){
 						deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
 					}
 				}
@@ -1815,7 +1858,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		System.out.println("====>" + disabled);
 		return disabled;
 	}
-	
+
 	
 	// ----------------IA---------------------------------------------
 
@@ -1897,7 +1940,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 	
 	public void cleanSearch(){
-		this.lsr = new LinkedList<>();
+		this.lsr = new LinkedList<Data>();
 		System.out.println("===))(&%%");
 	}
 

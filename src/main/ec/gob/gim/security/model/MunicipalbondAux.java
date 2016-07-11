@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -17,6 +19,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.coercive.model.Notification;
+import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.revenue.model.MunicipalBond;
 
 @Entity
@@ -28,6 +31,14 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 				pkColumnValue = "MunicipalbondAux", 
 				initialValue = 1, 
 				allocationSize = 1)
+
+@NamedQueries(value = { 
+		@NamedQuery(name = "MunicipalbondAux.findByDepositId", 
+					query = "SELECT mba FROM MunicipalbondAux mba where mba.deposit in :depositList"),
+		@NamedQuery(name="MunicipalbondAux.setAsVoid", 
+		query="UPDATE MunicipalbondAux mba SET mba.status = :status "
+				+ "WHERE mba.deposit.id in :depositList ")})
+
 public class MunicipalbondAux {
 
 	@Id
@@ -48,10 +59,16 @@ public class MunicipalbondAux {
 	private Boolean itconverinterest;
 	
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "municipalbond_id")
 	private MunicipalBond municipalbond;
-
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "deposit_id")
+	private Deposit deposit;
+	
+	
+	private String status;
 	
 
 	public Long getId() {
@@ -122,4 +139,23 @@ public class MunicipalbondAux {
 		this.interest = interest;
 	}
 
+
+	public Deposit getDeposit() {
+		return deposit;
+	}
+
+
+	public void setDeposit(Deposit deposit) {
+		this.deposit = deposit;
+	}
+
+
+	public String getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }

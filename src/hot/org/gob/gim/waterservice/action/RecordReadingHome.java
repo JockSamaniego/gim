@@ -1154,7 +1154,12 @@ public class RecordReadingHome extends EntityHome<Route> {
 		wbl.setTramitNumber(this.tramitNumber);
 		wbl.setServiceNumber(waterSupplyServiceNumber);
 		if(observation!=null){
-			wbl.setUnsubscribeBond(Integer.parseInt(observation));	
+			try{
+				wbl.setUnsubscribeBond(Integer.parseInt(observation));	
+			}catch(Exception e){
+				wbl.setUnsubscribeBond(null);
+			}
+				
 		}
 		return wbl;
 	}

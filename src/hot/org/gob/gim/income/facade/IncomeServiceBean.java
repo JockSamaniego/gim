@@ -227,11 +227,11 @@ public class IncomeServiceBean implements IncomeService {
 				paymentServiceDate, lastDeposit, !isForPay, !isForPay,
 				applyDiscount, null);
 
-		System.out
-				.println("\n\n\n\n\nBASE IMPONIBLE EN IncomeService -----> TAXABLE "
-						+ municipalBond.getTaxableTotal()
-						+ " TAXES TOTAL "
-						+ municipalBond.getTaxesTotal());
+//		System.out
+//				.println("\n\n\n\n\nBASE IMPONIBLE EN IncomeService -----> TAXABLE "
+//						+ municipalBond.getTaxableTotal()
+//						+ " TAXES TOTAL "
+//						+ municipalBond.getTaxesTotal());
 	}
 
 	@Override
@@ -380,43 +380,37 @@ public class IncomeServiceBean implements IncomeService {
 			System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE "
 					+ municipalBond.getTaxableTotal() + " TAXES TOTAL "
 					+ municipalBond.getTaxesTotal()
-					//@author macartuche
-					//@tag recaudacionesCoactivas
-					+"Interes municBond: "+municipalBond.getInterest()
-					+"interes deposit: "+deposit.getInterest()
 					);
 			
 			
 			entityManager.persist(deposit);
+
 			//@author macartuche
 			//@date 2016-06-21
 			//@tag recaudacionesCoactivas
-			if(municipalBond.getPaymentAgreement()!=null &&
-					deposit.getInterest().compareTo(municipalBond.getInterest())<0){
+			Boolean interestIsPayed=false;
+			BigDecimal sum = BigDecimal.ZERO; 
+			sum = sumAccumulatedInterest(municipalBond.getId(), false, "VALID");
+			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+				BigDecimal temp = deposit.getValue().add(sum);
+				if(temp.compareTo(municipalBond.getInterest()) >= 0)
+					interestIsPayed = true;				
+			}else if(sum==null && 
+					deposit.getValue().compareTo(municipalBond.getInterest())>=0 && 
+					municipalBond.getPaymentAgreement()!=null ){
+				interestIsPayed = true;
+			}
+			
+			if(municipalBond.getPaymentAgreement()!=null && !interestIsPayed ){
 				
-				MunicipalbondAux munAux = new MunicipalbondAux();
-				munAux.setPayValue(deposit.getInterest());
-				munAux.setInterest(municipalBond.getInterest());
-				munAux.setItconverinterest(Boolean.FALSE);
-				munAux.setMunicipalbond(municipalBond);
-				munAux.setLiquidationDate(deposit.getDate());
-				munAux.setLiquidationTime(deposit.getTime());
-//				
-//				municipalBond.setInterestPaymentAgreement(municipalBond.getInterest());
-//				municipalBond.setInterestRegister();
-				entityManager.persist(munAux);
-			}else if(municipalBond.getPaymentAgreement()!=null &&
-					deposit.getInterest().compareTo(municipalBond.getInterest())>=0){
-				MunicipalbondAux munAux = new MunicipalbondAux();
-				munAux.setPayValue(deposit.getInterest());
-				munAux.setInterest(municipalBond.getInterest());
-				munAux.setItconverinterest(Boolean.TRUE);
-				munAux.setMunicipalbond(municipalBond);
-				munAux.setLiquidationDate(deposit.getDate());
-				munAux.setLiquidationTime(deposit.getTime());
+				MunicipalbondAux munAux =  createBondAux(deposit, municipalBond, Boolean.FALSE);
+				entityManager.persist(munAux);			
+			}else if(municipalBond.getPaymentAgreement()!=null &&	interestIsPayed){
 				
+				MunicipalbondAux munAux =  createBondAux(deposit, municipalBond, Boolean.TRUE);			
 				entityManager.persist(munAux);
 			}
+			
 			if (deposit.getBalance().compareTo(BigDecimal.ZERO) == 0) {
 				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId,
 						deposit.getDate());
@@ -560,21 +554,28 @@ public class IncomeServiceBean implements IncomeService {
 				
 				//macartuche
 				//obtener el interees de la factura electronica y actual de pago
-				Receipt rec = municipalBond.getReceipt();
-				if(rec!=null){
-					Query q = entityManager.createQuery("Select cr from CompensationReceipt cr where cr.receipt=:receipt");
-					q.setParameter("receipt", rec);
-					List<CompensationReceipt> list = q.getResultList();
-					if(!list.isEmpty()){
-						CompensationReceipt cr = list.get(0);
-						BigDecimal residue =  municipalBond.getInterest().subtract(cr.getInterest());
-						if(residue.compareTo(BigDecimal.ZERO)==1){
-							cr.setResidualInterest(residue);
-						}
-						System.out.println("Se ha registrado el residuo de: "+residue);
-						entityManager.merge(cr);
-					}
-				}
+				
+				//2016-06-27 17:21
+				//@tag InteresCeroInstPub
+			    //COMENTADO YA QUE SE USA INTERES=0 A INST_PUB
+				
+//				Receipt rec = municipalBond.getReceipt();
+//				if(rec!=null){
+//					Query q = entityManager.createQuery("Select cr from CompensationReceipt cr where cr.receipt=:receipt");
+//					q.setParameter("receipt", rec);
+//					List<CompensationReceipt> list = q.getResultList();
+//					if(!list.isEmpty()){
+//						CompensationReceipt cr = list.get(0);
+//						BigDecimal residue =  municipalBond.getInterest().subtract(cr.getInterest());
+//						if(residue.compareTo(BigDecimal.ZERO)==1){
+//							cr.setResidualInterest(residue);
+//						}
+//						System.out.println("Se ha registrado el residuo de: "+residue);
+//						entityManager.merge(cr);
+//					}
+//				}
+				
+				
 				// Se realiza calculo de la liquidacion final
 				municipalBond.setBalance(BigDecimal.ZERO);
 				municipalBond.setInterest(municipalBond.getInterestTotal());
@@ -676,9 +677,12 @@ public class IncomeServiceBean implements IncomeService {
 										entityManager.merge(receipt);
 										entityManager.flush();
 
+										//@author macartuche
+										//@date 2016-06-27 17:25
+										//@tag InteresCeroInstPub
+										//No realizar el calculo de interes para instituciones publicas
 										// createCompensationReceipt
-										createCompensationReceipt(receipt,
-												municipalBond);
+										//createCompensationReceipt(receipt,municipalBond);
 
 									} else {
 										if (authorizedReceiptWS
@@ -727,45 +731,54 @@ public class IncomeServiceBean implements IncomeService {
 						Receipt receipt = findActiveReceipt(receiptId);
 						municipalBond.setReceipt(receipt);
 						
-						if(!receipt.getStatusElectronicReceipt().equals(StatusElectronicReceipt.AUTOIMPRESOR)){
-							// verificar si la factura ya fue autorizada anteriormente
-							if (receipt.getStatusElectronicReceipt() == StatusElectronicReceipt.AUTHORIZED) { 
+						//@author macartuche
+						//@date 2016-06-27 17:26
+						//@tag InteresCeroInstPub
+						//No realizar el calculo de interes para instituciones publicas
+						
+						//if(!receipt.getStatusElectronicReceipt().equals(StatusElectronicReceipt.AUTOIMPRESOR)){
+						// verificar si la factura ya fue autorizada anteriormente
+							//if (receipt.getStatusElectronicReceipt() == StatusElectronicReceipt.AUTHORIZED) { 
 								// createCompensationReceipt
-								createCompensationReceipt(receipt, municipalBond);
-							} 
-						} 
+								//createCompensationReceipt(receipt, municipalBond);
+							//} 
+						//} 
 					}
 				}
 			}
 		}
 	}
 
+	//@author macartuche
+	//@date 2016-06-27 17:25
+	//@tag InteresCeroInstPub
+	//No realizar el calculo de interes para instituciones publicas
 	@SuppressWarnings("unchecked")
-	private void createCompensationReceipt(Receipt receipt,
-			MunicipalBond municipalBond) {
-		// grabar el interes que tiene la
-		// factura electronica 
-		//crear solo en el caso de que no exista
-		Query q = entityManager.createQuery("Select cr from CompensationReceipt cr "
-				+ "where cr.serviceDate=:serviceDate and "
-				+ "cr.groupingCode=:groupingCode and "
-				+ "cr.receipt=:receipt");
-		q.setParameter("serviceDate", municipalBond.getServiceDate());
-		q.setParameter("groupingCode", municipalBond.getGroupingCode());
-		q.setParameter("receipt", receipt);
-		List<CompensationReceipt> crlist = q.getResultList();
-		if(crlist.isEmpty()){ 
-			CompensationReceipt compensationDetail = new CompensationReceipt();
-			compensationDetail.setServiceDate(municipalBond.getServiceDate());
-			compensationDetail.setGroupingCode(municipalBond.getGroupingCode());
-			compensationDetail.setInterest(municipalBond.getInterest());
-			compensationDetail.setReceipt(receipt);
-			compensationDetail.setAvailable(Boolean.TRUE);
-			compensationDetail.setIsPaid(Boolean.FALSE);
-			entityManager.merge(compensationDetail);
-			entityManager.flush();
-		} 
-	}
+//	private void createCompensationReceipt(Receipt receipt,
+//			MunicipalBond municipalBond) {
+//		// grabar el interes que tiene la
+//		// factura electronica 
+//		//crear solo en el caso de que no exista
+//		Query q = entityManager.createQuery("Select cr from CompensationReceipt cr "
+//				+ "where cr.serviceDate=:serviceDate and "
+//				+ "cr.groupingCode=:groupingCode and "
+//				+ "cr.receipt=:receipt");
+//		q.setParameter("serviceDate", municipalBond.getServiceDate());
+//		q.setParameter("groupingCode", municipalBond.getGroupingCode());
+//		q.setParameter("receipt", receipt);
+//		List<CompensationReceipt> crlist = q.getResultList();
+//		if(crlist.isEmpty()){ 
+//			CompensationReceipt compensationDetail = new CompensationReceipt();
+//			compensationDetail.setServiceDate(municipalBond.getServiceDate());
+//			compensationDetail.setGroupingCode(municipalBond.getGroupingCode());
+//			compensationDetail.setInterest(municipalBond.getInterest());
+//			compensationDetail.setReceipt(receipt);
+//			compensationDetail.setAvailable(Boolean.TRUE);
+//			compensationDetail.setIsPaid(Boolean.FALSE);
+//			entityManager.merge(compensationDetail);
+//			entityManager.flush();
+//		} 
+//	}
 
 	private void deletePaymentFromMunicipalBond(Long municipalBondId, Date date) {
 		Long paymentId = new Long(0);
@@ -1615,39 +1628,125 @@ public class IncomeServiceBean implements IncomeService {
 		query.setParameter("municipalBondStatusIds", statuses);
 		return query.getResultList();
 	}
+
+
+	//@author
+	//@tag recaudacionCoactivas
+	//@date 2016-07-06T12:29
+	//realizar el reverso en municipalbondaux - abonos compensaciones
+	@Override
+	public void reversePaymentAgreements(List<Long> depositIds)
+			throws ReverseNotAllowedException {
+
+		Query updateAux = entityManager.createNamedQuery("MunicipalbondAux.setAsVoid");
+		updateAux.setParameter("status", "VOID");
+		updateAux.setParameter("depositList", depositIds);
+		int state = updateAux.executeUpdate();		
+		
+	}
+	
 	
 	
 	/**
 	 * @author macartuche
-	 * Poner a true que la compensacion ha sido pagada
+	 * @date 2016-07-08T15:33
+	 * @tag recaudacionCoactivas
+	 * Obtener una lista de municipalbondAux por el estado, municipalbondId y si cubre o
+	 * no el interes
 	 */
-	
-	public void compensationPayment(List<Deposit> deposits){
+	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long municipalbondId, Boolean coverInterest, String status){
 		
-		if(deposits!=null && !deposits.isEmpty()){
-			for(Deposit deposit: deposits){
-				Long estado = deposit.getMunicipalBond().getMunicipalBondStatus().getId().longValue();
-				if(estado == 6){ //en compensacion
-					System.out.println("Ingresaaaaaa");
-					Receipt receipt = deposit.getMunicipalBond().getReceipt();
-					if( receipt != null){
-						
-						System.out.println("Ingresaaaaaa con factura");
-						Query query = entityManager.createQuery("Select cr from CompensationReceipt cr"
-								+ " where cr.receipt.id=:receiptid");
-						query.setParameter("receiptid", receipt.getId());
-						List<CompensationReceipt> compensationReceiptList = query.getResultList();
-						
-						if(!compensationReceiptList.isEmpty()){
-							CompensationReceipt compensation = compensationReceiptList.get(0);
-							compensation.setIsPaid(Boolean.TRUE);
-							entityManager.merge(compensation);
-							entityManager.flush();
-						}
-					}
-						
-				} 
-			}		
+		String query = "Select mba from MunicipalbondAux mba "
+						+ "where mba.municipalbond.id=:munid and mba.status=:status";
+		if(coverInterest!=null){
+			query += " and mba.itconverinterest=:cover";
 		}
+		
+		Query interestIsPayedQuery = entityManager.createQuery(query);
+		interestIsPayedQuery.setParameter("munid", municipalbondId);		
+		interestIsPayedQuery.setParameter("status", status);
+		
+		if(coverInterest!=null){
+			interestIsPayedQuery.setParameter("cover", coverInterest);
+		}
+		 
+		return interestIsPayedQuery.getResultList();
 	}
+	
+	
+	/**
+	 * @author macartuche
+	 * @date 2016-07-08T15:40:05
+	 * @tag recaudacionCoactivas
+	 * Suma de los intereses que se acumulan por abonos menores al interes
+	 */
+	public BigDecimal sumAccumulatedInterest(Long municipalbondId, Boolean coverInterest, String status){
+		
+		String query = " Select SUM(mba.payValue) from MunicipalbondAux mba " 
+					   + " where mba.municipalbond.id=:munid and "
+					   + "mba.itconverinterest=:cover and mba.status=:status";
+		Query sumInterest = entityManager.createQuery(query);		
+		sumInterest.setParameter("munid",municipalbondId);
+		sumInterest.setParameter("cover", coverInterest );
+		sumInterest.setParameter("status", status );
+		
+		return (BigDecimal)sumInterest.getSingleResult();
+	}
+	
+	/**
+	 * @author macartuche
+	 * @date 2016-07-08T15:52
+	 * @tag recaudacionCoactivas
+	 * @param deposit Deposit
+	 * @param municipalBond MunicipalBond
+	 * @param coverInterest Boolean
+	 * @return MunicipalbondAux
+	 */
+	private MunicipalbondAux createBondAux(Deposit deposit, MunicipalBond municipalBond,  Boolean coverInterest){
+		MunicipalbondAux munAux = new MunicipalbondAux();
+		munAux.setPayValue(deposit.getInterest());
+		munAux.setInterest(municipalBond.getInterest());
+		munAux.setItconverinterest(coverInterest);
+		munAux.setMunicipalbond(municipalBond);
+		munAux.setLiquidationDate(deposit.getDate());
+		munAux.setLiquidationTime(deposit.getTime());
+		munAux.setStatus("VALID");
+		return munAux;
+	}
+	/**
+	 * @author macartuche
+	 * Poner a true que la compensacion ha sido pagada
+	 */	
+	//@author macartuche
+	//@date 2016-06-27 17:24
+	//@tag InteresCeroInstPub
+	//No realizar el calculo de interes para instituciones publicas
+//	public void compensationPayment(List<Deposit> deposits){
+//		
+//		if(deposits!=null && !deposits.isEmpty()){
+//			for(Deposit deposit: deposits){
+//				Long estado = deposit.getMunicipalBond().getMunicipalBondStatus().getId().longValue();
+//				if(estado == 6){ //en compensacion
+//					System.out.println("Ingresaaaaaa");
+//					Receipt receipt = deposit.getMunicipalBond().getReceipt();
+//					if( receipt != null){
+//						
+//						System.out.println("Ingresaaaaaa con factura");
+//						Query query = entityManager.createQuery("Select cr from CompensationReceipt cr"
+//								+ " where cr.receipt.id=:receiptid");
+//						query.setParameter("receiptid", receipt.getId());
+//						List<CompensationReceipt> compensationReceiptList = query.getResultList();
+//						
+//						if(!compensationReceiptList.isEmpty()){
+//							CompensationReceipt compensation = compensationReceiptList.get(0);
+//							compensation.setIsPaid(Boolean.TRUE);
+//							entityManager.merge(compensation);
+//							entityManager.flush();
+//						}
+//					}
+//						
+//				} 
+//			}		
+//		}
+//	}
 }
