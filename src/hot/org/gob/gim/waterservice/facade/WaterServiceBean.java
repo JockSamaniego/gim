@@ -164,24 +164,15 @@ public class WaterServiceBean implements WaterService {
 		ConsumptionState preEmitted = findPreEmittedConsumptionState();
 		Date now = Calendar.getInstance().getTime();
 		
-		//@author macartuche
-		//@date 2016-06-27 11:42
-		//@tag InteresCeroInstPub
-		//No realizar el calculo de interes para instituciones publicas		
-		//Map<String, BigDecimal> interestByServiceCode = new HashMap<String, BigDecimal>();
+		Map<String, BigDecimal> interestByServiceCode = new HashMap<String, BigDecimal>();
 
 		for (Consumption c : consumptions) {
 			waterSupplies.add(c.getWaterSupply().getId());
 			String serviceNumber = c.getWaterSupply().getServiceNumber()
 					.toString();
 			
-			//@author macartuche
-			//@date 2016-06-27 11:42
-			//@tag InteresCeroInstPub
-			//No realizar el calculo de interes para instituciones publicas
-			
-			//BigDecimal interestSUM = findInterestByServiceCode(serviceNumber);
-			//interestByServiceCode.put(serviceNumber, interestSUM);
+			BigDecimal interestSUM = findInterestByServiceCode(serviceNumber);
+			interestByServiceCode.put(serviceNumber, interestSUM);
 		} 
 
 		List<MaintenanceEntryDTO> maintenanceEntryDTOs = findTotalMaintenanceEntryByWaterSupply(waterSupplies);
@@ -254,20 +245,14 @@ public class WaterServiceBean implements WaterService {
 				wsr.setRoute(r);
 
 				/********************/
-				// macartuche ->pasando el interes acumulado
-				
-				//@author macartuche
-				//@date 2016-06-27 11:42
-				//@tag InteresCeroInstPub
-				//No realizar el calculo de interes para instituciones publicas
-				
-				//BigDecimal interestList = interestByServiceCode.get(serviceCode);
-				//if(interestList!=null){
-				//	if (interestList.compareTo(BigDecimal.ZERO) == 1) {
-				//		serviceToUpdate.add(serviceCode);
-				//	}
-				//	wsr.setAccruedInterest(interestList);
-				//}
+				// macartuche ->pasando el interes acumulado					
+				BigDecimal interestList = interestByServiceCode.get(serviceCode);
+				if(interestList!=null){
+					if (interestList.compareTo(BigDecimal.ZERO) == 1) {
+						serviceToUpdate.add(serviceCode);
+					}
+					wsr.setAccruedInterest(interestList);
+				}
 			
 
 				if (c.getWaterSupply().getApplyElderlyExemption()) {
@@ -344,31 +329,27 @@ public class WaterServiceBean implements WaterService {
 	 * @param serviceCode
 	 * @return
 	 */
-	//@author macartuche
-	//@date 2016-06-27 17:51
-	//@tag InteresCeroInstPub
-	//No realizar el calculo de interes para instituciones publicas
-//	private BigDecimal findInterestByServiceCode(String serviceCode) {
-//		BigDecimal interestSUM = BigDecimal.ZERO;
-//		Query query = entityManager
-//				.createQuery("Select SUM(cr.residualInterest) from CompensationReceipt cr "
-//						+ "where cr.groupingCode=:serviceCode and cr.available=:available and cr.isPaid=:isPayed");
-//		query.setParameter("serviceCode", serviceCode);
-//		query.setParameter("available", Boolean.TRUE);
-//		//agregar campo para buscar solo los pagados
-//		//macartuche
-//		//2016-02-20 09:45
-//		query.setParameter("isPayed", Boolean.TRUE);
-//
-//		try {
-//			interestSUM = (BigDecimal) query.getSingleResult();
-//		} catch (NoResultException e) {
-//			System.out.println("No hay intereses para el serviceCode "
-//					+ serviceCode);
-//		}
-//
-//		return interestSUM;
-//	}
+	private BigDecimal findInterestByServiceCode(String serviceCode) {
+		BigDecimal interestSUM = BigDecimal.ZERO;
+		Query query = entityManager
+				.createQuery("Select SUM(cr.residualInterest) from CompensationReceipt cr "
+						+ "where cr.groupingCode=:serviceCode and cr.available=:available and cr.isPaid=:isPayed");
+		query.setParameter("serviceCode", serviceCode);
+		query.setParameter("available", Boolean.TRUE);
+		//agregar campo para buscar solo los pagados
+		//macartuche
+		//2016-02-20 09:45
+		query.setParameter("isPayed", Boolean.TRUE);
+
+		try {
+			interestSUM = (BigDecimal) query.getSingleResult();
+		} catch (NoResultException e) {
+			System.out.println("No hay intereses para el serviceCode "
+					+ serviceCode);
+		}
+
+		return interestSUM;
+	}
 
 	private Date findEmisionPeriod() {
 		Date today = new Date();
@@ -397,13 +378,7 @@ public class WaterServiceBean implements WaterService {
 			entityManager.persist(emissionOrder);
 			updateToEmittedStatus(waterSupplyIds);
 			//macartuche
-			
-			//@author macartuche
-			//@date 2016-06-27 11:42
-			//@tag InteresCeroInstPub
-			//No realizar el calculo de interes para instituciones publicas
-			
-			//updateCompensationReceipt();
+			updateCompensationReceipt();
 		}
 		
 
@@ -452,39 +427,29 @@ public class WaterServiceBean implements WaterService {
 			entityManager.persist(emissionOrder);
 			entityManager.persist(rpe);
 			updateToEmittedStatus(waterSupplyIds);
-			// updateConsumption();
-			
-			//@author macartuche
-			//@date 2016-06-27 11:42
-			//@tag InteresCeroInstPub
-			//No realizar el calculo de interes para instituciones publicas
-			
-			//updateCompensationReceipt();
+			// updateConsumption();			
+			updateCompensationReceipt();
 		}
 	}
 
 	
-	//@author macartuche
-	//@date 2016-06-27 11:42
-	//@tag InteresCeroInstPub
-	//No realizar el calculo de interes para instituciones publicas
-	
-	//private void updateCompensationReceipt(){
-		// macartuche
-		// actualizar todos los codigos de servicio
-	//	for (String serviceUpdate : serviceToUpdate) {
-	//		Query q = entityManager
-	//				.createQuery("Update CompensationReceipt cr "
-	//						+ "SET cr.available = false "
-	//						+ "WHERE cr.groupingCode=:groupingCode and cr.isPaid=:isPaid ");
-	//		q.setParameter("groupingCode", serviceUpdate);
+
+	private void updateCompensationReceipt(){
+		//macartuche
+		//actualizar todos los codigos de servicio
+		for (String serviceUpdate : serviceToUpdate) {
+			Query q = entityManager
+					.createQuery("Update CompensationReceipt cr "
+							+ "SET cr.available = false "
+							+ "WHERE cr.groupingCode=:groupingCode and cr.isPaid=:isPaid ");
+			q.setParameter("groupingCode", serviceUpdate);
 			//macartuche
 			//2016-02-20 11:48:45
 			//poner no disponibles los que ya se han pagado
-	//		q.setParameter("isPaid", Boolean.TRUE);
-	//		q.executeUpdate();
-	//	}
-	//}
+			q.setParameter("isPaid", Boolean.TRUE);
+			q.executeUpdate();
+		}
+	}
 	
 	private void updateToEmittedStatus(List<Long> waterSupplies) {
 		if (waterSupplies == null || waterSupplies.size() == 0)
@@ -568,20 +533,14 @@ public class WaterServiceBean implements WaterService {
 		Calendar cServiceDate = Calendar.getInstance();
 
 		// macartuche
-		// 2015-09-29
-		
-		//@author macartuche
-		//@date 2016-06-27 18:00
-		//@tag InteresCeroInstPub
-		//No realizar el calculo de interes para instituciones publicas
-		
-		//Map<String, BigDecimal> interestByServiceCode = new HashMap<String, BigDecimal>();
-		//for (Consumption c : consumptions) {
-		//	String serviceNumber = c.getWaterSupply().getServiceNumber()
-		//			.toString();
-		//	BigDecimal interestSUM = findInterestByServiceCode(serviceNumber);
-		//	interestByServiceCode.put(serviceNumber, interestSUM);
-		//}
+		// 2015-09-29		
+		Map<String, BigDecimal> interestByServiceCode = new HashMap<String, BigDecimal>();
+		for (Consumption c : consumptions) {
+			String serviceNumber = c.getWaterSupply().getServiceNumber()
+					.toString();
+			BigDecimal interestSUM = findInterestByServiceCode(serviceNumber);
+			interestByServiceCode.put(serviceNumber, interestSUM);
+		}
 
 		serviceToUpdate = new ArrayList<String>();
 		for (Consumption c : consumptions) {
@@ -636,24 +595,18 @@ public class WaterServiceBean implements WaterService {
 //			/********************/
 //			// macartuche ->pasando el interes acumulado
 			
-			//@author macartuche
-			//@date 2016-06-27 18:02
-			//@tag InteresCeroInstPub
-			//No realizar el calculo de interes para instituciones publicas
+			String serviceCode = c.getWaterSupply().getServiceNumber()
+					.toString();
+			BigDecimal interestList = interestByServiceCode.get(serviceCode);
 			
-			//String serviceCode = c.getWaterSupply().getServiceNumber()
-			//		.toString();
-			//BigDecimal interestList = interestByServiceCode.get(serviceCode);
-			
-
-			//System.out.println("Interest una sola emision: "+interestList+" "+serviceCode);
-			// valor mayor a cero
-			//if(interestList!=null){
-			//	if (interestList.compareTo(BigDecimal.ZERO) == 1) {
-			//		serviceToUpdate.add(serviceCode);
-			//	}
-			//	wsr.setAccruedInterest(interestList);
-			//}
+			System.out.println("Interest una sola emision: "+interestList+" "+serviceCode);
+			//valor mayor a cero
+			if(interestList!=null){
+				if (interestList.compareTo(BigDecimal.ZERO) == 1) {
+					serviceToUpdate.add(serviceCode);
+				}
+				wsr.setAccruedInterest(interestList);
+			}
 		
 			
 			if (c.getWaterSupply().getApplyElderlyExemption()) {

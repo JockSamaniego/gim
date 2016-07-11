@@ -112,12 +112,7 @@ public interface IncomeService {
 	 * @author macartuche
 	 * Poner a true que la compensacion ha sido pagada
 	 */
-	
-	//@author macartuche
-	//@date 2016-06-27 18:08
-	//@tag InteresCeroInstPub
-	//No realizar el calculo de interes para instituciones publicas
-//	public void compensationPayment(List<Deposit> deposits);
+	public void compensationPayment(List<Deposit> deposits);
 	
 	
 	//@author
