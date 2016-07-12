@@ -24,7 +24,6 @@ import ec.gob.gim.cadaster.model.Property;
 				table="IdentityGenerator",
 				valueColumnName="value",
 				allocationSize = 1, initialValue = 1)
-
 public class ExemptionForProperty {
 	
 	@Id
@@ -45,6 +44,8 @@ public class ExemptionForProperty {
 	
 	private BigDecimal amountCreditYear3;
 	
+	private BigDecimal discountPercentage;
+	
 	@Column(length=150)
 	private String nameHistoryResident;
 	
@@ -52,6 +53,7 @@ public class ExemptionForProperty {
 		this.amountCreditYear1 = BigDecimal.ZERO;
 		this.amountCreditYear2 = BigDecimal.ZERO;
 		this.amountCreditYear3 = BigDecimal.ZERO;
+		this.discountPercentage = new BigDecimal(100);
 	}
 	
 	public Long getId() {
@@ -110,4 +112,12 @@ public class ExemptionForProperty {
 		this.nameHistoryResident = nameHistoryResident;
 	}
 
+	public BigDecimal getDiscountPercentage() {
+		return discountPercentage;
+	}
+
+	public void setDiscountPercentage(BigDecimal discountPercentage) {
+		this.discountPercentage = discountPercentage;
+	}
+	
 }

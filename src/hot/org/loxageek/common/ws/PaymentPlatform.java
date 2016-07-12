@@ -8,17 +8,11 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.gob.gim.common.ServiceLocator;
-import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
-import org.gob.gim.exception.ReverseNotAllowedException;
-import org.gob.gim.income.facade.IncomeService;
 import org.gob.loja.gim.ws.dto.ClosingStatement;
 import org.gob.loja.gim.ws.dto.Payout;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
@@ -32,9 +26,7 @@ import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 import org.gob.loja.gim.ws.service.PaymentService;
 
-import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.EMoneyPayment;
-import ec.gob.gim.security.model.User;
 
 /**
  * Define los servicios que permiten la consulta de valores adeudados y el
