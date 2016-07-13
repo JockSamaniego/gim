@@ -1127,20 +1127,7 @@ public class MunicipalBond implements Serializable {
 	public void setInterestRegister(BigDecimal interestRegister) {
 		this.interestRegister = interestRegister;
 	}
-
-	//@author macartuche
-	//@date 2016-06-21T10:26:00
-	//@tag recaudacionCoactivas
-	@OneToMany(mappedBy="municipalbond")
-	private List<MunicipalbondAux> auxBonds;
-
-	public List<MunicipalbondAux> getAuxBonds() {
-		return auxBonds;
-	}
-
-	public void setAuxBonds(List<MunicipalbondAux> auxBonds) {
-		this.auxBonds = auxBonds;
-	}
+	
 
 	public MunicipalBond() {
 		// creationDate = Calendar.getInstance().getTime();

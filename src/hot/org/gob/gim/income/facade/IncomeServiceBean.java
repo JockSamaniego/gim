@@ -1707,6 +1707,9 @@ public class IncomeServiceBean implements IncomeService {
 		munAux.setMunicipalbond(municipalBond);
 		munAux.setLiquidationDate(deposit.getDate());
 		munAux.setLiquidationTime(deposit.getTime());
+
+	    //DEPOSITO 
+	    munAux.setDeposit(deposit); 
 		munAux.setStatus("VALID");
 		return munAux;
 	}
