@@ -26,7 +26,6 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.security.model.MunicipalbondAux;
-import ec.gob.loja.client.model.DataWS;
 
 @Local
 public interface IncomeService {
