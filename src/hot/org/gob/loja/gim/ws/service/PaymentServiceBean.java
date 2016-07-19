@@ -142,7 +142,7 @@ public class PaymentServiceBean implements PaymentService {
 	public Statement findStatement(ServiceRequest request)
 			throws PayoutNotAllowed, TaxpayerNotFound, NotActiveWorkday,
 			HasNoObligations {
-		System.out.println("------------------- "+request.getIdentificationNumber());
+		System.out.println("------------------- "+request.getIdentificationNumber()+"\t"+request.getUsername());
 		String identificationNumber = request.getIdentificationNumber();
 		Taxpayer taxpayer = findTaxpayer(identificationNumber);
 		Date workDayDate;
@@ -164,11 +164,6 @@ public class PaymentServiceBean implements PaymentService {
 					bonds = findPendingBonds(taxpayer.getId());
 					//esta imprimiendo el log de lo q se retorna quitar luego de las pruebas
 					Boolean control = comparateBondsDates(bonds);
-					/*if(!control){
-						loadBondsDetail(bonds);
-					}else{
-						throw new PayoutNotAllowed();
-					}*/
 					loadBondsDetail(bonds);
 				} catch (EntryDefinitionNotFoundException e) {
 					e.printStackTrace();
@@ -419,9 +414,8 @@ public class PaymentServiceBean implements PaymentService {
 		* 0); calendar.set(Calendar.MINUTE, 0); calendar.set(Calendar.HOUR, 0);
 		*/
 		// comparar si
-		System.out.println("---------cantidad "+bonds.size());
-		for (Bond bond : bonds) { 
-			System.out.println("---------");
+		System.out.println("========>cantidad "+bonds.size());
+		for (Bond bond : bonds) {			
 			System.out.println(bond.getAccount()+"\t"+bond.getNumber()+"\t"+bond.getDiscounts()+
 					"\t"+bond.getInterests()+"\t"+bond.getSurcharges()+"\t"+bond.getTaxes()+"\t"+bond.getTotal());
 			/*if (now.compareTo(bond.getExpirationDate()) == 1) {
