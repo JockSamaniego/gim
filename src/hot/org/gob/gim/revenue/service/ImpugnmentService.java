@@ -4,7 +4,9 @@ import java.util.List;
 
 import javax.ejb.Local;
 
+import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
+import ec.gob.gim.revenue.model.impugnment.criteria.ImpugnmentSearchCriteria;
 
 /**
  *  * @author René Ortega
@@ -25,5 +27,10 @@ public interface ImpugnmentService {
 	
 	public Impugnment update(Impugnment impugnment);
 	
+	public List<Impugnment> findAll();
+	
+	public MunicipalBond findMunicipalBondForImpugnment(Integer numberInfringement);
+	
+	public List<Impugnment> findImpugnmentsForCriteria(ImpugnmentSearchCriteria criteria);
 	
 }

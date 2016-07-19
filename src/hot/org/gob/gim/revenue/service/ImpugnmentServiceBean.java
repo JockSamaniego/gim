@@ -1,5 +1,7 @@
 package org.gob.gim.revenue.service;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -10,7 +12,9 @@ import javax.persistence.Query;
 
 import org.gob.gim.common.service.CrudService;
 
+import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
+import ec.gob.gim.revenue.model.impugnment.criteria.ImpugnmentSearchCriteria;
 
 /**
  *  * @author René Ortega
@@ -61,4 +65,42 @@ public class ImpugnmentServiceBean implements ImpugnmentService {
 
 		return new Long(1);
 	}
+
+	@Override
+	public List<Impugnment> findAll() {
+		Query query = entityManager.createQuery("select i from Impugnment i");
+		return query.getResultList();
+	}
+
+	@Override
+	public MunicipalBond findMunicipalBondForImpugnment(
+			Integer numberInfringement) {
+		try {
+			Query query = entityManager.createNativeQuery("select mb.id from municipalbond mb inner join antreference ant on mb.adjunct_id = ant.id where ant.antnumber=:numberInfringement");
+			query.setParameter("numberInfringement", numberInfringement);
+			BigInteger municipalBondId = (BigInteger) query.getSingleResult();
+			if(municipalBondId != null){
+				Query query1 = entityManager.createNamedQuery("MunicipalBond.findById");
+				query1.setParameter("municipalBondId", municipalBondId.longValue());
+				List<MunicipalBond> results = query1.getResultList();
+				if(!results.isEmpty()){
+					return results.get(0);
+				}
+			}
+			return null;
+			
+		} catch (javax.persistence.NoResultException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public List<Impugnment> findImpugnmentsForCriteria(
+			ImpugnmentSearchCriteria criteria) {
+		Query query  = entityManager.createNamedQuery("Impugnment.findByCriteria");
+		query.setParameter("numberInfringement", criteria.getNumberInfringement() == null ? 0 :criteria.getNumberInfringement());
+		query.setParameter("numberProsecution", criteria.getNumberProsecution() ==null ? 0 :criteria.getNumberProsecution());
+		return query.getResultList();
+	}
+	
 }

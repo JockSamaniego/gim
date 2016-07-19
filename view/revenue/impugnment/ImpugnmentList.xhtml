@@ -6,26 +6,135 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
 	template="../../layout/template.xhtml">
 
 	<ui:define name="body">
 
-		<h:form id="impugnmentListForm" styleClass="edit">
-			Lista de Impgunaciones
-		
-			<rich:dataTable id="impugnmentsTable" var="_impugnment" width="100%"
-							value="#{impugnments}"
-							columnClasses="center, center, left, left, center, right, center, left"
-							rows="25">
-					<rich:column>
-						<f:facet name="header">
-							id
-						</f:facet>
-						<h:outputText value="#{_impugnment.id}" />
-					</rich:column>
-			</rich:dataTable>
-		</h:form>
+		<ui:include src="dialogs/ImpugnmentRegister.xhtml" />
 
+		<h:form id="impugnmentListForm" styleClass="edit" prependId="false">
+			<h:outputText styleClass="formTitle"
+				value="#{messages['revenue.impugnments.impugnment_manager']}" />
+
+			<rich:simpleTogglePanel
+				label="#{messages['revenue.impugnments.impugnment_manager_search']}"
+				switchType="ajax">
+
+				<s:decorate template="../../layout/display.xhtml">
+					<ui:define name="label">#{messages['revenue.impugnments.impugnment_numberInfringement_label']}</ui:define>
+					<h:inputText id="residentCriteria"
+						value="#{impugnmentHome.numberInfringement}" size="40"
+						maxlength="40">
+						<a:support ajaxSingle="true" event="onblur"></a:support>
+					</h:inputText>
+
+				</s:decorate>
+
+				<s:decorate template="../../layout/display.xhtml">
+					<ui:define name="label">#{messages['revenue.impugnments.impugnment_numberProsecution_label']}</ui:define>
+					<h:inputText id="residentCriteria"
+						value="#{impugnmentHome.numberProsecution}" size="40"
+						maxlength="40">
+						<a:support ajaxSingle="true" event="onblur"></a:support>
+					</h:inputText>
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				
+					<a:commandButton id="btnSearch"
+						value="#{messages['common.search']}"
+						reRender="paginador,impugnmentsTable"
+						ajaxSingle="true"
+						bypassUpdates="true"
+						actionListener="#{impugnmentHome.searchImpugments()}" />
+
+					<s:button id="reset" value="#{messages['common.reset']}"
+						includePageParams="false" propagation="none">
+					</s:button>
+			</div>
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="Numero Impugnaciones()" />
+
+						<a:commandButton id="createImpugnment"
+							reRender="impugnmentRegisterPanel" ajaxSingle="true"
+							eventsQueue="gimQueue"
+							oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:350})"
+							value="Nueva"
+							actionListener="#{impugnmentHome.preparaRegisterImpugnment()}" />
+					</h:panelGrid>
+
+				</f:facet>
+				<div class="results" id="impugnmentList">
+
+					<rich:datascroller id="paginador" align="right"
+						for="impugnmentsTable" maxPages="3" />
+					<rich:spacer height="5" />
+					<rich:dataTable id="impugnmentsTable" var="_impugnment"
+						width="100%" value="#{impugnmentHome.impugnments}"
+						columnClasses="center, center, left, left, center, right, center, left"
+						rows="2">
+						<rich:column>
+							<f:facet name="header">
+								#{messages['revenue.impugnments.impugnment_id']}
+							</f:facet>
+							<h:outputText value="#{_impugnment.id}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								#{messages['revenue.impugnments.impugnment_numberInfringement']}
+							</f:facet>
+							<h:outputText value="#{_impugnment.numberInfringement}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								#{messages['revenue.impugnments.impugnment_date']}
+							</f:facet>
+							<h:outputText value="#{_impugnment.impugnmentDate}">
+								<f:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								#{messages['revenue.impugnments.impugnment_numberProsecution']}
+							</f:facet>
+							<h:outputText value="#{_impugnment.numberProsecution}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								#{messages['revenue.impugnments.impugnment_state']}
+							</f:facet>
+							<h:outputText value="#{_impugnment.status.name}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								#{messages['revenue.impugnments.impugnment_bond_number']}
+							</f:facet>
+							<h:outputText value="#{_impugnment.municipalBond.number}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								#{messages['revenue.impugnments.impugnment_bond_value']}
+							</f:facet>
+							<h:outputText value="#{_impugnment.municipalBond.value}" />
+						</rich:column>
+
+					</rich:dataTable>
+				</div>
+			</rich:panel>
+		</h:form>
 
 	</ui:define>
 

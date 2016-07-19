@@ -1,0 +1,125 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="impugnmentRegisterPanel">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['revenue.impugnments.impugnment']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkImpugnment" />
+				<rich:componentControl for="impugnmentRegisterPanel"
+					attachTo="hidelinkImpugnment" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="impugnmentForm">
+
+			<rich:messages errorClass="errors" style="color:red" />
+
+			<h:panelGrid width="100%">
+				<h:panelGrid columns="1">
+					<s:decorate id="impugnmentDateField"
+						template="../../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_date_label']}</ui:define>
+
+						<rich:calendar id="impugnmentDate"
+							value="#{impugnmentHome.impugnmentSelected.impugnmentDate}"
+							datePattern="#{messages['common.datePattern']}" required="true">
+							<a:support event="onchanged" ajaxSingle="true" />
+						</rich:calendar>
+					</s:decorate>
+					
+					<s:decorate id="numberInfringementField"
+						template="../../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_numberInfringement_label']}</ui:define>
+
+						<h:inputText id="numberInfringement" size="30" maxlength="30"
+							value="#{impugnmentHome.impugnmentSelected.numberInfringement}"
+							required="true">
+							<a:support event="onblur"
+								reRender="idMunicipalBondField,numberMunicipalBondField,valueMunicipalBondField"
+								ajaxSingle="true"
+								action="#{impugnmentHome.searchMunicipalBond()}" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="idMunicipalBondField"
+						template="../../../layout/edit.xhtml" for="numberMunicipalBond">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_bond_id_label']}</ui:define>
+
+						<h:outputText id="idMunicipalBond"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.id}">
+						</h:outputText>
+					</s:decorate>
+
+					<s:decorate id="numberMunicipalBondField"
+						template="../../../layout/edit.xhtml" for="numberMunicipalBond">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_bond_number_label']}</ui:define>
+
+						<h:outputText id="numberMunicipalBond"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.number}">
+						</h:outputText>
+					</s:decorate>
+
+					<s:decorate id="valueMunicipalBondField"
+						template="../../../layout/edit.xhtml" for="valueMunicipalBond">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_bond_value_label']}</ui:define>
+
+						<h:outputText id="valueMunicipalBond"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.value}">
+						</h:outputText>
+
+					</s:decorate>
+
+
+					<s:decorate id="numberProsecutionField"
+						template="../../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_numberProsecution_label']}</ui:define>
+
+						<h:inputText id="numberProsecution" size="30" maxlength="30"
+							value="#{impugnmentHome.impugnmentSelected.numberProsecution}"
+							required="true">
+							<a:support ajaxSingle="true" event="onblur"></a:support>
+						</h:inputText>
+
+					</s:decorate>
+
+					<div style="clear: both">
+						<span class="required">*</span>
+						#{messages['common.requiredFields']}
+					</div>
+
+				</h:panelGrid>
+
+				<div class="actionButtons">
+					<a:region>
+						<a:commandButton id="registerButton" ajaxSingle="true"
+							value="#{messages['revenue.impugnments.impugnment_save']}" 
+							reRender="impugnmentsTable"
+							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
+							bypassUpdates="true"
+							actionListener="#{impugnmentHome.registerImpugnment()}" />
+
+						<a:commandButton ajaxSingle="true"
+							value="#{messages['common.cancel']}"
+							oncomplete="Richfaces.hideModalPanel('impugnmentRegisterPanel');"
+							bypassUpdates="true" />
+					</a:region>
+				</div>
+			</h:panelGrid>
+		</h:form>
+
+	</rich:modalPanel>
+</ui:composition>

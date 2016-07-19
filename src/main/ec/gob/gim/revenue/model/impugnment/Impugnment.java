@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,15 +24,20 @@ import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.security.model.User;
 
 /**
  * @author rene
  * @date 2016-07-13
- * @ Clase para Impugnaciones de Fotomultas
+ * @summary Clase para Impugnaciones
  */
 @Audited
 @Entity
 @TableGenerator(name = "ImpugnmentGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "Impugnment", initialValue = 1, allocationSize = 1)
+@NamedQueries(value = {
+		@NamedQuery(name="Impugnment.findByCriteria", 
+				query="select i from Impugnment i where (:numberInfringement = 0 OR i.numberInfringement=:numberInfringement) AND (:numberProsecution = 0 OR i.numberProsecution=:numberProsecution)")
+})
 public class Impugnment implements Serializable{
 
 	/**
@@ -53,20 +60,24 @@ public class Impugnment implements Serializable{
 	private Integer numberInfringement;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "type_itm_id", nullable = true, referencedColumnName = "id")
+    @JoinColumn(name = "type_itm_id", nullable = false, referencedColumnName = "id")
     private ItemCatalog type;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "status_itm_id", nullable = true, referencedColumnName = "id")
+    @JoinColumn(name = "status_itm_id", nullable = false, referencedColumnName = "id")
     private ItemCatalog status;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "municipalBond_id", nullable = true, referencedColumnName = "id")
+    @JoinColumn(name = "municipalBond_id", nullable = false, referencedColumnName = "id")
     private MunicipalBond municipalBond;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userRegister_id", nullable = false, referencedColumnName = "id")
+    private User userRegister;
 
 	@Version
 	private Long version = 0L;
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -130,6 +141,14 @@ public class Impugnment implements Serializable{
 	public void setMunicipalBond(MunicipalBond municipalBond) {
 		this.municipalBond = municipalBond;
 	}
+	
+	public User getUserRegister() {
+		return userRegister;
+	}
+
+	public void setUserRegister(User userRegister) {
+		this.userRegister = userRegister;
+	}
 
 	public Long getVersion() {
 		return version;
@@ -165,6 +184,16 @@ public class Impugnment implements Serializable{
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "Impugnment [id=" + id + ", creationDate=" + creationDate
+				+ ", impugnmentDate=" + impugnmentDate + ", numberProsecution="
+				+ numberProsecution + ", numberInfringement="
+				+ numberInfringement + ", type=" + type + ", status=" + status
+				+ ", municipalBond=" + municipalBond + ", userRegister="
+				+ userRegister + ", version=" + version + "]";
 	}
 	
 }
