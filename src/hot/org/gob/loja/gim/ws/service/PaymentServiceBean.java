@@ -142,7 +142,7 @@ public class PaymentServiceBean implements PaymentService {
 	public Statement findStatement(ServiceRequest request)
 			throws PayoutNotAllowed, TaxpayerNotFound, NotActiveWorkday,
 			HasNoObligations {
-		System.out.println("------------------- "+request.getIdentificationNumber()+"\t"+request.getUsername());
+		System.out.println("rfarmijosm "+request.getIdentificationNumber()+"\t"+request.getUsername());
 		String identificationNumber = request.getIdentificationNumber();
 		Taxpayer taxpayer = findTaxpayer(identificationNumber);
 		Date workDayDate;
