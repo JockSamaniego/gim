@@ -1,7 +1,7 @@
 package org.gob.gim.revenue.action;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,7 +15,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.commercial.action.BusinessHome;
-import org.gob.gim.revenue.action.SolvencyReportHome;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -24,11 +23,8 @@ import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.gim.revenue.view.EntryValueItem;
-import org.gob.loja.gim.ws.dto.BondDetail;
 import org.gob.loja.gim.ws.dto.ObligationsHistoryFotoMulta;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -41,9 +37,8 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 
-import ec.gob.gim.cadaster.model.dto.PropertyHistoryDTO;
-import ec.gob.gim.commercial.model.Local;
-import ec.gob.gim.common.model.Alert;
+import ec.gob.gim.commercial.model.FireNames;
+import ec.gob.gim.commercial.model.FireRates;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FiscalPeriod;
@@ -55,10 +50,9 @@ import ec.gob.gim.revenue.model.EntryType;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
-import ec.gob.gim.revenue.model.SolvencyHistory;
 import ec.gob.gim.security.model.Role;
-import ec.gob.gim.commercial.model.FireRates;
-import ec.gob.gim.commercial.model.FireNames;
+import ec.gob.loja.antclient.DatosMatricula;
+import ec.gob.loja.antclient.MetodosProxy;
 
 @Name("municipalBondHome")
 public class MunicipalBondHome extends EntityHome<MunicipalBond> {
@@ -1444,9 +1438,22 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						e.printStackTrace();
 					}
 				}				
+			}else if(obligationsRadioButton.equals("Ant")){
+				solicitaMatricula(obligationsHistoryCriteria);
 			}
-			
-			
+		}
+		
+		private void solicitaMatricula(String placa) {
+			MetodosProxy mp=new MetodosProxy();
+			try {
+				DatosMatricula dm=mp.solicita_Matricula(placa, "WEB", "TESTUSER");
+				System.out.println("------------ "+dm.getAnio());
+				System.out.println("------------ "+dm.getApellido1());
+				System.out.println("------------ "+dm.getApellido2());
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		public String getObligationsRadioButton() {
