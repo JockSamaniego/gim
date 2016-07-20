@@ -59,6 +59,8 @@ public class ImpugnmentHome extends EntityController {
 
 	private ItemCatalog stateRegisterImpugnmentFotoMulta;
 
+	private List<ItemCatalog> statesImpugnmentFotoMulta;
+
 	// private ImpugnmentDataModel getDataModel() {
 	//
 	// ImpugnmentDataModel dataModel = (ImpugnmentDataModel) Contexts
@@ -79,6 +81,10 @@ public class ImpugnmentHome extends EntityController {
 
 	private Integer numberInfringement;
 
+	private Boolean isEditAction;
+
+	private ItemCatalog stateForImpugnmentFotoMultaEdit;
+
 	public ImpugnmentHome() {
 		loadImpugnments();
 	}
@@ -91,12 +97,6 @@ public class ImpugnmentHome extends EntityController {
 		// return null;
 		this.impugnments = this.impugnmentService
 				.findImpugnmentsForCriteria(criteria);
-
-		System.out
-				.println("************------------Entra a Find Impugnments------------***********");
-		System.out.println("tamaño:" + this.impugnments.size() + "----->"
-				+ this.impugnments);
-
 	}
 
 	public void loadImpugnments() {
@@ -111,6 +111,14 @@ public class ImpugnmentHome extends EntityController {
 				.findItemByCodeAndCodeCatalog(
 						CatalogConstants.CATALOG_STATES_IMPUGNMENT,
 						CatalogConstants.ITEM_CATALOG_STATE_IMPUGNMENT_REGISTER);
+
+		List<Long> itemsExceptIds = new ArrayList<Long>();
+		itemsExceptIds.add(stateRegisterImpugnmentFotoMulta.getId());
+
+		statesImpugnmentFotoMulta = itemCatalogService
+				.findItemsForCatalogCodeExceptIds(
+						CatalogConstants.CATALOG_STATES_IMPUGNMENT,
+						itemsExceptIds);
 
 		// this.impugnmentSelected = new Impugnment();
 
@@ -156,6 +164,32 @@ public class ImpugnmentHome extends EntityController {
 		this.numberInfringement = numberInfringement;
 	}
 
+	public Boolean getIsEditAction() {
+		return isEditAction;
+	}
+
+	public void setIsEditAction(Boolean isEditAction) {
+		this.isEditAction = isEditAction;
+	}
+
+	public List<ItemCatalog> getStatesImpugnmentFotoMulta() {
+		return statesImpugnmentFotoMulta;
+	}
+
+	public void setStatesImpugnmentFotoMulta(
+			List<ItemCatalog> statesImpugnmentFotoMulta) {
+		this.statesImpugnmentFotoMulta = statesImpugnmentFotoMulta;
+	}
+
+	public ItemCatalog getStateForImpugnmentFotoMultaEdit() {
+		return stateForImpugnmentFotoMultaEdit;
+	}
+
+	public void setStateForImpugnmentFotoMultaEdit(
+			ItemCatalog stateForImpugnmentFotoMultaEdit) {
+		this.stateForImpugnmentFotoMultaEdit = stateForImpugnmentFotoMultaEdit;
+	}
+
 	public void initializeService() {
 		if (impugnmentService == null) {
 			impugnmentService = ServiceLocator.getInstance().findResource(
@@ -171,6 +205,13 @@ public class ImpugnmentHome extends EntityController {
 		this.impugnmentSelected = new Impugnment();
 		this.impugnmentSelected.setCreationDate(new Date());
 		this.impugnmentSelected.setImpugnmentDate(new Date());
+		this.isEditAction = Boolean.FALSE;
+	}
+
+	public void prepareUpdateImpugnment(Long impugnmentId) {
+		this.impugnmentSelected = impugnmentService.findById(impugnmentId);
+		this.isEditAction = Boolean.TRUE;
+		this.stateForImpugnmentFotoMultaEdit = null;
 	}
 
 	public void searchMunicipalBond() {
@@ -209,14 +250,25 @@ public class ImpugnmentHome extends EntityController {
 
 	}
 
+	public void updateImpugnment() {
+		if (this.stateForImpugnmentFotoMultaEdit == null) {
+			facesMessages.addToControl("",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
+					"Debe seleccionar un estado");
+		} else {
+			this.impugnmentSelected.setStatus(stateForImpugnmentFotoMultaEdit);
+			this.impugnmentSelected.setUserUpdate(this.userSession.getUser());
+			this.impugnmentSelected.setUpdateDate(new Date());
+			this.impugnmentService.update(impugnmentSelected);
+			this.impugnments = this.impugnmentService
+					.findImpugnmentsForCriteria(criteria);
+		}
+	}
+
 	public void searchImpugments() {
-		System.out.println("***********-------------**************");
 		this.criteria.setNumberInfringement(numberInfringement);
 		this.criteria.setNumberProsecution(numberProsecution);
-		System.out.println("Criteria:" + criteria);
 		this.impugnments = this.impugnmentService
 				.findImpugnmentsForCriteria(criteria);
-		System.out.println("tamaño:" + this.impugnments.size() + "----->"
-				+ this.impugnments);
 	}
 }

@@ -57,14 +57,16 @@
 			<rich:panel>
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
-						<h:outputText id="lblNumberResults"
-							value="Numero Impugnaciones(#{impugnmentHome.impugnments.size()})" />
+						<h:outputFormat id="lblNumberResults"
+							value="#{messages['revenue.impugnments.impugnment_number_results']}">
+							<f:param value="#{impugnmentHome.impugnments.size()}"/>
+						</h:outputFormat>
 
 						<a:commandButton id="createImpugnment"
 							reRender="impugnmentRegisterPanel" ajaxSingle="true"
 							eventsQueue="gimQueue"
 							oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:350})"
-							value="Nueva"
+							value="#{messages['revenue.impugnments.impugnment_new']}"
 							actionListener="#{impugnmentHome.preparaRegisterImpugnment()}" />
 					</h:panelGrid>
 
@@ -72,12 +74,14 @@
 				<div class="results" id="impugnmentList">
 
 					<rich:datascroller id="paginador" align="right"
-						for="impugnmentsTable" maxPages="3" />
+						for="impugnmentsTable" maxPages="20" />
 					<rich:spacer height="5" />
+
 					<rich:dataTable id="impugnmentsTable" var="_impugnment"
 						width="100%" value="#{impugnmentHome.impugnments}"
-						columnClasses="center, center, left, left, center, right, center, left"
-						rows="25">
+						columnClasses="center, center, center, center, center, center,right,center"
+						rows="25"
+						>
 						<rich:column>
 							<f:facet name="header">
 								#{messages['revenue.impugnments.impugnment_id']}
@@ -132,12 +136,16 @@
 
 						<rich:column>
 							<f:facet name="header">
-								Opciones
+								#{messages['revenue.impugnments.impugnment_options']}
 							</f:facet>
 							<div align="center">
-
-								<a:commandButton value="Cambiar Estado">
-
+								<a:commandButton
+									value="#{messages['revenue.impugnments.impugnment_status_change']}"
+									reRender="impugnmentRegisterPanel" ajaxSingle="true"
+									eventsQueue="gimQueue"
+									oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:420})"
+									actionListener="#{impugnmentHome.prepareUpdateImpugnment(_impugnment.id)}"
+									rendered="#{_impugnment.status.code == 'STATE_REGISTE'}">
 								</a:commandButton>
 							</div>
 						</rich:column>
