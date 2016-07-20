@@ -43,23 +43,22 @@
 			</rich:simpleTogglePanel>
 
 			<div class="actionButtons">
-				
-					<a:commandButton id="btnSearch"
-						value="#{messages['common.search']}"
-						reRender="paginador,impugnmentsTable"
-						ajaxSingle="true"
-						bypassUpdates="true"
-						actionListener="#{impugnmentHome.searchImpugments()}" />
 
-					<s:button id="reset" value="#{messages['common.reset']}"
-						includePageParams="false" propagation="none">
-					</s:button>
+				<a:commandButton id="btnSearch" value="#{messages['common.search']}"
+					reRender="paginador,impugnmentsTable,lblNumberResults"
+					ajaxSingle="true" bypassUpdates="true"
+					actionListener="#{impugnmentHome.searchImpugments()}" />
+
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none">
+				</s:button>
 			</div>
 
 			<rich:panel>
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
-						<h:outputText value="Numero Impugnaciones()" />
+						<h:outputText id="lblNumberResults"
+							value="Numero Impugnaciones(#{impugnmentHome.impugnments.size()})" />
 
 						<a:commandButton id="createImpugnment"
 							reRender="impugnmentRegisterPanel" ajaxSingle="true"
@@ -78,7 +77,7 @@
 					<rich:dataTable id="impugnmentsTable" var="_impugnment"
 						width="100%" value="#{impugnmentHome.impugnments}"
 						columnClasses="center, center, left, left, center, right, center, left"
-						rows="2">
+						rows="25">
 						<rich:column>
 							<f:facet name="header">
 								#{messages['revenue.impugnments.impugnment_id']}
@@ -129,6 +128,18 @@
 								#{messages['revenue.impugnments.impugnment_bond_value']}
 							</f:facet>
 							<h:outputText value="#{_impugnment.municipalBond.value}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Opciones
+							</f:facet>
+							<div align="center">
+
+								<a:commandButton value="Cambiar Estado">
+
+								</a:commandButton>
+							</div>
 						</rich:column>
 
 					</rich:dataTable>

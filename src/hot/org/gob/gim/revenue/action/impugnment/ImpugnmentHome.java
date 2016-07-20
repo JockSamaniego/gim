@@ -78,8 +78,6 @@ public class ImpugnmentHome extends EntityController {
 	private Integer numberProsecution;
 
 	private Integer numberInfringement;
-	
-	
 
 	public ImpugnmentHome() {
 		loadImpugnments();
@@ -91,13 +89,16 @@ public class ImpugnmentHome extends EntityController {
 		// getDataModel().setRowCount(getDataModel().getObjectsNumber());
 
 		// return null;
-		this.impugnments = this.impugnmentService.findImpugnmentsForCriteria(criteria);
-		System.out.println("************------------Entra a Find Impugnments------------***********");
-		System.out.println("tamaño:"+this.impugnments.size()+"----->"+this.impugnments);
+		this.impugnments = this.impugnmentService
+				.findImpugnmentsForCriteria(criteria);
+
+		System.out
+				.println("************------------Entra a Find Impugnments------------***********");
+		System.out.println("tamaño:" + this.impugnments.size() + "----->"
+				+ this.impugnments);
 
 	}
 
-	// @Begin(join = true)
 	public void loadImpugnments() {
 		initializeService();
 		this.criteria = new ImpugnmentSearchCriteria();
@@ -112,7 +113,7 @@ public class ImpugnmentHome extends EntityController {
 						CatalogConstants.ITEM_CATALOG_STATE_IMPUGNMENT_REGISTER);
 
 		// this.impugnmentSelected = new Impugnment();
-		
+
 	}
 
 	public ImpugnmentSearchCriteria getCriteria() {
@@ -138,7 +139,7 @@ public class ImpugnmentHome extends EntityController {
 	public void setImpugnmentSelected(Impugnment impugnmentSelected) {
 		this.impugnmentSelected = impugnmentSelected;
 	}
-	
+
 	public Integer getNumberProsecution() {
 		return numberProsecution;
 	}
@@ -202,6 +203,8 @@ public class ImpugnmentHome extends EntityController {
 			this.impugnmentSelected.setType(typeImpugnmentFotoMulta);
 			this.impugnmentSelected.setUserRegister(this.userSession.getUser());
 			this.impugnmentService.save(impugnmentSelected);
+			this.impugnments = this.impugnmentService
+					.findImpugnmentsForCriteria(criteria);
 		}
 
 	}
@@ -211,7 +214,9 @@ public class ImpugnmentHome extends EntityController {
 		this.criteria.setNumberInfringement(numberInfringement);
 		this.criteria.setNumberProsecution(numberProsecution);
 		System.out.println("Criteria:" + criteria);
-		this.impugnments = this.impugnmentService.findImpugnmentsForCriteria(criteria);
-		System.out.println("tamaño:"+this.impugnments.size()+"----->"+this.impugnments);
+		this.impugnments = this.impugnmentService
+				.findImpugnmentsForCriteria(criteria);
+		System.out.println("tamaño:" + this.impugnments.size() + "----->"
+				+ this.impugnments);
 	}
 }

@@ -107,7 +107,7 @@
 					<a:region>
 						<a:commandButton id="registerButton" ajaxSingle="true"
 							value="#{messages['revenue.impugnments.impugnment_save']}" 
-							reRender="impugnmentsTable"
+							reRender="paginador,impugnmentsTable,lblNumberResults"
 							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
 							bypassUpdates="true"
 							actionListener="#{impugnmentHome.registerImpugnment()}" />
