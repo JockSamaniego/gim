@@ -63,7 +63,8 @@
 						</h:outputFormat>
 
 						<a:commandButton id="createImpugnment"
-							reRender="impugnmentRegisterPanel" ajaxSingle="true"
+							reRender="impugnmentRegisterPanel" 
+							ajaxSingle="true"
 							eventsQueue="gimQueue"
 							oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:350})"
 							value="#{messages['revenue.impugnments.impugnment_new']}"
