@@ -36,18 +36,19 @@
 
 						<rich:calendar id="impugnmentDate"
 							value="#{impugnmentHome.impugnmentSelected.impugnmentDate}"
-							datePattern="#{messages['common.datePattern']}" required="true">
+							datePattern="#{messages['common.datePattern']}" required="true"
+							disabled="#{impugnmentHome.isEditAction}">
 							<a:support event="onchanged" ajaxSingle="true" />
 						</rich:calendar>
 					</s:decorate>
-					
+
 					<s:decorate id="numberInfringementField"
 						template="../../../layout/edit.xhtml">
 						<ui:define name="label">#{messages['revenue.impugnments.impugnment_numberInfringement_label']}</ui:define>
 
 						<h:inputText id="numberInfringement" size="30" maxlength="30"
 							value="#{impugnmentHome.impugnmentSelected.numberInfringement}"
-							required="true">
+							required="true" disabled="#{impugnmentHome.isEditAction}">
 							<a:support event="onblur"
 								reRender="idMunicipalBondField,numberMunicipalBondField,valueMunicipalBondField"
 								ajaxSingle="true"
@@ -90,9 +91,36 @@
 
 						<h:inputText id="numberProsecution" size="30" maxlength="30"
 							value="#{impugnmentHome.impugnmentSelected.numberProsecution}"
-							required="true">
+							required="true" disabled="#{impugnmentHome.isEditAction}">
 							<a:support ajaxSingle="true" event="onblur"></a:support>
 						</h:inputText>
+
+					</s:decorate>
+
+					<s:decorate id="actualStatusField"
+						template="../../../layout/edit.xhtml" for="actualStatus"
+						rendered="#{impugnmentHome.isEditAction}">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_actual_state_label']}</ui:define>
+
+						<h:outputText id="actualStatus"
+							value="#{impugnmentHome.impugnmentSelected.status.name}">
+						</h:outputText>
+					</s:decorate>
+
+					<s:decorate id="statusField" template="../../../layout/edit.xhtml"
+						rendered="#{impugnmentHome.isEditAction}">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_state_label']}</ui:define>
+						<h:selectOneMenu id="cmbStatus"
+							value="#{impugnmentHome.stateForImpugnmentFotoMultaEdit}"
+							rendered="#{impugnmentHome.isEditAction}" required="true">
+							<f:selectItem itemLabel="Seleccione" itemValue="#{null}"
+								noSelectionOption="true" />
+							<f:selectItems
+								value="#{impugnmentHome.statesImpugnmentFotoMulta}" var="status"
+								itemLabel="#{status.name}" itemValue="#{status}" />
+							<a:support event="onchange" ajaxSingle="true" />
+							<s:convertEntity></s:convertEntity>
+						</h:selectOneMenu>
 
 					</s:decorate>
 
@@ -106,11 +134,20 @@
 				<div class="actionButtons">
 					<a:region>
 						<a:commandButton id="registerButton" ajaxSingle="true"
-							value="#{messages['revenue.impugnments.impugnment_save']}" 
-							reRender="impugnmentsTable"
+							value="#{messages['revenue.impugnments.impugnment_save']}"
+							reRender="paginador,impugnmentsTable,lblNumberResults"
 							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
 							bypassUpdates="true"
-							actionListener="#{impugnmentHome.registerImpugnment()}" />
+							actionListener="#{impugnmentHome.registerImpugnment()}"
+							rendered="#{!impugnmentHome.isEditAction}" />
+
+						<a:commandButton id="updateButton" ajaxSingle="true"
+							value="#{messages['revenue.impugnments.impugnment_update']}"
+							reRender="paginador,impugnmentsTable,lblNumberResults"
+							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
+							bypassUpdates="true"
+							actionListener="#{impugnmentHome.updateImpugnment()}"
+							rendered="#{impugnmentHome.isEditAction}" />
 
 						<a:commandButton ajaxSingle="true"
 							value="#{messages['common.cancel']}"

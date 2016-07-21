@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package ec.gob.gim.revenue.model.impugnment;
 
 import java.io.Serializable;
@@ -35,8 +33,9 @@ import ec.gob.gim.security.model.User;
 @Entity
 @TableGenerator(name = "ImpugnmentGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "Impugnment", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
-		@NamedQuery(name = "Impugnment.findByCriteria", query = "select i from Impugnment i where (:numberInfringement = 0 OR i.numberInfringement=:numberInfringement) AND (:numberProsecution = 0 OR i.numberProsecution=:numberProsecution)"),
-		@NamedQuery(name = "Impugnment.findByMunicipalBond", query = "select i from Impugnment i where i.municipalBond.id =:municipalBond_id") })
+		@NamedQuery(name = "Impugnment.findByCriteria", query = "select i from Impugnment i where (:numberInfringement = 0 OR i.numberInfringement=:numberInfringement) AND (:numberProsecution = 0 OR i.numberProsecution=:numberProsecution) ORDER BY i.id DESC"),
+		@NamedQuery(name = "Impugnment.findById", query = "select i from Impugnment i where i.id=:impugnmentId"),
+		@NamedQuery(name = "Impugnment.findByMunicipalBond", query = "select i from Impugnment i where i.municipalBond.id =:municipalBond_id")})
 public class Impugnment implements Serializable {
 
 	/**
@@ -73,9 +72,21 @@ public class Impugnment implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "userRegister_id", nullable = false, referencedColumnName = "id")
 	private User userRegister;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "userUpdate_id", nullable = true, referencedColumnName = "id")
+	private User userUpdate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date updateDate;
 
 	@Version
 	private Long version = 0L;
+	
+	public Impugnment() {
+		this.userUpdate = null;
+		this.updateDate = null;
+	}
 
 	public Long getId() {
 		return id;
@@ -155,6 +166,22 @@ public class Impugnment implements Serializable {
 
 	public void setVersion(Long version) {
 		this.version = version;
+	}
+	
+	public User getUserUpdate() {
+		return userUpdate;
+	}
+
+	public void setUserUpdate(User userUpdate) {
+		this.userUpdate = userUpdate;
+	}
+
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
 	}
 
 	@Override

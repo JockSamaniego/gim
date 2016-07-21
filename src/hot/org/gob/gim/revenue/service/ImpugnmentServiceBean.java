@@ -102,5 +102,16 @@ public class ImpugnmentServiceBean implements ImpugnmentService {
 		query.setParameter("numberProsecution", criteria.getNumberProsecution() ==null ? 0 :criteria.getNumberProsecution());
 		return query.getResultList();
 	}
+
+	@Override
+	public Impugnment findById(Long impugnmentId) {
+		Query query = entityManager.createNamedQuery("Impugnment.findById");
+		query.setParameter("impugnmentId", impugnmentId);
+		List<Impugnment> resultList = query.getResultList();
+		if(resultList.isEmpty()){
+			return null;
+		}
+		return resultList.get(0);
+	}
 	
 }

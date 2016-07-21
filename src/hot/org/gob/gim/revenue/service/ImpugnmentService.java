@@ -33,4 +33,6 @@ public interface ImpugnmentService {
 	
 	public List<Impugnment> findImpugnmentsForCriteria(ImpugnmentSearchCriteria criteria);
 	
+	public Impugnment findById(Long impugnmentId);
+	
 }
