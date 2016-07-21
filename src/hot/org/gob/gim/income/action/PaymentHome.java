@@ -69,6 +69,7 @@ import ec.gob.gim.revenue.model.FinancialInstitutionType;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.adjunct.ValuePair;
+import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.security.model.User;
 
 import java.text.DateFormat;
@@ -76,6 +77,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.sql.*;
 import java.util.Locale;
+
 import javax.persistence.EntityManager;
 
 @Name("paymentHome")
@@ -90,7 +92,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	@Logger
 	Log logger;
 
-	private List<MunicipalBondItem> municipalBondItems;
+	private List<MunicipalBondItem> municipalBondItems = new ArrayList<MunicipalBondItem>();
 
 	private List<MunicipalBond> municipalBonds;
 
@@ -586,6 +588,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		List<MunicipalBond> mbs = incomeService.findPendingBonds(residentId);
 		incomeService.calculatePayment(mbs, new Date(), true, true);
+		impugnmentsTotal = new ArrayList<>();
 		for (MunicipalBond municipalBond : mbs) {
 			System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE " + municipalBond.getTaxableTotal()
 					+ " TAXES TOTAL " + municipalBond.getTaxesTotal());
@@ -597,8 +600,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 			MunicipalBondItem mbi = new MunicipalBondItem(municipalBond);
 			groupingItem.add(mbi);
+			findPendingsImpugnments(municipalBond.getId());
 		}
-
 		return root.getMunicipalBondItems();
 	}
 
@@ -1988,6 +1991,29 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 	}
 	
+	// Para controlar las impugnaciones.............
+	// Jock Samaniego............. 20-07-2016........
 	
+	private List<Impugnment> impugnmentsTotal = new ArrayList<>();
+	
+	@SuppressWarnings("unchecked")
+	public void findPendingsImpugnments(Long id){
+		List<Impugnment> impugnments = new ArrayList<>();
+		Query query = getEntityManager().createNamedQuery("Impugnment.findByMunicipalBond");
+		query.setParameter("municipalBond_id", id);
+		impugnments = query.getResultList();
+		if(impugnments.size()>0){
+			impugnmentsTotal.addAll(impugnments);
+		}		
+	}
+
+
+	public List<Impugnment> getImpugnmentsTotal() {
+		return impugnmentsTotal;
+	}
+
+	public void setImpugnmentsTotal(List<Impugnment> impugnmentsTotal) {
+		this.impugnmentsTotal = impugnmentsTotal;
+	}
 
 }

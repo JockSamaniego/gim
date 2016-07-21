@@ -35,10 +35,9 @@ import ec.gob.gim.security.model.User;
 @Entity
 @TableGenerator(name = "ImpugnmentGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "Impugnment", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
-		@NamedQuery(name="Impugnment.findByCriteria", 
-				query="select i from Impugnment i where (:numberInfringement = 0 OR i.numberInfringement=:numberInfringement) AND (:numberProsecution = 0 OR i.numberProsecution=:numberProsecution)")
-})
-public class Impugnment implements Serializable{
+		@NamedQuery(name = "Impugnment.findByCriteria", query = "select i from Impugnment i where (:numberInfringement = 0 OR i.numberInfringement=:numberInfringement) AND (:numberProsecution = 0 OR i.numberProsecution=:numberProsecution)"),
+		@NamedQuery(name = "Impugnment.findByMunicipalBond", query = "select i from Impugnment i where i.municipalBond.id =:municipalBond_id") })
+public class Impugnment implements Serializable {
 
 	/**
 	 * 
@@ -48,36 +47,36 @@ public class Impugnment implements Serializable{
 	@Id
 	@GeneratedValue(generator = "ImpugnmentGenerator", strategy = GenerationType.TABLE)
 	private Long id;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate;
-	
+
 	@Temporal(TemporalType.DATE)
 	private Date impugnmentDate;
-	
+
 	private Integer numberProsecution;
-	
+
 	private Integer numberInfringement;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "type_itm_id", nullable = false, referencedColumnName = "id")
-    private ItemCatalog type;
-	
+	@JoinColumn(name = "type_itm_id", nullable = false, referencedColumnName = "id")
+	private ItemCatalog type;
+
 	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "status_itm_id", nullable = false, referencedColumnName = "id")
-    private ItemCatalog status;
-	
+	@JoinColumn(name = "status_itm_id", nullable = false, referencedColumnName = "id")
+	private ItemCatalog status;
+
 	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "municipalBond_id", nullable = false, referencedColumnName = "id")
-    private MunicipalBond municipalBond;
-	
+	@JoinColumn(name = "municipalBond_id", nullable = false, referencedColumnName = "id")
+	private MunicipalBond municipalBond;
+
 	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userRegister_id", nullable = false, referencedColumnName = "id")
-    private User userRegister;
+	@JoinColumn(name = "userRegister_id", nullable = false, referencedColumnName = "id")
+	private User userRegister;
 
 	@Version
 	private Long version = 0L;
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -141,7 +140,7 @@ public class Impugnment implements Serializable{
 	public void setMunicipalBond(MunicipalBond municipalBond) {
 		this.municipalBond = municipalBond;
 	}
-	
+
 	public User getUserRegister() {
 		return userRegister;
 	}
@@ -157,7 +156,7 @@ public class Impugnment implements Serializable{
 	public void setVersion(Long version) {
 		this.version = version;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -195,5 +194,5 @@ public class Impugnment implements Serializable{
 				+ ", municipalBond=" + municipalBond + ", userRegister="
 				+ userRegister + ", version=" + version + "]";
 	}
-	
+
 }
