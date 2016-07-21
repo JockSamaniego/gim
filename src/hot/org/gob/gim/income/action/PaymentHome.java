@@ -55,6 +55,7 @@ import ec.gob.gim.common.model.AlertPriority;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.common.model.SystemParameter;
 import ec.gob.gim.income.model.CreditNote;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.Payment;
@@ -236,6 +237,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		paymentInstanceName = realPath.substring(i, j);
 		paymentFileName = "payment." + paymentInstanceName + this.getConversationId() + "."
 				+ userSession.getPerson().getId() + ".pdf";
+		chargeControlImpugnmentStates();
 	}
 
 	public void search() {
@@ -1995,18 +1997,28 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	// Jock Samaniego............. 20-07-2016........
 	
 	private List<Impugnment> impugnmentsTotal = new ArrayList<>();
+	private String[] states;
 	
 	@SuppressWarnings("unchecked")
 	public void findPendingsImpugnments(Long id){
 		List<Impugnment> impugnments = new ArrayList<>();
-		Query query = getEntityManager().createNamedQuery("Impugnment.findByMunicipalBond");
-		query.setParameter("municipalBond_id", id);
-		impugnments = query.getResultList();
-		if(impugnments.size()>0){
-			impugnmentsTotal.addAll(impugnments);
-		}		
+		for (String st : states){
+			Query query = getEntityManager().createNamedQuery("Impugnment.findByMunicipalBond");
+			query.setParameter("municipalBond_id", id);
+			query.setParameter("code", st);
+			impugnments = query.getResultList();
+			if(impugnments.size()>0){
+				impugnmentsTotal.addAll(impugnments);
+			}		
+		}
 	}
 
+	public void chargeControlImpugnmentStates(){
+		Query query = getEntityManager().createNamedQuery("SystemParameter.findByName");
+		query.setParameter("name", "STATES_IMPUGNMENT_CONTROL_REGISTER_PAID");
+		SystemParameter controlStates = (SystemParameter) query.getSingleResult();
+		states = controlStates.getValue().trim().split(",");
+	}
 
 	public List<Impugnment> getImpugnmentsTotal() {
 		return impugnmentsTotal;

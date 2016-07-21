@@ -13,7 +13,7 @@
 		<f:facet name="header">
 			<h:panelGroup>
 				<h:outputText
-					value="#{messages['impugnment.pendingImpugnment']}"></h:outputText>
+					value="#{messages['impugnment.impugnments']}"></h:outputText>
 			</h:panelGroup>
 		</f:facet>
 		<f:facet name="controls">
@@ -36,7 +36,10 @@
 					</h:panelGrid>
 				</f:facet>
 
-				<a:outputPanel styleClass="results" id="alertList">
+				<a:outputPanel styleClass="results" id="impugnmentsList">
+				<rich:datascroller id="paginador" align="right"
+						for="impugnmentsTable" maxPages="20" />
+					<rich:spacer height="5" />
 					<rich:dataTable id="impugnmentsTable" var="_impugnment"
 						value="#{paymentHome.impugnmentsTotal}"
 						rowClasses="rvgRowOne,rvgRowTwo" >

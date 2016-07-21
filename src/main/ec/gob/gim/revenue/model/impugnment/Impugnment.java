@@ -35,7 +35,7 @@ import ec.gob.gim.security.model.User;
 @NamedQueries(value = {
 		@NamedQuery(name = "Impugnment.findByCriteria", query = "select i from Impugnment i where (:numberInfringement = 0 OR i.numberInfringement=:numberInfringement) AND (:numberProsecution = 0 OR i.numberProsecution=:numberProsecution) ORDER BY i.id DESC"),
 		@NamedQuery(name = "Impugnment.findById", query = "select i from Impugnment i where i.id=:impugnmentId"),
-		@NamedQuery(name = "Impugnment.findByMunicipalBond", query = "select i from Impugnment i where i.municipalBond.id =:municipalBond_id")})
+		@NamedQuery(name = "Impugnment.findByMunicipalBond", query = "select i from Impugnment i where (i.municipalBond.id =:municipalBond_id and i.status.code =:code)")})
 public class Impugnment implements Serializable {
 
 	/**
