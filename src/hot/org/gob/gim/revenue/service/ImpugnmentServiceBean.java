@@ -113,5 +113,26 @@ public class ImpugnmentServiceBean implements ImpugnmentService {
 		}
 		return resultList.get(0);
 	}
+
+	@Override
+	public MunicipalBond findMunicipalBondByNumber(Long municipalBondNumber) {
+		try {
+			Query query = entityManager.createNativeQuery("select mb.id from municipalbond mb where mb.number=:municipalBondNumber and mb.entry_id in (643,644)");
+			query.setParameter("municipalBondNumber", municipalBondNumber);
+			BigInteger municipalBondId = (BigInteger) query.getSingleResult();
+			if(municipalBondId != null){
+				Query query1 = entityManager.createNamedQuery("MunicipalBond.findById");
+				query1.setParameter("municipalBondId", municipalBondId.longValue());
+				List<MunicipalBond> results = query1.getResultList();
+				if(!results.isEmpty()){
+					return results.get(0);
+				}
+			}
+			return null;
+			
+		} catch (javax.persistence.NoResultException e) {
+			return null;
+		}
+	}
 	
 }

@@ -55,6 +55,20 @@
 								action="#{impugnmentHome.searchMunicipalBond()}" />
 						</h:inputText>
 					</s:decorate>
+					
+					<s:decorate id="numberMunicipalBondField"
+						template="../../../layout/edit.xhtml" for="numberMunicipalBond">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_bond_number_label']}</ui:define>
+
+						<h:inputText id="numberMunicipalBond"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.number}"
+							disabled="#{impugnmentHome.existObligationForInpugnmentNumber}">
+							<a:support event="onblur"
+								reRender="idMunicipalBondField,numberMunicipalBondField,valueMunicipalBondField"
+								ajaxSingle="true"
+								action="#{impugnmentHome.searchMunicipalBondByNumber()}" />
+						</h:inputText>
+					</s:decorate>
 
 					<s:decorate id="idMunicipalBondField"
 						template="../../../layout/edit.xhtml" for="numberMunicipalBond">
@@ -62,15 +76,6 @@
 
 						<h:outputText id="idMunicipalBond"
 							value="#{impugnmentHome.impugnmentSelected.municipalBond.id}">
-						</h:outputText>
-					</s:decorate>
-
-					<s:decorate id="numberMunicipalBondField"
-						template="../../../layout/edit.xhtml" for="numberMunicipalBond">
-						<ui:define name="label">#{messages['revenue.impugnments.impugnment_bond_number_label']}</ui:define>
-
-						<h:outputText id="numberMunicipalBond"
-							value="#{impugnmentHome.impugnmentSelected.municipalBond.number}">
 						</h:outputText>
 					</s:decorate>
 

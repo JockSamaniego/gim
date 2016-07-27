@@ -35,4 +35,6 @@ public interface ImpugnmentService {
 	
 	public Impugnment findById(Long impugnmentId);
 	
+	public MunicipalBond findMunicipalBondByNumber(Long municipalBondNumber);
+	
 }

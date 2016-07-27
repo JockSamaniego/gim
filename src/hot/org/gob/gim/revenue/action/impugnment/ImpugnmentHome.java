@@ -85,6 +85,8 @@ public class ImpugnmentHome extends EntityController {
 
 	private ItemCatalog stateForImpugnmentFotoMultaEdit;
 
+	private Boolean existObligationForInpugnmentNumber;
+
 	public ImpugnmentHome() {
 		loadImpugnments();
 	}
@@ -190,6 +192,15 @@ public class ImpugnmentHome extends EntityController {
 		this.stateForImpugnmentFotoMultaEdit = stateForImpugnmentFotoMultaEdit;
 	}
 
+	public Boolean getExistObligationForInpugnmentNumber() {
+		return existObligationForInpugnmentNumber;
+	}
+
+	public void setExistObligationForInpugnmentNumber(
+			Boolean existObligationForInpugnmentNumber) {
+		this.existObligationForInpugnmentNumber = existObligationForInpugnmentNumber;
+	}
+
 	public void initializeService() {
 		if (impugnmentService == null) {
 			impugnmentService = ServiceLocator.getInstance().findResource(
@@ -206,6 +217,7 @@ public class ImpugnmentHome extends EntityController {
 		this.impugnmentSelected.setCreationDate(new Date());
 		this.impugnmentSelected.setImpugnmentDate(new Date());
 		this.isEditAction = Boolean.FALSE;
+		this.existObligationForInpugnmentNumber = Boolean.TRUE;
 	}
 
 	public void prepareUpdateImpugnment(Long impugnmentId) {
@@ -220,12 +232,15 @@ public class ImpugnmentHome extends EntityController {
 					.findMunicipalBondForImpugnment(this.impugnmentSelected
 							.getNumberInfringement());
 
-			this.impugnmentSelected.setMunicipalBond(mb);
-
 			if (mb == null) {
+				this.impugnmentSelected.setMunicipalBond(new MunicipalBond());
+				this.existObligationForInpugnmentNumber = Boolean.FALSE;
 				addFacesMessageFromResourceBundle(
 						"revenue.impugnments.notFoundInfrigment",
 						this.impugnmentSelected.getNumberInfringement());
+			} else {
+				this.existObligationForInpugnmentNumber = Boolean.TRUE;
+				this.impugnmentSelected.setMunicipalBond(mb);
 			}
 		}
 	}
@@ -235,7 +250,9 @@ public class ImpugnmentHome extends EntityController {
 		if (impugnmentSelected.getImpugnmentDate() == null
 				|| impugnmentSelected.getMunicipalBond() == null
 				|| impugnmentSelected.getNumberInfringement() == null
-				|| impugnmentSelected.getNumberProsecution() == null) {
+				|| impugnmentSelected.getNumberProsecution() == null
+				|| impugnmentSelected.getMunicipalBond().getNumber() == null
+				|| impugnmentSelected.getMunicipalBond().getId() == null) {
 			facesMessages.addToControl("",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					"Campos obligatorios vacios");
@@ -248,6 +265,24 @@ public class ImpugnmentHome extends EntityController {
 					.findImpugnmentsForCriteria(criteria);
 		}
 
+	}
+
+	public void searchMunicipalBondByNumber() {
+		if (this.impugnmentSelected.getMunicipalBond().getNumber() != null) {
+			MunicipalBond mb = impugnmentService
+					.findMunicipalBondByNumber(this.impugnmentSelected
+							.getMunicipalBond().getNumber());
+
+			if (mb == null) {
+				this.existObligationForInpugnmentNumber = Boolean.FALSE;
+				addFacesMessageFromResourceBundle(
+						"revenue.impugnments.notFoundMunicipalBond",
+						this.impugnmentSelected.getMunicipalBond().getNumber());
+			} else {
+				this.impugnmentSelected.setMunicipalBond(mb);
+				this.existObligationForInpugnmentNumber = Boolean.TRUE;
+			}
+		}
 	}
 
 	public void updateImpugnment() {
