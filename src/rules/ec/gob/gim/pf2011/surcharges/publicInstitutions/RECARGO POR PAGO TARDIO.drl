@@ -14,13 +14,7 @@ function BigDecimal findSurchargeFactor(Date expiration, Long residentId){
         Calendar paymentDate = DateUtils.getTruncatedInstance(new Date());
         Calendar expirationDate = DateUtils.getTruncatedInstance(expiration);
         
-        Calendar transitionDate = Calendar.getInstance();
-		transitionDate.set(Calendar.DAY_OF_MONTH, 21);
-		transitionDate.set(Calendar.MONTH, 4);		
-		transitionDate.set(Calendar.YEAR, 2016);
-		transitionDate.set(Calendar.HOUR_OF_DAY, 0);
-		transitionDate.set(Calendar.MINUTE, 0);
-		transitionDate.set(Calendar.MILLISECOND, 0);
+        Calendar transitionDate = InterestPublicInstitutionUtils.transitionDate;
 		
 		System.out.println("Fecha de transitoria: "+transitionDate.getTime());        
 	    
