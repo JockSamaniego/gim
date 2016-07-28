@@ -79,7 +79,7 @@ public class ImpugnmentHome extends EntityController {
 
 	private Integer numberProsecution;
 
-	private Integer numberInfringement;
+	private String numberInfringement;
 
 	private Boolean isEditAction;
 
@@ -158,11 +158,11 @@ public class ImpugnmentHome extends EntityController {
 		this.numberProsecution = numberProsecution;
 	}
 
-	public Integer getNumberInfringement() {
+	public String getNumberInfringement() {
 		return numberInfringement;
 	}
 
-	public void setNumberInfringement(Integer numberInfringement) {
+	public void setNumberInfringement(String numberInfringement) {
 		this.numberInfringement = numberInfringement;
 	}
 

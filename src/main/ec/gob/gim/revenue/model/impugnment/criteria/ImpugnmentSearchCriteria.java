@@ -4,7 +4,7 @@ public class ImpugnmentSearchCriteria {
 	
 	private Integer numberProsecution;
 	
-	private Integer numberInfringement;
+	private String numberInfringement;
 	
 	public Integer getNumberProsecution() {
 		return numberProsecution;
@@ -14,11 +14,11 @@ public class ImpugnmentSearchCriteria {
 		this.numberProsecution = numberProsecution;
 	}
 	
-	public Integer getNumberInfringement() {
+	public String getNumberInfringement() {
 		return numberInfringement;
 	}
 	
-	public void setNumberInfringement(Integer numberInfringement) {
+	public void setNumberInfringement(String numberInfringement) {
 		this.numberInfringement = numberInfringement;
 	}
 	

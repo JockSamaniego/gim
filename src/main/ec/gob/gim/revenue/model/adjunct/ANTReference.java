@@ -108,7 +108,6 @@ public class ANTReference extends Adjunct {
 	/*public Long getAntNumber() {
 		return antNumber;
 	}
-
 	public void setAntNumber(Long antNumber) {
 		this.antNumber = antNumber;
 	}*/

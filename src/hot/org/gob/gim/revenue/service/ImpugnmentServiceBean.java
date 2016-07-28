@@ -74,9 +74,9 @@ public class ImpugnmentServiceBean implements ImpugnmentService {
 
 	@Override
 	public MunicipalBond findMunicipalBondForImpugnment(
-			Integer numberInfringement) {
+			String numberInfringement) {
 		try {
-			Query query = entityManager.createNativeQuery("select mb.id from municipalbond mb inner join antreference ant on mb.adjunct_id = ant.id where ant.antnumber=:numberInfringement");
+			Query query = entityManager.createNativeQuery("select mb.id from municipalbond mb inner join antreference ant on mb.adjunct_id = ant.id where ant.contraventionNumber=:numberInfringement");
 			query.setParameter("numberInfringement", numberInfringement);
 			BigInteger municipalBondId = (BigInteger) query.getSingleResult();
 			if(municipalBondId != null){
@@ -98,7 +98,7 @@ public class ImpugnmentServiceBean implements ImpugnmentService {
 	public List<Impugnment> findImpugnmentsForCriteria(
 			ImpugnmentSearchCriteria criteria) {
 		Query query  = entityManager.createNamedQuery("Impugnment.findByCriteria");
-		query.setParameter("numberInfringement", criteria.getNumberInfringement() == null ? 0 :criteria.getNumberInfringement());
+		query.setParameter("numberInfringement", criteria.getNumberInfringement() == null ? "" :criteria.getNumberInfringement());
 		query.setParameter("numberProsecution", criteria.getNumberProsecution() ==null ? 0 :criteria.getNumberProsecution());
 		return query.getResultList();
 	}
