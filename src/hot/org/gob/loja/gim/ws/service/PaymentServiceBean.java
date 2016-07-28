@@ -172,8 +172,8 @@ public class PaymentServiceBean implements PaymentService {
 						.getIdentificationNumber());
 				BigDecimal totalToPay = findAmountToPay(taxpayer.getId(),
 						payout.getBondIds());
-				System.out.println("TOTAL TO PAY FOR SELECTED BONDS ----> "
-						+ totalToPay);
+				//System.out.println("TOTAL TO PAY FOR SELECTED BONDS ----> "
+						//+ totalToPay);
 				if (totalToPay != null
 						&& totalToPay.compareTo(payout.getAmount()) == 0) {
 					try {
@@ -662,5 +662,8 @@ public class PaymentServiceBean implements PaymentService {
 		Statement statement = new Statement(taxpayer, bonds, workDayDate);
 		return statement;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 }
