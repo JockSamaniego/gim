@@ -2014,10 +2014,14 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void chargeControlImpugnmentStates(){
-		Query query = getEntityManager().createNamedQuery("SystemParameter.findByName");
-		query.setParameter("name", "STATES_IMPUGNMENT_CONTROL_REGISTER_PAID");
-		SystemParameter controlStates = (SystemParameter) query.getSingleResult();
-		states = controlStates.getValue().trim().split(",");
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		String controlStates = systemParameterService.findParameter("STATES_IMPUGNMENT_CONTROL_REGISTER_PAID");
+		
+		/*Query query = getEntityManager().createNamedQuery("SystemParameter.findByName");
+		query.setParameter("name", "");
+		SystemParameter controlStates = (SystemParameter) query.getSingleResult();*/
+		states = controlStates.trim().split(",");
 	}
 
 	public List<Impugnment> getImpugnmentsTotal() {
