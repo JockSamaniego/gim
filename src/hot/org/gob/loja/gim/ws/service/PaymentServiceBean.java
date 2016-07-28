@@ -71,7 +71,7 @@ public class PaymentServiceBean implements PaymentService {
 
 	public final String ACCOUNT_CODE_FOR_DISCOUNT = "ACCOUNT_CODE_FOR_DISCOUNT";
 
-	@Override
+	/*@Override
 	public Statement findStatement(ServiceRequest request)
 			throws PayoutNotAllowed, TaxpayerNotFound, NotActiveWorkday,
 			HasNoObligations {
@@ -136,6 +136,46 @@ public class PaymentServiceBean implements PaymentService {
 			Statement statement = new Statement(taxpayer, bonds, workDayDate);
 			return statement;
 		}
+	}*/
+	
+	@Override
+	public Statement findStatement(ServiceRequest request)
+			throws PayoutNotAllowed, TaxpayerNotFound, NotActiveWorkday,
+			HasNoObligations {
+		System.out.println("rfarmijosm "+request.getIdentificationNumber()+"\t"+request.getUsername());
+		String identificationNumber = request.getIdentificationNumber();
+		Taxpayer taxpayer = findTaxpayer(identificationNumber);
+		Date workDayDate;
+		if (request.getUsername().compareTo("dabetancourtc") == 0)
+			workDayDate = new GregorianCalendar().getTime();
+		else
+			workDayDate = findPaymentDate();
+		Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer
+				.getId());
+		
+		if (inPaymentAgreementBondsNumber > 0) {
+			throw new PayoutNotAllowed();
+		} else {
+			List<Long> pendingBondIds = hasPendingBonds(taxpayer.getId());
+			List<Bond> bonds = new ArrayList<Bond>();
+			if (pendingBondIds.size() > 0) {
+				try {
+					incomeService.calculatePayment(workDayDate, pendingBondIds, true, true);
+					bonds = findPendingBonds(taxpayer.getId());
+					//esta imprimiendo el log de lo q se retorna quitar luego de las pruebas
+					Boolean control = comparateBondsDates(bonds);
+					loadBondsDetail(bonds);
+				} catch (EntryDefinitionNotFoundException e) {
+					e.printStackTrace();
+					throw new PayoutNotAllowed();
+				}
+			}
+			// } else {
+			// throw new HasNoObligations();
+			// }
+			Statement statement = new Statement(taxpayer, bonds, workDayDate);
+			return statement;
+		}
 	}
 
 	@Override
@@ -143,6 +183,10 @@ public class PaymentServiceBean implements PaymentService {
 			throws InvalidPayout, PayoutNotAllowed, TaxpayerNotFound,
 			InvalidUser, NotActiveWorkday, NotOpenTill, HasNoObligations {
 		// Statement statement = findStatement(request);
+		
+		System.out.println("start PPPPPPPPPPPPPPP");
+		System.out.println(request.getIdentificationNumber()+"\t"+payout.getAmount()+"\t"+payout.getPaymentDate()+"\t"+payout.getBondIds());
+		System.out.println("end o PPPPPPPPPPPPPPP");
 
 		Person cashier = findCashier(request.getUsername());
 
@@ -172,8 +216,8 @@ public class PaymentServiceBean implements PaymentService {
 						.getIdentificationNumber());
 				BigDecimal totalToPay = findAmountToPay(taxpayer.getId(),
 						payout.getBondIds());
-				System.out.println("TOTAL TO PAY FOR SELECTED BONDS ----> "
-						+ totalToPay);
+				//System.out.println("TOTAL TO PAY FOR SELECTED BONDS ----> "
+						//+ totalToPay);
 				if (totalToPay != null
 						&& totalToPay.compareTo(payout.getAmount()) == 0) {
 					try {
@@ -370,14 +414,15 @@ public class PaymentServiceBean implements PaymentService {
 		* 0); calendar.set(Calendar.MINUTE, 0); calendar.set(Calendar.HOUR, 0);
 		*/
 		// comparar si
-
-		for (Bond bond : bonds) {
-			// System.out.println("==============hoy===========>"+calendar.getTime()+"========expiracion=========>"+bond.getExpirationDate());
-			if (now.compareTo(bond.getExpirationDate()) == 1) {
+		System.out.println("========>cantidad "+bonds.size());
+		for (Bond bond : bonds) {			
+			System.out.println(bond.getAccount()+"\t"+bond.getNumber()+"\t"+bond.getDiscounts()+
+					"\t"+bond.getInterests()+"\t"+bond.getSurcharges()+"\t"+bond.getTaxes()+"\t"+bond.getTotal());
+			/*if (now.compareTo(bond.getExpirationDate()) == 1) {
 				// System.out.println("=======================> deuda expirada");
 				// expiratedDate = Boolean.TRUE;
 				return true;
-			}
+			}*/
 		}
 		// return expiratedDate;
 		return false;
