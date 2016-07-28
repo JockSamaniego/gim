@@ -29,7 +29,7 @@ public interface ImpugnmentService {
 	
 	public List<Impugnment> findAll();
 	
-	public MunicipalBond findMunicipalBondForImpugnment(Integer numberInfringement);
+	public MunicipalBond findMunicipalBondForImpugnment(String numberInfringement);
 	
 	public List<Impugnment> findImpugnmentsForCriteria(ImpugnmentSearchCriteria criteria);
 	

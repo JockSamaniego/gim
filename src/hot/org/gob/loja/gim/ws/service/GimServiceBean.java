@@ -423,7 +423,7 @@ public class GimServiceBean implements GimService{
 		
 		//List<ANTReference> AntRef = new ArrayList<ANTReference>();
 		Query query = em.createNamedQuery("ANTReference.findFoto-Multa");	
-		query.setParameter("antNumber", emisionDetail.getAntNumber());
+		query.setParameter("contraventionNumber", emisionDetail.getContraventionNumber());
 		//AntRef = query.getResultList();
 		if(query.getResultList().size()<=0){
 		
@@ -476,7 +476,8 @@ public class GimServiceBean implements GimService{
 				// start Adjunt
 				ANTReference ant = new ANTReference();
 				ant.setNumberPlate(emisionDetail.getNumberPlate());
-				ant.setAntNumber(emisionDetail.getAntNumber());
+				//ant.setAntNumber(emisionDetail.getAntNumber());
+				ant.setContraventionNumber(emisionDetail.getContraventionNumber());
 				ant.setSpeeding(emisionDetail.getSpeeding());
 				ant.setVehicleType(emisionDetail.getVehicleType());
 				ant.setServiceType(emisionDetail.getServiceType());
