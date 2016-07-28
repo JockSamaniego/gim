@@ -662,8 +662,4 @@ public class PaymentServiceBean implements PaymentService {
 		Statement statement = new Statement(taxpayer, bonds, workDayDate);
 		return statement;
 	}
-<<<<<<< HEAD
-
-=======
->>>>>>> master
 }
