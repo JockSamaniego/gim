@@ -1369,9 +1369,12 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			if(obligationsRadioButton.equals("Normal")){
 				reportType = 1;
 				String qryResult = "SELECT mb.id, re.identificationnumber, re.name, "
-						+ "mb.number, mb.emisiondate, mb.expirationdate, mb.value, mb.paidtotal, mb.description, mb.reference, mb.groupingcode "
+						+ "mb.number, mb.emisiondate, mb.expirationdate, mb.value, mb.paidtotal, mb.description, mb.reference, mb.groupingcode, "
+						+ "mbs.name status, en.name entName "
 						+ "FROM gimprod.municipalbond mb "
 						+ "INNER JOIN gimprod.resident re on mb.resident_id = re.id "
+						+ "inner join municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id "
+						+ "inner join entry en on mb.entry_id = en.id "
 						+ "WHERE lower(mb.description) like lower('%"+obligationsHistoryCriteria+"%') or "
 						+ "lower(mb.reference) like lower('%"+obligationsHistoryCriteria+"%') or lower(mb.groupingcode) like lower('%"+obligationsHistoryCriteria+"%') "
 						+ "ORDER BY emisiondate;";
@@ -1379,8 +1382,9 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				List<Object[]> result = queryResult.getResultList();
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				
+				ObligationsHistoryFotoMulta reg;
 				for (Object[] row : result) {
-					ObligationsHistoryFotoMulta reg = new ObligationsHistoryFotoMulta();
+					reg = new ObligationsHistoryFotoMulta();
 					try {
 						reg.setId(row[0] == null ? 0 : Long.parseLong(row[0].toString()));
 						reg.setIdentificationNumber(row[1] == null ? "" : row[1].toString());
@@ -1393,6 +1397,8 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						reg.setDescription(row[8] == null ? "" : row[8].toString());
 						reg.setReference(row[9] == null ? "" : row[9].toString());
 						reg.setGroupingcode(row[10] == null ? "" : row[10].toString());
+						reg.setStatus(row[11] == null ? "" : row[11].toString());
+						reg.setEntryName(row[12] == null ? "" : row[12].toString());
 						obligationsHistoryResult.add(reg);
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
@@ -1403,9 +1409,11 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				reportType = 2;
 				String qryResult = "SELECT mb.id, re.identificationnumber, re.name, "
 						+ "mb.number, mb.emisiondate, mb.expirationdate, mb.value, mb.paidtotal, mb.description, mb.reference, mb.groupingcode, "
-						+ "ant.numberplate, ant.antnumber, ant.speeding, ant.citationdate "
+						+ "ant.numberplate, ant.antnumber, ant.speeding, ant.citationdate, mbs.name  status, en.name entName "
 						+ "FROM gimprod.municipalbond mb "
 						+ "INNER JOIN gimprod.resident re on mb.resident_id = re.id "
+						+ "inner join municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id "
+						+ "inner join entry en on mb.entry_id = en.id "
 						+ "INNER JOIN gimprod.antreference ant on mb.adjunct_id = ant.id "
 						+ "WHERE lower(mb.description) like lower('%"+obligationsHistoryCriteria+"%') or "
 						+ "lower(mb.reference) like lower('%"+obligationsHistoryCriteria+"%') or lower(mb.groupingcode) like lower('%"+obligationsHistoryCriteria+"%') "
@@ -1413,9 +1421,9 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				Query queryResult = this.getEntityManager().createNativeQuery(qryResult);
 				List<Object[]> result = queryResult.getResultList();
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				
+				ObligationsHistoryFotoMulta reg;
 				for (Object[] row : result) {
-					ObligationsHistoryFotoMulta reg = new ObligationsHistoryFotoMulta();
+				reg = new ObligationsHistoryFotoMulta();
 					try {
 						reg.setId(row[0] == null ? 0 : Long.parseLong(row[0].toString()));
 						reg.setIdentificationNumber(row[1] == null ? "" : row[1].toString());
@@ -1432,6 +1440,8 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						reg.setAntNumber(row[12] == null ? 0 : Long.parseLong(row[12].toString()));
 						reg.setSpeeding(row[13] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[13].toString())));
 						reg.setCitationDate(row[14] == null ? sdf.parse("") : sdf.parse(row[14].toString()));
+						reg.setStatus(row[15] == null ? "" : row[15].toString());
+						reg.setEntryName(row[16] == null ? "" : row[16].toString());
 						obligationsHistoryResult.add(reg);
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block

@@ -13,21 +13,20 @@
 		<h:form id="obligationsHistoryReport" styleClass="edit">
 			<ui:debug id="uiDebug" />
 			<rich:panel id="obligationsHistoryForm">
-				<f:facet name="header">Reporte de Historial de Obligaciones
-	            </f:facet>
+				<f:facet name="header"><h:outputText value="#{messages['municipalbond.searchHistory']}" />
+				</f:facet>
 				<s:decorate id="obligationsRadioButton"
 					template="../layout/edit.xhtml">
-					<ui:define name="label">Tipo de búsqueda: </ui:define>
+					<ui:define name="label">#{messages['municipalbond.searchType']}: </ui:define>
 					<h:selectOneRadio disabled="#{municipalBondHome.reportType ne 0}"
 						value="#{municipalBondHome.obligationsRadioButton}"
 						required="true">
 						<f:selectItem itemValue="Normal" itemLabel="Consulta Normal" />
 						<f:selectItem itemValue="FotoMulta" itemLabel="Consulta Foto-Multa" />
-						<f:selectItem itemValue="Ant" itemLabel="Consulta ANT" />
 					</h:selectOneRadio>
 				</s:decorate>
 				<s:decorate id="obligationsField" template="../layout/edit.xhtml">
-					<ui:define name="label">Criterio de búsqueda: </ui:define>
+					<ui:define name="label">#{messages['common.criteria']}: </ui:define>
 					<h:inputText id="obligation"
 						disabled="#{municipalBondHome.reportType ne 0}"
 						value="#{municipalBondHome.obligationsHistoryCriteria}"
@@ -38,7 +37,7 @@
 				<div class="actionButtons">
 					<a:commandButton id="generateReport"
 						disabled="#{municipalBondHome.reportType ne 0}"
-						value="#{messages['income.generateReport']}"
+						value="#{messages['common.search']}"
 						action="#{municipalBondHome.searchObligationsHistory}"
 						reRender="obligationsNormalQuery, obligationsHistoryForm" />
 				</div>
@@ -49,7 +48,7 @@
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
 						<h:outputText
-							value="Total de resultados : #{municipalBondHome.obligationsHistoryResult.size()}" />
+							value="#{messages['entry.searchResults']} : #{municipalBondHome.obligationsHistoryResult.size()}" />
 					</h:panelGrid>
 				</f:facet>
 				<div class="results" id="obligationsList">
@@ -57,212 +56,121 @@
 						rendered="#{municipalBondHome.obligationsHistoryResult.size() eq 0}">
 						<h:outputText value="#{messages['common.noResultsReturned']}" />
 					</rich:panel>
+
 					<rich:dataTable id="obligationsNormalTable" var="_item"
 						width="100%" value="#{municipalBondHome.obligationsHistoryResult}"
 						columnClasses="left, left, left, left, left, left, left, left, left, left, left"
-						rendered="#{municipalBondHome.obligationsHistoryResult.size() gt 0 and municipalBondHome.reportType eq 1}">
+						rendered="#{municipalBondHome.obligationsHistoryResult.size() gt 0}"
+						onRowMouseOver="this.style.backgroundColor='#33ccff'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+						rows="25">
 
 						<rich:column>
 							<f:facet name="header">
-						id
-							</f:facet>
-							<h:outputText value="#{_item.id}" />
-						</rich:column>
-
-						<rich:column>
-							<f:facet name="header">
-						cédula
-							</f:facet>
-							<h:outputText value="#{_item.identificationNumber}" />
-						</rich:column>
-
-						<rich:column>
-							<f:facet name="header">
-						nombre
-							</f:facet>
-							<h:outputText value="#{_item.name}" />
-						</rich:column>
-
-						<rich:column>
-							<f:facet name="header">
-						número
+								<h:outputText value="#{messages['municipalBond.number']}" />
 							</f:facet>
 							<h:outputText value="#{_item.number}" />
 						</rich:column>
 
 						<rich:column>
 							<f:facet name="header">
-						emisión
+								<h:outputText value="#{messages['municipalBond.emision']}" />
 							</f:facet>
-							<h:outputText value="#{_item.emisiondate}" />
+							<h:outputText value="#{_item.emisiondate}">
+								<s:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" dateStyle="short" />
+							</h:outputText>
 						</rich:column>
 
 						<rich:column styleClass="center">
 							<f:facet name="header">
-						expiración
+								<h:outputText value="#{messages['municipalBond.expiration']}" />
 							</f:facet>
-							<h:outputText value="#{_item.expirationdate}" />
+							<h:outputText value="#{_item.expirationdate}">
+								<s:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" dateStyle="short" />
+							</h:outputText>
 						</rich:column>
-
+						
 						<rich:column styleClass="center">
 							<f:facet name="header">
-						valor
+								<h:outputText value="#{messages['municipalBond.status']}" />
 							</f:facet>
-							<h:outputText value="#{_item.value}" />
+							<h:outputText value="#{_item.status}"/>
+						</rich:column>
+						
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['entry']}" />
+							</f:facet>
+							<h:outputText value="#{_item.entryName}" />
 						</rich:column>
 
-						<rich:column styleClass="center">
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['common.identificationNumber']}" />
+							</f:facet>
+							<h:outputText value="#{_item.identificationNumber}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['resident.name']}" />
+							</f:facet>
+							<h:outputText value="#{_item.name}" />
+						</rich:column>
+						
+						<!--rich:column styleClass="center">
 							<f:facet name="header">
 						pago total
 							</f:facet>
 							<h:outputText value="#{_item.paidtotal}" />
-						</rich:column>
+						</rich:column-->
 
 						<rich:column styleClass="center">
 							<f:facet name="header">
-						descripción
+								<h:outputText value="#{messages['municipalBond.description']}" />
 							</f:facet>
 							<h:outputText value="#{_item.description}" />
 						</rich:column>
-
+						
 						<rich:column styleClass="center">
 							<f:facet name="header">
-						referencia
-							</f:facet>
-							<h:outputText value="#{_item.reference}" />
-						</rich:column>
-
-						<rich:column styleClass="center">
-							<f:facet name="header">
-						agrupación
-							</f:facet>
-							<h:outputText value="#{_item.groupingcode}" />
-						</rich:column>
-
-					</rich:dataTable>
-
-					<rich:dataTable id="obligationsFotoMultaTable" var="_item"
-						width="100%" value="#{municipalBondHome.obligationsHistoryResult}"
-						columnClasses="left, left, left, left, left, left, left, left, left, left, left,left,left,left,left"
-						rendered="#{municipalBondHome.obligationsHistoryResult.size() gt 0 and municipalBondHome.reportType eq 2}">
-
-						<rich:column>
-							<f:facet name="header">
-						Id
-							</f:facet>
-							<h:outputText value="#{_item.id}" />
-						</rich:column>
-
-						<rich:column>
-							<f:facet name="header">
-						Cédula
-							</f:facet>
-							<h:outputText value="#{_item.identificationNumber}" />
-						</rich:column>
-
-						<rich:column>
-							<f:facet name="header">
-						Nombre
-							</f:facet>
-							<h:outputText value="#{_item.name}" />
-						</rich:column>
-
-						<rich:column>
-							<f:facet name="header">
-						Número
-							</f:facet>
-							<h:outputText value="#{_item.number}" />
-						</rich:column>
-
-						<rich:column>
-							<f:facet name="header">
-						Emisión
-							</f:facet>
-							<h:outputText value="#{_item.emisiondate}" />
-						</rich:column>
-
-						<rich:column styleClass="center">
-							<f:facet name="header">
-						Expiración
-							</f:facet>
-							<h:outputText value="#{_item.expirationdate}" />
-						</rich:column>
-
-						<rich:column styleClass="center">
-							<f:facet name="header">
-						Valor
+								<h:outputText value="#{messages['municipalBond.value']}" />
 							</f:facet>
 							<h:outputText value="#{_item.value}" />
 						</rich:column>
 
-						<rich:column styleClass="center">
-							<f:facet name="header">
-						Pago total
-							</f:facet>
-							<h:outputText value="#{_item.paidtotal}" />
-						</rich:column>
-
-						<rich:column styleClass="center">
-							<f:facet name="header">
-						Descripción
-							</f:facet>
-							<h:outputText value="#{_item.description}" />
-						</rich:column>
-
-						<rich:column styleClass="center">
-							<f:facet name="header">
-						Referencia
-							</f:facet>
-							<h:outputText value="#{_item.reference}" />
-						</rich:column>
-
-						<rich:column styleClass="center">
-							<f:facet name="header">
-						Agrupación
-							</f:facet>
-							<h:outputText value="#{_item.groupingcode}" />
-						</rich:column>
-
-						<rich:column styleClass="center">
-							<f:facet name="header">
-						Placa
-							</f:facet>
-							<h:outputText value="#{_item.numberPlate}" />
-						</rich:column>
-
-						<rich:column styleClass="center">
-							<f:facet name="header">
-						Número ANT
-							</f:facet>
-							<h:outputText value="#{_item.antNumber}" />
-						</rich:column>
-
-						<rich:column styleClass="center">
-							<f:facet name="header">
-						Velocidad
-							</f:facet>
-							<h:outputText value="#{_item.speeding}Km/h" />
-						</rich:column>
-
-						<rich:column styleClass="center">
-							<f:facet name="header">
-						Citación
-							</f:facet>
-							<h:outputText value="#{_item.citationDate}" />
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<a:commandButton id="viewer" ajaxSingle="true"
+								action="#{municipalBondsViewerHome.loadMunicipalBond(_item.id)}"
+								eventsQueue="gimEventsQueue" reRender="_municipalBondViewer"
+								oncomplete="Richfaces.showModalPanel('_municipalBondViewer',{width:600, height:500})"
+								value="#{messages['common.detail']}" />
 						</rich:column>
 
 					</rich:dataTable>
+
+					<rich:spacer height="5" />
+					<rich:datascroller align="center" for="obligationsNormalTable"
+					rendered="#{municipalBondHome.obligationsHistoryResult.size() gt 0}"
+						maxPages="20" id="sc1" />
+
 				</div>
 
 			</rich:panel>
 
-
+			<g:municipalBondViewer
+				resident="#{municipalBondsViewerHome.resident}"
+				municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}"
+				deposits="#{municipalBondsViewerHome.deposits}" />
 
 			<h:panelGrid id="detailPanel2" columns="3">
 
 				<s:button id="back" value="#{messages['common.back']}"
 					propagation="end" view="/home.xhtml" />
-				<s:button id="clean" value="Limpiar" propagation="end"
+				<s:button id="clean" value="#{messages['common.reset']}" propagation="end"
 					view="/revenue/ObligationsHistoryReport.xhtml" />
 			</h:panelGrid>
 		</h:form>
