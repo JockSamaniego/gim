@@ -4,9 +4,6 @@ package org.gob.loja.gim.ws.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 public class ObligationsHistoryFotoMulta {
 
 	private Long id;
@@ -24,7 +21,9 @@ public class ObligationsHistoryFotoMulta {
 	private Long antNumber;
 	private BigDecimal speeding;
 	private Date citationDate;
-
+	//rfarmijosm 2016-07-30
+	private String status;
+	private String entryName;
 
 	public ObligationsHistoryFotoMulta() {
 	}
@@ -169,4 +168,20 @@ public class ObligationsHistoryFotoMulta {
 		this.citationDate = citationDate;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getEntryName() {
+		return entryName;
+	}
+
+	public void setEntryName(String entryName) {
+		this.entryName = entryName;
+	}
+	
 }
