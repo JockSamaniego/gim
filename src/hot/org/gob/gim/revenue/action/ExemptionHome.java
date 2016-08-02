@@ -14,9 +14,11 @@ import javax.persistence.Query;
 
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.core.Interpolator;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
@@ -30,6 +32,7 @@ import ec.gob.gim.revenue.model.ExemptionType;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 
 @Name("exemptionHome")
+@Scope(ScopeType.CONVERSATION)
 public class ExemptionHome extends EntityHome<Exemption> {
 
 	/**
@@ -57,12 +60,22 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	private SystemParameterService systemParameterService;
 
 	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
-
+	
+	private ExemptionType exemptionSpecial;
+	
+	
 	@Logger
 	Log logger;
 
 	@In
 	FacesMessages facesMessages;
+	
+	public void init(){
+		if (systemParameterService == null) {
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SYSTEM_PARAMETER_SERVICE_NAME);
+		}
+	}
 
 	public void reCalculateValues() {
 		System.out.println("<<<RR>>reCalculateValues");
@@ -257,6 +270,8 @@ public class ExemptionHome extends EntityHome<Exemption> {
 			partnerIdentificationNumber = this.getInstance().getPartner()
 					.getIdentificationNumber();
 		isFirsTime = false;
+		init();
+		prepareEditExcemption(this.instance);
 	}
 
 	public boolean isWired() {
@@ -420,13 +435,6 @@ public class ExemptionHome extends EntityHome<Exemption> {
 
 		this.instance.getPropertiesInExemption().clear();
 
-		if (systemParameterService == null) {
-			systemParameterService = ServiceLocator.getInstance().findResource(
-					SYSTEM_PARAMETER_SERVICE_NAME);
-		}
-		ExemptionType exemptionSpecial = systemParameterService.materialize(
-				ExemptionType.class, "EXEMPTION_TYPE_ID_SPECIAL");
-
 		if (this.instance.getExemptionType().getId()
 				.equals(exemptionSpecial.getId())) {
 			this.isExemptionEspecial = Boolean.TRUE;
@@ -434,6 +442,19 @@ public class ExemptionHome extends EntityHome<Exemption> {
 			this.isExemptionEspecial = Boolean.FALSE;
 		}
 
+	}
+
+	public void prepareEditExcemption(Exemption excemption) {
+		
+		this.exemptionSpecial= systemParameterService.materialize(
+				ExemptionType.class, "EXEMPTION_TYPE_ID_SPECIAL");
+
+		if (excemption.getExemptionType().getId()
+				.equals(exemptionSpecial.getId())) {
+			this.isExemptionEspecial = Boolean.TRUE;
+		} else {
+			this.isExemptionEspecial = Boolean.FALSE;
+		}
 	}
 
 }
