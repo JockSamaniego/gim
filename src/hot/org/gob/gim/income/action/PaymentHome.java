@@ -590,7 +590,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		List<MunicipalBond> mbs = incomeService.findPendingBonds(residentId);
 		incomeService.calculatePayment(mbs, new Date(), true, true);
-		impugnmentsTotal = new ArrayList<>();
+		impugnmentsTotal = new ArrayList<Impugnment>();
 		for (MunicipalBond municipalBond : mbs) {
 			System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE " + municipalBond.getTaxableTotal()
 					+ " TAXES TOTAL " + municipalBond.getTaxesTotal());
@@ -1996,12 +1996,12 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	// Para controlar las impugnaciones.............
 	// Jock Samaniego............. 20-07-2016........
 	
-	private List<Impugnment> impugnmentsTotal = new ArrayList<>();
+	private List<Impugnment> impugnmentsTotal = new ArrayList<Impugnment>();
 	private String[] states;
 	
 	@SuppressWarnings("unchecked")
 	public void findPendingsImpugnments(Long id){
-		List<Impugnment> impugnments = new ArrayList<>();
+		List<Impugnment> impugnments = new ArrayList<Impugnment>();
 		for (String st : states){
 			Query query = getEntityManager().createNamedQuery("Impugnment.findByMunicipalBond");
 			query.setParameter("municipalBond_id", id);
