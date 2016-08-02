@@ -55,14 +55,15 @@
 								action="#{impugnmentHome.searchMunicipalBond()}" />
 						</h:inputText>
 					</s:decorate>
-					
+
 					<s:decorate id="numberMunicipalBondField"
 						template="../../../layout/edit.xhtml" for="numberMunicipalBond">
 						<ui:define name="label">#{messages['revenue.impugnments.impugnment_bond_number_label']}</ui:define>
 
 						<h:inputText id="numberMunicipalBond"
 							value="#{impugnmentHome.impugnmentSelected.municipalBond.number}"
-							disabled="#{impugnmentHome.existObligationForInpugnmentNumber}">
+							disabled="#{impugnmentHome.existObligationForInpugnmentNumber}"
+							size="30">
 							<a:support event="onblur"
 								reRender="idMunicipalBondField,numberMunicipalBondField,valueMunicipalBondField"
 								ajaxSingle="true"
@@ -76,6 +77,24 @@
 
 						<h:outputText id="idMunicipalBond"
 							value="#{impugnmentHome.impugnmentSelected.municipalBond.id}">
+						</h:outputText>
+					</s:decorate>
+
+					<s:decorate id="identificationResidentField"
+						template="../../../layout/edit.xhtml" for="identificationResident">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_resident_identification_label']}</ui:define>
+
+						<h:outputText id="identificationResident"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.resident.identificationNumber}">
+						</h:outputText>
+					</s:decorate>
+
+					<s:decorate id="nameResidentField"
+						template="../../../layout/edit.xhtml" for="nameResident">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_resident_name_label']}</ui:define>
+
+						<h:outputText id="nameResident"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.resident.name}">
 						</h:outputText>
 					</s:decorate>
 
@@ -100,6 +119,16 @@
 							<a:support ajaxSingle="true" event="onblur"></a:support>
 						</h:inputText>
 
+					</s:decorate>
+
+					<s:decorate id="observationField"
+						template="../../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_observation_label']}</ui:define>
+						<h:inputTextarea id="observation" 
+							value="#{impugnmentHome.impugnmentSelected.observation}" rows="5"
+							cols="34" maxlength="255">
+							<a:support ajaxSingle="true" event="onblur"></a:support>
+						</h:inputTextarea>
 					</s:decorate>
 
 					<s:decorate id="actualStatusField"
@@ -162,6 +191,5 @@
 				</div>
 			</h:panelGrid>
 		</h:form>
-
 	</rich:modalPanel>
 </ui:composition>

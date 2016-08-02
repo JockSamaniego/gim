@@ -66,7 +66,7 @@
 							reRender="impugnmentRegisterPanel" 
 							ajaxSingle="true"
 							eventsQueue="gimQueue"
-							oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:350})"
+							oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:520})"
 							value="#{messages['revenue.impugnments.impugnment_new']}"
 							actionListener="#{impugnmentHome.preparaRegisterImpugnment()}" />
 					</h:panelGrid>
@@ -144,9 +144,9 @@
 									value="#{messages['revenue.impugnments.impugnment_status_change']}"
 									reRender="impugnmentRegisterPanel" ajaxSingle="true"
 									eventsQueue="gimQueue"
-									oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:420})"
+									oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:520})"
 									actionListener="#{impugnmentHome.prepareUpdateImpugnment(_impugnment.id)}"
-									rendered="#{_impugnment.status.code == 'STATE_REGISTE'}">
+									rendered="#{_impugnment.status.code == 'STATE_REGISTE' and impugnmentHome.isUserWithRolMatriculacion()}">
 								</a:commandButton>
 							</div>
 						</rich:column>

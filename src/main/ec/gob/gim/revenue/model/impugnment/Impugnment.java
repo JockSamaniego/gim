@@ -34,7 +34,7 @@ import ec.gob.gim.security.model.User;
 @TableGenerator(name = "ImpugnmentGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "Impugnment", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
 		@NamedQuery(name = "Impugnment.findByCriteria", query = "select i from Impugnment i where (:numberInfringement='' OR i.numberInfringement=:numberInfringement) AND (:numberProsecution = 0 OR i.numberProsecution=:numberProsecution) ORDER BY i.id DESC"),
-		@NamedQuery(name = "Impugnment.findById", query = "select i from Impugnment i where i.id=:impugnmentId"),
+		@NamedQuery(name = "Impugnment.findById", query = "select i from Impugnment i join fetch i.municipalBond mb join fetch mb.resident res where i.id=:impugnmentId"),
 		@NamedQuery(name = "Impugnment.findByMunicipalBond", query = "select i from Impugnment i where (i.municipalBond.id =:municipalBond_id and i.status.code =:code)")})
 public class Impugnment implements Serializable {
 
@@ -56,6 +56,8 @@ public class Impugnment implements Serializable {
 	private Integer numberProsecution;
 
 	private String numberInfringement;
+	
+	private String observation;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "type_itm_id", nullable = false, referencedColumnName = "id")
@@ -158,6 +160,14 @@ public class Impugnment implements Serializable {
 
 	public void setUserRegister(User userRegister) {
 		this.userRegister = userRegister;
+	}
+	
+	public String getObservation() {
+		return observation;
+	}
+
+	public void setObservation(String observation) {
+		this.observation = observation;
 	}
 
 	public Long getVersion() {

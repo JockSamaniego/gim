@@ -7,6 +7,7 @@ import java.util.List;
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
+import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.service.ImpugnmentService;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.ScopeType;
@@ -17,9 +18,12 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityController;
 
 import ec.gob.gim.common.model.ItemCatalog;
+import ec.gob.gim.income.model.Account;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.revenue.model.impugnment.criteria.ImpugnmentSearchCriteria;
+import ec.gob.gim.security.model.Role;
+import ec.gob.gim.security.model.User;
 
 @Name("impugnmentHome")
 @Scope(ScopeType.CONVERSATION)
@@ -39,6 +43,8 @@ public class ImpugnmentHome extends EntityController {
 	private ImpugnmentService impugnmentService;
 
 	private ItemCatalogService itemCatalogService;
+
+	private SystemParameterService systemParameterService;
 
 	/**
 	 * criterios
@@ -87,6 +93,12 @@ public class ImpugnmentHome extends EntityController {
 
 	private Boolean existObligationForInpugnmentNumber;
 
+	private Role role_Coactivas;
+
+	private Role role_Matriculacion;
+
+	private Role role_Ver;
+
 	public ImpugnmentHome() {
 		loadImpugnments();
 	}
@@ -123,6 +135,15 @@ public class ImpugnmentHome extends EntityController {
 						itemsExceptIds);
 
 		// this.impugnmentSelected = new Impugnment();
+
+		this.role_Coactivas = systemParameterService.materialize(Role.class,
+				"ID_ROL_IMPUGNACIONES_COACTIVAS");
+		this.role_Matriculacion = systemParameterService.materialize(
+				Role.class, "ID_ROL_IMPUGNACIONES_MATRICULACION");
+		this.role_Ver = systemParameterService.materialize(Role.class,
+				"ID_ROL_IMPUGNACIONES_VER");
+
+		// if(userSession.getUser().hasRole(formalizingRoleName)){
 
 	}
 
@@ -201,6 +222,30 @@ public class ImpugnmentHome extends EntityController {
 		this.existObligationForInpugnmentNumber = existObligationForInpugnmentNumber;
 	}
 
+	public Role getRole_Coactivas() {
+		return role_Coactivas;
+	}
+
+	public void setRole_Coactivas(Role role_Coactivas) {
+		this.role_Coactivas = role_Coactivas;
+	}
+
+	public Role getRole_Matriculacion() {
+		return role_Matriculacion;
+	}
+
+	public void setRole_Matriculacion(Role role_Matriculacion) {
+		this.role_Matriculacion = role_Matriculacion;
+	}
+
+	public Role getRole_Ver() {
+		return role_Ver;
+	}
+
+	public void setRole_Ver(Role role_Ver) {
+		this.role_Ver = role_Ver;
+	}
+
 	public void initializeService() {
 		if (impugnmentService == null) {
 			impugnmentService = ServiceLocator.getInstance().findResource(
@@ -209,6 +254,10 @@ public class ImpugnmentHome extends EntityController {
 		if (itemCatalogService == null) {
 			itemCatalogService = ServiceLocator.getInstance().findResource(
 					ItemCatalogService.LOCAL_NAME);
+		}
+		if (systemParameterService == null) {
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SystemParameterService.LOCAL_NAME);
 		}
 	}
 
@@ -306,4 +355,30 @@ public class ImpugnmentHome extends EntityController {
 		this.impugnments = this.impugnmentService
 				.findImpugnmentsForCriteria(criteria);
 	}
+
+	public Boolean isUserWithRolCoercive() {
+		if (this.userSession.hasRoleByNameRol(role_Coactivas.getName())) {
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
+	}
+
+	public Boolean isUserWithRolMatriculacion() {
+		
+		if (this.userSession.hasRoleByNameRol(role_Matriculacion.getName())) {
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
+	}
+
+	public Boolean isUserWithRolVer() {
+		if (this.userSession.hasRoleByNameRol(role_Ver.getName())) {
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
+	}
+
 }
