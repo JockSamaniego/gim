@@ -50,13 +50,25 @@ public class ItemCatalogServiceBean implements ItemCatalogService {
 
 	@Override
 	public List<ItemCatalog> findItemsForCatalogCodeExceptIds(
-			String catalogCode,List<Long> itemsIds) {
+			String catalogCode, List<Long> itemsIds) {
 		Query query = entityManager
 				.createQuery("select i from ItemCatalog i where i.catalogCode=:catalogCode and i.id not in (:itemsIds)");
 		query.setParameter("catalogCode", catalogCode);
 		query.setParameter("itemsIds", itemsIds);
 		List<ItemCatalog> listResult = query.getResultList();
 		return listResult;
+	}
+
+	@Override
+	public ItemCatalog findById(Long id) {
+		Query query = entityManager
+				.createQuery("select i from ItemCatalog i where i.id=:id");
+		query.setParameter("id", id);
+		List<ItemCatalog> listResult = query.getResultList();
+		if(!listResult.isEmpty()){
+			return listResult.get(0);
+		}
+		return null;
 	}
 
 }

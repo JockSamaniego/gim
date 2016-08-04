@@ -10,11 +10,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.service.CrudService;
 
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.revenue.model.impugnment.criteria.ImpugnmentSearchCriteria;
+import ec.gob.gim.revenue.model.impugnment.dto.ImpugnmentDTO;
+import ec.gob.gim.waterservice.model.dto.WaterBlockDTO;
 
 /**
  *  * @author René Ortega
@@ -95,12 +98,41 @@ public class ImpugnmentServiceBean implements ImpugnmentService {
 	}
 
 	@Override
-	public List<Impugnment> findImpugnmentsForCriteria(
-			ImpugnmentSearchCriteria criteria) {
-		Query query  = entityManager.createNamedQuery("Impugnment.findByCriteria");
-		query.setParameter("numberInfringement", criteria.getNumberInfringement() == null ? "" :criteria.getNumberInfringement());
-		query.setParameter("numberProsecution", criteria.getNumberProsecution() ==null ? 0 :criteria.getNumberProsecution());
-		return query.getResultList();
+	public List<ImpugnmentDTO> findImpugnmentsForCriteria(ImpugnmentSearchCriteria criteria) {
+		Query query  = entityManager.createNativeQuery("SELECT imp.id AS id, "
+														+"imp.creationdate, "
+														+"imp.numberinfringement, "
+														+"imp.numberprosecution, "
+														+"imp.numbertramit, "
+														+"imp.observation, "
+														+"imp.updatedate, "
+														+"mb.id AS municipalbond_id, "
+														+"itm.id AS status_id, "
+														+"imp.userregister_id, "
+														+"imp.userupdate_id, "
+														+"res.identificationnumber, "
+														+"res.name AS resident_name, "
+														+"itm.name AS statusname, "
+														+"mb.number AS municipalbond_number, "
+														+"mb.value AS municipalbond_value, "
+														+"itm.code AS statuscode "
+													+"FROM Impugnment imp "
+													+"INNER JOIN municipalBond mb ON (mb.id = imp.municipalbond_id)"
+													+"INNER JOIN resident res ON (res.id = mb.resident_id) "
+													+"INNER JOIN itemcatalog itm ON (itm.id = imp.status_itm_id) "
+													+"WHERE (CAST(?1 AS text) = '' OR imp.numberInfringement = CAST(?1 AS text)) "
+													+"AND (CAST(?2 AS text) = '' OR imp.numberProsecution = CAST(?2 AS text)) "
+													+"AND (CAST(?3 AS text) = '' OR res.identificationNumber = CAST(?3 AS text)) "
+													+"AND (?4 = 0 OR itm.id = ?4) "
+													+"ORDER BY imp.id DESC");
+		query.setParameter(1, criteria.getNumberInfringement() == null ? "" :criteria.getNumberInfringement());
+		query.setParameter(2, criteria.getNumberProsecution() ==null ? "" :criteria.getNumberProsecution());
+		query.setParameter(3, criteria.getIdentificationNumber() == null ? "" :criteria.getIdentificationNumber());
+		query.setParameter(4, criteria.getState() == null ? BigInteger.ZERO :criteria.getState().getId());
+		
+		List<ImpugnmentDTO> retorno = NativeQueryResultsMapper.map(query.getResultList(), ImpugnmentDTO.class);
+		
+		return retorno;
 	}
 
 	@Override

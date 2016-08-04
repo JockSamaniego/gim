@@ -23,8 +23,8 @@
 
 				<s:decorate template="../../layout/display.xhtml">
 					<ui:define name="label">#{messages['revenue.impugnments.impugnment_numberInfringement_label']}</ui:define>
-					<h:inputText id="residentCriteria"
-						value="#{impugnmentHome.numberInfringement}" size="40"
+					<h:inputText id="residentCriteriaNumberInfringement"
+						value="#{impugnmentHome.numberInfringementCriteria}" size="40"
 						maxlength="40">
 						<a:support ajaxSingle="true" event="onblur"></a:support>
 					</h:inputText>
@@ -33,11 +33,35 @@
 
 				<s:decorate template="../../layout/display.xhtml">
 					<ui:define name="label">#{messages['revenue.impugnments.impugnment_numberProsecution_label']}</ui:define>
-					<h:inputText id="residentCriteria"
-						value="#{impugnmentHome.numberProsecution}" size="40"
+					<h:inputText id="residentCriteriaNumberProsecution"
+						value="#{impugnmentHome.numberProsecutionCriteria}" size="40"
 						maxlength="40">
 						<a:support ajaxSingle="true" event="onblur"></a:support>
 					</h:inputText>
+				</s:decorate>
+
+				<s:decorate template="../../layout/display.xhtml">
+					<ui:define name="label">#{messages['revenue.impugnments.impugnment_resident_identification_label']}</ui:define>
+					<h:inputText id="residentCriteriaIdentification"
+						value="#{impugnmentHome.identificationNumberCriteria}" size="40"
+						maxlength="40">
+						<a:support ajaxSingle="true" event="onblur"></a:support>
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['revenue.impugnments.impugnment_state_label']}</ui:define>
+					<h:selectOneMenu id="cmbStatusCriteria"
+						value="#{impugnmentHome.stateCriteriaId}"
+						>
+						
+						<f:selectItem itemLabel="#{messages['common.selectOne']}" itemValue="#{null}"
+							noSelectionOption="true" />
+						<f:selectItems value="#{impugnmentHome.statesImpugnmentCriteria}"
+							var="status" itemLabel="#{status.name}" itemValue="#{status.id}" />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+
 				</s:decorate>
 
 			</rich:simpleTogglePanel>
@@ -59,16 +83,16 @@
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
 						<h:outputFormat id="lblNumberResults"
 							value="#{messages['revenue.impugnments.impugnment_number_results']}">
-							<f:param value="#{impugnmentHome.impugnments.size()}"/>
+							<f:param value="#{impugnmentHome.impugnments.size()}" />
 						</h:outputFormat>
 
 						<a:commandButton id="createImpugnment"
-							reRender="impugnmentRegisterPanel" 
-							ajaxSingle="true"
+							reRender="impugnmentRegisterPanel" ajaxSingle="true"
 							eventsQueue="gimQueue"
-							oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:520})"
+							oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:550})"
 							value="#{messages['revenue.impugnments.impugnment_new']}"
-							actionListener="#{impugnmentHome.preparaRegisterImpugnment()}" />
+							actionListener="#{impugnmentHome.preparaRegisterImpugnment()}" 
+							rendered="#{!impugnmentHome.isUserWithRolVer()}"/>
 					</h:panelGrid>
 
 				</f:facet>
@@ -80,9 +104,8 @@
 
 					<rich:dataTable id="impugnmentsTable" var="_impugnment"
 						width="100%" value="#{impugnmentHome.impugnments}"
-						columnClasses="center, center, center, center, center, center,right,center"
-						rows="25"
-						>
+						columnClasses="center, center, center, center, center, center,center,center,right,center"
+						rows="25">
 						<rich:column>
 							<f:facet name="header">
 								#{messages['revenue.impugnments.impugnment_id']}
@@ -94,45 +117,60 @@
 							<f:facet name="header">
 								#{messages['revenue.impugnments.impugnment_numberInfringement']}
 							</f:facet>
-							<h:outputText value="#{_impugnment.numberInfringement}" />
+							<h:outputText value="#{_impugnment.numberinfringement}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								#{messages['revenue.impugnments.impugnment_numberProsecution']}
+							</f:facet>
+							<h:outputText value="#{_impugnment.numberprosecution}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								#{messages['revenue.impugnments.impugnment_resident_identification']}
+							</f:facet>
+							<h:outputText value="#{_impugnment.identificationnumber}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								#{messages['revenue.impugnments.impugnment_resident_name']}
+							</f:facet>
+							<h:outputText value="#{_impugnment.resident_name}" />
 						</rich:column>
 
 						<rich:column>
 							<f:facet name="header">
 								#{messages['revenue.impugnments.impugnment_date']}
 							</f:facet>
-							<h:outputText value="#{_impugnment.impugnmentDate}">
+							<h:outputText value="#{_impugnment.creationdate}">
 								<f:convertDateTime type="date"
 									pattern="#{messages['common.datePattern']}" />
 							</h:outputText>
 						</rich:column>
 
-						<rich:column>
-							<f:facet name="header">
-								#{messages['revenue.impugnments.impugnment_numberProsecution']}
-							</f:facet>
-							<h:outputText value="#{_impugnment.numberProsecution}" />
-						</rich:column>
-
+						
 						<rich:column>
 							<f:facet name="header">
 								#{messages['revenue.impugnments.impugnment_state']}
 							</f:facet>
-							<h:outputText value="#{_impugnment.status.name}" />
+							<h:outputText value="#{_impugnment.statusname}" />
 						</rich:column>
 
 						<rich:column>
 							<f:facet name="header">
 								#{messages['revenue.impugnments.impugnment_bond_number']}
 							</f:facet>
-							<h:outputText value="#{_impugnment.municipalBond.number}" />
+							<h:outputText value="#{_impugnment.municipalbond_number}" />
 						</rich:column>
 
 						<rich:column>
 							<f:facet name="header">
 								#{messages['revenue.impugnments.impugnment_bond_value']}
 							</f:facet>
-							<h:outputText value="#{_impugnment.municipalBond.value}" />
+							<h:outputText value="#{_impugnment.municipalbond_value}" />
 						</rich:column>
 
 						<rich:column>
@@ -140,13 +178,25 @@
 								#{messages['revenue.impugnments.impugnment_options']}
 							</f:facet>
 							<div align="center">
+							
+								<a:commandButton
+									value="#{messages['revenue.impugnments.impugnment_edit']}"
+									reRender="impugnmentRegisterPanel" 
+									ajaxSingle="true"
+									eventsQueue="gimQueue"
+									oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:550})"
+									actionListener="#{impugnmentHome.prepareUpdateImpugnment(_impugnment.id)}"
+									rendered="#{_impugnment.statuscode == 'STATE_REGISTE' and impugnmentHome.isUserWithRolMatriculacion()}">
+								</a:commandButton>
+								
 								<a:commandButton
 									value="#{messages['revenue.impugnments.impugnment_status_change']}"
-									reRender="impugnmentRegisterPanel" ajaxSingle="true"
+									reRender="impugnmentRegisterPanel" 
+									ajaxSingle="true"
 									eventsQueue="gimQueue"
-									oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:520})"
-									actionListener="#{impugnmentHome.prepareUpdateImpugnment(_impugnment.id)}"
-									rendered="#{_impugnment.status.code == 'STATE_REGISTE' and impugnmentHome.isUserWithRolMatriculacion()}">
+									oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:610})"
+									actionListener="#{impugnmentHome.prepareStatusChangeImpugnment(_impugnment.id)}"
+									rendered="#{_impugnment.statuscode == 'STATE_REGISTE' and impugnmentHome.isUserWithRolMatriculacion()}">
 								</a:commandButton>
 							</div>
 						</rich:column>
