@@ -51,8 +51,8 @@ import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.security.model.Role;
-import ec.gob.loja.antclient.DatosMatricula;
-import ec.gob.loja.antclient.MetodosProxy;
+//import ec.gob.loja.antclient.DatosMatricula;
+//import ec.gob.loja.antclient.MetodosProxy;
 
 @Name("municipalBondHome")
 public class MunicipalBondHome extends EntityHome<MunicipalBond> {
@@ -1439,22 +1439,22 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 					}
 				}				
 			}else if(obligationsRadioButton.equals("Ant")){
-				solicitaMatricula(obligationsHistoryCriteria);
+//				solicitaMatricula(obligationsHistoryCriteria);
 			}
 		}
 		
-		private void solicitaMatricula(String placa) {
-			MetodosProxy mp=new MetodosProxy();
-			try {
-				DatosMatricula dm=mp.solicita_Matricula(placa, "WEB", "TESTUSER");
-				System.out.println("------------ "+dm.getAnio());
-				System.out.println("------------ "+dm.getApellido1());
-				System.out.println("------------ "+dm.getApellido2());
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		private void solicitaMatricula(String placa) {
+//			MetodosProxy mp=new MetodosProxy();
+//			try {
+//				DatosMatricula dm=mp.solicita_Matricula(placa, "WEB", "TESTUSER");
+//				System.out.println("------------ "+dm.getAnio());
+//				System.out.println("------------ "+dm.getApellido1());
+//				System.out.println("------------ "+dm.getApellido2());
+//			} catch (RemoteException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 
 		public String getObligationsRadioButton() {
 			return obligationsRadioButton;
