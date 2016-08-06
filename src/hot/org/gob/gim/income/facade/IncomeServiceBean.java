@@ -371,7 +371,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	public void save(List<Deposit> deposits, Long paymentAgreementId,
 			Long tillId) throws Exception {
-		System.out.println("\n\nInicia grabacion");
+		//System.out.println("\n\nInicia grabacion");
 		Long PAID_STATUS_ID = systemParameterService
 				.findParameter(PAID_BOND_STATUS);
 		for (Deposit deposit : deposits) {
@@ -387,7 +387,7 @@ public class IncomeServiceBean implements IncomeService {
 		}
 		Date rightNow = new Date();
 		deactivatePaymentAgreement(paymentAgreementId, rightNow);
-		System.out.println("Termina grabacion");
+		//System.out.println("Termina grabacion");
 	}
 
 	private Receipt findActiveReceipt(Long receiptId) {
@@ -400,7 +400,7 @@ public class IncomeServiceBean implements IncomeService {
 	public Map<Long, Branch> fillMapBranch() {
 		// System.out.println("\n<<<R>>> branch: ");
 		Map<Long, Branch> mapBranch = new HashMap<Long, Branch>();
-		System.out.println("\n<<<R>>> branch: " + entityManager);
+		//System.out.println("\n<<<R>>> branch: " + entityManager);
 		Query query = entityManager.createNamedQuery("Branch.findAll");
 		List<Branch> list = new ArrayList<Branch>();
 		list = query.getResultList();
@@ -574,14 +574,14 @@ public class IncomeServiceBean implements IncomeService {
 			System.out.println("AUTOEMITER=>" + IS_AUTO_EMMITER);
 
 			if (IS_AUTO_EMMITER) {
-				System.out.println("SIIII=>");
+				//System.out.println("SIIII=>");
 				if (municipalBond.getEntry().getIsTaxable()) {
-					System.out.println("SIIII=>");
+					//System.out.println("SIIII=>");
 					if (municipalBond.getReceipt() == null) {
 						Receipt receipt = createReceipt(municipalBond,
 								branch.getNumber(), till.getNumber(),
 								paymentDate);
-						System.out.println("===========>" + till.getNumber());
+						//System.out.println("===========>" + till.getNumber());
 						
 						//PREGUNTAR SI ES POR COMPENSACION AGREGAR UN CAMPO MAS EN LA FACTURA
 						//macartuche
@@ -593,14 +593,14 @@ public class IncomeServiceBean implements IncomeService {
 						entityManager.persist(receipt);
 						municipalBond.setReceipt(receipt);
 						if (IS_ELECTRONIC_INVOICE_ENABLE) {
-							System.out
-									.println("isElectronicInvoiceEnable==================>"
-											+ till.isElectronicInvoiceEnable());
+							//System.out
+								//	.println("isElectronicInvoiceEnable==================>"
+									//		+ till.isElectronicInvoiceEnable());
 
 							if (till.isElectronicInvoiceEnable()) {
-								System.out
-										.println("isEmissionElectronicOnLine==================>"
-												+ till.isEmissionElectronicOnLine());
+								//System.out
+								//.println("isEmissionElectronicOnLine==================>"
+								//+ till.isEmissionElectronicOnLine());
 								if (till.isEmissionElectronicOnLine()) {
 
 									DataWS authorizedReceiptWS = authorizedElectronicReceipt(receipt);
