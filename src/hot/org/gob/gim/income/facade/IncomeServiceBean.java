@@ -216,7 +216,7 @@ public class IncomeServiceBean implements IncomeService {
 			Date paymentServiceDate, boolean isForPay, boolean applyDiscount,
 			Object... facts) throws EntryDefinitionNotFoundException {
 
-		System.out.println("IncomeServiceBean -----> BEGINS CALCULATE PAYMENT");
+		//System.out.println("IncomeServiceBean -----> BEGINS CALCULATE PAYMENT");
 		municipalBond.setBalance(municipalBond.getValue());
 		Deposit lastDeposit = this.getLastDeposit(municipalBond);
 		if (lastDeposit != null) {
@@ -226,11 +226,11 @@ public class IncomeServiceBean implements IncomeService {
 				paymentServiceDate, lastDeposit, !isForPay, !isForPay,
 				applyDiscount, null);
 
-		System.out
+		/*System.out
 				.println("\n\n\n\n\nBASE IMPONIBLE EN IncomeService -----> TAXABLE "
 						+ municipalBond.getTaxableTotal()
 						+ " TAXES TOTAL "
-						+ municipalBond.getTaxesTotal());
+						+ municipalBond.getTaxesTotal());*/
 	}
 
 	@Override

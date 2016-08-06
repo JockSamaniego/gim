@@ -78,5 +78,6 @@
 	<classpathentry kind="lib" path="lib/stax-api.jar"/>
 	<classpathentry kind="lib" path="lib/testng-jdk15.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/ant_ws_client.jar"/>
 	<classpathentry kind="output" path="test-build"/>
 </classpath>
