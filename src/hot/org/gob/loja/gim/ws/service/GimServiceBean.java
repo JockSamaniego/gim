@@ -689,15 +689,23 @@ public class GimServiceBean implements GimService{
 		return statementReport;
 	}
 
+
 	@Override
 	public List<RealEstate> findProperties(ServiceRequest request) {
 		try {
 			return listPropertiesByDNI(request.getIdentificationNumber());
-		} catch (RealEstateNotFound | TaxpayerNotFound | TaxpayerNonUnique e) {
+		} catch (RealEstateNotFound e){
+			e.printStackTrace();
+			return null;
+		}catch(TaxpayerNotFound  e){
+			e.printStackTrace();
+			return null;
+		}catch(TaxpayerNonUnique e){
 			e.printStackTrace();
 			return null;
 		}
 	}
+	
 	
 	private List<RealEstate> listPropertiesByDNI(String identificationNumber) throws RealEstateNotFound, TaxpayerNotFound, TaxpayerNonUnique{
 		try{

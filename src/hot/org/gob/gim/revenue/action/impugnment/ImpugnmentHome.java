@@ -51,7 +51,7 @@ public class ImpugnmentHome extends EntityController {
 
 	private ImpugnmentSearchCriteria criteria;
 
-	private List<Impugnment> impugnments = new ArrayList<>();
+	private List<Impugnment> impugnments = new ArrayList<Impugnment>();
 
 	private Impugnment impugnmentSelected;
 
