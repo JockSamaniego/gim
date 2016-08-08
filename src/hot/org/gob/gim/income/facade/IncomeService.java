@@ -1,5 +1,6 @@
 package org.gob.gim.income.facade;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.loja.client.model.DataWS;
 
 @Local
@@ -110,6 +112,9 @@ public interface IncomeService {
 	 * @author macartuche
 	 * Poner a true que la compensacion ha sido pagada
 	 */
-	
-	public void compensationPayment(List<Deposit> deposits);
+    //@author macartuche  
+    //@date 2016-06-27 18:08  
+    //@tag InteresCeroInstPub  
+    //No realizar el calculo de interes para instituciones publicas  
+   //public void compensationPayment(List<Deposit> deposits);
 }
