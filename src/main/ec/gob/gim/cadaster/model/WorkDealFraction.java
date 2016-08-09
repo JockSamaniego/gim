@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.envers.Audited;
 
@@ -56,6 +57,14 @@ public class WorkDealFraction implements Comparable<WorkDealFraction>{
 	private BigDecimal waterValue;
 	private BigDecimal sewerageValue;
 	
+	/**
+	 * 2016-08-04
+	 * @author mack
+	 * @tag cambioCalculoCEM
+	 */
+	@Transient
+	private BigDecimal commercialAppraisal; 
+	
 	public WorkDealFraction() {
 		frontLength = BigDecimal.ZERO;		
 		contributionFront = BigDecimal.ZERO;
@@ -69,6 +78,10 @@ public class WorkDealFraction implements Comparable<WorkDealFraction>{
 		 */
 		waterValue = BigDecimal.ZERO;
 		sewerageValue = BigDecimal.ZERO;
+		
+		//@tag cambioCalculoCEM
+		//2016-08-04
+		commercialAppraisal = BigDecimal.ZERO;
 	}
 	
 	public Long getId() {
@@ -152,5 +165,21 @@ public class WorkDealFraction implements Comparable<WorkDealFraction>{
 	@Override
 	public int compareTo(WorkDealFraction o) {
 		return property.getCadastralCode().compareTo(o.getProperty().getCadastralCode());
-	} 
+	}
+
+	/**
+	 * 2016-08-04
+	 * @author mack
+	 * valor Transiente
+	 */
+
+	public BigDecimal getCommercialAppraisal() {
+		return commercialAppraisal;
+	}
+
+	public void setCommercialAppraisal(BigDecimal commercialAppraisal) {
+		this.commercialAppraisal = commercialAppraisal;
+	}
+	
+	
 }
