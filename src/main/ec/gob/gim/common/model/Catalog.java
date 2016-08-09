@@ -34,7 +34,7 @@ public class Catalog {
 	@Version
 	private int version;
 
-	@Column(length = 15)
+	@Column(length = 30)
 	private String code;
 
 	@Column(length = 80)

@@ -31,7 +31,7 @@ public class ItemCatalog {
 	@Version
 	private int version;
 
-	@Column(length = 15)
+	@Column(length = 30)
 	private String code;
 
 	@Column(length = 80)
@@ -40,7 +40,7 @@ public class ItemCatalog {
 	@Column(updatable = false)
 	private String description;
 
-	@Column(length = 15)
+	@Column(length = 30)
 	private String catalogCode;
 
 	@ManyToOne

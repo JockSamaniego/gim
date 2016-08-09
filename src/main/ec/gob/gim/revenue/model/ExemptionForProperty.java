@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +15,7 @@ import javax.persistence.TableGenerator;
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.common.model.ItemCatalog;
 
 
 @Audited
@@ -45,6 +47,10 @@ public class ExemptionForProperty {
 	private BigDecimal amountCreditYear3;
 	
 	private BigDecimal discountPercentage;
+	
+	@ManyToOne(fetch = FetchType.EAGER, optional=true)
+	@JoinColumn(name = "treatmentType_itm_id", nullable = true, referencedColumnName = "id")
+	private ItemCatalog treatmentType;
 	
 	@Column(length=150)
 	private String nameHistoryResident;
@@ -118,6 +124,14 @@ public class ExemptionForProperty {
 
 	public void setDiscountPercentage(BigDecimal discountPercentage) {
 		this.discountPercentage = discountPercentage;
+	}
+
+	public ItemCatalog getTreatmentType() {
+		return treatmentType;
+	}
+
+	public void setTreatmentType(ItemCatalog treatmentType) {
+		this.treatmentType = treatmentType;
 	}
 	
 }

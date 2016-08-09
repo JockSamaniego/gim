@@ -106,60 +106,128 @@
 						</h:panelGrid>
 					</f:facet>
 
-					<rich:dataTable id="exemptionPropertyTable"
-						var="_exemptionProperty"
-						value="#{exemptionHome.instance.propertiesInExemption}">
-						<rich:column>
-							<f:facet name="header">#{messages['exemption.cadastralCode']}</f:facet>
-							<h:outputText
-								value="#{_exemptionProperty.property.cadastralCode}" />
-						</rich:column>
 
-						<rich:column>
-							<f:facet name="header">#{messages['exemption.territorialCode']}</f:facet>
-							<h:outputText
-								value="#{_exemptionProperty.property.previousCadastralCode}" />
-						</rich:column>
+					<rich:panel>
+						<f:facet name="header">
+							Propiedades Tratamiento Normal
 
-						<rich:column style="text-align:right;">
-							<f:facet name="header">#{messages['exemption.percentage']}</f:facet>
-							<h:inputText value="#{_exemptionProperty.discountPercentage}"
-								required="true" style="text-align:right;">
-								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
-								<a:support event="onblur" ajaxSingle="true" />
-							</h:inputText>
-						</rich:column>
+						</f:facet>
+						<rich:dataTable id="exemptionNormalPropertyTable"
+							var="_exemptionProperty"
+							value="#{exemptionHome.propertiesInExemptionNormal}">
+							<rich:column>
+								<f:facet name="header">#{messages['exemption.cadastralCode']}</f:facet>
+								<h:outputText
+									value="#{_exemptionProperty.property.cadastralCode}" />
+							</rich:column>
 
-						<rich:column>
-							<f:facet name="header">#{messages['exemption.nameHistoryResident']}</f:facet>
-							<h:outputText value="#{_exemptionProperty.nameHistoryResident}" />
-						</rich:column>
+							<rich:column>
+								<f:facet name="header">#{messages['exemption.territorialCode']}</f:facet>
+								<h:outputText
+									value="#{_exemptionProperty.property.previousCadastralCode}" />
+							</rich:column>
 
-						<rich:column>
-							<f:facet name="header">#{messages['exemption.commercialAppraisal']}</f:facet>
-							<h:outputText
-								value="#{_exemptionProperty.property.currentDomain.commercialAppraisal}" />
-						</rich:column>
+							<rich:column style="text-align:right;">
+								<f:facet name="header">#{messages['exemption.percentage']}</f:facet>
+								<h:inputText value="#{_exemptionProperty.discountPercentage}"
+									required="true" style="text-align:right;">
+									<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+									<a:support event="onblur" ajaxSingle="true" />
+								</h:inputText>
+							</rich:column>
 
-						<rich:column styleClass="right">
-							<f:facet name="header">#{messages['exemption.amountCreditYear1']}</f:facet>
-							<h:outputText value="#{_exemptionProperty.amountCreditYear1}" />
-						</rich:column>
+							<rich:column>
+								<f:facet name="header">#{messages['exemption.nameHistoryResident']}</f:facet>
+								<h:outputText value="#{_exemptionProperty.nameHistoryResident}" />
+							</rich:column>
 
-						<rich:column styleClass="right">
-							<f:facet name="header">#{messages['exemption.amountCreditYear2']}</f:facet>
-							<h:outputText value="#{_exemptionProperty.amountCreditYear2}" />
-						</rich:column>
+							<rich:column>
+								<f:facet name="header">#{messages['exemption.commercialAppraisal']}</f:facet>
+								<h:outputText
+									value="#{_exemptionProperty.property.currentDomain.commercialAppraisal}" />
+							</rich:column>
 
-						<rich:column styleClass="right">
-							<f:facet name="header">#{messages['exemption.amountCreditYear3']}</f:facet>
-							<h:outputText value="#{_exemptionProperty.amountCreditYear3}" />
-						</rich:column>
+							<rich:column styleClass="right">
+								<f:facet name="header">#{messages['exemption.amountCreditYear1']}</f:facet>
+								<h:outputText value="#{_exemptionProperty.amountCreditYear1}" />
+							</rich:column>
 
-					</rich:dataTable>
+							<rich:column styleClass="right">
+								<f:facet name="header">#{messages['exemption.amountCreditYear2']}</f:facet>
+								<h:outputText value="#{_exemptionProperty.amountCreditYear2}" />
+							</rich:column>
+
+							<rich:column styleClass="right">
+								<f:facet name="header">#{messages['exemption.amountCreditYear3']}</f:facet>
+								<h:outputText value="#{_exemptionProperty.amountCreditYear3}" />
+							</rich:column>
+
+						</rich:dataTable>
+					</rich:panel>
+
+
+					<rich:panel style="margin-top:5px !important">
+						<f:facet name="header">
+							Propiedades Tratamiento Especial
+
+						</f:facet>
+						<rich:dataTable id="exemptionSpecialPropertyTable"
+							var="_exemptionProperty"
+							value="#{exemptionHome.propertiesInExemptionSpecial}"
+							>
+							<rich:column>
+								<f:facet name="header">#{messages['exemption.cadastralCode']}</f:facet>
+								<h:outputText
+									value="#{_exemptionProperty.property.cadastralCode}" />
+							</rich:column>
+
+							<rich:column>
+								<f:facet name="header">#{messages['exemption.territorialCode']}</f:facet>
+								<h:outputText
+									value="#{_exemptionProperty.property.previousCadastralCode}" />
+							</rich:column>
+
+							<rich:column style="text-align:right;">
+								<f:facet name="header">#{messages['exemption.percentage']}</f:facet>
+								<h:inputText value="#{_exemptionProperty.discountPercentage}"
+									required="true" style="text-align:right;">
+									<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
+									<a:support event="onblur" ajaxSingle="true" />
+								</h:inputText>
+							</rich:column>
+
+							<rich:column>
+								<f:facet name="header">#{messages['exemption.nameHistoryResident']}</f:facet>
+								<h:outputText value="#{_exemptionProperty.nameHistoryResident}" />
+							</rich:column>
+
+							<rich:column>
+								<f:facet name="header">#{messages['exemption.commercialAppraisal']}</f:facet>
+								<h:outputText
+									value="#{_exemptionProperty.property.currentDomain.commercialAppraisal}" />
+							</rich:column>
+
+							<rich:column styleClass="right">
+								<f:facet name="header">#{messages['exemption.amountCreditYear1']}</f:facet>
+								<h:outputText value="#{_exemptionProperty.amountCreditYear1}" />
+							</rich:column>
+
+							<rich:column styleClass="right">
+								<f:facet name="header">#{messages['exemption.amountCreditYear2']}</f:facet>
+								<h:outputText value="#{_exemptionProperty.amountCreditYear2}" />
+							</rich:column>
+
+							<rich:column styleClass="right">
+								<f:facet name="header">#{messages['exemption.amountCreditYear3']}</f:facet>
+								<h:outputText value="#{_exemptionProperty.amountCreditYear3}" />
+							</rich:column>
+
+						</rich:dataTable>
+					</rich:panel>
 				</rich:panel>
 
-				<h:panelGrid columns="2" width="100%"
+				<h:panelGrid
+								columns="2" width="100%"
 					columnClasses="topAligned, topAligned right" id="panelBottom">
 
 					<h:panelGroup>

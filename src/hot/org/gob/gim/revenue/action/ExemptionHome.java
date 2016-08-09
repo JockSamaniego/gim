@@ -1,8 +1,7 @@
 package org.gob.gim.revenue.action;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -12,8 +11,10 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
+import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -25,11 +26,11 @@ import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
 import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Exemption;
 import ec.gob.gim.revenue.model.ExemptionForProperty;
 import ec.gob.gim.revenue.model.ExemptionType;
-import ec.gob.gim.revenue.model.MunicipalBondStatus;
 
 @Name("exemptionHome")
 @Scope(ScopeType.CONVERSATION)
@@ -60,21 +61,37 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	private SystemParameterService systemParameterService;
 
 	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
-	
+
 	private ExemptionType exemptionSpecial;
-	
-	
+
+	private List<ItemCatalog> typerTreatmentExcemption = new ArrayList<ItemCatalog>();
+
+	private ItemCatalogService itemCatalogService;
+
+	private List<ExemptionForProperty> propertiesInExemptionNormal = new ArrayList<ExemptionForProperty>();
+
+	private List<ExemptionForProperty> propertiesInExemptionSpecial = new ArrayList<ExemptionForProperty>();
+
+	private ItemCatalog typeTreatmentExcemption;
+
 	@Logger
 	Log logger;
 
 	@In
 	FacesMessages facesMessages;
-	
-	public void init(){
+
+	public void init() {
 		if (systemParameterService == null) {
 			systemParameterService = ServiceLocator.getInstance().findResource(
 					SYSTEM_PARAMETER_SERVICE_NAME);
 		}
+
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
+		this.typerTreatmentExcemption = itemCatalogService
+				.findItemsForCatalogCode(CatalogConstants.CATALOG_TYPES_TREATMENT_EXCEMPTION);
 	}
 
 	public void reCalculateValues() {
@@ -168,6 +185,21 @@ public class ExemptionHome extends EntityHome<Exemption> {
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					message);
 			return "failed";
+		}
+
+		/*
+		 * René Ortega 2016-08-08
+		 */
+		// TODO agregar propiedades de listas auxiliares
+
+		for (ExemptionForProperty property : this.propertiesInExemptionNormal) {
+			if (!hasPropertyInExemption(property))
+				this.instance.getPropertiesInExemption().add(property);
+		}
+
+		for (ExemptionForProperty property : this.propertiesInExemptionSpecial) {
+			if (!hasPropertyInExemption(property))
+				this.instance.getPropertiesInExemption().add(property);
 		}
 
 		if (this.instance.getId() == null) {
@@ -271,6 +303,13 @@ public class ExemptionHome extends EntityHome<Exemption> {
 					.getIdentificationNumber();
 		isFirsTime = false;
 		init();
+
+		this.typeTreatmentExcemption = itemCatalogService
+				.findItemByCodeAndCodeCatalog(
+						CatalogConstants.CATALOG_TYPES_TREATMENT_EXCEMPTION,
+						CatalogConstants.ITEM_CATALOG_TYPE_EXCLUDE_TREATMENT_EXCEMPTION);
+		this.exemptionSpecial = systemParameterService.materialize(
+				ExemptionType.class, "EXEMPTION_TYPE_ID_SPECIAL");
 		prepareEditExcemption(this.instance);
 	}
 
@@ -380,6 +419,33 @@ public class ExemptionHome extends EntityHome<Exemption> {
 		this.isExemptionEspecial = isExemptionEspecial;
 	}
 
+	public List<ItemCatalog> getTyperTreatmentExcemption() {
+		return typerTreatmentExcemption;
+	}
+
+	public void setTyperTreatmentExcemption(
+			List<ItemCatalog> typerTreatmentExcemption) {
+		this.typerTreatmentExcemption = typerTreatmentExcemption;
+	}
+
+	public List<ExemptionForProperty> getPropertiesInExemptionNormal() {
+		return propertiesInExemptionNormal;
+	}
+
+	public void setPropertiesInExemptionNormal(
+			List<ExemptionForProperty> propertiesInExemptionNormal) {
+		this.propertiesInExemptionNormal = propertiesInExemptionNormal;
+	}
+
+	public List<ExemptionForProperty> getPropertiesInExemptionSpecial() {
+		return propertiesInExemptionSpecial;
+	}
+
+	public void setPropertiesInExemptionSpecial(
+			List<ExemptionForProperty> propertiesInExemptionSpecial) {
+		this.propertiesInExemptionSpecial = propertiesInExemptionSpecial;
+	}
+
 	@SuppressWarnings("unchecked")
 	public void searchPropertyByCriteria() {
 		String EJBQL = "Property.findByCadastralCode";
@@ -417,9 +483,26 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	}
 
 	public void addExemptionForProperty() {
-		if (!hasPropertyInExemption(this.exemptionForProperty))
-			this.instance.getPropertiesInExemption().add(
-					this.exemptionForProperty);
+
+		// TODO controlar que no este ya agregada
+
+		// if (!hasPropertyInExemption(this.exemptionForProperty))
+		// this.instance.getPropertiesInExemption().add(
+		// this.exemptionForProperty);
+
+		if (this.exemptionForProperty.getTreatmentType() == null) {
+			this.propertiesInExemptionNormal.add(this.exemptionForProperty);
+		} else if (this.exemptionForProperty.getTreatmentType().getId()
+				.equals(typeTreatmentExcemption.getId())) {
+			this.propertiesInExemptionSpecial.add(this.exemptionForProperty);
+			//Recalcular el valor del avaluo de las propiedades
+			this.instance.setPropertiesAppraisal(this.instance.getPropertiesAppraisal().subtract(this.exemptionForProperty.getProperty().getCurrentDomain().getCommercialAppraisal()));
+		}
+		
+
+		
+		
+
 	}
 
 	public void removeExemptionForProperty() {
@@ -445,15 +528,29 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	}
 
 	public void prepareEditExcemption(Exemption excemption) {
-		
-		this.exemptionSpecial= systemParameterService.materialize(
-				ExemptionType.class, "EXEMPTION_TYPE_ID_SPECIAL");
 
-		if (excemption.getExemptionType().getId()
-				.equals(exemptionSpecial.getId())) {
-			this.isExemptionEspecial = Boolean.TRUE;
-		} else {
-			this.isExemptionEspecial = Boolean.FALSE;
+		this.propertiesInExemptionNormal.clear();
+		this.propertiesInExemptionSpecial.clear();
+
+		if (excemption.getExemptionType() != null) {
+
+			if (excemption.getExemptionType().getId()
+					.equals(exemptionSpecial.getId())) {
+				this.isExemptionEspecial = Boolean.TRUE;
+			} else {
+				this.isExemptionEspecial = Boolean.FALSE;
+			}
+		}
+
+		for (ExemptionForProperty propertyInExcemption : excemption
+				.getPropertiesInExemption()) {
+			// TODO
+			if (propertyInExcemption.getTreatmentType() == null) {
+				this.propertiesInExemptionNormal.add(propertyInExcemption);
+			} else if (propertyInExcemption.getTreatmentType().getId()
+					.equals(typeTreatmentExcemption.getId())) {
+				this.propertiesInExemptionSpecial.add(propertyInExcemption);
+			}
 		}
 	}
 

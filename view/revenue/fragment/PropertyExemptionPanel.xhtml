@@ -6,15 +6,15 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:c="http://java.sun.com/jstl/core" 
-	xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:c="http://java.sun.com/jstl/core" xmlns:g="http://gim.gob.ec/jsf"
 	xmlns:rich="http://richfaces.org/rich">
 
 	<rich:modalPanel id="propertyExemptionPanel" width="800" height="550"
 		style="overflow:auto" moveable="false">
 		<f:facet name="header">
 			<h:panelGroup>
-				<h:outputText value="#{messages['exemption.propertyExemptionTitle']}"></h:outputText>
+				<h:outputText
+					value="#{messages['exemption.propertyExemptionTitle']}"></h:outputText>
 			</h:panelGroup>
 		</f:facet>
 		<f:facet name="controls">
@@ -34,60 +34,87 @@
 			</h:panelGrid>
 			<rich:panel id="richPanelId">
 
-					<h:panelGrid columns="1" styleClass="center" width="100%"
-						columnClasses="topAligned,topAligned">
-						
-						<rich:panel styleClass="left">
-							<f:facet name="header">#{messages['property']}</f:facet>
-							<g:propertyChooser id="propertyChooser" required="true"
-								property="#{exemptionHome.exemptionForProperty.property}"
-								criteria="#{exemptionHome.criteriaProperty}"
-								bean="#{exemptionHome}" searchAction="searchPropertyByCriteria"
-								propertyList="#{exemptionHome.properties}"
-								searchByCriteriaAction="searchPropertyByCriteria"
-								clearSearchPanelAction="clearSearchPropertyPanel"
-								propertyChosenListenerName="propertySelectedListener"/>
-							<div style="clear: both" />
-						</rich:panel>
-	
-					</h:panelGrid>
-					
-					<s:decorate id="amountCreditYear1Field" template="../../layout/edit.xhtml" rendered="#{exemptionHome.instance.exemptionType.name=='Por Rebaja Hipotecaria'}">
-						<ui:define name="label">#{messages['exemption.amountCreditYear1']}</ui:define>
-						<h:inputText value="#{exemptionHome.exemptionForProperty.amountCreditYear1}"  style="text-align: right" required="true" />
-					</s:decorate>
-					
-					<s:decorate id="amountCreditYear2Field" template="../../layout/edit.xhtml" rendered="#{exemptionHome.instance.exemptionType.name=='Por Rebaja Hipotecaria'}">
-						<ui:define name="label">#{messages['exemption.amountCreditYear2']}</ui:define>
-						<h:inputText value="#{exemptionHome.exemptionForProperty.amountCreditYear2}"  style="text-align: right" required="true" />
-					</s:decorate>
-					
-					<s:decorate id="amountCreditYear3Field" template="../../layout/edit.xhtml" rendered="#{exemptionHome.instance.exemptionType.name=='Por Rebaja Hipotecaria'}">
-						<ui:define name="label">#{messages['exemption.amountCreditYear3']}</ui:define>
-						<h:inputText value="#{exemptionHome.exemptionForProperty.amountCreditYear3}"  style="text-align: right" required="true" />
-					</s:decorate>
-					
-				<div style="clear:both">
-                <span class="required">*</span>
-                #{messages['common.requiredFields']}
-            </div>		
+				<h:panelGrid columns="1" styleClass="center" width="100%"
+					columnClasses="topAligned,topAligned">
+
+					<rich:panel styleClass="left">
+						<f:facet name="header">#{messages['property']}</f:facet>
+						<g:propertyChooser id="propertyChooser" required="true"
+							property="#{exemptionHome.exemptionForProperty.property}"
+							criteria="#{exemptionHome.criteriaProperty}"
+							bean="#{exemptionHome}" searchAction="searchPropertyByCriteria"
+							propertyList="#{exemptionHome.properties}"
+							searchByCriteriaAction="searchPropertyByCriteria"
+							clearSearchPanelAction="clearSearchPropertyPanel"
+							propertyChosenListenerName="propertySelectedListener" />
+						<div style="clear: both" />
+					</rich:panel>
+
+				</h:panelGrid>
+
+				<s:decorate id="amountCreditYear1Field"
+					template="../../layout/edit.xhtml"
+					rendered="#{exemptionHome.instance.exemptionType.name=='Por Rebaja Hipotecaria'}">
+					<ui:define name="label">#{messages['exemption.amountCreditYear1']}</ui:define>
+					<h:inputText
+						value="#{exemptionHome.exemptionForProperty.amountCreditYear1}"
+						style="text-align: right" required="true" />
+				</s:decorate>
+
+				<s:decorate id="amountCreditYear2Field"
+					template="../../layout/edit.xhtml"
+					rendered="#{exemptionHome.instance.exemptionType.name=='Por Rebaja Hipotecaria'}">
+					<ui:define name="label">#{messages['exemption.amountCreditYear2']}</ui:define>
+					<h:inputText
+						value="#{exemptionHome.exemptionForProperty.amountCreditYear2}"
+						style="text-align: right" required="true" />
+				</s:decorate>
+
+				<s:decorate id="amountCreditYear3Field"
+					template="../../layout/edit.xhtml"
+					rendered="#{exemptionHome.instance.exemptionType.name=='Por Rebaja Hipotecaria'}">
+					<ui:define name="label">#{messages['exemption.amountCreditYear3']}</ui:define>
+					<h:inputText
+						value="#{exemptionHome.exemptionForProperty.amountCreditYear3}"
+						style="text-align: right" required="true" />
+				</s:decorate>
+
+				<s:decorate id="treatmentType" template="../../layout/edit.xhtml"
+					rendered="#{exemptionHome.instance.exemptionType.name=='Por Tercera Edad'}">
+					<ui:define name="label">Tipo:</ui:define>
+
+					<h:selectOneMenu id="cmbtreatmentType"
+						value="#{exemptionHome.exemptionForProperty.treatmentType}">
+						<s:selectItems value="#{typesExcemptionSpecialTreatment}" var="type"
+							label="#{type.name}"
+							noSelectionLabel="#{messages['common.selectOne']}" />
+						<s:convertEntity />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
 			</rich:panel>
 
 			<a:outputPanel ajaxRendered="false" id="buttonsId">
 
-			<div class="actionButtons">
+				<div class="actionButtons">
 
-				<a:commandButton id="save" value="#{messages['common.save']}"
-					action="#{exemptionHome.addExemptionForProperty()}" 
-					oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('propertyExemptionPanel')}.hide();"
-					reRender="propertiesPanel"/>
+					<a:commandButton id="save" value="#{messages['common.save']}"
+						action="#{exemptionHome.addExemptionForProperty()}"
+						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('propertyExemptionPanel')}.hide();"
+						reRender="propertiesPanel,panelBottom" />
 
-				<a:commandButton ajaxSingle="true"
-					value="#{messages['common.cancel']}" 
-					oncomplete="Richfaces.hideModalPanel('propertyExemptionPanel');"
-					bypassUpdates="true" />
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.cancel']}"
+						oncomplete="Richfaces.hideModalPanel('propertyExemptionPanel');"
+						bypassUpdates="true" />
 
-			</div>
+				</div>
 			</a:outputPanel>
 		</h:form>
 	</rich:modalPanel>
