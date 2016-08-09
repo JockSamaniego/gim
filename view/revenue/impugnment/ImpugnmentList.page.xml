@@ -6,6 +6,8 @@
 	<begin-conversation join="true" flush-mode="MANUAL" />
 
 	<param name="from"/>
-	<param name="numberProsecution" value="#{impugnmentHome.numberProsecution}" />
-	<param name="numberInfringement" value="#{impugnmentHome.numberInfringement}" />
+	<param name="numberProsecutionCriteria" value="#{impugnmentHome.numberProsecutionCriteria}" />
+	<param name="numberInfringementCriteria" value="#{impugnmentHome.numberInfringementCriteria}" />
+	<param name="identificationNumberCriteria" value="#{impugnmentHome.identificationNumberCriteria}" />
+	<param name="stateCriteriaId" value="#{impugnmentHome.stateCriteriaId}" />
 </page>

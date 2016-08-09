@@ -1061,8 +1061,6 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			Long paymentAgreementId = deactivatePaymentAgreement ? paymentAgreement.getId() : null;
 			
-			
-			
 			try {
 				org.jboss.seam.transaction.Transaction.instance().setTransactionTimeout(1800);
 				Long tillId = userSession.getTillPermission().getTill().getId();
@@ -1071,8 +1069,12 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				receiptPrintingManager.print(deposits);
 				renderingDepositPDF(userSession.getUser().getId());
 				
-				//invocar al incomeservice
-				incomeService.compensationPayment(deposits);
+				//@author macartuche  
+	            //@date 2016-07-01 11:16  
+	            //@tag InteresCeroInstPub  
+	            //No realizar el calculo de interes para instituciones publicas  
+	            //invocar al incomeservice  
+	            //incomeService.compensationPayment(deposits);  
 				
 			} catch (InvoiceNumberOutOfRangeException e) {
 				addFacesMessageFromResourceBundle(e.getClass().getSimpleName(), e.getInvoiceNumber());
@@ -1185,6 +1187,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void generateDeposits() {
+		
 		//System.out.println("GENERATE DEPOSITS -----> STARTS");
 		if (depositTotal.compareTo(BigDecimal.ZERO) < 0) {
 			depositTotal = BigDecimal.ZERO;
@@ -1239,10 +1242,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					//rfarmijos 2016-05-23
 					//preguntar proceso de pago para fraccionar interes
 					/*if(paymentAgreement.getLowerPercentage()){
-						deposit.setInterest(interestToPay);
-						remaining = remaining.subtract(interestToPay);
-						this.getInstance().add(deposit);
-						municipalBond.add(deposit);
+						//deposit.setInterest(interestToPay);
+						//remaining = remaining.subtract(interestToPay);
+						//this.getInstance().add(deposit);
+						//municipalBond.add(deposit);
+						
 					}else{*/
 						hasConflict = Boolean.TRUE;
 						deposit.setHasConflict(Boolean.TRUE);
@@ -1288,11 +1292,19 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					}
 
 				} else {
-					deposit.setCapital(remaining);
+					
+					deposit.setCapital(BigDecimal.ZERO);
 					remaining = BigDecimal.ZERO;
 				}
 				if (!deactivatePaymentAgreement) {
-					deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+					
+					
+					if(deposit.getInterest().compareTo(municipalBond.getInterest())<0){
+						deposit.setBalance(municipalBond.getBalance());
+					}else{
+						deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+					}
+					
 				}
 				deposit.setValue(deposit.getCapital().add(deposit.getInterest()).add(deposit.getPaidTaxes())
 						.add(deposit.getSurcharge()).subtract(deposit.getDiscount()));
@@ -1798,7 +1810,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		System.out.println("====>" + disabled);
 		return disabled;
 	}
-	
+
 	
 	// ----------------IA---------------------------------------------
 

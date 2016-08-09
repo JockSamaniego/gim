@@ -7,6 +7,7 @@ import javax.ejb.Local;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.revenue.model.impugnment.criteria.ImpugnmentSearchCriteria;
+import ec.gob.gim.revenue.model.impugnment.dto.ImpugnmentDTO;
 
 /**
  *  * @author René Ortega
@@ -31,7 +32,7 @@ public interface ImpugnmentService {
 	
 	public MunicipalBond findMunicipalBondForImpugnment(String numberInfringement);
 	
-	public List<Impugnment> findImpugnmentsForCriteria(ImpugnmentSearchCriteria criteria);
+	public List<ImpugnmentDTO> findImpugnmentsForCriteria(ImpugnmentSearchCriteria criteria);
 	
 	public Impugnment findById(Long impugnmentId);
 	

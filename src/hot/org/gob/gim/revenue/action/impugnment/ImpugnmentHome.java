@@ -7,6 +7,7 @@ import java.util.List;
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
+import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.service.ImpugnmentService;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.ScopeType;
@@ -20,6 +21,8 @@ import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.revenue.model.impugnment.criteria.ImpugnmentSearchCriteria;
+import ec.gob.gim.revenue.model.impugnment.dto.ImpugnmentDTO;
+import ec.gob.gim.security.model.Role;
 
 @Name("impugnmentHome")
 @Scope(ScopeType.CONVERSATION)
@@ -40,6 +43,8 @@ public class ImpugnmentHome extends EntityController {
 
 	private ItemCatalogService itemCatalogService;
 
+	private SystemParameterService systemParameterService;
+
 	/**
 	 * criterios
 	 * 
@@ -51,7 +56,8 @@ public class ImpugnmentHome extends EntityController {
 
 	private ImpugnmentSearchCriteria criteria;
 
-	private List<Impugnment> impugnments = new ArrayList<Impugnment>();
+
+	private List<ImpugnmentDTO> impugnments = new ArrayList<ImpugnmentDTO>();
 
 	private Impugnment impugnmentSelected;
 
@@ -60,6 +66,8 @@ public class ImpugnmentHome extends EntityController {
 	private ItemCatalog stateRegisterImpugnmentFotoMulta;
 
 	private List<ItemCatalog> statesImpugnmentFotoMulta;
+
+	private List<ItemCatalog> statesImpugnmentCriteria;
 
 	// private ImpugnmentDataModel getDataModel() {
 	//
@@ -77,15 +85,29 @@ public class ImpugnmentHome extends EntityController {
 	//
 	// }
 
-	private Integer numberProsecution;
+	private String numberProsecutionCriteria;
 
-	private String numberInfringement;
+	private String numberInfringementCriteria;
+
+	private String identificationNumberCriteria;
+
+	private Long stateCriteriaId;
 
 	private Boolean isEditAction;
+
+	private Boolean isCreateAction;
+
+	private Boolean isStatusChangeAction;
 
 	private ItemCatalog stateForImpugnmentFotoMultaEdit;
 
 	private Boolean existObligationForInpugnmentNumber;
+
+	private Role role_Coactivas;
+
+	private Role role_Matriculacion;
+
+	private Role role_Ver;
 
 	public ImpugnmentHome() {
 		loadImpugnments();
@@ -122,7 +144,19 @@ public class ImpugnmentHome extends EntityController {
 						CatalogConstants.CATALOG_STATES_IMPUGNMENT,
 						itemsExceptIds);
 
+		statesImpugnmentCriteria = itemCatalogService
+				.findItemsForCatalogCode(CatalogConstants.CATALOG_STATES_IMPUGNMENT);
+
 		// this.impugnmentSelected = new Impugnment();
+
+		this.role_Coactivas = systemParameterService.materialize(Role.class,
+				"ID_ROL_IMPUGNACIONES_COACTIVAS");
+		this.role_Matriculacion = systemParameterService.materialize(
+				Role.class, "ID_ROL_IMPUGNACIONES_MATRICULACION");
+		this.role_Ver = systemParameterService.materialize(Role.class,
+				"ID_ROL_IMPUGNACIONES_VER");
+
+		// if(userSession.getUser().hasRole(formalizingRoleName)){
 
 	}
 
@@ -134,11 +168,11 @@ public class ImpugnmentHome extends EntityController {
 		this.criteria = criteria;
 	}
 
-	public List<Impugnment> getImpugnments() {
+	public List<ImpugnmentDTO> getImpugnments() {
 		return impugnments;
 	}
 
-	public void setImpugnments(List<Impugnment> impugnments) {
+	public void setImpugnments(List<ImpugnmentDTO> impugnments) {
 		this.impugnments = impugnments;
 	}
 
@@ -150,20 +184,29 @@ public class ImpugnmentHome extends EntityController {
 		this.impugnmentSelected = impugnmentSelected;
 	}
 
-	public Integer getNumberProsecution() {
-		return numberProsecution;
+	public String getNumberProsecutionCriteria() {
+		return numberProsecutionCriteria;
 	}
 
-	public void setNumberProsecution(Integer numberProsecution) {
-		this.numberProsecution = numberProsecution;
+	public void setNumberProsecutionCriteria(String numberProsecutionCriteria) {
+		this.numberProsecutionCriteria = numberProsecutionCriteria;
 	}
 
-	public String getNumberInfringement() {
-		return numberInfringement;
+	public String getNumberInfringementCriteria() {
+		return numberInfringementCriteria;
 	}
 
-	public void setNumberInfringement(String numberInfringement) {
-		this.numberInfringement = numberInfringement;
+	public void setNumberInfringementCriteria(String numberInfringementCriteria) {
+		this.numberInfringementCriteria = numberInfringementCriteria;
+	}
+
+	public String getIdentificationNumberCriteria() {
+		return identificationNumberCriteria;
+	}
+
+	public void setIdentificationNumberCriteria(
+			String identificationNumberCriteria) {
+		this.identificationNumberCriteria = identificationNumberCriteria;
 	}
 
 	public Boolean getIsEditAction() {
@@ -201,6 +244,63 @@ public class ImpugnmentHome extends EntityController {
 		this.existObligationForInpugnmentNumber = existObligationForInpugnmentNumber;
 	}
 
+	public Role getRole_Coactivas() {
+		return role_Coactivas;
+	}
+
+	public void setRole_Coactivas(Role role_Coactivas) {
+		this.role_Coactivas = role_Coactivas;
+	}
+
+	public Role getRole_Matriculacion() {
+		return role_Matriculacion;
+	}
+
+	public void setRole_Matriculacion(Role role_Matriculacion) {
+		this.role_Matriculacion = role_Matriculacion;
+	}
+
+	public Role getRole_Ver() {
+		return role_Ver;
+	}
+
+	public void setRole_Ver(Role role_Ver) {
+		this.role_Ver = role_Ver;
+	}
+
+	public List<ItemCatalog> getStatesImpugnmentCriteria() {
+		return statesImpugnmentCriteria;
+	}
+
+	public void setStatesImpugnmentCriteria(
+			List<ItemCatalog> statesImpugnmentCriteria) {
+		this.statesImpugnmentCriteria = statesImpugnmentCriteria;
+	}
+
+	public Long getStateCriteriaId() {
+		return stateCriteriaId;
+	}
+
+	public void setStateCriteriaId(Long stateCriteriaId) {
+		this.stateCriteriaId = stateCriteriaId;
+	}
+
+	public Boolean getIsStatusChangeAction() {
+		return isStatusChangeAction;
+	}
+
+	public void setIsStatusChangeAction(Boolean isStatusChangeAction) {
+		this.isStatusChangeAction = isStatusChangeAction;
+	}
+
+	public Boolean getIsCreateAction() {
+		return isCreateAction;
+	}
+
+	public void setIsCreateAction(Boolean isCreateAction) {
+		this.isCreateAction = isCreateAction;
+	}
+
 	public void initializeService() {
 		if (impugnmentService == null) {
 			impugnmentService = ServiceLocator.getInstance().findResource(
@@ -210,19 +310,34 @@ public class ImpugnmentHome extends EntityController {
 			itemCatalogService = ServiceLocator.getInstance().findResource(
 					ItemCatalogService.LOCAL_NAME);
 		}
+		if (systemParameterService == null) {
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SystemParameterService.LOCAL_NAME);
+		}
 	}
 
 	public void preparaRegisterImpugnment() {
 		this.impugnmentSelected = new Impugnment();
-		this.impugnmentSelected.setCreationDate(new Date());
-		this.impugnmentSelected.setImpugnmentDate(new Date());
+		// this.impugnmentSelected.setCreationDate(new Date());
+		this.isCreateAction = Boolean.TRUE;
 		this.isEditAction = Boolean.FALSE;
+		this.isStatusChangeAction = Boolean.FALSE;
 		this.existObligationForInpugnmentNumber = Boolean.TRUE;
 	}
 
 	public void prepareUpdateImpugnment(Long impugnmentId) {
 		this.impugnmentSelected = impugnmentService.findById(impugnmentId);
+		this.isCreateAction = Boolean.FALSE;
 		this.isEditAction = Boolean.TRUE;
+		this.isStatusChangeAction = Boolean.FALSE;
+		this.stateForImpugnmentFotoMultaEdit = null;
+	}
+
+	public void prepareStatusChangeImpugnment(Long impugnmentId) {
+		this.impugnmentSelected = impugnmentService.findById(impugnmentId);
+		this.isCreateAction = Boolean.FALSE;
+		this.isEditAction = Boolean.FALSE;
+		this.isStatusChangeAction = Boolean.TRUE;
 		this.stateForImpugnmentFotoMultaEdit = null;
 	}
 
@@ -247,12 +362,11 @@ public class ImpugnmentHome extends EntityController {
 
 	public void registerImpugnment() {
 
-		if (impugnmentSelected.getImpugnmentDate() == null
-				|| impugnmentSelected.getMunicipalBond() == null
+		if (impugnmentSelected.getMunicipalBond() == null
 				|| impugnmentSelected.getNumberInfringement() == null
-				|| impugnmentSelected.getNumberProsecution() == null
 				|| impugnmentSelected.getMunicipalBond().getNumber() == null
-				|| impugnmentSelected.getMunicipalBond().getId() == null) {
+				|| impugnmentSelected.getMunicipalBond().getId() == null
+				|| (impugnmentSelected.getNumberTramit() == null && isUserWithRolCoercive())) {
 			facesMessages.addToControl("",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					"Campos obligatorios vacios");
@@ -286,6 +400,24 @@ public class ImpugnmentHome extends EntityController {
 	}
 
 	public void updateImpugnment() {
+		if (impugnmentSelected.getMunicipalBond() == null
+				|| impugnmentSelected.getNumberInfringement() == null
+				|| impugnmentSelected.getMunicipalBond().getNumber() == null
+				|| impugnmentSelected.getMunicipalBond().getId() == null
+				|| impugnmentSelected.getNumberTramit() == null ) {
+			facesMessages.addToControl("",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
+					"Campos obligatorios vacios");
+		} else {
+			this.impugnmentSelected.setUserUpdate(this.userSession.getUser());
+			this.impugnmentSelected.setUpdateDate(new Date());
+			this.impugnmentService.update(impugnmentSelected);
+			this.impugnments = this.impugnmentService
+					.findImpugnmentsForCriteria(criteria);
+		}
+	}
+
+	public void statusChangeUpdateImpugnment() {
 		if (this.stateForImpugnmentFotoMultaEdit == null) {
 			facesMessages.addToControl("",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
@@ -301,9 +433,40 @@ public class ImpugnmentHome extends EntityController {
 	}
 
 	public void searchImpugments() {
-		this.criteria.setNumberInfringement(numberInfringement);
-		this.criteria.setNumberProsecution(numberProsecution);
+		this.criteria.setNumberInfringement(numberInfringementCriteria);
+		this.criteria.setNumberProsecution(numberProsecutionCriteria);
+		this.criteria.setIdentificationNumber(identificationNumberCriteria);
+		this.criteria.setState(itemCatalogService.findById(stateCriteriaId));
+
+		System.out.println("ID estado:" + stateCriteriaId);
+
 		this.impugnments = this.impugnmentService
 				.findImpugnmentsForCriteria(criteria);
 	}
+
+	public Boolean isUserWithRolCoercive() {
+		if (this.userSession.hasRoleByNameRol(role_Coactivas.getName())) {
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
+	}
+
+	public Boolean isUserWithRolMatriculacion() {
+
+		if (this.userSession.hasRoleByNameRol(role_Matriculacion.getName())) {
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
+	}
+
+	public Boolean isUserWithRolVer() {
+		if (this.userSession.hasRoleByNameRol(role_Ver.getName())) {
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
+	}
+
 }

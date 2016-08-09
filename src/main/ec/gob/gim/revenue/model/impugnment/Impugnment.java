@@ -1,4 +1,3 @@
-
 package ec.gob.gim.revenue.model.impugnment;
 
 import java.io.Serializable;
@@ -33,9 +32,17 @@ import ec.gob.gim.security.model.User;
 @Entity
 @TableGenerator(name = "ImpugnmentGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "Impugnment", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
-		@NamedQuery(name = "Impugnment.findByCriteria", query = "select i from Impugnment i where (:numberInfringement='' OR i.numberInfringement=:numberInfringement) AND (:numberProsecution = 0 OR i.numberProsecution=:numberProsecution) ORDER BY i.id DESC"),
-		@NamedQuery(name = "Impugnment.findById", query = "select i from Impugnment i where i.id=:impugnmentId"),
-		@NamedQuery(name = "Impugnment.findByMunicipalBond", query = "select i from Impugnment i where (i.municipalBond.id =:municipalBond_id and i.status.code =:code)")})
+		@NamedQuery(name = "Impugnment.findByCriteria", query = "select i from Impugnment i "
+																+ "join fetch i.municipalBond mb "
+																+ "join fetch mb.resident res "
+																+ "join fetch i.status sta "
+																+ "where (:numberInfringement='' OR i.numberInfringement=:numberInfringement) "
+																+ "AND (:numberProsecution = 0 OR i.numberProsecution=:numberProsecution) "
+																+ "AND (:identificationNumber = '' OR res.identificationNumber=:identificationNumber) "
+																+ "AND (:statusId = 0 OR sta.id=:statusId) "
+																+ "ORDER BY i.id DESC"),
+		@NamedQuery(name = "Impugnment.findById", query = "select i from Impugnment i join fetch i.municipalBond mb join fetch mb.resident res where i.id=:impugnmentId"),
+		@NamedQuery(name = "Impugnment.findByMunicipalBond", query = "select i from Impugnment i where (i.municipalBond.id =:municipalBond_id and i.status.code =:code)") })
 public class Impugnment implements Serializable {
 
 	/**
@@ -50,12 +57,14 @@ public class Impugnment implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate;
 
-	@Temporal(TemporalType.DATE)
-	private Date impugnmentDate;
-
-	private Integer numberProsecution;
+	
+	private String numberProsecution;
 
 	private String numberInfringement;
+
+	private String observation;
+
+	private String numberTramit;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "type_itm_id", nullable = false, referencedColumnName = "id")
@@ -72,17 +81,17 @@ public class Impugnment implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "userRegister_id", nullable = false, referencedColumnName = "id")
 	private User userRegister;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "userUpdate_id", nullable = true, referencedColumnName = "id")
 	private User userUpdate;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updateDate;
 
 	@Version
 	private Long version = 0L;
-	
+
 	public Impugnment() {
 		this.userUpdate = null;
 		this.updateDate = null;
@@ -104,19 +113,11 @@ public class Impugnment implements Serializable {
 		this.creationDate = creationDate;
 	}
 
-	public Date getImpugnmentDate() {
-		return impugnmentDate;
-	}
-
-	public void setImpugnmentDate(Date impugnmentDate) {
-		this.impugnmentDate = impugnmentDate;
-	}
-
-	public Integer getNumberProsecution() {
+	public String getNumberProsecution() {
 		return numberProsecution;
 	}
 
-	public void setNumberProsecution(Integer numberProsecution) {
+	public void setNumberProsecution(String numberProsecution) {
 		this.numberProsecution = numberProsecution;
 	}
 
@@ -160,6 +161,14 @@ public class Impugnment implements Serializable {
 		this.userRegister = userRegister;
 	}
 
+	public String getObservation() {
+		return observation;
+	}
+
+	public void setObservation(String observation) {
+		this.observation = observation;
+	}
+
 	public Long getVersion() {
 		return version;
 	}
@@ -167,7 +176,7 @@ public class Impugnment implements Serializable {
 	public void setVersion(Long version) {
 		this.version = version;
 	}
-	
+
 	public User getUserUpdate() {
 		return userUpdate;
 	}
@@ -182,6 +191,14 @@ public class Impugnment implements Serializable {
 
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
+	}
+
+	public String getNumberTramit() {
+		return numberTramit;
+	}
+
+	public void setNumberTramit(String numberTramit) {
+		this.numberTramit = numberTramit;
 	}
 
 	@Override
@@ -215,7 +232,7 @@ public class Impugnment implements Serializable {
 	@Override
 	public String toString() {
 		return "Impugnment [id=" + id + ", creationDate=" + creationDate
-				+ ", impugnmentDate=" + impugnmentDate + ", numberProsecution="
+				+ ", numberProsecution="
 				+ numberProsecution + ", numberInfringement="
 				+ numberInfringement + ", type=" + type + ", status=" + status
 				+ ", municipalBond=" + municipalBond + ", userRegister="
