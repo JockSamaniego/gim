@@ -1293,7 +1293,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 				} else {
 					
-					deposit.setCapital(BigDecimal.ZERO);
+					deposit.setCapital(remaining);
 					remaining = BigDecimal.ZERO;
 				}
 				if (!deactivatePaymentAgreement) {

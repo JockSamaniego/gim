@@ -13,7 +13,7 @@ import org.apache.commons.beanutils.BeanUtils;
 public class NativeQueryResultsMapper {
 
     public static <T> List<T> map(List<Object[]> objectArrayList, Class<T> genericType) {
-        List<T> ret = new ArrayList<>();
+        List<T> ret = new ArrayList<T>();
         List<Field> mappingFields = getNativeQueryResultColumnAnnotatedFields(genericType);
         try {
             for (Object[] objectArr : objectArrayList) {
