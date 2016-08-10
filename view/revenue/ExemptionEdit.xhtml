@@ -243,6 +243,17 @@
 									action="#{exemptionHome.instance.calculatePatrimony()}" />
 							</h:inputText>
 						</s:decorate>
+						
+						<s:decorate id="propertiesSpecialTreatment" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['exemption.propertiesAppraisalSpecialTreatment']}</ui:define>
+							<h:inputText id="propertiesSpecialTreatment" size="15" readonly="true"
+								style="text-align: right"
+								value="#{exemptionHome.instance.propertiesAppraisalSpecialTreatment}"
+								required="true">
+								<f:convertNumber pattern="#0.00" />
+							</h:inputText>
+						</s:decorate>
+						
 						<s:decorate id="personalName" template="../layout/edit.xhtml">
 							<ui:define name="label">#{messages['exemption.personalAssets']}</ui:define>
 							<h:inputText id="name" size="15" style="text-align: right"

@@ -81,6 +81,8 @@ public class Exemption {
 	
 	private BigDecimal propertiesAppraisal;
 	
+	private BigDecimal propertiesAppraisalSpecialTreatment;
+	
 	@Transient
 	private BigDecimal patrimony;
 
@@ -305,4 +307,15 @@ public class Exemption {
 		this.discountYearNumber = discountYearNumber;
 	}
 
+
+	public BigDecimal getPropertiesAppraisalSpecialTreatment() {
+		return propertiesAppraisalSpecialTreatment;
+	}
+
+
+	public void setPropertiesAppraisalSpecialTreatment(
+			BigDecimal propertiesAppraisalSpecialTreatment) {
+		this.propertiesAppraisalSpecialTreatment = propertiesAppraisalSpecialTreatment;
+	}
+	
 }
