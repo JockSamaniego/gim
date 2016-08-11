@@ -73,7 +73,7 @@
 							<s:convertEntity />
 							<a:support event="onchange" ajaxSingle="true"
 								action="#{exemptionHome.onChangeExemptionType()}"
-								reRender="propertiesPanel,panelPercentage,exemptionPercentage, panelBottom" />
+								reRender="propertiesPanel,exemptionPercentage, panelBottom" />
 						</h:selectOneMenu>
 					</s:decorate>
 
@@ -162,19 +162,27 @@
 								<h:outputText value="#{_exemptionProperty.amountCreditYear3}" />
 							</rich:column>
 
+							<rich:column>
+								<f:facet name="header"></f:facet>
+								<a:commandButton ajaxSingle="true" value="Remover"
+									actionListener="#{exemptionHome.removeExemptionForProperty(_exemptionProperty)}"
+									reRender="exemptionNormalPropertyTable" />
+							</rich:column>
+
 						</rich:dataTable>
 					</rich:panel>
 
 
-					<rich:panel style="margin-top:5px !important">
+					<rich:panel id="panelSpecialTreatment"
+						style="margin-top:5px !important"
+						rendered="#{exemptionHome.renderTableTreatmentSpecial()}">
 						<f:facet name="header">
 							Propiedades Tratamiento Especial
 
 						</f:facet>
 						<rich:dataTable id="exemptionSpecialPropertyTable"
 							var="_exemptionProperty"
-							value="#{exemptionHome.propertiesInExemptionSpecial}"
-							>
+							value="#{exemptionHome.propertiesInExemptionSpecial}">
 							<rich:column>
 								<f:facet name="header">#{messages['exemption.cadastralCode']}</f:facet>
 								<h:outputText
@@ -222,12 +230,18 @@
 								<h:outputText value="#{_exemptionProperty.amountCreditYear3}" />
 							</rich:column>
 
+							<rich:column>
+								<f:facet name="header"></f:facet>
+								<a:commandButton ajaxSingle="true" value="Remover"
+									actionListener="#{exemptionHome.removeExemptionForProperty(_exemptionProperty)}"
+									reRender="exemptionSpecialPropertyTable,propertiesSpecialTreatment" />
+							</rich:column>
+
 						</rich:dataTable>
 					</rich:panel>
 				</rich:panel>
 
-				<h:panelGrid
-								columns="2" width="100%"
+				<h:panelGrid columns="2" width="100%"
 					columnClasses="topAligned, topAligned right" id="panelBottom">
 
 					<h:panelGroup>
@@ -243,17 +257,19 @@
 									action="#{exemptionHome.instance.calculatePatrimony()}" />
 							</h:inputText>
 						</s:decorate>
-						
-						<s:decorate id="propertiesSpecialTreatment" template="../layout/edit.xhtml">
+
+						<s:decorate id="propertiesSpecialTreatment"
+							template="../layout/edit.xhtml"
+							rendered="#{exemptionHome.renderTableTreatmentSpecial()}">
 							<ui:define name="label">#{messages['exemption.propertiesAppraisalSpecialTreatment']}</ui:define>
-							<h:inputText id="propertiesSpecialTreatment" size="15" readonly="true"
-								style="text-align: right"
+							<h:inputText id="propertiesSpecialTreatment" size="15"
+								readonly="true" style="text-align: right"
 								value="#{exemptionHome.instance.propertiesAppraisalSpecialTreatment}"
 								required="true">
 								<f:convertNumber pattern="#0.00" />
 							</h:inputText>
 						</s:decorate>
-						
+
 						<s:decorate id="personalName" template="../layout/edit.xhtml">
 							<ui:define name="label">#{messages['exemption.personalAssets']}</ui:define>
 							<h:inputText id="name" size="15" style="text-align: right"

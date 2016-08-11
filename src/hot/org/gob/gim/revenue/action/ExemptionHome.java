@@ -72,7 +72,9 @@ public class ExemptionHome extends EntityHome<Exemption> {
 
 	private List<ExemptionForProperty> propertiesInExemptionSpecial = new ArrayList<ExemptionForProperty>();
 
-	private ItemCatalog typeTreatmentExcemption;
+	private ItemCatalog typeTreatmentExcemptionSpecial;
+
+	// private ItemCatalog typeTreatmentExcemptionSpecial;
 
 	@Logger
 	Log logger;
@@ -92,6 +94,11 @@ public class ExemptionHome extends EntityHome<Exemption> {
 		}
 		this.typerTreatmentExcemption = itemCatalogService
 				.findItemsForCatalogCode(CatalogConstants.CATALOG_TYPES_TREATMENT_EXCEMPTION);
+
+		this.typeTreatmentExcemptionSpecial = itemCatalogService
+				.findItemByCodeAndCodeCatalog(
+						CatalogConstants.CATALOG_TYPES_TREATMENT_EXCEMPTION,
+						CatalogConstants.ITEM_CATALOG_TYPE_EXCLUDE_TREATMENT_EXCEMPTION);
 	}
 
 	public void reCalculateValues() {
@@ -304,7 +311,7 @@ public class ExemptionHome extends EntityHome<Exemption> {
 		isFirsTime = false;
 		init();
 
-		this.typeTreatmentExcemption = itemCatalogService
+		this.typeTreatmentExcemptionSpecial = itemCatalogService
 				.findItemByCodeAndCodeCatalog(
 						CatalogConstants.CATALOG_TYPES_TREATMENT_EXCEMPTION,
 						CatalogConstants.ITEM_CATALOG_TYPE_EXCLUDE_TREATMENT_EXCEMPTION);
@@ -493,19 +500,46 @@ public class ExemptionHome extends EntityHome<Exemption> {
 		if (this.exemptionForProperty.getTreatmentType() == null) {
 			this.propertiesInExemptionNormal.add(this.exemptionForProperty);
 		} else if (this.exemptionForProperty.getTreatmentType().getId()
-				.equals(typeTreatmentExcemption.getId())) {
+				.equals(typeTreatmentExcemptionSpecial.getId())) {
 			this.propertiesInExemptionSpecial.add(this.exemptionForProperty);
-			//Recalcular el valor del avaluo de las propiedades
-			this.instance.setPropertiesAppraisal(this.instance.getPropertiesAppraisal().subtract(this.exemptionForProperty.getProperty().getCurrentDomain().getCommercialAppraisal()));
+			// Recalcular el valor del avaluo de las propiedades
+//			this.instance
+//					.setPropertiesAppraisalSpecialTreatment(this.exemptionForProperty
+//							.getProperty().getCurrentDomain()
+//							.getCommercialAppraisal());
 		}
-		
 
-		
-		
+		BigDecimal totalTreatmentSpecial = BigDecimal.ZERO;
+		for (ExemptionForProperty exemptionForProperty : propertiesInExemptionSpecial) {
+			totalTreatmentSpecial = totalTreatmentSpecial
+					.add(exemptionForProperty.getProperty().getCurrentDomain()
+							.getCommercialAppraisal());
+		}
+
+		this.instance
+				.setPropertiesAppraisalSpecialTreatment(totalTreatmentSpecial);
 
 	}
 
-	public void removeExemptionForProperty() {
+	public void removeExemptionForProperty(ExemptionForProperty property) {
+		System.out.println("ID propiedad a remover:"
+				+ property.getProperty().getCadastralCode());
+		if (property.getTreatmentType() == null) {
+			this.propertiesInExemptionNormal.remove(property);
+		} else if (property.getTreatmentType().getId()
+				.equals(typeTreatmentExcemptionSpecial.getId())) {
+			this.propertiesInExemptionSpecial.remove(property);
+		}
+
+		BigDecimal totalTreatmentSpecial = BigDecimal.ZERO;
+		for (ExemptionForProperty exemptionForProperty : propertiesInExemptionSpecial) {
+			totalTreatmentSpecial = totalTreatmentSpecial
+					.add(exemptionForProperty.getProperty().getCurrentDomain()
+							.getCommercialAppraisal());
+		}
+
+		this.instance
+				.setPropertiesAppraisalSpecialTreatment(totalTreatmentSpecial);
 
 	}
 
@@ -548,10 +582,22 @@ public class ExemptionHome extends EntityHome<Exemption> {
 			if (propertyInExcemption.getTreatmentType() == null) {
 				this.propertiesInExemptionNormal.add(propertyInExcemption);
 			} else if (propertyInExcemption.getTreatmentType().getId()
-					.equals(typeTreatmentExcemption.getId())) {
+					.equals(typeTreatmentExcemptionSpecial.getId())) {
 				this.propertiesInExemptionSpecial.add(propertyInExcemption);
 			}
 		}
+	}
+	
+	public Boolean renderTableTreatmentSpecial(){
+		if(this.instance.getExemptionType() == null){
+			return Boolean.FALSE;
+		}else{
+			if(this.instance.getExemptionType().getName().equals("Por Tercera Edad")){
+				return Boolean.TRUE;
+			}
+		}
+		return Boolean.FALSE;
+		
 	}
 
 }
