@@ -156,7 +156,9 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 
 	public ResidentWithMunicipalBondOutOfDateList() {
 		setEjbql(EJBQL);		
-		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));		
+		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
+		System.out.println("EJB:"+EJBQL);
+		System.out.println("REstricciones"+RESTRICTIONS);
 		setOrder("sum(mb.value) DESC");
 		setGroupBy("resident.id,resident.identificationNumber,resident.name");		
 		setMaxResults(25);
@@ -325,6 +327,11 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 			query.setParameter("municipalBondStatusId", municipalBondStatus.getId());			
 			query.setParameter("expirationDate", expirationDate);
 			query.setParameter("value", amount);
+			System.out.println("residentIds:"+ ids);
+			System.out.println("municipalBondType:"+ MunicipalBondType.CREDIT_ORDER);
+			System.out.println("municipalBondStatusId:"+ municipalBondStatus.getId());
+			System.out.println("expirationDate:"+ expirationDate);
+			System.out.println("value:"+ amount);
 			municipalBonds = query.getResultList();
 		}
 			

@@ -23,6 +23,7 @@ import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.WorkDeal;
 import ec.gob.gim.cadaster.model.WorkDealFraction;
 import ec.gob.gim.cadaster.model.WorkDealFractionComparator;
+import ec.gob.gim.cadaster.model.dto.WorkDealFull;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
 
@@ -50,6 +51,11 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	private WorkDealFraction workDealFraction;
 
 	private List<Property> properties;
+	
+	//@author macartuche
+	//@date 2016-08-09T11:45
+	//@tag cambiosCalculoCEM
+	private WorkDealFull workdealfull;
 
 	public void setWorkDealId(Long id) {
 		setId(id);
@@ -67,6 +73,11 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	public void wire() {
 		getInstance();
+		//@author macartuche
+		//@date 2016-08-09T11:45
+		//@tag cambiosCalculoCEM
+		//carga el nuevo DTO
+		workdealfull = fillData(getInstance().getId());
 		if (isFirstTime)
 			calculate();
 		isFirstTime = Boolean.FALSE;
@@ -78,6 +89,13 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	public void editWorkDealFraction(WorkDealFraction workDealFraction) {
 		this.workDealFraction = workDealFraction;
+	}
+	
+	//@author macartuche
+	//@date 2016-08-09T11:45
+	//@tag cambiosCalculoCEM
+	private WorkDealFull fillData(Long idWorkDeal){
+		return null;
 	}
 
 	/**
