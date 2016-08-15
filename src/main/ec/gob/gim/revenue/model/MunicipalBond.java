@@ -1104,6 +1104,13 @@ public class MunicipalBond implements Serializable {
 			CascadeType.MERGE })
 	@JoinColumn(name = "adjunct_id")
 	private Adjunct adjunct;
+	
+	//@author macartuche
+	//@date 2016-08-11
+	//@tag interesFactElec
+	//aumentar campo de interesfactura
+	private BigDecimal interestVoucher;
+	private BigDecimal surchargeVoucher;
 
 	public MunicipalBond() {
 		// creationDate = Calendar.getInstance().getTime();
@@ -1789,4 +1796,23 @@ public class MunicipalBond implements Serializable {
 		this.reversedTime = reversedTime;
 	}
 
+	//@author macartuche
+	//@date 2016-08-11
+	//@tag interesFactElec
+	//aumentar campo de interesfactura
+	public BigDecimal getInterestVoucher() {
+		return interestVoucher;
+	}
+
+	public void setInterestVoucher(BigDecimal interestVoucher) {
+		this.interestVoucher = interestVoucher;
+	}
+
+	public BigDecimal getSurchargeVoucher() {
+		return surchargeVoucher;
+	}
+
+	public void setSurchargeVoucher(BigDecimal surchargeVoucher) {
+		this.surchargeVoucher = surchargeVoucher;
+	}
 }// end MunicipalBond
