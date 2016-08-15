@@ -988,7 +988,7 @@ public class MunicipalBond implements Serializable {
 
 	@Transient
 	private Boolean isSelected;
-
+	
 	/**
 	 * El valor base o cantidad ingresada para el calculo del rubro Por ejemplo
 	 * Numero de tachos de basura o base imponible o avaluo del vehículo
@@ -1104,6 +1104,14 @@ public class MunicipalBond implements Serializable {
 			CascadeType.MERGE })
 	@JoinColumn(name = "adjunct_id")
 	private Adjunct adjunct;
+	
+	//@author macartuche
+	//@date 2016-08-11
+	//@tag interesFactElec
+	//aumentar campo de interesfactura
+	private BigDecimal interestVoucher;
+	private BigDecimal surchargeVoucher;
+	
 
 	public MunicipalBond() {
 		// creationDate = Calendar.getInstance().getTime();
@@ -1128,7 +1136,14 @@ public class MunicipalBond implements Serializable {
 		taxItems = new TreeSet<TaxItem>();
 		printingsNumber = 0;
 		internalTramit = Boolean.FALSE;
+		
+		//@tag interesFactElec
+		//aumentar campo de interesfactura
+		interestVoucher = BigDecimal.ZERO;
+		surchargeVoucher = BigDecimal.ZERO;
+		
 	}
+
 
 	public MunicipalBond(Long id, BigDecimal taxes, BigDecimal value) {
 		/*
@@ -1787,6 +1802,26 @@ public class MunicipalBond implements Serializable {
 
 	public void setReversedTime(Date reversedTime) {
 		this.reversedTime = reversedTime;
+	}
+	
+	//@author macartuche
+	//@date 2016-08-11
+	//@tag interesFactElec
+	//aumentar campo de interesfactura
+	public BigDecimal getInterestVoucher() {
+		return interestVoucher;
+	}
+
+	public void setInterestVoucher(BigDecimal interestVoucher) {
+		this.interestVoucher = interestVoucher;
+	}
+
+	public BigDecimal getSurchargeVoucher() {
+		return surchargeVoucher;
+	}
+
+	public void setSurchargeVoucher(BigDecimal surchargeVoucher) {
+		this.surchargeVoucher = surchargeVoucher;
 	}
 
 }// end MunicipalBond

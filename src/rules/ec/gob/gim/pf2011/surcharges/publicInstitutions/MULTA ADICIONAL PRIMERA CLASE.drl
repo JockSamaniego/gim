@@ -70,6 +70,8 @@ function BigDecimal getInterest(Date $expirationDate, float $percentage, BigDeci
         
         if($dias > 0){
                 $meses += 1;
+        }else if($dias<0){
+                $meses = 0;
         }
         
         if( $anios > 0 ){
