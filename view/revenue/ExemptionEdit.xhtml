@@ -69,11 +69,13 @@
 							value="#{exemptionHome.instance.exemptionType}">
 							<s:selectItems value="#{exemptionTypes}" required="true"
 								var="exemptionType" label="#{exemptionType.name}"
-								noSelectionLabel="#{messages['common.chooseOption']}" />
+								noSelectionLabel="#{messages['common.chooseOption']}" 
+								/>
 							<s:convertEntity />
 							<a:support event="onchange" ajaxSingle="true"
 								action="#{exemptionHome.onChangeExemptionType()}"
-								reRender="propertiesPanel,exemptionPercentage, panelBottom" />
+								reRender="propertiesPanel,exemptionPercentage, panelBottom" 
+								/>
 						</h:selectOneMenu>
 					</s:decorate>
 

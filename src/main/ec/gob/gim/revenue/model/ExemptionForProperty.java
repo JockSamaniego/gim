@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.envers.Audited;
@@ -17,51 +19,53 @@ import org.hibernate.envers.Audited;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.ItemCatalog;
 
-
 @Audited
 @Entity
-@TableGenerator(name="ExemptionForPropertyGenerator",
-				pkColumnName="name",
-				pkColumnValue="ExemptionForProperty",
-				table="IdentityGenerator",
-				valueColumnName="value",
-				allocationSize = 1, initialValue = 1)
+@TableGenerator(name = "ExemptionForPropertyGenerator", pkColumnName = "name", pkColumnValue = "ExemptionForProperty", table = "IdentityGenerator", valueColumnName = "value", allocationSize = 1, initialValue = 1)
+@NamedQueries({
+				/*
+				 * Rene Ortega
+				 * 2016-08-11	
+				 */
+				@NamedQuery(name = "ExemptionForProperty.findPropertiesSpecialTreatment", query = "select ep from ExemptionForProperty ep where ep.exemption.id=:exemptionId and ep.treatmentType.id=:itemSpecialTreatmentId")
+
+})
 public class ExemptionForProperty {
-	
+
 	@Id
-	@GeneratedValue(generator="ExemptionForPropertyGenerator", strategy=GenerationType.TABLE)
+	@GeneratedValue(generator = "ExemptionForPropertyGenerator", strategy = GenerationType.TABLE)
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name="exemption_id")
+	@JoinColumn(name = "exemption_id")
 	private Exemption exemption;
-	
+
 	@ManyToOne
-	@JoinColumn(name="property_id")
+	@JoinColumn(name = "property_id")
 	private Property property;
-	
+
 	private BigDecimal amountCreditYear1;
-	
+
 	private BigDecimal amountCreditYear2;
-	
+
 	private BigDecimal amountCreditYear3;
-	
+
 	private BigDecimal discountPercentage;
-	
-	@ManyToOne(fetch = FetchType.EAGER, optional=true)
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
 	@JoinColumn(name = "treatmentType_itm_id", nullable = true, referencedColumnName = "id")
 	private ItemCatalog treatmentType;
-	
-	@Column(length=150)
+
+	@Column(length = 150)
 	private String nameHistoryResident;
-	
+
 	public ExemptionForProperty() {
 		this.amountCreditYear1 = BigDecimal.ZERO;
 		this.amountCreditYear2 = BigDecimal.ZERO;
 		this.amountCreditYear3 = BigDecimal.ZERO;
 		this.discountPercentage = new BigDecimal(100);
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -133,5 +137,5 @@ public class ExemptionForProperty {
 	public void setTreatmentType(ItemCatalog treatmentType) {
 		this.treatmentType = treatmentType;
 	}
-	
+
 }

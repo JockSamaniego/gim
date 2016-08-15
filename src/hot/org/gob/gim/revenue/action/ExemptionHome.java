@@ -551,6 +551,8 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	public void onChangeExemptionType() {
 
 		this.instance.getPropertiesInExemption().clear();
+		
+		this.instance.setReference(this.instance.getExemptionType().getReference());
 
 		if (this.instance.getExemptionType().getId()
 				.equals(exemptionSpecial.getId())) {
