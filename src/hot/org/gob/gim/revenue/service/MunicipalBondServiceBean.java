@@ -1128,13 +1128,6 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 		interest = interest.setScale(2, RoundingMode.HALF_UP);
 		municipalBond.setInterest(interest);
-		
-		//@tag interesFactElec
-		//aumentar campo de interesfactura
-		if(municipalBond.getInterestVoucher()!=null){
-			municipalBond.setInterest(municipalBond.getInterestVoucher());
-		}
-		//fin @tag interesFactElec
 		// System.out.println("INTERESTS -----> ENDS With value "+interest);
 	}
 	
