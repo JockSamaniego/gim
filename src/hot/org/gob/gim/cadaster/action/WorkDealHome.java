@@ -55,7 +55,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	//@author macartuche
 	//@date 2016-08-09T11:45
 	//@tag cambiosCalculoCEM
-	private WorkDealFull workdealfull;
+	private List<WorkDealFull> workdealfull;
 
 	public void setWorkDealId(Long id) {
 		setId(id);
@@ -77,7 +77,10 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 		//@date 2016-08-09T11:45
 		//@tag cambiosCalculoCEM
 		//carga el nuevo DTO
-		workdealfull = fillData(getInstance().getId());
+		if(getInstance().getId()!=null){
+			workdealfull = fillData(getInstance().getId());
+		}
+		
 		if (isFirstTime)
 			calculate();
 		isFirstTime = Boolean.FALSE;
@@ -94,8 +97,17 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	//@author macartuche
 	//@date 2016-08-09T11:45
 	//@tag cambiosCalculoCEM
-	private WorkDealFull fillData(Long idWorkDeal){
-		return null;
+	private List<WorkDealFull> fillData(Long idWorkDeal){
+		Query q = getEntityManager().createNativeQuery("Select * from workdealfractionfull where workdeal_id="+idWorkDeal);	
+		List<WorkDealFull> list=  q.getResultList();
+		List<WorkDealFull> listArray = new ArrayList<WorkDealFull>();
+		
+		/*for (WorkDealFull workDealFull : list) {
+			WorkDealFull wdfTemp = new WorkDealFull();
+			wdfTemp.setId(Long.valueOf(workDealFull.get);
+			
+		}*/
+		return  q.getResultList();
 	}
 
 	/**
@@ -173,10 +185,10 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 		
 		//@author macartuche
 		//@tag cambioCalculoCEM
-		listWDF = this.getInstance().getWorkDealFractions();
-		for (WorkDealFraction wdf : listWDF) {
+		//listWDF = this.getInstance().getWorkDealFractions();
+		/*for (WorkDealFraction wdf : listWDF) {
 			wdf.setCommercialAppraisal(getTotalAppraisalBYWorkeDealFractionSQL(wdf.getId()));
-		}
+		}*/
 		//fin @tag cambioCalculoCEM
 		
 		for (WorkDealFraction wf : listWDF) {

@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
@@ -25,6 +27,14 @@ import org.hibernate.envers.Audited;
 	 pkColumnValue="WorkDealFraction",
 	 initialValue=1, allocationSize=1
 )
+//@author macartuche
+//@tag cambioCem
+@NamedQueries(value = {		
+	@NamedQuery(name = "WorkDealFraction.findByWorkDeal", query = "SELECT NEW Work "
+		+ "FROM Consumption c "
+		+ "left join c.waterSupply ws "
+		+ "WHERE ws.serviceNumber = :serviceCode ")	
+})
 
 public class WorkDealFraction implements Comparable<WorkDealFraction>{
 
