@@ -29,12 +29,12 @@ import org.hibernate.envers.Audited;
 )
 //@author macartuche
 //@tag cambioCem
-@NamedQueries(value = {		
-	@NamedQuery(name = "WorkDealFraction.findByWorkDeal", query = "SELECT NEW Work "
-		+ "FROM Consumption c "
-		+ "left join c.waterSupply ws "
-		+ "WHERE ws.serviceNumber = :serviceCode ")	
-})
+//@NamedQueries(value = {		
+//	@NamedQuery(name = "WorkDealFraction.findBy", query = "SELECT NEW Work "
+//		+ "FROM Consumption c "
+//		+ "left join c.waterSupply ws "
+//		+ "WHERE ws.serviceNumber = :serviceCode ")	
+//})
 
 public class WorkDealFraction implements Comparable<WorkDealFraction>{
 

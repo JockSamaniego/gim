@@ -179,22 +179,22 @@
 		<h:outputText value="#{messages['workDeal.notWorkDealFractionAssociated']}."
 			rendered="#{empty workDealHome.instance.workDealFractions}" />
 
-		<rich:dataTable value="#{workDealHome.orderByAddresAndCadastralCode(workDealHome.instance.workDealFractions)}" var="_workDealFraction"
+		<rich:dataTable value="#{workDealHome.orderByAddressAndCadastralCodeDTO(workDealHome.workdealfractionList)}" var="_workDealFraction"
 			rendered="#{not empty workDealHome.instance.workDealFractions}"
 			rowClasses="rvgRowOne,rvgRowTwo" id="workDealTable">
-			<!-- 
+			
 			<rich:column styleClass="right" sortBy="#{_workDealFraction.property.cadastralCode}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['property.cadastralCode']}" />
 				</f:facet>
-				<h:outputText value="#{_workDealFraction.property.cadastralCode}" />
+				<h:outputText value="#{_workDealFraction.cadastralCode}" />
 			</rich:column>
 			
 			<rich:column styleClass="right" sortBy="#{_workDealFraction.property.previousCadastralCode}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['property.previousCadastralCode']}" />
 				</f:facet>
-				<h:outputText value="#{_workDealFraction.property.previousCadastralCode}" />
+				<h:outputText value="#{_workDealFraction.previousCadastralCode}" />
 			</rich:column>
 			
 			
@@ -202,16 +202,16 @@
 				<f:facet name="header">
 					<h:outputText value="#{messages['common.identificationNumber']}" />
 				</f:facet>
-				<h:outputText value="#{_workDealFraction.property.currentDomain.resident.identificationNumber}" />
+				<h:outputText value="#{_workDealFraction.identificationNumber}" />
 			</rich:column>
 			
 			<rich:column>
 				<f:facet name="header">
 					<h:outputText value="#{messages['resident']}" />
 				</f:facet>
-				<h:outputText value="#{_workDealFraction.property.currentDomain.resident.name}" />
+				<h:outputText value="#{_workDealFraction.name}" />
 			</rich:column>
-			 -->
+			
 			<rich:column>
 				<f:facet name="header">
 					<h:outputText value="#{messages['workDealFraction.address']}" />
@@ -232,7 +232,7 @@
 				<f:facet name="header">
 					<h:outputText value="#{messages['property.lotAliquot']}" />
 				</f:facet>
-				<h:outputText value="#{_workDealFraction.property.lotAliquot}" >
+				<h:outputText value="#{_workDealFraction.lotAliquot}" >
 					<f:convertNumber pattern="0.00"/>
 				</h:outputText>
 			</rich:column>
@@ -241,7 +241,7 @@
 				<f:facet name="header">
 					<h:outputText value="#{messages['domain.commercialAppraisal']}" />
 				</f:facet>
-				<h:outputText value="#{_workDealFraction.property.currentDomain.commercialAppraisal}" />
+				<h:outputText value="#{_workDealFraction.commercialAppraisal}" />
 			</rich:column>
 			 
 			

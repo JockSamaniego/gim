@@ -1130,9 +1130,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		municipalBond.setInterest(interest);
 		
 		
-		if(municipalBond.getInterestVoucher()!=null){
-			municipalBond.setInterest(municipalBond.getInterestVoucher());
-		}
+//		if(municipalBond.getInterestVoucher()!=null){
+//			municipalBond.setInterest(municipalBond.getInterestVoucher());
+//		}
 		// System.out.println("INTERESTS -----> ENDS With value "+interest);
 	}
 	

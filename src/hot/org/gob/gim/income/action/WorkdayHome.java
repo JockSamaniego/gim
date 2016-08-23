@@ -3217,6 +3217,37 @@ public class WorkdayHome extends EntityHome<Workday> {
 		}
 
 	}
+	
+	private List<EntryTotalCollected> getAllFutureTotals(Long statusId,Long entryId) {
+		try {
+			statusIds = new ArrayList<Long>();
+			statusIds.add(statusId);
+			Query query = query = getEntityManager().createNamedQuery(
+					"MunicipalBond.SumTotalFutureBetweenDatesByItemAndEntry");
+			query.setParameter("municipalBondStatusId", statusIds);
+			query.setParameter("startDate", startDate);
+			query.setParameter("endDate", endDate);
+			query.setParameter("entry_id", entryId);
+
+			List<EntryTotalCollected> retorno = query.getResultList();
+			if (!retorno.isEmpty()) {
+				for (EntryTotalCollected entryTotalCollected : retorno) {
+					ParameterFutureEmissionDTO parameters = new ObjectMapper()
+							.readValue(entryTotalCollected
+									.getParametersFutureEmission(),
+									ParameterFutureEmissionDTO.class);
+					entryTotalCollected
+							.setParametersFutureEmissionDTO(parameters);
+				}
+			}
+			System.out.println("Retono Future:" + retorno);
+			return retorno;
+		} catch (Exception e) {
+			System.out.println(e);
+			return new ArrayList<EntryTotalCollected>();
+		}
+
+	}
 
 	private List<EntryTotalCollected> getAllPrepaidTotals(String explanation) {
 		try {
@@ -3350,9 +3381,12 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private List<EntryTotalCollected> getTotalEmittedFutureByEntryAndStatus(
 			Long statusId) {
 		List<EntryTotalCollected> totals = new ArrayList<EntryTotalCollected>();
-		if (entry == null || entry.getId().equals(futureBondStatus.getId())) {
+		if (entry == null || municipalBondStatus.getId().equals(futureBondStatus.getId())) {
 			// TODO consultar emisiones futuras SumTotalFutureBetweenDatesByItem
 			totals = getAllFutureTotals(statusId);
+		}
+		if(entry!=null || municipalBondStatus.getId().equals(futureBondStatus.getId())){
+			totals = getAllFutureTotals(statusId, entry.getId());
 		}
 		return totals;
 	}
