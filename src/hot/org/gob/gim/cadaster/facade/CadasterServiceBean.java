@@ -21,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.FiscalPeriodService;
 import org.gob.gim.common.service.ResidentService;
@@ -37,6 +38,7 @@ import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.PropertyUse;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
+import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -591,7 +593,8 @@ public class CadasterServiceBean implements CadasterService {
 				BigDecimal base = pro.getCurrentDomain()
 						.getCommercialAppraisal();
 				Date expirationDate = null;
-				Date expiration = new Date(eo.getServiceDate().getYear(), 11,31);
+				Date expiration = new Date(eo.getServiceDate().getYear(), 11,
+						31);
 				boolean aux = false;
 				if (expiration == null) {
 					expirationDate = calculateExpirationDate(serviceDate, entry
@@ -627,18 +630,24 @@ public class CadasterServiceBean implements CadasterService {
 									.getStreet() != null)
 						municipalBond.setAddress(pro.getLocation()
 								.getMainBlockLimit().getStreet().getName());
-					
-					//****
-					String parameterDescription = systemParameterService.findParameter("URBAN_PROPERTY_TAX_DESCRIPTION_EMISSION");
-					municipalBond.setDescription(String.format(parameterDescription, fiscalPeriod.getFiscalYear()));
+
+					// ****
+					String parameterDescription = systemParameterService
+							.findParameter("URBAN_PROPERTY_TAX_DESCRIPTION_EMISSION");
+					municipalBond
+							.setDescription(String.format(parameterDescription,
+									fiscalPeriod.getFiscalYear()));
 				} else {
 					// municipalBond.setAddress(getAddressForRusticProperty(pro));
 					municipalBond.setAddress(pro.getCurrentDomain()
 							.getDescription());
 					municipalBond.setBondAddress(pro.getCurrentDomain()
 							.getDescription());
-					String parameterDescription = systemParameterService.findParameter("RUSTIC_PROPERTY_TAX_DESCRIPTION_EMISSION");
-					municipalBond.setDescription(String.format(parameterDescription, fiscalPeriod.getFiscalYear()));
+					String parameterDescription = systemParameterService
+							.findParameter("RUSTIC_PROPERTY_TAX_DESCRIPTION_EMISSION");
+					municipalBond
+							.setDescription(String.format(parameterDescription,
+									fiscalPeriod.getFiscalYear()));
 				}
 
 				if (pro.getAddressReference() != null) {
@@ -785,11 +794,13 @@ public class CadasterServiceBean implements CadasterService {
 	 *            id del periodo fiscal
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void calculateExemptions(Long fiscalPeriodId, Date fromDate, Date untilDate) {
+	public void calculateExemptions(Long fiscalPeriodId, Date fromDate,
+			Date untilDate) {
 		List<Long> entriesIds = loadEntriesIds();
 		Long pendingStatus = loadMunicipalBondStatus();
-		List<Exemption> exemptions = municipalBondService.findExemptionsByFiscalPeriod(fiscalPeriodId, fromDate,
-				untilDate);
+		List<Exemption> exemptions = municipalBondService
+				.findExemptionsByFiscalPeriod(fiscalPeriodId, fromDate,
+						untilDate);
 
 		System.out.println("Total exoneraciones: " + exemptions.size());
 		List<Long> residentsIds = new ArrayList<Long>();
@@ -1119,4 +1130,25 @@ public class CadasterServiceBean implements CadasterService {
 		return crudService.update(domain);
 	}
 
+	/*
+	 * Rene
+	 * 2016-08-16
+	 * Metodo para obtener los avaluos de la propiedad
+	 */
+	@Override
+	public List<AppraisalsPropertyDTO> findAppraisalsForProperty(
+			Long property_id) {
+		Query query = entityManager
+				.createNativeQuery("select CAST(extract(YEAR from app.date) as INTEGER) AS year_appraisal, "
+						+ "app.commercialappraisal AS commercial_appraisal "
+						+ "from appraisal app "
+						+ "inner JOIN property pro ON (app.property_id = pro.id) "
+						+ "where pro.id=?1 "
+						+ "order by app.date asc");
+		query.setParameter(1, property_id);
+		
+		List<AppraisalsPropertyDTO> retorno = NativeQueryResultsMapper.map(query.getResultList(), AppraisalsPropertyDTO.class);
+		
+		return retorno;
+	}
 }

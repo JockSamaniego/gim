@@ -9,6 +9,7 @@ package org.gob.gim.income.action;
  * 
  */
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,6 +27,8 @@ import javax.faces.event.ActionEvent;
 import javax.naming.NamingException;
 import javax.persistence.Query;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.GimUtils;
@@ -2738,8 +2741,9 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 	/**
 	 * Para reporte de saldos vigentes
+	 * @throws Exception 
 	 */
-	public void generateCurrentBalanceReport() {
+	public void generateCurrentBalanceReport() throws Exception {
 		isCurrentBalanceReport = Boolean.TRUE;
 		generateEmissionGlobalReport();
 	}
@@ -2749,8 +2753,9 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 	/**
 	 * Genera el reporte de emisión por partidas
+	 * @throws Exception 
 	 */
-	public void generateEmissionGlobalReport() {
+	public void generateEmissionGlobalReport() throws Exception {
 
 		rootNode = null;
 		Calendar now = Calendar.getInstance();
@@ -3188,15 +3193,50 @@ public class WorkdayHome extends EntityHome<Workday> {
 		return query.getResultList();
 	}
 
-	private List<EntryTotalCollected> getAllFutureTotals(Long statusId) {
+	private List<EntryTotalCollected> getAllFutureTotals(Long statusId)
+			throws Exception {
+
+		statusIds = new ArrayList<Long>();
+		statusIds.add(statusId);
+		Query query = query = getEntityManager().createNamedQuery(
+				"MunicipalBond.SumTotalFutureBetweenDatesByItem");
+		query.setParameter("municipalBondStatusId", statusIds);
+		query.setParameter("startDate", startDate);
+		query.setParameter("endDate", endDate);
+
+		List<EntryTotalCollected> retorno = query.getResultList();
+		if (!retorno.isEmpty()) {
+			for (EntryTotalCollected entryTotalCollected : retorno) {
+				if (entryTotalCollected.getParametersFutureEmission() == null) {
+					 throw new Exception("No existe configuracion de parametros futuros para la cuenta: "
+								+ entryTotalCollected.getAccount()+" - "+entryTotalCollected.getEntry());
+				} else {
+					ParameterFutureEmissionDTO parameters = new ObjectMapper()
+							.readValue(entryTotalCollected
+									.getParametersFutureEmission(),
+									ParameterFutureEmissionDTO.class);
+					entryTotalCollected
+							.setParametersFutureEmissionDTO(parameters);
+				}
+
+			}
+		}
+		System.out.println("Retono Future:" + retorno);
+		return retorno;
+
+	}
+
+	private List<EntryTotalCollected> getAllFutureTotals(Long statusId,
+			Long entryId) {
 		try {
 			statusIds = new ArrayList<Long>();
 			statusIds.add(statusId);
 			Query query = query = getEntityManager().createNamedQuery(
-					"MunicipalBond.SumTotalFutureBetweenDatesByItem");
+					"MunicipalBond.SumTotalFutureBetweenDatesByItemAndEntry");
 			query.setParameter("municipalBondStatusId", statusIds);
 			query.setParameter("startDate", startDate);
 			query.setParameter("endDate", endDate);
+			query.setParameter("entry_id", entryId);
 
 			List<EntryTotalCollected> retorno = query.getResultList();
 			if (!retorno.isEmpty()) {
@@ -3348,11 +3388,26 @@ public class WorkdayHome extends EntityHome<Workday> {
 	}
 
 	private List<EntryTotalCollected> getTotalEmittedFutureByEntryAndStatus(
-			Long statusId) {
+			Long statusId) throws Exception {
 		List<EntryTotalCollected> totals = new ArrayList<EntryTotalCollected>();
-		if (entry == null || entry.getId().equals(futureBondStatus.getId())) {
+		System.out.println(municipalBondStatus);
+		if (entry == null) {
+			if (municipalBondStatus == null) {
+				totals = getAllFutureTotals(statusId);
+			} else if (municipalBondStatus.getId().equals(
+					futureBondStatus.getId())) {
+				totals = getAllFutureTotals(statusId);
+			}
 			// TODO consultar emisiones futuras SumTotalFutureBetweenDatesByItem
-			totals = getAllFutureTotals(statusId);
+
+		} else if (entry != null) {
+			if (municipalBondStatus == null) {
+				totals = getAllFutureTotals(statusId, entry.getId());
+			} else if (municipalBondStatus.getId().equals(
+					futureBondStatus.getId())) {
+				totals = getAllFutureTotals(statusId, entry.getId());
+			}
+
 		}
 		return totals;
 	}

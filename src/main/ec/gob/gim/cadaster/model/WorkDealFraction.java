@@ -59,10 +59,11 @@ public class WorkDealFraction implements Comparable<WorkDealFraction>{
 	
 	/**
 	 * 2016-08-04
-	 * @author mack
+	 * @author Rene
 	 * @tag cambioCalculoCEM
 	 */
-	@Transient
+	//@Transient
+	//campoque almacena el valor seleccionado de avaluo comercial para el calculo de CEM
 	private BigDecimal commercialAppraisal; 
 	
 	public WorkDealFraction() {
