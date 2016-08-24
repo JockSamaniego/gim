@@ -44,6 +44,7 @@ import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.InterestPublicInstitutionUtils;
 import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.FiscalPeriodService;
+import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.service.TaxRateService;
 import org.gob.gim.income.service.TaxService;
@@ -104,6 +105,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 	@EJB
 	TaxService taxService;
+	
+	@EJB
+	ResidentService residentService;
 
 	public static final String PENDING_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_PENDING";
 
@@ -1054,7 +1058,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			//@tag InteresCeroInstPub
 			Boolean interestCero_publiCompany = systemParameterService.findParameter(COLLECT_INTEREST_PUBLIC_COMPANY);  
 			if(interestCero_publiCompany){
-				boolean isPublic = InterestPublicInstitutionUtils.isPublicInstitution(municipalBond.getResident().getId());
+				/*
+				 * @author Rene 
+				 * @date 2016-08-24
+				 */
+				boolean isPublic = residentService.isPublicInstitution(municipalBond.getResident().getId());
 				if(isPublic){  
 					Calendar transitionDate = InterestPublicInstitutionUtils.transitionDate;
 					Calendar paymentCalendar = Calendar.getInstance();
