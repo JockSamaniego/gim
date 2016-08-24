@@ -1128,6 +1128,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 		interest = interest.setScale(2, RoundingMode.HALF_UP);
 		municipalBond.setInterest(interest);
+		
+		
+//		if(municipalBond.getInterestVoucher()!=null){
+//			municipalBond.setInterest(municipalBond.getInterestVoucher());
+//		}
 		// System.out.println("INTERESTS -----> ENDS With value "+interest);
 	}
 	

@@ -178,11 +178,122 @@
 					value="#{messages['workDeal.notWorkDealFractionAssociated']}."
 					rendered="#{empty workDealHome.instance.workDealFractions}" />
 
-				<rich:dataTable
-					value="#{workDealHome.orderByAddresAndCadastralCode(workDealHome.instance.workDealFractions)}"
-					var="_workDealFraction"
-					rendered="#{not empty workDealHome.instance.workDealFractions}"
-					rowClasses="rvgRowOne,rvgRowTwo" id="workDealTable">
+		<rich:dataTable value="#{workDealHome.orderByAddressAndCadastralCodeDTO(workDealHome.workdealfractionList)}" var="_workDealFraction"
+			rendered="#{not empty workDealHome.instance.workDealFractions}"
+			rowClasses="rvgRowOne,rvgRowTwo" id="workDealTable">
+			
+			<rich:column styleClass="right" sortBy="#{_workDealFraction.property.cadastralCode}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['property.cadastralCode']}" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.cadastralCode}" />
+			</rich:column>
+			
+			<rich:column styleClass="right" sortBy="#{_workDealFraction.property.previousCadastralCode}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['property.previousCadastralCode']}" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.previousCadastralCode}" />
+			</rich:column>
+			
+			
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['common.identificationNumber']}" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.identificationNumber}" />
+			</rich:column>
+			
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="#{messages['resident']}" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.name}" />
+			</rich:column>
+			
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="#{messages['workDealFraction.address']}" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.address}" />
+			</rich:column>
+			
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['workDealFraction.frontLength']}" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.frontLength}">
+					<f:convertNumber pattern="0.00"/>
+				</h:outputText>
+			</rich:column>
+			
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['property.lotAliquot']}" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.lotAliquot}" >
+					<f:convertNumber pattern="0.00"/>
+				</h:outputText>
+			</rich:column>
+			
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['domain.commercialAppraisal']}" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.commercialAppraisal}" />
+			</rich:column>
+			 
+			
+			
+						
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['workDealFraction.contributionFront']}" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.contributionFront}">
+						<f:convertNumber pattern="0.00"/>
+				</h:outputText>
+			</rich:column>
+			
+			
+			
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['workDealFraction.sharedValue']}" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.sharedValue}">
+					<f:convertNumber pattern="0.00"/>
+				</h:outputText>
+			</rich:column>
+			
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['workDealFraction.differentiatedValue']}" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.differentiatedValue}">
+						<f:convertNumber pattern="0.00"/>
+				</h:outputText>
+			</rich:column>
+			
+		
+			
+			<rich:column styleClass="right">
+				<f:facet name="header">
+					<h:outputText value="#{messages['workDealFraction.total']}" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.total}">
+					<f:convertNumber pattern="0.00"/>
+				</h:outputText>
+			</rich:column> 
+			
+			<rich:column styleClass="right" rendered="#{workDealHome.instance.drinkingWater}">
+				<f:facet name="header">
+					<h:outputText value="Agua" />
+				</f:facet>
+				<h:outputText value="#{_workDealFraction.waterValue}">
+						<f:convertNumber pattern="0.00"/>
+				</h:outputText>
+			</rich:column>
 
 					<rich:column styleClass="right"
 						sortBy="#{_workDealFraction.property.cadastralCode}">

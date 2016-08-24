@@ -3,54 +3,73 @@ package ec.gob.gim.cadaster.model.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
-import ec.gob.gim.cadaster.model.WorkDealFraction;
+import org.gob.gim.common.NativeQueryResultColumn;
+import org.gob.gim.common.NativeQueryResultEntity;
 
+import ec.gob.gim.cadaster.model.WorkDealFraction;
+@NativeQueryResultEntity
 public class WorkDealFull {
 
+	@NativeQueryResultColumn(index = 0)
 	private Long id;
+	@NativeQueryResultColumn(index = 1)	
 	private String address;
-	private BigDecimal contributionfront;
-	private BigDecimal differentiatedvalue;
-	private BigDecimal frontlength;
-	private BigDecimal sharedvalue;
+	@NativeQueryResultColumn(index = 2)	
+	private BigDecimal contributionFront;
+	@NativeQueryResultColumn(index = 3)	
+	private BigDecimal differentiatedValue;
+	@NativeQueryResultColumn(index = 4)	
+	private BigDecimal frontLength;
+	@NativeQueryResultColumn(index = 5)	
+	private BigDecimal sharedValue;
+	@NativeQueryResultColumn(index = 6)	
 	private BigDecimal total;
+	@NativeQueryResultColumn(index = 7)	
 	private Long propertyId;
+	@NativeQueryResultColumn(index = 8)	
 	private Long workdealId;
+	@NativeQueryResultColumn(index = 9)
 	private BigDecimal sewerageValue;
-	private BigDecimal watervalue;
-	private BigDecimal commercialappraisal;
-	private String identificationnumber;
+	@NativeQueryResultColumn(index = 10)
+	private BigDecimal waterValue;
+	@NativeQueryResultColumn(index = 11)
+	private BigDecimal commercialAppraisal;
+	@NativeQueryResultColumn(index = 12)
+	private String identificationNumber;
+	@NativeQueryResultColumn(index = 13)
 	private String name;
-	private String previouscadastralcode;
-	private BigDecimal lotaliquot;
-	
-	private List<WorkDealFraction> workdealfractions;
+	@NativeQueryResultColumn(index = 14)
+	private String previousCadastralCode;
+	@NativeQueryResultColumn(index = 15)
+	private BigDecimal lotAliquot;
+	@NativeQueryResultColumn(index = 16)
+	private String cadastralCode;
 	
 	public WorkDealFull(){
 	}
 	
-	public WorkDealFull(Long id, String address, BigDecimal contributionfront, BigDecimal differentiatedvalue,
-			BigDecimal frontlength, BigDecimal sharedvalue, BigDecimal total, Long propertyId, Long workdealId,
-			BigDecimal sewerageValue, BigDecimal watervalue, BigDecimal commercialappraisal,
-			String identificationnumber, String name, String previouscadastralcode, BigDecimal lotaliquot,
-			List<WorkDealFraction> workdealfractions) {
+	public WorkDealFull(Long id, String address, BigDecimal contributionFront, BigDecimal differentiatedValue,
+			BigDecimal frontLength, BigDecimal sharedValue, BigDecimal total, Long propertyId, Long workdealId,
+			BigDecimal sewerageValue, BigDecimal waterValue, BigDecimal commercialAppraisal,
+			String identificationNumber, String name, String previousCadastralCode, BigDecimal lotAliquot, 
+			String cadastralCode) {
 		this.id = id;
 		this.address = address;
-		this.contributionfront = contributionfront;
-		this.differentiatedvalue = differentiatedvalue;
-		this.frontlength = frontlength;
-		this.sharedvalue = sharedvalue;
+		this.contributionFront = contributionFront;
+		this.differentiatedValue = differentiatedValue;
+		this.frontLength = frontLength;
+		this.sharedValue = sharedValue;
 		this.total = total;
 		this.propertyId = propertyId;
 		this.workdealId = workdealId;
 		this.sewerageValue = sewerageValue;
-		this.watervalue = watervalue;
-		this.commercialappraisal = commercialappraisal;
-		this.identificationnumber = identificationnumber;
+		this.waterValue = waterValue;
+		this.commercialAppraisal = commercialAppraisal;
+		this.identificationNumber = identificationNumber;
 		this.name = name;
-		this.previouscadastralcode = previouscadastralcode;
-		this.lotaliquot = lotaliquot;
-		this.workdealfractions = workdealfractions;
+		this.previousCadastralCode = previousCadastralCode;
+		this.lotAliquot = lotAliquot;
+		this.cadastralCode = cadastralCode;
 	}
 	
 	public Long getId() {
@@ -65,29 +84,34 @@ public class WorkDealFull {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	public BigDecimal getContributionfront() {
-		return contributionfront;
+
+	public BigDecimal getContributionFront() {
+		return contributionFront;
 	}
-	public void setContributionfront(BigDecimal contributionfront) {
-		this.contributionfront = contributionfront;
+
+	public void setContributionFront(BigDecimal contributionFront) {
+		this.contributionFront = contributionFront;
 	}
-	public BigDecimal getDifferentiatedvalue() {
-		return differentiatedvalue;
+
+	public void setFrontLength(BigDecimal frontLength) {
+		this.frontLength = frontLength;
 	}
-	public void setDifferentiatedvalue(BigDecimal differentiatedvalue) {
-		this.differentiatedvalue = differentiatedvalue;
+
+	public BigDecimal getDifferentiatedValue() {
+		return differentiatedValue;
 	}
-	public BigDecimal getFrontlength() {
-		return frontlength;
+	public void setDifferentiatedValue(BigDecimal differentiatedValue) {
+		this.differentiatedValue = differentiatedValue;
 	}
-	public void setFrontlength(BigDecimal frontlength) {
-		this.frontlength = frontlength;
+	public BigDecimal getFrontLength() {
+		return frontLength;
 	}
-	public BigDecimal getSharedvalue() {
-		return sharedvalue;
+	 
+	public BigDecimal getSharedValue() {
+		return sharedValue;
 	}
-	public void setSharedvalue(BigDecimal sharedvalue) {
-		this.sharedvalue = sharedvalue;
+	public void setSharedValue(BigDecimal sharedValue) {
+		this.sharedValue = sharedValue;
 	}
 	public BigDecimal getTotal() {
 		return total;
@@ -113,23 +137,23 @@ public class WorkDealFull {
 	public void setSewerageValue(BigDecimal sewerageValue) {
 		this.sewerageValue = sewerageValue;
 	}
-	public BigDecimal getWatervalue() {
-		return watervalue;
+	public BigDecimal getWaterValue() {
+		return waterValue;
 	}
-	public void setWatervalue(BigDecimal watervalue) {
-		this.watervalue = watervalue;
+	public void setWaterValue(BigDecimal waterValue) {
+		this.waterValue = waterValue;
 	}
-	public BigDecimal getCommercialappraisal() {
-		return commercialappraisal;
+	public BigDecimal getCommercialAppraisal() {
+		return commercialAppraisal;
 	}
-	public void setCommercialappraisal(BigDecimal commercialappraisal) {
-		this.commercialappraisal = commercialappraisal;
+	public void setCommercialAppraisal(BigDecimal commercialAppraisal) {
+		this.commercialAppraisal = commercialAppraisal;
 	}
-	public String getIdentificationnumber() {
-		return identificationnumber;
+	public String getIdentificationNumber() {
+		return identificationNumber;
 	}
-	public void setIdentificationnumber(String identificationnumber) {
-		this.identificationnumber = identificationnumber;
+	public void setIdentificationNumber(String identificationNumber) {
+		this.identificationNumber = identificationNumber;
 	}
 	public String getName() {
 		return name;
@@ -137,26 +161,24 @@ public class WorkDealFull {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getPreviouscadastralcode() {
-		return previouscadastralcode;
+	public String getPreviousCadastralCode() {
+		return previousCadastralCode;
 	}
-	public void setPreviouscadastralcode(String previouscadastralcode) {
-		this.previouscadastralcode = previouscadastralcode;
+	public void setPreviouscadastralcode(String previousCadastralCode) {
+		this.previousCadastralCode = previousCadastralCode;
 	}
-	public BigDecimal getLotaliquot() {
-		return lotaliquot;
+	public BigDecimal getLotAliquot() {
+		return lotAliquot;
 	}
-	public void setLotaliquot(BigDecimal lotaliquot) {
-		this.lotaliquot = lotaliquot;
-	}
-
-	public List<WorkDealFraction> getWorkdealfractions() {
-		return workdealfractions;
+	public void setLotaliquot(BigDecimal lotAliquot) {
+		this.lotAliquot = lotAliquot;
 	}
 
-	public void setWorkdealfractions(List<WorkDealFraction> workdealfractions) {
-		this.workdealfractions = workdealfractions;
+	public String getCadastralCode() {
+		return cadastralCode;
 	}
-	
-	
+
+	public void setCadastralCode(String cadastralCode) {
+		this.cadastralCode = cadastralCode;
+	}
 }
