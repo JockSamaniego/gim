@@ -9,7 +9,6 @@ package org.gob.gim.income.action;
  * 
  */
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,8 +26,6 @@ import javax.faces.event.ActionEvent;
 import javax.naming.NamingException;
 import javax.persistence.Query;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.GimUtils;
@@ -3257,37 +3254,6 @@ public class WorkdayHome extends EntityHome<Workday> {
 		}
 
 	}
-	
-	private List<EntryTotalCollected> getAllFutureTotals(Long statusId,Long entryId) {
-		try {
-			statusIds = new ArrayList<Long>();
-			statusIds.add(statusId);
-			Query query = query = getEntityManager().createNamedQuery(
-					"MunicipalBond.SumTotalFutureBetweenDatesByItemAndEntry");
-			query.setParameter("municipalBondStatusId", statusIds);
-			query.setParameter("startDate", startDate);
-			query.setParameter("endDate", endDate);
-			query.setParameter("entry_id", entryId);
-
-			List<EntryTotalCollected> retorno = query.getResultList();
-			if (!retorno.isEmpty()) {
-				for (EntryTotalCollected entryTotalCollected : retorno) {
-					ParameterFutureEmissionDTO parameters = new ObjectMapper()
-							.readValue(entryTotalCollected
-									.getParametersFutureEmission(),
-									ParameterFutureEmissionDTO.class);
-					entryTotalCollected
-							.setParametersFutureEmissionDTO(parameters);
-				}
-			}
-			System.out.println("Retono Future:" + retorno);
-			return retorno;
-		} catch (Exception e) {
-			System.out.println(e);
-			return new ArrayList<EntryTotalCollected>();
-		}
-
-	}
 
 	private List<EntryTotalCollected> getAllPrepaidTotals(String explanation) {
 		try {
@@ -3421,7 +3387,6 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private List<EntryTotalCollected> getTotalEmittedFutureByEntryAndStatus(
 			Long statusId) throws Exception {
 		List<EntryTotalCollected> totals = new ArrayList<EntryTotalCollected>();
-<<<<<<< HEAD
 		System.out.println(municipalBondStatus);
 		if (entry == null) {
 			if (municipalBondStatus == null) {
@@ -3430,9 +3395,6 @@ public class WorkdayHome extends EntityHome<Workday> {
 					futureBondStatus.getId())) {
 				totals = getAllFutureTotals(statusId);
 			}
-=======
-		if (entry == null || municipalBondStatus.getId().equals(futureBondStatus.getId())) {
->>>>>>> branch 'cem' of https://github.com/richardmijo/gim.git
 			// TODO consultar emisiones futuras SumTotalFutureBetweenDatesByItem
 
 		} else if (entry != null) {
@@ -3443,9 +3405,6 @@ public class WorkdayHome extends EntityHome<Workday> {
 				totals = getAllFutureTotals(statusId, entry.getId());
 			}
 
-		}
-		if(entry!=null || municipalBondStatus.getId().equals(futureBondStatus.getId())){
-			totals = getAllFutureTotals(statusId, entry.getId());
 		}
 		return totals;
 	}

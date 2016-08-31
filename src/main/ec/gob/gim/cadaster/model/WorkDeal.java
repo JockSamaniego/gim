@@ -145,6 +145,7 @@ public class WorkDeal {
 		this.name = name;
 	}
 
+	
 	public void add(WorkDealFraction workDealFraction) {
 		if (!this.getWorkDealFractions().contains(workDealFraction) && workDealFraction != null) {
 			this.getWorkDealFractions().add(workDealFraction);
@@ -153,9 +154,15 @@ public class WorkDeal {
 	}
 
 	public void remove(WorkDealFraction workDealFraction) {
-		boolean removed = this.workDealFractions.remove(workDealFraction);
-		if (removed)
-			workDealFraction.setWorkDeal(null);
+		 
+		for (WorkDealFraction wdf : this.workDealFractions) {
+			if(wdf.getProperty().getId().equals(workDealFraction.getProperty().getId())){
+				boolean removed = this.workDealFractions.remove(wdf);
+				if (removed)
+					wdf.setWorkDeal(null);
+				break;
+			}
+		}
 	}
 
 	public BigDecimal getCollectFactor() {

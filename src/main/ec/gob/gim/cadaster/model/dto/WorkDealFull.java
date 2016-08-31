@@ -1,12 +1,9 @@
 package ec.gob.gim.cadaster.model.dto;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import org.gob.gim.common.NativeQueryResultColumn;
 import org.gob.gim.common.NativeQueryResultEntity;
-
-import ec.gob.gim.cadaster.model.WorkDealFraction;
 @NativeQueryResultEntity
 public class WorkDealFull {
 
@@ -44,33 +41,6 @@ public class WorkDealFull {
 	private BigDecimal lotAliquot;
 	@NativeQueryResultColumn(index = 16)
 	private String cadastralCode;
-	
-	public WorkDealFull(){
-	}
-	
-	public WorkDealFull(Long id, String address, BigDecimal contributionFront, BigDecimal differentiatedValue,
-			BigDecimal frontLength, BigDecimal sharedValue, BigDecimal total, Long propertyId, Long workdealId,
-			BigDecimal sewerageValue, BigDecimal waterValue, BigDecimal commercialAppraisal,
-			String identificationNumber, String name, String previousCadastralCode, BigDecimal lotAliquot, 
-			String cadastralCode) {
-		this.id = id;
-		this.address = address;
-		this.contributionFront = contributionFront;
-		this.differentiatedValue = differentiatedValue;
-		this.frontLength = frontLength;
-		this.sharedValue = sharedValue;
-		this.total = total;
-		this.propertyId = propertyId;
-		this.workdealId = workdealId;
-		this.sewerageValue = sewerageValue;
-		this.waterValue = waterValue;
-		this.commercialAppraisal = commercialAppraisal;
-		this.identificationNumber = identificationNumber;
-		this.name = name;
-		this.previousCadastralCode = previousCadastralCode;
-		this.lotAliquot = lotAliquot;
-		this.cadastralCode = cadastralCode;
-	}
 	
 	public Long getId() {
 		return id;
@@ -170,15 +140,20 @@ public class WorkDealFull {
 	public BigDecimal getLotAliquot() {
 		return lotAliquot;
 	}
-	public void setLotaliquot(BigDecimal lotAliquot) {
-		this.lotAliquot = lotAliquot;
-	}
-
+	
 	public String getCadastralCode() {
 		return cadastralCode;
 	}
 
 	public void setCadastralCode(String cadastralCode) {
 		this.cadastralCode = cadastralCode;
+	}
+	
+	public void setPreviousCadastralCode(String previousCadastralCode) {
+		this.previousCadastralCode = previousCadastralCode;
+	}
+	
+	public void setLotAliquot(BigDecimal lotAliquot) {
+		this.lotAliquot = lotAliquot;
 	}
 }
