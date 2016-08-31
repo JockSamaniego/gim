@@ -18,7 +18,7 @@ public class ObligationsHistoryFotoMulta {
 	private String reference;
 	private String groupingcode;
 	private String numberPlate;
-	private Long antNumber;
+	private String antNumber;
 	private BigDecimal speeding;
 	private Date citationDate;
 	//rfarmijosm 2016-07-30
@@ -27,8 +27,35 @@ public class ObligationsHistoryFotoMulta {
 
 	public ObligationsHistoryFotoMulta() {
 	}
+		
+	public ObligationsHistoryFotoMulta(Long id, String identificationNumber,
+			String name, Long number, Date emisiondate, Date expirationdate,
+			BigDecimal value, BigDecimal paidtotal, String description,
+			String reference, String groupingcode, String numberPlate,
+			String antNumber, BigDecimal speeding, Date citationDate,
+			String status, String entryName) {
+		this.id = id;
+		this.identificationNumber = identificationNumber;
+		this.name = name;
+		this.number = number;
+		this.emisiondate = emisiondate;
+		this.expirationdate = expirationdate;
+		this.value = value;
+		this.paidtotal = paidtotal;
+		this.description = description;
+		this.reference = reference;
+		this.groupingcode = groupingcode;
+		this.numberPlate = numberPlate;
+		this.antNumber = antNumber;
+		this.speeding = speeding;
+		this.citationDate = citationDate;
+		this.status = status;
+		this.entryName = entryName;
+	}
 
-	public ObligationsHistoryFotoMulta(Long id, String identificationNumber,String name, Long number, Date emisiondate, Date expirationdate,
+
+
+	/*public ObligationsHistoryFotoMulta(Long id, String identificationNumber,String name, Long number, Date emisiondate, Date expirationdate,
 			BigDecimal value, BigDecimal paidtotal, String description,	String reference, String groupingcode,String numberPlate,Long antNumber,BigDecimal speeding,Date citationDate) {
 		this.id = id;
 		this.identificationNumber = identificationNumber;
@@ -46,7 +73,7 @@ public class ObligationsHistoryFotoMulta {
 		this.speeding = speeding;
 		this.citationDate = citationDate;
 
-	}
+	}*/
 
 	public Long getId() {
 		return id;
@@ -144,14 +171,6 @@ public class ObligationsHistoryFotoMulta {
 		this.numberPlate = numberPlate;
 	}
 
-	public Long getAntNumber() {
-		return antNumber;
-	}
-
-	public void setAntNumber(Long antNumber) {
-		this.antNumber = antNumber;
-	}
-
 	public BigDecimal getSpeeding() {
 		return speeding;
 	}
@@ -183,5 +202,13 @@ public class ObligationsHistoryFotoMulta {
 	public void setEntryName(String entryName) {
 		this.entryName = entryName;
 	}
-	
+
+	public String getAntNumber() {
+		return antNumber;
+	}
+
+	public void setAntNumber(String antNumber) {
+		this.antNumber = antNumber;
+	}
+		
 }

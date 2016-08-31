@@ -1366,6 +1366,12 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		private List<ObligationsHistoryFotoMulta> obligationsHistoryResult;
 		EntityManager em = getEntityManager();
 		
+		public void cleanReport(){
+			reportType = 0;
+			obligationsHistoryResult = new ArrayList<ObligationsHistoryFotoMulta>();
+			obligationsHistoryCriteria = null;
+		}
+		
 		public void searchObligationsHistory(){
 			obligationsHistoryResult = new ArrayList<ObligationsHistoryFotoMulta>();
 			if(obligationsRadioButton.equals("Normal")){
@@ -1411,7 +1417,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				reportType = 2;
 				String qryResult = "SELECT mb.id, re.identificationnumber, re.name, "
 						+ "mb.number, mb.emisiondate, mb.expirationdate, mb.value, mb.paidtotal, mb.description, mb.reference, mb.groupingcode, "
-						+ "ant.numberplate, ant.antnumber, ant.speeding, ant.citationdate, mbs.name  status, en.name entName "
+						+ "ant.numberplate, ant.contraventionNumber, ant.speeding, ant.citationdate, mbs.name  status, en.name entName "
 						+ "FROM gimprod.municipalbond mb "
 						+ "INNER JOIN gimprod.resident re on mb.resident_id = re.id "
 						+ "inner join municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id "
@@ -1419,7 +1425,8 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						+ "INNER JOIN gimprod.antreference ant on mb.adjunct_id = ant.id "
 						+ "WHERE lower(mb.description) like lower('%"+obligationsHistoryCriteria+"%') or "
 						+ "lower(mb.reference) like lower('%"+obligationsHistoryCriteria+"%') or lower(mb.groupingcode) like lower('%"+obligationsHistoryCriteria+"%') "
-						+ "or ant.antnumber = '"+obligationsHistoryCriteria+"' ORDER BY emisiondate;";
+						//+ "ORDER BY emisiondate;";
+						+ "or ant.contraventionNumber like '"+obligationsHistoryCriteria+"' ORDER BY emisiondate;";
 				Query queryResult = this.getEntityManager().createNativeQuery(qryResult);
 				List<Object[]> result = queryResult.getResultList();
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -1439,9 +1446,9 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						reg.setReference(row[9] == null ? "" : row[9].toString());
 						reg.setGroupingcode(row[10] == null ? "" : row[10].toString());
 						reg.setNumberPlate(row[11] == null ? "" : row[11].toString());
-						reg.setAntNumber(row[12] == null ? 0 : Long.parseLong(row[12].toString()));
+						reg.setAntNumber(row[12] == null ? "" : row[12].toString());
 						reg.setSpeeding(row[13] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[13].toString())));
-						reg.setCitationDate(row[14] == null ? sdf.parse("") : sdf.parse(row[14].toString()));
+						reg.setCitationDate(row[14] == null ? null : sdf.parse(row[14].toString()));
 						reg.setStatus(row[15] == null ? "" : row[15].toString());
 						reg.setEntryName(row[16] == null ? "" : row[16].toString());
 						obligationsHistoryResult.add(reg);

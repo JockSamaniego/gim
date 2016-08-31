@@ -170,8 +170,11 @@
 
 				<s:button id="back" value="#{messages['common.back']}"
 					propagation="end" view="/home.xhtml" />
-				<s:button id="clean" value="#{messages['common.reset']}" propagation="end"
-					view="/revenue/ObligationsHistoryReport.xhtml" />
+
+				<a:commandButton id="cleanReport"
+					value="#{messages['common.reset']}"
+					action="#{municipalBondHome.cleanReport}"
+					reRender="obligationsNormalQuery, obligationsHistoryForm" />
 			</h:panelGrid>
 		</h:form>
 
