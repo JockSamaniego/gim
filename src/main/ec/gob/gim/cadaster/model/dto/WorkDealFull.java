@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import org.gob.gim.common.NativeQueryResultColumn;
 import org.gob.gim.common.NativeQueryResultEntity;
+
+import ec.gob.gim.cadaster.model.Property;
 @NativeQueryResultEntity
 public class WorkDealFull {
 
@@ -41,6 +43,8 @@ public class WorkDealFull {
 	private BigDecimal lotAliquot;
 	@NativeQueryResultColumn(index = 16)
 	private String cadastralCode;
+	
+	private Property property;
 	
 	public Long getId() {
 		return id;
@@ -134,9 +138,7 @@ public class WorkDealFull {
 	public String getPreviousCadastralCode() {
 		return previousCadastralCode;
 	}
-	public void setPreviouscadastralcode(String previousCadastralCode) {
-		this.previousCadastralCode = previousCadastralCode;
-	}
+	
 	public BigDecimal getLotAliquot() {
 		return lotAliquot;
 	}
@@ -156,4 +158,11 @@ public class WorkDealFull {
 	public void setLotAliquot(BigDecimal lotAliquot) {
 		this.lotAliquot = lotAliquot;
 	}
+	public Property getProperty() {
+		return property;
+	}
+	public void setProperty(Property property) {
+		this.property = property;
+	}
+	
 }

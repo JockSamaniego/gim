@@ -1151,4 +1151,12 @@ public class CadasterServiceBean implements CadasterService {
 		
 		return retorno;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.gob.gim.cadaster.facade.CadasterService#findPropertyById(java.lang.Long)
+	 */
+	@Override
+	public Property findPropertyById(Long property_id) {
+		return this.entityManager.find(Property.class, property_id);
+	}
 }
