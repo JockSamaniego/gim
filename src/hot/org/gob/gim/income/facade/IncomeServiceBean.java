@@ -1596,6 +1596,93 @@ public class IncomeServiceBean implements IncomeService {
 	}
 	
 
+	//@author
+	//@tag recaudacionCoactivas
+	//@date 2016-07-06T12:29
+	//realizar el reverso en municipalbondaux - abonos compensaciones
+	@Override
+	public void reversePaymentAgreements(List<Long> depositIds)
+			throws ReverseNotAllowedException {
+
+		Query updateAux = entityManager.createNamedQuery("MunicipalbondAux.setAsVoid");
+		updateAux.setParameter("status", "VOID");
+		updateAux.setParameter("depositList", depositIds);
+		int state = updateAux.executeUpdate();		
+		
+	}
+	
+	
+	
+	/**
+	 * @author macartuche
+	 * @date 2016-07-08T15:33
+	 * @tag recaudacionCoactivas
+	 * Obtener una lista de municipalbondAux por el estado, municipalbondId y si cubre o
+	 * no el interes
+	 */
+	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long municipalbondId, Boolean coverInterest, String status){
+		
+		String query = "Select mba from MunicipalbondAux mba "
+						+ "where mba.municipalbond.id=:munid and mba.status=:status";
+		if(coverInterest!=null){
+			query += " and mba.itconverinterest=:cover";
+		}
+		
+		Query interestIsPayedQuery = entityManager.createQuery(query);
+		interestIsPayedQuery.setParameter("munid", municipalbondId);		
+		interestIsPayedQuery.setParameter("status", status);
+		
+		if(coverInterest!=null){
+			interestIsPayedQuery.setParameter("cover", coverInterest);
+		}
+		 
+		return interestIsPayedQuery.getResultList();
+	}
+	
+	
+	/**
+	 * @author macartuche
+	 * @date 2016-07-08T15:40:05
+	 * @tag recaudacionCoactivas
+	 * Suma de los intereses que se acumulan por abonos menores al interes
+	 */
+	public BigDecimal sumAccumulatedInterest(Long municipalbondId, Boolean coverInterest, String status){
+		
+		String query = " Select SUM(mba.payValue) from MunicipalbondAux mba " 
+					   + " where mba.municipalbond.id=:munid and "
+					   + "mba.itconverinterest=:cover and mba.status=:status";
+		Query sumInterest = entityManager.createQuery(query);		
+		sumInterest.setParameter("munid",municipalbondId);
+		sumInterest.setParameter("cover", coverInterest );
+		sumInterest.setParameter("status", status );
+		
+		return (BigDecimal)sumInterest.getSingleResult();
+	}
+	
+	/**
+	 * @author macartuche
+	 * @date 2016-07-08T15:52
+	 * @tag recaudacionCoactivas
+	 * @param deposit Deposit
+	 * @param municipalBond MunicipalBond
+	 * @param coverInterest Boolean
+	 * @return MunicipalbondAux
+	 */
+	private MunicipalbondAux createBondAux(Deposit deposit, MunicipalBond municipalBond,  Boolean coverInterest){
+		MunicipalbondAux munAux = new MunicipalbondAux();
+		munAux.setPayValue(deposit.getInterest());
+		munAux.setInterest(municipalBond.getInterest());
+		munAux.setItconverinterest(coverInterest);
+		munAux.setMunicipalbond(municipalBond);
+		munAux.setLiquidationDate(deposit.getDate());
+		munAux.setLiquidationTime(deposit.getTime());
+		
+		//DEPOSITO
+		munAux.setDeposit(deposit);
+		munAux.setStatus("VALID");
+		return munAux;
+	} 
+	
 	/**
 	 * @author macartuche
 	 * Poner a true que la compensacion ha sido pagada

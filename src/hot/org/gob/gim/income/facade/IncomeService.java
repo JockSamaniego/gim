@@ -26,7 +26,6 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.security.model.MunicipalbondAux;
-import ec.gob.loja.client.model.DataWS;
 
 @Local
 public interface IncomeService {
@@ -117,4 +116,11 @@ public interface IncomeService {
     //@tag InteresCeroInstPub  
     //No realizar el calculo de interes para instituciones publicas  
    //public void compensationPayment(List<Deposit> deposits);
+	
+	//@author
+	//@tag recaudacionCoactivas
+	//@date 2016-07-06T12:29
+	//realizar el reverso en municipalbondaux - abonos compensaciones
+	public void reversePaymentAgreements(List<Long> depositIds)
+				throws ReverseNotAllowedException;
 }

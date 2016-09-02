@@ -179,6 +179,21 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	@In(create = true)
 	ReceiptPrintingManager receiptPrintingManager;
 
+	
+	//2016-07-19T12:53pm
+	//@author macartuche
+	//@tag recaudacionCoactivas
+	private String agreementType;
+	
+	public String getAgreementType() {
+		return agreementType;
+	}
+
+	public void setAgreementType(String agreementType) {
+		this.agreementType = agreementType;
+	}
+
+	
 	public boolean isWired() {
 		return true;
 	}
@@ -562,10 +577,21 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				logger.info("CALCULATE 2");
 				resetPaymentTotals();
 				logger.info("CALCULATE 3");
+				
+				//obtener el tipo de acuerdo de pago
+				//2016-07-19T12:56
+				//@tag recaudacionCoactivas
+				if(paymentAgreement.getAgreementType()!=null && !paymentAgreement.getAgreementType().name().isEmpty()){
+					agreementType = paymentAgreement.getAgreementType().name();
+				}else{
+					agreementType = "";
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		
 	}
 
 	@SuppressWarnings("unchecked")

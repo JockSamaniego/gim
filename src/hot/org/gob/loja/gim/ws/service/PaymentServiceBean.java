@@ -145,13 +145,13 @@ public class PaymentServiceBean implements PaymentService {
 		String identificationNumber = request.getIdentificationNumber();
 		Taxpayer taxpayer = findTaxpayer(identificationNumber);
 		Date workDayDate;
-		if (request.getUsername().compareTo("dabetancourtc") == 0)
+		if (request.getUsername().compareTo("dabetancourtc") == 0) {
 			workDayDate = new GregorianCalendar().getTime();
-		else
+		} else 
 			workDayDate = findPaymentDate();
 		Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer
 				.getId());
-		
+
 		if (inPaymentAgreementBondsNumber > 0) {
 			throw new PayoutNotAllowed();
 		} else {
