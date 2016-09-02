@@ -149,7 +149,9 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		MunicipalBondItem root = new MunicipalBondItem(null);
 		try{
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
-			incomeService.calculatePayment(mbs, new Date(), true, false);
+			//@tag recaudacionCoactivas
+			incomeService.calculatePayment(mbs, new Date(), true, true);
+			
 		} catch(Exception e){
 			addFacesMessageFromResourceBundle(e.getMessage());
 		}

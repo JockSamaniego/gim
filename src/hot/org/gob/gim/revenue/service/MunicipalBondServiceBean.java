@@ -256,8 +256,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		paidTotal = paidTotal.add(municipalBond.getSurcharge());
 		
 		//@tag recaudacionCoativas
-		//if (!applyDiscounts) {
-		if (applyDiscounts) {
+		if (!applyDiscounts) {
+//		if (applyDiscounts) {
 			municipalBond.setDiscount(BigDecimal.ZERO);
 		} else {
 			paidTotal = paidTotal.subtract(municipalBond.getDiscount());
