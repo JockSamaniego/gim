@@ -11,16 +11,19 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
+import org.gob.gim.cadaster.action.pagination.WorkDealFractionDataModel;
 import org.gob.gim.cadaster.facade.CadasterService;
-import org.gob.gim.common.CatalogConstants;
-import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
-import org.gob.gim.revenue.service.ItemCatalogService;
+import org.gob.gim.revenue.action.MunicipalBondDataModel;
+import org.jboss.seam.Component;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Transactional;
+import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
@@ -30,16 +33,11 @@ import ec.gob.gim.cadaster.model.WorkDeal;
 import ec.gob.gim.cadaster.model.WorkDealFraction;
 import ec.gob.gim.cadaster.model.WorkDealFractionComparator;
 import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
-import ec.gob.gim.cadaster.model.dto.AuxWorkDealDTO;
-import ec.gob.gim.cadaster.model.dto.PropertyInfoFractionWorkDeal;
-import ec.gob.gim.cadaster.model.WorkDealFullComparator;
-import ec.gob.gim.cadaster.model.dto.WorkDealFull;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
-import ec.gob.gim.common.model.ItemCatalog;
-import ec.gob.gim.revenue.model.impugnment.dto.ImpugnmentDTO;
 
 @Name("workDealHome")
+@Scope(ScopeType.CONVERSATION)
 public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	/**
@@ -49,7 +47,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	@Logger
 	Log logger;
-
+	
 	@In
 	FacesMessages facesMessages;
 
@@ -58,8 +56,6 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	private CadasterService cadasterService;
 	public static String CADASTER_SERVICE_NAME = "/gim/CadasterService/local";
-	
-	private ItemCatalogService itemCatalogService;
 
 	private String criteriaProperty;
 	private Charge appraisalCharge;
@@ -67,30 +63,18 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	private Boolean isFirstTime = Boolean.TRUE;
 
-	private WorkDealFull workDealFraction;
+	private WorkDealFraction workDealFraction;
 
 	private List<Property> properties;
-
+	
 	private Boolean actionCreateFraction = Boolean.FALSE;
-
+	
 	private Boolean actionUpdateFraction = Boolean.FALSE;
-	
-	private List<AuxWorkDealDTO> auxChanges = new ArrayList<AuxWorkDealDTO>();
-	
-	private ItemCatalog actionNew;
-	
-	private ItemCatalog actionEdit;
-	
-	private ItemCatalog actionRemove;
-	
+
 	/*
-	 * René Ortega 2016-08-16 Lista para seleccionar los avaluos de x propiedad
+	 * RenÃ© Ortega 2016-08-16 Lista para seleccionar los avaluos de x propiedad
 	 */
 	private List<AppraisalsPropertyDTO> appraisalForPropertySelect = new ArrayList<AppraisalsPropertyDTO>();
-	// @author macartuche
-	// @date 2016-08-09T11:45
-	// @tag cambiosCalculoCEM
-	private List<WorkDealFull> workdealfractionList= new ArrayList<WorkDealFull>();
 
 	public void setWorkDealId(Long id) {
 		setId(id);
@@ -108,217 +92,60 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	public void wire() {
 		getInstance();
-
-		// @author macartuche
-		// @date 2016-08-09T11:45
-		// @tag cambiosCalculoCEM
-		// carga el nuevo DTO
-		if (isFirstTime) {
-			if (getInstance().getId() != null) {
-				workdealfractionList = fillData(getInstance().getId());
-			} 
-//				else {
-//				// TODO ver como hacer porque aun no hay registros en la BD....
-//				workdealfractionList = fillData(this.getInstance()
-//						.getWorkDealFractions());// new
-//													// ArrayList<WorkDealFull>();
-//			}
-
+		if (isFirstTime)
 			calculate();
-			isFirstTime = Boolean.FALSE;
+		isFirstTime = Boolean.FALSE;
 
-			if (cadasterService == null)
-				cadasterService = ServiceLocator.getInstance().findResource(
-						CADASTER_SERVICE_NAME);
-			
-			if (itemCatalogService == null) {
-				itemCatalogService = ServiceLocator.getInstance().findResource(
-						ItemCatalogService.LOCAL_NAME);
-			}
-			
-			this.actionNew = itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_ACTIONS_WORK_DEAL, CatalogConstants.ITEM_CATALOG_ACTION_NEW_WORK_DEAL);
-			this.actionEdit = itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_ACTIONS_WORK_DEAL, CatalogConstants.ITEM_CATALOG_ACTION_EDIT_WORK_DEAL);
-			this.actionRemove = itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_ACTIONS_WORK_DEAL, CatalogConstants.ITEM_CATALOG_ACTION_REMOVE_WORK_DEAL);
-			
+		if (cadasterService == null)
+			cadasterService = ServiceLocator.getInstance().findResource(
+					CADASTER_SERVICE_NAME);
+		if(this.instance != null){
+			getDataModel().setCriteria(this.instance.getId());
+			getDataModel().setRowCount(getDataModel().getObjectsNumber());
 		}
-
-	}
-
-	/*
-	 * Metodo para construir DTO cuando no este guardado....
-	 */
-	public List<WorkDealFull> fillData(List<WorkDealFraction> fractions) {
-		List<WorkDealFull> retorno = new ArrayList<WorkDealFull>();
-		for (WorkDealFraction workDealFraction : fractions) {
-			PropertyInfoFractionWorkDeal infoProperty =  getPropertyInfo(workDealFraction.getProperty().getId());
-			WorkDealFull fraction = new WorkDealFull();
-			fraction.setAddress(workDealFraction.getAddress());
-			fraction.setCadastralCode(infoProperty.getCadastralCode());
-			fraction.setCommercialAppraisal(workDealFraction
-					.getCommercialAppraisal());
-			fraction.setContributionFront(workDealFraction
-					.getContributionFront());
-			fraction.setDifferentiatedValue(workDealFraction
-					.getDifferentiatedValue());
-			fraction.setFrontLength(workDealFraction.getFrontLength());
-			fraction.setIdentificationNumber(infoProperty.getIdentificationNumber());
-			fraction.setLotAliquot(infoProperty.getLotalicuot());
-			fraction.setName(infoProperty.getName());
-			fraction.setPreviousCadastralCode(infoProperty.getPreviouscadastralcode());
-			fraction.setPropertyId(infoProperty.getProperty_id());
-			fraction.setSewerageValue(workDealFraction.getSewerageValue());
-			fraction.setSharedValue(workDealFraction.getSharedValue());
-			fraction.setTotal(workDealFraction.getTotal());
-			fraction.setWaterValue(workDealFraction.getWaterValue());
-			fraction.setId(workDealFraction.getId());
-			retorno.add(fraction);
-		}
-		return retorno;
 	}
 
 	public void createWorkDealFraction() {
-		this.workDealFraction = new WorkDealFull();
+		this.workDealFraction = new WorkDealFraction();
 		this.appraisalForPropertySelect.clear();
 		this.actionCreateFraction = Boolean.TRUE;
 		this.actionUpdateFraction = Boolean.FALSE;
 	}
 
-	public void editWorkDealFraction(WorkDealFull workDealFraction) {
-
-		// No esta en la BD ... es nuevo
-		/**
-		 * @author: rene
-		 * @fecha: 30/8/2016
-		 * @tag: CEM
-		 */
-//		for (WorkDealFraction wdf : this.instance.getWorkDealFractions()) {
-//			if (wdf.getProperty().getId()
-//					.equals(workDealFraction.getPropertyId())) {
-//				this.workDealFraction = wdf;
-//				break;
-//			}
-//		}
-
+	public void editWorkDealFraction(WorkDealFraction workDealFraction) {
 		this.workDealFraction = workDealFraction;
-		this.workDealFraction.setProperty(cadasterService.findPropertyById(workDealFraction.getPropertyId()));
-
 		this.appraisalForPropertySelect = cadasterService
-				.findAppraisalsForProperty(this.workDealFraction.getPropertyId());
+				.findAppraisalsForProperty(workDealFraction.getProperty().getId());
 		this.actionCreateFraction = Boolean.FALSE;
 		this.actionUpdateFraction = Boolean.TRUE;
 	}
-
-	public WorkDealFraction findWorkDealFraction(Long id) {
-		Query query = this.getEntityManager().createNamedQuery(
-				"WorkDealFraction.findById");
-		query.setParameter("workDealFractionId", id);
-		List<WorkDealFraction> results = query.getResultList();
-		if (!results.isEmpty()) {
-			return results.get(0);
-		} else {
-			return null;
-		}
-	}
-
-	// @author macartuche
-	// @date 2016-08-09T11:45
-	// @tag cambiosCalculoCEM
-	@SuppressWarnings("unchecked")
-	private List<WorkDealFull> fillData(Long idWorkDeal) {
-		Query query = getEntityManager()
-				.createNativeQuery(
-						"SELECT id, "
-								+ "address, "
-								+ "contributionfront, "
-								+ "differentiatedvalue, "
-								+ "frontlength, "
-								+ "sharedvalue, "
-								+ "total, "
-								+ "property_id, "
-								+ "workdeal_id,"
-								+ " coalesce(sewerageValue,0) as sewerageValue, "
-								+ "coalesce(watervalue,0) as watervalue, "
-								+ "commercialappraisal, "
-								+ "identificationnumber, "
-								+ "name, "
-								+ "previouscadastralcode, "
-								+ "lotaliquot, "
-								+ "cadastralCode "
-								+ "FROM  view_workdealfractionfull where workdeal_id=?1");
-
-		query.setParameter(1, idWorkDeal);
-		List<WorkDealFull> retorno = NativeQueryResultsMapper.map(
-				query.getResultList(), WorkDealFull.class);
-		return retorno;
-	}
-	
-	public PropertyInfoFractionWorkDeal getPropertyInfo(Long propertyId){
-		Query query = getEntityManager()
-				.createNativeQuery("SELECT 	pro.id as property_id, "
-											+"res.identificationnumber as identificationnumber, "
-											+"res.name as name, "
-											+"pro.previouscadastralcode, "
-											+"pro.cadastralCode "
-										+"FROM  property pro "
-										+"INNER JOIN domain dom ON (dom.currentproperty_id = pro.id) "
-										+"INNER JOIN resident res ON (dom.resident_id = res.id) "
-										+"where pro.id=?1");
-		query.setParameter(1, propertyId);
-		List<PropertyInfoFractionWorkDeal> retorno = NativeQueryResultsMapper.map(
-				query.getResultList(), PropertyInfoFractionWorkDeal.class);
-		if(!retorno.isEmpty()){
-			return retorno.get(0);
-		}
-		return null;
-	}
-	
-	
 
 	/**
 	 * Agrega un building a la propiedad
 	 */
 	public void addWorkDealFraction() {
-		if (this.workDealFraction.getCommercialAppraisal() == null) {
-			facesMessages.addToControl("",
+		if(this.workDealFraction.getCommercialAppraisal()==null){
+			facesMessages
+			.addToControl(
+					"",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					"Campos obligatorios vacios");
 			return;
 		}
-		if (verifyCheckAlreadyAdded()) {
-			facesMessages.addToControl("",
+		if(verifyCheckAlreadyAdded()){
+			facesMessages
+			.addToControl(
+					"",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					"Propiedad ya agregada");
 			return;
 		}
-		this.workDealFraction.setCadastralCode(this.workDealFraction.getProperty().getCadastralCode());
-		this.workDealFraction.setLotAliquot(this.workDealFraction.getProperty().getLotAliquot());
-		this.workDealFraction.setIdentificationNumber(this.workDealFraction.getProperty().getCurrentDomain().getResident().getIdentificationNumber());
-		this.workDealFraction.setName(this.workDealFraction.getProperty().getCurrentDomain().getResident().getName());
-		this.workDealFraction.setPreviousCadastralCode(this.workDealFraction.getProperty().getPreviousCadastralCode());
-		this.workDealFraction.setPropertyId(this.workDealFraction.getProperty().getId());
-		this.workdealfractionList.add(this.workDealFraction);
-		
-		if(this.actionCreateFraction){
-			auxChanges.add(new AuxWorkDealDTO(this.workDealFraction, actionNew));
-		}else if(actionUpdateFraction){
-			auxChanges.add(new AuxWorkDealDTO(this.workDealFraction, actionEdit));
-		}
+		this.getInstance().add(this.workDealFraction);
 	}
 
-	public void removeWorkDealFraction(WorkDealFull workDealFraction) {
-		// WorkDealFraction wdf =
-		// findWorkDealFraction(workDealFraction.getId());
-		// if (wdf != null){
-		for (WorkDealFull fraction : this.workdealfractionList) {
-			if (fraction.getProperty().getId()
-					.equals(workDealFraction.getPropertyId())) {
-				this.workdealfractionList.remove(fraction);
-				break;
-			}
-		}
-		
-		auxChanges.add(new AuxWorkDealDTO(workDealFraction, actionRemove));
-
+	public void removeWorkDealFraction(WorkDealFraction workDealFraction) {
+		if (workDealFraction != null)
+			this.getInstance().remove(workDealFraction);
 	}
 
 	public void searchProperty() {
@@ -364,13 +191,10 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	private BigDecimal totalWater;
 	private BigDecimal totalSewerage;
 
-	// @author macartuche
-	// @tag cambioCalculoCEM
-	List<WorkDealFraction> listWDF = new ArrayList<WorkDealFraction>();
-
 	public void calculate() {
 		if (this.getInstance().getCollectFactor().compareTo(BigDecimal.ZERO) == -1
-				|| this.getInstance().getCollectFactor().compareTo(BigDecimal.ONE) == 1) {
+				|| this.getInstance().getCollectFactor()
+						.compareTo(BigDecimal.ONE) == 1) {
 			addFacesMessageFromResourceBundle("workDeal.collectFactorInvalid");
 			return;
 		}
@@ -381,63 +205,43 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 		// agregado mack
 		totalWater = BigDecimal.ZERO;
 		totalSewerage = BigDecimal.ZERO;
-		////
+		// //
 		total = BigDecimal.ZERO;
 		calculateValues();
-		
-		//@author macartuche
-		//@tag cambioCalculoCEM
-		//listWDF = this.getInstance().getWorkDealFractions();
-		/*for (WorkDealFraction wdf : listWDF) {
-			wdf.setCommercialAppraisal(getTotalAppraisalBYWorkeDealFractionSQL(wdf.getId()));
-		}*/
-		
-		//fin @tag cambioCalculoCEM
-		for (WorkDealFull wdfDTO : workdealfractionList) {
-			calculateSharedValueDTO(wdfDTO);
-			calculateDifferentitatedValueDTO(wdfDTO);
-			wdfDTO.setTotal(wdfDTO.getSharedValue().add(wdfDTO.getDifferentiatedValue()));
-			totalSharedValue = totalSharedValue.add(wdfDTO.getSharedValue());
-			totalDifferentiatedValue = totalDifferentiatedValue.add(wdfDTO.getDifferentiatedValue());
-			total = total.add(wdfDTO.getTotal());
-		}
-		
-		/*
-		for (WorkDealFraction wf : listWDF) {
+		for (WorkDealFraction wf : this.getInstance().getWorkDealFractions()) {
 			calculateSharedValue(wf);
 			calculateDifferentitatedValue(wf);
+
 			wf.setTotal(wf.getSharedValue().add(wf.getDifferentiatedValue()));
+
 			totalSharedValue = totalSharedValue.add(wf.getSharedValue());
-			totalDifferentiatedValue = totalDifferentiatedValue.add(wf.getDifferentiatedValue());
+			totalDifferentiatedValue = totalDifferentiatedValue.add(wf
+					.getDifferentiatedValue());
 			total = total.add(wf.getTotal());
 		}
-		*/
 		this.getInstance().setTotalContributionFront(totalContributionFront);
 		this.getInstance().setTotalAppraisal(totalAppraisal);
 		adjustTotal();
 
-
 		//
-		//total de comercialappraisal de todos los workdealfraction de un workdeal
-		BigDecimal totalComercialAppraisal_WDF = getTotalAppraisalBYWorkeDealSQL();
-		/*		
-		for (WorkDealFraction wf : listWDF) {
+		for (WorkDealFraction wf : this.getInstance().getWorkDealFractions()) {
 			BigDecimal aux = BigDecimal.ZERO;
-			if (this.getInstance().getDrinkingWater() != null && this.getInstance().getDrinkingWater()) {
-				//aux = calculateValuesWS(wf, this.getInstance().getWaterValue());
-				//@tag cambioCalculoCEM
-				aux = calculateValuesWS(wf, this.getInstance().getWaterValue(), totalComercialAppraisal_WDF);
+			if (this.getInstance().getDrinkingWater() != null
+					&& this.getInstance().getDrinkingWater()) {
+				aux = calculateValuesWS(wf, this.getInstance().getWaterValue());
 				aux = aux.setScale(2, RoundingMode.HALF_UP);
 				wf.setWaterValue(aux);
 			}
-			if (this.getInstance().getSewerage() != null && this.getInstance().getSewerage()) {
-				//@tag cambioCalculoCEM
-				//aux = calculateValuesWS(wf, this.getInstance().getSewerageValue());
-				aux = calculateValuesWS(wf, this.getInstance().getSewerageValue(), totalComercialAppraisal_WDF);
+
+			if (this.getInstance().getSewerage() != null
+					&& this.getInstance().getSewerage()) {
+				aux = calculateValuesWS(wf, this.getInstance()
+						.getSewerageValue());
 				aux = aux.setScale(2, RoundingMode.HALF_UP);
 				System.out.println("Sin redondeo==>" + aux);
 				wf.setSewerageValue(aux);
 			}
+
 			// agregado mack
 			if (wf.getSewerageValue() != null) {
 				totalSewerage = totalSewerage.add(wf.getSewerageValue());
@@ -445,45 +249,24 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 			if (wf.getWaterValue() != null) {
 				totalWater = totalWater.add(wf.getWaterValue());
 			}
-		}*/
-		//@tag cambioCalculoCEM
-		for (WorkDealFull wdfDTO : workdealfractionList) {
-			BigDecimal aux = BigDecimal.ZERO;
-			if (this.getInstance().getDrinkingWater() != null && this.getInstance().getDrinkingWater()) {
-				aux = calculateValuesWSDTO(wdfDTO, this.getInstance().getWaterValue(), totalComercialAppraisal_WDF);
-				aux = aux.setScale(2, RoundingMode.HALF_UP);
-				wdfDTO.setWaterValue(aux);
-			}
 
-			if (this.getInstance().getSewerage() != null && this.getInstance().getSewerage()) {
-				aux = calculateValuesWSDTO(wdfDTO, this.getInstance().getSewerageValue(), totalComercialAppraisal_WDF);
-				aux = aux.setScale(2, RoundingMode.HALF_UP);
-				//System.out.println("Sin redondeo==>" + aux);
-				wdfDTO.setSewerageValue(aux);
-			}
-
-			// agregado mack
-			if (wdfDTO.getSewerageValue() != null) {
-				totalSewerage = totalSewerage.add(wdfDTO.getSewerageValue());
-			}
-			if (wdfDTO.getWaterValue() != null) {
-				totalWater = totalWater.add(wdfDTO.getWaterValue());
-			}
 		}
 
 		// water
-		if (this.getInstance().getDrinkingWater()!=null && 
-				this.getInstance().getDrinkingWater()) {
-			compareCases(totalWater, this.getInstance().getWaterValue(), "water");
+		if (this.getInstance().getDrinkingWater() != null
+				&& this.getInstance().getDrinkingWater()) {
+			compareCases(totalWater, this.getInstance().getWaterValue(),
+					"water");
 		}
 
 		// sewerage-alcantarillado
-		if (this.getInstance().getSewerage()!=null && 
-				this.getInstance().getSewerage()) {
-			compareCases(totalSewerage, this.getInstance().getSewerageValue(), "sewerage");
+		if (this.getInstance().getSewerage() != null
+				&& this.getInstance().getSewerage()) {
+			compareCases(totalSewerage, this.getInstance().getSewerageValue(),
+					"sewerage");
 		}
-		
 	}
+
 	/**
 	 * 
 	 * @param totalSum
@@ -496,7 +279,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 		int roundSeg = totalSum.compareTo(valueCompare);
 		// System.out.println("Compare==>" + roundSeg);
 		int i = 0;
-		int limit = this.workdealfractionList.size();
+		int limit = this.instance.getWorkDealFractions().size();
 		while (roundSeg != 0) {
 			switch (roundSeg) {
 			case -1:
@@ -532,7 +315,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 		// sumar y obtener el total de agua o alcantarillado
 		BigDecimal sumValue = BigDecimal.ZERO;
 		BigDecimal value = BigDecimal.ZERO;
-		for (int i = 0; i < this.workdealfractionList.size(); i++) {
+		for (int i = 0; i < this.instance.getWorkDealFractions().size(); i++) {
 			value = getValueDetail(waterOrSewerage, i);
 			sumValue = sumValue.add(value);
 		}
@@ -561,29 +344,10 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	 * @return
 	 */
 	private BigDecimal getValueDetail(String waterOrSewerage, int position) {
-
-		// WorkDealFraction aux =
-		// this.instance.getWorkDealFractions().get(position);
-		// @author macartuche
-		// @tag cambioCalculoCEM
-		//WorkDealFull aux = listWDF.get(position);
-		WorkDealFull wdf = workdealfractionList.get(position);
-
-		// return (waterOrSewerage.equals("water")) ? aux.getWaterValue() :
-		// aux.getSewerageValue();
-		return (waterOrSewerage.equals("water")) ? wdf.getWaterValue() : wdf
+		WorkDealFraction aux = this.instance.getWorkDealFractions().get(
+				position);
+		return (waterOrSewerage.equals("water")) ? aux.getWaterValue() : aux
 				.getSewerageValue();
-	}
-
-	private BigDecimal getTotalAppraisalBYWorkeDealSQL() {
-		Query qTotalAprraisal = getEntityManager().createNativeQuery(
-				"select sum(d.commercialappraisal) "
-						+ "from workdealfraction wdf "
-						+ "join property p on  wdf.property_id = p.id "
-						+ "join domain d on p.id=d.property_id "
-						+ "where d.currentproperty_id is not null  "
-						+ "and wdf.workdeal_id=" + getInstance().getId());
-		return (BigDecimal) qTotalAprraisal.getSingleResult();
 	}
 
 	/**
@@ -606,10 +370,10 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	private void setValueColumn(BigDecimal aux, String waterOrSewerage,
 			int position) {
 		if (waterOrSewerage.equals("water")) {
-			this.workdealfractionList.get(position)
+			this.instance.getWorkDealFractions().get(position)
 					.setWaterValue(aux);
 		} else {
-			this.workdealfractionList.get(position)
+			this.instance.getWorkDealFractions().get(position)
 					.setSewerageValue(aux);
 		}
 	}
@@ -622,40 +386,26 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 			BigDecimal difference = workDealValue.subtract(total);
 			this.getInstance()
 					.getWorkDealFractions()
-					.get(this.workdealfractionList.size() - 1)
+					.get(this.getInstance().getWorkDealFractions().size() - 1)
 					.setSharedValue(
-							this.workdealfractionList
-									.get(this.workdealfractionList.size() - 1)
+							this.getInstance()
+									.getWorkDealFractions()
+									.get(this.getInstance()
+											.getWorkDealFractions().size() - 1)
 									.getSharedValue().add(difference));
 			this.getInstance()
 					.getWorkDealFractions()
-					.get(this.workdealfractionList.size() - 1)
+					.get(this.getInstance().getWorkDealFractions().size() - 1)
 					.setTotal(
-							this.workdealfractionList.get(this.workdealfractionList.size() - 1)
+							this.getInstance()
+									.getWorkDealFractions()
+									.get(this.getInstance()
+											.getWorkDealFractions().size() - 1)
 									.getTotal().add(difference));
-			// this.getInstance().getWorkDealFractions().get(this.getInstance().getWorkDealFractions().size()
-			// - 1)
-			// .setSharedValue(this.getInstance().getWorkDealFractions()
-			// .get(this.getInstance().getWorkDealFractions().size() -
-			// 1).getSharedValue()
-			// .add(difference));
-			// this.getInstance().getWorkDealFractions().get(this.getInstance().getWorkDealFractions().size()
-			// - 1)
-			// .setTotal(this.getInstance().getWorkDealFractions()
-			// .get(this.getInstance().getWorkDealFractions().size() -
-			// 1).getTotal().add(difference));
-			// @tag cambioCalculoCEM
-			workdealfractionList.get(workdealfractionList.size() - 1)
-					.setSharedValue(
-							workdealfractionList
-									.get(workdealfractionList.size() - 1)
-									.getSharedValue().add(difference));
-			workdealfractionList.get(workdealfractionList.size() - 1).setTotal(
-					workdealfractionList.get(workdealfractionList.size() - 1)
-							.getTotal().add(difference));
 			totalSharedValue = BigDecimal.ZERO;
 			total = BigDecimal.ZERO;
-			for (WorkDealFull wf : this.workdealfractionList) {
+			for (WorkDealFraction wf : this.getInstance()
+					.getWorkDealFractions()) {
 				totalSharedValue = totalSharedValue.add(wf.getSharedValue());
 				total = total.add(wf.getTotal());
 			}
@@ -663,7 +413,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	}
 
 	public void calculateValues() {
-		for (WorkDealFull wf : this.workdealfractionList) {
+		for (WorkDealFraction wf : this.getInstance().getWorkDealFractions()) {
 			totalContributionFront = totalContributionFront.add(wf
 					.getContributionFront());
 			totalAppraisal = totalAppraisal.add(wf.getCommercialAppraisal());
@@ -744,31 +494,6 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 		workDealFraction.setSharedValue(aux);
 	}
 
-	// @tag cambioCalculoCEM
-	private void calculateSharedValueDTO(WorkDealFull wdfDTO) {
-		BigDecimal aux = BigDecimal.ONE;
-		// Frente Contribucion x Factor Frente x factor Cobro
-		aux = aux.multiply(wdfDTO.getContributionFront()
-				.multiply(this.getInstance().getFrontFactor())
-				.multiply(this.getInstance().getCollectFactor()));
-		aux = aux.setScale(2, RoundingMode.HALF_UP);
-		wdfDTO.setSharedValue(aux);
-	}
-
-	// @tag cambioCalculoCEM
-	private void calculateDifferentitatedValueDTO(WorkDealFull wdfDTO) {
-		BigDecimal aux = BigDecimal.ONE;
-		// Avaluo Comercial x Factor AvaluoFrente x factor Cobro
-		// macartuche
-		// @tag cambioCalculoCEM
-		aux = aux.multiply(wdfDTO.getCommercialAppraisal()
-				.multiply(this.getInstance().getAppraisalFactor())
-				.multiply(this.getInstance().getCollectFactor()));
-
-		aux = aux.setScale(2, RoundingMode.HALF_UP);
-		wdfDTO.setDifferentiatedValue(aux);
-	}
-
 	private void calculateDifferentitatedValue(WorkDealFraction workDealFraction) {
 		BigDecimal aux = BigDecimal.ONE;
 		// Avaluo Comercial x Factor AvaluoFrente x factor Cobro
@@ -785,26 +510,12 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 		BigDecimal sum = BigDecimal.ZERO;
 		BigDecimal avg = BigDecimal.ZERO;
 
-		sum = this.totalAppraisal;
+		for (WorkDealFraction wf : this.getInstance().getWorkDealFractions()) {
+			sum = sum.add(wf.getCommercialAppraisal());
+		}
 
 		avg = value.divide(sum, 12, RoundingMode.HALF_UP);
 		aux = workDealFraction.getCommercialAppraisal().multiply(avg);
-		aux = aux.setScale(10, RoundingMode.HALF_UP);
-		return aux;
-	}
-
-	// @tag cambioCalculoCEM
-	private BigDecimal calculateValuesWSDTO(WorkDealFull wdfDTO,
-			BigDecimal value, BigDecimal totalComercialAppraisal) {
-		BigDecimal aux = BigDecimal.ONE;
-		BigDecimal avg = BigDecimal.ZERO;
-		BigDecimal sum = totalComercialAppraisal;
-		avg = value.divide(sum, 12, RoundingMode.HALF_UP);
-
-		// @tag cambioCalculoCEM
-		// aux =
-		// workDealFraction.getProperty().getCurrentDomain().getCommercialAppraisal().multiply(avg);
-		aux = wdfDTO.getCommercialAppraisal().multiply(avg);
 		aux = aux.setScale(10, RoundingMode.HALF_UP);
 		return aux;
 	}
@@ -859,7 +570,6 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 			System.out.println("====>" + direction);
 			workDealFraction.setAddress(direction);
-
 			/*
 			 * Rene Ortega 2016-08-06 busqueda de avaluo de propiedades
 			 */
@@ -889,12 +599,6 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	public List<WorkDealFraction> orderByAddresAndCadastralCode(
 			List<WorkDealFraction> workDealFractions) {
 		Collections.sort(workDealFractions, new WorkDealFractionComparator());
-		return workDealFractions;
-	}
-
-	public List<WorkDealFull> orderByAddressAndCadastralCodeDTO(
-			List<WorkDealFull> workDealFractions) {
-		Collections.sort(workDealFractions, new WorkDealFullComparator());
 		return workDealFractions;
 	}
 
@@ -978,11 +682,11 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 		this.properties = properties;
 	}
 
-	public WorkDealFull getWorkDealFraction() {
+	public WorkDealFraction getWorkDealFraction() {
 		return workDealFraction;
 	}
 
-	public void setWorkDealFraction(WorkDealFull workDealFraction) {
+	public void setWorkDealFraction(WorkDealFraction workDealFraction) {
 		this.workDealFraction = workDealFraction;
 	}
 
@@ -1066,28 +770,23 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	public Boolean verifyCheckAlreadyAdded() {
 
-		for (WorkDealFull fraction : this.workdealfractionList) {
-			if (fraction.getPropertyId()
-					.equals(this.workDealFraction.getProperty().getId())
-					&& this.actionCreateFraction) {
+		for (WorkDealFraction fraction : this.instance.getWorkDealFractions()) {
+			if (fraction.getProperty().getId().equals(this.workDealFraction.getProperty().getId())&& this.actionCreateFraction) {
 				return Boolean.TRUE;
 			}
 		}
 		return Boolean.FALSE;
 
 	}
-
-	/**
-	 * @author macartuche
-	 * @date 2016-08-22
-	 * @tag cambioCalculoCEM
-	 */
-	public List<WorkDealFull> getWorkdealfractionList() {
-		return workdealfractionList;
-	}
-
-	public void setWorkdealfractionList(List<WorkDealFull> workdealfractionList) {
-		this.workdealfractionList = workdealfractionList;
+	
+	private WorkDealFractionDataModel getDataModel() {
+		
+		WorkDealFractionDataModel dataModel =  (WorkDealFractionDataModel) Component.getInstance(WorkDealFractionDataModel.class, true);
+		//System.out.println("Data model en el getDataModel de fracciones 1" + dataModel1);
+		//WorkDealFractionDataModel dataModel = (WorkDealFractionDataModel) Contexts
+		//		.getConversationContext().get(WorkDealFractionDataModel.class);
+		//System.out.println("Data model en el getDataModel de fracciones" + dataModel);
+		return dataModel;
 	}
 
 }

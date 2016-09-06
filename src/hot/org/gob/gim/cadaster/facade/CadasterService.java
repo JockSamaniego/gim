@@ -43,7 +43,4 @@ public interface CadasterService {
 	 * 
 	 */
 	List<AppraisalsPropertyDTO> findAppraisalsForProperty(Long property_id);
-	
-	Property findPropertyById(Long property_id);
-	
 }

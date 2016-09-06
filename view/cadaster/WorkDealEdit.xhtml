@@ -179,42 +179,60 @@
 					rendered="#{empty workDealHome.instance.workDealFractions}" />
 
 				<rich:dataTable
-					value="#{workDealHome.orderByAddressAndCadastralCodeDTO(workDealHome.workdealfractionList)}"
+					value="#{fractions}"
 					var="_workDealFraction"
-					rendered="#{not empty workDealHome.instance.workDealFractions}"
-					rowClasses="rvgRowOne,rvgRowTwo" id="workDealTable">
+					rowClasses="rvgRowOne,rvgRowTwo" id="workDealTable"
+					rows="25"
+					>
+					
+					<f:facet name="header">
+						<rich:columnGroup>
 
+							<rich:column colspan="14" breakBefore="true" styleClass="right">
+								<g:dataScroller maxPages="10" for="workDealTable"
+									style="float:right;" />
+							</rich:column>
 
+						</rich:columnGroup>
+					</f:facet>
+					
+					<f:facet name="footer">
+						<g:dataScroller maxPages="14" for="workDealTable"
+							style="float:right;" />
+					</f:facet>
+					
 
 					<rich:column styleClass="right"
-						sortBy="#{_workDealFraction.cadastralCode}">
+						sortBy="#{_workDealFraction.property.cadastralCode}">
 						<f:facet name="header">
 							<h:outputText value="#{messages['property.cadastralCode']}" />
 						</f:facet>
-						<h:outputText value="#{_workDealFraction.cadastralCode}" />
+						<h:outputText value="#{_workDealFraction.property.cadastralCode}" />
 					</rich:column>
 
 					<rich:column styleClass="right"
-						sortBy="#{_workDealFraction.previousCadastralCode}">
+						sortBy="#{_workDealFraction.property.previousCadastralCode}">
 						<f:facet name="header">
 							<h:outputText
 								value="#{messages['property.previousCadastralCode']}" />
 						</f:facet>
-						<h:outputText value="#{_workDealFraction.previousCadastralCode}" />
+						<h:outputText
+							value="#{_workDealFraction.property.previousCadastralCode}" />
 					</rich:column>
 
 					<rich:column styleClass="right">
 						<f:facet name="header">
 							<h:outputText value="#{messages['common.identificationNumber']}" />
 						</f:facet>
-						<h:outputText value="#{_workDealFraction.identificationNumber}" />
+						<h:outputText
+							value="#{_workDealFraction.resident.identificationNumber}" />
 					</rich:column>
 
 					<rich:column>
 						<f:facet name="header">
 							<h:outputText value="#{messages['resident']}" />
 						</f:facet>
-						<h:outputText value="#{_workDealFraction.name}" />
+						<h:outputText value="#{_workDealFraction.resident.name}" />
 					</rich:column>
 
 					<rich:column>
@@ -237,7 +255,7 @@
 						<f:facet name="header">
 							<h:outputText value="#{messages['property.lotAliquot']}" />
 						</f:facet>
-						<h:outputText value="#{_workDealFraction.lotAliquot}">
+						<h:outputText value="#{_workDealFraction.property.lotAliquot}">
 							<f:convertNumber pattern="0.00" />
 						</h:outputText>
 					</rich:column>
@@ -332,64 +350,7 @@
 							reRender="workDealPanel" ajaxSingle="true"
 							value="#{messages['common.delete']}" />
 					</rich:column>
-
-					<f:facet name="footer">
-						<rich:columnGroup columnClasses=",number">
-							<rich:column colspan="7">
-								<h:outputText value="#{messages['item.total']}:"
-									styleClass="labelBold" />
-							</rich:column>
-
-							<rich:column styleClass="number tableCellFont">
-								<h:outputText value="#{workDealHome.totalAppraisal}">
-									<f:convertNumber pattern="$ ####.00" />
-								</h:outputText>
-							</rich:column>
-
-							<rich:column styleClass="number tableCellFont">
-								<h:outputText value="#{workDealHome.totalContributionFront}">
-									<f:convertNumber pattern=" ####.00" />
-								</h:outputText>
-							</rich:column>
-
-							<rich:column styleClass="number tableCellFont">
-								<h:outputText value="#{workDealHome.totalSharedValue}">
-									<f:convertNumber pattern="$ ####.00" />
-								</h:outputText>
-							</rich:column>
-
-							<rich:column styleClass="number tableCellFont">
-								<h:outputText value="#{workDealHome.totalDifferentiatedValue}">
-									<f:convertNumber pattern="$ ####.00" />
-								</h:outputText>
-							</rich:column>
-
-
-
-							<rich:column styleClass="number tableCellFont">
-								<h:outputText value="#{workDealHome.total}">
-									<f:convertNumber pattern="$ ####.00" />
-								</h:outputText>
-							</rich:column>
-
-							<rich:column styleClass="number tableCellFont"
-								rendered="#{workDealHome.instance.drinkingWater}">
-								<h:outputText value="#{workDealHome.totalWater}">
-									<f:convertNumber pattern="$ ####.00" />
-								</h:outputText>
-							</rich:column>
-
-
-							<rich:column styleClass="number tableCellFont"
-								rendered="#{workDealHome.instance.sewerage}">
-								<h:outputText value="#{workDealHome.totalSewerage}">
-									<f:convertNumber pattern="$ ####.00" />
-								</h:outputText>
-							</rich:column>
-
-						</rich:columnGroup>
-					</f:facet>
-
+					
 				</rich:dataTable>
 
 

@@ -9,12 +9,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.hibernate.envers.Audited;
+
+import ec.gob.gim.common.model.Resident;
 
 
 @Audited
@@ -27,11 +27,6 @@ import org.hibernate.envers.Audited;
 	 pkColumnValue="WorkDealFraction",
 	 initialValue=1, allocationSize=1
 )
-//@author macartuche
-//@tag cambioCem
-@NamedQueries(value = {		
-	@NamedQuery(name = "WorkDealFraction.findById", query = "select wdf from WorkDealFraction wdf where id=:workDealFractionId")	
-})
 
 public class WorkDealFraction implements Comparable<WorkDealFraction>{
 
@@ -42,6 +37,10 @@ public class WorkDealFraction implements Comparable<WorkDealFraction>{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "property_id")
 	private Property property;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "resident_id")
+	private Resident resident;
 	
 	@ManyToOne
 	private WorkDeal workDeal;
@@ -71,7 +70,9 @@ public class WorkDealFraction implements Comparable<WorkDealFraction>{
 	 */
 	//@Transient
 	//campoque almacena el valor seleccionado de avaluo comercial para el calculo de CEM
-	private BigDecimal commercialAppraisal; 
+	private BigDecimal commercialAppraisal;
+	
+	
 	
 	public WorkDealFraction() {
 		frontLength = BigDecimal.ZERO;		
@@ -188,6 +189,13 @@ public class WorkDealFraction implements Comparable<WorkDealFraction>{
 	public void setCommercialAppraisal(BigDecimal commercialAppraisal) {
 		this.commercialAppraisal = commercialAppraisal;
 	}
-	
+
+	public Resident getResident() {
+		return resident;
+	}
+
+	public void setResident(Resident resident) {
+		this.resident = resident;
+	}
 	
 }
