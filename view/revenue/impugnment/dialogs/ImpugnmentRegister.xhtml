@@ -35,9 +35,10 @@
 						<ui:define name="label">#{messages['revenue.impugnments.impugnment_date_label']}</ui:define>
 
 						<rich:calendar id="impugnmentDate"
-							value="#{impugnmentHome.impugnmentSelected.impugnmentDate}"
-							datePattern="#{messages['common.datePattern']}" required="true"
-							disabled="#{impugnmentHome.isEditAction}">
+							value="#{impugnmentHome.impugnmentSelected.creationDate}"
+							datePattern="#{messages['common.datePattern']}"
+							required="#{!impugnmentHome.isUserWithRolCoercive()}"
+							disabled="#{impugnmentHome.isUserWithRolCoercive()}">
 							<a:support event="onchanged" ajaxSingle="true" />
 						</rich:calendar>
 					</s:decorate>
@@ -48,29 +49,52 @@
 
 						<h:inputText id="numberInfringement" size="30" maxlength="30"
 							value="#{impugnmentHome.impugnmentSelected.numberInfringement}"
-							required="true" disabled="#{impugnmentHome.isEditAction}">
+							required="true" disabled="#{impugnmentHome.isStatusChangeAction}">
 							<a:support event="onblur"
-								reRender="idMunicipalBondField,numberMunicipalBondField,valueMunicipalBondField"
+								reRender="idMunicipalBondField,numberMunicipalBondField,valueMunicipalBondField,identificationResidentField,nameResidentField"
 								ajaxSingle="true"
 								action="#{impugnmentHome.searchMunicipalBond()}" />
 						</h:inputText>
-					</s:decorate>
-
-					<s:decorate id="idMunicipalBondField"
-						template="../../../layout/edit.xhtml" for="numberMunicipalBond">
-						<ui:define name="label">#{messages['revenue.impugnments.impugnment_bond_id_label']}</ui:define>
-
-						<h:outputText id="idMunicipalBond"
-							value="#{impugnmentHome.impugnmentSelected.municipalBond.id}">
-						</h:outputText>
 					</s:decorate>
 
 					<s:decorate id="numberMunicipalBondField"
 						template="../../../layout/edit.xhtml" for="numberMunicipalBond">
 						<ui:define name="label">#{messages['revenue.impugnments.impugnment_bond_number_label']}</ui:define>
 
-						<h:outputText id="numberMunicipalBond"
-							value="#{impugnmentHome.impugnmentSelected.municipalBond.number}">
+						<h:inputText id="numberMunicipalBond"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.number}"
+							disabled="#{impugnmentHome.existObligationForInpugnmentNumber or impugnmentHome.isUserWithRolVer()}"
+							size="30">
+							<a:support event="onblur"
+								reRender="idMunicipalBondField,numberMunicipalBondField,valueMunicipalBondField,identificationResidentField,nameResidentField"
+								ajaxSingle="true"
+								action="#{impugnmentHome.searchMunicipalBondByNumber()}" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="idMunicipalBondField"
+						template="../../../layout/edit.xhtml" for="numberMunicipalBond">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_bond_id_label']}</ui:define>
+						<h:outputText id="idMunicipalBond"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.id}">
+						</h:outputText>
+					</s:decorate>
+
+					<s:decorate id="identificationResidentField"
+						template="../../../layout/edit.xhtml" for="identificationResident">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_resident_identification_label']}</ui:define>
+
+						<h:outputText id="identificationResident"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.resident.identificationNumber}">
+						</h:outputText>
+					</s:decorate>
+
+					<s:decorate id="nameResidentField"
+						template="../../../layout/edit.xhtml" for="nameResident">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_resident_name_label']}</ui:define>
+
+						<h:outputText id="nameResident"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.resident.name}">
 						</h:outputText>
 					</s:decorate>
 
@@ -88,18 +112,40 @@
 					<s:decorate id="numberProsecutionField"
 						template="../../../layout/edit.xhtml">
 						<ui:define name="label">#{messages['revenue.impugnments.impugnment_numberProsecution_label']}</ui:define>
-
 						<h:inputText id="numberProsecution" size="30" maxlength="30"
 							value="#{impugnmentHome.impugnmentSelected.numberProsecution}"
-							required="true" disabled="#{impugnmentHome.isEditAction}">
+							required="#{!impugnmentHome.isUserWithRolCoercive()}"
+							disabled="#{impugnmentHome.isUserWithRolCoercive() or impugnmentHome.isStatusChangeAction}">
 							<a:support ajaxSingle="true" event="onblur"></a:support>
 						</h:inputText>
 
 					</s:decorate>
 
+					<s:decorate id="numberTramitField"
+						template="../../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_numberTramit_label']}</ui:define>
+						<h:inputText id="numberTramit" size="30" maxlength="30"
+							value="#{impugnmentHome.impugnmentSelected.numberTramit}"
+							required="#{impugnmentHome.isUserWithRolCoercive()}"
+							disabled="#{impugnmentHome.isEditAction or impugnmentHome.isStatusChangeAction}">
+							<a:support ajaxSingle="true" event="onblur"></a:support>
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="observationField"
+						template="../../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_observation_label']}</ui:define>
+						<h:inputTextarea id="observation"
+							value="#{impugnmentHome.impugnmentSelected.observation}" rows="5"
+							cols="34" maxlength="255"
+							disabled="#{impugnmentHome.isUserWithRolCoercive()}">
+							<a:support ajaxSingle="true" event="onblur"></a:support>
+						</h:inputTextarea>
+					</s:decorate>
+
 					<s:decorate id="actualStatusField"
 						template="../../../layout/edit.xhtml" for="actualStatus"
-						rendered="#{impugnmentHome.isEditAction}">
+						rendered="#{impugnmentHome.isStatusChangeAction and impugnmentHome.isUserWithRolMatriculacion()}">
 						<ui:define name="label">#{messages['revenue.impugnments.impugnment_actual_state_label']}</ui:define>
 
 						<h:outputText id="actualStatus"
@@ -108,12 +154,12 @@
 					</s:decorate>
 
 					<s:decorate id="statusField" template="../../../layout/edit.xhtml"
-						rendered="#{impugnmentHome.isEditAction}">
+						rendered="#{impugnmentHome.isStatusChangeAction and impugnmentHome.isUserWithRolMatriculacion()}">
 						<ui:define name="label">#{messages['revenue.impugnments.impugnment_state_label']}</ui:define>
 						<h:selectOneMenu id="cmbStatus"
 							value="#{impugnmentHome.stateForImpugnmentFotoMultaEdit}"
-							rendered="#{impugnmentHome.isEditAction}" required="true">
-							<f:selectItem itemLabel="Seleccione" itemValue="#{null}"
+							required="true">
+							<f:selectItem itemLabel="#{messages['common.selectOne']}" itemValue="#{null}"
 								noSelectionOption="true" />
 							<f:selectItems
 								value="#{impugnmentHome.statesImpugnmentFotoMulta}" var="status"
@@ -139,7 +185,7 @@
 							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
 							bypassUpdates="true"
 							actionListener="#{impugnmentHome.registerImpugnment()}"
-							rendered="#{!impugnmentHome.isEditAction}" />
+							rendered="#{impugnmentHome.isCreateAction and !impugnmentHome.isUserWithRolVer()}" />
 
 						<a:commandButton id="updateButton" ajaxSingle="true"
 							value="#{messages['revenue.impugnments.impugnment_update']}"
@@ -147,16 +193,23 @@
 							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
 							bypassUpdates="true"
 							actionListener="#{impugnmentHome.updateImpugnment()}"
-							rendered="#{impugnmentHome.isEditAction}" />
+							rendered="#{impugnmentHome.isEditAction and impugnmentHome.isUserWithRolMatriculacion()}" />
+
+						<a:commandButton id="statusChangeButton" ajaxSingle="true"
+							value="#{messages['revenue.impugnments.impugnment_update']}"
+							reRender="paginador,impugnmentsTable,lblNumberResults"
+							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
+							bypassUpdates="true"
+							actionListener="#{impugnmentHome.statusChangeUpdateImpugnment()}"
+							rendered="#{impugnmentHome.isStatusChangeAction and impugnmentHome.isUserWithRolMatriculacion()}" />
 
 						<a:commandButton ajaxSingle="true"
 							value="#{messages['common.cancel']}"
 							oncomplete="Richfaces.hideModalPanel('impugnmentRegisterPanel');"
-							bypassUpdates="true" />
+							bypassUpdates="true" immediate="true" />
 					</a:region>
 				</div>
 			</h:panelGrid>
 		</h:form>
-
 	</rich:modalPanel>
 </ui:composition>

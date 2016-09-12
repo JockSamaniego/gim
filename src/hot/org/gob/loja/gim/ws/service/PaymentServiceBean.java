@@ -95,13 +95,7 @@ public class PaymentServiceBean implements PaymentService {
 					incomeService.calculatePayment(workDayDate, pendingBondIds,
 							true, true);
 					bonds = findPendingBonds(taxpayer.getId());
-					Boolean control = comparateBondsDates(bonds);
-					if(!control){
-						loadBondsDetail(bonds);
-					}else{
-						throw new PayoutNotAllowed();
-					}
-					//loadBondsDetail(bonds);
+					loadBondsDetail(bonds);
 				} catch (EntryDefinitionNotFoundException e) {
 					e.printStackTrace();
 					throw new PayoutNotAllowed();

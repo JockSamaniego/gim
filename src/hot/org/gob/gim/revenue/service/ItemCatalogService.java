@@ -22,4 +22,6 @@ public interface ItemCatalogService {
 	
 	public ItemCatalog findItemByCodeAndCodeCatalog(String catalogCode, String itemCode);
 	
+	public ItemCatalog findById(Long id);
+	
 }
