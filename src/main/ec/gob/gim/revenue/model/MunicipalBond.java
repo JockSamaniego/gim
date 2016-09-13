@@ -28,6 +28,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -51,6 +52,7 @@ import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.TaxItem;
 import ec.gob.gim.income.model.TaxpayerRecord;
+import ec.gob.gim.security.model.MunicipalbondAux;
 
 /**
  * @author gerson
@@ -70,18 +72,18 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "LEFT JOIN FETCH res.currentAddress "
 				+ "LEFT JOIN FETCH mb.items it "
 				+ "LEFT JOIN FETCH it.entry "
-				// rarmijos 2015-12-19
+				//rarmijos 2015-12-19
 				+ "LEFT JOIN FETCH it.electronicItem "
 				//
 				+ "LEFT JOIN FETCH mb.discountItems di "
 				+ "LEFT JOIN FETCH di.entry "
-				// rarmijos 2015-12-19
+				//rarmijos 2015-12-19
 				+ "LEFT JOIN FETCH di.electronicItem  "
 				//
 				+ "LEFT JOIN FETCH mb.deposits deposit "
 				+ "LEFT JOIN FETCH mb.surchargeItems si "
 				+ "LEFT JOIN FETCH si.entry "
-				// rarmijos 2015-12-19
+				//rarmijos 2015-12-19
 				+ "LEFT JOIN FETCH si.electronicItem "
 				//
 				+ "LEFT JOIN FETCH mb.taxItems ti "
@@ -520,35 +522,33 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "join m.items i join i.entry e left join e.account ac "
 				+ "where m.emisionDate Between :startDate and :endDate and i.total > 0"
 				+ " AND m.municipalBondStatus.id in (:municipalBondStatusIds) GROUP BY e.id, e.name,ac.accountCode ORDER BY ac.accountCode"),
-
-		@NamedQuery(name = "MunicipalBond.SumTotalFutureBetweenDatesByItem", query = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id, e.name, ac.accountCode, SUM(i.total), ac.parameterFutureEmission) from MunicipalBond m "
+				
+		@NamedQuery(name = "MunicipalBond.SumTotalFutureBetweenDatesByItem", query = 
+				"select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id, e.name, ac.accountCode, SUM(i.total), ac.parameterFutureEmission) from MunicipalBond m "
 				+ "join m.items i join i.entry e left join e.account ac "
 				+ "where m.creationDate Between :startDate and :endDate and i.total > 0"
 				+ " AND m.municipalBondStatus.id =:municipalBondStatusId GROUP BY e.id, e.name,ac.accountCode,ac.parameterFutureEmission ORDER BY ac.accountCode"),
-
-		@NamedQuery(name = "MunicipalBond.SumTotalFutureBetweenDatesByItemAndEntry", query = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id, e.name, ac.accountCode, SUM(i.total), ac.parameterFutureEmission) from MunicipalBond m "
-				+ "join m.items i join i.entry e left join e.account ac "
-				+ "where m.creationDate Between :startDate and :endDate and i.total > 0 and e.id=:entry_id "
-				+ " AND m.municipalBondStatus.id =:municipalBondStatusId GROUP BY e.id, e.name,ac.accountCode,ac.parameterFutureEmission ORDER BY ac.accountCode"),
-
-		@NamedQuery(name = "MunicipalBond.SumTotalPrepaidBetweenDatesByItem", query = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id, e.name, ac.accountCode, SUM(i.total),ac.parameterFutureEmission) "
-				+ "from StatusChange sch "
-				+ "join sch.municipalBond m "
-				+ "join m.items i join i.entry e left join e.account ac "
-				+ "where m.emisionDate Between :startDate and :endDate and i.total > 0"
-				+ " AND sch.explanation=:explanation GROUP BY e.id, e.name,ac.accountCode,ac.parameterFutureEmission ORDER BY ac.accountCode"),
+				
+		@NamedQuery(name = "MunicipalBond.SumTotalPrepaidBetweenDatesByItem", query = 
+					"select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id, e.name, ac.accountCode, SUM(i.total),ac.parameterFutureEmission) "
+					+ "from StatusChange sch "
+					+ "join sch.municipalBond m "
+					+ "join m.items i join i.entry e left join e.account ac "
+					+ "where m.emisionDate Between :startDate and :endDate and i.total > 0"
+					+ " AND sch.explanation=:explanation GROUP BY e.id, e.name,ac.accountCode,ac.parameterFutureEmission ORDER BY ac.accountCode"),
 
 		@NamedQuery(name = "MunicipalBond.SumTotalReversedBetweenDatesByTaxItem", query = "select NEW ec.gob.gim.income.model.EntryTotalCollected(t.id, t.name, ac.accountCode, SUM(ti.value)) from MunicipalBond m "
 				+ "join m.taxItems ti left join ti.tax t left join t.taxAccount ac "
 				+ "where m.emisionDate Between :startDate and :endDate and ti.value > 0"
 				+ " AND m.municipalBondStatus.id in (:municipalBondStatusIds) GROUP BY t.id, t.name,ac.accountCode ORDER BY ac.accountCode"),
-		// //
+			////	
 		@NamedQuery(name = "MunicipalBond.SumTotalFutureBetweenDatesByTaxItem", query = "select NEW ec.gob.gim.income.model.EntryTotalCollected(t.id, t.name, ac.accountCode, SUM(ti.value),  ac.parameterFutureEmission) from MunicipalBond m "
 				+ "join m.taxItems ti left join ti.tax t left join t.taxAccount ac "
 				+ "where m.creationDate Between :startDate and :endDate and ti.value > 0"
 				+ " AND m.municipalBondStatus.id =:municipalBondStatusId GROUP BY t.id, t.name,ac.accountCode, ac.parameterFutureEmission ORDER BY ac.accountCode"),
 
-		@NamedQuery(name = "MunicipalBond.SumTotalPrepaidBetweenDatesByTaxItem", query = "select NEW ec.gob.gim.income.model.EntryTotalCollected(t.id, t.name, ac.accountCode, SUM(ti.value),ac.parameterFutureEmission) "
+		@NamedQuery(name = "MunicipalBond.SumTotalPrepaidBetweenDatesByTaxItem", query = 
+		"select NEW ec.gob.gim.income.model.EntryTotalCollected(t.id, t.name, ac.accountCode, SUM(ti.value),ac.parameterFutureEmission) "
 				+ "from StatusChange sch "
 				+ "join sch.municipalBond m "
 				+ "join m.taxItems ti "
@@ -583,11 +583,12 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "AND m.municipalBondStatus.id in (:statusIds) and i.total > 0"
 				+ " GROUP BY ac.id, ac.accountName, ac.accountCode ORDER BY ac.accountCode"),
 
-		@NamedQuery(name = "MunicipalBond.SumTotalEmittedBetweenDatesFuturePeriodsByItem", query = "select NEW ec.gob.gim.income.model.EntryTotalCollected"
-				+ "(ac.id, "
-				+ "ac.accountName, "
-				+ "ac.accountCode, "
-				+ "SUM(i.total)) "
+		@NamedQuery(name = "MunicipalBond.SumTotalEmittedBetweenDatesFuturePeriodsByItem", query = 
+				"select NEW ec.gob.gim.income.model.EntryTotalCollected"
+						+ "(ac.id, "
+						+ "ac.accountName, "
+						+ "ac.accountCode, "
+						+ "SUM(i.total)) "
 				+ "from MunicipalBond m "
 				+ "join m.items i join i.entry e left join e.account ac "
 				+ "where m.municipalBondStatus.id =:statusId and i.total > 0"
@@ -619,14 +620,15 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "AND m.municipalBondStatus.id in (:statusIds) " +
 				// "and ti.value > 0" +
 				" GROUP BY t.id, t.name, ac.accountCode ORDER BY ac.accountCode"),
-
-		@NamedQuery(name = "MunicipalBond.SumTotalTaxesEmittedByFuturePeriodsBetweenDatesByItem", query = "select NEW ec.gob.gim.income.model.EntryTotalCollected(t.id, t.name, ac.accountCode, SUM(ti.value)) from MunicipalBond m "
+				
+		@NamedQuery(name = "MunicipalBond.SumTotalTaxesEmittedByFuturePeriodsBetweenDatesByItem", query = 
+		"select NEW ec.gob.gim.income.model.EntryTotalCollected(t.id, t.name, ac.accountCode, SUM(ti.value)) from MunicipalBond m "
 				+ "INNER JOIN m.taxItems ti "
 				+ "LEFT JOIN ti.tax t "
 				+ "LEFT JOIN t.taxAccount ac "
 				+ "where m.creationDate Between :startDate and :endDate "
-				+ "AND m.municipalBondStatus.id =:statusId "
-				+ " GROUP BY t.id, t.name, ac.accountCode ORDER BY ac.accountCode"),
+				+ "AND m.municipalBondStatus.id =:statusId " +
+				" GROUP BY t.id, t.name, ac.accountCode ORDER BY ac.accountCode"),
 
 		@NamedQuery(name = "MunicipalBond.SumTotalEmittedBetweenDatesByItem", query = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id, e.name, ac.accountCode, SUM(i.total)) from MunicipalBond m "
 				+ "join m.items i join i.entry e left join e.account ac "
@@ -897,14 +899,18 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "select mb.id from MunicipalBond mb where mb.expirationDate < :date and mb.municipalBondStatus.id in (3)) "
 				+ "GROUP BY account.accountCode,account.accountName "
 				+ "ORDER BY account.accountCode"),
-		@NamedQuery(name = "MunicipalBond.countMunicipalsBondsPendingFormalize", query = "SELECT count(*) "
-				+ "from MunicipalBond mb "
-				+ "join mb.municipalBondStatus mbs "
-				+ "where mbs.id=:futureStatusId "
-				+ "and :now >= mb.emisionDate"),
-		@NamedQuery(name = "MunicipalBond.findLastId", query = "select max(municipalBond.id) from MunicipalBond municipalBond"),
-		@NamedQuery(name = "MunicipalBond.findLastNumber", query = "select municipalBond.number from MunicipalBond municipalBond WHERE "
-				+ "municipalBond.id = :id"), })
+		@NamedQuery(name="MunicipalBond.countMunicipalsBondsPendingFormalize",
+				query = "SELECT count(*) "
+						+ "from MunicipalBond mb "
+						+ "join mb.municipalBondStatus mbs "
+						+ "where mbs.id=:futureStatusId "
+						+ "and :now >= mb.emisionDate" ),
+		@NamedQuery(name = "MunicipalBond.findLastId", 
+				query = "select max(municipalBond.id) from MunicipalBond municipalBond"),
+		@NamedQuery(name = "MunicipalBond.findLastNumber", 
+				query = "select municipalBond.number from MunicipalBond municipalBond WHERE "+
+						"municipalBond.id = :id"),
+		})
 //
 public class MunicipalBond implements Serializable {
 
@@ -1100,13 +1106,28 @@ public class MunicipalBond implements Serializable {
 			CascadeType.MERGE })
 	@JoinColumn(name = "adjunct_id")
 	private Adjunct adjunct;
-	
+
 	//@author macartuche
-	//@date 2016-08-11
-	//@tag interesFactElec
-	//aumentar campo de interesfactura
-	private BigDecimal interestVoucher;
-	private BigDecimal surchargeVoucher;
+	//@date 2016-06-20T16:600:00
+	//@tag recaudacionCoactivas
+	private BigDecimal interestPaymentAgreement;
+	private BigDecimal interestRegister;
+	public BigDecimal getInterestPaymentAgreement() {
+		return interestPaymentAgreement;
+	}
+
+	public void setInterestPaymentAgreement(BigDecimal interestPaymentAgreement) {
+		this.interestPaymentAgreement = interestPaymentAgreement;
+	}
+
+	public BigDecimal getInterestRegister() {
+		return interestRegister;
+	}
+
+	public void setInterestRegister(BigDecimal interestRegister) {
+		this.interestRegister = interestRegister;
+	}
+
 
 	public MunicipalBond() {
 		// creationDate = Calendar.getInstance().getTime();
@@ -1790,26 +1811,6 @@ public class MunicipalBond implements Serializable {
 
 	public void setReversedTime(Date reversedTime) {
 		this.reversedTime = reversedTime;
-	}
-	
-	//@author macartuche
-	//@date 2016-08-11
-	//@tag interesFactElec
-	//aumentar campo de interesfactura
-	public BigDecimal getInterestVoucher() {
-		return interestVoucher;
-	}
-
-	public void setInterestVoucher(BigDecimal interestVoucher) {
-		this.interestVoucher = interestVoucher;
-	}
-
-	public BigDecimal getSurchargeVoucher() {
-		return surchargeVoucher;
-	}
-
-	public void setSurchargeVoucher(BigDecimal surchargeVoucher) {
-		this.surchargeVoucher = surchargeVoucher;
 	}
 
 }// end MunicipalBond
