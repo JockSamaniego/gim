@@ -7,8 +7,10 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Name;
@@ -53,6 +55,7 @@ import ec.gob.gim.commercial.model.FireRates;
 import ec.gob.gim.common.model.AlertPriority;
 import ec.gob.gim.common.model.CheckingRecordType;
 import ec.gob.gim.common.model.Gender;
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.LegalEntityType;
 import ec.gob.gim.common.model.MaritalStatus;
 import ec.gob.gim.common.model.Person;
@@ -94,6 +97,8 @@ public class FactoryController  extends EntityController{
 
 	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
 	private SystemParameterService systemParameterService;
+	
+	private ItemCatalogService itemCatalogService;
 
 	@SuppressWarnings("unchecked")
 	@Factory("purchaseTypes")
@@ -122,6 +127,19 @@ public class FactoryController  extends EntityController{
 	public List<Cementery> loadCementeries(){
 		Query query = this.getEntityManager().createNamedQuery("Cementery.findAll");
 		return (List<Cementery>) query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Factory(value="typesExcemptionSpecialTreatment")
+	public List<ItemCatalog> loadtypesExcemptionSpecialTreatment(){
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
+		
+		//Query query = this.getEntityManager().createNamedQuery("Cementery.findAll");
+		return (List<ItemCatalog>) itemCatalogService
+				.findItemsForCatalogCode(CatalogConstants.CATALOG_TYPES_TREATMENT_EXCEMPTION);
 	}
 	
 	@SuppressWarnings("unchecked")

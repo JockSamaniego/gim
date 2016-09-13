@@ -35,6 +35,8 @@ public class ExemptionType {
 
 	private String name;
 	
+	private String reference;
+	
 	public ExemptionType(){
 
 	}
@@ -58,4 +60,14 @@ public class ExemptionType {
 		this.name = name;
 	}
 
+
+	public String getReference() {
+		return reference;
+	}
+
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+	
 }

@@ -591,7 +591,8 @@ public class CadasterServiceBean implements CadasterService {
 				BigDecimal base = pro.getCurrentDomain()
 						.getCommercialAppraisal();
 				Date expirationDate = null;
-				Date expiration = new Date(eo.getServiceDate().getYear(), 11,31);
+				Date expiration = new Date(eo.getServiceDate().getYear(), 11,
+						31);
 				boolean aux = false;
 				if (expiration == null) {
 					expirationDate = calculateExpirationDate(serviceDate, entry
@@ -627,18 +628,24 @@ public class CadasterServiceBean implements CadasterService {
 									.getStreet() != null)
 						municipalBond.setAddress(pro.getLocation()
 								.getMainBlockLimit().getStreet().getName());
-					
-					//****
-					String parameterDescription = systemParameterService.findParameter("URBAN_PROPERTY_TAX_DESCRIPTION_EMISSION");
-					municipalBond.setDescription(String.format(parameterDescription, fiscalPeriod.getFiscalYear()));
+
+					// ****
+					String parameterDescription = systemParameterService
+							.findParameter("URBAN_PROPERTY_TAX_DESCRIPTION_EMISSION");
+					municipalBond
+							.setDescription(String.format(parameterDescription,
+									fiscalPeriod.getFiscalYear()));
 				} else {
 					// municipalBond.setAddress(getAddressForRusticProperty(pro));
 					municipalBond.setAddress(pro.getCurrentDomain()
 							.getDescription());
 					municipalBond.setBondAddress(pro.getCurrentDomain()
 							.getDescription());
-					String parameterDescription = systemParameterService.findParameter("RUSTIC_PROPERTY_TAX_DESCRIPTION_EMISSION");
-					municipalBond.setDescription(String.format(parameterDescription, fiscalPeriod.getFiscalYear()));
+					String parameterDescription = systemParameterService
+							.findParameter("RUSTIC_PROPERTY_TAX_DESCRIPTION_EMISSION");
+					municipalBond
+							.setDescription(String.format(parameterDescription,
+									fiscalPeriod.getFiscalYear()));
 				}
 
 				if (pro.getAddressReference() != null) {
@@ -785,11 +792,13 @@ public class CadasterServiceBean implements CadasterService {
 	 *            id del periodo fiscal
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void calculateExemptions(Long fiscalPeriodId, Date fromDate, Date untilDate) {
+	public void calculateExemptions(Long fiscalPeriodId, Date fromDate,
+			Date untilDate) {
 		List<Long> entriesIds = loadEntriesIds();
 		Long pendingStatus = loadMunicipalBondStatus();
-		List<Exemption> exemptions = municipalBondService.findExemptionsByFiscalPeriod(fiscalPeriodId, fromDate,
-				untilDate);
+		List<Exemption> exemptions = municipalBondService
+				.findExemptionsByFiscalPeriod(fiscalPeriodId, fromDate,
+						untilDate);
 
 		System.out.println("Total exoneraciones: " + exemptions.size());
 		List<Long> residentsIds = new ArrayList<Long>();
@@ -805,7 +814,7 @@ public class CadasterServiceBean implements CadasterService {
 			System.out.println("======>>Exemption nro: " + count + " de "
 					+ countTotal);
 			appraisalForProperties = BigDecimal.ZERO;
-			if (ex.getExemptionType().getId() == 1)
+			if (ex.getExemptionType().getId() == 1)//por tercera edad
 				appraisalForProperties = calculateAppraisalGeneral(ex);
 			else
 				appraisalForProperties = calculateAppraisalForProperties(ex);
@@ -903,6 +912,9 @@ public class CadasterServiceBean implements CadasterService {
 
 	@SuppressWarnings("unchecked")
 	public BigDecimal calculateAppraisalGeneral(Exemption exemption) {
+		
+		//controlar para los de tratamiento especial
+		
 		Query query = entityManager
 				.createNamedQuery("Property.findByResidentIdNotDeleted");
 		query.setParameter("residentId", exemption.getResident().getId());
