@@ -4,6 +4,7 @@
 package org.gob.gim.cadaster.facade;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,6 +39,7 @@ import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.PropertyUse;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
+import ec.gob.gim.cadaster.model.WorkDealFraction;
 import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
@@ -1150,5 +1152,23 @@ public class CadasterServiceBean implements CadasterService {
 		List<AppraisalsPropertyDTO> retorno = NativeQueryResultsMapper.map(query.getResultList(), AppraisalsPropertyDTO.class);
 		
 		return retorno;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gob.gim.cadaster.facade.CadasterService#verifyCheckAlreadyAddedPropertyIntoWorkDeal(java.lang.Long, java.lang.Long)
+	 */
+	@Override
+	public WorkDealFraction verifyCheckAlreadyAddedPropertyIntoWorkDeal(Long workDeal_id, Long property_id) {
+		// TODO Auto-generated method stub
+		//Query query = this.entityManager.createNativeQuery("select count(*) from gimprod.workdealfraction where workdeal_id=?1 and property_id =?2");
+		Query query = this.entityManager.createQuery("select wf from WorkDealFraction wf where wf.workDeal.id=:workDeal_id and wf.property.id=:property_id");
+		query.setParameter("workDeal_id", workDeal_id);
+		query.setParameter("property_id", property_id);
+		
+		List<WorkDealFraction> result = query.getResultList();
+		if(result.isEmpty()){
+			return null;
+		}
+		return result.get(0);
 	}
 }

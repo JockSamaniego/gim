@@ -37,6 +37,8 @@ public class WorkDealFractionDataModel extends PageableDataModel<WorkDealFractio
 	// Criteria
 	private Long workDealId;
 	
+	private String cadastralCode;
+	
 	private WorkDealFractionService workDealFractionService;
 	
 	public WorkDealFractionDataModel() {
@@ -49,8 +51,9 @@ public class WorkDealFractionDataModel extends PageableDataModel<WorkDealFractio
 		}
 	}
 	
-	public void setCriteria(Long workDealId){
+	public void setCriteria(Long workDealId, String cadastralCode){
 		this.workDealId = workDealId;
+		this.cadastralCode = cadastralCode;
 	}
 	
 
@@ -71,7 +74,7 @@ public class WorkDealFractionDataModel extends PageableDataModel<WorkDealFractio
 			String sortField, boolean descending) {
 		// TODO Auto-generated method stub
 		 
-			List<WorkDealFraction> fractions = workDealFractionService.findFractions(this.workDealId,firstRow,numberOfRows);
+			List<WorkDealFraction> fractions = workDealFractionService.findFractions(this.workDealId,this.cadastralCode,firstRow,numberOfRows);
 			return fractions;
 	}
 	
@@ -105,7 +108,7 @@ public class WorkDealFractionDataModel extends PageableDataModel<WorkDealFractio
 	 */
 	@Override
 	public int getObjectsNumber() {
-		return workDealFractionService.findWorkDealFractionsNumber(workDealId).intValue();
+		return workDealFractionService.findWorkDealFractionsNumber(workDealId,cadastralCode).intValue();
 	}
 
 	@Override

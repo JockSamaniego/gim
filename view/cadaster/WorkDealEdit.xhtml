@@ -172,6 +172,22 @@
 							value="#{messages['workDeal.addWorkDealFraction']}" />
 					</h:panelGrid>
 				</f:facet>
+				
+				<rich:panel header="Buscador de fracciones" id="panelSearch">
+					<h:panelGrid columns="2">
+						<s:decorate id="keyField" template="../layout/edit.xhtml">
+							<ui:define name="label">Clave: </ui:define>
+							<h:inputText value="#{workDealHome.cadastralCode}"/>		
+						</s:decorate>
+						
+					</h:panelGrid>
+					<a:commandButton id="searchFraction" value="Buscar Fraccion"
+						reRender="workDealTable"/>
+					<a:commandButton id="clearSearch" value="Todas"
+						reRender="workDealTable,panelSearch"
+						actionListener="#{workDealHome.searchAll()}"/>
+					
+				</rich:panel>
 
 
 				<h:outputText
@@ -220,7 +236,7 @@
 							value="#{_workDealFraction.property.previousCadastralCode}" />
 					</rich:column>
 
-					<rich:column styleClass="right">
+					<rich:column styleClass="right" filterBy="">
 						<f:facet name="header">
 							<h:outputText value="#{messages['common.identificationNumber']}" />
 						</f:facet>

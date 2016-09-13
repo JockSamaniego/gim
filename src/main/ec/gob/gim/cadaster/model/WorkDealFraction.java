@@ -1,5 +1,6 @@
 package ec.gob.gim.cadaster.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Entity;
@@ -28,7 +29,12 @@ import ec.gob.gim.common.model.Resident;
 	 initialValue=1, allocationSize=1
 )
 
-public class WorkDealFraction implements Comparable<WorkDealFraction>{
+public class WorkDealFraction implements Comparable<WorkDealFraction>,Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(generator="WorkDealFractionGenerator",strategy=GenerationType.TABLE)
@@ -197,5 +203,32 @@ public class WorkDealFraction implements Comparable<WorkDealFraction>{
 	public void setResident(Resident resident) {
 		this.resident = resident;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WorkDealFraction other = (WorkDealFraction) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+	
 	
 }

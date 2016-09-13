@@ -13,6 +13,7 @@ import javax.persistence.Query;
 
 import org.gob.gim.cadaster.action.pagination.WorkDealFractionDataModel;
 import org.gob.gim.cadaster.facade.CadasterService;
+import org.gob.gim.cadaster.service.WorkDealFractionService;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.action.MunicipalBondDataModel;
@@ -47,7 +48,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	@Logger
 	Log logger;
-	
+
 	@In
 	FacesMessages facesMessages;
 
@@ -56,6 +57,8 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	private CadasterService cadasterService;
 	public static String CADASTER_SERVICE_NAME = "/gim/CadasterService/local";
+
+	private WorkDealFractionService workDealFractionService;
 
 	private String criteriaProperty;
 	private Charge appraisalCharge;
@@ -66,15 +69,28 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	private WorkDealFraction workDealFraction;
 
 	private List<Property> properties;
-	
+
 	private Boolean actionCreateFraction = Boolean.FALSE;
-	
+
 	private Boolean actionUpdateFraction = Boolean.FALSE;
 
 	/*
 	 * RenÃ© Ortega 2016-08-16 Lista para seleccionar los avaluos de x propiedad
 	 */
 	private List<AppraisalsPropertyDTO> appraisalForPropertySelect = new ArrayList<AppraisalsPropertyDTO>();
+
+	/*
+	 * CRITERIA
+	 */
+	private String cadastralCode;
+
+	public String getCadastralCode() {
+		return cadastralCode;
+	}
+
+	public void setCadastralCode(String cadastralCode) {
+		this.cadastralCode = cadastralCode;
+	}
 
 	public void setWorkDealId(Long id) {
 		setId(id);
@@ -92,16 +108,23 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	public void wire() {
 		getInstance();
-		if (isFirstTime)
+		if (isFirstTime) {
 			calculate();
-		isFirstTime = Boolean.FALSE;
+			isFirstTime = Boolean.FALSE;
 
-		if (cadasterService == null)
-			cadasterService = ServiceLocator.getInstance().findResource(
-					CADASTER_SERVICE_NAME);
-		if(this.instance != null){
-			getDataModel().setCriteria(this.instance.getId());
-			getDataModel().setRowCount(getDataModel().getObjectsNumber());
+			if (cadasterService == null)
+				cadasterService = ServiceLocator.getInstance().findResource(
+						CADASTER_SERVICE_NAME);
+
+			if (workDealFractionService == null) {
+				workDealFractionService = ServiceLocator.getInstance()
+						.findResource(WorkDealFractionService.LOCAL_NAME);
+			}
+			if (this.instance != null) {
+				getDataModel()
+						.setCriteria(this.instance.getId(), cadastralCode);
+				getDataModel().setRowCount(getDataModel().getObjectsNumber());
+			}
 		}
 	}
 
@@ -115,7 +138,8 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	public void editWorkDealFraction(WorkDealFraction workDealFraction) {
 		this.workDealFraction = workDealFraction;
 		this.appraisalForPropertySelect = cadasterService
-				.findAppraisalsForProperty(workDealFraction.getProperty().getId());
+				.findAppraisalsForProperty(workDealFraction.getProperty()
+						.getId());
 		this.actionCreateFraction = Boolean.FALSE;
 		this.actionUpdateFraction = Boolean.TRUE;
 	}
@@ -124,28 +148,51 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	 * Agrega un building a la propiedad
 	 */
 	public void addWorkDealFraction() {
-		if(this.workDealFraction.getCommercialAppraisal()==null){
-			facesMessages
-			.addToControl(
-					"",
+		if (this.workDealFraction.getCommercialAppraisal() == null) {
+			facesMessages.addToControl("",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					"Campos obligatorios vacios");
 			return;
 		}
-		if(verifyCheckAlreadyAdded()){
-			facesMessages
-			.addToControl(
-					"",
+		if (verifyCheckAlreadyAdded()) {
+			facesMessages.addToControl("",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					"Propiedad ya agregada");
 			return;
 		}
+		this.workDealFraction.setResident(this.workDealFraction.getProperty()
+				.getCurrentDomain().getResident());
 		this.getInstance().add(this.workDealFraction);
+		this.update();
+		this.getInstance();
+	}
+
+	public void editWorDealFraction() {
+		if (this.workDealFraction.getCommercialAppraisal() == null) {
+			facesMessages.addToControl("",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
+					"Campos obligatorios vacios");
+			return;
+		}
+		if (verifyCheckAlreadyAdded()) {
+			facesMessages.addToControl("",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
+					"Propiedad ya agregada");
+			return;
+		}
+		this.workDealFraction.setResident(this.workDealFraction.getProperty()
+				.getCurrentDomain().getResident());
+		this.workDealFractionService
+				.updateWorkDealFraction(this.workDealFraction);
+		this.getInstance();
 	}
 
 	public void removeWorkDealFraction(WorkDealFraction workDealFraction) {
-		if (workDealFraction != null)
+		if (workDealFraction != null) {
 			this.getInstance().remove(workDealFraction);
+		}
+		this.update();
+		getInstance();
 	}
 
 	public void searchProperty() {
@@ -265,6 +312,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 			compareCases(totalSewerage, this.getInstance().getSewerageValue(),
 					"sewerage");
 		}
+		this.cadastralCode = null;
 	}
 
 	/**
@@ -770,23 +818,56 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	public Boolean verifyCheckAlreadyAdded() {
 
-		for (WorkDealFraction fraction : this.instance.getWorkDealFractions()) {
-			if (fraction.getProperty().getId().equals(this.workDealFraction.getProperty().getId())&& this.actionCreateFraction) {
+		WorkDealFraction fractionBD = this.cadasterService
+				.verifyCheckAlreadyAddedPropertyIntoWorkDeal(this.instance
+						.getId(), this.workDealFraction.getProperty().getId());
+
+		if (fractionBD != null) {
+			if (actionCreateFraction) {
 				return Boolean.TRUE;
 			}
+			if (actionUpdateFraction) {
+				if (!fractionBD.getId().equals(this.workDealFraction.getId())) {
+					return Boolean.TRUE;
+				}
+			}
 		}
-		return Boolean.FALSE;
 
+		return Boolean.FALSE;
 	}
-	
+
 	private WorkDealFractionDataModel getDataModel() {
-		
-		WorkDealFractionDataModel dataModel =  (WorkDealFractionDataModel) Component.getInstance(WorkDealFractionDataModel.class, true);
-		//System.out.println("Data model en el getDataModel de fracciones 1" + dataModel1);
-		//WorkDealFractionDataModel dataModel = (WorkDealFractionDataModel) Contexts
-		//		.getConversationContext().get(WorkDealFractionDataModel.class);
-		//System.out.println("Data model en el getDataModel de fracciones" + dataModel);
+
+		WorkDealFractionDataModel dataModel = (WorkDealFractionDataModel) Component
+				.getInstance(WorkDealFractionDataModel.class, true);
+		// System.out.println("Data model en el getDataModel de fracciones 1" +
+		// dataModel1);
+		// WorkDealFractionDataModel dataModel = (WorkDealFractionDataModel)
+		// Contexts
+		// .getConversationContext().get(WorkDealFractionDataModel.class);
+		// System.out.println("Data model en el getDataModel de fracciones" +
+		// dataModel);
 		return dataModel;
+	}
+
+	public void searchAll() {
+		this.cadastralCode = null;
+	}
+
+	public Boolean getActionCreateFraction() {
+		return actionCreateFraction;
+	}
+
+	public void setActionCreateFraction(Boolean actionCreateFraction) {
+		this.actionCreateFraction = actionCreateFraction;
+	}
+
+	public Boolean getActionUpdateFraction() {
+		return actionUpdateFraction;
+	}
+
+	public void setActionUpdateFraction(Boolean actionUpdateFraction) {
+		this.actionUpdateFraction = actionUpdateFraction;
 	}
 
 }

@@ -124,9 +124,15 @@
 			<div class="actionButtons">
 				<a:commandButton actionListener="#{workDealHome.addWorkDealFraction()}"
 					value="#{messages['common.accept']}" 
-					reRender="workDealPanel,panelFraction"
+					reRender="workDealPanel,panelFraction,property"
 					oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('workDealFractionEditPanel')}.hide();" 
-					/>
+					rendered="#{workDealHome.actionCreateFraction}"/>
+					
+				<a:commandButton actionListener="#{workDealHome.editWorDealFraction()}"
+					value="Modificar" 
+					reRender="workDealPanel,panelFraction,property"
+					oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('workDealFractionEditPanel')}.hide();" 
+					rendered="#{workDealHome.actionUpdateFraction}"/>
 
 				<a:commandButton ajaxSingle="true"
 					value="#{messages['common.quit']}" reRender="workDealPanel"

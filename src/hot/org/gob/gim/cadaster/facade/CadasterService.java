@@ -10,6 +10,7 @@ import ec.gob.gim.cadaster.model.DomainSinat;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
+import ec.gob.gim.cadaster.model.WorkDealFraction;
 import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
@@ -43,4 +44,5 @@ public interface CadasterService {
 	 * 
 	 */
 	List<AppraisalsPropertyDTO> findAppraisalsForProperty(Long property_id);
+	WorkDealFraction verifyCheckAlreadyAddedPropertyIntoWorkDeal(Long workDeal_id, Long property_id);
 }
