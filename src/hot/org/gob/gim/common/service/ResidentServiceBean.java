@@ -173,22 +173,4 @@ public class ResidentServiceBean implements ResidentService {
 			System.out.println("=======> INSERTADO CONTRIBUYENTE : " + resident.getIdentificationNumber());
 		}
 	}
-
-	@Override
-	public Boolean isPublicInstitution(Long residentId) {
-		// TODO Auto-generated method stub
-		Query query = this.em.createNativeQuery("select count(*) " 
-												+"from resident " 
-												+"where residenttype = 'J' " 
-												+"and legalentityType='PUBLIC' "
-												+"and id =?");
-		query.setParameter(1, residentId);
-		BigInteger result = (BigInteger) query.getSingleResult();
-		if (result.intValue() == 0){
-			return Boolean.FALSE;
-		}else{
-			return Boolean.TRUE;
-		}
-		
-	}
 }

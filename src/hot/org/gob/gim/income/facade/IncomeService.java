@@ -111,16 +111,19 @@ public interface IncomeService {
 	 * @author macartuche
 	 * Poner a true que la compensacion ha sido pagada
 	 */
-    //@author macartuche  
-    //@date 2016-06-27 18:08  
-    //@tag InteresCeroInstPub  
-    //No realizar el calculo de interes para instituciones publicas  
-   //public void compensationPayment(List<Deposit> deposits);
+	public void compensationPayment(List<Deposit> deposits);
+	
 	
 	//@author
 	//@tag recaudacionCoactivas
-	//@date 2016-07-06T12:29
+	//@date 2016-07-06T12:27
 	//realizar el reverso en municipalbondaux - abonos compensaciones
-	public void reversePaymentAgreements(List<Long> depositIds)
-				throws ReverseNotAllowedException;
+	public void reversePaymentAgreements(List<Long> depositIds) throws ReverseNotAllowedException; 
+
+	//@author
+	//@tag recaudacionesCoactivas
+	//@date 2016-07-08T15:25:11
+	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long id, Boolean coverInterest, String status);
+	
+	public BigDecimal sumAccumulatedInterest(Long id, Boolean coverInterest, String status);
 }

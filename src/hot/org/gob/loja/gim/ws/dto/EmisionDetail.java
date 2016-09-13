@@ -12,14 +12,7 @@ public class EmisionDetail {
 	/**
 	 * numero generado por empresa
 	 */
-	//private Long antNumber;
-	
-	/**
-	 * nuevo numero generad por la empresa
-	 * es alfanumerico rfarmijosm 2017-07-19
-	 */
-	private String contraventionNumber;
-	
+	private Long antNumber;
 	/**
 	 * exceso de velocidad
 	 */
@@ -54,14 +47,14 @@ public class EmisionDetail {
 	 * amount; this.total = total; }
 	 */
 
-	public EmisionDetail(String numberPlate, String reference, String description, String address, String contraventionNumber,
+	public EmisionDetail(String numberPlate, String reference, String description, String address, Long antNumber,
 			BigDecimal speeding, BigDecimal amount, BigDecimal total) {
 		super();
 		this.numberPlate = numberPlate;
 		this.reference = reference;
 		this.description = description;
 		this.address = address;
-		this.contraventionNumber = contraventionNumber;
+		this.antNumber = antNumber;
 		this.speeding = speeding;
 		this.amount = amount;
 		this.total = total;
@@ -115,12 +108,13 @@ public class EmisionDetail {
 		this.address = address;
 	}
 
-	/*public Long getAntNumber() {
+	public Long getAntNumber() {
 		return antNumber;
 	}
+
 	public void setAntNumber(Long antNumber) {
 		this.antNumber = antNumber;
-	}*/
+	}
 
 	public BigDecimal getSpeeding() {
 		return speeding;
@@ -152,14 +146,6 @@ public class EmisionDetail {
 
 	public void setCitationDate(Date citationDate) {
 		this.citationDate = citationDate;
-	}
-
-	public String getContraventionNumber() {
-		return contraventionNumber;
-	}
-
-	public void setContraventionNumber(String contraventionNumber) {
-		this.contraventionNumber = contraventionNumber;
 	}
 	
 }
