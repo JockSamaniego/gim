@@ -1,7 +1,9 @@
 package org.gob.gim.revenue.action;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+import java.rmi.RemoteException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,7 +15,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.commercial.action.BusinessHome;
-import org.gob.gim.revenue.action.SolvencyReportHome;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -22,9 +23,8 @@ import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.gim.revenue.view.EntryValueItem;
+import org.gob.loja.gim.ws.dto.ObligationsHistoryFotoMulta;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -37,8 +37,8 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 
-import ec.gob.gim.commercial.model.Local;
-import ec.gob.gim.common.model.Alert;
+import ec.gob.gim.commercial.model.FireNames;
+import ec.gob.gim.commercial.model.FireRates;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FiscalPeriod;
@@ -50,10 +50,11 @@ import ec.gob.gim.revenue.model.EntryType;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
-import ec.gob.gim.revenue.model.SolvencyHistory;
 import ec.gob.gim.security.model.Role;
-import ec.gob.gim.commercial.model.FireRates;
-import ec.gob.gim.commercial.model.FireNames;
+//macartuche
+//antclient
+//import ec.gob.loja.antclient.DatosMatricula;
+//import ec.gob.loja.antclient.MetodosProxy;
 
 @Name("municipalBondHome")
 public class MunicipalBondHome extends EntityHome<MunicipalBond> {
@@ -1356,4 +1357,159 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			valueControl=mainValue;
 		}
 		
+		// Autor:Jock Samaniego 08/07/2016
+		//para permitir las consultas de historial de obligaciones
+		
+		private String obligationsRadioButton;
+		private int reportType = 0;
+		private String obligationsHistoryCriteria;
+		private List<ObligationsHistoryFotoMulta> obligationsHistoryResult;
+		EntityManager em = getEntityManager();
+		
+		public void cleanReport(){
+			reportType = 0;
+			obligationsHistoryResult = new ArrayList<ObligationsHistoryFotoMulta>();
+			obligationsHistoryCriteria = null;
+		}
+		
+		public void searchObligationsHistory(){
+			obligationsHistoryResult = new ArrayList<ObligationsHistoryFotoMulta>();
+			if(obligationsRadioButton.equals("Normal")){
+				reportType = 1;
+				String qryResult = "SELECT mb.id, re.identificationnumber, re.name, "
+						+ "mb.number, mb.emisiondate, mb.expirationdate, mb.value, mb.paidtotal, mb.description, mb.reference, mb.groupingcode, "
+						+ "mbs.name status, en.name entName "
+						+ "FROM gimprod.municipalbond mb "
+						+ "INNER JOIN gimprod.resident re on mb.resident_id = re.id "
+						+ "inner join municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id "
+						+ "inner join entry en on mb.entry_id = en.id "
+						+ "WHERE lower(mb.description) like lower('%"+obligationsHistoryCriteria+"%') or "
+						+ "lower(mb.reference) like lower('%"+obligationsHistoryCriteria+"%') or lower(mb.groupingcode) like lower('%"+obligationsHistoryCriteria+"%') "
+						+ "ORDER BY emisiondate;";
+				Query queryResult = this.getEntityManager().createNativeQuery(qryResult);
+				List<Object[]> result = queryResult.getResultList();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				
+				ObligationsHistoryFotoMulta reg;
+				for (Object[] row : result) {
+					reg = new ObligationsHistoryFotoMulta();
+					try {
+						reg.setId(row[0] == null ? 0 : Long.parseLong(row[0].toString()));
+						reg.setIdentificationNumber(row[1] == null ? "" : row[1].toString());
+						reg.setName(row[2] == null ? "" : row[2].toString());
+						reg.setNumber(row[3] == null ? 0 : Long.parseLong(row[3].toString()));
+						reg.setEmisiondate(row[4] == null ? sdf.parse("") : sdf.parse(row[4].toString()));
+						reg.setExpirationdate(row[5] == null ? sdf.parse("") : sdf.parse(row[5].toString()));
+						reg.setValue(row[6] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[6].toString())));
+						reg.setPaidtotal(row[7] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[7].toString())));
+						reg.setDescription(row[8] == null ? "" : row[8].toString());
+						reg.setReference(row[9] == null ? "" : row[9].toString());
+						reg.setGroupingcode(row[10] == null ? "" : row[10].toString());
+						reg.setStatus(row[11] == null ? "" : row[11].toString());
+						reg.setEntryName(row[12] == null ? "" : row[12].toString());
+						obligationsHistoryResult.add(reg);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}				
+			}else if(obligationsRadioButton.equals("FotoMulta")){
+				reportType = 2;
+				String qryResult = "SELECT mb.id, re.identificationnumber, re.name, "
+						+ "mb.number, mb.emisiondate, mb.expirationdate, mb.value, mb.paidtotal, mb.description, mb.reference, mb.groupingcode, "
+						+ "ant.numberplate, ant.contraventionNumber, ant.speeding, ant.citationdate, mbs.name  status, en.name entName "
+						+ "FROM gimprod.municipalbond mb "
+						+ "INNER JOIN gimprod.resident re on mb.resident_id = re.id "
+						+ "inner join municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id "
+						+ "inner join entry en on mb.entry_id = en.id "
+						+ "INNER JOIN gimprod.antreference ant on mb.adjunct_id = ant.id "
+						+ "WHERE lower(mb.description) like lower('%"+obligationsHistoryCriteria+"%') or "
+						+ "lower(mb.reference) like lower('%"+obligationsHistoryCriteria+"%') or lower(mb.groupingcode) like lower('%"+obligationsHistoryCriteria+"%') "
+						//+ "ORDER BY emisiondate;";
+						+ "or ant.contraventionNumber like '"+obligationsHistoryCriteria+"' ORDER BY emisiondate;";
+				Query queryResult = this.getEntityManager().createNativeQuery(qryResult);
+				List<Object[]> result = queryResult.getResultList();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				ObligationsHistoryFotoMulta reg;
+				for (Object[] row : result) {
+				reg = new ObligationsHistoryFotoMulta();
+					try {
+						reg.setId(row[0] == null ? 0 : Long.parseLong(row[0].toString()));
+						reg.setIdentificationNumber(row[1] == null ? "" : row[1].toString());
+						reg.setName(row[2] == null ? "" : row[2].toString());
+						reg.setNumber(row[3] == null ? 0 : Long.parseLong(row[3].toString()));
+						reg.setEmisiondate(row[4] == null ? sdf.parse("") : sdf.parse(row[4].toString()));
+						reg.setExpirationdate(row[5] == null ? sdf.parse("") : sdf.parse(row[5].toString()));
+						reg.setValue(row[6] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[6].toString())));
+						reg.setPaidtotal(row[7] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[7].toString())));
+						reg.setDescription(row[8] == null ? "" : row[8].toString());
+						reg.setReference(row[9] == null ? "" : row[9].toString());
+						reg.setGroupingcode(row[10] == null ? "" : row[10].toString());
+						reg.setNumberPlate(row[11] == null ? "" : row[11].toString());
+						reg.setAntNumber(row[12] == null ? "" : row[12].toString());
+						reg.setSpeeding(row[13] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[13].toString())));
+						reg.setCitationDate(row[14] == null ? null : sdf.parse(row[14].toString()));
+						reg.setStatus(row[15] == null ? "" : row[15].toString());
+						reg.setEntryName(row[16] == null ? "" : row[16].toString());
+						obligationsHistoryResult.add(reg);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}				
+			}else if(obligationsRadioButton.equals("Ant")){
+				//macartuche
+				//antclient
+//				solicitaMatricula(obligationsHistoryCriteria);
+			}
+		}
+		
+		//macartuche
+		//antclient
+//		private void solicitaMatricula(String placa) {
+//			MetodosProxy mp=new MetodosProxy();
+//			try {
+//				DatosMatricula dm=mp.solicita_Matricula(placa, "WEB", "TESTUSER");
+//				System.out.println("------------ "+dm.getAnio());
+//				System.out.println("------------ "+dm.getApellido1());
+//				System.out.println("------------ "+dm.getApellido2());
+//			} catch (RemoteException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+
+		public String getObligationsRadioButton() {
+			return obligationsRadioButton;
+		}
+
+		public void setObligationsRadioButton(String obligationsRadioButton) {
+			this.obligationsRadioButton = obligationsRadioButton;
+		}
+
+		public String getObligationsHistoryCriteria() {
+			return obligationsHistoryCriteria;
+		}
+
+		public void setObligationsHistoryCriteria(String obligationsHistoryCriteria) {
+			this.obligationsHistoryCriteria = obligationsHistoryCriteria;
+		}
+
+		public List<ObligationsHistoryFotoMulta> getObligationsHistoryResult() {
+			return obligationsHistoryResult;
+		}
+
+		public void setObligationsHistoryResult(
+				List<ObligationsHistoryFotoMulta> obligationsHistoryResult) {
+			this.obligationsHistoryResult = obligationsHistoryResult;
+		}
+
+		public int getReportType() {
+			return reportType;
+		}
+
+		public void setReportType(int reportType) {
+			this.reportType = reportType;
+		}
+
 }

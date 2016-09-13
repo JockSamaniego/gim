@@ -534,13 +534,13 @@
 			<rich:panel id="detailPanel2">
 
 				<a:commandButton id="print"
-					rendered="#{not empty workdayHome.entryTotalCollecteds}"
+					rendered="#{not empty workdayHome.entryTotalCollecteds or not empty workdayHome.entryTotalFuture}"
 					onclick="Richfaces.showModalPanel('printConfirmPanel',{width:250, height:150})"
 					value="#{messages['common.printGlobalReport']}" propagation="join" />
 
 				<s:button view="/revenue/report/RevenueReportByEntry.xhtml"
 					action="#{workdayHome.selectEntries()}" id="printReportId"
-					rendered="#{not empty workdayHome.entryTotalCollecteds}"
+					rendered="#{not empty workdayHome.entryTotalCollecteds or not empty workdayHome.entryTotalFuture}"
 					propagation="join" value="#{messages['common.printReportByEntry']}" />
 
 				<s:button id="back" value="#{messages['common.back']}"
