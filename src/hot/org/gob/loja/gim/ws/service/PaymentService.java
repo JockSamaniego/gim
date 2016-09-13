@@ -18,7 +18,6 @@ import org.gob.loja.gim.ws.exception.NotOpenTill;
 import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 
-import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.EMoneyPayment;
 import ec.gob.gim.security.model.User;
 

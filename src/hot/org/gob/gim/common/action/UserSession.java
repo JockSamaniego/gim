@@ -282,6 +282,10 @@ public class UserSession extends EntityController{
 		String roleName = systemParameterService.findParameter(roleNameParameter);
 		return Identity.instance().hasRole(roleName);
 	}
+	
+	public Boolean hasRoleByNameRol(String roleName) {
+		return Identity.instance().hasRole(roleName);
+	}
 
 
 	

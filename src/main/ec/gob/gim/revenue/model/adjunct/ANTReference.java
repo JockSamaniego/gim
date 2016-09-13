@@ -17,8 +17,8 @@ import org.gob.gim.common.DateUtils;
 import ec.gob.gim.revenue.model.Adjunct;
 
 @NamedQueries(value = {
-		@NamedQuery(name = "ANTReference.findFoto-Multa", query = "select antRef.antNumber from ANTReference antRef "				
-				+ "where  antRef.antNumber = :antNumber")
+		@NamedQuery(name = "ANTReference.findFoto-Multa", query = "select antRef.contraventionNumber from ANTReference antRef "				
+				+ "where lower(antRef.contraventionNumber) = lower(:contraventionNumber)")
 })
 
 
@@ -31,7 +31,13 @@ public class ANTReference extends Adjunct {
 	/**
 	 * numero generado por empresa
 	 */
-	private Long antNumber;
+	//private Long antNumber;
+	
+	/**
+	 * nuevo numero generad por la empresa
+	 * es alfanumerico rfarmijosm 2017-07-19
+	 */
+	private String contraventionNumber;
 	/**
 	 * exceso de velocidad
 	 */
@@ -85,6 +91,9 @@ public class ANTReference extends Adjunct {
 		pair = new ValuePair("Fecha citación", citationDate != null ? DateUtils.formatFullDate(citationDate) : "-");
 		details.add(pair);
 		
+		pair = new ValuePair("Nro. Infracción", contraventionNumber != null ? contraventionNumber.toUpperCase() : "-");
+		details.add(pair);
+		
 		return details;
 	}
 
@@ -96,13 +105,12 @@ public class ANTReference extends Adjunct {
 		this.numberPlate = numberPlate;
 	}
 
-	public Long getAntNumber() {
+	/*public Long getAntNumber() {
 		return antNumber;
 	}
-
 	public void setAntNumber(Long antNumber) {
 		this.antNumber = antNumber;
-	}
+	}*/
 
 	public BigDecimal getSpeeding() {
 		return speeding;
@@ -134,6 +142,14 @@ public class ANTReference extends Adjunct {
 
 	public void setCitationDate(Date citationDate) {
 		this.citationDate = citationDate;
-	}	
+	}
 
+	public String getContraventionNumber() {
+		return contraventionNumber;
+	}
+
+	public void setContraventionNumber(String contraventionNumber) {
+		this.contraventionNumber = contraventionNumber;
+	}
+	
 }

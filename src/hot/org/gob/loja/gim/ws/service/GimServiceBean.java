@@ -49,7 +49,6 @@ import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNotSaved;
 import org.loxageek.common.ws.ReflectionUtil;
 
-import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.Street;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.common.model.Address;
@@ -423,7 +422,7 @@ public class GimServiceBean implements GimService{
 		
 		//List<ANTReference> AntRef = new ArrayList<ANTReference>();
 		Query query = em.createNamedQuery("ANTReference.findFoto-Multa");	
-		query.setParameter("antNumber", emisionDetail.getAntNumber());
+		query.setParameter("contraventionNumber", emisionDetail.getContraventionNumber());
 		//AntRef = query.getResultList();
 		if(query.getResultList().size()<=0){
 		
@@ -476,7 +475,8 @@ public class GimServiceBean implements GimService{
 				// start Adjunt
 				ANTReference ant = new ANTReference();
 				ant.setNumberPlate(emisionDetail.getNumberPlate());
-				ant.setAntNumber(emisionDetail.getAntNumber());
+				//ant.setAntNumber(emisionDetail.getAntNumber());
+				ant.setContraventionNumber(emisionDetail.getContraventionNumber());
 				ant.setSpeeding(emisionDetail.getSpeeding());
 				ant.setVehicleType(emisionDetail.getVehicleType());
 				ant.setServiceType(emisionDetail.getServiceType());
@@ -687,6 +687,68 @@ public class GimServiceBean implements GimService{
 		statementReport.setBondReports(NativeQueryResultsMapper.map(query.getResultList(), BondReport.class));
 		System.out.println("--------------------------pagos "+query.getResultList().size());
 		return statementReport;
+	}
+
+
+	@Override
+	public List<RealEstate> findProperties(ServiceRequest request) {
+		try {
+			return listPropertiesByDNI(request.getIdentificationNumber());
+		} catch (RealEstateNotFound e){
+			e.printStackTrace();
+			return null;
+		}catch(TaxpayerNotFound  e){
+			e.printStackTrace();
+			return null;
+		}catch(TaxpayerNonUnique e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	private List<RealEstate> listPropertiesByDNI(String identificationNumber) throws RealEstateNotFound, TaxpayerNotFound, TaxpayerNonUnique{
+		try{
+			Query query = em.createNamedQuery("RealEstate.findByIdentificationNumber");
+			query.setParameter("identificationNumber", identificationNumber);
+			List<RealEstate> aux = query.getResultList();
+			for(RealEstate rs : aux){
+				TerritorialDivision defaultCanton = cadasterService.findDefaultCanton();
+				TerritorialDivision parish = cadasterService.findTerritorialDivision(rs.getCode(), 5, 9, defaultCanton);
+				rs.setNameParish(parish != null ? parish.getName() : null);
+				
+				query = em.createNamedQuery("Street.findByBlockId");
+				query.setParameter("blockId", rs.getIdBlock());
+				List<Street> blockLimits= (List<Street>)query.getResultList();
+				if (blockLimits != null && !blockLimits.isEmpty()){
+					StringBuffer limits = new StringBuffer();
+					for (Street bl : blockLimits){
+						limits = limits.append(bl.getName());
+						limits = limits.append(", ");
+					}
+					limits = limits.deleteCharAt(limits.length()-2);//(limits.length()-2, limits.length());
+					rs.setStreetBlockLimits(limits.toString().trim());
+				}
+			}
+			
+			return aux;
+			//RealEstate realEstate = (RealEstate)query.getSingleResult();
+			/*if (realEstate != null){
+				// Busqueda de datos del propietarios
+				Taxpayer owner = findTaxpayer(realEstate.getIdentificationNumber());
+				realEstate.setOwner(owner);
+				// Busqueda de la parroquia a donde perteneces el predio			
+				
+				return realEstate;
+			}*/
+			//throw new RealEstateNotFound();
+		}catch(NoResultException e){
+			throw new RealEstateNotFound();
+		}catch(NonUniqueResultException e){
+			throw new RealEstateNotFound();
+		}catch(IllegalStateException e){
+			throw new RealEstateNotFound();
+		}
 	}
 	
 }

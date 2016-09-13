@@ -16,6 +16,14 @@
 				value="#{adjunctHome.instance.numberPlate}" size="10">
 			</h:inputText>
 		</s:decorate>
+		
+		<s:decorate id="contraventionNumberField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['vehicle.contraventionNumber']}:</ui:define>
+			<h:inputText id="code" required="true"
+				style="text-transform: uppercase"
+				value="#{adjunctHome.instance.contraventionNumber}" size="10">
+			</h:inputText>
+		</s:decorate>
 
 		<s:decorate id="speedingField" template="../../layout/edit.xhtml">
 			<ui:define name="label">#{messages['vehicle.speeding']}:</ui:define>
