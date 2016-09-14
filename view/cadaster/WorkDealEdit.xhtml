@@ -166,10 +166,12 @@
 						<h:outputText value="#{messages['workDealFraction']}" />
 						<a:commandButton id="createWorkDealFraction"
 							action="#{workDealHome.createWorkDealFraction()}"
-							reRender="workDealFractionEditPanel" ajaxSingle="true"
+							reRender="workDealFractionEditPanel" 
+							ajaxSingle="true"
 							eventsQueue="gimEventsQueue"
 							oncomplete="Richfaces.showModalPanel('workDealFractionEditPanel',{width:820, height:520})"
-							value="#{messages['workDeal.addWorkDealFraction']}" />
+							value="#{messages['workDeal.addWorkDealFraction']}" 
+							process="@form"/>
 					</h:panelGrid>
 				</f:facet>
 				
@@ -376,7 +378,8 @@
 
 				<h:commandButton id="save" value="#{messages['common.save']}"
 					action="#{workDealHome.persist()}"
-					rendered="#{!workDealHome.managed}" />
+					rendered="#{!workDealHome.managed}" 
+					/>
 
 				<h:commandButton id="update" value="#{messages['common.save']}"
 					action="#{workDealHome.update()}"
