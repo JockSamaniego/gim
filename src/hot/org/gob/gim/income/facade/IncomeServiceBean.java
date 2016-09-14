@@ -1687,36 +1687,32 @@ public class IncomeServiceBean implements IncomeService {
 	 * @author macartuche
 	 * Poner a true que la compensacion ha sido pagada
 	 */	
-	//@author macartuche  
-    //@date 2016-06-27 17:24  
-    //@tag InteresCeroInstPub  
-    //No realizar el calculo de interes para instituciones publicas  
-//	public void compensationPayment(List<Deposit> deposits){
-//		
-//		if(deposits!=null && !deposits.isEmpty()){
-//			for(Deposit deposit: deposits){
-//				Long estado = deposit.getMunicipalBond().getMunicipalBondStatus().getId().longValue();
-//				if(estado == 6){ //en compensacion
-//					System.out.println("Ingresaaaaaa");
-//					Receipt receipt = deposit.getMunicipalBond().getReceipt();
-//					if( receipt != null){
-//						
-//						System.out.println("Ingresaaaaaa con factura");
-//						Query query = entityManager.createQuery("Select cr from CompensationReceipt cr"
-//								+ " where cr.receipt.id=:receiptid");
-//						query.setParameter("receiptid", receipt.getId());
-//						List<CompensationReceipt> compensationReceiptList = query.getResultList();
-//						
-//						if(!compensationReceiptList.isEmpty()){
-//							CompensationReceipt compensation = compensationReceiptList.get(0);
-//							compensation.setIsPaid(Boolean.TRUE);
-//							entityManager.merge(compensation);
-//							entityManager.flush();
-//						}
-//					}
-//						
-//				} 
-//			}		
-//		}
-//	}
+	public void compensationPayment(List<Deposit> deposits){
+		
+		if(deposits!=null && !deposits.isEmpty()){
+			for(Deposit deposit: deposits){
+				Long estado = deposit.getMunicipalBond().getMunicipalBondStatus().getId().longValue();
+				if(estado == 6){ //en compensacion
+					System.out.println("Ingresaaaaaa");
+					Receipt receipt = deposit.getMunicipalBond().getReceipt();
+					if( receipt != null){
+						
+						System.out.println("Ingresaaaaaa con factura");
+						Query query = entityManager.createQuery("Select cr from CompensationReceipt cr"
+								+ " where cr.receipt.id=:receiptid");
+						query.setParameter("receiptid", receipt.getId());
+						List<CompensationReceipt> compensationReceiptList = query.getResultList();
+						
+						if(!compensationReceiptList.isEmpty()){
+							CompensationReceipt compensation = compensationReceiptList.get(0);
+							compensation.setIsPaid(Boolean.TRUE);
+							entityManager.merge(compensation);
+							entityManager.flush();
+						}
+					}
+						
+				} 
+			}		
+		}
+	}
 }
