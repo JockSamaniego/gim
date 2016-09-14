@@ -119,7 +119,7 @@
 							value="#{workDealHome.instance.observation}" />
 					</s:decorate>
 
-					<h:panelGrid columns="2" id="valuesPanel">
+					<h:panelGrid columns="3" id="valuesPanel">
 						<s:decorate id="front40Field" template="../layout/edit.xhtml">
 							<ui:define name="label">#{messages['workDeal.front40']}: </ui:define>
 							<h:outputText id="front40" size="10" styleClass="right"
@@ -171,7 +171,7 @@
 							eventsQueue="gimEventsQueue"
 							oncomplete="Richfaces.showModalPanel('workDealFractionEditPanel',{width:820, height:520})"
 							value="#{messages['workDeal.addWorkDealFraction']}" 
-							process="panelInfo"/>
+							rendered="#{workDealHome.renderAddFraction()}"/>
 					</h:panelGrid>
 				</f:facet>
 				
@@ -184,10 +184,68 @@
 						
 					</h:panelGrid>
 					<a:commandButton id="searchFraction" value="Buscar Fraccion"
-						reRender="workDealTable"/>
+						reRender="workDealTable" actionListener="#{workDealHome.searchByCadatralCode()}"/>
 					<a:commandButton id="clearSearch" value="Todas"
 						reRender="workDealTable,panelSearch"
 						actionListener="#{workDealHome.searchAll()}"/>
+					
+				</rich:panel>
+				
+				<rich:panel header="Totales" id="panelTotals">
+					<h:panelGrid columns="3">
+						<s:decorate id="totalAppraisalField" template="../layout/edit.xhtml">
+							<ui:define name="label">Total Avaluos: </ui:define>
+							<h:outputText value="#{workDealHome.totalAppraisal}">
+								<f:convertNumber pattern="$ ####.00" />
+							</h:outputText>		
+						</s:decorate>
+						
+						<s:decorate id="totalContributionFrontField" template="../layout/edit.xhtml">
+							<ui:define name="label">Total Frentes: </ui:define>
+							<h:outputText value="#{workDealHome.totalContributionFront}">
+								<f:convertNumber pattern=" ####.00" />
+							</h:outputText>		
+						</s:decorate>
+											
+						<s:decorate id="totalSharedValueField" template="../layout/edit.xhtml">
+							<ui:define name="label">Total 40%: </ui:define>
+							<h:outputText value="#{workDealHome.totalSharedValue}">
+								<f:convertNumber pattern="$ ####.00" />
+							</h:outputText>		
+						</s:decorate>
+						
+						<s:decorate id="totalDifferentiatedValueField" template="../layout/edit.xhtml">
+							<ui:define name="label">Total 60%: </ui:define>
+							<h:outputText value="#{workDealHome.totalDifferentiatedValue}">
+								<f:convertNumber pattern="$ ####.00" />
+							</h:outputText>		
+						</s:decorate>
+						
+						<s:decorate id="totalField" template="../layout/edit.xhtml">
+							<ui:define name="label">Total Pavimento: </ui:define>
+							<h:outputText value="#{workDealHome.total}">
+								<f:convertNumber pattern="$ ####.00" />
+							</h:outputText>	
+						</s:decorate>
+						
+						
+						<s:decorate id="totalWaterField" template="../layout/edit.xhtml" rendered="#{workDealHome.instance.drinkingWater}">
+							<ui:define name="label">Total Alcantarillado: </ui:define>
+							<h:outputText value="#{workDealHome.totalWater}">
+								<f:convertNumber pattern="$ ####.00" />
+							</h:outputText>	
+						</s:decorate>	
+					
+												
+						<s:decorate id="totalSewerageField" template="../layout/edit.xhtml" rendered="#{workDealHome.instance.sewerage}">
+							<ui:define name="label">Total Alcantarillado: </ui:define>
+							<h:outputText value="#{workDealHome.totalSewerage}">
+								<f:convertNumber pattern="$ ####.00" />
+							</h:outputText>	
+						</s:decorate>	
+											
+						
+					</h:panelGrid>
 					
 				</rich:panel>
 
@@ -214,12 +272,6 @@
 						</rich:columnGroup>
 					</f:facet>
 					
-					<f:facet name="footer">
-						<g:dataScroller maxPages="14" for="workDealTable"
-							style="float:right;" />
-					</f:facet>
-					
-
 					<rich:column styleClass="right"
 						sortBy="#{_workDealFraction.property.cadastralCode}">
 						<f:facet name="header">

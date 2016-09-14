@@ -17,6 +17,7 @@ import org.gob.gim.cadaster.service.WorkDealFractionService;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.action.MunicipalBondDataModel;
+import org.jboss.resteasy.core.NoMessageBodyWriterFoundFailure;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -74,6 +75,8 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	private Boolean actionUpdateFraction = Boolean.FALSE;
 
+	private Boolean showCreateFractionDialog = Boolean.TRUE;
+
 	/*
 	 * RenÃ© Ortega 2016-08-16 Lista para seleccionar los avaluos de x propiedad
 	 */
@@ -90,6 +93,14 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	public void setCadastralCode(String cadastralCode) {
 		this.cadastralCode = cadastralCode;
+	}
+
+	public Boolean getShowCreateFractionDialog() {
+		return showCreateFractionDialog;
+	}
+
+	public void setShowCreateFractionDialog(Boolean showCreateFractionDialog) {
+		this.showCreateFractionDialog = showCreateFractionDialog;
 	}
 
 	public void setWorkDealId(Long id) {
@@ -133,6 +144,8 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 		this.appraisalForPropertySelect.clear();
 		this.actionCreateFraction = Boolean.TRUE;
 		this.actionUpdateFraction = Boolean.FALSE;
+
+
 	}
 
 	public void editWorkDealFraction(WorkDealFraction workDealFraction) {
@@ -163,8 +176,10 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 		this.workDealFraction.setResident(this.workDealFraction.getProperty()
 				.getCurrentDomain().getResident());
 		this.getInstance().add(this.workDealFraction);
-		this.update();
+		persist();
 		this.getInstance();
+		this.workDealFraction = new WorkDealFraction();
+		this.appraisalForPropertySelect.clear();
 	}
 
 	public void editWorDealFraction() {
@@ -851,7 +866,19 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	}
 
 	public void searchAll() {
-		this.cadastralCode = null;
+
+		if (this.getInstance().getId() != null) {
+			this.cadastralCode = null;
+			getDataModel().setCriteria(this.instance.getId(), cadastralCode);
+			getDataModel().setRowCount(getDataModel().getObjectsNumber());
+		}
+	}
+
+	public void searchByCadatralCode() {
+		if (this.getInstance().getId() != null) {
+			getDataModel().setCriteria(this.instance.getId(), cadastralCode);
+			getDataModel().setRowCount(getDataModel().getObjectsNumber());
+		}
 	}
 
 	public Boolean getActionCreateFraction() {
@@ -868,6 +895,11 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 	public void setActionUpdateFraction(Boolean actionUpdateFraction) {
 		this.actionUpdateFraction = actionUpdateFraction;
+	}
+
+	public Boolean renderAddFraction() {
+		return this.getInstance().getId() == null ? Boolean.FALSE
+				: Boolean.TRUE;
 	}
 
 }

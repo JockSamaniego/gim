@@ -124,7 +124,7 @@
 			<div class="actionButtons">
 				<a:commandButton actionListener="#{workDealHome.addWorkDealFraction()}"
 					value="#{messages['common.accept']}" 
-					reRender="workDealPanel,panelFraction,property"
+					reRender="workDealPanel,panelFraction,property,panelInfo,workDealTable"
 					oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('workDealFractionEditPanel')}.hide();" 
 					rendered="#{workDealHome.actionCreateFraction}"/>
 					
