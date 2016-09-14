@@ -23,7 +23,7 @@
 				<f:facet name="header">
             	#{messages['workDeal.data']}
             </f:facet>
-				<h:panelGrid columns="1">
+				<h:panelGrid columns="1" id="panelInfo">
 
 					<s:decorate id="nameField" template="../layout/edit.xhtml">
 						<ui:define name="label">#{messages['workDeal.name']}: </ui:define>
@@ -166,12 +166,12 @@
 						<h:outputText value="#{messages['workDealFraction']}" />
 						<a:commandButton id="createWorkDealFraction"
 							action="#{workDealHome.createWorkDealFraction()}"
-							reRender="workDealFractionEditPanel" 
+							reRender="workDealFractionEditPanel,panelInfo" 
 							ajaxSingle="true"
 							eventsQueue="gimEventsQueue"
 							oncomplete="Richfaces.showModalPanel('workDealFractionEditPanel',{width:820, height:520})"
 							value="#{messages['workDeal.addWorkDealFraction']}" 
-							process="@form"/>
+							process="panelInfo"/>
 					</h:panelGrid>
 				</f:facet>
 				
