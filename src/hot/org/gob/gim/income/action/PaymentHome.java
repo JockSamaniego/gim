@@ -1257,9 +1257,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				//@tag recaudacionCoactivas
 				Boolean interestIsPayed=false;
 				BigDecimal sum = BigDecimal.ZERO;				 
-				
 				List<MunicipalbondAux> list = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID");
-				
 				if(list.isEmpty()){
 					sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID");					
 					if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
@@ -1299,6 +1297,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 						deposit.setInterest(remaining);
 						deposit.setCapital(BigDecimal.ZERO);
 						this.getInstance().add(deposit);
+						
 						municipalBond.add(deposit);
 						
 						
@@ -1350,6 +1349,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					//@author macartuche
 					//@date 2016-06-20T17:00:00
 					//@tag recaudacionCoactivas
+					//agregando lineas para ver si se sube
 					if(deposit.getInterest().compareTo(interestToPay)<0){
 						deposit.setCapital(BigDecimal.ZERO);
 						remaining = BigDecimal.ZERO;
