@@ -1360,6 +1360,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					//@author macartuche
 					//@date 2016-06-20T17:00:00
 					//@tag recaudacionCoactivas
+//					BigDecimal discount = municipalBond.getDiscount();
+//					deposit.setDiscount(discount);
 					if(deposit.getInterest().compareTo(interestToPay)<0){
 						deposit.setCapital(BigDecimal.ZERO);
 						remaining = BigDecimal.ZERO;
@@ -1371,7 +1373,16 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				}
 				if (!deactivatePaymentAgreement) {
 					
-					
+//					BigDecimal interest = municipalBond.getInterest();
+//					BigDecimal taxesToPay = municipalBond.getTaxesTotal();
+//					BigDecimal surcharge = municipalBond.getSurcharge();
+//					BigDecimal discount = municipalBond.getDiscount();
+//
+//					BigDecimal totalWithTaxes = municipalBond.getBalance().add(interest).add(taxesToPay);
+//					totalWithTaxes = totalWithTaxes.add(surcharge);
+//					totalWithTaxes = totalWithTaxes.subtract(discount);
+//					
+//					deposit.setBalance(totalWithTaxes.subtract(deposit.getCapital()));
 					if(deposit.getInterest().compareTo(municipalBond.getInterest())<0){
 						deposit.setBalance(municipalBond.getBalance());
 					}else{

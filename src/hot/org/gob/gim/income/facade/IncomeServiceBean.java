@@ -380,6 +380,33 @@ public class IncomeServiceBean implements IncomeService {
 					+ municipalBond.getTaxableTotal() + " TAXES TOTAL "
 					+ municipalBond.getTaxesTotal());
 			entityManager.persist(deposit);
+			
+			//@author macartuche
+			//@date 2016-06-21
+			//@tag recaudacionesCoactivas
+			Boolean interestIsPayed=false;
+			BigDecimal sum = BigDecimal.ZERO; 
+			sum = sumAccumulatedInterest(municipalBond.getId(), false, "VALID");
+			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+				BigDecimal temp = deposit.getValue().add(sum);
+				if(temp.compareTo(municipalBond.getInterest()) >= 0)
+					interestIsPayed = true;				
+			}else if(sum==null && 
+					deposit.getValue().compareTo(municipalBond.getInterest())>=0 && 
+					municipalBond.getPaymentAgreement()!=null ){
+				interestIsPayed = true;
+			}
+			
+			if(municipalBond.getPaymentAgreement()!=null && !interestIsPayed ){
+				
+				MunicipalbondAux munAux =  createBondAux(deposit, municipalBond, Boolean.FALSE);
+				entityManager.persist(munAux);			
+			}else if(municipalBond.getPaymentAgreement()!=null &&	interestIsPayed){
+				
+				MunicipalbondAux munAux =  createBondAux(deposit, municipalBond, Boolean.TRUE);			
+				entityManager.persist(munAux);
+			}
+			
 			if (deposit.getBalance().compareTo(BigDecimal.ZERO) == 0) {
 				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId,
 						deposit.getDate());
