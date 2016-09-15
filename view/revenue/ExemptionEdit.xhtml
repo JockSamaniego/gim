@@ -14,77 +14,48 @@
 		<ui:include src="fragment/PropertyExemptionPanel.xhtml" />
 
 		<h:form id="exemption" styleClass="edit">
-			<ui:debug id="debug"/>
+			<ui:debug id="debug" />
 
 			<h:outputText styleClass="formTitle"
 				value="#{exemptionHome.managed ? messages['common.edit'] : messages['common.add']} #{messages['exemption.title']}" />
 
 			<rich:panel id="richPanelId">
 
-					<h:panelGrid columns="2" styleClass="center" width="100%"
-						columnClasses="topAligned,topAligned">
+				<h:panelGrid columns="2" styleClass="center" width="100%"
+					columnClasses="topAligned,topAligned">
 
-						<h:panelGrid columns="1" width="100%">
-							<rich:panel styleClass="left">
-								<f:facet name="header">#{messages['resident']}</f:facet>
-								<g:residentChooser id="ownerChooser" required="true"
-									resident="#{exemptionHome.instance.resident}"
-									criteria="#{exemptionHome.criteria}" bean="#{exemptionHome}"
-									label="#{messages['resident']}"
-									searchAction="searchResident"
-									residentsList="#{exemptionHome.residents}"
-									identificationNumber="#{exemptionHome.identificationNumber}"
-									searchByCriteriaAction="searchResidentByCriteria"
-									clearSearchPanelAction="clearSearchResidentPanel"
-									residentChosenListenerName="residentSelectedListener" 
-    							 reRender="richPanelId, ownerChooser_residentField, buttonsId, propertiesPanel"/>
-								<div style="clear: both" />
-							</rich:panel>
-						</h:panelGrid>
-
-						<h:panelGrid columns="1" width="100%">
-							<rich:panel styleClass="left">
-								<f:facet name="header">#{messages['exemption.partner']}</f:facet>
-								<g:residentChooser id="partnerChooser"
-									resident="#{exemptionHome.instance.partner}"
-									criteria="#{exemptionHome.criteria}" bean="#{exemptionHome}"
-									label="#{messages['partner']}"
-									searchAction="searchPartner"
-									residentsList="#{exemptionHome.residents}"
-									identificationNumber="#{exemptionHome.partnerIdentificationNumber}"
-									searchByCriteriaAction="searchResidentByCriteria"
-									clearSearchPanelAction="clearSearchResidentPanel"
-									residentChosenListenerName="partnerSelectedListener"
-									reRender="richPanelId, partnerChooser_residentField, buttonsId"/>
-								<div style="clear: both" />
-							</rich:panel>
-						</h:panelGrid>
-						
+					<h:panelGrid columns="1" width="100%">
+						<rich:panel styleClass="left">
+							<f:facet name="header">#{messages['resident']}</f:facet>
+							<g:residentChooser id="ownerChooser" required="true"
+								resident="#{exemptionHome.instance.resident}"
+								criteria="#{exemptionHome.criteria}" bean="#{exemptionHome}"
+								label="#{messages['resident']}" searchAction="searchResident"
+								residentsList="#{exemptionHome.residents}"
+								identificationNumber="#{exemptionHome.identificationNumber}"
+								searchByCriteriaAction="searchResidentByCriteria"
+								clearSearchPanelAction="clearSearchResidentPanel"
+								residentChosenListenerName="residentSelectedListener"
+								reRender="richPanelId, ownerChooser_residentField, buttonsId, propertiesPanel" />
+							<div style="clear: both" />
+						</rich:panel>
 					</h:panelGrid>
-					
-					<h:panelGrid columns="2" width="100%" columnClasses="topAligned, topAligned right">
-						<s:decorate id="exemptionTypeField" template="../layout/display.xhtml" >
-							<ui:define name="label">#{messages['exemption.type']}</ui:define>
-							<h:selectOneMenu id="exemptionTypeId" required="true"
-								value="#{exemptionHome.instance.exemptionType}">
-								<s:selectItems value="#{exemptionTypes}" required="true" var="exemptionType" 
-									label="#{exemptionType.name}" noSelectionLabel="#{messages['common.chooseOption']}" />
-								<s:convertEntity/>
-								<a:support event="onchange" ajaxSingle="true" action="#{exemptionHome.instance.propertiesInExemption.clear()}" reRender="propertiesPanel"/>
-							</h:selectOneMenu>
-						</s:decorate>
-						
-						<s:decorate id="typeField" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['fiscalPeriod.title']}</ui:define>
-							<h:selectOneMenu id="fiscalPeriodId" required="true"
-								value="#{exemptionHome.instance.fiscalPeriod}">
-								<s:selectItems value="#{fiscalPeriods}" required="true" var="fiscalPeriod"
-									label="#{fiscalPeriod.name}" noSelectionLabel="#{messages['common.chooseOption']}"/>
-								<s:convertEntity/>
-								<a:support event="onchange" ajaxSingle="true" action="#{exemptionHome.instance.propertiesInExemption.clear()}" reRender="propertiesPanel"/>
-							</h:selectOneMenu>
-						</s:decorate>				
-						<div style="clear:both"/>
+
+					<h:panelGrid columns="1" width="100%">
+						<rich:panel styleClass="left">
+							<f:facet name="header">#{messages['exemption.partner']}</f:facet>
+							<g:residentChooser id="partnerChooser"
+								resident="#{exemptionHome.instance.partner}"
+								criteria="#{exemptionHome.criteria}" bean="#{exemptionHome}"
+								label="#{messages['partner']}" searchAction="searchPartner"
+								residentsList="#{exemptionHome.residents}"
+								identificationNumber="#{exemptionHome.partnerIdentificationNumber}"
+								searchByCriteriaAction="searchResidentByCriteria"
+								clearSearchPanelAction="clearSearchResidentPanel"
+								residentChosenListenerName="partnerSelectedListener"
+								reRender="richPanelId, partnerChooser_residentField, buttonsId" />
+							<div style="clear: both" />
+						</rich:panel>
 					</h:panelGrid>
 
 				</h:panelGrid>
@@ -317,8 +288,7 @@
 							<ui:define name="label">#{messages['exemption.percentage']}</ui:define>
 							<h:inputText id="name" size="15" required="true"
 								style="text-align: right"
-								value="#{exemptionHome.instance.exemptionPercentage}"
-								>
+								value="#{exemptionHome.instance.exemptionPercentage}">
 								<f:convertNumber pattern="#0.00" />
 							</h:inputText>%
 						</s:decorate>
@@ -387,32 +357,30 @@
 					#{messages['common.requiredFields']}
 				</div>
 
-
-
 			</rich:panel>
 
 			<a:outputPanel ajaxRendered="false" id="buttonsId">
 
-			<div class="actionButtons">
+				<div class="actionButtons">
 
-				<h:commandButton id="save" value="#{messages['common.save']}"
-					action="#{exemptionHome.save()}" 
-					rendered="#{!exemptionHome.managed}" />
+					<h:commandButton id="save" value="#{messages['common.save']}"
+						action="#{exemptionHome.save()}"
+						rendered="#{!exemptionHome.managed}" />
 
-				<h:commandButton id="update" value="#{messages['common.save']}"
-					action="#{exemptionHome.save()}" rendered="#{exemptionHome.managed and exemptionHome.instance.active}" />
+					<h:commandButton id="update" value="#{messages['common.save']}"
+						action="#{exemptionHome.save()}"
+						rendered="#{exemptionHome.managed and exemptionHome.instance.active}" />
 
-				<h:commandButton id="delete" value="#{messages['common.delete']}"
-					action="#{exemptionHome.remove}" immediate="true"
-					rendered="#{exemptionHome.managed and false}" />
+					<h:commandButton id="delete" value="#{messages['common.delete']}"
+						action="#{exemptionHome.remove}" immediate="true"
+						rendered="#{exemptionHome.managed and false}" />
 
-				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
-					propagation="end" view="/revenue/ExemptionList.xhtml"/>
+					<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+						propagation="end" view="/revenue/ExemptionList.xhtml" />
 
-			</div>
+				</div>
 			</a:outputPanel>
 		</h:form>
-
 
 
 	</ui:define>
