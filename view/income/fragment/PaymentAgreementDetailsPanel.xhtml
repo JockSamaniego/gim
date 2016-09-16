@@ -9,8 +9,8 @@
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 	<ui:debug />
-	<rich:modalPanel id="paymentAgreementDetailsPanel" minHeight="540"
-		minWidth="800" moveable="false" resizeable="false" height="540"
+	<rich:modalPanel id="paymentAgreementDetailsPanel" minHeight="600"
+		minWidth="800" moveable="false" resizeable="false" height="600"
 		width="800">
 		<f:facet name="header">
 			<h:panelGroup>
@@ -28,7 +28,7 @@
 
 		<h:form id="paymentAgreementDetails" styleClass="edit">
 
-			<rich:panel style="height:490px;">
+			<rich:panel style="height:530px;">
 				<rich:panel style="height:30px; width:100%; overflow:auto;">
 					<rich:messages errorClass="errors" />
 				</rich:panel>
@@ -54,7 +54,6 @@
 							requiered="true"
 							disabled="#{!paymentAgreementHome.instance.lowerPercentage}"/>
 					</s:decorate>
-		
 				</h:panelGrid>
 
 
@@ -136,6 +135,17 @@
 							datePattern="#{messages['common.datePattern']}" required="true">
 						</rich:calendar>
 					</s:decorate>
+					
+					<s:decorate template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">Tipo de convenio:</ui:define>
+						<h:selectOneMenu id="reportType" required="true"
+							value="#{paymentAgreementHome.instance.agreementType}">
+							<s:selectItems value="#{agreementTypes}" var="type"
+								label="#{messages[type.name()]}" />
+							<s:convertEnum />
+						</h:selectOneMenu>
+					</s:decorate>
+					
 
 					<s:decorate id="calculateField"
 						template="../../layout/vertical-edit.xhtml">
