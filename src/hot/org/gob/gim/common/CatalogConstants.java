@@ -22,5 +22,7 @@ public class CatalogConstants {
 	 public static final String ITEM_CATALOG_ACTION_EDIT_WORK_DEAL = "ACTION_EDIT";
 	 
 	 public static final String ITEM_CATALOG_ACTION_REMOVE_WORK_DEAL = "ACTION_DELETE";
+	 
+	 public static final String ITEM_CATALOG_TYPE_EXCLUDE_TREATMENT_EXCEMPTION = "TYPE_EXCLUDE";
 	
 }
