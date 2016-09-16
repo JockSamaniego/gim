@@ -63,6 +63,7 @@ public class ExemptionForProperty {
 		this.amountCreditYear1 = BigDecimal.ZERO;
 		this.amountCreditYear2 = BigDecimal.ZERO;
 		this.amountCreditYear3 = BigDecimal.ZERO;
+		this.discountPercentage = new BigDecimal(100);
 	}
 
 	public Long getId() {

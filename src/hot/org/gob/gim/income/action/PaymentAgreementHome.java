@@ -20,7 +20,6 @@ import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.view.MunicipalBondItem;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -149,9 +148,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		MunicipalBondItem root = new MunicipalBondItem(null);
 		try{
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
-			//@tag recaudacionCoactivas
-			incomeService.calculatePayment(mbs, new Date(), true, true);
-			
+			incomeService.calculatePayment(mbs, new Date(), true, false);
 		} catch(Exception e){
 			addFacesMessageFromResourceBundle(e.getMessage());
 		}
@@ -451,18 +448,6 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	}
 
 
-	//2016-07-19T11:08
-	//@author macartuche
-	//@tag recaudacionCoactiva
-	@Factory("agreementTypes")
-	public List<AgreementType> loadReportTypes() {
-		
-		List<AgreementType> list = new ArrayList<AgreementType>();
-		
-		for (AgreementType type : AgreementType.values()) {
-			list.add(type);
-		}
-		return list;
-	}
+	
 		
 }

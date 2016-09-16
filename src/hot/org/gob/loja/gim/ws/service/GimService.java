@@ -1,7 +1,6 @@
 package org.gob.loja.gim.ws.service;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Local;
@@ -61,7 +60,5 @@ public interface GimService {
 	
 	StatementReport buildReport(ServiceRequest request, Date startDate, Date endDate, String reportType, Long entryId)
 			throws InvalidUser;
-	
-	List<RealEstate> findProperties(ServiceRequest request);
 	
 }

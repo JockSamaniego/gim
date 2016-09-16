@@ -281,17 +281,7 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 		    		"LEFT JOIN location.mainBlockLimit mainBlockLimit " +
 		    		"LEFT JOIN mainBlockLimit.street mainStreet " +
 		    		"LEFT JOIN location.neighborhood nb " +
-		    		"WHERE p.cadastralCode like :cadastralCode or p.previousCadastralCode like :cadastralCode"),
-    @NamedQuery(name = "RealEstate.findByIdentificationNumber", query = "SELECT NEW org.gob.loja.gim.ws.dto.RealEstate("
-				+ "p.id, p.cadastralCode, p.currentDomain.resident.identificationNumber, "
-				+ "location.houseNumber, mainStreet.name, nb.name, block.id, block.code, block.cadastralCode) "
-				+ "FROM Property p "
-				+ "LEFT JOIN p.block block "
-				+ "LEFT JOIN p.location location "
-				+ "LEFT JOIN location.mainBlockLimit mainBlockLimit "
-				+ "LEFT JOIN mainBlockLimit.street mainStreet "
-				+ "LEFT JOIN location.neighborhood nb "
-				+ "WHERE p.currentDomain.resident.identificationNumber = :identificationNumber order by p.cadastralCode")
+		    		"WHERE p.cadastralCode like :cadastralCode or p.previousCadastralCode like :cadastralCode")
 })
 public class Property {
 
