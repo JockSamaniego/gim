@@ -12,7 +12,6 @@
 	<ui:define name="body">
 
 		<ui:include src="fragment/AlertListPanel.xhtml" />
-		<ui:include src="fragment/ImpugnmentListPanel.xhtml" />
 
 		<f:verbatim>
 			<script type="text/javascript">
@@ -166,20 +165,11 @@
 						<a:commandLink id="alertField"
 							value="#{messages['alert.pendingAlerts']}"
 							rendered="#{paymentHome.pendingAlerts.size()==0 ? false : true}"
-							style="font-size:50px; font-weight:bold;color:red" styleClass="center"
+							style="font-size:50px; font-weight:bold;" styleClass="center"
 							reRender="alertListPanel"
 							oncomplete="Richfaces.showModalPanel('alertListPanel')">
 						</a:commandLink>
-						<br />
-						<a:commandLink id="impugnmentField"
-							value="#{messages['impugnment.pendingImpugnment']}"
-							rendered="#{paymentHome.impugnmentsTotal.size()==0 ? false : true}"
-							style="font-size:40px; font-weight:bold;" styleClass="center"
-							reRender="impugnmentListPanel"
-							oncomplete="Richfaces.showModalPanel('impugnmentListPanel')">
-						</a:commandLink>
 					</a:outputPanel>
-				
 
 					<a:outputPanel id="totalsPanel" ajaxRendered="true">
 						<h:panelGrid columnClasses="topAligned right" width="100%">
