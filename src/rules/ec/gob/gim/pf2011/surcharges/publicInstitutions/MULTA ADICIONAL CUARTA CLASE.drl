@@ -39,30 +39,30 @@ function BigDecimal getInterest(Date $expirationDate, float $percentage, BigDeci
         
         #agregar validacion de transitoria para Instituciones publicas
         if(InterestPublicInstitutionUtils.isPublicInstitution(residentId)){
-        	
-        	System.out.println("Empresa publica");
-       		Calendar $transitionDate = InterestPublicInstitutionUtils.transitionDate;
-       		DateTime $transitionDT = new DateTime($transitionDate.getTime());
-	
-			#compara fechas
-	     	boolean currentDateMajorTransitionDate 		= $c.after($transitionDate);
-	     	boolean transitionDateMajorExpirationDate 	= $transitionDate.after(expirationCalendar);
-	     	boolean currentDateMajorExpirationDate 		= $c.after(expirationCalendar);
-	     	
-	     	
-        	System.out.println("currentDateMajorTransitionDate "+currentDateMajorTransitionDate);
-        	System.out.println("transitionDateMajorExpirationDate "+transitionDateMajorExpirationDate);
-        	System.out.println("currentDateMajorExpirationDate "+currentDateMajorExpirationDate);
+                
+                System.out.println("Empresa publica");
+                Calendar $transitionDate = InterestPublicInstitutionUtils.transitionDate;
+                DateTime $transitionDT = new DateTime($transitionDate.getTime());
         
-	     	if (currentDateMajorTransitionDate && currentDateMajorExpirationDate ){
-        		System.out.println("periodo con fecha transitoria");
-	     		$period = new Period( $expirationDT, $transitionDT, PeriodType.yearMonthDay());
-	     	}else{
-	     		System.out.println("retorna cero");
-	     		return BigDecimal.ZERO;
-	     	}        	
+                        #compara fechas
+                boolean currentDateMajorTransitionDate          = $c.after($transitionDate);
+                boolean transitionDateMajorExpirationDate       = $transitionDate.after(expirationCalendar);
+                boolean currentDateMajorExpirationDate          = $c.after(expirationCalendar);
+                
+                
+                System.out.println("currentDateMajorTransitionDate "+currentDateMajorTransitionDate);
+                System.out.println("transitionDateMajorExpirationDate "+transitionDateMajorExpirationDate);
+                System.out.println("currentDateMajorExpirationDate "+currentDateMajorExpirationDate);
+        
+                if (currentDateMajorTransitionDate && currentDateMajorExpirationDate ){
+                        System.out.println("periodo con fecha transitoria");
+                        $period = new Period( $expirationDT, $transitionDT, PeriodType.yearMonthDay());
+                }else{
+                        System.out.println("retorna cero");
+                        return BigDecimal.ZERO;
+                }               
         }else{
-        	$period = new Period( $expirationDT, $currentDT, PeriodType.yearMonthDay());
+                $period = new Period( $expirationDT, $currentDT, PeriodType.yearMonthDay());
         }
         int $anios = $period.getYears();
         int $meses = $period.getMonths(); 
@@ -76,10 +76,17 @@ function BigDecimal getInterest(Date $expirationDate, float $percentage, BigDeci
         
         if($dias > 0){
                 $meses += 1;
+        }else if($dias <0){
+                $meses = 0;
         }
         
         if( $anios > 0 ){
-                $meses = $meses + $anios*12;
+                        if($meses >0){
+                                $meses = $meses + $anios*12;
+                        }else{
+                                $meses = 0;
+                        }
+                
         }
                 
         $interest = $interest * $percentage*$meses;
@@ -102,6 +109,7 @@ rule "Interes FotoMulta"
                 $mb : MunicipalBond();                          
         then
                 BigDecimal $value = getInterest($mb.getExpirationDate(), 2, $mb.getBase(), $mb.getResident().getId() );
+                System.out.println("Recargo: "+$value+ " groupincode "+$mb.getGroupingCode());
                 $itemBase.setValue($value);
                 $itemBase.setTotal($value);
 end 
