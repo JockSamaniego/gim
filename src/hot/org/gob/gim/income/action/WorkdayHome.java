@@ -2738,9 +2738,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 	/**
 	 * Para reporte de saldos vigentes
-	 * @throws Exception 
 	 */
-	public void generateCurrentBalanceReport() throws Exception {
+	public void generateCurrentBalanceReport() {
 		isCurrentBalanceReport = Boolean.TRUE;
 		generateEmissionGlobalReport();
 	}
@@ -2750,9 +2749,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 	/**
 	 * Genera el reporte de emisión por partidas
-	 * @throws Exception 
 	 */
-	public void generateEmissionGlobalReport() throws Exception {
+	public void generateEmissionGlobalReport() {
 
 		rootNode = null;
 		Calendar now = Calendar.getInstance();
@@ -3190,50 +3188,15 @@ public class WorkdayHome extends EntityHome<Workday> {
 		return query.getResultList();
 	}
 
-	private List<EntryTotalCollected> getAllFutureTotals(Long statusId)
-			throws Exception {
-
-		statusIds = new ArrayList<Long>();
-		statusIds.add(statusId);
-		Query query = query = getEntityManager().createNamedQuery(
-				"MunicipalBond.SumTotalFutureBetweenDatesByItem");
-		query.setParameter("municipalBondStatusId", statusIds);
-		query.setParameter("startDate", startDate);
-		query.setParameter("endDate", endDate);
-
-		List<EntryTotalCollected> retorno = query.getResultList();
-		if (!retorno.isEmpty()) {
-			for (EntryTotalCollected entryTotalCollected : retorno) {
-				if (entryTotalCollected.getParametersFutureEmission() == null) {
-					 throw new Exception("No existe configuracion de parametros futuros para la cuenta: "
-								+ entryTotalCollected.getAccount()+" - "+entryTotalCollected.getEntry());
-				} else {
-					ParameterFutureEmissionDTO parameters = new ObjectMapper()
-							.readValue(entryTotalCollected
-									.getParametersFutureEmission(),
-									ParameterFutureEmissionDTO.class);
-					entryTotalCollected
-							.setParametersFutureEmissionDTO(parameters);
-				}
-
-			}
-		}
-		System.out.println("Retono Future:" + retorno);
-		return retorno;
-
-	}
-
-	private List<EntryTotalCollected> getAllFutureTotals(Long statusId,
-			Long entryId) {
+	private List<EntryTotalCollected> getAllFutureTotals(Long statusId) {
 		try {
 			statusIds = new ArrayList<Long>();
 			statusIds.add(statusId);
 			Query query = query = getEntityManager().createNamedQuery(
-					"MunicipalBond.SumTotalFutureBetweenDatesByItemAndEntry");
+					"MunicipalBond.SumTotalFutureBetweenDatesByItem");
 			query.setParameter("municipalBondStatusId", statusIds);
 			query.setParameter("startDate", startDate);
 			query.setParameter("endDate", endDate);
-			query.setParameter("entry_id", entryId);
 
 			List<EntryTotalCollected> retorno = query.getResultList();
 			if (!retorno.isEmpty()) {
@@ -3385,26 +3348,11 @@ public class WorkdayHome extends EntityHome<Workday> {
 	}
 
 	private List<EntryTotalCollected> getTotalEmittedFutureByEntryAndStatus(
-			Long statusId) throws Exception {
+			Long statusId) {
 		List<EntryTotalCollected> totals = new ArrayList<EntryTotalCollected>();
-		System.out.println(municipalBondStatus);
-		if (entry == null) {
-			if (municipalBondStatus == null) {
-				totals = getAllFutureTotals(statusId);
-			} else if (municipalBondStatus.getId().equals(
-					futureBondStatus.getId())) {
-				totals = getAllFutureTotals(statusId);
-			}
+		if (entry == null || entry.getId().equals(futureBondStatus.getId())) {
 			// TODO consultar emisiones futuras SumTotalFutureBetweenDatesByItem
-
-		} else if (entry != null) {
-			if (municipalBondStatus == null) {
-				totals = getAllFutureTotals(statusId, entry.getId());
-			} else if (municipalBondStatus.getId().equals(
-					futureBondStatus.getId())) {
-				totals = getAllFutureTotals(statusId, entry.getId());
-			}
-
+			totals = getAllFutureTotals(statusId);
 		}
 		return totals;
 	}
