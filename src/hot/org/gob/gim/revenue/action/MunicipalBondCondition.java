@@ -375,9 +375,9 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	
 	public BigDecimal calculateTotal(){		
 		pendingTotal = BigDecimal.ZERO;
-		System.out.println("antes for............................. "+municipalBondItemsResult.size());
+		//System.out.println("antes for............................. "+municipalBondItemsResult.size());
 		for(MunicipalBondItem mbi: municipalBondItemsResult){
-			System.out.println(" for------ "+mbi.getMunicipalBond().getNumber()+" "+mbi.getMunicipalBond().getEntry().getName());
+			//System.out.println(" for------ "+mbi.getMunicipalBond().getNumber()+" "+mbi.getMunicipalBond().getEntry().getName());
 			pendingTotal = pendingTotal.add(mbi.getMunicipalBond().getPaidTotal());
 		}		
 		return pendingTotal.setScale(2, RoundingMode.HALF_UP);

@@ -94,6 +94,13 @@ public class DepositHome extends EntityHome<Deposit> {
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 
 			incomeService.reverse(selected, concept, userSession.getUser().getResident());
+			
+			//@author
+			//@tag recaudacionCoactivas
+			//@date 2016-07-06T12:23
+			//al realizar un reverso de abono, anular en la nueva tabla de municipalbondaux 
+			incomeService.reversePaymentAgreements(selected);
+
 			return "persisted";
 		} catch (Exception e){
 			addFacesMessageFromResourceBundle(e.getClass().getSimpleName());

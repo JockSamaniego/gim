@@ -1,0 +1,183 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<h:form id="obligationsHistoryReport" styleClass="edit">
+			<ui:debug id="uiDebug" />
+			<rich:panel id="obligationsHistoryForm">
+				<f:facet name="header"><h:outputText value="#{messages['municipalbond.searchHistory']}" />
+				</f:facet>
+				<s:decorate id="obligationsRadioButton"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['municipalbond.searchType']}: </ui:define>
+					<h:selectOneRadio disabled="#{municipalBondHome.reportType ne 0}"
+						value="#{municipalBondHome.obligationsRadioButton}"
+						required="true">
+						<f:selectItem itemValue="Normal" itemLabel="Consulta Normal" />
+						<f:selectItem itemValue="FotoMulta" itemLabel="Consulta Foto-Multa" />
+					</h:selectOneRadio>
+				</s:decorate>
+				<s:decorate id="obligationsField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.criteria']}: </ui:define>
+					<h:inputText id="obligation"
+						disabled="#{municipalBondHome.reportType ne 0}"
+						value="#{municipalBondHome.obligationsHistoryCriteria}"
+						required="true">
+					</h:inputText>
+				</s:decorate>
+				<div style="clear: both"></div>
+				<div class="actionButtons">
+					<a:commandButton id="generateReport"
+						disabled="#{municipalBondHome.reportType ne 0}"
+						value="#{messages['common.search']}"
+						action="#{municipalBondHome.searchObligationsHistory}"
+						reRender="obligationsNormalQuery, obligationsHistoryForm" />
+				</div>
+			</rich:panel>
+
+
+			<rich:panel id="obligationsNormalQuery" width="100%">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['entry.searchResults']} : #{municipalBondHome.obligationsHistoryResult.size()}" />
+					</h:panelGrid>
+				</f:facet>
+				<div class="results" id="obligationsList">
+					<rich:panel
+						rendered="#{municipalBondHome.obligationsHistoryResult.size() eq 0}">
+						<h:outputText value="#{messages['common.noResultsReturned']}" />
+					</rich:panel>
+
+					<rich:dataTable id="obligationsNormalTable" var="_item"
+						width="100%" value="#{municipalBondHome.obligationsHistoryResult}"
+						columnClasses="left, left, left, left, left, left, left, left, left, left, left"
+						rendered="#{municipalBondHome.obligationsHistoryResult.size() gt 0}"
+						onRowMouseOver="this.style.backgroundColor='#33ccff'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+						rows="25">
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.number']}" />
+							</f:facet>
+							<h:outputText value="#{_item.number}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.emision']}" />
+							</f:facet>
+							<h:outputText value="#{_item.emisiondate}">
+								<s:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" dateStyle="short" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.expiration']}" />
+							</f:facet>
+							<h:outputText value="#{_item.expirationdate}">
+								<s:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" dateStyle="short" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.status']}" />
+							</f:facet>
+							<h:outputText value="#{_item.status}"/>
+						</rich:column>
+						
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['entry']}" />
+							</f:facet>
+							<h:outputText value="#{_item.entryName}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['common.identificationNumber']}" />
+							</f:facet>
+							<h:outputText value="#{_item.identificationNumber}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['resident.name']}" />
+							</f:facet>
+							<h:outputText value="#{_item.name}" />
+						</rich:column>
+						
+						<!--rich:column styleClass="center">
+							<f:facet name="header">
+						pago total
+							</f:facet>
+							<h:outputText value="#{_item.paidtotal}" />
+						</rich:column-->
+
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.description']}" />
+							</f:facet>
+							<h:outputText value="#{_item.description}" />
+						</rich:column>
+						
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.value']}" />
+							</f:facet>
+							<h:outputText value="#{_item.value}" />
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<a:commandButton id="viewer" ajaxSingle="true"
+								action="#{municipalBondsViewerHome.loadMunicipalBond(_item.id)}"
+								eventsQueue="gimEventsQueue" reRender="_municipalBondViewer"
+								oncomplete="Richfaces.showModalPanel('_municipalBondViewer',{width:600, height:500})"
+								value="#{messages['common.detail']}" />
+						</rich:column>
+
+					</rich:dataTable>
+
+					<rich:spacer height="5" />
+					<rich:datascroller align="center" for="obligationsNormalTable"
+					rendered="#{municipalBondHome.obligationsHistoryResult.size() gt 0}"
+						maxPages="20" id="sc1" />
+
+				</div>
+
+			</rich:panel>
+
+			<g:municipalBondViewer
+				resident="#{municipalBondsViewerHome.resident}"
+				municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}"
+				deposits="#{municipalBondsViewerHome.deposits}" />
+
+			<h:panelGrid id="detailPanel2" columns="3">
+
+				<s:button id="back" value="#{messages['common.back']}"
+					propagation="end" view="/home.xhtml" />
+
+				<a:commandButton id="cleanReport"
+					value="#{messages['common.reset']}"
+					action="#{municipalBondHome.cleanReport}"
+					reRender="obligationsNormalQuery, obligationsHistoryForm" />
+			</h:panelGrid>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

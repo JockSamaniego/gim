@@ -21,5 +21,6 @@ public interface ResidentService {
 	List<Resident> findByCriteria(String criteria);
 	void verifyUniqueness(Long id, String identificationNumber, IdentificationType identificationType) throws IdentificationNumberExistsException;
 	void save(Resident resident) throws IdentificationNumberExistsException;
+	Boolean isPublicInstitution(Long residentId);
 	
 }
