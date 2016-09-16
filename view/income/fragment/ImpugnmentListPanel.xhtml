@@ -46,7 +46,7 @@
 						
 						<rich:column sortBy="#{_impugnment.creationDate}" styleClass="action">
 							<f:facet name="header">
-								<h:outputText value="#{messages['impugnment.creationDate']}" />
+								<h:outputText value="#{messages['revenue.impugnments.impugnment_date']}" />
 							</f:facet>
 							<h:outputText value="#{_impugnment.creationDate}" >
 							<f:convertDateTime
@@ -54,15 +54,18 @@
 							</h:outputText>
 						</rich:column>
 
-						<rich:column sortBy="#{_impugnment.impugnmentDate}" styleClass="action">
+						<!-- rich:column sortBy="#{_impugnment.impugnmentDate}" styleClass="action">
 							<f:facet name="header">
 								<h:outputText value="#{messages['impugnment.impugnmentDate']}" />
 							</f:facet>
 							<h:outputText value="#{_impugnment.impugnmentDate}" >
 							<f:convertDateTime
-									pattern="#{messages['common.datePattern']}" />
+									pattern=" #
+									{ 
+									
+									messages['common.datePattern']}" />
 							</h:outputText>
-						</rich:column>
+						</rich:column-->
 
 						<rich:column sortBy="#{_impugnment.numberProsecution}" styleClass="action">
 							<f:facet name="header">
