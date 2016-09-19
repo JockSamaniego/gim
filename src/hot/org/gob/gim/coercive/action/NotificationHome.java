@@ -35,10 +35,12 @@ import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.coercive.model.NotificationTask;
 import ec.gob.gim.coercive.model.NotificationTaskType;
 import ec.gob.gim.common.model.Person;
+import ec.gob.gim.common.model.SystemParameter;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
+import ec.gob.gim.revenue.model.impugnment.Impugnment;
 
 @Name("notificationHome")
 @Scope(ScopeType.CONVERSATION)
@@ -506,7 +508,15 @@ public class NotificationHome extends EntityHome<Notification> {
 
 			for (MunicipalBond municipalBond : municipalBonds) {
 				// if(municipalBond.getEntry().equals(e)){
-				notification.add(municipalBond);
+				;
+				if(findAcceptedImpugnments(municipalBond.getId()).size()<=0){
+					notification.add(municipalBond);
+					//System.out.println("====================La obligacion "+municipalBond.getId()+" ha sido notificada!!!");
+				}else{
+					//System.out.println("--------------------La obligacion "+municipalBond.getId()+" tiene impugnaciones:");
+					municipalBond.setNotification(notification);
+				}
+				
 				// }
 			}
 
@@ -956,5 +966,43 @@ public class NotificationHome extends EntityHome<Notification> {
 			ex.printStackTrace();
 		}
 	}
+	
+	
+	// Para controlar las municipal Bond que tienen impugnaciones aceptadas.............
+	// Jock Samaniego............. 14-09-2016........
+		
+		private List<Impugnment> impugnmentsTotal;
+		private String[] states;
+		
+		@SuppressWarnings("unchecked")
+		public List<Impugnment> findAcceptedImpugnments(Long id){
+			impugnmentsTotal = new ArrayList<>();
+			List<Impugnment> impugnments = new ArrayList<>();
+			for (String st : states){
+				Query query = getEntityManager().createNamedQuery("Impugnment.findByMunicipalBond");
+				query.setParameter("municipalBond_id", id);
+				query.setParameter("code", st);
+				impugnments = query.getResultList();
+				if(impugnments.size()>0){
+					impugnmentsTotal.addAll(impugnments);
+				}		
+			}
+			return impugnmentsTotal;
+		}
+
+		public void chargeControlImpugnmentStates(){
+			Query query = getEntityManager().createNamedQuery("SystemParameter.findByName");
+			query.setParameter("name", "STATES_IMPUGNMENT_CONTROL_REGISTER_NOTIFICATION");
+			SystemParameter controlStates = (SystemParameter) query.getSingleResult();
+			states = controlStates.getValue().trim().split(",");
+		}
+
+		public List<Impugnment> getImpugnmentsTotal() {
+			return impugnmentsTotal;
+		}
+
+		public void setImpugnmentsTotal(List<Impugnment> impugnmentsTotal) {
+			this.impugnmentsTotal = impugnmentsTotal;
+		}
 
 }
