@@ -511,7 +511,7 @@ public class NotificationHome extends EntityHome<Notification> {
 				;
 				if(findAcceptedImpugnments(municipalBond.getId()).size()<=0){
 					notification.add(municipalBond);
-					//System.out.println("====================La obligacion "+municipalBond.getId()+" ha sido notificada!!!");
+					System.out.println("====================La obligacion "+municipalBond.getId()+" ha sido notificada!!!");
 				}else{
 					//System.out.println("--------------------La obligacion "+municipalBond.getId()+" tiene impugnaciones:");
 					municipalBond.setNotification(notification);
