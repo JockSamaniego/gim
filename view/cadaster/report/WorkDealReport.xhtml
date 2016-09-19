@@ -6,9 +6,15 @@
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
-	title="#{messages['closingTill']}" subject="report" type="pdf"
-	pageSize="A4" margins="20 20 20 20" author="loxageek"
-	orientation="landscape" creator="loxageek">
+	title="CEM" 
+	subject="report" 
+	type="pdf"
+	pageSize="A4" 
+	margins="20 20 20 20" 
+	author="loxageek"
+	orientation="landscape" 
+	creator="loxageek"
+	>
 
 	<f:facet name="header">
 		<p:font size="9" name="HELVETICA">
@@ -364,7 +370,7 @@
 					
 					<p:cell horizontalAlignment="right">
 						<p:paragraph>
-							<p:text value="#{_var.property.currentDomain.commercialAppraisal}" />
+							<p:text value="#{_var.commercialAppraisal}" />
 						</p:paragraph>
 					</p:cell>
 					

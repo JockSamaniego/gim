@@ -10,6 +10,8 @@ import ec.gob.gim.cadaster.model.DomainSinat;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
+import ec.gob.gim.cadaster.model.WorkDealFraction;
+import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.revenue.model.EmissionOrder;
@@ -34,4 +36,13 @@ public interface CadasterService {
 	void calculateExemptions(Long fiscalPeriodId, Date fromDate, Date untilDate);	
 	void createCopyOfUnbuiltLots(List<UnbuiltLot> unbuiltLots, FiscalPeriod fiscalPeriod);
 	Domain update(Domain domain) throws Exception;
+	
+	/*
+	 * Rene Ortega
+	 * 2016-08-16
+	 * metodo que devuelve los avaluos de x propiedad
+	 * 
+	 */
+	List<AppraisalsPropertyDTO> findAppraisalsForProperty(Long property_id);
+	WorkDealFraction verifyCheckAlreadyAddedPropertyIntoWorkDeal(Long workDeal_id, Long property_id);
 }

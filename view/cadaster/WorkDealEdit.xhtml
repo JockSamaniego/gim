@@ -1,418 +1,457 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:g="http://gim.gob.ec/jsf"
-    template="../layout/template.xhtml">
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
 
-<ui:define name="body">
+	<ui:define name="body">
 
-	<ui:include src="fragment/WorkDealFractionEditPanel.xhtml" />
+		<ui:include src="fragment/WorkDealFractionEditPanel.xhtml" />
 
-    <h:form id="property" styleClass="edit">    	
-    	<rich:messages errorClass="errors"/>
-    	<ui:debug id="debug"/>
-    	<h:outputText styleClass="formTitle"
-    		value="#{Home.managed ? messages['common.edit'] : messages['common.create']} #{messages['workDeal']}" />
-    		
-    		<rich:panel>
+		<h:form id="property" styleClass="edit">
+			<rich:messages errorClass="errors" />
+			<ui:debug id="debug" />
+			<h:outputText styleClass="formTitle"
+				value="#{Home.managed ? messages['common.edit'] : messages['common.create']} #{messages['workDeal']}" />
+
+			<rich:panel id="panelWorkDeal">
 				<f:facet name="header">
             	#{messages['workDeal.data']}
             </f:facet>
-            <h:panelGrid columns="1">
+				<h:panelGrid columns="1" id="panelInfo">
 
-				<s:decorate id="nameField"
-					template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['workDeal.name']}: </ui:define>
-					<h:inputText id="name" size="70" maxlength="70"
-						value="#{workDealHome.instance.name}" required="true"
-						style="text-transform: uppercase">						
-					</h:inputText>
-				</s:decorate>
+					<s:decorate id="nameField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['workDeal.name']}: </ui:define>
+						<h:inputText id="name" size="70" maxlength="70"
+							value="#{workDealHome.instance.name}" required="true"
+							style="text-transform: uppercase">
+						</h:inputText>
+					</s:decorate>
 
-				
-				
-				<s:decorate id="workDealTypeField"
-					template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['workDeal.workDealType']}: </ui:define>
-					<h:selectOneMenu id="workDealType" required="true"
+
+
+					<s:decorate id="workDealTypeField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['workDeal.workDealType']}: </ui:define>
+						<h:selectOneMenu id="workDealType" required="true"
 							value="#{workDealHome.instance.workDealType}">
-						<s:selectItems value="#{workDealTypes}" required="true" var="type"
-							label="#{messages[type.name()]}"
-							noSelectionLabel="#{messages['common.chooseOption']}" />
-						<s:convertEnum/>
-						<a:support event="onchange" ajaxSingle="true"/>
-					</h:selectOneMenu>
-				</s:decorate>
+							<s:selectItems value="#{workDealTypes}" required="true"
+								var="type" label="#{messages[type.name()]}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEnum />
+							<a:support event="onchange" ajaxSingle="true" />
+						</h:selectOneMenu>
+					</s:decorate>
 
-				<s:decorate id="asphaltCheckField" template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['workDeal.asphaltActive']}</ui:define>
-					<h:selectBooleanCheckbox id="asphaltCheck"
-						value="#{workDealHome.instance.asphalt}"> 
-						<a:support event="onchange" ajaxSingle="true" reRender="valueField" />
-					</h:selectBooleanCheckbox>
-				</s:decorate>
-				
-				<s:decorate id="valueField"
-					template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['workDeal.workDealValue']}: </ui:define>
-					<h:inputText id="value" size="10" styleClass="right" disabled="#{!workDealHome.instance.asphalt}"
-						value="#{workDealHome.instance.workDealValue}" required="true">						
-						<f:convertNumber pattern="0.00"/>
-					</h:inputText>					
-				</s:decorate>
-				
-				<s:decorate id="collectField"
-					template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['workDeal.collectFactor']}: </ui:define>
-					<h:inputText id="value" size="10" styleClass="right"
-						value="#{workDealHome.instance.collectFactor}" required="true">						
-						<f:convertNumber pattern="0.00"/>
-					</h:inputText>					
-				</s:decorate>
-				
-	
-				<s:decorate id="drinkingWaterField" template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['workDeal.waterisActive']}</ui:define>
-					<h:selectBooleanCheckbox id="drinkingWater"
-						value="#{workDealHome.instance.drinkingWater}">
-						<a:support event="onchange" ajaxSingle="true" reRender="drinkingWaterValueField" />
-					</h:selectBooleanCheckbox>
-				</s:decorate>
-				
-				<s:decorate id="drinkingWaterValueField"
-					template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['workDeal.waterValue']}: </ui:define>
-					<h:inputText id="Watervalue" size="10" styleClass="right" disabled="#{!workDealHome.instance.drinkingWater}"
-						value="#{workDealHome.instance.waterValue}" required="true">						
-						<f:convertNumber pattern="0.00"/>
-					</h:inputText>					
-				</s:decorate>
-				
-				
-				<s:decorate id="sewerageField" template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['workDeal.sewerageisActive']}</ui:define>
-					<h:selectBooleanCheckbox id="sewerage"
-						value="#{workDealHome.instance.sewerage}">
-						<a:support event="onchange" ajaxSingle="true" reRender="sewerageValueField" />
-					</h:selectBooleanCheckbox>
-				</s:decorate>
-				
-				<s:decorate id="sewerageValueField"
-					template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['workDeal.sewerageValue']}: </ui:define>
-					<h:inputText id="sewerageValue" size="10" styleClass="right" 
-						disabled="#{!workDealHome.instance.sewerage}"
-						value="#{workDealHome.instance.sewerageValue}" required="true">						
-						<f:convertNumber pattern="0.00"/>
-					</h:inputText>					
-				</s:decorate>
+					<s:decorate id="asphaltCheckField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['workDeal.asphaltActive']}</ui:define>
+						<h:selectBooleanCheckbox id="asphaltCheck"
+							value="#{workDealHome.instance.asphalt}">
+							<a:support event="onchange" ajaxSingle="true"
+								reRender="valueField" />
+						</h:selectBooleanCheckbox>
+					</s:decorate>
+
+					<s:decorate id="valueField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['workDeal.workDealValue']}: </ui:define>
+						<h:inputText id="value" size="10" styleClass="right"
+							disabled="#{!workDealHome.instance.asphalt}"
+							value="#{workDealHome.instance.workDealValue}" required="true">
+							<f:convertNumber pattern="0.00" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="collectField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['workDeal.collectFactor']}: </ui:define>
+						<h:inputText id="value" size="10" styleClass="right"
+							value="#{workDealHome.instance.collectFactor}" required="true">
+							<f:convertNumber pattern="0.00" />
+						</h:inputText>
+					</s:decorate>
 
 
-				<s:decorate id="observationField" template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['workDeal.observation']}:</ui:define>
-					<h:inputTextarea id="observation" cols="80" rows="3"
-						value="#{workDealHome.instance.observation}" />
-				</s:decorate>
-				
-				<h:panelGrid columns="2" id="valuesPanel">
-					<s:decorate id="front40Field"
-						template="../layout/edit.xhtml">
-						<ui:define name="label">#{messages['workDeal.front40']}: </ui:define>
-						<h:outputText id="front40" size="10" styleClass="right"
-							value="#{workDealHome.instance.totalSharedValue}" required="true">						
-							<f:convertNumber pattern="0.00"/>
-						</h:outputText>					
+					<s:decorate id="drinkingWaterField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['workDeal.waterisActive']}</ui:define>
+						<h:selectBooleanCheckbox id="drinkingWater"
+							value="#{workDealHome.instance.drinkingWater}">
+							<a:support event="onchange" ajaxSingle="true"
+								reRender="drinkingWaterValueField" />
+						</h:selectBooleanCheckbox>
 					</s:decorate>
-					
-					<s:decorate id="appraisal60Field"
+
+					<s:decorate id="drinkingWaterValueField"
 						template="../layout/edit.xhtml">
-						<ui:define name="label">#{messages['workDeal.appraisal60']}: </ui:define>
-						<h:outputText id="appraisal60" size="10" styleClass="right"
-							value="#{workDealHome.instance.totalDifferentiatedValue}" required="true">						
-							<f:convertNumber pattern="0.00"/>
-						</h:outputText>					
+						<ui:define name="label">#{messages['workDeal.waterValue']}: </ui:define>
+						<h:inputText id="Watervalue" size="10" styleClass="right"
+							disabled="#{!workDealHome.instance.drinkingWater}"
+							value="#{workDealHome.instance.waterValue}" required="true">
+							<f:convertNumber pattern="0.00" />
+						</h:inputText>
 					</s:decorate>
-									
-					<s:decorate id="frontFactorField"
-						template="../layout/edit.xhtml">
-						<ui:define name="label">#{messages['workDeal.frontFactor']}: </ui:define>
-						<h:outputText id="frontFactor" size="10" styleClass="right"
-							value="#{workDealHome.instance.frontFactor}" required="true">						
-							<f:convertNumber pattern="0.000000000000"/>
-						</h:outputText>					
+
+
+					<s:decorate id="sewerageField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['workDeal.sewerageisActive']}</ui:define>
+						<h:selectBooleanCheckbox id="sewerage"
+							value="#{workDealHome.instance.sewerage}">
+							<a:support event="onchange" ajaxSingle="true"
+								reRender="sewerageValueField" />
+						</h:selectBooleanCheckbox>
 					</s:decorate>
-					
-					<s:decorate id="appraisalFactorField"
-						template="../layout/edit.xhtml">
-						<ui:define name="label">#{messages['workDeal.appraisalFactor']}: </ui:define>
-						<h:outputText id="appraisalFactor" size="10" styleClass="right"
-							value="#{workDealHome.instance.appraisalFactor}" required="true">						
-							<f:convertNumber pattern="0.000000000000"/>
-						</h:outputText>					
+
+					<s:decorate id="sewerageValueField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['workDeal.sewerageValue']}: </ui:define>
+						<h:inputText id="sewerageValue" size="10" styleClass="right"
+							disabled="#{!workDealHome.instance.sewerage}"
+							value="#{workDealHome.instance.sewerageValue}" required="true">
+							<f:convertNumber pattern="0.00" />
+						</h:inputText>
 					</s:decorate>
-				
-				</h:panelGrid>
+
+
+					<s:decorate id="observationField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['workDeal.observation']}:</ui:define>
+						<h:inputTextarea id="observation" cols="80" rows="3"
+							value="#{workDealHome.instance.observation}" />
+					</s:decorate>
+
+					<h:panelGrid columns="3" id="valuesPanel">
+						<s:decorate id="front40Field" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['workDeal.front40']}: </ui:define>
+							<h:outputText id="front40" size="10" styleClass="right"
+								value="#{workDealHome.instance.totalSharedValue}"
+								required="true">
+								<f:convertNumber pattern="0.00" />
+							</h:outputText>
+						</s:decorate>
+
+						<s:decorate id="appraisal60Field" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['workDeal.appraisal60']}: </ui:define>
+							<h:outputText id="appraisal60" size="10" styleClass="right"
+								value="#{workDealHome.instance.totalDifferentiatedValue}"
+								required="true">
+								<f:convertNumber pattern="0.00" />
+							</h:outputText>
+						</s:decorate>
+
+						<s:decorate id="frontFactorField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['workDeal.frontFactor']}: </ui:define>
+							<h:outputText id="frontFactor" size="10" styleClass="right"
+								value="#{workDealHome.instance.frontFactor}" required="true">
+								<f:convertNumber pattern="0.000000000000" />
+							</h:outputText>
+						</s:decorate>
+
+						<s:decorate id="appraisalFactorField"
+							template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['workDeal.appraisalFactor']}: </ui:define>
+							<h:outputText id="appraisalFactor" size="10" styleClass="right"
+								value="#{workDealHome.instance.appraisalFactor}" required="true">
+								<f:convertNumber pattern="0.000000000000" />
+							</h:outputText>
+						</s:decorate>
+
+					</h:panelGrid>
 
 				</h:panelGrid>
 			</rich:panel>
-    	
-    	<rich:panel id="workDealPanel">
-		<f:facet name="header">
-			<h:panelGrid columns="2" columnClasses="headerTitle,">
-				<h:outputText value="#{messages['workDealFraction']}" />
-				<a:commandButton id="createWorkDealFraction"
-					action="#{workDealHome.createWorkDealFraction()}"
-					reRender="workDealFractionEditPanel" ajaxSingle="true"
-					eventsQueue="gimEventsQueue"
-					oncomplete="Richfaces.showModalPanel('workDealFractionEditPanel',{width:820, height:480})"
-					value="#{messages['workDeal.addWorkDealFraction']}" />
-			</h:panelGrid>
-		</f:facet>
 
-
-		<h:outputText value="#{messages['workDeal.notWorkDealFractionAssociated']}."
-			rendered="#{empty workDealHome.instance.workDealFractions}" />
-
-		<rich:dataTable value="#{workDealHome.orderByAddresAndCadastralCode(workDealHome.instance.workDealFractions)}" var="_workDealFraction"
-			rendered="#{not empty workDealHome.instance.workDealFractions}"
-			rowClasses="rvgRowOne,rvgRowTwo" id="workDealTable">
-			
-			<rich:column styleClass="right" sortBy="#{_workDealFraction.property.cadastralCode}">
+			<rich:panel id="workDealPanel">
 				<f:facet name="header">
-					<h:outputText value="#{messages['property.cadastralCode']}" />
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="#{messages['workDealFraction']}" />
+						<a:commandButton id="createWorkDealFraction"
+							action="#{workDealHome.createWorkDealFraction()}"
+							reRender="workDealFractionEditPanel,panelInfo" 
+							ajaxSingle="true"
+							eventsQueue="gimEventsQueue"
+							oncomplete="Richfaces.showModalPanel('workDealFractionEditPanel',{width:820, height:520})"
+							value="#{messages['workDeal.addWorkDealFraction']}" 
+							rendered="#{workDealHome.renderAddFraction()}"/>
+					</h:panelGrid>
 				</f:facet>
-				<h:outputText value="#{_workDealFraction.property.cadastralCode}" />
-			</rich:column>
-			
-			<rich:column styleClass="right" sortBy="#{_workDealFraction.property.previousCadastralCode}">
-				<f:facet name="header">
-					<h:outputText value="#{messages['property.previousCadastralCode']}" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.property.previousCadastralCode}" />
-			</rich:column>
-			
-			<rich:column styleClass="right">
-				<f:facet name="header">
-					<h:outputText value="#{messages['common.identificationNumber']}" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.property.currentDomain.resident.identificationNumber}" />
-			</rich:column>
-			
-			<rich:column>
-				<f:facet name="header">
-					<h:outputText value="#{messages['resident']}" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.property.currentDomain.resident.name}" />
-			</rich:column>
-			
-			<rich:column>
-				<f:facet name="header">
-					<h:outputText value="#{messages['workDealFraction.address']}" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.address}" />
-			</rich:column>
-			
-			<rich:column styleClass="right">
-				<f:facet name="header">
-					<h:outputText value="#{messages['workDealFraction.frontLength']}" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.frontLength}">
-					<f:convertNumber pattern="0.00"/>
-				</h:outputText>
-			</rich:column>
-			
-			<rich:column styleClass="right">
-				<f:facet name="header">
-					<h:outputText value="#{messages['property.lotAliquot']}" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.property.lotAliquot}" >
-					<f:convertNumber pattern="0.00"/>
-				</h:outputText>
-			</rich:column>
-			
-			<rich:column styleClass="right">
-				<f:facet name="header">
-					<h:outputText value="#{messages['domain.commercialAppraisal']}" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.property.currentDomain.commercialAppraisal}" />
-			</rich:column>
-
-			
-			
-						
-			<rich:column styleClass="right">
-				<f:facet name="header">
-					<h:outputText value="#{messages['workDealFraction.contributionFront']}" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.contributionFront}">
-						<f:convertNumber pattern="0.00"/>
-				</h:outputText>
-			</rich:column>
-			
-			
-			
-			<rich:column styleClass="right">
-				<f:facet name="header">
-					<h:outputText value="#{messages['workDealFraction.sharedValue']}" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.sharedValue}">
-					<f:convertNumber pattern="0.00"/>
-				</h:outputText>
-			</rich:column>
-			
-			<rich:column styleClass="right">
-				<f:facet name="header">
-					<h:outputText value="#{messages['workDealFraction.differentiatedValue']}" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.differentiatedValue}">
-						<f:convertNumber pattern="0.00"/>
-				</h:outputText>
-			</rich:column>
-			
-		
-			
-			<rich:column styleClass="right">
-				<f:facet name="header">
-					<h:outputText value="#{messages['workDealFraction.total']}" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.total}">
-					<f:convertNumber pattern="0.00"/>
-				</h:outputText>
-			</rich:column> 
-			
-			<rich:column styleClass="right" rendered="#{workDealHome.instance.drinkingWater}">
-				<f:facet name="header">
-					<h:outputText value="Agua" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.waterValue}">
-						<f:convertNumber pattern="0.00"/>
-				</h:outputText>
-			</rich:column>
-
-
-			<rich:column styleClass="right" rendered="#{workDealHome.instance.sewerage}">
-				<f:facet name="header">
-					<h:outputText value="Alcantarillado" />
-				</f:facet>
-				<h:outputText value="#{_workDealFraction.sewerageValue}">
-						<f:convertNumber pattern="0.00"/>
-				</h:outputText>
-			</rich:column>
-
-			
-			<rich:column>
-				<f:facet name="header">
-					<h:outputText value="#{messages['common.action']}" />
-				</f:facet>
-				<a:commandButton id="editBuilding"
-					action="#{workDealHome.editWorkDealFraction(_workDealFraction)}"
-					reRender="workDealFractionEditPanel" ajaxSingle="true"
-					eventsQueue="gimEventsQueue"
-					oncomplete="Richfaces.showModalPanel('workDealFractionEditPanel',{width:820, height:480})"
-					value="#{messages['common.edit']}" />
-					
-				<a:commandButton id="removeBuilding"
-					action="#{workDealHome.removeWorkDealFraction(_workDealFraction)}"
-					reRender="workDealPanel" ajaxSingle="true"
-					value="#{messages['common.delete']}" />
-			</rich:column>
-			
-			<f:facet name="footer">
-				<rich:columnGroup columnClasses=",number">
-					<rich:column colspan="7">
-						<h:outputText value="#{messages['item.total']}:"
-							styleClass="labelBold" />
-					</rich:column>
-					
-					<rich:column styleClass="number tableCellFont">
-						<h:outputText value="#{workDealHome.totalAppraisal}">
-							<f:convertNumber pattern="$ ####.00" />
-						</h:outputText>
-					</rich:column>
-					
-					<rich:column styleClass="number tableCellFont">
-						<h:outputText value="#{workDealHome.totalContributionFront}">
-							<f:convertNumber pattern=" ####.00" />
-						</h:outputText>
-					</rich:column>
-					
-					<rich:column styleClass="number tableCellFont">
-						<h:outputText value="#{workDealHome.totalSharedValue}">
-							<f:convertNumber pattern="$ ####.00" />
-						</h:outputText>
-					</rich:column>
-					
-					<rich:column styleClass="number tableCellFont">
-						<h:outputText value="#{workDealHome.totalDifferentiatedValue}">
-							<f:convertNumber pattern="$ ####.00" />
-						</h:outputText>
-					</rich:column>
-					
 				
+				<rich:panel header="Buscador de fracciones" id="panelSearch">
+					<h:panelGrid columns="2">
+						<s:decorate id="keyField" template="../layout/edit.xhtml">
+							<ui:define name="label">Clave: </ui:define>
+							<h:inputText value="#{workDealHome.cadastralCode}"/>		
+						</s:decorate>
+						
+					</h:panelGrid>
+					<a:commandButton id="searchFraction" value="Buscar Fraccion"
+						reRender="workDealTable" actionListener="#{workDealHome.searchByCadatralCode()}"/>
+					<a:commandButton id="clearSearch" value="Todas"
+						reRender="workDealTable,panelSearch"
+						actionListener="#{workDealHome.searchAll()}"/>
 					
-					<rich:column styleClass="number tableCellFont">
-						<h:outputText value="#{workDealHome.total}">
-							<f:convertNumber pattern="$ ####.00" />
+				</rich:panel>
+				
+				<rich:panel header="Totales" id="panelTotals">
+					<h:panelGrid columns="3">
+						<s:decorate id="totalAppraisalField" template="../layout/edit.xhtml">
+							<ui:define name="label">Total Avaluos: </ui:define>
+							<h:outputText value="#{workDealHome.totalAppraisal}">
+								<f:convertNumber pattern="$ ####.00" />
+							</h:outputText>		
+						</s:decorate>
+						
+						<s:decorate id="totalContributionFrontField" template="../layout/edit.xhtml">
+							<ui:define name="label">Total Frentes: </ui:define>
+							<h:outputText value="#{workDealHome.totalContributionFront}">
+								<f:convertNumber pattern=" ####.00" />
+							</h:outputText>		
+						</s:decorate>
+											
+						<s:decorate id="totalSharedValueField" template="../layout/edit.xhtml">
+							<ui:define name="label">Total 40%: </ui:define>
+							<h:outputText value="#{workDealHome.totalSharedValue}">
+								<f:convertNumber pattern="$ ####.00" />
+							</h:outputText>		
+						</s:decorate>
+						
+						<s:decorate id="totalDifferentiatedValueField" template="../layout/edit.xhtml">
+							<ui:define name="label">Total 60%: </ui:define>
+							<h:outputText value="#{workDealHome.totalDifferentiatedValue}">
+								<f:convertNumber pattern="$ ####.00" />
+							</h:outputText>		
+						</s:decorate>
+						
+						<s:decorate id="totalField" template="../layout/edit.xhtml">
+							<ui:define name="label">Total Pavimento: </ui:define>
+							<h:outputText value="#{workDealHome.total}">
+								<f:convertNumber pattern="$ ####.00" />
+							</h:outputText>	
+						</s:decorate>
+						
+						
+						<s:decorate id="totalWaterField" template="../layout/edit.xhtml" rendered="#{workDealHome.instance.drinkingWater}">
+							<ui:define name="label">Total Alcantarillado: </ui:define>
+							<h:outputText value="#{workDealHome.totalWater}">
+								<f:convertNumber pattern="$ ####.00" />
+							</h:outputText>	
+						</s:decorate>	
+					
+												
+						<s:decorate id="totalSewerageField" template="../layout/edit.xhtml" rendered="#{workDealHome.instance.sewerage}">
+							<ui:define name="label">Total Alcantarillado: </ui:define>
+							<h:outputText value="#{workDealHome.totalSewerage}">
+								<f:convertNumber pattern="$ ####.00" />
+							</h:outputText>	
+						</s:decorate>	
+											
+						
+					</h:panelGrid>
+					
+				</rich:panel>
+
+
+				<h:outputText
+					value="#{messages['workDeal.notWorkDealFractionAssociated']}."
+					rendered="#{empty workDealHome.instance.workDealFractions}" />
+
+				<rich:dataTable
+					value="#{fractions}"
+					var="_workDealFraction"
+					rowClasses="rvgRowOne,rvgRowTwo" id="workDealTable"
+					rows="25"
+					>
+					
+					<f:facet name="header">
+						<rich:columnGroup>
+
+							<rich:column colspan="14" breakBefore="true" styleClass="right">
+								<g:dataScroller maxPages="10" for="workDealTable"
+									style="float:right;" />
+							</rich:column>
+
+						</rich:columnGroup>
+					</f:facet>
+					
+					<rich:column styleClass="right"
+						sortBy="#{_workDealFraction.property.cadastralCode}">
+						<f:facet name="header">
+							<h:outputText value="#{messages['property.cadastralCode']}" />
+						</f:facet>
+						<h:outputText value="#{_workDealFraction.property.cadastralCode}" />
+					</rich:column>
+
+					<rich:column styleClass="right"
+						sortBy="#{_workDealFraction.property.previousCadastralCode}">
+						<f:facet name="header">
+							<h:outputText
+								value="#{messages['property.previousCadastralCode']}" />
+						</f:facet>
+						<h:outputText
+							value="#{_workDealFraction.property.previousCadastralCode}" />
+					</rich:column>
+
+					<rich:column styleClass="right" filterBy="">
+						<f:facet name="header">
+							<h:outputText value="#{messages['common.identificationNumber']}" />
+						</f:facet>
+						<h:outputText
+							value="#{_workDealFraction.resident.identificationNumber}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="#{messages['resident']}" />
+						</f:facet>
+						<h:outputText value="#{_workDealFraction.resident.name}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="#{messages['workDealFraction.address']}" />
+						</f:facet>
+						<h:outputText value="#{_workDealFraction.address}" />
+					</rich:column>
+
+					<rich:column styleClass="right">
+						<f:facet name="header">
+							<h:outputText value="#{messages['workDealFraction.frontLength']}" />
+						</f:facet>
+						<h:outputText value="#{_workDealFraction.frontLength}">
+							<f:convertNumber pattern="0.00" />
 						</h:outputText>
 					</rich:column>
-					
-					<rich:column styleClass="number tableCellFont" rendered="#{workDealHome.instance.drinkingWater}">
-						<h:outputText value="#{workDealHome.totalWater}">
-							<f:convertNumber pattern="$ ####.00" />
+
+					<rich:column styleClass="right">
+						<f:facet name="header">
+							<h:outputText value="#{messages['property.lotAliquot']}" />
+						</f:facet>
+						<h:outputText value="#{_workDealFraction.property.lotAliquot}">
+							<f:convertNumber pattern="0.00" />
 						</h:outputText>
 					</rich:column>
-					
-					
-					<rich:column styleClass="number tableCellFont" rendered="#{workDealHome.instance.sewerage}">
-						<h:outputText value="#{workDealHome.totalSewerage}">
-							<f:convertNumber pattern="$ ####.00" />
+
+					<rich:column styleClass="right">
+						<f:facet name="header">
+							<h:outputText value="#{messages['domain.commercialAppraisal']}" />
+						</f:facet>
+						<h:outputText value="#{_workDealFraction.commercialAppraisal}" />
+					</rich:column>
+
+
+
+
+					<rich:column styleClass="right">
+						<f:facet name="header">
+							<h:outputText
+								value="#{messages['workDealFraction.contributionFront']}" />
+						</f:facet>
+						<h:outputText value="#{_workDealFraction.contributionFront}">
+							<f:convertNumber pattern="0.00" />
 						</h:outputText>
 					</rich:column>
+
+
+
+					<rich:column styleClass="right">
+						<f:facet name="header">
+							<h:outputText value="#{messages['workDealFraction.sharedValue']}" />
+						</f:facet>
+						<h:outputText value="#{_workDealFraction.sharedValue}">
+							<f:convertNumber pattern="0.00" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column styleClass="right">
+						<f:facet name="header">
+							<h:outputText
+								value="#{messages['workDealFraction.differentiatedValue']}" />
+						</f:facet>
+						<h:outputText value="#{_workDealFraction.differentiatedValue}">
+							<f:convertNumber pattern="0.00" />
+						</h:outputText>
+					</rich:column>
+
+
+
+					<rich:column styleClass="right">
+						<f:facet name="header">
+							<h:outputText value="#{messages['workDealFraction.total']}" />
+						</f:facet>
+						<h:outputText value="#{_workDealFraction.total}">
+							<f:convertNumber pattern="0.00" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column styleClass="right"
+						rendered="#{workDealHome.instance.drinkingWater}">
+						<f:facet name="header">
+							<h:outputText value="Agua" />
+						</f:facet>
+						<h:outputText value="#{_workDealFraction.waterValue}">
+							<f:convertNumber pattern="0.00" />
+						</h:outputText>
+					</rich:column>
+
+
+					<rich:column styleClass="right"
+						rendered="#{workDealHome.instance.sewerage}">
+						<f:facet name="header">
+							<h:outputText value="Alcantarillado" />
+						</f:facet>
+						<h:outputText value="#{_workDealFraction.sewerageValue}">
+							<f:convertNumber pattern="0.00" />
+						</h:outputText>
+					</rich:column>
+
+
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="#{messages['common.action']}" />
+						</f:facet>
+						<a:commandButton id="editBuilding"
+							action="#{workDealHome.editWorkDealFraction(_workDealFraction)}"
+							reRender="workDealFractionEditPanel" ajaxSingle="true"
+							eventsQueue="gimEventsQueue"
+							oncomplete="Richfaces.showModalPanel('workDealFractionEditPanel',{width:820, height:520})"
+							value="#{messages['common.edit']}" />
+
+						<a:commandButton id="removeBuilding"
+							action="#{workDealHome.removeWorkDealFraction(_workDealFraction)}"
+							reRender="workDealPanel" ajaxSingle="true"
+							value="#{messages['common.delete']}" />
+					</rich:column>
 					
-				</rich:columnGroup>
-			</f:facet>
-			
-		</rich:dataTable>
+				</rich:dataTable>
 
 
-	</rich:panel>
+			</rich:panel>
 
-        <div class="actionButtons">
+			<div class="actionButtons">
 
-            <h:commandButton id="save"
-                          value="#{messages['common.save']}"
-                         action="#{workDealHome.persist()}"
-                       rendered="#{!workDealHome.managed}"/>
-                       
-          <h:commandButton id="update"
-                          value="#{messages['common.save']}"
-                         action="#{workDealHome.update()}"
-                       rendered="#{workDealHome.managed}"/>
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{workDealHome.persist()}"
+					rendered="#{!workDealHome.managed}" 
+					/>
 
-            <h:commandButton id="delete"
-                          value="#{messages['common.delete']}"
-                         action="#{workDealHome.remove()}"
-                         immediate="true"
-                       rendered="#{workDealHome.managed and false}"/>
-                      
-			<a:commandButton id="calculate" action="#{workDealHome.calculate()}" reRender="workDealPanel, valuesPanel"
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{workDealHome.update()}"
+					rendered="#{workDealHome.managed}" />
+
+				<h:commandButton id="delete" value="#{messages['common.delete']}"
+					action="#{workDealHome.remove()}" immediate="true"
+					rendered="#{workDealHome.managed and false}" />
+
+				<a:commandButton id="calculate" action="#{workDealHome.calculate()}"
+					reRender="workDealPanel, valuesPanel, panelWorkDeal"
 					value="#{messages['common.calculate']}">
-			</a:commandButton>
-      	
-		    <s:button id="cancelEdit"
-                   value="#{messages['common.cancel']}"
-             propagation="none"
-                    view="/cadaster/WorkDealList.xhtml"/>						
+				</a:commandButton>
 
-        </div>
-    </h:form>
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="none" view="/cadaster/WorkDealList.xhtml" />
 
-</ui:define>
+			</div>
+		</h:form>
+
+	</ui:define>
 
 </ui:composition>

@@ -1,5 +1,6 @@
 package ec.gob.gim.cadaster.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Entity;
@@ -10,8 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.envers.Audited;
+
+import ec.gob.gim.common.model.Resident;
 
 
 @Audited
@@ -25,7 +29,12 @@ import org.hibernate.envers.Audited;
 	 initialValue=1, allocationSize=1
 )
 
-public class WorkDealFraction implements Comparable<WorkDealFraction>{
+public class WorkDealFraction implements Comparable<WorkDealFraction>,Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(generator="WorkDealFractionGenerator",strategy=GenerationType.TABLE)
@@ -34,6 +43,10 @@ public class WorkDealFraction implements Comparable<WorkDealFraction>{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "property_id")
 	private Property property;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "resident_id")
+	private Resident resident;
 	
 	@ManyToOne
 	private WorkDeal workDeal;
@@ -56,6 +69,17 @@ public class WorkDealFraction implements Comparable<WorkDealFraction>{
 	private BigDecimal waterValue;
 	private BigDecimal sewerageValue;
 	
+	/**
+	 * 2016-08-04
+	 * @author Rene
+	 * @tag cambioCalculoCEM
+	 */
+	//@Transient
+	//campoque almacena el valor seleccionado de avaluo comercial para el calculo de CEM
+	private BigDecimal commercialAppraisal;
+	
+	
+	
 	public WorkDealFraction() {
 		frontLength = BigDecimal.ZERO;		
 		contributionFront = BigDecimal.ZERO;
@@ -69,6 +93,10 @@ public class WorkDealFraction implements Comparable<WorkDealFraction>{
 		 */
 		waterValue = BigDecimal.ZERO;
 		sewerageValue = BigDecimal.ZERO;
+		
+		//@tag cambioCalculoCEM
+		//2016-08-04
+		commercialAppraisal = BigDecimal.ZERO;
 	}
 	
 	public Long getId() {
@@ -152,5 +180,55 @@ public class WorkDealFraction implements Comparable<WorkDealFraction>{
 	@Override
 	public int compareTo(WorkDealFraction o) {
 		return property.getCadastralCode().compareTo(o.getProperty().getCadastralCode());
-	} 
+	}
+
+	/**
+	 * 2016-08-04
+	 * @author mack
+	 * valor Transiente
+	 */
+
+	public BigDecimal getCommercialAppraisal() {
+		return commercialAppraisal;
+	}
+
+	public void setCommercialAppraisal(BigDecimal commercialAppraisal) {
+		this.commercialAppraisal = commercialAppraisal;
+	}
+
+	public Resident getResident() {
+		return resident;
+	}
+
+	public void setResident(Resident resident) {
+		this.resident = resident;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WorkDealFraction other = (WorkDealFraction) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+	
+	
 }
