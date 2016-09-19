@@ -44,7 +44,7 @@ public class Catalog {
 	private String description;
 
 	@OneToMany(mappedBy = "catalog")
-	private List<ItemCatalog> itemsCatalog = new ArrayList<>();
+	private List<ItemCatalog> itemsCatalog = new ArrayList<ItemCatalog>();
 
 	public Long getId() {
 		return this.id;
