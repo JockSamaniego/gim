@@ -7,7 +7,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,6 +26,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.gob.gim.income.action.AgreementType;
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.Resident;
@@ -105,6 +109,22 @@ public class PaymentAgreement {
 	@Transient
 	private Integer notPayedYet = new Integer("0");
 	
+	
+	//2016-07-19T10:45
+	//@author macartuche
+	//@tag recaudacionCoactivas
+	@Enumerated(EnumType.STRING)
+	@Column(length = 20)
+	private AgreementType agreementType;
+	
+	public AgreementType getAgreementType() {
+		return agreementType;
+	}
+
+	public void setAgreementType(AgreementType agreementType) {
+		this.agreementType = agreementType;
+	}
+
 	public PaymentAgreement() {
 		this.municipalBonds = new ArrayList<MunicipalBond>();
 		this.dividends = new LinkedList<Dividend>(); 

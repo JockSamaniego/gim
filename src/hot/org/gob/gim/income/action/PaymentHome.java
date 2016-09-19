@@ -71,6 +71,7 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.adjunct.ValuePair;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
+import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.gim.security.model.User;
 
 import java.text.DateFormat;
@@ -179,6 +180,21 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	@In(create = true)
 	ReceiptPrintingManager receiptPrintingManager;
 
+	
+	//2016-07-19T12:53pm
+	//@author macartuche
+	//@tag recaudacionCoactivas
+	private String agreementType;
+	
+	public String getAgreementType() {
+		return agreementType;
+	}
+
+	public void setAgreementType(String agreementType) {
+		this.agreementType = agreementType;
+	}
+
+	
 	public boolean isWired() {
 		return true;
 	}
@@ -562,10 +578,21 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				logger.info("CALCULATE 2");
 				resetPaymentTotals();
 				logger.info("CALCULATE 3");
+				
+				//obtener el tipo de acuerdo de pago
+				//2016-07-19T12:56
+				//@tag recaudacionCoactivas
+				if(paymentAgreement.getAgreementType()!=null && !paymentAgreement.getAgreementType().name().isEmpty()){
+					agreementType = paymentAgreement.getAgreementType().name();
+				}else{
+					agreementType = "";
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -590,7 +617,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		List<MunicipalBond> mbs = incomeService.findPendingBonds(residentId);
 		incomeService.calculatePayment(mbs, new Date(), true, true);
-		impugnmentsTotal = new ArrayList<>();
+		impugnmentsTotal = new ArrayList<Impugnment>();
 		for (MunicipalBond municipalBond : mbs) {
 			System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE " + municipalBond.getTaxableTotal()
 					+ " TAXES TOTAL " + municipalBond.getTaxesTotal());
@@ -1061,8 +1088,6 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			Long paymentAgreementId = deactivatePaymentAgreement ? paymentAgreement.getId() : null;
 			
-			
-			
 			try {
 				org.jboss.seam.transaction.Transaction.instance().setTransactionTimeout(1800);
 				Long tillId = userSession.getTillPermission().getTill().getId();
@@ -1071,8 +1096,12 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				receiptPrintingManager.print(deposits);
 				renderingDepositPDF(userSession.getUser().getId());
 				
-				//invocar al incomeservice
-				incomeService.compensationPayment(deposits);
+				//@author macartuche  
+	            //@date 2016-07-01 11:16  
+	            //@tag InteresCeroInstPub  
+	            //No realizar el calculo de interes para instituciones publicas  
+	            //invocar al incomeservice  
+	            //incomeService.compensationPayment(deposits);  
 				
 			} catch (InvoiceNumberOutOfRangeException e) {
 				addFacesMessageFromResourceBundle(e.getClass().getSimpleName(), e.getInvoiceNumber());
@@ -1185,6 +1214,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void generateDeposits() {
+		//agregado macartuche
+		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+		
 		//System.out.println("GENERATE DEPOSITS -----> STARTS");
 		if (depositTotal.compareTo(BigDecimal.ZERO) < 0) {
 			depositTotal = BigDecimal.ZERO;
@@ -1228,8 +1260,34 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				if (createDeposit) {
 					deposit = createDeposit(municipalBond.getDeposits().size() + 1);
 				}
+				
+				
+				//@author macartuche
+				//@date 2016-07-04T16:30
+				//@tag recaudacionCoactivas
+				Boolean interestIsPayed=false;
+				BigDecimal sum = BigDecimal.ZERO;	
 
-				BigDecimal interestToPay = municipalBond.getInterest();
+				List<MunicipalbondAux> list = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID");
+				
+				if(list.isEmpty()){
+					sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID");					
+					if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+						BigDecimal temp = remaining.add(sum);			
+						if(temp.compareTo(municipalBond.getInterest()) >= 0)
+							interestIsPayed = true;						
+					}
+				}
+				
+				BigDecimal interestToPay = BigDecimal.ZERO;
+				if(interestIsPayed){
+					//el interes a pagar sera lo faltante de la sumatoria					
+					interestToPay = municipalBond.getInterest().subtract(sum);//============>  
+				}else{
+					interestToPay = municipalBond.getInterest();
+				}
+				
+				//BigDecimal interestToPay = municipalBond.getInterest();
 				if (remaining.compareTo(interestToPay) >= 0) {
 					deposit.setInterest(interestToPay);
 					remaining = remaining.subtract(interestToPay);
@@ -1238,19 +1296,30 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				} else {
 					//rfarmijos 2016-05-23
 					//preguntar proceso de pago para fraccionar interes
-					/*if(paymentAgreement.getLowerPercentage()){
-						deposit.setInterest(interestToPay);
-						remaining = remaining.subtract(interestToPay);
+					if(paymentAgreement.getLowerPercentage()){
+						//deposit.setInterest(interestToPay);
+						//remaining = remaining.subtract(interestToPay);
+						//this.getInstance().add(deposit);
+						//municipalBond.add(deposit);
+						
+						
+						//@author macartuche
+						//@date 2016-06-20T17:00:00
+						//@tag recaudacionCoactivas
+						deposit.setInterest(remaining);
+						deposit.setCapital(BigDecimal.ZERO);
 						this.getInstance().add(deposit);
 						municipalBond.add(deposit);
-					}else{*/
+						
+						
+					}else{
 						hasConflict = Boolean.TRUE;
 						deposit.setHasConflict(Boolean.TRUE);
 						conflictingBond = municipalBond;
 						deltaUp = interestToPay.subtract(remaining);
 						deltaDown = remaining;
 						break;	
-					//}
+					}
 					
 				}
 
@@ -1288,17 +1357,51 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					}
 
 				} else {
-					deposit.setCapital(remaining);
-					remaining = BigDecimal.ZERO;
+					//@author macartuche
+					//@date 2016-06-20T17:00:00
+					//@tag recaudacionCoactivas
+//					BigDecimal discount = municipalBond.getDiscount();
+//					deposit.setDiscount(discount);
+					if(deposit.getInterest().compareTo(interestToPay)<0){
+						deposit.setCapital(BigDecimal.ZERO);
+						remaining = BigDecimal.ZERO;
+					}else{
+						deposit.setCapital(remaining);
+						remaining = BigDecimal.ZERO;
+					}
+					
 				}
 				if (!deactivatePaymentAgreement) {
-					deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+					
+//					BigDecimal interest = municipalBond.getInterest();
+//					BigDecimal taxesToPay = municipalBond.getTaxesTotal();
+//					BigDecimal surcharge = municipalBond.getSurcharge();
+//					BigDecimal discount = municipalBond.getDiscount();
+//
+//					BigDecimal totalWithTaxes = municipalBond.getBalance().add(interest).add(taxesToPay);
+//					totalWithTaxes = totalWithTaxes.add(surcharge);
+//					totalWithTaxes = totalWithTaxes.subtract(discount);
+//					
+//					deposit.setBalance(totalWithTaxes.subtract(deposit.getCapital()));
+					if(deposit.getInterest().compareTo(municipalBond.getInterest())<0){
+						deposit.setBalance(municipalBond.getBalance());
+					}else{
+						deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+					}
+					
+					//modificar tambien para el interes acumulado
+					//@author macartuche
+					//@date 2016-06-06T09:00:00
+					//@tag recaudacionCoactivas
+					if(interestIsPayed){
+						deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+					}
 				}
 				deposit.setValue(deposit.getCapital().add(deposit.getInterest()).add(deposit.getPaidTaxes())
 						.add(deposit.getSurcharge()).subtract(deposit.getDiscount()));
 				deposits.add(deposit);
 			}
-
+			
 			if (!hasConflict) {
 				this.getInstance().setValue(depositTotal);
 			} else {
@@ -1798,7 +1901,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		System.out.println("====>" + disabled);
 		return disabled;
 	}
-	
+
 	
 	// ----------------IA---------------------------------------------
 
@@ -1996,12 +2099,12 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	// Para controlar las impugnaciones.............
 	// Jock Samaniego............. 20-07-2016........
 	
-	private List<Impugnment> impugnmentsTotal = new ArrayList<>();
+	private List<Impugnment> impugnmentsTotal = new ArrayList<Impugnment>();
 	private String[] states;
 	
 	@SuppressWarnings("unchecked")
 	public void findPendingsImpugnments(Long id){
-		List<Impugnment> impugnments = new ArrayList<>();
+		List<Impugnment> impugnments = new ArrayList<Impugnment>();
 		for (String st : states){
 			Query query = getEntityManager().createNamedQuery("Impugnment.findByMunicipalBond");
 			query.setParameter("municipalBond_id", id);
@@ -2014,10 +2117,14 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void chargeControlImpugnmentStates(){
-		Query query = getEntityManager().createNamedQuery("SystemParameter.findByName");
-		query.setParameter("name", "STATES_IMPUGNMENT_CONTROL_REGISTER_PAID");
-		SystemParameter controlStates = (SystemParameter) query.getSingleResult();
-		states = controlStates.getValue().trim().split(",");
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		String controlStates = systemParameterService.findParameter("STATES_IMPUGNMENT_CONTROL_REGISTER_PAID");
+		
+		/*Query query = getEntityManager().createNamedQuery("SystemParameter.findByName");
+		query.setParameter("name", "");
+		SystemParameter controlStates = (SystemParameter) query.getSingleResult();*/
+		states = controlStates.trim().split(",");
 	}
 
 	public List<Impugnment> getImpugnmentsTotal() {

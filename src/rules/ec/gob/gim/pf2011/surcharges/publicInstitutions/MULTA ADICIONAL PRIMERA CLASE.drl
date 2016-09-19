@@ -1,0 +1,105 @@
+#created on: Feb 15, 2016
+package ec.gob.gim.rules.pf2011.penalty;
+
+import ec.gob.gim.income.model.InterestRate;
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.common.model.Person;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.joda.time.PeriodType;
+import org.gob.gim.common.InterestPublicInstitutionUtils;
+
+dialect "java"
+
+function BigDecimal getInterest(Date $expirationDate, float $percentage, BigDecimal $base, Long residentId){
+        
+        Calendar $c = Calendar.getInstance();
+        $c.set(Calendar.HOUR, 0);
+        $c.set(Calendar.MINUTE, 0);
+        $c.set(Calendar.SECOND, 0);
+                
+        DateTime $expirationDT = new DateTime($expirationDate);
+        DateTime $currentDT = new DateTime($c.getTime());
+        Period $period = null;
+        
+        
+         #agregar validacion de transitoria para Instituciones publicas
+        if(InterestPublicInstitutionUtils.isPublicInstitution(residentId)){
+        	Calendar $transitionDate = InterestPublicInstitutionUtils.transitionDate;
+       		DateTime $transitionDT = new DateTime($transitionDate.getTime());
+	
+			System.out.println("fecha transicion "+$transitionDate.getTime());
+			System.out.println("fecha expiracion  "+$expirationDate);
+			System.out.println("fecha actual  "+$currentDT);
+			
+			#compara fechas
+	     	boolean currentDateMajorTransitionDate 		= $c.after($transitionDate);
+	     	boolean transitionDateMajorExpirationDate 	= $transitionDate.getTime().after($expirationDate);
+	     	boolean currentDateMajorExpirationDate 		= $c.getTime().after($expirationDate);
+	     	
+	     	
+	     	System.out.println("currentDateMajorTransitionDate "+currentDateMajorTransitionDate);
+	     	System.out.println("transitionDateMajorExpirationDate "+transitionDateMajorExpirationDate);
+	     	System.out.println("currentDateMajorExpirationDate "+currentDateMajorExpirationDate);
+	     	
+	     	if (currentDateMajorTransitionDate && currentDateMajorExpirationDate ){
+	     		System.out.println("PASO VALIDACION");
+	     		$period = new Period( $expirationDT, $transitionDT, PeriodType.yearMonthDay());
+	     	}else{
+	     		return BigDecimal.ZERO;
+	     	}
+        }else{
+        	$period = new Period( $expirationDT, $currentDT, PeriodType.yearMonthDay());
+        }
+        int $anios = $period.getYears();
+        int $meses = $period.getMonths(); 
+        int $dias = $period.getDays();
+        
+        System.out.println("anios: "+$anios);
+        System.out.println("meses: "+$meses);
+        System.out.println("dias: "+$dias);
+        
+        float $interest = 1;
+        
+        if($dias > 0){
+                $meses += 1;
+        }else if($dias<0){
+                $meses = 0;
+        }
+        
+        if( $anios > 0 ){
+                $meses = $meses + $anios*12;
+        }
+                
+        $interest = $interest * $percentage*$meses;
+        
+        if ($interest >= 100) {
+                $interest = 100;
+        }
+                                        
+        return new BigDecimal($interest).multiply($base)
+                                .divide(new BigDecimal(100))
+                                .setScale(2, BigDecimal.ROUND_HALF_UP); 
+}       
+
+
+rule "Interes FotoMulta"
+        no-loop true
+        #salience 9
+        when
+                $itemBase : Item(entry.code == '00649');
+                $mb : MunicipalBond();                          
+        then
+                BigDecimal $value = getInterest($mb.getExpirationDate(), 2, $mb.getBase(), $mb.getResident().getId() );
+                $itemBase.setValue($value);
+                $itemBase.setTotal($value);
+                System.out.println("===>"+$mb.getNumber());
+end 
+

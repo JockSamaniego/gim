@@ -2,7 +2,6 @@ package org.gob.loja.gim.ws.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -71,20 +70,88 @@ public class PaymentServiceBean implements PaymentService {
 
 	public final String ACCOUNT_CODE_FOR_DISCOUNT = "ACCOUNT_CODE_FOR_DISCOUNT";
 
-	@Override
+	/*@Override
 	public Statement findStatement(ServiceRequest request)
 			throws PayoutNotAllowed, TaxpayerNotFound, NotActiveWorkday,
 			HasNoObligations {
 		String identificationNumber = request.getIdentificationNumber();
+		// Contribuyente que va a realizar el pago
 		Taxpayer taxpayer = findTaxpayer(identificationNumber);
 		Date workDayDate;
-		if (request.getUsername().compareTo("dabetancourtc") == 0)
+		if (request.getUsername().compareTo("dabetancourtc") == 0) {
 			workDayDate = new GregorianCalendar().getTime();
-		else
+		} else {
+			// Saca fecha de la jornada de recaudacion vigente
+			workDayDate = findPaymentDate();
+		}
+
+		Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer
+				.getId());
+
+		//si existen acuerdos de pago no se puede pagar
+		if (inPaymentAgreementBondsNumber > 0) {
+			throw new PayoutNotAllowed();
+		} else {
+			//Consulta todas las obligaciones pendientes de pago.
+			
+			List<Bond> bonds = findPendingBonds(taxpayer.getId());
+			List<Long> pendingBondIds = new ArrayList<Long>();
+
+			List<Bond> bondsExpired = new ArrayList<Bond>();
+			List<Long> expiredBondIds = new ArrayList<Long>();
+			for (Bond bond : bonds) {
+				pendingBondIds.add(bond.getId());
+				if(isExpiredBond(bond)){
+					//es expirada
+					expiredBondIds.add(bond.getId());
+					bondsExpired.add(bond);
+				}
+			}
+			
+			if (pendingBondIds.size() > 0) {
+				try {
+					//TODO se podria sacar en una sola consulta junto con pendingBondIds
+					//bonds = findPendingBonds(taxpayer.getId());
+					// TODO filtrar solo las vencidas para envial el else
+					//si hay vencidas retorna true
+					Boolean control = comparateBondsDates(bonds);
+					if (!control) {
+						incomeService.calculatePayment(workDayDate,
+								pendingBondIds, true, true);
+					} else {
+						incomeService.calculatePayment(workDayDate,
+								expiredBondIds, true, true);
+						bonds = bondsExpired;
+					}
+					loadBondsDetail(bonds);
+				} catch (EntryDefinitionNotFoundException e) {
+					e.printStackTrace();
+					throw new PayoutNotAllowed();
+				}
+			}
+			// } else {
+			// throw new HasNoObligations();
+			// }
+			Statement statement = new Statement(taxpayer, bonds, workDayDate);
+			return statement;
+		}
+	}*/
+	
+	@Override
+	public Statement findStatement(ServiceRequest request)
+			throws PayoutNotAllowed, TaxpayerNotFound, NotActiveWorkday,
+			HasNoObligations {
+		System.out.println("rfarmijosm "+request.getIdentificationNumber()+"\t"+request.getUsername());
+		String identificationNumber = request.getIdentificationNumber();
+		Taxpayer taxpayer = findTaxpayer(identificationNumber);
+		Date workDayDate;
+		if (request.getUsername().compareTo("dabetancourtc") == 0) {
+			workDayDate = new GregorianCalendar().getTime();
+		} else 
 			workDayDate = findPaymentDate();
 		Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer
 				.getId());
-		
+
 		if (inPaymentAgreementBondsNumber > 0) {
 			throw new PayoutNotAllowed();
 		} else {
@@ -92,9 +159,10 @@ public class PaymentServiceBean implements PaymentService {
 			List<Bond> bonds = new ArrayList<Bond>();
 			if (pendingBondIds.size() > 0) {
 				try {
-					incomeService.calculatePayment(workDayDate, pendingBondIds,
-							true, true);
+					incomeService.calculatePayment(workDayDate, pendingBondIds, true, true);
 					bonds = findPendingBonds(taxpayer.getId());
+					//esta imprimiendo el log de lo q se retorna quitar luego de las pruebas
+					Boolean control = comparateBondsDates(bonds);
 					loadBondsDetail(bonds);
 				} catch (EntryDefinitionNotFoundException e) {
 					e.printStackTrace();
@@ -114,6 +182,10 @@ public class PaymentServiceBean implements PaymentService {
 			throws InvalidPayout, PayoutNotAllowed, TaxpayerNotFound,
 			InvalidUser, NotActiveWorkday, NotOpenTill, HasNoObligations {
 		// Statement statement = findStatement(request);
+		
+		System.out.println("start PPPPPPPPPPPPPPP");
+		System.out.println(request.getIdentificationNumber()+"\t"+payout.getAmount()+"\t"+payout.getPaymentDate()+"\t"+payout.getBondIds());
+		System.out.println("end o PPPPPPPPPPPPPPP");
 
 		Person cashier = findCashier(request.getUsername());
 
@@ -143,8 +215,8 @@ public class PaymentServiceBean implements PaymentService {
 						.getIdentificationNumber());
 				BigDecimal totalToPay = findAmountToPay(taxpayer.getId(),
 						payout.getBondIds());
-				System.out.println("TOTAL TO PAY FOR SELECTED BONDS ----> "
-						+ totalToPay);
+				//System.out.println("TOTAL TO PAY FOR SELECTED BONDS ----> "
+						//+ totalToPay);
 				if (totalToPay != null
 						&& totalToPay.compareTo(payout.getAmount()) == 0) {
 					try {
@@ -320,40 +392,47 @@ public class PaymentServiceBean implements PaymentService {
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("pendingBondStatusId", pendingBondStatusId);
 		List<Bond> bonds = query.getResultList();
-		//System.out.println("RECORRIENDO RESULTADOS");
-		for (Bond bond : bonds) { 
-			System.out.println("L===========>"+bond.getServiceDate());
+		// System.out.println("RECORRIENDO RESULTADOS");
+		for (Bond bond : bonds) {
+			System.out.println("L===========>" + bond.getServiceDate());
 		}
-		//System.out.println("BONDS TOTAL ---->" + bonds.size());
+		// System.out.println("BONDS TOTAL ---->" + bonds.size());
 		return bonds;
 
 	}
-	
-	//by Jock Samaniego.......
+
+	// by Jock Samaniego.......
 	private Boolean comparateBondsDates(List<Bond> bonds) {
-		//Boolean expiratedDate = Boolean.FALSE;
+		// Boolean expiratedDate = Boolean.FALSE;
 		Date now = DateUtils.truncate(new Date());
-        /*         
-         rfarmijos 2016-06-21 quito estas lineas y dejo en una sola ya 
-         existe un clase q hace los mismo
-        Date today = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(today);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.HOUR, 0);*/
-		//comparar si 
-		
-		for (Bond bond : bonds) {
-			//System.out.println("==============hoy===========>"+calendar.getTime()+"========expiracion=========>"+bond.getExpirationDate());
-			if (now.compareTo(bond.getExpirationDate()) == 1) {
-				//System.out.println("=======================> deuda expirada");
-				//expiratedDate = Boolean.TRUE;
+		/*
+		* rfarmijos 2016-06-21 quito estas lineas y dejo en una sola ya existe
+		* un clase q hace los mismo Date today = new Date(); Calendar calendar
+		* = Calendar.getInstance(); calendar.setTime(today);
+		* calendar.set(Calendar.MILLISECOND, 0); calendar.set(Calendar.SECOND,
+		* 0); calendar.set(Calendar.MINUTE, 0); calendar.set(Calendar.HOUR, 0);
+		*/
+		// comparar si
+		System.out.println("========>cantidad "+bonds.size());
+		for (Bond bond : bonds) {			
+			System.out.println(bond.getAccount()+"\t"+bond.getNumber()+"\t"+bond.getDiscounts()+
+					"\t"+bond.getInterests()+"\t"+bond.getSurcharges()+"\t"+bond.getTaxes()+"\t"+bond.getTotal());
+			/*if (now.compareTo(bond.getExpirationDate()) == 1) {
+				// System.out.println("=======================> deuda expirada");
+				// expiratedDate = Boolean.TRUE;
 				return true;
-			}
+			}*/
 		}
-		//return expiratedDate;
+		// return expiratedDate;
+		return false;
+	}
+
+	private Boolean isExpiredBond(Bond bond) {
+		Date now = DateUtils.truncate(new Date());
+ 
+		if (now.compareTo(bond.getExpirationDate()) == 1) {
+			return true;
+		}
 		return false;
 	}
 
@@ -480,13 +559,14 @@ public class PaymentServiceBean implements PaymentService {
 
 		query.setParameter("debtId", debtId);
 		query.setParameter("amount", amount);
-		query.setParameter("date", date,TemporalType.DATE);
+		query.setParameter("date", date, TemporalType.DATE);
 		query.setParameter("account", idAgent);
-		
-		List<EMoneyPayment> retorno = query.getResultList(); 
-		
-		System.out.println("numero de elementos retornados de EmoneyPayment:"+retorno.size());
-		
+
+		List<EMoneyPayment> retorno = query.getResultList();
+
+		System.out.println("numero de elementos retornados de EmoneyPayment:"
+				+ retorno.size());
+
 		return retorno;
 	}
 
@@ -502,7 +582,7 @@ public class PaymentServiceBean implements PaymentService {
 	public List<Long> findDepositsIdsForReverse(ServiceRequest request,
 			List<Long> municipalBondsIds) {
 		List<Long> retorno = new ArrayList<Long>();
-		//List<Deposit> aux = new ArrayList<Deposit>();
+		// List<Deposit> aux = new ArrayList<Deposit>();
 		Query query = em.createNamedQuery("Deposit.findByMunicipalBondIds");
 		query.setParameter("municipalBondIds", municipalBondsIds);
 		retorno = query.getResultList();
@@ -510,18 +590,17 @@ public class PaymentServiceBean implements PaymentService {
 	}
 
 	/**
-	 * macartuche
-	 * auxiliar emoney
-	 */
+	* macartuche auxiliar emoney
+	*/
 	@Override
-	public String saveEmoneyPayment( ServiceRequest request, Payout payout, String debtId, boolean isPaid, String idAgent) {
- 
-		
+	public String saveEmoneyPayment(ServiceRequest request, Payout payout,
+			String debtId, boolean isPaid, String idAgent) {
+
 		List<Long> mbs = payout.getBondIds();
 		String str1 = mbs.toString();
 		String str0 = str1.substring(1, str1.length() - 1);
 		String str2 = str0.replaceAll("[ |:]", "");
-		
+
 		EMoneyPayment EMP = new EMoneyPayment();
 		EMP.setDebtId(debtId);
 		EMP.setAmount(payout.getAmount());
@@ -535,24 +614,27 @@ public class PaymentServiceBean implements PaymentService {
 		String id = idEmoney.toString();
 		return id;
 	}
-	
+
 	/**
-	 * macartuche
-	 * auxiliar emoney
-	 * @param paid
-	 */
+	* macartuche auxiliar emoney
+	* 
+	* @param paid
+	*/
 	@Override
-	public void updateEMoneyPayment(ServiceRequest request, EMoneyPayment paid){
+	public void updateEMoneyPayment(ServiceRequest request, EMoneyPayment paid) {
 		em.merge(paid);
 	}
-	
+
 	private final String USERNAME_QUERY = "usuario_emoney";
+
 	@Override
 	public void reverse(ServiceRequest request, List<Long> depositsToReverse) {
 
 		User user = findUserByUsername(request, USERNAME_QUERY);
 		try {
-			incomeService.reverse(depositsToReverse, "Reverso por medio de Dinero Electronico", user.getResident());
+			incomeService.reverse(depositsToReverse,
+					"Reverso por medio de Dinero Electronico",
+					user.getResident());
 		} catch (ReverseNotAllowedException e) {
 			e.printStackTrace();
 		} catch (ReverseAmongPaymentsIsNotAllowedException e) {
@@ -561,50 +643,55 @@ public class PaymentServiceBean implements PaymentService {
 	}
 
 	/**
-	 * macartuche
-	 * auxiliar emoney
-	 */	
+	* macartuche auxiliar emoney
+	*/
 	@Override
 	public boolean hasRolEmoney(ServiceRequest request) {
 		User user = findUserByUsername(request, USERNAME_QUERY);
-		return (user.hasRole("ROLE_REVERSE_EMONEY"))? true : false; 		
+		return (user.hasRole("ROLE_REVERSE_EMONEY")) ? true : false;
 	}
-	
-	
-	
-	//by Jock Samaniego..
+
+	// by Jock Samaniego..
 	@Override
-	public String searchPropertyByCadastralCode(ServiceRequest request, String cadastralCode) {
+	public String searchPropertyByCadastralCode(ServiceRequest request,
+			String cadastralCode) {
 		List<Property> properties = new ArrayList<Property>();
-		Query query = em.createNamedQuery("Property.findResidentByProperty");	
+		Query query = em.createNamedQuery("Property.findResidentByProperty");
 		query.setParameter("code", cadastralCode);
 		properties = query.getResultList();
-		if(properties.size()>0){
-			return properties.get(0).getCurrentDomain().getResident().getIdentificationNumber();
-		}else{
+		if (properties.size() > 0) {
+			return properties.get(0).getCurrentDomain().getResident()
+					.getIdentificationNumber();
+		} else {
 			return "No existe la clave catastral";
 		}
 	}
 
 	@Override
-	public Statement debtConsult(ServiceRequest request) throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations {
+	public Statement debtConsult(ServiceRequest request)
+			throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser,
+			NotActiveWorkday, HasNoObligations {
 		String identificationNumber = request.getIdentificationNumber();
 		Taxpayer taxpayer = findTaxpayer(identificationNumber);
+
 		Date workDayDate = new GregorianCalendar().getTime();
-		/*if (request.getUsername().compareTo("dabetancourtc") == 0)
-			workDayDate = ;
-		else
-			workDayDate = findPaymentDate();*/
-		Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer.getId());
-		
-		/*if (inPaymentAgreementBondsNumber > 0) {
-			throw new PayoutNotAllowed();
-		} else {*/
+		/*
+		* if (request.getUsername().compareTo("dabetancourtc") == 0)
+		* workDayDate = ; else workDayDate = findPaymentDate();
+		*/
+		Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer
+				.getId());
+
+		/*
+		* if (inPaymentAgreementBondsNumber > 0) { throw new
+		* PayoutNotAllowed(); } else {
+		*/
 		List<Long> pendingBondIds = hasPendingBonds(taxpayer.getId());
 		List<Bond> bonds = new ArrayList<Bond>();
 		if (pendingBondIds.size() > 0) {
 			try {
-				incomeService.calculatePayment(workDayDate, pendingBondIds, true, true);
+				incomeService.calculatePayment(workDayDate, pendingBondIds,
+						true, true);
 				bonds = findPendingBonds(taxpayer.getId());
 				loadBondsDetail(bonds);
 			} catch (EntryDefinitionNotFoundException e) {
@@ -612,13 +699,11 @@ public class PaymentServiceBean implements PaymentService {
 				throw new PayoutNotAllowed();
 			}
 		}
-		//quitar los id's para q no se realicen pagos
-		for(Bond bd: bonds){
+		// quitar los id's para q no se realicen pagos
+		for (Bond bd : bonds) {
 			bd.setId(null);
 		}
 		Statement statement = new Statement(taxpayer, bonds, workDayDate);
 		return statement;
 	}
-	
-	
 }

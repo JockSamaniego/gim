@@ -157,7 +157,7 @@ public class CoerciveReportHome extends EntityHome<Route> {
 			alreadyPayed = new Integer("0");			
 			notPayedYet = new Integer("0");
 			for (MunicipalBond mb : pa.getMunicipalBonds()) {
-				System.out.println("nuevo...");
+				//System.out.println("nuevo...");
 				if (mb.getMunicipalBondStatus().getId().equals(new Long("6"))) {
 					alreadyPayed = alreadyPayed + 1;
 				}else{

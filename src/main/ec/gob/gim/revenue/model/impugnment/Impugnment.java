@@ -93,6 +93,8 @@ public class Impugnment implements Serializable {
 	private Long version = 0L;
 
 	public Impugnment() {
+		//2016-09-18 rfarmijosm se esta guardando null en la bd
+		this.creationDate = new Date();
 		this.userUpdate = null;
 		this.updateDate = null;
 	}

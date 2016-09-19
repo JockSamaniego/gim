@@ -4,6 +4,7 @@
 package org.gob.gim.cadaster.facade;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,6 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.FiscalPeriodService;
 import org.gob.gim.common.service.ResidentService;
@@ -37,6 +39,8 @@ import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.PropertyUse;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
+import ec.gob.gim.cadaster.model.WorkDealFraction;
+import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -83,16 +87,16 @@ public class CadasterServiceBean implements CadasterService {
 	CrudService crudService;
 
 	/**
-	 * PreEmisión de la Utilidad por venta de predio
+	 * PreEmisiÃ³n de la Utilidad por venta de predio
 	 * 
 	 * @param p
 	 *            Property a la que se le va a emitir la Utilidad
 	 * @param d
-	 *            Domain nuevo dominio que se está creando con el traspaso
+	 *            Domain nuevo dominio que se estÃ¡ creando con el traspaso
 	 * @param f
 	 *            FiscalPeriod para el que se va a emitir
 	 * @param per
-	 *            Persona que realiza la preEmisión
+	 *            Persona que realiza la preEmisiÃ³n
 	 */
 	@Override
 	public void preEmitUtilityTax(Property p, Domain d, FiscalPeriod f,
@@ -162,20 +166,20 @@ public class CadasterServiceBean implements CadasterService {
 	}
 
 	/**
-	 * PreEmisión de la Alcabala por venta de predio
+	 * PreEmisiÃ³n de la Alcabala por venta de predio
 	 * 
 	 * @param pro
 	 *            Property a la que se le va a emitir la Alcabala
 	 * @param d
-	 *            Domain nuevo dominio que se está creando con el traspaso
+	 *            Domain nuevo dominio que se estÃ¡ creando con el traspaso
 	 * @param f
 	 *            FiscalPeriod para el que se va a emitir
 	 * @param per
-	 *            Persona que realiza la preEmisión
+	 *            Persona que realiza la preEmisiÃ³n
 	 * @param exoneration
 	 *            Boolean se le emite o no la Alcabala
 	 * @param exonerationReason
-	 *            Razón de la exoneración
+	 *            RazÃ³n de la exoneraciÃ³n
 	 */
 	@Override
 	public void preEmitAlcabalaTax(Property pro, Domain d, FiscalPeriod f,
@@ -252,9 +256,9 @@ public class CadasterServiceBean implements CadasterService {
 	 * @param cadastralCode
 	 *            Clave catastral de la que se toma el subString
 	 * @param x
-	 *            Posición inicial para el subString
+	 *            PosiciÃ³n inicial para el subString
 	 * @param y
-	 *            Posición final para el subString
+	 *            PosiciÃ³n final para el subString
 	 * @param td
 	 *            TerritorialDivision padre
 	 * @return TerritorialDivision
@@ -282,7 +286,7 @@ public class CadasterServiceBean implements CadasterService {
 	 * Buscar TerritorialDivision
 	 * 
 	 * @param code
-	 *            Código del TerritorialDivision
+	 *            CÃ³digo del TerritorialDivision
 	 * @param territorialDivisionTypeId
 	 *            Tipo de TerritorialDivision
 	 * @return TerritorialDivision
@@ -302,7 +306,7 @@ public class CadasterServiceBean implements CadasterService {
 
 	/**
 	 * @param code
-	 *            Código del TerritorialDivision
+	 *            CÃ³digo del TerritorialDivision
 	 * @param territorialDivisionTypeId
 	 *            Tipo de TerritorialDivision
 	 * @param parent
@@ -425,9 +429,9 @@ public class CadasterServiceBean implements CadasterService {
 	 *            Lista de Solares no edificadors a las que se les va a emitir
 	 *            el impuesto predial
 	 * @param fiscalperiod
-	 *            Periodo fiscal para el que se realiza la emisión
+	 *            Periodo fiscal para el que se realiza la emisiÃ³n
 	 * @param p
-	 *            Persona que realiza la preEmisión
+	 *            Persona que realiza la preEmisiÃ³n
 	 * @return List<MunicipalBond>
 	 */
 	public List<MunicipalBond> onlyCalculatePreEmissionOrderUnbuiltLotTax(
@@ -522,22 +526,22 @@ public class CadasterServiceBean implements CadasterService {
 	}
 
 	/**
-	 * Crea los MunicipalBond del impuesto predial urbano o rústico para todas
-	 * las propiedades enviadas como parámetro
+	 * Crea los MunicipalBond del impuesto predial urbano o rÃºstico para todas
+	 * las propiedades enviadas como parÃ¡metro
 	 * 
 	 * @param eo
 	 *            EmissionOrder sobre la que se agregan los MunicipalBond
 	 * @param entry
-	 *            Rubro que se va a emitir: Predio urbano o rústico
+	 *            Rubro que se va a emitir: Predio urbano o rÃºstico
 	 * @param properties
 	 *            Lista de Propiedades a las que se les va a emitir el impuesto
 	 *            predial
 	 * @param fiscalperiod
-	 *            Periodo fiscal para el que se realiza la emisión
+	 *            Periodo fiscal para el que se realiza la emisiÃ³n
 	 * @param p
-	 *            Persona que realiza la preEmisión
+	 *            Persona que realiza la preEmisiÃ³n
 	 * @param isUrban
-	 *            Boolean indica si es urbano o en caso contrario es rústico
+	 *            Boolean indica si es urbano o en caso contrario es rÃºstico
 	 * @return List<MunicipalBond>
 	 */
 	public List<MunicipalBond> onlyCalculatePreEmissionOrderPropertyTax(
@@ -561,9 +565,9 @@ public class CadasterServiceBean implements CadasterService {
 			// fiscalPeriod.getBasicSalaryUnifiedForRevenue().multiply(new
 			// BigDecimal(25));
 			// no se fijan los 25 SBU por que no es posible determinar Los
-			// predios unifamiliares urbano-marginales con avalúos de hasta
+			// predios unifamiliares urbano-marginales con avalÃºos de hasta
 			// veinticinco remuneraciones
-			// básicas unificadas del trabajador en general
+			// bÃ¡sicas unificadas del trabajador en general
 			exemptValueForMinAppraisal = BigDecimal.ZERO;
 		} else
 			exemptValueForMinAppraisal = fiscalPeriod
@@ -591,7 +595,8 @@ public class CadasterServiceBean implements CadasterService {
 				BigDecimal base = pro.getCurrentDomain()
 						.getCommercialAppraisal();
 				Date expirationDate = null;
-				Date expiration = new Date(eo.getServiceDate().getYear(), 11,31);
+				Date expiration = new Date(eo.getServiceDate().getYear(), 11,
+						31);
 				boolean aux = false;
 				if (expiration == null) {
 					expirationDate = calculateExpirationDate(serviceDate, entry
@@ -627,18 +632,24 @@ public class CadasterServiceBean implements CadasterService {
 									.getStreet() != null)
 						municipalBond.setAddress(pro.getLocation()
 								.getMainBlockLimit().getStreet().getName());
-					
-					//****
-					String parameterDescription = systemParameterService.findParameter("URBAN_PROPERTY_TAX_DESCRIPTION_EMISSION");
-					municipalBond.setDescription(String.format(parameterDescription, fiscalPeriod.getFiscalYear()));
+
+					// ****
+					String parameterDescription = systemParameterService
+							.findParameter("URBAN_PROPERTY_TAX_DESCRIPTION_EMISSION");
+					municipalBond
+							.setDescription(String.format(parameterDescription,
+									fiscalPeriod.getFiscalYear()));
 				} else {
 					// municipalBond.setAddress(getAddressForRusticProperty(pro));
 					municipalBond.setAddress(pro.getCurrentDomain()
 							.getDescription());
 					municipalBond.setBondAddress(pro.getCurrentDomain()
 							.getDescription());
-					String parameterDescription = systemParameterService.findParameter("RUSTIC_PROPERTY_TAX_DESCRIPTION_EMISSION");
-					municipalBond.setDescription(String.format(parameterDescription, fiscalPeriod.getFiscalYear()));
+					String parameterDescription = systemParameterService
+							.findParameter("RUSTIC_PROPERTY_TAX_DESCRIPTION_EMISSION");
+					municipalBond
+							.setDescription(String.format(parameterDescription,
+									fiscalPeriod.getFiscalYear()));
 				}
 
 				if (pro.getAddressReference() != null) {
@@ -772,24 +783,26 @@ public class CadasterServiceBean implements CadasterService {
 	}
 
 	/**
-	 * Crea el item de exención por tercera edad para todos los
-	 * municipalBonds(Predio urbano y rústico) existentes en un periodo fiscal
+	 * Crea el item de exenciÃ³n por tercera edad para todos los
+	 * municipalBonds(Predio urbano y rÃºstico) existentes en un periodo fiscal
 	 * determinado
 	 * 
-	 * Calcula el total de avalúo de las propiedades, calcula el patrimonio y el
-	 * valor de exención para los contribuyentes y establece el valor de
-	 * exención para el descuento y vuelve a calcular el valor a pagar por cada
-	 * obligación del contribuyente.
+	 * Calcula el total de avalÃºo de las propiedades, calcula el patrimonio y el
+	 * valor de exenciÃ³n para los contribuyentes y establece el valor de
+	 * exenciÃ³n para el descuento y vuelve a calcular el valor a pagar por cada
+	 * obligaciÃ³n del contribuyente.
 	 * 
 	 * @param fiscalPeriodId
 	 *            id del periodo fiscal
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void calculateExemptions(Long fiscalPeriodId, Date fromDate, Date untilDate) {
+	public void calculateExemptions(Long fiscalPeriodId, Date fromDate,
+			Date untilDate) {
 		List<Long> entriesIds = loadEntriesIds();
 		Long pendingStatus = loadMunicipalBondStatus();
-		List<Exemption> exemptions = municipalBondService.findExemptionsByFiscalPeriod(fiscalPeriodId, fromDate,
-				untilDate);
+		List<Exemption> exemptions = municipalBondService
+				.findExemptionsByFiscalPeriod(fiscalPeriodId, fromDate,
+						untilDate);
 
 		System.out.println("Total exoneraciones: " + exemptions.size());
 		List<Long> residentsIds = new ArrayList<Long>();
@@ -805,7 +818,7 @@ public class CadasterServiceBean implements CadasterService {
 			System.out.println("======>>Exemption nro: " + count + " de "
 					+ countTotal);
 			appraisalForProperties = BigDecimal.ZERO;
-			if (ex.getExemptionType().getId() == 1)
+			if (ex.getExemptionType().getId() == 1)//por tercera edad
 				appraisalForProperties = calculateAppraisalGeneral(ex);
 			else
 				appraisalForProperties = calculateAppraisalForProperties(ex);
@@ -903,6 +916,9 @@ public class CadasterServiceBean implements CadasterService {
 
 	@SuppressWarnings("unchecked")
 	public BigDecimal calculateAppraisalGeneral(Exemption exemption) {
+		
+		//controlar para los de tratamiento especial
+		
 		Query query = entityManager
 				.createNamedQuery("Property.findByResidentIdNotDeleted");
 		query.setParameter("residentId", exemption.getResident().getId());
@@ -1036,10 +1052,10 @@ public class CadasterServiceBean implements CadasterService {
 	// }
 
 	/**
-	 * Dirección es el nombre de la parroquia
+	 * DirecciÃ³n es el nombre de la parroquia
 	 * 
 	 * @param pro
-	 *            propiedad para la que se va a buscar la dirección
+	 *            propiedad para la que se va a buscar la direcciÃ³n
 	 * @return String
 	 */
 	private String getAddressForRusticProperty(Property pro) {
@@ -1060,7 +1076,7 @@ public class CadasterServiceBean implements CadasterService {
 	 * @param cadastralCode
 	 *            clave catastral
 	 * @param systemParameterName
-	 *            parametro para el tipo de propiedad: urbana o rústica
+	 *            parametro para el tipo de propiedad: urbana o rÃºstica
 	 * @param noEmitFor
 	 *            ids de las propiedades que no se va a tomar en cuenta
 	 * @return List<Property>
@@ -1119,4 +1135,43 @@ public class CadasterServiceBean implements CadasterService {
 		return crudService.update(domain);
 	}
 
+	/*
+	 * Rene
+	 * 2016-08-16
+	 * Metodo para obtener los avaluos de la propiedad
+	 */
+	@Override
+	public List<AppraisalsPropertyDTO> findAppraisalsForProperty(
+			Long property_id) {
+		Query query = entityManager
+				.createNativeQuery("select CAST(extract(YEAR from app.date) as INTEGER) AS year_appraisal, "
+						+ "app.commercialappraisal AS commercial_appraisal "
+						+ "from appraisal app "
+						+ "inner JOIN property pro ON (app.property_id = pro.id) "
+						+ "where pro.id=?1 "
+						+ "order by app.date asc");
+		query.setParameter(1, property_id);
+		
+		List<AppraisalsPropertyDTO> retorno = NativeQueryResultsMapper.map(query.getResultList(), AppraisalsPropertyDTO.class);
+		
+		return retorno;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gob.gim.cadaster.facade.CadasterService#verifyCheckAlreadyAddedPropertyIntoWorkDeal(java.lang.Long, java.lang.Long)
+	 */
+	@Override
+	public WorkDealFraction verifyCheckAlreadyAddedPropertyIntoWorkDeal(Long workDeal_id, Long property_id) {
+		// TODO Auto-generated method stub
+		//Query query = this.entityManager.createNativeQuery("select count(*) from gimprod.workdealfraction where workdeal_id=?1 and property_id =?2");
+		Query query = this.entityManager.createQuery("select wf from WorkDealFraction wf where wf.workDeal.id=:workDeal_id and wf.property.id=:property_id");
+		query.setParameter("workDeal_id", workDeal_id);
+		query.setParameter("property_id", property_id);
+		
+		List<WorkDealFraction> result = query.getResultList();
+		if(result.isEmpty()){
+			return null;
+		}
+		return result.get(0);
+	}
 }

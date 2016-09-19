@@ -34,7 +34,7 @@ public class Catalog {
 	@Version
 	private int version;
 
-	@Column(length = 15)
+	@Column(length = 30)
 	private String code;
 
 	@Column(length = 80)
@@ -44,7 +44,7 @@ public class Catalog {
 	private String description;
 
 	@OneToMany(mappedBy = "catalog")
-	private List<ItemCatalog> itemsCatalog = new ArrayList<>();
+	private List<ItemCatalog> itemsCatalog = new ArrayList<ItemCatalog>();
 
 	public Long getId() {
 		return this.id;

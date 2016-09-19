@@ -184,7 +184,7 @@
 							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
 						</h:outputText>
 					</h:panelGrid>
-					
+
 
 					<rich:dataTable id="paymentAgreementList" var="_paMb"
 						value="#{coerciveReportHome.bondsAgreement}" rows="15"
@@ -223,8 +223,52 @@
 					<rich:datascroller align="center" for="paymentAgreementList"
 						maxPages="20" id="sc3" />
 
+					<rich:panel>
+						<f:facet name="header">
+							<h:outputText value="#{messages['paymentAgreement.dividends']}" />
+						</f:facet>
+
+						<rich:extendedDataTable height="280px" width="100%"
+							id="dividendsTable" var="_dividend"
+							value="#{coerciveReportHome.paymentAgreement.dividends}"
+							rendered="#{coerciveReportHome.paymentAgreement.dividends.size() > 0}"
+							columnClasses="right, right, right">
+
+							<rich:column width="200">
+								<f:facet name="header">
+								#{messages['dividend.date']}
+							</f:facet>
+								<rich:calendar value="#{_dividend.date}" size="10"
+									disabled="true" datePattern="#{messages['common.datePattern']}" />
+							</rich:column>
+							<rich:column width="200" styleClass="right">
+								<f:facet name="header">
+								#{messages['dividend.balance']}
+							</f:facet>
+								<h:inputText value="#{_dividend.balance}"
+									style="width:100%; border: 0px solid;" styleClass="right">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:inputText>
+							</rich:column>
+							<rich:column width="200" styleClass="right">
+								<f:facet name="header">
+								#{messages['dividend.amount']}
+							</f:facet>
+								<h:inputText value="#{_dividend.amount}"
+									style="width:100%; border: 0px solid;" styleClass="right">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:inputText>
+							</rich:column>
+						</rich:extendedDataTable>
+					</rich:panel>
 					<div style="clear: both" />
 				</rich:panel>
+
+
 
 				<div class="actionButtons">
 
@@ -240,7 +284,6 @@
 						oncomplete="Richfaces.hideModalPanel('paymentAgrrementDetailPanel');"
 						bypassUpdates="true" />
 				</div>
-
 			</rich:modalPanel>
 
 		</h:form>

@@ -1,6 +1,7 @@
 package org.loxageek.common.ws;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -14,6 +15,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.gob.loja.gim.ws.dto.EmisionDetail;
+import org.gob.loja.gim.ws.dto.RealEstate;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.StatementReport;
 import org.gob.loja.gim.ws.dto.Taxpayer;
@@ -242,6 +244,12 @@ public class GimSystem {
 		StatementReport sr = gimService.buildReport(request, startDate, endDate, reportType, entryId);
 		InvalidateSession();
 		return sr; 
+	}
+	
+	public List<RealEstate> findProperties(ServiceRequest request) {
+		List<RealEstate> properties = gimService.findProperties(request);
+		InvalidateSession();
+		return properties;
 	}
 
 	/**

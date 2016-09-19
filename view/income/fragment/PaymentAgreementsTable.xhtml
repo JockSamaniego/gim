@@ -21,7 +21,9 @@
 			<a:support event="onchange" eventsQueue="gimQueue" ajaxSingle="true"
 				reRender="municipalBondsPanel, totalsPanel"
 				action="#{paymentHome.calculateTotals}" focus="value"/>
-		</h:selectOneMenu>
+		</h:selectOneMenu> -  
+		<h:outputText value=" #{messages[paymentHome.agreementType]}" 
+			style="font-size:13px; font-weight:bold;" ></h:outputText>
 	</s:decorate>
 
 	<s:decorate id="valueField" template="../../layout/edit.xhtml"  rendered="#{!paymentHome.agreementsBtn}">

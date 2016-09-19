@@ -91,7 +91,7 @@ public class ANTReference extends Adjunct {
 		pair = new ValuePair("Fecha citación", citationDate != null ? DateUtils.formatFullDate(citationDate) : "-");
 		details.add(pair);
 		
-		pair = new ValuePair("Nro. Infracción", citationDate != null ? contraventionNumber.toUpperCase() : "-");
+		pair = new ValuePair("Nro. Infracción", contraventionNumber != null ? contraventionNumber.toUpperCase() : "-");
 		details.add(pair);
 		
 		return details;

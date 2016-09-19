@@ -50,7 +50,7 @@
 	<s:decorate id="#{id}_addressCurrentField"
 		template="../layout/edit.xhtml">
 		<ui:define name="label">#{messages['resident.addressCurrent']}:</ui:define>
-		<h:inputText id="#{id}_addressCurrent" size="80" maxlength="80"
+		<h:inputText id="#{id}_addressCurrent" size="70" maxlength="70"
 			value="#{property.location.houseNumber} - #{property.location.mainBlockLimit.street.name}"
 			readonly="true">
 		</h:inputText>
