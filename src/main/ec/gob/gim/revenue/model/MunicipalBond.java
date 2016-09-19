@@ -526,14 +526,11 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "where m.creationDate Between :startDate and :endDate and i.total > 0"
 				+ " AND m.municipalBondStatus.id =:municipalBondStatusId GROUP BY e.id, e.name,ac.accountCode,ac.parameterFutureEmission ORDER BY ac.accountCode"),
 
-<<<<<<< HEAD
-=======
 		@NamedQuery(name = "MunicipalBond.SumTotalFutureBetweenDatesByItemAndEntry", query = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id, e.name, ac.accountCode, SUM(i.total), ac.parameterFutureEmission) from MunicipalBond m "
 				+ "join m.items i join i.entry e left join e.account ac "
 				+ "where m.creationDate Between :startDate and :endDate and i.total > 0 and e.id=:entry_id "
 				+ " AND m.municipalBondStatus.id =:municipalBondStatusId GROUP BY e.id, e.name,ac.accountCode,ac.parameterFutureEmission ORDER BY ac.accountCode"),
 
->>>>>>> develop
 		@NamedQuery(name = "MunicipalBond.SumTotalPrepaidBetweenDatesByItem", query = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id, e.name, ac.accountCode, SUM(i.total),ac.parameterFutureEmission) "
 				+ "from StatusChange sch "
 				+ "join sch.municipalBond m "
@@ -907,11 +904,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "and :now >= mb.emisionDate"),
 		@NamedQuery(name = "MunicipalBond.findLastId", query = "select max(municipalBond.id) from MunicipalBond municipalBond"),
 		@NamedQuery(name = "MunicipalBond.findLastNumber", query = "select municipalBond.number from MunicipalBond municipalBond WHERE "
-<<<<<<< HEAD
 				+ "municipalBond.id = :id"),})
-=======
-				+ "municipalBond.id = :id"), })
->>>>>>> develop
 //
 public class MunicipalBond implements Serializable {
 
