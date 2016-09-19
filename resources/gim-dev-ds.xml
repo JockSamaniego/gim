@@ -8,12 +8,8 @@
       <jndi-name>gimDatasource</jndi-name>
       <use-java-context>false</use-java-context>
       
-<<<<<<< HEAD
       <connection-url>jdbc:postgresql://localhost:5432/gim_septiembre</connection-url>
 
-=======
-      <connection-url>jdbc:postgresql://localhost:5432/gim_2016_08_16</connection-url>
->>>>>>> cem
       <driver-class>org.postgresql.Driver</driver-class>
       
       <user-name>rolgimloja</user-name>
