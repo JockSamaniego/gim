@@ -12,8 +12,8 @@
 
       <driver-class>org.postgresql.Driver</driver-class>
       
-      <user-name>rolgimloja</user-name>
-      <password>root</password>
+      <user-name>postgres</user-name>
+      <password>59911087</password>
       
    </local-tx-datasource>
     
