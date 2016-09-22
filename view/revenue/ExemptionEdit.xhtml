@@ -83,7 +83,7 @@
 						<ui:define name="label">#{messages['fiscalPeriod.title']}</ui:define>
 						<h:selectOneMenu id="fiscalPeriodId" required="true"
 							value="#{exemptionHome.instance.fiscalPeriod}">
-							<s:selectItems value="#{fiscalPeriods}" required="true"
+							<s:selectItems value="#{futuresFiscalPeriods}" required="true"
 								var="fiscalPeriod" label="#{fiscalPeriod.name}"
 								noSelectionLabel="#{messages['common.chooseOption']}" />
 							<s:convertEntity />
