@@ -1742,4 +1742,9 @@ public class IncomeServiceBean implements IncomeService {
 			}		
 		}
 	}
+	
+//Jock Samaniego.. 21/09/2016
+	public void updatePaymentAgreement(PaymentAgreement paymentAgreement){
+		entityManager.merge(paymentAgreement);		
+	}
 }

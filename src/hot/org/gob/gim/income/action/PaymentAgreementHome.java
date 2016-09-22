@@ -94,6 +94,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	public void wire() {
 		getInstance();
 		if(getInstance().getId() != null)identificationNumber = getInstance().getResident().getIdentificationNumber(); 
+		toActivePaymentAgreement();
 	}
 
 	public boolean isWired() {
@@ -464,5 +465,60 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		}
 		return list;
 	}
-		
+	
+	//Jock Samaniego
+	//20/09/2016
+	//Control para activacion de convenios
+
+	private Boolean toActive = Boolean.FALSE;
+
+	public void toActivePaymentAgreement() {
+		System.out.println("===============>>>>>entra al metodo toActive");
+		if (!this.instance.getIsActive()) {
+			try {
+				System.out.println("===============>>>>>entra al try");
+				String qryResult = "SELECT count(*) "
+						+ "FROM gimprod.municipalbond mb "
+						+ "WHERE mb.paymentagreement_id =:id and mb.municipalbondstatus_id = 4";
+				System.out.println("===============>>>>>pasa la consulta");
+				Query queryResult = this.getEntityManager().createNativeQuery(
+						qryResult);
+				queryResult.setParameter("id", this.instance.getId());
+				System.out.println("===============>>>>>el query");
+				List<Long> result = queryResult.getResultList();
+				System.out.println("===============>>>>>" + result.get(0));
+				int p =result.get(0).intValue();
+				if (p>=1) {
+					System.out.println("===============>>>>>entra a verdadero");
+					toActive = Boolean.TRUE;
+				} else {
+					System.out.println("===============>>>>>entra a falso");
+					toActive = Boolean.FALSE;
+				}
+			} catch (Exception e) {
+				System.out.println("===============>>>>>se va al catch");
+				toActive = Boolean.FALSE;
+			}
+
+		}else{
+			toActive = Boolean.FALSE;
+		}
+	}
+
+	public void activePaymentAgreement() {
+		this.instance.setIsActive(Boolean.TRUE);
+		System.out.println("===========id: " + this.instance.getId());
+		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+		incomeService.updatePaymentAgreement(this.instance);
+		toActive = Boolean.TRUE;
+	}
+
+	public Boolean getToActive() {
+		return toActive;
+	}
+
+	public void setToActive(Boolean toActive) {
+		this.toActive = toActive;
+	}
+
 }
