@@ -94,7 +94,8 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	public void wire() {
 		getInstance();
 		if(getInstance().getId() != null)identificationNumber = getInstance().getResident().getIdentificationNumber(); 
-		toActivePaymentAgreement();
+		chargeControlMunicipalBondStates();
+		toActivePaymentAgreement();		
 	}
 
 	public boolean isWired() {
@@ -471,43 +472,36 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	//Control para activacion de convenios
 
 	private Boolean toActive = Boolean.FALSE;
+	private String[] statesString;
+	private List<Long> statesLong = new ArrayList<>();
 
 	public void toActivePaymentAgreement() {
-		System.out.println("===============>>>>>entra al metodo toActive");
 		if (!this.instance.getIsActive()) {
 			try {
-				System.out.println("===============>>>>>entra al try");
-				String qryResult = "SELECT count(*) "
-						+ "FROM gimprod.municipalbond mb "
-						+ "WHERE mb.paymentagreement_id =:id and mb.municipalbondstatus_id = 4";
-				System.out.println("===============>>>>>pasa la consulta");
-				Query queryResult = this.getEntityManager().createNativeQuery(
-						qryResult);
-				queryResult.setParameter("id", this.instance.getId());
-				System.out.println("===============>>>>>el query");
-				List<Long> result = queryResult.getResultList();
-				System.out.println("===============>>>>>" + result.get(0));
-				int p =result.get(0).intValue();
-				if (p>=1) {
-					System.out.println("===============>>>>>entra a verdadero");
-					toActive = Boolean.TRUE;
-				} else {
-					System.out.println("===============>>>>>entra a falso");
-					toActive = Boolean.FALSE;
-				}
+					String qryResult = "SELECT count(*) "
+							+ "FROM gimprod.municipalbond mb "
+							+ "WHERE mb.paymentagreement_id =:id and mb.municipalbondstatus_id in (:state_id)";
+					Query queryResult = this.getEntityManager()
+							.createNativeQuery(qryResult);
+					queryResult.setParameter("id", this.instance.getId());
+					queryResult.setParameter("state_id", statesLong);
+					String result = queryResult.getSingleResult().toString();
+					if (Integer.parseInt(result) >= 1) {
+						toActive = Boolean.TRUE;
+					} else {
+						toActive = Boolean.FALSE;
+					}
 			} catch (Exception e) {
-				System.out.println("===============>>>>>se va al catch");
 				toActive = Boolean.FALSE;
 			}
 
-		}else{
+		} else {
 			toActive = Boolean.FALSE;
 		}
 	}
 
 	public void activePaymentAgreement() {
 		this.instance.setIsActive(Boolean.TRUE);
-		System.out.println("===========id: " + this.instance.getId());
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		incomeService.updatePaymentAgreement(this.instance);
 		toActive = Boolean.TRUE;
@@ -519,6 +513,16 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 
 	public void setToActive(Boolean toActive) {
 		this.toActive = toActive;
+	}
+	
+	public void chargeControlMunicipalBondStates(){
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		String controlStates = systemParameterService.findParameter("STATES_MUNICIPALBOND_CONTROL_PAYMENTAGREEMENT");
+		statesString = controlStates.trim().split(",");
+		for(int i=0;i<statesString.length;i++){
+			statesLong.add(Long.parseLong(statesString[i]));
+		}
 	}
 
 }
