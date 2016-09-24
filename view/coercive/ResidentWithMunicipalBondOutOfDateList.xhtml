@@ -155,6 +155,15 @@
 
 						</rich:column>
 						
+						<rich:column sortBy="#{_residentWithMunicipalBondOutOfDate.impAccount}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Impugnaciones" />
+							</f:facet>
+														
+							<h:outputText value="#{_residentWithMunicipalBondOutOfDate.impAccount}"/> 
+
+						</rich:column>
+						
 						<rich:column sortBy="#{_residentWithMunicipalBondOutOfDate.total}" styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="#{messages['item.approximateValue']}" />

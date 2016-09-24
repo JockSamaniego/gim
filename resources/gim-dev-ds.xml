@@ -9,6 +9,7 @@
       <use-java-context>false</use-java-context>
       
       <connection-url>jdbc:postgresql://localhost:5432/gim_septiembre</connection-url>
+
       <driver-class>org.postgresql.Driver</driver-class>
       
       <user-name>postgres</user-name>

@@ -904,7 +904,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "and :now >= mb.emisionDate"),
 		@NamedQuery(name = "MunicipalBond.findLastId", query = "select max(municipalBond.id) from MunicipalBond municipalBond"),
 		@NamedQuery(name = "MunicipalBond.findLastNumber", query = "select municipalBond.number from MunicipalBond municipalBond WHERE "
-				+ "municipalBond.id = :id"), })
+				+ "municipalBond.id = :id"),})
 //
 public class MunicipalBond implements Serializable {
 

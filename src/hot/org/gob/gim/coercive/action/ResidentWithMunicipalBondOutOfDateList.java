@@ -51,8 +51,8 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 	 */
 	private static final long serialVersionUID = -2904627074665502302L;
 
-	private static final String EJBQL = "select NEW org.gob.gim.coercive.view.ResidentItem(resident.id,resident.identificationNumber,resident.name,count(mb),sum(mb.value)) from MunicipalBond mb "
-			+ "left join mb.resident resident left join mb.entry entry";
+	private static final String EJBQL = "select NEW org.gob.gim.coercive.view.ResidentItem(resident.id,resident.identificationNumber,resident.name,count(mb),count(imp),sum(mb.value)) from Impugnment imp "
+			+ "right join imp.municipalBond mb left join  mb.resident resident left join mb.entry entry";
 
 	
 	
