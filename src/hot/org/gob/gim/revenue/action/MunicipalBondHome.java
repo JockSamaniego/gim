@@ -1383,8 +1383,9 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						+ "INNER JOIN gimprod.resident re on mb.resident_id = re.id "
 						+ "inner join municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id "
 						+ "inner join entry en on mb.entry_id = en.id "
-						+ "WHERE lower(mb.description) like lower('%"+obligationsHistoryCriteria+"%') or "
-						+ "lower(mb.reference) like lower('%"+obligationsHistoryCriteria+"%') or lower(mb.groupingcode) like lower('%"+obligationsHistoryCriteria+"%') "
+						+ "WHERE lower(mb.description) like lower('"+obligationsHistoryCriteria+"%') or "
+						+ "lower(re.identificationNumber) like lower('"+obligationsHistoryCriteria+"%') or "
+						+ "lower(mb.reference) like lower('"+obligationsHistoryCriteria+"%') or lower(mb.groupingcode) like lower('%"+obligationsHistoryCriteria+"%') "
 						+ "ORDER BY emisiondate;";
 				Query queryResult = this.getEntityManager().createNativeQuery(qryResult);
 				List<Object[]> result = queryResult.getResultList();
@@ -1424,9 +1425,10 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						+ "inner join entry en on mb.entry_id = en.id "
 						+ "INNER JOIN gimprod.antreference ant on mb.adjunct_id = ant.id "
 						+ "WHERE lower(mb.description) like lower('%"+obligationsHistoryCriteria+"%') or "
-						+ "lower(mb.reference) like lower('%"+obligationsHistoryCriteria+"%') or lower(mb.groupingcode) like lower('%"+obligationsHistoryCriteria+"%') "
+						//+ "lower(mb.reference) like lower('%"+obligationsHistoryCriteria+"%') or lower(mb.groupingcode) like lower('%"+obligationsHistoryCriteria+"%') "
 						//+ "ORDER BY emisiondate;";
-						+ "or ant.contraventionNumber like '"+obligationsHistoryCriteria+"' ORDER BY emisiondate;";
+						+ "ant.contraventionNumber = '"+obligationsHistoryCriteria+"' "
+						+ "ORDER BY emisiondate;";
 				Query queryResult = this.getEntityManager().createNativeQuery(qryResult);
 				List<Object[]> result = queryResult.getResultList();
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
