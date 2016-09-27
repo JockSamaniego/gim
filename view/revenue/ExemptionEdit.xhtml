@@ -129,7 +129,7 @@
 									value="#{_exemptionProperty.property.previousCadastralCode}" />
 							</rich:column>
 
-							<rich:column style="text-align:right;">
+							<rich:column style="text-align:right;" rendered="#{exemptionHome.instance.exemptionType.name != 'Por Tercera Edad'}">
 								<f:facet name="header">#{messages['exemption.percentage']}</f:facet>
 								<h:inputText value="#{_exemptionProperty.discountPercentage}"
 									required="true" style="text-align:right;">

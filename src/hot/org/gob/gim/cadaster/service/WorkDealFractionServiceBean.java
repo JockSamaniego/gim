@@ -40,6 +40,9 @@ public class WorkDealFractionServiceBean implements WorkDealFractionService {
 		if (cadastralCode != null) {
 			finalQuery = finalQuery + conditionAdditional;
 		}
+		
+		finalQuery = finalQuery + " order by wf.property.cadastralCode ASC";
+		
 		Query query = entityManager.createQuery(finalQuery);
 		query.setParameter("workDeal_id", workDeal_id);
 		if (cadastralCode != null) {
