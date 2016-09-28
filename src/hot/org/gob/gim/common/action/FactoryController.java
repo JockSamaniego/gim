@@ -3,6 +3,7 @@ package org.gob.gim.common.action;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -54,6 +55,7 @@ import ec.gob.gim.commercial.model.FeatureCategory;
 import ec.gob.gim.commercial.model.FireRates;
 import ec.gob.gim.common.model.AlertPriority;
 import ec.gob.gim.common.model.CheckingRecordType;
+import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Gender;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.LegalEntityType;
@@ -717,6 +719,19 @@ public class FactoryController  extends EntityController{
 		 Query query = this.getEntityManager().createNamedQuery("Person.findByRoleName");
 		 query.setParameter("roleName", userCoerciveRole);
 		 return query.getResultList();
+	}
+	
+	@Factory("futuresFiscalPeriods")
+	public List<FiscalPeriod> findFutureFiscalPeriods(){
+		Query query1 = this.getEntityManager().createNamedQuery("FiscalPeriod.findCurrent");
+		query1.setParameter("currentDate", new Date());
+		FiscalPeriod currentFiscalPeriod = (FiscalPeriod) query1.getSingleResult();		
+		if(currentFiscalPeriod==null){
+			return null;
+		}
+		Query query = this.getEntityManager().createQuery("select f from FiscalPeriod f where f.startDate>:endDateCurrentFiscalP order by f.startDate");
+		query.setParameter("endDateCurrentFiscalP", currentFiscalPeriod.getEndDate());
+		return query.getResultList();
 	}
 	
 }
