@@ -126,4 +126,8 @@ public interface IncomeService {
 	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long id, Boolean coverInterest, String status);
 	
 	public BigDecimal sumAccumulatedInterest(Long id, Boolean coverInterest, String status);
+	
+	//Jock Samaniego
+	//actualizar estado de convenios 21/09/2016
+	public void updatePaymentAgreement(PaymentAgreement paymentAgreement);
 }

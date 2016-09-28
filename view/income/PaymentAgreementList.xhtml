@@ -24,9 +24,10 @@
 			<div class="actionButtons">
 				<h:commandButton id="search" value="#{messages['common.search']}"
 					action="/income/PaymentAgreementList.xhtml">
-				    <f:param name="firstResult" value="0"/>
+					<f:param name="firstResult" value="0" />
 				</h:commandButton>
-				<s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" />
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
 			</div>
 
 		</h:form>
@@ -74,13 +75,21 @@
 					<h:column>
 						<f:facet name="header">
             	#{messages['paymentAgreement.description']}
-            </f:facet>
+                </f:facet>
 						<h:outputText value="#{_paymentAgreement.description}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+            				Está Activo?
+               			</f:facet>
+								<h:outputText value="SI" rendered="#{_paymentAgreement.isActive}" />
+								<h:outputText value="NO" rendered="#{!_paymentAgreement.isActive}" />
 					</h:column>
 
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet>
-            			<s:button view="/income/PaymentAgreementEdit.xhtml"
+						<s:button view="/income/PaymentAgreementEdit.xhtml"
 							value="#{messages['common.view']}" propagation="none"
 							id="paymentAgreementEdit" rendered="#{empty from}">
 							<f:param name="paymentAgreementId"
@@ -96,27 +105,31 @@
 
 			<s:link view="/income/PaymentAgreementList.xhtml"
 				rendered="#{paymentAgreementList.previousExists}"
-				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}" id="firstPage">
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
 				<f:param name="firstResult" value="0" />
 			</s:link>
 
 			<s:link view="/income/PaymentAgreementList.xhtml"
 				rendered="#{paymentAgreementList.previousExists}"
-				value="#{messages.left} #{messages['common.previousPage']}" id="previousPage">
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
 				<f:param name="firstResult"
 					value="#{paymentAgreementList.previousFirstResult}" />
 			</s:link>
 
 			<s:link view="/income/PaymentAgreementList.xhtml"
 				rendered="#{paymentAgreementList.nextExists}"
-				value="#{messages['common.nextPage']} #{messages.right}" id="nextPage">
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
 				<f:param name="firstResult"
 					value="#{paymentAgreementList.nextFirstResult}" />
 			</s:link>
 
 			<s:link view="/income/PaymentAgreementList.xhtml"
 				rendered="#{paymentAgreementList.nextExists}"
-				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}" id="lastPage">
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
 				<f:param name="firstResult"
 					value="#{paymentAgreementList.lastFirstResult}" />
 			</s:link>

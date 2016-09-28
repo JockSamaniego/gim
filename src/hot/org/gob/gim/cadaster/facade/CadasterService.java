@@ -14,6 +14,7 @@ import ec.gob.gim.cadaster.model.WorkDealFraction;
 import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
+import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -45,4 +46,8 @@ public interface CadasterService {
 	 */
 	List<AppraisalsPropertyDTO> findAppraisalsForProperty(Long property_id);
 	WorkDealFraction verifyCheckAlreadyAddedPropertyIntoWorkDeal(Long workDeal_id, Long property_id);
+	
+	//Jock Samaniego
+	//actualizar deleted predios rusticos 23/09/2016
+		public void updateRusticProperty(Property property);
 }

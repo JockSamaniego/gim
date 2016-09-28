@@ -94,6 +94,8 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	public void wire() {
 		getInstance();
 		if(getInstance().getId() != null)identificationNumber = getInstance().getResident().getIdentificationNumber(); 
+		chargeControlMunicipalBondStates();
+		toActivePaymentAgreement();		
 	}
 
 	public boolean isWired() {
@@ -464,5 +466,63 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		}
 		return list;
 	}
-		
+	
+	//Jock Samaniego
+	//20/09/2016
+	//Control para activacion de convenios
+
+	private Boolean toActive = Boolean.FALSE;
+	private String[] statesString;
+	private List<Long> statesLong = new ArrayList<>();
+
+	public void toActivePaymentAgreement() {
+		if (!this.instance.getIsActive()) {
+			try {
+					String qryResult = "SELECT count(*) "
+							+ "FROM gimprod.municipalbond mb "
+							+ "WHERE mb.paymentagreement_id =:id and mb.municipalbondstatus_id in (:state_id)";
+					Query queryResult = this.getEntityManager()
+							.createNativeQuery(qryResult);
+					queryResult.setParameter("id", this.instance.getId());
+					queryResult.setParameter("state_id", statesLong);
+					String result = queryResult.getSingleResult().toString();
+					if (Integer.parseInt(result) >= 1) {
+						toActive = Boolean.TRUE;
+					} else {
+						toActive = Boolean.FALSE;
+					}
+			} catch (Exception e) {
+				toActive = Boolean.FALSE;
+			}
+
+		} else {
+			toActive = Boolean.FALSE;
+		}
+	}
+
+	public void activePaymentAgreement() {
+		this.instance.setIsActive(Boolean.TRUE);
+		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+		incomeService.updatePaymentAgreement(this.instance);
+		toActive = Boolean.TRUE;
+	}
+
+	public Boolean getToActive() {
+		return toActive;
+	}
+
+	public void setToActive(Boolean toActive) {
+		this.toActive = toActive;
+	}
+	
+	public void chargeControlMunicipalBondStates(){
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		String controlStates = systemParameterService.findParameter("STATES_MUNICIPALBOND_CONTROL_PAYMENTAGREEMENT");
+		statesString = controlStates.trim().split(",");
+		for(int i=0;i<statesString.length;i++){
+			statesLong.add(Long.parseLong(statesString[i]));
+		}
+	}
+
 }

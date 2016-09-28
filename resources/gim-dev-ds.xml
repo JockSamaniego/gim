@@ -8,12 +8,12 @@
       <jndi-name>gimDatasource</jndi-name>
       <use-java-context>false</use-java-context>
       
-      <connection-url>jdbc:postgresql://localhost:5432/gimlocal</connection-url>
+      <connection-url>jdbc:postgresql://localhost:5432/gim_septiembre</connection-url>
 
       <driver-class>org.postgresql.Driver</driver-class>
       
-      <user-name>rolgimloja</user-name>
-      <password>root</password>
+      <user-name>postgres</user-name>
+      <password>59911087</password>
       
    </local-tx-datasource>
     
