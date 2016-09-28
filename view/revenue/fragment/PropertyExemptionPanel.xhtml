@@ -94,12 +94,32 @@
 
 				</s:decorate>
 
+				<!-- 
+					@tag descuentoEmprendimiento
+					@author macartuche
+					@date 2016-09-23T09:46
+				 -->
+				<s:decorate id="validUntil" template="../../layout/edit.xhtml"
+					rendered="#{exemptionHome.instance.exemptionType.name=='Por emprendimiento'}">
+					<ui:define name="label">Váido hasta:</ui:define>
+					<rich:calendar id="untilDate" required="true"
+						value="#{exemptionHome.exemptionForProperty.validUntil}"
+						datePattern="#{messages['common.datePattern']}" inputSize="10">
+						<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+					</rich:calendar>
+				</s:decorate>
+				
+				<!-- 
+					//fin @tag descuentoEmprendimiento
+				 -->
+				
 				<div style="clear: both">
 					<span class="required">*</span>
 					#{messages['common.requiredFields']}
 				</div>
 			</rich:panel>
-
+		
 			<a:outputPanel ajaxRendered="false" id="buttonsId">
 
 				<div class="actionButtons">
