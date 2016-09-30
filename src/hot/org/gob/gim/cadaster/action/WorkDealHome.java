@@ -136,6 +136,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 						.setCriteria(this.instance.getId(), cadastralCode);
 				getDataModel().setRowCount(getDataModel().getObjectsNumber());
 			}
+			
 		}
 	}
 
