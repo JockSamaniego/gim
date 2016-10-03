@@ -976,8 +976,8 @@ public class NotificationHome extends EntityHome<Notification> {
 		
 		@SuppressWarnings("unchecked")
 		public List<Impugnment> findAcceptedImpugnments(Long id){
-			impugnmentsTotal = new ArrayList<>();
-			List<Impugnment> impugnments = new ArrayList<>();
+			impugnmentsTotal = new ArrayList<Impugnment>();
+			List<Impugnment> impugnments = new ArrayList<Impugnment>();
 			for (String st : states){
 				Query query = getEntityManager().createNamedQuery("Impugnment.findByMunicipalBond");
 				query.setParameter("municipalBond_id", id);
