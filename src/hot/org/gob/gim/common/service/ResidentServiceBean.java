@@ -4,6 +4,8 @@
 package org.gob.gim.common.service;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,8 @@ public class ResidentServiceBean implements ResidentService {
 	
 	@PersistenceContext
     private EntityManager em;
+	
+	public static ArrayList<Integer> publicInstitutions = new ArrayList<Integer>();
 
 	/* (non-Javadoc)
 	 * @see org.gob.gim.common.service.ResidentService#find(java.lang.Long)
@@ -177,18 +181,74 @@ public class ResidentServiceBean implements ResidentService {
 	@Override
 	public Boolean isPublicInstitution(Long residentId) {
 		// TODO Auto-generated method stub
-		Query query = this.em.createNativeQuery("select count(*) " 
-												+"from resident " 
-												+"where residenttype = 'J' " 
-												+"and legalentityType='PUBLIC' "
-												+"and id =?");
-		query.setParameter(1, residentId);
-		BigInteger result = (BigInteger) query.getSingleResult();
-		if (result.intValue() == 0){
-			return Boolean.FALSE;
-		}else{
+		
+		if (this.publicInstitutions.contains(residentId.intValue())){
 			return Boolean.TRUE;
+		}else{
+			return Boolean.FALSE;
 		}
 		
 	}
+
+	/* (non-Javadoc)
+	 * @see org.gob.gim.common.service.ResidentService#loadPublicInstitutions()
+	 */
+	@Override
+	public void loadPublicInstitutions() {
+		// TODO Auto-generated method stub
+		
+		
+		this.publicInstitutions = new ArrayList<Integer>();
+		
+		Query query = this.em.createNativeQuery("select CAST ( id AS integer ) " 
+				+"from resident " 
+				+"where residenttype = 'J' " 
+				+"and legalentityType='PUBLIC' ");
+		
+		List<Integer> ids = query.getResultList();
+		
+		
+		Integer[] idsInstitution = new Integer[ids.size()];
+		
+		for (int i = 0; i < ids.size(); i++) {
+			//System.out.println(ids.get(i).intValue());
+			idsInstitution[i] = ids.get(i);
+		}
+		
+		
+		this.publicInstitutions = new ArrayList<Integer> (Arrays.asList(idsInstitution));
+		//System.out.println("Entra al metodo de inicializar instituciones publicas");
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gob.gim.common.service.ResidentService#updatePublicInstitutions()
+	 */
+	@Override
+	public void updatePublicInstitutions() {
+		// TODO Auto-generated method stub
+		
+		this.publicInstitutions = new ArrayList<Integer>();
+		
+		Query query = this.em.createNativeQuery("select CAST ( id AS integer ) " 
+				+"from resident " 
+				+"where residenttype = 'J' " 
+				+"and legalentityType='PUBLIC' ");
+		
+		List<Integer> ids = query.getResultList();
+		
+		
+		Integer[] idsInstitution = new Integer[ids.size()];
+		
+		for (int i = 0; i < ids.size(); i++) {
+			//System.out.println(ids.get(i).intValue());
+			idsInstitution[i] = ids.get(i);
+		}
+		
+		
+		this.publicInstitutions = new ArrayList<Integer> (Arrays.asList(idsInstitution));
+
+		
+	}
+
 }
