@@ -858,9 +858,9 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 				.getInstance(WorkDealFractionDataModel.class, true);
 		// System.out.println("Data model en el getDataModel de fracciones 1" +
 		// dataModel1);
-		// WorkDealFractionDataModel dataModel = (WorkDealFractionDataModel)
-		// Contexts
-		// .getConversationContext().get(WorkDealFractionDataModel.class);
+//		 WorkDealFractionDataModel dataModel = (WorkDealFractionDataModel)
+//		 Contexts
+//		 .getConversationContext().get(WorkDealFractionDataModel.class);
 		// System.out.println("Data model en el getDataModel de fracciones" +
 		// dataModel);
 		return dataModel;
