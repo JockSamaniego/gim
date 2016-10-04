@@ -473,7 +473,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 
 	private Boolean toActive = Boolean.FALSE;
 	private String[] statesString;
-	private List<Long> statesLong = new ArrayList<>();
+	private List<Long> statesLong = new ArrayList<Long>();
 
 	public void toActivePaymentAgreement() {
 		if (!this.instance.getIsActive()) {

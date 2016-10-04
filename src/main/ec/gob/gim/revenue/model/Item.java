@@ -72,8 +72,8 @@ public class Item implements Comparable<Item>{
 	/** para notas de credito electronicas **/
 	//@author macartuche
 	//@date 2015/06/11 09:56
-	@OneToOne(mappedBy="item", fetch = FetchType.LAZY)
-	private ElectronicItem electronicItem;
+//	@OneToOne(mappedBy="item", fetch = FetchType.LAZY)
+//	private ElectronicItem electronicItem;
 	
 	public Item() {		
 		value = BigDecimal.ZERO;
@@ -222,11 +222,11 @@ public class Item implements Comparable<Item>{
 	/** para notas de credito electronicas **/
 	//@author macartuche
 	//@date 2015/06/11 09:56
-	public ElectronicItem getElectronicItem() {
-		return electronicItem;
-	}
+//	public ElectronicItem getElectronicItem() {
+//		return electronicItem;
+//	}
 
-	public void setElectronicItem(ElectronicItem electronicItem) {
-		this.electronicItem = electronicItem;
-	}
+//	public void setElectronicItem(ElectronicItem electronicItem) {
+//		this.electronicItem = electronicItem;
+//	}
 }// end Item
