@@ -66,6 +66,14 @@
 					<h:inputText id="cashierid"
 						value="#{userHome.instance.cashierid}" />
 				</s:decorate>
+				
+				<!-- @tag turnero -->
+				<!-- @author macartuche -->
+				<s:decorate id="turneroField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['bank.hasTurnero']}: </ui:define>
+					<h:selectBooleanCheckbox id="blocked"
+						value="#{userHome.instance.callTicket}" />
+				</s:decorate>
 
 				<div style="clear: both">
 					<span class="required">*</span>
