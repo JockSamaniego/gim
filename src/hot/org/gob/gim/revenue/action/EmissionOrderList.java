@@ -20,7 +20,10 @@ public class EmissionOrderList extends EntityQuery<EmissionOrder> {
 	
 	private static final String EJBQL = "select e from EmissionOrder e "
 	+"left join fetch e.municipalBonds m "
-	+"left join fetch m.receipt ";
+	+"left join fetch m.receipt "
+	+"left join fetch m.resident "
+	+"left join fetch e.emisor "
+	+"left join fetch m.entry entry ";
 	
 	
 	private static final String[] RESTRICTIONS= {
@@ -29,7 +32,7 @@ public class EmissionOrderList extends EntityQuery<EmissionOrder> {
 		"(lower(m.entry.code) like lower(concat('%',#{emissionOrderList.entry},'%')))",
 		"(lower(m.entry.department) like lower(concat('%',#{emissionOrderList.department},'%')))",
 		"e.isDispatched=#{emissionOrderList.isDispatched}",
-		"m.entry.id not in (#{emissionOrderList.photoPenalty})"};
+		"entry.id not in (#{emissionOrderList.photoPenalty})"};
 	
 	/*private static final String[] RESTRICTIONS= {
 			"e.isDispatched=#{emissionOrderList.isDispatched}",

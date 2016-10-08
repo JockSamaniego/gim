@@ -249,9 +249,10 @@ public class RevenueServiceBean implements RevenueService {
 		}
 	}
 
-	public void emit(Long emissionOrderId, Long userId, Date startDate) {
+	//public void emit(Long emissionOrderId, Long userId, Date startDate) {
+	public void emit(Long emissionOrderId, Person emitter, Date startDate) {
 		EmissionOrder eo = findEmissionOrder(emissionOrderId);
-		User user = findUser(userId);
+		//User user = findUser(userId);
 		MunicipalBondStatus pendingBondStatus = systemParameterService
 				.materialize(MunicipalBondStatus.class,
 						"MUNICIPAL_BOND_STATUS_ID_PENDING");
@@ -262,7 +263,7 @@ public class RevenueServiceBean implements RevenueService {
 			municipalBond.setNumber(findNextMunicipalBondValue());
 			municipalBond.setEmisionDate(now);
 			municipalBond.setEmisionTime(now);
-			municipalBond.setEmitter((Person) user.getResident());
+			municipalBond.setEmitter(emitter);
 			municipalBond.setEmisionPeriod(startDate);
 			// rfarmijosm 2016-01-30 se comenta no es necesario buscar cada rato
 			// q se emite

@@ -68,13 +68,8 @@
 					<h:panelGrid columns="3" columnClasses="headerTitle,">
 						<h:outputText
 							value="#{messages['emissionOrder.searchResults']} (#{empty emissionOrderList.resultList ? 0 : (emissionOrderList.paginated ? emissionOrderList.resultCount : emissionOrderList.resultList.size)})" />
-							
-							<!-- a:commandButton
-							ajaxSingle="true" value="#{messages['common.emit']}"
-							action="
-							#
-							{
-							emissionOrderList.emitSelectedEmissionOrder()}" /-->
+						
+													
 					</h:panelGrid>
 
 				</f:facet>
@@ -84,18 +79,6 @@
 					<rich:dataTable id="emissionOrderTable" var="_emissionOrder"
 						value="#{emissionOrderList.resultList}"
 						rendered="#{not empty emissionOrderList.resultList}">
-
-						<!-- rich:column>
-							<f:facet name="header">
-								<h:outputText value="#{_emissionOrder.id}" />
-							</f:facet>
-							<h:selectBooleanCheckbox value=" # { _emissionOrder.isSelected}">
-								<a:support event="onchange" ajaxSingle="true"
-									bypassUpdates="true" eventsQueue="gimQueue"
-									action=" # { 
-									emissionOrderList.changeSelectedEmissionOrder(_emissionOrder, _emissionOrder.isSelected)}" />
-							</h:selectBooleanCheckbox>
-						</rich:column-->
 
 						<h:column>
 							<f:facet name="header">

@@ -42,7 +42,8 @@ public interface RevenueService {
 	void emit(List<MunicipalBond> municipalBonds, User user) throws Exception;
 	void emitFuture(List<MunicipalBond> municipalBonds, User user) throws Exception;
 	//void emit(Long emissionOrderId,Long userId) throws Exception;
-	void emit(Long emissionOrderId, Long userId, Date startDate) throws Exception;
+	//rfarmijosm 2016-10-08 se pasa el usuario para no consultar este dato cada rato
+	void emit(Long emissionOrderId, Person emitter, Date startDate) throws Exception;
 	void changeFutureToPendign(List<MunicipalBond> municipalBonds, User user, Person person, String explanation) throws Exception;
 	
 

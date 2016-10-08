@@ -219,7 +219,7 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 				systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
 						
 			if(revenueService == null) revenueService = ServiceLocator.getInstance().findResource(RevenueService.LOCAL_NAME);
-			revenueService.emit(emissionOrder.getId(), userSession.getUser().getId(), userSession.getFiscalPeriod().getStartDate());
+			revenueService.emit(emissionOrder.getId(), userSession.getPerson(), userSession.getFiscalPeriod().getStartDate());
 			return "updated";			
 		} catch(Exception e){
 			addFacesMessageFromResourceBundle("emissionOrder.errorWhileEmitting");
