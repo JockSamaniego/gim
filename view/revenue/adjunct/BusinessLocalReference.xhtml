@@ -38,6 +38,23 @@
 			<h:inputText id="manager"
 				value="#{adjunctHome.instance.manager}" maxlength="150" style=" width : 300px;"/>
 		</s:decorate>
+
+		<!-- 
+			@tag descuentoEmprendimiento
+			@author macartuche
+			@date 2016-09-23T12:13
+		-->
+		<s:decorate id="settleDisccountByEntrepreneurship"
+			template="../../layout/edit.xhtml"
+			rendered="#{municipalBondHome.entry.id == '8'}" style="margin-right:30px;">
+			<ui:define name="label">Descuento: </ui:define>
+			<h:selectBooleanCheckbox value="#{adjunctHome.instance.hasDiscountByEntrepreneurship}" 
+				id="discountByEntrepreneurship"
+				style="font-weight:bold; font-size:10px; color:red" >
+			</h:selectBooleanCheckbox>
+			<label for="municipalBondEditTitle:j_id579:settleDisccountByEntrepreneurship:discountByEntrepreneurship">#{messages['commercial.enterpreneurshipDiscount']}</label>
+		</s:decorate>
+		<!--//fin @tag  descuentoEmprendimiento -->
 	</a:outputPanel>
 
 </ui:composition>

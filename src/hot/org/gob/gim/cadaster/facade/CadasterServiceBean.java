@@ -44,6 +44,7 @@ import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.EmissionOrder;
@@ -1174,4 +1175,9 @@ public class CadasterServiceBean implements CadasterService {
 		}
 		return result.get(0);
 	}
+	
+	//Jock Samaniego.. 23/09/2016
+		public void updateRusticProperty(Property property){
+			entityManager.merge(property);		
+		}
 }

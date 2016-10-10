@@ -71,18 +71,18 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "LEFT JOIN FETCH mb.items it "
 				+ "LEFT JOIN FETCH it.entry "
 				// rarmijos 2015-12-19
-				+ "LEFT JOIN FETCH it.electronicItem "
+//				+ "LEFT JOIN FETCH it.electronicItem "
 				//
 				+ "LEFT JOIN FETCH mb.discountItems di "
 				+ "LEFT JOIN FETCH di.entry "
 				// rarmijos 2015-12-19
-				+ "LEFT JOIN FETCH di.electronicItem  "
+//				+ "LEFT JOIN FETCH di.electronicItem  "
 				//
 				+ "LEFT JOIN FETCH mb.deposits deposit "
 				+ "LEFT JOIN FETCH mb.surchargeItems si "
 				+ "LEFT JOIN FETCH si.entry "
 				// rarmijos 2015-12-19
-				+ "LEFT JOIN FETCH si.electronicItem "
+//				+ "LEFT JOIN FETCH si.electronicItem "
 				//
 				+ "LEFT JOIN FETCH mb.taxItems ti "
 				+ "LEFT JOIN FETCH ti.tax "

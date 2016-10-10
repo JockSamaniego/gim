@@ -877,5 +877,4 @@ public class BusinessHome extends EntityHome<Business> {
 		Collections.sort(parishNames);
 		return parishNames;
 	}	
-
 }

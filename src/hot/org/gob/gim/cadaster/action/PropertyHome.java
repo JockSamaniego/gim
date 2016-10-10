@@ -16,10 +16,12 @@ import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
 import org.gob.gim.appraisal.facade.AppraisalService;
+import org.gob.gim.cadaster.facade.CadasterService;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.income.facade.IncomeService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -2545,5 +2547,21 @@ public class PropertyHome extends EntityHome<Property> {
 	public void uploadImage(){
 		this.statusImage = false;	
 		System.out.println("uploadImage--->statusImageValor: "+statusImage);
+	}
+	
+	//Jock Samaniego
+	//23-09-2016
+	//Para activar predios rústicos deshabilitados
+	
+	public void activeRusticProperty(Property property){		
+		try{			
+			if(property.getPropertyType().getId() == 2){
+				property.setDeleted(Boolean.FALSE);
+				CadasterService cadasterService = ServiceLocator.getInstance().findResource(CadasterService.LOCAL_NAME);
+				cadasterService.updateRusticProperty(property);
+			}
+		}catch(Exception e){
+			System.out.println("error: no se completó la activación!!");
+		}
 	}
 }

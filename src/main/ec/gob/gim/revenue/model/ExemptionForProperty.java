@@ -1,6 +1,7 @@
 package ec.gob.gim.revenue.model;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,11 +60,16 @@ public class ExemptionForProperty {
 	@Column(length = 150)
 	private String nameHistoryResident;
 
+	//@tag descuentoEmprendimiento
+	//@author macartuche
+	//@date  2016-09-23
+	private Date validUntil;
+	
 	public ExemptionForProperty() {
 		this.amountCreditYear1 = BigDecimal.ZERO;
 		this.amountCreditYear2 = BigDecimal.ZERO;
 		this.amountCreditYear3 = BigDecimal.ZERO;
-		this.discountPercentage = new BigDecimal(100);
+		this.discountPercentage = null;
 	}
 
 	public Long getId() {
@@ -138,4 +144,14 @@ public class ExemptionForProperty {
 		this.treatmentType = treatmentType;
 	}
 
+	//@tag descuentoEmprendimiento
+	//@author macartuche
+	//@date  2016-09-23
+	public Date getValidUntil() {
+		return validUntil;
+	}
+
+	public void setValidUntil(Date validUntil) {
+		this.validUntil = validUntil;
+	}	
 }
