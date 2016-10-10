@@ -33,17 +33,20 @@ public class WorkDealFractionServiceBean implements WorkDealFractionService {
 	public List<WorkDealFraction> findFractions(Long workDeal_id,
 			String cadastralCode, Integer firstRow, Integer numberOfRows) {
 		String qryBase = "select wf from WorkDealFraction wf where wf.workDeal.id=:workDeal_id";
-		String conditionAdditional = " and wf.property.cadastralCode=:cadastralCode";
+		String conditionAdditional = " and wf.property.cadastralCode like(:cadastralCode)";
 		// TODO Auto-generated method stub
 		String finalQuery = qryBase;
 
 		if (cadastralCode != null) {
 			finalQuery = finalQuery + conditionAdditional;
 		}
+		
+		finalQuery = finalQuery + " order by wf.property.cadastralCode ASC";
+		
 		Query query = entityManager.createQuery(finalQuery);
 		query.setParameter("workDeal_id", workDeal_id);
 		if (cadastralCode != null) {
-			query.setParameter("cadastralCode", cadastralCode);
+			query.setParameter("cadastralCode", cadastralCode+"%");
 		}
 		query.setFirstResult(firstRow);
 		query.setMaxResults(numberOfRows);

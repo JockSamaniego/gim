@@ -560,7 +560,7 @@ public class ExemptionHome extends EntityHome<Exemption> {
 		} else {
 			this.isExemptionEspecial = Boolean.FALSE;
 		}
-
+		
 	}
 
 	public void prepareEditExcemption(Exemption excemption) {

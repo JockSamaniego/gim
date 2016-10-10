@@ -1,5 +1,6 @@
 package ec.gob.gim.revenue.model.adjunct;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,6 +35,11 @@ public class BusinessLocalReference extends Adjunct{
 	@Column(length=120)
 	private String localName;
 
+	//@tag descuentoEmprendimiento
+	//@author macartuche
+	//@date 2016-09-23T12:04
+	private Boolean hasDiscountByEntrepreneurship;
+	
 	public BusinessLocalReference(){
 		lostFiscalYear = Boolean.FALSE;
 	}
@@ -135,4 +141,14 @@ public class BusinessLocalReference extends Adjunct{
 		return details;
 	}
 
+	//@tag descuentoEmprendimiento
+	//@author macartuche
+	//@date 2016-09-23T12:04
+	public Boolean getHasDiscountByEntrepreneurship() {
+		return hasDiscountByEntrepreneurship;
+	}
+
+	public void setHasDiscountByEntrepreneurship(Boolean hasDiscountByEntrepreneurship) {
+		this.hasDiscountByEntrepreneurship = hasDiscountByEntrepreneurship;
+	}	
 }

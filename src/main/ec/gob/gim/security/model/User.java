@@ -68,6 +68,10 @@ public class User implements Comparable<User> {
 	@Column(name="cashier_id")
 	private Long cashierid;
 	
+	//@author macartuche
+	//@tag turnero
+	//2016-08-02T11:13
+	private Boolean callTicket;
 	
 	public User() {
 		roles = new ArrayList<Role>();
@@ -230,5 +234,17 @@ public class User implements Comparable<User> {
 
 	public void setCashierid(Long cashierid) {
 		this.cashierid = cashierid;
-	}  
+	}
+
+	//@author macartuche
+	//@tag turnero
+	//2016-08-02T11:14
+	public Boolean getCallTicket() {
+		return callTicket;
+	}
+
+	public void setCallTicket(Boolean callTicket) {
+		this.callTicket = callTicket;
+	} 
+	
 }

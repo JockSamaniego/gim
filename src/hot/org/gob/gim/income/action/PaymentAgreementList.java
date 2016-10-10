@@ -12,27 +12,26 @@ public class PaymentAgreementList extends EntityQuery<PaymentAgreement> {
 
 	private static final String EJBQL = "select pa from PaymentAgreement pa join fetch pa.resident r";
 
-	private static final String[] RESTRICTIONS = {
-		"(lower(r.identificationNumber) like lower(concat(#{paymentAgreementList.criteria},'%')) OR lower(r.name) like lower(concat(:el1,'%')))",
-		"pa.isActive = #{paymentAgreementList.isActive}"
+	private static final String[] RESTRICTIONS = { "(lower(r.identificationNumber) like lower(concat(#{paymentAgreementList.criteria},'%')) OR lower(r.name) like lower(concat(:el1,'%')))",
+	// "pa.isActive = #{paymentAgreementList.isActive}"
 	};
-	
+
 	private String criteria;
 
 	public PaymentAgreementList() {
 		setEjbql(EJBQL);
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
 		setMaxResults(25);
-		
-		//rfarmijosm 2016-05-23
+
+		// rfarmijosm 2016-05-23
 		setOrderColumn("pa.id");
-        setOrderDirection("desc");
+		setOrderDirection("desc");
 	}
-	
-	public Boolean getIsActive(){
+
+	public Boolean getIsActive() {
 		return Boolean.TRUE;
 	}
-	
+
 	@Override
 	public String getRestrictionLogicOperator() {
 		return "and";
@@ -45,9 +44,8 @@ public class PaymentAgreementList extends EntityQuery<PaymentAgreement> {
 	public void setCriteria(String criteria) {
 		this.criteria = criteria;
 	}
-	
-	/*@Override
-	public String getOrder() {
-		return "r.name";
-	}*/
+
+	/*
+	 * @Override public String getOrder() { return "r.name"; }
+	 */
 }

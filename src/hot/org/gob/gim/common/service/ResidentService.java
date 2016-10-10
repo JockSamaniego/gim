@@ -22,5 +22,10 @@ public interface ResidentService {
 	void verifyUniqueness(Long id, String identificationNumber, IdentificationType identificationType) throws IdentificationNumberExistsException;
 	void save(Resident resident) throws IdentificationNumberExistsException;
 	Boolean isPublicInstitution(Long residentId);
+	void loadPublicInstitutions();
+	void updatePublicInstitutions();
+	
+	
+	
 	
 }

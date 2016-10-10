@@ -16,6 +16,23 @@
 		<h:form id="municipalBondEditTitle" styleClass="edit">
 			<a:queue requestDelay="10" ignoreDupResponses="true" />
 
+			<rich:simpleTogglePanel rendered="#{userSession.user.callTicket}">
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle,"
+							cellpadding="0" cellspacing="0">
+							<h:outputText value="#{messages['turnero.title']}" styleClass="formTitle" />
+						</h:panelGrid>
+					</f:facet>
+					 <h:panelGrid id="checkIFrame" heigth="300">
+					 	 <iframe frameborder="0" align="left"
+				             src="http://192.168.1.52/novosga/public/modules/sga.atendimento/index"
+				             name="PdfPnl" id="PdfPnl" scrolling="auto" width="1280" 
+				             height="240" marginheight="5" marginwidth="10">
+				         </iframe>
+					 </h:panelGrid>
+			</rich:simpleTogglePanel>
+			<div style="clear:both; height:20px" />
+			
 			<rich:panel>
 				<f:facet name="header">
 					<h:outputText styleClass="formTitle"
@@ -178,7 +195,7 @@
 									rendered="#{municipalBondHome.entry.id == '8' or municipalBondHome.entry.id == '2'}" style="margin-right:30px;">
 									<h:outputText value="#{municipalBondHome.getMessage()} " style="font-weight:bold; font-size:10px; color:red" />
 								</s:decorate>
-
+								
 							</h:panelGrid>
 
 

@@ -75,8 +75,7 @@
 						style="font-weight:bold; font-size:25px; color:red" 
 						value="El contribuyente está registrado como fallecido"/>
 				</rich:panel>
-				
-							
+		
 				<rich:dataTable value="#{paymentAgreementHome.municipalBondItems}"
 					var="_entryItem"
 					rendered="#{not empty paymentAgreementHome.municipalBondItems and empty paymentAgreementHome.agreemetsExist and !paymentAgreementHome.personIsDead}"
@@ -373,7 +372,13 @@
 					</rich:subTable>
 				</rich:dataTable>
 			</a:outputPanel>
-			
+			<div class="actionButtons" align="right">
+				<s:button id="activeBtn" disabled="#{!paymentAgreementHome.toActive}"    
+						action="#{paymentAgreementHome.activePaymentAgreement()}"
+						value="Activar"
+						reRender="paymentAgreement">
+				</s:button>
+			</div>
 			<rich:panel rendered="#{not empty paymentAgreementHome.instance.id}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['paymentAgreement.dividends']}" />

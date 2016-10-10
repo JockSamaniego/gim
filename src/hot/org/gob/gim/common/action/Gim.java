@@ -12,6 +12,7 @@ import javax.persistence.Query;
 import javax.servlet.http.HttpSession;
 
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.facade.IncomeService;
 import org.jboss.seam.ScopeType;
@@ -52,11 +53,23 @@ public class Gim extends EntityController {
 		IncomeService service = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		institution = service.findDefaultInstitution();
 		loadFiscalPeriod();
+		
+		/**
+		 * @author: rene
+		 * @fecha: 3/10/2016
+		 * @tag:Instituciones publicas
+		 */
+		ResidentService residentService = ServiceLocator.getInstance().findResource(ResidentService.LOCAL_NAME);
+		residentService.loadPublicInstitutions();
 	}
 
 	public void refreshSystemparameters() {
 		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
 		systemParameterService.updateParameters();
+		
+		ResidentService residentService = ServiceLocator.getInstance().findResource(ResidentService.LOCAL_NAME);
+		residentService.updatePublicInstitutions();
+		
 		Redirect r = Redirect.instance();
 		r.setViewId("/home.xhtml");
 		r.setConversationPropagationEnabled(false);
