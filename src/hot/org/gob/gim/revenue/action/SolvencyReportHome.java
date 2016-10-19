@@ -249,12 +249,16 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		Long  payment_agreementBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
 		//rfarmijosm 2016-03-20 pedido de alice
 		Long  blockedBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_BLOCKED");
+		//rfarmijosm 2016-10-18 pedido de alice
+		Long futureBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE");
 				
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(payment_agreementBondStatusId);
 		//rfarmijosm 2016-03-20 pedido de alice
 		statuses.add(blockedBondStatusId);
+		//rfarmijosm 2016-10-18 pedido de alice
+		statuses.add(futureBondStatusId);
 		
 		Query query = null;
 		if(resident != null && entry == null && (code == null || code.trim().isEmpty()) ){
