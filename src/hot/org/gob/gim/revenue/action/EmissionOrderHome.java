@@ -849,14 +849,32 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 	private String selectedParish;
 	private Boolean sinat;
 	
+	//@tag predioEspecial
+	//@author macartuche
+	//@date 2016-10-27 15:20
 	@SuppressWarnings("unchecked")
+	public List<TerritorialDivision> findParishesSpecial(Long defaultCantonId) {
+		return findTerritorialDivisions(defaultCantonId);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<TerritorialDivision> findTerritorialDivisionSpecial(Long parentId) {
+		
+		//falta hacer eso
+		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParent");
+		query.setParameter("parentId", parentId);
+		return query.getResultList();
+	}
+	
+	//@end macartuche
+	
+
 	public List<String> findParishesSinat(){
 		//LocationPropertySinat
 		Query q = getEntityManager().createQuery("Select DISTINCT(lps.parishName) "
 				+ "from LocationPropertySinat lps order by lps.parishName");
 		return (List<String>)q.getResultList();
 	}
-	
 	
 	@SuppressWarnings("unchecked")
 	public void findSectorsByParish(){

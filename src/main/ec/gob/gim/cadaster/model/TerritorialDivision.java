@@ -70,6 +70,11 @@ public class TerritorialDivision {
 	@OneToMany(mappedBy = "sector", cascade = CascadeType.ALL)
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Block> blocks;
+	
+	//@tag predioEspecial
+	//@author macartuche
+	//@date 2016-10-27T16:07
+	private String type;
 
 	public TerritorialDivision() {
 		this.territorialDivisions = new ArrayList<TerritorialDivision>();
@@ -201,6 +206,18 @@ public class TerritorialDivision {
 			parent = parent.getParent();
 		}
 		return sb.toString();
+	}
+
+	
+	//@tag predioEspecial
+	//@author macartuche
+	//@date 2016-10-27T16:07
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }// end TerritorialDivision

@@ -1,0 +1,87 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel>
+		<f:facet name="header">
+			<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText
+					value="#{messages['propertyLanduse']} (#{empty propertySpecialHome.propertyLandUses ? 0 : propertySpecialHome.propertyLandUses.size})" />
+				<s:div styleClass="actionButtons" rendered="#{empty from}">					
+					<a:commandButton value="#{messages['common.add']}"
+						action="#{propertySpecialHome.addPropertyLandUse}"
+						reRender="propertyLandUseList" ajaxSingle="true" immediate="true">
+					</a:commandButton>
+				</s:div>
+			</h:panelGrid>
+		</f:facet>
+		
+		<a:region>
+		<a:outputPanel styleClass="results" id="propertyLandUseList">
+			<h:outputText value="#{messages['property.noPropertyLandUses']}"
+				rendered="#{empty propertySpecialHome.propertyLandUses}" />
+			
+
+			<rich:dataTable id="propertyLandUseTable" var="_propertyLandUse"
+				value="#{propertySpecialHome.propertyLandUses}"
+				rowClasses="rvgRowOne,rvgRowTwo"
+				rendered="#{not empty propertySpecialHome.propertyLandUses}">
+				<rich:column sortBy="#{_propertyLandUse.landUse.name}"
+					styleClass="action">					
+					<f:facet name="header">
+						<h:outputText value="#{messages['landUse']}" />
+					</f:facet>
+					<h:selectOneMenu value="#{_propertyLandUse.landUse}"
+						required="true">
+						<s:selectItems value="#{landUses}" var="_landUse" 
+							label="#{_landUse.code} - #{_landUse.name}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+						<a:support event="onchange" ajaxSingle="true"/>
+					</h:selectOneMenu>
+
+				</rich:column>
+				<rich:column styleClass="action" style="align:center;">
+					<f:facet name="header">
+						<h:outputText
+							value="#{messages['propertyLandUse.hasOperatingPermit']}" />
+					</f:facet>
+					<h:selectBooleanCheckbox
+						value="#{_propertyLandUse.hasOperatingPermit}">
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>
+				</rich:column>
+				<rich:column sortBy="#{_propertyLandUse.slices}" styleClass="action">
+						<f:facet name="header">
+							<h:outputText value="#{messages['propertyLandUse.slices']}" />
+						</f:facet>
+						<h:inputText value="#{_propertyLandUse.slices}" required="true"
+							size="5" maxlength="5">
+							<a:support event="onblur" ajaxSingle="true"/>
+						</h:inputText>					
+				</rich:column>
+				<rich:column styleClass="action">
+					<f:facet name="header">#{messages['common.action']}</f:facet>
+					<a:commandButton action="#{propertySpecialHome.remove(_propertyLandUse)}"
+						id="removePropertyLandUse" value="#{messages['common.remove']}"
+						immediate="true" reRender="propertyLandUseList" ajaxSingle="true">
+					</a:commandButton>
+				</rich:column>
+
+			</rich:dataTable>
+
+		</a:outputPanel>
+		</a:region>
+		<div style="clear: both">
+			<span class="required">*</span> #{messages['common.requiredFields']}
+		</div>
+
+	</rich:panel>
+</ui:composition>

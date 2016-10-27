@@ -1,0 +1,321 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:include src="fragment/PropertySearcher.xhtml" />
+
+		<h:form id="propertySearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['propertyListSpecial.manager']}" />
+
+			<rich:simpleTogglePanel label="#{messages['property.searchFilter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['resident']}: </ui:define>
+					<h:inputText id="residentCriteria"
+						value="#{propertySpecialList.residentCriteria}" size="40"
+						maxlength="40" />
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['property.cadastralCode']}: </ui:define>
+					<h:inputText id="cadastralCodeCriteria"
+						value="#{propertySpecialList.cadastralCodeCriteria}" size="40"
+						maxlength="40" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/cadaster/PropertySpecialList.xhtml">
+					<f:param name="firstResult" value="0" />
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none">
+					<f:param name="isSpecial" value="#{propertySpecialList.special}" />
+					<f:param name="residentCriteria" />
+					<f:param name="cadastralCodeCriteria" />
+					<f:param name="propertyType" />
+				</s:button>
+			</div>
+
+
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['property.searchResults']} (#{empty propertyList.resultList ? 0 : (propertyList.resultList.size)})" />
+
+						<s:button view="/cadaster/PropertySpecialEdit.xhtml" id="create"
+							propagation="none"
+							value="#{messages['common.create']} #{messages['property']}">
+							<f:param name="propertyId" />
+							<f:param name="isSpecial" value="#{isSpecial}" />
+						</s:button>
+
+						<!-- 						<a:commandButton id="createFromTemplate" -->
+						<!-- 							reRender="searchPropertyPanel" ajaxSingle="true" -->
+						<!-- 							eventsQueue="gimQueue" -->
+						<!-- 							oncomplete="Richfaces.showModalPanel('searchPropertyPanel',{width:700, height:500})" -->
+						<!-- 							disabled="#{not empty disabled ? disabled : 'false'}" -->
+						<!-- 							value="#{messages['common.createFromTemplate']}" /> -->
+
+					</h:panelGrid>
+
+				</f:facet>
+				<div class="results" id="propertyList">
+
+					<h:outputText
+						value="#{messages['property.searchReturnedNoResults']}."
+						rendered="#{empty propertySpecialList.resultList}" />
+
+					<rich:dataTable id="propertyList" var="_property"
+						value="#{propertySpecialList.resultList}"
+						rendered="#{not empty propertySpecialList.resultList}">
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['property.cadastralCode']}" />
+									<ui:param name="propertyPath" value="property.cadastralCode" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_property.cadastralCode}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['property.previousCadastralCode']}" />
+									<ui:param name="propertyPath"
+										value="property.previousCadastralCode" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_property.previousCadastralCode}" />
+						</h:column>
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['property.area']}" />
+									<ui:param name="propertyPath" value="property.area" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_property.area}">
+								<f:convertNumber pattern="#0.00" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['property.constructionArea']}" />
+									<ui:param name="propertyPath"
+										value="property.currentDomain.totalAreaConstruction" />
+								</ui:include>
+							</f:facet>
+							<h:outputText
+								value="#{_property.currentDomain.totalAreaConstruction}">
+								<f:convertNumber pattern="#0.00" />
+							</h:outputText>
+						</rich:column>
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['property.status']}" />
+									<ui:param name="propertyPath" value="property.deleted" />
+								</ui:include>
+							</f:facet>
+							<h:outputText
+								value="#{_property.deleted ? messages['property.deleted'].toUpperCase() : messages['property.valid'].toUpperCase()}" />
+						</h:column>
+
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="propertyLabel" value="#{messages['resident']}" />
+									<ui:param name="propertyPath"
+										value="property.currentDomain.resident.name" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_property.currentDomain.resident.name}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['resident.identificationNumber']}" />
+									<ui:param name="propertyPath"
+										value="property.currentDomain.resident.identificationNumber" />
+								</ui:include>
+							</f:facet>
+							<h:outputText style="text-align:right"
+								value="#{_property.currentDomain.resident.identificationNumber}" />
+						</h:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['domain.commercialAppraisal']}" />
+									<ui:param name="propertyPath"
+										value="property.currentDomain.commercialAppraisal" />
+								</ui:include>
+							</f:facet>
+							<h:outputText
+								value="#{_property.currentDomain.commercialAppraisal}">
+								<f:convertNumber pattern="#0.00" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="action: left">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+
+							<a:region>
+								<a:commandButton id="prints"
+									action="#{propertyHome.generateChangeOwnerReport(_property)}"
+									rendered="#{propertyHome.needConfirmChangeOwner(_property) and not _property.deleted}"
+									value="#{messages['common.print']}">
+								</a:commandButton>
+							</a:region>
+
+							<s:button view="/cadaster/PropertyEdit.xhtml"
+								includePageParams="false" value="#{messages['common.view']}"
+								propagation="none" id="view">
+								<f:param name="propertyId" value="#{_property.id}" />
+								<f:param name="readOnly" value="#{true}" />
+							</s:button>
+
+							<s:button view="/cadaster/ChangeOwnerPropertyName.xhtml"
+								includePageParams="false"
+								value="#{messages['property.changeOwnerName']}"
+								propagation="none" id="changeName"
+								rendered="#{!propertyHome.needConfirmChangeOwner(_property) and not _property.deleted}">
+								<f:param name="propertyId" value="#{_property.id}" />
+								<f:param name="isUrban" value="#{propertyHome.urban}" />
+							</s:button>
+
+							<s:button view="/cadaster/PropertyEdit.xhtml"
+								includePageParams="false" value="#{messages['common.edit']}"
+								propagation="none" id="propertyEdit"
+								rendered="#{not _property.deleted}">
+								<f:param name="propertyId" value="#{_property.id}" />
+								<f:param name="readOnly" value="#{false}" />
+							</s:button>
+            				#{' '}
+             				<s:button view="/cadaster/ChangeOwnerProperty.xhtml"
+								rendered="#{!propertyHome.needConfirmChangeOwner(_property) and not _property.deleted}"
+								value="#{messages['domain.changeOwner']}" propagation="none"
+								includePageParams="false" id="propertyChangeOwner">
+								<f:param name="propertyId" value="#{_property.id}" />
+								<f:param name="confirm" value="false" />
+								<f:param name="isUrban" value="true" />
+								<f:param name="changeOwner" value="true" />
+								<f:param name="domainId" />
+							</s:button> 
+				            #{' '}
+				            <s:button view="/cadaster/DomainEdit.xhtml"
+								value="#{messages['property.confirmChangeOwner']}"
+								propagation="none" includePageParams="false" id="changeOwner"
+								rendered="#{propertyHome.needConfirmChangeOwner(_property) and not _property.deleted}">
+								<f:param name="confirm" value="true" />
+								<f:param name="propertyId" value="#{_property.id}" />
+								<f:param name="isUrban" value="true" />
+								<f:param name="domainId"
+									value="#{propertyHome.lastDomainOfProperty(_property).id}" />
+							</s:button>
+							<s:button view="/cadaster/DomainEdit.xhtml"
+								rendered="#{!propertyHome.needConfirmChangeOwner(_property) and not _property.deleted and false}"
+								value="#{messages['domain.addMortgage']}" propagation="none"
+								id="propertyAddMortgage" includePageParams="false">
+								<f:param name="addMortgage" value="true" />
+								<f:param name="propertyId" value="#{_property.id}" />
+								<f:param name="isUrban" value="true" />
+								<f:param name="domainId" value="#{_property.currentDomain.id}" />
+							</s:button>
+
+
+							<s:button view="/cadaster/HistoryProperty.xhtml"
+								includePageParams="false"
+								value="#{messages['property.history']}" propagation="none"
+								id="propertyHistory" rendered="#{empty from}">
+								<f:param name="isUrban" value="true" />
+								<f:param name="propertyId" value="#{_property.id}" />
+							</s:button>
+
+
+							<!--nuevo boton puesto para el reporteeeeeeeee	.....................................................	-->
+							<s:button view="/cadaster/PropertyEdit.xhtml"
+								includePageParams="false" value="Reporte" propagation="none"
+								id="Reporte_Urbano">
+								<f:param name="propertyId" value="#{_property.id}" />
+								<f:param name="readOnly" value="#{true}" />
+							</s:button>
+						</rich:column>
+					</rich:dataTable>
+				</div>
+			</rich:panel>
+		</h:form>
+
+		<div class="tableControl">
+
+			<s:link view="/cadaster/PropertyList.xhtml"
+				rendered="#{propertyList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/cadaster/PropertyList.xhtml"
+				rendered="#{propertyList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult"
+					value="#{propertyList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/cadaster/PropertyList.xhtml"
+				rendered="#{propertyList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult" value="#{propertyList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/cadaster/PropertyList.xhtml"
+				rendered="#{propertyList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult" value="#{propertyList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>
