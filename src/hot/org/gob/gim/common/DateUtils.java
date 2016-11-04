@@ -5,6 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.persistence.Query;
+
+import org.gob.gim.revenue.action.MunicipalBondHome;
+
+import ec.gob.gim.income.model.TaxpayerRecord;
+
 public class DateUtils {
 	public static Date truncate(Date date){
 		Calendar calendar = DateUtils.getTruncatedInstance(date);
@@ -45,5 +51,37 @@ public class DateUtils {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss");
 		return df.format(date);
 	}
+	
+	//@EJB
+		//MunicipalBondService municipalBondService;
+		
+		MunicipalBondHome mbh=new MunicipalBondHome();
+		
+		public int finMunicipalbond(){
+			Query query = mbh.getEntityManager().createNamedQuery("Issuer.findActiveTaxpayerRecordByEntryId");
+			query.setParameter("entryId", Long.parseLong("76"));
+			TaxpayerRecord taxpayerRecord = null;
+			try {
+				taxpayerRecord = (TaxpayerRecord) query.getSingleResult();
+			} catch (Exception e) {
+				System.out.println("WARNING: There is no or there is more than one active taxpayer record for entry "
+						+ Long.parseLong("76") + " selecting default issuer");
+			}
+
+			if (taxpayerRecord == null) {
+				taxpayerRecord = findDefaultInstitution();
+			}
+			//return taxpayerRecord;
+			
+			//TaxpayerRecord institution = municipalBondService.findTaxpayerRecord(Long.parseLong("76"));
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> "+taxpayerRecord.getName());
+			return 2;
+		}
+		
+		public TaxpayerRecord findDefaultInstitution() {
+			Query query = mbh.getEntityManager().createNamedQuery("TaxpayerRecord.findDefaultTaxpayerRecord");
+			TaxpayerRecord institution = (TaxpayerRecord) query.getSingleResult();
+			return institution;
+		}
 	
 }
