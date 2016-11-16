@@ -378,6 +378,15 @@
 						value="Activar"
 						reRender="paymentAgreement">
 				</s:button>
+
+				<a:commandButton 
+								id="viewer" 
+								ajaxSingle="true"
+								action="#{paymentAgreementHome.loadMunicipalBondPayments()}"
+								disabled="#{paymentAgreementHome.checkAvailable()}"
+								eventsQueue="gimEventsQueue" reRender="municipalBondViewer"
+								oncomplete="Richfaces.showModalPanel('municipalBondViewer',{width:1024, height:500})"
+								value="#{messages['paymentagreeement.viewpayments']}" />
 			</div>
 			<rich:panel rendered="#{not empty paymentAgreementHome.instance.id}">
 				<f:facet name="header">
@@ -421,20 +430,248 @@
 						</rich:column>
 					</rich:dataTable>
 				</rich:panel>
-			
-
-			<div class="actionButtons">
-				<s:button id="printBtn" rendered="#{paymentAgreementHome.managed or paymentAgreementHome.readyForPrint}"
-						view="/income/report/PaymentAgreementReport.xhtml"
-						value="#{messages['common.print']}" propagation="join">
-				</s:button>
 				
-				<s:button id="exitBtn"
-						view="/income/PaymentAgreementList.xhtml"
-						value="#{messages['common.exit']}" propagation="none">
-				</s:button>
-			</div>
+				<div class="actionButtons">
+					<s:button id="printBtn" rendered="#{paymentAgreementHome.managed or paymentAgreementHome.readyForPrint}"
+							view="/income/report/PaymentAgreementReport.xhtml"
+							value="#{messages['common.print']}" propagation="join">
+					</s:button>					
+					<s:button id="exitBtn"
+							view="/income/PaymentAgreementList.xhtml"
+							value="#{messages['common.exit']}" propagation="none">
+					</s:button>
+				</div>
 		</h:form>
+		
+		<!-- @tag convenioPago -->
+		<rich:modalPanel id="municipalBondViewer" width="1024" height="350" >
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="#{messages['municipalBond.dividendsTotal']}"></h:outputText>
+					</h:panelGroup>
+				</f:facet>
+				<f:facet name="controls">
+					<h:panelGroup>
+						<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+							id="ocultarlink" />
+						<rich:componentControl for="municipalBondViewer"
+							attachTo="ocultarlink" operation="hide" event="onclick" />
+					</h:panelGroup>
+				</f:facet>
+				<h:form id="paymentAgreements">
+				
+				<rich:dataTable id="agreementBondsTable"
+						value="#{paymentAgreementHome.municipalBonds}" var="_municipalBond"
+						rowClasses="rvgRowOne,rvgRowTwo" columnClasses="tableCellFont"
+						style="margin-top:5px;"
+						rendered="#{paymentAgreementHome.municipalBonds != null}">
+				
+						<f:facet name="header">
+							<rich:columnGroup>
+								<rich:column styleClass="left" colspan="9">
+									<h:outputText styleClass="tableTitle"
+										value="#{messages['payment.paymentAgreementBonds']}" />
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+				
+						<rich:column styleClass="left entryTitle" rowspan="2" colspan="2" width="40%">
+							<h:outputText
+								value="#{_municipalBond.entry.name} - #{_municipalBond.transformedServiceDate}" />
+							<br />
+							<h:outputText style="font-weight:normal;"
+								value="#{_municipalBond.groupingCode} - #{empty _groupingItem.municipalBond.adjunct ? _groupingItem.municipalBond.address : _groupingItem.municipalBond.adjunct} (Vencida el #{_municipalBond.expirationDate})" />
+						</rich:column>
+				
+						<rich:column styleClass="center entryTitle">
+							<h:outputText style="font-weight:normal;"
+								value="#{messages['municipalBond.value']}" />
+						</rich:column>
+				
+						<rich:column styleClass="center entryTitle">
+							<h:outputText style="font-weight:normal;"
+								value="#{messages['municipalBond.balance']}" />
+						</rich:column>
+				
+						<rich:column styleClass="center entryTitle">
+							<h:outputText style="font-weight:normal;"
+								value="#{messages['municipalBond.interestsTotal']}" />
+						</rich:column>
+						
+						<rich:column styleClass="center entryTitle">
+							<h:outputText style="font-weight:normal;"
+								value="#{messages['municipalBond.surcharges']}" />
+						</rich:column>
+						
+						<rich:column styleClass="center entryTitle">
+							<h:outputText style="font-weight:normal;"
+								value="#{messages['municipalBond.discounts']}" />
+						</rich:column>
+				
+						<rich:column styleClass="center entryTitle">
+							<h:outputText style="font-weight:normal;"
+								value="#{messages['municipalBond.taxesTotal']}" />
+						</rich:column>
+				
+						<rich:column styleClass="center entryTitle">
+							<h:outputText style="font-weight:normal;"
+								value="#{messages['municipalBond.paidTotal']}" />
+						</rich:column>
+				
+						<rich:column styleClass="right entryTitle" breakBefore="true" width="10%">
+							<h:outputText value="#{_municipalBond.value}" >
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+						<rich:column styleClass="right entryTitle" width="10%">
+							<h:outputText value="#{_municipalBond.balance}">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+						<rich:column styleClass="right entryTitle" width="8%">
+							<h:outputText value="#{_municipalBond.interest}">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+						<rich:column styleClass="right entryTitle" width="8%">
+							<h:outputText value="#{_municipalBond.surcharge}">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+						<rich:column styleClass="right entryTitle" width="8%">
+							<h:outputText value="#{_municipalBond.discount}">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+						<rich:column styleClass="right entryTitle" width="8%">
+							<h:outputText value="#{_municipalBond.taxesTotal}">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+						<rich:column styleClass="right entryTitle" width="10%">
+							<h:outputText value="#{_municipalBond.paidTotal}">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+				
+						<rich:subTable rendered="#{empty _municipalBond.deposits}" value="1">
+							<rich:column styleClass="left" colspan="9">
+								<h:outputText value="#{messages['deposit.notRegisteredDeposits']}" />
+							</rich:column>
+						</rich:subTable>
+				
+						<rich:subTable value="#{_municipalBond.deposits}" var="_deposit"
+							rendered="#{not empty _municipalBond.deposits}">
+				
+							<rich:column
+								styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}"
+								width="2%">
+								<f:facet name="header">#{messages['deposit.number']}</f:facet>
+								<h:outputText value="#{_deposit.number}" />
+							</rich:column>
+							<rich:column
+								styleClass="center #{_deposit.id == null ? 'groupingTitle' : ''}" width="38%">
+								<f:facet name="header">#{messages['deposit.date']}</f:facet>
+								<h:outputText value="#{_deposit.date}">
+									<f:convertDateTime pattern="yyyy-MM-dd" />
+								</h:outputText>
+							</rich:column>
+				
+							<rich:column
+								styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+								<f:facet name="header">#{messages['deposit.capital']}</f:facet>
+								<h:outputText value="#{_deposit.capital}">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+							<rich:column
+								styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+								<f:facet name="header">#{messages['deposit.balance']}</f:facet>
+								<h:outputText value="#{_deposit.balance}">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+							<rich:column
+								styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+								<f:facet name="header">#{messages['deposit.interest']}</f:facet>
+								<h:outputText value="#{_deposit.interest}">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+							
+							<rich:column
+								styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+								<f:facet name="header">#{messages['deposit.surcharge']}</f:facet>
+								<h:outputText value="#{_deposit.surcharge}">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+				
+							<rich:column
+								styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+								<f:facet name="header">#{messages['deposit.discount']}</f:facet>
+								<h:outputText value="#{_deposit.discount}">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+							
+							<rich:column
+								styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+								<f:facet name="header">#{messages['deposit.paidTaxes']}</f:facet>
+								<h:outputText
+									value="#{_deposit.balance == 0 ? _deposit.municipalBond.taxesTotal : 0}">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+				
+							<rich:column
+								styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+								<f:facet name="header">#{messages['deposit.value']}</f:facet>
+								<h:outputText value="#{_deposit.value}">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+						</rich:subTable>
+				
+					</rich:dataTable>
+				
+
+				<a:commandButton 
+								id="exitViewer" 
+								ajaxSingle="true"
+								oncomplete="Richfaces.hideModalPanel('municipalBondViewer',{width:1024, height:500})"
+								value="#{messages['common.quit']}" />
+				</h:form>
+		</rich:modalPanel>
+		<!-- fin @tag convenioPago -->
 
 	</ui:define>
 </ui:composition>
