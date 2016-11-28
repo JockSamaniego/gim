@@ -40,6 +40,10 @@ import ec.gob.gim.common.model.Resident;
 		// macartuche
 		// agregar fecha de creacion
 		@NamedQuery(name = "Exemption.findByFiscalPeriodAndActiveAndDate", query = "select e from Exemption e "
+				+ "left join fetch e.resident r "
+				+ "left join fetch e.partner p"
+				+ "left join fetch e.fiscalPeriod  f "
+				+ "left join fetch e.exemptionType et "
 				+ "where e.fiscalPeriod.id =:fiscalPeriodId and (e.creationDate between :start and :end) and e.active=true order by e.id")
 
 })

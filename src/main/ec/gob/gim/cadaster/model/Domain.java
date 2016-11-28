@@ -64,9 +64,11 @@ import ec.gob.gim.security.model.User;
 			+ "domain.buildingAppraisalTmp = :buildingAppraisalTmp, "
 			+ "domain.commercialAppraisalTmp = :commercialAppraisalTmp "
 			+ "WHERE domain.id IN (:domainId)"),
+		//@tag exoneraciones2017
 		@NamedQuery(name = "Domain.totalAppraisalCurrentDomainByResident", query = "select sum(domain.commercialAppraisal) from Domain domain "	
-			+ "join domain.resident resident "			
-			+ "where resident.id = :residentId and domain.currentProperty is not null"),
+			+ "join domain.resident resident "
+			+ "join domain.property property "			
+			+ "where resident.id = :residentId and domain.currentProperty is not null and property.deleted=false"),
 		@NamedQuery(name  = "Domain.findPendingTransfersByPropertyId", 
 			query = "select domain from Domain domain " +
 					"  where domain.property.id = :propertyId and " +
