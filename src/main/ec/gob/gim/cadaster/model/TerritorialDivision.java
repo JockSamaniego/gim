@@ -37,6 +37,9 @@ import org.hibernate.envers.Audited;
 		@NamedQuery(name = "TerritorialDivision.findByCodeAndParent", query = "select o from TerritorialDivision o where "
 				+ "o.code=:code and o.parent = :parent"),
 		@NamedQuery(name = "TerritorialDivision.findByParent", query = "select o from TerritorialDivision o where o.parent.id = :parentId order by o.code"),
+		//@tag predioColoma
+		@NamedQuery(name = "TerritorialDivision.findByParentAndSpecial", query = "select o from TerritorialDivision o where o.parent.id = :parentId and type=:type order by o.code"),
+		
 		@NamedQuery(name = "TerritorialDivision.findProvinces", query = "select o from TerritorialDivision o where o.parent IS NULL order by o.name"),
 		@NamedQuery(name = "TerritorialDivision.findProvinceByCode", query = "select o from TerritorialDivision o where o.parent IS NULL and o.code=:code order by o.name")})
 public class TerritorialDivision {

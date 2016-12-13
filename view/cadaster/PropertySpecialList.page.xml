@@ -15,6 +15,7 @@
    <param name="residentCriteria" value="#{propertySpecialList.residentCriteria}"/>
    <param name="cadastralCodeCriteria" value="#{propertySpecialList.cadastralCodeCriteria}"/>
    <param name="propertyType" value="#{propertySpecialList.propertyTypeId}"/>
+   
    <param name="isSpecial" value="#{propertySpecialList.special}"/>
    <navigation from-action="#{propertySpecialList.propertySelectedListener}">
       <rule if-outcome="fromTemplate">

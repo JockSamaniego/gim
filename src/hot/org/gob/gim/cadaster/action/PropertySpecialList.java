@@ -13,6 +13,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.framework.EntityQuery;
 
 import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.PropertyLocationType;
 import ec.gob.gim.common.model.SystemParameter;
 
 @Name("propertySpecialList")
@@ -20,6 +21,16 @@ import ec.gob.gim.common.model.SystemParameter;
 public class PropertySpecialList extends EntityQuery<Property> {
 	
 	private static final long serialVersionUID = 1L;
+	public Enum propertyLocationType = PropertyLocationType.SPECIAL;
+
+
+	public Enum getPropertyLocationType() { 
+		return propertyLocationType;
+	}
+
+	public void setPropertyLocationType(Enum propertyLocationType) {
+		this.propertyLocationType = propertyLocationType;
+	}
 
 	private static final String EJBQL = "select property from Property property " +
 		"left join fetch property.currentDomain currentDomain " +
@@ -40,7 +51,8 @@ public class PropertySpecialList extends EntityQuery<Property> {
 			"lower(resident.name) like lower(concat(:el1,'%')))",
 			"(lower(property.previousCadastralCode) like lower(concat(#{propertySpecialList.cadastralCodeCriteria},'%')) or " +
 			"lower(property.cadastralCode) like lower(concat('%',:el2,'%')))",
-			"pt.id = #{propertySpecialList.propertyTypeId}",};
+			"pt.id = #{propertySpecialList.propertyTypeId}  ",
+			"property.propertyLocationType = #{propertySpecialList.propertyLocationType} ",};
 
 	private String residentCriteria;
 	
@@ -134,11 +146,11 @@ public class PropertySpecialList extends EntityQuery<Property> {
 	/**
 	 * Carga el tipo de propiedad: urbana o rústica
 	 */
-	public void chargePropertyType(){
+	public void chargePropertyType(){ //cacpe
 		if(!isFirstTime) return;
 		isFirstTime = false;
-		String name="PROPERTY_TYPE_ID_SPECIAL";
-//		if(isSpecial) name ="PROPERTY_TYPE_ID_SPECIAL";
+		String name="PROPERTY_TYPE_ID_URBAN";
+//		if(isSpecial) name ="PROPERTY_TYPE_ID_URBAN";
 		setPropertyTypeId(Long.parseLong(findPropertyType(name)));
 	}
 	

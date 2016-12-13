@@ -15,7 +15,7 @@
 		<h:form id="propertySearch" styleClass="edit">
 
 			<h:outputText styleClass="formTitle"
-				value="#{messages['propertyListSpecial.manager']}" />
+				value="#{messages['PropertySpecialListSpecial.manager']}" />
 
 			<rich:simpleTogglePanel label="#{messages['property.searchFilter']}"
 				switchType="ajax">
@@ -57,7 +57,7 @@
 				<f:facet name="header">
 					<h:panelGrid columns="3" columnClasses="headerTitle,">
 						<h:outputText
-							value="#{messages['property.searchResults']} (#{empty propertyList.resultList ? 0 : (propertyList.resultList.size)})" />
+							value="#{messages['property.searchResults']} (#{empty PropertySpecialList.resultList ? 0 : (PropertySpecialList.resultList.size)})" />
 
 						<s:button view="/cadaster/PropertySpecialEdit.xhtml" id="create"
 							propagation="none"
@@ -76,19 +76,19 @@
 					</h:panelGrid>
 
 				</f:facet>
-				<div class="results" id="propertyList">
+				<div class="results" id="PropertySpecialList">
 
 					<h:outputText
 						value="#{messages['property.searchReturnedNoResults']}."
 						rendered="#{empty propertySpecialList.resultList}" />
 
-					<rich:dataTable id="propertyList" var="_property"
+					<rich:dataTable id="PropertySpecialList" var="_property"
 						value="#{propertySpecialList.resultList}"
 						rendered="#{not empty propertySpecialList.resultList}">
 						<h:column>
 							<f:facet name="header">
 								<ui:include src="../layout/sort.xhtml">
-									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="entityList" value="#{PropertySpecialList}" />
 									<ui:param name="propertyLabel"
 										value="#{messages['property.cadastralCode']}" />
 									<ui:param name="propertyPath" value="property.cadastralCode" />
@@ -100,7 +100,7 @@
 						<h:column>
 							<f:facet name="header">
 								<ui:include src="../layout/sort.xhtml">
-									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="entityList" value="#{PropertySpecialList}" />
 									<ui:param name="propertyLabel"
 										value="#{messages['property.previousCadastralCode']}" />
 									<ui:param name="propertyPath"
@@ -112,7 +112,7 @@
 						<rich:column styleClass="right">
 							<f:facet name="header">
 								<ui:include src="../layout/sort.xhtml">
-									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="entityList" value="#{PropertySpecialList}" />
 									<ui:param name="propertyLabel"
 										value="#{messages['property.area']}" />
 									<ui:param name="propertyPath" value="property.area" />
@@ -126,7 +126,7 @@
 						<rich:column styleClass="right">
 							<f:facet name="header">
 								<ui:include src="../layout/sort.xhtml">
-									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="entityList" value="#{PropertySpecialList}" />
 									<ui:param name="propertyLabel"
 										value="#{messages['property.constructionArea']}" />
 									<ui:param name="propertyPath"
@@ -142,7 +142,7 @@
 						<h:column>
 							<f:facet name="header">
 								<ui:include src="../layout/sort.xhtml">
-									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="entityList" value="#{PropertySpecialList}" />
 									<ui:param name="propertyLabel"
 										value="#{messages['property.status']}" />
 									<ui:param name="propertyPath" value="property.deleted" />
@@ -156,7 +156,7 @@
 						<h:column>
 							<f:facet name="header">
 								<ui:include src="../layout/sort.xhtml">
-									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="entityList" value="#{PropertySpecialList}" />
 									<ui:param name="propertyLabel" value="#{messages['resident']}" />
 									<ui:param name="propertyPath"
 										value="property.currentDomain.resident.name" />
@@ -167,7 +167,7 @@
 						<h:column>
 							<f:facet name="header">
 								<ui:include src="../layout/sort.xhtml">
-									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="entityList" value="#{PropertySpecialList}" />
 									<ui:param name="propertyLabel"
 										value="#{messages['resident.identificationNumber']}" />
 									<ui:param name="propertyPath"
@@ -181,7 +181,7 @@
 						<rich:column styleClass="right">
 							<f:facet name="header">
 								<ui:include src="../layout/sort.xhtml">
-									<ui:param name="entityList" value="#{propertyList}" />
+									<ui:param name="entityList" value="#{PropertySpecialList}" />
 									<ui:param name="propertyLabel"
 										value="#{messages['domain.commercialAppraisal']}" />
 									<ui:param name="propertyPath"
@@ -285,33 +285,33 @@
 
 		<div class="tableControl">
 
-			<s:link view="/cadaster/PropertyList.xhtml"
-				rendered="#{propertyList.previousExists}"
+			<s:link view="/cadaster/PropertySpecialList.xhtml"
+				rendered="#{propertySpecialList.previousExists}"
 				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
 				id="firstPage">
 				<f:param name="firstResult" value="0" />
 			</s:link>
 
-			<s:link view="/cadaster/PropertyList.xhtml"
-				rendered="#{propertyList.previousExists}"
+			<s:link view="/cadaster/PropertySpecialList.xhtml"
+				rendered="#{propertySpecialList.previousExists}"
 				value="#{messages.left} #{messages['common.previousPage']}"
 				id="previousPage">
 				<f:param name="firstResult"
-					value="#{propertyList.previousFirstResult}" />
+					value="#{propertySpecialList.previousFirstResult}" />
 			</s:link>
 
-			<s:link view="/cadaster/PropertyList.xhtml"
-				rendered="#{propertyList.nextExists}"
+			<s:link view="/cadaster/PropertySpecialList.xhtml"
+				rendered="#{propertySpecialList.nextExists}"
 				value="#{messages['common.nextPage']} #{messages.right}"
 				id="nextPage">
-				<f:param name="firstResult" value="#{propertyList.nextFirstResult}" />
+				<f:param name="firstResult" value="#{propertySpecialList.nextFirstResult}" />
 			</s:link>
 
-			<s:link view="/cadaster/PropertyList.xhtml"
-				rendered="#{propertyList.nextExists}"
+			<s:link view="/cadaster/PropertySpecialList.xhtml"
+				rendered="#{propertySpecialList.nextExists}"
 				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
 				id="lastPage">
-				<f:param name="firstResult" value="#{propertyList.lastFirstResult}" />
+				<f:param name="firstResult" value="#{propertySpecialList.lastFirstResult}" />
 			</s:link>
 
 		</div>
