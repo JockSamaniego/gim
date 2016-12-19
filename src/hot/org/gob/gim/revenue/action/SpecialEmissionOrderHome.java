@@ -569,8 +569,10 @@ public class SpecialEmissionOrderHome extends EntityHome<EmissionOrder> {
 		//special
 		//@tag precioColoma
 		isUrbanProperty = false;
-		List<MunicipalBond> mb = cadasterService.onlyCalculatePreEmissionOrderPropertyTax(this.getInstance(), entry, properties, fiscalPeriod, userSession.getPerson(), isUrbanProperty);				 
+		boolean isSpecial =true;
+		List<MunicipalBond> mb = cadasterService.onlyCalculatePreEmissionOrderPropertyTax(this.getInstance(), entry, properties, fiscalPeriod, userSession.getPerson(), isUrbanProperty, isSpecial);				 
 		if(mb != null) this.getInstance().getMunicipalBonds().addAll(mb);
+		isUrbanProperty = true;
 	}
 	
 

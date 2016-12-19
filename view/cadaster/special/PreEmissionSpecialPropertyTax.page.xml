@@ -16,10 +16,10 @@
    <navigation>
       <rule if-outcome="persisted">
          <end-conversation before-redirect="true"/>
-         <redirect view-id="/cadaster/PreEmissionSpecialPropertyTax.xhtml"/>
+         <redirect view-id="/cadaster/special/PreEmissionSpecialPropertyTax.xhtml"/>
       </rule>
       <rule if-outcome="failed">     	
-         <redirect view-id="/cadaster/PreEmissionSpecialPropertyTax.xhtml"/>
+         <redirect view-id="/cadaster/special/PreEmissionSpecialPropertyTax.xhtml"/>
       </rule>
    </navigation>
       

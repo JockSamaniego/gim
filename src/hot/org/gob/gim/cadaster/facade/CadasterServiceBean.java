@@ -548,7 +548,7 @@ public class CadasterServiceBean implements CadasterService {
 	 */
 	public List<MunicipalBond> onlyCalculatePreEmissionOrderPropertyTax(
 			EmissionOrder eo, Entry entry, List<Property> properties,
-			FiscalPeriod fiscalPeriod, Person p, boolean isUrban)
+			FiscalPeriod fiscalPeriod, Person p, boolean isUrban, boolean IsSpecial)
 			throws Exception {
 
 		if (properties == null)
@@ -645,6 +645,7 @@ public class CadasterServiceBean implements CadasterService {
 					// municipalBond.setAddress(getAddressForRusticProperty(pro));
 					municipalBond.setAddress(pro.getCurrentDomain()
 							.getDescription());
+					
 					municipalBond.setBondAddress(pro.getCurrentDomain()
 							.getDescription());
 					String parameterDescription = systemParameterService
@@ -652,6 +653,8 @@ public class CadasterServiceBean implements CadasterService {
 					municipalBond
 							.setDescription(String.format(parameterDescription,
 									fiscalPeriod.getFiscalYear()));
+					
+
 				}
 
 				if (pro.getAddressReference() != null) {
@@ -659,6 +662,12 @@ public class CadasterServiceBean implements CadasterService {
 							+ pro.getAddressReference());
 					municipalBond.setBondAddress(municipalBond.getBondAddress()
 							+ " " + pro.getAddressReference());
+				}
+				
+				//@tag predioColoma
+				if(IsSpecial){
+					municipalBond.setAddress(pro.getAddressReference());
+					municipalBond.setBondAddress(pro.getAddressReference());
 				}
 
 				if (exemptValueForMinAppraisal.compareTo(base) >= 0) {

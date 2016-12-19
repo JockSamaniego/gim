@@ -552,8 +552,10 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 			properties = cadasterService.findPropertyByCadastralCodeAndType(cadastralCode,systemParameterPropertyType, noEmitFor);
 		}
 		
-		List<MunicipalBond> mb = cadasterService.onlyCalculatePreEmissionOrderPropertyTax(this.getInstance(), entry, properties, fiscalPeriod, userSession.getPerson(), isUrbanProperty);				 
+		//@tag coloma  false al final para decir que noes especial
+		List<MunicipalBond> mb = cadasterService.onlyCalculatePreEmissionOrderPropertyTax(this.getInstance(), entry, properties, fiscalPeriod, userSession.getPerson(), isUrbanProperty, false);				 
 		if(mb != null) this.getInstance().getMunicipalBonds().addAll(mb);
+		isUrbanProperty=true;
 	}
 	
 

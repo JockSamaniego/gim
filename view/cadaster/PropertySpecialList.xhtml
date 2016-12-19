@@ -15,7 +15,7 @@
 		<h:form id="propertySearch" styleClass="edit">
 
 			<h:outputText styleClass="formTitle"
-				value="#{messages['PropertySpecialListSpecial.manager']}" />
+				value="#{messages['propertySpecialList.manager']}" />
 
 			<rich:simpleTogglePanel label="#{messages['property.searchFilter']}"
 				switchType="ajax">
@@ -56,9 +56,9 @@
 			<rich:panel>
 				<f:facet name="header">
 					<h:panelGrid columns="3" columnClasses="headerTitle,">
-						<h:outputText
-							value="#{messages['property.searchResults']} (#{empty PropertySpecialList.resultList ? 0 : (PropertySpecialList.resultList.size)})" />
 
+						 <h:outputText value="#{messages['property.searchResults']} (#{empty propertySpecialList.resultList ? 0 : 
+							(propertySpecialList.paginated? propertySpecialList.resultCount : propertySpecialList.resultList.size)})" />
 						<s:button view="/cadaster/PropertySpecialEdit.xhtml" id="create"
 							propagation="none"
 							value="#{messages['common.create']} #{messages['property']}">
