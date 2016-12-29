@@ -146,6 +146,7 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	}
 
 	public BigDecimal totalPropertiesAppraisal(Long residentId) {
+		//@tag exoneraciones2017 //colocar en la consulta el deleted=false
 		Query query = getEntityManager().createNamedQuery(
 				"Domain.totalAppraisalCurrentDomainByResident");
 		query.setParameter("residentId", residentId);

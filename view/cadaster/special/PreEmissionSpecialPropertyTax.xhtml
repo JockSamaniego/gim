@@ -1,0 +1,263 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core" xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../../layout/template.xhtml">
+	<ui:define name="body">
+
+		<h:form id="preEmissionSpecialOrderForm" styleClass="edit">
+			<rich:messages errorClass="errors" />
+			<h:outputText styleClass="formTitle"
+				value="Pre Emisión Propiedades Especiales" />
+
+			<!-- Agregado macartuche -->
+			<!-- 2015-12-18 -->
+			<!-- Agregar un panel para saber si es emision sinat o quintas -->
+			<br /><br />
+			<rich:panel rendered="#{!specialEmissionOrderHome.urbanProperty}">
+				<f:facet name="header">Tipo emisión</f:facet>
+				<h:panelGrid columns="2" id="OptionsForRusticProperty"
+					rendered="#{!specialEmissionOrderHome.urbanProperty}">
+					<s:decorate id="emissionRusticType"
+						template="../../layout/vertical-edit.xhtml">
+						<h:selectOneRadio value="#{specialEmissionOrderHome.emissionRusticType}">
+							<f:selectItem itemValue="1" itemLabel="Quintas vacacionales" />
+							<f:selectItem itemValue="2" itemLabel="Sinat" />
+							<a:support event="onchange" 
+							action="#{specialEmissionOrderHome.setSinat()}" ajaxSingle="true" 
+							reRender="sinatProperties, quintas" />
+						</h:selectOneRadio>
+					</s:decorate>
+				</h:panelGrid>
+			</rich:panel>
+
+
+			<ui:include src="fragment/PreEmissionUrbanSpecialPropertyTaxPanel.xhtml" />
+			<ui:include src="fragment/PreEmissionRusticSpecialPropertyTaxPanel.xhtml" />
+ 
+			<!--  Obtener los datos de parroquias y sectores de la tabla locationpropertysinat -->
+			<h:panelGrid id="sinatProperties" style="width:100%">
+				<rich:panel rendered="#{specialEmissionOrderHome.sinat}">
+					<f:facet name="header">Sinat</f:facet>
+					<h:panelGrid columns="3" >
+						<s:decorate id="parishSinatField"
+							template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">Parroquia:</ui:define>
+							<h:selectOneMenu id="parishe1" value="#{specialEmissionOrderHome.selectedParish}">
+								<s:selectItems
+									value="#{specialEmissionOrderHome.findParishesSinat()}"
+									var="parish" label="#{parish}"
+									noSelectionLabel="#{messages['common.shouldSelected']}" />
+								<a:support event="onchange" ajaxSingle="true" 
+											action="#{specialEmissionOrderHome.findSectorsByParish()}" reRender="sectorSinatname, cadastralCode" />
+							</h:selectOneMenu>
+						</s:decorate>
+
+						<s:decorate id="sectorSinatname"
+							template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">Sector:</ui:define>
+							<h:selectManyListbox value="#{specialEmissionOrderHome.selectedSectors}"  size="10">
+								<f:selectItems value="#{specialEmissionOrderHome.sectorNameList}" />
+								<a:support event="onchange" ajaxSingle="true" 
+											action="#{specialEmissionOrderHome.countProperties()}" reRender="quantity" />
+							</h:selectManyListbox>
+						</s:decorate>
+
+						<h:outputText value="Nro., de propiedades en sector(es): #{specialEmissionOrderHome.propertiesSize}" id="quantity"></h:outputText>
+					</h:panelGrid>
+				</rich:panel>
+			</h:panelGrid>
+			<!-- *****************************************************  -->
+
+			<rich:panel>
+
+				<h:panelGrid columns="5" id="secondPanel">
+					<s:decorate id="cadastralCodeField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['property.cadastralCode']}:</ui:define>
+						<h:inputText id="cadastralCode"
+							value="#{specialEmissionOrderHome.cadastralCode}" disabled="true"
+							required="true" size="30" maxlength="30"
+							styleClass="cadasterCodeLabel">
+							<a:support event="onblur" reRender="cadastralCodeField"
+								ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="periodField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['fiscalPeriod']}:</ui:define>
+						<h:selectOneMenu id="period"
+							value="#{specialEmissionOrderHome.fiscalPeriod}" required="true"
+							disabled="#{disabled}">
+							<s:selectItems value="#{fiscalPeriods}" var="period"
+								label="#{period.name}"
+								noSelectionLabel="#{messages['common.shouldSelected']}" />
+							<s:convertEntity />
+							<a:support event="onchange" ajaxSingle="true"
+								reRender="dateField, periodField" />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="dateField" template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['domain.date']}:</ui:define>
+						<rich:calendar id="date" required="true" ajaxSingle="true"
+							enableManualInput="true"
+							value="#{specialEmissionOrderHome.fiscalPeriod.startDate}"
+							currentDate="#{currentDate}"
+							datePattern="#{messages['common.datePattern']}"
+							reRender="dateField" />
+					</s:decorate>
+
+					<a:commandButton id="calculatePreEmissionOrderValue"
+						ajaxSingle="true" reRender="panelId,dateField, secondPanel"
+						value="#{messages['emissionOrder.calculatePreEmission']}"
+						action="#{specialEmissionOrderHome.calculateTotalEmissionOrder()}" />
+				</h:panelGrid>
+			</rich:panel>
+
+
+			<rich:panel>
+			<f:facet name="header">Exoneraciones</f:facet>
+				<h:panelGrid columns="3" id="thirdPanel">
+
+					<s:decorate id="fromdateField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">Desde:</ui:define>
+						<rich:calendar id="fromdate" required="true"
+							value="#{specialEmissionOrderHome.fromDate}"
+							datePattern="#{messages['common.datePattern']}">
+							<a:support event="onchanged" ajaxSingle="true" />
+						</rich:calendar>
+					</s:decorate>
+
+					<s:decorate id="untildateField"
+						template="../../layout/vertical-edit.xhtml">
+						<ui:define name="label">Hasta:</ui:define>
+						<rich:calendar id="untildate" required="true"
+							value="#{specialEmissionOrderHome.untilDate}"
+							datePattern="#{messages['common.datePattern']}">
+							<a:support event="onchanged" ajaxSingle="true" />
+						</rich:calendar>
+					</s:decorate>
+
+					<a:commandButton id="calculateExemption" ajaxSingle="true"
+						reRender="dateField, periodField,panelId"
+						value="#{messages['emissionOrder.calculateExemption']}"
+						action="#{specialEmissionOrderHome.calculateExemptions()}" />
+				</h:panelGrid>
+			</rich:panel>
+
+			<h:panelGrid id="panelId" columns="1" width="100%">
+				<rich:panel
+					rendered="#{not empty specialEmissionOrderHome.instance.municipalBonds}"
+					id="emissionOrderDetail">
+					<f:facet name="header">
+						<h:panelGrid columns="3" columnClasses="headerTitle,">
+							<h:outputText value="#{messages['emissionOrder']}" />
+						</h:panelGrid>
+					</f:facet>
+					<h:panelGrid columns="1">
+						<s:decorate template="../../layout/display.xhtml">
+							<ui:define name="label">#{messages['emisor']}: </ui:define>
+							<h:outputText value="#{specialEmissionOrderHome.instance.emisor.name}" />
+						</s:decorate>
+						<s:decorate template="../../layout/display.xhtml">
+							<ui:define name="label">#{messages['emissionOrder.description']}: </ui:define>
+							<h:outputText value="#{specialEmissionOrderHome.instance.description}" />
+						</s:decorate>
+					</h:panelGrid>
+
+				</rich:panel>
+
+				<rich:panel
+					rendered="#{not empty specialEmissionOrderHome.instance.municipalBonds}"
+					id="municipalBondsId">
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle,">
+							<h:outputText
+								value="#{messages['municipalBond.searchResults']} (#{empty specialEmissionOrderHome.instance.municipalBonds ? 0 : (specialEmissionOrderHome.instance.municipalBonds.size())})" />
+
+							<a:commandButton id="saveExample" eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('preEmissionConfirm_confirmDialog',{width:300, height:220})"
+								value="#{messages['emissionOrder.aceptPreEmission']}" />
+
+						</h:panelGrid>
+					</f:facet>
+
+					<div class="results" id="municipalBondList">
+
+						<h:outputText
+							value="#{messages['municipalBond.searchReturnedNoResults']}."
+							rendered="#{empty specialEmissionOrderHome.instance.municipalBonds}" />
+
+						<rich:dataTable id="municipalBondList" var="_municipalBond"
+							value="#{specialEmissionOrderHome.instance.municipalBonds}" rows="50"
+							rendered="#{not empty specialEmissionOrderHome.instance.municipalBonds}">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{messages['resident']}" />
+								</f:facet>
+								<h:outputText value="#{_municipalBond.resident.name}" />
+							</rich:column>
+							<rich:column styleClass="left">
+								<f:facet name="header">
+									<h:outputText value="#{messages['municipalBond.description']}" />
+								</f:facet>
+								<h:outputText value="#{_municipalBond.description}" />
+							</rich:column>
+
+							<rich:column styleClass="left">
+								<f:facet name="header">
+									<h:outputText value="#{messages['municipalBond.taxableTotal']}" />
+								</f:facet>
+								<h:outputText value="#{_municipalBond.base}" />
+							</rich:column>
+
+							<rich:column styleClass="action">
+								<f:facet name="header">#{messages['common.action']}</f:facet>
+
+								<a:commandButton rendered="false"
+									action="#{specialEmissionOrderHome.sendMunicipalBond(_municipalBond)}"
+									value="#{messages['common.view']}" propagation="join"
+									id="municipalBondViewIassd" />
+
+								<a:commandButton id="viewer" ajaxSingle="true"
+									action="#{municipalBondsViewerHome.loadMunicipalBond(_municipalBond)}"
+									eventsQueue="gimEventsQueue" reRender="_municipalBondViewer"
+									oncomplete="Richfaces.showModalPanel('_municipalBondViewer',{width:700, height:500})"
+									value="#{messages['common.view']}" />
+
+							</rich:column>
+						</rich:dataTable>
+						<rich:datascroller id="tableScroller" page="1"
+							renderIfSinglePage="false" align="center" for="municipalBondList"
+							maxPages="20">
+							<f:facet name="first">
+								<h:outputText value="#{messages['common.firstPage']}" />
+							</f:facet>
+							<f:facet name="last">
+								<h:outputText value="#{messages['common.lastPage']}" />
+							</f:facet>
+						</rich:datascroller>
+					</div>
+				</rich:panel>
+			</h:panelGrid>
+		</h:form>
+
+		<g:municipalBondViewer resident="#{municipalBondsViewerHome.resident}"
+			municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}" />
+
+		<g:confirmDialog
+			dialogTitle="#{messages['emissionOrder.preEmitPropertyTax']}"
+			bean="#{specialEmissionOrderHome}" id="preEmissionConfirm"
+			message="#{messages['emissionOrder.confirmPreEmitPropertyTax']}"
+			reRenderComponents="panelId" yesAction="saveEmissionOrder" />
+	</ui:define>
+</ui:composition>

@@ -35,9 +35,9 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondView;
 
-@Name("emissionOrderHome")
+@Name("specialEmissionOrderHome")
 @Scope(ScopeType.CONVERSATION)
-public class EmissionOrderHome extends EntityHome<EmissionOrder> {
+public class SpecialEmissionOrderHome extends EntityHome<EmissionOrder> {
 
 	@In(create = true, value = "defaultProvince")
 	TerritorialDivision province;
@@ -416,8 +416,9 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 
 	@SuppressWarnings("unchecked")
 	private List<TerritorialDivision> findTerritorialDivisions(Long parentId) {
-		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParent");
+		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParentAndSpecial");
 		query.setParameter("parentId", parentId);
+		query.setParameter("type", "SPECIAL");
 		return query.getResultList();
 	}
 	
@@ -534,7 +535,13 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 	}
 		
 	private void createEmissionOrder(String cadastralCode, List<Long> noEmitFor) throws Exception {		
+		//@tag predioColoma
+		//solo para cargar el entry como rustico
+		isUrbanProperty = false;
 		loadEntry();  
+		
+		//@tag predioColoma
+		isUrbanProperty = true;
 		this.getInstance().setServiceDate(fiscalPeriod.getStartDate());
 		this.getInstance().setDescription(entry.getName() + ": " + cadastralCode);
 		this.getInstance().setEmisor(userSession.getPerson());
@@ -545,17 +552,27 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		//sea urbano o quintas obtiene propiedades de la forma normal del gim
 		//1 = quintas
 		//2 = sinat
+		
+		//2016-12-07T17:12:00
+		//
 		List<Property> properties =null;
 		if(emissionRusticType==2){
 			properties = findPropertiesBySectorName(noEmitFor); 
 		}else{
+			//@tag predioColoma
+			systemParameterPropertyType = "PROPERTY_TYPE_ID_URBAN";
+			//fin @tag
 			properties = cadasterService.findPropertyByCadastralCodeAndType(cadastralCode,systemParameterPropertyType, noEmitFor);
 		}
 		
-		//@tag coloma  false al final para decir que noes especial
-		List<MunicipalBond> mb = cadasterService.onlyCalculatePreEmissionOrderPropertyTax(this.getInstance(), entry, properties, fiscalPeriod, userSession.getPerson(), isUrbanProperty, false);				 
+
+		//special
+		//@tag precioColoma
+		isUrbanProperty = false;
+		boolean isSpecial =true;
+		List<MunicipalBond> mb = cadasterService.onlyCalculatePreEmissionOrderPropertyTax(this.getInstance(), entry, properties, fiscalPeriod, userSession.getPerson(), isUrbanProperty, isSpecial);				 
 		if(mb != null) this.getInstance().getMunicipalBonds().addAll(mb);
-		isUrbanProperty=true;
+		isUrbanProperty = true;
 	}
 	
 

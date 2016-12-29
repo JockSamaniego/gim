@@ -26,7 +26,7 @@ public interface CadasterService {
 	
 	void preEmitUtilityTax(Property p, Domain d, FiscalPeriod f, Person per) throws Exception;
 	void preEmitAlcabalaTax(Property p,Domain d, FiscalPeriod f, Person per, boolean exoneration, String exonerationReason) throws Exception;	
-	List<MunicipalBond> onlyCalculatePreEmissionOrderPropertyTax(EmissionOrder eo, Entry e, List<Property> properties, FiscalPeriod f, Person p,boolean isUrban) throws Exception;
+	List<MunicipalBond> onlyCalculatePreEmissionOrderPropertyTax(EmissionOrder eo, Entry e, List<Property> properties, FiscalPeriod f, Person p,boolean isUrban, boolean isSpecial) throws Exception;
 	List<MunicipalBond> onlyCalculatePreEmissionOrderUnbuiltLotTax(EmissionOrder eo, Entry e, List<UnbuiltLot> unbuiltLots, FiscalPeriod f, Person p) throws Exception;
 	List<Property> findPropertyByCadastralCodeAndType(String cadastralCode, String systemParameterName, List<Long> noEmitFor);
 	TerritorialDivision findTerritorialDivision(String cadastralCode, int x, int y, TerritorialDivision td);

@@ -299,7 +299,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	    }  		
 	    */
 	  
-		roundItems(municipalBond);
+		roundItems(municipalBond);///ya tiene los 48.10
 		BigDecimal paidTotal = municipalBond.getBalance();
 		paidTotal = paidTotal.add(municipalBond.getSurcharge());
 		

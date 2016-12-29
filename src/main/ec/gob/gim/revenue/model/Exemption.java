@@ -40,7 +40,11 @@ import ec.gob.gim.common.model.Resident;
 		// macartuche
 		// agregar fecha de creacion
 		@NamedQuery(name = "Exemption.findByFiscalPeriodAndActiveAndDate", query = "select e from Exemption e "
-				+ "where e.fiscalPeriod.id =:fiscalPeriodId and (e.creationDate between :start and :end) and e.active=true order by e.id")
+				+ "left join fetch e.resident r "
+				+ "left join fetch e.partner p"
+				+ "left join fetch e.fiscalPeriod  f "
+				+ "left join fetch e.exemptionType et "
+				+ "where e.fiscalPeriod.id =:fiscalPeriodId and (e.auxDate between :start and :end) and e.active=true order by e.id")
 
 })
 public class Exemption {
@@ -102,6 +106,10 @@ public class Exemption {
 
 	private Boolean active;
 
+	//@tag exoneraciones2017
+	@Temporal(TemporalType.DATE)
+	private Date auxDate;
+	
 	public Exemption() {
 		propertiesAppraisal = BigDecimal.ZERO;
 		vehiclesAppraisal = BigDecimal.ZERO;
@@ -286,6 +294,14 @@ public class Exemption {
 	public void setPropertiesAppraisalSpecialTreatment(
 			BigDecimal propertiesAppraisalSpecialTreatment) {
 		this.propertiesAppraisalSpecialTreatment = propertiesAppraisalSpecialTreatment;
+	}
+
+	public Date getAuxDate() {
+		return auxDate;
+	}
+
+	public void setAuxDate(Date auxDate) {
+		this.auxDate = auxDate;
 	}
 
 }

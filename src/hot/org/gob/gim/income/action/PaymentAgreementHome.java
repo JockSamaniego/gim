@@ -18,7 +18,9 @@ import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.facade.IncomeService;
+import org.gob.gim.income.facade.IncomeServiceBean;
 import org.gob.gim.income.view.MunicipalBondItem;
+import org.gob.loja.gim.ws.service.PaymentService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
@@ -31,6 +33,7 @@ import org.jboss.seam.log.Log;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.Dividend;
+import ec.gob.gim.income.model.Payment;
 import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
@@ -89,6 +92,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		if (isIdDefined()) {
 			wire();
 		}
+		
 	}
 
 	public void wire() {
@@ -96,6 +100,8 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		if(getInstance().getId() != null)identificationNumber = getInstance().getResident().getIdentificationNumber(); 
 		chargeControlMunicipalBondStates();
 		toActivePaymentAgreement();		
+		
+ 
 	}
 
 	public boolean isWired() {
@@ -525,4 +531,68 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		}
 	}
 
+	
+	//@tag conveniosPagos
+	//@date 2016-10-28T11:46
+	private List<Payment> paymentsList;
+	
+
+	private List<MunicipalBond> municipalBonds;
+	
+
+	public List<Payment> getPaymentsList() {
+		return paymentsList;
+	}
+
+	public void setPaymentsList(List<Payment> paymentsList) {
+		this.paymentsList = paymentsList;
+	}
+	//fin @tag conveniosPagos
+	
+	//@tag conveniosPagos
+	//@author macartuche
+	//@date 2016-10-31T08:23
+	
+	private List<MunicipalBond> municipalbondList;
+	
+	public void loadMunicipalBondPayments(){
+		municipalBonds = findAgreementMunicipalBonds(this.getInstance().getId()); 
+	}
+	
+	
+	public boolean checkAvailable(){
+		System.out.println("=----->"+this.getInstance().getId());
+		return (this.getInstance().getId()==null)? true : false;
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	private List<MunicipalBond> findAgreementMunicipalBonds(Long paymentId) {
+
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+					.findResource(SystemParameterService.LOCAL_NAME);
+		Long inAgreementMunicipalBondStatusId = systemParameterService
+					.findParameter(IncomeServiceBean.IN_PAYMENT_AGREEMENT_BOND_STATUS);
+		Query query = getEntityManager().createNamedQuery("MunicipalBond.findByPaymentAgreementIdAndStatusId");
+		query.setParameter("municipalBondStatusId", inAgreementMunicipalBondStatusId);
+		query.setParameter("paymentAgreementId", paymentId);
+		return query.getResultList();
+	}
+	
+	public List<MunicipalBond> getMunicipalbondList() {
+		return municipalbondList;
+	}
+
+	public void setMunicipalbondList(List<MunicipalBond> municipalbondList) {
+		this.municipalbondList = municipalbondList;
+	}
+	
+
+	public List<MunicipalBond> getMunicipalBonds() {
+		return municipalBonds;
+	}
+
+	public void setMunicipalBonds(List<MunicipalBond> municipalBonds) {
+		this.municipalBonds = municipalBonds;
+	}
 }

@@ -1,0 +1,60 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel id="propertyAppraisalPanel">
+		<f:facet name="header">
+			<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText
+					value="#{messages['property.appraisals']} (#{empty propertySpecialHome.instance.appraisals ? 0 : propertySpecialHome.instance.appraisals.size})" />
+			</h:panelGrid>
+		</f:facet>
+		
+		<a:region>
+		<a:outputPanel styleClass="results" id="propertyAppraisalList">
+			<h:outputText value="#{messages['property.noAppraisals']}"
+				rendered="#{empty propertySpecialHome.instance.appraisals}" />
+
+			<rich:dataTable id="propertyAppraisalTable" var="_appraisal"
+				value="#{propertySpecialHome.instance.appraisals}"
+				rowClasses="rvgRowOne,rvgRowTwo"
+				rendered="#{not empty propertySpecialHome.instance.appraisals}">
+				<rich:column sortBy="#{_appraisal.date}"
+					styleClass="action">					
+					<f:facet name="header">
+						<h:outputText value="#{messages['common.date']}" />
+					</f:facet>
+					<h:outputText value="#{_appraisal.date}">
+						<f:convertDateTime pattern="#{messages['common.dateFullTimePattern']}" />
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column styleClass="right">
+					<f:facet name="header">#{messages['domain.lotAppraisal']}</f:facet>
+					<h:outputText value="#{_appraisal.lot}" styleClass="right" readonly="true" />
+				</rich:column>
+				
+				<rich:column styleClass="right">
+					<f:facet name="header">#{messages['domain.buildingAppraisal']}</f:facet>
+					<h:outputText value="#{_appraisal.building}" styleClass="right" readonly="true" />
+				</rich:column>
+				
+				<rich:column styleClass="right">
+					<f:facet name="header">#{messages['domain.commercialAppraisal']}</f:facet>
+					<h:outputText value="#{_appraisal.commercialAppraisal}" readonly="true" />
+				</rich:column>
+				
+			</rich:dataTable>
+
+		</a:outputPanel>
+		</a:region>
+	</rich:panel>
+</ui:composition>

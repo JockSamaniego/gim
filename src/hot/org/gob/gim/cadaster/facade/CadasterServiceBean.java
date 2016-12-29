@@ -41,6 +41,7 @@ import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
 import ec.gob.gim.cadaster.model.WorkDealFraction;
 import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
+import ec.gob.gim.cadaster.model.dto.ExemptionDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -547,7 +548,7 @@ public class CadasterServiceBean implements CadasterService {
 	 */
 	public List<MunicipalBond> onlyCalculatePreEmissionOrderPropertyTax(
 			EmissionOrder eo, Entry entry, List<Property> properties,
-			FiscalPeriod fiscalPeriod, Person p, boolean isUrban)
+			FiscalPeriod fiscalPeriod, Person p, boolean isUrban, boolean IsSpecial)
 			throws Exception {
 
 		if (properties == null)
@@ -644,6 +645,7 @@ public class CadasterServiceBean implements CadasterService {
 					// municipalBond.setAddress(getAddressForRusticProperty(pro));
 					municipalBond.setAddress(pro.getCurrentDomain()
 							.getDescription());
+					
 					municipalBond.setBondAddress(pro.getCurrentDomain()
 							.getDescription());
 					String parameterDescription = systemParameterService
@@ -651,6 +653,8 @@ public class CadasterServiceBean implements CadasterService {
 					municipalBond
 							.setDescription(String.format(parameterDescription,
 									fiscalPeriod.getFiscalYear()));
+					
+
 				}
 
 				if (pro.getAddressReference() != null) {
@@ -658,6 +662,12 @@ public class CadasterServiceBean implements CadasterService {
 							+ pro.getAddressReference());
 					municipalBond.setBondAddress(municipalBond.getBondAddress()
 							+ " " + pro.getAddressReference());
+				}
+				
+				//@tag predioColoma
+				if(IsSpecial){
+					municipalBond.setAddress(pro.getAddressReference());
+					municipalBond.setBondAddress(pro.getAddressReference());
 				}
 
 				if (exemptValueForMinAppraisal.compareTo(base) >= 0) {
@@ -719,9 +729,9 @@ public class CadasterServiceBean implements CadasterService {
 	}
 
 	private void calculateDiscountPercentage(Exemption ex) {
-		if (ex.getExemptionType().getId() == 1) {
+		if (ex.getExemptionType().getId() == 1 || ex.getExemptionType().getId() == 2 ) { // 1 por tercera edad
 			BigDecimal cienBD = new BigDecimal(100);
-			BigDecimal base = ex.getFiscalPeriod()
+			BigDecimal base = ex.getFiscalPeriod()//500 salarios basicos
 					.getBasicSalaryUnifiedForRevenue()
 					.multiply(ex.getFiscalPeriod().getSalariesNumber());
 			System.out.println("<<<RR>>> base: " + base);
@@ -739,7 +749,7 @@ public class CadasterServiceBean implements CadasterService {
 				ex.setDiscountPercentage(cienBD);
 			else
 				ex.setDiscountPercentage(discount);
-		} else {
+		}  else {
 			ex.setDiscountPercentage(ex.getExemptionPercentage());
 		}
 
@@ -803,7 +813,7 @@ public class CadasterServiceBean implements CadasterService {
 		Long pendingStatus = loadMunicipalBondStatus();
 		List<Exemption> exemptions = municipalBondService
 				.findExemptionsByFiscalPeriod(fiscalPeriodId, fromDate,
-						untilDate);
+						untilDate); //cambiado
 
 		System.out.println("Total exoneraciones: " + exemptions.size());
 		List<Long> residentsIds = new ArrayList<Long>();
@@ -819,10 +829,39 @@ public class CadasterServiceBean implements CadasterService {
 			System.out.println("======>>Exemption nro: " + count + " de "
 					+ countTotal);
 			appraisalForProperties = BigDecimal.ZERO;
-			if (ex.getExemptionType().getId() == 1)//por tercera edad
-				appraisalForProperties = calculateAppraisalGeneral(ex);
-			else
-				appraisalForProperties = calculateAppraisalForProperties(ex);
+			
+			ExemptionDTO valuesExemption; 
+			
+			if (ex.getExemptionType().getId() == 1 || ex.getExemptionType().getId() == 2){//por tercera edad y discapacidad
+				//@tag exoneraciones2017
+				if(ex.getPropertiesInExemption().isEmpty())
+					valuesExemption = calculateAppraisalGeneral(ex);
+				else
+					valuesExemption = calculateAppraisalForProperties(ex);
+				//fin @tag exoneraciones2017
+			}else{
+				valuesExemption = calculateAppraisalForProperties(ex);//todo arregkar metodo
+				//appraisalForProperties = calculateAppraisalForProperties(ex);
+			}
+			
+			//@tag exoneraciones2017
+			switch (ex.getExemptionType().getId().intValue()) {
+				case 1: case 3: //tercera edad y rebaja hipotecaria
+					appraisalForProperties = valuesExemption.getCommercialAppraisalResident().
+					add(valuesExemption.getCommercialAppraisalPattern()).
+					subtract(valuesExemption.getCommercialAppraisalSpecial());
+					break;
+	
+				case 2: //discapacidad
+					appraisalForProperties = valuesExemption.getCommercialAppraisalTable().
+											subtract(valuesExemption.getCommercialAppraisalSpecial());
+					break;
+				case 4: //especial
+					appraisalForProperties = BigDecimal.ZERO;
+					break;		 
+			}
+			//fin @tag exoneraciones2017
+			
 			ex.setPropertiesAppraisal(appraisalForProperties);
 			ex.calculatePatrimony(appraisalForProperties);
 			calculateDiscountPercentage(ex);
@@ -833,8 +872,10 @@ public class CadasterServiceBean implements CadasterService {
 
 			bonds.clear();
 			bonds = findMunicipalBondsByFiscalPeriodResidentAndEntry(
-					fiscalPeriodId, residentsIds, entriesIds, pendingStatus);
-			for (MunicipalBond mb : bonds) {
+					fiscalPeriodId, residentsIds, entriesIds, pendingStatus);//todo
+			for (MunicipalBond mb : bonds) { //TODO
+
+				System.out.println("Clave catastral "+mb.getGroupingCode());
 				PropertyAppraisal propertyAppraisal = (PropertyAppraisal) mb
 						.getAdjunct();
 				BigDecimal exemptionValue = BigDecimal.ZERO;
@@ -850,7 +891,23 @@ public class CadasterServiceBean implements CadasterService {
 					exemptionValue = mb.getBase();
 				}
 				try {
-					if (ex.getExemptionType().getId() == 1) { // tercera edad
+					if (ex.getExemptionType().getId() == 1 || ex.getExemptionType().getId() == 2) { // tercera edad  y discap
+						//@tag exoneraciones2017
+						boolean flag=false;
+						for(ExemptionForProperty efp: ex.getPropertiesInExemption()){
+							if(efp.getProperty().getId().intValue() == propertyAppraisal.getProperty().getId().intValue()){			 
+								BigDecimal percentage = (efp.getDiscountPercentage()==null)? ex.getDiscountPercentage() : efp.getDiscountPercentage();
+								exemptionValue = percentage.multiply(propertyAppraisal.getCommercialAppraisal()).divide(new BigDecimal(100)); 
+								propertyAppraisal.setExemptionValue(exemptionValue);
+								municipalBondService.changeExemptionInMunicipalBond(mb,false, true, propertyAppraisal);
+								flag=true;
+							}
+						}
+						//fin @tag exoneraciones2017
+						
+						if(flag)
+							continue;
+						
 						propertyAppraisal.setExemptionValue(exemptionValue);
 						// mb.setReference(mb.getReference() + " " +
 						// ex.getReference());
@@ -862,32 +919,55 @@ public class CadasterServiceBean implements CadasterService {
 						for (ExemptionForProperty exemptionForProperty : exForProperties) {
 							// if
 							// (exemptionForProperty.getProperty().getCadastralCode().matches(mb.getGroupingCode())){
-							if (exemptionForProperty.getProperty()
-									.getCadastralCode()
-									.indexOf(mb.getGroupingCode()) != -1) {
+							boolean flag=false;
+//							if (exemptionForProperty.getProperty()
+//									.getCadastralCode()
+//									.indexOf(mb.getGroupingCode()) != -1) {
+							System.out.println("comparación: ÏdPropiedad: "+ 
+										exemptionForProperty.getProperty().getId()+" ID BOND: "+
+									propertyAppraisal.getProperty().getId().intValue());
+							if(exemptionForProperty.getProperty().getId().intValue() == 
+									propertyAppraisal.getProperty().getId().intValue()){			 
 								if (exemptionForProperty.getProperty()
 										.getCurrentDomain().getPropertyUse() == PropertyUse.PARTICULAR) {
-									propertyAppraisal
-											.setExemptionValue(exemptionValue);
+//									propertyAppraisal
+//											.setExemptionValue(exemptionValue);
+									
+//									for(ExemptionForProperty efp: ex.getPropertiesInExemption()){
+//										if(efp.getProperty().getId().intValue() == propertyAppraisal.getProperty().getId().intValue()){			 
+											BigDecimal percentage = (exemptionForProperty.getDiscountPercentage()==null)? ex.getDiscountPercentage() : exemptionForProperty.getDiscountPercentage();
+											exemptionValue = percentage.multiply(propertyAppraisal.getCommercialAppraisal()).divide(new BigDecimal(100)); 
+											propertyAppraisal.setExemptionValue(exemptionValue);
+											municipalBondService.changeExemptionInMunicipalBond(mb,false, true, propertyAppraisal);
+//											flag=true;
+//										}
+//									}
+									
+									continue;
 								} else {
 									propertyAppraisal
 											.setExemptionValue(propertyAppraisal
 													.getCommercialAppraisal());
+									municipalBondService
+									.changeExemptionInMunicipalBond(mb,
+											false, true, propertyAppraisal);
 								}
-								System.out
-										.println("======>>Exencion por propiedad: "
-												+ ex.getId());
-								System.out
-										.println("======>>Exencion por cadastralcode: "
-												+ exemptionForProperty
-														.getProperty()
-														.getCadastralCode());
+//								System.out
+//										.println("======>>Exencion por propiedad: "
+//												+ ex.getId());
+//								System.out
+//										.println("======>>Exesi ncion por cadastralcode: "
+//												+ exemptionForProperty
+//														.getProperty()
+//														.getCadastralCode());
+//								
+//								
+//									
 								// mb.setReference(mb.getReference() + " " +
 								// ex.getReference());
-								municipalBondService
-										.changeExemptionInMunicipalBond(mb,
-												false, true, propertyAppraisal);
+								
 							}
+							
 						}
 					}
 				} catch (EntryDefinitionNotFoundException e) {
@@ -916,46 +996,128 @@ public class CadasterServiceBean implements CadasterService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public BigDecimal calculateAppraisalGeneral(Exemption exemption) {
+	public ExemptionDTO calculateAppraisalGeneral(Exemption exemption) {
 		
 		//controlar para los de tratamiento especial
 		
-		Query query = entityManager
-				.createNamedQuery("Property.findByResidentIdNotDeleted");
-		query.setParameter("residentId", exemption.getResident().getId());
-		List<Property> properties = query.getResultList();
+//		Query query = entityManager
+//				.createNamedQuery("Property.findByResidentIdNotDeleted");
+//		query.setParameter("residentId", exemption.getResident().getId());
+//		List<Property> properties = query.getResultList();
 		BigDecimal appraisalForProperties = BigDecimal.ZERO;
-		for (Property property : properties) {
-			System.out.println("=======> calculateAppraisalGeneral: "
-					+ property.getCadastralCode());
-			System.out.println("=======> resident: "
-					+ exemption.getResident().getName());
-			System.out.println("=======> property code: "
-					+ property.getCadastralCode());
-			System.out.println("=======> property appraisal: "
-					+ property.getCurrentDomain().getCommercialAppraisal());
-			appraisalForProperties = appraisalForProperties.add(property
-					.getCurrentDomain().getCommercialAppraisal());
-		}
-		if (exemption.getPartner() != null) {
-			query = entityManager
-					.createNamedQuery("Property.findByResidentIdNotDeleted");
-			query.setParameter("residentId", exemption.getPartner().getId());
-			properties.clear();
-			properties = query.getResultList();
-			for (Property property : properties) {
-				appraisalForProperties = appraisalForProperties.add(property
-						.getCurrentDomain().getCommercialAppraisal());
-			}
-		}
-		return appraisalForProperties;
+		
+//		String query1 = "select result.total_apraisal_resident + result.total_apraisal_parent "
+//				+ "from  (SELECT COALESCE(sum(d.commercialappraisal),0.00) as total_apraisal_resident, "
+//				+ "(SELECT COALESCE(sum(d.commercialappraisal),0.00) "
+//				+ " FROM property p INNER JOIN domain d on (d.currentproperty_id = p.id) "
+//				+ "WHERE d.resident_id = ?0 and p.deleted = false) as total_apraisal_parent "
+//				+ "FROM property p "
+//				+ "INNER JOIN domain d on (d.currentproperty_id = p.id) "
+//				+ "WHERE d.resident_id = ?1 and p.deleted = false) result";
+		
+		String query1 = "SELECT COALESCE(sum(d.commercialappraisal),0.00) as total_apraisal_resident,"
+				+ "(SELECT COALESCE(sum(d.commercialappraisal),0.00) "
+				+ "FROM property p "
+				+ "INNER JOIN domain d on (d.currentproperty_id = p.id) "
+				+ "WHERE d.resident_id = ?0 "
+				+ "and p.deleted = false) as total_apraisal_parent, "
+				+ "(select coalesce(sum(dom.commercialappraisal),0.00)  "
+				+ "from exemptionforproperty efp "
+				+ "inner join property pro on (efp.property_id = pro.id) "
+				+ "inner join domain dom ON (dom.currentproperty_id = pro.id)  "
+				+ "where efp.treatmenttype_itm_id is not null "
+				+ "and efp.exemption_id = ?2 and pro.deleted = false) as total_apraisal_special "
+				+ "FROM property p "
+				+ "INNER JOIN domain d on (d.currentproperty_id = p.id) "
+				+ "WHERE d.resident_id = ?1 "
+				+ "and p.deleted = false ";
+	
+	
+		Query q = entityManager.createNativeQuery(query1);
+		q.setParameter(0, exemption.getPartner()==null? (new BigInteger("-9999")) : exemption.getPartner().getId());
+		q.setParameter(1, exemption.getResident().getId());
+		q.setParameter(2, exemption.getId());
+		
+		List<ExemptionDTO> list = NativeQueryResultsMapper.map(q.getResultList(), ExemptionDTO.class);
+		
+		return (list.isEmpty())? null : list.get(0);
+//		appraisalForProperties = q.getResultList();
+		
+//		for (Property property : properties) {
+//			System.out.println("=======> calculateAppraisalGeneral: "
+//					+ property.getCadastralCode());
+//			System.out.println("=======> resident: "
+//					+ exemption.getResident().getName());
+//			System.out.println("=======> property code: "
+//					+ property.getCadastralCode());
+//			System.out.println("=======> property appraisal: "
+//					+ property.getCurrentDomain().getCommercialAppraisal());
+//			appraisalForProperties = appraisalForProperties.add(property
+//					.getCurrentDomain().getCommercialAppraisal());
+//		}
+//		if (exemption.getPartner() != null) {
+//			query = entityManager
+//					.createNamedQuery("Property.findByResidentIdNotDeleted");
+//			query.setParameter("residentId", exemption.getPartner().getId());
+//			properties.clear();
+//			properties = query.getResultList();
+//			for (Property property : properties) {
+//				appraisalForProperties = appraisalForProperties.add(property
+//						.getCurrentDomain().getCommercialAppraisal());
+//			}
+//		}
+//		return appraisalForProperties;
 	}
+	
 
-	public BigDecimal calculateAppraisalForProperties(Exemption exemption) {
-		List<ExemptionForProperty> propertiesInEx = exemption
+	public ExemptionDTO calculateAppraisalForProperties(Exemption exemption) {
+		
+		String query1 = "select (SELECT COALESCE(sum(d4.commercialappraisal),0.00) "
+									+ "FROM property p4 "
+									+ "	INNER JOIN domain d4 on (d4.currentproperty_id = p4.id) "
+									+ " WHERE d4.resident_id =  ?0"
+									+ "		and p4.deleted = false) as total_resident, "
+						+ "		(SELECT COALESCE(sum(d5.commercialappraisal),0.00) "
+									+ "		FROM property p5 "
+									+ "		INNER JOIN domain d5 on (d5.currentproperty_id = p5.id) "
+									+ "		WHERE d5.resident_id =  ?1 "
+									+ "		and p5.deleted = false) as total_pattern,"
+							+ "	(select 	COALESCE(sum(dom5.commercialappraisal),0.00) "
+									+ "		from exemptionforproperty efp5 "
+									+ "		inner join property pro5 on pro5.id = efp5.property_id "
+									+ "		inner join domain dom5 on dom5.currentproperty_id = pro5.id "
+									+ "		inner join exemption exe5 on (exe5.id = efp5.exemption_id) "
+									+ "		where efp5.exemption_id = ?2 "
+									+ "		and pro5.deleted = false "
+									+ "		and efp5.treatmentType_itm_id is not null ) as total_special ,"
+						+ "		COALESCE(sum(dom.commercialappraisal),0.00) as total_fractions "
+				+ "		from exemptionforproperty efp "
+				+ "		inner join property pro on pro.id = efp.property_id "
+				+ "		inner join domain dom on dom.currentproperty_id = pro.id  "
+				+ "		inner join exemption exe on (exe.id = efp.exemption_id) "
+				+ "		where efp.exemption_id = ?2 "
+				+ "		and pro.deleted = false";
+
+		Query q = entityManager.createNativeQuery(query1);
+	
+		q.setParameter(0, exemption.getResident().getId());
+		q.setParameter(1, ((exemption.getPartner()==null)? new BigInteger("-9999"): exemption.getPartner().getId()));
+		q.setParameter(2, exemption.getId());
+		
+		List<ExemptionDTO> list = NativeQueryResultsMapper.map(q.getResultList(), ExemptionDTO.class);
+		
+		return (list.isEmpty())? null : list.get(0);
+		
+		
+		
+		/*List<ExemptionForProperty> propertiesInEx = exemption
 				.getPropertiesInExemption();
+		
+	
 		BigDecimal appraisalForProperties = BigDecimal.ZERO;
 		for (ExemptionForProperty exForProperty : propertiesInEx) {
+			 
+			
 			if ((exForProperty.getProperty().getCurrentDomain().getResident()
 					.getId() == exemption.getResident().getId())
 					&& (!exForProperty.getProperty().getDeleted()))
@@ -970,8 +1132,11 @@ public class CadasterServiceBean implements CadasterService {
 							.getCommercialAppraisal());
 			appraisalForProperties = appraisalForProperties.add(exForProperty
 					.getProperty().getCurrentDomain().getCommercialAppraisal());
+			
+			
+			
 		}
-		return appraisalForProperties;
+		return appraisalForProperties;*/
 	}
 
 	// private EmissionOrder savePreEmissionOrderPropertyTax(String
