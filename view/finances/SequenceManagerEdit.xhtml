@@ -1,0 +1,82 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="concessionPlaceType" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['sequenceManager.editFormTitle']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{sequenceManagerHome.managed ? messages['edit'] : messages['add'] } #{messages['concessionPlaceType']}</f:facet>
+
+				<s:decorate id="creationDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['sequenceManager.date']}:</ui:define>
+					<rich:calendar id="creationDate" disabled="true"
+						value="#{sequenceManagerHome.instance.date}"
+						datePattern="#{messages['common.datePattern']}" />
+				</s:decorate>
+
+				<s:decorate id="takenByField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['sequenceManager.takenBy']}</ui:define>
+					<h:inputText id="takenBy" required="true" size="50" maxlength="50"
+						value="#{sequenceManagerHome.instance.takenBy.name}"
+						style="text-transform: uppercase" readonly="true">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="nameField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['sequenceManager.code']}</ui:define>
+					<h:inputText id="name" required="true" size="50" maxlength="50"
+						value="#{sequenceManagerHome.instance.code}"
+						style="text-transform: uppercase" readonly="true">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="reasonField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['sequenceManager.explanation']}</ui:define>
+					<h:inputTextarea id="reason" required="true" cols="60" rows="3"
+						value="#{sequenceManagerHome.instance.explanation}">
+					</h:inputTextarea>
+				</s:decorate>
+
+				<!-- s:decorate id="isActiveField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['sequenceManager.isActive']}</ui:define>
+					<h:selectBooleanCheckbox id="isActive"
+						value= " # 
+						 {sequenceManagerHome. instance.isActive}" />
+				</s:decorate-->
+
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{sequenceManagerHome.persist}"
+					disabled="#{!sequenceManagerHome.wired}"
+					rendered="#{!sequenceManagerHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/finances/SequenceManagerList.xhtml" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
