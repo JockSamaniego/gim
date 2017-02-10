@@ -22,4 +22,6 @@ public interface EmissionService {
 	
 	public List<ReportEmissionDTO> findEmissionReport(ReportEmissionCriteria criteria);
 	
+	public List<ReportEmissionDTO> findEmissionReportOtherDetails(ReportEmissionCriteria criteria);
+	
 }

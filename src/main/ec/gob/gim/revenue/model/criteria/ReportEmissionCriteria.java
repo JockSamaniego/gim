@@ -3,6 +3,7 @@
  */
 package ec.gob.gim.revenue.model.criteria;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -11,14 +12,15 @@ import java.util.Date;
  */
 public class ReportEmissionCriteria {
 	
-	private Long account_id;
+	private String account_id;
 	private Date startDate;
 	private Date endDate;
 	private String status_ids;
-	public Long getAccount_id() {
+	
+	public String getAccount_id() {
 		return account_id;
 	}
-	public void setAccount_id(Long account_id) {
+	public void setAccount_id(String account_id) {
 		this.account_id = account_id;
 	}
 	public Date getStartDate() {

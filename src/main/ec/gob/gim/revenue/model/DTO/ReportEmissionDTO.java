@@ -25,16 +25,22 @@ public class ReportEmissionDTO {
 	private String account_name;
 	
 	@NativeQueryResultColumn(index = 3)
-	private Long cantidad;
+	private Long cantidad_emisiones;
 	
 	@NativeQueryResultColumn(index = 4)
-	private BigDecimal amount_emission;
+	private BigDecimal valor_emision;
 	
 	@NativeQueryResultColumn(index = 5)
-	private BigDecimal amount_bajas_posteriores;
+	private Long cantidad_bajas;
 	
 	@NativeQueryResultColumn(index = 6)
-	private BigDecimal amount_bajas_current;
+	private BigDecimal valor_bajas;
+	
+	@NativeQueryResultColumn(index = 7)
+	private BigDecimal total_emision;
+	
+	@NativeQueryResultColumn(index = 8)
+	private String tipo;
 
 	public Long getAcount_id() {
 		return acount_id;
@@ -60,46 +66,62 @@ public class ReportEmissionDTO {
 		this.account_name = account_name;
 	}
 
-	public Long getCantidad() {
-		return cantidad;
+	public Long getCantidad_emisiones() {
+		return cantidad_emisiones;
 	}
 
-	public void setCantidad(Long cantidad) {
-		this.cantidad = cantidad;
+	public void setCantidad_emisiones(Long cantidad_emisiones) {
+		this.cantidad_emisiones = cantidad_emisiones;
 	}
 
-	public BigDecimal getAmount_emission() {
-		return amount_emission;
+	public BigDecimal getValor_emision() {
+		return valor_emision;
 	}
 
-	public void setAmount_emission(BigDecimal amount_emission) {
-		this.amount_emission = amount_emission;
+	public void setValor_emision(BigDecimal valor_emision) {
+		this.valor_emision = valor_emision;
 	}
 
-	public BigDecimal getAmount_bajas_posteriores() {
-		return amount_bajas_posteriores;
+	public Long getCantidad_bajas() {
+		return cantidad_bajas;
 	}
 
-	public void setAmount_bajas_posteriores(BigDecimal amount_bajas_posteriores) {
-		this.amount_bajas_posteriores = amount_bajas_posteriores;
+	public void setCantidad_bajas(Long cantidad_bajas) {
+		this.cantidad_bajas = cantidad_bajas;
 	}
 
-	public BigDecimal getAmount_bajas_current() {
-		return amount_bajas_current;
+	public BigDecimal getValor_bajas() {
+		return valor_bajas;
 	}
 
-	public void setAmount_bajas_current(BigDecimal amount_bajas_current) {
-		this.amount_bajas_current = amount_bajas_current;
+	public void setValor_bajas(BigDecimal valor_bajas) {
+		this.valor_bajas = valor_bajas;
+	}
+
+	public BigDecimal getTotal_emision() {
+		return total_emision;
+	}
+
+	public void setTotal_emision(BigDecimal total_emision) {
+		this.total_emision = total_emision;
+	}
+	
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	@Override
 	public String toString() {
 		return "ReportEmissionDTO [acount_id=" + acount_id + ", account_code="
 				+ account_code + ", account_name=" + account_name
-				+ ", cantidad=" + cantidad + ", amount_emission="
-				+ amount_emission + ", amount_bajas_posteriores="
-				+ amount_bajas_posteriores + ", amount_bajas_current="
-				+ amount_bajas_current + "]";
+				+ ", cantidad_emisiones=" + cantidad_emisiones
+				+ ", valor_emision=" + valor_emision + ", cantidad_bajas="
+				+ cantidad_bajas + ", valor_bajas=" + valor_bajas
+				+ ", total_emision=" + total_emision + ", tipo=" + tipo + "]";
 	}
-	
+
 }
