@@ -67,7 +67,7 @@
 					<a:commandButton id="generateReport"
 						value="#{messages['income.generateReport']}"
 						 action="#{emissionReportHome.generateReport()}"
-						 reRender="detailEmissionPanel,entryFutureList,formalizationProntoPagoList,formalizationNormalList,anuladasList"/>
+						 reRender="detailEmissionPanel,entryFutureList,formalizationProntoPagoList,formalizationNormalList,anuladasList,detailPanel2,printingSuccessBtn"/>
 				</div>
 
 			</rich:panel>
@@ -489,9 +489,20 @@
 					</rich:dataTable>
 				</rich:panel>
 			</a:outputPanel>
+
+			<h:panelGroup id="detailPanel2">
+
+				<s:button style="width:70px" id="printingSuccessBtn"
+				view="/revenue/emissionReport/EmissionReportPDF.xhtml"
+				value="Imprimir"
+				rendered="#{emissionReportHome.renderPrint}">
+				</s:button>
+
+				<s:button id="back" value="#{messages['common.back']}"
+					propagation="end" view="/home.xhtml" />
+			</h:panelGroup>
+			
 			
 		</h:form>
-		
 	</ui:define>
-
 </ui:composition>

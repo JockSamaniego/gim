@@ -30,7 +30,9 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
+import ec.gob.gim.cadaster.model.LocationPropertySinat;
 import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.PropertyLocationType;
 import ec.gob.gim.cadaster.model.WorkDeal;
 import ec.gob.gim.cadaster.model.WorkDealFraction;
 import ec.gob.gim.cadaster.model.WorkDealFractionComparator;
@@ -634,16 +636,28 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 
 			System.out.println("====>" + direction);
 			workDealFraction.setAddress(direction);
-			/*
-			 * Rene Ortega 2016-08-06 busqueda de avaluo de propiedades
-			 */
-			this.appraisalForPropertySelect = cadasterService
-					.findAppraisalsForProperty(property.getId());
-			System.out.println("numero de avaluos de propiedad:"
-					+ this.appraisalForPropertySelect.size());
+			
+			
 		} catch (Exception e) {
-
+			
 		}
+		
+		if(property.getLocation()==null && property.getPropertyLocationType()==PropertyLocationType.SINAT){
+			LocationPropertySinat loc = cadasterService.findLocationPropertySinat(property.getId());
+			if(loc!=null){
+				workDealFraction.setAddress(loc.getSectorName());
+			}else{
+				workDealFraction.setAddress(null);
+			}
+		}
+		
+		/*
+		 * Rene Ortega 2016-08-06 busqueda de avaluo de propiedades
+		 */		
+		this.appraisalForPropertySelect = cadasterService
+				.findAppraisalsForProperty(property.getId());
+//		System.out.println("numero de avaluos de propiedad:"
+//				+ this.appraisalForPropertySelect.size());
 
 	}
 

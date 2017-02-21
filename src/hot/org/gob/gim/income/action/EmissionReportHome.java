@@ -133,8 +133,10 @@ public class EmissionReportHome extends EntityController {
 	private Long total_anuladas;
 	
 	private BigDecimal total_valor_anuladas;
-
 	
+	private Boolean renderPrint = Boolean.FALSE;
+	
+
 	public EmissionReportHome() {
 		
 	}
@@ -344,6 +346,46 @@ public class EmissionReportHome extends EntityController {
 	public void setDetailsAnuladas(List<ReportEmissionDTO> detailsAnuladas) {
 		this.detailsAnuladas = detailsAnuladas;
 	}
+	
+	public Charge getIncomeCharge() {
+		return incomeCharge;
+	}
+
+	public void setIncomeCharge(Charge incomeCharge) {
+		this.incomeCharge = incomeCharge;
+	}
+
+	public Charge getRevenueCharge() {
+		return revenueCharge;
+	}
+
+	public void setRevenueCharge(Charge revenueCharge) {
+		this.revenueCharge = revenueCharge;
+	}
+
+	public Delegate getIncomeDelegate() {
+		return incomeDelegate;
+	}
+
+	public void setIncomeDelegate(Delegate incomeDelegate) {
+		this.incomeDelegate = incomeDelegate;
+	}
+
+	public Delegate getRevenueDelegate() {
+		return revenueDelegate;
+	}
+
+	public void setRevenueDelegate(Delegate revenueDelegate) {
+		this.revenueDelegate = revenueDelegate;
+	}
+	
+	public Boolean getRenderPrint() {
+		return renderPrint;
+	}
+
+	public void setRenderPrint(Boolean renderPrint) {
+		this.renderPrint = renderPrint;
+	}
 
 	public void loadDefaultDates() {
 		if (isFirstTime) {
@@ -487,6 +529,8 @@ public class EmissionReportHome extends EntityController {
 	
 	public void generateReport(){
 		
+		this.renderPrint = Boolean.FALSE;
+		
 		List <Long> statusIds = new ArrayList<Long>();
 
 		if (municipalBondStatus != null) {
@@ -567,6 +611,10 @@ public class EmissionReportHome extends EntityController {
 				this.total_valor_anuladas = this.total_valor_anuladas.add(reportEmissionDTO.getTotal_emision());
 			}
 			
+		}
+		
+		if(this.allResults.size()>0 || this.detailsAnuladas.size()>0 || this.detailsFormalizacionesNormales.size()>0 || this.detailsFormalizacionesPagoAnticipado.size()>0 || this.detailsFuturas.size()>0){
+			this.renderPrint = Boolean.TRUE;
 		}
 	}
 }

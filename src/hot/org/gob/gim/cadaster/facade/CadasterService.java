@@ -7,6 +7,7 @@ import javax.ejb.Local;
 
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.DomainSinat;
+import ec.gob.gim.cadaster.model.LocationPropertySinat;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
@@ -46,6 +47,14 @@ public interface CadasterService {
 	 */
 	List<AppraisalsPropertyDTO> findAppraisalsForProperty(Long property_id);
 	WorkDealFraction verifyCheckAlreadyAddedPropertyIntoWorkDeal(Long workDeal_id, Long property_id);
+	
+	/*
+	 * Rene Ortega
+	 * 2017-02-21
+	 * metodo que devuelve la localizacion de propiedades rusticas
+	 * 
+	 */
+	LocationPropertySinat findLocationPropertySinat(Long property_id);
 	
 	//Jock Samaniego
 	//actualizar deleted predios rusticos 23/09/2016
