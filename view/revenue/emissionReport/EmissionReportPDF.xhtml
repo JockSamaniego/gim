@@ -1,0 +1,865 @@
+<p:document xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	title="#{messages['closingTill']}" subject="report" type="pdf"
+	pageSize="A4" margins="20 10 20 20" author="loxageek"
+	orientation="portrait" creator="René">
+
+	<f:facet name="header">
+		<p:font size="9" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="2" widthPercentage="100" spacingAfter="15"
+						widths="1 10">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:image value="#{gim.institution.logo}" alignment="center" widht="1" height="1">
+                                <s:transformImageSize height="70" maintainRatio="true"/>
+                            </p:image>
+                        </p:cell>
+						<p:cell>
+							<p:font size="8" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+							</p:font>
+
+							<p:font size="7" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.address}. #{messages['institution.phone']}: #{gim.institution.phone} -  #{messages['institution.fax']}: #{gim.institution.fax}</p:paragraph>
+							</p:font>
+
+							<p:font size="8" style="bold">
+								<p:paragraph alignment="center">#{messages['REVENUEREPORT']}</p:paragraph>
+							</p:font>
+						</p:cell>
+					</p:table>
+				</p:paragraph>
+			</p:header>
+			<p:footer borderWidthTop="1" borderColorTop="blue"
+				borderWidthBottom="0" alignment="center">
+	 			[<p:pageNumber />]
+			</p:footer>
+		</p:font>
+	</f:facet>
+
+	<p:font size="9" name="HELVETICA">
+
+		<p:paragraph alignment="right" spacingAfter="10">
+			<p:font size="8" name="HELVETICA">
+				<p:text value="#{messages['common.date']}: " />
+				<p:text value="#{currentDatetime}">
+					<f:convertDateTime
+						pattern="#{messages['common.dateFullTimePattern']}" />
+				</p:text>
+			</p:font>
+		</p:paragraph>
+
+				<p:table columns="2" widthPercentage="100" headerRows="0" widths="1 1"
+			spacingAfter="10">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['common.printBy']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{userSession.user.resident.name}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['totalEmitted']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{emissionReportHome.total_emision}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['report.startDate']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{emissionReportHome.startDate}">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['report.endDate']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{emissionReportHome.endDate}">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+		
+		<p:table rendered="#{not empty emissionReportHome.allResults}" columns="7"
+			spacingBefore="10" spacingAfter="10" widthPercentage="100"
+			headerRows="0" widths="1.3 3.7 1 1 1 1 1">
+			<p:font size="9" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['accountCode']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['account.accountName']}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Cantidad Emisiones" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Valor Emisión"/>
+					</p:paragraph>
+				</p:cell>
+
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Cantidad Bajas" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Valor Bajas" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="TOTAL EMISION" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+
+			<ui:repeat value="#{emissionReportHome.allResults}" var="_var">
+				<p:font size="8" style="normal,italic,oblique">
+					<p:cell borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.account_code}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.account_name}" />
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.cantidad_emisiones}">
+								
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.valor_emision}">
+								<f:convertNumber pattern="#0.00" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.cantidad_bajas}">
+								
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.valor_bajas}">
+								<f:convertNumber pattern="#0.00" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.total_emision}">
+								<f:convertNumber pattern="#0.00" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+				</p:font>
+			</ui:repeat>
+			
+			<p:font size="9" style="bold">
+				<p:cell borderWidth="0" />
+
+				<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{messages['item.total']}" />
+					</p:paragraph>
+				</p:cell>
+			
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_cant_emisiones}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_valor_emision}">
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_cant_bajas}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_valor_bajas}">
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_emision}">
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+			</p:font>
+		</p:table>
+		
+		<p:newPage/>
+		
+		<p:table rendered="#{not empty emissionReportHome.detailsFuturas}" columns="1"
+			spacingBefore="15" spacingAfter="5" widthPercentage="100"
+			headerRows="0">
+			<p:font size="14" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center" borderWidth="0" >
+					<p:paragraph>
+						<p:text value="FUTURAS" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+		
+		
+		
+		<p:table rendered="#{not empty emissionReportHome.detailsFuturas}" columns="4"
+			spacingBefore="10" spacingAfter="10" widthPercentage="100"
+			headerRows="0" widths="2 2 1 1">
+			<p:font size="9" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['account']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['account.accountName']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Nro. Emisiones" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Valor Emisiones" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+
+			<ui:repeat value="#{emissionReportHome.detailsFuturas}" var="_var">
+				<p:font size="8">
+					<p:cell borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.account_code}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.account_name}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.cantidad_emisiones}">
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.total_emision}">
+								<f:convertNumber pattern="#0.00" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+				</p:font>
+			</ui:repeat>
+
+			<p:font size="9" style="bold">
+				<p:cell borderWidth="0" />	
+				
+				<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{messages['item.total']}" />
+					</p:paragraph>
+				</p:cell>
+							
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_futuras}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_valor_futuras}">
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+			</p:font>
+		</p:table>
+		
+
+		<p:table rendered="#{not empty emissionReportHome.detailsFormalizacionesPagoAnticipado}" columns="1"
+			spacingBefore="15" spacingAfter="5" widthPercentage="100"
+			headerRows="0">
+			<p:font size="14" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center" borderWidth="0" >
+					<p:paragraph>
+						<p:text value="FORMALIZACIONES PAGO ANTICIPADO" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+		
+		
+		
+		<p:table rendered="#{not empty emissionReportHome.detailsFormalizacionesPagoAnticipado}" columns="4"
+			spacingBefore="10" spacingAfter="10" widthPercentage="100"
+			headerRows="0" widths="2 2 1 1">
+			<p:font size="9" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['account']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['account.accountName']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Nro. Emisiones" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Valor Emisiones" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+
+			<ui:repeat value="#{emissionReportHome.detailsFormalizacionesPagoAnticipado}" var="_var">
+				<p:font size="8">
+					<p:cell borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.account_code}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.account_name}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.cantidad_emisiones}">
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.total_emision}">
+								<f:convertNumber pattern="#0.00" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+				</p:font>
+			</ui:repeat>
+
+			<p:font size="9" style="bold">
+				<p:cell borderWidth="0" />				
+
+				<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{messages['item.total']}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_formalizaciones_pago_anticipado}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_valor_formalizaciones_pago_anticipado}">
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+			</p:font>
+		</p:table>
+		
+		<p:table rendered="#{not empty emissionReportHome.detailsFormalizacionesNormales}" columns="1"
+			spacingBefore="15" spacingAfter="5" widthPercentage="100"
+			headerRows="0">
+			<p:font size="14" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center" borderWidth="0" >
+					<p:paragraph>
+						<p:text value="FORMALIZACIONES NORMALES" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+		
+		
+		
+		<p:table rendered="#{not empty emissionReportHome.detailsFormalizacionesNormales}" columns="4"
+			spacingBefore="10" spacingAfter="10" widthPercentage="100"
+			headerRows="0" widths="2 2 1 1">
+			<p:font size="9" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['account']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['account.accountName']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Nro. Emisiones" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Valor Emisiones" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+
+			<ui:repeat value="#{emissionReportHome.detailsFormalizacionesNormales}" var="_var">
+				<p:font size="8">
+					<p:cell borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.account_code}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.account_name}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.cantidad_emisiones}">
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.total_emision}">
+								<f:convertNumber pattern="#0.00" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+				</p:font>
+			</ui:repeat>
+
+			<p:font size="9" style="bold">
+				<p:cell borderWidth="0" />				
+
+				<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{messages['item.total']}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_formalizaciones_normales}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_valor_formalizaciones_normales}">
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+			</p:font>
+		</p:table>
+		
+		
+		<p:table rendered="#{not empty emissionReportHome.detailsAnuladas}" columns="1"
+			spacingBefore="15" spacingAfter="5" widthPercentage="100"
+			headerRows="0">
+			<p:font size="14" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center" borderWidth="0" >
+					<p:paragraph>
+						<p:text value="ANULACIONES" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+		
+		<p:table rendered="#{not empty emissionReportHome.detailsAnuladas}" columns="4"
+			spacingBefore="10" spacingAfter="10" widthPercentage="100"
+			headerRows="0" widths="2 2 1 1">
+			<p:font size="9" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['account']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['account.accountName']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Nro. Emisiones" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Valor Emisiones" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+
+			<ui:repeat value="#{emissionReportHome.detailsAnuladas}" var="_var">
+				<p:font size="8">
+					<p:cell borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.account_code}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.account_name}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.cantidad_emisiones}">
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.total_emision}">
+								<f:convertNumber pattern="#0.00" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+				</p:font>
+			</ui:repeat>
+
+			<p:font size="9" style="bold">
+				<p:cell borderWidth="0" />				
+
+				<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{messages['item.total']}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_anuladas}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_valor_anuladas}">
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+			</p:font>
+		</p:table>
+		
+		<p:newPage/>
+		
+		<p:table columns="2" spacingAfter="15"
+			spacingBefore="15" widthPercentage="40"
+			headerRows="0" widths="2 1">
+			<p:font size="9" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['revenue.totalEmision']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['item.total']}" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+
+			<ui:repeat value="2">
+				<p:font size="8">
+							
+					<p:cell>
+						<p:paragraph>
+							<p:text value="#{messages['revenue.currentEmisions']}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell  horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{emissionReportHome.total_valor_emision}" />
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell >
+						<p:paragraph>
+							<p:text value="#{messages['revenue.reversedValues']}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{emissionReportHome.total_valor_bajas}" />
+						</p:paragraph>
+					</p:cell>					
+					
+				</p:font>
+			</ui:repeat>
+
+			<p:font size="9" style="bold">
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['item.total']}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_valor_emision + emissionReportHome.total_valor_bajas}">
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+			</p:font>
+		</p:table>
+		
+		
+		
+		<p:table columns="2" widthPercentage="80" headerRows="0" spacingBefore="30">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="center" />
+			</f:facet>
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text value="____________________________" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text value="____________________________" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text
+							value="#{emissionReportHome.revenueDelegate.name.toUpperCase()}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text
+							value="#{emissionReportHome.incomeDelegate.name.toUpperCase()}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text
+							value="#{messages['revenue.emisionResponsible'].toUpperCase()}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text
+							value="#{messages['revenue.emisionReceipt'].toUpperCase()}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+						
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text
+							value="#{emissionReportHome.revenueCharge.name.toUpperCase()}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="7" style="bold">
+						<p:text
+							value="#{emissionReportHome.incomeCharge.name.toUpperCase()}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:table>
+		
+		
+	</p:font>
+</p:document>
