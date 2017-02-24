@@ -68,6 +68,9 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
     private Resident currentResident;
     @In
     EntityManager entityManager;
+    
+    @In(create = true)   
+    private WorkdayHome workdayHome;
 
     private boolean selectable;
 
@@ -778,6 +781,12 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
                 total = total.add((BigDecimal) row[2]);
             }
         }
+        
+        //rfarmijosm 2016-02-23
+        workdayHome.setStartDate(startDate);
+        workdayHome.setEndDate(endDate);
+        workdayHome.replacementPaymentReport();
+        
     }
 
     public String dateToStr(Date date) {

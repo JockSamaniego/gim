@@ -33,7 +33,8 @@
 					</rich:calendar>
 				</s:decorate>
 
-				<s:decorate id="groupByField" template="../layout/edit.xhtml" rendered="#{!workdayHome.globalReport and false}">
+				<s:decorate id="groupByField" template="../layout/edit.xhtml"
+					rendered="#{!workdayHome.globalReport and false}">
 					<ui:define name="label">#{messages['account']}: </ui:define>
 					<h:selectOneMenu id="groupBy" required="true"
 						value="#{workdayHome.keygroupBy}">
@@ -50,44 +51,181 @@
 				<div class="actionButtons">
 
 					<a:commandButton id="generateReport"
-						reRender="detailPanel2,detailPaymentPanel,total"
+						reRender="detailPanel2,detailPaymentPanel,total,replacementAgrementDetail"
 						value="#{messages['income.generateReport']}"
 						action="#{workdayHome.generateGlobalReport()}" />
 
 				</div>
 
 			</rich:panel>
-			
+
 			<ui:include src="fragment/DetailCollected.xhtml" />
-					
+
 
 			<rich:panel id="total">
-			
-				<s:decorate id="workdayField" template="../layout/edit.xhtml" rendered="#{workdayHome.instance.id != null}">
+
+				<s:decorate id="workdayField" template="../layout/edit.xhtml"
+					rendered="#{workdayHome.instance.id != null}">
 					<ui:define name="label">#{messages['workday.incomePart']}:</ui:define>
-					<h:inputText value="#{workdayHome.instance.charge}" size="12" disabled="true" />
+					<h:inputText value="#{workdayHome.instance.charge}" size="12"
+						disabled="true" />
 				</s:decorate>
-				
+
 				<s:decorate id="servedPeopleField" template="../layout/edit.xhtml">
 					<ui:define name="label">#{messages['item.total']} #{messages['till.servedPeople']}:</ui:define>
-					<h:inputText value="#{workdayHome.numberOfServedPeople}" size="12" disabled="true" />
+					<h:inputText value="#{workdayHome.numberOfServedPeople}" size="12"
+						disabled="true" />
 				</s:decorate>
 
 				<s:decorate id="transactionsField" template="../layout/edit.xhtml">
 					<ui:define name="label">#{messages['item.total']} #{messages['till.numberTransactions']}:</ui:define>
-					<h:inputText value="#{workdayHome.numberOfTransactions}" size="12" disabled="true"/>
+					<h:inputText value="#{workdayHome.numberOfTransactions}" size="12"
+						disabled="true" />
 				</s:decorate>
 				<div style="clear: both" />
 
 			</rich:panel>
 
+
+
+			<rich:panel id="replacementAgrementDetail">
+
+				<f:facet name="header">Bajas de obligaciones con abono</f:facet>
+
+				<rich:dataTable id="replacementAgrementTable" var="_replacement"
+					value="#{workdayHome.replacementAgreements}"
+					rowClasses="rvgRowOne,rvgRowTwo"
+					rendered="#{not empty workdayHome.replacementAgreements}">
+
+					<f:facet name="header">Resumen de Bajas</f:facet>
+
+					<rich:column sortBy="#{_replacement.ent_name}">
+						<f:facet name="header">
+							<h:outputText value="#{messages['entry']}" />
+						</f:facet>
+						<h:outputText value="#{_replacement.ent_name}" size="12"
+							styleClass="right">
+						</h:outputText>
+					</rich:column>
+
+					<rich:column sortBy="#{_replacement.identificationnumber}"
+						styleClass="left">
+						<f:facet name="header">
+							<h:outputText
+								value="#{messages['resident.identificationNumber']}" />
+						</f:facet>
+						<h:outputText value="#{_replacement.identificationnumber}"
+							size="12" styleClass="left">
+						</h:outputText>
+					</rich:column>
+
+					<rich:column sortBy="#{_replacement.name_resident}">
+						<f:facet name="header">
+							<h:outputText value="#{messages['resident.name']}" />
+						</f:facet>
+						<h:outputText value="#{_replacement.name_resident}" size="12">
+						</h:outputText>
+					</rich:column>
+
+					<rich:column sortBy="#{_replacement.mb_emisiondate}">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.emisionDate']}" />
+						</f:facet>
+						<h:outputText value="#{_replacement.mb_emisiondate}" size="12">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column sortBy="#{_replacement.mb_number}" styleClass="right">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.number']}" />
+						</f:facet>
+						<h:outputText value="#{_replacement.mb_number}" size="12"
+							styleClass="right">
+						</h:outputText>
+					</rich:column>
+
+					<rich:column sortBy="#{_replacement.mb_value}" styleClass="right">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.value']}" />
+						</f:facet>
+						<h:outputText value="#{_replacement.mb_value}" size="12"
+							styleClass="right">
+							<f:convertNumber pattern="$ ####.00" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column sortBy="#{_replacement.replacement_total}"
+						styleClass="right">
+						<f:facet name="header">
+							<h:outputText
+								value="#{messages['replacementPaymentAgreement.title']}" />
+						</f:facet>
+						<h:outputText value="#{_replacement.replacement_total}" size="12"
+							styleClass="right">
+							<f:convertNumber pattern="$ ####.00" />
+						</h:outputText>
+					</rich:column>
+
+				</rich:dataTable>
+
+
+
+
+
+
+
+
+				<rich:dataTable id="replacementAccountTable" var="_account"
+					value="#{workdayHome.replacementAccountDTOs}"
+					rowClasses="rvgRowOne,rvgRowTwo"
+					rendered="#{not empty workdayHome.replacementAccountDTOs}">
+
+					<f:facet name="header">Bajas con abonos por cuenta contable</f:facet>
+
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="#{messages['account.accountCode']}" />
+						</f:facet>
+						<h:outputText value="#{_account.accountcode}" size="12"
+							styleClass="right">
+						</h:outputText>
+					</rich:column>
+
+					<rich:column styleClass="left">
+						<f:facet name="header">
+							<h:outputText value="#{messages['account.accountName']}" />
+						</f:facet>
+						<h:outputText value="#{_account.accountname}" size="12"
+							styleClass="left">
+						</h:outputText>
+					</rich:column>
+
+					<rich:column styleClass="right">
+						<f:facet name="header">
+							<h:outputText value="#{messages['money.value']}" />
+						</f:facet>
+						<h:outputText value="#{_account.total}" size="12"
+							styleClass="right">
+							<f:convertNumber pattern="$ ####.00" />
+						</h:outputText>
+					</rich:column>
+
+				</rich:dataTable>
+
+				<div style="clear: both" />
+
+			</rich:panel>
+
+
 			<rich:panel id="detailPanel2">
 				<s:button view="/income/report/IncomeControlReport.xhtml" id="print"
 					rendered="#{(not empty workdayHome.entryTotalCollecteds or not empty workdayHome.entryTotalCollectedsByCompensation or not empty workdayHome.entryTotalCollectedsInAgreement) and !workdayHome.globalReport}"
 					propagation="join" value="#{messages['common.print']}" />
-					
-				<s:button view="/income/report/IncomeGlobalReportExtra.xhtml" id="printss"
-					propagation="join" value="#{messages['common.printTemp']}" />
+
+				<s:button view="/income/report/IncomeGlobalReportExtra.xhtml"
+					id="printss" propagation="join"
+					value="#{messages['common.printTemp']}" />
 
 				<s:button view="/income/report/IncomeGlobalReport.xhtml"
 					action="#{workdayHome.buildMainAccounts()}" id="printId"
