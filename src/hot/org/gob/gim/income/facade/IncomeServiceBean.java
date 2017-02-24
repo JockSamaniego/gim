@@ -327,9 +327,11 @@ public class IncomeServiceBean implements IncomeService {
 		return deposit;
 	}
 
+	//@tag recaudacionCoactiva
+	//agregar el tipo de pago Interes/recargo/impuesto
 	@SuppressWarnings("unchecked")
 	public void save(Date paymentDate, List<Long> municipalBondIds,
-			Person cashier, Long tillId) throws Exception {
+			Person cashier, Long tillId, String rateType) throws Exception {
 		Query query = entityManager
 				.createNamedQuery("MunicipalBond.findSimpleByIds");
 		query.setParameter("municipalBondIds", municipalBondIds);
@@ -341,7 +343,7 @@ public class IncomeServiceBean implements IncomeService {
 					cashier, tillId);
 			deposits.add(deposit);
 		}
-		save(deposits, null, tillId);
+		save(deposits, null, tillId, rateType);
 	}
 
 	public void deactivateCreditNotes(List<PaymentFraction> paymentFractions) {
@@ -368,9 +370,11 @@ public class IncomeServiceBean implements IncomeService {
 			}
 		}
 	}
-
+	
+	//@tag recaudacionCoactiva
+	//agregar el tipo de pago Interes/recargo/impuesto
 	public void save(List<Deposit> deposits, Long paymentAgreementId,
-			Long tillId) throws Exception {
+			Long tillId, String itemType) throws Exception {
 		//System.out.println("\n\nInicia grabacion");
 		Long PAID_STATUS_ID = systemParameterService
 				.findParameter(PAID_BOND_STATUS);
@@ -384,28 +388,45 @@ public class IncomeServiceBean implements IncomeService {
 			//@author macartuche
 			//@date 2016-06-21
 			//@tag recaudacionesCoactivas
-			Boolean interestIsPayed=false;
+			Boolean itemIsPayed=false;
 			BigDecimal sum = BigDecimal.ZERO; 
-			sum = sumAccumulatedInterest(municipalBond.getId(), false, "VALID");
+			sum = sumAccumulatedInterest(municipalBond.getId(), false, "VALID", itemType);
+			BigDecimal itemValue = BigDecimal.ZERO;
+			BigDecimal depositValue = BigDecimal.ZERO;
+			
+			switch (itemType.toCharArray()[0]) {
+				case 'I': //interest
+					itemValue = municipalBond.getInterest();
+					depositValue = deposit.getInterest();
+				break;
+				case 'S': //surcharge
+					itemValue = municipalBond.getSurcharge();
+					depositValue = deposit.getSurcharge();
+				break;
+				case 'T': //taxes
+					itemValue = municipalBond.getTaxesTotal();
+					depositValue = deposit.getPaidTaxes();
+				break;
+
+			}
 			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
-				BigDecimal temp = deposit.getValue().add(sum);
-				if(temp.compareTo(municipalBond.getInterest()) >= 0)
-					interestIsPayed = true;				
+				BigDecimal temp = depositValue.add(sum);
+				if(temp.compareTo(itemValue) >= 0)
+					itemIsPayed = true;				
 			}else if(sum==null && 
-					deposit.getValue().compareTo(municipalBond.getInterest())>=0 && 
+					depositValue.compareTo(itemValue)>=0 && 
 					municipalBond.getPaymentAgreement()!=null ){
-				interestIsPayed = true;
+				itemIsPayed = true;
 			}
 			
-			if(municipalBond.getPaymentAgreement()!=null && !interestIsPayed ){
-				
-				MunicipalbondAux munAux =  createBondAux(deposit, municipalBond, Boolean.FALSE);
+			if(municipalBond.getPaymentAgreement()!=null){				
+				MunicipalbondAux munAux =  createBondAux(deposit, municipalBond, itemIsPayed, itemType);
 				entityManager.persist(munAux);			
-			}else if(municipalBond.getPaymentAgreement()!=null &&	interestIsPayed){
-				
-				MunicipalbondAux munAux =  createBondAux(deposit, municipalBond, Boolean.TRUE);			
-				entityManager.persist(munAux);
 			}
+//			else if(municipalBond.getPaymentAgreement()!=null &&	itemIsPayed ){				
+//				MunicipalbondAux munAux =  createBondAux(deposit, municipalBond, Boolean.TRUE, itemType);			
+//				entityManager.persist(munAux);
+//			}
 			
 			if (deposit.getBalance().compareTo(BigDecimal.ZERO) == 0) {
 				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId,
@@ -1647,10 +1668,12 @@ public class IncomeServiceBean implements IncomeService {
 	 * Obtener una lista de municipalbondAux por el estado, municipalbondId y si cubre o
 	 * no el interes
 	 */
-	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long municipalbondId, Boolean coverInterest, String status){
+	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long municipalbondId, Boolean coverInterest, 
+															String status, String type){
 		
 		String query = "Select mba from MunicipalbondAux mba "
-						+ "where mba.municipalbond.id=:munid and mba.status=:status";
+						+ "where mba.municipalbond.id=:munid and mba.status=:status"
+						+ " and mba.type=:type";
 		if(coverInterest!=null){
 			query += " and mba.itconverinterest=:cover";
 		}
@@ -1658,6 +1681,7 @@ public class IncomeServiceBean implements IncomeService {
 		Query interestIsPayedQuery = entityManager.createQuery(query);
 		interestIsPayedQuery.setParameter("munid", municipalbondId);		
 		interestIsPayedQuery.setParameter("status", status);
+		interestIsPayedQuery.setParameter("type", type);
 		
 		if(coverInterest!=null){
 			interestIsPayedQuery.setParameter("cover", coverInterest);
@@ -1673,15 +1697,18 @@ public class IncomeServiceBean implements IncomeService {
 	 * @tag recaudacionCoactivas
 	 * Suma de los intereses que se acumulan por abonos menores al interes
 	 */
-	public BigDecimal sumAccumulatedInterest(Long municipalbondId, Boolean coverInterest, String status){
+	public BigDecimal sumAccumulatedInterest(Long municipalbondId, Boolean coverInterest, String status, String type){
 		
 		String query = " Select SUM(mba.payValue) from MunicipalbondAux mba " 
 					   + " where mba.municipalbond.id=:munid and "
-					   + "mba.itconverinterest=:cover and mba.status=:status";
+					   + " mba.itconverinterest=:cover and "
+					   + " mba.status=:status and"
+					   + " mba.type=:type ";
 		Query sumInterest = entityManager.createQuery(query);		
 		sumInterest.setParameter("munid",municipalbondId);
 		sumInterest.setParameter("cover", coverInterest );
 		sumInterest.setParameter("status", status );
+		sumInterest.setParameter("type", type);
 		
 		return (BigDecimal)sumInterest.getSingleResult();
 	}
@@ -1695,14 +1722,34 @@ public class IncomeServiceBean implements IncomeService {
 	 * @param coverInterest Boolean
 	 * @return MunicipalbondAux
 	 */
-	private MunicipalbondAux createBondAux(Deposit deposit, MunicipalBond municipalBond,  Boolean coverInterest){
+	private MunicipalbondAux createBondAux(Deposit deposit, MunicipalBond municipalBond,  Boolean coverInterest, String type){
 		MunicipalbondAux munAux = new MunicipalbondAux();
-		munAux.setPayValue(deposit.getInterest());
-		munAux.setInterest(municipalBond.getInterest());
+
+		
+		BigDecimal valuePayed = BigDecimal.ZERO;
+		BigDecimal valueCover = BigDecimal.ZERO;
+		switch (type.charAt(0)) {
+			case 'I':
+				valuePayed = deposit.getInterest();
+				valueCover = municipalBond.getInterest();
+			break;
+			case 'S':
+				valuePayed = deposit.getSurcharge();
+				valueCover = municipalBond.getSurcharge();
+			break;
+			case 'T':
+				valuePayed = deposit.getPaidTaxes();
+				valueCover = municipalBond.getTaxesTotal();
+			break;
+			
+		}
+		munAux.setPayValue(valuePayed);
+		munAux.setInterest(valueCover);
 		munAux.setItconverinterest(coverInterest);
 		munAux.setMunicipalbond(municipalBond);
 		munAux.setLiquidationDate(deposit.getDate());
 		munAux.setLiquidationTime(deposit.getTime());
+		munAux.setType(type);
 		
 		//DEPOSITO
 		munAux.setDeposit(deposit);

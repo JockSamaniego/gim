@@ -64,8 +64,12 @@ public interface IncomeService {
 	void calculatePayment(List<MunicipalBond> municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount, Object ... facts) throws EntryDefinitionNotFoundException;
 	public void deactivateCreditNotes(List<PaymentFraction> paymentFractions);
 	
-	public void save(Date paymentDate, List<Long> municipalBondIds, Person cashier, Long tillId) throws Exception;
-	public void save(List<Deposit> deposits, Long paymentAgreementId, Long tillId) throws Exception;
+	//@tag recaudacionCoactivas 
+	//agregar el tipo de pago Interes/recargo/impuesto
+	public void save(Date paymentDate, List<Long> municipalBondIds, Person cashier, Long tillId, String rateType) throws Exception;
+	//@tag recaudacionCoactivas
+	//agregar el tipo de pago Interes/recargo/impuesto
+	public void save(List<Deposit> deposits, Long paymentAgreementId, Long tillId, String rateType) throws Exception;
 	public void saveForCompensationPayment(List<MunicipalBond> municipalBonds, Long tillId) throws Exception;
 	public void setAsPrinted(List<Long> printedDepositIds);
 	
@@ -123,9 +127,9 @@ public interface IncomeService {
 	//@author
 	//@tag recaudacionesCoactivas
 	//@date 2016-07-08T15:25:11
-	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long id, Boolean coverInterest, String status);
+	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long id, Boolean coverInterest, String status, String type);
 	
-	public BigDecimal sumAccumulatedInterest(Long id, Boolean coverInterest, String status);
+	public BigDecimal sumAccumulatedInterest(Long id, Boolean coverInterest, String status, String type);
 	
 	//Jock Samaniego
 	//actualizar estado de convenios 21/09/2016

@@ -70,6 +70,8 @@ public class MunicipalbondAux {
 	
 	private String status;
 	
+	//interest - surcharge
+	private String type;
 
 	public Long getId() {
 		return id;
@@ -158,4 +160,15 @@ public class MunicipalbondAux {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+
+	public String getType() {
+		return type;
+	}
+
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 }

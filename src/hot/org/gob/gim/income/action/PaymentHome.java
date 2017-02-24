@@ -1091,7 +1091,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			try {
 				org.jboss.seam.transaction.Transaction.instance().setTransactionTimeout(1800);
 				Long tillId = userSession.getTillPermission().getTill().getId();
-				incomeService.save(deposits, paymentAgreementId, tillId);
+				//@tag recaudacionCoactivas
+				//agregar el tipo de pago por defecto I (solo afecta convenios de pago)
+				incomeService.save(deposits, paymentAgreementId, tillId, this.ITEM_TYPE);
+				//fin recaudacionCoactivas
 				incomeService.deactivateCreditNotes(getInstance().getPaymentFractions());
 				receiptPrintingManager.print(deposits);
 				renderingDepositPDF(userSession.getUser().getId());
@@ -1235,6 +1238,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			Integer index = 0;
 
 			MunicipalBond municipalBond = null;
+			
+			Boolean capitalIsAffected = false;
+			Boolean paidTotal = false;
 			while (remaining.compareTo(BigDecimal.ZERO) > 0) {
 				//System.out.println("GENERATE DEPOSITS -----> remaining " + remaining);
 
@@ -1249,6 +1255,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 				Deposit deposit = null;
 				Boolean createDeposit = Boolean.TRUE;
+				capitalIsAffected = false;
 
 				if (municipalBond.getDeposits() != null && municipalBond.getDeposits().size() > 0) {
 					deposit = municipalBond.getDeposits().get(municipalBond.getDeposits().size() - 1);
@@ -1260,70 +1267,25 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				if (createDeposit) {
 					deposit = createDeposit(municipalBond.getDeposits().size() + 1);
 				}
+								
 				
-				
+				System.out.println("**********************************REMAINING: "+remaining);
 				//@author macartuche
 				//@date 2016-07-04T16:30
-				//@tag recaudacionCoactivas
-				Boolean interestIsPayed=false;
-				BigDecimal sum = BigDecimal.ZERO;	
-
-				List<MunicipalbondAux> list = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID");
+				//@tag recaudacionCoactivas	
+				Map<String, Object> resultInterest = calculateRate(incomeService, municipalBond, "I", 
+													remaining, municipalBond.getInterest(), deposit,
+													capitalIsAffected);
+				remaining = (BigDecimal)resultInterest.get("remaining");
+				capitalIsAffected = (Boolean)resultInterest.get("capitalIsAffected");
+				paidTotal = (Boolean)resultInterest.get("allIsPayed");
 				
-				if(list.isEmpty()){
-					sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID");					
-					if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
-						BigDecimal temp = remaining.add(sum);			
-						if(temp.compareTo(municipalBond.getInterest()) >= 0)
-							interestIsPayed = true;						
-					}
-				}
+				if(paidTotal) continue;
 				
-				BigDecimal interestToPay = BigDecimal.ZERO;
-				if(interestIsPayed){
-					//el interes a pagar sera lo faltante de la sumatoria					
-					interestToPay = municipalBond.getInterest().subtract(sum);//============>  
-				}else{
-					interestToPay = municipalBond.getInterest();
-				}
-				
-				//BigDecimal interestToPay = municipalBond.getInterest();
-				if (remaining.compareTo(interestToPay) >= 0) {
-					deposit.setInterest(interestToPay);
-					remaining = remaining.subtract(interestToPay);
-					this.getInstance().add(deposit);
-					municipalBond.add(deposit);
-				} else {
-					//rfarmijos 2016-05-23
-					//preguntar proceso de pago para fraccionar interes
-					if(paymentAgreement.getLowerPercentage()){
-						//deposit.setInterest(interestToPay);
-						//remaining = remaining.subtract(interestToPay);
-						//this.getInstance().add(deposit);
-						//municipalBond.add(deposit);
-						
-						
-						//@author macartuche
-						//@date 2016-06-20T17:00:00
-						//@tag recaudacionCoactivas
-						deposit.setInterest(remaining);
-						deposit.setCapital(BigDecimal.ZERO);
-						this.getInstance().add(deposit);
-						municipalBond.add(deposit);
-						
-						
-					}else{
-						hasConflict = Boolean.TRUE;
-						deposit.setHasConflict(Boolean.TRUE);
-						conflictingBond = municipalBond;
-						deltaUp = interestToPay.subtract(remaining);
-						deltaDown = remaining;
-						break;	
-					}
-					
-				}
-
+				System.out.println(" 11 Valor de capital afectado "+capitalIsAffected);
+				//luego del interes el capital
 				BigDecimal capitalToPay = municipalBond.getBalance().subtract(municipalBond.getDiscount());
+				//junto con el capital se trata de pagar ( impuestos + recargos ) - descuentos	
 				if (remaining.compareTo(capitalToPay) >= 0) {
 					BigDecimal taxesToPay = municipalBond.getTaxesTotal();
 					BigDecimal surcharge = municipalBond.getSurcharge();
@@ -1332,71 +1294,130 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					BigDecimal totalWithTaxes = municipalBond.getBalance().add(taxesToPay);
 					totalWithTaxes = totalWithTaxes.add(surcharge);
 					totalWithTaxes = totalWithTaxes.subtract(discount);
+					System.out.println("22 Valor de capital afectado "+capitalIsAffected);
 					if (remaining.compareTo(totalWithTaxes) >= 0) {
 						deposit.setCapital(capitalToPay.add(discount));
 						deposit.setBalance(BigDecimal.ZERO);
 						deposit.setPaidTaxes(taxesToPay);
 						deposit.setDiscount(discount);
 						deposit.setSurcharge(surcharge);
-
+						
+						//@tag recaudacionCoactivas
+						//agregar en caso de que no exista el interes
+						deposit.setInterest(compareValue(deposit, "I"));
+						//fin 
+						
 						remaining = remaining.subtract(capitalToPay);
 						remaining = remaining.subtract(taxesToPay);
 						remaining = remaining.subtract(surcharge);
 						System.out.println("OBLIGACION CANCELADA A ZERO --> "
 								+ municipalBond.getEntry().getDescription() + " " + municipalBond.getId());
+						municipalBond.add(deposit);
+						this.getInstance().add(deposit);
+						
 						if (index == municipalBonds.size()) {
 							deactivatePaymentAgreement = Boolean.TRUE;
 						}
 					} else {
-						hasConflict = Boolean.TRUE;
-						deposit.setHasConflict(Boolean.TRUE);
-						conflictingBond = municipalBond;
-						deltaUp = totalWithTaxes.subtract(remaining);
-						deltaDown = remaining.add(deposit.getInterest());
-						break;
+						//AQUI HAY CONFLICTO POR RECARGO **************************************
+						//@tag recaudacionCoactivas Recargo
+						//2017-02-07 15:08
+						//metodo para cobro de impuestos y de recargo			
+						
+						System.out.println("Valor de capital afectado "+capitalIsAffected);
+						if(!capitalIsAffected){
+							capitalToPay = capitalToPay.add(discount);
+							deposit.setCapital(capitalToPay);
+							remaining = remaining.subtract(deposit.getCapital());
+						}
+						
+						deposit.setDiscount(discount);
+						deposit.setInterest(compareValue(deposit, "I"));
+						
+						deposit.setBalance(taxesToPay.add(surcharge));
+						//balanceTmp = deposit.getBalance();
+						System.out.println("Balance: "+deposit.getBalance());
+						capitalIsAffected = true;
+						//balanceZero = true;
+						
+						
+						//en caso de que sobre dinero 
+						//primero impuestos						
+						taxesToPay = municipalBond.getTaxesTotal();
+						//T=> taxes
+						Map<String, Object> resultTaxes = calculateRate(incomeService, municipalBond, "T", 
+														remaining, municipalBond.getTaxesTotal(), 
+														deposit, capitalIsAffected);
+						remaining = (BigDecimal)resultTaxes.get("remaining");
+						capitalIsAffected = (Boolean)resultTaxes.get("capitalIsAffected");
+						paidTotal = (Boolean)resultTaxes.get("allIsPayed");
+						
+						if(paidTotal) continue;
+						
+						//verificar el pago de recargos
+						if((Boolean)resultTaxes.get("canPayMore")){						
+							Map<String, Object> resultSurcharge = calculateRate(incomeService, municipalBond, "S", 
+																remaining, municipalBond.getSurcharge(), 
+																deposit, capitalIsAffected);													
+							remaining = (BigDecimal)resultSurcharge.get("remaining");
+							capitalIsAffected = (Boolean)resultSurcharge.get("capitalIsAffected");
+							paidTotal = (Boolean)resultSurcharge.get("allIsPayed");							
+							if(paidTotal) continue;
+							
+						}
+						
+						if (index == municipalBonds.size()) {
+							deactivatePaymentAgreement = Boolean.TRUE;
+						}
 					}
 
 				} else {
 					//@author macartuche
 					//@date 2016-06-20T17:00:00
 					//@tag recaudacionCoactivas
-//					BigDecimal discount = municipalBond.getDiscount();
-//					deposit.setDiscount(discount);
-					if(deposit.getInterest().compareTo(interestToPay)<0){
-						deposit.setCapital(BigDecimal.ZERO);
-						remaining = BigDecimal.ZERO;
-					}else{
-						deposit.setCapital(remaining);
-						remaining = BigDecimal.ZERO;
-					}
+					//revisar impuestos y recargo
+					Map<String, Object> resultTaxes = calculateRate(incomeService, municipalBond, "T", remaining, 
+										municipalBond.getTaxesTotal(), deposit, capitalIsAffected);
+					remaining = (BigDecimal)resultInterest.get("remaining");
+					capitalIsAffected = (Boolean)resultInterest.get("capitalIsAffected");
 					
+					
+					if((Boolean)resultTaxes.get("canPayMore")){						
+						Map<String, Object> resultSurcharge = calculateRate(incomeService, municipalBond, "S", remaining, 
+																municipalBond.getSurcharge(), deposit, capitalIsAffected);													
+						remaining = (BigDecimal)resultSurcharge.get("remaining");
+						capitalIsAffected = (Boolean)resultSurcharge.get("capitalIsAffected");
+					}
 				}
 				if (!deactivatePaymentAgreement) {
 					
-//					BigDecimal interest = municipalBond.getInterest();
-//					BigDecimal taxesToPay = municipalBond.getTaxesTotal();
-//					BigDecimal surcharge = municipalBond.getSurcharge();
-//					BigDecimal discount = municipalBond.getDiscount();
-//
-//					BigDecimal totalWithTaxes = municipalBond.getBalance().add(interest).add(taxesToPay);
-//					totalWithTaxes = totalWithTaxes.add(surcharge);
-//					totalWithTaxes = totalWithTaxes.subtract(discount);
-//					
-//					deposit.setBalance(totalWithTaxes.subtract(deposit.getCapital()));
-					if(deposit.getInterest().compareTo(municipalBond.getInterest())<0){
-						deposit.setBalance(municipalBond.getBalance());
-					}else{
-						deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
-					}
+		//					if(deposit.getInterest().compareTo(municipalBond.getInterest())<0){
+		//						deposit.setBalance(municipalBond.getBalance());
+		//					}else{
+		//						deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+		//					}
 					
 					//modificar tambien para el interes acumulado
 					//@author macartuche
 					//@date 2016-06-06T09:00:00
 					//@tag recaudacionCoactivas
+					/*
 					if(interestIsPayed){
-						deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
+							deposit.setBalance(municipalBond.getBalance().subtract(deposit.getCapital()));
 					}
+					
+					if(balanceZero){
+						deposit.setBalance(balanceTmp);
+					}
+					*/
 				}
+				System.out.println("Capital: "+deposit.getCapital());
+				System.out.println("interes: "+deposit.getInterest());
+				System.out.println("impuestos: "+deposit.getPaidTaxes());
+				System.out.println("recargos: "+deposit.getSurcharge());
+				System.out.println("Descuento: "+deposit.getDiscount());
+				System.out.println("Balance: "+deposit.getBalance());
+				
 				deposit.setValue(deposit.getCapital().add(deposit.getInterest()).add(deposit.getPaidTaxes())
 						.add(deposit.getSurcharge()).subtract(deposit.getDiscount()));
 				deposits.add(deposit);
@@ -1410,6 +1431,227 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 		}
 		//System.out.println("GENERATE DEPOSITS -----> ENDS");
+	}
+	
+	/**
+	 * 
+	 * @param incomeService
+	 * @param municipalBond
+	 * @param rateType
+	 * @param sum
+	 * @param remaining
+	 * @param rateNumber
+	 */
+	public String ITEM_TYPE = "I";
+	private Map<String, Object> calculateRate(IncomeService incomeService, 
+								MunicipalBond municipalBond, 
+								String itemType,
+								BigDecimal remaining,
+								BigDecimal itemValue,
+								Deposit deposit,
+								Boolean capitalIsAffected){
+		
+		Boolean itemHasDeposit=false;
+		Boolean allItemPayed= false; 
+		BigDecimal sum= BigDecimal.ZERO;
+		Map<String, Object> result = new HashMap<String, Object>();
+		BigDecimal valueToPay = BigDecimal.ZERO;
+		Boolean canPayMore=false;
+		BigDecimal balance = BigDecimal.ZERO;
+		Boolean allIsPayed =false;
+		
+		//en caso que el interes/recargo/impuestos sean cero en el municipalbond
+		if(itemValue.compareTo(BigDecimal.ZERO)==0 || remaining.compareTo(BigDecimal.ZERO)==0){ 
+			result.put("canPayMore", true);
+			result.put("remaining", remaining);
+			result.put("hasConflict", false);
+			result.put("conflictingBond", null);
+			result.put("deltaUp", BigDecimal.ZERO);
+			result.put("deltaDown", BigDecimal.ZERO);
+			result.put("capitalIsAffected", capitalIsAffected);					
+			result.put("allIsPayed", allIsPayed);					
+			return result;
+		}
+		
+		List<MunicipalbondAux> ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", itemType);		
+		if(ratesList.isEmpty()){
+			sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", itemType);					
+			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+				BigDecimal temp = remaining.add(sum);			
+				if(temp.compareTo(sum) >= 0){
+					itemHasDeposit= true;
+				}										
+			}
+		}else{
+			allItemPayed=true ;
+			canPayMore = true;
+		}
+		
+		
+		valueToPay = (itemHasDeposit)? itemValue.subtract(sum): itemValue; 
+		
+		if(!allItemPayed){
+			//pagar el interes
+			if (remaining.compareTo(valueToPay) >= 0 && valueToPay.compareTo(BigDecimal.ZERO) ==1) {
+			
+				remaining = remaining.subtract(valueToPay);
+
+				if(itemType=="I"){
+					deposit.setInterest(valueToPay);
+					deposit.setSurcharge(compareValue(deposit, "S"));
+					deposit.setPaidTaxes(compareValue(deposit, "T"));
+					
+					if(remaining.compareTo(municipalBond.getBalance())==1){
+						deposit.setCapital(municipalBond.getBalance());
+						remaining = remaining.subtract(municipalBond.getBalance());
+						capitalIsAffected = true;
+					}else if(remaining.compareTo(municipalBond.getBalance())==0){
+						deposit.setCapital(municipalBond.getBalance());
+						remaining = BigDecimal.ZERO;
+						capitalIsAffected = true;
+					}else if(remaining.compareTo(municipalBond.getBalance())==-1){
+						deposit.setCapital(remaining);
+						remaining = BigDecimal.ZERO;
+						capitalIsAffected = true;
+					}
+					//revisar si se cubre todo el interes
+					
+				}else if(itemType=="S"){
+					deposit.setSurcharge(valueToPay);
+					deposit.setInterest(compareValue(deposit, "I"));
+					deposit.setPaidTaxes(compareValue(deposit, "T"));
+					deposit.setCapital(compareValue(deposit, "C"));
+				}else if(itemType=="T"){
+					deposit.setPaidTaxes(valueToPay);
+					deposit.setInterest(compareValue(deposit, "I"));
+					deposit.setSurcharge(compareValue(deposit, "S"));
+					deposit.setCapital(BigDecimal.ZERO);
+				}
+				
+
+				
+				
+				//determinar el saldo de la deuda
+				
+				balance = calculateBalance(deposit, municipalBond, capitalIsAffected);
+				if(itemType=="S"){
+					balance = BigDecimal.ZERO;
+					
+				}
+				if(remaining.compareTo(BigDecimal.ZERO)>0){
+					canPayMore = true;	
+				
+				}else{
+					municipalBond.add(deposit);
+				}
+				
+				deposit.setBalance(balance);
+				municipalBond.add(deposit);
+				this.getInstance().add(deposit);
+				allIsPayed = (deposit.getBalance().compareTo(BigDecimal.ZERO)==0)? true: false;
+				
+			}else if(valueToPay.compareTo(BigDecimal.ZERO) ==1 ){
+				//abonos de rubro (impuesto, interes, recargo) - solo los de 20%
+				if(paymentAgreement.getLowerPercentage()){
+					if(itemType=="I"){
+						deposit.setInterest(remaining);
+						deposit.setPaidTaxes(compareValue(deposit, "T"));
+						deposit.setCapital(compareValue(deposit, "C"));
+						deposit.setSurcharge(compareValue(deposit, "S"));
+					}else if(itemType=="S"){
+						deposit.setSurcharge(remaining);
+						deposit.setPaidTaxes(compareValue(deposit, "T"));
+						deposit.setCapital(compareValue(deposit, "C"));
+						deposit.setInterest(compareValue(deposit, "I"));
+					}else if(itemType=="T"){
+						deposit.setPaidTaxes(remaining);
+						deposit.setCapital(compareValue(deposit, "C"));
+						deposit.setInterest(compareValue(deposit, "I"));
+						deposit.setSurcharge(compareValue(deposit, "S"));
+					}
+					
+					//determinar el saldo de la deuda
+					deposit.setCapital(compareValue(deposit, "C"));
+					balance = calculateBalance(deposit, municipalBond, capitalIsAffected);
+					deposit.setBalance(balance);
+					this.getInstance().add(deposit);
+					municipalBond.add(deposit);
+					remaining = BigDecimal.ZERO;
+					
+					allIsPayed = (deposit.getBalance().compareTo(BigDecimal.ZERO)==0)? true: false;
+				}else{
+					//conflicto porque no tiene activo menos del 20% 
+					//para pagos de abons de  (impuesto, interes, recargo) 
+					hasConflict = Boolean.TRUE;
+					deposit.setHasConflict(Boolean.TRUE);
+					conflictingBond = municipalBond;
+					deltaUp = valueToPay.subtract(remaining);
+					deltaDown = remaining;
+				}			
+			}	
+		}
+			
+		
+		ITEM_TYPE = itemType;
+		
+		result.put("canPayMore", canPayMore);
+		result.put("remaining", remaining);
+		result.put("hasConflict", hasConflict);
+		result.put("conflictingBond", municipalBond);
+		result.put("deltaUp", deltaUp);
+		result.put("deltaDown", deltaDown);
+		result.put("capitalIsAffected", capitalIsAffected);
+		result.put("allIsPayed", allIsPayed);				
+		return result;
+		
+	}
+	
+	private BigDecimal compareValue(Deposit dep, String itemType){
+		
+		BigDecimal returnValue = BigDecimal.ZERO;
+		
+		if(itemType =="I"){
+			returnValue = (dep.getInterest()== null || 
+							dep.getInterest().compareTo(BigDecimal.ZERO)==0) ? BigDecimal.ZERO : dep.getInterest();
+		}else if(itemType=="S"){
+			returnValue = (dep.getSurcharge() == null ||
+							dep.getSurcharge().compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO : dep.getSurcharge();
+		}else if(itemType=="T"){
+			returnValue = (dep.getPaidTaxes() == null || 
+							dep.getPaidTaxes().compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO : dep.getPaidTaxes();
+		}else if(itemType=="C"){
+			returnValue = (dep.getCapital() == null || 
+					dep.getCapital().compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO : dep.getCapital();
+		}
+		
+		System.out.println(itemType +" "+returnValue);
+		return returnValue;
+	}
+	
+	
+	private BigDecimal  calculateBalance(Deposit dep, 
+			MunicipalBond municipalBond, 
+			Boolean capitalIsAfected){
+		
+		System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
+		
+		
+		//agregar control
+		if(capitalIsAfected){
+			BigDecimal value = municipalBond.getBalance().subtract(dep.getCapital().
+					add(dep.getInterest()).
+					add(dep.getSurcharge()).
+					add(dep.getPaidTaxes()).subtract(dep.getDiscount()));
+			
+			value = (value.compareTo(BigDecimal.ZERO)<=0)? BigDecimal.ZERO: value;
+			return (dep.getBalance()!=null)? dep.getBalance() : value;
+		}
+		
+		return municipalBond.getBalance();
+		//return municipalBond.getBalance().subtract(dep.getCapital().
+		//		add(dep.getInterest()).
+		//		add(dep.getSurcharge()).
+		//		add(dep.getPaidTaxes()).subtract(dep.getDiscount()));
 	}
 
 	private Deposit createDeposit(Integer ordinal) {
