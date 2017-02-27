@@ -1,0 +1,215 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:include src="fragment/MunicipalBondReplacementPayment.xhtml" />
+
+		<h:form id="replacementPaymentAgreement" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{replacementPaymentAgreementHome.managed ? messages['common.edit'] : messages['common.edit']} #{messages['replacementPaymentAgreement']}" />
+
+			<rich:panel>
+				<f:facet name="header">
+	    	        #{messages['replacementPaymentAgreement.infoData']}
+    	        </f:facet>
+
+				<s:decorate id="dateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['replacementPaymentAgreement.date']}:</ui:define>
+					<rich:calendar id="date"
+						value="#{replacementPaymentAgreementHome.instance.date}"
+						datePattern="#{messages['common.datePattern']}" disabled="true" />
+				</s:decorate>
+
+
+				<s:decorate id="detailField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['replacementPaymentAgreement.detail']}:</ui:define>
+					<h:inputTextarea id="detail" cols="50" rows="3"
+						value="#{replacementPaymentAgreementHome.instance.detail}" required="true"/>
+				</s:decorate>
+
+				<s:decorate id="mbNumber" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['municipalBond.number']}:</ui:define>
+					<h:inputText id="numberMB"
+						value="#{replacementPaymentAgreementHome.number}" size="20">
+						<a:support event="onblur" reRender="numberMB" ajaxSingle="true" />
+					</h:inputText>
+					<a:commandButton
+						reRender="municipalBondReplacement,replacementPaymentDepositTable,totalField"
+						action="#{replacementPaymentAgreementHome.addMunicipalbond()}"
+						eventsQueue="gimEventsQueue" ajaxSingle="true"
+						value="#{messages['common.add']}" />
+				</s:decorate>
+
+
+				<!--s:decorate id="isReversedField" template="../layout/edit.xhtml">
+					<ui:define name="label">Is reversed</ui:define>
+					<h:selectBooleanCheckbox id="isReversed"
+						value="#{replacementPaymentAgreementHome.instance.isReversed}" />
+				</s:decorate>
+
+				<s:decorate id="reversedExplanationField"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">Reversed explanation</ui:define>
+					<h:inputTextarea id="reversedExplanation" cols="80" rows="3"
+						value="#{replacementPaymentAgreementHome.instance.reversedExplanation}" />
+				</s:decorate>
+
+				<s:decorate id="timeField" template="../layout/edit.xhtml">
+					<ui:define name="label">Time</ui:define>
+					<h:inputText id="time" size="5"
+						value="#{replacementPaymentAgreementHome.instance.time}">
+						<s:convertDateTime type="time" />
+						<a:support event="onblur" reRender="timeField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate-->
+
+				<rich:dataTable var="_municipalBond" id="municipalBondReplacement"
+					value="#{replacementPaymentAgreementHome.instance.municipalBond}"
+					rowClasses="rvgRowOne,rvgRowTwo">
+
+					<f:facet name="header">
+
+						<h:outputText value="Detalle de obligación" />
+
+					</f:facet>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['municipalBond.number']}</f:facet>
+						<h:outputText value="#{_municipalBond.number}" />
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['resident']}</f:facet>
+						<h:outputText value="#{_municipalBond.resident.name}" />
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['municipalBond.emisionDate']}</f:facet>
+						<h:outputText value="#{_municipalBond.emisionDate}">
+							<s:convertDateTime type="date"
+								pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['municipalBond.expirationDate']}</f:facet>
+						<h:outputText value="#{_municipalBond.expirationDate}">
+							<s:convertDateTime type="date"
+								pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['municipalBond.entry']}</f:facet>
+						<h:outputText
+							value="#{_municipalBond.entry.code} - #{_municipalBond.entry.name}" />
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['municipalBondStatus']}</f:facet>
+						<h:outputText value="#{_municipalBond.municipalBondStatus.name}" />
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['municipalBond.value']}</f:facet>
+						<h:outputText value="#{_municipalBond.value}">
+							<f:convertNumber />
+						</h:outputText>
+					</rich:column>
+
+				</rich:dataTable>
+
+				<br />
+
+				<rich:dataTable var="_replacementPaymentDeposit"
+					value="#{replacementPaymentAgreementHome.instance.replacementPaymentDeposits}"
+					rowClasses="rvgRowOne,rvgRowTwo"
+					id="replacementPaymentDepositTable"
+					onRowMouseOver="this.style.backgroundColor='#f4f4ff'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+					<f:facet name="header">
+						<h:outputText value="Detalle de abonos" />
+					</f:facet>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['replacementPaymentDeposit.id']}</f:facet>
+						<h:outputText value="#{_replacementPaymentDeposit.id}" />
+					</rich:column>
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['deposit.date']}</f:facet>
+						<h:outputText value="#{_replacementPaymentDeposit.deposit.date}">
+							<s:convertDateTime type="date"
+								pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+					<rich:column style="text-align: right;">
+						<f:facet name="header">#{messages['replacementPaymentDeposit.value']}</f:facet>
+						<h:outputText value="#{_replacementPaymentDeposit.value}">
+							<f:convertNumber />
+						</h:outputText>
+					</rich:column>
+				</rich:dataTable>
+
+				<s:decorate id="totalField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['replacementPaymentAgreement.total']}:</ui:define>
+					<h:inputText id="total"
+						value="#{replacementPaymentAgreementHome.instance.total}"
+						size="26" disabled="true" style="text-align: right;">
+						<a:support event="onblur" reRender="totalField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{replacementPaymentAgreementHome.persist}"
+					disabled="#{!replacementPaymentAgreementHome.wired}"
+					rendered="#{!replacementPaymentAgreementHome.managed}" />
+
+				<!-- h 
+				: 
+				commandButton id="update" value="#{messages['common.save']}"
+					action=" 
+					# { -replacementPaymentAgreementHome.update}"
+					rendered="
+					 # /
+					 { *replacementPaymentAgreementHome.managed}" /-->
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/income/ReplacementPaymentAgreementLis.xhtml"
+					rendered="#{replacementPaymentAgreementHome.managed}" />
+
+				<s:button id="cancelAdd" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/income/#{empty replacementPaymentAgreementFrom ? 'ReplacementPaymentAgreementList' : replacementPaymentAgreementFrom}.xhtml"
+					rendered="#{!replacementPaymentAgreementHome.managed}" />
+
+			</div>
+		</h:form>
+
+
+
+	</ui:define>
+
+</ui:composition>

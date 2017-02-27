@@ -1,0 +1,55 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="municipalBondReplacementPaymentPanel" width="600"
+		height="500" style="overflow:auto">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['municipalBond']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="municipalBondReplacementPaymentPanel"
+					attachTo="hidelink" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+
+		<a:form id="municipalBondReplacementPayment" styleClass="edit">
+			
+			<rich:panel id="dataPanel">
+		
+
+				<div style="clear: both"></div>
+
+			</rich:panel>
+
+			<rich:panel id="buttons">
+				<div class="actionButtons">
+					<a:commandButton value="#{messages['common.save']}"
+						reRender="municipalBondReplacement"
+						oncomplete="#{(facesContext.maximumSeverity == null || facesContext.maximumSeverity == 'INFO 0') ? 'Richfaces.hideModalPanel(\'municipalBondReplacementPaymentPanel\');' : ''}" />
+
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.quit']}"
+						oncomplete="Richfaces.hideModalPanel('municipalBondReplacementPaymentPanel');"
+						bypassUpdates="true" />
+				</div>
+			</rich:panel>
+
+		</a:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

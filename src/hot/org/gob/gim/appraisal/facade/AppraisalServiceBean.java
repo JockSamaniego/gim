@@ -196,6 +196,20 @@ public class AppraisalServiceBean implements AppraisalService {
 			return new BigDecimal(0.95);
 		else
 			return new BigDecimal(0.94);
+		/*if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
+			return new BigDecimal(1);
+		else if (proper.getArea().compareTo(new BigDecimal(251)) == -1)
+			return new BigDecimal(1);
+		else if (proper.getArea().compareTo(new BigDecimal(501)) == -1)
+			return new BigDecimal(0.96);
+		else if (proper.getArea().compareTo(new BigDecimal(1001)) == -1)
+			return new BigDecimal(0.90);
+		else if (proper.getArea().compareTo(new BigDecimal(2501)) == -1)
+			return new BigDecimal(0.80);
+		else if (proper.getArea().compareTo(new BigDecimal(5001)) == -1)
+			return new BigDecimal(0.795);
+		else
+			return new BigDecimal(0.60);*/
 	}
 
 	public List<Property> calculateUrbanAppraisal(

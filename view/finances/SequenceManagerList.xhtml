@@ -1,0 +1,204 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="standSearch" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['sequenceManagerList.manager']}" />
+
+			<rich:simpleTogglePanel label="#{messages['stand.searchFilter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['common.criteria']}</ui:define>
+					<h:inputText id="criteria" value="#{sequenceManagerList.criteria}" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/finances/SequenceManagerList.xhtml">
+					<f:param name="firstResult" value="0" />
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+			<rich:panel>
+				<f:facet name="header">
+
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['sequenceManagerList.searchResults']} (#{empty sequenceManagerList.resultList ? 0 : (sequenceManagerList.paginated ? sequenceManagerList.resultCount : sequenceManagerList.resultList.size)})" />
+
+						<s:div styleClass="actionButtons" rendered="#{empty from}">
+							<s:button view="/finances/SequenceManagerEdit.xhtml" id="create"
+								propagation="none"
+								value="#{messages['common.create']} #{messages['sequenceManager']}">
+								<f:param name="sequenceManagerId" />
+							</s:button>
+						</s:div>
+					</h:panelGrid>
+				</f:facet>
+				<div class="results" id="standList">
+
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty sequenceManagerList.resultList}" />
+
+					<rich:dataTable id="standList" var="_stand"
+						value="#{sequenceManagerList.resultList}"
+						rendered="#{not empty sequenceManagerList.resultList}">
+						<rich:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{standList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['sequenceManager.id']}" />
+									<ui:param name="propertyPath" value="sequenceManager.id" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_stand.id}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{standList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['sequenceManager.takenBy']}" />
+									<ui:param name="propertyPath" value="sequenceManager.takenBy" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_stand.takenBy.name}" />
+						</rich:column>
+
+						<rich:column style="text-align:right;">
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{standList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['sequenceManager.code']}" />
+									<ui:param name="propertyPath" value="sequenceManager.code" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_stand.code}" />
+						</rich:column>
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{standList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['sequenceManager.date']}" />
+									<ui:param name="propertyPath" value="sequenceManager.date" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_stand.date}">
+								<s:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" dateStyle="short" />
+							</h:outputText>
+						</h:column>
+
+
+						<rich:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{standList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['sequenceManagerType']}" />
+									<ui:param name="propertyPath"
+										value="stand.sequenceManagerType.id" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_stand.sequenceManagerType.name}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{standList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['sequenceManagerType']}" />
+									<ui:param name="propertyPath"
+										value="stand.sequenceManagerType.explanation" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_stand.explanation}" />
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{standList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['sequenceManager.isActive']}" />
+									<ui:param name="propertyPath"
+										value="stand.isActive" />
+								</ui:include>
+							</f:facet>
+							<h:selectBooleanCheckbox
+								value="#{_stand.isActive}" readonly="true"/>
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<s:button view="/finances/SequenceManagerEdit.xhtml"
+								value="#{messages['common.view']}" propagation="none"
+								id="branchEdit" rendered="#{empty from}">
+								<f:param name="sequenceManagerId" value="#{_stand.id}" />
+							</s:button>
+						</rich:column>
+					</rich:dataTable>
+
+				</div>
+			</rich:panel>
+
+			<div class="tableControl">
+
+				<s:link view="/finances/sequenceManagerList.xhtml"
+					rendered="#{sequenceManagerList.previousExists}"
+					value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+					id="firstPage">
+					<f:param name="firstResult" value="0" />
+				</s:link>
+
+				<s:link view="/finances/sequenceManagerList.xhtml"
+					rendered="#{sequenceManagerList.previousExists}"
+					value="#{messages.left} #{messages['common.previousPage']}"
+					id="previousPage">
+					<f:param name="firstResult"
+						value="#{sequenceManagerList.previousFirstResult}" />
+				</s:link>
+
+				<s:link view="/finances/sequenceManagerList.xhtml"
+					rendered="#{sequenceManagerList.nextExists}"
+					value="#{messages['common.nextPage']} #{messages.right}"
+					id="nextPage">
+					<f:param name="firstResult"
+						value="#{sequenceManagerList.nextFirstResult}" />
+				</s:link>
+
+				<s:link view="/finances/sequenceManagerList.xhtml"
+					rendered="#{sequenceManagerList.nextExists}"
+					value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+					id="lastPage">
+					<f:param name="firstResult"
+						value="#{sequenceManagerList.lastFirstResult}" />
+				</s:link>
+
+			</div>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

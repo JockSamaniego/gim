@@ -29,6 +29,7 @@ import javax.persistence.Query;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.GimUtils;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.MunicipalBondUtil;
 import org.gob.gim.common.action.UserSession;
@@ -69,6 +70,8 @@ import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.TillPermissionDetail;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.income.model.dto.ParameterFutureEmissionDTO;
+import ec.gob.gim.income.model.dto.ReplacementAccountDTO;
+import ec.gob.gim.income.model.dto.ReplacementAgreementDTO;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -235,6 +238,9 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private List<ReportView> totalNullified;
 	private List<ReportView> totalByCashier;
 	private List<MunicipalBondItem> municipalBondItems;
+	
+	private List<ReplacementAgreementDTO> replacementAgreements;
+	private List<ReplacementAccountDTO> replacementAccountDTOs;
 
 	@In
 	UserSession userSession;
@@ -777,6 +783,10 @@ public class WorkdayHome extends EntityHome<Workday> {
 		endDate = startDate;
 		findWorkday(endDate);
 		generateClosingWorkdayCompleteReport();
+		
+		//rfarmijosm 2017-02-23
+		replacementPaymentReport();
+		
 		return "/income/report/ClosingWorkdayReport.xhtml";
 	}
 
@@ -2060,6 +2070,49 @@ public class WorkdayHome extends EntityHome<Workday> {
 		deposits = getDepositsFromPayments(payments);
 		servedPeople();
 		transactionsNumber();
+		//rfarmijosm 2017-02-20
+		replacementPaymentReport();
+	}	
+	
+	/**
+	 * rfarmijosm 2017-02-20
+	 * obtiene el reporte de bajas de mb con abonos
+	 */
+	public void replacementPaymentReport() {
+		String sql = "select rpa.id, rpa.date f_baja, rpa.detail, rpa.total total_abanado, "
+				+ "re.identificationnumber, re.name, mb.number, mb.value, mb.emisiondate, ent.code, ent.name entry"
+				+ "name "
+				+ "from gimprod.ReplacementPaymentAgreement rpa "
+				+ "inner join gimprod.municipalbond mb on rpa.municipalbond_id = mb.id "
+				+ "inner join gimprod.resident re on mb.resident_id = re.id "
+				+ "inner join gimprod.entry ent on mb.entry_id = ent.id "
+				+ "where rpa.date between :startDate and :endDate "
+				+ "order by rpa.date, mb.number";
+		Query query = getEntityManager().createNativeQuery(sql);
+		query.setParameter("startDate", startDate);
+		query.setParameter("endDate", endDate);
+		
+		replacementAgreements = NativeQueryResultsMapper.map(query.getResultList(), ReplacementAgreementDTO.class);
+		/*for(ReplacementAgreementDTO ra: replacementAgreements){
+			System.out.println(ra.getEnt_name()+" "+ra.getMb_number());
+		}*/
+		//return query.getResultList();
+		
+		String sqlPartidas="select ac.accountcode, ac.accountname, sum(it.total) total "
+				+ "from gimprod.ReplacementPaymentAgreement rpa "
+				+ "inner join gimprod.municipalbond mb on rpa.municipalbond_id = mb.id "
+				+ "left outer join gimprod.item it on mb.id = it.municipalbond_id "
+				+ "inner join gimprod.entry ent on it.entry_id = ent.id "
+				+ "inner join gimprod.account ac on ent.account_id = ac.id "
+				+ "where rpa.date between :startDate and :endDate "
+				+ "group by ac.accountcode, ac.accountname "
+				+ "order by ac.accountcode, ac.accountname";
+		
+		Query queryPartidas = getEntityManager().createNativeQuery(sqlPartidas);
+		queryPartidas.setParameter("startDate", startDate);
+		queryPartidas.setParameter("endDate", endDate);
+		
+		replacementAccountDTOs = NativeQueryResultsMapper.map(queryPartidas.getResultList(), ReplacementAccountDTO.class);
 	}
 
 	/**
@@ -2180,7 +2233,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 			}
 			generateSummaryTree();
 		}
-
+		replacementPaymentReport();
 	}
 
 	/**
@@ -3639,6 +3692,14 @@ public class WorkdayHome extends EntityHome<Workday> {
 				return true;
 		}
 		return false;
+	}
+
+	public List<ReplacementAccountDTO> getReplacementAccountDTOs() {
+		return replacementAccountDTOs;
+	}
+
+	public void setReplacementAccountDTOs(List<ReplacementAccountDTO> replacementAccountDTOs) {
+		this.replacementAccountDTOs = replacementAccountDTOs;
 	}
 
 	public String getFontStyle(int parentsNumber) {
@@ -6788,4 +6849,13 @@ public class WorkdayHome extends EntityHome<Workday> {
 	public void setTaxesFormalize(List<EntryTotalCollected> taxesFormalize) {
 		this.taxesFormalize = taxesFormalize;
 	}
+
+	public List<ReplacementAgreementDTO> getReplacementAgreements() {
+		return replacementAgreements;
+	}
+
+	public void setReplacementAgreements(List<ReplacementAgreementDTO> replacementAgreements) {
+		this.replacementAgreements = replacementAgreements;
+	}
+	
 }

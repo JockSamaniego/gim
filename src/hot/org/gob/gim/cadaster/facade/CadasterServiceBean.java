@@ -907,12 +907,14 @@ public class CadasterServiceBean implements CadasterService {
 						
 						if(flag)
 							continue;
-						
-						propertyAppraisal.setExemptionValue(exemptionValue);
-						// mb.setReference(mb.getReference() + " " +
-						// ex.getReference());
-						municipalBondService.changeExemptionInMunicipalBond(mb,
-								false, true, propertyAppraisal);
+						//Solo aplica para tercera edad
+						if(ex.getExemptionType().getId() == 1){
+							propertyAppraisal.setExemptionValue(exemptionValue);
+							// mb.setReference(mb.getReference() + " " +
+							// ex.getReference());
+							municipalBondService.changeExemptionInMunicipalBond(mb,
+									false, true, propertyAppraisal);
+						}
 					} else { // las demas exenciones por propiedad
 						List<ExemptionForProperty> exForProperties = ex
 								.getPropertiesInExemption();
