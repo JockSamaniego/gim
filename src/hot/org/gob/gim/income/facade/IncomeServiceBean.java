@@ -388,45 +388,7 @@ public class IncomeServiceBean implements IncomeService {
 			//@author macartuche
 			//@date 2016-06-21
 			//@tag recaudacionesCoactivas
-			Boolean itemIsPayed=false;
-			BigDecimal sum = BigDecimal.ZERO; 
-			sum = sumAccumulatedInterest(municipalBond.getId(), false, "VALID", itemType);
-			BigDecimal itemValue = BigDecimal.ZERO;
-			BigDecimal depositValue = BigDecimal.ZERO;
-			
-			switch (itemType.toCharArray()[0]) {
-				case 'I': //interest
-					itemValue = municipalBond.getInterest();
-					depositValue = deposit.getInterest();
-				break;
-				case 'S': //surcharge
-					itemValue = municipalBond.getSurcharge();
-					depositValue = deposit.getSurcharge();
-				break;
-				case 'T': //taxes
-					itemValue = municipalBond.getTaxesTotal();
-					depositValue = deposit.getPaidTaxes();
-				break;
-
-			}
-			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
-				BigDecimal temp = depositValue.add(sum);
-				if(temp.compareTo(itemValue) >= 0)
-					itemIsPayed = true;				
-			}else if(sum==null && 
-					depositValue.compareTo(itemValue)>=0 && 
-					municipalBond.getPaymentAgreement()!=null ){
-				itemIsPayed = true;
-			}
-			
-			if(municipalBond.getPaymentAgreement()!=null){				
-				MunicipalbondAux munAux =  createBondAux(deposit, municipalBond, itemIsPayed, itemType);
-				entityManager.persist(munAux);			
-			}
-//			else if(municipalBond.getPaymentAgreement()!=null &&	itemIsPayed ){				
-//				MunicipalbondAux munAux =  createBondAux(deposit, municipalBond, Boolean.TRUE, itemType);			
-//				entityManager.persist(munAux);
-//			}
+			 createMunicipalBondsAux(deposit, municipalBond);
 			
 			if (deposit.getBalance().compareTo(BigDecimal.ZERO) == 0) {
 				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId,
@@ -438,6 +400,108 @@ public class IncomeServiceBean implements IncomeService {
 		//System.out.println("Termina grabacion");
 	}
 
+	
+	private void createMunicipalBondsAux(Deposit dep, MunicipalBond mb){
+		BigDecimal sum = BigDecimal.ZERO; 
+		BigDecimal itemValue = BigDecimal.ZERO;
+		BigDecimal depositValue = BigDecimal.ZERO;
+		Boolean itemIsPayed = false;
+
+		if(dep.getInterest().compareTo(BigDecimal.ZERO) > 0){
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "I");
+			itemValue = mb.getInterest();
+			depositValue = dep.getInterest();
+			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+				BigDecimal temp = depositValue.add(sum);
+				if(temp.compareTo(itemValue) >= 0)
+					itemIsPayed = true;				
+			}else if(sum==null && 
+					depositValue.compareTo(itemValue)>=0 && 
+					mb.getPaymentAgreement()!=null ){
+				itemIsPayed = true;
+			}
+			
+			if(mb.getPaymentAgreement()!=null){				
+				MunicipalbondAux munAux =  createBondAux(dep, mb, itemIsPayed, "I");
+				entityManager.persist(munAux);			
+			}
+		}
+		
+		sum = BigDecimal.ZERO; 
+		itemValue = BigDecimal.ZERO;
+		depositValue = BigDecimal.ZERO;
+		itemIsPayed = false;
+		
+		if(dep.getCapital().compareTo(BigDecimal.ZERO) > 0){
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "C");
+			itemValue = mb.getBalance();
+			depositValue = dep.getCapital();
+			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+				BigDecimal temp = depositValue.add(sum);
+				if(temp.compareTo(itemValue) >= 0)
+					itemIsPayed = true;				
+			}else if(sum==null && 
+					depositValue.compareTo(itemValue)>=0 && 
+					mb.getPaymentAgreement()!=null ){
+				itemIsPayed = true;
+			}
+			
+			if(mb.getPaymentAgreement()!=null){				
+				MunicipalbondAux munAux =  createBondAux(dep, mb, itemIsPayed, "C");
+				entityManager.persist(munAux);			
+			}
+		}
+		
+		sum = BigDecimal.ZERO; 
+		itemValue = BigDecimal.ZERO;
+		depositValue = BigDecimal.ZERO;
+		itemIsPayed = false;
+		
+		if(dep.getPaidTaxes().compareTo(BigDecimal.ZERO) > 0){
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "T");
+			itemValue = mb.getTaxesTotal();
+			depositValue = dep.getPaidTaxes();
+			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+				BigDecimal temp = depositValue.add(sum);
+				if(temp.compareTo(itemValue) >= 0)
+					itemIsPayed = true;				
+			}else if(sum==null && 
+					depositValue.compareTo(itemValue)>=0 && 
+					mb.getPaymentAgreement()!=null ){
+				itemIsPayed = true;
+			}
+			
+			if(mb.getPaymentAgreement()!=null){				
+				MunicipalbondAux munAux =  createBondAux(dep, mb, itemIsPayed, "T");
+				entityManager.persist(munAux);			
+			}
+		}
+
+		sum = BigDecimal.ZERO; 
+		itemValue = BigDecimal.ZERO;
+		depositValue = BigDecimal.ZERO;
+		itemIsPayed = false;
+		
+		if(dep.getSurcharge().compareTo(BigDecimal.ZERO) > 0){
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "S");
+			itemValue = mb.getSurcharge();
+			depositValue = dep.getSurcharge();
+			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+				BigDecimal temp = depositValue.add(sum);
+				if(temp.compareTo(itemValue) >= 0)
+					itemIsPayed = true;				
+			}else if(sum==null && 
+					depositValue.compareTo(itemValue)>=0 && 
+					mb.getPaymentAgreement()!=null ){
+				itemIsPayed = true;
+			}
+			
+			if(mb.getPaymentAgreement()!=null){				
+				MunicipalbondAux munAux =  createBondAux(dep, mb, itemIsPayed, "S");
+				entityManager.persist(munAux);			
+			}
+		}
+	}
 	private Receipt findActiveReceipt(Long receiptId) {
 		Query query = entityManager.createNamedQuery("Receipt.findById");
 		query.setParameter("receiptId", receiptId);

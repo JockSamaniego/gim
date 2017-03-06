@@ -44,19 +44,21 @@ import ec.gob.gim.security.model.User;
 
 @NamedQueries(value = {
 		@NamedQuery(name="PassiveRate.findAVG", 
-			query = "select pr from PassiveRate pr where pr.startDate=:currentDate")
+			query = "select pr from PassiveRate pr where isActive=:isActive")
 		}
 	)
  public class PassiveRate {
 
 	@Id
-	@GeneratedValue(generator="PassiveRateGenerator",strategy=GenerationType.TABLE)
+	@GeneratedValue(generator="PassiveRateGenerator", strategy=GenerationType.TABLE)
 	private Long id;
 	
 	private BigDecimal rate;
 	
 	@Temporal(TemporalType.DATE)
 	private Date startDate;
+	
+	private Boolean isActive;
 	
 	public PassiveRate(){
 		
@@ -91,4 +93,12 @@ import ec.gob.gim.security.model.User;
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}	
 }

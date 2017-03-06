@@ -162,7 +162,7 @@ public class CalculatorHome extends EntityHome<CapitalGain> {
 		System.out.println(currentDate.getTime());
 		EntityManager em = getEntityManager();
 		Query q = em.createNamedQuery("PassiveRate.findAVG");
-		q.setParameter("currentDate",  currentDate.getTime());
+		q.setParameter("isActive",  Boolean.TRUE);
 		
 		List<PassiveRate> list = q.getResultList();		
 		if(list.size()>0){
