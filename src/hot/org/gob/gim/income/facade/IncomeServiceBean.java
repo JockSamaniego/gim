@@ -1739,7 +1739,7 @@ public class IncomeServiceBean implements IncomeService {
 						+ "where mba.municipalbond.id=:munid and mba.status=:status"
 						+ " and mba.type=:type";
 		if(coverInterest!=null){
-			query += " and mba.itconverinterest=:cover";
+			query += " and mba.coveritem=:cover";
 		}
 		
 		Query interestIsPayedQuery = entityManager.createQuery(query);
@@ -1765,7 +1765,7 @@ public class IncomeServiceBean implements IncomeService {
 		
 		String query = " Select SUM(mba.payValue) from MunicipalbondAux mba " 
 					   + " where mba.municipalbond.id=:munid and "
-					   + " mba.itconverinterest=:cover and "
+					   + " mba.coveritem=:cover and "
 					   + " mba.status=:status and"
 					   + " mba.type=:type ";
 		Query sumInterest = entityManager.createQuery(query);		
@@ -1808,8 +1808,8 @@ public class IncomeServiceBean implements IncomeService {
 			
 		}
 		munAux.setPayValue(valuePayed);
-		munAux.setInterest(valueCover);
-		munAux.setItconverinterest(coverInterest);
+		munAux.setBalance(valueCover);
+		munAux.setCoveritem(coverInterest);
 		munAux.setMunicipalbond(municipalBond);
 		munAux.setLiquidationDate(deposit.getDate());
 		munAux.setLiquidationTime(deposit.getTime());

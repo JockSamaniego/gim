@@ -1060,16 +1060,17 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			//@date 2016-06-20T16:600:00
 			//@tag recaudacionCoactivas
 			Query qaux = entityManager.createQuery(
-					"Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id and ma.status=:status"); // 
+					"Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id and ma.status=:status and ma.type=:type"); // 
 			qaux.setParameter("id", municipalBond.getId());
 			qaux.setParameter("status", "VALID");
+			qaux.setParameter("type", "I");
 			
 			List<MunicipalbondAux> datalist = qaux.getResultList();			
 			if(!datalist.isEmpty()){
 				//tomar la ultima instancia almacenada
 				int lastIndex = datalist.size()-1;
 				MunicipalbondAux aux = datalist.get(lastIndex);
-				if(!aux.getItconverinterest()){
+				if(!aux.getCoveritem()){
 					expirationDate = DateUtils.truncate(municipalBond.getExpirationDate());
 				}
 			}

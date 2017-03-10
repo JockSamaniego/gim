@@ -54,9 +54,9 @@ public class MunicipalbondAux {
 	
 	private BigDecimal payValue;
 	
-	private BigDecimal interest;
+	private BigDecimal balance;
 	
-	private Boolean itconverinterest;
+	private Boolean coveritem;
 	
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -101,14 +101,14 @@ public class MunicipalbondAux {
 	public void setLiquidationTime(Date liquidationTime) {
 		this.liquidationTime = liquidationTime;
 	}
-
-	public Boolean getItconverinterest() {
-		return itconverinterest;
+	
+	public Boolean getCoveritem() {
+		return coveritem;
 	}
 
 
-	public void setItconverinterest(Boolean itconverinterest) {
-		this.itconverinterest = itconverinterest;
+	public void setCoveritem(Boolean coveritem) {
+		this.coveritem = coveritem;
 	}
 
 
@@ -131,14 +131,15 @@ public class MunicipalbondAux {
 		this.payValue = payValue;
 	}
 
+	
 
-	public BigDecimal getInterest() {
-		return interest;
+	public BigDecimal getBalance() {
+		return balance;
 	}
 
 
-	public void setInterest(BigDecimal interest) {
-		this.interest = interest;
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
 	}
 
 
@@ -148,6 +149,7 @@ public class MunicipalbondAux {
 
 
 	public void setDeposit(Deposit deposit) {
+		
 		this.deposit = deposit;
 	}
 
@@ -170,5 +172,6 @@ public class MunicipalbondAux {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
 	
 }
