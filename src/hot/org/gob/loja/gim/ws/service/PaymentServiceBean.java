@@ -146,8 +146,8 @@ public class PaymentServiceBean implements PaymentService {
 		String identificationNumber = request.getIdentificationNumber();
 		
 		//rfarmijosm 2017-02-06 se copia el codigo de jock de otro branch, impedir pagos con alerta por ws
-		Boolean AlertPending = controlAlertResident(identificationNumber);
-		if (AlertPending) {
+		//Boolean AlertPending = ;
+		if (controlAlertResident(identificationNumber)) {
 			throw new PayoutNotAllowed();
 		} else {
 
