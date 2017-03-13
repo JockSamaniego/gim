@@ -7,8 +7,7 @@
    <local-tx-datasource>
       <jndi-name>gimDatasource</jndi-name>
       <use-java-context>false</use-java-context> 
-      <!--connection-url>jdbc:postgresql://localhost/gim_2017_febero</connection-url-->
-      <connection-url>jdbc:postgresql://localhost/gim_2017_febrero_2</connection-url>
+      <connection-url>jdbc:postgresql://localhost:5432/gim_2017_01_03</connection-url>
       <driver-class>org.postgresql.Driver</driver-class>
       <user-name>rolgimloja</user-name>
       <password>pruebas</password>
