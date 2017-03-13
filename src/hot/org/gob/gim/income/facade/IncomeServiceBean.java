@@ -1805,6 +1805,10 @@ public class IncomeServiceBean implements IncomeService {
 				valuePayed = deposit.getPaidTaxes();
 				valueCover = municipalBond.getTaxesTotal();
 			break;
+			case 'C':
+				valuePayed = deposit.getCapital();
+				valueCover = municipalBond.getBalance();
+			break;
 			
 		}
 		munAux.setPayValue(valuePayed);

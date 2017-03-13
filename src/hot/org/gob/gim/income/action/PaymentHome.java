@@ -1454,18 +1454,21 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		}
 				
 				
-		List<MunicipalbondAux> ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", itemType);
-		if(ratesList.isEmpty()){
-			sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", itemType);					
-			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
-				BigDecimal temp = remaining.add(sum);			
-				if(temp.compareTo(sum) >= 0){
-					itemHasDeposit= true;
-				}										
+		if(itemType != "C"){
+			List<MunicipalbondAux> ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", itemType);
+			if(ratesList.isEmpty()){
+				sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", itemType);					
+				if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+					BigDecimal temp = remaining.add(sum);			
+					if(temp.compareTo(sum) >= 0){
+						itemHasDeposit= true;
+					}										
+				}
 			}
 		}
 		
-		valueToPay = (itemHasDeposit)? itemValue.subtract(sum): itemValue;
+		
+		valueToPay = (itemHasDeposit)? compareCase(itemValue, sum): itemValue;
 		if (remaining.compareTo(valueToPay) >= 0 && valueToPay.compareTo(BigDecimal.ZERO) ==1) {
 			value = valueToPay;
 			remaining = remaining.subtract(value);			
@@ -1493,6 +1496,18 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		return result;
 	}
 	
+	
+	private BigDecimal compareCase(BigDecimal value, BigDecimal sum){
+		BigDecimal realValue = BigDecimal.ZERO;
+		
+		if(value.compareTo(sum)> 0){
+			realValue = value.subtract(sum);
+		}else if(sum.compareTo(value)>=0){
+			realValue = value;
+		}
+		
+		return realValue;
+	}
 	/**
 	 * 
 	 * @param incomeService
