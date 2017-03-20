@@ -62,7 +62,7 @@
 					var="_replacementPaymentAgreement"
 					value="#{replacementPaymentAgreementList.resultList}"
 					rendered="#{not empty replacementPaymentAgreementList.resultList}">
-					<h:column>
+					<rich:column>
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">
 								<ui:param name="entityList"
@@ -73,112 +73,103 @@
 							</ui:include>
 						</f:facet>
 						<h:outputText value="#{_replacementPaymentAgreement.id}" />
-					</h:column>
-					<h:column>
+					</rich:column>
+					<rich:column>
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">
 								<ui:param name="entityList"
 									value="#{replacementPaymentAgreementList}" />
-								<ui:param name="propertyLabel" value="Date" />
+								<ui:param name="propertyLabel" value="Fecha Registro" />
 								<ui:param name="propertyPath"
 									value="replacementPaymentAgreement.date" />
 							</ui:include>
 						</f:facet>
 						<h:outputText value="#{_replacementPaymentAgreement.date}">
-							<s:convertDateTime type="date" dateStyle="short" />
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
 						</h:outputText>
-					</h:column>
-					<h:column>
+					</rich:column>
+					<rich:column>
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">
 								<ui:param name="entityList"
 									value="#{replacementPaymentAgreementList}" />
-								<ui:param name="propertyLabel" value="Detail" />
+								<ui:param name="propertyLabel" value="Detalle" />
 								<ui:param name="propertyPath"
 									value="replacementPaymentAgreement.detail" />
 							</ui:include>
 						</f:facet>
 						<h:outputText value="#{_replacementPaymentAgreement.detail}" />
-					</h:column>
-					<h:column>
+					</rich:column>
+					<rich:column styleClass="action">
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">
 								<ui:param name="entityList"
 									value="#{replacementPaymentAgreementList}" />
-								<ui:param name="propertyLabel" value="Is reversed" />
+								<ui:param name="propertyLabel" value="Reversado?" />
 								<ui:param name="propertyPath"
 									value="replacementPaymentAgreement.isReversed" />
 							</ui:include>
 						</f:facet>
-						<h:outputText value="#{_replacementPaymentAgreement.isReversed}" />
-					</h:column>
-					<h:column>
+						<h:selectBooleanCheckbox
+								value="#{_replacementPaymentAgreement.isReversed}" disabled="true" />
+					</rich:column>
+					<rich:column>
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">
 								<ui:param name="entityList"
 									value="#{replacementPaymentAgreementList}" />
-								<ui:param name="propertyLabel" value="Municipal bond id" />
+								<ui:param name="propertyLabel" value="#{messages['municipalBond.number']}" />
 								<ui:param name="propertyPath"
 									value="replacementPaymentAgreement.municipalBond.id" />
 							</ui:include>
 						</f:facet>
 						<h:outputText
-							value="#{_replacementPaymentAgreement.municipalBond.id}" />
-					</h:column>
-					<h:column>
+							value="#{_replacementPaymentAgreement.municipalBond.number}" />
+					</rich:column>
+					<rich:column>
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">
 								<ui:param name="entityList"
 									value="#{replacementPaymentAgreementList}" />
-								<ui:param name="propertyLabel" value="Payment agreement id" />
+								<ui:param name="propertyLabel" value="Acuerdo Nro." />
 								<ui:param name="propertyPath"
 									value="replacementPaymentAgreement.paymentAgreement.id" />
 							</ui:include>
 						</f:facet>
 						<h:outputText
 							value="#{_replacementPaymentAgreement.paymentAgreement.id}" />
-					</h:column>
-					<h:column>
+					</rich:column>
+					
+					<rich:column style="text-align:right;">
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">
 								<ui:param name="entityList"
 									value="#{replacementPaymentAgreementList}" />
-								<ui:param name="propertyLabel" value="Reversed explanation" />
-								<ui:param name="propertyPath"
-									value="replacementPaymentAgreement.reversedExplanation" />
-							</ui:include>
-						</f:facet>
-						<h:outputText
-							value="#{_replacementPaymentAgreement.reversedExplanation}" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">
-							<ui:include src="../layout/sort.xhtml">
-								<ui:param name="entityList"
-									value="#{replacementPaymentAgreementList}" />
-								<ui:param name="propertyLabel" value="Time" />
-								<ui:param name="propertyPath"
-									value="replacementPaymentAgreement.time" />
-							</ui:include>
-						</f:facet>
-						<h:outputText value="#{_replacementPaymentAgreement.time}">
-							<s:convertDateTime type="time" />
-						</h:outputText>
-					</h:column>
-					<h:column>
-						<f:facet name="header">
-							<ui:include src="../layout/sort.xhtml">
-								<ui:param name="entityList"
-									value="#{replacementPaymentAgreementList}" />
-								<ui:param name="propertyLabel" value="Total" />
+								<ui:param name="propertyLabel" value="Total Cancelado" />
 								<ui:param name="propertyPath"
 									value="replacementPaymentAgreement.total" />
 							</ui:include>
 						</f:facet>
 						<h:outputText value="#{_replacementPaymentAgreement.total}">
-							<f:convertNumber />
+							<f:convertNumber pattern="$ ####.00" />
 						</h:outputText>
-					</h:column>
+					</rich:column>
+					
+					<rich:column style="text-align:right;">
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList"
+									value="#{replacementPaymentAgreementList}" />
+								<ui:param name="propertyLabel" value="Valor Obligación" />
+								<ui:param name="propertyPath"
+									value="replacementPaymentAgreement.total" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_replacementPaymentAgreement.municipalBond.value}">
+							<f:convertNumber pattern="$ ####.00" />
+						</h:outputText>
+					</rich:column>
+									
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet>
 

@@ -57,7 +57,7 @@ public class ReplacementPaymentAgreement {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "paymentAgreement_id")
 	private PaymentAgreement paymentAgreement;
-	
+
 	@NotAudited
 	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "statusChange_id")
@@ -176,6 +176,14 @@ public class ReplacementPaymentAgreement {
 
 	public void setStatusChange(StatusChange statusChange) {
 		this.statusChange = statusChange;
+	}
+
+	public BigDecimal sumTotalPaid() {
+		BigDecimal paidValue = BigDecimal.ZERO;
+		for (ReplacementPaymentDeposit deposit : replacementPaymentDeposits) {
+			paidValue = paidValue.add(deposit.getValue());
+		}
+		return paidValue;
 	}
 
 }
