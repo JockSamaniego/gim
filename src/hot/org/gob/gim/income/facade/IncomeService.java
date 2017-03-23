@@ -64,12 +64,8 @@ public interface IncomeService {
 	void calculatePayment(List<MunicipalBond> municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount, Object ... facts) throws EntryDefinitionNotFoundException;
 	public void deactivateCreditNotes(List<PaymentFraction> paymentFractions);
 	
-	//@tag recaudacionCoactivas 
-	//agregar el tipo de pago Interes/recargo/impuesto
-	public void save(Date paymentDate, List<Long> municipalBondIds, Person cashier, Long tillId, String rateType) throws Exception;
-	//@tag recaudacionCoactivas
-	//agregar el tipo de pago Interes/recargo/impuesto
-	public void save(List<Deposit> deposits, Long paymentAgreementId, Long tillId, String rateType) throws Exception;
+	public void save(Date paymentDate, List<Long> municipalBondIds, Person cashier, Long tillId) throws Exception;
+	public void save(List<Deposit> deposits, Long paymentAgreementId, Long tillId) throws Exception;
 	public void saveForCompensationPayment(List<MunicipalBond> municipalBonds, Long tillId) throws Exception;
 	public void setAsPrinted(List<Long> printedDepositIds);
 	

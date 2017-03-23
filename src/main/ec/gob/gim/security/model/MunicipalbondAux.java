@@ -72,6 +72,8 @@ public class MunicipalbondAux {
 	
 	//interest - surcharge
 	private String type;
+	
+	private Boolean anotherItem;
 
 	public Long getId() {
 		return id;
@@ -171,6 +173,16 @@ public class MunicipalbondAux {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+
+	public Boolean getAnotherItem() {
+		return anotherItem;
+	}
+
+
+	public void setAnotherItem(Boolean anotherItem) {
+		this.anotherItem = anotherItem;
 	}
 	
 	

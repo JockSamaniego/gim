@@ -117,8 +117,7 @@ public class IncomeServiceBean implements IncomeService {
 		Deposit deposit = null;
 		List<Deposit> deposits = municipalBond.getDeposits();
 		for (Deposit d : deposits) {
-			if (deposit == null
-					|| deposit.getId().intValue() < d.getId().intValue()) {
+			if (deposit == null || deposit.getId().intValue() < d.getId().intValue()) {
 				deposit = d;
 			}
 		}
@@ -126,32 +125,28 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	@Override
-	public void calculatePayment(MunicipalBond municipalBond, boolean isForPay,
-			boolean applyDiscount) throws EntryDefinitionNotFoundException {
+	public void calculatePayment(MunicipalBond municipalBond, boolean isForPay, boolean applyDiscount)
+			throws EntryDefinitionNotFoundException {
 		Date now = Calendar.getInstance().getTime();
 		this.calculatePayment(municipalBond, now, isForPay, applyDiscount);
 	}
 
 	@Override
-	public void calculatePayment(MunicipalBond municipalBond,
-			Date paymentServiceDate, boolean isForPay, boolean applyDiscount)
-			throws EntryDefinitionNotFoundException {
+	public void calculatePayment(MunicipalBond municipalBond, Date paymentServiceDate, boolean isForPay,
+			boolean applyDiscount) throws EntryDefinitionNotFoundException {
 		Object[] objects = null;
-		calculatePayment(municipalBond, paymentServiceDate, isForPay,
-				applyDiscount, objects);
+		calculatePayment(municipalBond, paymentServiceDate, isForPay, applyDiscount, objects);
 	}
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void calculatePayment(Date paymentDate, List<Long> municipalBondIds,
-			boolean isForPay, boolean applyDiscount)
+	public void calculatePayment(Date paymentDate, List<Long> municipalBondIds, boolean isForPay, boolean applyDiscount)
 			throws EntryDefinitionNotFoundException {
 		// List<MunicipalBond> municipalBonds =
 		// findMunicipalBonds(municipalBondIds);
 		List<MunicipalBond> municipalBonds = findMunicipalBondsPaymentPlatform(municipalBondIds);
 		for (MunicipalBond municipalBond : municipalBonds) {
-			this.calculatePayment(municipalBond, paymentDate, isForPay,
-					applyDiscount);
+			this.calculatePayment(municipalBond, paymentDate, isForPay, applyDiscount);
 		}
 	}
 
@@ -166,16 +161,14 @@ public class IncomeServiceBean implements IncomeService {
 	private List<MunicipalBond> findMunicipalBondsPaymentPlatform(List<Long> ids) {
 		// Query query =
 		// entityManager.createNamedQuery("MunicipalBond.findByIds");
-		Query query = entityManager
-				.createNamedQuery("MunicipalBond.findByIdsPaymentPlatform");
+		Query query = entityManager.createNamedQuery("MunicipalBond.findByIdsPaymentPlatform");
 		query.setParameter("municipalBondIds", ids);
 		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	private MunicipalBondStatus findMunicipalBondStatusById(Long id) {
-		Query query = entityManager
-				.createNamedQuery("MunicipalBondStatus.findById");
+		Query query = entityManager.createNamedQuery("MunicipalBondStatus.findById");
 		query.setParameter("id", id);
 		List<MunicipalBondStatus> list = query.getResultList();
 		if (list.size() > 0)
@@ -184,12 +177,10 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	@Override
-	public void calculatePayment(List<MunicipalBond> municipalBonds,
-			Date paymentServiceDate, boolean isForPay, boolean applyDiscount)
-			throws EntryDefinitionNotFoundException { 
+	public void calculatePayment(List<MunicipalBond> municipalBonds, Date paymentServiceDate, boolean isForPay,
+			boolean applyDiscount) throws EntryDefinitionNotFoundException {
 		for (MunicipalBond municipalBond : municipalBonds) {
-			this.calculatePayment(municipalBond, paymentServiceDate, isForPay,
-					applyDiscount);
+			this.calculatePayment(municipalBond, paymentServiceDate, isForPay, applyDiscount);
 		}
 	}
 
@@ -203,50 +194,45 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	@Override
-	public void calculatePayment(MunicipalBond municipalBond, boolean isForPay,
-			boolean applyDiscount, Object... facts)
+	public void calculatePayment(MunicipalBond municipalBond, boolean isForPay, boolean applyDiscount, Object... facts)
 			throws EntryDefinitionNotFoundException {
 		Date now = Calendar.getInstance().getTime();
-		this.calculatePayment(municipalBond, now, isForPay, applyDiscount,
-				facts);
+		this.calculatePayment(municipalBond, now, isForPay, applyDiscount, facts);
 
 	}
 
 	@Override
-	public void calculatePayment(MunicipalBond municipalBond,
-			Date paymentServiceDate, boolean isForPay, boolean applyDiscount,
-			Object... facts) throws EntryDefinitionNotFoundException {
+	public void calculatePayment(MunicipalBond municipalBond, Date paymentServiceDate, boolean isForPay,
+			boolean applyDiscount, Object... facts) throws EntryDefinitionNotFoundException {
 
-		//System.out.println("IncomeServiceBean -----> BEGINS CALCULATE PAYMENT");
+		// System.out.println("IncomeServiceBean -----> BEGINS CALCULATE
+		// PAYMENT");
 		municipalBond.setBalance(municipalBond.getValue());
 		Deposit lastDeposit = this.getLastDeposit(municipalBond);
 		if (lastDeposit != null) {
 			municipalBond.setBalance(lastDeposit.getBalance());
 		}
-		municipalBondService.calculatePayment(municipalBond,
-				paymentServiceDate, lastDeposit, !isForPay, !isForPay,
+		municipalBondService.calculatePayment(municipalBond, paymentServiceDate, lastDeposit, !isForPay, !isForPay,
 				applyDiscount, null);
-		/*System.out
-				.println("\n\n\n\n\nBASE IMPONIBLE EN IncomeService -----> TAXABLE "
-						+ municipalBond.getTaxableTotal()
-						+ " TAXES TOTAL "
-						+ municipalBond.getTaxesTotal());*/
+		/*
+		 * System.out
+		 * .println("\n\n\n\n\nBASE IMPONIBLE EN IncomeService -----> TAXABLE "
+		 * + municipalBond.getTaxableTotal() + " TAXES TOTAL " +
+		 * municipalBond.getTaxesTotal());
+		 */
 	}
 
 	@Override
-	public void calculatePayment(List<MunicipalBond> municipalBonds,
-			Date paymentServiceDate, boolean isForPay, boolean applyDiscount,
-			Object... facts) throws EntryDefinitionNotFoundException {
+	public void calculatePayment(List<MunicipalBond> municipalBonds, Date paymentServiceDate, boolean isForPay,
+			boolean applyDiscount, Object... facts) throws EntryDefinitionNotFoundException {
 		for (MunicipalBond municipalBond : municipalBonds) {
-			this.calculatePayment(municipalBond, paymentServiceDate, isForPay,
-					applyDiscount, facts);
+			this.calculatePayment(municipalBond, paymentServiceDate, isForPay, applyDiscount, facts);
 		}
 	}
 
 	public void setAsPrinted(List<Long> printedDepositIds) {
 		if (printedDepositIds != null && printedDepositIds.size() > 0) {
-			Query query = entityManager
-					.createNamedQuery("Deposit.setAsPrinted");
+			Query query = entityManager.createNamedQuery("Deposit.setAsPrinted");
 			query.setParameter("printedDepositIds", printedDepositIds);
 			query.executeUpdate();
 		}
@@ -255,10 +241,8 @@ public class IncomeServiceBean implements IncomeService {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void updateReprintings(Long municipalBondId) {
 		if (municipalBondId != null) {
-			MunicipalBond municipalBond = entityManager.getReference(
-					MunicipalBond.class, municipalBondId);
-			municipalBond
-					.setPrintingsNumber(municipalBond.getPrintingsNumber() + 1);
+			MunicipalBond municipalBond = entityManager.getReference(MunicipalBond.class, municipalBondId);
+			municipalBond.setPrintingsNumber(municipalBond.getPrintingsNumber() + 1);
 			entityManager.flush();
 			/*
 			 * Query query =
@@ -278,20 +262,16 @@ public class IncomeServiceBean implements IncomeService {
 
 	}
 
-	public void saveForCompensationPayment(List<MunicipalBond> municipalBonds,
-			Long tillId) throws Exception {
+	public void saveForCompensationPayment(List<MunicipalBond> municipalBonds, Long tillId) throws Exception {
 		System.out.println("\n\nInicia grabacion para pago por compensacion");
 		Workday workday = findActiveWorkday();
-		Long COMPENSATION_STATUS_ID = systemParameterService
-				.findParameter(COMPENSATION_BOND_STATUS);
+		Long COMPENSATION_STATUS_ID = systemParameterService.findParameter(COMPENSATION_BOND_STATUS);
 		for (MunicipalBond municipalBond : municipalBonds) {
-			setToNextStatus(municipalBond, COMPENSATION_STATUS_ID, tillId,
-					workday.getDate());
+			setToNextStatus(municipalBond, COMPENSATION_STATUS_ID, tillId, workday.getDate());
 		}
 	}
 
-	private Deposit generateDeposit(MunicipalBond municipalBond,
-			Date paymentDate, Person cashier, Long tillId) {
+	private Deposit generateDeposit(MunicipalBond municipalBond, Date paymentDate, Person cashier, Long tillId) {
 		Payment payment = new Payment();
 		payment.setDate(paymentDate);
 		payment.setTime(paymentDate);
@@ -303,10 +283,8 @@ public class IncomeServiceBean implements IncomeService {
 		query.setParameter("tillId", tillId);
 		Till till = (Till) query.getSingleResult();
 		if (till.isTillBank()) {
-			payment.getPaymentFractions().get(0)
-					.setPaidAmount(municipalBond.getPaidTotal());
-			payment.getPaymentFractions().get(0)
-					.setReceivedAmount(municipalBond.getPaidTotal());
+			payment.getPaymentFractions().get(0).setPaidAmount(municipalBond.getPaidTotal());
+			payment.getPaymentFractions().get(0).setReceivedAmount(municipalBond.getPaidTotal());
 		}
 		Deposit deposit = new Deposit();
 		deposit.setBalance(BigDecimal.ZERO);
@@ -327,23 +305,21 @@ public class IncomeServiceBean implements IncomeService {
 		return deposit;
 	}
 
-	//@tag recaudacionCoactiva
-	//agregar el tipo de pago Interes/recargo/impuesto
+	// @tag recaudacionCoactiva
+	// agregar el tipo de pago Interes/recargo/impuesto
 	@SuppressWarnings("unchecked")
-	public void save(Date paymentDate, List<Long> municipalBondIds,
-			Person cashier, Long tillId, String rateType) throws Exception {
-		Query query = entityManager
-				.createNamedQuery("MunicipalBond.findSimpleByIds");
+	public void save(Date paymentDate, List<Long> municipalBondIds, Person cashier, Long tillId)
+			throws Exception {
+		Query query = entityManager.createNamedQuery("MunicipalBond.findSimpleByIds");
 		query.setParameter("municipalBondIds", municipalBondIds);
 		List<MunicipalBond> paidMunicipalBonds = query.getResultList();
 
 		List<Deposit> deposits = new LinkedList<Deposit>();
 		for (MunicipalBond municipalBond : paidMunicipalBonds) {
-			Deposit deposit = generateDeposit(municipalBond, paymentDate,
-					cashier, tillId);
+			Deposit deposit = generateDeposit(municipalBond, paymentDate, cashier, tillId);
 			deposits.add(deposit);
 		}
-		save(deposits, null, tillId, rateType);
+		save(deposits, null, tillId);
 	}
 
 	public void deactivateCreditNotes(List<PaymentFraction> paymentFractions) {
@@ -351,157 +327,168 @@ public class IncomeServiceBean implements IncomeService {
 		for (PaymentFraction fraction : paymentFractions) {
 			if (fraction.getPaymentType() == PaymentType.CREDIT_NOTE) {
 				// CreditNote creditNote = fraction.getCreditNote();
-				CreditNote creditNote = entityManager.getReference(
-						CreditNote.class, fraction.getCreditNote().getId());
-				System.out.println("CHECKING CREDIT NOTE "
-						+ fraction.getCreditNote().getId() + " AVAILABLE "
-						+ creditNote.getAvailableAmount() + " PAID "
-						+ fraction.getPaidAmount());
-				creditNote.setAvailableAmount(creditNote.getAvailableAmount()
-						.subtract(fraction.getPaidAmount()));
+				CreditNote creditNote = entityManager.getReference(CreditNote.class, fraction.getCreditNote().getId());
+				System.out.println("CHECKING CREDIT NOTE " + fraction.getCreditNote().getId() + " AVAILABLE "
+						+ creditNote.getAvailableAmount() + " PAID " + fraction.getPaidAmount());
+				creditNote.setAvailableAmount(creditNote.getAvailableAmount().subtract(fraction.getPaidAmount()));
 				if (creditNote.getAvailableAmount().compareTo(BigDecimal.ZERO) == 0) {
-					System.out
-							.println("CREDIT NOTE "
-									+ fraction.getCreditNote().getId()
-									+ " DEACTIVATED");
+					System.out.println("CREDIT NOTE " + fraction.getCreditNote().getId() + " DEACTIVATED");
 					creditNote.setIsActive(Boolean.FALSE);
 				}
 				entityManager.persist(creditNote);
 			}
 		}
 	}
-	
-	//@tag recaudacionCoactiva
-	//agregar el tipo de pago Interes/recargo/impuesto
-	public void save(List<Deposit> deposits, Long paymentAgreementId,
-			Long tillId, String itemType) throws Exception {
-		//System.out.println("\n\nInicia grabacion");
-		Long PAID_STATUS_ID = systemParameterService
-				.findParameter(PAID_BOND_STATUS);
+
+	// @tag recaudacionCoactiva
+	// agregar el tipo de pago Interes/recargo/impuesto
+	public void save(List<Deposit> deposits, Long paymentAgreementId, Long tillId) throws Exception {
+		// System.out.println("\n\nInicia grabacion");
+		Long PAID_STATUS_ID = systemParameterService.findParameter(PAID_BOND_STATUS);
 		for (Deposit deposit : deposits) {
 			MunicipalBond municipalBond = deposit.getMunicipalBond();
-			System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE "
-					+ municipalBond.getTaxableTotal() + " TAXES TOTAL "
-					+ municipalBond.getTaxesTotal());
+			System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE " + municipalBond.getTaxableTotal()
+					+ " TAXES TOTAL " + municipalBond.getTaxesTotal());
 			entityManager.persist(deposit);
-			
-			//@author macartuche
-			//@date 2016-06-21
-			//@tag recaudacionesCoactivas
-			 createMunicipalBondsAux(deposit, municipalBond);
-			
+
+			// @author macartuche
+			// @date 2016-06-21
+			// @tag recaudacionesCoactivas
+			createMunicipalBondsAux(deposit, municipalBond);
+
 			if (deposit.getBalance().compareTo(BigDecimal.ZERO) == 0) {
-				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId,
-						deposit.getDate());
+				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId, deposit.getDate());
 			}
 		}
 		Date rightNow = new Date();
 		deactivatePaymentAgreement(paymentAgreementId, rightNow);
-		//System.out.println("Termina grabacion");
+		// System.out.println("Termina grabacion");
 	}
 
-	
-	private void createMunicipalBondsAux(Deposit dep, MunicipalBond mb){
-		BigDecimal sum = BigDecimal.ZERO; 
+	private void createMunicipalBondsAux(Deposit dep, MunicipalBond mb) {
+		BigDecimal sum = BigDecimal.ZERO;
 		BigDecimal itemValue = BigDecimal.ZERO;
 		BigDecimal depositValue = BigDecimal.ZERO;
 		Boolean itemIsPayed = false;
 
-		if(dep.getInterest().compareTo(BigDecimal.ZERO) > 0){
+		if (dep.getInterest().compareTo(BigDecimal.ZERO) > 0) {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "I");
 			itemValue = mb.getInterest();
 			depositValue = dep.getInterest();
-			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
 				BigDecimal temp = depositValue.add(sum);
-				if(temp.compareTo(itemValue) >= 0)
-					itemIsPayed = true;				
-			}else if(sum==null && 
-					depositValue.compareTo(itemValue)>=0 && 
-					mb.getPaymentAgreement()!=null ){
+				if (temp.compareTo(itemValue) >= 0)
+					itemIsPayed = true;
+			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
 				itemIsPayed = true;
 			}
-			
-			if(mb.getPaymentAgreement()!=null){				
-				MunicipalbondAux munAux =  createBondAux(dep, mb, itemIsPayed, "I");
-				entityManager.persist(munAux);			
-			}
-		}
-		
-		sum = BigDecimal.ZERO; 
-		itemValue = BigDecimal.ZERO;
-		depositValue = BigDecimal.ZERO;
-		itemIsPayed = false;
-		
-		if(dep.getCapital().compareTo(BigDecimal.ZERO) > 0){
-			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "C");
-			itemValue = mb.getBalance();
-			depositValue = dep.getCapital();
-			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
-				BigDecimal temp = depositValue.add(sum);
-				if(temp.compareTo(itemValue) >= 0)
-					itemIsPayed = true;				
-			}else if(sum==null && 
-					depositValue.compareTo(itemValue)>=0 && 
-					mb.getPaymentAgreement()!=null ){
-				itemIsPayed = true;
-			}
-			
-			if(mb.getPaymentAgreement()!=null){				
-				MunicipalbondAux munAux =  createBondAux(dep, mb, itemIsPayed, "C");
-				entityManager.persist(munAux);			
-			}
-		}
-		
-		sum = BigDecimal.ZERO; 
-		itemValue = BigDecimal.ZERO;
-		depositValue = BigDecimal.ZERO;
-		itemIsPayed = false;
-		
-		if(dep.getPaidTaxes().compareTo(BigDecimal.ZERO) > 0){
-			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "T");
-			itemValue = mb.getTaxesTotal();
-			depositValue = dep.getPaidTaxes();
-			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
-				BigDecimal temp = depositValue.add(sum);
-				if(temp.compareTo(itemValue) >= 0)
-					itemIsPayed = true;				
-			}else if(sum==null && 
-					depositValue.compareTo(itemValue)>=0 && 
-					mb.getPaymentAgreement()!=null ){
-				itemIsPayed = true;
-			}
-			
-			if(mb.getPaymentAgreement()!=null){				
-				MunicipalbondAux munAux =  createBondAux(dep, mb, itemIsPayed, "T");
-				entityManager.persist(munAux);			
+
+			if (mb.getPaymentAgreement() != null) {
+				//si item esta pagado poner valor a true
+				if(itemIsPayed)
+					updateMunicipalbondAux(mb, "I");
+				
+				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "I");
+				entityManager.persist(munAux);
 			}
 		}
 
-		sum = BigDecimal.ZERO; 
+		sum = BigDecimal.ZERO;
 		itemValue = BigDecimal.ZERO;
 		depositValue = BigDecimal.ZERO;
 		itemIsPayed = false;
-		
-		if(dep.getSurcharge().compareTo(BigDecimal.ZERO) > 0){
+
+		if (dep.getCapital().compareTo(BigDecimal.ZERO) > 0) {
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "C");
+			itemValue = mb.getBalance();
+			depositValue = dep.getCapital();
+			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
+				BigDecimal temp = depositValue.add(sum);
+				if (temp.compareTo(itemValue) >= 0)
+					itemIsPayed = true;
+			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
+				itemIsPayed = true;
+			}
+
+			if (mb.getPaymentAgreement() != null) {
+				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "C");
+				entityManager.persist(munAux);
+			}
+		}
+
+		sum = BigDecimal.ZERO;
+		itemValue = BigDecimal.ZERO;
+		depositValue = BigDecimal.ZERO;
+		itemIsPayed = false;
+
+		if (dep.getPaidTaxes().compareTo(BigDecimal.ZERO) > 0) {
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "T");
+			itemValue = mb.getTaxesTotal();
+			depositValue = dep.getPaidTaxes();
+			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
+				BigDecimal temp = depositValue.add(sum);
+				if (temp.compareTo(itemValue) >= 0)
+					itemIsPayed = true;
+			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
+				itemIsPayed = true;
+			}
+
+			if (mb.getPaymentAgreement() != null) {
+				if(itemIsPayed)
+					updateMunicipalbondAux(mb, "T");
+				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "T");
+				entityManager.persist(munAux);
+			}
+		}
+
+		sum = BigDecimal.ZERO;
+		itemValue = BigDecimal.ZERO;
+		depositValue = BigDecimal.ZERO;
+		itemIsPayed = false;
+
+		if (dep.getSurcharge().compareTo(BigDecimal.ZERO) > 0) {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "S");
 			itemValue = mb.getSurcharge();
 			depositValue = dep.getSurcharge();
-			if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
 				BigDecimal temp = depositValue.add(sum);
-				if(temp.compareTo(itemValue) >= 0)
-					itemIsPayed = true;				
-			}else if(sum==null && 
-					depositValue.compareTo(itemValue)>=0 && 
-					mb.getPaymentAgreement()!=null ){
+				if (temp.compareTo(itemValue) >= 0)
+					itemIsPayed = true;
+			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
 				itemIsPayed = true;
 			}
-			
-			if(mb.getPaymentAgreement()!=null){				
-				MunicipalbondAux munAux =  createBondAux(dep, mb, itemIsPayed, "S");
-				entityManager.persist(munAux);			
+
+			if (mb.getPaymentAgreement() != null) {
+				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "S");
+				entityManager.persist(munAux);
 			}
 		}
 	}
+	
+	/**
+	 * INteres o recargos luego de pagar parte del capital 
+	 * @test
+	 * @param bond
+	 * @param type
+	 */
+	private void updateMunicipalbondAux(MunicipalBond bond, String type){
+		String query = "Select mb from MunicipalbondAux mb"
+				+ " where mb.municipalbond=:bond and "
+				+ " mb.type=:type and "
+//				+ " mb.coveritem=:coveritem and "
+				+ " mb.anotherItem is null  ";
+		
+		Query q = entityManager.createQuery(query);
+		q.setParameter("bond", bond);
+		q.setParameter("type", type);
+//		q.setParameter("coveritem", true);
+		List<MunicipalbondAux> list = (List<MunicipalbondAux>)q.getResultList();
+		for (MunicipalbondAux municipalbondAux : list) {
+			municipalbondAux.setAnotherItem(true);
+			entityManager.merge(municipalbondAux);
+		}
+	}
+
 	private Receipt findActiveReceipt(Long receiptId) {
 		Query query = entityManager.createNamedQuery("Receipt.findById");
 		query.setParameter("receiptId", receiptId);
@@ -512,7 +499,7 @@ public class IncomeServiceBean implements IncomeService {
 	public Map<Long, Branch> fillMapBranch() {
 		// System.out.println("\n<<<R>>> branch: ");
 		Map<Long, Branch> mapBranch = new HashMap<Long, Branch>();
-		//System.out.println("\n<<<R>>> branch: " + entityManager);
+		// System.out.println("\n<<<R>>> branch: " + entityManager);
 		Query query = entityManager.createNamedQuery("Branch.findAll");
 		List<Branch> list = new ArrayList<Branch>();
 		list = query.getResultList();
@@ -524,23 +511,18 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	public DataWS authorizedElectronicReceipt(Receipt receipt) throws Exception {
-		String sriEnvironment = systemParameterService
-				.findParameter(ELECTRONIC_INVOICE_ENVIRONMENT);
+		String sriEnvironment = systemParameterService.findParameter(ELECTRONIC_INVOICE_ENVIRONMENT);
 		JAXBContext jaxbContext = JAXBContext.newInstance(Factura.class);
 		Marshaller marshaller = jaxbContext.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-		marshaller.setProperty("com.sun.xml.bind.xmlHeaders",
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		String xml_dir = systemParameterService
-				.findParameter(ELECTRONIC_INVOICE_XML_DIR);
-		String dirName = System.getProperty("user.home") + File.separator
-				+ xml_dir;
+		String xml_dir = systemParameterService.findParameter(ELECTRONIC_INVOICE_XML_DIR);
+		String dirName = System.getProperty("user.home") + File.separator + xml_dir;
 		System.out.println("Output sent to " + dirName);
 		new File(dirName).mkdirs();
 
-		String xmlFileName = dirName + File.separator + receipt.toString()
-				+ ".xml";
+		String xmlFileName = dirName + File.separator + receipt.toString() + ".xml";
 		System.out.println("File Saved: " + xmlFileName);
 		File output = new File(xmlFileName);
 		ElectronicServiceBean elecbean = new ElectronicServiceBean();
@@ -551,8 +533,7 @@ public class IncomeServiceBean implements IncomeService {
 
 		// agregado macartuche
 		XmlTransform.CFO = getCFO();
-		Factura factura = XmlTransform.transform(receipt, sriEnvironment,
-				elecbean.getMapBranch());
+		Factura factura = XmlTransform.transform(receipt, sriEnvironment, elecbean.getMapBranch());
 		marshaller.marshal(factura, output);
 
 		byte[] document;
@@ -561,15 +542,13 @@ public class IncomeServiceBean implements IncomeService {
 			document = FileUtilities.convertir_file_to_ByteArray(output);
 			String checksum = FileUtilities.checkSumApacheCommons(xmlFileName);
 			dataWS.setXmlFile(document);
-			dataWS.setRucCompany(receipt.getMunicipalBond().getInstitution()
-					.getNumber());
+			dataWS.setRucCompany(receipt.getMunicipalBond().getInstitution().getNumber());
 			System.out.println("cliente checksum ");
 			dataWS.setCheksum(checksum);
 			dataWS = sendToService(dataWS);
 			new File(xmlFileName).delete();
 		} catch (IOException ex) {
-			Logger.getLogger(IncomeServiceBean.class.getName()).log(
-					Level.SEVERE, null, ex);
+			Logger.getLogger(IncomeServiceBean.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 		return dataWS;
@@ -582,8 +561,8 @@ public class IncomeServiceBean implements IncomeService {
 	 */
 	@SuppressWarnings("unchecked")
 	private String getCFO() {
-		Query query = entityManager.createQuery("Select d from Delegate d "
-				+ "where d.charge.id=:id and d.isActive =:active");
+		Query query = entityManager
+				.createQuery("Select d from Delegate d " + "where d.charge.id=:id and d.isActive =:active");
 
 		query.setParameter("id", 10L);
 		query.setParameter("active", Boolean.TRUE);
@@ -597,23 +576,20 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	public DataWS sendToService(DataWS input) {
-		String uriElectronicService = systemParameterService
-				.findParameter(ELECTRONIC_INVOICE_BASE_URI);
+		String uriElectronicService = systemParameterService.findParameter(ELECTRONIC_INVOICE_BASE_URI);
 		ElectronicClient client = new ElectronicClient(uriElectronicService);
 		DataWS response;
 		response = client.reception_XML(input, DataWS.class);
-		System.out.println("Access key " + response.getAccesKey()
-				+ " Autorizado en SRI: " + response.getAuthorized()
-				+ " Ambiente Contingencia: "
-				+ response.getContingencyEnvironment());
+		System.out.println("Access key " + response.getAccesKey() + " Autorizado en SRI: " + response.getAuthorized()
+				+ " Ambiente Contingencia: " + response.getContingencyEnvironment());
 		return response;
 	}
 
-	private void setToNextStatus(MunicipalBond municipalBond,
-			Long nextStatusId, Long tillId, Date paymentDate) throws Exception {
+	private void setToNextStatus(MunicipalBond municipalBond, Long nextStatusId, Long tillId, Date paymentDate)
+			throws Exception {
 		if (municipalBond != null && municipalBond.getId() != null) {
-			MunicipalBondStatus paidStatus = systemParameterService
-					.materialize(MunicipalBondStatus.class, PAID_BOND_STATUS);
+			MunicipalBondStatus paidStatus = systemParameterService.materialize(MunicipalBondStatus.class,
+					PAID_BOND_STATUS);
 			Long statusId;
 			MunicipalBondStatus statusIdPrevious;
 			Branch branch = findBranchByTillId(tillId);
@@ -621,47 +597,47 @@ public class IncomeServiceBean implements IncomeService {
 			if (nextStatusId == paidStatus.getId()) {
 				statusIdPrevious = municipalBond.getMunicipalBondStatus();
 				if (branch.getIsPaidByCompensation()) {
-					MunicipalBondStatus mbs = systemParameterService
-							.materialize(MunicipalBondStatus.class,
-									COMPENSATION_BOND_STATUS);
+					MunicipalBondStatus mbs = systemParameterService.materialize(MunicipalBondStatus.class,
+							COMPENSATION_BOND_STATUS);
 					statusId = mbs.getId();
 					municipalBond.setMunicipalBondStatus(mbs);
 				} else {
-					statusId = systemParameterService
-							.findParameter(PAID_BOND_STATUS);
+					statusId = systemParameterService.findParameter(PAID_BOND_STATUS);
 					municipalBond.setMunicipalBondStatus(paidStatus);
-					
+
 				}
-				
-				//macartuche
-				//obtener el interees de la factura electronica y actual de pago										
-				//@tag InteresCeroInstPub  
-		        //COMENTADO YA QUE SE USA INTERES=0 A INST_PUB  
-//		            Receipt rec = municipalBond.getReceipt();  
-//		            if(rec!=null){  
-//		              Query q = entityManager.createQuery("Select cr from CompensationReceipt cr where cr.receipt=:receipt");  
-//		              q.setParameter("receipt", rec);  
-//		              List<CompensationReceipt> list = q.getResultList();  
-//		              if(!list.isEmpty()){  
-//		                CompensationReceipt cr = list.get(0);  
-//		                BigDecimal residue =  municipalBond.getInterest().subtract(cr.getInterest());  
-//		                if(residue.compareTo(BigDecimal.ZERO)==1){  
-//		                  cr.setResidualInterest(residue);  
-//		                }  
-//		                System.out.println("Se ha registrado el residuo de: "+residue);  
-//		                entityManager.merge(cr);  
-//		              }  
-//		            }  
-				
-				
+
+				// macartuche
+				// obtener el interees de la factura electronica y actual de
+				// pago
+				// @tag InteresCeroInstPub
+				// COMENTADO YA QUE SE USA INTERES=0 A INST_PUB
+				// Receipt rec = municipalBond.getReceipt();
+				// if(rec!=null){
+				// Query q = entityManager.createQuery("Select cr from
+				// CompensationReceipt cr where cr.receipt=:receipt");
+				// q.setParameter("receipt", rec);
+				// List<CompensationReceipt> list = q.getResultList();
+				// if(!list.isEmpty()){
+				// CompensationReceipt cr = list.get(0);
+				// BigDecimal residue =
+				// municipalBond.getInterest().subtract(cr.getInterest());
+				// if(residue.compareTo(BigDecimal.ZERO)==1){
+				// cr.setResidualInterest(residue);
+				// }
+				// System.out.println("Se ha registrado el residuo de:
+				// "+residue);
+				// entityManager.merge(cr);
+				// }
+				// }
+
 				// Se realiza calculo de la liquidacion final
 				municipalBond.setBalance(BigDecimal.ZERO);
 				municipalBond.setInterest(municipalBond.getInterestTotal());
 				municipalBond.setDiscount(municipalBond.getDiscount());
 				municipalBond.setSurcharge(municipalBond.getSurcharge());
 				municipalBond.setTaxableTotal(municipalBond.getTaxableTotal());
-				municipalBond.setNonTaxableTotal(municipalBond
-						.getNonTaxableTotal());
+				municipalBond.setNonTaxableTotal(municipalBond.getNonTaxableTotal());
 				municipalBond.setTaxesTotal(municipalBond.getTaxesTotal());
 				municipalBond.setPaidTotal(municipalBond.findPaidTotal());
 				municipalBond.setLiquidationDate(paymentDate);
@@ -669,72 +645,64 @@ public class IncomeServiceBean implements IncomeService {
 				municipalBond.setPrintingsNumber(1);
 			} else {
 				statusIdPrevious = municipalBond.getMunicipalBondStatus();
-				municipalBond
-						.setMunicipalBondStatus(findMunicipalBondStatusById(nextStatusId));
+				municipalBond.setMunicipalBondStatus(findMunicipalBondStatusById(nextStatusId));
 				statusId = nextStatusId;
 			}
 
-			Query query = entityManager
-					.createNamedQuery("MunicipalBondStatus.findById");
+			Query query = entityManager.createNamedQuery("MunicipalBondStatus.findById");
 			query.setParameter("id", statusId);
-			MunicipalBondStatus newBondStatus = (MunicipalBondStatus) query
-					.getSingleResult();
+			MunicipalBondStatus newBondStatus = (MunicipalBondStatus) query.getSingleResult();
 
 			municipalBond.setMunicipalBondStatus(newBondStatus);
 			entityManager.merge(municipalBond);
 
-			Boolean IS_AUTO_EMMITER = systemParameterService
-					.findParameter(ENABLE_RECEIPT_GENERATION);
-			Boolean IS_ELECTRONIC_INVOICE_ENABLE = systemParameterService
-					.findParameter(ELECTRONIC_INVOICE_ENABLE);
+			Boolean IS_AUTO_EMMITER = systemParameterService.findParameter(ENABLE_RECEIPT_GENERATION);
+			Boolean IS_ELECTRONIC_INVOICE_ENABLE = systemParameterService.findParameter(ELECTRONIC_INVOICE_ENABLE);
 			System.out.println("AUTOEMITER=>" + IS_AUTO_EMMITER);
 
 			if (IS_AUTO_EMMITER) {
-				//System.out.println("SIIII=>");
+				// System.out.println("SIIII=>");
 				if (municipalBond.getEntry().getIsTaxable()) {
-					//System.out.println("SIIII=>");
+					// System.out.println("SIIII=>");
 					if (municipalBond.getReceipt() == null) {
-						Receipt receipt = createReceipt(municipalBond,
-								branch.getNumber(), till.getNumber(),
+						Receipt receipt = createReceipt(municipalBond, branch.getNumber(), till.getNumber(),
 								paymentDate);
-						//System.out.println("===========>" + till.getNumber());
-						
-						//PREGUNTAR SI ES POR COMPENSACION AGREGAR UN CAMPO MAS EN LA FACTURA
-						//macartuche
-						if(municipalBond.getMunicipalBondStatus().getId()==7L){
+						// System.out.println("===========>" +
+						// till.getNumber());
+
+						// PREGUNTAR SI ES POR COMPENSACION AGREGAR UN CAMPO MAS
+						// EN LA FACTURA
+						// macartuche
+						if (municipalBond.getMunicipalBondStatus().getId() == 7L) {
 							receipt.setCompensation(true);
 						}
-						
-						//receipt.setStatusElectronicReceipt(StatusElectronicReceipt.AUTOIMPRESOR);
+
+						// receipt.setStatusElectronicReceipt(StatusElectronicReceipt.AUTOIMPRESOR);
 						entityManager.persist(receipt);
 						municipalBond.setReceipt(receipt);
 						if (IS_ELECTRONIC_INVOICE_ENABLE) {
-							//System.out
-								//	.println("isElectronicInvoiceEnable==================>"
-									//		+ till.isElectronicInvoiceEnable());
+							// System.out
+							// .println("isElectronicInvoiceEnable==================>"
+							// + till.isElectronicInvoiceEnable());
 
 							if (till.isElectronicInvoiceEnable()) {
-								//System.out
-								//.println("isEmissionElectronicOnLine==================>"
-								//+ till.isEmissionElectronicOnLine());
+								// System.out
+								// .println("isEmissionElectronicOnLine==================>"
+								// + till.isEmissionElectronicOnLine());
 								if (till.isEmissionElectronicOnLine()) {
 
 									DataWS authorizedReceiptWS = authorizedElectronicReceipt(receipt);
-									// System.out.println("<<<R>>> Messages SRI: "
+									// System.out.println("<<<R>>> Messages SRI:
+									// "
 									// +
 									// authorizedReceiptWS.getMessageList().toString());
-									System.out.println("AUTHORIZADO?"
-											+ authorizedReceiptWS
-													.getAuthorized());
+									System.out.println("AUTHORIZADO?" + authorizedReceiptWS.getAuthorized());
 									if (authorizedReceiptWS.getAuthorized()) {
-										receipt.setAuthorizationNumber(authorizedReceiptWS
-												.getAuthorizationNumber());
-										receipt.setSriAuthorizationDate(authorizedReceiptWS
-												.getAuthorizationDate());
+										receipt.setAuthorizationNumber(authorizedReceiptWS.getAuthorizationNumber());
+										receipt.setSriAuthorizationDate(authorizedReceiptWS.getAuthorizationDate());
 										receipt.setStatusElectronicReceipt(StatusElectronicReceipt.AUTHORIZED);
 									} else {
-										if (authorizedReceiptWS
-												.getContingencyEnvironment()) {
+										if (authorizedReceiptWS.getContingencyEnvironment()) {
 											receipt.setAuthorizationNumber("");
 											receipt.setSriAuthorizationDate(paymentDate);
 											receipt.setStatusElectronicReceipt(StatusElectronicReceipt.CONTINGENCY);
@@ -747,41 +715,34 @@ public class IncomeServiceBean implements IncomeService {
 									}
 
 									if (authorizedReceiptWS.getAuthorized()) {
-										receipt.setSriAccessKey(authorizedReceiptWS
-												.getAccesKey());
-										receipt.setSriContingencyEnvironment(authorizedReceiptWS
-												.getContingencyEnvironment());
+										receipt.setSriAccessKey(authorizedReceiptWS.getAccesKey());
+										receipt.setSriContingencyEnvironment(
+												authorizedReceiptWS.getContingencyEnvironment());
 										receipt.setStatusElectronicReceipt(StatusElectronicReceipt.AUTHORIZED);
 										entityManager.merge(receipt);
 										entityManager.flush();
 
-										//No realizar el calculo de interes para instituciones publicas
+										// No realizar el calculo de interes
+										// para instituciones publicas
 										// createCompensationReceipt
-										//@author macartuche  
-			                            //@date 2016-06-27 17:25  
-			                            //@tag InteresCeroInstPub  
-										//createCompensationReceipt(receipt,municipalBond);
+										// @author macartuche
+										// @date 2016-06-27 17:25
+										// @tag InteresCeroInstPub
+										// createCompensationReceipt(receipt,municipalBond);
 
 									} else {
-										if (authorizedReceiptWS
-												.getContingencyEnvironment()) {
-											receipt.setSriAccessKey(authorizedReceiptWS
-													.getAccesKey());
-											receipt.setSriContingencyEnvironment(authorizedReceiptWS
-													.getContingencyEnvironment());
+										if (authorizedReceiptWS.getContingencyEnvironment()) {
+											receipt.setSriAccessKey(authorizedReceiptWS.getAccesKey());
+											receipt.setSriContingencyEnvironment(
+													authorizedReceiptWS.getContingencyEnvironment());
 											receipt.setStatusElectronicReceipt(StatusElectronicReceipt.CONTINGENCY);
 											entityManager.merge(receipt);
 											entityManager.flush();
 										} else {
-											deletePaymentFromMunicipalBond(
-													municipalBond.getId(),
-													paymentDate);
-											municipalBond
-													.setMunicipalBondStatus(statusIdPrevious);
-											municipalBond
-													.setLiquidationDate(null);
-											municipalBond
-													.setLiquidationTime(null);
+											deletePaymentFromMunicipalBond(municipalBond.getId(), paymentDate);
+											municipalBond.setMunicipalBondStatus(statusIdPrevious);
+											municipalBond.setLiquidationDate(null);
+											municipalBond.setLiquidationTime(null);
 											entityManager.merge(municipalBond);
 											receipt.setStatus(FinancialStatus.VOID);
 											receipt.setStatusElectronicReceipt(StatusElectronicReceipt.VOID);
@@ -808,61 +769,65 @@ public class IncomeServiceBean implements IncomeService {
 						Long receiptId = municipalBond.getReceipt().getId();
 						Receipt receipt = findActiveReceipt(receiptId);
 						municipalBond.setReceipt(receipt);
-						
-						//@author macartuche  
-		                //@date 2016-06-27 17:26  
-		                //@tag InteresCeroInstPub  
-		                //No realizar el calculo de interes para instituciones publicas  
 
-//						if(!receipt.getStatusElectronicReceipt().equals(StatusElectronicReceipt.AUTOIMPRESOR)){
-////						 verificar si la factura ya fue autorizada anteriormente
-//							if (receipt.getStatusElectronicReceipt() == StatusElectronicReceipt.AUTHORIZED) { 
-////								 createCompensationReceipt
-//								createCompensationReceipt(receipt, municipalBond);
-//							} 
-//						} 
+						// @author macartuche
+						// @date 2016-06-27 17:26
+						// @tag InteresCeroInstPub
+						// No realizar el calculo de interes para instituciones
+						// publicas
+
+						// if(!receipt.getStatusElectronicReceipt().equals(StatusElectronicReceipt.AUTOIMPRESOR)){
+						//// verificar si la factura ya fue autorizada
+						// anteriormente
+						// if (receipt.getStatusElectronicReceipt() ==
+						// StatusElectronicReceipt.AUTHORIZED) {
+						//// createCompensationReceipt
+						// createCompensationReceipt(receipt, municipalBond);
+						// }
+						// }
 					}
 				}
 			}
 		}
 	}
 
-	//@author macartuche  
-    //@date 2016-06-27 17:25  
-    //@tag InteresCeroInstPub  
-    //No realizar el calculo de interes para instituciones publicas 
-//	@SuppressWarnings("unchecked")
-//	private void createCompensationReceipt(Receipt receipt,
-//			MunicipalBond municipalBond) {
-//		// grabar el interes que tiene la
-//		// factura electronica 
-//		//crear solo en el caso de que no exista
-//		Query q = entityManager.createQuery("Select cr from CompensationReceipt cr "
-//				+ "where cr.serviceDate=:serviceDate and "
-//				+ "cr.groupingCode=:groupingCode and "
-//				+ "cr.receipt=:receipt");
-//		q.setParameter("serviceDate", municipalBond.getServiceDate());
-//		q.setParameter("groupingCode", municipalBond.getGroupingCode());
-//		q.setParameter("receipt", receipt);
-//		List<CompensationReceipt> crlist = q.getResultList();
-//		if(crlist.isEmpty()){ 
-//			CompensationReceipt compensationDetail = new CompensationReceipt();
-//			compensationDetail.setServiceDate(municipalBond.getServiceDate());
-//			compensationDetail.setGroupingCode(municipalBond.getGroupingCode());
-//			compensationDetail.setInterest(municipalBond.getInterest());
-//			compensationDetail.setReceipt(receipt);
-//			compensationDetail.setAvailable(Boolean.TRUE);
-//			compensationDetail.setIsPaid(Boolean.FALSE);
-//			entityManager.merge(compensationDetail);
-//			entityManager.flush();
-//		} 
-//	}
+	// @author macartuche
+	// @date 2016-06-27 17:25
+	// @tag InteresCeroInstPub
+	// No realizar el calculo de interes para instituciones publicas
+	// @SuppressWarnings("unchecked")
+	// private void createCompensationReceipt(Receipt receipt,
+	// MunicipalBond municipalBond) {
+	// // grabar el interes que tiene la
+	// // factura electronica
+	// //crear solo en el caso de que no exista
+	// Query q = entityManager.createQuery("Select cr from CompensationReceipt
+	// cr "
+	// + "where cr.serviceDate=:serviceDate and "
+	// + "cr.groupingCode=:groupingCode and "
+	// + "cr.receipt=:receipt");
+	// q.setParameter("serviceDate", municipalBond.getServiceDate());
+	// q.setParameter("groupingCode", municipalBond.getGroupingCode());
+	// q.setParameter("receipt", receipt);
+	// List<CompensationReceipt> crlist = q.getResultList();
+	// if(crlist.isEmpty()){
+	// CompensationReceipt compensationDetail = new CompensationReceipt();
+	// compensationDetail.setServiceDate(municipalBond.getServiceDate());
+	// compensationDetail.setGroupingCode(municipalBond.getGroupingCode());
+	// compensationDetail.setInterest(municipalBond.getInterest());
+	// compensationDetail.setReceipt(receipt);
+	// compensationDetail.setAvailable(Boolean.TRUE);
+	// compensationDetail.setIsPaid(Boolean.FALSE);
+	// entityManager.merge(compensationDetail);
+	// entityManager.flush();
+	// }
+	// }
 
 	private void deletePaymentFromMunicipalBond(Long municipalBondId, Date date) {
 		Long paymentId = new Long(0);
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		String sql = "select payment_id from deposit where municipalbond_id = "
-				+ municipalBondId + " and date='" + df.format(date) + "';";
+		String sql = "select payment_id from deposit where municipalbond_id = " + municipalBondId + " and date='"
+				+ df.format(date) + "';";
 		System.out.println("<<<R>>> sql: " + sql);
 		Query query = entityManager.createNativeQuery(sql);
 		paymentId = (Long) query.getSingleResult();
@@ -886,42 +851,34 @@ public class IncomeServiceBean implements IncomeService {
 		}
 	}
 
-	private Receipt createReceipt(MunicipalBond municipalBond,
-			Integer branchNumber, Integer tillNumber, Date paymentDate)
-			throws Exception {
+	private Receipt createReceipt(MunicipalBond municipalBond, Integer branchNumber, Integer tillNumber,
+			Date paymentDate) throws Exception {
 		Entry entry = municipalBond.getEntry();
 		try {
-			Long INITIAL_RECEIPT_NUMBER = systemParameterService
-					.findParameter("INITIAL_RECEIPT_NUMBER");
-			Long FINAL_RECEIPT_NUMBER = systemParameterService
-					.findParameter("FINAL_RECEIPT_NUMBER");
-			Boolean IS_ELECTRONIC_RECEIPT = systemParameterService
-					.findParameter(ELECTRONIC_INVOICE_ENABLE);
+			Long INITIAL_RECEIPT_NUMBER = systemParameterService.findParameter("INITIAL_RECEIPT_NUMBER");
+			Long FINAL_RECEIPT_NUMBER = systemParameterService.findParameter("FINAL_RECEIPT_NUMBER");
+			Boolean IS_ELECTRONIC_RECEIPT = systemParameterService.findParameter(ELECTRONIC_INVOICE_ENABLE);
 
 			ReceiptType receiptType = findReceiptType(entry.getId());
 			entry.setReceiptType(receiptType);
 			Long receiptTypeId = receiptType.getId();
 
-			ReceiptAuthorization authorization = findReceiptAuthorization(
-					entry, paymentDate);
+			ReceiptAuthorization authorization = findReceiptAuthorization(entry, paymentDate);
 
-			Long number = findReceiptValue(authorization.getTaxpayerRecord()
-					.getId(), receiptTypeId, branchNumber, tillNumber);
+			Long number = findReceiptValue(authorization.getTaxpayerRecord().getId(), receiptTypeId, branchNumber,
+					tillNumber);
 
 			if (number > FINAL_RECEIPT_NUMBER) {
-				resetSequence(authorization.getTaxpayerRecord().getId(),
-						receiptTypeId, branchNumber, tillNumber,
+				resetSequence(authorization.getTaxpayerRecord().getId(), receiptTypeId, branchNumber, tillNumber,
 						INITIAL_RECEIPT_NUMBER);
 				number = INITIAL_RECEIPT_NUMBER;
 			}
 
-			if (number >= INITIAL_RECEIPT_NUMBER
-					&& number <= FINAL_RECEIPT_NUMBER) {
+			if (number >= INITIAL_RECEIPT_NUMBER && number <= FINAL_RECEIPT_NUMBER) {
 				Receipt receipt = new Receipt();
 				receipt.setDate(paymentDate);
 				receipt.setReceiptAuthorization(authorization);
-				receipt.setAuthorizationNumber(authorization
-						.getAuthorizationNumber());
+				receipt.setAuthorizationNumber(authorization.getAuthorizationNumber());
 				receipt.setElectronicReceipt(IS_ELECTRONIC_RECEIPT);
 				receipt.setSequential(number);
 				receipt.setBranch(branchNumber);
@@ -949,56 +906,43 @@ public class IncomeServiceBean implements IncomeService {
 	 * return nextReceiptNumber; }
 	 */
 
-	private Long findReceiptValue(Long taxpayerRecordId, Long receiptTypeId,
-			Integer branchNumber, Integer tillNumber) {
+	private Long findReceiptValue(Long taxpayerRecordId, Long receiptTypeId, Integer branchNumber, Integer tillNumber) {
 		Query query = entityManager.createNativeQuery("SELECT nextval('"
-				+ buildSequenceName(taxpayerRecordId, receiptTypeId,
-						branchNumber, tillNumber) + "')");
+				+ buildSequenceName(taxpayerRecordId, receiptTypeId, branchNumber, tillNumber) + "')");
 		return ((BigInteger) query.getResultList().get(0)).longValue();
 	}
 
-	private String buildSequenceName(Long taxpayerRecordId, Long receiptTypeId,
-			Integer branchNumber, Integer tillNumber) {
+	private String buildSequenceName(Long taxpayerRecordId, Long receiptTypeId, Integer branchNumber,
+			Integer tillNumber) {
 		// WARNING: Los identificadores en Postgresql son siempre en MINUSCULAS
-		return "auth_" + taxpayerRecordId + "_" + receiptTypeId + "_"
-				+ branchNumber + "_" + tillNumber;
+		return "auth_" + taxpayerRecordId + "_" + receiptTypeId + "_" + branchNumber + "_" + tillNumber;
 	}
 
-	private void resetSequence(Long taxpayerRecordId, Long receiptTypeId,
-			Integer branchNumber, Integer tillNumber, Long initialValue) {
-		String sequenceName = buildSequenceName(taxpayerRecordId,
-				receiptTypeId, branchNumber, tillNumber);
-		String alterSentence = "ALTER SEQUENCE " + sequenceName
-				+ " RESTART WITH " + initialValue;
+	private void resetSequence(Long taxpayerRecordId, Long receiptTypeId, Integer branchNumber, Integer tillNumber,
+			Long initialValue) {
+		String sequenceName = buildSequenceName(taxpayerRecordId, receiptTypeId, branchNumber, tillNumber);
+		String alterSentence = "ALTER SEQUENCE " + sequenceName + " RESTART WITH " + initialValue;
 		Query query = entityManager.createNativeQuery(alterSentence);
 		query.executeUpdate();
 	}
 
 	// TODO Colocarlo como un named native query con parametros?
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createSequence(Long taxpayerRecordId, Long receiptTypeId,
-			Integer branchNumber, Integer tillNumber) {
-		Long initialReceiptNumber = systemParameterService
-				.findParameter("INITIAL_RECEIPT_NUMBER");
-		Long finalReceiptNumber = systemParameterService
-				.findParameter("FINAL_RECEIPT_NUMBER");
-		String sequenceName = buildSequenceName(taxpayerRecordId,
-				receiptTypeId, branchNumber, tillNumber);
-		System.out.println("LXGK-SRI -----> Sequence CHECKIN sequence "
-				+ sequenceName);
-		String stripedSequenceName = sequenceName.substring(
-				sequenceName.indexOf('.') + 1).toLowerCase();
+	public void createSequence(Long taxpayerRecordId, Long receiptTypeId, Integer branchNumber, Integer tillNumber) {
+		Long initialReceiptNumber = systemParameterService.findParameter("INITIAL_RECEIPT_NUMBER");
+		Long finalReceiptNumber = systemParameterService.findParameter("FINAL_RECEIPT_NUMBER");
+		String sequenceName = buildSequenceName(taxpayerRecordId, receiptTypeId, branchNumber, tillNumber);
+		System.out.println("LXGK-SRI -----> Sequence CHECKIN sequence " + sequenceName);
+		String stripedSequenceName = sequenceName.substring(sequenceName.indexOf('.') + 1).toLowerCase();
 		if (!sequenceNameExists(stripedSequenceName)) {
-			String createSentence = "CREATE SEQUENCE " + sequenceName
-					+ " START " + initialReceiptNumber + " MINVALUE "
+			String createSentence = "CREATE SEQUENCE " + sequenceName + " START " + initialReceiptNumber + " MINVALUE "
 					+ initialReceiptNumber + " MAXVALUE " + finalReceiptNumber;
 			Query query = entityManager.createNativeQuery(createSentence);
 			query.executeUpdate();
 			System.out.println("LXGK-SRI -----> Sequence created ");
 			return;
 		}
-		System.out
-				.println("LXGK-SRI -----> Sequence already exists, skipping creation");
+		System.out.println("LXGK-SRI -----> Sequence already exists, skipping creation");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1015,50 +959,43 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	private ReceiptType findReceiptType(Long entryId) {
-		Query query = entityManager
-				.createNamedQuery("Entry.findReceiptTypeByEntryId");
+		Query query = entityManager.createNamedQuery("Entry.findReceiptTypeByEntryId");
 		query.setParameter("entryId", entryId);
 		ReceiptType receiptType = (ReceiptType) query.getSingleResult();
 		return receiptType;
 	}
 
-	private ReceiptAuthorization findReceiptAuthorization(Entry entry,
-			Date paymentDate) throws ReceiptAuthorizationDoesNotExistException {
-		TaxpayerRecord taxpayerRecord = municipalBondService
-				.findTaxpayerRecord(entry.getId());
+	private ReceiptAuthorization findReceiptAuthorization(Entry entry, Date paymentDate)
+			throws ReceiptAuthorizationDoesNotExistException {
+		TaxpayerRecord taxpayerRecord = municipalBondService.findTaxpayerRecord(entry.getId());
 
-		Query query = entityManager
-				.createNamedQuery("ReceiptAuthorization.findActiveByTaxpayerRecordId");
+		Query query = entityManager.createNamedQuery("ReceiptAuthorization.findActiveByTaxpayerRecordId");
 		query.setParameter("taxpayerRecordId", taxpayerRecord.getId());
 		query.setParameter("date", paymentDate);
 		// query.setParameter("receiptTypeId", receiptType.getId());
 		try {
-			ReceiptAuthorization receiptAuthorization = (ReceiptAuthorization) query
-					.getSingleResult();
+			ReceiptAuthorization receiptAuthorization = (ReceiptAuthorization) query.getSingleResult();
 			return receiptAuthorization;
 		} catch (Exception e) {
 			throw new ReceiptAuthorizationDoesNotExistException();
 		}
 	}
 
-	private void deactivatePaymentAgreement(Long paymentAgreementId,
-			Date rightNow) {
+	private void deactivatePaymentAgreement(Long paymentAgreementId, Date rightNow) {
 		if (paymentAgreementId != null) {
-			Query query = entityManager
-					.createNamedQuery("PaymentAgreement.deactivate");
+			Query query = entityManager.createNamedQuery("PaymentAgreement.deactivate");
 			query.setParameter("isActive", Boolean.FALSE);
 			query.setParameter("closingDate", rightNow);
 			query.setParameter("closingTime", rightNow);
 			query.setParameter("paymentAgreementId", paymentAgreementId);
-			query.executeUpdate();  
+			query.executeUpdate();
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Deposit> findDepositsForReverse(Long residentId, Long cashierId) {
 		if (residentId != null) {
-			Query query = entityManager
-					.createNamedQuery("Deposit.findDepositsByResidentIdAndCashierAndDate");
+			Query query = entityManager.createNamedQuery("Deposit.findDepositsByResidentIdAndCashierAndDate");
 			query.setParameter("residentId", residentId);
 			query.setParameter("cashierId", cashierId);
 			query.setParameter("date", new Date());
@@ -1067,9 +1004,8 @@ public class IncomeServiceBean implements IncomeService {
 		return null;
 	}
 
-	public void reverse(List<Long> depositIds, String concept,
-			Resident userReversed) throws ReverseNotAllowedException,
-			ReverseAmongPaymentsIsNotAllowedException {
+	public void reverse(List<Long> depositIds, String concept, Resident userReversed)
+			throws ReverseNotAllowedException, ReverseAmongPaymentsIsNotAllowedException {
 		List<Payment> payments = findPayments(depositIds);
 		// System.out.println("REVERSE -----> Deposits "+depositIds+" size
 		// "+depositIds.size());
@@ -1083,8 +1019,7 @@ public class IncomeServiceBean implements IncomeService {
 		// System.out.println("REVERSE -----> Deposits "+deposits+" size
 		// "+deposits.size());
 		Payment payment = payments.get(0);
-		List<PaymentFraction> paymentFractions = findPaymentFractions(payment
-				.getId());
+		List<PaymentFraction> paymentFractions = findPaymentFractions(payment.getId());
 		// System.out.println("REVERSE -----> paymentFractions
 		// "+paymentFractions+" size "+paymentFractions.size());
 
@@ -1096,13 +1031,10 @@ public class IncomeServiceBean implements IncomeService {
 		BigDecimal reversableAmount = BigDecimal.ZERO;
 		BigDecimal nonCashAmount = BigDecimal.ZERO;
 		List<PaymentFraction> fractions = new LinkedList<PaymentFraction>();
-		Boolean isFullPaymentReverse = payment.getDeposits().size() == deposits
-				.size();
+		Boolean isFullPaymentReverse = payment.getDeposits().size() == deposits.size();
 		for (PaymentFraction fraction : paymentFractions) {
-			if (isFullPaymentReverse
-					|| fraction.getPaymentType() == PaymentType.CASH) {
-				reversableAmount = reversableAmount.add(fraction
-						.getPaidAmount());
+			if (isFullPaymentReverse || fraction.getPaymentType() == PaymentType.CASH) {
+				reversableAmount = reversableAmount.add(fraction.getPaidAmount());
 				fractions.add(fraction);
 			} else {
 				if (fraction.getPaymentType() != PaymentType.CASH) {
@@ -1136,8 +1068,7 @@ public class IncomeServiceBean implements IncomeService {
 
 		BigDecimal remaining = new BigDecimal(totalToReverse.doubleValue());
 		for (PaymentFraction fraction : fractions) {
-			if (isFullPaymentReverse
-					|| remaining.compareTo(fraction.getPaidAmount()) > 0) {
+			if (isFullPaymentReverse || remaining.compareTo(fraction.getPaidAmount()) > 0) {
 				if (fraction.getPaymentType() == PaymentType.CREDIT_NOTE) {
 					Long creditNoteId = fraction.getCreditNote().getId();
 					reactivateCreditNote(creditNoteId, fraction.getPaidAmount());
@@ -1145,26 +1076,22 @@ public class IncomeServiceBean implements IncomeService {
 				fraction.setPaidAmount(BigDecimal.ZERO);
 				fraction.setReceivedAmount(BigDecimal.ZERO);
 			} else {
-				fraction.setPaidAmount(fraction.getPaidAmount().subtract(
-						remaining));
+				fraction.setPaidAmount(fraction.getPaidAmount().subtract(remaining));
 			}
 			remaining = remaining.subtract(fraction.getPaidAmount());
 		}
 
 		// PREVIOUS ALGORITHM
-		Long PENDING_STATUS_ID = systemParameterService
-				.findParameter(PENDING_BOND_STATUS);
+		Long PENDING_STATUS_ID = systemParameterService.findParameter(PENDING_BOND_STATUS);
 		changeMunicipalBondsStatus(depositIds, PENDING_STATUS_ID);
-		changeDepositStatus(depositIds, concept, FinancialStatus.VOID,
-				userReversed);
+		changeDepositStatus(depositIds, concept, FinancialStatus.VOID, userReversed);
 		entityManager.persist(payment);
 
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<PaymentFraction> findPaymentFractions(Long paymentId) {
-		Query query = entityManager
-				.createNamedQuery("PaymentFraction.findByPaymentId");
+		Query query = entityManager.createNamedQuery("PaymentFraction.findByPaymentId");
 		query.setParameter("paymentId", paymentId);
 		return query.getResultList();
 	}
@@ -1178,8 +1105,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	@SuppressWarnings("unchecked")
 	private List<Payment> findPayments(List<Long> depositIds) {
-		Query query = entityManager
-				.createNamedQuery("Deposit.findPaymentsByDepositIds");
+		Query query = entityManager.createNamedQuery("Deposit.findPaymentsByDepositIds");
 		query.setParameter("depositIds", depositIds);
 		return query.getResultList();
 	}
@@ -1188,16 +1114,14 @@ public class IncomeServiceBean implements IncomeService {
 		System.out.println("REHABILITAR EN SB ---> " + depositId);
 		List<Long> depositIds = new ArrayList<Long>();
 		depositIds.add(depositId);
-		Long PAID_STATUS_ID = systemParameterService
-				.findParameter(PAID_BOND_STATUS);
+		Long PAID_STATUS_ID = systemParameterService.findParameter(PAID_BOND_STATUS);
 		try {
 			changeMunicipalBondsStatus(depositIds, PAID_STATUS_ID);
 		} catch (ReverseNotAllowedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		changeDepositStatus(depositIds, null, FinancialStatus.VALID,
-				userReversed);
+		changeDepositStatus(depositIds, null, FinancialStatus.VALID, userReversed);
 	}
 
 	private Branch findBranchByTillId(Long tillId) {
@@ -1215,25 +1139,22 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void changeMunicipalBondsStatus(List<Long> depositIds,
-			Long municipalBondStatusId) throws ReverseNotAllowedException {
-		Query query = entityManager
-				.createNativeQuery("SELECT municipalBond_id FROM Deposit d WHERE d.id IN (:depositIds) and d.balance = 0");
+	private void changeMunicipalBondsStatus(List<Long> depositIds, Long municipalBondStatusId)
+			throws ReverseNotAllowedException {
+		Query query = entityManager.createNativeQuery(
+				"SELECT municipalBond_id FROM Deposit d WHERE d.id IN (:depositIds) and d.balance = 0");
 		query.setParameter("depositIds", depositIds);
 		List<BigInteger> municipalBonds = query.getResultList();
 		List<Long> municipalBondIds = new ArrayList<Long>();
-		Long PENDING_STATUS_ID = systemParameterService
-				.findParameter(PENDING_BOND_STATUS);
-		Long PAYMENT_AGREEMENT_STATUS_ID = systemParameterService
-				.findParameter(IN_PAYMENT_AGREEMENT_BOND_STATUS);
-		//boolean IS_ELECTRONIC_INVOIVE_ENABLE = systemParameterService
-		//		.findParameter(ELECTRONIC_INVOICE_ENABLE);
+		Long PENDING_STATUS_ID = systemParameterService.findParameter(PENDING_BOND_STATUS);
+		Long PAYMENT_AGREEMENT_STATUS_ID = systemParameterService.findParameter(IN_PAYMENT_AGREEMENT_BOND_STATUS);
+		// boolean IS_ELECTRONIC_INVOIVE_ENABLE = systemParameterService
+		// .findParameter(ELECTRONIC_INVOICE_ENABLE);
 		for (BigInteger biid : municipalBonds) {
 			Long municipalBondId = biid.longValue();
 			municipalBondIds.add(municipalBondId);
 
-			if (municipalBondStatusId.longValue() == PENDING_STATUS_ID
-					.longValue()) {
+			if (municipalBondStatusId.longValue() == PENDING_STATUS_ID.longValue()) {
 				// if (IS_ELECTRONIC_INVOIVE_ENABLE)
 				// throw new ReverseNotAllowedException();
 				// else
@@ -1243,33 +1164,27 @@ public class IncomeServiceBean implements IncomeService {
 			}
 		}
 		if (municipalBondIds.size() > 0) {
-			persistChangeStatus(municipalBondIds, municipalBondStatusId,
-					PENDING_STATUS_ID, PAYMENT_AGREEMENT_STATUS_ID);
+			persistChangeStatus(municipalBondIds, municipalBondStatusId, PENDING_STATUS_ID,
+					PAYMENT_AGREEMENT_STATUS_ID);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void persistChangeStatus(List<Long> municipalBondIds,
-			Long municipalBondStatusId, Long PENDING_STATUS_ID,
+	private void persistChangeStatus(List<Long> municipalBondIds, Long municipalBondStatusId, Long PENDING_STATUS_ID,
 			Long PAYMENT_AGREEMENT_STATUS_ID) {
-		Query query = entityManager
-				.createNamedQuery("MunicipalBondStatus.findById");
+		Query query = entityManager.createNamedQuery("MunicipalBondStatus.findById");
 		query.setParameter("id", municipalBondStatusId);
-		MunicipalBondStatus newBondStatus = (MunicipalBondStatus) query
-				.getSingleResult();
+		MunicipalBondStatus newBondStatus = (MunicipalBondStatus) query.getSingleResult();
 
 		query.setParameter("id", PAYMENT_AGREEMENT_STATUS_ID);
-		MunicipalBondStatus paymentAgreementStatus = (MunicipalBondStatus) query
-				.getSingleResult();
+		MunicipalBondStatus paymentAgreementStatus = (MunicipalBondStatus) query.getSingleResult();
 
-		query = entityManager
-				.createNamedQuery("MunicipalBond.findByIdsToChangeStatus");
+		query = entityManager.createNamedQuery("MunicipalBond.findByIdsToChangeStatus");
 		query.setParameter("municipalBondIds", municipalBondIds);
 		List<MunicipalBond> municipalBonds = query.getResultList();
 		for (MunicipalBond mb : municipalBonds) {
 			mb.setMunicipalBondStatus(newBondStatus);
-			if (newBondStatus.getId().longValue() == PENDING_STATUS_ID
-					.longValue()) {
+			if (newBondStatus.getId().longValue() == PENDING_STATUS_ID.longValue()) {
 				mb.setLiquidationDate(null);
 				mb.setLiquidationTime(null);
 				if (mb.getPaymentAgreement() != null) {
@@ -1285,14 +1200,12 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	private void reactivatePaymentAgreement(Long paymentAgreementId) {
-		Query query = entityManager
-				.createNamedQuery("PaymentAgreement.reactivate");
+		Query query = entityManager.createNamedQuery("PaymentAgreement.reactivate");
 		query.setParameter("paymentAgreementId", paymentAgreementId);
 		query.executeUpdate();
 	}
 
-	private void reactivateCreditNote(Long creditNoteId,
-			BigDecimal availableAmount) {
+	private void reactivateCreditNote(Long creditNoteId, BigDecimal availableAmount) {
 		Query query = entityManager.createNamedQuery("CreditNote.reactivate");
 		query.setParameter("creditNoteId", creditNoteId);
 		query.setParameter("availableAmount", availableAmount);
@@ -1306,8 +1219,7 @@ public class IncomeServiceBean implements IncomeService {
 		 * query.setParameter("municipalBondId", municipalBondId);
 		 * query.executeUpdate();
 		 */
-		Query query = entityManager
-				.createNamedQuery("Receipt.findByMunicipalBondId");
+		Query query = entityManager.createNamedQuery("Receipt.findByMunicipalBondId");
 		query.setParameter("municipalBondId", municipalBondId);
 		List<Receipt> receipts = query.getResultList();
 
@@ -1329,8 +1241,7 @@ public class IncomeServiceBean implements IncomeService {
 		 * query.executeUpdate();
 		 */
 
-		Query query = entityManager
-				.createNamedQuery("Receipt.findReversedByMunicipalBondId");
+		Query query = entityManager.createNamedQuery("Receipt.findReversedByMunicipalBondId");
 		query.setParameter("municipalBondId", municipalBondId);
 		List<Receipt> receipts = query.getResultList();
 		if (receipts.size() > 0) {
@@ -1342,8 +1253,8 @@ public class IncomeServiceBean implements IncomeService {
 		}
 	}
 
-	private void changeDepositStatus(List<Long> depositIds, String concept,
-			FinancialStatus status, Resident userReversed) {
+	private void changeDepositStatus(List<Long> depositIds, String concept, FinancialStatus status,
+			Resident userReversed) {
 		String queryName = "Deposit.setAsVoid";
 		if (status == FinancialStatus.VALID) {
 			queryName = "Deposit.setAsValid";
@@ -1373,24 +1284,20 @@ public class IncomeServiceBean implements IncomeService {
 		Query query = entityManager
 				.createNativeQuery("SELECT SUM(m.paidTotal) FROM MunicipalBond m WHERE m.id IN (:municipalBondIds)");
 		query.setParameter("municipalBondIds", municipalBondIds);
-		System.out.println("ESCALAR CLASS ----> "
-				+ query.getResultList().get(0));
+		System.out.println("ESCALAR CLASS ----> " + query.getResultList().get(0));
 		BigDecimal total = (BigDecimal) (query.getResultList().get(0));
 		return total;
 	}
 
 	public void createCreditNote(CreditNote creditNote, LegalStatus legalStatus)
 			throws CreditNoteValueNotValidException {
-		List<Long> municipalBondIds = getMunicipalBondIds(creditNote
-				.getMunicipalBonds());
+		List<Long> municipalBondIds = getMunicipalBondIds(creditNote.getMunicipalBonds());
 		if (municipalBondIds != null && municipalBondIds.size() > 0) {
 			BigDecimal maximumTotal = getMaximumTotal(municipalBondIds);
 
 			System.out.println("MAXIMUM TOTAL ----> " + maximumTotal);
-			System.out.println("CREDIT NOTE VALUE ----> "
-					+ creditNote.getValue());
-			System.out.println("COMPARE TO "
-					+ maximumTotal.compareTo(creditNote.getValue()));
+			System.out.println("CREDIT NOTE VALUE ----> " + creditNote.getValue());
+			System.out.println("COMPARE TO " + maximumTotal.compareTo(creditNote.getValue()));
 
 			if (maximumTotal.compareTo(creditNote.getValue()) >= 0) {
 				saveCreditNote(creditNote, municipalBondIds, legalStatus);
@@ -1402,13 +1309,11 @@ public class IncomeServiceBean implements IncomeService {
 		}
 	}
 
-	private void saveCreditNote(CreditNote creditNote,
-			List<Long> municipalBondIds, LegalStatus legalStatus) {
+	private void saveCreditNote(CreditNote creditNote, List<Long> municipalBondIds, LegalStatus legalStatus) {
 		entityManager.persist(creditNote);
 		entityManager.flush();
 
-		Query query = entityManager
-				.createNamedQuery("MunicipalBond.updateLegalStatus");
+		Query query = entityManager.createNamedQuery("MunicipalBond.updateLegalStatus");
 		query.setParameter("municipalBondIds", municipalBondIds);
 		query.setParameter("legalStatus", legalStatus);
 		query.setParameter("creditNoteId", creditNote.getId());
@@ -1417,8 +1322,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	@SuppressWarnings("unchecked")
 	public List<Deposit> findDeposits(Long municipalBondId) {
-		Query query = entityManager
-				.createNamedQuery("Deposit.findByMunicipalBondId");
+		Query query = entityManager.createNamedQuery("Deposit.findByMunicipalBondId");
 		query.setParameter("municipalBondId", municipalBondId);
 		return query.getResultList();
 	}
@@ -1426,10 +1330,9 @@ public class IncomeServiceBean implements IncomeService {
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public List<MunicipalBond> findPendingBonds(Long residentId) {
-		SystemParameterService systemParameterService = ServiceLocator
-				.getInstance().findResource(SystemParameterService.LOCAL_NAME);
-		Long pendingMunicipalBondStatusId = systemParameterService
-				.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
 		Long compensationMunicipalBondStatusId = systemParameterService
 				.findParameter("MUNICIPAL_BOND_STATUS_ID_COMPENSATION");
 
@@ -1437,8 +1340,7 @@ public class IncomeServiceBean implements IncomeService {
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(compensationMunicipalBondStatusId);
 
-		Query query = entityManager
-				.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
+		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
@@ -1448,16 +1350,14 @@ public class IncomeServiceBean implements IncomeService {
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public List<MunicipalBond> findOnlyPendingBonds(Long residentId) {
-		SystemParameterService systemParameterService = ServiceLocator
-				.getInstance().findResource(SystemParameterService.LOCAL_NAME);
-		Long pendingMunicipalBondStatusId = systemParameterService
-				.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
 
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 
-		Query query = entityManager
-				.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
+		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
@@ -1466,21 +1366,22 @@ public class IncomeServiceBean implements IncomeService {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public List<MunicipalBond> findOnlyPendingAndInAgreementBonds( Long residentId) {
-		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+	public List<MunicipalBond> findOnlyPendingAndInAgreementBonds(Long residentId) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
 		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
-		Long agreementMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
-		
-		//Long futureMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
-		
+		Long agreementMunicipalBondStatusId = systemParameterService
+				.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+
+		// Long futureMunicipalBondStatusId =
+		// systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
 
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(agreementMunicipalBondStatusId);
-		//statuses.add(futureMunicipalBondStatusId);
+		// statuses.add(futureMunicipalBondStatusId);
 
-		Query query = entityManager
-				.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
+		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
@@ -1488,12 +1389,11 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<MunicipalBond> findPendingBondsBetweenDates(Long residentId,
-			Long entryId, Date startDate, Date endDate) {
-		SystemParameterService systemParameterService = ServiceLocator
-				.getInstance().findResource(SystemParameterService.LOCAL_NAME);
-		Long pendingMunicipalBondStatusId = systemParameterService
-				.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
+	public List<MunicipalBond> findPendingBondsBetweenDates(Long residentId, Long entryId, Date startDate,
+			Date endDate) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
 		Long compensationMunicipalBondStatusId = systemParameterService
 				.findParameter("MUNICIPAL_BOND_STATUS_ID_COMPENSATION");
 
@@ -1513,18 +1413,15 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<MunicipalBond> findOnlyPendingBonds(Long residentId,
-			Long entryId) {
-		SystemParameterService systemParameterService = ServiceLocator
-				.getInstance().findResource(SystemParameterService.LOCAL_NAME);
-		Long pendingMunicipalBondStatusId = systemParameterService
-				.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
+	public List<MunicipalBond> findOnlyPendingBonds(Long residentId, Long entryId) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
 
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 
-		Query query = entityManager
-				.createNamedQuery("MunicipalBond.findByResidentIdEntryIdAndTypeAndStatus");
+		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdEntryIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
 		query.setParameter("entryId", entryId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
@@ -1534,21 +1431,23 @@ public class IncomeServiceBean implements IncomeService {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public List<MunicipalBond> findOnlyPendingAndInAgreementBonds( Long residentId, Long entryId) {
-		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+	public List<MunicipalBond> findOnlyPendingAndInAgreementBonds(Long residentId, Long entryId) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
 		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
-		Long agreementMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
-		
-		//Long futureMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
+		Long agreementMunicipalBondStatusId = systemParameterService
+				.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+
+		// Long futureMunicipalBondStatusId =
+		// systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
 
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(agreementMunicipalBondStatusId);
-		
-		//statuses.add(futureMunicipalBondStatusId);
 
-		Query query = entityManager
-				.createNamedQuery("MunicipalBond.findByResidentIdEntryIdAndTypeAndStatus");
+		// statuses.add(futureMunicipalBondStatusId);
+
+		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdEntryIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
 		query.setParameter("entryId", entryId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
@@ -1557,12 +1456,10 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<MunicipalBond> findPendingBondsBetweenDates(Long residentId,
-			Date startDate, Date endDate) {
-		SystemParameterService systemParameterService = ServiceLocator
-				.getInstance().findResource(SystemParameterService.LOCAL_NAME);
-		Long pendingMunicipalBondStatusId = systemParameterService
-				.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
+	public List<MunicipalBond> findPendingBondsBetweenDates(Long residentId, Date startDate, Date endDate) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
 		Long compensationMunicipalBondStatusId = systemParameterService
 				.findParameter("MUNICIPAL_BOND_STATUS_ID_COMPENSATION");
 
@@ -1570,8 +1467,7 @@ public class IncomeServiceBean implements IncomeService {
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(compensationMunicipalBondStatusId);
 
-		Query query = entityManager
-				.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatusBetweenDates");
+		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatusBetweenDates");
 		query.setParameter("residentId", residentId);
 		query.setParameter("startDate", startDate);
 		query.setParameter("endDate", endDate);
@@ -1580,18 +1476,15 @@ public class IncomeServiceBean implements IncomeService {
 		return query.getResultList();
 	}
 
-	public void save(PaymentAgreement paymentAgreement,
-			List<Long> municipalBondIds) {
+	public void save(PaymentAgreement paymentAgreement, List<Long> municipalBondIds) {
 		Long inPaymentAgreementMunicipalBondStatusId = systemParameterService
 				.findParameter(IN_PAYMENT_AGREEMENT_BOND_STATUS);
 		entityManager.persist(paymentAgreement);
 		System.out.println("LXGK -----> " + paymentAgreement.getId());
-		Query query = entityManager
-				.createNamedQuery("MunicipalBond.updatePaymentAgreement");
+		Query query = entityManager.createNamedQuery("MunicipalBond.updatePaymentAgreement");
 		query.setParameter("municipalBondIds", municipalBondIds);
 		query.setParameter("paymentAgreementId", paymentAgreement.getId());
-		query.setParameter("municipalBondStatusId",
-				inPaymentAgreementMunicipalBondStatusId);
+		query.setParameter("municipalBondStatusId", inPaymentAgreementMunicipalBondStatusId);
 		query.executeUpdate();
 
 	}
@@ -1599,8 +1492,7 @@ public class IncomeServiceBean implements IncomeService {
 	@SuppressWarnings("unchecked")
 	public MunicipalBond loadForPrinting(Long municipalBondId) {
 		System.out.println("LOADING FOR PRITING");
-		Query query = entityManager
-				.createNamedQuery("Deposit.findByMunicipalBondIdForPrinting");
+		Query query = entityManager.createNamedQuery("Deposit.findByMunicipalBondIdForPrinting");
 		query.setParameter("municipalBondId", municipalBondId);
 		List<Deposit> deposits = (List<Deposit>) query.getResultList();
 		System.out.println("RECOVERED ---> " + deposits.size());
@@ -1624,8 +1516,7 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	public Workday findActiveWorkday() throws NotActiveWorkdayException {
-		Query query = entityManager
-				.createNamedQuery("Workday.findCurrentWorkday");
+		Query query = entityManager.createNamedQuery("Workday.findCurrentWorkday");
 		try {
 			Workday workday = (Workday) query.getSingleResult();
 			return workday;
@@ -1637,11 +1528,9 @@ public class IncomeServiceBean implements IncomeService {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public List<Receipt> findReceipts(Date startDate, Date endDate,
-			FinancialStatus finantialStatus) {
+	public List<Receipt> findReceipts(Date startDate, Date endDate, FinancialStatus finantialStatus) {
 		String queryName = "Receipt.findByDateAndStatus";
-		if (finantialStatus.name()
-				.equalsIgnoreCase(FinancialStatus.VOID.name())) {
+		if (finantialStatus.name().equalsIgnoreCase(FinancialStatus.VOID.name())) {
 			queryName = "Receipt.findReversedByDateAndStatus";
 		}
 		Query query = entityManager.createNamedQuery(queryName);
@@ -1656,13 +1545,10 @@ public class IncomeServiceBean implements IncomeService {
 	// Creacion de secuencias para los comprobantes complementarios
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createSequenceComplementVoucher(String sequenceName) {
-		Long initialReceiptNumber = systemParameterService
-				.findParameter("INITIAL_RECEIPT_NUMBER");
-		Long finalReceiptNumber = systemParameterService
-				.findParameter("FINAL_RECEIPT_NUMBER");
+		Long initialReceiptNumber = systemParameterService.findParameter("INITIAL_RECEIPT_NUMBER");
+		Long finalReceiptNumber = systemParameterService.findParameter("FINAL_RECEIPT_NUMBER");
 		if (!sequenceNameExists(sequenceName)) {
-			String createSentence = "CREATE SEQUENCE " + sequenceName
-					+ " START " + initialReceiptNumber + " MINVALUE "
+			String createSentence = "CREATE SEQUENCE " + sequenceName + " START " + initialReceiptNumber + " MINVALUE "
 					+ initialReceiptNumber + " MAXVALUE " + finalReceiptNumber;
 			Query query = entityManager.createNativeQuery(createSentence);
 			query.executeUpdate();
@@ -1672,15 +1558,11 @@ public class IncomeServiceBean implements IncomeService {
 	// @author macartuche
 	// @date 2015-05-25
 	// Siguiente valor de la secuencia
-	public Long generateNextValue(String sequenceName)
-			throws InvoiceNumberOutOfRangeException {
-		Long INITIAL_RECEIPT_NUMBER = systemParameterService
-				.findParameter("INITIAL_RECEIPT_NUMBER");
-		Long FINAL_RECEIPT_NUMBER = systemParameterService
-				.findParameter("FINAL_RECEIPT_NUMBER");
+	public Long generateNextValue(String sequenceName) throws InvoiceNumberOutOfRangeException {
+		Long INITIAL_RECEIPT_NUMBER = systemParameterService.findParameter("INITIAL_RECEIPT_NUMBER");
+		Long FINAL_RECEIPT_NUMBER = systemParameterService.findParameter("FINAL_RECEIPT_NUMBER");
 
-		Query query = entityManager.createNativeQuery("SELECT nextval('"
-				+ sequenceName + "')");
+		Query query = entityManager.createNativeQuery("SELECT nextval('" + sequenceName + "')");
 		Long number = ((BigInteger) query.getResultList().get(0)).longValue();
 
 		if (number >= INITIAL_RECEIPT_NUMBER && number <= FINAL_RECEIPT_NUMBER) {
@@ -1688,128 +1570,132 @@ public class IncomeServiceBean implements IncomeService {
 		} else {
 			throw new InvoiceNumberOutOfRangeException(number);
 		}
-			
-	}
 
+	}
 
 	@Override
 	public List<MunicipalBond> findFutureBonds(Long residentId) {
-		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
-		Long  futureMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
-				
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		Long futureMunicipalBondStatusId = systemParameterService
+				.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
+
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(futureMunicipalBondStatusId);
-		
+
 		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
-		query.setParameter("municipalBondType",MunicipalBondType.CREDIT_ORDER);
+		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
 		return query.getResultList();
 	}
-	
 
-	//@author
-	//@tag recaudacionCoactivas
-	//@date 2016-07-06T12:29
-	//realizar el reverso en municipalbondaux - abonos compensaciones
+	// @author
+	// @tag recaudacionCoactivas
+	// @date 2016-07-06T12:29
+	// realizar el reverso en municipalbondaux - abonos compensaciones
 	@Override
-	public void reversePaymentAgreements(List<Long> depositIds)
-			throws ReverseNotAllowedException {
+	public void reversePaymentAgreements(List<Long> depositIds) throws ReverseNotAllowedException {
 
 		Query updateAux = entityManager.createNamedQuery("MunicipalbondAux.setAsVoid");
 		updateAux.setParameter("status", "VOID");
 		updateAux.setParameter("depositList", depositIds);
-		int state = updateAux.executeUpdate();		
-		
+		int state = updateAux.executeUpdate();
+
 	}
-	
-	
-	
+
 	/**
 	 * @author macartuche
 	 * @date 2016-07-08T15:33
-	 * @tag recaudacionCoactivas
-	 * Obtener una lista de municipalbondAux por el estado, municipalbondId y si cubre o
-	 * no el interes
+	 * @tag recaudacionCoactivas Obtener una lista de municipalbondAux por el
+	 *      estado, municipalbondId y si cubre o no el interes
 	 */
-	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long municipalbondId, Boolean coverInterest, 
-															String status, String type){
-		
+	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long municipalbondId, Boolean coverInterest, String status,
+			String type) {
+
 		String query = "Select mba from MunicipalbondAux mba "
-						+ "where mba.municipalbond.id=:munid and mba.status=:status"
-						+ " and mba.type=:type";
-		if(coverInterest!=null){
+				+ "where mba.municipalbond.id=:munid and mba.status=:status" + " and mba.type=:type";
+		if (coverInterest != null) {
 			query += " and mba.coveritem=:cover";
 		}
 		
+		if(type=="I" || type=="T"){
+			query += " and mba.anotherItem is null ";
+		}
+
 		Query interestIsPayedQuery = entityManager.createQuery(query);
-		interestIsPayedQuery.setParameter("munid", municipalbondId);		
+		interestIsPayedQuery.setParameter("munid", municipalbondId);
 		interestIsPayedQuery.setParameter("status", status);
 		interestIsPayedQuery.setParameter("type", type);
-		
-		if(coverInterest!=null){
+
+		if (coverInterest != null) {
 			interestIsPayedQuery.setParameter("cover", coverInterest);
 		}
-		 
+
 		return interestIsPayedQuery.getResultList();
 	}
-	
-	
+
 	/**
 	 * @author macartuche
 	 * @date 2016-07-08T15:40:05
-	 * @tag recaudacionCoactivas
-	 * Suma de los intereses que se acumulan por abonos menores al interes
+	 * @tag recaudacionCoactivas Suma de los intereses que se acumulan por
+	 *      abonos menores al interes
 	 */
-	public BigDecimal sumAccumulatedInterest(Long municipalbondId, Boolean coverInterest, String status, String type){
+	public BigDecimal sumAccumulatedInterest(Long municipalbondId, Boolean coverInterest, String status, String type) {
+
+		String query = " Select SUM(mba.payValue) from MunicipalbondAux mba "
+				+ " where mba.municipalbond.id=:munid and " + " mba.coveritem=:cover and " + " mba.status=:status and"
+				+ " mba.type=:type ";
 		
-		String query = " Select SUM(mba.payValue) from MunicipalbondAux mba " 
-					   + " where mba.municipalbond.id=:munid and "
-					   + " mba.coveritem=:cover and "
-					   + " mba.status=:status and"
-					   + " mba.type=:type ";
-		Query sumInterest = entityManager.createQuery(query);		
-		sumInterest.setParameter("munid",municipalbondId);
-		sumInterest.setParameter("cover", coverInterest );
-		sumInterest.setParameter("status", status );
+		if( type == "I" || type == "T" ){
+			query += "and mba.anotherItem is null ";
+		}
+		
+		Query sumInterest = entityManager.createQuery(query);
+		sumInterest.setParameter("munid", municipalbondId);
+		sumInterest.setParameter("cover", coverInterest);
+		sumInterest.setParameter("status", status);
 		sumInterest.setParameter("type", type);
-		
-		return (BigDecimal)sumInterest.getSingleResult();
+
+		return (BigDecimal) sumInterest.getSingleResult();
 	}
-	
+
 	/**
 	 * @author macartuche
 	 * @date 2016-07-08T15:52
 	 * @tag recaudacionCoactivas
-	 * @param deposit Deposit
-	 * @param municipalBond MunicipalBond
-	 * @param coverInterest Boolean
+	 * @param deposit
+	 *            Deposit
+	 * @param municipalBond
+	 *            MunicipalBond
+	 * @param coverInterest
+	 *            Boolean
 	 * @return MunicipalbondAux
 	 */
-	private MunicipalbondAux createBondAux(Deposit deposit, MunicipalBond municipalBond,  Boolean coverInterest, String type){
+	private MunicipalbondAux createBondAux(Deposit deposit, MunicipalBond municipalBond, Boolean coverInterest,
+			String type) {
 		MunicipalbondAux munAux = new MunicipalbondAux();
 
-		
 		BigDecimal valuePayed = BigDecimal.ZERO;
 		BigDecimal valueCover = BigDecimal.ZERO;
 		switch (type.charAt(0)) {
-			case 'I':
-				valuePayed = deposit.getInterest();
-				valueCover = municipalBond.getInterest();
+		case 'I':
+			valuePayed = deposit.getInterest();
+			valueCover = municipalBond.getInterest();
 			break;
-			case 'S':
-				valuePayed = deposit.getSurcharge();
-				valueCover = municipalBond.getSurcharge();
+		case 'S':
+			valuePayed = deposit.getSurcharge();
+			valueCover = municipalBond.getSurcharge();
 			break;
-			case 'T':
-				valuePayed = deposit.getPaidTaxes();
-				valueCover = municipalBond.getTaxesTotal();
+		case 'T':
+			valuePayed = deposit.getPaidTaxes();
+			valueCover = municipalBond.getTaxesTotal();
 			break;
-			case 'C':
-				valuePayed = deposit.getCapital();
-				valueCover = municipalBond.getBalance();
+		case 'C':
+			valuePayed = deposit.getCapital();
+			valueCover = municipalBond.getBalance();
 			break;
-			
+
 		}
 		munAux.setPayValue(valuePayed);
 		munAux.setBalance(valueCover);
@@ -1818,48 +1704,50 @@ public class IncomeServiceBean implements IncomeService {
 		munAux.setLiquidationDate(deposit.getDate());
 		munAux.setLiquidationTime(deposit.getTime());
 		munAux.setType(type);
+
+		if(coverInterest)
+			munAux.setAnotherItem(coverInterest);
 		
-		//DEPOSITO
+		// DEPOSITO
 		munAux.setDeposit(deposit);
 		munAux.setStatus("VALID");
 		return munAux;
-	} 
-	
+	}
+
 	/**
-	 * @author macartuche
-	 * Poner a true que la compensacion ha sido pagada
-	 */	
-	public void compensationPayment(List<Deposit> deposits){
-		
-		if(deposits!=null && !deposits.isEmpty()){
-			for(Deposit deposit: deposits){
+	 * @author macartuche Poner a true que la compensacion ha sido pagada
+	 */
+	public void compensationPayment(List<Deposit> deposits) {
+
+		if (deposits != null && !deposits.isEmpty()) {
+			for (Deposit deposit : deposits) {
 				Long estado = deposit.getMunicipalBond().getMunicipalBondStatus().getId().longValue();
-				if(estado == 6){ //en compensacion
+				if (estado == 6) { // en compensacion
 					System.out.println("Ingresaaaaaa");
 					Receipt receipt = deposit.getMunicipalBond().getReceipt();
-					if( receipt != null){
-						
+					if (receipt != null) {
+
 						System.out.println("Ingresaaaaaa con factura");
-						Query query = entityManager.createQuery("Select cr from CompensationReceipt cr"
-								+ " where cr.receipt.id=:receiptid");
+						Query query = entityManager.createQuery(
+								"Select cr from CompensationReceipt cr" + " where cr.receipt.id=:receiptid");
 						query.setParameter("receiptid", receipt.getId());
 						List<CompensationReceipt> compensationReceiptList = query.getResultList();
-						
-						if(!compensationReceiptList.isEmpty()){
+
+						if (!compensationReceiptList.isEmpty()) {
 							CompensationReceipt compensation = compensationReceiptList.get(0);
 							compensation.setIsPaid(Boolean.TRUE);
 							entityManager.merge(compensation);
 							entityManager.flush();
 						}
 					}
-						
-				} 
-			}		
+
+				}
+			}
 		}
 	}
-	
-//Jock Samaniego.. 21/09/2016
-	public void updatePaymentAgreement(PaymentAgreement paymentAgreement){
-		entityManager.merge(paymentAgreement);		
+
+	// Jock Samaniego.. 21/09/2016
+	public void updatePaymentAgreement(PaymentAgreement paymentAgreement) {
+		entityManager.merge(paymentAgreement);
 	}
 }

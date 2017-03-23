@@ -1,0 +1,256 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="paymentagreement" styleClass="edit">
+			<a:queue></a:queue>
+
+			<rich:panel bodyClass="topAligned">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,"
+						cellpadding="0" cellspacing="0">
+						<h:outputText value="Ajuste de convenios"
+							styleClass="formTitle" />
+						<s:button id="newPaymentBtn" action="cancel"
+							value="Revisar convenio"
+							disabled="#{paymentAgreementProcessHome.resident == null}" />
+					</h:panelGrid>
+				</f:facet>
+
+				<h:panelGrid columns="3" width="100%"
+					columnClasses="topAligned, topAligned right">
+					<a:outputPanel id="paymentTotalPanel">
+						<g:residentChooser id="residentChooser"
+							disabled="#{paymentAgreementProcessHome.resident != null}"
+							resident="#{paymentAgreementProcessHome.resident}"
+							residentsList="#{paymentAgreementProcessHome.residents}"
+							identificationNumber="#{paymentAgreementProcessHome.identificationNumber}"
+							criteria="#{paymentAgreementProcessHome.criteria}"
+							bean="#{paymentAgreementProcessHome}"
+							searchByCriteriaAction="searchByCriteria"
+							clearSearchPanelAction="clearSearchPanel" searchAction="search"
+							residentChosenListenerName="residentSelectedListener"
+							reRender="municipalBondsAuxPanel, paymentAgreementList" />
+					</a:outputPanel>
+				</h:panelGrid>
+				<div style="clear: both" />
+			</rich:panel>
+
+			<a:outputPanel id="municipalBondsAuxPanel" ajaxRendered="true">
+
+				<rich:panel style="margin-top:5px;">
+					<f:facet name="header">
+
+						<h:panelGrid columns="2" columnClasses="headerTitle,"
+							cellpadding="0" cellspacing="0">
+							<h:outputText value="" styleClass="formTitle" />
+							<s:button id="callSP"
+								action="#{paymentAgreementProcessHome.callSP}"
+								value="Llamar a procedimiento almacenado"
+								reRender="auxTable, auxDBTable"
+								disabled="#{paymentAgreementProcessHome.paymentAgreementSelected == null}" />
+						</h:panelGrid>
+					</f:facet>
+
+					<s:decorate id="identificationTypeField"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">Convenios de pago:</ui:define>
+						<h:selectOneMenu id="paymentAgreementList"
+							value="#{paymentAgreementProcessHome.paymentAgreementSelected}">
+							<s:selectItems
+								value="#{paymentAgreementProcessHome.paymentAgreements}"
+								var="paymentAgreement" label="#{paymentAgreement.description}"
+								noSelectionLabel="#{messages['common.choose']}" />
+							<s:convertEntity />
+							<a:support event="onchange" eventsQueue="gimQueue"
+								ajaxSingle="true" reRender="callSP" focus="value" />
+
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<div style="clear: both"></div>
+				
+					
+					<rich:dataTable id="auxDBTable"
+						value="#{paymentAgreementProcessHome.bdList}" var="_bond"
+						rowClasses="rvgRowOne,rvgRowTwo" columnClasses="tableCellFont"
+						style="margin-top:5px;"
+						rendered="#{paymentAgreementProcessHome.bdList != null}">
+
+						<f:facet name="header">
+							<rich:columnGroup>
+								<rich:column styleClass="left" colspan="9">
+									<h:outputText styleClass="tableTitle"
+										value="Valores a actualizar" />
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+
+						<rich:column styleClass="action" id="coverDB">
+							<f:facet name="header">Cubre rubro</f:facet>
+							<h:selectBooleanCheckbox value="#{_bond.coveritem}"  />
+						</rich:column>
+
+						<rich:column styleClass="action" id="balanceDB">
+							<f:facet name="header">Saldo a la fecha</f:facet> 
+							<h:outputText value="#{_bond.balance}">
+								<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="paymentDateDB">
+							<f:facet name="header">Fecha pago</f:facet> 
+							<h:outputText value="#{_bond.liquidationDate}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="paymentTimeDB">
+							<f:facet name="header">Hora pago</f:facet> 
+							<h:outputText value="#{_bond.liquidationTime}">
+								<f:convertDateTime pattern="#{messages['common.timePattern']}"/>
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="payValueDB">
+							<f:facet name="header">Valor Pagado</f:facet> 
+							<h:outputText value="#{_bond.payValue}">
+								<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="depositIdDB">
+							<f:facet name="header">ID Deposito</f:facet> 
+							<h:outputText value="#{_bond.deposit.id}">
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="municipalbondIdDB">
+							<f:facet name="header">ID Obligación</f:facet> 
+							<h:outputText value="#{_bond.municipalbond.id}">
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="typeDB">
+							<f:facet name="header">Tipo</f:facet> 
+							<h:outputText value="#{_bond.type}">
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="otherDB">
+							<f:facet name="header">Otro rubro</f:facet> 
+							<h:selectBooleanCheckbox value="#{_bond.anotherItem}" >
+								<a:support event="onchange" ajaxSingle="true"  inmediate="true"  />
+							</h:selectBooleanCheckbox>	
+						</rich:column>
+						
+					</rich:dataTable>
+					
+					<div style="clear: both"></div>
+					<rich:dataTable id="auxTable"
+						value="#{paymentAgreementProcessHome.auxList}" var="_bondaux"
+						rowClasses="rvgRowOne,rvgRowTwo" columnClasses="tableCellFont"
+						style="margin-top:5px;"
+						rendered="#{paymentAgreementProcessHome.auxList != null}">
+
+						<f:facet name="header">
+							<rich:columnGroup>
+								<rich:column styleClass="left" colspan="9">
+									<h:outputText styleClass="tableTitle"
+										value="Valores a insertar" />
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+
+						<rich:column styleClass="action" id="cover">
+							<f:facet name="header">Cubre rubro</f:facet>
+							<h:selectBooleanCheckbox value="#{_bondaux.coveritem}"  >
+								<a:support event="onchange" ajaxSingle="true"  inmediate="true"  />
+							</h:selectBooleanCheckbox>
+						</rich:column>
+
+						<rich:column styleClass="action" id="balance">
+							<f:facet name="header">Saldo a la fecha</f:facet> 
+							<h:outputText value="#{_bondaux.balance}">
+								<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="paymentDate">
+							<f:facet name="header">Fecha pago</f:facet> 
+							<h:outputText value="#{_bondaux.liquidationDate}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="paymentTime">
+							<f:facet name="header">Hora pago</f:facet> 
+							<h:outputText value="#{_bondaux.liquidationTime}">
+								<f:convertDateTime pattern="#{messages['common.timePattern']}"/>
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="payValue">
+							<f:facet name="header">Valor Pagado</f:facet> 
+							<h:outputText value="#{_bondaux.payValue}">
+								<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="depositId">
+							<f:facet name="header">ID Deposito</f:facet> 
+							<h:outputText value="#{_bondaux.deposit.id}">
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="municipalbondId">
+							<f:facet name="header">ID Obligación</f:facet> 
+							<h:outputText value="#{_bondaux.municipalbond.id}">
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="type">
+							<f:facet name="header">Tipo</f:facet> 
+							<h:outputText value="#{_bondaux.type}">
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action" id="other">
+							<f:facet name="header">Otro rubro</f:facet> 
+							<h:selectBooleanCheckbox value="#{_bondaux.anotherItem}"  />	
+						</rich:column>
+						
+					</rich:dataTable>
+					
+					<div style="clear:both"></div>
+
+
+					<s:button id="saveBondsAux"
+								action="#{paymentAgreementProcessHome.saveBondsAux}"
+								value="Guardar valores"
+								disabled="#{paymentAgreementProcessHome.auxList == null}" />
+				</rich:panel>
+			</a:outputPanel>
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
