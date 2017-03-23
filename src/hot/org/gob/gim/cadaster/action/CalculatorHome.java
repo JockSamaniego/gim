@@ -187,6 +187,11 @@ public class CalculatorHome extends EntityHome<CapitalGain> {
 	
 	
 	public void getextraordinaryProfit(){
+		
+		if(this.getInstance().getSalesValue() ==null || this.getInstance().getAdjustedAcquisitionValue() ==null){
+			return;
+		}
+		
 		if(this.getInstance().getSalesValue().compareTo(BigDecimal.ZERO)==1 && 
 		   this.getInstance().getAdjustedAcquisitionValue().compareTo(BigDecimal.ZERO)==1){
 			
