@@ -400,3 +400,7 @@ table.radio input[type=radio] {
 .boldFont {
 	font-weight:bold;
 }
+
+.top-aligned-columns td{
+    vertical-align: top;
+}

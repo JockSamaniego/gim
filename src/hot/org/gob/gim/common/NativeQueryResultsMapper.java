@@ -4,9 +4,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -24,9 +24,17 @@ public class NativeQueryResultsMapper {
                             if (objectArr[i] == "" || objectArr[i] == null) {
                                 BeanUtils.setProperty(t, mappingFields.get(i).getName(), null);
                             } else {
-                                Timestamp fecha = (Timestamp) objectArr[i];
-                                Date d = new Date(fecha.getTime());
-                                BeanUtils.setProperty(t, mappingFields.get(i).getName(), d);
+                            	//System.out.println("tipo de clase................ "+objectArr[i].getClass());
+                            	//rfarmiosm para covertir fechas sl.date y no solo timestamp
+                            	if(objectArr[i].getClass().toString().equals("class java.sql.Date")){
+                            		java.sql.Date fecha = (java.sql.Date) objectArr[i];
+                            		Date d = new Date(fecha.getTime());
+                                    BeanUtils.setProperty(t, mappingFields.get(i).getName(), d);
+                            	}else{
+                            		Timestamp fecha = (Timestamp) objectArr[i];
+                                    Date d = new Date(fecha.getTime());
+                                    BeanUtils.setProperty(t, mappingFields.get(i).getName(), d);
+                            	}
                             }
 
                         } else {

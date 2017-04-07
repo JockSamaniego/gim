@@ -1,0 +1,313 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="capitalGain" styleClass="edit">
+
+			<h:outputText styleClass="formTitle" value="Calculadora" />
+
+			<rich:panel>
+				<f:facet name="header">Calculadora</f:facet>
+				<rich:messages errorClass="errors"/>
+				<ui:debug id="debug" />
+				
+				<h:panelGrid
+						width="100%" id="pnlsearchProperty">
+							
+						<s:decorate template="../layout/display.xhtml">
+	
+							<ui:define name="label">Clave catastral:</ui:define>
+							<h:inputText id="value" label="#{messages['criteria']}"
+								styleClass="uppercase" size="100">
+							</h:inputText>
+							
+							<a:region>
+							<rich:suggestionbox for="value"
+								suggestionAction="#{calculatorHome.searchActionByName}"
+								var="property" height="150" width="450">
+								<f:facet name="nothingLabel">
+									<h:outputText value="#{messages['action.nothingActions']}" />
+								</f:facet>
+								<a:support event="onselect"
+									action="#{calculatorHome.setProperty(property)}" reRender="propertyData"/>
+								<h:column>
+									<h:outputText value=" #{property.cadastralCode} - #{property.currentDomain.resident.name}" />
+								</h:column>
+							</rich:suggestionbox>
+							</a:region>
+						</s:decorate> 		 		
+				</h:panelGrid>
+		</rich:panel>
+		
+		<h:panelGrid columns="3" id="propertyData" width="100%" 
+		  styleClass="top-aligned-columns">
+			<rich:panel style="vertical-align: top">						
+				<f:facet name="header">Valor de adquisición</f:facet>
+				<h:panelGrid id="acquisitionValuePanel"  >
+						<s:decorate id="valueField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Valor del bien: </ui:define>
+							<h:inputText value="#{calculatorHome.instance.property.currentDomain.commercialAppraisal}" styleClass="right" disabled="true" >
+								<f:convertNumber   pattern="$ ####.00"
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:inputText>
+						</s:decorate>
+						
+						<s:decorate id="plusField"
+						template="../layout/display.xhtml">
+							<ui:define name="label">Mejoras de construcción: </ui:define>
+							<h:inputText value="#{calculatorHome.instance.buildingImprovements}" styleClass="right">
+								<a:support event="onblur"
+									action="#{calculatorHome.getAcquisitionCost()}" reRender="acquisitionValueField, AcquisitionValue2"/>
+
+								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:inputText>
+						</s:decorate>
+						
+						<s:decorate id="spentDield"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Gastos de adquisición: </ui:define>
+							<h:inputText value="#{calculatorHome.instance.acquisitionEnhancements}"   styleClass="right">
+								<a:support event="onblur"
+									action="#{calculatorHome.getAcquisitionCost()}" reRender="acquisitionValueField, AcquisitionValue2"/>
+								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:inputText>
+						</s:decorate>
+						
+						<s:decorate id="spendField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Contribución especial de mejoras: </ui:define>
+							<h:inputText value="#{calculatorHome.instance.cem}"  styleClass="right" >			
+								<a:support event="onblur"
+									action="#{calculatorHome.getAcquisitionCost()}" reRender="acquisitionValueField, AcquisitionValue2"/>
+					
+								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:inputText>
+						</s:decorate>
+						
+						
+						<s:decorate id="acquisitionValueField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Valor de adquisición:</ui:define>
+							<h:inputText value="#{calculatorHome.instance.acquisitionValue}" readonly="true" styleClass="right"  disabled="true">
+								<f:convertNumber pattern="$ ####.00"
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:inputText>
+						</s:decorate>						
+					</h:panelGrid>
+				</rich:panel>
+				<rich:panel width="20%">
+					<f:facet name="header">Valor de bien ajustado</f:facet>						
+					<h:panelGrid id="valueAdjustmentPanel"  >
+						<s:decorate id="acquisitionDateField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Fecha de compra del bien: </ui:define>
+							<rich:calendar id="acquisitionDate"
+												value="#{calculatorHome.instance.purchaseDate}"
+												datePattern="#{messages['common.datePattern']}">	
+								<a:support event="onchanged"
+									action="#{calculatorHome.calculateData}" reRender="yearsField, monthsField, valueAdjustmentField, acquisitionAdjustementValueField, adjustmentfactorField, passiveRateField, ordinaryProfitField"/>
+							</rich:calendar>
+						</s:decorate>
+						
+						<s:decorate id="saleField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Fecha de venta del bien</ui:define>
+							<rich:calendar id="saleDate"
+												value="#{calculatorHome.instance.saleDate}"
+												datePattern="#{messages['common.datePattern']}">	
+								<a:support event="onchanged"
+									action="#{calculatorHome.calculateData}" reRender="yearsField, monthsField, valueAdjustmentField, acquisitionAdjustementValueField, adjustmentfactorField, passiveRateField, ordinaryProfitField"/>						
+							</rich:calendar>
+						</s:decorate>
+
+ 						<s:decorate id="yearsField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Años: </ui:define>
+ 							<h:inputText value="#{calculatorHome.yearsNumber}"    styleClass="right"  disabled="true">							
+							</h:inputText>			 
+						</s:decorate> 
+
+
+ 						<s:decorate id="monthsField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Meses: </ui:define>	
+ 							<h:inputText value="#{calculatorHome.monthsNumber}" disabled="true" styleClass="right">						
+							</h:inputText>			 
+						</s:decorate> 
+
+						<s:decorate id="passiveRateField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Tasa pasiva: </ui:define>	
+ 							<h:inputText value="#{calculatorHome.instance.passiveRate.rate}" disabled="true" styleClass="right">		
+ 								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />					
+							</h:inputText>			 
+						</s:decorate> 
+
+
+						<s:decorate id="adjustmentfactorField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Factor de ajuste: </ui:define>	
+ 							<h:inputText value="#{calculatorHome.instance.adjustementFactor}" disabled="true" styleClass="right">		
+ 								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />					
+							</h:inputText>			 
+						</s:decorate> 
+												
+						<s:decorate id="acquisitionAdjustementValueField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Valor de adquisición ajustado: </ui:define>
+ 							<h:inputText value="#{calculatorHome.instance.adjustedAcquisitionValue}" disabled="true" styleClass="right">	
+ 								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />					
+							</h:inputText>			 
+						</s:decorate> 		
+
+
+
+						<s:decorate id="AcquisitionValue2"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Valor de Adquisición: </ui:define>	
+ 							<h:inputText value="#{calculatorHome.instance.acquisitionValue}" 
+ 							disabled="true" styleClass="right">		
+ 								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />					
+							</h:inputText>			 
+						</s:decorate> 
+
+
+						<s:decorate id="ordinaryProfitField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Ganancia Ordinaria: </ui:define>	
+ 							<h:inputText value="#{calculatorHome.instance.ordinaryProfit}" 
+ 							disabled="true" styleClass="right">		
+ 								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />					
+							</h:inputText>			 
+						</s:decorate> 
+					</h:panelGrid>
+				</rich:panel>
+
+				<rich:panel width="33%">
+					<f:facet name="header">Valor de bien ajustado</f:facet>						
+					<h:panelGrid id="saleValue"  >
+						<s:decorate id="salesFied"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Valor de venta: </ui:define>
+							<h:inputText value="#{calculatorHome.instance.salesValue}"   styleClass="right">
+
+								<a:support event="onblur"
+									action="#{calculatorHome.getextraordinaryProfit()}" reRender="extraOrdinaryProfitField, taxableField, paidTotalField"/>
+
+								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate id="valueAdjustmentField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Valor de adquisición ajustado: </ui:define>
+							<h:inputText value="#{calculatorHome.instance.adjustedAcquisitionValue}"   styleClass="right" disabled="true">
+							
+								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate id="extraOrdinaryProfitField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">GANANCIA EXTRAORDINARIA: </ui:define>
+							<h:inputText value="#{calculatorHome.instance.extraOrdinaryProfit}"   styleClass="right" disabled="true">
+							
+								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate id="SBUField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">24 SBU: </ui:define>
+							<h:inputText value="#{calculatorHome.exoneratedSBU}" styleClass="right" disabled="true">
+							
+								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:inputText>
+						</s:decorate>
+
+
+						<s:decorate id="taxableField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">Base Imponible: </ui:define>
+							<h:inputText value="#{calculatorHome.instance.taxable}" styleClass="right" disabled="true">
+							
+								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:inputText>
+						</s:decorate>
+
+
+						<s:decorate id="paidTotalField"
+							template="../layout/display.xhtml">
+							<ui:define name="label">VALOR A PAGAR: </ui:define>
+							<h:inputText value="#{calculatorHome.instance.paidTotal}" styleClass="right" disabled="true">
+							
+								<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:inputText>
+						</s:decorate>
+
+					</h:panelGrid>
+				</rich:panel>
+			</h:panelGrid>
+				
+				
+			<h:panelGrid id="resultsPanel">
+							
+			</h:panelGrid>		
+ 
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+				<div class="actionButtons">
+					<h:commandButton id="save" value="#{messages['common.save']}"
+							action="#{calculatorHome.save()}" disabled="#{!calculatorHome.wired}"
+							rendered="#{!calculatorHome.managed and !readOnly}" />	
+							
+					<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/cadaster/CalculatorList.xhtml" rendered="#{!readOnly}"/>						
+				</div>		
+		</h:form>
+		
+	</ui:define>
+
+</ui:composition>

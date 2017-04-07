@@ -1,0 +1,151 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://richfaces.org/a4j" template="../layout/template.xhtml">
+
+	<ui:define name="body"> 
+
+		<h:form id="search" styleClass="edit">
+
+			<h:outputText styleClass="formTitle" value="Plúsvalia" />
+			
+			<rich:simpleTogglePanel label="Filtros" switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['property.cadastralCode']}</ui:define>
+					<h:inputText id="code" value="#{calculatorList.cadastralCode}" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/cadaster/CalculatorList.xhtml">
+					<f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}" 
+				includePageParams="false" />
+			</div>
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="Resultados (#{empty calculatorList.resultList ? 0 : (calculatorList.paginated ? calculatorList.resultCount : calculatorList.resultList.size)})" />						
+					<s:button view="/cadaster/CalculatorEdit.xhtml" id="#{messages['common.create']}"
+						propagation="none" value="#{messages['common.create']} ">						
+						<f:param name="plusvaliaId" />
+					</s:button>					
+				</h:panelGrid>
+			</f:facet>
+			
+			<div class="results" id="capitalGainList">
+
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty calculatorList.resultList}" />
+
+				<rich:dataTable id="calculatorList" var="_row"
+					value="#{calculatorList.resultList}"
+					rendered="#{not empty calculatorList.resultList}"
+					columnClasses="left, right, right">
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{calculatorList}" />
+								<ui:param name="propertyLabel" value="#{messages['property.cadastralCode']}" />
+								<ui:param name="propertyPath" value="row.property.cadastralCode" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_row.property.cadastralCode}" />
+					</h:column>
+					
+					<h:column styleClass="right">
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{calculatorList}" />
+								<ui:param name="propertyLabel" value="Base imponible" />
+								<ui:param name="propertyPath" value="row.taxable" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_row.taxable}"  styleClass="right">
+							<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />	
+						</h:outputText>
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{blockList}" />
+								<ui:param name="propertyLabel" value="Valor a Pagar" />
+								<ui:param name="propertyPath" value="row.paidTotal" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_row.paidTotal}" >
+							<f:convertNumber  
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />	
+						</h:outputText>
+					</h:column>
+					
+					
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<h:form>							  
+							<s:button view="/cadaster/CalculatorEdit.xhtml" value="#{messages['common.edit']}"
+								propagation="none" id="calculatorEdit" rendered="#{empty from}">
+								<f:param name="plusvaliaId" value="#{_row.id}" />
+							</s:button>
+							
+							<s:button view="/cadaster/CalculatorEdit.xhtml" includePageParams="false"
+								value="#{messages['common.view']}" propagation="none"
+								id="view">
+								<f:param name="plusvaliaId" value="#{_row.id}" />
+								<f:param name="readOnly" value="#{true}" />
+							</s:button>
+						</h:form>
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+			<s:link view="/cadaster/CalculatorList.xhtml"
+				rendered="#{calculatorList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/cadaster/CalculatorList.xhtml"
+				rendered="#{calculatorList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult" value="#{calculatorList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/cadaster/CalculatorList.xhtml"
+				rendered="#{calculatorList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult" value="#{calculatorList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/cadaster/CalculatorList.xhtml"
+				rendered="#{calculatorList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult" value="#{calculatorList.lastFirstResult}" />
+			</s:link>
+		</div>
+	</ui:define>
+</ui:composition>

@@ -42,6 +42,7 @@ import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 //import org.gob.loja.gim.ws.exception.HasObligationsExpired;
 
 import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.income.model.EMoneyPayment;
 import ec.gob.gim.income.model.Till;
@@ -143,37 +144,45 @@ public class PaymentServiceBean implements PaymentService {
 			HasNoObligations {
 		System.out.println("rfarmijosm "+request.getIdentificationNumber()+"\t"+request.getUsername());
 		String identificationNumber = request.getIdentificationNumber();
-		Taxpayer taxpayer = findTaxpayer(identificationNumber);
-		Date workDayDate;
-		if (request.getUsername().compareTo("dabetancourtc") == 0) {
-			workDayDate = new GregorianCalendar().getTime();
-		} else 
-			workDayDate = findPaymentDate();
-		Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer
-				.getId());
-
-		if (inPaymentAgreementBondsNumber > 0) {
+		
+		//rfarmijosm 2017-02-06 se copia el codigo de jock de otro branch, impedir pagos con alerta por ws
+		//Boolean AlertPending = ;
+		if (controlAlertResident(identificationNumber)) {
 			throw new PayoutNotAllowed();
 		} else {
-			List<Long> pendingBondIds = hasPendingBonds(taxpayer.getId());
-			List<Bond> bonds = new ArrayList<Bond>();
-			if (pendingBondIds.size() > 0) {
-				try {
-					incomeService.calculatePayment(workDayDate, pendingBondIds, true, true);
-					bonds = findPendingBonds(taxpayer.getId());
-					//esta imprimiendo el log de lo q se retorna quitar luego de las pruebas
-					Boolean control = comparateBondsDates(bonds);
-					loadBondsDetail(bonds);
-				} catch (EntryDefinitionNotFoundException e) {
-					e.printStackTrace();
-					throw new PayoutNotAllowed();
+
+			Taxpayer taxpayer = findTaxpayer(identificationNumber);
+			Date workDayDate;
+			if (request.getUsername().compareTo("dabetancourtc") == 0) {
+				workDayDate = new GregorianCalendar().getTime();
+			} else
+				workDayDate = findPaymentDate();
+			Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer.getId());
+
+			if (inPaymentAgreementBondsNumber > 0) {
+				throw new PayoutNotAllowed();
+			} else {
+				List<Long> pendingBondIds = hasPendingBonds(taxpayer.getId());
+				List<Bond> bonds = new ArrayList<Bond>();
+				if (pendingBondIds.size() > 0) {
+					try {
+						incomeService.calculatePayment(workDayDate, pendingBondIds, true, true);
+						bonds = findPendingBonds(taxpayer.getId());
+						// esta imprimiendo el log de lo q se retorna quitar
+						// luego de las pruebas
+						Boolean control = comparateBondsDates(bonds);
+						loadBondsDetail(bonds);
+					} catch (EntryDefinitionNotFoundException e) {
+						e.printStackTrace();
+						throw new PayoutNotAllowed();
+					}
 				}
+				// } else {
+				// throw new HasNoObligations();
+				// }
+				Statement statement = new Statement(taxpayer, bonds, workDayDate);
+				return statement;
 			}
-			// } else {
-			// throw new HasNoObligations();
-			// }
-			Statement statement = new Statement(taxpayer, bonds, workDayDate);
-			return statement;
 		}
 	}
 
@@ -399,6 +408,19 @@ public class PaymentServiceBean implements PaymentService {
 		// System.out.println("BONDS TOTAL ---->" + bonds.size());
 		return bonds;
 
+	}
+	
+	// by Jock Samaniego.......
+	private Boolean controlAlertResident(String identificationNumber) {
+		List<Alert> alerts = new ArrayList<Alert>();
+		Query query = em.createNamedQuery("Alert.findPendingAlertsByResidentIdNum");
+		query.setParameter("residentIdNum", identificationNumber);
+		alerts = query.getResultList();
+		if (alerts.size() > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	// by Jock Samaniego.......

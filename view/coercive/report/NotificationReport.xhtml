@@ -49,9 +49,7 @@
 								</p:font>
 							</p:paragraph>
 
-						</p:cell>
-
-						<p:cell></p:cell>
+						</p:cell>						
 
 						<p:cell>
 							<p:paragraph alignment="center" spacingAfter="2">
@@ -76,14 +74,14 @@
 		var="notification">
 		<p:font size="8" name="HELVETICA">
 			<p:paragraph horizontalAlignment="center" alignment="center">
-				<p:table columns="1" widthPercentage="100" spacingAfter="10">
+				<p:table columns="1" widthPercentage="100" spacingAfter="4">
 					<f:facet name="defaultCell">
 						<p:cell borderWidth="0" />
 					</f:facet>
 
 					<p:cell horizontalAlignment="center">
 						<p:paragraph alignment="center">
-							<p:font size="10" style="italic,oblique, bold" name="HELVETICA">
+							<p:font size="9" style="italic,oblique, bold" name="HELVETICA">
 								<p:text
 									value="#{messages['notification'].toUpperCase()} - #{notificationHome.isOriginal ? messages['printing.original'] : messages['printing.copy']}" />
 							</p:font>
@@ -102,21 +100,21 @@
 
 				</p:table>
 			</p:paragraph>
-			<p:paragraph spacingAfter="2">
+			<p:paragraph >
 				<p:table columns="1" widthPercentage="100" headerRows="0" widths="1">
 					<f:facet name="defaultCell">
 						<p:cell borderWidth="0" horizontalAlignment="left" />
 					</f:facet>
 					<p:cell colspan="1" horizontalAlignment="center">
-						<p:paragraph alignment="center" spacingAfter="10">
+						<p:paragraph alignment="center" spacingAfter="4">
 							<p:font size="10" style="italic,oblique, bold" name="HELVETICA">
 								<p:text value="#{notification.yearNumber}" />
 							</p:font>
 						</p:paragraph>
 					</p:cell>
-					
+
 					<p:cell></p:cell>
-					
+
 					<p:cell colspan="1" horizontalAlignment="center">
 						<p:paragraph>
 							<p:font size="9" style="bold">
@@ -173,18 +171,28 @@
 					</p:cell>
 				</p:table>
 			</p:paragraph>
-			<p:paragraph spacingAfter="2">
-				<p:table columns="5" widthPercentage="90" headerRows="0"
-					widths="2 0.8 0.8 0.8 0.8">
+			<p:paragraph spacingAfter="1">
+				<p:table columns="6" widthPercentage="100" headerRows="0"
+					widths="1.9 0.8 0.8 0.8 0.9 0.8">
 					<p:font size="8" name="HELVETICA" style="bold">
 						<p:cell horizontalAlignment="center">
 							<p:paragraph>
 								<p:text value="#{messages['entry']}" />
 							</p:paragraph>
 						</p:cell>
+						
+						
+						
+						
+						
 						<p:cell horizontalAlignment="center">
 							<p:paragraph>
-								<p:text value="#{messages['municipalBond.number']}" />
+								<p:text value="Documento No." />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="Documento Tipo" />
 							</p:paragraph>
 						</p:cell>
 						<p:cell horizontalAlignment="center">
@@ -221,6 +229,27 @@
 								</p:font>
 							</p:paragraph>
 						</p:cell>
+
+
+						
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right"
+								rendered="#{municipalBond.entry.isTaxable}">
+								<p:font size="8">
+									<p:text value="Factura" />
+								</p:font>
+							</p:paragraph>
+							<p:paragraph alignment="right"
+								rendered="#{!municipalBond.entry.isTaxable}">
+								<p:font size="8">
+									<p:text value="Título de Crédito" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+
+
+
 						<p:cell colspan="1" horizontalAlignment="center">
 							<p:paragraph alignment="center">
 								<p:font size="8">
@@ -251,7 +280,7 @@
 				</p:table>
 			</p:paragraph>
 
-			<p:paragraph spacingAfter="15" spacingBefore="2" alignment="justify"
+			<p:paragraph spacingAfter="8" spacingBefore="1" alignment="justify"
 				leading="2">
 				<p:table columns="1" widthPercentage="100" headerRows="0" widths="1">
 					<f:facet name="defaultCell">
@@ -304,7 +333,7 @@
 				</p:font>
 			</p:paragraph>
 
-			<p:paragraph alignment="right" spacingBefore="30" leading="2">
+			<p:paragraph alignment="right" spacingBefore="10" leading="2">
 				<p:table columns="3" widthPercentage="100" headerRows="0"
 					widths="1 1 1">
 					<f:facet name="defaultCell">
@@ -395,7 +424,7 @@
 		rendered="#{notificationHome.printCopies()}" var="notification">
 		<p:font size="8" name="HELVETICA">
 			<p:paragraph>
-				<p:table columns="3" widthPercentage="100" spacingAfter="15">
+				<p:table columns="3" widthPercentage="100" spacingAfter="4">
 					<f:facet name="defaultCell">
 						<p:cell borderWidth="0" />
 					</f:facet>
@@ -426,17 +455,17 @@
 					<f:facet name="defaultCell">
 						<p:cell borderWidth="0" horizontalAlignment="left" />
 					</f:facet>
-					
+
 					<p:cell colspan="1" horizontalAlignment="center">
-						<p:paragraph alignment="center" spacingAfter="10">
+						<p:paragraph alignment="center" spacingAfter="4">
 							<p:font size="10" style="italic,oblique, bold" name="HELVETICA">
 								<p:text value="#{notification.yearNumber}" />
 							</p:font>
 						</p:paragraph>
 					</p:cell>
-					
+
 					<p:cell></p:cell>
-					
+
 					<p:cell colspan="1">
 						<p:paragraph>
 							<p:font size="9" style="bold">
@@ -550,7 +579,7 @@
 				</p:table>
 			</p:paragraph>
 
-			<p:paragraph spacingAfter="15" spacingBefore="2" alignment="justify"
+			<p:paragraph spacingAfter="8" spacingBefore="2" alignment="justify"
 				leading="2">
 				<p:table columns="1" widthPercentage="100" headerRows="0" widths="1">
 					<f:facet name="defaultCell">
@@ -686,5 +715,5 @@
 		<p:newPage
 			rendered="#{notificationReport.notifications.indexOf(notification) != notificationReport.notifications.size() -1}" />
 	</a4j:repeat>
-
+	
 </p:document>
