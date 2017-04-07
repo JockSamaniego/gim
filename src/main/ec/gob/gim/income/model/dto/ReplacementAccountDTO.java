@@ -19,8 +19,11 @@ public class ReplacementAccountDTO {
 
 	@NativeQueryResultColumn(index = 1)
 	private String accountname;
+	
+	/*@NativeQueryResultColumn(index = 2)
+	private String detail;*/
 
-	@NativeQueryResultColumn(index = 2)
+	@NativeQueryResultColumn(index = 3)
 	private BigDecimal total;
 
 	public String getAccountcode() {
@@ -46,5 +49,13 @@ public class ReplacementAccountDTO {
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
+
+	/*public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}*/
 
 }
