@@ -19,11 +19,8 @@ public class ReplacementAccountDTO {
 
 	@NativeQueryResultColumn(index = 1)
 	private String accountname;
-	
-	/*@NativeQueryResultColumn(index = 2)
-	private String detail;*/
 
-	@NativeQueryResultColumn(index = 3)
+	@NativeQueryResultColumn(index = 2)
 	private BigDecimal total;
 
 	public String getAccountcode() {

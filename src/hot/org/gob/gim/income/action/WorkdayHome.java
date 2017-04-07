@@ -2080,8 +2080,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	 */
 	public void replacementPaymentReport() {
 		String sql = "select rpa.id, rpa.date f_baja, rpa.detail, rpa.total total_abanado, "
-				+ "re.identificationnumber, re.name, mb.number, mb.value, mb.emisiondate, ent.code, ent.name entry"
-				+ "name "
+				+ "re.identificationnumber, re.name, mb.number, mb.value, mb.emisiondate, ent.code, ent.name entryname "
 				+ "from gimprod.ReplacementPaymentAgreement rpa "
 				+ "inner join gimprod.municipalbond mb on rpa.municipalbond_id = mb.id "
 				+ "inner join gimprod.resident re on mb.resident_id = re.id "

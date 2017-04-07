@@ -396,8 +396,8 @@
 	</p:table>
 
 	<p:table rendered="#{not empty workdayHome.replacementAgreements}"
-		spacingAfter="15" columns="7" widthPercentage="100" headerRows="0"
-		widths="3 1 3 1 0.7 0.7 0.7">
+		spacingAfter="15" columns="8" widthPercentage="100" headerRows="0"
+		widths="3 1 2.5 1 2 0.7 0.7 0.7">
 		<p:font size="7" style="bold">
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="0" />
@@ -424,6 +424,12 @@
 			<p:cell horizontalAlignment="center">
 				<p:paragraph>
 					<p:text value="#{messages['municipalBond.emisionDate']}" />
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Detalle Baja" />
 				</p:paragraph>
 			</p:cell>
 
@@ -472,6 +478,12 @@
 						<p:text value="#{_replacement.mb_emisiondate}">
 							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
 						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{_replacement.replacement_detail}" />
 					</p:paragraph>
 				</p:cell>
 
