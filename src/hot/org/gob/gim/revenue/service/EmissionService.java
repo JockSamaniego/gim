@@ -9,8 +9,6 @@ import javax.ejb.Local;
 
 import ec.gob.gim.revenue.model.DTO.ReportEmissionDTO;
 import ec.gob.gim.revenue.model.criteria.ReportEmissionCriteria;
-import ec.gob.gim.revenue.model.impugnment.criteria.ImpugnmentSearchCriteria;
-import ec.gob.gim.revenue.model.impugnment.dto.ImpugnmentDTO;
 
 /**
  * @author Rene Ortega

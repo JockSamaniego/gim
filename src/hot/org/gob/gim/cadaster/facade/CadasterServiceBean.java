@@ -32,7 +32,6 @@ import org.gob.gim.revenue.facade.RevenueService;
 import org.gob.gim.revenue.service.EntryService;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.gim.revenue.view.EntryValueItem;
-import org.hibernate.sql.Update;
 
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.LocationPropertySinat;
@@ -46,7 +45,6 @@ import ec.gob.gim.cadaster.model.dto.ExemptionDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
-import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.EmissionOrder;

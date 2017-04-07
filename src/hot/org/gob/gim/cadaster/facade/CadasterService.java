@@ -6,7 +6,6 @@ import java.util.List;
 import javax.ejb.Local;
 
 import ec.gob.gim.cadaster.model.Domain;
-import ec.gob.gim.cadaster.model.DomainSinat;
 import ec.gob.gim.cadaster.model.LocationPropertySinat;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
@@ -15,7 +14,6 @@ import ec.gob.gim.cadaster.model.WorkDealFraction;
 import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
-import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;

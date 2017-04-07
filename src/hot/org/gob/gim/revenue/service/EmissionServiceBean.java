@@ -3,8 +3,6 @@
  */
 package org.gob.gim.revenue.service;
 
-import java.math.BigInteger;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -12,7 +10,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TemporalType;
 
 import org.gob.gim.common.NativeQueryResultsMapper;
 

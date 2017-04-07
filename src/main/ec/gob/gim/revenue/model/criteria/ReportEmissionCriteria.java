@@ -3,7 +3,6 @@
  */
 package ec.gob.gim.revenue.model.criteria;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 /**
