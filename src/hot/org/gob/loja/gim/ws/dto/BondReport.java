@@ -30,13 +30,16 @@ public class BondReport {
 	private String paymentDate;
 	
 	@NativeQueryResultColumn(index = 7)
-	private Long antNumber;
+	private String antNumber;
 	
 	@NativeQueryResultColumn(index = 8)
 	private String numberPlate;
+	
+	
 
 	public BondReport(Long id, Long number, String account, String serviceCode, String serviceDate, BigDecimal total,
-			String paymentDate, Long antNumber, String numberPlate) {
+			String paymentDate, String antNumber, String numberPlate) {
+		super();
 		this.id = id;
 		this.number = number;
 		this.account = account;
@@ -47,6 +50,19 @@ public class BondReport {
 		this.antNumber = antNumber;
 		this.numberPlate = numberPlate;
 	}
+
+	/*public BondReport(Long id, Long number, String account, String serviceCode, String serviceDate, BigDecimal total,
+			String paymentDate, Long antNumber, String numberPlate) {
+		this.id = id;
+		this.number = number;
+		this.account = account;
+		this.serviceCode = serviceCode;
+		this.serviceDate = serviceDate;
+		this.total = total;
+		this.paymentDate = paymentDate;
+		this.antNumber = antNumber;
+		this.numberPlate = numberPlate;
+	}*/
 		
 	public BondReport() {
 		
@@ -92,13 +108,13 @@ public class BondReport {
 		this.total = total;
 	}
 	
-	public Long getAntNumber() {
+	/*public Long getAntNumber() {
 		return antNumber;
 	}
 
 	public void setAntNumber(Long antNumber) {
 		this.antNumber = antNumber;
-	}
+	}*/
 
 	public String getNumberPlate() {
 		return numberPlate;
@@ -122,6 +138,14 @@ public class BondReport {
 
 	public void setPaymentDate(String paymentDate) {
 		this.paymentDate = paymentDate;
+	}
+
+	public String getAntNumber() {
+		return antNumber;
+	}
+
+	public void setAntNumber(String antNumber) {
+		this.antNumber = antNumber;
 	}
 
 }

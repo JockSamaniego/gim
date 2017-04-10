@@ -620,7 +620,7 @@ public class GimServiceBean implements GimService{
 		System.out.println("--------------------------el tamnio es "+query.getResultList().size());*/
 		
 		String sqlPending="select mb.id, mb.number, e.name, mb.groupingCode, mb.serviceDate, "
-				+ "mb.base, mb.emisionDate, ant.antNumber, ant.numberplate "
+				+ "mb.base, mb.emisionDate, ant.contraventionnumber, ant.numberplate "
 				+ "from municipalbond mb "
 				+ "inner join resident on mb.resident_id=resident.id "
 				+ "inner join ANTReference ant on mb.adjunct_Id=ant.id "
@@ -663,7 +663,7 @@ public class GimServiceBean implements GimService{
 		paymentStatus.add(new Long("11"));
 		
 		String sqlPending="select mb.id, mb.number, e.name, mb.groupingCode, mb.serviceDate, "
-				+ "mb.base, mb.liquidationDate, ant.antNumber, ant.numberplate "
+				+ "mb.base, mb.liquidationDate, ant.contraventionnumber, ant.numberplate "
 				+ "from municipalbond mb "
 				+ "inner join resident on mb.resident_id=resident.id "
 				+ "inner join ANTReference ant on mb.adjunct_Id=ant.id "
