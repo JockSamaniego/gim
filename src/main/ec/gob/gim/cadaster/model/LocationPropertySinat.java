@@ -52,7 +52,10 @@ import javax.persistence.TableGenerator;
 		+ "and property.deleted = false "
 		+ "and lps.property.id not in :noEmitFor "
 		+ "and lps.parishName=:parishName "
-		+ "ORDER BY property.cadastralCode")
+		+ "ORDER BY property.cadastralCode"),
+@NamedQuery(name = "LocationPropertySinat.findByProperty", query = "Select lps from LocationPropertySinat lps "
+		+ "left join lps.property property "
+		+ "where property.id =:property_id ")
 })
 public class LocationPropertySinat {
 	@Id

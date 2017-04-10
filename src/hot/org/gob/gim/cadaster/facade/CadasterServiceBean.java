@@ -32,9 +32,9 @@ import org.gob.gim.revenue.facade.RevenueService;
 import org.gob.gim.revenue.service.EntryService;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.gim.revenue.view.EntryValueItem;
-import org.hibernate.sql.Update;
 
 import ec.gob.gim.cadaster.model.Domain;
+import ec.gob.gim.cadaster.model.LocationPropertySinat;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.PropertyUse;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
@@ -45,7 +45,6 @@ import ec.gob.gim.cadaster.model.dto.ExemptionDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
-import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.EmissionOrder;
@@ -1344,7 +1343,22 @@ public class CadasterServiceBean implements CadasterService {
 	}
 	
 	//Jock Samaniego.. 23/09/2016
-		public void updateRusticProperty(Property property){
-			entityManager.merge(property);		
+	public void updateRusticProperty(Property property){
+		entityManager.merge(property);		
+	}
+
+	@Override
+	public LocationPropertySinat findLocationPropertySinat(Long property_id) {
+		// TODO Auto-generated method stub
+		Query query = entityManager
+				.createNamedQuery("LocationPropertySinat.findByProperty");
+		query.setParameter("property_id", property_id);
+		List<LocationPropertySinat> result = query.getResultList();
+		if(result.size()>0){
+			return result.get(0);
 		}
+		
+		return null;
+	}
+		
 }
