@@ -17,7 +17,7 @@
    <param name="residentFrom"/>
    <param name="residentId" value="#{residentHome.residentId}"/>
    
-   <navigation from-action="#{businessHome.printLicense}">
+   <navigation from-action="#{businessHome.confirmPrintLicense}"> 
       <rule if-outcome="false">
          <end-conversation/>
          <redirect view-id="/commercial/report/OperatingLicenseReport.xhtml" />
