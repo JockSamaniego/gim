@@ -25,7 +25,7 @@ import ec.gob.gim.common.model.Person;
 @TableGenerator(name = "OperatingLicenseGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "OperatingLicense", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
 		@NamedQuery(name = "Local.findByPaperCode", query = "SELECT operatingLicense from OperatingLicense operatingLicense WHERE "
-				+ "operatingLicense.paper_code = :code"), })
+				+ "operatingLicense.paper_code = :code and operatingLicense.nullified = false "), })
 public class OperatingLicense {
 
 	@Id
