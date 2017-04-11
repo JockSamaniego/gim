@@ -18,12 +18,15 @@
 				<p:paragraph spacingAfter="15">
 					<p:table columns="3" widthPercentage="100" spacingAfter="15"
 						widths="1 5 2">
+
 						<f:facet name="defaultCell">
 							<p:cell borderWidth="0" />
 						</f:facet>
+
 						<p:cell fixedHeight="100">
 
 						</p:cell>
+
 						<p:cell fixedHeight="100">
 							<p:font size="8" style="bold">
 								<p:paragraph alignment="center">
@@ -35,165 +38,312 @@
 						</p:cell>
 
 						<p:cell>
+
 						</p:cell>
+
 					</p:table>
 				</p:paragraph>
 			</p:header>
 		</p:font>
 	</f:facet>
 
+
 	<p:paragraph alignment="justify">
-		<p:table spacingBefore="310">
+		<p:table spacingBefore="300">
 			<p:cell borderWidth="0" />
 		</p:table>
 	</p:paragraph>
+
 	<p:font size="9" name="HELVETICA">
-		<p:paragraph spacingAfter="0" spacingBefore="160"  horizontalAlignment="right">
-			<p:table columns="1" widthPercentage="55" headerRows="0"  horizontalAlignment="right">
+		<p:paragraph spacingAfter="0" spacingBefore="145"
+			horizontalAlignment="right">
+			<p:table columns="1" widthPercentage="55" headerRows="0"
+				horizontalAlignment="right">
 				<f:facet name="defaultCell">
 					<p:cell borderWidth="0" horizontalAlignment="left" />
 				</f:facet>
+
 				<p:cell colspan="1" fixedHeight="32">
-					<p:text
-						value="#{businessHome.local.name.toUpperCase()}" />
+					<p:font size="12" style="bold">
+						<p:text value="#{businessHome.local.name.toUpperCase()}" />
+					</p:font>
 				</p:cell>
+
 				<p:cell colspan="1" fixedHeight="32">
-					<p:text value="#{businessHome.instance.owner.name.toString().toUpperCase()}" />
+					<p:font size="12" style="bold">
+						<p:text
+							value="#{businessHome.instance.owner.name.toString().toUpperCase()}" />
+
+					</p:font>
 				</p:cell>
 			</p:table>
 		</p:paragraph>
+
 		<p:paragraph spacingAfter="0" spacingBefore="0" alignment="left">
 			<p:table columns="3" widthPercentage="100" headerRows="0">
 				<f:facet name="defaultCell">
 					<p:cell borderWidth="0" horizontalAlignment="left" />
 				</f:facet>
-				<p:cell colspan="1" fixedHeight="33" >
-					<p:text
-						value="" />
-				</p:cell>
+
 				<p:cell colspan="1" fixedHeight="33">
-					<p:text
-						value="#{businessHome.local.business.cedruc}" />
+					<p:text value="" />
 				</p:cell>
-				<p:cell colspan="1" fixedHeight="33" >
-					<p:text
-						value="" />
+
+				<p:cell colspan="1" fixedHeight="33">
+					<p:font size="12" style="bold">
+						<p:text value="#{businessHome.local.business.cedruc}" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="33">
+					<p:text value="" />
 				</p:cell>
 			</p:table>
 		</p:paragraph>
+		
 		<p:paragraph spacingAfter="0" spacingBefore="0" alignment="left">
 			<p:table columns="4" widthPercentage="100" headerRows="0">
 				<f:facet name="defaultCell">
 					<p:cell borderWidth="0" horizontalAlignment="left" />
 				</f:facet>
-				<p:cell colspan="1" fixedHeight="32" >
-					<p:text
-						value="" />
-				</p:cell>
 				<p:cell colspan="1" fixedHeight="32">
-					<p:text
-						value="LOJA" />
+					<p:text value="" />
 				</p:cell>
-				<p:cell colspan="1" fixedHeight="32" >
-					<p:text
-						value="" />
-				</p:cell>
+
 				<p:cell colspan="1" fixedHeight="32">
-					<p:text
-						value="#{businessHome.local.address.city.toUpperCase()}" />
+					<p:font size="12" style="bold">
+						<p:text value="LOJA" />
+					</p:font>
+
 				</p:cell>
-				<p:cell colspan="1" fixedHeight="32" >
-					<p:text
-						value="" />
-				</p:cell>
+
 				<p:cell colspan="1" fixedHeight="32">
-					<p:text
-						value="#{businessHome.local.address.parish.toUpperCase()}" />
+
+					<p:text value="" />
+
 				</p:cell>
-				<p:cell colspan="1" fixedHeight="32" >
-					<p:text
-						value="" />
-				</p:cell>
+
 				<p:cell colspan="1" fixedHeight="32">
-					<p:text
-						value="#{businessHome.local.address.neighborhood.toUpperCase()}" />
+
+					<p:font size="12" style="bold">
+
+						<p:text value="#{businessHome.local.address.city.toUpperCase()}" />
+
+					</p:font>
+
 				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32">
+
+					<p:text value="" />
+
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32">
+
+					<p:font size="12" style="bold">
+
+						<p:text value="#{businessHome.local.address.parish.toUpperCase()}" />
+
+					</p:font>
+
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32">
+
+					<p:text value="" />
+
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32">
+
+					<p:font size="12" style="bold">
+
+						<p:text
+							value="#{businessHome.local.address.neighborhood.toUpperCase()}" />
+
+					</p:font>
+
+				</p:cell>
+
 			</p:table>
+
 		</p:paragraph>
-		<p:paragraph spacingAfter="0" spacingBefore="0" horizontalAlignment="right">
-			<p:table columns="1" widthPercentage="80" headerRows="0"  horizontalAlignment="right">
+
+		<p:paragraph spacingAfter="0" spacingBefore="0"
+			horizontalAlignment="right">
+
+			<p:table columns="1" widthPercentage="80" headerRows="0"
+				horizontalAlignment="right">
+
 				<f:facet name="defaultCell">
+
 					<p:cell borderWidth="0" />
+
 				</f:facet>
-				<p:cell colspan="1" fixedHeight="32" >
-					<p:text  
-						value="#{businessHome.local.address.street.toUpperCase()}" />
+
+				<p:cell colspan="1" fixedHeight="32">
+
+					<p:font size="12" style="bold">
+
+						<p:text value="#{businessHome.local.address.street.toUpperCase()}" />
+
+					</p:font>
+
 				</p:cell>
-				
+
+
+
 			</p:table>
+
 		</p:paragraph>
-		<p:paragraph spacingAfter="0" spacingBefore="0" horizontalAlignment="right">
-			<p:table columns="1" widthPercentage="65" headerRows="0"  horizontalAlignment="right">
+
+		<p:paragraph spacingAfter="0" spacingBefore="0"
+			horizontalAlignment="right">
+
+			<p:table columns="1" widthPercentage="65" headerRows="0"
+				horizontalAlignment="right">
+
 				<f:facet name="defaultCell">
+
 					<p:cell borderWidth="0" />
+
 				</f:facet>
-				<p:cell colspan="1" fixedHeight="33" >
-					<p:text  
-						value="#{businessHome.local.code}" />
+
+				<p:cell colspan="1" fixedHeight="33">
+
+					<p:font size="12" style="bold">
+
+						<p:text value="#{businessHome.local.code}" />
+
+					</p:font>
+
 				</p:cell>
-				
+
+
+
 			</p:table>
+
 		</p:paragraph>
-		<p:paragraph spacingAfter="0" spacingBefore="0" horizontalAlignment="right">
-			<p:table columns="1" widthPercentage="100" headerRows="0"  horizontalAlignment="right">
+
+		<p:paragraph spacingAfter="0" spacingBefore="0"
+			horizontalAlignment="right">
+
+			<p:table columns="1" widthPercentage="100" headerRows="0"
+				horizontalAlignment="right">
+
 				<f:facet name="defaultCell">
+
 					<p:cell borderWidth="0" />
+
 				</f:facet>
-				<p:cell colspan="1" fixedHeight="17" >
-					<p:text
-						value="" />
+
+				<p:cell colspan="1" fixedHeight="17">
+
+					<p:text value="" />
+
 				</p:cell>
-				<p:cell colspan="1" fixedHeight="32" >
-					<p:text  
-						value="#{businessHome.economic_Activity.toUpperCase()}" />
-				</p:cell>		
+
+				<p:cell colspan="1" fixedHeight="32">
+
+					<p:font size="12" style="bold">
+
+						<p:text value="#{businessHome.economic_Activity.toUpperCase()}" />
+
+					</p:font>
+
+				</p:cell>
+
 			</p:table>
+
 		</p:paragraph>
-		<p:paragraph spacingAfter="0" spacingBefore="3" horizontalAlignment="right">
-			<p:table columns="4" widthPercentage="100" headerRows="0"  horizontalAlignment="right">
+
+		<p:paragraph spacingAfter="0" spacingBefore="3"
+			horizontalAlignment="right">
+
+			<p:table columns="4" widthPercentage="100" headerRows="0"
+				horizontalAlignment="right">
+
 				<f:facet name="defaultCell">
+
 					<p:cell borderWidth="0" horizontalAlignment="left" />
+
 				</f:facet>
-				<p:cell colspan="1" fixedHeight="32" >
-					<p:text
-						value="" />
-				</p:cell>
+
 				<p:cell colspan="1" fixedHeight="32">
-					<p:text
-						value="#{businessHome.emissionDate}" />
+
+					<p:text value="" />
+
 				</p:cell>
-				<p:cell colspan="1" fixedHeight="32" >
-					<p:text
-						value="" />
-				</p:cell>
+
 				<p:cell colspan="1" fixedHeight="32">
-					<p:text
-						value="#{businessHome.validityDate}" />
+
+					<p:font size="12" style="bold">
+
+						<p:text value="#{businessHome.emissionDate}" />
+
+					</p:font>
+
 				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32">
+
+					<p:text value="" />
+
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32">
+
+					<p:font size="12" style="bold">
+
+						<p:text value="#{businessHome.validityDate}" />
+
+					</p:font>
+
+				</p:cell>
+
 			</p:table>
+
 		</p:paragraph>
 
 
-		<p:paragraph spacingAfter="0" spacingBefore="10" horizontalAlignment="left"  VerticalAlignment="center">
-			<p:table columns="1" widthPercentage="100" headerRows="0"  horizontalAlignment="left"  VerticalAlignment="center">
-				<f:facet name="defaultCell">
-					<p:cell borderWidth="0" horizontalAlignment="left" />
-				</f:facet>
-				<p:cell colspan="1" fixedHeight="32">
-					<p:barCode type="CODE128" code="#{businessHome.codePaper}"/>
-				</p:cell>
-			</p:table>
+
+		<p:paragraph spacingAfter="0" spacingBefore="52" alignment="center"
+			verticalAlignment="10" leading="10">
+
+			<p:font size="12" style="bold">
+
+				<p:text
+					value="#{businessHome.sanitationDelegate.name.toUpperCase()}" />
+
+			</p:font>
+
 		</p:paragraph>
+
+
+		<p:paragraph spacingAfter="0" spacingBefore="10"
+			horizontalAlignment="left" VerticalAlignment="center">
+
+			<p:table columns="1" widthPercentage="100" headerRows="0"
+				horizontalAlignment="left" VerticalAlignment="center">
+
+				<f:facet name="defaultCell">
+
+					<p:cell borderWidth="0" horizontalAlignment="left" />
+
+				</f:facet>
+
+				<p:cell colspan="1" fixedHeight="55">
+
+					<p:barCode type="CODE128" code="#{businessHome.codePaper}" />
+
+				</p:cell>
+
+			</p:table>
+
+		</p:paragraph>
+
 
 	</p:font>
+
 </p:document>
