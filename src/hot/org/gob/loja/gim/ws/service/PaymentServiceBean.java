@@ -233,7 +233,7 @@ public class PaymentServiceBean implements PaymentService {
 						&& totalToPay.compareTo(payout.getAmount()) == 0) {
 					try {
 						incomeService.save(payout.getPaymentDate(),
-								payout.getBondIds(), cashier, tillId);
+								payout.getBondIds(), cashier, tillId, payout.getTransactionId());
 					} catch (Exception e) {
 						e.printStackTrace();
 						throw new InvalidPayout();
