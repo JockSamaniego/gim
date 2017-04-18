@@ -201,7 +201,12 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 						+ "LEFT JOIN FETCH d.payment p "
 						+ "JOIN FETCH d.reversedMunicipalBond rmb "
 						+ "WHERE d.payment.cashier.id = :cashierId AND (d.date between :paymentStartDate and :paymentEndDate) "
-						+ "ORDER BY d.reversedDate, d.reversedTime")
+						+ "ORDER BY d.reversedDate, d.reversedTime"),
+	
+	
+	@NamedQuery(name="Deposit.findByExternalTransaccionId",
+				query=  "SELECT d FROM Deposit d " 
+						+ " WHERE d.payment.externalTransactionId= :transactionId"),
 
 	
 })

@@ -46,6 +46,7 @@ import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Person;
+import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.EMoneyPayment;
 import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.TillPermission;
@@ -736,5 +737,35 @@ public class PaymentServiceBean implements PaymentService {
 			List<Long> bondIds, String transactionId) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	/**
+	 * @author macartuche
+	 * 
+	 */
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public TransactionData queryPayment(ServiceRequest request, String transactionId){
+		TransactionData data = new TransactionData();
+		
+		if(transactionId.trim().isEmpty()){
+			data.setTransactionCompleted(Boolean.FALSE);
+			data.setTransactionMessage(Messages.TRANSACTIONID_EMPTY);
+			return data;
+		}
+		
+		Query query = em.createNamedQuery("Deposit.findByExternalTransaccionId");
+		query.setParameter("transactionId", transactionId);
+		List<Deposit> deposits = query.getResultList();
+		if(deposits.isEmpty()){
+			data.setTransactionCompleted(Boolean.FALSE);
+			data.setTransactionMessage(Messages.PAYMENT_NOT_REALIZED + transactionId);
+		}else{
+			data.setTransactionCompleted(Boolean.TRUE);
+			data.setTransactionMessage(Messages.PAYMENT_REALIZED + transactionId);
+		}
+		
+		return data;
 	}
 }

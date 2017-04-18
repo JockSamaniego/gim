@@ -359,4 +359,10 @@ public class PaymentPlatform {
 		return null;
 	}
 	
+	
+	@WebMethod
+	public TransactionData  queryPayment(ServiceRequest request, String transactionId){
+		
+		return null;
+	}
 }
