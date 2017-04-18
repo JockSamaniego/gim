@@ -31,6 +31,7 @@ import org.gob.loja.gim.ws.dto.Payout;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.Statement;
 import org.gob.loja.gim.ws.dto.Taxpayer;
+import org.gob.loja.gim.ws.dto.TransactionData;
 import org.gob.loja.gim.ws.dto.Transfer;
 import org.gob.loja.gim.ws.exception.HasNoObligations;
 import org.gob.loja.gim.ws.exception.InvalidPayout;
@@ -40,6 +41,7 @@ import org.gob.loja.gim.ws.exception.NotOpenTill;
 import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 //import org.gob.loja.gim.ws.exception.HasObligationsExpired;
+
 
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Alert;
@@ -727,5 +729,12 @@ public class PaymentServiceBean implements PaymentService {
 		}
 		Statement statement = new Statement(taxpayer, bonds, workDayDate);
 		return statement;
+	}
+
+	@Override
+	public TransactionData reversePaymentBank(ServiceRequest request,
+			List<Long> bondIds, String transactionId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

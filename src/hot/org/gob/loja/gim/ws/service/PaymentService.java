@@ -10,6 +10,7 @@ import org.gob.loja.gim.ws.dto.ClosingStatement;
 import org.gob.loja.gim.ws.dto.Payout;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.Statement;
+import org.gob.loja.gim.ws.dto.TransactionData;
 import org.gob.loja.gim.ws.exception.HasNoObligations;
 import org.gob.loja.gim.ws.exception.InvalidPayout;
 import org.gob.loja.gim.ws.exception.InvalidUser;
@@ -39,5 +40,12 @@ public interface PaymentService {
 	public void updateEMoneyPayment(ServiceRequest request, EMoneyPayment paid);
 	public void reverse(ServiceRequest request, List<Long> depositsToReverse);
 	public boolean hasRolEmoney(ServiceRequest request);
-	public String searchPropertyByCadastralCode(ServiceRequest request, String cadastralCode);	
+	public String searchPropertyByCadastralCode(ServiceRequest request, String cadastralCode);
+	
+	/*
+	 * BANCOS
+	 * By: René Ortega
+	 * 2017-04-18
+	 */
+	public TransactionData reversePaymentBank(ServiceRequest request, List<Long> bondIds, String transactionId);
 }

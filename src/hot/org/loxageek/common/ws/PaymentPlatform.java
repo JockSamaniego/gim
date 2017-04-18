@@ -17,6 +17,7 @@ import org.gob.loja.gim.ws.dto.ClosingStatement;
 import org.gob.loja.gim.ws.dto.Payout;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.Statement;
+import org.gob.loja.gim.ws.dto.TransactionData;
 import org.gob.loja.gim.ws.exception.HasNoObligations;
 import org.gob.loja.gim.ws.exception.InvalidPayout;
 import org.gob.loja.gim.ws.exception.InvalidUser;
@@ -347,6 +348,15 @@ public class PaymentPlatform {
 		}
 		InvalidateSession();
 		return statement;
+	}
+	
+	/* reversos para bancos
+	 * By: René Ortega
+	 * 2017-04-18
+	 */
+	public TransactionData reversePayment (ServiceRequest request,
+			List<Long> bondIds, String transactionId){
+		return null;
 	}
 	
 }
