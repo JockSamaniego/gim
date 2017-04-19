@@ -362,4 +362,10 @@ public class PaymentPlatform {
 		return this.service.reversePaymentBank(request, payout);
 	}
 	
+	
+	@WebMethod
+	public TransactionData  queryPayment(ServiceRequest request, String transactionId){
+		
+		return null;
+	}
 }
