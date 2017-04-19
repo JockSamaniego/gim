@@ -226,7 +226,7 @@ public class PaymentServiceBean implements PaymentService {
 			InvalidUser, NotActiveWorkday, NotOpenTill, HasNoObligations {
 		// Statement statement = findStatement(request);
 		
-		bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
+		//bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
 		serverLog = new BankingEntityLog();
 		serverLog.setDateTransaction(new Date());
 		serverLog.setTransactionId(payout.getTransactionId());
@@ -311,7 +311,7 @@ public class PaymentServiceBean implements PaymentService {
 	public ClosingStatement findDeposits(ServiceRequest request,
 			Date paymentDate) throws InvalidUser {
 		
-		bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
+		//bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
 		serverLog = new BankingEntityLog();
 		serverLog.setDateTransaction(new Date());
 		serverLog.setTransactionId(null);
@@ -810,7 +810,7 @@ public class PaymentServiceBean implements PaymentService {
 	public TransactionData reversePaymentBank(ServiceRequest request,
 			Payout payout) {
 		
-		bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
+		//bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
 		serverLog = new BankingEntityLog();
 		serverLog.setDateTransaction(new Date());
 		serverLog.setTransactionId(payout.getTransactionId());
@@ -914,7 +914,7 @@ public class PaymentServiceBean implements PaymentService {
 	@Override
 	public TransactionData queryPayment(ServiceRequest request, String transactionId){
 		
-		bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
+		//bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
 		serverLog = new BankingEntityLog();
 		serverLog.setDateTransaction(new Date());
 		serverLog.setTransactionId(transactionId);
