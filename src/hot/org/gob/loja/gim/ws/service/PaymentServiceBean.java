@@ -158,7 +158,7 @@ public class PaymentServiceBean implements PaymentService {
 			throws PayoutNotAllowed, TaxpayerNotFound, NotActiveWorkday,
 			HasNoObligations {
 		
-		bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
+		//ssbHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
 		serverLog = new BankingEntityLog();
 		serverLog.setDateTransaction(new Date());
 		serverLog.setTransactionId(null);
@@ -172,7 +172,8 @@ public class PaymentServiceBean implements PaymentService {
 		if (controlAlertResident(identificationNumber)) {
 			serverLog.setMethodCompleted(false);
 			serverLog.setCodeError("PayoutNotAllowed");
-			bHome.saveServerLog(serverLog);
+			em.persist(serverLog);
+			//bHome.saveServerLog();
 			throw new PayoutNotAllowed();
 		} else {
 
