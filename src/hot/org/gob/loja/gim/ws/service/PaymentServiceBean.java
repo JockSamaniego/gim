@@ -173,7 +173,6 @@ public class PaymentServiceBean implements PaymentService {
 			serverLog.setMethodCompleted(false);
 			serverLog.setCodeError("PayoutNotAllowed");
 			em.persist(serverLog);
-			//bHome.saveServerLog();
 			throw new PayoutNotAllowed();
 		} else {
 
@@ -188,7 +187,7 @@ public class PaymentServiceBean implements PaymentService {
 			if (inPaymentAgreementBondsNumber > 0) {
 				serverLog.setMethodCompleted(false);
 				serverLog.setCodeError("PayoutNotAllowed");
-				bHome.saveServerLog(serverLog);
+				em.persist(serverLog);
 				throw new PayoutNotAllowed();
 			} else {
 				List<Long> pendingBondIds = hasPendingBonds(taxpayer.getId());
@@ -205,7 +204,7 @@ public class PaymentServiceBean implements PaymentService {
 						e.printStackTrace();
 						serverLog.setMethodCompleted(false);
 						serverLog.setCodeError("PayoutNotAllowed");
-						bHome.saveServerLog(serverLog);
+						em.persist(serverLog);
 						throw new PayoutNotAllowed();
 					}
 				}
@@ -215,7 +214,7 @@ public class PaymentServiceBean implements PaymentService {
 				Statement statement = new Statement(taxpayer, bonds, workDayDate);
 				serverLog.setMethodCompleted(true);
 				serverLog.setCodeError(null);
-				bHome.saveServerLog(serverLog);
+				em.persist(serverLog);
 				return statement;
 			}
 		}
@@ -250,14 +249,14 @@ public class PaymentServiceBean implements PaymentService {
 					|| tillPermission.getOpeningTime() == null){
 				serverLog.setMethodCompleted(false);
 				serverLog.setCodeError("NotOpenTill");
-				bHome.saveServerLog(serverLog);
+				em.persist(serverLog);
 				throw new NotOpenTill();
 			}
 		} catch (NotOpenTill e) {
 			e.printStackTrace();
 			serverLog.setMethodCompleted(false);
 			serverLog.setCodeError("NotOpenTill");
-			bHome.saveServerLog(serverLog);
+			em.persist(serverLog);
 			throw new NotOpenTill();
 		}
 
@@ -283,7 +282,7 @@ public class PaymentServiceBean implements PaymentService {
 						e.printStackTrace();
 						serverLog.setMethodCompleted(false);
 						serverLog.setCodeError("InvalidPayout");
-						bHome.saveServerLog(serverLog);
+						em.persist(serverLog);
 						throw new InvalidPayout();
 					}
 					em.flush();
@@ -293,19 +292,19 @@ public class PaymentServiceBean implements PaymentService {
 							paidFromExternalBondStatusId);
 					serverLog.setMethodCompleted(true);
 					serverLog.setCodeError(null);
-					bHome.saveServerLog(serverLog);
+					em.persist(serverLog);
 					return true;
 				}
 			}
 		} else {
 			serverLog.setMethodCompleted(false);
 			serverLog.setCodeError("NotActiveWorkday");
-			bHome.saveServerLog(serverLog);
+			em.persist(serverLog);
 			throw new NotActiveWorkday();
 		}
 		serverLog.setMethodCompleted(false);
 		serverLog.setCodeError("InvalidPayout");
-		bHome.saveServerLog(serverLog);
+		em.persist(serverLog);
 		throw new InvalidPayout();
 	}
 
@@ -330,7 +329,7 @@ public class PaymentServiceBean implements PaymentService {
 
 		serverLog.setMethodCompleted(true);
 		serverLog.setCodeError(null);
-		bHome.saveServerLog(serverLog);
+		em.persist(serverLog);
 		return closingStatement;
 	}
 
@@ -373,7 +372,7 @@ public class PaymentServiceBean implements PaymentService {
 		}
 		serverLog.setMethodCompleted(false);
 		serverLog.setCodeError("InvalidUser");
-		bHome.saveServerLog(serverLog);
+		em.persist(serverLog);
 		throw new InvalidUser();
 
 	}
@@ -824,7 +823,7 @@ public class PaymentServiceBean implements PaymentService {
 			ret.setTransactionMessage(Messages.TRANSACTIONID_EMPTY);
 			serverLog.setMethodCompleted(false);
 			serverLog.setCodeError(Messages.TRANSACTIONID_EMPTY);
-			bHome.saveServerLog(serverLog);
+			em.persist(serverLog);
 			return ret;
 		}
 		
@@ -847,7 +846,7 @@ public class PaymentServiceBean implements PaymentService {
 			ret.setTransactionMessage(Messages.TRANSACTIONID_NOT_FOUND);
 			serverLog.setMethodCompleted(false);
 			serverLog.setCodeError(Messages.TRANSACTIONID_NOT_FOUND);
-			bHome.saveServerLog(serverLog);
+			em.persist(serverLog);
 			return ret;
 		}
 		
@@ -902,7 +901,7 @@ public class PaymentServiceBean implements PaymentService {
 		}
 		//serverLog.setMethodCompleted(false);
 		//serverLog.setCodeError(Messages.TRANSACTIONID_NOT_FOUND);
-		bHome.saveServerLog(serverLog);
+		em.persist(serverLog);
 		return ret;
 	}
 	
@@ -930,7 +929,7 @@ public class PaymentServiceBean implements PaymentService {
 			
 			serverLog.setMethodCompleted(true);
 			serverLog.setCodeError(null);
-			bHome.saveServerLog(serverLog);
+			em.persist(serverLog);
 			return data;
 		}
 		
@@ -946,7 +945,7 @@ public class PaymentServiceBean implements PaymentService {
 		}
 		serverLog.setMethodCompleted(true);
 		serverLog.setCodeError(null);
-		bHome.saveServerLog(serverLog);
+		em.persist(serverLog);
 		return data;
 	}
 	

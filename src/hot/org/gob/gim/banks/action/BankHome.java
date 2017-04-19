@@ -133,9 +133,4 @@ public class BankHome extends EntityHome<Object>implements Serializable {
 		this.reports = reports;
 	}
 
-	public void saveServerLog(BankingEntityLog log){
-		EntityManager em = getEntityManager();
-		em.persist(log);
-	}
-	
 }
