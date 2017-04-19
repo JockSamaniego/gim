@@ -18,6 +18,8 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
+import ec.gob.gim.bank.model.BankingEntityLog;
+
 @Name("bankHome")
 @Scope(ScopeType.CONVERSATION)
 public class BankHome extends EntityHome<Object>implements Serializable {
@@ -131,4 +133,9 @@ public class BankHome extends EntityHome<Object>implements Serializable {
 		this.reports = reports;
 	}
 
+	public void saveServerLog(BankingEntityLog log){
+		EntityManager em = getEntityManager();
+		em.persist(log);
+	}
+	
 }
