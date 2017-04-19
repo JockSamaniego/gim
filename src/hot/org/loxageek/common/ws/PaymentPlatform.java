@@ -354,9 +354,12 @@ public class PaymentPlatform {
 	 * By: René Ortega
 	 * 2017-04-18
 	 */
+	@WebMethod
 	public TransactionData reversePayment (ServiceRequest request,
-			List<Long> bondIds, String transactionId){
-		return null;
+			Payout payout){
+		System.out.println("Llega al metodo de reverso");
+		
+		return this.service.reversePaymentBank(request, payout);
 	}
 	
 	

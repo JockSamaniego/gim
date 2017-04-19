@@ -47,10 +47,10 @@ public interface PaymentService {
 	 * By: René Ortega
 	 * 2017-04-18
 	 */
-	public TransactionData reversePaymentBank(ServiceRequest request, List<Long> bondIds, String transactionId);
+	public TransactionData reversePaymentBank(ServiceRequest request, Payout payout);
 	
 	//@autor macartuche
-	//@date 2017-04-18T15:41:19
-	//metodo para consultar si el pago se encuentra efectuado en el sistema GIM
+		//@date 2017-04-18T15:41:19
+		//metodo para consultar si el pago se encuentra efectuado en el sistema GIM
 	public TransactionData queryPayment(ServiceRequest request, String transactionId);
 }

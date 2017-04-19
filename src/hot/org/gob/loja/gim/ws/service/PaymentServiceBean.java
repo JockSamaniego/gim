@@ -1,7 +1,12 @@
 package org.gob.loja.gim.ws.service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -19,6 +24,7 @@ import javax.persistence.TemporalType;
 
 import org.gob.gim.banks.action.BankHome;
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.NotActiveWorkdayException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
@@ -44,13 +50,9 @@ import org.gob.loja.gim.ws.exception.NotOpenTill;
 import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 //import org.gob.loja.gim.ws.exception.HasObligationsExpired;
-
-
-
-
 import org.jboss.seam.contexts.Contexts;
-
 import ec.gob.gim.bank.model.BankingEntityLog;
+import org.richfaces.util.CollectionsUtils;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.commercial.model.OperatingLicense;
 import ec.gob.gim.common.model.Alert;
@@ -61,6 +63,7 @@ import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.MunicipalBondType;
+import ec.gob.gim.revenue.model.DTO.ReportEmissionDTO;
 import ec.gob.gim.security.model.User;
 
 @Stateless(name = "PaymentService")
@@ -797,12 +800,109 @@ public class PaymentServiceBean implements PaymentService {
 		Statement statement = new Statement(taxpayer, bonds, workDayDate);
 		return statement;
 	}
-
+	
+	/*
+	 * René Ortega
+	 * 2017-04-18
+	 * Metodo de Reverso de pagos desde bancos
+	 */
 	@Override
 	public TransactionData reversePaymentBank(ServiceRequest request,
-			List<Long> bondIds, String transactionId) {
-		// TODO Auto-generated method stub
-		return null;
+			Payout payout) {
+		
+		bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
+		serverLog = new BankingEntityLog();
+		serverLog.setDateTransaction(new Date());
+		serverLog.setTransactionId(payout.getTransactionId());
+		serverLog.setMethodUsed("queryPayment");
+		serverLog.setBankUsername(request.getUsername());
+		
+		TransactionData ret = new TransactionData();
+		if(payout.getTransactionId().trim().isEmpty()){
+			ret.setTransactionCompleted(Boolean.FALSE);
+			ret.setTransactionMessage(Messages.TRANSACTIONID_EMPTY);
+			serverLog.setMethodCompleted(false);
+			serverLog.setCodeError(Messages.TRANSACTIONID_EMPTY);
+			bHome.saveServerLog(serverLog);
+			return ret;
+		}
+		
+		Query query = this.em.createNativeQuery("SELECT "+ 
+													  "dep.municipalbond_id "+
+												"FROM "+ 
+													"gimprod.payment pay, "+ 
+													"gimprod.deposit dep "+
+												"WHERE "+ 
+													  "dep.payment_id = pay.id AND "+
+													  "pay.externaltransactionid = ?1 "+
+												"ORDER BY dep.municipalbond_id ASC");
+
+		query.setParameter(1, payout.getTransactionId());
+
+		List<BigInteger> bondsForTransaction = query.getResultList();
+		
+		if(bondsForTransaction.isEmpty()){
+			ret.setTransactionCompleted(Boolean.FALSE);
+			ret.setTransactionMessage(Messages.TRANSACTIONID_NOT_FOUND);
+			serverLog.setMethodCompleted(false);
+			serverLog.setCodeError(Messages.TRANSACTIONID_NOT_FOUND);
+			bHome.saveServerLog(serverLog);
+			return ret;
+		}
+		
+		int[] bondsForTransactionAux = new int[bondsForTransaction.size()];
+		
+		for (int i = 0; i < bondsForTransaction.size(); i++) {
+			String s = String.valueOf(bondsForTransaction.get(i).intValue());
+			bondsForTransactionAux[i] = Integer.parseInt(s);
+		}
+		
+		Collections.sort(payout.getBondIds());
+		
+		int[] bondIdsAux = new int[payout.getBondIds().size()];
+		
+		for (int i = 0; i < payout.getBondIds().size(); i++) {
+			bondIdsAux[i] = Integer.parseInt(payout.getBondIds().get(i).toString());
+		}
+
+		Boolean equalsBonds = Arrays.equals(bondsForTransactionAux, bondIdsAux);
+		
+		if(equalsBonds){
+			try {
+				incomeService.reverse(this.findDepositsIdsForReverse(request, payout.getBondIds()),
+					Messages.REVERSED_DESCRIPTION,
+					this.findUserByUsername(request, request.getUsername()).getResident());
+				ret.setTransactionCompleted(Boolean.TRUE);
+				ret.setTransactionMessage(Messages.REVERSED_OK);
+				serverLog.setMethodCompleted(Boolean.TRUE);
+				serverLog.setCodeError(Messages.REVERSED_OK);
+			} catch (ReverseNotAllowedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				ret.setTransactionCompleted(Boolean.FALSE);
+				ret.setTransactionMessage(Messages.REVERSED_NOT_ALLOWED);
+				serverLog.setMethodCompleted(Boolean.FALSE);
+				serverLog.setCodeError(Messages.REVERSED_NOT_ALLOWED);
+			} catch (ReverseAmongPaymentsIsNotAllowedException e) {
+				// TODO Auto-generated catch block
+				ret.setTransactionCompleted(Boolean.FALSE);
+				ret.setTransactionMessage(Messages.REVERSED_NOT_ALLOWED);
+				serverLog.setMethodCompleted(Boolean.FALSE);
+				serverLog.setCodeError(Messages.REVERSED_NOT_ALLOWED);
+				e.printStackTrace();
+			}
+			
+		}else{
+			ret.setTransactionCompleted(Boolean.FALSE);
+			ret.setTransactionMessage(Messages.REVERSED_IDS_ERROR);
+			serverLog.setMethodCompleted(Boolean.FALSE);
+			serverLog.setCodeError(Messages.REVERSED_IDS_ERROR);
+			
+		}
+		//serverLog.setMethodCompleted(false);
+		//serverLog.setCodeError(Messages.TRANSACTIONID_NOT_FOUND);
+		bHome.saveServerLog(serverLog);
+		return ret;
 	}
 	
 	/**
