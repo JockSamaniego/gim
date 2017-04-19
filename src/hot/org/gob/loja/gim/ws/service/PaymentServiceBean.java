@@ -31,7 +31,6 @@ import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.loja.gim.ws.dto.Bond;
-import org.gob.loja.gim.ws.dto.BondDTO;
 import org.gob.loja.gim.ws.dto.BondDetail;
 import org.gob.loja.gim.ws.dto.ClosingStatement;
 import org.gob.loja.gim.ws.dto.Payout;
@@ -745,13 +744,21 @@ public class PaymentServiceBean implements PaymentService {
 		Statement statement = new Statement(taxpayer, bonds, workDayDate);
 		return statement;
 	}
-
+	
+	/*
+	 * René Ortega
+	 * 2017-04-18
+	 * Metodo de Reverso de pagos desde bancos
+	 */
 	@Override
 	public TransactionData reversePaymentBank(ServiceRequest request,
 			Payout payout) {
-		// TODO Auto-generated method stub
-		
-		/*;*/
+		TransactionData ret = new TransactionData();
+		if(payout.getTransactionId().trim().isEmpty()){
+			ret.setTransactionCompleted(Boolean.FALSE);
+			ret.setTransactionMessage(Messages.TRANSACTIONID_EMPTY);
+			return ret;
+		}
 		
 		Query query = this.em.createNativeQuery("SELECT "+ 
 													  "dep.municipalbond_id "+
@@ -762,9 +769,16 @@ public class PaymentServiceBean implements PaymentService {
 													  "dep.payment_id = pay.id AND "+
 													  "pay.externaltransactionid = ?1 "+
 												"ORDER BY dep.municipalbond_id ASC");
-		query.setParameter(1, "");
+
+		query.setParameter(1, payout.getTransactionId());
 
 		List<BigInteger> bondsForTransaction = query.getResultList();
+		
+		if(bondsForTransaction.isEmpty()){
+			ret.setTransactionCompleted(Boolean.FALSE);
+			ret.setTransactionMessage(Messages.TRANSACTIONID_NOT_FOUND);
+			return ret;
+		}
 		
 		int[] bondsForTransactionAux = new int[bondsForTransaction.size()];
 		
@@ -773,39 +787,41 @@ public class PaymentServiceBean implements PaymentService {
 			bondsForTransactionAux[i] = Integer.parseInt(s);
 		}
 		
-		/*Collections.sort(bondIds);
+		Collections.sort(payout.getBondIds());
 		
-		int[] bondIdsAux = new int[bondIds.size()];
+		int[] bondIdsAux = new int[payout.getBondIds().size()];
 		
-		for (int i = 0; i < bondIds.size(); i++) {
-			bondIdsAux[i] = Integer.parseInt(bondIds.get(i).toString());
+		for (int i = 0; i < payout.getBondIds().size(); i++) {
+			bondIdsAux[i] = Integer.parseInt(payout.getBondIds().get(i).toString());
 		}
 
 		Boolean equalsBonds = Arrays.equals(bondsForTransactionAux, bondIdsAux);
 		
-		//Boolean interseccion = bondIds.retainAll(bondsForTransaction);
-		
-		System.out.println("Son los mismos ids:"+equalsBonds);
-		
-		TransactionData ret = new TransactionData();
-				
 		if(equalsBonds){
+			try {
+				incomeService.reverse(this.findDepositsIdsForReverse(request, payout.getBondIds()),
+					Messages.REVERSED_DESCRIPTION,
+					this.findUserByUsername(request, request.getUsername()).getResident());
+				ret.setTransactionCompleted(Boolean.TRUE);
+				ret.setTransactionMessage(Messages.REVERSED_OK);
+			} catch (ReverseNotAllowedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				ret.setTransactionCompleted(Boolean.FALSE);
+				ret.setTransactionMessage(Messages.REVERSED_NOT_ALLOWED);
+			} catch (ReverseAmongPaymentsIsNotAllowedException e) {
+				// TODO Auto-generated catch block
+				ret.setTransactionCompleted(Boolean.FALSE);
+				ret.setTransactionMessage(Messages.REVERSED_NOT_ALLOWED);
+				e.printStackTrace();
+			}
 			
-			incomeService.reverse(depositsToReverse,
-					"Reverso por medio de Dinero Electronico",
-					user.getResident());
-			
-			ret.setTransactionCompleted(Boolean.TRUE);
-			ret.setTransactionMessage("Reverso Exitoso");
 		}else{
 			ret.setTransactionCompleted(Boolean.FALSE);
-			ret.setTransactionMessage("Los ids enviados de obligaciones no coinciden con los regustrados en el sistema");
+			ret.setTransactionMessage(Messages.REVERSED_IDS_ERROR);
 			
-		}*/
-		
-		
-		//return ret;
-		return null;
+		}
+		return ret;
 	}
 	
 	/**
