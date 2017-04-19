@@ -1,7 +1,12 @@
 package org.gob.loja.gim.ws.service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -17,6 +22,7 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.NotActiveWorkdayException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
@@ -25,6 +31,7 @@ import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.loja.gim.ws.dto.Bond;
+import org.gob.loja.gim.ws.dto.BondDTO;
 import org.gob.loja.gim.ws.dto.BondDetail;
 import org.gob.loja.gim.ws.dto.ClosingStatement;
 import org.gob.loja.gim.ws.dto.Payout;
@@ -43,6 +50,12 @@ import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 //import org.gob.loja.gim.ws.exception.HasObligationsExpired;
 
 
+
+
+
+
+import org.richfaces.util.CollectionsUtils;
+
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Person;
@@ -51,6 +64,7 @@ import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.MunicipalBondType;
+import ec.gob.gim.revenue.model.DTO.ReportEmissionDTO;
 import ec.gob.gim.security.model.User;
 
 @Stateless(name = "PaymentService")
@@ -733,8 +747,63 @@ public class PaymentServiceBean implements PaymentService {
 
 	@Override
 	public TransactionData reversePaymentBank(ServiceRequest request,
-			List<Long> bondIds, String transactionId) {
+			Payout payout) {
 		// TODO Auto-generated method stub
+		
+		/*;*/
+		
+		Query query = this.em.createNativeQuery("SELECT "+ 
+													  "dep.municipalbond_id "+
+												"FROM "+ 
+													"gimprod.payment pay, "+ 
+													"gimprod.deposit dep "+
+												"WHERE "+ 
+													  "dep.payment_id = pay.id AND "+
+													  "pay.externaltransactionid = ?1 "+
+												"ORDER BY dep.municipalbond_id ASC");
+		query.setParameter(1, "");
+
+		List<BigInteger> bondsForTransaction = query.getResultList();
+		
+		int[] bondsForTransactionAux = new int[bondsForTransaction.size()];
+		
+		for (int i = 0; i < bondsForTransaction.size(); i++) {
+			String s = String.valueOf(bondsForTransaction.get(i).intValue());
+			bondsForTransactionAux[i] = Integer.parseInt(s);
+		}
+		
+		/*Collections.sort(bondIds);
+		
+		int[] bondIdsAux = new int[bondIds.size()];
+		
+		for (int i = 0; i < bondIds.size(); i++) {
+			bondIdsAux[i] = Integer.parseInt(bondIds.get(i).toString());
+		}
+
+		Boolean equalsBonds = Arrays.equals(bondsForTransactionAux, bondIdsAux);
+		
+		//Boolean interseccion = bondIds.retainAll(bondsForTransaction);
+		
+		System.out.println("Son los mismos ids:"+equalsBonds);
+		
+		TransactionData ret = new TransactionData();
+				
+		if(equalsBonds){
+			
+			incomeService.reverse(depositsToReverse,
+					"Reverso por medio de Dinero Electronico",
+					user.getResident());
+			
+			ret.setTransactionCompleted(Boolean.TRUE);
+			ret.setTransactionMessage("Reverso Exitoso");
+		}else{
+			ret.setTransactionCompleted(Boolean.FALSE);
+			ret.setTransactionMessage("Los ids enviados de obligaciones no coinciden con los regustrados en el sistema");
+			
+		}*/
+		
+		
+		//return ret;
 		return null;
 	}
 }
