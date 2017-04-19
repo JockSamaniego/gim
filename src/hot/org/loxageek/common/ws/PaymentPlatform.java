@@ -365,7 +365,7 @@ public class PaymentPlatform {
 	
 	@WebMethod
 	public TransactionData  queryPayment(ServiceRequest request, String transactionId){
-		
-		return null;
+		System.out.println("Entra a la consulta de pago Bank");
+		return this.service.queryPayment(request, transactionId);
 	}
 }
