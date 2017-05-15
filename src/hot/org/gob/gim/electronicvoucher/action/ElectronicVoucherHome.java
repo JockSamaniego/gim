@@ -428,6 +428,7 @@ public class ElectronicVoucherHome extends EntityHome<ElectronicVoucher>implemen
 		Date now = Calendar.getInstance().getTime();
 		this.instance.setCreationDate(now);
 		this.instance.setCreationTime(now);
+		this.instance.setDocumentDate(now);
 		this.instance.setDocumentNumber("000-000-123456789");
 		this.instance.setEmissionDate(now);
 		this.instance.setEmisionTime(now);

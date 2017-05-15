@@ -10,6 +10,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
@@ -365,7 +366,6 @@ public class PaymentPlatform {
 	
 	@WebMethod
 	public TransactionData  queryPayment(ServiceRequest request, String transactionId){
-		System.out.println("Entra a la consulta de pago Bank");
 		return this.service.queryPayment(request, transactionId);
 	}
 }
