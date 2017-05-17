@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.jboss.seam.ScopeType;
@@ -13,7 +14,9 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
 
+import ec.gob.gim.commercial.model.Local;
 import ec.gob.gim.common.model.Alert;
+import ec.gob.gim.common.model.AlertType;
 import ec.gob.gim.common.model.Resident;
 
 @Name("alertHome")

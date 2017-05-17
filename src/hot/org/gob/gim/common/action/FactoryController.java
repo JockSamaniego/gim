@@ -54,6 +54,7 @@ import ec.gob.gim.commercial.model.BusinessType;
 import ec.gob.gim.commercial.model.FeatureCategory;
 import ec.gob.gim.commercial.model.FireRates;
 import ec.gob.gim.common.model.AlertPriority;
+import ec.gob.gim.common.model.AlertType;
 import ec.gob.gim.common.model.CheckingRecordType;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Gender;
@@ -707,6 +708,12 @@ public class FactoryController  extends EntityController{
 		return Arrays.asList(AlertPriority.values());
 	}	
 
+	@Factory("alertTypes")
+	public List<AlertType> findAlertTypes(){
+		Query query = this.getEntityManager().createNamedQuery("AlertType.findAllByActive");
+		return query.getResultList();
+	}
+	
 	@Factory("statusElectronicReceipts")
 	public List<StatusElectronicReceipt> loadStatusElectronicReceipts() {
 		return Arrays.asList(StatusElectronicReceipt.values());

@@ -12,6 +12,7 @@
 
 	<ui:define name="body">
 		<ui:include src="fragment/ActiveLocals.xhtml"></ui:include>
+		<ui:include src="../income/fragment/AlertListPanel.xhtml" />
 
 		<h:form id="municipalBondEditTitle" styleClass="edit">
 			<a:queue requestDelay="10" ignoreDupResponses="true" />
@@ -38,7 +39,11 @@
 					<h:outputText styleClass="formTitle"
 						value="#{messages['revenue.emissionMunicipalBond']}" />
 				</f:facet>
-
+				
+			<h:panelGrid columns="2" width="100%"
+					columnClasses="topAligned, topAligned right">
+					
+				<a:outputPanel id="searchPanel">
 				<g:residentChooser id="residentChooser"
 					resident="#{municipalBondHome.instance.resident}"
 					criteria="#{municipalBondHome.criteria}"
@@ -48,7 +53,7 @@
 					searchByCriteriaAction="searchResidentByCriteria"
 					clearSearchPanelAction="clearSearchResidentPanel"
 					residentChosenListenerName="residentSelectedListener"
-					reRender="entryChooser-reason,entryChooser-name, _itemsTable, entryChooser-entryCode, entryChooser-openSearchPanelBtn, detailsTable" />
+					reRender="entryChooser-reason,entryChooser-name, _itemsTable, entryChooser-entryCode, entryChooser-openSearchPanelBtn, detailsTable, emitPanel, alertPanel" />
 
 				<g:entryChooser id="entryChooser" label="#{messages['entry']}"
 					reasonLabel="#{messages['entry.reason']}" showReason="true"
@@ -61,19 +66,30 @@
 					searchByCriteriaAction="searchEntryByCriteria"
 					clearSearchPanelAction="clearSearchEntryPanel"
 					entryChosenListenerName="entrySelectedListener"
-					reRender="fieldsPanel, adjunctPanel,messages, _itemsTable, serviceDateShortPanel, municipalBondEditTitle" />
-
+					reRender="fieldsPanel, adjunctPanel,messages, _itemsTable, serviceDateShortPanel, municipalBondEditTitle,emitPanel" />
+				</a:outputPanel>
+				
+				<a:outputPanel id="alertPanel" ajaxRendered="true">
+						<a:commandLink id="alertField"
+							value="#{municipalBondHome.blocketMessage}"
+							rendered="#{municipalBondHome.pendingAlerts.size()==0 ? false : true}"
+							style="font-size:40px; font-weight:bold;color:#{municipalBondHome.colorMessage}" styleClass="center"
+							reRender="alertListPanel"
+							oncomplete="Richfaces.showModalPanel('alertListPanel')">
+						</a:commandLink>
+				</a:outputPanel>
+			</h:panelGrid>
 				<div style="clear: both" />
-
+			
 
 			</rich:panel>
 
 			<a:region>
 
+				
 
 
-
-				<h:panelGrid columns="1" width="100%">
+				<h:panelGrid  id="emitPanel" columns="1" width="100%" rendered="#{!municipalBondHome.isBlocketToEmit}">
 					<rich:panel style="width:100%" id="detailsTable">
 						<f:facet name="header">
 										<h:panelGrid columns="3" width="100%"
