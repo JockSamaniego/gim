@@ -29,4 +29,11 @@ public class TaxServiceBean implements TaxService{
 		return crudService.findWithNamedQuery("Tax.findByEntryId", parameters);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Tax> findByMunicipalBondId(Long municipalBondId) {
+		Map<String, Long> parameters = new HashMap<String, Long>();
+		parameters.put("municipalBondId", municipalBondId);
+		return crudService.findWithNamedQuery("TaxItem.findByMunicipalBondId", parameters);
+	}
 }
