@@ -10,4 +10,6 @@ import ec.gob.gim.income.model.Tax;
 public interface TaxService {
 
 	List<Tax> findByEntryId(Long entryId);
+	//cambio iva 14%  a 12%
+	List<Tax> findByMunicipalBondId(Long municipalBondId);
 }

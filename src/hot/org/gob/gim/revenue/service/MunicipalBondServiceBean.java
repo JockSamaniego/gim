@@ -237,7 +237,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
+	@Override//iva12%
 	public void calculatePayment(MunicipalBond municipalBond, Date paymentDate, Deposit deposit, boolean isNew,
 			boolean isEmission, boolean applyDiscounts, List<TaxRate> taxRatesActives, Object... facts)
 					throws EntryDefinitionNotFoundException {
@@ -950,8 +950,13 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		// municipalBond.getTaxableTotal());
 		municipalBond.calculateTaxableTotal();
 		List<Tax> taxes = null;
-		if (taxRatesActives == null)
-			taxes = taxService.findByEntryId(municipalBond.getEntry().getId());
+		//iva 14% a iva12%
+		if (taxRatesActives == null){
+			if(municipalBond.getId()==null)
+				taxes = taxService.findByEntryId(municipalBond.getEntry().getId());
+			else
+				taxes = taxService.findByMunicipalBondId(municipalBond.getId()); 			
+		}
 
 		// System.out.println(":)============== taxes ==>" + taxes.size() +
 		// " subtotal: " + municipalBond.getTaxableTotal());
