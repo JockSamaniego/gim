@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.envers.Audited;
@@ -30,6 +32,15 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 	 pkColumnValue="TaxItem",
 	 initialValue=1, allocationSize=1
  )
+//@author macartuche
+//iva14% a iva12%
+@NamedQueries(value = {
+		@NamedQuery(name="TaxItem.findByMunicipalBondId", 
+				query="select ti.tax from TaxItem ti " +
+						"where "+
+						"ti.municipalBond.id = :municipalBondId"),
+		}
+)
  public class TaxItem implements Comparable<TaxItem>{
 
 	@Id
