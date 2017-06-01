@@ -300,7 +300,8 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 		 * new BigDecimal(100));
 		 */
 		//iva a 14 rfarmijos 2016-05-31
-		total = total.add(subTotalNoTax).add(subTotalTax.add(subTotalTax.multiply(new BigDecimal(0.14))));
+		//iva a 12 rfarmijos 2017-06-01
+		total = total.add(subTotalNoTax).add(subTotalTax.add(subTotalTax.multiply(new BigDecimal(0.12))));
 		this.total = this.total.setScale(2, RoundingMode.HALF_UP);
 		this.getInstance().setTotal(total);
 	}
