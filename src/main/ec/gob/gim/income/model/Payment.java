@@ -199,6 +199,8 @@ public class Payment {
 	
 	private BigDecimal reversableAmount;
 	
+	private String externalTransactionId;
+	
 	@OneToMany(mappedBy = "payment", cascade={CascadeType.MERGE, CascadeType.PERSIST})
 	private List<PaymentFraction> paymentFractions;
 	
@@ -290,6 +292,14 @@ public class Payment {
 		this.paymentFractions = paymentFractions;
 	}
 	
+	public String getExternalTransactionId() {
+		return externalTransactionId;
+	}
+
+	public void setExternalTransactionId(String externalTransactionId) {
+		this.externalTransactionId = externalTransactionId;
+	}
+
 	public void add(PaymentFraction paymentFraction) {
 		if (!this.paymentFractions.contains(paymentFraction)) {
 			this.paymentFractions.add(paymentFraction);

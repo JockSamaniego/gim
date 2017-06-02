@@ -10,6 +10,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
@@ -17,6 +18,7 @@ import org.gob.loja.gim.ws.dto.ClosingStatement;
 import org.gob.loja.gim.ws.dto.Payout;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.Statement;
+import org.gob.loja.gim.ws.dto.TransactionData;
 import org.gob.loja.gim.ws.exception.HasNoObligations;
 import org.gob.loja.gim.ws.exception.InvalidPayout;
 import org.gob.loja.gim.ws.exception.InvalidUser;
@@ -349,4 +351,21 @@ public class PaymentPlatform {
 		return statement;
 	}
 	
+	/* reversos para bancos
+	 * By: René Ortega
+	 * 2017-04-18
+	 */
+	@WebMethod
+	public TransactionData reversePayment (ServiceRequest request,
+			Payout payout){
+		System.out.println("Llega al metodo de reverso");
+		
+		return this.service.reversePaymentBank(request, payout);
+	}
+	
+	
+	@WebMethod
+	public TransactionData  queryPayment(ServiceRequest request, String transactionId){
+		return this.service.queryPayment(request, transactionId);
+	}
 }

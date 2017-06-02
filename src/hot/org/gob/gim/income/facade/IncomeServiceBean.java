@@ -132,7 +132,7 @@ public class IncomeServiceBean implements IncomeService {
 		this.calculatePayment(municipalBond, now, isForPay, applyDiscount);
 	}
 
-	@Override
+	@Override//iva12%
 	public void calculatePayment(MunicipalBond municipalBond,
 			Date paymentServiceDate, boolean isForPay, boolean applyDiscount)
 			throws EntryDefinitionNotFoundException {
@@ -183,7 +183,7 @@ public class IncomeServiceBean implements IncomeService {
 		return null;
 	}
 
-	@Override
+	@Override  //iva12%
 	public void calculatePayment(List<MunicipalBond> municipalBonds,
 			Date paymentServiceDate, boolean isForPay, boolean applyDiscount)
 			throws EntryDefinitionNotFoundException { 
@@ -212,7 +212,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	}
 
-	@Override
+	@Override//iva12%
 	public void calculatePayment(MunicipalBond municipalBond,
 			Date paymentServiceDate, boolean isForPay, boolean applyDiscount,
 			Object... facts) throws EntryDefinitionNotFoundException {
@@ -291,13 +291,14 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	private Deposit generateDeposit(MunicipalBond municipalBond,
-			Date paymentDate, Person cashier, Long tillId) {
+			Date paymentDate, Person cashier, Long tillId, String externalTransactionId) {
 		Payment payment = new Payment();
 		payment.setDate(paymentDate);
 		payment.setTime(paymentDate);
 		payment.setCashier(cashier);
 		payment.setStatus(FinancialStatus.VALID);
 		payment.setValue(municipalBond.getPaidTotal());
+		payment.setExternalTransactionId(externalTransactionId);
 
 		Query query = entityManager.createNamedQuery("Till.findById");
 		query.setParameter("tillId", tillId);
@@ -329,7 +330,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	@SuppressWarnings("unchecked")
 	public void save(Date paymentDate, List<Long> municipalBondIds,
-			Person cashier, Long tillId) throws Exception {
+			Person cashier, Long tillId, String externalTransactionId) throws Exception {
 		Query query = entityManager
 				.createNamedQuery("MunicipalBond.findSimpleByIds");
 		query.setParameter("municipalBondIds", municipalBondIds);
@@ -338,7 +339,7 @@ public class IncomeServiceBean implements IncomeService {
 		List<Deposit> deposits = new LinkedList<Deposit>();
 		for (MunicipalBond municipalBond : paidMunicipalBonds) {
 			Deposit deposit = generateDeposit(municipalBond, paymentDate,
-					cashier, tillId);
+					cashier, tillId, externalTransactionId);
 			deposits.add(deposit);
 		}
 		save(deposits, null, tillId);

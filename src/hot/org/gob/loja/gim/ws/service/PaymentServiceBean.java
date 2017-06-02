@@ -1,7 +1,12 @@
 package org.gob.loja.gim.ws.service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -13,16 +18,20 @@ import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
+import org.gob.gim.banks.action.BankHome;
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.NotActiveWorkdayException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
 import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
+import org.gob.gim.revenue.action.SolvencyReportHome;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.loja.gim.ws.dto.Bond;
 import org.gob.loja.gim.ws.dto.BondDetail;
@@ -31,6 +40,7 @@ import org.gob.loja.gim.ws.dto.Payout;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.Statement;
 import org.gob.loja.gim.ws.dto.Taxpayer;
+import org.gob.loja.gim.ws.dto.TransactionData;
 import org.gob.loja.gim.ws.dto.Transfer;
 import org.gob.loja.gim.ws.exception.HasNoObligations;
 import org.gob.loja.gim.ws.exception.InvalidPayout;
@@ -40,15 +50,20 @@ import org.gob.loja.gim.ws.exception.NotOpenTill;
 import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 //import org.gob.loja.gim.ws.exception.HasObligationsExpired;
-
+import org.jboss.seam.contexts.Contexts;
+import ec.gob.gim.bank.model.BankingEntityLog;
+import org.richfaces.util.CollectionsUtils;
 import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.commercial.model.OperatingLicense;
 import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Person;
+import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.EMoneyPayment;
 import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.MunicipalBondType;
+import ec.gob.gim.revenue.model.DTO.ReportEmissionDTO;
 import ec.gob.gim.security.model.User;
 
 @Stateless(name = "PaymentService")
@@ -142,12 +157,22 @@ public class PaymentServiceBean implements PaymentService {
 	public Statement findStatement(ServiceRequest request)
 			throws PayoutNotAllowed, TaxpayerNotFound, NotActiveWorkday,
 			HasNoObligations {
+		
+		//ssbHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
+		serverLog = new BankingEntityLog();
+		serverLog.setDateTransaction(new Date());
+		serverLog.setTransactionId(null);
+		serverLog.setMethodUsed("findStatement");
+		serverLog.setBankUsername(request.getUsername());
 		System.out.println("rfarmijosm "+request.getIdentificationNumber()+"\t"+request.getUsername());
 		String identificationNumber = request.getIdentificationNumber();
 		
 		//rfarmijosm 2017-02-06 se copia el codigo de jock de otro branch, impedir pagos con alerta por ws
 		//Boolean AlertPending = ;
 		if (controlAlertResident(identificationNumber)) {
+			serverLog.setMethodCompleted(false);
+			serverLog.setCodeError("PayoutNotAllowed");
+			em.persist(serverLog);
 			throw new PayoutNotAllowed();
 		} else {
 
@@ -160,6 +185,9 @@ public class PaymentServiceBean implements PaymentService {
 			Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer.getId());
 
 			if (inPaymentAgreementBondsNumber > 0) {
+				serverLog.setMethodCompleted(false);
+				serverLog.setCodeError("PayoutNotAllowed");
+				em.persist(serverLog);
 				throw new PayoutNotAllowed();
 			} else {
 				List<Long> pendingBondIds = hasPendingBonds(taxpayer.getId());
@@ -174,6 +202,9 @@ public class PaymentServiceBean implements PaymentService {
 						loadBondsDetail(bonds);
 					} catch (EntryDefinitionNotFoundException e) {
 						e.printStackTrace();
+						serverLog.setMethodCompleted(false);
+						serverLog.setCodeError("PayoutNotAllowed");
+						em.persist(serverLog);
 						throw new PayoutNotAllowed();
 					}
 				}
@@ -181,6 +212,9 @@ public class PaymentServiceBean implements PaymentService {
 				// throw new HasNoObligations();
 				// }
 				Statement statement = new Statement(taxpayer, bonds, workDayDate);
+				serverLog.setMethodCompleted(true);
+				serverLog.setCodeError(null);
+				em.persist(serverLog);
 				return statement;
 			}
 		}
@@ -192,6 +226,13 @@ public class PaymentServiceBean implements PaymentService {
 			InvalidUser, NotActiveWorkday, NotOpenTill, HasNoObligations {
 		// Statement statement = findStatement(request);
 		
+		//bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
+		serverLog = new BankingEntityLog();
+		serverLog.setDateTransaction(new Date());
+		serverLog.setTransactionId(payout.getTransactionId());
+		serverLog.setMethodUsed("registerDeposit");
+		serverLog.setBankUsername(request.getUsername());
+		
 		System.out.println("start PPPPPPPPPPPPPPP");
 		System.out.println(request.getIdentificationNumber()+"\t"+payout.getAmount()+"\t"+payout.getPaymentDate()+"\t"+payout.getBondIds());
 		System.out.println("end o PPPPPPPPPPPPPPP");
@@ -200,16 +241,22 @@ public class PaymentServiceBean implements PaymentService {
 
 		Till till = findTill(cashier.getId());
 		Long tillId = till.getId();
-
 		Date workDayDate = findPaymentDate();
 		try {
 			TillPermission tillPermission = findTillPermission(cashier.getId(),
 					workDayDate);
 			if (tillPermission == null
-					|| tillPermission.getOpeningTime() == null)
+					|| tillPermission.getOpeningTime() == null){
+				serverLog.setMethodCompleted(false);
+				serverLog.setCodeError("NotOpenTill");
+				em.persist(serverLog);
 				throw new NotOpenTill();
+			}
 		} catch (NotOpenTill e) {
 			e.printStackTrace();
+			serverLog.setMethodCompleted(false);
+			serverLog.setCodeError("NotOpenTill");
+			em.persist(serverLog);
 			throw new NotOpenTill();
 		}
 
@@ -230,9 +277,12 @@ public class PaymentServiceBean implements PaymentService {
 						&& totalToPay.compareTo(payout.getAmount()) == 0) {
 					try {
 						incomeService.save(payout.getPaymentDate(),
-								payout.getBondIds(), cashier, tillId);
+								payout.getBondIds(), cashier, tillId, payout.getTransactionId());
 					} catch (Exception e) {
 						e.printStackTrace();
+						serverLog.setMethodCompleted(false);
+						serverLog.setCodeError("InvalidPayout");
+						em.persist(serverLog);
 						throw new InvalidPayout();
 					}
 					em.flush();
@@ -240,17 +290,34 @@ public class PaymentServiceBean implements PaymentService {
 							.findParameter(IncomeServiceBean.PAID_FROM_EXTERNAL_CHANNEL_BOND_STATUS);
 					persistChangeStatus(payout.getBondIds(),
 							paidFromExternalBondStatusId);
+					serverLog.setMethodCompleted(true);
+					serverLog.setCodeError(null);
+					em.persist(serverLog);
 					return true;
 				}
 			}
 		} else {
+			serverLog.setMethodCompleted(false);
+			serverLog.setCodeError("NotActiveWorkday");
+			em.persist(serverLog);
 			throw new NotActiveWorkday();
 		}
+		serverLog.setMethodCompleted(false);
+		serverLog.setCodeError("InvalidPayout");
+		em.persist(serverLog);
 		throw new InvalidPayout();
 	}
 
 	public ClosingStatement findDeposits(ServiceRequest request,
 			Date paymentDate) throws InvalidUser {
+		
+		//bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
+		serverLog = new BankingEntityLog();
+		serverLog.setDateTransaction(new Date());
+		serverLog.setTransactionId(null);
+		serverLog.setMethodUsed("findDeposits");
+		serverLog.setBankUsername(request.getUsername());
+		
 		Person cashier = findCashier(request.getUsername());
 		List<Transfer> transfers = findTransfers(paymentDate, cashier.getId());
 		BigDecimal total = findTotal(paymentDate, cashier.getId());
@@ -260,6 +327,9 @@ public class PaymentServiceBean implements PaymentService {
 		closingStatement.setTotal(total);
 		closingStatement.setTransfers(transfers);
 
+		serverLog.setMethodCompleted(true);
+		serverLog.setCodeError(null);
+		em.persist(serverLog);
 		return closingStatement;
 	}
 
@@ -300,7 +370,9 @@ public class PaymentServiceBean implements PaymentService {
 			return person;
 		} catch (Exception e) {
 		}
-
+		serverLog.setMethodCompleted(false);
+		serverLog.setCodeError("InvalidUser");
+		em.persist(serverLog);
 		throw new InvalidUser();
 
 	}
@@ -728,4 +800,167 @@ public class PaymentServiceBean implements PaymentService {
 		Statement statement = new Statement(taxpayer, bonds, workDayDate);
 		return statement;
 	}
+	
+	/*
+	 * René Ortega
+	 * 2017-04-18
+	 * Metodo de Reverso de pagos desde bancos
+	 */
+	@Override
+	public TransactionData reversePaymentBank(ServiceRequest request,
+			Payout payout) {
+		
+		//bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
+		serverLog = new BankingEntityLog();
+		serverLog.setDateTransaction(new Date());
+		serverLog.setTransactionId(payout.getTransactionId());
+		serverLog.setMethodUsed("queryPayment");
+		serverLog.setBankUsername(request.getUsername());
+		
+		TransactionData ret = new TransactionData();
+		if(payout.getTransactionId().trim().isEmpty()){
+			ret.setTransactionCompleted(Boolean.FALSE);
+			ret.setTransactionMessage(Messages.TRANSACTIONID_EMPTY);
+			serverLog.setMethodCompleted(false);
+			serverLog.setCodeError(Messages.TRANSACTIONID_EMPTY);
+			em.persist(serverLog);
+			return ret;
+		}
+		
+		Query query = this.em.createNativeQuery("SELECT "+ 
+													  "dep.municipalbond_id "+
+												"FROM "+ 
+													"gimprod.payment pay, "+ 
+													"gimprod.deposit dep "+
+												"WHERE "+ 
+													  "dep.payment_id = pay.id AND "+
+													  "pay.externaltransactionid = ?1 "+
+												"ORDER BY dep.municipalbond_id ASC");
+
+		query.setParameter(1, payout.getTransactionId());
+
+		List<BigInteger> bondsForTransaction = query.getResultList();
+		
+		if(bondsForTransaction.isEmpty()){
+			ret.setTransactionCompleted(Boolean.FALSE);
+			ret.setTransactionMessage(Messages.TRANSACTIONID_NOT_FOUND);
+			serverLog.setMethodCompleted(false);
+			serverLog.setCodeError(Messages.TRANSACTIONID_NOT_FOUND);
+			em.persist(serverLog);
+			return ret;
+		}
+		
+		int[] bondsForTransactionAux = new int[bondsForTransaction.size()];
+		
+		for (int i = 0; i < bondsForTransaction.size(); i++) {
+			String s = String.valueOf(bondsForTransaction.get(i).intValue());
+			bondsForTransactionAux[i] = Integer.parseInt(s);
+		}
+		
+		Collections.sort(payout.getBondIds());
+		
+		int[] bondIdsAux = new int[payout.getBondIds().size()];
+		
+		for (int i = 0; i < payout.getBondIds().size(); i++) {
+			bondIdsAux[i] = Integer.parseInt(payout.getBondIds().get(i).toString());
+		}
+
+		Boolean equalsBonds = Arrays.equals(bondsForTransactionAux, bondIdsAux);
+		
+		if(equalsBonds){
+			try {
+				incomeService.reverse(this.findDepositsIdsForReverse(request, payout.getBondIds()),
+					Messages.REVERSED_DESCRIPTION,
+					this.findUserByUsername(request, request.getUsername()).getResident());
+				ret.setTransactionCompleted(Boolean.TRUE);
+				ret.setTransactionMessage(Messages.REVERSED_OK);
+				serverLog.setMethodCompleted(Boolean.TRUE);
+				serverLog.setCodeError(Messages.REVERSED_OK);
+			} catch (ReverseNotAllowedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				ret.setTransactionCompleted(Boolean.FALSE);
+				ret.setTransactionMessage(Messages.REVERSED_NOT_ALLOWED);
+				serverLog.setMethodCompleted(Boolean.FALSE);
+				serverLog.setCodeError(Messages.REVERSED_NOT_ALLOWED);
+			} catch (ReverseAmongPaymentsIsNotAllowedException e) {
+				// TODO Auto-generated catch block
+				ret.setTransactionCompleted(Boolean.FALSE);
+				ret.setTransactionMessage(Messages.REVERSED_NOT_ALLOWED);
+				serverLog.setMethodCompleted(Boolean.FALSE);
+				serverLog.setCodeError(Messages.REVERSED_NOT_ALLOWED);
+				e.printStackTrace();
+			}
+			
+		}else{
+			ret.setTransactionCompleted(Boolean.FALSE);
+			ret.setTransactionMessage(Messages.REVERSED_IDS_ERROR);
+			serverLog.setMethodCompleted(Boolean.FALSE);
+			serverLog.setCodeError(Messages.REVERSED_IDS_ERROR);
+			
+		}
+		//serverLog.setMethodCompleted(false);
+		//serverLog.setCodeError(Messages.TRANSACTIONID_NOT_FOUND);
+		em.persist(serverLog);
+		return ret;
+	}
+	
+	/**
+	 * @author macartuche
+	 * 
+	 */
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public TransactionData queryPayment(ServiceRequest request, String transactionId){
+		
+		//bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
+		serverLog = new BankingEntityLog();
+		serverLog.setDateTransaction(new Date());
+		serverLog.setTransactionId(transactionId);
+		serverLog.setMethodUsed("queryPayment");
+		serverLog.setBankUsername(request.getUsername());
+		
+		TransactionData data = new TransactionData();
+		
+		if(transactionId.trim().isEmpty()){
+			data.setTransactionCompleted(Boolean.FALSE);
+			data.setTransactionMessage(Messages.TRANSACTIONID_EMPTY);
+			
+			serverLog.setMethodCompleted(true);
+			serverLog.setCodeError(null);
+			em.persist(serverLog);
+			return data;
+		}
+		
+		Query query = em.createNamedQuery("Deposit.findByExternalTransaccionId");
+		query.setParameter("transactionId", transactionId);
+		List<Deposit> deposits = query.getResultList();
+		if(deposits.isEmpty()){
+			data.setTransactionCompleted(Boolean.FALSE);
+			data.setTransactionMessage(Messages.PAYMENT_NOT_REALIZED + transactionId);
+		}else{
+			data.setTransactionCompleted(Boolean.TRUE);
+			data.setTransactionMessage(Messages.PAYMENT_REALIZED + transactionId);
+		}
+		serverLog.setMethodCompleted(true);
+		serverLog.setCodeError(null);
+		em.persist(serverLog);
+		return data;
+	}
+	
+	//Jock Samaniego
+	//Para guardar los Logs de transacciones bancarias
+	
+	private BankingEntityLog serverLog;
+	BankHome bHome;
+
+	public BankingEntityLog getServerLog() {
+		return serverLog;
+	}
+
+	public void setServerLog(BankingEntityLog serverLog) {
+		this.serverLog = serverLog;
+	}
+	
 }
