@@ -80,6 +80,7 @@
 					entryId="#{_entry.id}" 
 					code="#{_entry.code}"
 					entry="#{_entry}"
+					rendered="#{_entry.isActive}"
 					reRender="#{id}-reasonField, #{id}-entryField, #{id}-nameField 
 						#{not empty reRender ? ',' : ''} #{not empty reRender ? reRender : ''}"/>
 			</rich:column>
