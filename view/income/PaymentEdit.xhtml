@@ -181,9 +181,9 @@
 
 					<a:outputPanel id="alertPanel" ajaxRendered="true">
 						<a:commandLink id="alertField"
-							value="#{messages['alert.pendingAlerts']}"
+							value="#{paymentHome.blocketMessage}"
 							rendered="#{paymentHome.pendingAlerts.size()==0 ? false : true}"
-							style="font-size:50px; font-weight:bold;color:red" styleClass="center"
+							style="font-size:40px; font-weight:bold;color:#{paymentHome.colorMessage}" styleClass="center"
 							reRender="alertListPanel"
 							oncomplete="Richfaces.showModalPanel('alertListPanel')">
 						</a:commandLink>
@@ -234,7 +234,7 @@
 				<div style="clear: both" />
 			</rich:panel>
 
-			<a:outputPanel id="municipalBondsPanel" ajaxRendered="true">
+			<a:outputPanel id="municipalBondsPanel" ajaxRendered="true" rendered="#{!paymentHome.isBlocketToCollect}">
 				<rich:panel style="margin-top:5px;"
 					rendered="#{empty paymentHome.municipalBondItems and empty paymentHome.inPaymentAgreementBonds and not empty paymentHome.resident}">
 					<h:outputText
