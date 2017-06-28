@@ -142,19 +142,19 @@ public class Infractions {
 		this.archived = archived;
 	}
 
-	public ItemCatalogx getType() {
+	public ItemCatalog getType() {
 		return type;
 	}
 
-	public void setType(ItemCatalogx type) {
+	public void setType(ItemCatalog type) {
 		this.type = type;
 	}
 
-	public ItemCatalogx getStatus() {
+	public ItemCatalog getStatus() {
 		return status;
 	}
 
-	public void setStatus(ItemCatalogx status) {
+	public void setStatus(ItemCatalog status) {
 		this.status = status;
 	}
 

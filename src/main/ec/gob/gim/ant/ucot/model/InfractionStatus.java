@@ -79,11 +79,11 @@ public class InfractionStatus {
 		this.statusDate = statusDate;
 	}
 
-	public ItemCatalogx getStatus() {
+	public ItemCatalog getStatus() {
 		return status;
 	}
 
-	public void setStatus(ItemCatalogx status) {
+	public void setStatus(ItemCatalog status) {
 		this.status = status;
 	}
 

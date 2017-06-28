@@ -86,12 +86,12 @@ public class Bulletin {
 	}
 
 
-	public ItemCatalogx getType() {
+	public ItemCatalog getType() {
 		return type;
 	}
 
 
-	public void setType(ItemCatalogx type) {
+	public void setType(ItemCatalog type) {
 		this.type = type;
 	}
 }//end Block
