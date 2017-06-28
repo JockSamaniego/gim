@@ -68,6 +68,9 @@ public class Infractions {
 	@JoinColumn(name="statusitem_id")
 	private ItemCatalog status;
 	
+
+	@ManyToOne
+	@JoinColumn(name="bulletin_id")
 	private Bulletin bulletin;
 
 	public Long getId() {

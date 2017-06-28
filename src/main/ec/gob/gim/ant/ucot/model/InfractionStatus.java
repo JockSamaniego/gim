@@ -51,7 +51,7 @@ public class InfractionStatus {
 	private ItemCatalog status;
 
 	@ManyToOne
-	@JoinColumn(name="statusitem_id")
+	@JoinColumn(name="infraction_id")
 	private Infractions infraction;
 	 
 
