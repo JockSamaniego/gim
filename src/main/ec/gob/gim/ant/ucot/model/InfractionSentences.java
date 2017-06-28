@@ -12,6 +12,8 @@ import javax.persistence.TableGenerator;
 
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.common.model.ItemCatalog;
+
 /**
  * 
  * @author mack
@@ -80,11 +82,11 @@ public class InfractionSentences {
 		this.description = description;
 	}
 
-	public ItemCatalog getType() {
+	public ItemCatalogx getType() {
 		return type;
 	}
 
-	public void setType(ItemCatalog type) {
+	public void setType(ItemCatalogx type) {
 		this.type = type;
 	} 
 	

@@ -15,6 +15,8 @@ import javax.persistence.TableGenerator;
 
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.common.model.ItemCatalog;
+
 /**
  * 
  * @author mack
@@ -77,11 +79,11 @@ public class InfractionStatus {
 		this.statusDate = statusDate;
 	}
 
-	public ItemCatalog getStatus() {
+	public ItemCatalogx getStatus() {
 		return status;
 	}
 
-	public void setStatus(ItemCatalog status) {
+	public void setStatus(ItemCatalogx status) {
 		this.status = status;
 	}
 

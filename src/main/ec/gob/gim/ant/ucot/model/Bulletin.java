@@ -9,11 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne; 
 import javax.persistence.TableGenerator;
 
 import org.hibernate.envers.Audited;
+
+import ec.gob.gim.common.model.ItemCatalog;
 
 /**
  * 
@@ -85,12 +86,12 @@ public class Bulletin {
 	}
 
 
-	public ItemCatalog getType() {
+	public ItemCatalogx getType() {
 		return type;
 	}
 
 
-	public void setType(ItemCatalog type) {
+	public void setType(ItemCatalogx type) {
 		this.type = type;
 	}
 }//end Block

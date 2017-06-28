@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.envers.Audited;
+
+import ec.gob.gim.common.model.ItemCatalog;
  
 
 /**
@@ -140,19 +142,19 @@ public class Infractions {
 		this.archived = archived;
 	}
 
-	public ItemCatalog getType() {
+	public ItemCatalogx getType() {
 		return type;
 	}
 
-	public void setType(ItemCatalog type) {
+	public void setType(ItemCatalogx type) {
 		this.type = type;
 	}
 
-	public ItemCatalog getStatus() {
+	public ItemCatalogx getStatus() {
 		return status;
 	}
 
-	public void setStatus(ItemCatalog status) {
+	public void setStatus(ItemCatalogx status) {
 		this.status = status;
 	}
 

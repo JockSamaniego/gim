@@ -27,7 +27,7 @@ import ec.gob.gim.common.model.Resident;
 public class Agent {
 
 	@Id
-	@GeneratedValue(generator="BulletinGenerator",strategy=GenerationType.TABLE)
+	@GeneratedValue(generator="AgentGenerator",strategy=GenerationType.TABLE)
 	private Long id;
 	
 	@Column(nullable=false, length=30)
