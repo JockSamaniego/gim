@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne; 
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 
@@ -47,10 +49,12 @@ public class Bulletin {
 	@JoinColumn(name="itemcatalog_id")
 	private ItemCatalog type;
 	
-	@Column(nullable=false)
+	@Temporal(TemporalType.DATE)
 	private Date creationDate;
 	
-
+	@Temporal(TemporalType.TIME)
+	private Date creationTime;
+	
 	@ManyToOne
 	@JoinColumn(name="agent_id")
 	private Agent agent;
@@ -94,4 +98,26 @@ public class Bulletin {
 	public void setType(ItemCatalog type) {
 		this.type = type;
 	}
-}//end Block
+
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+
+	public Date getCreationTime() {
+		return creationTime;
+	}
+
+
+	public void setCreationTime(Date creationTime) {
+		this.creationTime = creationTime;
+	}
+	
+	
+}//

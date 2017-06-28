@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 
@@ -49,8 +51,11 @@ public class Infractions {
 	@Column(length=10)
 	private String numeral;
 	
-	@Column(nullable=false)
+	@Temporal(TemporalType.DATE)
 	private Date citationDate;
+	
+	@Temporal(TemporalType.TIME)
+	private Date citationTime;
 	
 	private Boolean inPhysic;
 	

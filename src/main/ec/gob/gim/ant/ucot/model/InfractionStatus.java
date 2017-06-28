@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 
@@ -42,9 +44,11 @@ public class InfractionStatus {
 	@Column(nullable=false)
 	private BigInteger serial;
 
-	
-	@Column(nullable=false)
+	@Temporal(TemporalType.DATE)
 	private Date statusDate;
+	
+	@Temporal(TemporalType.TIME)
+	private Date statusTime;
 	
 	@ManyToOne
 	@JoinColumn(name="statusitem_id")
@@ -94,6 +98,15 @@ public class InfractionStatus {
 	public void setInfraction(Infractions infraction) {
 		this.infraction = infraction;
 	}
+
+	public Date getStatusTime() {
+		return statusTime;
+	}
+
+	public void setStatusTime(Date statusTime) {
+		this.statusTime = statusTime;
+	}
+	
 	
 	
 }

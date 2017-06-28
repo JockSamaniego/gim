@@ -49,7 +49,6 @@ public class InfractionSentences {
 	@JoinColumn(name="itemcatalog_id")
 	private ItemCatalog type;
 	 
-
 	public Long getId() {
 		return id;
 	}
@@ -89,11 +88,6 @@ public class InfractionSentences {
 	public void setType(ItemCatalog type) {
 		this.type = type;
 	} 
-	
-	
 }
 	
-	
-	
-	
-	
+
