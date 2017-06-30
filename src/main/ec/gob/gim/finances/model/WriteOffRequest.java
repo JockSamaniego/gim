@@ -174,5 +174,21 @@ public class WriteOffRequest {
 	public void setWriteOffType(WriteOffType writeOffType) {
 		this.writeOffType = writeOffType;
 	}
+	
+	public String getDetailEmission() {
+		return detailEmission;
+	}
+
+	public void setDetailEmission(String detailEmission) {
+		this.detailEmission = detailEmission;
+	}
+
+	public Resident getIssueTo() {
+		return issueTo;
+	}
+
+	public void setIssueTo(Resident issueTo) {
+		this.issueTo = issueTo;
+	}
 
 }

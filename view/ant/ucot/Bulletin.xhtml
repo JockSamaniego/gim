@@ -1,0 +1,153 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Bulletin Details</f:facet>
+
+
+        <s:decorate id="creationDate" template="layout/display.xhtml">
+            <ui:define name="label">Creation date</ui:define>
+            <h:outputText value="#{bulletinHome.instance.creationDate}">
+                <s:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="creationTime" template="layout/display.xhtml">
+            <ui:define name="label">Creation time</ui:define>
+            <h:outputText value="#{bulletinHome.instance.creationTime}">
+                <s:convertDateTime type="time"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="endNumber" template="layout/display.xhtml">
+            <ui:define name="label">End number</ui:define>
+            <h:outputText value="#{bulletinHome.instance.endNumber}"/>
+        </s:decorate>
+
+        <s:decorate id="startNumber" template="layout/display.xhtml">
+            <ui:define name="label">Start number</ui:define>
+            <h:outputText value="#{bulletinHome.instance.startNumber}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/BulletinEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty bulletinFrom ? 'BulletinList' : bulletinFrom}.xhtml"
+                    id="done"
+                 value="Done"/>
+
+    </div>
+
+    <rich:tabPanel switchType="ajax">
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Agent</h:panelGroup>
+        </f:facet>
+    <div class="association" id="agentParent">
+
+        <h:outputText value="There is no agent associated with this bulletin."
+                   rendered="#{bulletinHome.instance.agent == null}"/>
+
+        <rich:dataTable var="_agent"
+                   value="#{bulletinHome.instance.agent}"
+                rendered="#{bulletinHome.instance.agent != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="agentTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_agent.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Agent code</f:facet>
+                <h:outputText value="#{_agent.agentCode}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Resident id</f:facet>
+                <h:outputText value="#{_agent.resident.id}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewagent"
+                     value="View"
+                      view="/Agent.xhtml">
+                    <f:param name="agentId"
+                           value="#{_agent.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Type</h:panelGroup>
+        </f:facet>
+    <div class="association" id="typeParent">
+
+        <h:outputText value="There is no type associated with this bulletin."
+                   rendered="#{bulletinHome.instance.type == null}"/>
+
+        <rich:dataTable var="_itemCatalog"
+                   value="#{bulletinHome.instance.type}"
+                rendered="#{bulletinHome.instance.type != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="typeTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_itemCatalog.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Catalog id</f:facet>
+                <h:outputText value="#{_itemCatalog.catalog.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Catalog code</f:facet>
+                <h:outputText value="#{_itemCatalog.catalogCode}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Code</f:facet>
+                <h:outputText value="#{_itemCatalog.code}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_itemCatalog.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_itemCatalog.name}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewitemCatalog"
+                     value="View"
+                      view="/ItemCatalog.xhtml">
+                    <f:param name="itemCatalogId"
+                           value="#{_itemCatalog.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

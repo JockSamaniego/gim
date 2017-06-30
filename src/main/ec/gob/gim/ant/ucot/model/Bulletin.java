@@ -118,6 +118,16 @@ public class Bulletin {
 	public void setCreationTime(Date creationTime) {
 		this.creationTime = creationTime;
 	}
+
+
+	public Agent getAgent() {
+		return agent;
+	}
+
+
+	public void setAgent(Agent agent) {
+		this.agent = agent;
+	}
 	
 	
 }//

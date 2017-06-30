@@ -1,0 +1,786 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="writeOffDetail" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{writeOffDetailHome.managed ? 'Edit' : 'Add'} Write off detail</f:facet>
+
+
+
+            <s:decorate id="monthField" template="layout/edit.xhtml">
+                <ui:define name="label">Month</ui:define>
+                <h:inputText id="month"
+                          value="#{writeOffDetailHome.instance.month}">
+                    <a:support event="onblur" reRender="monthField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="monthTypeField" template="layout/edit.xhtml">
+                <ui:define name="label">Month type</ui:define>
+                <h:inputText id="monthType"
+                          value="#{writeOffDetailHome.instance.monthType}">
+                    <a:support event="onblur" reRender="monthTypeField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="newAmountField" template="layout/edit.xhtml">
+                <ui:define name="label">New amount</ui:define>
+                <h:inputText id="newAmount"
+                          value="#{writeOffDetailHome.instance.newAmount}"
+                           size="26">
+                    <a:support event="onblur" reRender="newAmountField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="newCurrentReadingField" template="layout/edit.xhtml">
+                <ui:define name="label">New current reading</ui:define>
+                <h:inputText id="newCurrentReading"
+                          value="#{writeOffDetailHome.instance.newCurrentReading}">
+                    <a:support event="onblur" reRender="newCurrentReadingField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+
+            <s:decorate id="newPreviousReadingField" template="layout/edit.xhtml">
+                <ui:define name="label">New previous reading</ui:define>
+                <h:inputText id="newPreviousReading"
+                          value="#{writeOffDetailHome.instance.newPreviousReading}">
+                    <a:support event="onblur" reRender="newPreviousReadingField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="oldAmountField" template="layout/edit.xhtml">
+                <ui:define name="label">Old amount</ui:define>
+                <h:inputText id="oldAmount"
+                          value="#{writeOffDetailHome.instance.oldAmount}"
+                           size="26">
+                    <a:support event="onblur" reRender="oldAmountField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="oldCurrentReadingField" template="layout/edit.xhtml">
+                <ui:define name="label">Old current reading</ui:define>
+                <h:inputText id="oldCurrentReading"
+                          value="#{writeOffDetailHome.instance.oldCurrentReading}">
+                    <a:support event="onblur" reRender="oldCurrentReadingField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+
+            <s:decorate id="oldPreviousReadingField" template="layout/edit.xhtml">
+                <ui:define name="label">Old previous reading</ui:define>
+                <h:inputText id="oldPreviousReading"
+                          value="#{writeOffDetailHome.instance.oldPreviousReading}">
+                    <a:support event="onblur" reRender="oldPreviousReadingField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+
+            <s:decorate id="yearField" template="layout/edit.xhtml">
+                <ui:define name="label">Year</ui:define>
+                <h:inputText id="year"
+                          value="#{writeOffDetailHome.instance.year}">
+                    <a:support event="onblur" reRender="yearField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{writeOffDetailHome.persist}"
+                       disabled="#{!writeOffDetailHome.wired}"
+                       rendered="#{!writeOffDetailHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{writeOffDetailHome.update}"
+                       rendered="#{writeOffDetailHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{writeOffDetailHome.remove}"
+                      immediate="true"
+                       rendered="#{writeOffDetailHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/WriteOffDetail.xhtml"
+                rendered="#{writeOffDetailHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty writeOffDetailFrom ? 'WriteOffDetailList' : writeOffDetailFrom}.xhtml"
+                rendered="#{!writeOffDetailHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="New municipal bond">
+    <div class="association" id="newMunicipalBondParent">
+
+        <h:outputText value="There is no newMunicipalBond associated with this writeOffDetail."
+                   rendered="#{writeOffDetailHome.instance.newMunicipalBond == null}"/>
+
+        <rich:dataTable var="_municipalBond"
+                   value="#{writeOffDetailHome.instance.newMunicipalBond}"
+                rendered="#{writeOffDetailHome.instance.newMunicipalBond != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="newMunicipalBondTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_municipalBond.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Address</f:facet>
+                <h:outputText value="#{_municipalBond.address}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Adjunct id</f:facet>
+                <h:outputText value="#{_municipalBond.adjunct.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Apply interest</f:facet>
+                <h:outputText value="#{_municipalBond.applyInterest}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Balance</f:facet>
+                <h:outputText value="#{_municipalBond.balance}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Base</f:facet>
+                <h:outputText value="#{_municipalBond.base}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Bond address</f:facet>
+                <h:outputText value="#{_municipalBond.bondAddress}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Creation date</f:facet>
+                <h:outputText value="#{_municipalBond.creationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Creation time</f:facet>
+                <h:outputText value="#{_municipalBond.creationTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Credit note id</f:facet>
+                <h:outputText value="#{_municipalBond.creditNote.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_municipalBond.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Discount</f:facet>
+                <h:outputText value="#{_municipalBond.discount}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Emision date</f:facet>
+                <h:outputText value="#{_municipalBond.emisionDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Emision period</f:facet>
+                <h:outputText value="#{_municipalBond.emisionPeriod}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Emision time</f:facet>
+                <h:outputText value="#{_municipalBond.emisionTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Emitter id</f:facet>
+                <h:outputText value="#{_municipalBond.emitter.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Entry id</f:facet>
+                <h:outputText value="#{_municipalBond.entry.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Exempt</f:facet>
+                <h:outputText value="#{_municipalBond.exempt}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Expiration date</f:facet>
+                <h:outputText value="#{_municipalBond.expirationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Fiscal period id</f:facet>
+                <h:outputText value="#{_municipalBond.fiscalPeriod.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Grouping code</f:facet>
+                <h:outputText value="#{_municipalBond.groupingCode}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Institution id</f:facet>
+                <h:outputText value="#{_municipalBond.institution.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Interest</f:facet>
+                <h:outputText value="#{_municipalBond.interest}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Interest voucher</f:facet>
+                <h:outputText value="#{_municipalBond.interestVoucher}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Internal tramit</f:facet>
+                <h:outputText value="#{_municipalBond.internalTramit}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Is no pasive subject</f:facet>
+                <h:outputText value="#{_municipalBond.isNoPasiveSubject}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Legal status</f:facet>
+                <h:outputText value="#{_municipalBond.legalStatus}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Liquidation date</f:facet>
+                <h:outputText value="#{_municipalBond.liquidationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Liquidation time</f:facet>
+                <h:outputText value="#{_municipalBond.liquidationTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Municipal bond status id</f:facet>
+                <h:outputText value="#{_municipalBond.municipalBondStatus.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Municipal bond type</f:facet>
+                <h:outputText value="#{_municipalBond.municipalBondType}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Non taxable total</f:facet>
+                <h:outputText value="#{_municipalBond.nonTaxableTotal}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Notification id</f:facet>
+                <h:outputText value="#{_municipalBond.notification.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Number</f:facet>
+                <h:outputText value="#{_municipalBond.number}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Originator id</f:facet>
+                <h:outputText value="#{_municipalBond.originator.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Paid total</f:facet>
+                <h:outputText value="#{_municipalBond.paidTotal}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Payment agreement id</f:facet>
+                <h:outputText value="#{_municipalBond.paymentAgreement.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Previous payment</f:facet>
+                <h:outputText value="#{_municipalBond.previousPayment}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Printings number</f:facet>
+                <h:outputText value="#{_municipalBond.printingsNumber}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reference</f:facet>
+                <h:outputText value="#{_municipalBond.reference}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Resident id</f:facet>
+                <h:outputText value="#{_municipalBond.resident.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reversed date</f:facet>
+                <h:outputText value="#{_municipalBond.reversedDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reversed resolution</f:facet>
+                <h:outputText value="#{_municipalBond.reversedResolution}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reversed time</f:facet>
+                <h:outputText value="#{_municipalBond.reversedTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Service date</f:facet>
+                <h:outputText value="#{_municipalBond.serviceDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Surcharge</f:facet>
+                <h:outputText value="#{_municipalBond.surcharge}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Surcharge voucher</f:facet>
+                <h:outputText value="#{_municipalBond.surchargeVoucher}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Taxable total</f:facet>
+                <h:outputText value="#{_municipalBond.taxableTotal}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Taxes total</f:facet>
+                <h:outputText value="#{_municipalBond.taxesTotal}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Time period id</f:facet>
+                <h:outputText value="#{_municipalBond.timePeriod.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Value</f:facet>
+                <h:outputText value="#{_municipalBond.value}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Receipt id</f:facet>
+                <h:outputText value="#{_municipalBond.receipt.id}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{writeOffDetailHome.instance.newMunicipalBond != null ? 'changeParent' : 'selectParent'}" value="#{writeOffDetailHome.instance.newMunicipalBond != null ? 'Change' : 'Select'} newMunicipalBond"
+                       view="/MunicipalBondList.xhtml">
+                <f:param name="from" value="WriteOffDetailEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab label="Old municipal bond">
+    <div class="association" id="oldMunicipalBondParent">
+
+        <h:outputText value="There is no oldMunicipalBond associated with this writeOffDetail."
+                   rendered="#{writeOffDetailHome.instance.oldMunicipalBond == null}"/>
+
+        <rich:dataTable var="_municipalBond"
+                   value="#{writeOffDetailHome.instance.oldMunicipalBond}"
+                rendered="#{writeOffDetailHome.instance.oldMunicipalBond != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="oldMunicipalBondTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_municipalBond.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Address</f:facet>
+                <h:outputText value="#{_municipalBond.address}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Adjunct id</f:facet>
+                <h:outputText value="#{_municipalBond.adjunct.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Apply interest</f:facet>
+                <h:outputText value="#{_municipalBond.applyInterest}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Balance</f:facet>
+                <h:outputText value="#{_municipalBond.balance}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Base</f:facet>
+                <h:outputText value="#{_municipalBond.base}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Bond address</f:facet>
+                <h:outputText value="#{_municipalBond.bondAddress}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Creation date</f:facet>
+                <h:outputText value="#{_municipalBond.creationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Creation time</f:facet>
+                <h:outputText value="#{_municipalBond.creationTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Credit note id</f:facet>
+                <h:outputText value="#{_municipalBond.creditNote.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_municipalBond.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Discount</f:facet>
+                <h:outputText value="#{_municipalBond.discount}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Emision date</f:facet>
+                <h:outputText value="#{_municipalBond.emisionDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Emision period</f:facet>
+                <h:outputText value="#{_municipalBond.emisionPeriod}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Emision time</f:facet>
+                <h:outputText value="#{_municipalBond.emisionTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Emitter id</f:facet>
+                <h:outputText value="#{_municipalBond.emitter.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Entry id</f:facet>
+                <h:outputText value="#{_municipalBond.entry.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Exempt</f:facet>
+                <h:outputText value="#{_municipalBond.exempt}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Expiration date</f:facet>
+                <h:outputText value="#{_municipalBond.expirationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Fiscal period id</f:facet>
+                <h:outputText value="#{_municipalBond.fiscalPeriod.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Grouping code</f:facet>
+                <h:outputText value="#{_municipalBond.groupingCode}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Institution id</f:facet>
+                <h:outputText value="#{_municipalBond.institution.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Interest</f:facet>
+                <h:outputText value="#{_municipalBond.interest}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Interest voucher</f:facet>
+                <h:outputText value="#{_municipalBond.interestVoucher}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Internal tramit</f:facet>
+                <h:outputText value="#{_municipalBond.internalTramit}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Is no pasive subject</f:facet>
+                <h:outputText value="#{_municipalBond.isNoPasiveSubject}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Legal status</f:facet>
+                <h:outputText value="#{_municipalBond.legalStatus}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Liquidation date</f:facet>
+                <h:outputText value="#{_municipalBond.liquidationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Liquidation time</f:facet>
+                <h:outputText value="#{_municipalBond.liquidationTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Municipal bond status id</f:facet>
+                <h:outputText value="#{_municipalBond.municipalBondStatus.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Municipal bond type</f:facet>
+                <h:outputText value="#{_municipalBond.municipalBondType}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Non taxable total</f:facet>
+                <h:outputText value="#{_municipalBond.nonTaxableTotal}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Notification id</f:facet>
+                <h:outputText value="#{_municipalBond.notification.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Number</f:facet>
+                <h:outputText value="#{_municipalBond.number}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Originator id</f:facet>
+                <h:outputText value="#{_municipalBond.originator.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Paid total</f:facet>
+                <h:outputText value="#{_municipalBond.paidTotal}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Payment agreement id</f:facet>
+                <h:outputText value="#{_municipalBond.paymentAgreement.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Previous payment</f:facet>
+                <h:outputText value="#{_municipalBond.previousPayment}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Printings number</f:facet>
+                <h:outputText value="#{_municipalBond.printingsNumber}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reference</f:facet>
+                <h:outputText value="#{_municipalBond.reference}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Resident id</f:facet>
+                <h:outputText value="#{_municipalBond.resident.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reversed date</f:facet>
+                <h:outputText value="#{_municipalBond.reversedDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reversed resolution</f:facet>
+                <h:outputText value="#{_municipalBond.reversedResolution}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reversed time</f:facet>
+                <h:outputText value="#{_municipalBond.reversedTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Service date</f:facet>
+                <h:outputText value="#{_municipalBond.serviceDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Surcharge</f:facet>
+                <h:outputText value="#{_municipalBond.surcharge}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Surcharge voucher</f:facet>
+                <h:outputText value="#{_municipalBond.surchargeVoucher}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Taxable total</f:facet>
+                <h:outputText value="#{_municipalBond.taxableTotal}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Taxes total</f:facet>
+                <h:outputText value="#{_municipalBond.taxesTotal}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Time period id</f:facet>
+                <h:outputText value="#{_municipalBond.timePeriod.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Value</f:facet>
+                <h:outputText value="#{_municipalBond.value}">
+                    <f:convertNumber/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Receipt id</f:facet>
+                <h:outputText value="#{_municipalBond.receipt.id}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{writeOffDetailHome.instance.oldMunicipalBond != null ? 'changeParent' : 'selectParent'}" value="#{writeOffDetailHome.instance.oldMunicipalBond != null ? 'Change' : 'Select'} oldMunicipalBond"
+                       view="/MunicipalBondList.xhtml">
+                <f:param name="from" value="WriteOffDetailEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab label="Write off request">
+    <div class="association" id="writeOffRequestParent">
+
+        <h:outputText value="There is no writeOffRequest associated with this writeOffDetail."
+                   rendered="#{writeOffDetailHome.instance.writeOffRequest == null}"/>
+
+        <rich:dataTable var="_writeOffRequest"
+                   value="#{writeOffDetailHome.instance.writeOffRequest}"
+                rendered="#{writeOffDetailHome.instance.writeOffRequest != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="writeOffRequestTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_writeOffRequest.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Approved by id</f:facet>
+                <h:outputText value="#{_writeOffRequest.approvedBy.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Date</f:facet>
+                <h:outputText value="#{_writeOffRequest.date}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Detail</f:facet>
+                <h:outputText value="#{_writeOffRequest.detail}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Detail emission</f:facet>
+                <h:outputText value="#{_writeOffRequest.detailEmission}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Internal process number</f:facet>
+                <h:outputText value="#{_writeOffRequest.internalProcessNumber}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Is active</f:facet>
+                <h:outputText value="#{_writeOffRequest.isActive}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Issue to id</f:facet>
+                <h:outputText value="#{_writeOffRequest.issueTo.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Made by id</f:facet>
+                <h:outputText value="#{_writeOffRequest.madeBy.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Resident id</f:facet>
+                <h:outputText value="#{_writeOffRequest.resident.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Sequence manager id</f:facet>
+                <h:outputText value="#{_writeOffRequest.sequenceManager.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Water supply id</f:facet>
+                <h:outputText value="#{_writeOffRequest.waterSupply.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Write off type id</f:facet>
+                <h:outputText value="#{_writeOffRequest.writeOffType.id}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{writeOffDetailHome.instance.writeOffRequest != null ? 'changeParent' : 'selectParent'}" value="#{writeOffDetailHome.instance.writeOffRequest != null ? 'Change' : 'Select'} writeOffRequest"
+                       view="/WriteOffRequestList.xhtml">
+                <f:param name="from" value="WriteOffDetailEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,92 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="writeOffType" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{writeOffTypeHome.managed ? 'Edit' : 'Add'} Write off type</f:facet>
+
+
+
+            <s:decorate id="detailField" template="layout/edit.xhtml">
+                <ui:define name="label">Detail</ui:define>
+                <h:inputText id="detail"
+                           size="100"
+                      maxlength="100"
+                          value="#{writeOffTypeHome.instance.detail}">
+                    <a:support event="onblur" reRender="detailField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="isActiveField" template="layout/edit.xhtml">
+                <ui:define name="label">Is active</ui:define>
+                <h:selectBooleanCheckbox id="isActive"
+                                      value="#{writeOffTypeHome.instance.isActive}"/>
+            </s:decorate>
+
+
+            <s:decorate id="nameField" template="layout/edit.xhtml">
+                <ui:define name="label">Name</ui:define>
+                <h:inputText id="name"
+                           size="50"
+                      maxlength="50"
+                          value="#{writeOffTypeHome.instance.name}">
+                    <a:support event="onblur" reRender="nameField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{writeOffTypeHome.persist}"
+                       disabled="#{!writeOffTypeHome.wired}"
+                       rendered="#{!writeOffTypeHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{writeOffTypeHome.update}"
+                       rendered="#{writeOffTypeHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{writeOffTypeHome.remove}"
+                      immediate="true"
+                       rendered="#{writeOffTypeHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/WriteOffType.xhtml"
+                rendered="#{writeOffTypeHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty writeOffTypeFrom ? 'WriteOffTypeList' : writeOffTypeFrom}.xhtml"
+                rendered="#{!writeOffTypeHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

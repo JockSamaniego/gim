@@ -1,0 +1,299 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="infractions" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{infractionsHome.managed ? 'Edit' : 'Add'} Infractions</f:facet>
+
+
+
+            <s:decorate id="archivedField" template="layout/edit.xhtml">
+                <ui:define name="label">Archived</ui:define>
+                <h:selectBooleanCheckbox id="archived"
+                                      value="#{infractionsHome.instance.archived}"/>
+            </s:decorate>
+
+
+            <s:decorate id="articleField" template="layout/edit.xhtml">
+                <ui:define name="label">Article</ui:define>
+                <h:inputText id="article"
+                           size="10"
+                      maxlength="10"
+                          value="#{infractionsHome.instance.article}">
+                    <a:support event="onblur" reRender="articleField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+
+            <s:decorate id="citationDateField" template="layout/edit.xhtml">
+                <ui:define name="label">Citation date</ui:define>
+                <rich:calendar id="citationDate"
+                          value="#{infractionsHome.instance.citationDate}" datePattern="MM/dd/yyyy" />
+            </s:decorate>
+
+
+            <s:decorate id="citationTimeField" template="layout/edit.xhtml">
+                <ui:define name="label">Citation time</ui:define>
+                <h:inputText id="citationTime"
+                           size="5"
+                          value="#{infractionsHome.instance.citationTime}">
+                    <s:convertDateTime type="time"/>
+                    <a:support event="onblur" reRender="citationTimeField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="identificationField" template="layout/edit.xhtml">
+                <ui:define name="label">Identification</ui:define>
+                <h:inputTextarea id="identification"
+                               cols="80"
+                               rows="3"
+                              value="#{infractionsHome.instance.identification}"/>
+            </s:decorate>
+
+
+            <s:decorate id="inPhysicField" template="layout/edit.xhtml">
+                <ui:define name="label">In physic</ui:define>
+                <h:selectBooleanCheckbox id="inPhysic"
+                                      value="#{infractionsHome.instance.inPhysic}"/>
+            </s:decorate>
+
+
+            <s:decorate id="licensePlateField" template="layout/edit.xhtml">
+                <ui:define name="label">License plate</ui:define>
+                <h:inputTextarea id="licensePlate"
+                               cols="80"
+                               rows="3"
+                              value="#{infractionsHome.instance.licensePlate}"/>
+            </s:decorate>
+
+
+            <s:decorate id="numeralField" template="layout/edit.xhtml">
+                <ui:define name="label">Numeral</ui:define>
+                <h:inputText id="numeral"
+                           size="10"
+                      maxlength="10"
+                          value="#{infractionsHome.instance.numeral}">
+                    <a:support event="onblur" reRender="numeralField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="serialField" template="layout/edit.xhtml">
+                <ui:define name="label">Serial</ui:define>
+                <h:inputText id="serial"
+                       required="true"
+                          value="#{infractionsHome.instance.serial}">
+                    <a:support event="onblur" reRender="serialField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{infractionsHome.persist}"
+                       disabled="#{!infractionsHome.wired}"
+                       rendered="#{!infractionsHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{infractionsHome.update}"
+                       rendered="#{infractionsHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{infractionsHome.remove}"
+                      immediate="true"
+                       rendered="#{infractionsHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/Infractions.xhtml"
+                rendered="#{infractionsHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty infractionsFrom ? 'InfractionsList' : infractionsFrom}.xhtml"
+                rendered="#{!infractionsHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="Bulletin">
+    <div class="association" id="bulletinParent">
+
+        <h:outputText value="There is no bulletin associated with this infractions."
+                   rendered="#{infractionsHome.instance.bulletin == null}"/>
+
+        <rich:dataTable var="_bulletin"
+                   value="#{infractionsHome.instance.bulletin}"
+                rendered="#{infractionsHome.instance.bulletin != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="bulletinTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_bulletin.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Agent id</f:facet>
+                <h:outputText value="#{_bulletin.agent.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Creation date</f:facet>
+                <h:outputText value="#{_bulletin.creationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Creation time</f:facet>
+                <h:outputText value="#{_bulletin.creationTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">End number</f:facet>
+                <h:outputText value="#{_bulletin.endNumber}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Start number</f:facet>
+                <h:outputText value="#{_bulletin.startNumber}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Type id</f:facet>
+                <h:outputText value="#{_bulletin.type.id}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{infractionsHome.instance.bulletin != null ? 'changeParent' : 'selectParent'}" value="#{infractionsHome.instance.bulletin != null ? 'Change' : 'Select'} bulletin"
+                       view="/BulletinList.xhtml">
+                <f:param name="from" value="InfractionsEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab label="Status">
+    <div class="association" id="statusParent">
+
+        <h:outputText value="There is no status associated with this infractions."
+                   rendered="#{infractionsHome.instance.status == null}"/>
+
+        <rich:dataTable var="_itemCatalog"
+                   value="#{infractionsHome.instance.status}"
+                rendered="#{infractionsHome.instance.status != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="statusTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_itemCatalog.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Catalog id</f:facet>
+                <h:outputText value="#{_itemCatalog.catalog.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Catalog code</f:facet>
+                <h:outputText value="#{_itemCatalog.catalogCode}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Code</f:facet>
+                <h:outputText value="#{_itemCatalog.code}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_itemCatalog.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_itemCatalog.name}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{infractionsHome.instance.status != null ? 'changeParent' : 'selectParent'}" value="#{infractionsHome.instance.status != null ? 'Change' : 'Select'} status"
+                       view="/ItemCatalogList.xhtml">
+                <f:param name="from" value="InfractionsEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab label="Type">
+    <div class="association" id="typeParent">
+
+        <h:outputText value="There is no type associated with this infractions."
+                   rendered="#{infractionsHome.instance.type == null}"/>
+
+        <rich:dataTable var="_itemCatalog"
+                   value="#{infractionsHome.instance.type}"
+                rendered="#{infractionsHome.instance.type != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="typeTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_itemCatalog.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Catalog id</f:facet>
+                <h:outputText value="#{_itemCatalog.catalog.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Catalog code</f:facet>
+                <h:outputText value="#{_itemCatalog.catalogCode}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Code</f:facet>
+                <h:outputText value="#{_itemCatalog.code}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_itemCatalog.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_itemCatalog.name}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{infractionsHome.instance.type != null ? 'changeParent' : 'selectParent'}" value="#{infractionsHome.instance.type != null ? 'Change' : 'Select'} type"
+                       view="/ItemCatalogList.xhtml">
+                <f:param name="from" value="InfractionsEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

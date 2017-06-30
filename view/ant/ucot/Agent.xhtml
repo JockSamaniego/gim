@@ -1,0 +1,112 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Agent Details</f:facet>
+
+
+        <s:decorate id="agentCode" template="layout/display.xhtml">
+            <ui:define name="label">Agent code</ui:define>
+            <h:outputText value="#{agentHome.instance.agentCode}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/AgentEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty agentFrom ? 'AgentList' : agentFrom}.xhtml"
+                    id="done"
+                 value="Done"/>
+
+    </div>
+
+    <rich:tabPanel switchType="ajax">
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Resident</h:panelGroup>
+        </f:facet>
+    <div class="association" id="residentParent">
+
+        <h:outputText value="There is no resident associated with this agent."
+                   rendered="#{agentHome.instance.resident == null}"/>
+
+        <rich:dataTable var="_resident"
+                   value="#{agentHome.instance.resident}"
+                rendered="#{agentHome.instance.resident != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="residentTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_resident.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Current address id</f:facet>
+                <h:outputText value="#{_resident.currentAddress.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Email</f:facet>
+                <h:outputText value="#{_resident.email}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Enabled individual payment</f:facet>
+                <h:outputText value="#{_resident.enabledIndividualPayment}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identification number</f:facet>
+                <h:outputText value="#{_resident.identificationNumber}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identification type</f:facet>
+                <h:outputText value="#{_resident.identificationType}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Is enabled for deferred payments</f:facet>
+                <h:outputText value="#{_resident.isEnabledForDeferredPayments}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_resident.name}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Register date</f:facet>
+                <h:outputText value="#{_resident.registerDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">User id</f:facet>
+                <h:outputText value="#{_resident.user.id}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewresident"
+                     value="View"
+                      view="/Resident.xhtml">
+                    <f:param name="residentId"
+                           value="#{_resident.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,192 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Infraction status Details</f:facet>
+
+
+        <s:decorate id="serial" template="layout/display.xhtml">
+            <ui:define name="label">Serial</ui:define>
+            <h:outputText value="#{infractionStatusHome.instance.serial}"/>
+        </s:decorate>
+
+        <s:decorate id="statusDate" template="layout/display.xhtml">
+            <ui:define name="label">Status date</ui:define>
+            <h:outputText value="#{infractionStatusHome.instance.statusDate}">
+                <s:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="statusTime" template="layout/display.xhtml">
+            <ui:define name="label">Status time</ui:define>
+            <h:outputText value="#{infractionStatusHome.instance.statusTime}">
+                <s:convertDateTime type="time"/>
+            </h:outputText>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/InfractionStatusEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty infractionStatusFrom ? 'InfractionStatusList' : infractionStatusFrom}.xhtml"
+                    id="done"
+                 value="Done"/>
+
+    </div>
+
+    <rich:tabPanel switchType="ajax">
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Infraction</h:panelGroup>
+        </f:facet>
+    <div class="association" id="infractionParent">
+
+        <h:outputText value="There is no infraction associated with this infractionStatus."
+                   rendered="#{infractionStatusHome.instance.infraction == null}"/>
+
+        <rich:dataTable var="_infractions"
+                   value="#{infractionStatusHome.instance.infraction}"
+                rendered="#{infractionStatusHome.instance.infraction != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="infractionTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_infractions.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Archived</f:facet>
+                <h:outputText value="#{_infractions.archived}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Article</f:facet>
+                <h:outputText value="#{_infractions.article}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Bulletin id</f:facet>
+                <h:outputText value="#{_infractions.bulletin.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Citation date</f:facet>
+                <h:outputText value="#{_infractions.citationDate}">
+                    <s:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Citation time</f:facet>
+                <h:outputText value="#{_infractions.citationTime}">
+                    <s:convertDateTime type="time"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identification</f:facet>
+                <h:outputText value="#{_infractions.identification}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">In physic</f:facet>
+                <h:outputText value="#{_infractions.inPhysic}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">License plate</f:facet>
+                <h:outputText value="#{_infractions.licensePlate}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Numeral</f:facet>
+                <h:outputText value="#{_infractions.numeral}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Serial</f:facet>
+                <h:outputText value="#{_infractions.serial}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Status id</f:facet>
+                <h:outputText value="#{_infractions.status.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Type id</f:facet>
+                <h:outputText value="#{_infractions.type.id}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewinfractions"
+                     value="View"
+                      view="/Infractions.xhtml">
+                    <f:param name="infractionsId"
+                           value="#{_infractions.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Status</h:panelGroup>
+        </f:facet>
+    <div class="association" id="statusParent">
+
+        <h:outputText value="There is no status associated with this infractionStatus."
+                   rendered="#{infractionStatusHome.instance.status == null}"/>
+
+        <rich:dataTable var="_itemCatalog"
+                   value="#{infractionStatusHome.instance.status}"
+                rendered="#{infractionStatusHome.instance.status != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="statusTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_itemCatalog.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Catalog id</f:facet>
+                <h:outputText value="#{_itemCatalog.catalog.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Catalog code</f:facet>
+                <h:outputText value="#{_itemCatalog.catalogCode}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Code</f:facet>
+                <h:outputText value="#{_itemCatalog.code}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_itemCatalog.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_itemCatalog.name}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewitemCatalog"
+                     value="View"
+                      view="/ItemCatalog.xhtml">
+                    <f:param name="itemCatalogId"
+                           value="#{_itemCatalog.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>
