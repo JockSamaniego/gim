@@ -1,10 +1,11 @@
 package org.gob.gim.ant.ucot.action;
 
-import ec.gob.gim.ant.ucot.model.*;
-import ec.gob.gim.common.model.ItemCatalog;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
+
+import ec.gob.gim.ant.ucot.model.InfractionStatus;
+import ec.gob.gim.ant.ucot.model.Infractions;
 
 @Name("infractionStatusHome")
 public class InfractionStatusHome extends EntityHome<InfractionStatus> {
