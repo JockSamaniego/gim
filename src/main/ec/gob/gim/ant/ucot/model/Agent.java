@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.envers.Audited;
@@ -24,6 +26,10 @@ import ec.gob.gim.common.model.Resident;
 	 pkColumnValue="Agent",
 	 initialValue=1, allocationSize=1
 )
+@NamedQueries(value = {
+		@NamedQuery(name = "Agent.FindByCode", query = "Select a from Agent a where a.agentCode=:code"),
+		@NamedQuery(name = "Agent.FindByResident", query = "Select a from Agent a where a.resident.id=:residentid")})
+
 public class Agent {
 
 	@Id
@@ -35,8 +41,9 @@ public class Agent {
 	
 	@ManyToOne
 	@JoinColumn(name="resident_id")
-	private Resident resident	;
+	private Resident resident;
 
+	private boolean active;
 
 	public Long getId() {
 		return id;
@@ -65,5 +72,17 @@ public class Agent {
 
 	public void setResident(Resident resident) {
 		this.resident = resident;
+	}
+
+
+	public boolean isActive() {
+		return active;
+	}
+
+
+	public void setActive(boolean active) {
+		this.active = active;
 	} 
+	
+	
 }

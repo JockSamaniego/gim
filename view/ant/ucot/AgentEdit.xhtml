@@ -6,8 +6,9 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:a="http://richfaces.org/a4j"
+    xmlns:g="http://gim.gob.ec/jsf"
     xmlns:rich="http://richfaces.org/rich"
-    template="layout/template.xhtml">
+    template="../../layout/template.xhtml">
 
 <ui:define name="body">
 
@@ -16,9 +17,20 @@
         <rich:panel>
             <f:facet name="header">#{agentHome.managed ? 'Edit' : 'Add'} Agent</f:facet>
 
+            <g:residentChooser resident="#{agentHome.instance.resident}"
+              criteria="#{agentHome.criteria}"
+              bean="#{agentHome}" searchAction="searchResident"
+              residentsList="#{agentHome.residents}"
+              identificationNumber="#{agentHome.identificationNumber}"
+              searchByCriteriaAction="searchResidentByCriteria"
+              clearSearchPanelAction="clearSearchResidentPanel"
+              residentChosenListenerName="residentSelectedListener" >
+              <s:convertEntity />
+            </g:residentChooser>
+            
+            
 
-
-            <s:decorate id="agentCodeField" template="layout/edit.xhtml">
+            <s:decorate id="agentCodeField" template="../../layout/edit.xhtml">
                 <ui:define name="label">Agent code</ui:define>
                 <h:inputText id="agentCode"
                        required="true"
@@ -67,77 +79,7 @@
              propagation="end"
                     view="/#{empty agentFrom ? 'AgentList' : agentFrom}.xhtml"
                 rendered="#{!agentHome.managed}"/>
-
         </div>
     </h:form>
-
-<rich:tabPanel switchType="ajax">
-
-    <rich:tab label="Resident">
-    <div class="association" id="residentParent">
-
-        <h:outputText value="There is no resident associated with this agent."
-                   rendered="#{agentHome.instance.resident == null}"/>
-
-        <rich:dataTable var="_resident"
-                   value="#{agentHome.instance.resident}"
-                rendered="#{agentHome.instance.resident != null}"
-              rowClasses="rvgRowOne,rvgRowTwo"
-                      id="residentTable">
-            <h:column>
-                <f:facet name="header">Id</f:facet>
-                <h:outputText value="#{_resident.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Current address id</f:facet>
-                <h:outputText value="#{_resident.currentAddress.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Email</f:facet>
-                <h:outputText value="#{_resident.email}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Enabled individual payment</f:facet>
-                <h:outputText value="#{_resident.enabledIndividualPayment}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Identification number</f:facet>
-                <h:outputText value="#{_resident.identificationNumber}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Identification type</f:facet>
-                <h:outputText value="#{_resident.identificationType}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Is enabled for deferred payments</f:facet>
-                <h:outputText value="#{_resident.isEnabledForDeferredPayments}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Name</f:facet>
-                <h:outputText value="#{_resident.name}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Register date</f:facet>
-                <h:outputText value="#{_resident.registerDate}">
-                    <s:convertDateTime type="date" dateStyle="short"/>
-                </h:outputText>
-            </h:column>
-            <h:column>
-                <f:facet name="header">User id</f:facet>
-                <h:outputText value="#{_resident.user.id}"/>
-            </h:column>
-        </rich:dataTable>
-
-        <div class="actionButtons">
-            <s:button id="#{agentHome.instance.resident != null ? 'changeParent' : 'selectParent'}" value="#{agentHome.instance.resident != null ? 'Change' : 'Select'} resident"
-                       view="/ResidentList.xhtml">
-                <f:param name="from" value="AgentEdit"/>
-            </s:button>
-        </div>
-
-    </div>
-    </rich:tab>
-</rich:tabPanel>
-</ui:define>
-
+    </ui:define>
 </ui:composition>
