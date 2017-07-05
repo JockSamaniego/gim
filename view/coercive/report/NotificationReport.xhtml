@@ -136,7 +136,8 @@
 								<p:text
 									value="#{notification.notified.currentAddress.street}    " />
 							</p:font>
-
+						</p:paragraph>
+						<p:paragraph>
 							<p:font size="9" style="bold">
 								<p:text
 									rendered="#{notification.notified.currentAddress.phoneNumber != null}"
@@ -466,7 +467,7 @@
 
 					<p:cell></p:cell>
 
-					<p:cell colspan="1">
+					<p:cell colspan="1" horizontalAlignment="center">
 						<p:paragraph>
 							<p:font size="9" style="bold">
 								<p:text
@@ -476,9 +477,29 @@
 					</p:cell>
 					<p:cell colspan="1">
 						<p:paragraph>
+
+							<p:font size="9" style="bold">
+								<p:text
+									rendered="#{notification.notified.currentAddress.street != null}"
+									value="#{messages['municipalBond.address']}: " />
+							</p:font>
+
 							<p:font size="9">
 								<p:text
-									value="#{notification.notified.currentAddress.street} #{notification.notified.currentAddress.phoneNumber != null ? ',' : ''} #{notification.notified.currentAddress.phoneNumber}" />
+									value="#{notification.notified.currentAddress.street}    " />
+							</p:font>
+						</p:paragraph>
+						<p:paragraph>
+							<p:font size="9" style="bold">
+								<p:text
+									rendered="#{notification.notified.currentAddress.phoneNumber != null}"
+									value="#{messages['resident.phone']}: " />
+							</p:font>
+
+							<p:font size="9">
+								<p:text
+									rendered="#{notification.notified.currentAddress.phoneNumber != null}"
+									value="#{notification.notified.currentAddress.phoneNumber} " />
 							</p:font>
 						</p:paragraph>
 					</p:cell>
@@ -494,7 +515,7 @@
 									value="#{'['}#{messages['common.sum']} #{messages['common.currency']} #{notification.total}" />
 							</p:font>
 							<p:font size="8" style="italic">
-								<p:text value="(Valor sujeto a intéreses y recargos)" />
+								<p:text value="(Valor sujeto a intereses y recargos)" />
 							</p:font>
 							<p:font size="9" style="plain">
 								<p:text value="#{']'}" />
@@ -503,18 +524,28 @@
 					</p:cell>
 				</p:table>
 			</p:paragraph>
-			<p:paragraph spacingAfter="2">
-				<p:table columns="5" widthPercentage="100" headerRows="0"
-					widths="2 0.8 0.8 0.8 0.8">
+			<p:paragraph spacingAfter="1">
+				<p:table columns="6" widthPercentage="100" headerRows="0"
+					widths="1.9 0.8 0.8 0.8 0.9 0.8">
 					<p:font size="8" name="HELVETICA" style="bold">
 						<p:cell horizontalAlignment="center">
 							<p:paragraph>
 								<p:text value="#{messages['entry']}" />
 							</p:paragraph>
 						</p:cell>
+						
+						
+						
+						
+						
 						<p:cell horizontalAlignment="center">
 							<p:paragraph>
-								<p:text value="#{messages['municipalBond.number']}" />
+								<p:text value="Documento No." />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="Documento Tipo" />
 							</p:paragraph>
 						</p:cell>
 						<p:cell horizontalAlignment="center">
@@ -535,6 +566,7 @@
 					</p:font>
 					<a4j:repeat value="#{notification.municipalBonds}"
 						var="municipalBond">
+
 						<p:cell colspan="1" horizontalAlignment="left">
 							<p:paragraph alignment="left">
 								<p:font size="8">
@@ -542,6 +574,7 @@
 								</p:font>
 							</p:paragraph>
 						</p:cell>
+
 						<p:cell colspan="1" horizontalAlignment="right">
 							<p:paragraph alignment="right">
 								<p:font size="8">
@@ -549,6 +582,27 @@
 								</p:font>
 							</p:paragraph>
 						</p:cell>
+
+
+						
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right"
+								rendered="#{municipalBond.entry.isTaxable}">
+								<p:font size="8">
+									<p:text value="Factura" />
+								</p:font>
+							</p:paragraph>
+							<p:paragraph alignment="right"
+								rendered="#{!municipalBond.entry.isTaxable}">
+								<p:font size="8">
+									<p:text value="Título de Crédito" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+
+
+
 						<p:cell colspan="1" horizontalAlignment="center">
 							<p:paragraph alignment="center">
 								<p:font size="8">
@@ -579,7 +633,7 @@
 				</p:table>
 			</p:paragraph>
 
-			<p:paragraph spacingAfter="8" spacingBefore="2" alignment="justify"
+			<p:paragraph spacingAfter="8" spacingBefore="1" alignment="justify"
 				leading="2">
 				<p:table columns="1" widthPercentage="100" headerRows="0" widths="1">
 					<f:facet name="defaultCell">
@@ -600,11 +654,11 @@
 							</p:font>
 							<p:font size="7" style="bold">
 								<p:text
-									value="Art. 151 del Código Orgánico Tributario; Art. 941 del Código de Procedimiento Civil; y, Arts. 2 y 5 de la Ordenanza que regula el ejercicio de la Jurisdicción Coactiva del Gobierno Autónomo Descentralizado Municipal de Loja, " />
+									value="Art. 151 del Código Orgánico Tributario; Art. 170, 173, 191 Libro VI Régimen Tributario Municipal de la Recopilación de la Legislación Municipal de Loja, " />
 							</p:font>
 							<p:font size="6">
 								<p:text
-									value="me permito notificar a usted, haciéndole conocer que se han emitido títulos de crédito, por los meses y/o años vencidos, mismos que deben ser cancelados dentro del plazo de " />
+									value="me permito notificar a usted, haciéndole conocer que se han emitido títulos de crédito, por los meses y/o años vencidos, mismos que deben de ser cancelados dentro del plazo de " />
 							</p:font>
 							<p:font size="8" style="bold">
 								<p:text value="OCHO DÍAS, " />

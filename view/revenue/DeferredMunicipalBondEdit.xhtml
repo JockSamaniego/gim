@@ -12,6 +12,7 @@
 	<ui:define name="body">
 
 		<ui:include src="fragment/DeferredMunicipalBondPanel.xhtml" />
+		<ui:include src="../income/fragment/AlertListPanel.xhtml" />
 
 		<h:form id="deferredMunicipalBondEditTitle" styleClass="edit">
 			<ui:debug id="debug" />
@@ -21,6 +22,9 @@
 					<h:outputText styleClass="formTitle"
 						value="#{messages['revenue.emissionDeferredMunicipalBond']}" />
 				</f:facet>
+			<h:panelGrid columns="2" width="100%"
+					columnClasses="topAligned, topAligned right">	
+				<a:outputPanel id="searchPanel">
 
 				<s:decorate id="exemptField" template="../layout/edit.xhtml">
 					<ui:define name="label">#{messages['municipalBond.serviceDate']}: </ui:define>
@@ -49,7 +53,7 @@
 					searchByCriteriaAction="searchResidentByCriteria"
 					clearSearchPanelAction="clearSearchResidentPanel"
 					residentChosenListenerName="residentSelectedListener"
-					reRender="entryChooser-entryCode, entryChooser-openSearchPanelBtn, preEmit" />
+					reRender="entryChooser-entryCode, entryChooser-openSearchPanelBtn, preEmit, itemsPanel, alertPanel" />
 
 				<g:entryChooser id="entryChooser" label="#{messages['entry']}"
 					criteria="#{deferredMunicipalBond.criteriaEntry}"
@@ -62,11 +66,22 @@
 					entryChosenListenerName="entrySelectedListener"
 					renderedButtonAdd="true" addreRender="itemsPanel, messages, preEmit"
 					buttonAddAction="addEntryAction" />
-
+				</a:outputPanel>
+				
+				<a:outputPanel id="alertPanel" ajaxRendered="true">
+						<a:commandLink id="alertField"
+							value="#{deferredMunicipalBond.blocketMessage}"
+							rendered="#{deferredMunicipalBond.pendingAlerts.size()==0 ? false : true}"
+							style="font-size:40px; font-weight:bold;color:#{deferredMunicipalBond.colorMessage}" styleClass="center"
+							reRender="alertListPanel"
+							oncomplete="Richfaces.showModalPanel('alertListPanel')">
+						</a:commandLink>
+				</a:outputPanel>
+			</h:panelGrid>
 				<div style="clear: both"></div>
 			</rich:panel>
 
-			<a:outputPanel id="itemsPanel" ajaxRendered="false" layout="block">
+			<a:outputPanel id="itemsPanel" ajaxRendered="false" layout="block" rendered="#{!deferredMunicipalBond.isBlocketToEmit}">
 				<rich:panel
 					rendered="#{not empty deferredMunicipalBond.deferredMunicipalBondItems}">
 					<a:region>

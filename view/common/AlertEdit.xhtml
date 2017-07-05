@@ -59,11 +59,27 @@
 							<h:inputText id="openDepartment" size="60" readonly="#{alertHome.managed}"
 								value="#{alertHome.instance.department}" />
 						</s:decorate>
+						
+						<s:decorate template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['alertType']}:</ui:define>
+							<h:selectOneMenu id="alertType" disabled="#{alertHome.managed}"
+								value="#{alertHome.instance.alertType}" required="true">
+								<ui:debug id="debugExternal"/>
+								<s:selectItems value="#{alertTypes}" var="alertType"
+									label="#{alertType.name}" 
+									noSelectionLabel="Seleccione uno" />
+								<s:convertEntity />
+								<a:support event="onchange"
+						    		ajaxSingle="true"  inmediate="true" 
+						    		reRender="openDetailField" />
+							</h:selectOneMenu>
+						</s:decorate>
 		
 						<s:decorate id="openDetailField" template="../layout/edit.xhtml">
 							<ui:define name="label">#{messages['alert.openDetail']}</ui:define>
-							<h:inputTextarea id="openDetail" required="true" readonly="#{alertHome.managed}"
-								value="#{alertHome.instance.openDetail}" />
+							<h:inputTextarea id="openDetail" required="true"
+							value="#{alertHome.instance.alertType.createDetail}" 
+								/>
 						</s:decorate>
 		
 						<s:decorate template="../layout/edit.xhtml">

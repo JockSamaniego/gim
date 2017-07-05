@@ -633,17 +633,44 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		}
 		return root.getMunicipalBondItems();
 	}
+	
+	//Jock Samaniego
+	//Para bloquear emisión
+	private Boolean isBlocketToCollect = Boolean.FALSE;
+	private String blocketMessage;
+	private String colorMessage;
+
+	public Boolean getIsBlocketToCollect() {
+		return isBlocketToCollect;
+	}
+	public String getBlocketMessage() {
+		return blocketMessage;
+	}
+
+	public String getColorMessage() {
+		return colorMessage;
+	}
 
 	@SuppressWarnings("unchecked")
 	private void findPendingAlerts(Long residentId) {
+		blocketMessage="";
 		pendingAlerts.clear();
+		isBlocketToCollect = Boolean.FALSE;
+		colorMessage = "blue";
 		Query query = getEntityManager().createNamedQuery("Alert.findPendingAlertsByResidentId");
 		query.setParameter("residentId", resident.getId());
-
 		pendingAlerts = query.getResultList();
+		if (pendingAlerts.size()>0){
+			blocketMessage=pendingAlerts.get(0).getAlertType().getMessage();			
+		}
 		for (Alert alert : pendingAlerts) {
-			if (alert.getPriority() == AlertPriority.HIGH) {
-				paymentBlocked = true;
+			//if (alert.getPriority() == AlertPriority.HIGH) {
+				//paymentBlocked = true;
+			//}
+			if(alert.getAlertType().getIsToCollect()){
+				isBlocketToCollect = Boolean.TRUE;
+				blocketMessage=alert.getAlertType().getMessage();
+				colorMessage = "red";
 			}
 		}
 	}

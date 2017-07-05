@@ -614,5 +614,5 @@ public class FinantialStatement extends EntityController {
 	public void setAccountItemsOrnato(List<AccountItem> accountItemsOrnato) {
 		this.accountItemsOrnato = accountItemsOrnato;
 	}
-
+	
 }

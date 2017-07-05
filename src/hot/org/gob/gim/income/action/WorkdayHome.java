@@ -5025,7 +5025,6 @@ public class WorkdayHome extends EntityHome<Workday> {
 					return;
 				}
 			}
-
 			if (getWorkdayId() != null
 					&& getNumberOfTillOpened(getWorkdayId()) > 0) {
 				existOpenedTills = true;
