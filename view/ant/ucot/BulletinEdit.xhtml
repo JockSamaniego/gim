@@ -7,7 +7,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:a="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
-    template="layout/template.xhtml">
+    template="../../layout/template.xhtml">
 
 <ui:define name="body">
 
@@ -19,14 +19,14 @@
 
 
 
-            <s:decorate id="creationDateField" template="layout/edit.xhtml">
+            <s:decorate id="creationDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">Creation date</ui:define>
                 <rich:calendar id="creationDate"
                           value="#{bulletinHome.instance.creationDate}" datePattern="MM/dd/yyyy" />
             </s:decorate>
 
 
-            <s:decorate id="creationTimeField" template="layout/edit.xhtml">
+            <s:decorate id="creationTimeField" template="../../layout/edit.xhtml">
                 <ui:define name="label">Creation time</ui:define>
                 <h:inputText id="creationTime"
                            size="5"
@@ -37,7 +37,7 @@
             </s:decorate>
 
 
-            <s:decorate id="endNumberField" template="layout/edit.xhtml">
+            <s:decorate id="endNumberField" template="../../layout/edit.xhtml">
                 <ui:define name="label">End number</ui:define>
                 <h:inputText id="endNumber"
                        required="true"
@@ -47,7 +47,7 @@
             </s:decorate>
 
 
-            <s:decorate id="startNumberField" template="layout/edit.xhtml">
+            <s:decorate id="startNumberField" template="../../layout/edit.xhtml">
                 <ui:define name="label">Start number</ui:define>
                 <h:inputText id="startNumber"
                        required="true"

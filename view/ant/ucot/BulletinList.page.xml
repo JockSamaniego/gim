@@ -9,5 +9,6 @@
    <param name="logic" value="#{bulletinList.restrictionLogicOperator}"/>
 
    <param name="from"/>
+   <param name="criteriaSearch" value="#{bulletinList.criteriaSearch}" />
 
 </page>
