@@ -51,15 +51,15 @@ import org.jboss.seam.security.Credentials;
 import org.jboss.seam.security.Identity;
 
 /**
- *
- * @author Usuario
+ * rfam 2017-07-06
+ * se comenta no se esta usando
  */
-@WebService
+//@WebService
 //        (serviceName = "WorkDayWs")
 public class WorkDayWs {
 
-    @Resource
-    WebServiceContext wsContext;
+  /*  @Resource
+    WebServiceContext wsContext;*/
 
     @EJB
     private WorkDay service;
@@ -74,7 +74,7 @@ public class WorkDayWs {
      * @throws org.gob.loja.gim.ws.exception.CashierOpen
      * @throws org.gob.loja.gim.ws.exception.ExistsDuplicateUsers
      */
-    @WebMethod
+/*    @WebMethod
 //        (operationName = "WorkDay")
     public void WorkDay(ServiceRequest request) throws DateNoAvalible, InvalidUser, InterestRateNoDefined, TaxesNoDefined, CashierOpen, ExistsDuplicateUsers, Exception {
         Boolean routeObj = Boolean.FALSE;
@@ -134,6 +134,6 @@ public class WorkDayWs {
             hsr.getSession().setMaxInactiveInterval(1);
         }
 
-    }
+    }*/
 
 }
