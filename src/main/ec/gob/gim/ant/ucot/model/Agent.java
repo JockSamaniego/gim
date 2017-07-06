@@ -1,3 +1,4 @@
+
 package ec.gob.gim.ant.ucot.model;
  
 
@@ -14,12 +15,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
-
 import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
-
-import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Resident;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 @Audited
 @Entity
@@ -31,6 +31,10 @@ import ec.gob.gim.common.model.Resident;
 	 pkColumnValue="Agent",
 	 initialValue=1, allocationSize=1
 )
+@NamedQueries(value = {
+		@NamedQuery(name = "Agent.FindByCode", query = "Select a from Agent a where a.agentCode=:code"),
+		@NamedQuery(name = "Agent.FindByResident", query = "Select a from Agent a where a.resident.id=:residentid")})
+
 public class Agent {
 
 	@Id
@@ -47,20 +51,12 @@ public class Agent {
 	@OneToMany(mappedBy = "agent", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Bulletin> bulletins;
-	private Boolean isActive;
+	
+
+	private boolean active;
 
 	public Long getId() {
 		return id;
-	}
-
-
-	public List<Bulletin> getBulletins() {
-		return bulletins;
-	}
-
-
-	public void setBulletins(List<Bulletin> bulletins) {
-		this.bulletins = bulletins;
 	}
 
 
@@ -89,13 +85,23 @@ public class Agent {
 	}
 
 
-	public Boolean getIsActive() {
-		return isActive;
+	public boolean isActive() {
+		return active;
 	}
 
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+
+	public List<Bulletin> getBulletins() {
+		return bulletins;
+	}
+
+
+	public void setBulletins(List<Bulletin> bulletins) {
+		this.bulletins = bulletins;
 	} 
 	
 	
