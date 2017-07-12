@@ -28,6 +28,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,6 +36,8 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -1069,6 +1072,7 @@ public class MunicipalBond implements Serializable {
 	private Entry entry;
 
 	@OneToMany(mappedBy = "municipalBond", fetch = FetchType.LAZY)
+	@OrderBy("date asc")
 	private List<Deposit> deposits;
 
 	@OneToMany(mappedBy = "municipalBond", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

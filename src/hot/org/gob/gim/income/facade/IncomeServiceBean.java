@@ -1619,7 +1619,7 @@ public class IncomeServiceBean implements IncomeService {
 			query += " and mba.coveritem=:cover";
 		}
 		
-		if(type=="I" || type=="T"){
+		if(type=="I" || type=="S"){
 			query += " and mba.anotherItem is null ";
 		}
 
@@ -1656,7 +1656,7 @@ public class IncomeServiceBean implements IncomeService {
 		sumInterest.setParameter("cover", coverInterest);
 		sumInterest.setParameter("status", status);
 		sumInterest.setParameter("type", type);
-
+		
 		return (BigDecimal) sumInterest.getSingleResult();
 	}
 
