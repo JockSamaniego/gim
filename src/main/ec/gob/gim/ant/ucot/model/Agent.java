@@ -1,20 +1,25 @@
+
 package ec.gob.gim.ant.ucot.model;
  
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.TableGenerator;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.envers.Audited;
+import ec.gob.gim.common.model.Resident;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.TableGenerator;
-
-import org.hibernate.envers.Audited;
-
-import ec.gob.gim.common.model.Resident;
 
 @Audited
 @Entity
@@ -39,9 +44,14 @@ public class Agent {
 	@Column(nullable=false, length=30)
 	private String agentCode;
 	
-	@ManyToOne
+	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
 	@JoinColumn(name="resident_id")
-	private Resident resident;
+	private Resident resident	;
+	
+	@OneToMany(mappedBy = "agent", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private List<Bulletin> bulletins;
+	
 
 	private boolean active;
 
@@ -82,6 +92,16 @@ public class Agent {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+
+	public List<Bulletin> getBulletins() {
+		return bulletins;
+	}
+
+
+	public void setBulletins(List<Bulletin> bulletins) {
+		this.bulletins = bulletins;
 	} 
 	
 	
