@@ -302,7 +302,7 @@
 
 						<a:region>
 							<a:commandButton id="reprintId"
-								rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_PRINTER') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel))}"
+								rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_PRINTER') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel)) and municipalBondManager.showWarned(_municipalBond)!='redFont'}"
 								action="#{municipalBondManager.print(_municipalBond.id)}"
 								value="#{messages['municipalBond.reprint']}"
 								reRender="resultsPanel" >
@@ -312,7 +312,7 @@
 						<a:region>
 							<!--   and _municipalBond.resident.isEnabledForDeferredPayments -->
 							<a:commandButton id="reprintOriginalId"
-								rendered="#{municipalBondManager.hasRole('ROLE_NAME_PRINTER_RESCUER') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel)) and _municipalBond.resident.isEnabledForDeferredPayments}"
+								rendered="#{municipalBondManager.hasRole('ROLE_NAME_PRINTER_RESCUER') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel)) and _municipalBond.resident.isEnabledForDeferredPayments and municipalBondManager.showWarned(_municipalBond)!='redFont'}"
 								action="#{municipalBondManager.printOriginal(_municipalBond.id)}"
 								value="#{messages['municipalBond.reprintOriginal']}"
 								reRender="resultsPanel" />
