@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<page xmlns="http://jboss.com/products/seam/pages"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	login-required="true">
 
-   <param name="firstResult" value="#{writeOffRequestList.firstResult}"/>
-   <param name="sort" value="#{writeOffRequestList.orderColumn}"/>
-   <param name="dir" value="#{writeOffRequestList.orderDirection}"/>
-   <param name="logic" value="#{writeOffRequestList.restrictionLogicOperator}"/>
+	<begin-conversation join="true" flush-mode="MANUAL" />
 
-   <param name="from"/>
-   <param name="detail" value="#{writeOffRequestList.writeOffRequest.detail}"/>
-   <param name="detailEmission" value="#{writeOffRequestList.writeOffRequest.detailEmission}"/>
-   <param name="internalProcessNumber" value="#{writeOffRequestList.writeOffRequest.internalProcessNumber}"/>
+	<action execute="#{writeOffRequestHome.loadWrites}"/>
+	
+	<param name="firstResult" value="#{writeOffRequestList.firstResult}" />
+	<param name="sort" value="#{writeOffRequestList.orderColumn}" />
+	<param name="dir" value="#{writeOffRequestList.orderDirection}" />
+	<param name="logic" value="#{writeOffRequestList.restrictionLogicOperator}" />
+
+	<param name="from" />
+	<param name="detail" value="#{writeOffRequestList.writeOffRequest.detail}" />
+	<param name="detailEmission"
+		value="#{writeOffRequestList.writeOffRequest.detailEmission}" />
+	<param name="internalProcessNumber"
+		value="#{writeOffRequestList.writeOffRequest.internalProcessNumber}" />
 
 </page>

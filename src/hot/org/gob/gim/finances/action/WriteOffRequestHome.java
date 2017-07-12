@@ -1,28 +1,126 @@
-package org.gob.gim.finances.action;	
+package org.gob.gim.finances.action;
 
-import org.gob.gim.common.action.ResidentHome;
-import org.gob.gim.waterservice.action.WaterSupplyHome;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.component.UIComponent;
+import javax.faces.event.ActionEvent;
+import javax.persistence.Query;
+import javax.transaction.Transactional;
+
+import org.gob.gim.cadaster.action.pagination.WorkDealFractionDataModel;
+import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.UserSession;
+import org.gob.gim.common.service.SequenceManagerService;
+import org.gob.gim.finances.pagination.WriteOffRequestDataModel;
+import org.gob.gim.finances.service.WriteOffService;
+import org.jboss.seam.Component;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityHome;
 
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.finances.model.SequenceManager;
+import ec.gob.gim.finances.model.WriteOffDetail;
 import ec.gob.gim.finances.model.WriteOffRequest;
 import ec.gob.gim.finances.model.WriteOffType;
+import ec.gob.gim.finances.model.DTO.DetailTableAuxDTO;
+import ec.gob.gim.finances.model.DTO.WriteOffDetailDTO;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.waterservice.model.MonthType;
 import ec.gob.gim.waterservice.model.WaterSupply;
 
 @Name("writeOffRequestHome")
 public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
-	@In(create = true)
-	ResidentHome residentHome;
-	@In(create = true)
-	SequenceManagerHome sequenceManagerHome;
-	@In(create = true)
-	WaterSupplyHome waterSupplyHome;
-	@In(create = true)
-	WriteOffTypeHome writeOffTypeHome;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	@In(scope = ScopeType.SESSION, value = "userSession")
+	UserSession userSession;
+
+	private WriteOffService writeOffService;
+	
+	private SequenceManagerService sequenceManagerService;
+
+	private String criteria;
+
+	private List<Resident> residents;
+
+	private String identificationNumber;
+
+	private List<WaterSupply> waterSupplies = new ArrayList<WaterSupply>();
+
+	private WaterSupply waterSupplySelected;
+
+	private Long numberOldBondAux;
+
+	private Long numberNewBondAux;
+
+	private WriteOffDetailDTO detail_aux_old = new WriteOffDetailDTO();
+
+	private WriteOffDetailDTO detail_aux_new = new WriteOffDetailDTO();
+
+	private Boolean disabled_old_fields = Boolean.TRUE;
+
+	private Boolean disabled_new_fields = Boolean.TRUE;
+
+	private List<WriteOffDetail> details = new ArrayList<WriteOffDetail>();
+
+	private List<DetailTableAuxDTO> detailsTableOld = new ArrayList<DetailTableAuxDTO>();
+
+	private List<DetailTableAuxDTO> detailsTableNew = new ArrayList<DetailTableAuxDTO>();
+	
+	private List<WriteOffType> _types = new ArrayList<WriteOffType>();
+	
+	private boolean isFirstTime = true;
+	
+	/*
+	 * CRITERIA
+	 */
+	
+	private String number_request_criteria = null;
+	
+	private String identification_number_criteria = null;
+	
+	private String name_resident_criteria = null;
+	
+	
+	public List<WaterSupply> getWaterSupplies() {
+		return waterSupplies;
+	}
+
+	public void setWaterSupplies(List<WaterSupply> waterSupplies) {
+		this.waterSupplies = waterSupplies;
+	}
+
+	public String getIdentificationNumber() {
+		return identificationNumber;
+	}
+
+	public void setIdentificationNumber(String identificationNumber) {
+		this.identificationNumber = identificationNumber;
+	}
+
+	public List<Resident> getResidents() {
+		return residents;
+	}
+
+	public void setResidents(List<Resident> residents) {
+		this.residents = residents;
+	}
+
+	public String getCriteria() {
+		return criteria;
+	}
+
+	public void setCriteria(String criteria) {
+		this.criteria = criteria;
+	}
 
 	public void setWriteOffRequestId(Long id) {
 		setId(id);
@@ -30,6 +128,119 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 	public Long getWriteOffRequestId() {
 		return (Long) getId();
+	}
+
+	public WaterSupply getWaterSupplySelected() {
+		return waterSupplySelected;
+	}
+
+	public void setWaterSupplySelected(WaterSupply waterSupplySelected) {
+		this.waterSupplySelected = waterSupplySelected;
+	}
+
+	public Long getNumberOldBondAux() {
+		return numberOldBondAux;
+	}
+
+	public void setNumberOldBondAux(Long numberOldBondAux) {
+		this.numberOldBondAux = numberOldBondAux;
+	}
+
+	public Long getNumberNewBondAux() {
+		return numberNewBondAux;
+	}
+
+	public void setNumberNewBondAux(Long numberNewBondAux) {
+		this.numberNewBondAux = numberNewBondAux;
+	}
+
+	public WriteOffDetailDTO getDetail_aux_old() {
+		return detail_aux_old;
+	}
+
+	public void setDetail_aux_old(WriteOffDetailDTO detail_aux_old) {
+		this.detail_aux_old = detail_aux_old;
+	}
+
+	public WriteOffDetailDTO getDetail_aux_new() {
+		return detail_aux_new;
+	}
+
+	public void setDetail_aux_new(WriteOffDetailDTO detail_aux_new) {
+		this.detail_aux_new = detail_aux_new;
+	}
+
+	public Boolean getDisabled_old_fields() {
+		return disabled_old_fields;
+	}
+
+	public void setDisabled_old_fields(Boolean disabled_old_fields) {
+		this.disabled_old_fields = disabled_old_fields;
+	}
+
+	public Boolean getDisabled_new_fields() {
+		return disabled_new_fields;
+	}
+
+	public void setDisabled_new_fields(Boolean disabled_new_fields) {
+		this.disabled_new_fields = disabled_new_fields;
+	}
+
+	public List<WriteOffDetail> getDetails() {
+		return details;
+	}
+
+	public void setDetails(List<WriteOffDetail> details) {
+		this.details = details;
+	}
+
+	public List<DetailTableAuxDTO> getDetailsTableOld() {
+		return detailsTableOld;
+	}
+
+	public void setDetailsTableOld(List<DetailTableAuxDTO> detailsTableOld) {
+		this.detailsTableOld = detailsTableOld;
+	}
+
+	public List<DetailTableAuxDTO> getDetailsTableNew() {
+		return detailsTableNew;
+	}
+
+	public void setDetailsTableNew(List<DetailTableAuxDTO> detailsTableNew) {
+		this.detailsTableNew = detailsTableNew;
+	}
+	
+	public List<WriteOffType> get_types() {
+		return _types;
+	}
+
+	public void set_types(List<WriteOffType> _types) {
+		this._types = _types;
+	}
+	
+	public String getNumber_request_criteria() {
+		return number_request_criteria;
+	}
+
+	public void setNumber_request_criteria(String number_request_criteria) {
+		this.number_request_criteria = number_request_criteria;
+	}
+
+	public String getIdentification_number_criteria() {
+		return identification_number_criteria;
+	}
+
+	public void setIdentification_number_criteria(
+			String identification_number_criteria) {
+		this.identification_number_criteria = identification_number_criteria;
+	}
+
+	public String getName_resident_criteria() {
+		return name_resident_criteria;
+	}
+
+	public void setName_resident_criteria(String name_resident_criteria) {
+		this.name_resident_criteria = name_resident_criteria;
 	}
 
 	@Override
@@ -45,36 +256,47 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	}
 
 	public void wire() {
+		
+		
 		getInstance();
-		Resident approvedBy = residentHome.getDefinedInstance();
-		if (approvedBy != null) {
-			getInstance().setApprovedBy(approvedBy);
+		
+		if (isFirstTime) {
+			
+			if (writeOffService == null) {
+				writeOffService = ServiceLocator.getInstance().findResource(WriteOffService.LOCAL_NAME);
+			}
+			
+			if (sequenceManagerService == null) {
+				sequenceManagerService = ServiceLocator.getInstance().findResource(SequenceManagerService.LOCAL_NAME);
+			}
+			
+			isFirstTime = Boolean.FALSE;
+			this.details = new ArrayList<WriteOffDetail>();
+			
+			/*
+			 * Inicializar tipos de inconsistencias
+			 */
+			this._types = this.findTypes();
 		}
-		Resident issueTo = residentHome.getDefinedInstance();
-		if (issueTo != null) {
-			getInstance().setIssueTo(issueTo);
-		}
-		Resident madeBy = residentHome.getDefinedInstance();
-		if (madeBy != null) {
-			getInstance().setMadeBy(madeBy);
-		}
-		Resident resident = residentHome.getDefinedInstance();
-		if (resident != null) {
-			getInstance().setResident(resident);
-		}
-		SequenceManager sequenceManager = sequenceManagerHome
-				.getDefinedInstance();
-		if (sequenceManager != null) {
-			getInstance().setSequenceManager(sequenceManager);
-		}
-		WaterSupply waterSupply = waterSupplyHome.getDefinedInstance();
-		if (waterSupply != null) {
-			getInstance().setWaterSupply(waterSupply);
-		}
-		WriteOffType writeOffType = writeOffTypeHome.getDefinedInstance();
-		if (writeOffType != null) {
-			getInstance().setWriteOffType(writeOffType);
-		}
+		
+		/*
+		 * Resident approvedBy = residentHome.getDefinedInstance(); if
+		 * (approvedBy != null) { getInstance().setApprovedBy(approvedBy); }
+		 * Resident issueTo = residentHome.getDefinedInstance(); if (issueTo !=
+		 * null) { getInstance().setIssueTo(issueTo); } Resident madeBy =
+		 * residentHome.getDefinedInstance(); if (madeBy != null) {
+		 * getInstance().setMadeBy(madeBy); } Resident resident =
+		 * residentHome.getDefinedInstance(); if (resident != null) {
+		 * getInstance().setResident(resident); } SequenceManager
+		 * sequenceManager = sequenceManagerHome .getDefinedInstance(); if
+		 * (sequenceManager != null) {
+		 * getInstance().setSequenceManager(sequenceManager); } WaterSupply
+		 * waterSupply = waterSupplyHome.getDefinedInstance(); if (waterSupply
+		 * != null) { getInstance().setWaterSupply(waterSupply); } WriteOffType
+		 * writeOffType = writeOffTypeHome.getDefinedInstance(); if
+		 * (writeOffType != null) { getInstance().setWriteOffType(writeOffType);
+		 * }
+		 */
 	}
 
 	public boolean isWired() {
@@ -83,6 +305,265 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 	public WriteOffRequest getDefinedInstance() {
 		return isIdDefined() ? getInstance() : null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void searchResidentByCriteria() {
+		if (this.criteria != null && !this.criteria.isEmpty()) {
+			Query query = getEntityManager().createNamedQuery(
+					"Resident.findByCriteria");
+			query.setParameter("criteria", this.criteria);
+			setResidents(query.getResultList());
+		}
+	}
+
+	public void searchResident() {
+		Query query = getEntityManager().createNamedQuery(
+				"Resident.findByIdentificationNumber");
+		query.setParameter("identificationNumber", this.identificationNumber);
+		try {
+			Resident resident = (Resident) query.getSingleResult();
+
+			this.getInstance().setResident(resident);
+
+			if (resident.getId() == null) {
+				addFacesMessageFromResourceBundle("resident.notFound");
+			}
+
+			if (this.instance.getResident() != null) {
+				Query q = this.getEntityManager().createNamedQuery(
+						"WaterSupply.findByResident");
+				q.setParameter("idResident", this.instance.getResident()
+						.getId());
+				this.waterSupplies = q.getResultList();
+			}
+
+		} catch (Exception e) {
+			this.getInstance().setResident(null);
+			addFacesMessageFromResourceBundle("resident.notFound");
+		}
+	}
+
+	public void clearSearchResidentPanel() {
+		this.setCriteria(null);
+		setResidents(null);
+	}
+
+	public void residentSelectedListener(ActionEvent event) {
+		UIComponent component = event.getComponent();
+		Resident resident = (Resident) component.getAttributes()
+				.get("resident");
+		this.getInstance().setResident(resident);
+		this.setIdentificationNumber(resident.getIdentificationNumber());
+
+		if (this.instance.getResident() != null) {
+			Query q = this.getEntityManager().createNamedQuery(
+					"WaterSupply.findByResident");
+			q.setParameter("idResident", this.instance.getResident().getId());
+			this.waterSupplies = q.getResultList();
+		}
+
+	}
+
+	public void onSelectService() {
+		int aux_index = -1;
+
+		for (int i = 0; i < waterSupplySelected.getWaterMeters().size(); i++) {
+			if (waterSupplySelected.getWaterMeters().get(i).getIsActive()) {
+				aux_index = i;
+				break;
+			}
+		}
+
+		if (aux_index != -1) {
+			this.instance.setWaterMeter(waterSupplySelected.getWaterMeters()
+					.get(aux_index));
+		}
+
+	}
+
+	public void prepareAddBondLower() {
+		// Encerar los valores del dialogo
+		this.detail_aux_new = new WriteOffDetailDTO();
+		this.detail_aux_old = new WriteOffDetailDTO();
+		this.numberNewBondAux = null;
+		this.numberOldBondAux = null;
+		this.disabled_new_fields = Boolean.TRUE;
+		this.disabled_old_fields = Boolean.TRUE;
+	}
+
+	public void searchBondDetailOld() {
+		System.out.println("LLega al search Old Bond");
+
+		System.out.println(this.numberOldBondAux);
+
+		List<WriteOffDetailDTO> retorno_bd = this.writeOffService.searchBondDetail(this.numberOldBondAux);
+
+		if (retorno_bd.size() == 0) {
+			System.out.println("no existe el Bond");
+		} else if (retorno_bd.size() > 0) {
+			this.detail_aux_old = retorno_bd.get(0);
+			if (this.detail_aux_old.getAdjunct_id() == 0) {
+				this.detail_aux_old.setAdjunct_id(null);
+				this.detail_aux_old.setAmount_m3(null);
+				this.detail_aux_old.setCurrentreading(null);
+				this.detail_aux_old.setMonth(null);
+				this.detail_aux_old.setMonthtype(null);
+				this.detail_aux_old.setPreviousreading(null);
+				this.detail_aux_old.setYear(null);
+				this.disabled_old_fields = false;
+			} else {
+				this.disabled_old_fields = true;
+			}
+		}
+
+		System.out.println(detail_aux_old);
+	}
+
+	public void searchBondDetailNew() {
+		System.out.println("LLega al search New Bond");
+
+		System.out.println(this.numberNewBondAux);
+
+		List<WriteOffDetailDTO> retorno_bd = this.writeOffService.searchBondDetail(this.numberNewBondAux);
+
+		if (retorno_bd.size() == 0) {
+			System.out.println("no existe el Bond");
+		} else if (retorno_bd.size() > 0) {
+			this.detail_aux_new = retorno_bd.get(0);
+
+			if (this.detail_aux_new.getAdjunct_id() == 0) {
+				this.detail_aux_new.setAdjunct_id(null);
+				this.detail_aux_new.setAmount_m3(null);
+				this.detail_aux_new.setCurrentreading(null);
+				this.detail_aux_new.setMonth(null);
+				this.detail_aux_new.setMonthtype(null);
+				this.detail_aux_new.setPreviousreading(null);
+				this.detail_aux_new.setYear(null);
+				this.disabled_new_fields = false;
+			} else {
+				this.disabled_new_fields = true;
+			}
+
+		}
+
+		System.out.println(detail_aux_new);
+	}
+
+	public void addBonds() {
+		
+		System.out.println("Llega al add bonds");
+		
+		this.instance.setMadeBy(this.userSession.getPerson());
+
+		WriteOffDetail detail = new WriteOffDetail();
+		detail.setNewAmount(this.detail_aux_new.getAmount_m3());
+		detail.setNewCurrentReading(this.detail_aux_new.getCurrentreading());
+		detail.setNewMunicipalBond(getEntityManager().find(MunicipalBond.class,
+				this.detail_aux_new.getBond_id()));
+
+		detail.setNewPreviousReading(this.detail_aux_new.getPreviousreading());
+		detail.setOldAmount(this.detail_aux_old.getAmount_m3());
+		detail.setOldCurrentReading(this.detail_aux_old.getCurrentreading());
+		detail.setOldMunicipalBond(getEntityManager().find(MunicipalBond.class,
+				this.detail_aux_old.getBond_id()));
+		detail.setOldPreviousReading(this.detail_aux_old.getPreviousreading());
+		detail.setWriteOffRequest(this.instance);
+
+		/*
+		 * COMUNES
+		 */
+
+		detail.setMonth(this.detail_aux_new.getMonth());
+		detail.setMonthType(MonthType.getByValue(this.detail_aux_new.getMonth()));
+		detail.setYear(this.detail_aux_new.getYear());
+		detail.setWriteOffRequest(this.instance);
+		
+		this.instance.addDetail(detail);
+		
+		this.details.add(detail);
+
+		System.out.println(this.details);
+
+		this.detailsTableNew = new ArrayList<DetailTableAuxDTO>();
+
+		this.detailsTableOld = new ArrayList<DetailTableAuxDTO>();
+
+		for (int i = 0; i < details.size(); i++) {
+			WriteOffDetail det = this.details.get(i);
+			
+			DetailTableAuxDTO old = new DetailTableAuxDTO();
+			old.setIndex(i+1);
+			old.setBond_number(det.getOldMunicipalBond().getNumber());
+			old.setCurrent_reading(det.getOldCurrentReading());
+			old.setM3(det.getOldAmount());
+			old.setMonth_name(det.getMonthType().name());
+			old.setPrevious_reading(det.getOldPreviousReading());
+			old.setValue(det.getOldMunicipalBond().getValue());
+			old.setYear(det.getYear());
+			
+			this.detailsTableOld.add(old);
+			
+			DetailTableAuxDTO _new = new DetailTableAuxDTO();
+			_new.setIndex(i+1);
+			_new.setBond_number(det.getNewMunicipalBond().getNumber());
+			_new.setCurrent_reading(det.getNewCurrentReading());
+			_new.setM3(det.getNewAmount());
+			_new.setMonth_name(det.getMonthType().name());
+			_new.setPrevious_reading(det.getNewPreviousReading());
+			_new.setValue(det.getNewMunicipalBond().getValue());
+			_new.setYear(det.getYear());
+			
+			this.detailsTableNew.add(_new);
+
+		}
+		
+		System.out.println(this.detailsTableOld);
+		System.out.println(this.detailsTableNew);
+
+	}
+	
+	public List<WriteOffType> findTypes(){
+		Query query = getEntityManager().createNamedQuery(
+				"WriteOffType.findAll");
+		List<WriteOffType> _return = query.getResultList();
+		return _return;
+	}
+	
+	@Transactional
+	public String save(){
+		
+		System.out.println("Llega al save");
+		
+		SequenceManager sequence = new SequenceManager();
+		sequence.setCode(this.sequenceManagerService.getNextValue());
+		sequence.setExplanation("Baja de Agua potable");
+		sequence.setSequenceManagerType(this.sequenceManagerService.getTypeByCode("AGUA_POTABLE"));
+		sequence.setTakenBy(this.userSession.getPerson());
+		
+		this.instance.setSequenceManager(sequence);		
+		
+		return this.persist();
+		
+	}
+	
+	private WriteOffRequestDataModel getDataModel() {
+
+		/*WriteOffRequestDataModel dataModel = (WriteOffRequestDataModel) Contexts
+				.getConversationContext().get(WriteOffRequestDataModel.class);*/
+		WriteOffRequestDataModel dataModel = (WriteOffRequestDataModel) Component
+				.getInstance(WriteOffRequestDataModel.class, true);
+		return dataModel;
+	}
+	
+	public void loadWrites(){
+		getDataModel().setCriteria(this.number_request_criteria, this.identification_number_criteria, this.name_resident_criteria);
+		getDataModel().setRowCount(getDataModel().getObjectsNumber());
+	}
+	
+	public void search(){
+		getDataModel().setCriteria(this.number_request_criteria, this.identification_number_criteria, this.name_resident_criteria);
+		getDataModel().setRowCount(getDataModel().getObjectsNumber());
 	}
 
 }

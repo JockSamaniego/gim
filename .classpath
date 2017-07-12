@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="src/main"/>
 	<classpathentry kind="lib" path="lib/antlr-3.3.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-runtime-3.3.jar"/>
-	<classpathentry kind="lib" path="lib/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/commons-digester.jar"/>
 	<classpathentry kind="lib" path="lib/core.jar"/>
@@ -79,5 +78,6 @@
 	<classpathentry kind="lib" path="lib/testng-jdk15.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/elecInvClient.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-1.9.3.jar"/>
 	<classpathentry kind="output" path="test-build"/>
 </classpath>

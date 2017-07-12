@@ -90,7 +90,6 @@ public class SequenceManagerHome extends EntityHome<SequenceManager> {
 		qsmt.setParameter("id", new Long("1"));
 		SequenceManagerType type = (SequenceManagerType) qsmt.getSingleResult();
 
-		this.getInstance().setCode(code);
 		this.getInstance().setSequenceManagerType(type);
 		
 		super.persist();

@@ -26,4 +26,5 @@ public class WriteOffRequestList extends EntityQuery<WriteOffRequest> {
 	public WriteOffRequest getWriteOffRequest() {
 		return writeOffRequest;
 	}
+	
 }

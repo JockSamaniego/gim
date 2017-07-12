@@ -11,9 +11,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.envers.Audited;
 
@@ -28,14 +30,15 @@ import ec.gob.gim.common.model.Resident;
 @Audited
 @Entity
 @TableGenerator(name = "SequenceManagerGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "SequenceManager", initialValue = 1, allocationSize = 1)
-@NamedQueries(value = {
-		@NamedQuery(name = "SequenceManager.findMaxCodeByYear", query = "select MAX(b.code) from SequenceManager b where year = :year") })
 public class SequenceManager {
 
 	@Id
 	@GeneratedValue(generator = "SequenceManagerGenerator", strategy = GenerationType.TABLE)
 	private Long id;
 
+	/*
+	 * current date
+	 */
 	@Temporal(TemporalType.DATE)
 	private Date date;
 
@@ -44,13 +47,16 @@ public class SequenceManager {
 	/**
 	 * codigo secuencial para el año
 	 */
-	private Integer code;
+	private Long code;
 
+	/*
+	 * Explicacion de porque se da la baja
+	 */
 	@Column(length = 30)
 	private String explanation;
 
 	/**
-	 * quien toma el número para dar la baja
+	 * quien toma el número para dar la baja(current user)
 	 */
 	@ManyToOne
 	@JoinColumn(name = "takenby_id")
@@ -89,11 +95,11 @@ public class SequenceManager {
 		this.isActive = isActive;
 	}
 
-	public Integer getCode() {
+	public Long getCode() {
 		return code;
 	}
 
-	public void setCode(Integer code) {
+	public void setCode(Long code) {
 		this.code = code;
 	}
 

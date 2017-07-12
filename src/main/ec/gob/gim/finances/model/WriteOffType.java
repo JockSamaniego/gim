@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.envers.Audited;
@@ -12,6 +14,9 @@ import org.hibernate.envers.Audited;
 @Audited
 @Entity
 @TableGenerator(name = "WriteOffTypeGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "WriteOffType", initialValue = 1, allocationSize = 1)
+@NamedQueries({
+	@NamedQuery(name = "WriteOffType.findAll", query = "select t from WriteOffType t where t.isActive = true order by t.id asc") 
+})
 public class WriteOffType {
 
 	@Id

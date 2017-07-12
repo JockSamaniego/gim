@@ -1,21 +1,32 @@
 package ec.gob.gim.finances.model;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.waterservice.model.WaterMeter;
 import ec.gob.gim.waterservice.model.WaterSupply;
 
 @Audited
@@ -30,17 +41,17 @@ public class WriteOffRequest {
 	@Temporal(TemporalType.DATE)
 	private Date date;
 
-	private Boolean isActive;
+	private Boolean isActive = Boolean.TRUE;
 
 	@Column(length = 50)
 	private String internalProcessNumber;
 
 	@Column(length = 100)
 	private String detail;
-	
+
 	@Column(length = 100)
 	private String detailEmission;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "writeofftype_id")
 	private WriteOffType writeOffType;
@@ -48,24 +59,23 @@ public class WriteOffRequest {
 	/**
 	 * numero de secuencia a dar de baja
 	 */
-	@ManyToOne
-	@JoinColumn(name = "sequencemanager_id")
+	@OneToOne(cascade = CascadeType.ALL)
 	private SequenceManager sequenceManager;
 
 	/**
-	 * servicio de agua potable a dar de baja
+	 * Medidor a dar de baja
 	 */
 	@ManyToOne
-	@JoinColumn(name = "watersupply_id")
-	private WaterSupply waterSupply;
+	@JoinColumn(name = "watermeter_id")
+	private WaterMeter waterMeter;
 
 	/**
-	 * a quien se emite cuando sea necesario 
+	 * a quien se emite cuando sea necesario
 	 */
 	@ManyToOne
 	@JoinColumn(name = "issueto_id")
 	private Resident issueTo;
-	
+
 	/**
 	 * contribuyente
 	 */
@@ -74,7 +84,7 @@ public class WriteOffRequest {
 	private Resident resident;
 
 	/**
-	 * usuario que alabora la baja
+	 * usuario que elabora la baja
 	 */
 	@ManyToOne
 	@JoinColumn(name = "madeby_id")
@@ -86,6 +96,19 @@ public class WriteOffRequest {
 	@ManyToOne
 	@JoinColumn(name = "approvedby_id")
 	private Resident approvedBy;
+
+	@OneToMany(fetch = FetchType.LAZY)
+	@Cascade(value = org.hibernate.annotations.CascadeType.ALL)
+	@JoinColumn(name = "writeoffrequest_id")
+	@OrderBy("id asc")
+	private List<WriteOffDetail> details = new ArrayList<WriteOffDetail>();
+
+	public WriteOffRequest() {
+		super();
+		// TODO Auto-generated constructor stub
+		this.date = new Date();
+		this.waterMeter = new WaterMeter();
+	}
 
 	public Long getId() {
 		return id;
@@ -135,14 +158,6 @@ public class WriteOffRequest {
 		this.sequenceManager = sequenceManager;
 	}
 
-	public WaterSupply getWaterSupply() {
-		return waterSupply;
-	}
-
-	public void setWaterSupply(WaterSupply waterSupply) {
-		this.waterSupply = waterSupply;
-	}
-
 	public Resident getResident() {
 		return resident;
 	}
@@ -174,7 +189,7 @@ public class WriteOffRequest {
 	public void setWriteOffType(WriteOffType writeOffType) {
 		this.writeOffType = writeOffType;
 	}
-	
+
 	public String getDetailEmission() {
 		return detailEmission;
 	}
@@ -189,6 +204,40 @@ public class WriteOffRequest {
 
 	public void setIssueTo(Resident issueTo) {
 		this.issueTo = issueTo;
+	}
+
+	public WaterMeter getWaterMeter() {
+		return waterMeter;
+	}
+
+	public void setWaterMeter(WaterMeter waterMeter) {
+		this.waterMeter = waterMeter;
+	}
+
+	public List<WriteOffDetail> getDetails() {
+		return details;
+	}
+
+	public void setDetails(List<WriteOffDetail> details) {
+		this.details = details;
+	}
+
+	public void addDetail(WriteOffDetail detail) {
+		detail.setWriteOffRequest(this);
+		this.details.add(detail);
+	}
+
+	public String sequenceNumberComplete() {
+		
+		DecimalFormat numFormat = new DecimalFormat("0000");
+		System.out.println("Code format: "+numFormat.format(this.sequenceManager.getCode()));
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(numFormat.format(this.sequenceManager.getCode()));
+		stringBuilder.append(" - ");
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(this.getDate()); 
+		stringBuilder.append(cal.get(Calendar.YEAR));
+		return stringBuilder.toString();
 	}
 
 }

@@ -6,7 +6,7 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
-    template="layout/template.xhtml">
+    template="../layout/template.xhtml">
 
 <ui:define name="body">
 
@@ -14,29 +14,29 @@
         <f:facet name="header">Write off request Details</f:facet>
 
 
-        <s:decorate id="date" template="layout/display.xhtml">
+        <s:decorate id="date" template="../layout/display.xhtml">
             <ui:define name="label">Date</ui:define>
             <h:outputText value="#{writeOffRequestHome.instance.date}">
                 <s:convertDateTime type="date" dateStyle="short"/>
             </h:outputText>
         </s:decorate>
 
-        <s:decorate id="detail" template="layout/display.xhtml">
+        <s:decorate id="detail" template="../layout/display.xhtml">
             <ui:define name="label">Detail</ui:define>
             <h:outputText value="#{writeOffRequestHome.instance.detail}"/>
         </s:decorate>
 
-        <s:decorate id="detailEmission" template="layout/display.xhtml">
+        <s:decorate id="detailEmission" template="../layout/display.xhtml">
             <ui:define name="label">Detail emission</ui:define>
             <h:outputText value="#{writeOffRequestHome.instance.detailEmission}"/>
         </s:decorate>
 
-        <s:decorate id="internalProcessNumber" template="layout/display.xhtml">
+        <s:decorate id="internalProcessNumber" template="../layout/display.xhtml">
             <ui:define name="label">Internal process number</ui:define>
             <h:outputText value="#{writeOffRequestHome.instance.internalProcessNumber}"/>
         </s:decorate>
 
-        <s:decorate id="isActive" template="layout/display.xhtml">
+        <s:decorate id="isActive" template="../layout/display.xhtml">
             <ui:define name="label">Is active</ui:define>
             <h:outputText value="#{writeOffRequestHome.instance.isActive}"/>
         </s:decorate>
