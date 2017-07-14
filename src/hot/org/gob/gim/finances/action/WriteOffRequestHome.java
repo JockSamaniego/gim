@@ -1,5 +1,6 @@
 package org.gob.gim.finances.action;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.gob.gim.cadaster.action.pagination.WorkDealFractionDataModel;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SequenceManagerService;
+import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.finances.pagination.WriteOffRequestDataModel;
 import org.gob.gim.finances.service.WriteOffService;
 import org.jboss.seam.Component;
@@ -21,6 +23,8 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityHome;
 
+import ec.gob.gim.common.model.Charge;
+import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.finances.model.SequenceManager;
 import ec.gob.gim.finances.model.WriteOffDetail;
@@ -28,6 +32,7 @@ import ec.gob.gim.finances.model.WriteOffRequest;
 import ec.gob.gim.finances.model.WriteOffType;
 import ec.gob.gim.finances.model.DTO.DetailTableAuxDTO;
 import ec.gob.gim.finances.model.DTO.WriteOffDetailDTO;
+import ec.gob.gim.finances.model.DTO.WriteOffRequestDTO;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.waterservice.model.MonthType;
 import ec.gob.gim.waterservice.model.WaterSupply;
@@ -39,12 +44,12 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@In(scope = ScopeType.SESSION, value = "userSession")
 	UserSession userSession;
 
 	private WriteOffService writeOffService;
-	
+
 	private SequenceManagerService sequenceManagerService;
 
 	private String criteria;
@@ -74,22 +79,42 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	private List<DetailTableAuxDTO> detailsTableOld = new ArrayList<DetailTableAuxDTO>();
 
 	private List<DetailTableAuxDTO> detailsTableNew = new ArrayList<DetailTableAuxDTO>();
-	
+
 	private List<WriteOffType> _types = new ArrayList<WriteOffType>();
-	
+
 	private boolean isFirstTime = true;
-	
+
 	/*
 	 * CRITERIA
 	 */
-	
+
 	private String number_request_criteria = null;
-	
+
 	private String identification_number_criteria = null;
-	
+
 	private String name_resident_criteria = null;
+
+	/*
+	 * Auxiliar para la baja seleccionada(print)
+	 */
+	private WriteOffRequestDTO writeOffRequestSelected;
+
+	private Charge revenueCharge;
+
+	private Delegate revenueDelegate;
+
+	private Charge commercializationCharge;
+
+	private Delegate commercializationDelegate;
 	
+	private Charge finantialCharge;
+
+	private Delegate finantialDelegate;
 	
+	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
+
+	private SystemParameterService systemParameterService;
+
 	public List<WaterSupply> getWaterSupplies() {
 		return waterSupplies;
 	}
@@ -209,7 +234,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	public void setDetailsTableNew(List<DetailTableAuxDTO> detailsTableNew) {
 		this.detailsTableNew = detailsTableNew;
 	}
-	
+
 	public List<WriteOffType> get_types() {
 		return _types;
 	}
@@ -217,7 +242,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	public void set_types(List<WriteOffType> _types) {
 		this._types = _types;
 	}
-	
+
 	public String getNumber_request_criteria() {
 		return number_request_criteria;
 	}
@@ -243,10 +268,67 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		this.name_resident_criteria = name_resident_criteria;
 	}
 
+	public Delegate getRevenueDelegate() {
+		return revenueDelegate;
+	}
+
+	public void setRevenueDelegate(Delegate revenueDelegate) {
+		this.revenueDelegate = revenueDelegate;
+	}
+	
+	public Charge getCommercializationCharge() {
+		return commercializationCharge;
+	}
+
+	public void setCommercializationCharge(Charge commercializationCharge) {
+		this.commercializationCharge = commercializationCharge;
+	}
+
+	public Delegate getCommercializationDelegate() {
+		return commercializationDelegate;
+	}
+
+	public void setCommercializationDelegate(Delegate commercializationDelegate) {
+		this.commercializationDelegate = commercializationDelegate;
+	}
+
+	public Charge getFinantialCharge() {
+		return finantialCharge;
+	}
+
+	public void setFinantialCharge(Charge finantialCharge) {
+		this.finantialCharge = finantialCharge;
+	}
+
+	public Delegate getFinantialDelegate() {
+		return finantialDelegate;
+	}
+
+	public void setFinantialDelegate(Delegate finantialDelegate) {
+		this.finantialDelegate = finantialDelegate;
+	}
+
 	@Override
 	protected WriteOffRequest createInstance() {
 		WriteOffRequest writeOffRequest = new WriteOffRequest();
 		return writeOffRequest;
+	}
+
+	public WriteOffRequestDTO getWriteOffRequestSelected() {
+		return writeOffRequestSelected;
+	}
+
+	public void setWriteOffRequestSelected(
+			WriteOffRequestDTO writeOffRequestSelected) {
+		this.writeOffRequestSelected = writeOffRequestSelected;
+	}
+
+	public Charge getRevenueCharge() {
+		return revenueCharge;
+	}
+
+	public void setRevenueCharge(Charge revenueCharge) {
+		this.revenueCharge = revenueCharge;
 	}
 
 	public void load() {
@@ -256,29 +338,33 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	}
 
 	public void wire() {
-		
-		
+
 		getInstance();
-		
+
 		if (isFirstTime) {
-			
-			if (writeOffService == null) {
-				writeOffService = ServiceLocator.getInstance().findResource(WriteOffService.LOCAL_NAME);
-			}
-			
-			if (sequenceManagerService == null) {
-				sequenceManagerService = ServiceLocator.getInstance().findResource(SequenceManagerService.LOCAL_NAME);
-			}
-			
+
 			isFirstTime = Boolean.FALSE;
 			this.details = new ArrayList<WriteOffDetail>();
-			
+
 			/*
 			 * Inicializar tipos de inconsistencias
 			 */
 			this._types = this.findTypes();
+
+			loadCharge();
+
 		}
-		
+
+		if (writeOffService == null) {
+			writeOffService = ServiceLocator.getInstance().findResource(
+					WriteOffService.LOCAL_NAME);
+		}
+
+		if (sequenceManagerService == null) {
+			sequenceManagerService = ServiceLocator.getInstance().findResource(
+					SequenceManagerService.LOCAL_NAME);
+		}
+
 		/*
 		 * Resident approvedBy = residentHome.getDefinedInstance(); if
 		 * (approvedBy != null) { getInstance().setApprovedBy(approvedBy); }
@@ -397,7 +483,8 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 		System.out.println(this.numberOldBondAux);
 
-		List<WriteOffDetailDTO> retorno_bd = this.writeOffService.searchBondDetail(this.numberOldBondAux);
+		List<WriteOffDetailDTO> retorno_bd = this.writeOffService
+				.searchBondDetail(this.numberOldBondAux);
 
 		if (retorno_bd.size() == 0) {
 			System.out.println("no existe el Bond");
@@ -425,7 +512,8 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 		System.out.println(this.numberNewBondAux);
 
-		List<WriteOffDetailDTO> retorno_bd = this.writeOffService.searchBondDetail(this.numberNewBondAux);
+		List<WriteOffDetailDTO> retorno_bd = this.writeOffService
+				.searchBondDetail(this.numberNewBondAux);
 
 		if (retorno_bd.size() == 0) {
 			System.out.println("no existe el Bond");
@@ -451,9 +539,9 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	}
 
 	public void addBonds() {
-		
+
 		System.out.println("Llega al add bonds");
-		
+
 		this.instance.setMadeBy(this.userSession.getPerson());
 
 		WriteOffDetail detail = new WriteOffDetail();
@@ -478,9 +566,9 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		detail.setMonthType(MonthType.getByValue(this.detail_aux_new.getMonth()));
 		detail.setYear(this.detail_aux_new.getYear());
 		detail.setWriteOffRequest(this.instance);
-		
+
 		this.instance.addDetail(detail);
-		
+
 		this.details.add(detail);
 
 		System.out.println(this.details);
@@ -491,9 +579,9 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 		for (int i = 0; i < details.size(); i++) {
 			WriteOffDetail det = this.details.get(i);
-			
+
 			DetailTableAuxDTO old = new DetailTableAuxDTO();
-			old.setIndex(i+1);
+			old.setIndex(i + 1);
 			old.setBond_number(det.getOldMunicipalBond().getNumber());
 			old.setCurrent_reading(det.getOldCurrentReading());
 			old.setM3(det.getOldAmount());
@@ -501,11 +589,11 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 			old.setPrevious_reading(det.getOldPreviousReading());
 			old.setValue(det.getOldMunicipalBond().getValue());
 			old.setYear(det.getYear());
-			
+
 			this.detailsTableOld.add(old);
-			
+
 			DetailTableAuxDTO _new = new DetailTableAuxDTO();
-			_new.setIndex(i+1);
+			_new.setIndex(i + 1);
 			_new.setBond_number(det.getNewMunicipalBond().getNumber());
 			_new.setCurrent_reading(det.getNewCurrentReading());
 			_new.setM3(det.getNewAmount());
@@ -513,57 +601,181 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 			_new.setPrevious_reading(det.getNewPreviousReading());
 			_new.setValue(det.getNewMunicipalBond().getValue());
 			_new.setYear(det.getYear());
-			
+
 			this.detailsTableNew.add(_new);
 
 		}
-		
+
 		System.out.println(this.detailsTableOld);
 		System.out.println(this.detailsTableNew);
 
 	}
-	
-	public List<WriteOffType> findTypes(){
+
+	public List<WriteOffType> findTypes() {
 		Query query = getEntityManager().createNamedQuery(
 				"WriteOffType.findAll");
 		List<WriteOffType> _return = query.getResultList();
 		return _return;
 	}
-	
+
 	@Transactional
-	public String save(){
-		
+	public String save() {
+
 		System.out.println("Llega al save");
-		
+
 		SequenceManager sequence = new SequenceManager();
 		sequence.setCode(this.sequenceManagerService.getNextValue());
 		sequence.setExplanation("Baja de Agua potable");
-		sequence.setSequenceManagerType(this.sequenceManagerService.getTypeByCode("AGUA_POTABLE"));
+		sequence.setSequenceManagerType(this.sequenceManagerService
+				.getTypeByCode("AGUA_POTABLE"));
 		sequence.setTakenBy(this.userSession.getPerson());
-		
-		this.instance.setSequenceManager(sequence);		
-		
+
+		this.instance.setSequenceManager(sequence);
+
 		return this.persist();
-		
+
 	}
-	
+
 	private WriteOffRequestDataModel getDataModel() {
 
-		/*WriteOffRequestDataModel dataModel = (WriteOffRequestDataModel) Contexts
-				.getConversationContext().get(WriteOffRequestDataModel.class);*/
+		/*
+		 * WriteOffRequestDataModel dataModel = (WriteOffRequestDataModel)
+		 * Contexts
+		 * .getConversationContext().get(WriteOffRequestDataModel.class);
+		 */
 		WriteOffRequestDataModel dataModel = (WriteOffRequestDataModel) Component
 				.getInstance(WriteOffRequestDataModel.class, true);
 		return dataModel;
 	}
-	
-	public void loadWrites(){
-		getDataModel().setCriteria(this.number_request_criteria, this.identification_number_criteria, this.name_resident_criteria);
+
+	public void loadWrites() {
+		getDataModel().setCriteria(this.number_request_criteria,
+				this.identification_number_criteria,
+				this.name_resident_criteria);
+		getDataModel().setRowCount(getDataModel().getObjectsNumber());
+
+		loadCharge();
+	}
+
+	public void search() {
+		getDataModel().setCriteria(this.number_request_criteria,
+				this.identification_number_criteria,
+				this.name_resident_criteria);
 		getDataModel().setRowCount(getDataModel().getObjectsNumber());
 	}
-	
-	public void search(){
-		getDataModel().setCriteria(this.number_request_criteria, this.identification_number_criteria, this.name_resident_criteria);
-		getDataModel().setRowCount(getDataModel().getObjectsNumber());
+
+	public String print(Long writeOffRequest_id) {
+
+		System.out
+				.println("*********--------------LLEGA al print-----------***************");
+
+		// System.out.println(writeOffRequest);
+
+		if (writeOffService == null) {
+			writeOffService = ServiceLocator.getInstance().findResource(
+					WriteOffService.LOCAL_NAME);
+		}
+
+		this.writeOffRequestSelected = this.writeOffService
+				.findById(writeOffRequest_id);
+
+		WriteOffRequest writeOff = this.getEntityManager().find(
+				WriteOffRequest.class, writeOffRequest_id);
+
+		this.detailsTableOld = new ArrayList<DetailTableAuxDTO>();
+
+		this.detailsTableNew = new ArrayList<DetailTableAuxDTO>();
+
+		for (int i = 0; i < writeOff.getDetails().size(); i++) {
+
+			WriteOffDetail det = writeOff.getDetails().get(i);
+
+			DetailTableAuxDTO old = new DetailTableAuxDTO();
+			old.setIndex(i + 1);
+			old.setBond_number(det.getOldMunicipalBond().getNumber());
+			old.setCurrent_reading(det.getOldCurrentReading());
+			old.setM3(det.getOldAmount());
+			old.setMonth_name(det.getMonthType().name());
+			old.setPrevious_reading(det.getOldPreviousReading());
+			old.setValue(det.getOldMunicipalBond().getValue());
+			old.setYear(det.getYear());
+
+			this.detailsTableOld.add(old);
+
+			DetailTableAuxDTO _new = new DetailTableAuxDTO();
+			_new.setIndex(i + 1);
+			_new.setBond_number(det.getNewMunicipalBond().getNumber());
+			_new.setCurrent_reading(det.getNewCurrentReading());
+			_new.setM3(det.getNewAmount());
+			_new.setMonth_name(det.getMonthType().name());
+			_new.setPrevious_reading(det.getNewPreviousReading());
+			_new.setValue(det.getNewMunicipalBond().getValue());
+			_new.setYear(det.getYear());
+
+			this.detailsTableNew.add(_new);
+
+		}
+
+		return "/finances/WriteOffRequestReportPDF.xhtml";
+	}
+
+	public BigDecimal totalOldBonds() {
+
+		BigDecimal sum = BigDecimal.ZERO;
+
+		for (DetailTableAuxDTO detailTableAuxDTO : detailsTableOld) {
+			sum = sum.add(detailTableAuxDTO.getValue());
+		}
+
+		return sum;
+	}
+
+	public BigDecimal totalNewBonds() {
+
+		BigDecimal sum = BigDecimal.ZERO;
+
+		for (DetailTableAuxDTO detailTableAuxDTO : detailsTableNew) {
+			sum = sum.add(detailTableAuxDTO.getValue());
+		}
+
+		return sum;
+	}
+
+	private void loadCharge() {
+
+		revenueCharge = getCharge("DELEGATE_ID_REVENUE");
+		if (revenueCharge != null) {
+			for (Delegate d : revenueCharge.getDelegates()) {
+				if (d.getIsActive())
+					revenueDelegate = d;
+			}
+		}
+		
+		finantialCharge = getCharge("DELEGATE_ID_FINANTIAL");
+		if (finantialCharge != null) {
+			for (Delegate d : finantialCharge.getDelegates()) {
+				if (d.getIsActive())
+					finantialDelegate = d;
+			}
+		}
+		
+		commercializationCharge = getCharge("DELEGATE_ID_COMMERCIALIZATION");
+		if (commercializationCharge != null) {
+			for (Delegate d : commercializationCharge.getDelegates()) {
+				if (d.getIsActive())
+					commercializationDelegate = d;
+			}
+		}
+		
+	}
+
+	private Charge getCharge(String systemParameter) {
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SYSTEM_PARAMETER_SERVICE_NAME);
+		Charge charge = systemParameterService.materialize(Charge.class,
+				systemParameter);
+		return charge;
 	}
 
 }
