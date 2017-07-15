@@ -16,12 +16,12 @@
 
 
 			<h:outputText styleClass="formTitle"
-				value="#{alertHome.managed ? messages['common.close'] : messages['common.create']} #{messages['alertType.tittle']}" />
+				value="#{alertTypeHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['alertType']}" />
 
 			<h:panelGrid columns="2" width="100%" id="panelCreation">
 				<s:decorate>
 					<rich:panel id="openPanel">
-						<f:facet name="header">#{messages['alertType.open']}</f:facet>
+						<f:facet name="header">#{messages['alertType']}</f:facet>
 						<s:decorate id="openUserField" template="../layout/edit.xhtml">
 							<ui:define name="label">#{messages['alert.openUser']}</ui:define>
 							<h:inputText id="openUser" size="60" readonly="true"
@@ -38,7 +38,7 @@
 						</s:decorate>
 		
 						<s:decorate id="openNameField" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['alertType.openName']}</ui:define>
+							<ui:define name="label">#{messages['alertType.name']}</ui:define>
 							<h:inputText id="openName" required="true" size="60" 
 								value="#{alertTypeHome.instance.name}" />
 						</s:decorate>
