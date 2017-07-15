@@ -6,7 +6,7 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
-    template="layout/template.xhtml">
+    template="../../layout/template.xhtml">
 
 <ui:define name="body">
 
@@ -14,22 +14,22 @@
 
         <rich:simpleTogglePanel label="InfractionSentences Search Filter" switchType="ajax">
 
-            <s:decorate template="layout/display.xhtml">
+            <s:decorate template="../../layout/display.xhtml">
                 <ui:define name="label">Description</ui:define>
                 <h:inputText id="description" value="#{infractionSentencesList.infractionSentences.description}"/>
             </s:decorate>
 
-            <s:decorate template="layout/display.xhtml">
+            <s:decorate template="../../layout/display.xhtml">
                 <ui:define name="label">Judge</ui:define>
                 <h:inputText id="judge" value="#{infractionSentencesList.infractionSentences.judge}"/>
             </s:decorate>
 
-            <s:decorate template="layout/display.xhtml">
+            <s:decorate template="../../layout/display.xhtml">
                 <ui:define name="label">Process number</ui:define>
                 <h:inputText id="processNumber" value="#{infractionSentencesList.infractionSentences.processNumber}"/>
             </s:decorate>
 
-            <s:decorate template="layout/display.xhtml">
+            <s:decorate template="../../layout/display.xhtml">
                 <ui:define name="label">Match</ui:define>
                 <h:selectOneRadio id="logic" value="#{infractionSentencesList.restrictionLogicOperator}" styleClass="radio">
                     <f:selectItem itemLabel="All" itemValue="and"/>

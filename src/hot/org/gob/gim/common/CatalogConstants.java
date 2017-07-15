@@ -24,5 +24,7 @@ public class CatalogConstants {
 	 public static final String ITEM_CATALOG_ACTION_REMOVE_WORK_DEAL = "ACTION_DELETE";
 	 
 	 public static final String ITEM_CATALOG_TYPE_EXCLUDE_TREATMENT_EXCEMPTION = "TYPE_EXCLUDE";
+	 
+	 public static final String CATALOG_TYPES_BULLETIN = "TYPES_BULLETIN";
 	
 }

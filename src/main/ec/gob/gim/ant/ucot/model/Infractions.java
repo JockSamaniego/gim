@@ -173,4 +173,13 @@ public class Infractions {
 	public void setBulletin(Bulletin bulletin) {
 		this.bulletin = bulletin;
 	}
+
+	public Date getCitationTime() {
+		return citationTime;
+	}
+
+	public void setCitationTime(Date citationTime) {
+		this.citationTime = citationTime;
+	}
+	
 }

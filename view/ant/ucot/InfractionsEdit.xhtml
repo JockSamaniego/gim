@@ -7,7 +7,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:a="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
-    template="layout/template.xhtml">
+    template="../../layout/template.xhtml">
 
 <ui:define name="body">
 
@@ -18,14 +18,14 @@
 
 
 
-            <s:decorate id="archivedField" template="layout/edit.xhtml">
+            <s:decorate id="archivedField" template="../../layout/edit.xhtml">
                 <ui:define name="label">Archived</ui:define>
                 <h:selectBooleanCheckbox id="archived"
                                       value="#{infractionsHome.instance.archived}"/>
             </s:decorate>
 
 
-            <s:decorate id="articleField" template="layout/edit.xhtml">
+            <s:decorate id="articleField" template="../../layout/edit.xhtml">
                 <ui:define name="label">Article</ui:define>
                 <h:inputText id="article"
                            size="10"
@@ -37,14 +37,14 @@
 
 
 
-            <s:decorate id="citationDateField" template="layout/edit.xhtml">
+            <s:decorate id="citationDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">Citation date</ui:define>
                 <rich:calendar id="citationDate"
                           value="#{infractionsHome.instance.citationDate}" datePattern="MM/dd/yyyy" />
             </s:decorate>
 
 
-            <s:decorate id="citationTimeField" template="layout/edit.xhtml">
+            <s:decorate id="citationTimeField" template="../../layout/edit.xhtml">
                 <ui:define name="label">Citation time</ui:define>
                 <h:inputText id="citationTime"
                            size="5"
@@ -55,7 +55,7 @@
             </s:decorate>
 
 
-            <s:decorate id="identificationField" template="layout/edit.xhtml">
+            <s:decorate id="identificationField" template="../../layout/edit.xhtml">
                 <ui:define name="label">Identification</ui:define>
                 <h:inputTextarea id="identification"
                                cols="80"
@@ -64,14 +64,14 @@
             </s:decorate>
 
 
-            <s:decorate id="inPhysicField" template="layout/edit.xhtml">
+            <s:decorate id="inPhysicField" template="../../layout/edit.xhtml">
                 <ui:define name="label">In physic</ui:define>
                 <h:selectBooleanCheckbox id="inPhysic"
                                       value="#{infractionsHome.instance.inPhysic}"/>
             </s:decorate>
 
 
-            <s:decorate id="licensePlateField" template="layout/edit.xhtml">
+            <s:decorate id="licensePlateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">License plate</ui:define>
                 <h:inputTextarea id="licensePlate"
                                cols="80"
@@ -80,7 +80,7 @@
             </s:decorate>
 
 
-            <s:decorate id="numeralField" template="layout/edit.xhtml">
+            <s:decorate id="numeralField" template="../../layout/edit.xhtml">
                 <ui:define name="label">Numeral</ui:define>
                 <h:inputText id="numeral"
                            size="10"
@@ -91,7 +91,7 @@
             </s:decorate>
 
 
-            <s:decorate id="serialField" template="layout/edit.xhtml">
+            <s:decorate id="serialField" template="../../layout/edit.xhtml">
                 <ui:define name="label">Serial</ui:define>
                 <h:inputText id="serial"
                        required="true"

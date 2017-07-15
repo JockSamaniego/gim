@@ -27,6 +27,8 @@
    <param name="itemCatalogId" value="#{itemCatalogHome.itemCatalogId}"/>
    <param name="catalogFrom"/>
    <param name="catalogId" value="#{catalogHome.catalogId}"/>
+   
+   <param name="criteriaSearch" value="#{agentList.criteriaSearch}" />
 
 
 
@@ -34,21 +36,21 @@
    <navigation from-action="#{bulletinHome.persist}">
       <rule if-outcome="persisted">
          <end-conversation/>
-         <redirect view-id="/Bulletin.xhtml"/>
+         <redirect view-id="/ant/ucot/BulletinList.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{bulletinHome.update}">
       <rule if-outcome="updated">
          <end-conversation/>
-         <redirect view-id="/Bulletin.xhtml"/>
+         <redirect view-id="/ant/ucot/BulletinList.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{bulletinHome.remove}">
       <rule if-outcome="removed">
          <end-conversation/>
-         <redirect view-id="/BulletinList.xhtml"/>
+         <redirect view-id="/ant/ucot/BulletinList.xhtml"/>
       </rule>
    </navigation>
 

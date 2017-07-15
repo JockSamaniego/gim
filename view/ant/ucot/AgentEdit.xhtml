@@ -12,73 +12,82 @@
 
 <ui:define name="body">
 
-    <h:form id="agent" styleClass="edit">
+    <h:form id="agent" styleClass="edit" >
 
         <rich:panel>
-            <f:facet name="header">#{agentHome.managed ? 'Edit' : 'Add'} Agent</f:facet>
-
-            <g:residentChooser resident="#{agentHome.instance.resident}"
-              criteria="#{agentHome.criteria}"
-              bean="#{agentHome}" searchAction="searchResident"
-              residentsList="#{agentHome.residents}"
-              identificationNumber="#{agentHome.identificationNumber}"
-              searchByCriteriaAction="searchResidentByCriteria"
-              clearSearchPanelAction="clearSearchResidentPanel"
-              residentChosenListenerName="residentSelectedListener" >
-              <s:convertEntity />
-            </g:residentChooser>
-            
-            
+                <f:facet name="header">#{alertHome.managed ? messages['agent.Edit'] : messages['agent.Create']}</f:facet>
+                  <g:residentChooser resident="#{agentHome.instance.resident}"
+                    disabled="#{agentHome.managed}"
+                    criteria="#{agentHome.criteria}"
+                    bean="#{agentHome}" searchAction="searchResident"
+                    residentsList="#{agentHome.residents}"
+                    identificationNumber="#{agentHome.identificationNumber}"
+                    searchByCriteriaAction="searchResidentByCriteria"
+                    clearSearchPanelAction="clearSearchResidentPanel"
+                    residentChosenListenerName="residentSelectedListener">
+                    <s:convertEntity />
+                  </g:residentChooser>            
 
             <s:decorate id="agentCodeField" template="../../layout/edit.xhtml">
-                <ui:define name="label">Agent code</ui:define>
+                <ui:define name="label">#{messages['agent.code']}</ui:define>
                 <h:inputText id="agentCode"
                        required="true"
                            size="30"
                       maxlength="30"
-                          value="#{agentHome.instance.agentCode}">
+                          value="#{agentHome.instance.agentCode}"
+                          readonly="#{agentHome.managed}">
                     <a:support event="onblur" reRender="agentCodeField" bypassUpdates="true" ajaxSingle="true"/>
                 </h:inputText>
             </s:decorate>
+          
+      <s:decorate id="agentActiveField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['agent.isActive']}</ui:define>
+                <h:selectBooleanCheckbox id="agenteIsActive"
+                value="#{agentHome.instance.isActive}" />
+            </s:decorate> 
 
 
             <div style="clear:both">
                 <span class="required">*</span>
-                required fields
+               campos requeridos
             </div>
+            
+            <s:decorate id="agentMessageField" template="../../layout/edit.xhtml">
+                <h:outputText value="#{agentHome.message}" rendered="#{agentHome.message != null}" style="color:red"/>
+            </s:decorate> 
+
+            <div style="clear:both">
+            </div>
+            
 
         </rich:panel>
 
         <div class="actionButtons">
 
             <h:commandButton id="save"
-                          value="Save"
-                         action="#{agentHome.persist}"
+                          value="#{messages['common.save']}"
+                         action="#{agentHome.saveAgent()}"
                        disabled="#{!agentHome.wired}"
                        rendered="#{!agentHome.managed}"/>
 
             <h:commandButton id="update"
-                          value="Save"
+                          value="#{messages['common.save']}"
                          action="#{agentHome.update}"
                        rendered="#{agentHome.managed}"/>
 
             <h:commandButton id="delete"
-                          value="Delete"
+                          value="#{messages['common.delete']}"
                          action="#{agentHome.remove}"
                       immediate="true"
+                      disabled="true"
                        rendered="#{agentHome.managed}"/>
 
             <s:button id="cancelEdit"
-                   value="Cancel"
+                   value="#{messages['common.cancel']}"
              propagation="end"
-                    view="/Agent.xhtml"
-                rendered="#{agentHome.managed}"/>
+                    view="/ant/ucot/AgentList.xhtml"/>
 
-            <s:button id="cancelAdd"
-                   value="Cancel"
-             propagation="end"
-                    view="/#{empty agentFrom ? 'AgentList' : agentFrom}.xhtml"
-                rendered="#{!agentHome.managed}"/>
+
         </div>
     </h:form>
     </ui:define>

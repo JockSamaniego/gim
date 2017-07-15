@@ -1,5 +1,12 @@
 package org.gob.gim.ant.ucot.action;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.gob.gim.common.CatalogConstants;
+import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
@@ -10,6 +17,9 @@ import ec.gob.gim.common.model.ItemCatalog;
 
 @Name("bulletinHome")
 public class BulletinHome extends EntityHome<Bulletin> {
+	
+	private List<ItemCatalog> typesBulletin;
+	private ItemCatalogService itemCatalogService;
 
 	@In(create = true)
 	AgentHome agentHome;
@@ -26,7 +36,10 @@ public class BulletinHome extends EntityHome<Bulletin> {
 
 	@Override
 	protected Bulletin createInstance() {
+		Date date = new Date();
 		Bulletin bulletin = new Bulletin();
+		bulletin.setCreationDate(date);
+		bulletin.setCreationTime(date);
 		return bulletin;
 	}
 
@@ -46,6 +59,11 @@ public class BulletinHome extends EntityHome<Bulletin> {
 		if (type != null) {
 			getInstance().setType(type);
 		}*/
+		
+		initializeService();
+		typesBulletin = new ArrayList<ItemCatalog>();
+		typesBulletin = itemCatalogService.findItemsForCatalogCode(
+						CatalogConstants.CATALOG_TYPES_BULLETIN);
 	}
 
 	public boolean isWired() {
@@ -55,5 +73,27 @@ public class BulletinHome extends EntityHome<Bulletin> {
 	public Bulletin getDefinedInstance() {
 		return isIdDefined() ? getInstance() : null;
 	}
+	
 
+	public List<ItemCatalog> getTypesBulletin() {
+		return typesBulletin;
+	}
+
+	public void setTypesBulletin(List<ItemCatalog> typesBulletin) {
+		this.typesBulletin = typesBulletin;
+	}
+	
+	public void initializeService() {
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
+	}
+	
+	public void agentSelectedListener(Agent ag) {
+		//UIComponent component = event.getComponent();
+		//Agent agent = (Agent) component.getAttributes().get("agent");
+		this.instance.setAgent(ag);		 
+	}
+	
 }

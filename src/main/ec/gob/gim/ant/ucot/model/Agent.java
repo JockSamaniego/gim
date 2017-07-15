@@ -33,7 +33,11 @@ import javax.persistence.NamedQuery;
 )
 @NamedQueries(value = {
 		@NamedQuery(name = "Agent.FindByCode", query = "Select a from Agent a where a.agentCode=:code"),
-		@NamedQuery(name = "Agent.FindByResident", query = "Select a from Agent a where a.resident.id=:residentid")})
+		@NamedQuery(name = "Agent.FindByResident", query = "Select a from Agent a where a.resident.id=:residentid"),
+		@NamedQuery(name = "Agent.findByCriteria", query = "Select a from Agent a where "
+		+"lower(a.resident.name) like lower(concat(:criteriaSearch,'%')) OR " 
+		+"lower(a.resident.identificationNumber) like lower(concat(:criteriaSearch,'%')) OR "
+		+"lower(a.agentCode) like lower(concat(:criteriaSearch,'%'))")})
 
 public class Agent {
 
@@ -52,8 +56,7 @@ public class Agent {
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Bulletin> bulletins;
 	
-
-	private boolean active;
+	private Boolean isActive;
 
 	public Long getId() {
 		return id;
@@ -85,13 +88,13 @@ public class Agent {
 	}
 
 
-	public boolean isActive() {
-		return active;
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
 
-	public void setActive(boolean active) {
-		this.active = active;
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 

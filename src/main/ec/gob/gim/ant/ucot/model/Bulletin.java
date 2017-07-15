@@ -62,6 +62,8 @@ public class Bulletin {
 	private Agent agent;
 
 
+	private String detail;
+	
 	public Long getId() {
 		return id;
 	}
@@ -129,6 +131,16 @@ public class Bulletin {
 
 	public void setAgent(Agent agent) {
 		this.agent = agent;
+	}
+
+
+	public String getDetail() {
+		return detail;
+	}
+
+
+	public void setDetail(String detail) {
+		this.detail = detail;
 	}
 	
 	
