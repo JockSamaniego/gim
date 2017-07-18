@@ -11,12 +11,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.ItemCatalog;
  
 
@@ -64,6 +66,9 @@ public class Infractions {
 	private String licensePlate;
 	
 	private Boolean archived;
+	
+	@OneToOne
+	private InfractionSentences infractionSentence;
 	
 	@ManyToOne
 	@JoinColumn(name="typeitem_id")
@@ -181,5 +186,15 @@ public class Infractions {
 	public void setCitationTime(Date citationTime) {
 		this.citationTime = citationTime;
 	}
+
+	public InfractionSentences getInfractionSentence() {
+		return infractionSentence;
+	}
+
+	public void setInfractionSentence(InfractionSentences infractionSentence) {
+		this.infractionSentence = infractionSentence;
+	}
+	
+	
 	
 }

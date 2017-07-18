@@ -17,9 +17,6 @@
         <rich:panel>
             <f:facet name="header">#{bulletinHome.managed ? messages['bulletin.Edit'] : messages['bulletin.Create']}</f:facet>
 
-
-
-
             <s:decorate id="creationDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['bulletin.creationDate']}</ui:define>
                 <h:inputText id="creationDate"
