@@ -98,6 +98,9 @@ public class Alert {
 	private User openUser;
 	
 	@OneToOne
+	private AlertType alertType;
+	
+	@OneToOne
 	private User closeUser;
 	
 	public Alert(){
@@ -235,6 +238,15 @@ public class Alert {
 	 */
 	public User getOpenUser() {
 		return openUser;
+	}
+	
+
+	public AlertType getAlertType() {
+		return alertType;
+	}
+
+	public void setAlertType(AlertType alertType) {
+		this.alertType = alertType;
 	}
 
 	/**
