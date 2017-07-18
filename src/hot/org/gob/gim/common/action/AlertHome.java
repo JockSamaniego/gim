@@ -199,5 +199,9 @@ public class AlertHome extends EntityHome<Alert> {
 		this.instance.setResident(resident);
 		this.setIdentificationNumber(resident.getIdentificationNumber());
 	}
+	
+	public void setDefaultAlertText(){
+		this.getInstance().setOpenDetail(this.getInstance().getAlertType().getCreateDetail());
+	}
 
 }
