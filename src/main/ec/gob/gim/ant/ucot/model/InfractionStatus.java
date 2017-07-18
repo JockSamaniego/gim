@@ -42,7 +42,7 @@ public class InfractionStatus {
 	private Long id;
 
 	@Column(nullable=false)
-	private BigInteger serial;
+	private String name;
 
 	@Temporal(TemporalType.DATE)
 	private Date statusDate;
@@ -67,12 +67,12 @@ public class InfractionStatus {
 		this.id = id;
 	}
 
-	public BigInteger getSerial() {
-		return serial;
+	public String getName() {
+		return name;
 	}
 
-	public void setSerial(BigInteger serial) {
-		this.serial = serial;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Date getStatusDate() {
