@@ -661,7 +661,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		query.setParameter("residentId", resident.getId());
 		pendingAlerts = query.getResultList();
 		if (pendingAlerts.size()>0){
-			blocketMessage=pendingAlerts.get(0).getAlertType().getMessage();			
+			blocketMessage=pendingAlerts.get(0).getOpenDetail();			
 		}
 		for (Alert alert : pendingAlerts) {
 			//if (alert.getPriority() == AlertPriority.HIGH) {
@@ -669,7 +669,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			//}
 			if(alert.getAlertType().getIsToCollect()){
 				isBlocketToCollect = Boolean.TRUE;
-				blocketMessage=alert.getAlertType().getMessage();
+				blocketMessage=alert.getOpenDetail();
 				colorMessage = "red";
 			}
 		}

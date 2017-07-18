@@ -817,7 +817,7 @@ public class DeferredMunicipalBondAction extends EntityController{
 		query.setParameter("residentId", residentId);
 		pendingAlerts = query.getResultList();
 		if (pendingAlerts.size() > 0) {
-			blocketMessage = pendingAlerts.get(0).getAlertType().getMessage();
+			blocketMessage = pendingAlerts.get(0).getOpenDetail();
 		}
 		for (Alert alert : pendingAlerts) {
 			// if (alert.getPriority() == AlertPriority.HIGH) {
@@ -826,7 +826,7 @@ public class DeferredMunicipalBondAction extends EntityController{
 			if (alert.getAlertType().getIsToEmit()) {
 				isBlocketToEmit = Boolean.TRUE;
 				colorMessage = "red";
-				blocketMessage = alert.getAlertType().getMessage();
+				blocketMessage = alert.getOpenDetail();
 			}
 		}
 	}

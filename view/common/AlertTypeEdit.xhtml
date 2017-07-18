@@ -42,13 +42,7 @@
 							<h:inputText id="openName" required="true" size="60" 
 								value="#{alertTypeHome.instance.name}" />
 						</s:decorate>
-						
-						<s:decorate id="openMessageField" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['alertType.message']}</ui:define>
-							<h:inputText id="openMessage" required="true" size="60" 
-								value="#{alertTypeHome.instance.message}" />
-						</s:decorate>
-		
+
 						<s:decorate id="openDetailField" template="../layout/edit.xhtml">
 							<ui:define name="label">#{messages['alert.openDetail']}</ui:define>
 							<h:inputTextarea id="openDetail" required="true"

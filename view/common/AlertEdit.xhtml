@@ -61,7 +61,7 @@
 		
 						<s:decorate id="openDepartmentField" template="../layout/edit.xhtml">
 							<ui:define name="label">#{messages['alert.openDepartment']}</ui:define>
-							<h:inputText id="openDepartment" size="60" readonly="#{alertHome.managed}"
+							<h:inputText id="openDepartment" size="60" readonly="#{alertHome.managed}" required="true"
 								value="#{alertHome.instance.department}" />
 						</s:decorate>
 						
