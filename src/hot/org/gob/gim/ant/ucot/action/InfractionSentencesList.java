@@ -8,7 +8,7 @@ import java.util.Arrays;
 @Name("infractionSentencesList")
 public class InfractionSentencesList extends EntityQuery<InfractionSentences> {
 
-	private static final String EJBQL = "select infractionSentences from InfractionSentences infractionSentences";
+	private static final String EJBQL = "select infractionSentences from InfractionSentences infractionSentences ORDER BY infractionSentences.id ASC";
 
 	private static final String[] RESTRICTIONS = {
 			"lower(infractionSentences.description) like lower(concat(#{infractionSentencesList.infractionSentences.description},'%'))",

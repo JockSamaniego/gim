@@ -22,21 +22,21 @@
    <navigation from-action="#{infractionSentencesHome.persist}">
       <rule if-outcome="persisted">
          <end-conversation/>
-         <redirect view-id="/InfractionSentences.xhtml"/>
+         <redirect view-id="/ant/ucot/InfractionSentencesList.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{infractionSentencesHome.update}">
       <rule if-outcome="updated">
          <end-conversation/>
-         <redirect view-id="/InfractionSentences.xhtml"/>
+         <redirect view-id="/ant/ucot/InfractionSentencesList.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{infractionSentencesHome.remove}">
       <rule if-outcome="removed">
          <end-conversation/>
-         <redirect view-id="/InfractionSentencesList.xhtml"/>
+         <redirect view-id="/ant/ucot/InfractionSentencesList.xhtml"/>
       </rule>
    </navigation>
 

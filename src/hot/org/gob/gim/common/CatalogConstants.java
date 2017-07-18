@@ -27,4 +27,5 @@ public class CatalogConstants {
 	 
 	 public static final String CATALOG_TYPES_BULLETIN = "TYPES_BULLETIN";
 	
+	 public static final String CATALOG_TYPES_SENTENCE = "TYPES_SENTENCE";
 }
