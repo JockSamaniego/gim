@@ -12,6 +12,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
+import org.gob.gim.commercial.action.BusinessHome;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -784,7 +785,12 @@ public class DeferredMunicipalBondAction extends EntityController{
 	}*/
 	// Jock Samaniego
 	// Para bloquear emisión
-
+	
+	public void wire() {
+		bondIsWire = Boolean.TRUE;
+	}
+	
+	private Boolean bondIsWire = Boolean.FALSE;
 	private List<Alert> pendingAlerts = new ArrayList<Alert>();
 	private Boolean isBlocketToEmit = Boolean.FALSE;
 	private String blocketMessage;
@@ -804,6 +810,14 @@ public class DeferredMunicipalBondAction extends EntityController{
 
 	public String getColorMessage() {
 		return colorMessage;
+	}
+
+	public Boolean getBondIsWire() {
+		return bondIsWire;
+	}
+
+	public void setBondIsWire(Boolean bondIsWire) {
+		this.bondIsWire = bondIsWire;
 	}
 
 	@SuppressWarnings("unchecked")
