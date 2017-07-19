@@ -69,7 +69,8 @@
 							<f:facet name="header">
 								<h:outputText value="#{messages['alert.openDetail']}" />
 							</f:facet>
-							<textarea cols="30" rows="4" readonly="true">#{_alert.openDetail}</textarea>
+							<h:inputTextarea value="#{_alert.openDetail}" disabled="true"
+							cols="30" rows="4"></h:inputTextarea>
 						</rich:column>
 
 						<rich:column sortBy="#{_alert.priority}" styleClass="action" >
