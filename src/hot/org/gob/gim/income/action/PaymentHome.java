@@ -254,6 +254,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		paymentFileName = "payment." + paymentInstanceName + this.getConversationId() + "."
 				+ userSession.getPerson().getId() + ".pdf";
 		chargeControlImpugnmentStates();
+		bondIsWire = Boolean.TRUE;
 	}
 
 	public void search() {
@@ -2160,6 +2161,18 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 	public void setImpugnmentsTotal(List<Impugnment> impugnmentsTotal) {
 		this.impugnmentsTotal = impugnmentsTotal;
+	}
+	
+	//=============================
+	
+	private Boolean bondIsWire = Boolean.FALSE;
+
+	public Boolean getBondIsWire() {
+		return bondIsWire;
+	}
+
+	public void setBondIsWire(Boolean bondIsWire) {
+		this.bondIsWire = bondIsWire;
 	}
 
 }

@@ -38,7 +38,7 @@
 
 				<a:outputPanel styleClass="results" id="alertList">
 					<rich:dataTable id="alertsTable" var="_alert"
-						value="#{paymentHome.pendingAlerts.size()==0 ? (municipalBondHome.pendingAlerts.size()==0 ? deferredMunicipalBond.pendingAlerts : municipalBondHome.pendingAlerts) : paymentHome.pendingAlerts}"
+						value="#{paymentHome.bondIsWire ? paymentHome.pendingAlerts : (deferredMunicipalBond.bondIsWire ? deferredMunicipalBond.pendingAlerts : municipalBondHome.pendingAlerts)}"
 						rowClasses="rvgRowOne,rvgRowTwo" >
 						
 						<rich:column sortBy="#{_alert.openUser.name}" styleClass="action">
@@ -69,7 +69,8 @@
 							<f:facet name="header">
 								<h:outputText value="#{messages['alert.openDetail']}" />
 							</f:facet>
-							<textarea cols="30" rows="4" readonly="true">#{_alert.openDetail}</textarea>
+							<h:inputTextarea value="#{_alert.openDetail}" disabled="true"
+							cols="30" rows="4"></h:inputTextarea>
 						</rich:column>
 
 						<rich:column sortBy="#{_alert.priority}" styleClass="action" >

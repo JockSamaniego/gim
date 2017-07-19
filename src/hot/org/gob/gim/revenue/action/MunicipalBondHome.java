@@ -722,6 +722,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		}
 		isFirstTime = false;
 		BusinessHome.myId = null;
+		bondIsWire = Boolean.TRUE;
 	}
 
 	public boolean isWired() {
@@ -1521,6 +1522,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		//Jock Samaniego
 		//Para bloquear emisión
 		
+		private Boolean bondIsWire=Boolean.FALSE;
 		private List<Alert> pendingAlerts = new ArrayList<Alert>();
 		private Boolean isBlocketToEmit = Boolean.FALSE;
 		private String blocketMessage;
@@ -1540,6 +1542,14 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 		public String getColorMessage() {
 			return colorMessage;
+		}
+
+		public Boolean getBondIsWire() {
+			return bondIsWire;
+		}
+
+		public void setBondIsWire(Boolean bondIsWire) {
+			this.bondIsWire = bondIsWire;
 		}
 
 		@SuppressWarnings("unchecked")
