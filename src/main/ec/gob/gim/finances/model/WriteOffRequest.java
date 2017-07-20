@@ -49,9 +49,6 @@ public class WriteOffRequest {
 	@Column(length = 100)
 	private String detail;
 
-	@Column(length = 100)
-	private String detailEmission;
-
 	@ManyToOne
 	@JoinColumn(name = "writeofftype_id")
 	private WriteOffType writeOffType;
@@ -108,6 +105,7 @@ public class WriteOffRequest {
 		// TODO Auto-generated constructor stub
 		this.date = new Date();
 		this.waterMeter = new WaterMeter();
+		this.writeOffType = null;
 	}
 
 	public Long getId() {
@@ -188,14 +186,6 @@ public class WriteOffRequest {
 
 	public void setWriteOffType(WriteOffType writeOffType) {
 		this.writeOffType = writeOffType;
-	}
-
-	public String getDetailEmission() {
-		return detailEmission;
-	}
-
-	public void setDetailEmission(String detailEmission) {
-		this.detailEmission = detailEmission;
 	}
 
 	public Resident getIssueTo() {

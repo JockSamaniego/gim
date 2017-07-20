@@ -9,7 +9,6 @@
 	type="pdf" pageSize="A4" margins="20 20 20 20" author="René"
 	orientation="portrait" creator="René">
 
-
 	<f:facet name="header">
 		<p:font size="9" name="HELVETICA">
 			<p:footer borderWidthTop="1" borderColorTop="blue"
@@ -71,20 +70,23 @@
 
 		<p:paragraph alignment="justify">
 			
-				Que, el <p:font style="bold"> Lic. Ulpiano Ulises Cabrera Medina,</p:font> responsable de la verificación de la emisión constata que el tipo de inconsistencia, genera el informe de baja de la o las obligaciones emitidas erroneamente en el que se especifica el nombre del usuario, cédula, dirección, número de medidor, obligaciones a darse de baja, el tipo de inconsistencia, el responsable y las nuevas obligacioes emitidas.
+				Que, el <p:font style="bold"> #{writeOffRequestHome.commercializationRevisionDelegate.name},</p:font> responsable de la verificación de la emisión constata que el tipo de inconsistencia, genera el informe de baja de la o las obligaciones emitidas erroneamente en el que se especifica el nombre del usuario, cédula, dirección, número de medidor, obligaciones a darse de baja, el tipo de inconsistencia, el responsable y las nuevas obligacioes emitidas.
 
 		</p:paragraph>
 
 		<p:paragraph alignment="justify">
-			Que, el #{writeOffRequestHome.commercializationDelegate.name}, <p:font style="bold"> #{writeOffRequestHome.commercializationCharge.name},</p:font> aprueba el informe emitido por el responsable de la verificación de las obligaciones emitidas erroneamente. 
+			Que, el #{writeOffRequestHome.commercializationDelegate.name}, <p:font
+				style="bold"> #{writeOffRequestHome.commercializationCharge.name},</p:font> aprueba el informe emitido por el responsable de la verificación de las obligaciones emitidas erroneamente. 
 		</p:paragraph>
 
 		<p:paragraph alignment="justify">
-			Que, la #{writeOffRequestHome.revenueDelegate.name} <p:font style="bold"> #{writeOffRequestHome.revenueCharge.name},</p:font> revisa el informe emitido por el responsable de la verificacion de las obligaciones emitidas erróneamente y aprobado por el Jefe de Comercialización. 
+			Que, la #{writeOffRequestHome.revenueDelegate.name} <p:font
+				style="bold"> #{writeOffRequestHome.revenueCharge.name},</p:font> revisa el informe emitido por el responsable de la verificacion de las obligaciones emitidas erróneamente y aprobado por el Jefe de Comercialización. 
 		</p:paragraph>
 
 		<p:paragraph alignment="justify" spacingAfter="15">
-			Que, al ser procedente lo solicitado; y en uso de las atribuciones que le otorga la Resolución Administrativa N° 0019 del 26 de Mayo del 2014 del <p:font style="bold"> Alcalde de Loja,</p:font> en concordancia con el Art. 340 del Código Orgánico de Organización Territorial, Autonomía y Descentralización, y Art. 33 de la Ordenanza que Regula el Ejercicio de Jurisdicción Coactiva del Municipio de Loja.
+			Que, al ser procedente lo solicitado; y en uso de las atribuciones que le otorga la Resolución Administrativa N° 0019 del 26 de Mayo del 2014 del <p:font
+				style="bold"> Alcalde de Loja,</p:font> en concordancia con el Art. 340 del Código Orgánico de Organización Territorial, Autonomía y Descentralización, y Art. 33 de la Ordenanza que Regula el Ejercicio de Jurisdicción Coactiva del Municipio de Loja.
 		</p:paragraph>
 
 		<p:font size="12" style="bold">
@@ -206,8 +208,9 @@
 				<p:cell borderWidth="0" />
 			</f:facet>
 
-			<p:cell borderWidth="0.5" horizontalAlignment="center"
-				verticalAlignment="middle">
+			<p:cell borderWidthTop="0.5" borderWidthLeft="0.5"
+				borderWidthRight="0.5" borderWidthBottom="0.5"
+				horizontalAlignment="center" verticalAlignment="middle">
 				<p:paragraph>
 					<p:font size="8" style="bold">
 						<p:text value="ITEM" />
@@ -215,8 +218,8 @@
 				</p:paragraph>
 			</p:cell>
 
-			<p:cell borderWidth="0.5" horizontalAlignment="center"
-				verticalAlignment="middle">
+			<p:cell horizontalAlignment="center" verticalAlignment="middle"
+				borderWidthBottom="0.5" borderWidthTop="0.5" borderWidthRight="0.5">
 				<p:paragraph>
 					<p:font size="8" style="bold">
 						<p:text value="NRO. OBLIGACIÓN" />
@@ -224,8 +227,8 @@
 				</p:paragraph>
 			</p:cell>
 
-			<p:cell borderWidth="0.5" horizontalAlignment="center"
-				verticalAlignment="middle">
+			<p:cell horizontalAlignment="center" verticalAlignment="middle"
+				borderWidthBottom="0.5" borderWidthTop="0.5" borderWidthRight="0.5">
 				<p:paragraph>
 					<p:font size="8" style="bold">
 						<p:text value="MES" />
@@ -234,8 +237,8 @@
 
 			</p:cell>
 
-			<p:cell borderWidth="0.5" horizontalAlignment="center"
-				verticalAlignment="middle">
+			<p:cell horizontalAlignment="center" verticalAlignment="middle"
+				borderWidthBottom="0.5" borderWidthTop="0.5" borderWidthRight="0.5">
 				<p:paragraph>
 					<p:font size="8" style="bold">
 						<p:text value="AÑO" />
@@ -244,8 +247,8 @@
 
 			</p:cell>
 
-			<p:cell borderWidth="0.5" horizontalAlignment="center"
-				verticalAlignment="middle">
+			<p:cell horizontalAlignment="center" verticalAlignment="middle"
+				borderWidthBottom="0.5" borderWidthTop="0.5" borderWidthRight="0.5">
 				<p:paragraph>
 					<p:font size="8" style="bold">
 						<p:text value="LECTURA ANTERIOR" />
@@ -254,8 +257,8 @@
 
 			</p:cell>
 
-			<p:cell borderWidth="0.5" horizontalAlignment="center"
-				verticalAlignment="middle">
+			<p:cell horizontalAlignment="center" verticalAlignment="middle"
+				borderWidthBottom="0.5" borderWidthTop="0.5" borderWidthRight="0.5">
 				<p:paragraph>
 					<p:font size="8" style="bold">
 						<p:text value="LECTURA ACTUAL" />
@@ -264,8 +267,8 @@
 
 			</p:cell>
 
-			<p:cell borderWidth="0.5" horizontalAlignment="center"
-				verticalAlignment="middle">
+			<p:cell horizontalAlignment="center" verticalAlignment="middle"
+				borderWidthBottom="0.5" borderWidthTop="0.5" borderWidthRight="0.5">
 				<p:paragraph>
 					<p:font size="8" style="bold">
 						<p:text value="M3" />
@@ -274,8 +277,8 @@
 
 			</p:cell>
 
-			<p:cell borderWidth="0.5" horizontalAlignment="center"
-				verticalAlignment="middle">
+			<p:cell horizontalAlignment="center" verticalAlignment="middle"
+				borderWidthBottom="0.5" borderWidthTop="0.5" borderWidthRight="0.5">
 				<p:paragraph>
 					<p:font size="8" style="bold">
 						<p:text value="VALOR" />
@@ -771,7 +774,8 @@
 				</p:paragraph>
 			</p:cell>
 
-			<p:cell colspan="1" borderWidth="0.5" horizontalAlignment="left"
+			<p:cell colspan="1" borderWidthBottom="0.5" borderWidthLeft="0.5"
+				borderWidthRight="0.5" horizontalAlignment="left"
 				verticalAlignment="middle">
 				<p:paragraph>
 					<p:font size="8">
@@ -972,6 +976,354 @@
 
 		</p:table>
 
+		<p:table columns="2" widthPercentage="100" headerRows="0"
+			spacingAfter="10">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell colspan="1" borderWidthTop="0.5" borderWidthLeft="0.5"
+				borderWidthRight="0.5" horizontalAlignment="left"
+				verticalAlignment="top" minimumHeight="50">
+				<p:paragraph>
+					<p:font size="7">
+						<p:text value="Solicitante" />
+					</p:font>
+
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell borderWidthTop="0.5" borderWidthRight="0.5"
+				horizontalAlignment="left" verticalAlignment="top" colspan="1">
+				<p:paragraph>
+					<p:font size="7">
+						<p:text value="Aprobado" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1" borderWidthTop="0.5" borderWidthLeft="0.5"
+				borderWidthRight="0.5" horizontalAlignment="center">
+				<p:paragraph>
+					<p:font size="8">
+						<p:text
+							value="#{writeOffRequestHome.commercializationRevisionDelegate.name}" />
+					</p:font>
+
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1" borderWidthTop="0.5" borderWidthRight="0.5"
+				horizontalAlignment="center">
+				<p:paragraph>
+					<p:font size="8">
+						<p:text
+							value="#{writeOffRequestHome.commercializationDelegate.name}" />
+					</p:font>
+
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1" horizontalAlignment="center"
+				borderWidthBottom="0.5" borderWidthLeft="0.5" borderWidthRight="0.5">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text
+							value="#{writeOffRequestHome.commercializationRevisionCharge.name}" />
+					</p:font>
+
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1" horizontalAlignment="center"
+				borderWidthBottom="0.5" borderWidthRight="0.5">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text
+							value="#{writeOffRequestHome.commercializationCharge.name}" />
+					</p:font>
+
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1" horizontalAlignment="left"
+				borderWidthBottom="0.5" borderWidthLeft="0.5" borderWidthRight="0.5"
+				minimumHeight="50">
+				<p:paragraph>
+					<p:font size="7">
+						<p:text value="Revisado Emisión" />
+					</p:font>
+
+				</p:paragraph>
+			</p:cell>
+
+
+
+			<p:cell colspan="1" horizontalAlignment="center"
+				verticalAlignment="middle"
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type == 'MEDIDOR DEFECTUOSO'}">
+				<p:paragraph>
+					<p:font size="8">
+						<p:text value="EMITIR TITULO DE CREDITO" />
+					</p:font>
+
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1" horizontalAlignment="center"
+				verticalAlignment="middle"
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type == 'DE LECTURA'}">
+
+				<p:font size="8">
+					<p:paragraph alignment="center">EMITIR TITULO DE CREDITO</p:paragraph>
+				</p:font>
+
+				<p:font size="8">
+					<p:paragraph alignment="center">#{writeOffRequestHome.writeOffRequestSelected.detail_responsible}</p:paragraph>
+				</p:font>
+
+			</p:cell>
+
+			<p:cell colspan="1" horizontalAlignment="center"
+				verticalAlignment="middle"
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type == 'DESCALIBRACION DE MEDIDOR'}">
+				<p:paragraph>
+					<p:font size="8">
+						<p:text value="EMITIR TITULO DE CREDITO POR GASTOS ADMINISTRATIVOS" />
+					</p:font>
+
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1"
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type == 'NO LIQUIDADA'}">
+				
+			</p:cell>
+
+
+			<p:cell colspan="1" borderWidthLeft="0.5" borderWidthRight="0.5"
+				horizontalAlignment="center">
+				<p:paragraph>
+					<p:font size="8">
+						<p:text value="#{writeOffRequestHome.revenueDelegate.name}" />
+					</p:font>
+
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+			
+			</p:cell>
+
+
+			<p:cell colspan="1" horizontalAlignment="center"
+				borderWidthBottom="0.5" borderWidthRight="0.5" borderWidthLeft="0.5">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{writeOffRequestHome.revenueCharge.name}" />
+					</p:font>
+
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+			
+			</p:cell>
+
+		</p:table>
+
+
+		<p:table columns="9" widthPercentage="100" headerRows="0"
+			widths="0.4 0.6 0.8 0.7 0.6 0.6 0.6 1.5 0.5" spacingAfter="10">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="AÑO" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="MES" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="MEDIDOR" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="ESTADO" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="LECTURA ANTERIOR" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="LECTURA ACTUAL" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="CONSUMO" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="EST. PAGO" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="VALOR" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<ui:repeat value="#{writeOffRequestHome.previous_consumptions}"
+				var="_con">
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="center">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_con._year}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="center">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_con._month}" />
+						</p:font>
+					</p:paragraph>
+
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="center">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_con.measurer}" />
+						</p:font>
+					</p:paragraph>
+
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="center">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_con.consumption_state}" />
+						</p:font>
+					</p:paragraph>
+
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="right">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_con.previous_reading}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="right">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_con.current_reading}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="right">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_con.m3}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="right">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_con.paid_state}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="right">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_con.paid_total}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+
+			</ui:repeat>
+
+		</p:table>
+
+		<p:paragraph alignment="center">
+			<p:font size="8" style="bold">
+				<p:text
+					value="TRÁMITE    #{writeOffRequestHome.writeOffRequestSelected.internal_process_number}" />
+			</p:font>
+		</p:paragraph>
 
 	</p:font>
 

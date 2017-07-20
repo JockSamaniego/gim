@@ -41,6 +41,12 @@ public class WriteOffRequestDTO {
 	@NativeQueryResultColumn(index = 10)
 	private String request_number;
 
+	@NativeQueryResultColumn(index = 11)
+	private String internal_process_number;
+	
+	@NativeQueryResultColumn(index = 12)
+	private String detail_responsible;
+	
 	public Long getId() {
 		return id;
 	}
@@ -131,6 +137,22 @@ public class WriteOffRequestDTO {
 
 	public void setRequest_number(String request_number) {
 		this.request_number = request_number;
+	}
+
+	public String getInternal_process_number() {
+		return internal_process_number;
+	}
+
+	public void setInternal_process_number(String internal_process_number) {
+		this.internal_process_number = internal_process_number;
+	}
+
+	public String getDetail_responsible() {
+		return detail_responsible;
+	}
+
+	public void setDetail_responsible(String detail_responsible) {
+		this.detail_responsible = detail_responsible;
 	}
 	
 }

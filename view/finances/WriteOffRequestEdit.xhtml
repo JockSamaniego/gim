@@ -46,10 +46,11 @@
 				<s:decorate id="type" template="../layout/edit.xhtml">
 					<ui:define name="label">Tipo:</ui:define>
 					<h:selectOneMenu id="cmbType" required="true"
-						value="#{writeOffRequestHome.instance.writeOffType}">
+						value="#{writeOffRequestHome.instance.writeOffType}"
+						requiredMessage="Tipo requerido">
 						<s:selectItems value="#{writeOffRequestHome._types}"
-							noSelectionLabel="#{messages['common.chooseOption']}"
-							var="_type" label="#{_type.name}" />
+							noSelectionLabel="Seleccione"
+							var="_type" label="#{_type.name}" required="true"/>
 						<s:convertEntity />
 						<a:support event="onblur" reRender="type" bypassUpdates="true"
 							ajaxSingle="true" />
@@ -59,7 +60,7 @@
 				<s:decorate id="waterSupply" template="../layout/edit.xhtml">
 					<ui:define name="label">Servicio:</ui:define>
 					<h:selectOneMenu id="cmWaterSupply" required="true"
-						value="#{writeOffRequestHome.waterSupplySelected}">
+						value="#{writeOffRequestHome.waterSupplySelected}" requiredMessage="Servicio requerido">
 						<s:selectItems value="#{writeOffRequestHome.waterSupplies}"
 							noSelectionLabel="#{messages['common.chooseOption']}"
 							var="_waterSupply" label="#{_waterSupply.serviceNumber}" />
@@ -98,16 +99,6 @@
 							bypassUpdates="true" ajaxSingle="true" />
 					</h:inputText>
 				</s:decorate>
-
-				<s:decorate id="detailEmissionField" template="../layout/edit.xhtml">
-					<ui:define name="label">Detail emission</ui:define>
-					<h:inputText id="detailEmission" maxlength="100"
-						value="#{writeOffRequestHome.instance.detailEmission}">
-						<a:support event="onblur" reRender="detailEmissionField"
-							bypassUpdates="true" ajaxSingle="true" />
-					</h:inputText>
-				</s:decorate>
-
 
 				<s:decorate id="internalProcessNumberField"
 					template="../layout/edit.xhtml">

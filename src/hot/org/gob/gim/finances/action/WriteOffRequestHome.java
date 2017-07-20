@@ -1,7 +1,9 @@
 package org.gob.gim.finances.action;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -30,10 +32,12 @@ import ec.gob.gim.finances.model.SequenceManager;
 import ec.gob.gim.finances.model.WriteOffDetail;
 import ec.gob.gim.finances.model.WriteOffRequest;
 import ec.gob.gim.finances.model.WriteOffType;
+import ec.gob.gim.finances.model.DTO.ConsumptionPreviousDTO;
 import ec.gob.gim.finances.model.DTO.DetailTableAuxDTO;
 import ec.gob.gim.finances.model.DTO.WriteOffDetailDTO;
 import ec.gob.gim.finances.model.DTO.WriteOffRequestDTO;
 import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.waterservice.model.Consumption;
 import ec.gob.gim.waterservice.model.MonthType;
 import ec.gob.gim.waterservice.model.WaterSupply;
 
@@ -83,6 +87,8 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	private List<WriteOffType> _types = new ArrayList<WriteOffType>();
 
 	private boolean isFirstTime = true;
+	
+	private List<ConsumptionPreviousDTO> previous_consumptions = new ArrayList<ConsumptionPreviousDTO>();
 
 	/*
 	 * CRITERIA
@@ -106,6 +112,10 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	private Charge commercializationCharge;
 
 	private Delegate commercializationDelegate;
+	
+	private Charge commercializationRevisionCharge;
+
+	private Delegate commercializationRevisionDelegate;
 	
 	private Charge finantialCharge;
 
@@ -307,6 +317,33 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	public void setFinantialDelegate(Delegate finantialDelegate) {
 		this.finantialDelegate = finantialDelegate;
 	}
+	
+	public List<ConsumptionPreviousDTO> getPrevious_consumptions() {
+		return previous_consumptions;
+	}
+
+	public void setPrevious_consumptions(
+			List<ConsumptionPreviousDTO> previous_consumptions) {
+		this.previous_consumptions = previous_consumptions;
+	}
+	
+	public Charge getCommercializationRevisionCharge() {
+		return commercializationRevisionCharge;
+	}
+
+	public void setCommercializationRevisionCharge(
+			Charge commercializationRevisionCharge) {
+		this.commercializationRevisionCharge = commercializationRevisionCharge;
+	}
+
+	public Delegate getCommercializationRevisionDelegate() {
+		return commercializationRevisionDelegate;
+	}
+
+	public void setCommercializationRevisionDelegate(
+			Delegate commercializationRevisionDelegate) {
+		this.commercializationRevisionDelegate = commercializationRevisionDelegate;
+	}
 
 	@Override
 	protected WriteOffRequest createInstance() {
@@ -479,9 +516,6 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	}
 
 	public void searchBondDetailOld() {
-		System.out.println("LLega al search Old Bond");
-
-		System.out.println(this.numberOldBondAux);
 
 		List<WriteOffDetailDTO> retorno_bd = this.writeOffService
 				.searchBondDetail(this.numberOldBondAux);
@@ -666,11 +700,6 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 	public String print(Long writeOffRequest_id) {
 
-		System.out
-				.println("*********--------------LLEGA al print-----------***************");
-
-		// System.out.println(writeOffRequest);
-
 		if (writeOffService == null) {
 			writeOffService = ServiceLocator.getInstance().findResource(
 					WriteOffService.LOCAL_NAME);
@@ -685,6 +714,8 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		this.detailsTableOld = new ArrayList<DetailTableAuxDTO>();
 
 		this.detailsTableNew = new ArrayList<DetailTableAuxDTO>();
+		
+		String _month = "";
 
 		for (int i = 0; i < writeOff.getDetails().size(); i++) {
 
@@ -711,10 +742,14 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 			_new.setPrevious_reading(det.getNewPreviousReading());
 			_new.setValue(det.getNewMunicipalBond().getValue());
 			_new.setYear(det.getYear());
+			
+			_month = String.valueOf(det.getMonthType().getMonthInt());
 
 			this.detailsTableNew.add(_new);
 
 		}
+		
+		this.previous_consumptions = this.writeOffService.findPreviousReading(writeOff.getWaterMeter().getId(),this.writeOffRequestSelected.get_year().toString() , _month);
 
 		return "/finances/WriteOffRequestReportPDF.xhtml";
 	}
@@ -767,6 +802,14 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 			}
 		}
 		
+		commercializationRevisionCharge = getCharge("RESPONSIBLE_ID_VERIFICATION");
+		if (commercializationRevisionCharge != null) {
+			for (Delegate d : commercializationRevisionCharge.getDelegates()) {
+				if (d.getIsActive())
+					commercializationRevisionDelegate = d;
+			}
+		}
+		
 	}
 
 	private Charge getCharge(String systemParameter) {
@@ -777,5 +820,5 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 				systemParameter);
 		return charge;
 	}
-
+	
 }

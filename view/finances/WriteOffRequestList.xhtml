@@ -50,12 +50,7 @@
 			</div>
 
 			<rich:panel>
-				<f:facet name="header">WriteOffRequest Search Results (#{empty writeOffRequestList.resultList ? 0 : (writeOffRequestList.paginated ? writeOffRequestList.resultCount : writeOffRequestList.resultList.size)})</f:facet>
 				<div class="results" id="writeOffRequestList">
-
-					<h:outputText
-						value="The writeOffRequest search returned no results."
-						rendered="#{empty writeOffRequestList.resultList}" />
 
 					<rich:dataTable id="writeOffRequestList" var="_writeOffRequest"
 						value="#{writeOffRequests}" rows="25">
@@ -155,7 +150,6 @@
 					<f:param name="writeOffRequestId" />
 				</s:button>
 			</s:div>
-
 
 		</h:form>
 
