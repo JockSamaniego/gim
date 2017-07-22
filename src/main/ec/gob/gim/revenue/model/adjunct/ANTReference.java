@@ -58,6 +58,13 @@ public class ANTReference extends Adjunct {
 	 */
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date citationDate;
+	
+	/**
+	 * rfam 2017-07-21
+	 * ML-JRM-2017-404-MY
+	 * 332 TV-UMTTTSV-2017
+	 */
+	private String supportDocumentURL;
 
 	// private String observation;
 
@@ -150,6 +157,14 @@ public class ANTReference extends Adjunct {
 
 	public void setContraventionNumber(String contraventionNumber) {
 		this.contraventionNumber = contraventionNumber;
+	}
+	
+	public String getSupportDocumentURL() {
+		return supportDocumentURL;
+	}
+
+	public void setSupportDocumentURL(String supportDocumentURL) {
+		this.supportDocumentURL = supportDocumentURL;
 	}
 	
 }
