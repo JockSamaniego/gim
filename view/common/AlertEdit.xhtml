@@ -12,6 +12,11 @@
 
 	<ui:define name="body">
 
+		<style type="text/css">
+			.alignTop {
+				vertical-align: top;
+			}
+		</style>
 		<h:form id="role" styleClass="edit">
 
 
@@ -35,7 +40,7 @@
 				</rich:panel>
 			</s:decorate>
 
-			<h:panelGrid columns="2" width="100%" id="panelDeceased2">
+			<h:panelGrid columns="2" width="100%" id="panelDeceased2" columnClasses="alignTop, alignTop">
 				<s:decorate>
 					<rich:panel id="openPanel">
 						<f:facet name="header">#{messages['alert.open']}</f:facet>
@@ -56,7 +61,7 @@
 		
 						<s:decorate id="openDepartmentField" template="../layout/edit.xhtml">
 							<ui:define name="label">#{messages['alert.openDepartment']}</ui:define>
-							<h:inputText id="openDepartment" size="60" readonly="#{alertHome.managed}"
+							<h:inputText id="openDepartment" size="60" readonly="#{alertHome.managed}" required="true"
 								value="#{alertHome.instance.department}" />
 						</s:decorate>
 						
@@ -71,6 +76,7 @@
 								<s:convertEntity />
 								<a:support event="onchange"
 						    		ajaxSingle="true"  inmediate="true" 
+						    		action="#{alertHome.setDefaultAlertText()}"
 						    		reRender="openDetailField" />
 							</h:selectOneMenu>
 						</s:decorate>
@@ -78,8 +84,8 @@
 						<s:decorate id="openDetailField" template="../layout/edit.xhtml">
 							<ui:define name="label">#{messages['alert.openDetail']}</ui:define>
 							<h:inputTextarea id="openDetail" required="true"
-							value="#{alertHome.instance.alertType.createDetail}" 
-								/>
+							value="#{alertHome.instance.openDetail}" 
+								disabled="#{alertHome.managed}"/>
 						</s:decorate>
 		
 						<s:decorate template="../layout/edit.xhtml">

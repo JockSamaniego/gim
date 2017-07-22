@@ -722,6 +722,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		}
 		isFirstTime = false;
 		BusinessHome.myId = null;
+		bondIsWire = Boolean.TRUE;
 	}
 
 	public boolean isWired() {
@@ -1521,6 +1522,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		//Jock Samaniego
 		//Para bloquear emisión
 		
+		private Boolean bondIsWire=Boolean.FALSE;
 		private List<Alert> pendingAlerts = new ArrayList<Alert>();
 		private Boolean isBlocketToEmit = Boolean.FALSE;
 		private String blocketMessage;
@@ -1542,6 +1544,14 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			return colorMessage;
 		}
 
+		public Boolean getBondIsWire() {
+			return bondIsWire;
+		}
+
+		public void setBondIsWire(Boolean bondIsWire) {
+			this.bondIsWire = bondIsWire;
+		}
+
 		@SuppressWarnings("unchecked")
 		private void findPendingAlerts(Long residentId) {
 			blocketMessage="";
@@ -1552,7 +1562,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			query.setParameter("residentId", residentId);
 			pendingAlerts = query.getResultList();
 			if (pendingAlerts.size()>0){
-				blocketMessage=pendingAlerts.get(0).getAlertType().getMessage();			
+				blocketMessage=pendingAlerts.get(0).getOpenDetail();			
 			}
 			for (Alert alert : pendingAlerts) {
 				//if (alert.getPriority() == AlertPriority.HIGH) {
@@ -1561,7 +1571,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				if(alert.getAlertType().getIsToEmit()){
 					isBlocketToEmit = Boolean.TRUE;
 					colorMessage = "red";
-					blocketMessage=alert.getAlertType().getMessage();
+					blocketMessage=alert.getOpenDetail();
 				}
 			}
 		}

@@ -254,6 +254,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		paymentFileName = "payment." + paymentInstanceName + this.getConversationId() + "."
 				+ userSession.getPerson().getId() + ".pdf";
 		chargeControlImpugnmentStates();
+		bondIsWire = Boolean.TRUE;
 	}
 
 	public void search() {
@@ -661,7 +662,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		query.setParameter("residentId", resident.getId());
 		pendingAlerts = query.getResultList();
 		if (pendingAlerts.size()>0){
-			blocketMessage=pendingAlerts.get(0).getAlertType().getMessage();			
+			blocketMessage=pendingAlerts.get(0).getOpenDetail();			
 		}
 		for (Alert alert : pendingAlerts) {
 			//if (alert.getPriority() == AlertPriority.HIGH) {
@@ -669,7 +670,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			//}
 			if(alert.getAlertType().getIsToCollect()){
 				isBlocketToCollect = Boolean.TRUE;
-				blocketMessage=alert.getAlertType().getMessage();
+				blocketMessage=alert.getOpenDetail();
 				colorMessage = "red";
 			}
 		}
@@ -2160,6 +2161,18 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 	public void setImpugnmentsTotal(List<Impugnment> impugnmentsTotal) {
 		this.impugnmentsTotal = impugnmentsTotal;
+	}
+	
+	//=============================
+	
+	private Boolean bondIsWire = Boolean.FALSE;
+
+	public Boolean getBondIsWire() {
+		return bondIsWire;
+	}
+
+	public void setBondIsWire(Boolean bondIsWire) {
+		this.bondIsWire = bondIsWire;
 	}
 
 }
