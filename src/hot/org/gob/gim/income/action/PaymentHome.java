@@ -575,6 +575,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				clearDeposits();
 				hasConflict = Boolean.FALSE;
 				municipalBonds = findAgreementMunicipalBonds();
+				System.out.println("Total de bonds "+municipalBonds.size());
 				IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 				incomeService.calculatePayment(municipalBonds, new Date(), true, true);
 				logger.info("CALCULATE 2");

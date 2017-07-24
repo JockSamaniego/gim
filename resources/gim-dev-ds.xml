@@ -7,7 +7,7 @@
    <local-tx-datasource>
       <jndi-name>gimDatasource</jndi-name>
       <use-java-context>false</use-java-context> 
-      <connection-url>jdbc:postgresql://localhost:5432/gimLoja2</connection-url>
+      <connection-url>jdbc:postgresql://localhost:5432/gimLojaPres</connection-url>
       <driver-class>org.postgresql.Driver</driver-class>
       <user-name>postgres</user-name>
       <password>postgres</password>

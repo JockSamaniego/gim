@@ -1073,7 +1073,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 					//tomar la ultima instancia almacenada
 					int lastIndex = datalist.size()-1;
 					MunicipalbondAux aux = datalist.get(lastIndex);
-					if(!aux.getCoveritem()){
+					if(aux.getCoveritem()!=null && !aux.getCoveritem()){
 						expirationDate = DateUtils.truncate(municipalBond.getExpirationDate());
 						//verficar si ha habido pagos de todo 
 						Query queryNewInterest = entityManager.createQuery(
