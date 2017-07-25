@@ -1,562 +1,292 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    template="layout/template.xhtml">
-
-<ui:define name="body">
-
-    <h:form id="writeOffRequest" styleClass="edit">
-
-        <rich:panel>
-            <f:facet name="header">#{writeOffRequestHome.managed ? 'Edit' : 'Add'} Write off request</f:facet>
-
-
-
-
-            <s:decorate id="dateField" template="layout/edit.xhtml">
-                <ui:define name="label">Date</ui:define>
-                <rich:calendar id="date"
-                          value="#{writeOffRequestHome.instance.date}" datePattern="MM/dd/yyyy" />
-            </s:decorate>
-
-
-            <s:decorate id="detailField" template="layout/edit.xhtml">
-                <ui:define name="label">Detail</ui:define>
-                <h:inputText id="detail"
-                           size="100"
-                      maxlength="100"
-                          value="#{writeOffRequestHome.instance.detail}">
-                    <a:support event="onblur" reRender="detailField" bypassUpdates="true" ajaxSingle="true"/>
-                </h:inputText>
-            </s:decorate>
-
-
-            <s:decorate id="detailEmissionField" template="layout/edit.xhtml">
-                <ui:define name="label">Detail emission</ui:define>
-                <h:inputText id="detailEmission"
-                           size="100"
-                      maxlength="100"
-                          value="#{writeOffRequestHome.instance.detailEmission}">
-                    <a:support event="onblur" reRender="detailEmissionField" bypassUpdates="true" ajaxSingle="true"/>
-                </h:inputText>
-            </s:decorate>
-
-
-            <s:decorate id="internalProcessNumberField" template="layout/edit.xhtml">
-                <ui:define name="label">Internal process number</ui:define>
-                <h:inputText id="internalProcessNumber"
-                           size="50"
-                      maxlength="50"
-                          value="#{writeOffRequestHome.instance.internalProcessNumber}">
-                    <a:support event="onblur" reRender="internalProcessNumberField" bypassUpdates="true" ajaxSingle="true"/>
-                </h:inputText>
-            </s:decorate>
-
-
-            <s:decorate id="isActiveField" template="layout/edit.xhtml">
-                <ui:define name="label">Is active</ui:define>
-                <h:selectBooleanCheckbox id="isActive"
-                                      value="#{writeOffRequestHome.instance.isActive}"/>
-            </s:decorate>
-
-
-
-
-
-
-
-            <div style="clear:both">
-                <span class="required">*</span>
-                required fields
-            </div>
-
-        </rich:panel>
-
-        <div class="actionButtons">
-
-            <h:commandButton id="save"
-                          value="Save"
-                         action="#{writeOffRequestHome.persist}"
-                       disabled="#{!writeOffRequestHome.wired}"
-                       rendered="#{!writeOffRequestHome.managed}"/>
-
-            <h:commandButton id="update"
-                          value="Save"
-                         action="#{writeOffRequestHome.update}"
-                       rendered="#{writeOffRequestHome.managed}"/>
-
-            <h:commandButton id="delete"
-                          value="Delete"
-                         action="#{writeOffRequestHome.remove}"
-                      immediate="true"
-                       rendered="#{writeOffRequestHome.managed}"/>
-
-            <s:button id="cancelEdit"
-                   value="Cancel"
-             propagation="end"
-                    view="/WriteOffRequest.xhtml"
-                rendered="#{writeOffRequestHome.managed}"/>
-
-            <s:button id="cancelAdd"
-                   value="Cancel"
-             propagation="end"
-                    view="/#{empty writeOffRequestFrom ? 'WriteOffRequestList' : writeOffRequestFrom}.xhtml"
-                rendered="#{!writeOffRequestHome.managed}"/>
-
-        </div>
-    </h:form>
-
-<rich:tabPanel switchType="ajax">
-
-    <rich:tab label="Approved by">
-    <div class="association" id="approvedByParent">
-
-        <h:outputText value="There is no approvedBy associated with this writeOffRequest."
-                   rendered="#{writeOffRequestHome.instance.approvedBy == null}"/>
-
-        <rich:dataTable var="_resident"
-                   value="#{writeOffRequestHome.instance.approvedBy}"
-                rendered="#{writeOffRequestHome.instance.approvedBy != null}"
-              rowClasses="rvgRowOne,rvgRowTwo"
-                      id="approvedByTable">
-            <h:column>
-                <f:facet name="header">Id</f:facet>
-                <h:outputText value="#{_resident.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Current address id</f:facet>
-                <h:outputText value="#{_resident.currentAddress.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Email</f:facet>
-                <h:outputText value="#{_resident.email}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Enabled individual payment</f:facet>
-                <h:outputText value="#{_resident.enabledIndividualPayment}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Identification number</f:facet>
-                <h:outputText value="#{_resident.identificationNumber}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Identification type</f:facet>
-                <h:outputText value="#{_resident.identificationType}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Is enabled for deferred payments</f:facet>
-                <h:outputText value="#{_resident.isEnabledForDeferredPayments}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Name</f:facet>
-                <h:outputText value="#{_resident.name}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Register date</f:facet>
-                <h:outputText value="#{_resident.registerDate}">
-                    <s:convertDateTime type="date" dateStyle="short"/>
-                </h:outputText>
-            </h:column>
-            <h:column>
-                <f:facet name="header">User id</f:facet>
-                <h:outputText value="#{_resident.user.id}"/>
-            </h:column>
-        </rich:dataTable>
-
-        <div class="actionButtons">
-            <s:button id="#{writeOffRequestHome.instance.approvedBy != null ? 'changeParent' : 'selectParent'}" value="#{writeOffRequestHome.instance.approvedBy != null ? 'Change' : 'Select'} approvedBy"
-                       view="/ResidentList.xhtml">
-                <f:param name="from" value="WriteOffRequestEdit"/>
-            </s:button>
-        </div>
-
-    </div>
-    </rich:tab>
-
-    <rich:tab label="Issue to">
-    <div class="association" id="issueToParent">
-
-        <h:outputText value="There is no issueTo associated with this writeOffRequest."
-                   rendered="#{writeOffRequestHome.instance.issueTo == null}"/>
-
-        <rich:dataTable var="_resident"
-                   value="#{writeOffRequestHome.instance.issueTo}"
-                rendered="#{writeOffRequestHome.instance.issueTo != null}"
-              rowClasses="rvgRowOne,rvgRowTwo"
-                      id="issueToTable">
-            <h:column>
-                <f:facet name="header">Id</f:facet>
-                <h:outputText value="#{_resident.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Current address id</f:facet>
-                <h:outputText value="#{_resident.currentAddress.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Email</f:facet>
-                <h:outputText value="#{_resident.email}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Enabled individual payment</f:facet>
-                <h:outputText value="#{_resident.enabledIndividualPayment}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Identification number</f:facet>
-                <h:outputText value="#{_resident.identificationNumber}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Identification type</f:facet>
-                <h:outputText value="#{_resident.identificationType}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Is enabled for deferred payments</f:facet>
-                <h:outputText value="#{_resident.isEnabledForDeferredPayments}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Name</f:facet>
-                <h:outputText value="#{_resident.name}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Register date</f:facet>
-                <h:outputText value="#{_resident.registerDate}">
-                    <s:convertDateTime type="date" dateStyle="short"/>
-                </h:outputText>
-            </h:column>
-            <h:column>
-                <f:facet name="header">User id</f:facet>
-                <h:outputText value="#{_resident.user.id}"/>
-            </h:column>
-        </rich:dataTable>
-
-        <div class="actionButtons">
-            <s:button id="#{writeOffRequestHome.instance.issueTo != null ? 'changeParent' : 'selectParent'}" value="#{writeOffRequestHome.instance.issueTo != null ? 'Change' : 'Select'} issueTo"
-                       view="/ResidentList.xhtml">
-                <f:param name="from" value="WriteOffRequestEdit"/>
-            </s:button>
-        </div>
-
-    </div>
-    </rich:tab>
-
-    <rich:tab label="Made by">
-    <div class="association" id="madeByParent">
-
-        <h:outputText value="There is no madeBy associated with this writeOffRequest."
-                   rendered="#{writeOffRequestHome.instance.madeBy == null}"/>
-
-        <rich:dataTable var="_resident"
-                   value="#{writeOffRequestHome.instance.madeBy}"
-                rendered="#{writeOffRequestHome.instance.madeBy != null}"
-              rowClasses="rvgRowOne,rvgRowTwo"
-                      id="madeByTable">
-            <h:column>
-                <f:facet name="header">Id</f:facet>
-                <h:outputText value="#{_resident.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Current address id</f:facet>
-                <h:outputText value="#{_resident.currentAddress.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Email</f:facet>
-                <h:outputText value="#{_resident.email}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Enabled individual payment</f:facet>
-                <h:outputText value="#{_resident.enabledIndividualPayment}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Identification number</f:facet>
-                <h:outputText value="#{_resident.identificationNumber}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Identification type</f:facet>
-                <h:outputText value="#{_resident.identificationType}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Is enabled for deferred payments</f:facet>
-                <h:outputText value="#{_resident.isEnabledForDeferredPayments}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Name</f:facet>
-                <h:outputText value="#{_resident.name}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Register date</f:facet>
-                <h:outputText value="#{_resident.registerDate}">
-                    <s:convertDateTime type="date" dateStyle="short"/>
-                </h:outputText>
-            </h:column>
-            <h:column>
-                <f:facet name="header">User id</f:facet>
-                <h:outputText value="#{_resident.user.id}"/>
-            </h:column>
-        </rich:dataTable>
-
-        <div class="actionButtons">
-            <s:button id="#{writeOffRequestHome.instance.madeBy != null ? 'changeParent' : 'selectParent'}" value="#{writeOffRequestHome.instance.madeBy != null ? 'Change' : 'Select'} madeBy"
-                       view="/ResidentList.xhtml">
-                <f:param name="from" value="WriteOffRequestEdit"/>
-            </s:button>
-        </div>
-
-    </div>
-    </rich:tab>
-
-    <rich:tab label="Resident">
-    <div class="association" id="residentParent">
-
-        <h:outputText value="There is no resident associated with this writeOffRequest."
-                   rendered="#{writeOffRequestHome.instance.resident == null}"/>
-
-        <rich:dataTable var="_resident"
-                   value="#{writeOffRequestHome.instance.resident}"
-                rendered="#{writeOffRequestHome.instance.resident != null}"
-              rowClasses="rvgRowOne,rvgRowTwo"
-                      id="residentTable">
-            <h:column>
-                <f:facet name="header">Id</f:facet>
-                <h:outputText value="#{_resident.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Current address id</f:facet>
-                <h:outputText value="#{_resident.currentAddress.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Email</f:facet>
-                <h:outputText value="#{_resident.email}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Enabled individual payment</f:facet>
-                <h:outputText value="#{_resident.enabledIndividualPayment}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Identification number</f:facet>
-                <h:outputText value="#{_resident.identificationNumber}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Identification type</f:facet>
-                <h:outputText value="#{_resident.identificationType}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Is enabled for deferred payments</f:facet>
-                <h:outputText value="#{_resident.isEnabledForDeferredPayments}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Name</f:facet>
-                <h:outputText value="#{_resident.name}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Register date</f:facet>
-                <h:outputText value="#{_resident.registerDate}">
-                    <s:convertDateTime type="date" dateStyle="short"/>
-                </h:outputText>
-            </h:column>
-            <h:column>
-                <f:facet name="header">User id</f:facet>
-                <h:outputText value="#{_resident.user.id}"/>
-            </h:column>
-        </rich:dataTable>
-
-        <div class="actionButtons">
-            <s:button id="#{writeOffRequestHome.instance.resident != null ? 'changeParent' : 'selectParent'}" value="#{writeOffRequestHome.instance.resident != null ? 'Change' : 'Select'} resident"
-                       view="/ResidentList.xhtml">
-                <f:param name="from" value="WriteOffRequestEdit"/>
-            </s:button>
-        </div>
-
-    </div>
-    </rich:tab>
-
-    <rich:tab label="Sequence manager">
-    <div class="association" id="sequenceManagerParent">
-
-        <h:outputText value="There is no sequenceManager associated with this writeOffRequest."
-                   rendered="#{writeOffRequestHome.instance.sequenceManager == null}"/>
-
-        <rich:dataTable var="_sequenceManager"
-                   value="#{writeOffRequestHome.instance.sequenceManager}"
-                rendered="#{writeOffRequestHome.instance.sequenceManager != null}"
-              rowClasses="rvgRowOne,rvgRowTwo"
-                      id="sequenceManagerTable">
-            <h:column>
-                <f:facet name="header">Id</f:facet>
-                <h:outputText value="#{_sequenceManager.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Code</f:facet>
-                <h:outputText value="#{_sequenceManager.code}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Date</f:facet>
-                <h:outputText value="#{_sequenceManager.date}">
-                    <s:convertDateTime type="date" dateStyle="short"/>
-                </h:outputText>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Explanation</f:facet>
-                <h:outputText value="#{_sequenceManager.explanation}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Is active</f:facet>
-                <h:outputText value="#{_sequenceManager.isActive}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Sequence manager type id</f:facet>
-                <h:outputText value="#{_sequenceManager.sequenceManagerType.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Taken by id</f:facet>
-                <h:outputText value="#{_sequenceManager.takenBy.id}"/>
-            </h:column>
-        </rich:dataTable>
-
-        <div class="actionButtons">
-            <s:button id="#{writeOffRequestHome.instance.sequenceManager != null ? 'changeParent' : 'selectParent'}" value="#{writeOffRequestHome.instance.sequenceManager != null ? 'Change' : 'Select'} sequenceManager"
-                       view="/SequenceManagerList.xhtml">
-                <f:param name="from" value="WriteOffRequestEdit"/>
-            </s:button>
-        </div>
-
-    </div>
-    </rich:tab>
-
-    <rich:tab label="Water supply">
-    <div class="association" id="waterSupplyParent">
-
-        <h:outputText value="There is no waterSupply associated with this writeOffRequest."
-                   rendered="#{writeOffRequestHome.instance.waterSupply == null}"/>
-
-        <rich:dataTable var="_waterSupply"
-                   value="#{writeOffRequestHome.instance.waterSupply}"
-                rendered="#{writeOffRequestHome.instance.waterSupply != null}"
-              rowClasses="rvgRowOne,rvgRowTwo"
-                      id="waterSupplyTable">
-            <h:column>
-                <f:facet name="header">Id</f:facet>
-                <h:outputText value="#{_waterSupply.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Apply elderly exemption</f:facet>
-                <h:outputText value="#{_waterSupply.applyElderlyExemption}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Apply special exemption</f:facet>
-                <h:outputText value="#{_waterSupply.applySpecialExemption}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Contract id</f:facet>
-                <h:outputText value="#{_waterSupply.contract.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Has sewerage</f:facet>
-                <h:outputText value="#{_waterSupply.hasSewerage}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Is canceled</f:facet>
-                <h:outputText value="#{_waterSupply.isCanceled}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Ncalle</f:facet>
-                <h:outputText value="#{_waterSupply.ncalle}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Ncasa</f:facet>
-                <h:outputText value="#{_waterSupply.ncasa}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Observations</f:facet>
-                <h:outputText value="#{_waterSupply.observations}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Property id</f:facet>
-                <h:outputText value="#{_waterSupply.property.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Recipe owner id</f:facet>
-                <h:outputText value="#{_waterSupply.recipeOwner.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Route id</f:facet>
-                <h:outputText value="#{_waterSupply.route.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Route order</f:facet>
-                <h:outputText value="#{_waterSupply.routeOrder}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Service number</f:facet>
-                <h:outputText value="#{_waterSupply.serviceNumber}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Service owner id</f:facet>
-                <h:outputText value="#{_waterSupply.serviceOwner.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Street id</f:facet>
-                <h:outputText value="#{_waterSupply.street.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Water supply category id</f:facet>
-                <h:outputText value="#{_waterSupply.waterSupplyCategory.id}"/>
-            </h:column>
-        </rich:dataTable>
-
-        <div class="actionButtons">
-            <s:button id="#{writeOffRequestHome.instance.waterSupply != null ? 'changeParent' : 'selectParent'}" value="#{writeOffRequestHome.instance.waterSupply != null ? 'Change' : 'Select'} waterSupply"
-                       view="/WaterSupplyList.xhtml">
-                <f:param name="from" value="WriteOffRequestEdit"/>
-            </s:button>
-        </div>
-
-    </div>
-    </rich:tab>
-
-    <rich:tab label="Write off type">
-    <div class="association" id="writeOffTypeParent">
-
-        <h:outputText value="There is no writeOffType associated with this writeOffRequest."
-                   rendered="#{writeOffRequestHome.instance.writeOffType == null}"/>
-
-        <rich:dataTable var="_writeOffType"
-                   value="#{writeOffRequestHome.instance.writeOffType}"
-                rendered="#{writeOffRequestHome.instance.writeOffType != null}"
-              rowClasses="rvgRowOne,rvgRowTwo"
-                      id="writeOffTypeTable">
-            <h:column>
-                <f:facet name="header">Id</f:facet>
-                <h:outputText value="#{_writeOffType.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Detail</f:facet>
-                <h:outputText value="#{_writeOffType.detail}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Is active</f:facet>
-                <h:outputText value="#{_writeOffType.isActive}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Name</f:facet>
-                <h:outputText value="#{_writeOffType.name}"/>
-            </h:column>
-        </rich:dataTable>
-
-        <div class="actionButtons">
-            <s:button id="#{writeOffRequestHome.instance.writeOffType != null ? 'changeParent' : 'selectParent'}" value="#{writeOffRequestHome.instance.writeOffType != null ? 'Change' : 'Select'} writeOffType"
-                       view="/WriteOffTypeList.xhtml">
-                <f:param name="from" value="WriteOffRequestEdit"/>
-            </s:button>
-        </div>
-
-    </div>
-    </rich:tab>
-</rich:tabPanel>
-</ui:define>
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:include src="dialogs/MunicipalBondAdd.xhtml" />
+
+		<h:form id="writeOffRequest" styleClass="edit">
+
+			<rich:panel>
+				<f:facet name="header">Contribuyente</f:facet>
+
+				<g:residentChooser id="residentChooser"
+					resident="#{writeOffRequestHome.instance.resident}"
+					criteria="#{writeOffRequestHome.criteria}"
+					bean="#{writeOffRequestHome}" searchAction="searchResident"
+					residentsList="#{writeOffRequestHome.residents}"
+					identificationNumber="#{writeOffRequestHome.identificationNumber}"
+					searchByCriteriaAction="searchResidentByCriteria"
+					clearSearchPanelAction="clearSearchResidentPanel"
+					residentChosenListenerName="residentSelectedListener"
+					reRender="waterSupply" />
+				<div style="clear: both">
+					<span class="required">*</span>"#{messages['common.requiredFields']}"
+				</div>
+			</rich:panel>
+
+			<rich:panel>
+				<f:facet name="header">Información de solicitud de Baja</f:facet>
+
+				<s:decorate id="dateField" template="../layout/edit.xhtml">
+					<ui:define name="label">Fecha</ui:define>
+					<rich:calendar id="date"
+						value="#{writeOffRequestHome.instance.date}"
+						datePattern="dd/MM/yyyy" />
+				</s:decorate>
+
+				<s:decorate id="type" template="../layout/edit.xhtml">
+					<ui:define name="label">Tipo:</ui:define>
+					<h:selectOneMenu id="cmbType" required="true"
+						value="#{writeOffRequestHome.instance.writeOffType}"
+						requiredMessage="Tipo requerido">
+						<s:selectItems value="#{writeOffRequestHome._types}"
+							noSelectionLabel="Seleccione" var="_type" label="#{_type.name}"
+							required="true" />
+						<s:convertEntity />
+						<a:support event="onchange"
+							action="#{writeOffRequestHome.onSelectType}" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="waterSupply" template="../layout/edit.xhtml">
+					<ui:define name="label">Servicio:</ui:define>
+					<h:selectOneMenu id="cmWaterSupply" required="true"
+						value="#{writeOffRequestHome.waterSupplySelected}"
+						requiredMessage="Servicio requerido">
+						<s:selectItems value="#{writeOffRequestHome.waterSupplies}"
+							noSelectionLabel="#{messages['common.chooseOption']}"
+							var="_waterSupply" label="#{_waterSupply.serviceNumber}" />
+						<s:convertEntity />
+						<a:support event="onchange"
+							action="#{writeOffRequestHome.onSelectService}"
+							reRender="waterMeter,address" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="address" template="../layout/edit.xhtml">
+					<ui:define name="label">Dirección:</ui:define>
+					<h:inputText id="txtAddress" maxlength="100"
+						value="#{writeOffRequestHome.waterSupplySelected.ncalle}"
+						disabled="true">
+						<a:support event="onblur" reRender="address" bypassUpdates="true"
+							ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="waterMeter" template="../layout/edit.xhtml">
+					<ui:define name="label">Medidor:</ui:define>
+					<h:inputText id="txtWaterMeter" maxlength="100"
+						value="#{writeOffRequestHome.instance.waterMeter.serial}"
+						disabled="true">
+						<a:support event="onblur" reRender="waterMeter"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="detailField" template="../layout/edit.xhtml">
+					<ui:define name="label">Responsable/Soporte</ui:define>
+					<h:inputText id="detail" maxlength="100"
+						value="#{writeOffRequestHome.instance.detail}">
+						<a:support event="onblur" reRender="detailField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate id="internalProcessNumberField"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">Número de Proceso Interno</ui:define>
+					<h:inputText id="internalProcessNumber" maxlength="50"
+						value="#{writeOffRequestHome.instance.internalProcessNumber}">
+						<a:support event="onblur" reRender="internalProcessNumberField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span> required fields
+				</div>
+
+			</rich:panel>
+
+			<rich:panel id="panel_low_bonds">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="OBLIGACIONES A DAR DE BAJA" />
+						<a:commandButton id="createRegister" ajaxSingle="true"
+							eventsQueue="gimQueue" value="Agregar Obligaciones"
+							oncomplete="Richfaces.showModalPanel('municipalBondAddPanel',{width:650, height:550})"
+							actionListener="#{writeOffRequestHome.prepareAddBondLower()}"
+							reRender="municipalBondAddPanel" />
+					</h:panelGrid>
+				</f:facet>
+
+				<rich:dataTable id="_low_bonds_table" var="_det_low"
+					value="#{writeOffRequestHome.detailsTableOld}"
+					rendered="#{not empty writeOffRequestHome.detailsTableOld}">
+					<h:column>
+						<f:facet name="header">
+							Item
+						</f:facet>
+						<h:outputText value="#{_det_low.index}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							N° Obligación
+						</f:facet>
+						<h:outputText value="#{_det_low.bond_number}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							Mes
+						</f:facet>
+						<h:outputText value="#{_det_low.month_name}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							Año
+						</f:facet>
+						<h:outputText value="#{_det_low.year}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							Lectura Anterior
+						</f:facet>
+						<h:outputText value="#{_det_low.previous_reading}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							Lectura Actual
+						</f:facet>
+						<h:outputText value="#{_det_low.current_reading}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							m3
+						</f:facet>
+						<h:outputText value="#{_det_low.m3}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							Valor
+						</f:facet>
+						<h:outputText value="#{_det_low.value}" />
+					</h:column>
+				</rich:dataTable>
+
+			</rich:panel>
+
+			<rich:panel id="panel_new_bonds">
+				<f:facet name="header">NUEVAS OBLIGACIONES</f:facet>
+
+				<rich:dataTable id="_new_bonds_table" var="_det_new"
+					value="#{writeOffRequestHome.detailsTableNew}"
+					rendered="#{not empty writeOffRequestHome.detailsTableOld}">
+					<h:column>
+						<f:facet name="header">
+							Item
+						</f:facet>
+						<h:outputText value="#{_det_new.index}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							N° Obligación
+						</f:facet>
+						<h:outputText value="#{_det_new.bond_number}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							Mes
+						</f:facet>
+						<h:outputText value="#{_det_new.month_name}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							Año
+						</f:facet>
+						<h:outputText value="#{_det_new.year}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							Lectura Anterior
+						</f:facet>
+						<h:outputText value="#{_det_new.previous_reading}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							Lectura Actual
+						</f:facet>
+						<h:outputText value="#{_det_new.current_reading}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							m3
+						</f:facet>
+						<h:outputText value="#{_det_new.m3}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							Valor
+						</f:facet>
+						<h:outputText value="#{_det_new.value}" />
+					</h:column>
+				</rich:dataTable>
+
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="Save"
+					action="#{writeOffRequestHome.save()}"
+					disabled="#{!writeOffRequestHome.wired}"
+					rendered="#{!writeOffRequestHome.managed}" />
+
+				<a:commandButton id="_save" ajaxSingle="true" value="Guardar"
+					bypassUpdates="true" actionListener="#{writeOffRequestHome.save()}" 
+					/>
+
+				<h:commandButton id="update" value="Save"
+					action="#{writeOffRequestHome.update}"
+					rendered="#{writeOffRequestHome.managed}" />
+
+				<h:commandButton id="delete" value="Delete"
+					action="#{writeOffRequestHome.remove}" immediate="true"
+					rendered="#{writeOffRequestHome.managed}" />
+
+				<s:button id="cancelEdit" value="Cancel" propagation="end"
+					view="/WriteOffRequest.xhtml"
+					rendered="#{writeOffRequestHome.managed}" />
+
+				<s:button id="cancelAdd" value="Cancel" propagation="end"
+					view="/#{empty writeOffRequestFrom ? 'WriteOffRequestList' : writeOffRequestFrom}.xhtml"
+					rendered="#{!writeOffRequestHome.managed}" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
 
 </ui:composition>

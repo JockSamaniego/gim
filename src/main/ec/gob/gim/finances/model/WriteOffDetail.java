@@ -20,25 +20,31 @@ import ec.gob.gim.waterservice.model.MonthType;
 
 @Audited
 @Entity
-@TableGenerator(name = "WriteOffRequestGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "WriteOffRequest", initialValue = 1, allocationSize = 1)
+@TableGenerator(name = "WriteOffDetailGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "WriteOffDetail", initialValue = 1, allocationSize = 1)
 public class WriteOffDetail {
 
 	@Id
-	@GeneratedValue(generator = "WriteOffRequestGenerator", strategy = GenerationType.TABLE)
+	@GeneratedValue(generator = "WriteOffDetailGenerator", strategy = GenerationType.TABLE)
 	private Long id;
 
 	private Integer year;
+	
 	private Integer month;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(length = 15)
 	private MonthType monthType;
 
 	private BigDecimal oldAmount;
+	
 	private Long oldCurrentReading;
+	
 	private Long oldPreviousReading;
 
 	private BigDecimal newAmount;
+	
 	private Long newCurrentReading;
+	
 	private Long newPreviousReading;
 
 	@ManyToOne
@@ -157,4 +163,17 @@ public class WriteOffDetail {
 		this.writeOffRequest = writeOffRequest;
 	}
 
+	@Override
+	public String toString() {
+		return "WriteOffDetail [id=" + id + ", year=" + year + ", month="
+				+ month + ", monthType=" + monthType + ", oldAmount="
+				+ oldAmount + ", oldCurrentReading=" + oldCurrentReading
+				+ ", oldPreviousReading=" + oldPreviousReading + ", newAmount="
+				+ newAmount + ", newCurrentReading=" + newCurrentReading
+				+ ", newPreviousReading=" + newPreviousReading
+				+ ", oldMunicipalBond=" + oldMunicipalBond
+				+ ", newMunicipalBond=" + newMunicipalBond
+				+ ", writeOffRequest=" + writeOffRequest + "]";
+	}
+	
 }
