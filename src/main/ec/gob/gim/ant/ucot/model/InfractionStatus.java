@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,29 +37,27 @@ import ec.gob.gim.common.model.ItemCatalog;
 	 pkColumnValue="InfractionStatus",
 	 initialValue=1, allocationSize=1
 )
+
+@NamedQueries(value = {
+		@NamedQuery(name = "status.findByInfractionId", query = "Select s from InfractionStatus s WHERE s.infraction.id = :infractionId ORDER BY s.id ASC")})
 public class InfractionStatus {
 
 	@Id
 	@GeneratedValue(generator="InfractionStatusGenerator",strategy=GenerationType.TABLE)
 	private Long id;
 
-	@Column(nullable=false)
-	private String name;
+	@ManyToOne
+	@JoinColumn(name="itemcatalog_id")
+	private ItemCatalog name;
 
 	@Temporal(TemporalType.DATE)
 	private Date statusDate;
-	
-	@Temporal(TemporalType.TIME)
-	private Date statusTime;
-	
-	@ManyToOne
-	@JoinColumn(name="statusitem_id")
-	private ItemCatalog status;
 
 	@ManyToOne
 	@JoinColumn(name="infraction_id")
 	private Infractions infraction;
 	 
+	private String Detail;
 
 	public Long getId() {
 		return id;
@@ -65,14 +65,6 @@ public class InfractionStatus {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public Date getStatusDate() {
@@ -83,12 +75,12 @@ public class InfractionStatus {
 		this.statusDate = statusDate;
 	}
 
-	public ItemCatalog getStatus() {
-		return status;
+	public ItemCatalog getName() {
+		return name;
 	}
 
-	public void setStatus(ItemCatalog status) {
-		this.status = status;
+	public void setName(ItemCatalog name) {
+		this.name = name;
 	}
 
 	public Infractions getInfraction() {
@@ -99,16 +91,14 @@ public class InfractionStatus {
 		this.infraction = infraction;
 	}
 
-	public Date getStatusTime() {
-		return statusTime;
+	public String getDetail() {
+		return Detail;
 	}
 
-	public void setStatusTime(Date statusTime) {
-		this.statusTime = statusTime;
+	public void setDetail(String detail) {
+		Detail = detail;
 	}
-	
-	
-	
+
 }
 	
 	

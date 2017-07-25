@@ -14,7 +14,18 @@
     <h:form id="infractionSentences" styleClass="edit">
 
         <rich:panel>
-            <f:facet name="header">#{bulletinHome.managed ? messages['sentence.Edit'] : messages['sentence.Create']}</f:facet>
+            <f:facet name="header">#{infractionSentencesHome.managed ? messages['sentence.Edit'] : messages['sentence.Create']}</f:facet>
+
+            <s:decorate id="infractionField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction']}:</ui:define>
+                <h:inputText id="infraction"
+                           size="30"
+                           required="true"
+                           readonly="true"
+                      maxlength="30"
+                          value="#{infractionSentencesHome.instance.infraction.serial}">
+                </h:inputText>
+            </s:decorate>
 
             <s:decorate id="judgeField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['sentence.judge']}:</ui:define>
@@ -23,10 +34,8 @@
                            required="true"
                       maxlength="30"
                           value="#{infractionSentencesHome.instance.judge}">
-                    <a:support event="onblur" reRender="judgeField" bypassUpdates="true" ajaxSingle="true"/>
                 </h:inputText>
             </s:decorate>
-
 
             <s:decorate id="processNumberField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['sentence.numberProcess']}:</ui:define>
@@ -35,7 +44,6 @@
                            required="true"
                       maxlength="30"
                           value="#{infractionSentencesHome.instance.processNumber}">
-                    <a:support event="onblur" reRender="processNumberField" bypassUpdates="true" ajaxSingle="true"/>
                 </h:inputText>
             </s:decorate>
 
@@ -75,7 +83,8 @@
             <h:commandButton id="update"
                           value="#{messages['common.save']}"
                          action="#{infractionSentencesHome.update}"
-                       rendered="#{infractionSentencesHome.managed}"/>
+                       rendered="#{infractionSentencesHome.managed}">
+                 </h:commandButton>
 
             <h:commandButton id="delete"
                           value="#{messages['common.delete']}"

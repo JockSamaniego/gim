@@ -40,6 +40,7 @@
                 <ui:define name="label">#{messages['bulletin.startNumber']}</ui:define>
                 <h:inputText id="startNumber"
                        required="true"
+                       readonly="#{bulletinHome.haveInfractions}"
                           value="#{bulletinHome.instance.startNumber}">
                     <a:support event="onblur" reRender="startNumberField" bypassUpdates="true" ajaxSingle="true"/>
                 </h:inputText>
@@ -49,6 +50,7 @@
                 <ui:define name="label">#{messages['bulletin.endNumber']}</ui:define>
                 <h:inputText id="endNumber"
                        required="true"
+                       readonly="#{bulletinHome.haveInfractions}"
                           value="#{bulletinHome.instance.endNumber}">
                     <a:support event="onblur" reRender="endNumberField" bypassUpdates="true" ajaxSingle="true"/>
                 </h:inputText>
@@ -103,6 +105,13 @@
                 <span class="required">*</span>
                 campos requeridos
             </div>
+            
+            <s:decorate id="bulletinMessageField" template="../../layout/edit.xhtml">
+                <h:outputText value="#{bulletinHome.message}" rendered="#{bulletinHome.message != null}" style="color:red"/>
+            </s:decorate> 
+
+            <div style="clear:both">
+            </div>
 
         </rich:panel>
 
@@ -110,7 +119,7 @@
 
             <h:commandButton id="save"
                           value="#{messages['common.save']}"
-                         action="#{bulletinHome.persist}"
+                         action="#{bulletinHome.saveBulletin()}"
                        disabled="#{!bulletinHome.wired}"
                        rendered="#{!bulletinHome.managed}"/>
 

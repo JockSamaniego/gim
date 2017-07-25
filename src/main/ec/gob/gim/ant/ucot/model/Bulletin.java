@@ -2,6 +2,7 @@ package ec.gob.gim.ant.ucot.model;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,10 +13,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne; 
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.ItemCatalog;
@@ -35,6 +40,11 @@ import ec.gob.gim.common.model.ItemCatalog;
 	 pkColumnValue="Bulletin",
 	 initialValue=1, allocationSize=1
 )
+@NamedQueries(value = {
+		@NamedQuery(name = "bulletin.findBySerial", query = "Select b from Bulletin b where b.startNumber <= :serial AND b.endNumber >= :serial"),
+		@NamedQuery(name = "bulletin.findByRank", query = "Select b from Bulletin b where b.startNumber > :startSerial AND b.endNumber < :endSerial")})
+
+
 public class Bulletin {
 
 	@Id
@@ -60,6 +70,10 @@ public class Bulletin {
 	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
 	@JoinColumn(name="agent_id")
 	private Agent agent;
+	
+	@OneToMany(mappedBy = "bulletin", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private List<Infractions> infractions;
 
 
 	private String detail;
@@ -141,6 +155,16 @@ public class Bulletin {
 
 	public void setDetail(String detail) {
 		this.detail = detail;
+	}
+
+
+	public List<Infractions> getInfractions() {
+		return infractions;
+	}
+
+
+	public void setInfractions(List<Infractions> infractions) {
+		this.infractions = infractions;
 	}
 	
 	

@@ -33,10 +33,14 @@
 
 
 
-   <navigation from-action="#{bulletinHome.persist}">
+   <navigation from-action="#{bulletinHome.saveBulletin()}">
       <rule if-outcome="persisted">
          <end-conversation/>
          <redirect view-id="/ant/ucot/BulletinList.xhtml"/>
+      </rule>
+      <rule if-outcome="failed">
+         <end-conversation/>
+         <redirect view-id="/ant/ucot/BulletinEdit.xhtml"/>
       </rule>
    </navigation>
 

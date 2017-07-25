@@ -12,28 +12,42 @@
 <ui:define name="body">
 
     <h:form id="infractions" styleClass="edit">
-	<ui:include src="fragment/SentencePanel.xhtml" />
         <rich:panel>
             <f:facet name="header">
-                <h:panelGrid columns="3" columnClasses="headerTitle,">
+                <h:panelGrid columns="1" columnClasses="headerTitle,">
                   <h:outputText
                     value="#{infractionsHome.managed ? messages['infraction.Edit'] : messages['infraction.Create']}" />
-                      <a:commandButton id="CreateSentence"
-		                    action="#{infractionSentencesHome.wire()}"
-  		                  reRender="sentencePanel" ajaxSingle="true"
-  		                  eventsQueue="gimQueue"
-  		                  oncomplete="Richfaces.showModalPanel('sentencePanel',{width:600, height:500})"
-  		                  value="Agregar Sentencia" >
-  		                  	<f:param name="infractionSentencesId"/>
-  		                </a:commandButton>
-                       <s:button view="/ant/ucot/BulletinEdit.xhtml"
-                                   id="StatusInfraction"
-                          propagation="none"
-                                value="Agregar Estado">
-                           <f:param name="infractionSentencesId"/>
-                       </s:button>
                 </h:panelGrid>      
             </f:facet>
+
+            <s:decorate id="agentField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.agent']}</ui:define>
+                <h:inputText id="agent"
+                       required="true"
+                       readonly="true"
+                       size="50"
+                          value="#{infractionsHome.instance.bulletin.agent.resident.name}">
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="bulletinField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['bulletin']}</ui:define>
+                <h:inputText id="bulletinStart"
+                       required="true"
+                       readonly="true"
+                       size="20"
+                          value="#{infractionsHome.instance.bulletin.startNumber}">
+                </h:inputText>
+                <h:outputText id="bulletin"
+                          value="   -   ">
+                </h:outputText>
+                <h:inputText id="bulletinEnd"
+                       required="true"
+                       readonly="true"
+                       size="20"
+                          value="#{infractionsHome.instance.bulletin.endNumber}">
+                </h:inputText>
+            </s:decorate>
 
             <s:decorate id="serialField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.serial']}</ui:define>
@@ -54,7 +68,7 @@
                 <ui:define name="label">#{messages['infraction.citationtime']}</ui:define>
                 <h:inputText id="citationTime"
                            size="15"
-                           maxlength="10"
+                           maxlength="11"
                            required="true"
                           value="#{infractionsHome.instance.citationTime}">
                     <s:convertDateTime type="time"/>
@@ -114,6 +128,13 @@
                 <span class="required">*</span>
                 campos requeridos
             </div>
+            
+            <s:decorate id="infractionMessageField" template="../../layout/edit.xhtml">
+                <h:outputText value="#{infractionsHome.message}" rendered="#{infractionsHome.message != null}" style="color:red"/>
+            </s:decorate> 
+
+            <div style="clear:both">
+            </div>
 
         </rich:panel>
 
@@ -121,7 +142,7 @@
 
             <h:commandButton id="save"
                           value="#{messages['common.save']}"
-                         action="#{infractionsHome.persist}"
+                         action="#{infractionsHome.saveInfraction(bulletinHome.instance)}"
                        disabled="#{!infractionsHome.wired}"
                        rendered="#{!infractionsHome.managed}"/>
 
@@ -140,7 +161,13 @@
             <s:button id="cancelEdit"
                    value="#{messages['common.cancel']}"
              propagation="end"
-                    view="/Infractions.xhtml"/>
+                rendered="#{!infractionsHome.managed}"
+                    view="/ant/ucot/BulletinList.xhtml"/>
+            <s:button id="cancelEdit2"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                rendered="#{infractionsHome.managed}"
+                    view="/ant/ucot/InfractionsList.xhtml"/>
 
         </div>
     </h:form>

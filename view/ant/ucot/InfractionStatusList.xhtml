@@ -10,169 +10,104 @@
 
 <ui:define name="body">
 
-    <h:form id="infractionStatusSearch" styleClass="edit">
-
-        <rich:simpleTogglePanel label="InfractionStatus Search Filter" switchType="ajax">
-
-            <s:decorate template="../../layout/display.xhtml">
-                <ui:define name="label">Match</ui:define>
-                <h:selectOneRadio id="logic" value="#{infractionStatusList.restrictionLogicOperator}" styleClass="radio">
-                    <f:selectItem itemLabel="All" itemValue="and"/>
-                    <f:selectItem itemLabel="Any" itemValue="or"/>
-                </h:selectOneRadio>
-            </s:decorate>
-
-        </rich:simpleTogglePanel>
-
-        <div class="actionButtons">
-            <h:commandButton id="search" value="Search" action="/InfractionStatusList.xhtml"/>
-            <s:button id="reset" value="Reset" includePageParams="false"/>
-        </div>
-
-    </h:form>
+<h:outputText styleClass="formTitle" value="#{messages['ucot.statusManager']}" />  
 
     <rich:panel>
-        <f:facet name="header">InfractionStatus Search Results (#{empty infractionStatusList.resultList ? 0 : (infractionStatusList.paginated ? infractionStatusList.resultCount : infractionStatusList.resultList.size)})</f:facet>
+        <f:facet name="header">
+            <h:panelGrid columns="2" columnClasses="headerTitle,">
+                <h:outputText
+                    value=" #{messages['status.searchResults']} (#{infractionStatusHome.infractionStatus.size()>0 ? infractionStatusHome.infractionStatus.size() : 0})" />
+                   <s:button view="/ant/ucot/InfractionStatusEdit.xhtml"
+                               id="create"
+                      propagation="none"
+                            value="#{messages['common.create']} #{messages['status']}">
+                       <f:param name="infractionStatusId" />
+                       <f:param name="infractionsId"
+                        value="#{infractionsHome.infractionsId}"/>
+                   </s:button>
+            </h:panelGrid>      
+        </f:facet>
     <div class="results" id="infractionStatusList">
 
-    <h:outputText value="The infractionStatus search returned no results."
-               rendered="#{empty infractionStatusList.resultList}"/>
+    <h:outputText value="No se han encontrado resultados"
+               rendered="#{infractionStatusHome.infractionStatus.size()==0}"/>
 
     <rich:dataTable id="infractionStatusList"
                 var="_infractionStatus"
-              value="#{infractionStatusList.resultList}"
-           rendered="#{not empty infractionStatusList.resultList}">
-        <h:column>
+              value="#{infractionStatusHome.infractionStatus}"
+           rendered="#{infractionStatusHome.infractionStatus.size()>0}">
+
+        
+        <rich:column styleClass="action" style="align:center;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{infractionStatusList}"/>
-                    <ui:param name="propertyLabel" value="Id"/>
-                    <ui:param name="propertyPath" value="infractionStatus.id"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction']}"/>
+                    <ui:param name="propertyPath" value="infractionStatus.infraction.serial"/>
                 </ui:include>
             </f:facet>
-            <h:outputText value="#{_infractionStatus.id}"/>
-        </h:column>
-        <h:column>
+            <h:outputText value="#{_infractionStatus.infraction.serial}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{infractionStatusList}"/>
-                    <ui:param name="propertyLabel" value="Infraction id"/>
-                    <ui:param name="propertyPath" value="infractionStatus.infraction.id"/>
+                    <ui:param name="propertyLabel" value="#{messages['agent.name']}"/>
+                    <ui:param name="propertyPath" value="infractionStatus.name.name"/>
                 </ui:include>
             </f:facet>
-            <h:outputText value="#{_infractionStatus.infraction.id}"/>
-        </h:column>
-        <h:column>
+            <h:outputText value="#{_infractionStatus.name.name}"/>
+        </rich:column>
+
+        <rich:column styleClass="action" style="align:center;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{infractionStatusList}"/>
-                    <ui:param name="propertyLabel" value="Serial"/>
-                    <ui:param name="propertyPath" value="infractionStatus.serial"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_infractionStatus.serial}"/>
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{infractionStatusList}"/>
-                    <ui:param name="propertyLabel" value="Status id"/>
-                    <ui:param name="propertyPath" value="infractionStatus.status.id"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_infractionStatus.status.id}"/>
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{infractionStatusList}"/>
-                    <ui:param name="propertyLabel" value="Status date"/>
+                    <ui:param name="propertyLabel" value="#{messages['bulletin.creationDate']}"/>
                     <ui:param name="propertyPath" value="infractionStatus.statusDate"/>
                 </ui:include>
             </f:facet>
             <h:outputText value="#{_infractionStatus.statusDate}">
                 <s:convertDateTime type="date" dateStyle="short"/>
             </h:outputText>
-        </h:column>
-        <h:column>
+        </rich:column>
+        <rich:column styleClass="action" style="align:right;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{infractionStatusList}"/>
-                    <ui:param name="propertyLabel" value="Status time"/>
-                    <ui:param name="propertyPath" value="infractionStatus.statusTime"/>
+                    <ui:param name="propertyLabel" value="#{messages['alert.openDetail']}"/>
+                    <ui:param name="propertyPath" value="infractionStatus.detail"/>
                 </ui:include>
             </f:facet>
-            <h:outputText value="#{_infractionStatus.statusTime}">
-                <s:convertDateTime type="time"/>
+            <h:outputText value="#{_infractionStatus.detail}">
+                <s:convertDateTime type="date" dateStyle="short"/>
             </h:outputText>
-        </h:column>
-        <rich:column styleClass="action">
-            <f:facet name="header">Action</f:facet>
-            <s:link view="/#{empty from ? 'InfractionStatus' : from}.xhtml"
-                   value="#{empty from ? 'View' : 'Select'}"
-             propagation="#{empty from ? 'none' : 'default'}"
-                      id="infractionStatusViewId">
-                <f:param name="infractionStatusId"
-                        value="#{_infractionStatus.id}"/>
-            </s:link>
-            #{' '}
-            <s:link view="/ant/ucot/InfractionStatusEdit.xhtml"
-                   value="Edit"
-             propagation="none"
-                      id="infractionStatusEdit"
-                rendered="#{empty from}">
-                <f:param name="infractionStatusId"
-                        value="#{_infractionStatus.id}"/>
-            </s:link>
         </rich:column>
+
+        <rich:column styleClass="action">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            <s:button view="/ant/ucot/InfractionStatusEdit.xhtml"
+                   value="#{messages['common.edit']}"
+             propagation="none"
+                      id="infractionStatusEdit">
+                <f:param name="infractionStatusId"
+                        value="#{_infractionStatus.id}"/>
+            </s:button>  
+        </rich:column>
+
     </rich:dataTable>
 
     </div>
     </rich:panel>
 
-    <div class="tableControl">
+    <div class="actionButtons">
 
-        <s:link view="/ant/ucot/InfractionStatusList.xhtml"
-            rendered="#{infractionStatusList.previousExists}"
-               value="#{messages.left}#{messages.left} First Page"
-                  id="firstPage">
-          <f:param name="firstResult" value="0"/>
-        </s:link>
+            <s:button id="exit"
+                   value="#{messages['common.exit']}"
+             propagation="end"
+                    view="/ant/ucot/InfractionsList.xhtml"/>
 
-        <s:link view="/ant/ucot/InfractionStatusList.xhtml"
-            rendered="#{infractionStatusList.previousExists}"
-               value="#{messages.left} Previous Page"
-                  id="previousPage">
-            <f:param name="firstResult"
-                    value="#{infractionStatusList.previousFirstResult}"/>
-        </s:link>
-
-        <s:link view="/ant/ucot/InfractionStatusList.xhtml"
-            rendered="#{infractionStatusList.nextExists}"
-               value="Next Page #{messages.right}"
-                  id="nextPage">
-            <f:param name="firstResult"
-                    value="#{infractionStatusList.nextFirstResult}"/>
-        </s:link>
-
-        <s:link view="/ant/ucot/InfractionStatusList.xhtml"
-            rendered="#{infractionStatusList.nextExists}"
-               value="Last Page #{messages.right}#{messages.right}"
-                  id="lastPage">
-            <f:param name="firstResult"
-                    value="#{infractionStatusList.lastFirstResult}"/>
-        </s:link>
-
-    </div>
-
-    <s:div styleClass="actionButtons" rendered="#{empty from}">
-        <s:button view="/ant/ucot/InfractionStatusEdit.xhtml"
-                    id="create"
-           propagation="none"
-                 value="Create infractionStatus">
-            <f:param name="infractionStatusId"/>
-        </s:button>
-    </s:div>
+        </div>
 
 </ui:define>
 

@@ -9,6 +9,8 @@
 
    <action execute="#{infractionSentencesHome.wire}"/>
 
+   <param name="infractionsFrom"/>
+   <param name="infractionsId" value="#{infractionsHome.infractionsId}"/>
    <param name="infractionSentencesFrom"/>
    <param name="infractionSentencesId" value="#{infractionSentencesHome.infractionSentencesId}"/>
    <param name="itemCatalogFrom"/>

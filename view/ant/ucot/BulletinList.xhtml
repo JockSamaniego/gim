@@ -15,8 +15,13 @@
 
         <rich:simpleTogglePanel label="#{messages['ucot.searchFilter']}" switchType="ajax">
             <s:decorate template="../../layout/display.xhtml">
-                <ui:define name="label">#{messages['ucot.agent']}</ui:define>
+                <ui:define name="label">#{messages['ucot.agent']}:</ui:define>
                 <h:inputText id="name" value="#{bulletinList.criteriaSearch}"/>
+            </s:decorate>
+
+            <s:decorate template="../../layout/display.xhtml">
+                <ui:define name="label">#{messages['infraction.serial']}:</ui:define>
+                <h:inputText id="serial" value="#{bulletinList.serial}"/>
             </s:decorate>
 
       </rich:simpleTogglePanel>
@@ -52,49 +57,7 @@
                 var="_bulletin"
               value="#{bulletinList.resultList}"
            rendered="#{not empty bulletinList.resultList}">
-        <rich:column styleClass="action" style="align:center;">
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{bulletinList}"/>
-                    <ui:param name="propertyLabel" value="#{messages['bulletin.id']}"/>
-                    <ui:param name="propertyPath" value="bulletin.id"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_bulletin.id}"/>
-        </rich:column>
-        <rich:column styleClass="action" style="align:center;">
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{bulletinList}"/>
-                    <ui:param name="propertyLabel" value="#{messages['ucot.agent']}"/>
-                    <ui:param name="propertyPath" value="bulletin.agent.resident.identificationNumber"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_bulletin.agent.resident.identificationNumber}"/>
-        </rich:column>
-        <h:column>
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{bulletinList}"/>
-                    <ui:param name="propertyLabel" value="#{messages['agent.name']}"/>
-                    <ui:param name="propertyPath" value="bulletin.agent.resident.name"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_bulletin.agent.resident.name}"/>
-        </h:column>
-        <rich:column styleClass="action" style="align:center;">
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{bulletinList}"/>
-                    <ui:param name="propertyLabel" value="#{messages['bulletin.creationDate']}"/>
-                    <ui:param name="propertyPath" value="bulletin.creationDate"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_bulletin.creationDate}">
-                <f:convertDateTime pattern="dd/MM/yyyy" />
-            </h:outputText>
-        </rich:column>
-        <rich:column styleClass="action" style="align:right;">
+           <rich:column styleClass="action" style="align:right;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{bulletinList}"/>
@@ -118,11 +81,54 @@
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['ucot.agent']}"/>
+                    <ui:param name="propertyPath" value="bulletin.agent.resident.identificationNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.agent.resident.identificationNumber}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:left;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['agent.name']}"/>
+                    <ui:param name="propertyPath" value="bulletin.agent.resident.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.agent.resident.name}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['bulletin.creationDate']}"/>
+                    <ui:param name="propertyPath" value="bulletin.creationDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.creationDate}">
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </rich:column>
+        
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
                     <ui:param name="propertyLabel" value="#{messages['bulletin.type']}"/>
                     <ui:param name="propertyPath" value="bulletin.type.name"/>
                 </ui:include>
             </f:facet>
             <h:outputText value="#{_bulletin.type.name}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:left;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['ucot.detail']}"/>
+                    <ui:param name="propertyPath" value="bulletin.detail"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.detail}"/>
         </rich:column>
         <rich:column styleClass="action">
             <f:facet name="header">#{messages['common.action']}</f:facet>
@@ -130,6 +136,13 @@
                    value="#{messages['common.edit']}"
              propagation="none"
                       id="bulletinEdit">
+                <f:param name="bulletinId"
+                        value="#{_bulletin.id}"/>
+            </s:button>
+            <s:button view="/ant/ucot/InfractionsEdit.xhtml"
+                   value="#{messages['infraction.Create']}"
+             propagation="none"
+                      id="createInfraction">
                 <f:param name="bulletinId"
                         value="#{_bulletin.id}"/>
             </s:button>

@@ -18,15 +18,17 @@ public class AgentList extends EntityQuery<Agent> {
 	private static final String EJBQL = "select agent from Agent agent";
 
 	private static final String[] RESTRICTIONS = {
-		"lower(agent.resident.name) like lower(concat(#{agentList.criteriaSearch},'%'))",
-		"lower(agent.resident.identificationNumber) like lower(concat(#{agentList.criteriaSearch},'%'))",
-		"lower(agent.agentCode) like lower(concat(#{agentList.criteriaSearch},'%'))",};
+		"lower(agent.resident.name) like lower(concat('%',#{agentList.criteriaSearch},'%'))",
+		"lower(agent.resident.identificationNumber) like lower(concat('%',#{agentList.criteriaSearch},'%'))",
+		"lower(agent.agentCode) like lower(concat('%',#{agentList.criteriaSearch},'%'))",};
 
 	private Agent agent = new Agent();
 
 	public AgentList() {
 		setEjbql(EJBQL);
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
+		setOrderColumn("agent.resident.identificationNumber");
+		setOrderDirection("asc");
 		setMaxResults(25);
 	}
 	

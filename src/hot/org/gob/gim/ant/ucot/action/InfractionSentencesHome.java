@@ -3,6 +3,8 @@ package org.gob.gim.ant.ucot.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Query;
+
 import ec.gob.gim.ant.ucot.model.*;
 import ec.gob.gim.common.model.ItemCatalog;
 
@@ -18,6 +20,9 @@ public class InfractionSentencesHome extends EntityHome<InfractionSentences> {
 	
 	private List<ItemCatalog> typesSentence;
 	private ItemCatalogService itemCatalogService;
+	
+	@In(create = true)
+	InfractionsHome infractionsHome;
 
 	/*@In(create = true)
 	ItemCatalogHome itemCatalogHome;*/
@@ -48,10 +53,15 @@ public class InfractionSentencesHome extends EntityHome<InfractionSentences> {
 		if (type != null) {
 			getInstance().setType(type);
 		}*/
+		Infractions infraction = infractionsHome.getDefinedInstance();
+		if (infraction != null) {
+			getInstance().setInfraction(infraction);
+		}
 		initializeService();
 		typesSentence = new ArrayList<ItemCatalog>();
 		typesSentence = itemCatalogService.findItemsForCatalogCode(
 						CatalogConstants.CATALOG_TYPES_SENTENCE);
+		
 	}
 
 	public boolean isWired() {
@@ -77,5 +87,34 @@ public class InfractionSentencesHome extends EntityHome<InfractionSentences> {
 		this.typesSentence = typesSentence;
 	}
 
+	private List<InfractionSentences> infractionSentences;
 
+	public List<InfractionSentences> getInfractionSentences() {
+		return infractionSentences;
+	}
+
+	public void setInfractionSentences(List<InfractionSentences> infractionSentences) {
+		this.infractionSentences = infractionSentences;
+	}
+	
+	private Long infraction_id;
+	
+
+	public Long getInfraction_id() {
+		return infraction_id;
+	}
+
+	public void setInfraction_id(Long infraction_id) {
+		this.infraction_id = infraction_id;
+	}
+
+	public void searchSentences(){
+		Infractions infraction = infractionsHome.getDefinedInstance();
+		infractionSentences = new ArrayList();
+		Query query = getEntityManager().createNamedQuery(
+				"sentence.findByInfractionId");
+		query.setParameter("infractionId", infraction.getId());
+		infractionSentences = query.getResultList();
+	}
+	
 }

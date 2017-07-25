@@ -52,16 +52,6 @@
                 var="_agent"
               value="#{agentList.resultList}"
            rendered="#{not empty agentList.resultList}">
-        <rich:column styleClass="action" style="align:center;">
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{agentList}"/>
-                    <ui:param name="propertyLabel" value="Id"/>
-                    <ui:param name="propertyPath" value="agent.id"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_agent.id}"/>
-        </rich:column>
         <rich:column styleClass="action" style="align:right;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
@@ -82,7 +72,7 @@
             </f:facet>
             <h:outputText value="#{_agent.resident.identificationNumber}"/>
         </rich:column>
-        <h:column>
+        <rich:column styleClass="action" style="align:left;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{agentList}"/>
@@ -91,7 +81,7 @@
                 </ui:include>
             </f:facet>
             <h:outputText value="#{_agent.resident.name}"/>
-        </h:column>
+        </rich:column>
          <rich:column styleClass="action" style="align:center;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
