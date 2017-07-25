@@ -47,6 +47,9 @@ public class WriteOffRequestDTO {
 	@NativeQueryResultColumn(index = 12)
 	private String detail_responsible;
 	
+	@NativeQueryResultColumn(index = 13)
+	private String _type_code;
+	
 	public Long getId() {
 		return id;
 	}
@@ -153,6 +156,14 @@ public class WriteOffRequestDTO {
 
 	public void setDetail_responsible(String detail_responsible) {
 		this.detail_responsible = detail_responsible;
+	}
+
+	public String get_type_code() {
+		return _type_code;
+	}
+
+	public void set_type_code(String _type_code) {
+		this._type_code = _type_code;
 	}
 	
 }

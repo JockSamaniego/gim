@@ -1,9 +1,7 @@
 package org.gob.gim.finances.action;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -11,7 +9,6 @@ import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 
-import org.gob.gim.cadaster.action.pagination.WorkDealFractionDataModel;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SequenceManagerService;
@@ -22,7 +19,6 @@ import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityHome;
 
 import ec.gob.gim.common.model.Charge;
@@ -37,7 +33,6 @@ import ec.gob.gim.finances.model.DTO.DetailTableAuxDTO;
 import ec.gob.gim.finances.model.DTO.WriteOffDetailDTO;
 import ec.gob.gim.finances.model.DTO.WriteOffRequestDTO;
 import ec.gob.gim.revenue.model.MunicipalBond;
-import ec.gob.gim.waterservice.model.Consumption;
 import ec.gob.gim.waterservice.model.MonthType;
 import ec.gob.gim.waterservice.model.WaterSupply;
 
@@ -87,7 +82,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	private List<WriteOffType> _types = new ArrayList<WriteOffType>();
 
 	private boolean isFirstTime = true;
-	
+
 	private List<ConsumptionPreviousDTO> previous_consumptions = new ArrayList<ConsumptionPreviousDTO>();
 
 	/*
@@ -112,18 +107,24 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	private Charge commercializationCharge;
 
 	private Delegate commercializationDelegate;
-	
+
 	private Charge commercializationRevisionCharge;
 
 	private Delegate commercializationRevisionDelegate;
-	
+
 	private Charge finantialCharge;
 
 	private Delegate finantialDelegate;
-	
+
 	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
 
 	private SystemParameterService systemParameterService;
+
+	private Boolean not_found_adjunct_bond_old = Boolean.FALSE;
+
+	private Boolean not_found_adjunct_bond_new = Boolean.FALSE;
+
+	private WriteOffDetail aux_entity_detail;
 
 	public List<WaterSupply> getWaterSupplies() {
 		return waterSupplies;
@@ -285,7 +286,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	public void setRevenueDelegate(Delegate revenueDelegate) {
 		this.revenueDelegate = revenueDelegate;
 	}
-	
+
 	public Charge getCommercializationCharge() {
 		return commercializationCharge;
 	}
@@ -317,7 +318,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	public void setFinantialDelegate(Delegate finantialDelegate) {
 		this.finantialDelegate = finantialDelegate;
 	}
-	
+
 	public List<ConsumptionPreviousDTO> getPrevious_consumptions() {
 		return previous_consumptions;
 	}
@@ -326,7 +327,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 			List<ConsumptionPreviousDTO> previous_consumptions) {
 		this.previous_consumptions = previous_consumptions;
 	}
-	
+
 	public Charge getCommercializationRevisionCharge() {
 		return commercializationRevisionCharge;
 	}
@@ -345,12 +346,6 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		this.commercializationRevisionDelegate = commercializationRevisionDelegate;
 	}
 
-	@Override
-	protected WriteOffRequest createInstance() {
-		WriteOffRequest writeOffRequest = new WriteOffRequest();
-		return writeOffRequest;
-	}
-
 	public WriteOffRequestDTO getWriteOffRequestSelected() {
 		return writeOffRequestSelected;
 	}
@@ -366,6 +361,36 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 	public void setRevenueCharge(Charge revenueCharge) {
 		this.revenueCharge = revenueCharge;
+	}
+
+	public Boolean getNot_found_adjunct_bond_old() {
+		return not_found_adjunct_bond_old;
+	}
+
+	public void setNot_found_adjunct_bond_old(Boolean not_found_adjunct_bond_old) {
+		this.not_found_adjunct_bond_old = not_found_adjunct_bond_old;
+	}
+
+	public Boolean getNot_found_adjunct_bond_new() {
+		return not_found_adjunct_bond_new;
+	}
+
+	public void setNot_found_adjunct_bond_new(Boolean not_found_adjunct_bond_new) {
+		this.not_found_adjunct_bond_new = not_found_adjunct_bond_new;
+	}
+
+	public WriteOffDetail getAux_entity_detail() {
+		return aux_entity_detail;
+	}
+
+	public void setAux_entity_detail(WriteOffDetail aux_entity_detail) {
+		this.aux_entity_detail = aux_entity_detail;
+	}
+
+	@Override
+	protected WriteOffRequest createInstance() {
+		WriteOffRequest writeOffRequest = new WriteOffRequest();
+		return writeOffRequest;
 	}
 
 	public void load() {
@@ -402,24 +427,6 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 					SequenceManagerService.LOCAL_NAME);
 		}
 
-		/*
-		 * Resident approvedBy = residentHome.getDefinedInstance(); if
-		 * (approvedBy != null) { getInstance().setApprovedBy(approvedBy); }
-		 * Resident issueTo = residentHome.getDefinedInstance(); if (issueTo !=
-		 * null) { getInstance().setIssueTo(issueTo); } Resident madeBy =
-		 * residentHome.getDefinedInstance(); if (madeBy != null) {
-		 * getInstance().setMadeBy(madeBy); } Resident resident =
-		 * residentHome.getDefinedInstance(); if (resident != null) {
-		 * getInstance().setResident(resident); } SequenceManager
-		 * sequenceManager = sequenceManagerHome .getDefinedInstance(); if
-		 * (sequenceManager != null) {
-		 * getInstance().setSequenceManager(sequenceManager); } WaterSupply
-		 * waterSupply = waterSupplyHome.getDefinedInstance(); if (waterSupply
-		 * != null) { getInstance().setWaterSupply(waterSupply); } WriteOffType
-		 * writeOffType = writeOffTypeHome.getDefinedInstance(); if
-		 * (writeOffType != null) { getInstance().setWriteOffType(writeOffType);
-		 * }
-		 */
 	}
 
 	public boolean isWired() {
@@ -505,6 +512,12 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 	}
 
+	public void onSelectType() {
+		System.out.println("----Llega al select Tipo----");
+		System.out.println(this.instance.getWriteOffType().getName());
+
+	}
+
 	public void prepareAddBondLower() {
 		// Encerar los valores del dialogo
 		this.detail_aux_new = new WriteOffDetailDTO();
@@ -513,63 +526,103 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		this.numberOldBondAux = null;
 		this.disabled_new_fields = Boolean.TRUE;
 		this.disabled_old_fields = Boolean.TRUE;
+		this.aux_entity_detail = new WriteOffDetail();
 	}
 
 	public void searchBondDetailOld() {
 
-		List<WriteOffDetailDTO> retorno_bd = this.writeOffService
-				.searchBondDetail(this.numberOldBondAux);
+		this.aux_entity_detail = new WriteOffDetail();
 
-		if (retorno_bd.size() == 0) {
-			System.out.println("no existe el Bond");
-		} else if (retorno_bd.size() > 0) {
-			this.detail_aux_old = retorno_bd.get(0);
-			if (this.detail_aux_old.getAdjunct_id() == 0) {
-				this.detail_aux_old.setAdjunct_id(null);
-				this.detail_aux_old.setAmount_m3(null);
-				this.detail_aux_old.setCurrentreading(null);
-				this.detail_aux_old.setMonth(null);
-				this.detail_aux_old.setMonthtype(null);
-				this.detail_aux_old.setPreviousreading(null);
-				this.detail_aux_old.setYear(null);
-				this.disabled_old_fields = false;
-			} else {
-				this.disabled_old_fields = true;
+		if (this.instance.getResident() == null) {
+			addFacesMessageFromResourceBundle("No ha ingresado el contribuyente");
+		} else {
+
+			List<WriteOffDetailDTO> retorno_bd = this.writeOffService
+					.searchBondDetail(this.numberOldBondAux);
+
+			if (retorno_bd.size() == 0) {
+				addFacesMessageFromResourceBundle("No existe la obligacion con el numero ingresado");
+				this.not_found_adjunct_bond_old = Boolean.TRUE;
+			} else if (retorno_bd.size() > 0) {
+
+				if (retorno_bd.get(0).getCount_old().longValue() > 0
+						|| retorno_bd.get(0).getCount_new().longValue() > 0) {
+					addFacesMessageFromResourceBundle("Obligacion ya ingresada en otra baja");
+				} else if (retorno_bd.get(0).getResident_id().intValue() == this.instance
+						.getResident().getId().intValue()) {
+					this.detail_aux_old = retorno_bd.get(0);
+					if (this.detail_aux_old.getAdjunct_id() == 0) {
+						this.detail_aux_old.setAdjunct_id(null);
+						this.detail_aux_old.setAmount_m3(null);
+						this.detail_aux_old.setCurrentreading(null);
+						this.detail_aux_old.setMonth(null);
+						this.detail_aux_old.setMonthtype(null);
+						this.detail_aux_old.setPreviousreading(null);
+						this.detail_aux_old.setYear(null);
+						this.disabled_old_fields = false;
+					} else {
+						this.disabled_old_fields = true;
+					}
+
+				} else {
+					addFacesMessageFromResourceBundle("La obligacion no pertenece al contribuyente ingresado");
+					this.detail_aux_old = null;
+					this.disabled_old_fields = true;
+					this.numberOldBondAux = null;
+				}
+
 			}
+
 		}
 
-		System.out.println(detail_aux_old);
 	}
 
 	public void searchBondDetailNew() {
-		System.out.println("LLega al search New Bond");
 
-		System.out.println(this.numberNewBondAux);
+		this.aux_entity_detail = new WriteOffDetail();
 
-		List<WriteOffDetailDTO> retorno_bd = this.writeOffService
-				.searchBondDetail(this.numberNewBondAux);
+		if (this.instance.getResident() == null) {
+			addFacesMessageFromResourceBundle("No ha ingresado el contribuyente");
+		} else {
 
-		if (retorno_bd.size() == 0) {
-			System.out.println("no existe el Bond");
-		} else if (retorno_bd.size() > 0) {
-			this.detail_aux_new = retorno_bd.get(0);
+			List<WriteOffDetailDTO> retorno_bd = this.writeOffService
+					.searchBondDetail(this.numberNewBondAux);
 
-			if (this.detail_aux_new.getAdjunct_id() == 0) {
-				this.detail_aux_new.setAdjunct_id(null);
-				this.detail_aux_new.setAmount_m3(null);
-				this.detail_aux_new.setCurrentreading(null);
-				this.detail_aux_new.setMonth(null);
-				this.detail_aux_new.setMonthtype(null);
-				this.detail_aux_new.setPreviousreading(null);
-				this.detail_aux_new.setYear(null);
-				this.disabled_new_fields = false;
-			} else {
-				this.disabled_new_fields = true;
+			if (retorno_bd.size() == 0) {
+				addFacesMessageFromResourceBundle("No existe la obligacion con el numero ingresado");
+				this.not_found_adjunct_bond_old = Boolean.TRUE;
+			} else if (retorno_bd.size() > 0) {
+
+				if (retorno_bd.get(0).getCount_new().longValue() > 0
+						|| retorno_bd.get(0).getCount_old().longValue() > 0) {
+					addFacesMessageFromResourceBundle("Obligacion ya ingresada en otra baja");
+				} else if (retorno_bd.get(0).getResident_id().intValue() == this.instance
+						.getResident().getId().intValue()) {
+					this.detail_aux_new = retorno_bd.get(0);
+					if (this.detail_aux_new.getAdjunct_id() == 0) {
+						this.detail_aux_new.setAdjunct_id(null);
+						this.detail_aux_new.setAmount_m3(null);
+						this.detail_aux_new.setCurrentreading(null);
+						this.detail_aux_new.setMonth(null);
+						this.detail_aux_new.setMonthtype(null);
+						this.detail_aux_new.setPreviousreading(null);
+						this.detail_aux_new.setYear(null);
+						this.disabled_new_fields = false;
+					} else {
+						this.disabled_new_fields = true;
+					}
+
+				} else {
+					addFacesMessageFromResourceBundle("La obligacion no pertenece al contribuyente ingresado");
+					this.detail_aux_new = null;
+					this.disabled_new_fields = true;
+					this.numberNewBondAux = null;
+				}
+
 			}
 
 		}
 
-		System.out.println(detail_aux_new);
 	}
 
 	public void addBonds() {
@@ -596,8 +649,15 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		 * COMUNES
 		 */
 
-		detail.setMonth(this.detail_aux_new.getMonth());
-		detail.setMonthType(MonthType.getByValue(this.detail_aux_new.getMonth()));
+		if (!this.disabled_old_fields) {
+			detail.setMonthType(this.aux_entity_detail.getMonthType());
+			detail.setMonth(this.aux_entity_detail.getMonthType().getMonthInt());
+		} else {
+			detail.setMonthType(MonthType.getByValue(this.detail_aux_new
+					.getMonth()));
+			detail.setMonth(this.detail_aux_new.getMonth());
+		}
+
 		detail.setYear(this.detail_aux_new.getYear());
 		detail.setWriteOffRequest(this.instance);
 
@@ -714,7 +774,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		this.detailsTableOld = new ArrayList<DetailTableAuxDTO>();
 
 		this.detailsTableNew = new ArrayList<DetailTableAuxDTO>();
-		
+
 		String _month = "";
 
 		for (int i = 0; i < writeOff.getDetails().size(); i++) {
@@ -742,14 +802,16 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 			_new.setPrevious_reading(det.getNewPreviousReading());
 			_new.setValue(det.getNewMunicipalBond().getValue());
 			_new.setYear(det.getYear());
-			
+
 			_month = String.valueOf(det.getMonthType().getMonthInt());
 
 			this.detailsTableNew.add(_new);
 
 		}
-		
-		this.previous_consumptions = this.writeOffService.findPreviousReading(writeOff.getWaterMeter().getId(),this.writeOffRequestSelected.get_year().toString() , _month);
+
+		this.previous_consumptions = this.writeOffService.findPreviousReading(
+				writeOff.getWaterMeter().getId(), this.writeOffRequestSelected
+						.get_year().toString(), _month);
 
 		return "/finances/WriteOffRequestReportPDF.xhtml";
 	}
@@ -785,7 +847,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 					revenueDelegate = d;
 			}
 		}
-		
+
 		finantialCharge = getCharge("DELEGATE_ID_FINANTIAL");
 		if (finantialCharge != null) {
 			for (Delegate d : finantialCharge.getDelegates()) {
@@ -793,7 +855,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 					finantialDelegate = d;
 			}
 		}
-		
+
 		commercializationCharge = getCharge("DELEGATE_ID_COMMERCIALIZATION");
 		if (commercializationCharge != null) {
 			for (Delegate d : commercializationCharge.getDelegates()) {
@@ -801,7 +863,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 					commercializationDelegate = d;
 			}
 		}
-		
+
 		commercializationRevisionCharge = getCharge("RESPONSIBLE_ID_VERIFICATION");
 		if (commercializationRevisionCharge != null) {
 			for (Delegate d : commercializationRevisionCharge.getDelegates()) {
@@ -809,7 +871,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 					commercializationRevisionDelegate = d;
 			}
 		}
-		
+
 	}
 
 	private Charge getCharge(String systemParameter) {
@@ -820,5 +882,5 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 				systemParameter);
 		return charge;
 	}
-	
+
 }

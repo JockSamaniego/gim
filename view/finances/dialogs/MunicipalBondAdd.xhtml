@@ -28,214 +28,228 @@
 
 			<rich:messages errorClass="errors" style="color:red" />
 
-			<rich:panel>
-				<f:facet name="header">Obligación a dar de Baja</f:facet>
-				<h:panelGrid columns="2" width="100%">
-					<s:decorate id="numberBondOldField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Número Obligación:</ui:define>
+			<h:panelGrid width="100%">
 
-						<h:inputText id="numberBondOld" maxlength="30"
-							value="#{writeOffRequestHome.numberOldBondAux}" required="true">
-							<a:support event="onblur"
-								reRender="numberBondOldField, monthBondOldField, yearBondOldField, previousReadingBondOldField, currentReadingBondOldField, amountm3BondOldField, valueBondOldField"
-								ajaxSingle="true"
-								action="#{writeOffRequestHome.searchBondDetailOld()}" />
-						</h:inputText>
-					</s:decorate>
+				<rich:panel>
+					<f:facet name="header">Obligación a dar de Baja</f:facet>
+					<h:panelGrid columns="2" width="100%">
+						<s:decorate id="numberBondOldField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Número Obligación:</ui:define>
 
-					<h:panelGroup />
+							<h:inputText id="numberBondOld" maxlength="30"
+								value="#{writeOffRequestHome.numberOldBondAux}" required="true">
+								<a:support event="onblur"
+									reRender="numberBondOldField, monthBondOldField, yearBondOldField, previousReadingBondOldField, currentReadingBondOldField, amountm3BondOldField, valueBondOldField"
+									ajaxSingle="true"
+									action="#{writeOffRequestHome.searchBondDetailOld()}" />
+							</h:inputText>
+						</s:decorate>
 
-					<s:decorate id="monthBondOldField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Mes:</ui:define>
+						<h:panelGroup />
 
-						<h:inputText id="monthBondOld" maxlength="30"
-							value="#{writeOffRequestHome.detail_aux_old.month}"
-							required="true"
-							disabled="#{writeOffRequestHome.disabled_old_fields}">
-							<a:support event="onblur" reRender="monthBondOldField"
-								ajaxSingle="true" />
-						</h:inputText>
-					</s:decorate>
+						<s:decorate id="monthBondOldField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Mes:</ui:define>
 
-					<s:decorate id="yearBondOldField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Año:</ui:define>
+							<h:inputText id="monthBondOld" maxlength="30"
+								value="#{writeOffRequestHome.detail_aux_old.month}"
+								required="true"
+								disabled="#{writeOffRequestHome.disabled_old_fields}"
+								rendered="#{writeOffRequestHome.disabled_old_fields}">
+								<a:support event="onblur" reRender="monthBondOldField"
+									ajaxSingle="true" />
+							</h:inputText>
+							
+							<h:selectOneMenu id="monthTypes"
+								value="#{writeOffRequestHome.aux_entity_detail.monthType}" 
+								rendered="#{!writeOffRequestHome.disabled_old_fields}">
+								<s:selectItems value="#{monthTypes}" var="month"
+									label="#{messages[month.name()]}"
+									noSelectionLabel="#{messages['common.chooseOption']}" />
+								<s:convertEnum />
+								<a:support event="onchange" ajaxSingle="true"/>
+							</h:selectOneMenu>
+							
+						</s:decorate>
 
-						<h:inputText id="yearBondOld" maxlength="30"
-							value="#{writeOffRequestHome.detail_aux_old.year}"
-							required="true"
-							disabled="#{writeOffRequestHome.disabled_old_fields}">
-							<a:support event="onblur" reRender="yearBondOldField"
-								ajaxSingle="true" />
-						</h:inputText>
-					</s:decorate>
+						<s:decorate id="yearBondOldField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Año:</ui:define>
 
-					<s:decorate id="previousReadingBondOldField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Lectura Anterior:</ui:define>
+							<h:inputText id="yearBondOld" maxlength="30"
+								value="#{writeOffRequestHome.detail_aux_old.year}"
+								required="true"
+								disabled="#{writeOffRequestHome.disabled_old_fields}">
+								<a:support event="onblur" reRender="yearBondOldField"
+									ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
 
-						<h:inputText id="previousReadingBondOld" maxlength="30"
-							value="#{writeOffRequestHome.detail_aux_old.previousreading}"
-							required="true"
-							disabled="#{writeOffRequestHome.disabled_old_fields}">
-							<a:support event="onblur" reRender="previousReadingBondOldField"
-								ajaxSingle="true" />
-						</h:inputText>
-					</s:decorate>
+						<s:decorate id="previousReadingBondOldField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Lectura Anterior:</ui:define>
 
-					<s:decorate id="currentReadingBondOldField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Lectura Actual:</ui:define>
+							<h:inputText id="previousReadingBondOld" maxlength="30"
+								value="#{writeOffRequestHome.detail_aux_old.previousreading}"
+								required="true"
+								disabled="#{writeOffRequestHome.disabled_old_fields}">
+								<a:support event="onblur" reRender="previousReadingBondOldField"
+									ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
 
-						<h:inputText id="currentReadingBondOld" maxlength="30"
-							value="#{writeOffRequestHome.detail_aux_old.currentreading}"
-							required="true"
-							disabled="#{writeOffRequestHome.disabled_old_fields}">
-							<a:support event="onblur" reRender="currentReadingBondOldField"
-								ajaxSingle="true" />
-						</h:inputText>
-					</s:decorate>
+						<s:decorate id="currentReadingBondOldField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Lectura Actual:</ui:define>
 
-					<s:decorate id="amountm3BondOldField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Consumo:</ui:define>
+							<h:inputText id="currentReadingBondOld" maxlength="30"
+								value="#{writeOffRequestHome.detail_aux_old.currentreading}"
+								required="true"
+								disabled="#{writeOffRequestHome.disabled_old_fields}">
+								<a:support event="onblur" reRender="currentReadingBondOldField"
+									ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
 
-						<h:inputText id="amountm3ReadingBondOld" maxlength="30"
-							value="#{writeOffRequestHome.detail_aux_old.amount_m3}"
-							required="true"
-							disabled="#{writeOffRequestHome.disabled_old_fields}">
-							<a:support event="onblur" reRender="amountm3BondOldField"
-								ajaxSingle="true" />
-						</h:inputText>
-					</s:decorate>
+						<s:decorate id="amountm3BondOldField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Consumo:</ui:define>
 
-					<s:decorate id="valueBondOldField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Valor:</ui:define>
+							<h:inputText id="amountm3ReadingBondOld" maxlength="30"
+								value="#{writeOffRequestHome.detail_aux_old.amount_m3}"
+								required="true"
+								disabled="#{writeOffRequestHome.disabled_old_fields}">
+								<a:support event="onblur" reRender="amountm3BondOldField"
+									ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
 
-						<h:inputText id="valueBondOld" maxlength="30"
-							value="#{writeOffRequestHome.detail_aux_old.value}"
-							required="true" disabled="true">
-							<a:support event="onblur" reRender="valueBondOldField"
-								ajaxSingle="true" />
-						</h:inputText>
-					</s:decorate>
+						<s:decorate id="valueBondOldField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Valor:</ui:define>
 
-				</h:panelGrid>
-			</rich:panel>
+							<h:inputText id="valueBondOld" maxlength="30"
+								value="#{writeOffRequestHome.detail_aux_old.value}"
+								required="true" disabled="true">
+								<a:support event="onblur" reRender="valueBondOldField"
+									ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
 
-			<rich:panel>
-				<f:facet name="header">Nueva Obligación</f:facet>
-				<h:panelGrid columns="2" width="100%">
-					<s:decorate id="numberBondNewField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Número Obligación:</ui:define>
-						<h:inputText id="numberBondNew" maxlength="30"
-							value="#{writeOffRequestHome.numberNewBondAux}" required="true">
-							<a:support event="onblur"
-								reRender="numberBondNewField, monthBondNewField, yearBondNewField, previousReadingBondNewField, currentReadingBondNewField, amountm3BondNewField, valueBondNewField"
-								ajaxSingle="true"
-								action="#{writeOffRequestHome.searchBondDetailNew()}" />
-						</h:inputText>
-					</s:decorate>
+					</h:panelGrid>
+				</rich:panel>
 
-					<h:panelGroup />
+				<rich:panel>
+					<f:facet name="header">Nueva Obligación</f:facet>
+					<h:panelGrid columns="2" width="100%">
+						<s:decorate id="numberBondNewField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Número Obligación:</ui:define>
+							<h:inputText id="numberBondNew" maxlength="30"
+								value="#{writeOffRequestHome.numberNewBondAux}" required="true">
+								<a:support event="onblur"
+									reRender="numberBondNewField, monthBondNewField, yearBondNewField, previousReadingBondNewField, currentReadingBondNewField, amountm3BondNewField, valueBondNewField"
+									ajaxSingle="true"
+									action="#{writeOffRequestHome.searchBondDetailNew()}" />
+							</h:inputText>
+						</s:decorate>
 
-					<s:decorate id="monthBondNewField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Mes:</ui:define>
+						<h:panelGroup />
 
-						<h:inputText id="monthBondNew" maxlength="30"
-							value="#{writeOffRequestHome.detail_aux_new.month}"
-							required="true"
-							disabled="#{writeOffRequestHome.disabled_new_fields}">
-							<a:support event="onblur" reRender="monthBondNewField"
-								ajaxSingle="true" />
-						</h:inputText>
-					</s:decorate>
+						<s:decorate id="monthBondNewField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Mes:</ui:define>
 
-					<s:decorate id="yearBondNewField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Año:</ui:define>
+							<h:inputText id="monthBondNew" maxlength="30"
+								value="#{writeOffRequestHome.detail_aux_new.month}"
+								required="true"
+								disabled="#{writeOffRequestHome.disabled_new_fields}">
+								<a:support event="onblur" reRender="monthBondNewField"
+									ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
 
-						<h:inputText id="yearBondNew" maxlength="30"
-							value="#{writeOffRequestHome.detail_aux_new.year}"
-							required="true"
-							disabled="#{writeOffRequestHome.disabled_new_fields}">
-							<a:support event="onblur" reRender="yearBondNewField"
-								ajaxSingle="true" />
-						</h:inputText>
-					</s:decorate>
+						<s:decorate id="yearBondNewField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Año:</ui:define>
 
-					<s:decorate id="previousReadingBondNewField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Lectura Anterior:</ui:define>
+							<h:inputText id="yearBondNew" maxlength="30"
+								value="#{writeOffRequestHome.detail_aux_new.year}"
+								required="true"
+								disabled="#{writeOffRequestHome.disabled_new_fields}">
+								<a:support event="onblur" reRender="yearBondNewField"
+									ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
 
-						<h:inputText id="previousReadingBondNew" maxlength="30"
-							value="#{writeOffRequestHome.detail_aux_new.previousreading}"
-							required="true"
-							disabled="#{writeOffRequestHome.disabled_new_fields}">
-							<a:support event="onblur" reRender="previousReadingBondNewField"
-								ajaxSingle="true" />
-						</h:inputText>
-					</s:decorate>
+						<s:decorate id="previousReadingBondNewField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Lectura Anterior:</ui:define>
 
-					<s:decorate id="currentReadingBondNewField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Lectura Actual:</ui:define>
+							<h:inputText id="previousReadingBondNew" maxlength="30"
+								value="#{writeOffRequestHome.detail_aux_new.previousreading}"
+								required="true"
+								disabled="#{writeOffRequestHome.disabled_new_fields}">
+								<a:support event="onblur" reRender="previousReadingBondNewField"
+									ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
 
-						<h:inputText id="currentReadingBondNew" maxlength="30"
-							value="#{writeOffRequestHome.detail_aux_new.currentreading}"
-							required="true"
-							disabled="#{writeOffRequestHome.disabled_new_fields}">
-							<a:support event="onblur" reRender="currentReadingBondNewField"
-								ajaxSingle="true" />
-						</h:inputText>
-					</s:decorate>
+						<s:decorate id="currentReadingBondNewField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Lectura Actual:</ui:define>
 
-					<s:decorate id="amountm3BondNewField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Consumo:</ui:define>
+							<h:inputText id="currentReadingBondNew" maxlength="30"
+								value="#{writeOffRequestHome.detail_aux_new.currentreading}"
+								required="true"
+								disabled="#{writeOffRequestHome.disabled_new_fields}">
+								<a:support event="onblur" reRender="currentReadingBondNewField"
+									ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
 
-						<h:inputText id="amountm3ReadingBondNew" maxlength="30"
-							value="#{writeOffRequestHome.detail_aux_new.amount_m3}"
-							required="true"
-							disabled="#{writeOffRequestHome.disabled_new_fields}">
-							<a:support event="onblur" reRender="amountm3BondNewField"
-								ajaxSingle="true" />
-						</h:inputText>
-					</s:decorate>
+						<s:decorate id="amountm3BondNewField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Consumo:</ui:define>
 
-					<s:decorate id="valueBondNewField"
-						template="../../layout/edit.xhtml">
-						<ui:define name="label">Valor:</ui:define>
+							<h:inputText id="amountm3ReadingBondNew" maxlength="30"
+								value="#{writeOffRequestHome.detail_aux_new.amount_m3}"
+								required="true"
+								disabled="#{writeOffRequestHome.disabled_new_fields}">
+								<a:support event="onblur" reRender="amountm3BondNewField"
+									ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
 
-						<h:inputText id="valueBondNew" maxlength="30"
-							value="#{writeOffRequestHome.detail_aux_new.value}"
-							required="true" disabled="true">
-							<a:support event="onblur" reRender="valueBondNewField"
-								ajaxSingle="true" />
-						</h:inputText>
-					</s:decorate>
-				</h:panelGrid>
-			</rich:panel>
+						<s:decorate id="valueBondNewField"
+							template="../../layout/edit.xhtml">
+							<ui:define name="label">Valor:</ui:define>
 
-			<div class="actionButtons">
-				<a:region>
-					<a:commandButton id="addButton" ajaxSingle="true"
-						value="Agregar"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('municipalBondAddPanel')}.hide();"
-						bypassUpdates="true"
-						actionListener="#{writeOffRequestHome.addBonds()}"
-						reRender="writeOffRequest:panel_low_bonds, writeOffRequest:panel_new_bonds"/>
-					<a:commandButton ajaxSingle="true"
-						value="#{messages['common.cancel']}"
-						oncomplete="Richfaces.hideModalPanel('municipalBondAddPanel');"
-						bypassUpdates="true" immediate="true" />
-				</a:region>
-			</div>
+							<h:inputText id="valueBondNew" maxlength="30"
+								value="#{writeOffRequestHome.detail_aux_new.value}"
+								required="true" disabled="true">
+								<a:support event="onblur" reRender="valueBondNewField"
+									ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
+					</h:panelGrid>
+				</rich:panel>
+
+				<div class="actionButtons">
+					<a:region>
+						<a:commandButton id="addButton" ajaxSingle="true" value="Agregar"
+							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('municipalBondAddPanel')}.hide();"
+							bypassUpdates="true"
+							actionListener="#{writeOffRequestHome.addBonds()}"
+							reRender="writeOffRequest:panel_low_bonds, writeOffRequest:panel_new_bonds" />
+						<a:commandButton ajaxSingle="true"
+							value="#{messages['common.cancel']}"
+							oncomplete="Richfaces.hideModalPanel('municipalBondAddPanel');"
+							bypassUpdates="true" immediate="true" />
+					</a:region>
+				</div>
+			</h:panelGrid>
 		</h:form>
 	</rich:modalPanel>
 </ui:composition>

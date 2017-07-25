@@ -1061,7 +1061,7 @@
 
 			<p:cell colspan="1" horizontalAlignment="center"
 				verticalAlignment="middle"
-				rendered="#{writeOffRequestHome.writeOffRequestSelected._type == 'MEDIDOR DEFECTUOSO'}">
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'MEDIDOR_DEFECTUOSO'}">
 				<p:paragraph>
 					<p:font size="8">
 						<p:text value="EMITIR TITULO DE CREDITO" />
@@ -1072,7 +1072,7 @@
 
 			<p:cell colspan="1" horizontalAlignment="center"
 				verticalAlignment="middle"
-				rendered="#{writeOffRequestHome.writeOffRequestSelected._type == 'DE LECTURA'}">
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'DE_LECTURA'}">
 
 				<p:font size="8">
 					<p:paragraph alignment="center">EMITIR TITULO DE CREDITO</p:paragraph>
@@ -1086,7 +1086,7 @@
 
 			<p:cell colspan="1" horizontalAlignment="center"
 				verticalAlignment="middle"
-				rendered="#{writeOffRequestHome.writeOffRequestSelected._type == 'DESCALIBRACION DE MEDIDOR'}">
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'DESCALIBRACION_MEDIDOR'}">
 				<p:paragraph>
 					<p:font size="8">
 						<p:text value="EMITIR TITULO DE CREDITO POR GASTOS ADMINISTRATIVOS" />
@@ -1096,7 +1096,7 @@
 			</p:cell>
 
 			<p:cell colspan="1"
-				rendered="#{writeOffRequestHome.writeOffRequestSelected._type == 'NO LIQUIDADA'}">
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'NO_LIQUIDADA'}">
 				
 			</p:cell>
 

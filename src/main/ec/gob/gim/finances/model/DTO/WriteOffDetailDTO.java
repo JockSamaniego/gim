@@ -38,6 +38,18 @@ public class WriteOffDetailDTO {
 	@NativeQueryResultColumn(index = 9)
 	private Long adjunct_id;
 	
+	@NativeQueryResultColumn(index = 10)
+	private Long resident_id;
+	
+	@NativeQueryResultColumn(index = 11)
+	private String status;
+	
+	@NativeQueryResultColumn(index = 12)
+	private Integer count_old;
+	
+	@NativeQueryResultColumn(index = 13)
+	private Integer count_new;
+	
 	public WriteOffDetailDTO() {
 		this.adjunct_id = null;
 		this.amount_m3 = null;
@@ -109,6 +121,32 @@ public class WriteOffDetailDTO {
 	}
 	public void setAdjunct_id(Long adjunct_id) {
 		this.adjunct_id = adjunct_id;
+	}
+	
+	public Long getResident_id() {
+		return resident_id;
+	}
+	public void setResident_id(Long resident_id) {
+		this.resident_id = resident_id;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+	public Integer getCount_old() {
+		return count_old;
+	}
+	public void setCount_old(Integer count_old) {
+		this.count_old = count_old;
+	}
+	public Integer getCount_new() {
+		return count_new;
+	}
+	public void setCount_new(Integer count_new) {
+		this.count_new = count_new;
 	}
 	@Override
 	public String toString() {

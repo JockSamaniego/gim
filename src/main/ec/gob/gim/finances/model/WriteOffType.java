@@ -14,9 +14,7 @@ import org.hibernate.envers.Audited;
 @Audited
 @Entity
 @TableGenerator(name = "WriteOffTypeGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "WriteOffType", initialValue = 1, allocationSize = 1)
-@NamedQueries({
-	@NamedQuery(name = "WriteOffType.findAll", query = "select t from WriteOffType t where t.isActive = true order by t.id asc") 
-})
+@NamedQueries({ @NamedQuery(name = "WriteOffType.findAll", query = "select t from WriteOffType t where t.isActive = true order by t.id asc") })
 public class WriteOffType {
 
 	@Id
@@ -30,6 +28,8 @@ public class WriteOffType {
 
 	@Column(length = 100)
 	private String detail;
+
+	private String code;
 
 	public Long getId() {
 		return id;
@@ -63,4 +63,12 @@ public class WriteOffType {
 		this.detail = detail;
 	}
 
+	public String getCode() {
+		return code;
 	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+	
+}
