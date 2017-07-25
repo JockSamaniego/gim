@@ -10,6 +10,8 @@
     template="../../layout/template.xhtml">
 
 
+            <s:decorate id="creationDateField" template="../../layout/edit.xhtml">
+
 <ui:define name="body">
 
     <h:form id="bulletin" styleClass="edit">
@@ -25,6 +27,8 @@
                           <f:convertDateTime pattern="dd/MM/yyyy" />
                 </h:inputText>
             </s:decorate>
+
+
 
 
             <s:decorate id="creationTimeField" template="../../layout/edit.xhtml">

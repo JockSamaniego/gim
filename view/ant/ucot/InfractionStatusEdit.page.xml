@@ -26,6 +26,10 @@
    <param name="userId" value="#{userHome.userId}"/>
 
 
+         <end-conversation/>
+
+
+         <redirect view-id="/ant/ucot/InfractionStatusList.xhtml"/>
 
    <param name="itemCatalogFrom"/>
    <param name="itemCatalogId" value="#{itemCatalogHome.itemCatalogId}"/>

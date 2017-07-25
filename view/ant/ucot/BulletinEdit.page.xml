@@ -22,6 +22,10 @@
    <param name="userId" value="#{userHome.userId}"/>
 
 
+      <rule if-outcome="updated">
+
+
+         <end-conversation/>
 
    <param name="itemCatalogFrom"/>
    <param name="itemCatalogId" value="#{itemCatalogHome.itemCatalogId}"/>
