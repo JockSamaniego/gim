@@ -25,21 +25,10 @@
    <param name="userFrom"/>
    <param name="userId" value="#{userHome.userId}"/>
 
-
-         <end-conversation/>
-
-
-         <redirect view-id="/ant/ucot/InfractionStatusList.xhtml"/>
-
    <param name="itemCatalogFrom"/>
    <param name="itemCatalogId" value="#{itemCatalogHome.itemCatalogId}"/>
    <param name="catalogFrom"/>
    <param name="catalogId" value="#{catalogHome.catalogId}"/>
-
-
-
-
-
 
    <navigation from-action="#{infractionStatusHome.persist}">
       <rule if-outcome="persisted">
