@@ -994,6 +994,7 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		+"left join fetch m.resident res "
 		+"left join fetch m.receipt "
 		+"left join fetch m.entry entry "
+		+ "LEFT JOIN FETCH m.adjunct "
 		+ "where ";
 		//+ "(lower(m.resident.name) like lower(concat(#{emissionOrderList.resident},'%'))) "
 		if (identificationNumber != null && !identificationNumber.equals("")) {
