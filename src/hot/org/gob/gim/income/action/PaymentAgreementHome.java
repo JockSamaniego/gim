@@ -1,6 +1,7 @@
 package org.gob.gim.income.action;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,6 +31,7 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
+import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.Dividend;
@@ -72,6 +74,60 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	@In(scope=ScopeType.SESSION, value="userSession")
 	UserSession userSession;
 
+	//@macartuche 
+	//para saber lo pagado hasta el momento
+	BigDecimal payed = BigDecimal.ZERO;
+	BigDecimal balanceForPay = BigDecimal.ZERO;
+	BigDecimal canceledValue = BigDecimal.ZERO;
+	List<Payment> payments = new ArrayList<Payment>();
+	BigInteger totalPayments  = BigInteger.ZERO;
+	Boolean enterTOCalculate = Boolean.TRUE;
+	
+	public BigDecimal getPayed() {
+		return payed;
+	}
+
+	public void setPayed(BigDecimal payed) {
+		this.payed = payed;
+	}
+	
+	public BigDecimal getBalanceForPay() {
+		return balanceForPay;
+	}
+
+	public void setBalanceForPay(BigDecimal balanceForPay) {
+		this.balanceForPay = balanceForPay;
+	}
+	 
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
+	}
+
+	public BigDecimal getCanceledValue() {
+		return canceledValue;
+	}
+
+	public void setCanceledValue(BigDecimal canceledValue) {
+		this.canceledValue = canceledValue;
+	}
+
+	public BigInteger getTotalPayments() {
+		return totalPayments;
+	}
+
+	public void setTotalPayments(BigInteger totalPayments) {
+		this.totalPayments = totalPayments;
+	}
+	
+	//fin valor pagado
+	
+	
+	  
 	public void setPaymentAgreementId(Long id) {
 		setId(id);
 	}
@@ -101,8 +157,94 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		chargeControlMunicipalBondStates();
 		toActivePaymentAgreement();		
 		
- 
+		if(getInstance().getId() != null && enterTOCalculate) {
+			//@author macartuche
+			//valor pagado
+			calculateCanceledBonds();
+			calculateBalanceForPay();
+			calculatePayedValue();
+			loadTotalDeposit();
+		}
 	}
+	
+	//@author macartuche
+	//valor pagado y saldos
+	@In(create=true)
+	PaymentHome paymentHome;
+	public void calculatePayedValue(){		
+		if(getInstance().getId()!=null){
+			 this.getInstance().getId();
+ 			 
+			 Query q = getEntityManager().createNativeQuery("Select coalesce(SUM(d.value),0) "
+			 			+ "from Deposit d join municipalbond m on m.id = d.municipalbond_id "
+			 			+ "where m.paymentagreement_id=:id and d.status='VALID' "
+			 			+ "and m.municipalbondstatus_id <> :canceled");
+			 
+			 q.setParameter("id", this.getInstance().getId());
+			 q.setParameter("canceled", new Long(9));
+			 
+			 this.payed = (BigDecimal)q.getSingleResult();	
+ 
+		}
+	}
+		
+	public void calculateBalanceForPay() {
+		balanceForPay = BigDecimal.ZERO;
+		paymentHome.setPaymentAgreement(this.getInstance());
+		paymentHome.calculateTotals();
+		for(MunicipalBond bond: paymentHome.getMunicipalBonds()) {
+			balanceForPay = balanceForPay.add(bond.getPaidTotal());
+		}
+	}
+		
+	public void calculateCanceledBonds() {
+		if(getInstance().getId()!=null) { 
+			Query q = getEntityManager().createNativeQuery("select coalesce(sum(m.value),0) from municipalbond m "
+					+ "where m.paymentagreement_id=:agreement and m.municipalbondstatus_id=:canceled");
+			q.setParameter("canceled", 9L); //anulados o dados de baja
+			q.setParameter("agreement", getInstance().getId());
+			this.canceledValue = (BigDecimal)q.getSingleResult();	 
+		}
+	}
+		
+	
+	@SuppressWarnings("unchecked")
+	public void loadTotalDeposit() {
+		
+		if(getInstance().getId() !=null ) {
+			Query q = getEntityManager().createNativeQuery("select count(distinct(p.id)) "
+					+ "from payment  p join deposit d on d.payment_id= p.id  "
+					+ "join municipalbond m on m.id= d.municipalbond_id "
+					+ "where m.paymentagreement_id=:id and p.status='VALID' and d.status='VALID' ");
+			q.setParameter("id", getInstance().getId());
+			
+			List<Object> data = q.getResultList();
+			if(data.size()>0) {
+				totalPayments = (BigInteger)data.get(0);
+			}
+		}
+	}
+	@SuppressWarnings("unchecked")
+	public void loadDeposits() {
+		if(getInstance().getId()!=null) {
+			 
+			Query q = getEntityManager().createQuery("Select DISTINCT(p) from Payment p "
+					+ "JOIN p.deposits d "
+					+ "JOIN d.municipalBond m "
+					+ "WHERE m.paymentAgreement.id=:id and d.status=:status "
+					+ "and m.municipalBondStatus.id !=:canceled "
+					+ "ORDER by p.date, p.time ");
+			q.setParameter("id", getInstance().getId());
+			q.setParameter("status", FinancialStatus.VALID);
+			q.setParameter("canceled", new Long(9));
+			payments = (List<Payment>)q.getResultList();
+			enterTOCalculate = Boolean.FALSE;
+		}
+	}
+	
+	
+	
+	//fin abonos y saldos @macartuche
 
 	public boolean isWired() {
 		return true;
