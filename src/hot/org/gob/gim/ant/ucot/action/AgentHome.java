@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.common.action.ResidentHome;
@@ -30,6 +31,8 @@ public class AgentHome extends EntityHome<Agent> {
 	private String identificationNumber;
 	private String criteria;
 	private List<Resident> residents;
+	private List<Agent> agents;
+	private String message;
 	
 	@In(create = true)
 	ResidentHome residentHome;
@@ -45,6 +48,7 @@ public class AgentHome extends EntityHome<Agent> {
 	@Override
 	protected Agent createInstance() {
 		Agent agent = new Agent();
+		agent.setIsActive(Boolean.TRUE);
 		return agent;
 	}
 
@@ -59,7 +63,9 @@ public class AgentHome extends EntityHome<Agent> {
 		//Resident resident = residentHome.getDefinedInstance();
 		if (getInstance().getId() == null) {
 			//getInstance().setResident(resident);
-			this.instance.setActive(Boolean.TRUE);
+			this.instance.setIsActive(Boolean.TRUE);
+		}else{
+			this.identificationNumber = this.instance.getResident().getIdentificationNumber();
 		}
 	}
 
@@ -94,6 +100,7 @@ public class AgentHome extends EntityHome<Agent> {
 		try {
 			Resident resident = (Resident) query.getSingleResult();						
 			this.instance.setResident(resident);
+			this.setIdentificationNumber(resident.getIdentificationNumber());
 
 			if (resident.getId() == null) {
 				addFacesMessageFromResourceBundle("resident.notFound");
@@ -106,27 +113,30 @@ public class AgentHome extends EntityHome<Agent> {
 	}
 	
 	
-	public String persist(){
+	public String saveAgent(){
 		//validaciones
-		
+		message=null;
 		//verificar que el mismo codigo de agente no esté asignado
 		String code = this.instance.getAgentCode();
 		boolean repeated  = agentCodeExist(code);
 		if(repeated){
-			return "";
+			message="El codigo de agente ya esta asignado";
+			return "failed";
 		}
 		
 		//verificar que el resident no este asignado
 		Resident resident = this.instance.getResident();
 		boolean assigned  = residentAssigned(resident);
 		if(assigned){
-			return "";
+			message="El contribuyente ya esta asignado";
+			return "failed";
 		}
 		//guardado en BD
-		
-		
-		return "";
+
+		persist();
+		return "persisted";
 	}
+	
 	
 	/**
 	 * 
@@ -150,11 +160,15 @@ public class AgentHome extends EntityHome<Agent> {
 		q.setParameter("code", code);
 		return (q.getResultList().size() > 0)? true: false;		
 	}
-
 	
 	public void clearSearchResidentPanel() {
 		this.setCriteria(null);
 		setResidents(null);
+	}
+	
+	public void clearSearchAgentPanel() {
+		this.setCriteria(null);
+		setAgents(null);
 	}
 	
 	public void residentSelectedListener(ActionEvent event) {
@@ -188,5 +202,36 @@ public class AgentHome extends EntityHome<Agent> {
 	public void setResidents(List<Resident> residents) {
 		this.residents = residents;
 	}
+	
+	
+	//para asignar agente al boletin
+	
+	@SuppressWarnings("unchecked")
+	public void searchAgentByCriteria() {
+		if (this.criteria != null && !this.criteria.isEmpty()) {
+			Query query = getEntityManager().createNamedQuery(
+					"Agent.findByCriteria");
+			query.setParameter("criteriaSearch", this.criteria);
+			agents = query.getResultList();
+		}
+	}
+
+	public List<Agent> getAgents() {
+		return agents;
+	}
+
+	public void setAgents(List<Agent> agents) {
+		this.agents = agents;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
+	
 	
 }

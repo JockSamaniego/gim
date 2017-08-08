@@ -12,54 +12,106 @@
 <ui:define name="body">
 
     <h:form id="bulletin" styleClass="edit">
-
+		<ui:include src="fragment/SearchAgentPanel.xhtml" />
         <rich:panel>
-            <f:facet name="header">#{bulletinHome.managed ? 'Edit' : 'Add'} Bulletin</f:facet>
-
-
-
+            <f:facet name="header">#{bulletinHome.managed ? messages['bulletin.Edit'] : messages['bulletin.Create']}</f:facet>
 
             <s:decorate id="creationDateField" template="../../layout/edit.xhtml">
-                <ui:define name="label">Creation date</ui:define>
-                <rich:calendar id="creationDate"
-                          value="#{bulletinHome.instance.creationDate}" datePattern="MM/dd/yyyy" />
+                <ui:define name="label">#{messages['bulletin.creationDate']}</ui:define>
+                <h:inputText id="creationDate"
+                          value="#{bulletinHome.instance.creationDate}"
+                          readonly="true">
+                          <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:inputText>
             </s:decorate>
+
+
 
 
             <s:decorate id="creationTimeField" template="../../layout/edit.xhtml">
-                <ui:define name="label">Creation time</ui:define>
+                <ui:define name="label">#{messages['bulletin.creationTime']}</ui:define>
                 <h:inputText id="creationTime"
-                           size="5"
-                          value="#{bulletinHome.instance.creationTime}">
-                    <s:convertDateTime type="time"/>
-                    <a:support event="onblur" reRender="creationTimeField" bypassUpdates="true" ajaxSingle="true"/>
+                          value="#{bulletinHome.instance.creationTime}"
+                          readonly="true">
+                          <f:convertDateTime pattern="HH:mm" />
                 </h:inputText>
             </s:decorate>
 
-
-            <s:decorate id="endNumberField" template="../../layout/edit.xhtml">
-                <ui:define name="label">End number</ui:define>
-                <h:inputText id="endNumber"
-                       required="true"
-                          value="#{bulletinHome.instance.endNumber}">
-                    <a:support event="onblur" reRender="endNumberField" bypassUpdates="true" ajaxSingle="true"/>
-                </h:inputText>
-            </s:decorate>
-
-
-            <s:decorate id="startNumberField" template="../../layout/edit.xhtml">
-                <ui:define name="label">Start number</ui:define>
+             <s:decorate id="startNumberField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['bulletin.startNumber']}</ui:define>
                 <h:inputText id="startNumber"
                        required="true"
+                       readonly="#{bulletinHome.haveInfractions}"
                           value="#{bulletinHome.instance.startNumber}">
                     <a:support event="onblur" reRender="startNumberField" bypassUpdates="true" ajaxSingle="true"/>
                 </h:inputText>
             </s:decorate>
 
+            <s:decorate id="endNumberField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['bulletin.endNumber']}</ui:define>
+                <h:inputText id="endNumber"
+                       required="true"
+                       readonly="#{bulletinHome.haveInfractions}"
+                          value="#{bulletinHome.instance.endNumber}">
+                    <a:support event="onblur" reRender="endNumberField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+			<s:decorate id="bulletinTypeField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['bulletin.type']}:</ui:define>
+				<h:selectOneMenu id="bulletinType" value="#{bulletinHome.instance.type}" required="true">
+					<s:selectItems value="#{bulletinHome.typesBulletin}" var="bulletinType" label="#{bulletinType.name}" itemValue="#{bulletinType}" />
+					<a:support event="onchange" ajaxSingle="true" />
+					<s:convertEntity></s:convertEntity>
+				</h:selectOneMenu>
+			</s:decorate>
+
+      <s:decorate id="agentField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.agent']}</ui:define>
+                <h:inputText id="asingAgent"
+                             required="true"
+                             readonly="true"
+                             value="#{bulletinHome.instance.agent.resident.identificationNumber}"
+                             size="20">
+                    <a:support event="onblur" reRender="agentField" bypassUpdates="true" ajaxSingle="true"/>
+                    <s:convertEntity></s:convertEntity>
+                </h:inputText>
+
+                <a:commandButton id="openSearchPanelBtn"
+                  action="#{agentHome.clearSearchAgentPanel()}"
+                  reRender="searchAgentPanel" ajaxSingle="true"
+                  eventsQueue="gimQueue"
+                  oncomplete="Richfaces.showModalPanel('searchAgentPanel',{width:600, height:500})"
+                  value="Asignar" />
+                    <br /><br />
+                <h:inputText id="asingAgentName"
+                             required="true"
+                             readonly="true"
+                             value="#{bulletinHome.instance.agent.resident.name}"
+                             size="50">
+                    <a:support event="onblur" reRender="agentField" bypassUpdates="true" ajaxSingle="true"/>
+                    <s:convertEntity></s:convertEntity>
+                </h:inputText>
+      </s:decorate>
+
+      <s:decorate id="bulletinDetail" template="../../layout/edit.xhtml">
+              <ui:define name="label">#{messages['alert.openDetail']}</ui:define>
+              <h:inputTextarea id="openDetail"
+                value="#{bulletinHome.instance.detail}" />
+      </s:decorate>
+		
 
             <div style="clear:both">
                 <span class="required">*</span>
-                required fields
+                campos requeridos
+            </div>
+            
+            <s:decorate id="bulletinMessageField" template="../../layout/edit.xhtml">
+                <h:outputText value="#{bulletinHome.message}" rendered="#{bulletinHome.message != null}" style="color:red"/>
+            </s:decorate> 
+
+            <div style="clear:both">
             </div>
 
         </rich:panel>
@@ -67,121 +119,30 @@
         <div class="actionButtons">
 
             <h:commandButton id="save"
-                          value="Save"
-                         action="#{bulletinHome.persist}"
+                          value="#{messages['common.save']}"
+                         action="#{bulletinHome.saveBulletin()}"
                        disabled="#{!bulletinHome.wired}"
                        rendered="#{!bulletinHome.managed}"/>
 
             <h:commandButton id="update"
-                          value="Save"
+                          value="#{messages['common.save']}"
                          action="#{bulletinHome.update}"
                        rendered="#{bulletinHome.managed}"/>
 
             <h:commandButton id="delete"
-                          value="Delete"
+                          value="#{messages['common.delete']}"
                          action="#{bulletinHome.remove}"
                       immediate="true"
+                      disabled="true"
                        rendered="#{bulletinHome.managed}"/>
 
-            <s:button id="cancelEdit"
-                   value="Cancel"
+            <s:button id="cancel"
+                   value="#{messages['common.cancel']}"
              propagation="end"
-                    view="/Bulletin.xhtml"
-                rendered="#{bulletinHome.managed}"/>
-
-            <s:button id="cancelAdd"
-                   value="Cancel"
-             propagation="end"
-                    view="/#{empty bulletinFrom ? 'BulletinList' : bulletinFrom}.xhtml"
-                rendered="#{!bulletinHome.managed}"/>
+                    view="/ant/ucot/BulletinList.xhtml"/>
 
         </div>
     </h:form>
-
-<rich:tabPanel switchType="ajax">
-
-    <rich:tab label="Agent">
-    <div class="association" id="agentParent">
-
-        <h:outputText value="There is no agent associated with this bulletin."
-                   rendered="#{bulletinHome.instance.agent == null}"/>
-
-        <rich:dataTable var="_agent"
-                   value="#{bulletinHome.instance.agent}"
-                rendered="#{bulletinHome.instance.agent != null}"
-              rowClasses="rvgRowOne,rvgRowTwo"
-                      id="agentTable">
-            <h:column>
-                <f:facet name="header">Id</f:facet>
-                <h:outputText value="#{_agent.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Agent code</f:facet>
-                <h:outputText value="#{_agent.agentCode}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Resident id</f:facet>
-                <h:outputText value="#{_agent.resident.id}"/>
-            </h:column>
-        </rich:dataTable>
-
-        <div class="actionButtons">
-            <s:button id="#{bulletinHome.instance.agent != null ? 'changeParent' : 'selectParent'}" value="#{bulletinHome.instance.agent != null ? 'Change' : 'Select'} agent"
-                       view="/AgentList.xhtml">
-                <f:param name="from" value="BulletinEdit"/>
-            </s:button>
-        </div>
-
-    </div>
-    </rich:tab>
-
-    <rich:tab label="Type">
-    <div class="association" id="typeParent">
-
-        <h:outputText value="There is no type associated with this bulletin."
-                   rendered="#{bulletinHome.instance.type == null}"/>
-
-        <rich:dataTable var="_itemCatalog"
-                   value="#{bulletinHome.instance.type}"
-                rendered="#{bulletinHome.instance.type != null}"
-              rowClasses="rvgRowOne,rvgRowTwo"
-                      id="typeTable">
-            <h:column>
-                <f:facet name="header">Id</f:facet>
-                <h:outputText value="#{_itemCatalog.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Catalog id</f:facet>
-                <h:outputText value="#{_itemCatalog.catalog.id}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Catalog code</f:facet>
-                <h:outputText value="#{_itemCatalog.catalogCode}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Code</f:facet>
-                <h:outputText value="#{_itemCatalog.code}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Description</f:facet>
-                <h:outputText value="#{_itemCatalog.description}"/>
-            </h:column>
-            <h:column>
-                <f:facet name="header">Name</f:facet>
-                <h:outputText value="#{_itemCatalog.name}"/>
-            </h:column>
-        </rich:dataTable>
-
-        <div class="actionButtons">
-            <s:button id="#{bulletinHome.instance.type != null ? 'changeParent' : 'selectParent'}" value="#{bulletinHome.instance.type != null ? 'Change' : 'Select'} type"
-                       view="/ItemCatalogList.xhtml">
-                <f:param name="from" value="BulletinEdit"/>
-            </s:button>
-        </div>
-
-    </div>
-    </rich:tab>
-</rich:tabPanel>
 </ui:define>
 
 </ui:composition>

@@ -31,27 +31,17 @@
    <param name="catalogId" value="#{catalogHome.catalogId}"/>
 
 
-
-
-
-   <navigation from-action="#{infractionsHome.persist}">
-      <rule if-outcome="persisted">
-         <end-conversation/>
-         <redirect view-id="/Infractions.xhtml"/>
-      </rule>
-   </navigation>
-
    <navigation from-action="#{infractionsHome.update}">
       <rule if-outcome="updated">
          <end-conversation/>
-         <redirect view-id="/Infractions.xhtml"/>
+         <redirect view-id="/ant/ucot/InfractionsList.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{infractionsHome.remove}">
       <rule if-outcome="removed">
          <end-conversation/>
-         <redirect view-id="/InfractionsList.xhtml"/>
+         <redirect view-id="/ant/ucot/InfractionsList.xhtml"/>
       </rule>
    </navigation>
 

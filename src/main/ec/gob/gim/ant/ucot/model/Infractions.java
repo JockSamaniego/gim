@@ -4,19 +4,25 @@ package ec.gob.gim.ant.ucot.model;
 import java.math.BigInteger;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.ItemCatalog;
  
 
@@ -36,6 +42,11 @@ import ec.gob.gim.common.model.ItemCatalog;
 	 pkColumnValue="Agent",
 	 initialValue=1, allocationSize=1
 )
+
+@NamedQueries(value = {
+		@NamedQuery(name = "infractions.findByBulletinId", query = "Select i from Infractions i where i.bulletin.id = :bulletinId"),
+		@NamedQuery(name = "infractions.findBySerial", query = "Select i from Infractions i where i.serial = :serial")})
+
 public class Infractions {
 
 	@Id
@@ -63,18 +74,9 @@ public class Infractions {
 	
 	private String licensePlate;
 	
-	private Boolean archived;
+	private Boolean archived;	
 	
-	@ManyToOne
-	@JoinColumn(name="typeitem_id")
-	private ItemCatalog type;
-	
-	@ManyToOne
-	@JoinColumn(name="statusitem_id")
-	private ItemCatalog status;
-	
-
-	@ManyToOne
+	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
 	@JoinColumn(name="bulletin_id")
 	private Bulletin bulletin;
 
@@ -150,21 +152,6 @@ public class Infractions {
 		this.archived = archived;
 	}
 
-	public ItemCatalog getType() {
-		return type;
-	}
-
-	public void setType(ItemCatalog type) {
-		this.type = type;
-	}
-
-	public ItemCatalog getStatus() {
-		return status;
-	}
-
-	public void setStatus(ItemCatalog status) {
-		this.status = status;
-	}
 
 	public Bulletin getBulletin() {
 		return bulletin;
@@ -173,4 +160,13 @@ public class Infractions {
 	public void setBulletin(Bulletin bulletin) {
 		this.bulletin = bulletin;
 	}
+
+	public Date getCitationTime() {
+		return citationTime;
+	}
+
+	public void setCitationTime(Date citationTime) {
+		this.citationTime = citationTime;
+	}
+	
 }

@@ -11,12 +11,17 @@
 <ui:define name="body">
 
     <h:form id="bulletinSearch" styleClass="edit">
-<h:outputText styleClass="formTitle" value="#{messages['ucot.bulletinManger']}" />    
+<h:outputText styleClass="formTitle" value="#{messages['ucot.bulletinManager']}" />    
 
         <rich:simpleTogglePanel label="#{messages['ucot.searchFilter']}" switchType="ajax">
             <s:decorate template="../../layout/display.xhtml">
-                <ui:define name="label">#{messages['ucot.agent']}</ui:define>
+                <ui:define name="label">#{messages['ucot.agent']}:</ui:define>
                 <h:inputText id="name" value="#{bulletinList.criteriaSearch}"/>
+            </s:decorate>
+
+            <s:decorate template="../../layout/display.xhtml">
+                <ui:define name="label">#{messages['infraction.serial']}:</ui:define>
+                <h:inputText id="serial" value="#{bulletinList.serial}"/>
             </s:decorate>
 
       </rich:simpleTogglePanel>
@@ -52,98 +57,95 @@
                 var="_bulletin"
               value="#{bulletinList.resultList}"
            rendered="#{not empty bulletinList.resultList}">
-        <h:column>
+           <rich:column styleClass="action" style="align:right;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{bulletinList}"/>
-                    <ui:param name="propertyLabel" value="Id"/>
-                    <ui:param name="propertyPath" value="bulletin.id"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_bulletin.id}"/>
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{bulletinList}"/>
-                    <ui:param name="propertyLabel" value="Agent id"/>
-                    <ui:param name="propertyPath" value="bulletin.agent.id"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_bulletin.agent.id}"/>
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{bulletinList}"/>
-                    <ui:param name="propertyLabel" value="Creation date"/>
-                    <ui:param name="propertyPath" value="bulletin.creationDate"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_bulletin.creationDate}">
-                <s:convertDateTime type="date" dateStyle="short"/>
-            </h:outputText>
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{bulletinList}"/>
-                    <ui:param name="propertyLabel" value="Creation time"/>
-                    <ui:param name="propertyPath" value="bulletin.creationTime"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_bulletin.creationTime}">
-                <s:convertDateTime type="time"/>
-            </h:outputText>
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{bulletinList}"/>
-                    <ui:param name="propertyLabel" value="End number"/>
-                    <ui:param name="propertyPath" value="bulletin.endNumber"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_bulletin.endNumber}"/>
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{bulletinList}"/>
-                    <ui:param name="propertyLabel" value="Start number"/>
+                    <ui:param name="propertyLabel" value="#{messages['bulletin.startNumber']}"/>
                     <ui:param name="propertyPath" value="bulletin.startNumber"/>
                 </ui:include>
             </f:facet>
             <h:outputText value="#{_bulletin.startNumber}"/>
-        </h:column>
-        <h:column>
+        </rich:column>
+        <rich:column styleClass="action" style="align:right;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{bulletinList}"/>
-                    <ui:param name="propertyLabel" value="Type id"/>
-                    <ui:param name="propertyPath" value="bulletin.type.id"/>
+                    <ui:param name="propertyLabel" value="#{messages['bulletin.endNumber']}"/>
+                    <ui:param name="propertyPath" value="bulletin.endNumber"/>
                 </ui:include>
             </f:facet>
-            <h:outputText value="#{_bulletin.type.id}"/>
-        </h:column>
+            <h:outputText value="#{_bulletin.endNumber}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['ucot.agent']}"/>
+                    <ui:param name="propertyPath" value="bulletin.agent.resident.identificationNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.agent.resident.identificationNumber}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:left;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['agent.name']}"/>
+                    <ui:param name="propertyPath" value="bulletin.agent.resident.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.agent.resident.name}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['bulletin.creationDate']}"/>
+                    <ui:param name="propertyPath" value="bulletin.creationDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.creationDate}">
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </rich:column>
+        
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['bulletin.type']}"/>
+                    <ui:param name="propertyPath" value="bulletin.type.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.type.name}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:left;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['ucot.detail']}"/>
+                    <ui:param name="propertyPath" value="bulletin.detail"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.detail}"/>
+        </rich:column>
         <rich:column styleClass="action">
-            <f:facet name="header">Action</f:facet>
-            <s:link view="/#{empty from ? 'Bulletin' : from}.xhtml"
-                   value="#{empty from ? 'View' : 'Select'}"
-             propagation="#{empty from ? 'none' : 'default'}"
-                      id="bulletinViewId">
-                <f:param name="bulletinId"
-                        value="#{_bulletin.id}"/>
-            </s:link>
-            #{' '}
-            <s:link view="/BulletinEdit.xhtml"
-                   value="Edit"
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            <s:button view="/ant/ucot/BulletinEdit.xhtml"
+                   value="#{messages['common.edit']}"
              propagation="none"
-                      id="bulletinEdit"
-                rendered="#{empty from}">
+                      id="bulletinEdit">
                 <f:param name="bulletinId"
                         value="#{_bulletin.id}"/>
-            </s:link>
+            </s:button>
+            <s:button view="/ant/ucot/InfractionsEdit.xhtml"
+                   value="#{messages['infraction.Create']}"
+             propagation="none"
+                      id="createInfraction">
+                <f:param name="bulletinId"
+                        value="#{_bulletin.id}"/>
+            </s:button>
         </rich:column>
     </rich:dataTable>
 
@@ -152,14 +154,14 @@
 
     <div class="tableControl">
 
-        <s:link view="/BulletinList.xhtml"
+        <s:link view="/ant/ucot/BulletinList.xhtml"
             rendered="#{bulletinList.previousExists}"
                value="#{messages.left}#{messages.left} First Page"
                   id="firstPage">
           <f:param name="firstResult" value="0"/>
         </s:link>
 
-        <s:link view="/BulletinList.xhtml"
+        <s:link view="/ant/ucot/BulletinList.xhtml"
             rendered="#{bulletinList.previousExists}"
                value="#{messages.left} Previous Page"
                   id="previousPage">
@@ -167,7 +169,7 @@
                     value="#{bulletinList.previousFirstResult}"/>
         </s:link>
 
-        <s:link view="/BulletinList.xhtml"
+        <s:link view="/ant/ucot/BulletinList.xhtml"
             rendered="#{bulletinList.nextExists}"
                value="Next Page #{messages.right}"
                   id="nextPage">
@@ -175,7 +177,7 @@
                     value="#{bulletinList.nextFirstResult}"/>
         </s:link>
 
-        <s:link view="/BulletinList.xhtml"
+        <s:link view="/ant/ucot/BulletinList.xhtml"
             rendered="#{bulletinList.nextExists}"
                value="Last Page #{messages.right}#{messages.right}"
                   id="lastPage">
