@@ -76,7 +76,7 @@
 					<ui:define name="label">Dirección:</ui:define>
 					<h:inputText id="txtAddress" maxlength="100"
 						value="#{writeOffRequestHome.waterSupplySelected.ncalle}"
-						disabled="true">
+						disabled="true" size="50">
 						<a:support event="onblur" reRender="address" bypassUpdates="true"
 							ajaxSingle="true" />
 					</h:inputText>
@@ -95,7 +95,7 @@
 				<s:decorate id="detailField" template="../layout/edit.xhtml">
 					<ui:define name="label">Responsable/Soporte</ui:define>
 					<h:inputText id="detail" maxlength="100"
-						value="#{writeOffRequestHome.instance.detail}">
+						value="#{writeOffRequestHome.instance.detail}" size="50">
 						<a:support event="onblur" reRender="detailField"
 							bypassUpdates="true" ajaxSingle="true" />
 					</h:inputText>
@@ -112,7 +112,7 @@
 				</s:decorate>
 
 				<div style="clear: both">
-					<span class="required">*</span> required fields
+					<span class="required">*</span> Campos obligatorios
 				</div>
 
 			</rich:panel>
@@ -259,30 +259,12 @@
 
 			<div class="actionButtons">
 
-				<h:commandButton id="save" value="Save"
+				<h:commandButton id="save" value="Guardar"
 					action="#{writeOffRequestHome.save()}"
-					disabled="#{!writeOffRequestHome.wired}"
-					rendered="#{!writeOffRequestHome.managed}" />
-
-				<a:commandButton id="_save" ajaxSingle="true" value="Guardar"
-					bypassUpdates="true" actionListener="#{writeOffRequestHome.save()}" 
 					/>
 
-				<h:commandButton id="update" value="Save"
-					action="#{writeOffRequestHome.update}"
-					rendered="#{writeOffRequestHome.managed}" />
-
-				<h:commandButton id="delete" value="Delete"
-					action="#{writeOffRequestHome.remove}" immediate="true"
-					rendered="#{writeOffRequestHome.managed}" />
-
-				<s:button id="cancelEdit" value="Cancel" propagation="end"
-					view="/WriteOffRequest.xhtml"
-					rendered="#{writeOffRequestHome.managed}" />
-
-				<s:button id="cancelAdd" value="Cancel" propagation="end"
-					view="/#{empty writeOffRequestFrom ? 'WriteOffRequestList' : writeOffRequestFrom}.xhtml"
-					rendered="#{!writeOffRequestHome.managed}" />
+					<s:button id="cancelAdd" value="Cancelar" propagation="end"
+					view="/finances/WriteOffRequestList.xhtml"/>
 
 			</div>
 		</h:form>

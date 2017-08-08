@@ -2,6 +2,8 @@ package org.gob.gim.finances.action;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -30,6 +32,7 @@ import ec.gob.gim.finances.model.WriteOffRequest;
 import ec.gob.gim.finances.model.WriteOffType;
 import ec.gob.gim.finances.model.DTO.ConsumptionPreviousDTO;
 import ec.gob.gim.finances.model.DTO.DetailTableAuxDTO;
+import ec.gob.gim.finances.model.DTO.MunicipalBondDTO;
 import ec.gob.gim.finances.model.DTO.WriteOffDetailDTO;
 import ec.gob.gim.finances.model.DTO.WriteOffRequestDTO;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -84,6 +87,8 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	private boolean isFirstTime = true;
 
 	private List<ConsumptionPreviousDTO> previous_consumptions = new ArrayList<ConsumptionPreviousDTO>();
+	
+	private List<MunicipalBondDTO> bondsReport = new ArrayList<MunicipalBondDTO>();
 
 	/*
 	 * CRITERIA
@@ -124,7 +129,9 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 	private Boolean not_found_adjunct_bond_new = Boolean.FALSE;
 
-	private WriteOffDetail aux_entity_detail;
+	private WriteOffDetail aux_entity_detail_old;
+	
+	private WriteOffDetail aux_entity_detail_new;
 
 	public List<WaterSupply> getWaterSupplies() {
 		return waterSupplies;
@@ -379,12 +386,28 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		this.not_found_adjunct_bond_new = not_found_adjunct_bond_new;
 	}
 
-	public WriteOffDetail getAux_entity_detail() {
-		return aux_entity_detail;
+	public WriteOffDetail getAux_entity_detail_old() {
+		return aux_entity_detail_old;
 	}
 
-	public void setAux_entity_detail(WriteOffDetail aux_entity_detail) {
-		this.aux_entity_detail = aux_entity_detail;
+	public void setAux_entity_detail_old(WriteOffDetail aux_entity_detail_old) {
+		this.aux_entity_detail_old = aux_entity_detail_old;
+	}
+
+	public WriteOffDetail getAux_entity_detail_new() {
+		return aux_entity_detail_new;
+	}
+
+	public void setAux_entity_detail_new(WriteOffDetail aux_entity_detail_new) {
+		this.aux_entity_detail_new = aux_entity_detail_new;
+	}
+	
+	public List<MunicipalBondDTO> getBondsReport() {
+		return bondsReport;
+	}
+
+	public void setBondsReport(List<MunicipalBondDTO> bondsReport) {
+		this.bondsReport = bondsReport;
 	}
 
 	@Override
@@ -526,12 +549,13 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		this.numberOldBondAux = null;
 		this.disabled_new_fields = Boolean.TRUE;
 		this.disabled_old_fields = Boolean.TRUE;
-		this.aux_entity_detail = new WriteOffDetail();
+		this.aux_entity_detail_old = new WriteOffDetail();
+		this.aux_entity_detail_new = new WriteOffDetail();
 	}
 
 	public void searchBondDetailOld() {
 
-		this.aux_entity_detail = new WriteOffDetail();
+		this.aux_entity_detail_old = new WriteOffDetail();
 
 		if (this.instance.getResident() == null) {
 			addFacesMessageFromResourceBundle("No ha ingresado el contribuyente");
@@ -579,7 +603,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 	public void searchBondDetailNew() {
 
-		this.aux_entity_detail = new WriteOffDetail();
+		this.aux_entity_detail_new = new WriteOffDetail();
 
 		if (this.instance.getResident() == null) {
 			addFacesMessageFromResourceBundle("No ha ingresado el contribuyente");
@@ -650,8 +674,17 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		 */
 
 		if (!this.disabled_old_fields) {
-			detail.setMonthType(this.aux_entity_detail.getMonthType());
-			detail.setMonth(this.aux_entity_detail.getMonthType().getMonthInt());
+			detail.setMonthType(this.aux_entity_detail_old.getMonthType());
+			detail.setMonth(this.aux_entity_detail_old.getMonthType().getMonthInt());
+		} else {
+			detail.setMonthType(MonthType.getByValue(this.detail_aux_new
+					.getMonth()));
+			detail.setMonth(this.detail_aux_new.getMonth());
+		}
+		
+		if (!this.disabled_new_fields) {
+			detail.setMonthType(this.aux_entity_detail_new.getMonthType());
+			detail.setMonth(this.aux_entity_detail_new.getMonthType().getMonthInt());
 		} else {
 			detail.setMonthType(MonthType.getByValue(this.detail_aux_new
 					.getMonth()));
@@ -776,6 +809,10 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		this.detailsTableNew = new ArrayList<DetailTableAuxDTO>();
 
 		String _month = "";
+		
+		String _year= "";
+		
+		List<Calendar> dates_consumptions = new ArrayList<Calendar>(); 
 
 		for (int i = 0; i < writeOff.getDetails().size(); i++) {
 
@@ -804,19 +841,36 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 			_new.setYear(det.getYear());
 
 			_month = String.valueOf(det.getMonthType().getMonthInt());
-
+			
+			Calendar _cal = Calendar.getInstance();
+			_cal.set(Calendar.YEAR, det.getYear());
+			_cal.set(Calendar.MONTH, det.getMonthType().getMonthInt());
+			
+			dates_consumptions.add(_cal);
 			this.detailsTableNew.add(_new);
 
 		}
-
+		
+		Calendar _aux_date = dates_consumptions.get(0);
+		
+		for(int i = 0; i < dates_consumptions.size(); i++){
+			if( dates_consumptions.get(i).getTimeInMillis() < _aux_date.getTimeInMillis() ){
+				_aux_date = dates_consumptions.get(i);
+			}
+		}
+		
+		_year = String.valueOf(_aux_date.get(Calendar.YEAR));
+		_month = String.valueOf(_aux_date.get(Calendar.MONTH));
+		
 		this.previous_consumptions = this.writeOffService.findPreviousReading(
-				writeOff.getWaterMeter().getId(), this.writeOffRequestSelected
-						.get_year().toString(), _month);
+				writeOff.getWaterMeter().getId(), _year , _month);
+		
+		this.bondsReport = this.writeOffService.findBonds(this.writeOffRequestSelected.getId());
 
 		return "/finances/WriteOffRequestReportPDF.xhtml";
 	}
 
-	public BigDecimal totalOldBonds() {
+	public BigDecimal totalOldBonds() {	
 
 		BigDecimal sum = BigDecimal.ZERO;
 

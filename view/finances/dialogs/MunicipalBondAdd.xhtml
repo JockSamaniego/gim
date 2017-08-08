@@ -60,17 +60,17 @@
 								<a:support event="onblur" reRender="monthBondOldField"
 									ajaxSingle="true" />
 							</h:inputText>
-							
-							<h:selectOneMenu id="monthTypes"
-								value="#{writeOffRequestHome.aux_entity_detail.monthType}" 
+
+							<h:selectOneMenu id="monthTypes_old"
+								value="#{writeOffRequestHome.aux_entity_detail_old.monthType}"
 								rendered="#{!writeOffRequestHome.disabled_old_fields}">
 								<s:selectItems value="#{monthTypes}" var="month"
 									label="#{messages[month.name()]}"
 									noSelectionLabel="#{messages['common.chooseOption']}" />
 								<s:convertEnum />
-								<a:support event="onchange" ajaxSingle="true"/>
+								<a:support event="onchange" ajaxSingle="true" />
 							</h:selectOneMenu>
-							
+
 						</s:decorate>
 
 						<s:decorate id="yearBondOldField"
@@ -160,14 +160,25 @@
 						<s:decorate id="monthBondNewField"
 							template="../../layout/edit.xhtml">
 							<ui:define name="label">Mes:</ui:define>
-
+							
 							<h:inputText id="monthBondNew" maxlength="30"
 								value="#{writeOffRequestHome.detail_aux_new.month}"
 								required="true"
-								disabled="#{writeOffRequestHome.disabled_new_fields}">
+								disabled="#{writeOffRequestHome.disabled_new_fields}"
+								rendered="#{writeOffRequestHome.disabled_new_fields}">
 								<a:support event="onblur" reRender="monthBondNewField"
 									ajaxSingle="true" />
 							</h:inputText>
+
+							<h:selectOneMenu id="monthTypes_new"
+								value="#{writeOffRequestHome.aux_entity_detail_new.monthType}"
+								rendered="#{!writeOffRequestHome.disabled_new_fields}">
+								<s:selectItems value="#{monthTypes}" var="month"
+									label="#{messages[month.name()]}"
+									noSelectionLabel="#{messages['common.chooseOption']}" />
+								<s:convertEnum />
+								<a:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
 						</s:decorate>
 
 						<s:decorate id="yearBondNewField"

@@ -544,7 +544,7 @@ public class EmissionReportHome extends EntityController {
 			statusIds.add(inPaymentAgreementStatus.getId());
 			statusIds.add(externalChannelStatus.getId());
 			statusIds.add(blockedMunicipalBondStatus.getId());
-			statusIds.add(reversedMunicipalBondStatus.getId());
+			//statusIds.add(reversedMunicipalBondStatus.getId());
 		}
 		
 		Joiner joiner = Joiner.on(",");
