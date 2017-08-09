@@ -20,11 +20,12 @@ import ec.gob.gim.wsrest.dto.DtoRoute;
 import ec.gob.gim.wsrest.dto.RoutePackage;
 
 /**
- * 
+ * rfam 2017-07-06
+ * se comenta no se esta usando
  */
-@WebService
+//@WebService
 public class ReadingsUMAPAL {
-	@EJB
+	/*@EJB
 	private ReadingService service;
 
 	@Resource
@@ -90,6 +91,6 @@ public class ReadingsUMAPAL {
 	        hsr.getSession().setMaxInactiveInterval(1);
 	    }
 
-	}
+	}*/
 
 }

@@ -254,6 +254,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		paymentFileName = "payment." + paymentInstanceName + this.getConversationId() + "."
 				+ userSession.getPerson().getId() + ".pdf";
 		chargeControlImpugnmentStates();
+		bondIsWire = Boolean.TRUE;
 	}
 
 	public void search() {
@@ -633,17 +634,44 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		}
 		return root.getMunicipalBondItems();
 	}
+	
+	//Jock Samaniego
+	//Para bloquear emisión
+	private Boolean isBlocketToCollect = Boolean.FALSE;
+	private String blocketMessage;
+	private String colorMessage;
+
+	public Boolean getIsBlocketToCollect() {
+		return isBlocketToCollect;
+	}
+	public String getBlocketMessage() {
+		return blocketMessage;
+	}
+
+	public String getColorMessage() {
+		return colorMessage;
+	}
 
 	@SuppressWarnings("unchecked")
 	private void findPendingAlerts(Long residentId) {
+		blocketMessage="";
 		pendingAlerts.clear();
+		isBlocketToCollect = Boolean.FALSE;
+		colorMessage = "blue";
 		Query query = getEntityManager().createNamedQuery("Alert.findPendingAlertsByResidentId");
 		query.setParameter("residentId", resident.getId());
-
 		pendingAlerts = query.getResultList();
+		if (pendingAlerts.size()>0){
+			blocketMessage=pendingAlerts.get(0).getOpenDetail();			
+		}
 		for (Alert alert : pendingAlerts) {
-			if (alert.getPriority() == AlertPriority.HIGH) {
-				paymentBlocked = true;
+			//if (alert.getPriority() == AlertPriority.HIGH) {
+				//paymentBlocked = true;
+			//}
+			if(alert.getAlertType().getIsToCollect()){
+				isBlocketToCollect = Boolean.TRUE;
+				blocketMessage=alert.getOpenDetail();
+				colorMessage = "red";
 			}
 		}
 	}
@@ -2133,6 +2161,18 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 	public void setImpugnmentsTotal(List<Impugnment> impugnmentsTotal) {
 		this.impugnmentsTotal = impugnmentsTotal;
+	}
+	
+	//=============================
+	
+	private Boolean bondIsWire = Boolean.FALSE;
+
+	public Boolean getBondIsWire() {
+		return bondIsWire;
+	}
+
+	public void setBondIsWire(Boolean bondIsWire) {
+		this.bondIsWire = bondIsWire;
 	}
 
 }

@@ -39,6 +39,7 @@ import org.jboss.seam.log.Log;
 
 import ec.gob.gim.commercial.model.FireNames;
 import ec.gob.gim.commercial.model.FireRates;
+import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FiscalPeriod;
@@ -221,6 +222,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		query.setParameter("identificationNumber", this.identificationNumber);
 		try {
 			Resident resident = (Resident) query.getSingleResult();
+			findPendingAlerts(resident.getId());
 			this.setResident(resident);
 		} catch (Exception e) {
 			this.setResident(null);
@@ -289,6 +291,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				.get("resident");
 		this.setResident(resident);
 		this.setIdentificationNumber(resident.getIdentificationNumber());
+		findPendingAlerts(resident.getId());
 	}
 
 	public void buildMunicipalBonds() {
@@ -437,10 +440,10 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		query.setParameter("identificationNumber", this.identificationNumber);
 		try {
 			Resident resident = (Resident) query.getSingleResult();
+			findPendingAlerts(resident.getId());
 			logger.info("RESIDENT CHOOSER ACTION " + resident.getName());
 
 			this.getInstance().setResident(resident);
-
 			cleanList();
 			setEntry(null);
 			setEntryCode(null);
@@ -646,6 +649,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				.get("resident");
 		this.getInstance().setResident(resident);
 		this.setIdentificationNumber(resident.getIdentificationNumber());
+		findPendingAlerts(resident.getId());
 		cleanList();
 		setEntry(null);
 		setEntryCode(null);
@@ -718,6 +722,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		}
 		isFirstTime = false;
 		BusinessHome.myId = null;
+		bondIsWire = Boolean.TRUE;
 	}
 
 	public boolean isWired() {
@@ -1512,6 +1517,63 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 		public void setReportType(int reportType) {
 			this.reportType = reportType;
+		}
+		
+		//Jock Samaniego
+		//Para bloquear emisión
+		
+		private Boolean bondIsWire=Boolean.FALSE;
+		private List<Alert> pendingAlerts = new ArrayList<Alert>();
+		private Boolean isBlocketToEmit = Boolean.FALSE;
+		private String blocketMessage;
+		private String colorMessage;
+
+		public Boolean getIsBlocketToEmit() {
+			return isBlocketToEmit;
+		}
+
+		public List<Alert> getPendingAlerts() {
+			return pendingAlerts;
+		}
+
+		public String getBlocketMessage() {
+			return blocketMessage;
+		}
+
+		public String getColorMessage() {
+			return colorMessage;
+		}
+
+		public Boolean getBondIsWire() {
+			return bondIsWire;
+		}
+
+		public void setBondIsWire(Boolean bondIsWire) {
+			this.bondIsWire = bondIsWire;
+		}
+
+		@SuppressWarnings("unchecked")
+		private void findPendingAlerts(Long residentId) {
+			blocketMessage="";
+			pendingAlerts.clear();
+			isBlocketToEmit = Boolean.FALSE;
+			colorMessage = "blue";
+			Query query = getEntityManager().createNamedQuery("Alert.findPendingAlertsByResidentId");
+			query.setParameter("residentId", residentId);
+			pendingAlerts = query.getResultList();
+			if (pendingAlerts.size()>0){
+				blocketMessage=pendingAlerts.get(0).getOpenDetail();			
+			}
+			for (Alert alert : pendingAlerts) {
+				//if (alert.getPriority() == AlertPriority.HIGH) {
+					//paymentBlocked = true;
+				//}
+				if(alert.getAlertType().getIsToEmit()){
+					isBlocketToEmit = Boolean.TRUE;
+					colorMessage = "red";
+					blocketMessage=alert.getOpenDetail();
+				}
+			}
 		}
 
 }

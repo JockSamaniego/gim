@@ -12,6 +12,11 @@
 
 	<ui:define name="body">
 
+		<style type="text/css">
+			.alignTop {
+				vertical-align: top;
+			}
+		</style>
 		<h:form id="role" styleClass="edit">
 
 
@@ -35,7 +40,7 @@
 				</rich:panel>
 			</s:decorate>
 
-			<h:panelGrid columns="2" width="100%" id="panelDeceased2">
+			<h:panelGrid columns="2" width="100%" id="panelDeceased2" columnClasses="alignTop, alignTop">
 				<s:decorate>
 					<rich:panel id="openPanel">
 						<f:facet name="header">#{messages['alert.open']}</f:facet>
@@ -56,14 +61,31 @@
 		
 						<s:decorate id="openDepartmentField" template="../layout/edit.xhtml">
 							<ui:define name="label">#{messages['alert.openDepartment']}</ui:define>
-							<h:inputText id="openDepartment" size="60" readonly="#{alertHome.managed}"
+							<h:inputText id="openDepartment" size="60" readonly="#{alertHome.managed}" required="true"
 								value="#{alertHome.instance.department}" />
+						</s:decorate>
+						
+						<s:decorate template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['alertType']}:</ui:define>
+							<h:selectOneMenu id="alertType" disabled="#{alertHome.managed}"
+								value="#{alertHome.instance.alertType}" required="true">
+								<ui:debug id="debugExternal"/>
+								<s:selectItems value="#{alertTypes}" var="alertType"
+									label="#{alertType.name}" 
+									noSelectionLabel="Seleccione uno" />
+								<s:convertEntity />
+								<a:support event="onchange"
+						    		ajaxSingle="true"  inmediate="true" 
+						    		action="#{alertHome.setDefaultAlertText()}"
+						    		reRender="openDetailField" />
+							</h:selectOneMenu>
 						</s:decorate>
 		
 						<s:decorate id="openDetailField" template="../layout/edit.xhtml">
 							<ui:define name="label">#{messages['alert.openDetail']}</ui:define>
-							<h:inputTextarea id="openDetail" required="true" readonly="#{alertHome.managed}"
-								value="#{alertHome.instance.openDetail}" />
+							<h:inputTextarea id="openDetail" required="true"
+							value="#{alertHome.instance.openDetail}" 
+								disabled="#{alertHome.managed}"/>
 						</s:decorate>
 		
 						<s:decorate template="../layout/edit.xhtml">
