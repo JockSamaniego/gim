@@ -17,35 +17,35 @@ import org.jboss.seam.annotations.intercept.BypassInterceptors;
  * @date 2015-06-30
  */
 
-@Name("emailValidator")
+@Name("numberPlateValidator")
 @BypassInterceptors
 @org.jboss.seam.annotations.faces.Validator
-public class EmailValidator implements javax.faces.validator.Validator, Serializable{
+public class NumberPlateValidator implements javax.faces.validator.Validator, Serializable{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	//private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-	//2017 rfam permite puntos en el nombre de correo
-	private static final String EMAIL_PATTERN = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+	//private static final String PLATE_PATTERN = "^[a-zA-Z0-9&gt;&lt;_/.-]*$";
+	//private static final String PLATE_PATTERN = "^([a-zA-Z0-9]){7}$";
+	private static final String PLATE_PATTERN = "^([a-zA-Z0-9]){6,7}$";
+	
  
 	private Pattern pattern;
 	private Matcher matcher;
  
-	public EmailValidator(){
+	public NumberPlateValidator(){
 		  
 	}
  
 	@Override
 	public void validate(FacesContext context, UIComponent component,
 			Object value) throws ValidatorException {
- 
-		pattern = Pattern.compile(EMAIL_PATTERN);
+		pattern = Pattern.compile(PLATE_PATTERN);
 		matcher = pattern.matcher(value.toString());
 		if(!matcher.matches()){
-			FacesMessage msg = new FacesMessage("Validación de Correo", "Formato de correo inválido.");
+			FacesMessage msg = new FacesMessage("Número de placa Incorrecto", "Formato de placa inválido.");
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
  
