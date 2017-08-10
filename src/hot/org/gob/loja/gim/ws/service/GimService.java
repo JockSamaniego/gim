@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.ejb.Local;
 
+import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
 import org.gob.loja.gim.ws.dto.RealEstate;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
@@ -63,5 +64,7 @@ public interface GimService {
 			throws InvalidUser;
 	
 	List<RealEstate> findProperties(ServiceRequest request);
+	
+	Map<String, String>  saveUser(String identificationNumber, String username, String password);
 	
 }

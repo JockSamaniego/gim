@@ -30,6 +30,7 @@ import org.gob.loja.gim.ws.exception.RealEstateNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNonUnique;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNotSaved;
+import org.gob.loja.gim.ws.exception.UserNotSaved;
 import org.gob.loja.gim.ws.service.GimService;
 
 /**
@@ -245,6 +246,25 @@ public class GimSystem {
 		InvalidateSession();
 		return sr; 
 	}
+	
+	@WebMethod
+	@XmlJavaTypeAdapter(MapAdapter.class)
+	public Map<String, String> createUser(ServiceRequest request, String username, String password) 
+	throws InvalidUser, AccountIsNotActive, AccountIsBlocked, UserNotSaved{
+		Map<String, String> data = gimService.saveUser(request.getIdentificationNumber(),username, password);
+		InvalidateSession();
+		return data; 
+	}
+	
+	
+//	@WebMethod
+//	public Boolean saveTaxpayer(ServiceRequest request, Taxpayer taxpayer) 
+//		throws InvalidUser, AccountIsNotActive, AccountIsBlocked, TaxpayerNotSaved{
+//		System.out.println("SAVE TAXPAYER FOR: "+taxpayer.getIdentificationNumber());
+//		Boolean ok = gimService.saveTaxpayer(request, taxpayer);
+//		InvalidateSession();
+//		return ok;
+//	}
 	
 	public List<RealEstate> findProperties(ServiceRequest request) {
 		List<RealEstate> properties = gimService.findProperties(request);

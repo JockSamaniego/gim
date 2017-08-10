@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,9 @@ import javax.persistence.Query;
 
 import org.gob.gim.cadaster.facade.CadasterService;
 import org.gob.gim.common.NativeQueryResultsMapper;
+import org.gob.gim.common.PasswordManager;
+import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.UserHome;
 import org.gob.gim.common.exception.IdentificationNumberExistsException;
 import org.gob.gim.common.exception.IdentificationNumberSizeException;
 import org.gob.gim.common.exception.IdentificationNumberWrongException;
@@ -27,6 +31,7 @@ import org.gob.gim.common.exception.InvalidIdentificationNumberFinishedException
 import org.gob.gim.common.exception.NonUniqueIdentificationNumberException;
 import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.common.service.UserService;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
 import org.gob.gim.revenue.view.EntryValueItem;
@@ -47,6 +52,7 @@ import org.gob.loja.gim.ws.exception.RealEstateNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNonUnique;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNotSaved;
+import org.jboss.seam.annotations.In;
 import org.loxageek.common.ws.ReflectionUtil;
 
 import ec.gob.gim.cadaster.model.Street;
@@ -63,6 +69,7 @@ import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.adjunct.ANTReference;
 import ec.gob.gim.security.model.User;
+import ec.gob.loja.model.Users; 
 
 @Stateless(name="GimService")
 @Interceptors({SecurityInterceptor.class})
@@ -82,6 +89,11 @@ public class GimServiceBean implements GimService{
 	
 	@EJB
 	SystemParameterService systemParameterService;
+ 
+	//@tag cuentaUnica
+	@EJB
+	UserService userService;
+	
 	
 	@Override
 	public Taxpayer findTaxpayer(ServiceRequest request)
@@ -131,6 +143,68 @@ public class GimServiceBean implements GimService{
 			//return Boolean.FALSE;
 		}		
 	}
+	
+	@Override
+	public Map<String, String>  saveUser(String identificationNumber, String username, String password) {
+		return save( identificationNumber, username, password);
+	}
+	
+	@In(create=true)
+	PasswordManager passwordManager;
+	@SuppressWarnings("unchecked")
+	public Map<String, String> save(String identificationNumber, String username, String password) {
+	 
+		Map<String, String> result = new HashMap<String, String>();
+		
+		Query q = em.createNamedQuery("Resident.findByIdentificationNumber");
+		q.setParameter("identificationNumber", identificationNumber);
+		List<Resident> residentList = q.getResultList();
+		if(residentList.isEmpty()) {
+			result.put("message", "Ya existe un registro con el nombre de usuario");
+			result.put("status", "error");
+			return result;
+		}
+		
+		//check if username exist
+		q = em.createNamedQuery("User.findByUsername");
+		q.setParameter("name", username);		
+		List<User> userList = q.getResultList();
+		if(!userList.isEmpty()) {
+			result.put("message", "Ya existe un registro con el nombre de usuario");
+			result.put("status", "error");
+			return result;
+		}
+
+		User user = new User();
+		user.setResident(residentList.get(0));
+		user.setName(username);
+		user.setPassword(passwordManager.hash(password));
+		user.setIsActive(Boolean.TRUE);
+		user.setIsBlocked(Boolean.TRUE);
+		 		 
+		user = userService.save(user);			
+	   
+		if(user.getId()!=null) {
+			try{
+				residentList.get(0).setUser(user); 
+				residentService.save(residentList.get(0));
+				
+				result.put("message", "Usuario creado con id:"+user.getId());
+				result.put("status", "ok");
+			} catch (IdentificationNumberExistsException e) {
+				e.printStackTrace();
+				result.put("message", "No se puede actualizar el resident con el userid");
+				result.put("status", "error");
+			}
+			
+		}else {
+			result.put("message", "No se puede crear el usuario");
+			result.put("status", "error");
+		}
+		
+		return result; 
+	}
+ 
 	
 	@Override
 	public RealEstate findRealEstate(ServiceRequest request,  String cadastralCode) 
