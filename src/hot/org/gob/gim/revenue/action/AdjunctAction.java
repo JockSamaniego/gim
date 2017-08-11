@@ -11,7 +11,6 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.gob.gim.commercial.action.BusinessHome;
-import org.gob.gim.revenue.action.MunicipalBondHome;
 import org.gob.gim.common.DateUtils;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Name;
@@ -30,6 +29,7 @@ import ec.gob.gim.revenue.model.adjunct.DomainTransfer;
 import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
 import ec.gob.gim.revenue.model.adjunct.PropertyReference;
 import ec.gob.gim.revenue.model.adjunct.detail.EarlyTransferDiscount;
+import ec.gob.gim.revenue.model.adjunct.detail.VehicleType;
 
 @Name("adjunctAction")
 public class AdjunctAction extends EntityController{
@@ -242,6 +242,12 @@ public class AdjunctAction extends EntityController{
 			return query.getResultList();
 		}
 		return new ArrayList<Local>();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<VehicleType> findVehicleTypeForSimert() {
+		Query query = getEntityManager().createNamedQuery("VehicleType.findForSimert");
+		return query.getResultList();
 	}
 	
 	public void updateLocalCode(Long id){

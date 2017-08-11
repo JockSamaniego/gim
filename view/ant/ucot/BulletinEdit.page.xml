@@ -21,34 +21,38 @@
    <param name="userFrom"/>
    <param name="userId" value="#{userHome.userId}"/>
 
-
-
    <param name="itemCatalogFrom"/>
    <param name="itemCatalogId" value="#{itemCatalogHome.itemCatalogId}"/>
    <param name="catalogFrom"/>
    <param name="catalogId" value="#{catalogHome.catalogId}"/>
+   
+   <param name="criteriaSearch" value="#{agentList.criteriaSearch}" />
 
 
 
 
-   <navigation from-action="#{bulletinHome.persist}">
+   <navigation from-action="#{bulletinHome.saveBulletin()}">
       <rule if-outcome="persisted">
          <end-conversation/>
-         <redirect view-id="/Bulletin.xhtml"/>
+         <redirect view-id="/ant/ucot/BulletinList.xhtml"/>
+      </rule>
+      <rule if-outcome="failed">
+         <end-conversation/>
+         <redirect view-id="/ant/ucot/BulletinEdit.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{bulletinHome.update}">
       <rule if-outcome="updated">
          <end-conversation/>
-         <redirect view-id="/Bulletin.xhtml"/>
+         <redirect view-id="/ant/ucot/BulletinList.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{bulletinHome.remove}">
       <rule if-outcome="removed">
          <end-conversation/>
-         <redirect view-id="/BulletinList.xhtml"/>
+         <redirect view-id="/ant/ucot/BulletinList.xhtml"/>
       </rule>
    </navigation>
 

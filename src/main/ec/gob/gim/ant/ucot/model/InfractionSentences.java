@@ -1,13 +1,17 @@
 package ec.gob.gim.ant.ucot.model;
  
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.envers.Audited;
@@ -30,6 +34,8 @@ import ec.gob.gim.common.model.ItemCatalog;
 	 pkColumnValue="InfractionSentences",
 	 initialValue=1, allocationSize=1
 )
+@NamedQueries(value = {
+		@NamedQuery(name = "sentence.findByInfractionId", query = "Select s from InfractionSentences s WHERE s.infraction.id = :infractionId ORDER BY s.id ASC")})
 public class InfractionSentences {
 
 	@Id
@@ -48,6 +54,10 @@ public class InfractionSentences {
 	@ManyToOne
 	@JoinColumn(name="itemcatalog_id")
 	private ItemCatalog type;
+	
+	@ManyToOne
+	@JoinColumn(name="infractions_id")
+	private Infractions infraction;
 	 
 	public Long getId() {
 		return id;
@@ -87,7 +97,16 @@ public class InfractionSentences {
 
 	public void setType(ItemCatalog type) {
 		this.type = type;
+	}
+
+	public Infractions getInfraction() {
+		return infraction;
+	}
+
+	public void setInfraction(Infractions infraction) {
+		this.infraction = infraction;
 	} 
+	
 }
 	
 

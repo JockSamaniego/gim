@@ -481,6 +481,7 @@ public class GimServiceBean implements GimService{
 				ant.setVehicleType(emisionDetail.getVehicleType());
 				ant.setServiceType(emisionDetail.getServiceType());
 				ant.setCitationDate(emisionDetail.getCitationDate());
+				ant.setSupportDocumentURL(emisionDetail.getSupportDocumentURL());
 				mb.setAdjunct(ant);
 				// end Adjunt
 				

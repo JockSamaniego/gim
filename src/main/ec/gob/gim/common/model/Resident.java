@@ -34,6 +34,7 @@ import org.gob.gim.common.exception.InvalidIdentificationNumberFinishedException
 import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.ant.ucot.model.Agent;
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.commercial.model.Business;
 import ec.gob.gim.income.model.PaymentAgreement;
@@ -183,6 +184,10 @@ public abstract class Resident extends Identifiable{
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Alert> alerts;
 	
+	@OneToMany(mappedBy = "resident", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private List<Agent> agents;
+
 	public Resident(){
 		isEnabledForDeferredPayments = Boolean.FALSE;
 		this.addresses= new ArrayList<Address>();
@@ -445,6 +450,14 @@ public abstract class Resident extends Identifiable{
 	 */
 	public void setAlerts(List<Alert> alerts) {
 		this.alerts = alerts;
+	}
+	
+	public List<Agent> getAgents() {
+		return agents;
+	}
+
+	public void setAgents(List<Agent> agents) {
+		this.agents = agents;
 	}
 //
 //	@Override

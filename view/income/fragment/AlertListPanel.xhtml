@@ -12,8 +12,7 @@
 	<rich:modalPanel id="alertListPanel" width="700" height="500">
 		<f:facet name="header">
 			<h:panelGroup>
-				<h:outputText
-					value="#{messages['alert.pendingAlerts']}"></h:outputText>
+				<h:outputText value="#{messages['alert.pendingAlerts']}"></h:outputText>
 			</h:panelGroup>
 		</f:facet>
 		<f:facet name="controls">
@@ -30,17 +29,16 @@
 			<rich:panel>
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
-						<h:outputText
-							value="#{messages['alert.pendingAlerts']}" />
+						<h:outputText value="#{messages['alert.pendingAlerts']}" />
 
 					</h:panelGrid>
 				</f:facet>
 
 				<a:outputPanel styleClass="results" id="alertList">
 					<rich:dataTable id="alertsTable" var="_alert"
-						value="#{paymentHome.pendingAlerts}"
-						rowClasses="rvgRowOne,rvgRowTwo" >
-						
+						value="#{paymentHome.bondIsWire ? paymentHome.pendingAlerts : (deferredMunicipalBond.bondIsWire ? deferredMunicipalBond.pendingAlerts : municipalBondHome.pendingAlerts)}"
+						rowClasses="rvgRowOne,rvgRowTwo">
+
 						<rich:column sortBy="#{_alert.openUser.name}" styleClass="action">
 							<f:facet name="header">
 								<h:outputText value="#{messages['alert.openUser']}" />
@@ -65,14 +63,15 @@
 							</h:outputText>
 						</rich:column>
 
-						<rich:column sortBy="#{_alert.openDetail}" styleClass="action" >
+						<rich:column sortBy="#{_alert.openDetail}" styleClass="action">
 							<f:facet name="header">
 								<h:outputText value="#{messages['alert.openDetail']}" />
 							</f:facet>
-							<textarea cols="30" rows="4" readonly="true">#{_alert.openDetail}</textarea>
+							<h:inputTextarea value="#{_alert.openDetail}" disabled="true"
+								cols="30" rows="4"></h:inputTextarea>
 						</rich:column>
 
-						<rich:column sortBy="#{_alert.priority}" styleClass="action" >
+						<rich:column sortBy="#{_alert.priority}" styleClass="action">
 							<f:facet name="header">
 								<h:outputText value="#{messages['alert.priority']}" />
 							</f:facet>
@@ -82,8 +81,7 @@
 					</rich:dataTable>
 
 				</a:outputPanel>
-				<div style="clear: both">
-				</div>
+				<div style="clear: both"></div>
 
 			</rich:panel>
 

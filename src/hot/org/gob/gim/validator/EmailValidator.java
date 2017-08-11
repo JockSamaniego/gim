@@ -27,9 +27,9 @@ public class EmailValidator implements javax.faces.validator.Validator, Serializ
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\." +
-			"[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*" +
-			"(\\.[A-Za-z]{2,})$";
+	//private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+	//2017 rfam permite puntos en el nombre de correo
+	private static final String EMAIL_PATTERN = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
  
 	private Pattern pattern;
 	private Matcher matcher;

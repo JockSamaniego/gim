@@ -6,7 +6,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	template="../layout/template.xhtml">
+	template="../layout/template.xhtml"
+                xmlns:a="http://richfaces.org/a4j">
 
 	<ui:define name="body">
 
@@ -29,8 +30,6 @@
 				</h:commandButton>
 				<s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" />
 			</div>
-
-		</h:form>
 
 		<rich:panel>
 			<f:facet name="header">
@@ -126,12 +125,18 @@
 							<f:param name="creditNoteType" value="#{_creditNote.class.simpleName}"/>
 						</s:button>
 						
+						<a:commandButton value="#{messages['common.endorse']}"
+							id="creditNoteEndorse" ajaxSingle="true"
+							action="#{creditNoteHome.endorseCreditNote(_creditNote)}"
+							rendered="#{_creditNote.isActive}">							
+						</a:commandButton>
+									
 					</rich:column>
 				</rich:dataTable>
 
 			</div>
 		</rich:panel>
-
+	</h:form>
 		<div class="tableControl">
 
 			<s:link view="/income/CreditNoteList.xhtml"

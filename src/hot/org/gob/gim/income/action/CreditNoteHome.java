@@ -8,18 +8,23 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.CreditNoteValueNotValidException;
 import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
 
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.CreditNote;
+import ec.gob.gim.income.model.EndorseCreditNote;
 import ec.gob.gim.income.model.LegalStatus;
 import ec.gob.gim.revenue.model.MunicipalBond;
 
@@ -78,6 +83,9 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 		if (getInstance().getResident() != null) {
 			setResident(getInstance().getResident());
 			setIdentificationNumber(getResident().getIdentificationNumber());
+			System.out.println("============> "+identificationNumber);
+			System.out.println("============> "+resident.getIdentificationNumber());
+			System.out.println("============> "+getInstance().getId());
 		}
 	}
 
@@ -282,4 +290,180 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 	public void setMunicipalBondNumber(Long municipalBondNumber) {
 		this.municipalBondNumber = municipalBondNumber;
 	}
+	
+	//para endosar notas de credito
+		//Jock Samaniego
+	
+	private Resident previousResident;
+	private Resident currentResident;
+	private String identificationNumberPrevious;
+	private String identificationNumberCurrent;
+	private Long residentId;
+	private EndorseCreditNote endorseCreditNote;
+	private CreditNote creditNoteSelected;
+	private Calendar now;
+	private String endorseDetail;
+	
+	@In(scope = ScopeType.SESSION, value = "userSession")
+	UserSession userSession;
+//getters - Setters	
+	public Resident getPreviousResident() {
+		return previousResident;
+	}
+
+	public void setPreviousResident(Resident previousResident) {
+		this.previousResident = previousResident;
+	}
+
+	public Resident getCurrentResident() {
+		return currentResident;
+	}
+
+	public void setCurrentResident(Resident currentResident) {
+		this.currentResident = currentResident;
+	}
+
+	public String getIdentificationNumberPrevious() {
+		return identificationNumberPrevious;
+	}
+
+	public void setIdentificationNumberPrevious(String identificationNumberPrevious) {
+		this.identificationNumberPrevious = identificationNumberPrevious;
+	}
+
+	public String getIdentificationNumberCurrent() {
+		return identificationNumberCurrent;
+	}
+
+	public void setIdentificationNumberCurrent(String identificationNumberCurrent) {
+		this.identificationNumberCurrent = identificationNumberCurrent;
+	}
+
+	public Long getResidentId() {
+		return residentId;
+	}
+
+	public void setResidentId(Long residentId) {
+		this.residentId = residentId;
+	}
+
+	public EndorseCreditNote getEndorseCreditNote() {
+		return endorseCreditNote;
+	}
+
+	public void setEndorseCreditNote(EndorseCreditNote endorseCreditNote) {
+		this.endorseCreditNote = endorseCreditNote;
+	}
+
+	public CreditNote getCreditNoteSelected() {
+		return creditNoteSelected;
+	}
+
+	public void setCreditNoteSelected(CreditNote creditNoteSelected) {
+		this.creditNoteSelected = creditNoteSelected;
+	}
+	
+	public Calendar getNow() {
+		return now;
+	}
+
+	public void setNow(Calendar now) {
+		this.now = now;
+	}
+
+	public UserSession getUserSession() {
+		return userSession;
+	}
+
+	public void setUserSession(UserSession userSession) {
+		this.userSession = userSession;
+	}
+
+	public String getEndorseDetail() {
+		return endorseDetail;
+	}
+
+	public void setEndorseDetail(String endorseDetail) {
+		this.endorseDetail = endorseDetail;
+	}
+
+	//Metodo de endoso
+	public String endorseCreditNote(CreditNote creditNote){
+		creditNoteSelected = creditNote;	
+		previousResident = creditNoteSelected.getResident();	
+		identificationNumberPrevious=previousResident.getIdentificationNumber();
+		now = Calendar.getInstance();
+		return "/income/CreditNoteEndorse.xhtml";
+	}
+	
+	public String saveCreditNoteEndorse(){
+		endorseCreditNote = new EndorseCreditNote();
+		endorseCreditNote.setCurrentResident(currentResident);
+		endorseCreditNote.setEndorseDate(now.getTime());
+		endorseCreditNote.setEndorseUser(userSession.getUser());
+		endorseCreditNote.setCreditNote(creditNoteSelected);
+		endorseCreditNote.setPreviousResident(previousResident);
+		endorseCreditNote.setEndorseDetail(endorseDetail);
+		EntityManager em = getEntityManager();
+		//em.merge(creditNoteSelected);
+		em.persist(endorseCreditNote);
+		setInstance(creditNoteSelected);
+		this.instance.setResident(currentResident);
+		super.update();
+		return "/income/CreditNoteList.xhtml";
+	}
+		
+	//metodos necesarios
+
+	public void searchResidentCurrent() {
+        Query query = getEntityManager().createNamedQuery(
+                "Resident.findByIdentificationNumber");
+        query.setParameter("identificationNumber",
+                this.identificationNumberCurrent);
+        try {
+            Resident resident = (Resident) query.getSingleResult();
+            this.setCurrentResident(resident);
+
+            if (resident.getId() == null) {
+                addFacesMessageFromResourceBundle("resident.notFound");
+            }
+        } catch (Exception e) {
+            this.setCurrentResident(null);
+            addFacesMessageFromResourceBundle("resident.notFound");
+        }
+    }
+	
+	public void currentSelectedListener(ActionEvent event) {
+        UIComponent component = event.getComponent();
+        Resident resident = (Resident) component.getAttributes()
+                .get("resident");
+        this.setCurrentResident(resident);
+        this.setIdentificationNumberCurrent(resident.getIdentificationNumber());
+    }
+	
+	public void previousResidentSelectedListener(ActionEvent event) {
+        UIComponent component = event.getComponent();
+        Resident resident = (Resident) component.getAttributes()
+                .get("resident");
+        this.setPreviousResident(resident);
+        this.setIdentificationNumberPrevious(resident.getIdentificationNumber());
+    }
+	
+	public void searchResidentPrevious() {
+        Query query = getEntityManager().createNamedQuery(
+                "Resident.findByIdentificationNumber");
+        query.setParameter("identificationNumber",
+                this.identificationNumberPrevious);
+        try {
+            Resident resident = (Resident) query.getSingleResult();
+            this.setPreviousResident(resident);
+
+            if (resident.getId() == null) {
+                addFacesMessageFromResourceBundle("resident.notFound");
+            }
+        } catch (Exception e) {
+            this.setPreviousResident(null);
+            addFacesMessageFromResourceBundle("resident.notFound");
+        }
+    }
 }

@@ -30,7 +30,7 @@
 							residentChosenListenerName="residentSelectedListener"
 							reRender="municipalBondsPanel, totalValueField, registerPaymentBtn" />
 					</a:outputPanel>
-					<h:panelGrid columnClasses="topAligned right" width="100%">
+					<h:panelGrid columnClasses="topAligned right" width="100%" rendered="#{empty paymentAgreementHome.instance.id}">
 							<!-- ui:define name="label">#-{messages['paymentAgreement.total']}</ui:define-->
 							<h:outputText  rendered="#{empty paymentAgreementHome.instance.id}"
 								id="totalValueField"
@@ -52,6 +52,41 @@
 								value="#{messages['paymentAgreement.register']}" 
 								rendered="#{paymentAgreementHome.isSaveButtonDisabled or empty paymentAgreementHome.instance.id}"
 								focus="receivedCashField"/>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="2" width="100%" columnClasses="right,topAligned,right,topAligned" rendered="#{not empty paymentAgreementHome.instance.id}">
+						<h:outputText value="#{messages['dividend.balance']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
+						<h:outputText value="#{paymentAgreementHome.balanceForPay}" style="font-size:40px; font-weight:bold;">
+							<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>			
+						<h:outputText value="#{messages['municipalBond.totalCancelled']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
+						<h:outputText value="#{paymentAgreementHome.payed}" style="font-size:40px; font-weight:bold;">
+							<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>				
+						<h:outputText value="#{messages['VOID']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
+						<h:outputText value="#{paymentAgreementHome.canceledValue}" style="font-size:40px; font-weight:bold;">
+							<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>		
+						
+						<h:outputText value="#{messages['dividens.totals']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
+						<h:outputText value="#{paymentAgreementHome.instance.dividends.size()}" style="font-size:40px; font-weight:bold;">
+							<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>	
+						
+						<h:outputText value="#{messages['dividens.payments']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
+						<h:outputText value="#{paymentAgreementHome.totalPayments}" style="font-size:40px; font-weight:bold;">
+							<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>			
 					</h:panelGrid>
 				</h:panelGrid>
 				<div style="clear: both"/>
@@ -382,11 +417,19 @@
 				<a:commandButton 
 								id="viewer" 
 								ajaxSingle="true"
+								action="#{paymentAgreementHome.loadDeposits()}"
+								disabled="#{paymentAgreementHome.checkAvailable()}"
+								eventsQueue="gimEventsQueue" reRender="depositDetail"
+								value="#{messages['paymentagreeement.viewpayments']}" />
+				
+				<a:commandButton 
+								id="currentviewer" 
+								ajaxSingle="true"
 								action="#{paymentAgreementHome.loadMunicipalBondPayments()}"
 								disabled="#{paymentAgreementHome.checkAvailable()}"
 								eventsQueue="gimEventsQueue" reRender="municipalBondViewer"
 								oncomplete="Richfaces.showModalPanel('municipalBondViewer',{width:1024, height:500})"
-								value="#{messages['paymentagreeement.viewpayments']}" />
+								value="Estado actual" />
 			</div>
 			<rich:panel rendered="#{not empty paymentAgreementHome.instance.id}">
 				<f:facet name="header">
@@ -427,6 +470,42 @@
 									maxFractionDigits="#{messages['common.maxFractionDigits']}"
 									minFractionDigits="#{messages['common.minFractionDigits']}" />
 							</h:inputText>
+						</rich:column>
+					</rich:dataTable>
+				</rich:panel>
+				
+				
+				<!--  @macartuche -->
+				<!--  Depositos realizados -->
+				<rich:panel id="depositDetail" 
+				rendered="#{paymentAgreementHome.payments!=null}">
+					<f:facet name="header">
+						<h:outputText value="#{messages['paymentagreements.depositspayed']}" />
+					</f:facet>
+					<rich:dataTable id="paymentTable" 
+								value="#{paymentAgreementHome.payments}" var="_payment"
+								rendered="#{paymentAgreementHome.payments.size() > 0}">
+						<rich:column styleClass="right" width="65%">
+							<f:facet name="header">#{messages['auditInspector.date']}</f:facet>
+							<h:outputText value="#{_payment.date}" style="font-size: 12px;">
+								<s:convertDateTime type="date"
+												pattern="#{messages['common.datePattern']}" />		
+							</h:outputText>
+						</rich:column>
+		
+						<rich:column styleClass="right" width="5%">
+							<f:facet name="header">#{messages['auditInspector.time']}</f:facet>
+							<h:outputText value="#{_payment.time}" style="font-size: 12px;">
+								<s:convertDateTime type="date"
+												pattern="#{messages['common.timePattern']}" />		
+							</h:outputText>
+						</rich:column>
+		
+						<rich:column styleClass="right">
+							<f:facet name="header">#{messages['common.value']}</f:facet>
+							<h:outputText value="#{_payment.value}" style="font-size: 14px; font-weight: bold">
+								<f:convertNumber maxFractionDigits="#{messages['common.maxFractionDigits']}" minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
 						</rich:column>
 					</rich:dataTable>
 				</rich:panel>

@@ -25,36 +25,29 @@
    <param name="userFrom"/>
    <param name="userId" value="#{userHome.userId}"/>
 
-
-
    <param name="itemCatalogFrom"/>
    <param name="itemCatalogId" value="#{itemCatalogHome.itemCatalogId}"/>
    <param name="catalogFrom"/>
    <param name="catalogId" value="#{catalogHome.catalogId}"/>
 
-
-
-
-
-
    <navigation from-action="#{infractionStatusHome.persist}">
       <rule if-outcome="persisted">
          <end-conversation/>
-         <redirect view-id="/InfractionStatus.xhtml"/>
+         <redirect view-id="/ant/ucot/InfractionStatusList.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{infractionStatusHome.update}">
       <rule if-outcome="updated">
          <end-conversation/>
-         <redirect view-id="/InfractionStatus.xhtml"/>
+         <redirect view-id="/ant/ucot/InfractionStatusList.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{infractionStatusHome.remove}">
       <rule if-outcome="removed">
          <end-conversation/>
-         <redirect view-id="/InfractionStatusList.xhtml"/>
+         <redirect view-id="/ant/ucot/InfractionStatusList.xhtml"/>
       </rule>
    </navigation>
 

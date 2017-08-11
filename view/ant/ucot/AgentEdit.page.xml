@@ -22,24 +22,28 @@
 
 
 
-   <navigation from-action="#{agentHome.persist}">
+   <navigation from-action="#{agentHome.saveAgent()}">
       <rule if-outcome="persisted">
          <end-conversation/>
-         <redirect view-id="/Agent.xhtml"/>
+         <redirect view-id="/ant/ucot/AgentList.xhtml"/>
+      </rule>
+      <rule if-outcome="failed">
+         <end-conversation/>
+         <redirect view-id="/ant/ucot/AgentEdit.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{agentHome.update}">
       <rule if-outcome="updated">
          <end-conversation/>
-         <redirect view-id="/Agent.xhtml"/>
+         <redirect view-id="/ant/ucot/AgentList.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{agentHome.remove}">
       <rule if-outcome="removed">
          <end-conversation/>
-         <redirect view-id="/AgentList.xhtml"/>
+         <redirect view-id="/ant/ucot/AgentList.xhtml"/>
       </rule>
    </navigation>
 

@@ -3,10 +3,15 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
 
+	<action execute="#{infractionStatusHome.searchStatus()}"/>
+
    <param name="firstResult" value="#{infractionStatusList.firstResult}"/>
    <param name="sort" value="#{infractionStatusList.orderColumn}"/>
    <param name="dir" value="#{infractionStatusList.orderDirection}"/>
    <param name="logic" value="#{infractionStatusList.restrictionLogicOperator}"/>
+
+   <param name="infractionsFrom"/>
+   <param name="infractionsId" value="#{infractionsHome.infractionsId}"/>
 
    <param name="from"/>
 

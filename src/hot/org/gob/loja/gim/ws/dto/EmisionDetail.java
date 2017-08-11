@@ -37,7 +37,14 @@ public class EmisionDetail {
 	/**
 	 * yyyy-MM-dd
 	 */
-	private Date citationDate; 
+	private Date citationDate;
+	
+	/**
+	 * rfam 2017-07-21
+	 * ML-JRM-2017-404-MY
+	 * 332 TV-UMTTTSV-2017
+	 */
+	private String supportDocumentURL;
 
 	private BigDecimal amount;
 	private BigDecimal total;
@@ -160,6 +167,14 @@ public class EmisionDetail {
 
 	public void setContraventionNumber(String contraventionNumber) {
 		this.contraventionNumber = contraventionNumber;
+	}
+
+	public String getSupportDocumentURL() {
+		return supportDocumentURL;
+	}
+
+	public void setSupportDocumentURL(String supportDocumentURL) {
+		this.supportDocumentURL = supportDocumentURL;
 	}
 	
 }
