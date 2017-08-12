@@ -256,6 +256,14 @@ public class GimSystem {
 		return data; 
 	}
 	
+	@WebMethod
+	public UserResponse login(ServiceRequest request, String username, String password) 
+	throws InvalidUser, AccountIsNotActive, AccountIsBlocked, UserNotSaved{
+		UserResponse data = gimService.login(username, password);
+		InvalidateSession();
+		return data; 
+	}
+	
 	
 //	@WebMethod
 //	public Boolean saveTaxpayer(ServiceRequest request, Taxpayer taxpayer) 

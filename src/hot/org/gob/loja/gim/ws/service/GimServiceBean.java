@@ -205,6 +205,26 @@ public class GimServiceBean implements GimService{
 		
 		return userResponse; 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public UserResponse login(String username, String password) {
+		
+		String passwdEncripted = passwordManager.hash(password);
+		Query q = em.createNamedQuery("User.findByUsernameAndPassword");
+		q.setParameter("name", username);
+		q.setParameter("password", passwdEncripted);
+		List<Users> users = q.getResultList();
+		UserResponse response = new UserResponse();
+		if(!users.isEmpty()) {
+			response.setMessage("Numero de registros encontrados: "+users.size());
+			response.setStatus("ok");
+		}else {
+			response.setMessage("No existen registros");
+			response.setStatus("error");
+		}
+		return response;
+	}
  
 	
 	@Override

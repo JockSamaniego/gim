@@ -65,6 +65,14 @@ public interface GimService {
 	
 	List<RealEstate> findProperties(ServiceRequest request);
 	
+	/**
+	 * @author macartuche
+	 * @param identificationNumber
+	 * @param username
+	 * @param password
+	 * @return
+	 */
 	UserResponse  saveUser(String identificationNumber, String username, String password);
+	UserResponse login(String username, String password);
 	
 }
