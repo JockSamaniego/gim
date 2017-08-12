@@ -65,6 +65,6 @@ public interface GimService {
 	
 	List<RealEstate> findProperties(ServiceRequest request);
 	
-	Map<String, String>  saveUser(String identificationNumber, String username, String password);
+	UserResponse  saveUser(String identificationNumber, String username, String password);
 	
 }

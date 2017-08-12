@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
 import org.gob.loja.gim.ws.dto.RealEstate;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
@@ -248,10 +249,9 @@ public class GimSystem {
 	}
 	
 	@WebMethod
-	@XmlJavaTypeAdapter(MapAdapter.class)
-	public Map<String, String> createUser(ServiceRequest request, String username, String password) 
+	public UserResponse createUser(ServiceRequest request, String username, String password) 
 	throws InvalidUser, AccountIsNotActive, AccountIsBlocked, UserNotSaved{
-		Map<String, String> data = gimService.saveUser(request.getIdentificationNumber(),username, password);
+		UserResponse data = gimService.saveUser(request.getIdentificationNumber(),username, password);
 		InvalidateSession();
 		return data; 
 	}
