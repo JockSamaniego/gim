@@ -5,7 +5,6 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +19,6 @@ import javax.persistence.Query;
 
 import org.gob.gim.cadaster.facade.CadasterService;
 import org.gob.gim.common.NativeQueryResultsMapper;
-import org.gob.gim.common.PasswordManager;
-import org.gob.gim.common.ServiceLocator;
-import org.gob.gim.common.action.UserHome;
 import org.gob.gim.common.exception.IdentificationNumberExistsException;
 import org.gob.gim.common.exception.IdentificationNumberSizeException;
 import org.gob.gim.common.exception.IdentificationNumberWrongException;
@@ -53,7 +49,6 @@ import org.gob.loja.gim.ws.exception.RealEstateNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNonUnique;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNotSaved;
-import org.jboss.seam.annotations.In;
 import org.loxageek.common.ws.ReflectionUtil;
 
 import ec.gob.gim.cadaster.model.Street;
@@ -70,7 +65,6 @@ import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.adjunct.ANTReference;
 import ec.gob.gim.security.model.User;
-import ec.gob.loja.model.Users; 
 
 @Stateless(name="GimService")
 @Interceptors({SecurityInterceptor.class})
@@ -214,10 +208,10 @@ public class GimServiceBean implements GimService{
 		Query q = em.createNamedQuery("User.findByUsernameAndPassword");
 		q.setParameter("name", username);
 		q.setParameter("password", passwdEncripted);
-		List<Users> users = q.getResultList();
+		List<User> users = q.getResultList();
 		UserResponse response = new UserResponse();
 		if(!users.isEmpty()) {
-			response.setMessage("Numero de registros encontrados: "+users.size());
+			response.setMessage(users.get(0).getResident().getIdentificationNumber());
 			response.setStatus("ok");
 		}else {
 			response.setMessage("No existen registros");
