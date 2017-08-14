@@ -1,0 +1,91 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="infractionStatus" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{infractionStatusHome.managed ? messages['status.Edit'] : messages['status.Create']}</f:facet>
+
+			<s:decorate id="infractionField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction']}:</ui:define>
+                <h:inputText id="infraction"
+                           size="30"
+                           required="true"
+                           readonly="true"
+                      maxlength="30"
+                          value="#{infractionStatusHome.instance.infraction.serial}">
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="statusNameField"
+              template="../../layout/edit.xhtml">
+              <ui:define name="label">#{messages['agent.name']}</ui:define>
+              <h:selectOneMenu id="nameType" value="#{infractionStatusHome.instance.name}" required="true">
+                <s:selectItems value="#{infractionStatusHome.typesStatus}" var="status" label="#{status.name}" itemValue="#{status}" />
+                <a:support event="onchange" ajaxSingle="true" />
+                <s:convertEntity></s:convertEntity>
+              </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate id="statusDateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['bulletin.creationDate']}</ui:define>
+                <rich:calendar id="statusDate"
+                         required="true"
+                          value="#{infractionStatusHome.instance.statusDate}" datePattern="MM/dd/yyyy" />
+            </s:decorate>
+            
+            <s:decorate id="detailStatusField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['alert.openDetail']}</ui:define>
+                <h:inputTextarea id="statusDetail"
+                      value="#{infractionStatusHome.instance.detail}" >
+                </h:inputTextarea>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{infractionStatusHome.persist}"
+                       disabled="#{!infractionStatusHome.wired}"
+                       rendered="#{!infractionStatusHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{infractionStatusHome.update}"
+                       rendered="#{infractionStatusHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="#{messages['common.delete']}"
+                         action="#{infractionStatusHome.remove}"
+                      immediate="true"
+                       disabled="true"
+                       rendered="#{infractionStatusHome.managed}"/>
+
+            <s:button id="cancel"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/ant/ucot/InfractionStatusList.xhtml" />
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

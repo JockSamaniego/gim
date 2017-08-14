@@ -18,5 +18,8 @@ public enum MonthType {
 	public MonthType getMonthType(int month){
 		return MonthType.values()[month - 1];
 	}
-
+	
+	public static MonthType getByValue(int month){
+		return MonthType.values()[month-1];
+	}
 }

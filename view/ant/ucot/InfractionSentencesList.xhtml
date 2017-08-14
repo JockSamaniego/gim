@@ -1,0 +1,120 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="infractionSentencesSearch" styleClass="edit">
+    <h:outputText styleClass="formTitle" value="#{messages['ucot.sentenceManager']}" />
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">
+            <h:panelGrid columns="2" columnClasses="headerTitle,">
+                <h:outputText
+                    value=" #{messages['sentence.searchResults']} (#{infractionSentencesHome.infractionSentences.size()>0 ? infractionSentencesHome.infractionSentences.size() : 0})" />
+                   <s:button view="/ant/ucot/InfractionSentencesEdit.xhtml"
+                               id="create"
+                      propagation="none"
+                            value="#{messages['common.create']} #{messages['sentence']}">
+                            <f:param name="infractionSentencesId"/>
+                       <f:param name="infractionsId"
+                        value="#{infractionsHome.infractionsId}"/>
+                   </s:button>
+            </h:panelGrid>      
+        </f:facet>
+    <div class="results" id="infractionSentencesList">
+
+    <h:outputText value="No se han encontrado resultados"
+               rendered="#{infractionSentencesHome.infractionSentences.size()==0}"/>
+
+    <rich:dataTable id="infractionSentencesList"
+                var="_infractionSentences"
+              value="#{infractionSentencesHome.infractionSentences}"
+           rendered="#{infractionSentencesHome.infractionSentences.size()>0}">
+
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionSentencesList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction']}"/>
+                    <ui:param name="propertyPath" value="infractionSentences.infraction.serial"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractionSentences.infraction.serial}"/>
+        </rich:column>
+
+         <rich:column styleClass="action" style="align:right;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionSentencesList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['sentence.numberProcess']}"/>
+                    <ui:param name="propertyPath" value="infractionSentences.processNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractionSentences.processNumber}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:left;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionSentencesList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['sentence.judge']}"/>
+                    <ui:param name="propertyPath" value="infractionSentences.judge"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractionSentences.judge}"/>
+        </rich:column>
+       
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionSentencesList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['bulletin.type']}"/>
+                    <ui:param name="propertyPath" value="infractionSentences.type.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractionSentences.type.name}"/>
+        </rich:column>
+         <rich:column styleClass="action" style="align:left;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionSentencesList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['ucot.detail']}"/>
+                    <ui:param name="propertyPath" value="infractionSentences.description"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractionSentences.description}"/>
+        </rich:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            <s:button view="/ant/ucot/InfractionSentencesEdit.xhtml"
+                   value="#{messages['common.edit']}"
+             propagation="none"
+                      id="infractionSentencesEdit">
+                <f:param name="infractionSentencesId"
+                        value="#{_infractionSentences.id}"/>
+            </s:button>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+<div class="actionButtons">
+
+            <s:button id="exit"
+                   value="#{messages['common.exit']}"
+             propagation="end"
+                    view="/ant/ucot/InfractionsList.xhtml"/>
+
+        </div>
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,147 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="agentSearch" styleClass="edit">
+
+        <h:outputText styleClass="formTitle" value="#{messages['ucot.agentManager']}" />    
+
+        <rich:simpleTogglePanel label="#{messages['ucot.searchFilter']}" switchType="ajax">
+            <s:decorate template="../../layout/display.xhtml">
+                <ui:define name="label">#{messages['common.criteria']}</ui:define>
+                <h:inputText id="name" value="#{agentList.criteriaSearch}"/>
+            </s:decorate>
+
+      </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="#{messages['common.search']}" action="/ant/ucot/AgentList.xhtml">
+                <f:param name="firstResult" value="0"/>
+            </h:commandButton>
+            <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
+        </div>
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">
+            <h:panelGrid columns="2" columnClasses="headerTitle,">
+                <h:outputText
+                    value=" #{messages['agent.searchResults']} (#{empty agentList.resultList ? 0 : (agentList.paginated ? agentList.resultCount : agentList.resultList.size)})" />
+                   <s:button view="/ant/ucot/AgentEdit.xhtml"
+                               id="create"
+                      propagation="none"
+                            value="#{messages['common.create']} #{messages['ucot.agent']}">
+                       <f:param name="agentId"/>
+                   </s:button>
+            </h:panelGrid>      
+        </f:facet>
+    <div class="results" id="agentList">
+
+    <h:outputText value="No se han encotrado resultados"
+               rendered="#{empty agentList.resultList}"/>
+
+    <rich:dataTable id="agentList"
+                var="_agent"
+              value="#{agentList.resultList}"
+           rendered="#{not empty agentList.resultList}">
+        <rich:column styleClass="action" style="align:right;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{agentList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['agent.code']}"/>
+                    <ui:param name="propertyPath" value="agent.agentCode"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_agent.agentCode}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{agentList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['agent.identificationNumber']}"/>
+                    <ui:param name="propertyPath" value="agent.resident.identificationNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_agent.resident.identificationNumber}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:left;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{agentList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['agent.name']}"/>
+                    <ui:param name="propertyPath" value="agent.resident.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_agent.resident.name}"/>
+        </rich:column>
+         <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{agentList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['agent.isActive']}"/>
+                    <ui:param name="propertyPath" value="agent.isActive"/>
+                </ui:include>
+            </f:facet>
+            <h:selectBooleanCheckbox value="#{_agent.isActive}" disabled="true"/>
+        </rich:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            <s:button view="/ant/ucot/AgentEdit.xhtml"
+                   value="#{messages['common.edit']}"
+             propagation="none"
+                      id="agentEdit">
+                <f:param name="agentId"
+                        value="#{_agent.id}"/>
+            </s:button>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/ant/ucot/AgentList.xhtml"
+            rendered="#{agentList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/ant/ucot/AgentList.xhtml"
+            rendered="#{agentList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{agentList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/ant/ucot/AgentList.xhtml"
+            rendered="#{agentList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{agentList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/ant/ucot/AgentList.xhtml"
+            rendered="#{agentList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{agentList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

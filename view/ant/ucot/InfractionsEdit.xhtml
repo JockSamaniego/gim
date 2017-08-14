@@ -1,0 +1,176 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="infractions" styleClass="edit">
+        <rich:panel>
+            <f:facet name="header">
+                <h:panelGrid columns="1" columnClasses="headerTitle,">
+                  <h:outputText
+                    value="#{infractionsHome.managed ? messages['infraction.Edit'] : messages['infraction.Create']}" />
+                </h:panelGrid>      
+            </f:facet>
+
+            <s:decorate id="agentField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.agent']}</ui:define>
+                <h:inputText id="agent"
+                       required="true"
+                       readonly="true"
+                       size="50"
+                          value="#{infractionsHome.instance.bulletin.agent.resident.name}">
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="bulletinField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['bulletin']}</ui:define>
+                <h:inputText id="bulletinStart"
+                       required="true"
+                       readonly="true"
+                       size="20"
+                          value="#{infractionsHome.instance.bulletin.startNumber}">
+                </h:inputText>
+                <h:outputText id="bulletin"
+                          value="   -   ">
+                </h:outputText>
+                <h:inputText id="bulletinEnd"
+                       required="true"
+                       readonly="true"
+                       size="20"
+                          value="#{infractionsHome.instance.bulletin.endNumber}">
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="serialField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.serial']}</ui:define>
+                <h:inputText id="serial"
+                       required="true"
+                          value="#{infractionsHome.instance.serial}">
+                    <a:support event="onblur" reRender="serialField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="citationDateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.citationdate']}</ui:define>
+                <rich:calendar id="citationDate" required="true"
+                          value="#{infractionsHome.instance.citationDate}" datePattern="dd/MM/yyyy" />
+            </s:decorate>
+
+            <s:decorate id="citationTimeField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.citationtime']}</ui:define>
+                <h:inputText id="citationTime"
+                           size="15"
+                           maxlength="11"
+                           required="true"
+                          value="#{infractionsHome.instance.citationTime}">
+                    <s:convertDateTime type="time"/>
+                    <a:support event="onblur" reRender="citationTimeField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="licensePlateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.plate']}</ui:define>
+                <h:inputText id="licensePlate"
+                               size="15"
+                               maxlength="10"
+                              value="#{infractionsHome.instance.licensePlate}"/>
+            </s:decorate>
+
+            <s:decorate id="identificationField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.identification']}</ui:define>
+                <h:inputText id="identification"
+                              size="15"
+                              maxlength="10"
+                              value="#{infractionsHome.instance.identification}"/>
+            </s:decorate>
+
+            <s:decorate id="articleField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.article']}</ui:define>
+                <h:inputText id="article"
+                           size="15"
+                      maxlength="10"
+                          value="#{infractionsHome.instance.article}">
+                    <a:support event="onblur" reRender="articleField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="numeralField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.numeral']}</ui:define>
+                <h:inputText id="numeral"
+                           size="15"
+                      maxlength="10"
+                          value="#{infractionsHome.instance.numeral}">
+                    <a:support event="onblur" reRender="numeralField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="inPhysicField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.inphysic']}</ui:define>
+                <h:selectBooleanCheckbox id="inPhysic"
+                                      value="#{infractionsHome.instance.inPhysic}"/>
+            </s:decorate>
+
+            <s:decorate id="archivedField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.archived']}</ui:define>
+                <h:selectBooleanCheckbox id="archived"
+                                      value="#{infractionsHome.instance.archived}"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos
+            </div>
+            
+            <s:decorate id="infractionMessageField" template="../../layout/edit.xhtml">
+                <h:outputText value="#{infractionsHome.message}" rendered="#{infractionsHome.message != null}" style="color:red"/>
+            </s:decorate> 
+
+            <div style="clear:both">
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{infractionsHome.saveInfraction(bulletinHome.instance)}"
+                       disabled="#{!infractionsHome.wired}"
+                       rendered="#{!infractionsHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{infractionsHome.update}"
+                       rendered="#{infractionsHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="#{messages['common.delete']}"
+                         action="#{infractionsHome.remove}"
+                      immediate="true"
+                      disabled="true"
+                       rendered="#{infractionsHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                rendered="#{!infractionsHome.managed}"
+                    view="/ant/ucot/BulletinList.xhtml"/>
+            <s:button id="cancelEdit2"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                rendered="#{infractionsHome.managed}"
+                    view="/ant/ucot/InfractionsList.xhtml"/>
+
+        </div>
+    </h:form>
+</ui:define>
+
+</ui:composition>

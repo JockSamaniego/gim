@@ -25,7 +25,8 @@ import org.hibernate.envers.Audited;
 @Entity
 @TableGenerator(name = "SequenceManagerTypeGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "SequenceManagerType", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
-		@NamedQuery(name = "SequenceManagerType.findAll", query = "select smt from SequenceManagerType smt where smt.isActive = true order by smt.name ") })
+		@NamedQuery(name = "SequenceManagerType.findAll", query = "select smt from SequenceManagerType smt where smt.isActive = true order by smt.name "),
+		@NamedQuery(name = "SequenceManagerType.findByCode", query = "select smt from SequenceManagerType smt where smt.isActive = true AND smt.code =:code") })
 public class SequenceManagerType {
 
 	@Id
@@ -39,6 +40,9 @@ public class SequenceManagerType {
 
 	@Column(length = 30, unique = true)
 	private String name;
+
+	@Column(length = 30, unique = true)
+	private String code;
 
 	public SequenceManagerType() {
 		this.isActive = Boolean.TRUE;
@@ -74,6 +78,14 @@ public class SequenceManagerType {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }
