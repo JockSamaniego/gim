@@ -210,7 +210,7 @@ public class GimServiceBean implements GimService{
 	@Override
 	public UserResponse login(String username, String password) {
 		
-		String passwdEncripted = passwordManager.hash(password);
+		String passwdEncripted = hash(password);
 		Query q = em.createNamedQuery("User.findByUsernameAndPassword");
 		q.setParameter("name", username);
 		q.setParameter("password", passwdEncripted);
