@@ -35,6 +35,7 @@ import org.gob.gim.common.service.UserService;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
 import org.gob.gim.revenue.view.EntryValueItem;
+import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.BondReport;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
 import org.gob.loja.gim.ws.dto.RealEstate;
@@ -145,24 +146,24 @@ public class GimServiceBean implements GimService{
 	}
 	
 	@Override
-	public Map<String, String>  saveUser(String identificationNumber, String username, String password) {
+	public UserResponse  saveUser(String identificationNumber, String username, String password) {
 		return save( identificationNumber, username, password);
 	}
 	
 	@In(create=true)
 	PasswordManager passwordManager;
 	@SuppressWarnings("unchecked")
-	public Map<String, String> save(String identificationNumber, String username, String password) {
+	public UserResponse save(String identificationNumber, String username, String password) {
 	 
-		Map<String, String> result = new HashMap<String, String>();
+		UserResponse userResponse = new UserResponse();
 		
 		Query q = em.createNamedQuery("Resident.findByIdentificationNumber");
 		q.setParameter("identificationNumber", identificationNumber);
 		List<Resident> residentList = q.getResultList();
 		if(residentList.isEmpty()) {
-			result.put("message", "Ya existe un registro con el nombre de usuario");
-			result.put("status", "error");
-			return result;
+			userResponse.setMessage("Ya existe un registro con el nombre de usuario");
+			userResponse.setStatus("error");
+			return userResponse;
 		}
 		
 		//check if username exist
@@ -170,9 +171,9 @@ public class GimServiceBean implements GimService{
 		q.setParameter("name", username);		
 		List<User> userList = q.getResultList();
 		if(!userList.isEmpty()) {
-			result.put("message", "Ya existe un registro con el nombre de usuario");
-			result.put("status", "error");
-			return result;
+			userResponse.setMessage("Ya existe un registro con el nombre de usuario");
+			userResponse.setStatus("error");
+			return userResponse;
 		}
 
 		User user = new User();
@@ -189,20 +190,40 @@ public class GimServiceBean implements GimService{
 				residentList.get(0).setUser(user); 
 				residentService.save(residentList.get(0));
 				
-				result.put("message", "Usuario creado con id:"+user.getId());
-				result.put("status", "ok");
+				userResponse.setMessage("Usuario creado con id:"+user.getId());
+				userResponse.setStatus("ok");
 			} catch (IdentificationNumberExistsException e) {
 				e.printStackTrace();
-				result.put("message", "No se puede actualizar el resident con el userid");
-				result.put("status", "error");
+				userResponse.setMessage("No se puede actualizar el resident con el userid");
+				userResponse.setStatus("error");
 			}
 			
 		}else {
-			result.put("message", "No se puede crear el usuario");
-			result.put("status", "error");
+			userResponse.setMessage("No se puede crear el usuario");
+			userResponse.setStatus("error");
 		}
 		
-		return result; 
+		return userResponse; 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public UserResponse login(String username, String password) {
+		
+		String passwdEncripted = passwordManager.hash(password);
+		Query q = em.createNamedQuery("User.findByUsernameAndPassword");
+		q.setParameter("name", username);
+		q.setParameter("password", passwdEncripted);
+		List<Users> users = q.getResultList();
+		UserResponse response = new UserResponse();
+		if(!users.isEmpty()) {
+			response.setMessage("Numero de registros encontrados: "+users.size());
+			response.setStatus("ok");
+		}else {
+			response.setMessage("No existen registros");
+			response.setStatus("error");
+		}
+		return response;
 	}
  
 	
