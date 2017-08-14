@@ -150,8 +150,8 @@ public class GimServiceBean implements GimService{
 		return save( identificationNumber, username, password);
 	}
 	
-	@In(create=true)
-	PasswordManager passwordManager;
+	//@In(create=true)
+	//PasswordManager passwordManager;
 	@SuppressWarnings("unchecked")
 	public UserResponse save(String identificationNumber, String username, String password) {
 	 
@@ -179,7 +179,7 @@ public class GimServiceBean implements GimService{
 		User user = new User();
 		user.setResident(residentList.get(0));
 		user.setName(username);
-		user.setPassword(passwordManager.hash(password));
+		user.setPassword(hash(password));
 		user.setIsActive(Boolean.TRUE);
 		user.setIsBlocked(Boolean.TRUE);
 		 		 
