@@ -12,6 +12,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
+import org.gob.gim.commercial.action.BusinessHome;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -31,6 +32,7 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityController;
 import org.jboss.seam.log.Log;
 
+import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -95,6 +97,7 @@ public class DeferredMunicipalBondAction extends EntityController{
 		try{
 			//Resident resident = (Resident) query.getSingleResult();
 			resident = (Resident) query.getSingleResult();
+			findPendingAlerts(resident.getId());
 			logger.info("RESIDENT CHOOSER ACTION "+resident.getName());
 			
 			//this.resident = resident;
@@ -214,6 +217,7 @@ public class DeferredMunicipalBondAction extends EntityController{
 		Resident resident = (Resident) component.getAttributes().get("resident");
 		setResident(resident);
 		this.setIdentificationNumber(resident.getIdentificationNumber());
+		findPendingAlerts(resident.getId());
 		deferredMunicipalBondItems.clear();
 		setEntry(null);
 		setEntryCode(null);
@@ -779,5 +783,66 @@ public class DeferredMunicipalBondAction extends EntityController{
 			SystemParameterService systemParameterService) {
 		this.systemParameterService = systemParameterService;
 	}*/
+	// Jock Samaniego
+	// Para bloquear emisión
+	
+	public void wire() {
+		bondIsWire = Boolean.TRUE;
+	}
+	
+	private Boolean bondIsWire = Boolean.FALSE;
+	private List<Alert> pendingAlerts = new ArrayList<Alert>();
+	private Boolean isBlocketToEmit = Boolean.FALSE;
+	private String blocketMessage;
+	private String colorMessage;
+
+	public Boolean getIsBlocketToEmit() {
+		return isBlocketToEmit;
+	}
+
+	public List<Alert> getPendingAlerts() {
+		return pendingAlerts;
+	}
+
+	public String getBlocketMessage() {
+		return blocketMessage;
+	}
+
+	public String getColorMessage() {
+		return colorMessage;
+	}
+
+	public Boolean getBondIsWire() {
+		return bondIsWire;
+	}
+
+	public void setBondIsWire(Boolean bondIsWire) {
+		this.bondIsWire = bondIsWire;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void findPendingAlerts(Long residentId) {
+		blocketMessage = "";
+		pendingAlerts.clear();
+		isBlocketToEmit = Boolean.FALSE;
+		colorMessage = "blue";
+		Query query = getEntityManager().createNamedQuery(
+				"Alert.findPendingAlertsByResidentId");
+		query.setParameter("residentId", residentId);
+		pendingAlerts = query.getResultList();
+		if (pendingAlerts.size() > 0) {
+			blocketMessage = pendingAlerts.get(0).getOpenDetail();
+		}
+		for (Alert alert : pendingAlerts) {
+			// if (alert.getPriority() == AlertPriority.HIGH) {
+			// paymentBlocked = true;
+			// }
+			if (alert.getAlertType().getIsToEmit()) {
+				isBlocketToEmit = Boolean.TRUE;
+				colorMessage = "red";
+				blocketMessage = alert.getOpenDetail();
+			}
+		}
+	}
 
 }

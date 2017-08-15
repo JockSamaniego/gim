@@ -1,0 +1,91 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:g="http://gim.gob.ec/jsf" 
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="role" styleClass="edit">
+
+
+			<h:outputText styleClass="formTitle"
+				value="#{alertTypeHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['alertType']}" />
+
+			<h:panelGrid columns="2" width="100%" id="panelCreation">
+				<s:decorate>
+					<rich:panel id="openPanel">
+						<f:facet name="header">#{messages['alertType']}</f:facet>
+						<s:decorate id="openUserField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['alert.openUser']}</ui:define>
+							<h:inputText id="openUser" size="60" readonly="true"
+								value="#{alertTypeHome.instance.openUser.resident.name}" />
+						</s:decorate>
+		
+						<s:decorate id="openDateField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['alert.openDate']}</ui:define>
+							<h:inputText id="openDate" size="60" readonly="true"
+								value="#{alertTypeHome.instance.createDate}" >
+								<f:convertDateTime
+									pattern="#{messages['common.dateTimePattern']}" />
+							</h:inputText>
+						</s:decorate>
+		
+						<s:decorate id="openNameField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['alertType.name']}</ui:define>
+							<h:inputText id="openName" required="true" size="60" 
+								value="#{alertTypeHome.instance.name}" />
+						</s:decorate>
+
+						<s:decorate id="openDetailField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['alert.openDetail']}</ui:define>
+							<h:inputTextarea id="openDetail" required="true"
+								value="#{alertTypeHome.instance.createDetail}" />
+						</s:decorate>
+						
+						<s:decorate id="isActiveField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['alertType.isActive']}</ui:define>
+							<h:selectBooleanCheckbox id="isActive" value="#{alertTypeHome.instance.isActive}" /> 
+						</s:decorate>
+						
+						<div style="clear: both">
+							<span class="required">*</span>
+							#{messages['common.requiredFields']}
+						</div>
+						<br />
+						<br />
+						<h:outputText id="openRestrictions" style="font-size: 16px; font-weight: bold" value="#{messages['alertType.restrictions']}:" />
+						<h:panelGrid columns="1" width="100%" id="panelRestrictions">
+							
+							<s:decorate id="isToEmitField" template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['alertType.isToEmit']}</ui:define>
+								<h:selectBooleanCheckbox id="isToEmit" value="#{alertTypeHome.instance.isToEmit}" /> 
+							</s:decorate>
+							
+							<s:decorate id="isToCollectField" template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['alertType.isToCollect']}</ui:define>
+								<h:selectBooleanCheckbox id="isToCollect" value="#{alertTypeHome.instance.isToCollect}" /> 
+							</s:decorate>
+						</h:panelGrid>
+					</rich:panel>
+				</s:decorate>
+			</h:panelGrid>
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{alertTypeHome.saveAlertType()}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/common/AlertTypeList.xhtml" />
+
+			</div>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
