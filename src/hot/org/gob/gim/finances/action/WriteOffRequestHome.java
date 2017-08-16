@@ -87,6 +87,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	private boolean isFirstTime = true;
 
 	private List<ConsumptionPreviousDTO> previous_consumptions = new ArrayList<ConsumptionPreviousDTO>();
+	private List<ConsumptionPreviousDTO> aux_previous_consumptions = new ArrayList<ConsumptionPreviousDTO>();
 	
 	private List<MunicipalBondDTO> bondsReport = new ArrayList<MunicipalBondDTO>();
 
@@ -862,8 +863,14 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		_year = String.valueOf(_aux_date.get(Calendar.YEAR));
 		_month = String.valueOf(_aux_date.get(Calendar.MONTH));
 		
-		this.previous_consumptions = this.writeOffService.findPreviousReading(
+		this.aux_previous_consumptions = this.writeOffService.findPreviousReading(
 				writeOff.getWaterMeter().getId(), _year , _month);
+		
+		this.previous_consumptions = new ArrayList<ConsumptionPreviousDTO>();
+		
+		for(int i = aux_previous_consumptions.size()-1; i>=0; i--){
+			this.previous_consumptions.add(this.aux_previous_consumptions.get(i));
+		}
 		
 		this.bondsReport = this.writeOffService.findBonds(this.writeOffRequestSelected.getId());
 

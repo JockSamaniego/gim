@@ -150,7 +150,7 @@
 						<f:facet name="header">
 							Mes
 						</f:facet>
-						<h:outputText value="#{_det_low.month_name}" />
+						<h:outputText value="#{messages[_det_low.month_name]}" />
 					</h:column>
 
 					<h:column>
@@ -215,7 +215,7 @@
 						<f:facet name="header">
 							Mes
 						</f:facet>
-						<h:outputText value="#{_det_new.month_name}" />
+						<h:outputText value="#{messages[_det_new.month_name]}" />
 					</h:column>
 
 					<h:column>
@@ -265,7 +265,6 @@
 
 					<s:button id="cancelAdd" value="Cancelar" propagation="end"
 					view="/finances/WriteOffRequestList.xhtml"/>
-
 			</div>
 		</h:form>
 
