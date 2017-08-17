@@ -88,7 +88,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 	private List<ConsumptionPreviousDTO> previous_consumptions = new ArrayList<ConsumptionPreviousDTO>();
 	private List<ConsumptionPreviousDTO> aux_previous_consumptions = new ArrayList<ConsumptionPreviousDTO>();
-	
+
 	private List<MunicipalBondDTO> bondsReport = new ArrayList<MunicipalBondDTO>();
 
 	/*
@@ -131,7 +131,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	private Boolean not_found_adjunct_bond_new = Boolean.FALSE;
 
 	private WriteOffDetail aux_entity_detail_old;
-	
+
 	private WriteOffDetail aux_entity_detail_new;
 
 	public List<WaterSupply> getWaterSupplies() {
@@ -402,7 +402,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	public void setAux_entity_detail_new(WriteOffDetail aux_entity_detail_new) {
 		this.aux_entity_detail_new = aux_entity_detail_new;
 	}
-	
+
 	public List<MunicipalBondDTO> getBondsReport() {
 		return bondsReport;
 	}
@@ -676,16 +676,18 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 		if (!this.disabled_old_fields) {
 			detail.setMonthType(this.aux_entity_detail_old.getMonthType());
-			detail.setMonth(this.aux_entity_detail_old.getMonthType().getMonthInt());
+			detail.setMonth(this.aux_entity_detail_old.getMonthType()
+					.getMonthInt());
 		} else {
 			detail.setMonthType(MonthType.getByValue(this.detail_aux_new
 					.getMonth()));
 			detail.setMonth(this.detail_aux_new.getMonth());
 		}
-		
+
 		if (!this.disabled_new_fields) {
 			detail.setMonthType(this.aux_entity_detail_new.getMonthType());
-			detail.setMonth(this.aux_entity_detail_new.getMonthType().getMonthInt());
+			detail.setMonth(this.aux_entity_detail_new.getMonthType()
+					.getMonthInt());
 		} else {
 			detail.setMonthType(MonthType.getByValue(this.detail_aux_new
 					.getMonth()));
@@ -810,10 +812,10 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		this.detailsTableNew = new ArrayList<DetailTableAuxDTO>();
 
 		String _month = "";
-		
-		String _year= "";
-		
-		List<Calendar> dates_consumptions = new ArrayList<Calendar>(); 
+
+		String _year = "";
+
+		List<Calendar> dates_consumptions = new ArrayList<Calendar>();
 
 		for (int i = 0; i < writeOff.getDetails().size(); i++) {
 
@@ -842,42 +844,46 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 			_new.setYear(det.getYear());
 
 			_month = String.valueOf(det.getMonthType().getMonthInt());
-			
+
 			Calendar _cal = Calendar.getInstance();
 			_cal.set(Calendar.YEAR, det.getYear());
 			_cal.set(Calendar.MONTH, det.getMonthType().getMonthInt());
-			
+
 			dates_consumptions.add(_cal);
 			this.detailsTableNew.add(_new);
 
 		}
-		
+
 		Calendar _aux_date = dates_consumptions.get(0);
-		
-		for(int i = 0; i < dates_consumptions.size(); i++){
-			if( dates_consumptions.get(i).getTimeInMillis() < _aux_date.getTimeInMillis() ){
+
+		for (int i = 0; i < dates_consumptions.size(); i++) {
+			if (dates_consumptions.get(i).getTimeInMillis() < _aux_date
+					.getTimeInMillis()) {
 				_aux_date = dates_consumptions.get(i);
 			}
 		}
-		
+
 		_year = String.valueOf(_aux_date.get(Calendar.YEAR));
 		_month = String.valueOf(_aux_date.get(Calendar.MONTH));
-		
-		this.aux_previous_consumptions = this.writeOffService.findPreviousReading(
-				writeOff.getWaterMeter().getId(), _year , _month);
-		
+
+		this.aux_previous_consumptions = this.writeOffService
+				.findPreviousReading(writeOff.getWaterMeter().getId(), _year,
+						_month);
+
 		this.previous_consumptions = new ArrayList<ConsumptionPreviousDTO>();
-		
-		for(int i = aux_previous_consumptions.size()-1; i>=0; i--){
-			this.previous_consumptions.add(this.aux_previous_consumptions.get(i));
+
+		for (int i = aux_previous_consumptions.size() - 1; i >= 0; i--) {
+			this.previous_consumptions.add(this.aux_previous_consumptions
+					.get(i));
 		}
-		
-		this.bondsReport = this.writeOffService.findBonds(this.writeOffRequestSelected.getId());
+
+		this.bondsReport = this.writeOffService
+				.findBonds(this.writeOffRequestSelected.getId());
 
 		return "/finances/WriteOffRequestReportPDF.xhtml";
 	}
 
-	public BigDecimal totalOldBonds() {	
+	public BigDecimal totalOldBonds() {
 
 		BigDecimal sum = BigDecimal.ZERO;
 
@@ -942,6 +948,63 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		Charge charge = systemParameterService.materialize(Charge.class,
 				systemParameter);
 		return charge;
+	}
+
+	public String prepareEditWriteOffRequest(Long writeOffRequest_id) {
+		this.detailsTableOld = new ArrayList<DetailTableAuxDTO>();
+		this.detailsTableNew = new ArrayList<DetailTableAuxDTO>();
+		System.out.println("Llega al preparar para editar:"
+				+ writeOffRequest_id);
+		this.setId(writeOffRequest_id);
+		System.out.println("entidad:" + this.instance);
+		getInstance();
+		System.out.println("entidad:" + this.instance);
+		this.identificationNumber = this.instance.getResident()
+				.getIdentificationNumber();
+
+		Query q = this.getEntityManager().createNamedQuery(
+				"WaterSupply.findByWaterMeter");
+		q.setParameter("idWaterMeter", this.instance.getWaterMeter().getId());
+		WaterSupply waterSupply = (WaterSupply) q.getSingleResult();
+
+		q = this.getEntityManager().createNamedQuery(
+				"WaterSupply.findByResident");
+		q.setParameter("idResident", this.instance.getResident().getId());
+		this.waterSupplies = q.getResultList();
+
+		this.waterSupplySelected = waterSupply;
+
+		for (int i = 0; i < this.instance.getDetails().size(); i++) {
+
+			WriteOffDetail det = this.instance.getDetails().get(i);
+
+			DetailTableAuxDTO old = new DetailTableAuxDTO();
+			old.setIndex(i + 1);
+			old.setBond_number(det.getOldMunicipalBond().getNumber());
+			old.setCurrent_reading(det.getOldCurrentReading());
+			old.setM3(det.getOldAmount());
+			old.setMonth_name(det.getMonthType().name());
+			old.setPrevious_reading(det.getOldPreviousReading());
+			old.setValue(det.getOldMunicipalBond().getValue());
+			old.setYear(det.getYear());
+
+			this.detailsTableOld.add(old);
+
+			DetailTableAuxDTO _new = new DetailTableAuxDTO();
+			_new.setIndex(i + 1);
+			_new.setBond_number(det.getNewMunicipalBond().getNumber());
+			_new.setCurrent_reading(det.getNewCurrentReading());
+			_new.setM3(det.getNewAmount());
+			_new.setMonth_name(det.getMonthType().name());
+			_new.setPrevious_reading(det.getNewPreviousReading());
+			_new.setValue(det.getNewMunicipalBond().getValue());
+			_new.setYear(det.getYear());
+
+			this.detailsTableNew.add(_new);
+
+		}
+
+		return "/finances/WriteOffRequestEdit.xhtml";
 	}
 
 }
