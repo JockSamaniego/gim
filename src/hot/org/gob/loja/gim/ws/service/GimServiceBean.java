@@ -841,4 +841,85 @@ public class GimServiceBean implements GimService{
 		}
 	}
 	
+	@Override
+	public Boolean generateEmissionOrder(String name, String password, String identificationNumber, 
+			String accountCode, String pplessUser, Integer quantity) throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound, 
+			EmissionOrderNotGenerate, EmissionOrderNotSave, InvalidUser, AccountIsNotActive, AccountIsBlocked{
+		
+		try{
+			Resident resident = residentService.find(identificationNumber);
+			if (resident == null){
+				throw new TaxpayerNotFound();
+			}
+			//Entry entry = revenueService.findByAccountCode(accountCode);
+			Entry entry = revenueService.findEntryByCode(accountCode);
+			if (entry == null){
+				throw new EntryNotFound();
+			}
+			
+			Date currentDate = java.util.Calendar.getInstance().getTime();
+			List<FiscalPeriod> fiscalPeriods = revenueService.findFiscalPeriodCurrent(currentDate);
+			
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null && !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null; 
+			
+			if (fiscalPeriodCurrent == null){
+				throw new FiscalPeriodNotFound();
+			}
+			
+			EntryValueItem entryValueItem = new EntryValueItem();
+			entryValueItem.setDescription(entry.getName());
+			entryValueItem.setServiceDate(currentDate);
+			entryValueItem.setAmount(new BigDecimal(quantity));
+			//entryValueItem.setMainValue(mainValue)
+							
+			MunicipalBond mb = revenueService.createMunicipalBond(resident, entry, fiscalPeriodCurrent, entryValueItem, true);
+			mb.setGroupingCode(identificationNumber);
+			if (mb.getResident().getCurrentAddress() != null) {
+				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+			}
+			User user = findUser(name, password);
+			if (user == null){
+				throw new InvalidUser();
+			}
+			Person emitter = findPersonFromUser(user.getId());
+			mb.setEmitter(emitter);
+			mb.setOriginator(emitter);
+			mb.setDescription(pplessUser);
+			
+			///
+			revenueService.emit(mb, user);
+			///
+			System.out.println("=========> MUNICIPAL BOND: ");
+			System.out.println("===> RESIDENT: " + mb.getResident().getName());
+			System.out.println("===> DIRECCION: " + mb.getAddress());
+			System.out.println("===> DESCRIPCION: " + mb.getDescription());
+			System.out.println("===> BASE: " + mb.getBase());
+			System.out.println("===> CREATIONDATE: " + mb.getCreationDate());
+			System.out.println("===> EMISSIONDATE: " + mb.getEmisionDate());
+			System.out.println("===> EMITTER: " + mb.getEmitter().getName());
+			System.out.println("===> ORIGINATOR: " + mb.getOriginator().getName());
+			System.out.println("===> EXPIRATIONDATE: " + mb.getExpirationDate());
+			System.out.println("===> EMISSIONPERIOD: " + mb.getEmisionPeriod());
+			System.out.println("===> ENTRY: " + mb.getEntry().getName() + " - " + mb.getEntry().getCode());
+			System.out.println("===> FISCALPERIOD: " + mb.getFiscalPeriod().getName());
+			System.out.println("===> ITEMS: " + mb.getItems().size());
+			System.out.println("===> TOTAL: " + mb.getPaidTotal());
+			System.out.println("===> VALUE: " + mb.getValue());
+			System.out.println("===> NUMBER: " + mb.getNumber());
+			System.out.println("===> MUNICIPALBONDSTATUS: " + (mb.getMunicipalBondStatus() != null ? mb.getMunicipalBondStatus().getName():null));
+			System.out.println("===> MUNICIPALBONDTYPE: " + (mb.getMunicipalBondType() != null ? mb.getMunicipalBondType():null));
+			System.out.println("===> MUNICIPALBONDLEGALSTATUS: " + (mb.getLegalStatus() != null ? mb.getLegalStatus().name() : null));
+			
+			System.out.println("::::::generateEmissionOrder: SAVED OK!!");
+			return Boolean.TRUE;			
+		}catch(NonUniqueIdentificationNumberException e){
+			throw new TaxpayerNonUnique();
+		} catch (EntryDefinitionNotFoundException e) {
+			throw new EmissionOrderNotGenerate();
+		} catch (Exception e) {
+			throw new EmissionOrderNotSave();
+		}
+		//return Boolean.FALSE;
+	}
+	
 }

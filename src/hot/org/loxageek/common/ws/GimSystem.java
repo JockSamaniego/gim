@@ -299,5 +299,13 @@ public class GimSystem {
 	        }
 	    }
 	}
+	
+	@WebMethod
+	public Boolean generateEmissionOrderQuantity(String name, String password, String identificationNumber, 
+			String accountCode, String pplessuser, Integer quantity) throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound, 
+			EmissionOrderNotGenerate, EmissionOrderNotSave, InvalidUser, AccountIsNotActive, AccountIsBlocked{
+		System.out.println("====> GENERATE EmissionOrder FOR: "+accountCode);
+		return gimService.generateEmissionOrder(name, password, identificationNumber, accountCode, pplessuser, quantity);
+	}
 
 }

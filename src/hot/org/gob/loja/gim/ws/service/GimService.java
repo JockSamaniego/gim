@@ -60,6 +60,13 @@ public interface GimService {
 			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
 			AccountIsBlocked;
 	
+	Boolean generateEmissionOrder(String name, String password,
+			String identificationNumber, String accountCode, String pplessUser, Integer quantity)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
+	
 	StatementReport buildReport(ServiceRequest request, Date startDate, Date endDate, String reportType, Long entryId)
 			throws InvalidUser;
 	
