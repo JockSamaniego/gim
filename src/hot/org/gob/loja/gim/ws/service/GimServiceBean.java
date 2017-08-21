@@ -213,9 +213,11 @@ public class GimServiceBean implements GimService{
 		if(!users.isEmpty()) {
 			response.setMessage(users.get(0).getResident().getIdentificationNumber());
 			response.setStatus("ok");
+			response.setName(users.get(0).getResident().getName());
 		}else {
 			response.setMessage("No existen registros");
 			response.setStatus("error");
+			response.setName("");
 		}
 		return response;
 	}
