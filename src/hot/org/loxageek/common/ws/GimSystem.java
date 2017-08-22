@@ -251,7 +251,7 @@ public class GimSystem {
 	@WebMethod
 	public UserResponse createUser(ServiceRequest request, String username, String password) 
 	throws InvalidUser, AccountIsNotActive, AccountIsBlocked, UserNotSaved{
-		UserResponse data = gimService.saveUser(request.getIdentificationNumber(),username, password);
+		UserResponse data = gimService.saveUser(request,username, password);
 		InvalidateSession();
 		return data; 
 	}

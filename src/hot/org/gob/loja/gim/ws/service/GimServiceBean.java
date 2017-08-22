@@ -140,8 +140,8 @@ public class GimServiceBean implements GimService{
 	}
 	
 	@Override
-	public UserResponse  saveUser(String identificationNumber, String username, String password) {
-		return save( identificationNumber, username, password);
+	public UserResponse  saveUser(ServiceRequest request, String username, String password) {
+		return save( request.getIdentificationNumber(), username, password);
 	}
 	
 	//@In(create=true)
