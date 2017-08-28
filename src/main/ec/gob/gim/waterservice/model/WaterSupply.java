@@ -49,8 +49,12 @@ import ec.gob.gim.revenue.model.Contract;
 				+ "LEFT JOIN FETCH waterSupply.waterSupplyCategory "
 				+ "LEFT JOIN FETCH waterSupply.route route "
 				+ "WHERE route.id = :routeId and waterSupply.isCanceled = :isCanceled order by waterSupply.routeOrder"),
-		/*@NamedQuery(name = "WaterSuppply.findActiveWaterSupplyForExemptions", query = "SELECT waterSupply FROM WaterSupply waterSupply "
-				+ "WHERE waterSupply.applyExemptions = true and waterSupply.serviceOwner.id = :residentId"),*/
+		/*
+		 * @NamedQuery(name = "WaterSuppply.findActiveWaterSupplyForExemptions",
+		 * query = "SELECT waterSupply FROM WaterSupply waterSupply " +
+		 * "WHERE waterSupply.applyExemptions = true and waterSupply.serviceOwner.id = :residentId"
+		 * ),
+		 */
 		@NamedQuery(name = "WaterSupply.findActualMeter", query = "SELECT waterSupply FROM WaterSupply waterSupply "
 				+ "WHERE waterSupply.route.id = :routeId order by waterSupply.routeOrder"),
 		@NamedQuery(name = "WaterSupply.findMaxService", query = "SELECT MAX(waterSupply.serviceNumber) FROM WaterSupply waterSupply"),
@@ -60,6 +64,9 @@ import ec.gob.gim.revenue.model.Contract;
 				+ "LEFT JOIN FETCH waterSupply.serviceOwner serviceOwner "
 				+ "left join fetch waterSupply.recipeOwner recipeOwner "
 				+ "WHERE serviceOwner.id = :idResident"),
+		@NamedQuery(name = "WaterSupply.findByWaterMeter", query = "SELECT waterSupply FROM WaterSupply waterSupply "
+				+ "LEFT JOIN FETCH waterSupply.waterMeters wm "
+				+ "WHERE wm.id = :idWaterMeter"),
 		@NamedQuery(name = "WaterSupply.findByActiveExemption", query = "SELECT count(waterSupply.id) FROM WaterSupply waterSupply "
 				+ "LEFT JOIN waterSupply.serviceOwner serviceOwner "
 				+ "WHERE waterSupply.serviceOwner.id = :idResident and (waterSupply.applyElderlyExemption = true or waterSupply.applySpecialExemption = true) ") })
@@ -80,9 +87,9 @@ public class WaterSupply {
 	private String ncasa;
 
 	private Boolean hasSewerage;
-	
+
 	private Boolean applySpecialExemption;
-	private Boolean applyElderlyExemption;	
+	private Boolean applyElderlyExemption;
 
 	private Boolean isCanceled;
 
@@ -131,7 +138,7 @@ public class WaterSupply {
 	private Integer notPayMonths;
 	@Transient
 	private BigDecimal totalDebt;
-	
+
 	@Transient
 	private Integer sequence;
 
@@ -181,7 +188,8 @@ public class WaterSupply {
 			wm.setIsActive(new Boolean(false));
 		}
 		if (!waterMeters.contains(waterMeter)) {
-			// Revisar esta parte por la navegabilidad waterMeter.setWaterSupply(this)
+			// Revisar esta parte por la navegabilidad
+			// waterMeter.setWaterSupply(this)
 			waterMeters.add(waterMeter);
 		}
 	}
@@ -338,7 +346,6 @@ public class WaterSupply {
 	public void setIsCanceled(Boolean isCanceled) {
 		this.isCanceled = isCanceled;
 	}
-
 
 	/**
 	 * Contribuyente a cual se va a emitir la factura

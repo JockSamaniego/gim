@@ -112,7 +112,15 @@
 							<f:facet name="header">Acciones</f:facet>
 							<a:region>
 
-								<h:commandLink   action="#{writeOffRequestHome.print(_writeOffRequest.id)}" value="Imprimir" target="_blank" />
+								<h:commandLink
+									action="#{writeOffRequestHome.print(_writeOffRequest.id)}"
+									value="Imprimir" target="_blank" />
+
+								<a:commandButton id="btnEdit"
+									value="Editar"
+									ajaxSingle="true" bypassUpdates="true" style="margin-left: 10px;"
+									action="#{writeOffRequestHome.prepareEditWriteOffRequest(_writeOffRequest.id)}"
+									rendered="#{writeOffRequestHome.render_edit_button(_writeOffRequest._days)}" />
 
 							</a:region>
 
