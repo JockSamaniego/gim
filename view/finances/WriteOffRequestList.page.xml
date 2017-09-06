@@ -11,4 +11,11 @@
 			<redirect view-id="/finances/WriteOffRequestReportPDF.xhtml" />
 		</rule>
 	</navigation>
+	
+	<navigation from-action="#{writeOffRequestHome.prepareEditWriteOffRequest()}">
+      <rule if-outcome="to_edit">
+         <end-conversation/>
+         <redirect view-id="/finances/WriteOffRequestEdit.xhtml"/>
+      </rule>
+   </navigation>
 </page>
