@@ -46,7 +46,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@In
 	FacesMessages facesMessages;
 
@@ -136,7 +136,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	private WriteOffDetail aux_entity_detail_old;
 
 	private WriteOffDetail aux_entity_detail_new;
-	
+
 	private Integer days_for_edit;
 
 	public List<WaterSupply> getWaterSupplies() {
@@ -415,7 +415,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	public void setBondsReport(List<MunicipalBondDTO> bondsReport) {
 		this.bondsReport = bondsReport;
 	}
-	
+
 	public Integer getDays_for_edit() {
 		return days_for_edit;
 	}
@@ -451,7 +451,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 			this._types = this.findTypes();
 
 			loadCharge();
-			
+
 		}
 
 		if (writeOffService == null) {
@@ -693,9 +693,11 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 			detail.setMonthType(this.aux_entity_detail_old.getMonthType());
 			detail.setMonth(this.aux_entity_detail_old.getMonthType()
 					.getMonthInt());
-		}
-
-		if (!this.disabled_new_fields) {
+		} else if (this.disabled_old_fields) {
+			detail.setMonthType(MonthType.getByValue(this.detail_aux_old
+					.getMonth()));
+			detail.setMonth(this.detail_aux_old.getMonth());
+		} else if (!this.disabled_new_fields) {
 			detail.setMonthType(this.aux_entity_detail_new.getMonthType());
 			detail.setMonth(this.aux_entity_detail_new.getMonthType()
 					.getMonthInt());
@@ -734,16 +736,16 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 		System.out.println("Llega al save");
 		boolean _exist_details_actives = Boolean.FALSE;
-		
+
 		for (WriteOffDetail w : this.instance.getDetails()) {
-			if(w.getIsActive()){
+			if (w.getIsActive()) {
 				_exist_details_actives = Boolean.TRUE;
 				break;
 			}
 		}
 
 		if (!_exist_details_actives) {
-						
+
 			facesMessages.addToControl("",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					"No ha agregado obligaciones");
@@ -1119,14 +1121,15 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 			}
 		}
 	}
-	
-	public Boolean render_edit_button(Integer days){
-		
+
+	public Boolean render_edit_button(Integer days) {
+
 		if (systemParameterService == null)
 			systemParameterService = ServiceLocator.getInstance().findResource(
 					SYSTEM_PARAMETER_SERVICE_NAME);
-		this.days_for_edit = systemParameterService.findParameter("TIME_EDIT_DAYS_WRITEOFFREQUEST_UMAPAL");
-		
+		this.days_for_edit = systemParameterService
+				.findParameter("TIME_EDIT_DAYS_WRITEOFFREQUEST_UMAPAL");
+
 		return days <= this.days_for_edit;
 	}
 
