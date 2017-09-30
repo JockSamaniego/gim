@@ -27,12 +27,17 @@
 		</p:cell>
 		<p:cell horizontalAlignment="center" grayFill="0.90">
 			<p:font size="6" style="bold">
-				<p:paragraph alignment="center">#{messages['item.code']}</p:paragraph>
+				<p:paragraph alignment="center">
+					<p:text value="#{empty _deposit.municipalBond.receipt ? 'Rubro' : 	messages['item.code']}"></p:text>	
+				</p:paragraph>
 			</p:font>
 		</p:cell>
 		<p:cell horizontalAlignment="center" grayFill="0.90">
 			<p:font size="6" style="bold">
-				<p:paragraph alignment="center">#{messages['entry']}</p:paragraph>
+				<p:paragraph alignment="center">
+
+					<p:text value="#{empty _deposit.municipalBond.receipt ? 'Concepto' : 	messages['entry']}"></p:text>					
+				</p:paragraph>
 			</p:font>
 		</p:cell>
 		<p:cell horizontalAlignment="center" grayFill="0.90">

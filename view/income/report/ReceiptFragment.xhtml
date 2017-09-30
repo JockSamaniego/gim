@@ -99,7 +99,9 @@
 
 				<p:cell horizontalAlignment="right">
 					<p:font size="6" style="bold">
-						<p:paragraph alignment="right">#{messages['municipalBond.number']}:</p:paragraph>
+						<p:paragraph alignment="right">
+							<p:text value="#{empty _deposit.municipalBond.receipt ? 'Título': messages['municipalBond.number']}"></p:text>:
+						</p:paragraph>
 					</p:font>
 				</p:cell>
 				<p:cell horizontalAlignment="left">
@@ -121,7 +123,7 @@
 
 				<p:cell horizontalAlignment="right" >
 					<p:font size="6" style="bold">
-						<p:paragraph alignment="right">#{messages['entry.code']}:</p:paragraph>
+						<p:paragraph alignment="right"><p:text value="#{empty _deposit.municipalBond.receipt ? 'Rubro' : 	messages['entry.code']}"></p:text>:</p:paragraph>
 					</p:font>
 				</p:cell>
 				<p:cell horizontalAlignment="left" >
@@ -154,7 +156,7 @@
 				
 				<p:cell horizontalAlignment="right" >
 					<p:font size="6" style="bold">
-						<p:paragraph alignment="right">#{messages['entry']}:</p:paragraph>
+						<p:paragraph alignment="right"><p:text value="#{empty _deposit.municipalBond.receipt ? 'Concepto' : 	messages['entry']}"></p:text>:</p:paragraph>
 					</p:font>
 				</p:cell>
 				<p:cell horizontalAlignment="left" >
