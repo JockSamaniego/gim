@@ -140,8 +140,8 @@ public class GimServiceBean implements GimService{
 	}
 	
 	@Override
-	public UserResponse  saveUser(String identificationNumber, String username, String password) {
-		return save( identificationNumber, username, password);
+	public UserResponse  saveUser(ServiceRequest request, String username, String password) {
+		return save( request.getIdentificationNumber(), username, password);
 	}
 	
 	//@In(create=true)
@@ -155,10 +155,17 @@ public class GimServiceBean implements GimService{
 		q.setParameter("identificationNumber", identificationNumber);
 		List<Resident> residentList = q.getResultList();
 		if(residentList.isEmpty()) {
-			userResponse.setMessage("Ya existe un registro con el nombre de usuario");
+			userResponse.setMessage("No existe resident");
 			userResponse.setStatus("error");
 			return userResponse;
 		}
+		
+		Resident resident = residentList.get(0);
+		if(resident.getUser()!=null) {
+			userResponse.setMessage("El resident ya tiene usuario");
+			userResponse.setStatus("userExist");
+			return userResponse;
+		} 
 		
 		//check if username exist
 		q = em.createNamedQuery("User.findByUsername");
@@ -175,7 +182,7 @@ public class GimServiceBean implements GimService{
 		user.setName(username);
 		user.setPassword(hash(password));
 		user.setIsActive(Boolean.TRUE);
-		user.setIsBlocked(Boolean.TRUE);
+		user.setIsBlocked(Boolean.FALSE);
 		 		 
 		user = userService.save(user);			
 	   
@@ -213,9 +220,11 @@ public class GimServiceBean implements GimService{
 		if(!users.isEmpty()) {
 			response.setMessage(users.get(0).getResident().getIdentificationNumber());
 			response.setStatus("ok");
+			response.setName(users.get(0).getResident().getName());
 		}else {
 			response.setMessage("No existen registros");
 			response.setStatus("error");
+			response.setName("");
 		}
 		return response;
 	}

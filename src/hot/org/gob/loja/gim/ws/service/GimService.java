@@ -79,7 +79,7 @@ public interface GimService {
 	 * @param password
 	 * @return
 	 */
-	UserResponse  saveUser(String identificationNumber, String username, String password);
+	UserResponse  saveUser(ServiceRequest request, String username, String password);
 	UserResponse login(String username, String password);
 	
 }
