@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 public class DetailTableAuxDTO {
 	
+	private Long detail_id = null;
+	
 	private Integer index;
 	
 	private Long bond_number;
@@ -82,6 +84,14 @@ public class DetailTableAuxDTO {
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
+	}
+	
+	public Long getDetail_id() {
+		return detail_id;
+	}
+
+	public void setDetail_id(Long detail_id) {
+		this.detail_id = detail_id;
 	}
 
 	@Override

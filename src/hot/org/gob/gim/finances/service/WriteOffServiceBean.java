@@ -4,7 +4,6 @@
 package org.gob.gim.finances.service;
 
 import java.math.BigInteger;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -14,7 +13,6 @@ import javax.persistence.Query;
 
 import org.gob.gim.common.NativeQueryResultsMapper;
 
-import ec.gob.gim.finances.model.WriteOffRequest;
 import ec.gob.gim.finances.model.DTO.ConsumptionPreviousDTO;
 import ec.gob.gim.finances.model.DTO.MunicipalBondDTO;
 import ec.gob.gim.finances.model.DTO.WriteOffDetailDTO;
@@ -40,19 +38,19 @@ public class WriteOffServiceBean implements WriteOffService {
 						+ "con.month as mes, "
 						+ "con.monthtype as mes_nombre, "
 						+ "con.year as anio, "
-						+ "con.previousreading as lectura_anterior, "
-						+ "con.currentreading as lectura_actual, "
-						+ "COALESCE(con.amount, -1) as consumo_m3, "
+						+ "wsr.consumptionpreviousreading as lectura_anterior, " 
+						+ "wsr.consumptioncurrentreading as lectura_actual, "
+						+ "COALESCE(wsr.consumptionamount, -1) as consumo_m3, "
 						+ "mb.value as valor, "
 						+ "mb.adjunct_id, "
 						+ "mb.resident_id, "
 						+ "mbs.name, "
 						+ "(select count(wod.id) from writeoffdetail wod "
 						+ "INNER JOIN municipalbond mb1 ON mb1.id = wod.oldmb_id "
-						+ "where mb1.number =  mb.number) count_old, "
+						+ "where mb1.number =  mb.number AND wod.isactive = TRUE ) count_old, "
 						+ "(select count(wod1.id) from writeoffdetail wod1 "
 						+ "INNER JOIN municipalbond mb2 ON mb2.id = wod1.newmb_id "
-						+ "where mb2.number =  mb.number) count_new "
+						+ "where mb2.number =  mb.number AND wod1.isactive = TRUE) count_new "
 						+ "FROM municipalbond mb "
 						+ "LEFT JOIN waterservicereference wsr ON wsr.id = mb.adjunct_id "
 						+ "LEFT JOIN consumption con ON con.id = wsr.consumption_id "
@@ -84,7 +82,8 @@ public class WriteOffServiceBean implements WriteOffService {
 						+ "wrt.name AS _type, "
 						+ "to_char(seq.code,'0000') number_code, "
 						+ "EXTRACT(YEAR FROM wor.date) as _year, "
-						+ "to_char(seq.code, '0000') || '-' || EXTRACT (YEAR FROM wor.date) AS request_number "
+						+ "to_char(seq.code, '0000') || '-' || EXTRACT (YEAR FROM wor.date) AS request_number, "
+						+ "current_date - wor.date + 1 as _days "
 						+ "FROM "
 						+ "writeoffrequest wor "
 						+ "INNER JOIN resident res ON wor.resident_id = res.id "
@@ -167,6 +166,7 @@ public class WriteOffServiceBean implements WriteOffService {
 						+ "to_char(seq.code,'0000') number_code, "
 						+ "EXTRACT(YEAR FROM wor.date) as _year, "
 						+ "to_char(seq.code, '0000') || '-' || EXTRACT (YEAR FROM wor.date) AS request_number, "
+						+ "current_date - wor.date as _days, "
 						+ "wor.internalprocessnumber, "
 						+ "wor.detail, "
 						+ "wrt.code "
@@ -196,9 +196,9 @@ public class WriteOffServiceBean implements WriteOffService {
 						+ "to_char(to_date(con.year||'-'||con.month, 'YYYY-MM-DD'), 'TMMonth') as mes, "
 						+ "wme.serial as medidor, "
 						+ "wms.name as estado_consumo, "
-						+ "con.currentreading as lec_actual, "
-						+ "con.previousreading as lec_anterior, "
-						+ "con.amount as consumo, "
+						+ "wsr.consumptioncurrentreading as lectura_actual, "
+						+ "wsr.consumptionpreviousreading as lectura_anterior, " 
+						+ "COALESCE(wsr.consumptionamount, -1) as consumo_m3," 
 						+ "mbs.name as est_pago, "
 						+ "mb.paidtotal as valor "
 						+ "FROM consumption con "
