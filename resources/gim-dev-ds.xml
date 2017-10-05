@@ -9,8 +9,8 @@
       <use-java-context>false</use-java-context>
       <connection-url>jdbc:postgresql://localhost:5432/gim</connection-url>
       <driver-class>org.postgresql.Driver</driver-class>
-      <user-name>postgres</user-name>
-      <password>59911087</password>
+      <user-name>rolgimloja</user-name>
+      <password>server</password>
    </local-tx-datasource>
 
 </datasources>

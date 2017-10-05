@@ -120,7 +120,7 @@
 						<h:outputText
 							value="#{_emissionOrder.municipalBonds.size() == 1 ? _emissionOrder.municipalBonds.get(0).resident.name : ''}" />
 					</h:column>
-
+					
 					<h:column>
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">
@@ -131,6 +131,20 @@
 							</ui:include>
 						</f:facet>
 						<h:outputText value="#{_emissionOrder.description}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{emissionOrderList}" />
+								<ui:param name="propertyLabel" value="#{messages['vehicle.citationDate']}" />
+								<ui:param name="propertyPath" value="m.adjunct.citationDate" />
+							</ui:include>
+						</f:facet>
+						<h:outputText
+							value="#{_emissionOrder.municipalBonds.size() == 1 ? _emissionOrder.municipalBonds.get(0).adjunct.citationDate : ''}" >
+								<f:convertDateTime pattern="yyyy-MM-dd" />
+							</h:outputText>
 					</h:column>
 
 					<rich:column styleClass="action">

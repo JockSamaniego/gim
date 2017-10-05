@@ -11,6 +11,7 @@ import javax.ejb.Local;
 
 import ec.gob.gim.finances.model.WriteOffRequest;
 import ec.gob.gim.finances.model.DTO.ConsumptionPreviousDTO;
+import ec.gob.gim.finances.model.DTO.MunicipalBondDTO;
 import ec.gob.gim.finances.model.DTO.WriteOffDetailDTO;
 import ec.gob.gim.finances.model.DTO.WriteOffRequestDTO;
 
@@ -32,5 +33,7 @@ public interface WriteOffService {
 	WriteOffRequestDTO findById(Long writeOffRequestId);
 	
 	List<ConsumptionPreviousDTO> findPreviousReading(Long watersupply_id, String _year, String _month);
+	
+	List<MunicipalBondDTO> findBonds(Long writeOfRequestId);
 
 }

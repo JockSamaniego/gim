@@ -6,23 +6,13 @@
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core" title="Baja" subject="report"
-	type="pdf" pageSize="A4" margins="20 20 20 20" author="René"
+	type="pdf" pageSize="A4" margins="30 30 30 30" author="René"
 	orientation="portrait" creator="René">
-
-	<f:facet name="header">
-		<p:font size="9" name="HELVETICA">
-			<p:footer borderWidthTop="1" borderColorTop="blue"
-				borderWidthBottom="0" alignment="center">
-	 			[<p:pageNumber />]
-			</p:footer>
-		</p:font>
-	</f:facet>
-
 
 	<p:font size="9" name="HELVETICA">
 
 		<p:paragraph>
-			<p:table columns="3" widthPercentage="100" spacingAfter="30"
+			<p:table columns="3" widthPercentage="100" spacingAfter="20"
 				widths="1 10 1">
 				<f:facet name="defaultCell">
 					<p:cell borderWidth="0" />
@@ -60,9 +50,8 @@
 
 				</p:cell>
 				<p:cell>
-					<p:image value="#{gim.institution.logo}" alignment="center"
+					<p:image value="/img/logo_umapal.png" alignment="center"
 						widht="1" height="1">
-						<s:transformImageSize height="70" maintainRatio="true" />
 					</p:image>
 				</p:cell>
 			</p:table>
@@ -312,7 +301,7 @@
 					horizontalAlignment="right">
 					<p:paragraph>
 						<p:font size="8">
-							<p:text value="#{_bond.month_name}" />
+							<p:text value="#{messages[_bond.month_name]}"/>
 						</p:font>
 					</p:paragraph>
 
@@ -387,7 +376,7 @@
 
 		</p:table>
 
-		<p:paragraph alignment="justify" spacingAfter="60">
+		<p:paragraph alignment="justify" spacingAfter="45">
 			Comunicar el particular a los siguientes Departamentos Municipales: Finanzas, Recaudaciones, Rentas, Coactivas, para su fiel cumplimiento.- Es dado y firmado en la Dirección Financiera del Municipio de Loja.- CUMPLASE Y NOTIFÍQUESE. 
 		</p:paragraph>
 
@@ -435,9 +424,8 @@
 					</p:font>
 				</p:cell>
 				<p:cell>
-					<p:image value="#{gim.institution.logo}" alignment="center"
+					<p:image value="/img/logo_umapal.png" alignment="center"
 						widht="1" height="1">
-						<s:transformImageSize height="70" maintainRatio="true" />
 					</p:image>
 				</p:cell>
 			</p:table>
@@ -665,7 +653,7 @@
 					horizontalAlignment="right">
 					<p:paragraph>
 						<p:font size="8">
-							<p:text value="#{_bond.month_name}" />
+							<p:text value="#{messages[_bond.month_name]}"/>
 						</p:font>
 					</p:paragraph>
 
@@ -768,7 +756,7 @@
 			<p:cell colspan="1">
 				<p:paragraph>
 					<p:font size="8" style="bold">
-						<p:text value="RESPONSABLE" />
+						<p:text value="RESPONSABLE/DETALLE" />
 					</p:font>
 
 				</p:paragraph>
@@ -779,7 +767,7 @@
 				verticalAlignment="middle">
 				<p:paragraph>
 					<p:font size="8">
-						<p:text value="AQUI EL NOMBRE DEL RESPONSABLE SI ES EL CASO" />
+						<p:text value="#{writeOffRequestHome.writeOffRequestSelected.detail_responsible}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
@@ -901,7 +889,7 @@
 					horizontalAlignment="right">
 					<p:paragraph>
 						<p:font size="8">
-							<p:text value="#{_bond.month_name}" />
+							<p:text value="#{messages[_bond.month_name]}"/>
 						</p:font>
 					</p:paragraph>
 
@@ -1061,7 +1049,7 @@
 
 			<p:cell colspan="1" horizontalAlignment="center"
 				verticalAlignment="middle"
-				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'MEDIDOR_DEFECTUOSO'}">
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'INACCESIBLE'}">
 				<p:paragraph>
 					<p:font size="8">
 						<p:text value="EMITIR TITULO DE CREDITO" />
@@ -1096,7 +1084,7 @@
 			</p:cell>
 
 			<p:cell colspan="1"
-				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'NO_LIQUIDADA'}">
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'NO_LIQUIDADA' or writeOffRequestHome.writeOffRequestSelected._type_code == 'ASIGNACION_CATEGORIA_CONSUMO'}">
 				
 			</p:cell>
 
@@ -1134,7 +1122,9 @@
 
 
 		<p:table columns="9" widthPercentage="100" headerRows="0"
-			widths="0.4 0.6 0.8 0.7 0.6 0.6 0.6 1.5 0.5" spacingAfter="10">
+			widths="0.4 0.6 0.8 0.7 0.6 0.6 0.6 1.5 0.5" spacingAfter="10"
+			rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code != 'NO_LIQUIDADA'}"
+			>
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="0" />
 			</f:facet>
@@ -1243,7 +1233,7 @@
 					horizontalAlignment="center">
 					<p:paragraph>
 						<p:font size="8">
-							<p:text value="#{_con._month}" />
+							<p:text value="#{messages[_con._month]}"/>
 						</p:font>
 					</p:paragraph>
 
@@ -1317,6 +1307,157 @@
 			</ui:repeat>
 
 		</p:table>
+		
+		<p:table columns="7" widthPercentage="100" headerRows="0"
+			widths="0.4 0.4 0.4 0.4 0.4 1.5 0.4" spacingAfter="10"
+			rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'NO_LIQUIDADA'}"
+			>
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="Obligacion Nro" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="Estado" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="Emisión" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="Vencimiento" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="Liquidación" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="Descripción" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			<p:cell borderWidth="0.5" horizontalAlignment="center"
+				verticalAlignment="middle">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="Monto" />
+					</p:font>
+				</p:paragraph>
+
+			</p:cell>
+
+			
+			<ui:repeat value="#{writeOffRequestHome.bondsReport}"
+				var="_bond">
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="center">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_bond.number}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="center">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_bond.status}" />
+						</p:font>
+					</p:paragraph>
+
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="center">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_bond.emission_date}" />
+						</p:font>
+					</p:paragraph>
+
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="center">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_bond.expiration_date}" />
+						</p:font>
+					</p:paragraph>
+
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="right">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_bond.liquidation_date}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="left">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_bond.description}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell borderWidth="0.5" verticalAlignment="middle"
+					horizontalAlignment="right">
+					<p:paragraph>
+						<p:font size="8">
+							<p:text value="#{_bond.amount}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+
+			</ui:repeat>
+
+		</p:table>
+		
 
 		<p:paragraph alignment="center">
 			<p:font size="8" style="bold">

@@ -64,7 +64,7 @@
 
 	<mail:mail-session  host="smtp.gmail.com" port="587" 
 						username="gim.loja@gmail.com" 
-						password="ajolmiglor"/>
+						password="a$j$olmiGlor"/>
 
 	<!-- For use with jBPM pageflow or process management -->
 	<!-- <bpm:jbpm> <bpm:process-definitions></bpm:process-definitions> <bpm:pageflow-definitions></bpm:pageflow-definitions> 

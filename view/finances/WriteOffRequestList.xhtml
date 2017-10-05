@@ -31,9 +31,9 @@
 				</s:decorate>
 
 				<s:decorate template="../layout/display.xhtml">
-					<ui:define name="label">Nombres</ui:define>
+					<ui:define name="label">Usuario</ui:define>
 					<h:inputText id="txtNames"
-						value="#{writeOffRequestHome.name_resident_criteria}">
+						value="#{writeOffRequestHome.name_resident_criteria}" size="50">
 						<a:support ajaxSingle="true" event="onblur"></a:support>
 					</h:inputText>
 				</s:decorate>
@@ -42,14 +42,24 @@
 
 			<div class="actionButtons">
 				<a:commandButton id="btnSearch" value="#{messages['common.search']}"
-					reRender="writeOffRequestList" ajaxSingle="true"
+					reRender="writeOffRequestList, panelHeaderTable" ajaxSingle="true"
 					bypassUpdates="true"
 					actionListener="#{writeOffRequestHome.search()}" />
-				<s:button id="reset" value="Reset" includePageParams="false" />
-
 			</div>
-
 			<rich:panel>
+
+				<f:facet name="header">
+
+					<h:panelGrid columns="2" columnClasses="headerTitle"
+						id="panelHeaderTable">
+						<h:outputText
+							value="Resultados (#{writeOffRequests.objectsNumber})" />
+						<s:button view="/finances/WriteOffRequestEdit.xhtml" id="create"
+							propagation="none" value="Nueva Solicitud de Baja">
+							<f:param name="writeOffRequestId" />
+						</s:button>
+					</h:panelGrid>
+				</f:facet>
 				<div class="results" id="writeOffRequestList">
 
 					<rich:dataTable id="writeOffRequestList" var="_writeOffRequest"
@@ -101,10 +111,9 @@
 						<rich:column styleClass="action">
 							<f:facet name="header">Acciones</f:facet>
 							<a:region>
-								<a:commandButton id="print1" value="#{messages['common.print']}"
-									action="#{writeOffRequestHome.print(_writeOffRequest.id)}"
-									>
-								</a:commandButton>
+
+								<h:commandLink   action="#{writeOffRequestHome.print(_writeOffRequest.id)}" value="Imprimir" target="_blank" />
+
 							</a:region>
 
 						</rich:column>
@@ -143,13 +152,6 @@
 				</s:link>
 
 			</div>
-
-			<s:div styleClass="actionButtons" rendered="#{empty from}">
-				<s:button view="/finances/WriteOffRequestEdit.xhtml" id="create"
-					propagation="none" value="Nueva Solicitud de Baja">
-					<f:param name="writeOffRequestId" />
-				</s:button>
-			</s:div>
 
 		</h:form>
 
