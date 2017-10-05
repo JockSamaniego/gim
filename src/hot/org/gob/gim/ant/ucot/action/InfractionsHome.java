@@ -125,5 +125,34 @@ public class InfractionsHome extends EntityHome<Infractions> {
 		return false;
 		
 	}
+	
+	private BigDecimal salary;
+	private BigDecimal porcentage;
+	
+	public BigDecimal getSalary() {
+		return salary;
+	}
 
+	public void setSalary(BigDecimal salary) {
+		this.salary = salary;
+	}
+
+	public BigDecimal getPorcentage() {
+		return porcentage;
+	}
+
+	public void setPorcentage(BigDecimal porcentage) {
+		this.porcentage = porcentage;
+	}
+
+	public void calculateValue(){
+		if(salary != null && porcentage != null){
+			BigDecimal resp;
+			resp = salary.multiply(porcentage);
+			resp = resp.divide(new BigDecimal(100));
+			this.getInstance().setValue(resp);
+		}else{
+			this.getInstance().setValue(new BigDecimal(0));
+		}
+	}
 }

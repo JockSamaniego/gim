@@ -23,7 +23,10 @@ public class InfractionsList extends EntityQuery<Infractions> {
 		"lower(infractions.licensePlate) like lower(concat('%',#{infractionsList.infractions.licensePlate},'%'))",
 		"infractions.citationDate >= #{infractionsList.dateFrom}",
 		"infractions.citationDate <= #{infractionsList.dateUntil}",
-		"lower(infractions.bulletin.agent.resident.identificationNumber) like lower(concat('%',#{infractionsList.agent},'%'))",};
+		"lower(infractions.bulletin.agent.resident.identificationNumber) like lower(concat('%',#{infractionsList.agent},'%'))",
+		"lower(infractions.article) like lower(concat('%',#{infractionsList.infractions.article},'%'))",
+		"lower(infractions.numeral) like lower(concat('%',#{infractionsList.infractions.numeral},'%'))",
+		"lower(infractions.partNumber) like lower(concat('%',#{infractionsList.infractions.partNumber},'%'))",};
 
 	private Infractions infractions = new Infractions();
 	private BigInteger startSerial;
