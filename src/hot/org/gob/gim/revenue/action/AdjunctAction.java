@@ -11,7 +11,11 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.gob.gim.commercial.action.BusinessHome;
+import org.gob.gim.revenue.action.MunicipalBondHome;
+import org.gob.gim.revenue.service.ItemCatalogService;
+import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.ServiceLocator;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
@@ -20,6 +24,7 @@ import org.jboss.seam.framework.EntityController;
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.commercial.model.Local;
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.CurrencyDevaluation;
@@ -354,4 +359,28 @@ public class AdjunctAction extends EntityController{
 	public void setDesactiveLocals(List<Local> desactiveLocals) {
 		this.desactiveLocals = desactiveLocals;
 	}
+	
+	//Jock Samaniego
+	//Para obtener lista de tipos de domainTransfer
+	
+	private List<ItemCatalog> transferTypes;
+	private ItemCatalogService itemCatalogService;
+	
+	public List<ItemCatalog> domainTransferTypes(){
+		initializeService();
+		transferTypes = new ArrayList<ItemCatalog>();
+		transferTypes = itemCatalogService.findItemsForCatalogCode(
+				CatalogConstants.CATALOG_TYPES_DOMAIN_TRANSFER);
+		
+		return transferTypes;
+	}
+	
+	public void initializeService() {
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
+	}
+
+	
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.jboss.seam.annotations.Begin;
@@ -333,4 +334,24 @@ public class UnitDeathHome extends EntityHome<Unit> implements Serializable {
 			}
 			return "null";
 		}	
+		
+		//Autor: Jock Samaniego
+		//para editar datos de registro y expiracion
+				
+		public void editUnitDeath(Long unitDeathId, Date dateOfDeath, Date subscriptionDate, Date expirationDate){
+			try{
+				Query query = getEntityManager().createNamedQuery("Death.FindById");
+				query.setParameter("id", unitDeathId);
+				Death death = (Death) query.getSingleResult();
+				death.setDateOfDeath(dateOfDeath);
+				death.getCurrentContract().setSubscriptionDate(subscriptionDate);
+				death.getCurrentContract().setExpirationDate(expirationDate);
+				
+				EntityManager em = getEntityManager();
+				em.persist(death);
+
+			}catch(Exception e){
+				System.out.println("no se puedo realizar la edición");
+			}
+		}
 }

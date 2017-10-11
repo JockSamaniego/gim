@@ -9,6 +9,17 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 	<a:outputPanel id="domainTransferPanel">
+	
+		<h:panelGrid columns="2">
+			<h:outputLabel
+				value="#{messages['domainTransfer.type']}:" />
+			<h:selectOneMenu id="transferType" value="#{adjunctHome.instance.domainTransferType}" required="true">
+					<s:selectItems value="#{adjunctAction.domainTransferTypes()}" var="transferType" label="#{transferType.name}" itemValue="#{transferType}" />
+					<a:support event="onchange" ajaxSingle="true" />
+					<s:convertEntity></s:convertEntity>
+			</h:selectOneMenu>
+		</h:panelGrid>
+		
 		<h:panelGrid columns="2">
 			<h:selectBooleanCheckbox id="emitWithoutReport"
 				value="#{adjunctHome.instance.emitWithoutReport}">

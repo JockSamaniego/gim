@@ -28,7 +28,7 @@ public class ItemCatalogServiceBean implements ItemCatalogService {
 	@Override
 	public List<ItemCatalog> findItemsForCatalogCode(String catalogCode) {
 		Query query = entityManager
-				.createQuery("select i from ItemCatalog i where i.catalogCode=:catalogCode");
+				.createQuery("select i from ItemCatalog i where i.catalogCode=:catalogCode ORDER BY i.name ASC");
 		query.setParameter("catalogCode", catalogCode);
 		List<ItemCatalog> listResult = query.getResultList();
 		return listResult;
