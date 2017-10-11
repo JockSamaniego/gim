@@ -11,7 +11,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -19,7 +18,6 @@ import org.gob.gim.common.DateUtils;
 
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.Property;
-import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.adjunct.detail.EarlyTransferDiscount;
 
@@ -53,9 +51,9 @@ public class DomainTransfer extends Adjunct{
 	private Boolean mortgageDiscount;
 	private Boolean emitWithoutReport;
 	
-	@ManyToOne
+	/*@ManyToOne
 	@JoinColumn(name="itemcatalog_id")
-	private ItemCatalog domainTransferType;
+	private ItemCatalog domainTransferType;*/
 	
 	@Enumerated(EnumType.STRING)
 	@Column(length=15)
@@ -259,13 +257,13 @@ public class DomainTransfer extends Adjunct{
 		return buyingDate;
 	}
 
-	public ItemCatalog getDomainTransferType() {
+	/*public ItemCatalog getDomainTransferType() {
 		return domainTransferType;
 	}
 
 	public void setDomainTransferType(ItemCatalog domainTransferType) {
 		this.domainTransferType = domainTransferType;
-	}
+	}*/
 
 	public void setBuyingDate(Date buyingDate) {
 		this.buyingDate = buyingDate;
