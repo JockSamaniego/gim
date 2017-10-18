@@ -17,6 +17,10 @@
 					var="vehicleType" label="#{vehicleType.name}"
 					noSelectionLabel="#{messages['common.choose']}" />
 				<s:convertEntity />
+				
+				<a:support event="onchange" ajaxSingle="true"
+					reRender="VFRPanel" />
+					
 			</h:selectOneMenu>
 		</s:decorate>
 
@@ -24,7 +28,9 @@
 			<ui:define name="label">#{messages['vehicle.plate']}:</ui:define>
 			<h:inputText id="code" required="true"
 				style="text-transform: uppercase"
-				value="#{adjunctHome.instance.numberPlate}" size="10">
+				value="#{adjunctHome.instance.numberPlate}" size="10"
+				disabled="#{adjunctHome.instance.vehicleType.id == 26}"
+				>
 				<f:validator validatorId="numberPlateValidator" />
 			</h:inputText>
 		</s:decorate>
@@ -34,7 +40,8 @@
 			<ui:define name="label">#{messages['vehicle.notificationNumber']}:</ui:define>
 			<h:inputText id="code" required="true"
 				style="text-transform: uppercase"
-				value="#{adjunctHome.instance.notificationNumber}" size="10">
+				value="#{adjunctHome.instance.notificationNumber}" size="10"
+				disabled="#{adjunctHome.instance.vehicleType.id == 26}">
 			</h:inputText>
 		</s:decorate>
 
@@ -45,7 +52,8 @@
 				value="#{adjunctHome.instance.infringementDate}" required="true"
 				enableManualInput="true"
 				datePattern="#{messages['common.datePattern']}" ajaxSingle="true"
-				inputSize="10">
+				inputSize="10"
+				disabled="#{adjunctHome.instance.vehicleType.id == 26}">
 			</rich:calendar>
 
 		</s:decorate>
