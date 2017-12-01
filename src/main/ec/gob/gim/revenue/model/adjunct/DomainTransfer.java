@@ -114,7 +114,7 @@ public class DomainTransfer extends Adjunct{
 		pair = new ValuePair("Informacion Adicional", getAditionalInformation() );
 		details.add(pair);
 		
-		if(isHalfDiscount) {
+		if(isHalfDiscount!=null && isHalfDiscount) {
 			pair = new ValuePair("Descuento 50%", ""+halfDiscountAmount );
 			details.add(pair);	
 		}
