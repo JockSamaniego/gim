@@ -51,6 +51,10 @@ public class DomainTransfer extends Adjunct{
 	private Boolean mortgageDiscount;
 	private Boolean emitWithoutReport;
 	
+	//rfam 2017-11-29 pedido de la parra sin memo, se pasara por parte de informatica
+	private Boolean isHalfDiscount;
+	private BigDecimal halfDiscountAmount;
+	
 	/*@ManyToOne
 	@JoinColumn(name="itemcatalog_id")
 	private ItemCatalog domainTransferType;*/
@@ -64,6 +68,7 @@ public class DomainTransfer extends Adjunct{
 		earlyTransferDiscount = EarlyTransferDiscount.NOT_APPLICABLE;
 		buyingDate = new Date();
 		transactionDate = new Date();
+		isHalfDiscount = Boolean.FALSE;
 	}
 	
 	@Transient
@@ -108,6 +113,12 @@ public class DomainTransfer extends Adjunct{
 		details.add(pair);
 		pair = new ValuePair("Informacion Adicional", getAditionalInformation() );
 		details.add(pair);
+		
+		if(isHalfDiscount!=null && isHalfDiscount) {
+			pair = new ValuePair("Descuento 50%", ""+halfDiscountAmount );
+			details.add(pair);	
+		}
+
 		return details;
 	}
 	
@@ -118,6 +129,8 @@ public class DomainTransfer extends Adjunct{
 		if(transactionValue != null)aux = aux + "Valor Venta: " + transactionValue + "; ";
 		if(improvementsContribution != null)aux = aux + "Contribución Mejoras: " + improvementsContribution + "; ";
 		if(newBuildingValue != null)aux = aux + "Obra Nueva: " + newBuildingValue;
+		
+		//if(isHalfDiscount != null)aux = aux + "Descuento 50%: " + halfDiscountAmount;
 		return aux;
 	}
 	
@@ -282,6 +295,22 @@ public class DomainTransfer extends Adjunct{
 
 	public BigDecimal getBuyingTransactionValue() {
 		return buyingTransactionValue;
+	}
+
+	public BigDecimal getHalfDiscountAmount() {
+		return halfDiscountAmount;
+	}
+
+	public void setHalfDiscountAmount(BigDecimal halfDiscountAmount) {
+		this.halfDiscountAmount = halfDiscountAmount;
+	}
+
+	public Boolean getIsHalfDiscount() {
+		return isHalfDiscount;
+	}
+
+	public void setIsHalfDiscount(Boolean isHalfDiscount) {
+		this.isHalfDiscount = isHalfDiscount;
 	}
 
 	public void setBuyingTransactionValue(BigDecimal buyingTransactionValue) {
