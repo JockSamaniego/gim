@@ -71,6 +71,9 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	private List<ExemptionForProperty> propertiesInExemptionNormal = new ArrayList<ExemptionForProperty>();
 
 	private List<ExemptionForProperty> propertiesInExemptionSpecial = new ArrayList<ExemptionForProperty>();
+	
+	//rfam 2017-12-26
+	private List<ExemptionForProperty> deletedPropertiesInExemption = new ArrayList<ExemptionForProperty>();
 
 	private ItemCatalog typeTreatmentExcemptionSpecial;
 
@@ -208,6 +211,13 @@ public class ExemptionHome extends EntityHome<Exemption> {
 		for (ExemptionForProperty property : this.propertiesInExemptionSpecial) {
 			if (!hasPropertyInExemption(property))
 				this.instance.getPropertiesInExemption().add(property);
+		}
+		
+		//rfam 2017-12-16
+		//para borrar las proiedades quitadas en el evento remove
+		for (ExemptionForProperty property : this.deletedPropertiesInExemption) {
+			if (hasPropertyInExemption(property))
+				this.instance.getPropertiesInExemption().remove(property);
 		}
 
 		if (this.instance.getId() == null) {
@@ -538,6 +548,9 @@ public class ExemptionHome extends EntityHome<Exemption> {
 					.add(exemptionForProperty.getProperty().getCurrentDomain()
 							.getCommercialAppraisal());
 		}
+		
+		//rfam 2017-12-26
+		deletedPropertiesInExemption.add(property);
 
 		this.instance
 				.setPropertiesAppraisalSpecialTreatment(totalTreatmentSpecial);
