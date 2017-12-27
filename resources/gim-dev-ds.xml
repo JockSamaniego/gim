@@ -14,5 +14,3 @@
    </local-tx-datasource>
 
 </datasources>
-
-      <connection-url>jdbc:postgresql://localhost:5432/gim_2017_11</connection-url>
