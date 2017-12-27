@@ -82,6 +82,10 @@ public class AdjunctAction extends EntityController{
 //			this.setAddressAdjunct(property.getAddress());
 			changePropertyTaxableBase();
 			//propertyAppraisal.setCode(propertyAppraisal.getPreviousCadastralCode()+" - "+propertyAppraisal.getCadastralCode());
+			//property.getBuildings()
+			//rfam 2017-12-15 aprobacion de ordenanza
+			propertyAppraisal.setLotArea(BigDecimal.ONE);
+			propertyAppraisal.setConstructionArea(BigDecimal.ONE);
 		}
 	}
 	
