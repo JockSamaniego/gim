@@ -204,6 +204,7 @@ public class AppraisalServiceBean implements AppraisalService {
 
 	public BigDecimal getAppraisalAreaFactor(Property proper) {
 		
+		//rfam 2017-12-29 ordenanza bieno 2018-2019
 		if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
 			return new BigDecimal(1);
 		else if (proper.getArea().compareTo(new BigDecimal(251)) == -1)
