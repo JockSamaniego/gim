@@ -136,13 +136,13 @@ public class AppraisalServiceBean implements AppraisalService {
 			equivalencia = proper.getSide().divide(proper.getFront(), 3,
 					RoundingMode.HALF_UP);
 		}
-		System.out.println("Property Id:" + proper.getId());
-		System.out.println("Valor equivalencia1:" + equivalencia.doubleValue());
+		// System.out.println("Property Id:" + proper.getId());
+		// System.out.println("Valor equivalencia1:" + equivalencia.doubleValue());
 		equivalencia = equivalencia.add(new BigDecimal(0.001)); // para comparar
 																// solamente los
 																// menores y no
 																// los iguales
-		System.out.println("Valor equivalencia1:" + equivalencia.doubleValue());
+		// System.out.println("Valor equivalencia1:" + equivalencia.doubleValue());
 
 		//rfam 2017-12-26
 		if (equivalencia.compareTo(new BigDecimal(0.3300)) == 1)
@@ -265,8 +265,8 @@ public class AppraisalServiceBean implements AppraisalService {
 		getMaps(appraisalPeriod);
 		for (Property property : properties) {
 			// Inicia Calculo de Avaluo de Terreno
-			System.out.println("======= CadastralCode: "
-					+ property.getCadastralCode());
+			//System.out.println("======= CadastralCode: "
+				//	+ property.getCadastralCode());
 			lotAppraisal = BigDecimal.ZERO;
 			affectationFactorLot = BigDecimal.ZERO;
 			property.setAppraisalRelationFactor(getAppraisalRelationFactor(property));
@@ -332,16 +332,16 @@ public class AppraisalServiceBean implements AppraisalService {
 				lotAppraisal = lotAppraisal.setScale(2, RoundingMode.HALF_UP);
 			}
 
-			System.out.println("======= totalLotAppraisal: " + lotAppraisal);
+			// System.out.println("======= totalLotAppraisal: " + lotAppraisal);
 			if ((property.getLotAliquot().floatValue() > 0)
 					&& (property.getLotAliquot().floatValue() < 100)) {
 				lotAppraisal = lotAppraisal.multiply(property.getLotAliquot())
 						.divide(cienBigD);
 				lotAppraisal = lotAppraisal.setScale(2, RoundingMode.HALF_UP);
-				System.out.println("======= Lot Aliquot: "
+				/*System.out.println("======= Lot Aliquot: "
 						+ property.getLotAliquot());
 				System.out.println("======= totalLotAppraisal Aliquot: "
-						+ lotAppraisal);
+						+ lotAppraisal);*/
 			}
 
 			if (temporalValues) {
@@ -350,7 +350,7 @@ public class AppraisalServiceBean implements AppraisalService {
 				property.getCurrentDomain().setLotAppraisal(lotAppraisal);
 			}
 
-			System.out.println("======= lotAppraisal : " + lotAppraisal);
+			// System.out.println("======= lotAppraisal : " + lotAppraisal);
 
 			// Inicia Calculo de Avaluo de Construccion
 			totalBuildingAppraisal = BigDecimal.ZERO;
