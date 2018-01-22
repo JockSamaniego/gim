@@ -174,7 +174,8 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 			query="SELECT SUM(d.value) " +
 				  " FROM Deposit d " +
 				  " WHERE d.date = :paymentDate " +
-				  " AND d.payment.cashier.id = :cashierId"),
+				  " AND d.payment.cashier.id = :cashierId"), 
+				  //" AND d.status = 'VALID'"),
  
     @NamedQuery(name="Deposit.findByIds", 
 			query="SELECT DISTINCT d FROM Deposit d " +
