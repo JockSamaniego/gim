@@ -11,7 +11,7 @@ public enum LotTopography {
 	IN_LEVEL(new BigDecimal(1.0)),
 	UNDER_LEVEL(new BigDecimal(0.95)),
 	ABOVE_LEVEL(new BigDecimal(0.98)),
-	PRECIPITOUS(new BigDecimal(0.85));
+	PRECIPITOUS(new BigDecimal(0.75));
 	
 	BigDecimal factor;
 	

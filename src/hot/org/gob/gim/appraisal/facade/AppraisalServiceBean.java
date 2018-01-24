@@ -136,15 +136,35 @@ public class AppraisalServiceBean implements AppraisalService {
 			equivalencia = proper.getSide().divide(proper.getFront(), 3,
 					RoundingMode.HALF_UP);
 		}
-		System.out.println("Property Id:" + proper.getId());
-		System.out.println("Valor equivalencia1:" + equivalencia.doubleValue());
+		// System.out.println("Property Id:" + proper.getId());
+		// System.out.println("Valor equivalencia1:" + equivalencia.doubleValue());
 		equivalencia = equivalencia.add(new BigDecimal(0.001)); // para comparar
 																// solamente los
 																// menores y no
 																// los iguales
-		System.out.println("Valor equivalencia1:" + equivalencia.doubleValue());
+		// System.out.println("Valor equivalencia1:" + equivalencia.doubleValue());
 
-		if (equivalencia.compareTo(new BigDecimal(0.2500)) == 1)
+		//rfam 2017-12-26
+		if (equivalencia.compareTo(new BigDecimal(0.3300)) == 1)
+			return new BigDecimal(1);
+		else if (equivalencia.compareTo(new BigDecimal(0.2500)) == 1)
+			return new BigDecimal(0.9925);
+		else if (equivalencia.compareTo(new BigDecimal(0.2000)) == 1)
+			return new BigDecimal(0.9850);
+		else if (equivalencia.compareTo(new BigDecimal(0.1667)) == 1)
+			return new BigDecimal(0.9775);
+		else if (equivalencia.compareTo(new BigDecimal(0.1429)) == 1)
+			return new BigDecimal(0.9700);
+		else if (equivalencia.compareTo(new BigDecimal(0.1250)) == 1)
+			return new BigDecimal(0.9625);
+		else if (equivalencia.compareTo(new BigDecimal(0.1111)) == 1)
+			return new BigDecimal(0.9550);
+		else if (equivalencia.compareTo(new BigDecimal(0.1000)) == 1)
+			return new BigDecimal(0.9475);
+		else
+			return new BigDecimal(0.9400);
+		
+		/*if (equivalencia.compareTo(new BigDecimal(0.2500)) == 1)
 			return new BigDecimal(1);
 		else if (equivalencia.compareTo(new BigDecimal(0.2000)) == 1)
 			return new BigDecimal(0.9925);
@@ -161,7 +181,8 @@ public class AppraisalServiceBean implements AppraisalService {
 		else if (equivalencia.compareTo(new BigDecimal(0.0909)) == 1)
 			return new BigDecimal(0.9475);
 		else
-			return new BigDecimal(0.9400);
+			return new BigDecimal(0.9400);*/
+		
 //		 if (equivalencia.compareTo(new BigDecimal(0.251)) == 1)
 //		 return new BigDecimal(1);
 //		 else if (equivalencia.compareTo(new BigDecimal(0.201)) == 1)
@@ -182,7 +203,24 @@ public class AppraisalServiceBean implements AppraisalService {
 	}
 
 	public BigDecimal getAppraisalAreaFactor(Property proper) {
+		
+		//rfam 2017-12-29 ordenanza bieno 2018-2019
 		if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
+			return new BigDecimal(1);
+		else if (proper.getArea().compareTo(new BigDecimal(251)) == -1)
+			return new BigDecimal(1);
+		else if (proper.getArea().compareTo(new BigDecimal(501)) == -1)
+			return new BigDecimal(0.96);
+		else if (proper.getArea().compareTo(new BigDecimal(1001)) == -1)
+			return new BigDecimal(0.90);
+		else if (proper.getArea().compareTo(new BigDecimal(2501)) == -1)
+			return new BigDecimal(0.80);
+		else if (proper.getArea().compareTo(new BigDecimal(5001)) == -1)
+			return new BigDecimal(0.75);
+		else
+			return new BigDecimal(0.70);
+		
+		/*if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
 			return new BigDecimal(1);
 		else if (proper.getArea().compareTo(new BigDecimal(251)) == -1)
 			return new BigDecimal(0.99);
@@ -195,7 +233,8 @@ public class AppraisalServiceBean implements AppraisalService {
 		else if (proper.getArea().compareTo(new BigDecimal(5001)) == -1)
 			return new BigDecimal(0.95);
 		else
-			return new BigDecimal(0.94);
+			return new BigDecimal(0.94);*/
+			
 		/*if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
 			return new BigDecimal(1);
 		else if (proper.getArea().compareTo(new BigDecimal(251)) == -1)
@@ -227,8 +266,8 @@ public class AppraisalServiceBean implements AppraisalService {
 		getMaps(appraisalPeriod);
 		for (Property property : properties) {
 			// Inicia Calculo de Avaluo de Terreno
-			System.out.println("======= CadastralCode: "
-					+ property.getCadastralCode());
+			//System.out.println("======= CadastralCode: "
+				//	+ property.getCadastralCode());
 			lotAppraisal = BigDecimal.ZERO;
 			affectationFactorLot = BigDecimal.ZERO;
 			property.setAppraisalRelationFactor(getAppraisalRelationFactor(property));
@@ -294,16 +333,16 @@ public class AppraisalServiceBean implements AppraisalService {
 				lotAppraisal = lotAppraisal.setScale(2, RoundingMode.HALF_UP);
 			}
 
-			System.out.println("======= totalLotAppraisal: " + lotAppraisal);
+			// System.out.println("======= totalLotAppraisal: " + lotAppraisal);
 			if ((property.getLotAliquot().floatValue() > 0)
 					&& (property.getLotAliquot().floatValue() < 100)) {
 				lotAppraisal = lotAppraisal.multiply(property.getLotAliquot())
 						.divide(cienBigD);
 				lotAppraisal = lotAppraisal.setScale(2, RoundingMode.HALF_UP);
-				System.out.println("======= Lot Aliquot: "
+				/*System.out.println("======= Lot Aliquot: "
 						+ property.getLotAliquot());
 				System.out.println("======= totalLotAppraisal Aliquot: "
-						+ lotAppraisal);
+						+ lotAppraisal);*/
 			}
 
 			if (temporalValues) {
@@ -312,7 +351,7 @@ public class AppraisalServiceBean implements AppraisalService {
 				property.getCurrentDomain().setLotAppraisal(lotAppraisal);
 			}
 
-			System.out.println("======= lotAppraisal : " + lotAppraisal);
+			// System.out.println("======= lotAppraisal : " + lotAppraisal);
 
 			// Inicia Calculo de Avaluo de Construccion
 			totalBuildingAppraisal = BigDecimal.ZERO;
