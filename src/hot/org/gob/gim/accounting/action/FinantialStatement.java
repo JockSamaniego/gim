@@ -296,7 +296,7 @@ public class FinantialStatement extends EntityController {
 		/*
 		 * René Ortega Implementacion Memo: ML-DF-2015-1069 2015-12-15
 		*/
-		accountItemsOrnato = new ArrayList<AccountItem>();
+		/*accountItemsOrnato = new ArrayList<AccountItem>();
 		if (criteria.getReportType() == ReportType.BALANCE) {
 			systemParameterService = ServiceLocator.getInstance().findResource(
 					SystemParameterService.LOCAL_NAME);
@@ -335,7 +335,7 @@ public class FinantialStatement extends EntityController {
 			accountItems.get(index).setDebit(valorTotal);
 			
 			totalResolutionOrnato = valorTotal;
-		}
+		}*/
 
 	}
 
