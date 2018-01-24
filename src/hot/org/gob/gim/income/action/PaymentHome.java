@@ -168,6 +168,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 	@In(scope = ScopeType.SESSION, value = "userSession")
 	UserSession userSession;
+	
+	//@author macartuche
+	//para deshabilitar boton de registro de pago hasta ingresar los valores y 
+	//que sea mayor o igual al monto de cobro
+	private Boolean canRegisterPayment=true;
 
 	public UserSession getUserSession() {
 		return userSession;
@@ -1638,9 +1643,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	public void calculateChange() {
 		BigDecimal value = this.getInstance().getValue();
 		BigDecimal receivedAmount = getReceivedAmount();
+		this.canRegisterPayment = true;
 		if (value != null && receivedAmount != null) {
 			if (value.compareTo(receivedAmount) <= 0) {
 				change = receivedAmount.subtract(value);
+				this.canRegisterPayment = false;
 			} else {
 				change = BigDecimal.ZERO;
 			}
@@ -1774,6 +1781,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void updateHasCompensationBonds() {
+		//@author macartuche
+		//deshabilitar boton de registro de pago
+		this.canRegisterPayment=true;
+		//fin
 		clearFractions();
 		hasCompensationBonds = Boolean.FALSE;
 		selectedBonds = getSelected();
@@ -2175,4 +2186,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		this.bondIsWire = bondIsWire;
 	}
 
+	public Boolean getCanRegisterPayment() {
+		return canRegisterPayment;
+	}
+
+	public void setCanRegisterPayment(Boolean canRegisterPayment) {
+		this.canRegisterPayment = canRegisterPayment;
+	}
 }
