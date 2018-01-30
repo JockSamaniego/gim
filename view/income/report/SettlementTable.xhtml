@@ -263,6 +263,15 @@
 			</p:cell>
 		</p:font>
 	</p:table>
+	
+	<p:table columns="3" widthPercentage="100" spacingAfter="5" widths="12 1 12" rendered="#{_deposit.municipalBond.entry.explanatoryNote != null}">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" />
+		</f:facet>
+		<p:cell colspan="3" horizontalAlignment="center">
+			<p:paragraph><p:font size="8">#{_deposit.municipalBond.entry.explanatoryNote}</p:font></p:paragraph>
+		</p:cell>
+	</p:table>
 
 	<p:barCode  type="code128" barHeight="25" textSize="10" rendered="#{not receiptPrintingManager.isCertificate and !_deposit.municipalBond.receipt.electronicReceipt}"
 				code="#{_deposit.municipalBond.receipt.authorizationNumber}-#{_deposit.municipalBond.receipt.sequential}" codeType="CODE128_UCC"
