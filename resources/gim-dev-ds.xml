@@ -9,12 +9,9 @@
       <use-java-context>false</use-java-context>
 <<<<<<< HEAD
 
-      <connection-url>jdbc:postgresql://localhost:5432/gim_2018_01</connection-url>
-=======
-      <connection-url>jdbc:postgresql://192.168.1.23:5432/gimLoja25</connection-url>
->>>>>>> develop
+      <connection-url>jdbc:postgresql://localhost:5432/gim_2018_01_28</connection-url>
       <driver-class>org.postgresql.Driver</driver-class>
-      <user-name>gim</user-name>
-      <password>gim2018</password>
+      <user-name>rolgimloja</user-name>
+      <password>root</password>
    </local-tx-datasource>
 </datasources>
