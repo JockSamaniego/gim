@@ -58,7 +58,7 @@
 								<h:outputText value="#{messages['payment.detail']}" />
 								<a:commandButton value="#{messages['common.add']}"
 									action="#{paymentHome.addPaymentFraction()}"
-									reRender="paymentDetails, savePaymentBtn"/>
+									reRender="paymentDetails"/>
 							</h:panelGrid>
 							
 						</f:facet>
@@ -93,7 +93,7 @@
 									minFractionDigits="#{messages['common.minFractionDigits']}" />
 								<a:support event="onblur"
 									actionListener="#{paymentHome.calculateChange()}"
-									reRender="changeField, receivedAmount, savePaymentBtn"
+									reRender="changeField, receivedAmount"
 									ajaxSingle="true" />
 							</h:inputText>
 						</rich:column>
@@ -162,7 +162,7 @@
 							<a:commandButton value="#{messages['common.remove']}"
 								actionListener="#{paymentHome.removePaymentFraction(_fraction)}"
 								action="#{paymentHome.calculateChange()}"
-								reRender="paymentDetails, savePaymentBtn, changeField" />
+								reRender="paymentDetails" />
 						</rich:column>
 						
 					</rich:extendedDataTable>
@@ -189,7 +189,6 @@
 						action="#{paymentHome.persist}"
 						value="#{messages['payment.save']}"
 						onclick="this.disabled=true;"
-						disabled="#{paymentHome.canRegisterPayment}"
 						oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.showModalPanel(\'pdfPrinted\');' : ''}"
 						reRender="pdfPrinted"/>
 
