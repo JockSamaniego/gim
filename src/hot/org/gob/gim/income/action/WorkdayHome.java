@@ -6869,40 +6869,41 @@ public class WorkdayHome extends EntityHome<Workday> {
 	@SuppressWarnings("unchecked")
 	public void search() {
 		this.resultList = new ArrayList<EmitterReportDTO>();
-		String sqlQuery = "SELECT mb.emisiondate as emisionDate, "
-				+ "mb.number as obligation, "
-				+ "mb.servicedate as serviceDate, "
-				+ "mbs.name as status,"
-				+ "re.identificationnumber as residentNumber, "
-				+ "re.name as residentName, "
-				+ "vfr.infringementdate as infringementDate, "
-				+ "vfr.notificationnumber as notificationNumber, "
-				+ "vfr.numberplate as numberPlate, "
-				+ "emi.name as emitterName, "
-				+ "emi.identificationnumber as emitterNumber, "
-				+ "ent.name as entryName, "
-				+ "mb.value as value, "
-				+ "mb.paidtotal as paidTotal" 
-				+ "FROM municipalbond mb " 
-				+ "INNER JOIN municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id " 
-				+ "INNER JOIN resident re on mb.resident_id = re.id " 
-				+ "INNER JOIN resident emi on mb.emitter_id = emi.id " 
-				+ "INNER JOIN entry ent on mb.entry_id = ent.id " 
-				+ "LEFT JOIN VehicularFineReference vfr on mb.adjunct_id = vfr.id " 
-				+ "WHERE mb.emisiondate between :start and :end " 
-				+ "AND entry_id in (580, 581, 582, 583, 584, 585) " 
-				+ "ORDER BY ent.code, ent.name, mb.number ";
-		Query query = this.getEntityManager().createNativeQuery(sqlQuery);
+		StringBuffer sqlQuery = new StringBuffer("SELECT mb.emisiondate as emisionDate, ");
+				sqlQuery.append("mb.number as obligation, ")
+				.append("mb.servicedate as serviceDate, ")
+				.append("mbs.name as status,")
+				.append("re.identificationnumber as residentNumber, ")
+				.append("re.name as residentName, ")
+				.append("vfr.infringementdate as infringementDate, ")
+				.append("vfr.notificationnumber as notificationNumber, ")
+				.append("vfr.numberplate as numberPlate, ")
+				.append("emi.name as emitterName, ")
+				.append("emi.identificationnumber as emitterNumber, ")
+				.append("ent.name as entryName, ")
+				.append("mb.value as value, ")
+				.append("mb.paidtotal as paidTotal ") 
+				.append("FROM municipalbond mb ") 
+				.append("INNER JOIN municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id ") 
+				.append("INNER JOIN resident re on mb.resident_id = re.id ") 
+				.append("INNER JOIN resident emi on mb.emitter_id = emi.id ") 
+				.append("INNER JOIN entry ent on mb.entry_id = ent.id ") 
+				.append("LEFT JOIN VehicularFineReference vfr on mb.adjunct_id = vfr.id ") 
+				.append("WHERE mb.emisiondate between :start and :end ")
+				.append("AND entry_id in (580, 581, 582, 583, 584, 585) ");
+		if(this.municipalBondStatus!= null && this.municipalBondStatus.getId()!=0) {
+			sqlQuery.append("AND mb.municipalbondstatus_id=:status ");
+		}
+		sqlQuery.append("ORDER BY emisionDate, ent.code, ent.name, mb.number ");
+		
+		Query query = this.getEntityManager().createNativeQuery(sqlQuery.toString());
 		query.setParameter("start", this.startDate);
 		query.setParameter("end", this.endDate);
-		
-		this.resultList =  NativeQueryResultsMapper.map(query.getResultList(), EmitterReportDTO.class);
-		for (EmitterReportDTO dto : this.resultList) {
-			System.out.println(dto.getStatus()+" "+dto.getName()+" "+dto.getEmitter()+" "+dto.getEntryName());
-			System.out.println();
-			
+		if(this.municipalBondStatus!= null && this.municipalBondStatus.getId()!=0) {
+			query.setParameter("status", this.municipalBondStatus.getId());
 		}
-		System.out.println("=====>"+this.resultList.size());
+		this.resultList =  NativeQueryResultsMapper.map(query.getResultList(), EmitterReportDTO.class);
+		
 	}
 
 	public List<EmitterReportDTO> getResultList() {

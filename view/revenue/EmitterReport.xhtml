@@ -92,9 +92,24 @@
 						rowClasses="rvgRowOne,rvgRowTwo"
 						rendered="#{not empty workdayHome.resultList}">
 
-						<rich:column sortBy="#{_emitterReport.emisionDate}" styleClass="left">
+						<rich:column 
+							filterBy="#{_emitterReport.number}"
+							sortBy="#{_emitterReport.number}" 
+							styleClass="left">
 							<f:facet name="header">
-								<h:outputText value="#{messages['emisionDate']}" />
+								<h:outputText value="Oblig." />
+							</f:facet>
+							<h:outputText value="#{_emitterReport.number}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column 
+							filterBy="#{_emitterReport.emisionDate}"
+							sortBy="#{_emitterReport.emisionDate}" 
+							styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="F. emisión" />
 							</f:facet>
 							<h:outputText value="#{_emitterReport.emisionDate}" size="12"
 								styleClass="left">
@@ -102,25 +117,23 @@
 							</h:outputText>
 						</rich:column>
 
-						<rich:column sortBy="#{_emitterReport.number}" styleClass="left">
-							<f:facet name="header">
-								<h:outputText value="#{messages['number']}" />
-							</f:facet>
-							<h:outputText value="#{_emitterReport.number}" size="12"
-								styleClass="left">
-							</h:outputText>
-						</rich:column>
+						
 
-						<rich:column sortBy="#{_emitterReport.serviceDate}" styleClass="right">
+						<rich:column 
+							filterBy="#{_emitterReport.serviceDate}"
+							sortBy="#{_emitterReport.serviceDate}" 
+							styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="Fecha de servicio" />
+								<h:outputText value="F. de servicio" />
 							</f:facet>
 							<h:outputText value="#{_emitterReport.serviceDate}" size="12"
 								styleClass="right">
 							</h:outputText>
 						</rich:column>
 
-						<rich:column sortBy="#{_emitterReport.status}"
+						<rich:column 
+							filterBy="#{_emitterReport.status}"
+							sortBy="#{_emitterReport.status}"
 							styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="Estado" />
@@ -131,7 +144,10 @@
 						</rich:column>
 						
 
-						<rich:column sortBy="#{_emitterReport.identificationNumber}" styleClass="right">
+						<rich:column 
+							filterBy="#{_emitterReport.identificationNumber}"
+							sortBy="#{_emitterReport.identificationNumber}" 
+							styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="Identificación" />
 							</f:facet>
@@ -140,7 +156,10 @@
 							</h:outputText>
 						</rich:column>
 
-						<rich:column sortBy="#{_emitterReport.name}" styleClass="right">
+						<rich:column 
+							filterBy="#{_emitterReport.name}"
+							sortBy="#{_emitterReport.name}" 
+							styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="Contribuyente" />
 							</f:facet>
@@ -149,9 +168,12 @@
 							</h:outputText>
 						</rich:column>
 						
-						<rich:column sortBy="#{_emitterReport.infringementDate}" styleClass="right">
+						<rich:column 
+							filterBy="#{_emitterReport.infringementDate}"
+							sortBy="#{_emitterReport.infringementDate}" 
+							styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="Fecha de infracción" />
+								<h:outputText value="F. infracción" />
 							</f:facet>
 							<h:outputText value="#{_emitterReport.infringementDate}" size="12"
 								styleClass="right">
@@ -159,9 +181,12 @@
 							</h:outputText>
 						</rich:column>
 						
-						<rich:column sortBy="#{_emitterReport.notificationNumber}" styleClass="right">
+						<rich:column 
+							filterBy="#{_emitterReport.notificationNumber}"
+							sortBy="#{_emitterReport.notificationNumber}" 
+							styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="No. notificación" />
+								<h:outputText value="Nro. notif." />
 							</f:facet>
 							<h:outputText value="#{_emitterReport.notificationNumber}" size="12"
 								styleClass="right">
@@ -169,7 +194,10 @@
 						</rich:column>
 						
 						
-						<rich:column sortBy="#{_emitterReport.numberPlate}" styleClass="right">
+						<rich:column 
+							filterBy="#{_emitterReport.numberPlate}"
+							sortBy="#{_emitterReport.numberPlate}" 
+							styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="Placa" />
 							</f:facet>
@@ -188,14 +216,7 @@
 							</h:outputText>
 						</rich:column>
 						
-						<rich:column sortBy="#{_emitterReport.emitterNumber}" styleClass="right">
-							<f:facet name="header">
-								<h:outputText value="Identificación del emisor" />
-							</f:facet>
-							<h:outputText value="#{_emitterReport.emitterNumber}" size="12"
-								styleClass="right">
-							</h:outputText>
-						</rich:column>
+					 	
 						
 						<rich:column sortBy="#{_emitterReport.entryName}" styleClass="right">
 							<f:facet name="header">
@@ -235,15 +256,10 @@
 
 			<rich:panel id="detailPanel2">
 
-				<a:commandButton id="print"
-					rendered="#{not empty workdayHome.entryTotalCollecteds or not empty workdayHome.entryTotalFuture}"
-					onclick="Richfaces.showModalPanel('printConfirmPanel',{width:250, height:150})"
-					value="#{messages['common.printGlobalReport']}" propagation="join" />
-
-				<s:button view="/revenue/report/RevenueReportByEntry.xhtml"
-					action="#{workdayHome.selectEntries()}" id="printReportId"
-					rendered="#{not empty workdayHome.entryTotalCollecteds or not empty workdayHome.entryTotalFuture}"
-					propagation="join" value="#{messages['common.printReportByEntry']}" />
+				<s:button view="/revenue/report/EmitterReportPrint.xhtml"
+					id="printReportId"
+					rendered="#{not empty workdayHome.resultList}"
+					propagation="join" value="#{messages['common.print']}" />
 
 				<s:button id="back" value="#{messages['common.back']}"
 					propagation="end" view="/home.xhtml" />
