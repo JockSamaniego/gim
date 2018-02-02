@@ -29,6 +29,8 @@ import javax.persistence.Query;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.GimUtils;
+import org.gob.gim.common.NativeQueryResultColumn;
+import org.gob.gim.common.NativeQueryResultEntity;
 import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.MunicipalBondUtil;
@@ -49,6 +51,7 @@ import org.jboss.seam.log.Log;
 import org.richfaces.model.TreeNode;
 import org.richfaces.model.TreeNodeImpl;
 
+import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FinancialStatus;
@@ -77,6 +80,7 @@ import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondView;
+import ec.gob.gim.revenue.model.DTO.EmitterReportDTO; 
 
 @Name("workdayHome")
 public class WorkdayHome extends EntityHome<Workday> {
@@ -6855,5 +6859,61 @@ public class WorkdayHome extends EntityHome<Workday> {
 	public void setReplacementAgreements(List<ReplacementAgreementDTO> replacementAgreements) {
 		this.replacementAgreements = replacementAgreements;
 	}
+	/**
+	 * @author macartuche
+	 * @date 2018-01-31 08:33
+	 * Consulta por emisores
+	 */
+	@SuppressWarnings("unchecked")
+	private List<EmitterReportDTO> resultList;
+	@SuppressWarnings("unchecked")
+	public void search() {
+		this.resultList = new ArrayList<EmitterReportDTO>();
+		StringBuffer sqlQuery = new StringBuffer("SELECT mb.emisiondate as emisionDate, ");
+				sqlQuery.append("mb.number as obligation, ")
+				.append("mb.servicedate as serviceDate, ")
+				.append("mbs.name as status,")
+				.append("re.identificationnumber as residentNumber, ")
+				.append("re.name as residentName, ")
+				.append("vfr.infringementdate as infringementDate, ")
+				.append("vfr.notificationnumber as notificationNumber, ")
+				.append("vfr.numberplate as numberPlate, ")
+				.append("emi.name as emitterName, ")
+				.append("emi.identificationnumber as emitterNumber, ")
+				.append("ent.name as entryName, ")
+				.append("mb.value as value, ")
+				.append("mb.paidtotal as paidTotal ") 
+				.append("FROM municipalbond mb ") 
+				.append("INNER JOIN municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id ") 
+				.append("INNER JOIN resident re on mb.resident_id = re.id ") 
+				.append("INNER JOIN resident emi on mb.emitter_id = emi.id ") 
+				.append("INNER JOIN entry ent on mb.entry_id = ent.id ") 
+				.append("LEFT JOIN VehicularFineReference vfr on mb.adjunct_id = vfr.id ") 
+				.append("WHERE mb.emisiondate between :start and :end ")
+				.append("AND entry_id in (580, 581, 582, 583, 584, 585) ");
+		if(this.municipalBondStatus!= null && this.municipalBondStatus.getId()!=0) {
+			sqlQuery.append("AND mb.municipalbondstatus_id=:status ");
+		}
+		sqlQuery.append("ORDER BY emisionDate, ent.code, ent.name, mb.number ");
+		
+		Query query = this.getEntityManager().createNativeQuery(sqlQuery.toString());
+		query.setParameter("start", this.startDate);
+		query.setParameter("end", this.endDate);
+		if(this.municipalBondStatus!= null && this.municipalBondStatus.getId()!=0) {
+			query.setParameter("status", this.municipalBondStatus.getId());
+		}
+		this.resultList =  NativeQueryResultsMapper.map(query.getResultList(), EmitterReportDTO.class);
+		
+	}
+
+	public List<EmitterReportDTO> getResultList() {
+		return resultList;
+	}
+
+	public void setResultList(List<EmitterReportDTO> resultList) {
+		this.resultList = resultList;
+	}
+	
 	
 }
+

@@ -2,6 +2,7 @@ package org.gob.gim.common;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 
 public class NativeQueryResultsMapper {
 
@@ -21,8 +23,9 @@ public class NativeQueryResultsMapper {
                 for (int i = 0; i < objectArr.length; i++) {
                     if (mappingFields.get(i) != null) {
                         if (mappingFields.get(i).getType().toString().equals("class java.util.Date")) {
-                            if (objectArr[i] == "" || objectArr[i] == null) {
-                                BeanUtils.setProperty(t, mappingFields.get(i).getName(), null);
+                            if (objectArr[i] == "" || objectArr[i] == null) {	                            	
+                            	//BeanUtils.setProperty(t, mappingFields.get(i).getName(), null);
+                            	PropertyUtils.setProperty(t, mappingFields.get(i).getName(), null);
                             } else {
                             	//System.out.println("tipo de clase................ "+objectArr[i].getClass());
                             	//rfarmiosm para covertir fechas sl.date y no solo timestamp
@@ -54,7 +57,10 @@ public class NativeQueryResultsMapper {
         } catch (InvocationTargetException ite) {
             System.out.println("Cannot invoke method: " + ite);
             ret.clear();
-        }
+        } catch (NoSuchMethodException e) {
+            System.out.println("No such method: " + e);
+            ret.clear();
+		}
         return ret;
     }
 
