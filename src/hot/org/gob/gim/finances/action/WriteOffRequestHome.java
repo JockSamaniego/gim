@@ -120,6 +120,10 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	private Charge commercializationRevisionCharge;
 
 	private Delegate commercializationRevisionDelegate;
+	
+	private Charge chiefFinanceCharge;
+
+	private Delegate chiefFinanceDelegate;
 
 	private Charge finantialCharge;
 
@@ -422,6 +426,22 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 	public void setDays_for_edit(Integer days_for_edit) {
 		this.days_for_edit = days_for_edit;
+	}
+	
+	public Charge getChiefFinanceCharge() {
+		return chiefFinanceCharge;
+	}
+
+	public void setChiefFinanceCharge(Charge chiefFinanceCharge) {
+		this.chiefFinanceCharge = chiefFinanceCharge;
+	}
+
+	public Delegate getChiefFinanceDelegate() {
+		return chiefFinanceDelegate;
+	}
+
+	public void setChiefFinanceDelegate(Delegate chiefFinanceDelegate) {
+		this.chiefFinanceDelegate = chiefFinanceDelegate;
 	}
 
 	@Override
@@ -961,6 +981,14 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 			for (Delegate d : commercializationRevisionCharge.getDelegates()) {
 				if (d.getIsActive())
 					commercializationRevisionDelegate = d;
+			}
+		}
+		
+		chiefFinanceCharge = getCharge("CHIEFFINACE_ID");
+		if (chiefFinanceCharge != null) {
+			for (Delegate d : chiefFinanceCharge.getDelegates()) {
+				if (d.getIsActive())
+					chiefFinanceDelegate = d;
 			}
 		}
 

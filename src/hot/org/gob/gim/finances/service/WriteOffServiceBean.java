@@ -94,7 +94,7 @@ public class WriteOffServiceBean implements WriteOffService {
 						+ "WHERE (CAST(?1 AS text) = '' OR res.identificationnumber = CAST(?2 AS text)) "
 						+ "AND (CAST(?3 AS text)= '' OR res.name LIKE CAST(?4 AS text)) "
 						+ "AND (CAST(?5 AS text) = '' OR (to_char(seq.code, '0000') || '-' || EXTRACT (YEAR FROM wor.date)) LIKE CAST(?6 AS text)) "
-						+ "ORDER BY _year, seq.code DESC");
+						+ "ORDER BY _year desc, seq.code DESC");
 		query.setParameter(1, identification_number_criteria == null ? ""
 				: identification_number_criteria);
 		query.setParameter(2, identification_number_criteria == null ? ""
@@ -169,7 +169,8 @@ public class WriteOffServiceBean implements WriteOffService {
 						+ "current_date - wor.date as _days, "
 						+ "wor.internalprocessnumber, "
 						+ "wor.detail, "
-						+ "wrt.code "
+						+ "wrt.code, "
+						+ "wor.observations "
 						+ "FROM "
 						+ "writeoffrequest wor "
 						+ "INNER JOIN resident res ON wor.resident_id = res.id "

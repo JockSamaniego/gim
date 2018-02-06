@@ -99,6 +99,9 @@ public class WriteOffRequest {
 	@JoinColumn(name = "writeoffrequest_id")
 	@OrderBy("id asc")
 	private List<WriteOffDetail> details = new ArrayList<WriteOffDetail>();
+	
+	@Column(length = 100)
+	private String observations;
 
 	public WriteOffRequest() {
 		super();
@@ -230,4 +233,12 @@ public class WriteOffRequest {
 		return stringBuilder.toString();
 	}
 
+	public String getObservations() {
+		return observations;
+	}
+
+	public void setObservations(String observations) {
+		this.observations = observations;
+	}
+	
 }
