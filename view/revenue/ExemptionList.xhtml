@@ -49,6 +49,12 @@
 					<h:inputText id="resident" value="#{exemptionList.resident}"
 						size="50" maxlength="50" />
 				</s:decorate>
+				
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['common.partner']}</ui:define>
+					<h:inputText id="partner" value="#{exemptionList.partner}"
+						size="50" maxlength="50" />
+				</s:decorate>
 
 			</rich:simpleTogglePanel>
 
@@ -115,6 +121,18 @@
 						</f:facet>
 						<h:outputText value="#{_exemption.resident.name}" />
 					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{exemptionList}" />
+								<ui:param name="propertyLabel" value="#{messages['common.partner']}" />
+								<ui:param name="propertyPath" value="exemption.partner" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_exemption.partner.name}" />
+					</h:column>
+					
 					<h:column>
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">

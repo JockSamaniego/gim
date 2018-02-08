@@ -119,6 +119,19 @@
 				</p:font>
 		</p:paragraph>
 		
+		<p:paragraph spacingAfter="0" spacingBefore="5" alignment="justify" verticalAlignment="5" leading="10" >
+				<p:font size="12" style="bold">
+					<p:text
+						value="PARROQUIA ANTERIOR:   " />
+				</p:font>
+				<p:font size="12">
+					<p:text
+						value="#{propertyHome.parish.name}"  rendered="#{not empty propertyHome.parish.name}" />
+					<p:text
+						value="sin parroquia asignada"  rendered="#{empty propertyHome.parish.name}" />
+					</p:font>
+		</p:paragraph>
+		
 		<p:paragraph spacingAfter="0" spacingBefore="5" alignment="justify" verticalAlignment="5" leading="10"  rendered="#{not empty propertyHome.parroquiaAnt}">
 				<p:font size="12" style="bold">
 					<p:text
@@ -157,7 +170,7 @@
 				</p:font>
 		</p:paragraph>		
 	
-			<p:paragraph spacingAfter="0" spacingBefore="5" alignment="justify" verticalAlignment="5" leading="10" >
+		<!-- p:paragraph spacingAfter="0" spacingBefore="5" alignment="justify" verticalAlignment="5" leading="10" >
 				<p:font size="12" style="bold">
 					<p:text
 						value="REFERENCIA:   " />
@@ -181,12 +194,25 @@
 					<p:text
 						value="sin propiedad asignada"  rendered="#{empty propertyHome.instance.location.houseNumber}" />
 				</p:font>
-		</p:paragraph>
+		</p:paragraph-->
 		
 		<p:paragraph spacingAfter="0" spacingBefore="5" alignment="justify" verticalAlignment="5" leading="10">
 				<p:font size="12" style="bold">
 					<p:text
 						value="CLAVE CATASTRAL:   " />
+				</p:font>
+				<p:font size="12">
+					<p:text
+						value="#{propertyHome.instance.previousCadastralCode}"  rendered="#{not empty propertyHome.instance.previousCadastralCode}" />
+					<p:text
+						value="sin clave asignada"  rendered="#{empty propertyHome.instance.previousCadastralCode}" />
+				</p:font>
+		</p:paragraph>
+		
+		<p:paragraph spacingAfter="0" spacingBefore="5" alignment="justify" verticalAlignment="5" leading="10" >
+				<p:font size="12" style="bold">
+					<p:text
+						value="CLAVE CATASTRAL ANTERIOR:   " />
 				</p:font>
 				<p:font size="12">
 					<p:text
@@ -416,5 +442,9 @@
 		</p:paragraph>
 
 	</p:font>
+
+	<p:barCode  type="code128" barHeight="25" textSize="10"
+				code="#{propertyHome.instance.previousCadastralCode}" codeType="CODE128_UCC"
+				xpos="10" ypos="5" />
 
 </p:document>
