@@ -114,7 +114,7 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 
 	public void callSP(){
 		if(this.paymentAgreementSelected != null){
-			String query = "SELECT * FROM sp_paymentagreement_lower_percentege1( "+this.paymentAgreementSelected.getId()+") ";
+			String query = "SELECT * FROM sp_paymentagreement_lower_percentege( "+this.paymentAgreementSelected.getId()+") ";
 			System.out.println(query);
 			Query q = getEntityManager().createNativeQuery(query);
 //			q.setParameter(0, this.paymentAgreementSelected.getId());
@@ -177,7 +177,7 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 			getEntityManager().flush();
 	 
 		}
- 
+		
 	}
 	
 	@SuppressWarnings("unused")
