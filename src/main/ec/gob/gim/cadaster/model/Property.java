@@ -293,7 +293,11 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 				+ "LEFT JOIN location.mainBlockLimit mainBlockLimit "
 				+ "LEFT JOIN mainBlockLimit.street mainStreet "
 				+ "LEFT JOIN location.neighborhood nb "
-				+ "WHERE p.currentDomain.resident.identificationNumber = :identificationNumber order by p.cadastralCode")
+				+ "WHERE p.currentDomain.resident.identificationNumber = :identificationNumber order by p.cadastralCode"),
+	@NamedQuery(name = "Property.findByResidentsIds", 
+			    query = "SELECT p FROM Property p " +
+			    		"WHERE p.currentDomain.resident.id in (:ids) "+
+			    		"AND p.deleted = FALSE ")
 })
 public class Property {
 
