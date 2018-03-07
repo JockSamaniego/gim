@@ -756,7 +756,7 @@
 			<p:cell colspan="1">
 				<p:paragraph>
 					<p:font size="8" style="bold">
-						<p:text value="RESPONSABLE" />
+						<p:text value="RESPONSABLE/DETALLE" />
 					</p:font>
 
 				</p:paragraph>
@@ -1049,7 +1049,7 @@
 
 			<p:cell colspan="1" horizontalAlignment="center"
 				verticalAlignment="middle"
-				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'MEDIDOR_DEFECTUOSO'}">
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'INACCESIBLE'}">
 				<p:paragraph>
 					<p:font size="8">
 						<p:text value="EMITIR TITULO DE CREDITO" />
@@ -1084,7 +1084,7 @@
 			</p:cell>
 
 			<p:cell colspan="1"
-				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'NO_LIQUIDADA'}">
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'NO_LIQUIDADA' or writeOffRequestHome.writeOffRequestSelected._type_code == 'ASIGNACION_CATEGORIA_CONSUMO' or writeOffRequestHome.writeOffRequestSelected._type_code == 'MEDIDOR_DEFECTUOSO'}">
 				
 			</p:cell>
 

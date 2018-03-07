@@ -14,7 +14,9 @@
 		<ui:include src="dialogs/MunicipalBondAdd.xhtml" />
 
 		<h:form id="writeOffRequest" styleClass="edit">
-
+		
+			<rich:messages errorClass="errors" />
+			<ui:debug id="debug" />
 			<rich:panel>
 				<f:facet name="header">Contribuyente</f:facet>
 
@@ -49,11 +51,11 @@
 						value="#{writeOffRequestHome.instance.writeOffType}"
 						requiredMessage="Tipo requerido">
 						<s:selectItems value="#{writeOffRequestHome._types}"
-							noSelectionLabel="Seleccione" var="_type" label="#{_type.name}"
-							required="true" />
+							var="_type" label="#{_type.name}"
+							/>
 						<s:convertEntity />
 						<a:support event="onchange"
-							action="#{writeOffRequestHome.onSelectType}" ajaxSingle="true" />
+							ajaxSingle="true" />
 					</h:selectOneMenu>
 				</s:decorate>
 
@@ -63,7 +65,7 @@
 						value="#{writeOffRequestHome.waterSupplySelected}"
 						requiredMessage="Servicio requerido">
 						<s:selectItems value="#{writeOffRequestHome.waterSupplies}"
-							noSelectionLabel="#{messages['common.chooseOption']}"
+							noSelectionLabel="#{messages['common.chooseOption']}"							
 							var="_waterSupply" label="#{_waterSupply.serviceNumber}" />
 						<s:convertEntity />
 						<a:support event="onchange"
@@ -95,7 +97,7 @@
 				<s:decorate id="detailField" template="../layout/edit.xhtml">
 					<ui:define name="label">Responsable/Soporte</ui:define>
 					<h:inputText id="detail" maxlength="100"
-						value="#{writeOffRequestHome.instance.detail}" size="50">
+						value="#{writeOffRequestHome.instance.detail}" size="100" required="true" requiredMessage="Campo requerido">
 						<a:support event="onblur" reRender="detailField"
 							bypassUpdates="true" ajaxSingle="true" />
 					</h:inputText>
@@ -105,7 +107,7 @@
 					template="../layout/edit.xhtml">
 					<ui:define name="label">Número de Proceso Interno</ui:define>
 					<h:inputText id="internalProcessNumber" maxlength="50"
-						value="#{writeOffRequestHome.instance.internalProcessNumber}">
+						value="#{writeOffRequestHome.instance.internalProcessNumber}" required="true" requiredMessage="Campo requerido">
 						<a:support event="onblur" reRender="internalProcessNumberField"
 							bypassUpdates="true" ajaxSingle="true" />
 					</h:inputText>
@@ -150,7 +152,7 @@
 						<f:facet name="header">
 							Mes
 						</f:facet>
-						<h:outputText value="#{_det_low.month_name}" />
+						<h:outputText value="#{messages[_det_low.month_name]}" />
 					</h:column>
 
 					<h:column>
@@ -187,6 +189,18 @@
 						</f:facet>
 						<h:outputText value="#{_det_low.value}" />
 					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							Acciones
+						</f:facet>
+						<div align="center">
+							<a:commandButton id="btnRemove" action="#{writeOffRequestHome.deleteBondEdit(_det_low)}" value="Quitar" ajaxSingle="true"
+								bypassUpdates="true" reRender="writeOffRequest:panel_low_bonds, writeOffRequest:panel_new_bonds"
+								/>
+						</div>
+					</h:column>
+
 				</rich:dataTable>
 
 			</rich:panel>
@@ -215,7 +229,7 @@
 						<f:facet name="header">
 							Mes
 						</f:facet>
-						<h:outputText value="#{_det_new.month_name}" />
+						<h:outputText value="#{messages[_det_new.month_name]}" />
 					</h:column>
 
 					<h:column>
@@ -260,12 +274,10 @@
 			<div class="actionButtons">
 
 				<h:commandButton id="save" value="Guardar"
-					action="#{writeOffRequestHome.save()}"
-					/>
+					action="#{writeOffRequestHome.save()}" />
 
-					<s:button id="cancelAdd" value="Cancelar" propagation="end"
-					view="/finances/WriteOffRequestList.xhtml"/>
-
+				<s:button id="cancelAdd" value="Cancelar" propagation="none"
+					view="/finances/WriteOffRequestList.xhtml" />
 			</div>
 		</h:form>
 

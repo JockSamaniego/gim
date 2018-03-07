@@ -3,7 +3,6 @@ package org.gob.gim.finances.action;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -21,6 +20,7 @@ import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 
 import ec.gob.gim.common.model.Charge;
@@ -46,6 +46,9 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	@In
+	FacesMessages facesMessages;
 
 	@In(scope = ScopeType.SESSION, value = "userSession")
 	UserSession userSession;
@@ -87,7 +90,8 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	private boolean isFirstTime = true;
 
 	private List<ConsumptionPreviousDTO> previous_consumptions = new ArrayList<ConsumptionPreviousDTO>();
-	
+	private List<ConsumptionPreviousDTO> aux_previous_consumptions = new ArrayList<ConsumptionPreviousDTO>();
+
 	private List<MunicipalBondDTO> bondsReport = new ArrayList<MunicipalBondDTO>();
 
 	/*
@@ -130,8 +134,10 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	private Boolean not_found_adjunct_bond_new = Boolean.FALSE;
 
 	private WriteOffDetail aux_entity_detail_old;
-	
+
 	private WriteOffDetail aux_entity_detail_new;
+
+	private Integer days_for_edit;
 
 	public List<WaterSupply> getWaterSupplies() {
 		return waterSupplies;
@@ -401,13 +407,21 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	public void setAux_entity_detail_new(WriteOffDetail aux_entity_detail_new) {
 		this.aux_entity_detail_new = aux_entity_detail_new;
 	}
-	
+
 	public List<MunicipalBondDTO> getBondsReport() {
 		return bondsReport;
 	}
 
 	public void setBondsReport(List<MunicipalBondDTO> bondsReport) {
 		this.bondsReport = bondsReport;
+	}
+
+	public Integer getDays_for_edit() {
+		return days_for_edit;
+	}
+
+	public void setDays_for_edit(Integer days_for_edit) {
+		this.days_for_edit = days_for_edit;
 	}
 
 	@Override
@@ -535,12 +549,6 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 	}
 
-	public void onSelectType() {
-		System.out.println("----Llega al select Tipo----");
-		System.out.println(this.instance.getWriteOffType().getName());
-
-	}
-
 	public void prepareAddBondLower() {
 		// Encerar los valores del dialogo
 		this.detail_aux_new = new WriteOffDetailDTO();
@@ -656,12 +664,20 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		this.instance.setMadeBy(this.userSession.getPerson());
 
 		WriteOffDetail detail = new WriteOffDetail();
-		detail.setNewAmount(this.detail_aux_new.getAmount_m3());
-		detail.setNewCurrentReading(this.detail_aux_new.getCurrentreading());
-		detail.setNewMunicipalBond(getEntityManager().find(MunicipalBond.class,
-				this.detail_aux_new.getBond_id()));
 
-		detail.setNewPreviousReading(this.detail_aux_new.getPreviousreading());
+		// CONTROLAR SI EXISTE NUEVA OBLIGACION
+
+		boolean _flag_existe_new_bond = this.detail_aux_new.getBond_id() == null;
+
+		if (!_flag_existe_new_bond) {
+			detail.setNewAmount(this.detail_aux_new.getAmount_m3());
+			detail.setNewCurrentReading(this.detail_aux_new.getCurrentreading());
+			detail.setNewMunicipalBond(getEntityManager().find(
+					MunicipalBond.class, this.detail_aux_new.getBond_id()));
+			detail.setNewPreviousReading(this.detail_aux_new
+					.getPreviousreading());
+		}
+
 		detail.setOldAmount(this.detail_aux_old.getAmount_m3());
 		detail.setOldCurrentReading(this.detail_aux_old.getCurrentreading());
 		detail.setOldMunicipalBond(getEntityManager().find(MunicipalBond.class,
@@ -675,23 +691,23 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 		if (!this.disabled_old_fields) {
 			detail.setMonthType(this.aux_entity_detail_old.getMonthType());
-			detail.setMonth(this.aux_entity_detail_old.getMonthType().getMonthInt());
-		} else {
-			detail.setMonthType(MonthType.getByValue(this.detail_aux_new
+			detail.setMonth(this.aux_entity_detail_old.getMonthType()
+					.getMonthInt());
+		} else if (this.disabled_old_fields) {
+			detail.setMonthType(MonthType.getByValue(this.detail_aux_old
 					.getMonth()));
-			detail.setMonth(this.detail_aux_new.getMonth());
-		}
-		
-		if (!this.disabled_new_fields) {
+			detail.setMonth(this.detail_aux_old.getMonth());
+		} else if (!this.disabled_new_fields) {
 			detail.setMonthType(this.aux_entity_detail_new.getMonthType());
-			detail.setMonth(this.aux_entity_detail_new.getMonthType().getMonthInt());
+			detail.setMonth(this.aux_entity_detail_new.getMonthType()
+					.getMonthInt());
 		} else {
-			detail.setMonthType(MonthType.getByValue(this.detail_aux_new
+			detail.setMonthType(MonthType.getByValue(this.detail_aux_old
 					.getMonth()));
-			detail.setMonth(this.detail_aux_new.getMonth());
+			detail.setMonth(this.detail_aux_old.getMonth());
 		}
 
-		detail.setYear(this.detail_aux_new.getYear());
+		detail.setYear(this.detail_aux_old.getYear());
 		detail.setWriteOffRequest(this.instance);
 
 		this.instance.addDetail(detail);
@@ -704,37 +720,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 		this.detailsTableOld = new ArrayList<DetailTableAuxDTO>();
 
-		for (int i = 0; i < details.size(); i++) {
-			WriteOffDetail det = this.details.get(i);
-
-			DetailTableAuxDTO old = new DetailTableAuxDTO();
-			old.setIndex(i + 1);
-			old.setBond_number(det.getOldMunicipalBond().getNumber());
-			old.setCurrent_reading(det.getOldCurrentReading());
-			old.setM3(det.getOldAmount());
-			old.setMonth_name(det.getMonthType().name());
-			old.setPrevious_reading(det.getOldPreviousReading());
-			old.setValue(det.getOldMunicipalBond().getValue());
-			old.setYear(det.getYear());
-
-			this.detailsTableOld.add(old);
-
-			DetailTableAuxDTO _new = new DetailTableAuxDTO();
-			_new.setIndex(i + 1);
-			_new.setBond_number(det.getNewMunicipalBond().getNumber());
-			_new.setCurrent_reading(det.getNewCurrentReading());
-			_new.setM3(det.getNewAmount());
-			_new.setMonth_name(det.getMonthType().name());
-			_new.setPrevious_reading(det.getNewPreviousReading());
-			_new.setValue(det.getNewMunicipalBond().getValue());
-			_new.setYear(det.getYear());
-
-			this.detailsTableNew.add(_new);
-
-		}
-
-		System.out.println(this.detailsTableOld);
-		System.out.println(this.detailsTableNew);
+		this.generateTablesDetails();
 
 	}
 
@@ -749,17 +735,37 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	public String save() {
 
 		System.out.println("Llega al save");
+		boolean _exist_details_actives = Boolean.FALSE;
 
-		SequenceManager sequence = new SequenceManager();
-		sequence.setCode(this.sequenceManagerService.getNextValue());
-		sequence.setExplanation("Baja de Agua potable");
-		sequence.setSequenceManagerType(this.sequenceManagerService
-				.getTypeByCode("AGUA_POTABLE"));
-		sequence.setTakenBy(this.userSession.getPerson());
+		for (WriteOffDetail w : this.instance.getDetails()) {
+			if (w.getIsActive()) {
+				_exist_details_actives = Boolean.TRUE;
+				break;
+			}
+		}
 
-		this.instance.setSequenceManager(sequence);
+		if (!_exist_details_actives) {
 
-		return this.persist();
+			facesMessages.addToControl("",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
+					"No ha agregado obligaciones");
+			return null;
+		} else {
+			if (this.instance.getId() == null) {
+				SequenceManager sequence = new SequenceManager();
+				sequence.setCode(this.sequenceManagerService.getNextValue());
+				sequence.setExplanation("Baja de Agua potable");
+				sequence.setSequenceManagerType(this.sequenceManagerService
+						.getTypeByCode("AGUA_POTABLE"));
+				sequence.setTakenBy(this.userSession.getPerson());
+
+				this.instance.setSequenceManager(sequence);
+
+			}
+
+			return this.persist();
+
+		}
 
 	}
 
@@ -809,68 +815,100 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		this.detailsTableNew = new ArrayList<DetailTableAuxDTO>();
 
 		String _month = "";
-		
-		String _year= "";
-		
-		List<Calendar> dates_consumptions = new ArrayList<Calendar>(); 
+
+		String _year = "";
+
+		List<Calendar> dates_consumptions = new ArrayList<Calendar>();
+
+		int aux_cont_new_bonds = 1;
+
+		int aux_cont_old_bonds = 1;
 
 		for (int i = 0; i < writeOff.getDetails().size(); i++) {
 
 			WriteOffDetail det = writeOff.getDetails().get(i);
 
-			DetailTableAuxDTO old = new DetailTableAuxDTO();
-			old.setIndex(i + 1);
-			old.setBond_number(det.getOldMunicipalBond().getNumber());
-			old.setCurrent_reading(det.getOldCurrentReading());
-			old.setM3(det.getOldAmount());
-			old.setMonth_name(det.getMonthType().name());
-			old.setPrevious_reading(det.getOldPreviousReading());
-			old.setValue(det.getOldMunicipalBond().getValue());
-			old.setYear(det.getYear());
+			if (det.getIsActive()) {
 
-			this.detailsTableOld.add(old);
+				boolean _flag_existe_new_bond = det.getNewMunicipalBond() == null;
 
-			DetailTableAuxDTO _new = new DetailTableAuxDTO();
-			_new.setIndex(i + 1);
-			_new.setBond_number(det.getNewMunicipalBond().getNumber());
-			_new.setCurrent_reading(det.getNewCurrentReading());
-			_new.setM3(det.getNewAmount());
-			_new.setMonth_name(det.getMonthType().name());
-			_new.setPrevious_reading(det.getNewPreviousReading());
-			_new.setValue(det.getNewMunicipalBond().getValue());
-			_new.setYear(det.getYear());
+				DetailTableAuxDTO old = new DetailTableAuxDTO();
+				old.setIndex(aux_cont_old_bonds);
+				old.setBond_number(det.getOldMunicipalBond().getNumber());
+				old.setCurrent_reading(det.getOldCurrentReading());
+				old.setM3(det.getOldAmount());
+				old.setMonth_name(det.getMonthType().name());
+				old.setPrevious_reading(det.getOldPreviousReading());
+				old.setValue(det.getOldMunicipalBond().getValue());
+				old.setYear(det.getYear());
 
-			_month = String.valueOf(det.getMonthType().getMonthInt());
-			
-			Calendar _cal = Calendar.getInstance();
-			_cal.set(Calendar.YEAR, det.getYear());
-			_cal.set(Calendar.MONTH, det.getMonthType().getMonthInt());
-			
-			dates_consumptions.add(_cal);
-			this.detailsTableNew.add(_new);
+				this.detailsTableOld.add(old);
 
-		}
-		
-		Calendar _aux_date = dates_consumptions.get(0);
-		
-		for(int i = 0; i < dates_consumptions.size(); i++){
-			if( dates_consumptions.get(i).getTimeInMillis() < _aux_date.getTimeInMillis() ){
-				_aux_date = dates_consumptions.get(i);
+				aux_cont_old_bonds++;
+
+				if (!_flag_existe_new_bond) {
+					DetailTableAuxDTO _new = new DetailTableAuxDTO();
+					_new.setIndex(aux_cont_new_bonds);
+					_new.setBond_number(det.getNewMunicipalBond().getNumber());
+					_new.setCurrent_reading(det.getNewCurrentReading());
+					_new.setM3(det.getNewAmount());
+					_new.setMonth_name(det.getMonthType().name());
+					_new.setPrevious_reading(det.getNewPreviousReading());
+					_new.setValue(det.getNewMunicipalBond().getValue());
+					_new.setYear(det.getYear());
+					this.detailsTableNew.add(_new);
+					aux_cont_new_bonds++;
+
+				}
+
+				_month = String.valueOf(det.getMonthType().getMonthInt());
+
+				Calendar _cal = Calendar.getInstance();
+				_cal.set(Calendar.YEAR, det.getYear());
+				_cal.set(Calendar.MONTH, det.getMonthType().getMonthInt());
+
+				dates_consumptions.add(_cal);
+
 			}
 		}
-		
-		_year = String.valueOf(_aux_date.get(Calendar.YEAR));
-		_month = String.valueOf(_aux_date.get(Calendar.MONTH));
-		
-		this.previous_consumptions = this.writeOffService.findPreviousReading(
-				writeOff.getWaterMeter().getId(), _year , _month);
-		
-		this.bondsReport = this.writeOffService.findBonds(this.writeOffRequestSelected.getId());
+
+		Calendar _aux_date = Calendar.getInstance();
+
+		this.previous_consumptions = new ArrayList<ConsumptionPreviousDTO>();
+
+		if (dates_consumptions.size() > 0) {
+			_aux_date = dates_consumptions.get(0);
+			for (int i = 0; i < dates_consumptions.size(); i++) {
+				if (dates_consumptions.get(i).getTimeInMillis() < _aux_date
+						.getTimeInMillis()) {
+					_aux_date = dates_consumptions.get(i);
+				}
+			}
+
+			_year = String.valueOf(_aux_date.get(Calendar.YEAR));
+			_month = String.valueOf(_aux_date.get(Calendar.MONTH));
+
+			this.aux_previous_consumptions = this.writeOffService
+					.findPreviousReading(writeOff.getWaterMeter().getId(),
+							_year, _month);
+
+			// this.previous_consumptions = new
+			// ArrayList<ConsumptionPreviousDTO>();
+
+			for (int i = aux_previous_consumptions.size() - 1; i >= 0; i--) {
+				this.previous_consumptions.add(this.aux_previous_consumptions
+						.get(i));
+			}
+
+			this.bondsReport = this.writeOffService
+					.findBonds(this.writeOffRequestSelected.getId());
+
+		}
 
 		return "/finances/WriteOffRequestReportPDF.xhtml";
 	}
 
-	public BigDecimal totalOldBonds() {	
+	public BigDecimal totalOldBonds() {
 
 		BigDecimal sum = BigDecimal.ZERO;
 
@@ -935,6 +973,164 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		Charge charge = systemParameterService.materialize(Charge.class,
 				systemParameter);
 		return charge;
+	}
+
+	public String prepareEditWriteOffRequest(Long writeOffRequest_id) {
+
+		this._types = this.findTypes();
+		this.detailsTableOld = new ArrayList<DetailTableAuxDTO>();
+		this.detailsTableNew = new ArrayList<DetailTableAuxDTO>();
+		this.instance = this.getEntityManager().find(WriteOffRequest.class,
+				writeOffRequest_id);
+		System.out.println("entidad:" + this.instance);
+		this.identificationNumber = this.instance.getResident()
+				.getIdentificationNumber();
+
+		Query q = this.getEntityManager().createNamedQuery(
+				"WaterSupply.findByWaterMeter");
+		q.setParameter("idWaterMeter", this.instance.getWaterMeter().getId());
+		WaterSupply waterSupply = (WaterSupply) q.getSingleResult();
+
+		q = this.getEntityManager().createNamedQuery(
+				"WaterSupply.findByResident");
+		q.setParameter("idResident", this.instance.getResident().getId());
+		this.waterSupplies = q.getResultList();
+
+		this.waterSupplySelected = waterSupply;
+
+		int aux_cont_new_bonds = 1;
+		int aux_cont_old_bonds = 1;
+
+		for (int i = 0; i < this.instance.getDetails().size(); i++) {
+
+			WriteOffDetail det = this.instance.getDetails().get(i);
+
+			if (det.getIsActive()) {
+				DetailTableAuxDTO old = new DetailTableAuxDTO();
+				old.setDetail_id(det.getId());
+				old.setIndex(aux_cont_old_bonds);
+				old.setBond_number(det.getOldMunicipalBond().getNumber());
+				old.setCurrent_reading(det.getOldCurrentReading());
+				old.setM3(det.getOldAmount());
+				old.setMonth_name(det.getMonthType().name());
+				old.setPrevious_reading(det.getOldPreviousReading());
+				old.setValue(det.getOldMunicipalBond().getValue());
+				old.setYear(det.getYear());
+
+				this.detailsTableOld.add(old);
+				aux_cont_old_bonds++;
+
+				boolean _flag_existe_new_bond = det.getNewMunicipalBond() == null;
+
+				if (!_flag_existe_new_bond) {
+					DetailTableAuxDTO _new = new DetailTableAuxDTO();
+					_new.setDetail_id(det.getId());
+					_new.setIndex(aux_cont_new_bonds);
+					_new.setBond_number(det.getNewMunicipalBond().getNumber());
+					_new.setCurrent_reading(det.getNewCurrentReading());
+					_new.setM3(det.getNewAmount());
+					_new.setMonth_name(det.getMonthType().name());
+					_new.setPrevious_reading(det.getNewPreviousReading());
+					_new.setValue(det.getNewMunicipalBond().getValue());
+					_new.setYear(det.getYear());
+					this.detailsTableNew.add(_new);
+					aux_cont_new_bonds++;
+				}
+
+			}
+
+		}
+
+		return "/finances/WriteOffRequestEdit.xhtml";
+	}
+
+	public void deleteBondEdit(DetailTableAuxDTO bond) {
+
+		if (bond.getDetail_id() == null) {
+			int _index = 0;
+			// solicitud aun no guardada
+			for (WriteOffDetail detail : this.instance.getDetails()) {
+				if (detail.getOldMunicipalBond().getNumber() == bond
+						.getBond_number()) {
+					break;
+				}
+				_index++;
+			}
+			this.instance.getDetails().remove(_index);
+
+		} else {
+			// solicitud ya guardada (Edicion de solicitud)
+			for (WriteOffDetail detail : this.instance.getDetails()) {
+				if (detail.getId() == bond.getDetail_id()) {
+					detail.setIsActive(Boolean.FALSE);
+					break;
+				}
+			}
+
+		}
+
+		this.generateTablesDetails();
+
+	}
+
+	public void generateTablesDetails() {
+
+		this.detailsTableOld = new ArrayList<DetailTableAuxDTO>();
+		this.detailsTableNew = new ArrayList<DetailTableAuxDTO>();
+
+		int aux_cont_new_bonds = 1;
+		int aux_cont_old_bonds = 1;
+
+		for (int i = 0; i < this.instance.getDetails().size(); i++) {
+
+			WriteOffDetail det = this.instance.getDetails().get(i);
+
+			if (det.getIsActive()) {
+				DetailTableAuxDTO old = new DetailTableAuxDTO();
+				old.setDetail_id(det.getId());
+				old.setIndex(aux_cont_old_bonds);
+				old.setBond_number(det.getOldMunicipalBond().getNumber());
+				old.setCurrent_reading(det.getOldCurrentReading());
+				old.setM3(det.getOldAmount());
+				old.setMonth_name(det.getMonthType().name());
+				old.setPrevious_reading(det.getOldPreviousReading());
+				old.setValue(det.getOldMunicipalBond().getValue());
+				old.setYear(det.getYear());
+
+				this.detailsTableOld.add(old);
+
+				aux_cont_old_bonds++;
+
+				boolean _flag_existe_new_bond = det.getNewMunicipalBond() == null;
+
+				if (!_flag_existe_new_bond) {
+					DetailTableAuxDTO _new = new DetailTableAuxDTO();
+					_new.setDetail_id(det.getId());
+					_new.setIndex(aux_cont_new_bonds);
+					_new.setBond_number(det.getNewMunicipalBond().getNumber());
+					_new.setCurrent_reading(det.getNewCurrentReading());
+					_new.setM3(det.getNewAmount());
+					_new.setMonth_name(det.getMonthType().name());
+					_new.setPrevious_reading(det.getNewPreviousReading());
+					_new.setValue(det.getNewMunicipalBond().getValue());
+					_new.setYear(det.getYear());
+					this.detailsTableNew.add(_new);
+					aux_cont_new_bonds++;
+				}
+
+			}
+		}
+	}
+
+	public Boolean render_edit_button(Integer days) {
+
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SYSTEM_PARAMETER_SERVICE_NAME);
+		this.days_for_edit = systemParameterService
+				.findParameter("TIME_EDIT_DAYS_WRITEOFFREQUEST_UMAPAL");
+
+		return days <= this.days_for_edit;
 	}
 
 }
