@@ -565,15 +565,15 @@ public class RevenueServiceBean implements RevenueService {
 						.getMunicipalBondStatus();
 
 				municipalBond.setMunicipalBondStatus(pendingBondStatus);
-				municipalBond
+				/*municipalBond
 						.setExpirationDate(getExpirationDateChangeFutureStatusToPendingStatus(
 								now, municipalBond.getEmisionDate(),
-								municipalBond.getExpirationDate()));
+								municipalBond.getExpirationDate()));*/
 				municipalBond.setNumber(findNextMunicipalBondValue());
 				municipalBond.setEmisionDate(now);
 				municipalBond.setEmisionPeriod(fiscalPeriodService
 						.findCurrent(now).get(0).getStartDate());
-				municipalBond.setEmitter(person);
+				//municipalBond.setEmitter(person);
 				System.out.println("Antes de guardar municipal bond");
 				municipalBondService.update(municipalBond);
 				System.out.println("Antes de guardar status change");
