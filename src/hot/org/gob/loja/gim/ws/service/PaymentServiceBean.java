@@ -18,7 +18,6 @@ import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
@@ -474,9 +473,9 @@ public class PaymentServiceBean implements PaymentService {
 		query.setParameter("pendingBondStatusId", pendingBondStatusId);
 		List<Bond> bonds = query.getResultList();
 		// System.out.println("RECORRIENDO RESULTADOS");
-		for (Bond bond : bonds) {
+		/*for (Bond bond : bonds) {
 			System.out.println("L===========>" + bond.getServiceDate());
-		}
+		}*/
 		// System.out.println("BONDS TOTAL ---->" + bonds.size());
 		return bonds;
 
@@ -961,6 +960,91 @@ public class PaymentServiceBean implements PaymentService {
 
 	public void setServerLog(BankingEntityLog serverLog) {
 		this.serverLog = serverLog;
+	}
+
+	@Override
+	public Statement findFutureEmission(ServiceRequest request)
+			throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations {
+		String identificationNumber = request.getIdentificationNumber();
+		
+		//rfarmijosm 2017-02-06 se copia el codigo de jock de otro branch, impedir pagos con alerta por ws
+		//Boolean AlertPending = ;
+		if (controlAlertResident(identificationNumber)) {
+			serverLog.setMethodCompleted(false);
+			serverLog.setCodeError("PayoutNotAllowed");
+			em.persist(serverLog);
+			throw new PayoutNotAllowed();
+		} else {
+
+			Taxpayer taxpayer = findTaxpayer(identificationNumber);
+			Date workDayDate;
+			if (request.getUsername().compareTo("dabetancourtc") == 0) {
+				workDayDate = new GregorianCalendar().getTime();
+			} else
+				workDayDate = findPaymentDate();
+			Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer.getId());
+
+			if (inPaymentAgreementBondsNumber > 0) {
+				serverLog.setMethodCompleted(false);
+				serverLog.setCodeError("PayoutNotAllowed");
+				em.persist(serverLog);
+				throw new PayoutNotAllowed();
+			} else {
+				//List<Long> pendingBondIds = hasFutureBonds(taxpayer.getId());
+				List<Bond> bonds = new ArrayList<Bond>();
+				//if (pendingBondIds.size() > 0) {
+					try {
+						//incomeService.calculatePayment(workDayDate, pendingBondIds, true, true);
+						bonds = findFutureBonds(taxpayer.getId());
+
+						//Boolean control = comparateBondsDates(bonds);
+						loadBondsDetail(bonds);
+					} catch (Exception e) {
+						e.printStackTrace();
+						serverLog.setMethodCompleted(false);
+						serverLog.setCodeError("PayoutNotAllowed");
+						em.persist(serverLog);
+						throw new PayoutNotAllowed();
+					}
+				//}
+				// } else {
+				// throw new HasNoObligations();
+				// }
+				Statement statement = new Statement(taxpayer, bonds, workDayDate);
+				//serverLog.setMethodCompleted(true);
+				//serverLog.setCodeError(null);
+				//em.persist(serverLog);
+				return statement;
+			}
+		}
+	}
+	
+	/*@SuppressWarnings("unchecked")
+	private List<Long> hasFutureBonds(Long taxpayerId) {
+		Long futureBondStatusId = systemParameterService.findParameter(IncomeServiceBean.FUTURE_BOND_STATUS);
+		Query query = em.createNamedQuery("Bond.findIdsByStatusAndResidentId");
+		query.setParameter("residentId", taxpayerId);
+		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
+		query.setParameter("pendingBondStatusId", futureBondStatusId);
+		List<Long> ids = query.getResultList();
+		System.out.println("FUTURE BONDS TOTAL ---->" + ids.size());
+		return ids;
+	}*/
+	
+	@SuppressWarnings("unchecked")
+	private List<Bond> findFutureBonds(Long taxpayerId) {
+		Long futureBondStatusId = systemParameterService.findParameter(IncomeServiceBean.FUTURE_BOND_STATUS);
+		Query query = em.createNamedQuery("Bond.findByStatusAndResidentId");
+		query.setParameter("residentId", taxpayerId);
+		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
+		query.setParameter("pendingBondStatusId", futureBondStatusId);
+		List<Bond> bonds = query.getResultList();
+		/*for (Bond bond : bonds) {
+			System.out.println("L===========>" + bond.getServiceDate());
+		}*/
+		// System.out.println("BONDS TOTAL ---->" + bonds.size());
+		return bonds;
+
 	}
 	
 }
