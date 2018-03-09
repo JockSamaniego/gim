@@ -1,10 +1,14 @@
 package org.gob.gim.ws.service;
 
+import org.gob.loja.gim.ws.dto.Taxpayer;
+
 public class UserResponse {
 
 	private String message;
 	private String name;
-	private String status;
+	private String status; 
+	private Taxpayer taxpayer;
+	
 	public String getMessage() {
 		return message;
 	}
@@ -23,6 +27,10 @@ public class UserResponse {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
+	public Taxpayer getTaxpayer() {
+		return taxpayer;
+	}
+	public void setTaxpayer(Taxpayer taxpayer) {
+		this.taxpayer = taxpayer;
+	}	
 }

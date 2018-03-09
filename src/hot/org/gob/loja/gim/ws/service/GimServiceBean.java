@@ -218,10 +218,19 @@ public class GimServiceBean implements GimService{
 		List<User> users = q.getResultList();
 		UserResponse response = new UserResponse();
 		if(!users.isEmpty()) {
-			response.setMessage(users.get(0).getResident().getIdentificationNumber());
-			response.setStatus("ok");
-			response.setName(users.get(0).getResident().getName());
+			User user = users.get(0);
+			try {
+				response.setTaxpayer(findTaxpayer(user.getResident().getIdentificationNumber()));
+				response.setMessage(user.getResident().getIdentificationNumber());
+				response.setStatus("ok");
+				response.setName(user.getResident().getName());
+			} catch (TaxpayerNotFound e) {
+				e.printStackTrace();
+			} catch (TaxpayerNonUnique e) {
+				e.printStackTrace();
+			}
 		}else {
+			response.setTaxpayer(null);
 			response.setMessage("No existen registros");
 			response.setStatus("error");
 			response.setName("");
