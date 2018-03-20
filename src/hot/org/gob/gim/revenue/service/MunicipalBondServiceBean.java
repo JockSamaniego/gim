@@ -237,7 +237,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override//iva12%
+	@Override
+	//iva12%
 	public void calculatePayment(MunicipalBond municipalBond, Date paymentDate, Deposit deposit, boolean isNew,
 			boolean isEmission, boolean applyDiscounts, List<TaxRate> taxRatesActives, Object... facts)
 					throws EntryDefinitionNotFoundException {
@@ -299,7 +300,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	    }  		
 	    */
 	  
-		roundItems(municipalBond);///ya tiene los 48.10
+		roundItems(municipalBond);
+		///ya tiene los 48.10
 		BigDecimal paidTotal = municipalBond.getBalance();
 		paidTotal = paidTotal.add(municipalBond.getSurcharge());
 		
