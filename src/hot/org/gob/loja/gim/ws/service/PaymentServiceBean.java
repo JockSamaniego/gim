@@ -962,9 +962,6 @@ public class PaymentServiceBean implements PaymentService {
 		String identificationNumber = request.getIdentificationNumber();
 		
 		if (controlAlertResident(identificationNumber)) {
-			//serverLog.setMethodCompleted(false);
-			//serverLog.setCodeError("PayoutNotAllowed");
-			//em.persist(serverLog);
 			throw new PayoutNotAllowed();
 		} else {
 
@@ -985,7 +982,6 @@ public class PaymentServiceBean implements PaymentService {
 				List<FutureBond> bonds = new ArrayList<FutureBond>();
 					try {
 						bonds = findFutureBonds(taxpayer.getId());
-						//loadBondsDetail(bonds);
 					} catch (Exception e) {
 						e.printStackTrace();
 						serverLog.setMethodCompleted(false);
@@ -999,18 +995,6 @@ public class PaymentServiceBean implements PaymentService {
 			}
 		}
 	}
-	
-	/*@SuppressWarnings("unchecked")
-	private List<Long> hasFutureBonds(Long taxpayerId) {
-		Long futureBondStatusId = systemParameterService.findParameter(IncomeServiceBean.FUTURE_BOND_STATUS);
-		Query query = em.createNamedQuery("Bond.findIdsByStatusAndResidentId");
-		query.setParameter("residentId", taxpayerId);
-		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
-		query.setParameter("pendingBondStatusId", futureBondStatusId);
-		List<Long> ids = query.getResultList();
-		System.out.println("FUTURE BONDS TOTAL ---->" + ids.size());
-		return ids;
-	}*/
 	
 	@SuppressWarnings("unchecked")
 	private List<FutureBond> findFutureBonds(Long taxpayerId) {
