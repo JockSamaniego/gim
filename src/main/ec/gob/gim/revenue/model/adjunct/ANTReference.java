@@ -65,6 +65,13 @@ public class ANTReference extends Adjunct {
 	 * 332 TV-UMTTTSV-2017
 	 */
 	private String supportDocumentURL;
+	
+	/**
+	 * rfam 2018-02-19
+	 * ML-PSM-2018-374
+	 * UMTTTSV-FV-2018-0086-O
+	 */
+	private String physicalInfractionNumber;
 
 	// private String observation;
 
@@ -100,6 +107,11 @@ public class ANTReference extends Adjunct {
 		
 		pair = new ValuePair("Nro. Infracción", contraventionNumber != null ? contraventionNumber.toUpperCase() : "-");
 		details.add(pair);
+		
+		if (physicalInfractionNumber != null && physicalInfractionNumber.equals("")) {
+			pair = new ValuePair("Boleta Infracción", physicalInfractionNumber != null ? physicalInfractionNumber.toUpperCase() : "-");
+			details.add(pair);
+		}
 		
 		return details;
 	}
@@ -166,5 +178,15 @@ public class ANTReference extends Adjunct {
 	public void setSupportDocumentURL(String supportDocumentURL) {
 		this.supportDocumentURL = supportDocumentURL;
 	}
+
+	public String getPhysicalInfractionNumber() {
+		return physicalInfractionNumber;
+	}
+
+	public void setPhysicalInfractionNumber(String physicalInfractionNumber) {
+		this.physicalInfractionNumber = physicalInfractionNumber;
+	}
+
+	
 	
 }
