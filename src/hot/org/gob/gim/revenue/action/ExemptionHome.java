@@ -15,6 +15,7 @@ import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.service.ItemCatalogService;
+import org.gob.gim.revenue.service.PropertyService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -31,6 +32,8 @@ import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Exemption;
 import ec.gob.gim.revenue.model.ExemptionForProperty;
 import ec.gob.gim.revenue.model.ExemptionType;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.DTO.PropertyDTO;
 
 @Name("exemptionHome")
 @Scope(ScopeType.CONVERSATION)
@@ -68,14 +71,18 @@ public class ExemptionHome extends EntityHome<Exemption> {
 
 	private ItemCatalogService itemCatalogService;
 
+	private PropertyService propertyService;
+
 	private List<ExemptionForProperty> propertiesInExemptionNormal = new ArrayList<ExemptionForProperty>();
 
 	private List<ExemptionForProperty> propertiesInExemptionSpecial = new ArrayList<ExemptionForProperty>();
-	
-	//rfam 2017-12-26
+
+	// rfam 2017-12-26
 	private List<ExemptionForProperty> deletedPropertiesInExemption = new ArrayList<ExemptionForProperty>();
 
 	private ItemCatalog typeTreatmentExcemptionSpecial;
+
+	private List<PropertyDTO> propertiesForSelection = new ArrayList<PropertyDTO>();
 
 	// private ItemCatalog typeTreatmentExcemptionSpecial;
 
@@ -84,6 +91,15 @@ public class ExemptionHome extends EntityHome<Exemption> {
 
 	@In
 	FacesMessages facesMessages;
+
+	public List<PropertyDTO> getPropertiesForSelection() {
+		return propertiesForSelection;
+	}
+
+	public void setPropertiesForSelection(
+			List<PropertyDTO> propertiesForSelection) {
+		this.propertiesForSelection = propertiesForSelection;
+	}
 
 	public void init() {
 		if (systemParameterService == null) {
@@ -95,6 +111,12 @@ public class ExemptionHome extends EntityHome<Exemption> {
 			itemCatalogService = ServiceLocator.getInstance().findResource(
 					ItemCatalogService.LOCAL_NAME);
 		}
+
+		if (propertyService == null) {
+			propertyService = ServiceLocator.getInstance().findResource(
+					PropertyService.LOCAL_NAME);
+		}
+
 		this.typerTreatmentExcemption = itemCatalogService
 				.findItemsForCatalogCode(CatalogConstants.CATALOG_TYPES_TREATMENT_EXCEMPTION);
 
@@ -149,7 +171,7 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	}
 
 	public BigDecimal totalPropertiesAppraisal(Long residentId) {
-		//@tag exoneraciones2017 //colocar en la consulta el deleted=false
+		// @tag exoneraciones2017 //colocar en la consulta el deleted=false
 		Query query = getEntityManager().createNamedQuery(
 				"Domain.totalAppraisalCurrentDomainByResident");
 		query.setParameter("residentId", residentId);
@@ -212,9 +234,9 @@ public class ExemptionHome extends EntityHome<Exemption> {
 			if (!hasPropertyInExemption(property))
 				this.instance.getPropertiesInExemption().add(property);
 		}
-		
-		//rfam 2017-12-16
-		//para borrar las proiedades quitadas en el evento remove
+
+		// rfam 2017-12-16
+		// para borrar las proiedades quitadas en el evento remove
 		for (ExemptionForProperty property : this.deletedPropertiesInExemption) {
 			if (hasPropertyInExemption(property))
 				this.instance.getPropertiesInExemption().remove(property);
@@ -514,10 +536,10 @@ public class ExemptionHome extends EntityHome<Exemption> {
 				.equals(typeTreatmentExcemptionSpecial.getId())) {
 			this.propertiesInExemptionSpecial.add(this.exemptionForProperty);
 			// Recalcular el valor del avaluo de las propiedades
-//			this.instance
-//					.setPropertiesAppraisalSpecialTreatment(this.exemptionForProperty
-//							.getProperty().getCurrentDomain()
-//							.getCommercialAppraisal());
+			// this.instance
+			// .setPropertiesAppraisalSpecialTreatment(this.exemptionForProperty
+			// .getProperty().getCurrentDomain()
+			// .getCommercialAppraisal());
 		}
 
 		BigDecimal totalTreatmentSpecial = BigDecimal.ZERO;
@@ -529,6 +551,46 @@ public class ExemptionHome extends EntityHome<Exemption> {
 
 		this.instance
 				.setPropertiesAppraisalSpecialTreatment(totalTreatmentSpecial);
+
+	}
+
+	public void addProperties() {
+		System.out.println(this.propertiesForSelection);
+
+		for (PropertyDTO propertyDTO : propertiesForSelection) {
+
+			if (propertyDTO.getSelected()) {
+
+				Property proBD = this.propertyService
+						.findPropertyById(propertyDTO.getProperty_id());
+				ExemptionForProperty efp = new ExemptionForProperty();
+				efp.setAmountCreditYear1(propertyDTO.getAmountCreditYear1());
+				efp.setAmountCreditYear2(propertyDTO.getAmountCreditYear2());
+				efp.setAmountCreditYear3(propertyDTO.getAmountCreditYear3());
+				efp.setProperty(proBD);
+				efp.setTreatmentType(propertyDTO.getTreatmentType());
+				efp.setValidUntil(propertyDTO.getValidUntil());
+				efp.setNameHistoryResident(propertyDTO.getResident_name());
+
+				if (propertyDTO.getTreatmentType() == null) {
+					this.propertiesInExemptionNormal.add(efp);
+				} else if (propertyDTO.getTreatmentType().getId()
+						.equals(typeTreatmentExcemptionSpecial.getId())) {
+					this.propertiesInExemptionSpecial.add(efp);
+				}
+
+				BigDecimal totalTreatmentSpecial = BigDecimal.ZERO;
+				for (ExemptionForProperty exemptionForProperty : propertiesInExemptionSpecial) {
+					totalTreatmentSpecial = totalTreatmentSpecial
+							.add(exemptionForProperty.getProperty()
+									.getCurrentDomain()
+									.getCommercialAppraisal());
+				}
+
+				this.instance
+						.setPropertiesAppraisalSpecialTreatment(totalTreatmentSpecial);
+			}
+		}
 
 	}
 
@@ -548,8 +610,8 @@ public class ExemptionHome extends EntityHome<Exemption> {
 					.add(exemptionForProperty.getProperty().getCurrentDomain()
 							.getCommercialAppraisal());
 		}
-		
-		//rfam 2017-12-26
+
+		// rfam 2017-12-26
 		deletedPropertiesInExemption.add(property);
 
 		this.instance
@@ -558,6 +620,34 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	}
 
 	public void createExemptionForProperty() {
+		// TODO obtener propiedades de contibuyente y conyuge si es el caso
+		List<Long> idsResidentsForQuery = new ArrayList<Long>();
+		List<Long> idsPropertiesForQuery = new ArrayList<Long>();
+		idsPropertiesForQuery.add(new Long(-1));
+		if (this.instance.getResident() != null) {
+			idsResidentsForQuery.add(this.instance.getResident().getId());
+		}
+		if (this.instance.getPartner() != null) {
+			idsResidentsForQuery.add(this.instance.getPartner().getId());
+		}
+
+		/*
+		 * Query query = getEntityManager().createNamedQuery(
+		 * "Property.findByResidentsIds"); query.setParameter("ids",
+		 * idsForQuery); this.propertiesForSelection = query.getResultList();
+		 */
+		
+		for (ExemptionForProperty efp : propertiesInExemptionNormal) {
+			idsPropertiesForQuery.add(efp.getProperty().getId());
+		}
+		
+		for (ExemptionForProperty efp : propertiesInExemptionSpecial) {
+			idsPropertiesForQuery.add(efp.getProperty().getId());
+		}
+
+		this.propertiesForSelection = this.propertyService
+				.findByResidentIds(idsResidentsForQuery, idsPropertiesForQuery );
+
 		this.exemptionForProperty = new ExemptionForProperty();
 		clearSearchPropertyPanel();
 	}
@@ -565,8 +655,9 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	public void onChangeExemptionType() {
 
 		this.instance.getPropertiesInExemption().clear();
-		
-		this.instance.setReference(this.instance.getExemptionType().getReference());
+
+		this.instance.setReference(this.instance.getExemptionType()
+				.getReference());
 
 		if (this.instance.getExemptionType().getId()
 				.equals(exemptionSpecial.getId())) {
@@ -574,7 +665,7 @@ public class ExemptionHome extends EntityHome<Exemption> {
 		} else {
 			this.isExemptionEspecial = Boolean.FALSE;
 		}
-		
+
 	}
 
 	public void prepareEditExcemption(Exemption excemption) {
@@ -603,17 +694,28 @@ public class ExemptionHome extends EntityHome<Exemption> {
 			}
 		}
 	}
-	
-	public Boolean renderTableTreatmentSpecial(){
-		if(this.instance.getExemptionType() == null){
+
+	public Boolean renderTableTreatmentSpecial() {
+		if (this.instance.getExemptionType() == null) {
 			return Boolean.FALSE;
-		}else{
-			if(this.instance.getExemptionType().getName().equals("Por Tercera Edad")){
+		} else {
+			if (this.instance.getExemptionType().getName()
+					.equals("Por Tercera Edad")) {
 				return Boolean.TRUE;
 			}
 		}
 		return Boolean.FALSE;
-		
+
+	}
+
+	public void changeSelectedProperty(PropertyDTO property, boolean selected) {
+		System.out.println(property);
+		for (PropertyDTO propertyDto : propertiesForSelection) {
+			if (propertyDto.getProperty_id() == property.getProperty_id()) {
+				propertyDto.setSelected(!selected);
+				break;
+			}
+		}
 	}
 
 }

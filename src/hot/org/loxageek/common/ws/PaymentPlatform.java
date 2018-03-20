@@ -10,11 +10,11 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.gob.loja.gim.ws.dto.ClosingStatement;
+import org.gob.loja.gim.ws.dto.FutureStatement;
 import org.gob.loja.gim.ws.dto.Payout;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.Statement;
@@ -368,4 +368,45 @@ public class PaymentPlatform {
 	public TransactionData  queryPayment(ServiceRequest request, String transactionId){
 		return this.service.queryPayment(request, transactionId);
 	}
+	
+	
+	/**
+	 * Permite identificar si el contribuyente tiene pendientes emisiones futuras
+	 * 
+	 * @param request
+	 *            Detalle del peticionario del servicio
+	 * @return Estado de cuenta del contribuyente solicitado en el request
+	 * @throws PayoutNotAllowed
+	 * @throws TaxpayerNotFound
+	 * @throws NotActiveWorkday
+	 */
+	@WebMethod
+	public FutureStatement findFutureEmission(ServiceRequest request)
+			throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations {
+		System.out.println(
+				"FINDING SATATEMENT FOR " + request.getIdentificationNumber() + " with USER: " + request.getUsername());
+		FutureStatement statement = new FutureStatement();
+		try {
+			statement = service.findFutureEmission(request);
+		} catch (PayoutNotAllowed e) {
+			InvalidateSession();
+			throw e;
+		} catch (TaxpayerNotFound e) {
+			InvalidateSession();
+			throw e;
+		} catch (InvalidUser e) {
+			InvalidateSession();
+			throw e;
+		} catch (NotActiveWorkday e) {
+			InvalidateSession();
+			throw e;
+		} catch (HasNoObligations e) {
+			InvalidateSession();
+			throw e;
+		}
+		InvalidateSession();
+		return statement;
+	}
+	
+	
 }

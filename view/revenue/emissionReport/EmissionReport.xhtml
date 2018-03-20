@@ -67,7 +67,7 @@
 					<a:commandButton id="generateReport"
 						value="#{messages['income.generateReport']}"
 						 action="#{emissionReportHome.generateReport()}"
-						 reRender="detailEmissionPanel,entryFutureList,formalizationProntoPagoList,formalizationNormalList,anuladasList,detailPanel2,printingSuccessBtn"/>
+						 reRender="detailEmissionPanel,entryFutureList,formalizationProntoPagoList,formalizationNormalList,anuladasList,reversadasList,detailPanel2,printingSuccessBtn"/>
 				</div>
 
 			</rich:panel>
@@ -122,6 +122,7 @@
 							</f:facet>
 							<h:outputText value="#{_entryDetail.valor_emision}" size="12"
 								styleClass="right">
+								<f:convertNumber type="number" groupingUsed="true" />
 							</h:outputText>
 						</rich:column>
 						
@@ -141,6 +142,7 @@
 							</f:facet>
 							<h:outputText value="#{_entryDetail.valor_bajas}" size="12"
 								styleClass="right">
+								<f:convertNumber type="number" groupingUsed="true" />
 							</h:outputText>
 						</rich:column>
 						
@@ -150,6 +152,7 @@
 							</f:facet>
 							<h:outputText value="#{_entryDetail.total_emision}" size="12"
 								styleClass="right">
+								<f:convertNumber type="number" groupingUsed="true" />
 							</h:outputText>
 						</rich:column>
 						
@@ -166,7 +169,7 @@
 								
 								<rich:column styleClass="number tableCellFont">
 									<h:outputText value="#{emissionReportHome.total_valor_emision}">
-										<f:convertNumber pattern="$ ####.00" />
+										<f:convertNumber pattern="$ ####.00" type="number" groupingUsed="true" />
 									</h:outputText>
 								</rich:column>
 
@@ -177,13 +180,13 @@
 								
 								<rich:column styleClass="number tableCellFont">
 									<h:outputText value="#{emissionReportHome.total_valor_bajas}">
-										<f:convertNumber pattern="$ ####.00" />
+										<f:convertNumber pattern="$ ####.00" type="number" groupingUsed="true" />
 									</h:outputText>
 								</rich:column>
 								
 								<rich:column styleClass="number tableCellFont">
 									<h:outputText value="#{emissionReportHome.total_emision}">
-										<f:convertNumber pattern="$ ####.00" />
+										<f:convertNumber  type="currency"  currencySymbol="$" groupingUsed="true" />
 									</h:outputText>
 								</rich:column>
 							</rich:columnGroup>
@@ -243,6 +246,7 @@
 							</f:facet>
 							<h:outputText value="#{_entryDetail.total_emision}" size="12"
 								styleClass="right">
+								<f:convertNumber type="number" groupingUsed="true" />
 							</h:outputText>
 						</rich:column>
 
@@ -259,7 +263,7 @@
 								</rich:column>
 								<rich:column styleClass="number tableCellFont">
 									<h:outputText value="#{emissionReportHome.total_valor_futuras}">
-										<f:convertNumber pattern="$ ####.00" />
+										<f:convertNumber pattern="$ ####.00" type="number" groupingUsed="true" />
 									</h:outputText>
 								</rich:column>
 							</rich:columnGroup>
@@ -317,6 +321,7 @@
 							</f:facet>
 							<h:outputText value="#{_entryDetail.total_emision}" size="12"
 								styleClass="right">
+								<f:convertNumber type="number" groupingUsed="true" />
 							</h:outputText>
 						</rich:column>
 
@@ -333,7 +338,7 @@
 								</rich:column>
 								<rich:column styleClass="number tableCellFont">
 									<h:outputText value="#{emissionReportHome.total_valor_formalizaciones_pago_anticipado}">
-										<f:convertNumber pattern="$ ####.00" />
+										<f:convertNumber pattern="$ ####.00" type="number" groupingUsed="true" />
 									</h:outputText>
 								</rich:column>
 							</rich:columnGroup>
@@ -391,6 +396,7 @@
 							</f:facet>
 							<h:outputText value="#{_entryDetail.total_emision}" size="12"
 								styleClass="right">
+								<f:convertNumber type="number" groupingUsed="true" />
 							</h:outputText>
 						</rich:column>
 
@@ -407,7 +413,7 @@
 								</rich:column>
 								<rich:column styleClass="number tableCellFont">
 									<h:outputText value="#{emissionReportHome.total_valor_formalizaciones_normales}">
-										<f:convertNumber pattern="$ ####.00" />
+										<f:convertNumber pattern="$ ####.00" type="number" groupingUsed="true" />
 									</h:outputText>
 								</rich:column>
 							</rich:columnGroup>
@@ -427,7 +433,7 @@
 					<h:outputText value="#{messages['common.returnedNoResults']}"
 						rendered="#{empty emissionReportHome.detailsAnuladas}" />
 
-					<rich:dataTable id="reversedTable" var="_entryDetail"
+					<rich:dataTable id="anuladasTable" var="_entryDetail"
 						value="#{emissionReportHome.detailsAnuladas}"
 						rowClasses="rvgRowOne,rvgRowTwo"
 						rendered="#{not empty emissionReportHome.detailsAnuladas}">
@@ -465,6 +471,7 @@
 							</f:facet>
 							<h:outputText value="#{_entryDetail.total_emision}" size="12"
 								styleClass="right">
+								<f:convertNumber type="number" groupingUsed="true" />
 							</h:outputText>
 						</rich:column>
 
@@ -481,7 +488,7 @@
 								</rich:column>
 								<rich:column styleClass="number tableCellFont">
 									<h:outputText value="#{emissionReportHome.total_valor_anuladas}">
-										<f:convertNumber pattern="$ ####.00" />
+										<f:convertNumber pattern="$ ####.00" type="number" groupingUsed="true" />
 									</h:outputText>
 								</rich:column>
 							</rich:columnGroup>
@@ -489,6 +496,82 @@
 					</rich:dataTable>
 				</rich:panel>
 			</a:outputPanel>
+			
+			<a:outputPanel styleClass="results" id="reversadasList">
+				<rich:panel id="reversadasPanel">
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle,">
+							<h:outputText value="EMISIONES DADAS DE BAJA" />
+						</h:panelGrid>
+					</f:facet>
+
+					<h:outputText value="#{messages['common.returnedNoResults']}"
+						rendered="#{empty emissionReportHome.detailsReversadas}" />
+
+					<rich:dataTable id="reversedTable" var="_entryDetail"
+						value="#{emissionReportHome.detailsReversadas}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty emissionReportHome.detailsReversadas}">
+
+						<rich:column sortBy="#{_entryDetail.account_code}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.account_code}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.account_name}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account.accountName']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.account_name}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.cantidad_emisiones}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Nro. Emisiones" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.cantidad_emisiones}" size="12"
+								styleClass="right">
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column sortBy="#{_entryDetail.total_emision}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Valor Emisiones" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.total_emision}" size="12"
+								styleClass="right">
+								<f:convertNumber pattern="$ ####.00" type="number" groupingUsed="true" />
+							</h:outputText>
+						</rich:column>
+
+
+						<f:facet name="footer">
+							<rich:columnGroup columnClasses=",number">
+								<rich:column colspan="2">
+									<h:outputText value="#{messages['item.total']}:"
+										styleClass="labelBold" />
+								</rich:column>
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText value="#{emissionReportHome.total_reversadas}">
+									</h:outputText>
+								</rich:column>
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText value="#{emissionReportHome.total_valor_reversadas}">
+										<f:convertNumber  type="currency"  currencySymbol="$" groupingUsed="true" />
+									</h:outputText>
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+					</rich:dataTable>
+				</rich:panel>
+			</a:outputPanel>
+			
 
 			<h:panelGroup id="detailPanel2">
 
