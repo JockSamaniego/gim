@@ -38,10 +38,11 @@
 		<s:decorate id="contraventionNumberField"
 			template="../../layout/edit.xhtml">
 			<ui:define name="label">#{messages['vehicle.notificationNumber']}:</ui:define>
-			<h:inputText id="code" required="true"
+			<h:inputText id="contraventionNumber" required="true"
 				style="text-transform: uppercase"
 				value="#{adjunctHome.instance.notificationNumber}" size="10"
 				disabled="#{adjunctHome.instance.vehicleType.id == 26}">
+				<f:validator validatorId="simertNotificationNumberValidator" />
 			</h:inputText>
 		</s:decorate>
 

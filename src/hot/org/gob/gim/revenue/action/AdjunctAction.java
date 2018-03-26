@@ -11,11 +11,10 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.gob.gim.commercial.action.BusinessHome;
-import org.gob.gim.revenue.action.MunicipalBondHome;
-import org.gob.gim.revenue.service.ItemCatalogService;
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
@@ -385,6 +384,5 @@ public class AdjunctAction extends EntityController{
 					ItemCatalogService.LOCAL_NAME);
 		}
 	}
-
 	
 }
