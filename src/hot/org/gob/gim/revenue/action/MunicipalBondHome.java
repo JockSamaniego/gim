@@ -1575,5 +1575,20 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				}
 			}
 		}
+		
+		@SuppressWarnings("unused")
+		public Boolean findSimertfine(String code) {
+			Query q = getEntityManager().createQuery("select count(*) from gimprod.vehicularfinereference vfr "
+					+ "inner join gimprod.municipalbond mb on vfr.id = mb.adjunct_id "
+					+ "where vfr.notificationnumber like like concat('%', :criteria,'%') "
+					+ "and mb.municipalbondstatus_id in (3,4,5,6,7,10)");
+			q.setParameter("criteria", code);
+			Long quantity = (Long) q.getSingleResult();
+			if (quantity.intValue() < 0) {
+				return false;
+			}else {
+				return true;	
+			}
+		}
 
 }
