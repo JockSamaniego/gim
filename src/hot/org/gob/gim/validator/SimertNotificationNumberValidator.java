@@ -33,15 +33,16 @@ public class SimertNotificationNumberValidator implements javax.faces.validator.
 	@Override
 	public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 		String notificationNumber = value.toString().trim();
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><< " + notificationNumber);
+		//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><< " + notificationNumber);
 		MunicipalBondHome mb = (MunicipalBondHome) Component.getInstance("municipalBondHome");
 		if (mb.findSimertfine(notificationNumber)) {
-			System.out.println("ya existe>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			//System.out.println("ya existe>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			message = Interpolator.instance().interpolate("Número infracción ya existente", new Object[0]);
 			throw new ValidatorException(new FacesMessage(message));
-		}else {
-			System.out.println("...................... no hay nada si deja ingresar");
 		}
+		/*else {
+			System.out.println("...................... no hay nada si deja ingresar");
+		}*/
 
 		/*
 		 * ResidentHome residentHome = (ResidentHome)

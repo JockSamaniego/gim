@@ -43,6 +43,8 @@
 				value="#{adjunctHome.instance.notificationNumber}" size="10"
 				disabled="#{adjunctHome.instance.vehicleType.id == 26}">
 				<f:validator validatorId="simertNotificationNumberValidator" />
+				<a:support event="onblur" ajaxSingle="true" bypassUpdates="true"
+					reRender="contraventionNumberField" />
 			</h:inputText>
 		</s:decorate>
 
