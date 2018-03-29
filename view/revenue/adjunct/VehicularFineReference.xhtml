@@ -32,6 +32,8 @@
 				disabled="#{adjunctHome.instance.vehicleType.id == 26}"
 				>
 				<f:validator validatorId="numberPlateValidator" />
+				<a:support event="onblur" ajaxSingle="true" bypassUpdates="true"
+					reRender="codeField" />
 			</h:inputText>
 		</s:decorate>
 
