@@ -69,13 +69,11 @@
 							value="#{exemptionHome.instance.exemptionType}">
 							<s:selectItems value="#{exemptionTypes}" required="true"
 								var="exemptionType" label="#{exemptionType.name}"
-								noSelectionLabel="#{messages['common.chooseOption']}" 
-								/>
+								noSelectionLabel="#{messages['common.chooseOption']}" />
 							<s:convertEntity />
 							<a:support event="onchange" ajaxSingle="true"
 								action="#{exemptionHome.onChangeExemptionType()}"
-								reRender="propertiesPanel,exemptionPercentage, panelBottom" 
-								/>
+								reRender="propertiesPanel,exemptionPercentage, panelBottom" />
 						</h:selectOneMenu>
 					</s:decorate>
 
@@ -129,7 +127,8 @@
 									value="#{_exemptionProperty.property.previousCadastralCode}" />
 							</rich:column>
 
-							<rich:column style="text-align:right;" rendered="#{exemptionHome.instance.exemptionType.name == 'Exencion Especial' or exemptionHome.instance.exemptionType.name == 'Por emprendimiento'}">
+							<rich:column style="text-align:right;"
+								rendered="#{exemptionHome.instance.exemptionType.name == 'Exencion Especial' or exemptionHome.instance.exemptionType.name == 'Por emprendimiento'}">
 								<f:facet name="header">#{messages['exemption.percentage']}</f:facet>
 								<h:inputText value="#{_exemptionProperty.discountPercentage}"
 									required="true" style="text-align:right;">
@@ -162,6 +161,12 @@
 							<rich:column styleClass="right">
 								<f:facet name="header">#{messages['exemption.amountCreditYear3']}</f:facet>
 								<h:outputText value="#{_exemptionProperty.amountCreditYear3}" />
+							</rich:column>
+
+							<rich:column styleClass="right">
+								<f:facet name="header">Estado</f:facet>
+								<h:outputText
+									value="#{_exemptionProperty.property.deleted ? messages['property.deleted'].toUpperCase() : messages['property.valid'].toUpperCase()}" />
 							</rich:column>
 
 							<rich:column>
@@ -230,6 +235,12 @@
 							<rich:column styleClass="right">
 								<f:facet name="header">#{messages['exemption.amountCreditYear3']}</f:facet>
 								<h:outputText value="#{_exemptionProperty.amountCreditYear3}" />
+							</rich:column>
+							
+							<rich:column styleClass="right">
+								<f:facet name="header">Estado</f:facet>
+								<h:outputText
+									value="#{_exemptionProperty.property.deleted ? messages['property.deleted'].toUpperCase() : messages['property.valid'].toUpperCase()}" />
 							</rich:column>
 
 							<rich:column>

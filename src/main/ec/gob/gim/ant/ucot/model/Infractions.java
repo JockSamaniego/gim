@@ -1,6 +1,7 @@
 package ec.gob.gim.ant.ucot.model;
  
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -62,6 +63,9 @@ public class Infractions {
 	@Column(length=10)
 	private String numeral;
 	
+	@Column(length=10)
+	private String partNumber;
+	
 	@Temporal(TemporalType.DATE)
 	private Date citationDate;
 	
@@ -72,9 +76,24 @@ public class Infractions {
 	
 	private String identification;
 	
+	private String name;
+	
 	private String licensePlate;
 	
-	private Boolean archived;	
+	private Boolean nullified;
+	
+	private Boolean digitized;
+	
+	private Boolean white_green;
+	
+	private Boolean yellow;
+	
+	private BigDecimal points;
+	
+	private BigDecimal value;
+	
+	@Temporal(TemporalType.DATE)
+	private Date nullifiedDate;
 	
 	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
 	@JoinColumn(name="bulletin_id")
@@ -144,14 +163,13 @@ public class Infractions {
 		this.licensePlate = licensePlate;
 	}
 
-	public Boolean getArchived() {
-		return archived;
+	public Boolean getNullified() {
+		return nullified;
 	}
 
-	public void setArchived(Boolean archived) {
-		this.archived = archived;
+	public void setNullified(Boolean nullified) {
+		this.nullified = nullified;
 	}
-
 
 	public Bulletin getBulletin() {
 		return bulletin;
@@ -168,5 +186,70 @@ public class Infractions {
 	public void setCitationTime(Date citationTime) {
 		this.citationTime = citationTime;
 	}
+
+	public String getPartNumber() {
+		return partNumber;
+	}
+
+	public void setPartNumber(String partNumber) {
+		this.partNumber = partNumber;
+	}
+
+	public Date getNullifiedDate() {
+		return nullifiedDate;
+	}
+
+	public void setNullifiedDate(Date nullifiedDate) {
+		this.nullifiedDate = nullifiedDate;
+	}
+
+	public Boolean getDigitized() {
+		return digitized;
+	}
+
+	public void setDigitized(Boolean digitized) {
+		this.digitized = digitized;
+	}
+
+	public BigDecimal getPoints() {
+		return points;
+	}
+
+	public void setPoints(BigDecimal points) {
+		this.points = points;
+	}
+
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Boolean getWhite_green() {
+		return white_green;
+	}
+
+	public void setWhite_green(Boolean white_green) {
+		this.white_green = white_green;
+	}
+
+	public Boolean getYellow() {
+		return yellow;
+	}
+
+	public void setYellow(Boolean yellow) {
+		this.yellow = yellow;
+	}
+	
 	
 }

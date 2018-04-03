@@ -1,6 +1,8 @@
 package ec.gob.gim.ant.ucot.model;
  
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 
@@ -58,6 +62,9 @@ public class InfractionSentences {
 	@ManyToOne
 	@JoinColumn(name="infractions_id")
 	private Infractions infraction;
+	
+	@Temporal(TemporalType.DATE)
+	private Date creationDate;
 	 
 	public Long getId() {
 		return id;
@@ -105,6 +112,14 @@ public class InfractionSentences {
 
 	public void setInfraction(Infractions infraction) {
 		this.infraction = infraction;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	} 
 	
 }

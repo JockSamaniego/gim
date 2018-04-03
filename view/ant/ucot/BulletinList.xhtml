@@ -5,12 +5,14 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     template="../../layout/template.xhtml">
 
 <ui:define name="body">
 
     <h:form id="bulletinSearch" styleClass="edit">
+    <ui:include src="fragment/InfractionsDelivered.xhtml" />
 <h:outputText styleClass="formTitle" value="#{messages['ucot.bulletinManager']}" />    
 
         <rich:simpleTogglePanel label="#{messages['ucot.searchFilter']}" switchType="ajax">
@@ -33,7 +35,7 @@
             <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
         </div>
 
-    </h:form>
+    
 
     <rich:panel>
         <f:facet name="header">
@@ -146,11 +148,21 @@
                 <f:param name="bulletinId"
                         value="#{_bulletin.id}"/>
             </s:button>
+
+
+             <a:commandButton id="openinfractionsDeliveredBtn"
+                  action="#{bulletinHome.searchInfractionsDelivered(_bulletin.id)}"
+                  reRender="infractionsDelivered" ajaxSingle="true"
+                  eventsQueue="gimQueue"
+                  oncomplete="Richfaces.showModalPanel('infractionsDelivered',{width:600, height:500})"
+                  value="Listado" />
+            
         </rich:column>
     </rich:dataTable>
 
     </div>
     </rich:panel>
+    </h:form>
 
     <div class="tableControl">
 

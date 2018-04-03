@@ -1,7 +1,7 @@
 package org.gob.gim.revenue.action;
 
 import java.math.BigDecimal;
-import java.rmi.RemoteException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1573,6 +1573,28 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 					colorMessage = "red";
 					blocketMessage=alert.getOpenDetail();
 				}
+			}
+		}
+		
+		/**
+		 * Permite buscar un numero de notificacion de simert en la bd
+		 * para evitar la duplicidad de multas de simert
+		 * rfam 2018-03-26
+		 * @param code
+		 * @return
+		 */
+		@SuppressWarnings("unused")
+		public Boolean findSimertfine(String code) {
+			Query q = getEntityManager().createNativeQuery("select count(*) from gimprod.vehicularfinereference vfr "
+					+ "inner join gimprod.municipalbond mb on vfr.id = mb.adjunct_id "
+					+ "where vfr.notificationnumber like concat('%', :criteria,'%') "
+					+ "and mb.municipalbondstatus_id in (3,4,5,6,7,10)");
+			q.setParameter("criteria", code);
+			BigInteger quantity = (BigInteger) q.getSingleResult();
+			if (quantity.intValue() <= 0) {
+				return false;
+			}else {
+				return true;	
 			}
 		}
 

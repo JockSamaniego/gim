@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
@@ -38,6 +40,10 @@ import ec.gob.gim.revenue.model.Contract;
 	 pkColumnValue="Death",
 	 initialValue=1, allocationSize=1
  )
+
+@NamedQueries(value = {
+		@NamedQuery(name = "Death.FindById", query = "Select d from Death d where d.id=:id"),})
+
  public class Death {
 
 	@Id

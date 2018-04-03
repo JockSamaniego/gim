@@ -905,13 +905,24 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 		@NamedQuery(name = "MunicipalBond.findLastId", query = "select max(municipalBond.id) from MunicipalBond municipalBond"),
 		
 		@NamedQuery(name = "MunicipalBond.findLastNumber", query = "select municipalBond.number from MunicipalBond municipalBond WHERE "
-				+ "municipalBond.id = :id")
+				+ "municipalBond.id = :id"),
+		
+		@NamedQuery(name = "Bond.findFutureByStatusAndResidentId", query = "SELECT NEW org.gob.loja.gim.ws.dto.FutureBond( "
+				+ "e.name, mb.groupingCode, count(mb), sum(mb.paidTotal), sum(mb.interest), sum(mb.surcharge), sum(mb.taxesTotal), sum(mb.discount) ) "
+				+ "FROM MunicipalBond mb "
+				+ "JOIN mb.entry e "
+				+ "WHERE "
+				+ "mb.resident.id=:residentId AND "
+				+ "mb.municipalBondType=:municipalBondType AND "
+				+ "mb.municipalBondStatus.id = :pendingBondStatusId "
+				+ "group by e.name, mb.groupingCode "
+				+ "order by e.name, mb.groupingCode ")
 })
 //
 public class MunicipalBond implements Serializable {
 
 	/**
-	 * 
+	 *  
 	 */
 	private static final long serialVersionUID = 18386387333339876L;
 

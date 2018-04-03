@@ -11,8 +11,8 @@
 
 <ui:define name="body">
 
-    <h:form id="infractions" styleClass="edit">
-        <rich:panel>
+    <h:form id="infractions" styleClass="edit" >
+        <rich:panel id="infractionsPanel" >
             <f:facet name="header">
                 <h:panelGrid columns="1" columnClasses="headerTitle,">
                   <h:outputText
@@ -25,7 +25,7 @@
                 <h:inputText id="agent"
                        required="true"
                        readonly="true"
-                       size="50"
+                       size="60"
                           value="#{infractionsHome.instance.bulletin.agent.resident.name}">
                 </h:inputText>
             </s:decorate>
@@ -46,6 +46,15 @@
                        readonly="true"
                        size="20"
                           value="#{infractionsHome.instance.bulletin.endNumber}">
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="typeField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['bulletin.type']}</ui:define>
+                <h:inputText id="type"
+                       required="true"
+                       readonly="true"
+                          value="#{infractionsHome.instance.bulletin.type.name}">
                 </h:inputText>
             </s:decorate>
 
@@ -76,12 +85,77 @@
                 </h:inputText>
             </s:decorate>
 
-            <s:decorate id="licensePlateField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['infraction.plate']}</ui:define>
-                <h:inputText id="licensePlate"
-                               size="15"
-                               maxlength="10"
-                              value="#{infractionsHome.instance.licensePlate}"/>
+            <s:decorate id="colorPersonalField" template="../../layout/edit.xhtml" 
+                                      rendered="#{infractionsHome.instance.bulletin.type.name == 'PERSONAL'}">
+                <ui:define name="label">#{messages['infraction.white']}?</ui:define>
+                <h:selectBooleanCheckbox id="white"
+                                      value="#{infractionsHome.instance.white_green}">
+                </h:selectBooleanCheckbox>
+            </s:decorate>
+
+            <s:decorate id="colorAdhesiveField" template="../../layout/edit.xhtml" 
+                                      rendered="#{infractionsHome.instance.bulletin.type.name != 'PERSONAL'}">
+                <ui:define name="label">#{messages['infraction.green']}?</ui:define>
+                <h:selectBooleanCheckbox id="green"
+                                      value="#{infractionsHome.instance.white_green}">
+                </h:selectBooleanCheckbox>
+            </s:decorate>
+            
+             <s:decorate id="colorField" template="../../layout/edit.xhtml">
+                
+                <ui:define name="label">#{messages['infraction.yellow']}?</ui:define>
+                <h:selectBooleanCheckbox id="yellow"
+                                      value="#{infractionsHome.instance.yellow}">
+                </h:selectBooleanCheckbox>
+            </s:decorate>
+
+            <s:decorate id="inPhysicField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.inphysic']}</ui:define>
+                <h:selectBooleanCheckbox id="inPhysic"
+                                      value="#{infractionsHome.instance.inPhysic}">
+                        <a:support event="onchange" ajaxSingle="true" reRender="infractionsPanel" />
+                </h:selectBooleanCheckbox>
+            </s:decorate>
+
+            <s:decorate id="digitizedField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.inPhysic}">
+                <ui:define name="label">#{messages['infraction.digitized']}</ui:define>
+                <h:selectBooleanCheckbox id="digitized"
+                                      value="#{infractionsHome.instance.digitized}">
+                </h:selectBooleanCheckbox>
+            </s:decorate>
+
+            <s:decorate id="archivedField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.nullified']}</ui:define>
+                <h:selectBooleanCheckbox id="nullified"
+                                      value="#{infractionsHome.instance.nullified}">
+                         <a:support event="onchange" ajaxSingle="true" reRender="infractionsPanel" />
+                </h:selectBooleanCheckbox>
+            </s:decorate>
+            
+            <s:decorate id="nullifiedDateField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.nullified}">
+                <ui:define name="label">#{messages['infraction.nullifiedDate']}</ui:define>
+                <rich:calendar id="nullifiedDate"
+                          value="#{infractionsHome.instance.nullifiedDate}" datePattern="dd/MM/yyyy" 
+                          required="#{infractionsHome.instance.nullified}"/>
+            </s:decorate>
+
+
+        <h:panelGrid columns="1" > 
+
+          <rich:panel>
+            <f:facet name="header">
+                <h:panelGrid columns="1" columnClasses="headerTitle,">
+                  <h:outputText
+                    value="Información Adicional" />
+                </h:panelGrid>      
+            </f:facet>
+            
+            <s:decorate id="nameField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.name']}</ui:define>
+                <h:inputText id="name"
+                              size="50"
+                              maxlength="50"
+                              value="#{infractionsHome.instance.name}"/>
             </s:decorate>
 
             <s:decorate id="identificationField" template="../../layout/edit.xhtml">
@@ -92,13 +166,20 @@
                               value="#{infractionsHome.instance.identification}"/>
             </s:decorate>
 
+            <s:decorate id="licensePlateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.plate']}</ui:define>
+                <h:inputText id="licensePlate"
+                               size="15"
+                               maxlength="10"
+                              value="#{infractionsHome.instance.licensePlate}"/>
+            </s:decorate>
+
             <s:decorate id="articleField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.article']}</ui:define>
                 <h:inputText id="article"
                            size="15"
                       maxlength="10"
                           value="#{infractionsHome.instance.article}">
-                    <a:support event="onblur" reRender="articleField" bypassUpdates="true" ajaxSingle="true"/>
                 </h:inputText>
             </s:decorate>
 
@@ -108,21 +189,73 @@
                            size="15"
                       maxlength="10"
                           value="#{infractionsHome.instance.numeral}">
-                    <a:support event="onblur" reRender="numeralField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+            
+            <s:decorate id="numberPartField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.numberPart']}</ui:define>
+                <h:inputText id="numberPart"
+                           size="15"
+                      maxlength="10"
+                          value="#{infractionsHome.instance.partNumber}">
+                </h:inputText>
+            </s:decorate>         
+
+            
+            <div style="clear:both" />
+
+          </rich:panel>
+
+
+          <rich:panel>
+            <f:facet name="header">
+                <h:panelGrid columns="1" columnClasses="headerTitle,">
+                  <h:outputText
+                    value="Sanciones" />
+                </h:panelGrid>      
+            </f:facet>
+            <s:decorate id="infractionPointField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Puntos</ui:define>
+                <h:inputText id="licensePlate"
+                               size="15"
+                               maxlength="10"
+                              value="#{infractionsHome.instance.points}" />
+            </s:decorate>
+
+            <s:decorate id="basicSalaryField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Salario Básico</ui:define>
+                <h:inputText id="identification"
+                              size="15"
+                              maxlength="10"
+                              value="#{infractionsHome.salary}">
+                              <a:support event="onblur" ajaxSingle="true" action="#{infractionsHome.calculateValue()}" reRender="valueField" />
                 </h:inputText>
             </s:decorate>
 
-            <s:decorate id="inPhysicField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['infraction.inphysic']}</ui:define>
-                <h:selectBooleanCheckbox id="inPhysic"
-                                      value="#{infractionsHome.instance.inPhysic}"/>
+            <s:decorate id="porcentageField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Porcentaje</ui:define>
+                <h:inputText id="article"
+                           size="15"
+                      maxlength="10"
+                      value="#{infractionsHome.porcentage}">
+                      <a:support event="onblur" ajaxSingle="true" action="#{infractionsHome.calculateValue()}" reRender="valueField" />
+                </h:inputText>
             </s:decorate>
 
-            <s:decorate id="archivedField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['infraction.archived']}</ui:define>
-                <h:selectBooleanCheckbox id="archived"
-                                      value="#{infractionsHome.instance.archived}"/>
+            <s:decorate id="valueField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Valor de Multa</ui:define>
+                <h:inputText id="numeral"
+                           size="15"
+                      maxlength="10"
+                          value="#{infractionsHome.instance.value}">
+                </h:inputText>
             </s:decorate>
+        
+            <div style="clear:both" />
+
+      </rich:panel>
+
+    </h:panelGrid>
 
             <div style="clear:both">
                 <span class="required">*</span>
@@ -136,7 +269,7 @@
             <div style="clear:both">
             </div>
 
-        </rich:panel>
+  </rich:panel>
 
         <div class="actionButtons">
 

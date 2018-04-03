@@ -26,17 +26,13 @@
                           value="#{infractionSentencesHome.instance.infraction.serial}">
                 </h:inputText>
             </s:decorate>
-
-            <s:decorate id="judgeField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['sentence.judge']}:</ui:define>
-                <h:inputText id="judge"
-                           size="30"
-                           required="true"
-                      maxlength="30"
-                          value="#{infractionSentencesHome.instance.judge}">
-                </h:inputText>
+            
+            <s:decorate id="sentenceDateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['bulletin.creationDate']}</ui:define>
+                <rich:calendar id="sentenceDate" required="true"
+                          value="#{infractionSentencesHome.instance.creationDate}" datePattern="dd/MM/yyyy" />
             </s:decorate>
-
+            
             <s:decorate id="processNumberField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['sentence.numberProcess']}:</ui:define>
                 <h:inputText id="processNumber"
@@ -47,6 +43,16 @@
                 </h:inputText>
             </s:decorate>
 
+            <s:decorate id="judgeField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['sentence.judge']}:</ui:define>
+                <h:inputText id="judge"
+                           size="30"
+                           required="true"
+                      maxlength="30"
+                          value="#{infractionSentencesHome.instance.judge}">
+                </h:inputText>
+            </s:decorate>
+            
             <s:decorate id="sentenceTypeField"
               template="../../layout/edit.xhtml">
               <ui:define name="label">#{messages['bulletin.type']}:</ui:define>

@@ -9,7 +9,7 @@
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<rich:modalPanel id="deathHistoryPanel" width="650" height="400">
+	<rich:modalPanel id="deathHistoryPanel" width="900" height="400">
 		<f:facet name="header">
 			<h:panelGroup>
 				<h:outputText
@@ -48,17 +48,34 @@
 
 					<rich:column sortBy="#{_unitDeath.dateOfDeath}" styleClass="action">
 						<f:facet name="header">#{messages['unitDeath.dateOfDeath']}</f:facet>
-						<h:outputText value="#{_unitDeath.dateOfDeath}" >
+						<h:inputText value="#{_unitDeath.dateOfDeath}" >
 							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
-						</h:outputText>
+						</h:inputText>
+					</rich:column>
+
+
+					<rich:column sortBy="#{_unitDeath.currentContract.subscriptionDate}" styleClass="action">
+						<f:facet name="header">#{messages['unitDeath.subscriptionDate']}</f:facet>
+						<h:inputText value="#{_unitDeath.currentContract.subscriptionDate}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:inputText>
 					</rich:column>
 
 					<rich:column sortBy="#{_unitDeath.currentContract.expirationDate}" styleClass="action">
 						<f:facet name="header">#{messages['unitDeath.expirationDate']}</f:facet>
-						<h:outputText value="#{_unitDeath.currentContract.expirationDate}" >
+						<h:inputText value="#{_unitDeath.currentContract.expirationDate}" >
 							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
-						</h:outputText>
+						</h:inputText>
 					</rich:column>
+
+					<rich:column styleClass="action">
+			            <f:facet name="header">#{messages['common.action']}</f:facet>
+			            <s:button action= "subscriptionDate"
+			                   value="#{messages['common.edit']}"
+			             propagation="none"
+			                      id="unitDeathEdit">
+			            </s:button>			            
+			        </rich:column>
 
 				</rich:dataTable>
 			</rich:panel>
