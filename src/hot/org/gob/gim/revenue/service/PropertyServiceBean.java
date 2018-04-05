@@ -2,19 +2,15 @@ package org.gob.gim.revenue.service;
 
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.gob.gim.common.NativeQueryResultsMapper;
-import org.gob.gim.common.service.CrudService;
 
 import ec.gob.gim.cadaster.model.Property;
-import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.revenue.model.DTO.PropertyDTO;
-import ec.gob.gim.revenue.model.impugnment.dto.ImpugnmentDTO;
 
 /**
  * * @author René Ortega * @Fecha 2018-02-20
