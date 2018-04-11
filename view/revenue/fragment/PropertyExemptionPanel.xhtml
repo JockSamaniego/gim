@@ -26,108 +26,123 @@
 			</h:panelGroup>
 		</f:facet>
 
-		<h:form id="propertyExemptionForm">
+		<h:form id="propertyExemptionForm" prependId="false">
+
 			<h:panelGrid width="100%">
 				<rich:panel style="height:50px; width:100%; overflow:auto;">
 					<rich:messages errorClass="errors" />
 				</rich:panel>
 			</h:panelGrid>
+
 			<rich:panel id="richPanelId">
 
-				<h:panelGrid columns="1" styleClass="center" width="100%"
-					columnClasses="topAligned,topAligned">
+					<rich:dataTable id="propertiesForSelection" var="_property"
+						value="#{exemptionHome.propertiesForSelection}">
 
-					<rich:panel styleClass="left">
-						<f:facet name="header">#{messages['property']}</f:facet>
-						<g:propertyChooser id="propertyChooser" required="true"
-							property="#{exemptionHome.exemptionForProperty.property}"
-							criteria="#{exemptionHome.criteriaProperty}"
-							bean="#{exemptionHome}" searchAction="searchPropertyByCriteria"
-							propertyList="#{exemptionHome.properties}"
-							searchByCriteriaAction="searchPropertyByCriteria"
-							clearSearchPanelAction="clearSearchPropertyPanel"
-							propertyChosenListenerName="propertySelectedListener" />
-						<div style="clear: both" />
-					</rich:panel>
+						<rich:column>
+							<f:facet name="header">
+								Selección
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{_property.selected}">
+								<a:support event="onchange" ajaxSingle="true"
+									bypassUpdates="true" eventsQueue="gimQueue" 
+									action="#{exemptionHome.changeSelectedProperty(_property, _property.selected)}"
+									reRender="propertiesForSelection"/>
+							</h:selectBooleanCheckbox>
+						</rich:column>
 
-				</h:panelGrid>
+						<rich:column>
+							<f:facet name="header">Clave Catastral</f:facet>
+							<h:outputText value="#{_property.cadastralcode}" />
+						</rich:column>
 
-				<s:decorate id="amountCreditYear1Field"
-					template="../../layout/edit.xhtml"
-					rendered="#{exemptionHome.instance.exemptionType.name=='Por Rebaja Hipotecaria'}">
-					<ui:define name="label">#{messages['exemption.amountCreditYear1']}</ui:define>
-					<h:inputText
-						value="#{exemptionHome.exemptionForProperty.amountCreditYear1}"
-						style="text-align: right" required="true" />
-				</s:decorate>
+						<rich:column>
+							<f:facet name="header">Propietario</f:facet>
+							<h:outputText value="#{_property.resident_name}" />
+						</rich:column>
 
-				<s:decorate id="amountCreditYear2Field"
-					template="../../layout/edit.xhtml"
-					rendered="#{exemptionHome.instance.exemptionType.name=='Por Rebaja Hipotecaria'}">
-					<ui:define name="label">#{messages['exemption.amountCreditYear2']}</ui:define>
-					<h:inputText
-						value="#{exemptionHome.exemptionForProperty.amountCreditYear2}"
-						style="text-align: right" required="true" />
-				</s:decorate>
+						<rich:column
+							rendered="#{exemptionHome.instance.exemptionType.name == 'Por Tercera Edad'}">
+							<f:facet name="header">
+								Tipo Tratamiento
+							</f:facet>
+							<h:selectOneMenu id="cmbtreatmentType"
+								value="#{_property.treatmentType}" disabled="#{!_property.selected}">
+								<s:selectItems value="#{typesExcemptionSpecialTreatment}"
+									var="type" label="#{type.name}"
+									noSelectionLabel="TRATAMIENTO NORMAL" />
+								<s:convertEntity />
+								<a:support event="onchange" ajaxSingle="true"/>
+							</h:selectOneMenu>
+						</rich:column>
 
-				<s:decorate id="amountCreditYear3Field"
-					template="../../layout/edit.xhtml"
-					rendered="#{exemptionHome.instance.exemptionType.name=='Por Rebaja Hipotecaria'}">
-					<ui:define name="label">#{messages['exemption.amountCreditYear3']}</ui:define>
-					<h:inputText
-						value="#{exemptionHome.exemptionForProperty.amountCreditYear3}"
-						style="text-align: right" required="true" />
-				</s:decorate>
+						<rich:column
+							rendered="#{exemptionHome.instance.exemptionType.name == 'Por Rebaja Hipotecaria'}">
+							<f:facet name="header">
+								#{messages['exemption.amountCreditYear1']}
+							</f:facet>
+							<h:inputText id="txt1"
+								value="#{_property.amountCreditYear1}"
+								style="text-align: right" required="true" disabled="#{!_property.selected}"/>
+						</rich:column>
 
-				<s:decorate id="treatmentType" template="../../layout/edit.xhtml"
-					rendered="#{exemptionHome.instance.exemptionType.name=='Por Tercera Edad'}">
-					<ui:define name="label">Tipo:</ui:define>
+						<rich:column
+							rendered="#{exemptionHome.instance.exemptionType.name == 'Por Rebaja Hipotecaria'}">
+							<f:facet name="header">
+								#{messages['exemption.amountCreditYear2']}
+							</f:facet>
+							<h:inputText
+								value="#{_property.amountCreditYear2}"
+								style="text-align: right" required="true" disabled="#{!_property.selected}"/>
+						</rich:column>
 
-					<h:selectOneMenu id="cmbtreatmentType"
-						value="#{exemptionHome.exemptionForProperty.treatmentType}">
-						<s:selectItems value="#{typesExcemptionSpecialTreatment}" var="type"
-							label="#{type.name}"
-							noSelectionLabel="#{messages['common.selectOne']}" />
-						<s:convertEntity />
-						<a:support event="onchange" ajaxSingle="true" />
-					</h:selectOneMenu>
+						<rich:column
+							rendered="#{exemptionHome.instance.exemptionType.name == 'Por Rebaja Hipotecaria'}">
+							<f:facet name="header">
+								#{messages['exemption.amountCreditYear3']}
+							</f:facet>
+							<h:inputText
+								value="#{_property.amountCreditYear3}"
+								style="text-align: right" required="true" disabled="#{!_property.selected}"/>
+						</rich:column>
 
-				</s:decorate>
+						<!-- 
+							@tag descuentoEmprendimiento
+							@author macartuche
+							@date 2016-09-23T09:46
+						 -->
+						<rich:column
+							rendered="#{exemptionHome.instance.exemptionType.name=='Por emprendimiento'}">
+							<f:facet name="header">
+								Válido hasta:
+							</f:facet>
+							<rich:calendar id="untilDate" required="true"
+								value="#{_property.validUntil}"
+								datePattern="#{messages['common.datePattern']}" inputSize="10">
+								<f:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" disabled="#{!_property.selected}"/>
+							</rich:calendar>
+						</rich:column>
+						<!-- 
+							//fin @tag descuentoEmprendimiento
+						 -->
 
-				<!-- 
-					@tag descuentoEmprendimiento
-					@author macartuche
-					@date 2016-09-23T09:46
-				 -->
-				<s:decorate id="validUntil" template="../../layout/edit.xhtml"
-					rendered="#{exemptionHome.instance.exemptionType.name=='Por emprendimiento'}">
-					<ui:define name="label">Váido hasta:</ui:define>
-					<rich:calendar id="untilDate" required="true"
-						value="#{exemptionHome.exemptionForProperty.validUntil}"
-						datePattern="#{messages['common.datePattern']}" inputSize="10">
-						<f:convertDateTime type="date"
-							pattern="#{messages['common.datePattern']}" />
-					</rich:calendar>
-				</s:decorate>
-				
-				<!-- 
-					//fin @tag descuentoEmprendimiento
-				 -->
-				
+					</rich:dataTable>
+
 				<div style="clear: both">
 					<span class="required">*</span>
 					#{messages['common.requiredFields']}
 				</div>
 			</rich:panel>
-		
+
 			<a:outputPanel ajaxRendered="false" id="buttonsId">
 
 				<div class="actionButtons">
 
-					<a:commandButton id="save" value="#{messages['common.save']}"
-						action="#{exemptionHome.addExemptionForProperty()}"
+					<a:commandButton id="ok" value="#{messages['common.save']}"
+						action="#{exemptionHome.addProperties()}"
 						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('propertyExemptionPanel')}.hide();"
-						reRender="propertiesPanel,panelBottom" />
+						reRender="propertiesPanel,panelBottom"/>
 
 					<a:commandButton ajaxSingle="true"
 						value="#{messages['common.cancel']}"

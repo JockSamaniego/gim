@@ -163,7 +163,7 @@ BEGIN
 	GROUP BY ac.id, t.name,ac.accountCode,ac.parameterFutureEmission 
 	ORDER BY ac.accountCode)
 	UNION
-	--REVERSADAS
+	--ANULADAS
 	(select ac.id,
 		ac.accountCode, 
 		e.name, 
@@ -182,6 +182,7 @@ BEGIN
 	and i.total > 0 
 	--AND e.id = :entryId 
 	AND mb.municipalBondStatus_id in(select value::bigint from systemparameter where name = 'MUNICIPAL_BOND_STATUS_ID_VOID') 
+	and i.value > 0
 	GROUP BY ac.id, e.name, ac.accountCode 
 	ORDER BY ac.accountCode)
 	UNION
@@ -202,6 +203,49 @@ BEGIN
 	--and mb.reverseddate Between sdate AND edate
 	and t.id NOT IN (2)
 	AND mb.municipalBondStatus_id in(select value::bigint from systemparameter where name = 'MUNICIPAL_BOND_STATUS_ID_VOID')
+	GROUP BY ac.id, t.name,ac.accountCode 
+	ORDER BY ac.accountCode)
+	UNION
+	--REVERSADAS
+	(select ac.id,
+		ac.accountCode, 
+		e.name, 
+		count(*) as cantidad, 
+		SUM(i.total) as valor_emision,
+		0 as cantidad_bajas,
+		0.00 as valor_bajas,
+		SUM(i.total) as total_emision,
+		'REVERSADAS' AS tipo
+	from municipalbond mb
+	INNER join item i ON i.municipalbond_id = mb.id
+	INNER join entry e ON i.entry_id = e.id
+	left join account ac ON e.account_id = ac.id 
+	where mb.emisionDate Between sdate AND edate
+	and mb.reverseddate Between sdate AND edate
+	and i.total > 0 
+	--AND e.id = :entryId 
+	AND mb.municipalBondStatus_id in(select value::bigint from systemparameter where name = 'MUNICIPAL_BOND_STATUS_ID_REVERSED') 
+	and i.value > 0
+	GROUP BY ac.id, e.name, ac.accountCode 
+	ORDER BY ac.accountCode)
+	UNION
+	(select ac.id,
+		ac.accountCode, 
+		t.name,
+		count(*) as cantidad, 
+		SUM(ti.value) as valor_emision,
+		0 as cantidad_bajas,
+		0.00 as valor_bajas,
+		SUM(ti.value) as total_emision,
+		'REVERSADAS' AS tipo
+	from MunicipalBond mb 
+	INNER join taxItem ti ON ti.municipalbond_id = mb.id
+	left join tax t ON ti.tax_id = t.id
+	left join Account ac  ON ac.id = t.taxaccount_id
+	where mb.emisionDate Between sdate AND edate
+	and mb.reverseddate Between sdate AND edate
+	and t.id NOT IN (2)
+	AND mb.municipalBondStatus_id in(select value::bigint from systemparameter where name = 'MUNICIPAL_BOND_STATUS_ID_REVERSED')
 	GROUP BY ac.id, t.name,ac.accountCode 
 	ORDER BY ac.accountCode)) final_result
 	WHERE cuentaid IS NULL OR final_result.id = cuentaid

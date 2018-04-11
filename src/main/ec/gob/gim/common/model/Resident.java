@@ -115,7 +115,7 @@ import ec.gob.gim.security.model.User;
 								"NEW org.gob.loja.gim.ws.dto.Taxpayer(" +
 								"r.id, r.identificationNumber, r.name, r.email, currentAddress.street, currentAddress.phoneNumber) " +
 							  "FROM Resident r left join r.currentAddress currentAddress " +
-							  "WHERE r.identificationNumber LIKE :identificationNumber")*/				  
+							  "WHERE r.identificationNumber LIKE :identificationNumber")*/
 	}
 )
 

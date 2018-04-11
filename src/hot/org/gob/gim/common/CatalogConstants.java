@@ -30,4 +30,6 @@ public class CatalogConstants {
 	 public static final String CATALOG_TYPES_SENTENCE = "TYPES_SENTENCE";
 	 
 	 public static final String CATALOG_TYPES_STATUS = "TYPES_STATUS";
+	 
+	 public static final String CATALOG_TYPES_DOMAIN_TRANSFER = "TYPES_DOMAIN_TRANSFER";
 }

@@ -2,10 +2,8 @@ package org.gob.loja.gim.ws.service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -18,24 +16,23 @@ import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.gob.gim.banks.action.BankHome;
 import org.gob.gim.common.DateUtils;
-import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.NotActiveWorkdayException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
 import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
-import org.gob.gim.revenue.action.SolvencyReportHome;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.loja.gim.ws.dto.Bond;
 import org.gob.loja.gim.ws.dto.BondDetail;
 import org.gob.loja.gim.ws.dto.ClosingStatement;
+import org.gob.loja.gim.ws.dto.FutureBond;
+import org.gob.loja.gim.ws.dto.FutureStatement;
 import org.gob.loja.gim.ws.dto.Payout;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.Statement;
@@ -49,12 +46,9 @@ import org.gob.loja.gim.ws.exception.NotActiveWorkday;
 import org.gob.loja.gim.ws.exception.NotOpenTill;
 import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
-//import org.gob.loja.gim.ws.exception.HasObligationsExpired;
-import org.jboss.seam.contexts.Contexts;
+
 import ec.gob.gim.bank.model.BankingEntityLog;
-import org.richfaces.util.CollectionsUtils;
 import ec.gob.gim.cadaster.model.Property;
-import ec.gob.gim.commercial.model.OperatingLicense;
 import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.income.model.Deposit;
@@ -63,7 +57,6 @@ import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.MunicipalBondType;
-import ec.gob.gim.revenue.model.DTO.ReportEmissionDTO;
 import ec.gob.gim.security.model.User;
 
 @Stateless(name = "PaymentService")
@@ -474,9 +467,9 @@ public class PaymentServiceBean implements PaymentService {
 		query.setParameter("pendingBondStatusId", pendingBondStatusId);
 		List<Bond> bonds = query.getResultList();
 		// System.out.println("RECORRIENDO RESULTADOS");
-		for (Bond bond : bonds) {
+		/*for (Bond bond : bonds) {
 			System.out.println("L===========>" + bond.getServiceDate());
-		}
+		}*/
 		// System.out.println("BONDS TOTAL ---->" + bonds.size());
 		return bonds;
 
@@ -961,6 +954,56 @@ public class PaymentServiceBean implements PaymentService {
 
 	public void setServerLog(BankingEntityLog serverLog) {
 		this.serverLog = serverLog;
+	}
+
+	@Override
+	public FutureStatement findFutureEmission(ServiceRequest request)
+			throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations {
+		String identificationNumber = request.getIdentificationNumber();
+		
+		if (controlAlertResident(identificationNumber)) {
+			throw new PayoutNotAllowed();
+		} else {
+
+			Taxpayer taxpayer = findTaxpayer(identificationNumber);
+			Date workDayDate;
+			if (request.getUsername().compareTo("dabetancourtc") == 0) {
+				workDayDate = new GregorianCalendar().getTime();
+			} else
+				workDayDate = findPaymentDate();
+			Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer.getId());
+
+			if (inPaymentAgreementBondsNumber > 0) {
+				serverLog.setMethodCompleted(false);
+				serverLog.setCodeError("PayoutNotAllowed");
+				em.persist(serverLog);
+				throw new PayoutNotAllowed();
+			} else {
+				List<FutureBond> bonds = new ArrayList<FutureBond>();
+					try {
+						bonds = findFutureBonds(taxpayer.getId());
+					} catch (Exception e) {
+						e.printStackTrace();
+						serverLog.setMethodCompleted(false);
+						serverLog.setCodeError("PayoutNotAllowed");
+						em.persist(serverLog);
+						throw new PayoutNotAllowed();
+					}
+				
+				FutureStatement statement = new FutureStatement(taxpayer, bonds);
+				return statement;
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<FutureBond> findFutureBonds(Long taxpayerId) {
+		Long futureBondStatusId = systemParameterService.findParameter(IncomeServiceBean.FUTURE_BOND_STATUS);
+		Query query = em.createNamedQuery("Bond.findFutureByStatusAndResidentId");
+		query.setParameter("residentId", taxpayerId);
+		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
+		query.setParameter("pendingBondStatusId", futureBondStatusId);
+		return query.getResultList();
 	}
 	
 }

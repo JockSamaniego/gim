@@ -15,11 +15,14 @@ import ec.gob.gim.revenue.model.ExemptionType;
 @Name("exemptionList")
 public class ExemptionList extends EntityQuery<Exemption> {
 
-	private static final String EJBQL = "select exemption from Exemption exemption";
+	private static final String EJBQL = "select exemption from Exemption exemption "
+			+ "left join fetch exemption.resident "
+			+ "left join fetch exemption.partner ";
 
 	private static final String[] RESTRICTIONS = {"exemption.fiscalPeriod = #{exemptionList.fiscalPeriod}",
 		"exemption.exemptionType = #{exemptionList.exemptionType}",
-		"lower(exemption.resident.identificationNumber) like lower(concat('%',#{exemptionList.resident},'%')) or lower(exemption.resident.name) like lower(concat('%',:el3,'%'))",};
+		"lower(exemption.resident.identificationNumber) like lower(concat('%',#{exemptionList.resident},'%')) or lower(exemption.resident.name) like lower(concat('%',:el3,'%'))",
+		"lower(exemption.partner.identificationNumber) like lower(concat('%',#{exemptionList.partner},'%')) or lower(exemption.partner.name) like lower(concat('%',:el4,'%'))"};
 
 	private Exemption exemption= new Exemption();
 	
@@ -36,6 +39,7 @@ public class ExemptionList extends EntityQuery<Exemption> {
 	}
 
 	private String resident;
+	private String partner;
 
 	public ExemptionList() {
 		setEjbql(EJBQL);
@@ -65,6 +69,14 @@ public class ExemptionList extends EntityQuery<Exemption> {
 
 	public void setExemptionType(ExemptionType exemptionType) {
 		this.exemptionType = exemptionType;
+	}
+
+	public String getPartner() {
+		return partner;
+	}
+
+	public void setPartner(String partner) {
+		this.partner = partner;
 	}
 
 }

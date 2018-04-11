@@ -53,6 +53,9 @@ public class WriteOffRequestDTO {
 	@NativeQueryResultColumn(index = 14)
 	private String _type_code;
 	
+	@NativeQueryResultColumn(index = 15)
+	private String _observations;
+	
 	public Long getId() {
 		return id;
 	}
@@ -175,6 +178,14 @@ public class WriteOffRequestDTO {
 
 	public void set_days(Integer _days) {
 		this._days = _days;
+	}
+
+	public String get_observations() {
+		return _observations;
+	}
+
+	public void set_observations(String _observations) {
+		this._observations = _observations;
 	}
 	
 }

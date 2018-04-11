@@ -9,6 +9,7 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 	<a:outputPanel id="domainTransferPanel">
+			
 		<h:panelGrid columns="2">
 			<h:selectBooleanCheckbox id="emitWithoutReport"
 				value="#{adjunctHome.instance.emitWithoutReport}">
@@ -141,6 +142,34 @@
 							reRender="mortgageDiscountField" />
 					</h:selectBooleanCheckbox>
 				</s:decorate>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2">
+
+				<s:decorate id="isHalfDiscountField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['property.isHalfDiscount']}</ui:define>
+					<h:selectBooleanCheckbox id="mortgageDiscount"
+						value="#{adjunctHome.instance.isHalfDiscount}">
+						<a:support event="onchange" ajaxSingle="true"
+							reRender="halfDiscountAmountField" />
+					</h:selectBooleanCheckbox>
+				</s:decorate>
+				
+				<s:decorate id="halfDiscountAmountField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['property.halfDiscountAmount']}</ui:define>
+
+					<h:inputText id="halfDiscountAmount" styleClass="right"
+						value="#{adjunctHome.instance.halfDiscountAmount}" size="10"
+						disabled="#{!adjunctHome.instance.isHalfDiscount}">
+						<a:support event="onchange" ajaxSingle="true"
+							reRender="halfDiscountAmountField" />
+					</h:inputText>
+					
+				</s:decorate>
+				
+				
 			</h:panelGrid>
 
 
