@@ -157,7 +157,7 @@ public class PaymentServiceBean implements PaymentService {
 		serverLog.setTransactionId(null);
 		serverLog.setMethodUsed("findStatement");
 		serverLog.setBankUsername(request.getUsername());
-		System.out.println("rfarmijosm "+request.getIdentificationNumber()+"\t"+request.getUsername());
+		// System.out.println("rfarmijosm "+request.getIdentificationNumber()+"\t"+request.getUsername());
 		String identificationNumber = request.getIdentificationNumber();
 		
 		//rfarmijosm 2017-02-06 se copia el codigo de jock de otro branch, impedir pagos con alerta por ws
@@ -226,9 +226,9 @@ public class PaymentServiceBean implements PaymentService {
 		serverLog.setMethodUsed("registerDeposit");
 		serverLog.setBankUsername(request.getUsername());
 		
-		System.out.println("start PPPPPPPPPPPPPPP");
-		System.out.println(request.getIdentificationNumber()+"\t"+payout.getAmount()+"\t"+payout.getPaymentDate()+"\t"+payout.getBondIds());
-		System.out.println("end o PPPPPPPPPPPPPPP");
+		//System.out.println("start PPPPPPPPPPPPPPP");
+		//System.out.println(request.getIdentificationNumber()+"\t"+payout.getAmount()+"\t"+payout.getPaymentDate()+"\t"+payout.getBondIds());
+		//System.out.println("end o PPPPPPPPPPPPPPP");
 
 		Person cashier = findCashier(request.getUsername());
 
@@ -343,7 +343,7 @@ public class PaymentServiceBean implements PaymentService {
 		query.setParameter("paymentDate", paymentDate);
 		query.setParameter("cashierId", cashierId);
 		List<BigDecimal> totals = query.getResultList();
-		System.out.println("ESCALAR CLASS ----> " + totals.get(0));
+		//System.out.println("ESCALAR CLASS ----> " + totals.get(0));
 		BigDecimal total = BigDecimal.ZERO;
 		if (totals.get(0) != null)
 			total = totals.get(0);
@@ -397,7 +397,7 @@ public class PaymentServiceBean implements PaymentService {
 				return tillPermission;
 			}
 		}
-		System.out.println("#################NOT OPEN TILL############");
+		//System.out.println("#################NOT OPEN TILL############");
 		throw new NotOpenTill();
 	}
 
@@ -433,8 +433,8 @@ public class PaymentServiceBean implements PaymentService {
 	private Long findInPaymentAgreementBondsNumber(Long taxpayerId) {
 		Long inPaymentAgreementBondStatusId = systemParameterService
 				.findParameter(IncomeServiceBean.IN_PAYMENT_AGREEMENT_BOND_STATUS);
-		System.out.println("BOND STATUS ---->inPaymentAgreementBondStatusId "
-				+ inPaymentAgreementBondStatusId);
+		//System.out.println("BOND STATUS ---->inPaymentAgreementBondStatusId "
+			//	+ inPaymentAgreementBondStatusId);
 		Query query = em.createNamedQuery("Bond.countByStatusAndResidentId");
 		query.setParameter("residentId", taxpayerId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
@@ -453,7 +453,7 @@ public class PaymentServiceBean implements PaymentService {
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("pendingBondStatusId", pendingBondStatusId);
 		List<Long> ids = query.getResultList();
-		System.out.println("PENDING BONDS TOTAL ---->" + ids.size());
+		//System.out.println("PENDING BONDS TOTAL ---->" + ids.size());
 		return ids;
 	}
 
@@ -500,7 +500,7 @@ public class PaymentServiceBean implements PaymentService {
 		* 0); calendar.set(Calendar.MINUTE, 0); calendar.set(Calendar.HOUR, 0);
 		*/
 		// comparar si
-		System.out.println("========>cantidad "+bonds.size());
+		//System.out.println("========>cantidad "+bonds.size());
 		for (Bond bond : bonds) {			
 			System.out.println(bond.getAccount()+"\t"+bond.getNumber()+"\t"+bond.getDiscounts()+
 					"\t"+bond.getInterests()+"\t"+bond.getSurcharges()+"\t"+bond.getTaxes()+"\t"+bond.getTotal());
@@ -615,7 +615,7 @@ public class PaymentServiceBean implements PaymentService {
 	@Override
 	public Boolean isTillOpen(ServiceRequest request) throws NotActiveWorkday,
 			NotOpenTill, InvalidUser {
-		System.out.println(">?");
+		//System.out.println(">?");
 		Boolean isOpen = true;
 		Person cashier = findCashier(request.getUsername());
 		// Till till = findTill(cashier.getId());
@@ -634,7 +634,7 @@ public class PaymentServiceBean implements PaymentService {
 			// e.printStackTrace();
 			// throw new NotOpenTill();
 		}
-		System.out.println("---> " + isOpen);
+		//System.out.println("---> " + isOpen);
 		return isOpen;
 	}
 
@@ -651,8 +651,7 @@ public class PaymentServiceBean implements PaymentService {
 
 		List<EMoneyPayment> retorno = query.getResultList();
 
-		System.out.println("numero de elementos retornados de EmoneyPayment:"
-				+ retorno.size());
+		//System.out.println("numero de elementos retornados de EmoneyPayment:" + retorno.size());
 
 		return retorno;
 	}
