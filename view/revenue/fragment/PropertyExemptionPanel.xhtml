@@ -52,8 +52,13 @@
 						</rich:column>
 
 						<rich:column>
-							<f:facet name="header">Clave Catastral</f:facet>
+							<f:facet name="header">Código Territorial</f:facet>
 							<h:outputText value="#{_property.cadastralcode}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">Clave Catastral</f:facet>
+							<h:outputText value="#{_property.previouscadastralcode}" />
 						</rich:column>
 
 						<rich:column>
