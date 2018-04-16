@@ -12,7 +12,6 @@ import java.util.List;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.facade.RevenueService;

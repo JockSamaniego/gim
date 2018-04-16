@@ -2,7 +2,6 @@ package org.gob.gim.common;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +26,7 @@ public class NativeQueryResultsMapper {
                             	//BeanUtils.setProperty(t, mappingFields.get(i).getName(), null);
                             	PropertyUtils.setProperty(t, mappingFields.get(i).getName(), null);
                             } else {
-                            	//System.out.println("tipo de clase................ "+objectArr[i].getClass());
+                          	  	//System.out.println("tipo de clase................ "+objectArr[i].getClass());
                             	//rfarmiosm para covertir fechas sl.date y no solo timestamp
                             	if(objectArr[i].getClass().toString().equals("class java.sql.Date")){
                             		java.sql.Date fecha = (java.sql.Date) objectArr[i];
