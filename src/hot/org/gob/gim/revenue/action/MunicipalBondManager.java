@@ -725,7 +725,7 @@ public class MunicipalBondManager extends EntityController {
 			// + getSelected());
 			List<Long> listSelected = getSelected();
 			//System.out.println("Tamaño de listado de selecionadas:"
-					+ listSelected.size());
+					//+ listSelected.size());
 			List<MunicipalBond> listadoSeleccionadas = new ArrayList<MunicipalBond>();
 			// System.out.println("Tamaño de modelo:"+getDataModel().getMunicipalBonds().size());
 

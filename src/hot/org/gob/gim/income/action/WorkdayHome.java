@@ -2885,7 +2885,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 		// Pago anticipado
 		entryTotalPrepaid = getTotalEmittedPrepaidByEntryAndStatus(explanation);
 		//System.out.println("Entru total prepaid antes de taxes prepaid:"
-				+ entryTotalPrepaid.size());
+				//+ entryTotalPrepaid.size());
 		// log.info("-------------------------6.------------------");
 		taxesPrepaid = getAllPrepaidTaxesTotalsByStatus(explanation);
 
