@@ -606,8 +606,8 @@ public class EmissionReportHome extends EntityController {
 		
 		this.detailsResults = this.emissionService.findEmissionReportOtherDetails(criteria);
 		
-		System.out.println("-----Detalles------");
-		System.out.println(this.detailsResults);
+		//System.out.println("-----Detalles------");
+		//System.out.println(this.detailsResults);
 		
 		this.detailsFormalizacionesNormales = new ArrayList<ReportEmissionDTO>();
 		this.detailsFormalizacionesPagoAnticipado = new ArrayList<ReportEmissionDTO>();

@@ -95,7 +95,7 @@ public class GimServiceBean implements GimService{
 			throws TaxpayerNotFound, TaxpayerNonUnique, InvalidUser, AccountIsNotActive, AccountIsBlocked {
 		String identificationNumber = request.getIdentificationNumber();
 		Taxpayer taxpayer = findTaxpayer(identificationNumber);
-		System.out.println("::::::findTaxpayer Found: " + taxpayer != null ? taxpayer.getId() : "NULL");
+		//System.out.println("::::::findTaxpayer Found: " + taxpayer != null ? taxpayer.getId() : "NULL");
 		return taxpayer;
 	}
 	
@@ -103,7 +103,7 @@ public class GimServiceBean implements GimService{
 	public Map<String, Object> findTaxpayer(String name, String password, String identificationNumber) 
 		throws TaxpayerNotFound, TaxpayerNonUnique, InvalidUser, AccountIsNotActive, AccountIsBlocked{
 		Taxpayer taxpayer = findTaxpayer(identificationNumber);
-		System.out.println("::::::findTaxpayer Found: " + taxpayer != null ? taxpayer.getId() : "NULL");
+		//System.out.println("::::::findTaxpayer Found: " + taxpayer != null ? taxpayer.getId() : "NULL");
 		return ReflectionUtil.getAsMap(taxpayer); 
 	}
 
@@ -113,7 +113,7 @@ public class GimServiceBean implements GimService{
 		Resident resident = getInstanceResident(taxpayer); 
 		try{
 			save(resident);
-			System.out.println("::::::saveTaxpayer: SAVED OK!!");
+			//System.out.println("::::::saveTaxpayer: SAVED OK!!");
 			return Boolean.TRUE;
 		}catch(Exception e){
 			System.out.println("------------------------------");

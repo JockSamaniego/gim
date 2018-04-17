@@ -280,7 +280,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	public void saveForCompensationPayment(List<MunicipalBond> municipalBonds,
 			Long tillId) throws Exception {
-		System.out.println("\n\nInicia grabacion para pago por compensacion");
+		//System.out.println("\n\nInicia grabacion para pago por compensacion");
 		Workday workday = findActiveWorkday();
 		Long COMPENSATION_STATUS_ID = systemParameterService
 				.findParameter(COMPENSATION_BOND_STATUS);
@@ -346,23 +346,23 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	public void deactivateCreditNotes(List<PaymentFraction> paymentFractions) {
-		System.out.println("DEACTIVATING CREDIT NOTES");
+		//System.out.println("DEACTIVATING CREDIT NOTES");
 		for (PaymentFraction fraction : paymentFractions) {
 			if (fraction.getPaymentType() == PaymentType.CREDIT_NOTE) {
 				// CreditNote creditNote = fraction.getCreditNote();
 				CreditNote creditNote = entityManager.getReference(
 						CreditNote.class, fraction.getCreditNote().getId());
-				System.out.println("CHECKING CREDIT NOTE "
+				/*System.out.println("CHECKING CREDIT NOTE "
 						+ fraction.getCreditNote().getId() + " AVAILABLE "
 						+ creditNote.getAvailableAmount() + " PAID "
-						+ fraction.getPaidAmount());
+						+ fraction.getPaidAmount());*/
 				creditNote.setAvailableAmount(creditNote.getAvailableAmount()
 						.subtract(fraction.getPaidAmount()));
 				if (creditNote.getAvailableAmount().compareTo(BigDecimal.ZERO) == 0) {
-					System.out
+					/*System.out
 							.println("CREDIT NOTE "
 									+ fraction.getCreditNote().getId()
-									+ " DEACTIVATED");
+									+ " DEACTIVATED");*/
 					creditNote.setIsActive(Boolean.FALSE);
 				}
 				entityManager.persist(creditNote);
@@ -377,9 +377,9 @@ public class IncomeServiceBean implements IncomeService {
 				.findParameter(PAID_BOND_STATUS);
 		for (Deposit deposit : deposits) {
 			MunicipalBond municipalBond = deposit.getMunicipalBond();
-			System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE "
+			/*System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE "
 					+ municipalBond.getTaxableTotal() + " TAXES TOTAL "
-					+ municipalBond.getTaxesTotal());
+					+ municipalBond.getTaxesTotal());*/
 			entityManager.persist(deposit);
 			
 			//@author macartuche
@@ -452,12 +452,12 @@ public class IncomeServiceBean implements IncomeService {
 				.findParameter(ELECTRONIC_INVOICE_XML_DIR);
 		String dirName = System.getProperty("user.home") + File.separator
 				+ xml_dir;
-		System.out.println("Output sent to " + dirName);
+		//System.out.println("Output sent to " + dirName);
 		new File(dirName).mkdirs();
 
 		String xmlFileName = dirName + File.separator + receipt.toString()
 				+ ".xml";
-		System.out.println("File Saved: " + xmlFileName);
+		//System.out.println("File Saved: " + xmlFileName);
 		File output = new File(xmlFileName);
 		ElectronicServiceBean elecbean = new ElectronicServiceBean();
 		// elecbean.fillMapBranch();
@@ -479,7 +479,7 @@ public class IncomeServiceBean implements IncomeService {
 			dataWS.setXmlFile(document);
 			dataWS.setRucCompany(receipt.getMunicipalBond().getInstitution()
 					.getNumber());
-			System.out.println("cliente checksum ");
+			//System.out.println("cliente checksum ");
 			dataWS.setCheksum(checksum);
 			dataWS = sendToService(dataWS);
 			new File(xmlFileName).delete();
@@ -518,10 +518,10 @@ public class IncomeServiceBean implements IncomeService {
 		ElectronicClient client = new ElectronicClient(uriElectronicService);
 		DataWS response;
 		response = client.reception_XML(input, DataWS.class);
-		System.out.println("Access key " + response.getAccesKey()
+		/*System.out.println("Access key " + response.getAccesKey()
 				+ " Autorizado en SRI: " + response.getAuthorized()
 				+ " Ambiente Contingencia: "
-				+ response.getContingencyEnvironment());
+				+ response.getContingencyEnvironment());*/
 		return response;
 	}
 
@@ -603,7 +603,7 @@ public class IncomeServiceBean implements IncomeService {
 					.findParameter(ENABLE_RECEIPT_GENERATION);
 			Boolean IS_ELECTRONIC_INVOICE_ENABLE = systemParameterService
 					.findParameter(ELECTRONIC_INVOICE_ENABLE);
-			System.out.println("AUTOEMITER=>" + IS_AUTO_EMMITER);
+			//System.out.println("AUTOEMITER=>" + IS_AUTO_EMMITER);
 
 			if (IS_AUTO_EMMITER) {
 				//System.out.println("SIIII=>");
@@ -639,9 +639,9 @@ public class IncomeServiceBean implements IncomeService {
 									// System.out.println("<<<R>>> Messages SRI: "
 									// +
 									// authorizedReceiptWS.getMessageList().toString());
-									System.out.println("AUTHORIZADO?"
+									/*System.out.println("AUTHORIZADO?"
 											+ authorizedReceiptWS
-													.getAuthorized());
+													.getAuthorized());*/
 									if (authorizedReceiptWS.getAuthorized()) {
 										receipt.setAuthorizationNumber(authorizedReceiptWS
 												.getAuthorizationNumber());
@@ -779,23 +779,23 @@ public class IncomeServiceBean implements IncomeService {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		String sql = "select payment_id from deposit where municipalbond_id = "
 				+ municipalBondId + " and date='" + df.format(date) + "';";
-		System.out.println("<<<R>>> sql: " + sql);
+		//System.out.println("<<<R>>> sql: " + sql);
 		Query query = entityManager.createNativeQuery(sql);
 		paymentId = (Long) query.getSingleResult();
 		query = null;
 		if (paymentId > 0) {
 			sql = "delete from paymentfraction where payment_id = " + paymentId;
-			System.out.println("<<<R>>> sql: " + sql);
+			//System.out.println("<<<R>>> sql: " + sql);
 			query = entityManager.createNativeQuery(sql);
 			query.executeUpdate();
 			query = null;
 			sql = "delete from deposit where payment_id = " + paymentId;
-			System.out.println("<<<R>>> sql: " + sql);
+			//System.out.println("<<<R>>> sql: " + sql);
 			query = entityManager.createNativeQuery(sql);
 			query.executeUpdate();
 			query = null;
 			sql = "delete from payment where payment_id = " + paymentId;
-			System.out.println("<<<R>>> sql: " + sql);
+			//System.out.println("<<<R>>> sql: " + sql);
 			query = entityManager.createNativeQuery(sql);
 			query.executeUpdate();
 			query = null;
@@ -900,8 +900,8 @@ public class IncomeServiceBean implements IncomeService {
 				.findParameter("FINAL_RECEIPT_NUMBER");
 		String sequenceName = buildSequenceName(taxpayerRecordId,
 				receiptTypeId, branchNumber, tillNumber);
-		System.out.println("LXGK-SRI -----> Sequence CHECKIN sequence "
-				+ sequenceName);
+		//System.out.println("LXGK-SRI -----> Sequence CHECKIN sequence "
+				//+ sequenceName);
 		String stripedSequenceName = sequenceName.substring(
 				sequenceName.indexOf('.') + 1).toLowerCase();
 		if (!sequenceNameExists(stripedSequenceName)) {
@@ -910,7 +910,7 @@ public class IncomeServiceBean implements IncomeService {
 					+ initialReceiptNumber + " MAXVALUE " + finalReceiptNumber;
 			Query query = entityManager.createNativeQuery(createSentence);
 			query.executeUpdate();
-			System.out.println("LXGK-SRI -----> Sequence created ");
+			//System.out.println("LXGK-SRI -----> Sequence created ");
 			return;
 		}
 		System.out
@@ -1272,7 +1272,7 @@ public class IncomeServiceBean implements IncomeService {
 		Calendar cal = new GregorianCalendar();
 		query.setParameter("reversedDate", cal.getTime());
 		query.setParameter("reversedTime", cal.getTime());
-		System.out.println("load resident user");
+		//System.out.println("load resident user");
 		query.setParameter("reversedResident", userReversed);
 		query.executeUpdate();
 	}
@@ -1289,8 +1289,8 @@ public class IncomeServiceBean implements IncomeService {
 		Query query = entityManager
 				.createNativeQuery("SELECT SUM(m.paidTotal) FROM MunicipalBond m WHERE m.id IN (:municipalBondIds)");
 		query.setParameter("municipalBondIds", municipalBondIds);
-		System.out.println("ESCALAR CLASS ----> "
-				+ query.getResultList().get(0));
+		/*System.out.println("ESCALAR CLASS ----> "
+				+ query.getResultList().get(0));*/
 		BigDecimal total = (BigDecimal) (query.getResultList().get(0));
 		return total;
 	}
@@ -1302,11 +1302,11 @@ public class IncomeServiceBean implements IncomeService {
 		if (municipalBondIds != null && municipalBondIds.size() > 0) {
 			BigDecimal maximumTotal = getMaximumTotal(municipalBondIds);
 
-			System.out.println("MAXIMUM TOTAL ----> " + maximumTotal);
+			/*System.out.println("MAXIMUM TOTAL ----> " + maximumTotal);
 			System.out.println("CREDIT NOTE VALUE ----> "
 					+ creditNote.getValue());
 			System.out.println("COMPARE TO "
-					+ maximumTotal.compareTo(creditNote.getValue()));
+					+ maximumTotal.compareTo(creditNote.getValue()));*/
 
 			if (maximumTotal.compareTo(creditNote.getValue()) >= 0) {
 				saveCreditNote(creditNote, municipalBondIds, legalStatus);
@@ -1501,7 +1501,7 @@ public class IncomeServiceBean implements IncomeService {
 		Long inPaymentAgreementMunicipalBondStatusId = systemParameterService
 				.findParameter(IN_PAYMENT_AGREEMENT_BOND_STATUS);
 		entityManager.persist(paymentAgreement);
-		System.out.println("LXGK -----> " + paymentAgreement.getId());
+		//System.out.println("LXGK -----> " + paymentAgreement.getId());
 		Query query = entityManager
 				.createNamedQuery("MunicipalBond.updatePaymentAgreement");
 		query.setParameter("municipalBondIds", municipalBondIds);
@@ -1514,13 +1514,13 @@ public class IncomeServiceBean implements IncomeService {
 
 	@SuppressWarnings("unchecked")
 	public MunicipalBond loadForPrinting(Long municipalBondId) {
-		System.out.println("LOADING FOR PRITING");
+		//System.out.println("LOADING FOR PRITING");
 		Query query = entityManager
 				.createNamedQuery("Deposit.findByMunicipalBondIdForPrinting");
 		query.setParameter("municipalBondId", municipalBondId);
 		List<Deposit> deposits = (List<Deposit>) query.getResultList();
-		System.out.println("RECOVERED ---> " + deposits.size());
-		System.out.println("END LOADING FOR PRITING");
+		/*System.out.println("RECOVERED ---> " + deposits.size());
+		System.out.println("END LOADING FOR PRITING");*/
 		if (deposits.size() > 0) {
 			return deposits.get(deposits.size() - 1).getMunicipalBond();
 		}
@@ -1721,11 +1721,11 @@ public class IncomeServiceBean implements IncomeService {
 			for(Deposit deposit: deposits){
 				Long estado = deposit.getMunicipalBond().getMunicipalBondStatus().getId().longValue();
 				if(estado == 6){ //en compensacion
-					System.out.println("Ingresaaaaaa");
+					//System.out.println("Ingresaaaaaa");
 					Receipt receipt = deposit.getMunicipalBond().getReceipt();
 					if( receipt != null){
 						
-						System.out.println("Ingresaaaaaa con factura");
+						//System.out.println("Ingresaaaaaa con factura");
 						Query query = entityManager.createQuery("Select cr from CompensationReceipt cr"
 								+ " where cr.receipt.id=:receiptid");
 						query.setParameter("receiptid", receipt.getId());

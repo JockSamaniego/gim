@@ -79,14 +79,14 @@ public final class IdentificationNumberUtil {
 		int rucType = Integer.parseInt(rucTypeSelector);
 				
 		if (rucType < 6) {
-			System.out.println("THIS DISTANCE IN MY VOICE: PERSONA NATURAL "+rucType);
+			//System.out.println("THIS DISTANCE IN MY VOICE: PERSONA NATURAL "+rucType);
 			verifyDigit(identificationNumber);
 		} else if (rucType == 6) {
-			System.out.println("THIS DISTANCE IN MY VOICE: PERSONA JURIDICA PUBLICA "+rucType);
+			//System.out.println("THIS DISTANCE IN MY VOICE: PERSONA JURIDICA PUBLICA "+rucType);
 			int[] coeficientes = { 3, 2, 7, 6, 5, 4, 3, 2 };
 			verifyTaxpayerNumber(identificationNumber, coeficientes);
 		} else if (rucType == 9) {
-			System.out.println("THIS DISTANCE IN MY VOICE: PERSONA JURIDICA PRIVADA O EXTRANJERO "+rucType);
+			//System.out.println("THIS DISTANCE IN MY VOICE: PERSONA JURIDICA PRIVADA O EXTRANJERO "+rucType);
 			int[] coeficientes = { 4, 3, 2, 7, 6, 5, 4, 3, 2 };
 			verifyTaxpayerNumber(identificationNumber, coeficientes);
 		} else {
@@ -120,7 +120,7 @@ public final class IdentificationNumberUtil {
 		}
 
 		String suffixValue = identificationNumber.substring(coeficientes.length + 1);
-		System.out.println("THIS DISTANCE IN MY VOICE: "+suffixValue);
+		//System.out.println("THIS DISTANCE IN MY VOICE: "+suffixValue);
 		if (Integer.parseInt(suffixValue) == 0) { 
 			throw new InvalidIdentificationNumberFinishedException();
 		}

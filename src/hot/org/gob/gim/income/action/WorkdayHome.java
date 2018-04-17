@@ -2559,15 +2559,14 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 		}
 
-		if (ids.size() > 0) {
-			System.out.println("::::::::::::::::::...son::::::::::::::::::: "
-					+ ids.size());
+		/*if (ids.size() > 0) {
+			System.out.println("::::::::::::::::::...son::::::::::::::::::: " + ids.size());
 			System.out
 					.println("::::::::::::::::::::.statusId::::::::::::::"
 							+ statusId
 							+ " :::::::::::::::::::::::::::::::::::::mistake in items :::::::::::::::::. "
 							+ ids);
-		}
+		}*/
 
 	}
 
@@ -2885,7 +2884,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 		// Pago anticipado
 		entryTotalPrepaid = getTotalEmittedPrepaidByEntryAndStatus(explanation);
-		System.out.println("Entru total prepaid antes de taxes prepaid:"
+		//System.out.println("Entru total prepaid antes de taxes prepaid:"
 				+ entryTotalPrepaid.size());
 		// log.info("-------------------------6.------------------");
 		taxesPrepaid = getAllPrepaidTaxesTotalsByStatus(explanation);
@@ -2894,7 +2893,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 		entryTotalPrepaid.addAll(taxesPrepaid);
 		// log.info("-------------------------8.------------------");
 		orderByGroupBy(entryTotalPrepaid);
-		System.out.println("Entru total prepaid:" + entryTotalPrepaid.size());
+		//System.out.println("Entru total prepaid:" + entryTotalPrepaid.size());
 
 		// //********fomalizacion***********////
 		entryTotalFormalize = getTotalEmittedFormalizeByEntryAndStatus(explanationFormalize);
@@ -2988,11 +2987,11 @@ public class WorkdayHome extends EntityHome<Workday> {
 							.setParametersFutureEmissionDTO(parameters);
 				}
 			}
-			System.out.println("Retono Future:" + retorno);
+			//System.out.println("Retono Future:" + retorno);
 			return retorno;
 
 		} catch (Exception e) {
-			System.out.println(e);
+			//System.out.println(e);
 			return new ArrayList<EntryTotalCollected>();
 		}
 	}
@@ -3017,11 +3016,11 @@ public class WorkdayHome extends EntityHome<Workday> {
 							.setParametersFutureEmissionDTO(parameters);
 				}
 			}
-			System.out.println("Retono Future:" + retorno);
+			//System.out.println("Retono Future:" + retorno);
 			return retorno;
 
 		} catch (Exception e) {
-			System.out.println(e);
+			//System.out.println(e);
 			return new ArrayList<EntryTotalCollected>();
 		}
 	}
@@ -3045,7 +3044,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 							.setParametersFutureEmissionDTO(parameters);
 				}
 			}
-			System.out.println("Retono Future:" + retorno);
+			//System.out.println("Retono Future:" + retorno);
 			return retorno;
 		} catch (Exception e) {
 			System.out.println(e);
@@ -3069,10 +3068,10 @@ public class WorkdayHome extends EntityHome<Workday> {
 		query.setParameter("emisionPeriod", userSession.getFiscalPeriod()
 				.getStartDate());
 
-		System.out
-				.println("Periodo fiscal que se envia a consultar en obtener emisiones:"
-						+ userSession.getFiscalPeriod().getStartDate());
-		System.out.println("StatusId a enviar a consultar:" + statusIds);
+		//System.out
+				//.println("Periodo fiscal que se envia a consultar en obtener emisiones:"
+						//+ userSession.getFiscalPeriod().getStartDate());
+		//System.out.println("StatusId a enviar a consultar:" + statusIds);
 		query.setParameter("startDate", startDate);
 		query.setParameter("endDate", endDate);
 		return query.getResultList();
@@ -3093,8 +3092,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private List<EntryTotalCollected> getAllEmissionTotalsFuturePeriods() {
 		Query query = getEntityManager().createNamedQuery(
 				"MunicipalBond.SumTotalEmittedBetweenDatesFuturePeriodsByItem");
-		System.out.println("Status Ids que se envian a la consulta:"
-				+ statusIds);
+		//System.out.println("Status Ids que se envian a la consulta:"
+				//+ statusIds);
 		query.setParameter("statusId", futureBondStatus.getId());
 		query.setParameter("startDate", startDate);
 		query.setParameter("endDate", endDate);
@@ -3107,7 +3106,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	 * @return List<EntryTotalCollected>
 	 */
 	private List<EntryTotalCollected> getAllEmissionTotals() {
-		System.out.println("Entra al gat All EmisionTOtals");
+		//System.out.println("Entra al gat All EmisionTOtals");
 		List<EntryTotalCollected> currentPeriod = getAllEmissionTotalsCurrentPeriod();
 		List<EntryTotalCollected> previousPeriod = getAllEmissionTotalsPreviousPeriods();
 		List<EntryTotalCollected> missing = new ArrayList<EntryTotalCollected>();
@@ -3274,7 +3273,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 			}
 		}
-		System.out.println("Retono Future:" + retorno);
+		//System.out.println("Retono Future:" + retorno);
 		return retorno;
 
 	}
@@ -3302,7 +3301,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 							.setParametersFutureEmissionDTO(parameters);
 				}
 			}
-			System.out.println("Retono Future:" + retorno);
+			//System.out.println("Retono Future:" + retorno);
 			return retorno;
 		} catch (Exception e) {
 			System.out.println(e);
@@ -3329,7 +3328,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 							.setParametersFutureEmissionDTO(parameters);
 				}
 			}
-			System.out.println("Retono Future:" + retorno);
+			//System.out.println("Retono Future:" + retorno);
 			return retorno;
 		} catch (Exception e) {
 			System.out.println(e);
@@ -3355,7 +3354,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 							.setParametersFutureEmissionDTO(parameters);
 				}
 			}
-			System.out.println("Retono Future:" + retorno);
+			//System.out.println("Retono Future:" + retorno);
 			return retorno;
 		} catch (Exception e) {
 			System.out.println(e);
@@ -3443,7 +3442,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private List<EntryTotalCollected> getTotalEmittedFutureByEntryAndStatus(
 			Long statusId) throws Exception {
 		List<EntryTotalCollected> totals = new ArrayList<EntryTotalCollected>();
-		System.out.println(municipalBondStatus);
+		//System.out.println(municipalBondStatus);
 		if (entry == null) {
 			if (municipalBondStatus == null) {
 				totals = getAllFutureTotals(statusId);
@@ -3491,10 +3490,10 @@ public class WorkdayHome extends EntityHome<Workday> {
 	 * @return
 	 */
 	private List<EntryTotalCollected> getTotalEmissionByEntry() {
-		System.out.println("Entra al getTotalEmissionByEntry");
+		//System.out.println("Entra al getTotalEmissionByEntry");
 		List<EntryTotalCollected> totals = new ArrayList<EntryTotalCollected>();
 		if (entry == null) {
-			System.out.println("entry == null");
+			//System.out.println("entry == null");
 			totals = getAllEmissionTotals();
 		} else {
 			totals = getAllEmissionTotalsByEntry(entry.getId());

@@ -193,10 +193,10 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 			List<MunicipalBond> pendingBonds = null;			
 			if(entry == null){
 				pendingBonds = incomeService.findOnlyPendingAndInAgreementBonds(resident.getId());
-				System.out.println("1.................. "+pendingBonds.size());
+				//System.out.println("1.................. "+pendingBonds.size());
 			}else{
 				pendingBonds = incomeService.findOnlyPendingAndInAgreementBonds(resident.getId(), entry.getId());
-				System.out.println("2.................. "+pendingBonds.size());
+				//System.out.println("2.................. "+pendingBonds.size());
 			}
 			
 			incomeService.calculatePayment(pendingBonds, new Date(), true, true);			
@@ -337,7 +337,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 
 	@SuppressWarnings("unchecked")
 	public void searchResidentByCriteria() {
-		System.out.println("SEARCH RESIDENT BY CRITERIA " + this.criteria);
+		//System.out.println("SEARCH RESIDENT BY CRITERIA " + this.criteria);
 		if (this.criteria != null && !this.criteria.isEmpty()) {
 			Query query = getEntityManager().createNamedQuery("Resident.findByCriteria");
 			query.setParameter("criteria", this.criteria);
@@ -346,7 +346,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	}
 
 	public void searchResident() {
-		System.out.println("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
+		//System.out.println("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
 		Query query = getEntityManager().createNamedQuery("Resident.findByIdentificationNumber");
 		query.setParameter("identificationNumber", this.identificationNumber);
 		try {

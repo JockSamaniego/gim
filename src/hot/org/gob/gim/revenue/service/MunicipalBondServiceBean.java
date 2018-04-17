@@ -559,11 +559,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		if (municipalBond.getEntry() != null) {
 
 			List<byte[]> rulesToApply = new ArrayList<byte[]>();
-			System.out.println("=======> OBTIENE LOS ITEMS");
+			//System.out.println("=======> OBTIENE LOS ITEMS");
 			List<Item> itemFacts = municipalBond.getItems();
 
 			Date serviceDate = municipalBond.getServiceDate();
-			System.out.println("=======>serviceDate: " + serviceDate);
+			//System.out.println("=======>serviceDate: " + serviceDate);
 
 			// Crea item principal
 			Entry entry = municipalBond.getEntry();
@@ -812,7 +812,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				InputStream is = new ByteArrayInputStream(bos.toByteArray());
 				knowledgeBuilder.add(ResourceFactory.newInputStreamResource(is), ResourceType.DRL);
 				if (knowledgeBuilder.hasErrors()) {
-					System.out.println("RULES DEBUG -----> WARNING: Added Rule has errors");
+					//System.out.println("RULES DEBUG -----> WARNING: Added Rule has errors");
 					KnowledgeBuilderErrors errors = knowledgeBuilder.getErrors();
 					Iterator<KnowledgeBuilderError> it = errors.iterator();
 					while (it.hasNext()) {
@@ -847,9 +847,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			// "+factHandles.size());
 
 			if (factHandles.size() > 0) {
-				System.out.println("RULES DEBUG -----> Firing all rules ");
+				//System.out.println("RULES DEBUG -----> Firing all rules ");
 				int firedRules = session.fireAllRules();
-				System.out.println("RULES DEBUG -----> Rules applied " + firedRules);
+				//System.out.println("RULES DEBUG -----> Rules applied " + firedRules);
 			}
 
 			for (FactHandle factHandle : factHandles) {
@@ -871,9 +871,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	public BigDecimal calculateSurcharge(MunicipalBond municipalBond) {
 		BigDecimal surcharge = BigDecimal.ZERO;
 		for (Item i : municipalBond.getSurchargeItems()) {
-			System.out.println("item: " + i);
+			/*System.out.println("item: " + i);
 			System.out.println("item total: " + i.getTotal());
-			System.out.println("item total: " + i.getEntry().getCompleteName());
+			System.out.println("item total: " + i.getEntry().getCompleteName());*/
 			i.setTotal(i.getTotal().setScale(2, RoundingMode.HALF_UP));
 			BigDecimal aux = i.getTotal();
 			surcharge = surcharge.add(aux);
@@ -1416,7 +1416,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		Query query = entityManager.createQuery(stringQuery);
 		Long size = (Long) query.getSingleResult();
 
-		System.out.println("CLASE RETORNADA " + size.getClass() + " CURRENT SIZE = " + size);
+		//System.out.println("CLASE RETORNADA " + size.getClass() + " CURRENT SIZE = " + size);
 
 		return size;
 	}
@@ -1458,7 +1458,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		Query query = entityManager.createQuery(stringQuery);
 		Long size = (Long) query.getSingleResult();
 
-		System.out.println("CLASE RETORNADA emisiones futuras: " + size.getClass() + " CURRENT SIZE = " + size);
+		//System.out.println("CLASE RETORNADA emisiones futuras: " + size.getClass() + " CURRENT SIZE = " + size);
 		return size;
 	}
 
@@ -1497,8 +1497,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		query.setParameter("now", now, TemporalType.DATE);
 		Long size = (Long) query.getSingleResult();
 
-		System.out.println("numero de obligaciones normalizar que devuelve el model: " + size.getClass()
-				+ " CURRENT SIZE = " + size);
+		/*System.out.println("numero de obligaciones normalizar que devuelve el model: " + size.getClass()
+				+ " CURRENT SIZE = " + size);*/
 		return size;
 
 	}

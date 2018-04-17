@@ -560,14 +560,14 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 	private Adjunct createAdjunct(Entry entry) {
 		try {
-			System.out.println("CREATE ADJUNCT ----> "
-					+ entry.getAdjunctClassName());
+			/*System.out.println("CREATE ADJUNCT ----> "
+					+ entry.getAdjunctClassName());*/
 			if (entry.getAdjunctClassName() != null
 					&& !entry.getAdjunctClassName().trim().isEmpty()) {
 				Class<?> klass = Class.forName(entry.getAdjunctClassName());
 				Adjunct adjunct = (Adjunct) klass.newInstance();
-				System.out.println("ADJUNCT CREATED ----> "
-						+ adjunct.getClass().getSimpleName());
+				/*System.out.println("ADJUNCT CREATED ----> "
+						+ adjunct.getClass().getSimpleName());*/
 				this.adjunctUri = ADJUNCT_PREFIX
 						+ adjunct.getClass().getSimpleName() + ADJUNCT_SUFIX;
 				return adjunct;

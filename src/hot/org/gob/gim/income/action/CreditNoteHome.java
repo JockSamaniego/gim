@@ -83,9 +83,9 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 		if (getInstance().getResident() != null) {
 			setResident(getInstance().getResident());
 			setIdentificationNumber(getResident().getIdentificationNumber());
-			System.out.println("============> "+identificationNumber);
+			/*System.out.println("============> "+identificationNumber);
 			System.out.println("============> "+resident.getIdentificationNumber());
-			System.out.println("============> "+getInstance().getId());
+			System.out.println("============> "+getInstance().getId());*/
 		}
 	}
 

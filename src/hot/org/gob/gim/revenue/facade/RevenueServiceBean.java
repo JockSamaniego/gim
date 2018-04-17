@@ -223,9 +223,9 @@ public class RevenueServiceBean implements RevenueService {
 						pendingBondStatus, user);
 			} else {
 				if (municipalBond.getAdjunct() != null) {
-					System.out.println("EMITIENDO CON ADJUNTO "
+					/*System.out.println("EMITIENDO CON ADJUNTO "
 							+ municipalBond.getAdjunct() + " CODIGO ADJUNTO "
-							+ municipalBond.getAdjunct().getCode());
+							+ municipalBond.getAdjunct().getCode());*/
 					if (municipalBond.getAdjunct().getId() != null) {
 						Adjunct adjunct = entityManager.merge(municipalBond
 								.getAdjunct());
@@ -351,7 +351,7 @@ public class RevenueServiceBean implements RevenueService {
 		List<MunicipalBond> bonds = query.getResultList();
 
 		for (MunicipalBond bond : bonds) {
-			System.out.println("GZ -----> Update in RevenueServiceBean");
+			//System.out.println("GZ -----> Update in RevenueServiceBean");
 			MunicipalBondStatus previousStatus = bond.getMunicipalBondStatus();
 			bond.setMunicipalBondStatus(status);
 			if (reversedStatusId.equals(municipalBondStatusId)) {
@@ -446,7 +446,7 @@ public class RevenueServiceBean implements RevenueService {
 				if ( yearOfDate(municipalBond.getServiceDate()) > yearOfDate(now)  ) {
 					//comparar si sigo en el mismo años sino pasa al futuro
 					//System.out.println("las siguientes ........ "+ i);
-					System.out.println("entra a poner la fecha de emision........: "+municipalBond.getServiceDate());				
+					//System.out.println("entra a poner la fecha de emision........: "+municipalBond.getServiceDate());				
 					//lastDate = municipalBond.getServiceDate();
 					//if(isNexYear(lastDate, now)){
 						//System.out.println("pasa al siguiente anio "+ i);
@@ -484,8 +484,8 @@ public class RevenueServiceBean implements RevenueService {
 					saveStatusChangeRecord(null, municipalBond, previousStatus, pendingBondStatus, user);
 				} else {
 					if (municipalBond.getAdjunct() != null) {
-						System.out.println("EMITIENDO CON ADJUNTO " + municipalBond.getAdjunct() + " CODIGO ADJUNTO "
-								+ municipalBond.getAdjunct().getCode());
+						/*System.out.println("EMITIENDO CON ADJUNTO " + municipalBond.getAdjunct() + " CODIGO ADJUNTO "
+								+ municipalBond.getAdjunct().getCode());*/
 						if (municipalBond.getAdjunct().getId() != null) {
 							Adjunct adjunct = entityManager.merge(municipalBond.getAdjunct());
 							municipalBond.setAdjunct(adjunct);
@@ -540,24 +540,24 @@ public class RevenueServiceBean implements RevenueService {
 	public void changeFutureToPendign(List<MunicipalBond> municipalBonds,
 			User user, Person person, String explanation) throws Exception {
 		// TODO Auto-generated method stub
-		System.out.println("Lo que llega al service revenue****---------");
+		/*System.out.println("Lo que llega al service revenue****---------");
 		System.out.println("Municipal Bonds:" + municipalBonds);
-		System.out.println("User:" + user);
+		System.out.println("User:" + user);*/
 		for (MunicipalBond municipalBond : municipalBonds) {
 			checkEmission(municipalBond);
-			System.out.println("Paso de check Emision");
+			//System.out.println("Paso de check Emision");
 			if (canUserEmit(user)) {
-				System.out.println("Si puede emitir");
+				//System.out.println("Si puede emitir");
 				MunicipalBondStatus pendingBondStatus = systemParameterService
 						.materialize(MunicipalBondStatus.class,
 								"MUNICIPAL_BOND_STATUS_ID_PENDING");
 				MunicipalBondType mt = findMunicipalBondTypeByRole(user);
 				if (mt == null) {
-					System.out.println("Usuario no puede emitir MT");
+					//System.out.println("Usuario no puede emitir MT");
 					throw new UserCanNotEmitException();
 				}
 
-				System.out.println("Iniciando a setear valores");
+				//System.out.println("Iniciando a setear valores");
 
 				Date now = Calendar.getInstance().getTime();
 
@@ -574,9 +574,9 @@ public class RevenueServiceBean implements RevenueService {
 				municipalBond.setEmisionPeriod(fiscalPeriodService
 						.findCurrent(now).get(0).getStartDate());
 				//municipalBond.setEmitter(person);
-				System.out.println("Antes de guardar municipal bond");
+				//System.out.println("Antes de guardar municipal bond");
 				municipalBondService.update(municipalBond);
-				System.out.println("Antes de guardar status change");
+				//System.out.println("Antes de guardar status change");
 				saveStatusChangeRecord(explanation, municipalBond, previous,
 						pendingBondStatus, user);
 
@@ -617,7 +617,7 @@ public class RevenueServiceBean implements RevenueService {
 				- firstDate.getTimeInMillis());
 
 		int days = diferenceDays.get(Calendar.DAY_OF_YEAR);
-		System.out.println("Diferencia = " + days);
+		//System.out.println("Diferencia = " + days);
 
 		present.add(Calendar.DATE, days);
 		return present.getTime();

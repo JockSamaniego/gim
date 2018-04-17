@@ -209,7 +209,7 @@ public class RecordReadingHome extends EntityHome<Route> {
 				iActual--;
 			}
 		} else {
-			System.out.println("es nulo no entiendo pos? " + startYear);
+			//System.out.println("es nulo no entiendo pos? " + startYear);
 		}
 
 		return years;
@@ -257,7 +257,7 @@ public class RecordReadingHome extends EntityHome<Route> {
 					SYSTEM_PARAMETER_SERVICE_NAME);
 		changeIn = systemParameterService
 				.findParameter("AMOUNT_BETWEEN_WATER_ROUTE");
-		System.out.println("========> changeIn " + changeIn);
+		//System.out.println("========> changeIn " + changeIn);
 		if (changeIn != null) {
 			if (waterSupplies != null) {
 				int routeOrderActual = 0;
@@ -310,7 +310,7 @@ public class RecordReadingHome extends EntityHome<Route> {
 	 * eventos registro de lecturas
 	 */
 	public void loadRecordReadings() {
-		System.out.println("entra a cargar::::!!!!!!!!!!!!!!!!! ");
+		//System.out.println("entra a cargar::::!!!!!!!!!!!!!!!!! ");
 		// la coinsulta debe ser de un mes atras para poder cargar la lectura
 		// anterior
 		int monthInt = month.getMonthInt() - 1;
@@ -463,11 +463,11 @@ public class RecordReadingHome extends EntityHome<Route> {
 				i = consumptions.size() + 10;
 			}
 		}
-		System.out.println("where 1. " + actualReadingPosition);
+		//System.out.println("where 1. " + actualReadingPosition);
 		if (actualReadingPosition >= consumptions.size()) {
 			actualReadingPosition = consumptions.size() - 1;
 		}
-		System.out.println("where 2. " + actualReadingPosition);
+		//System.out.println("where 2. " + actualReadingPosition);
 		if (consumptions.size() > 0) {
 			actualConsumption = consumptions.get(actualReadingPosition);
 		}
@@ -641,8 +641,8 @@ public class RecordReadingHome extends EntityHome<Route> {
 					}
 				} else {
 
-					System.out.println("ZZZZZZZZZZ "
-							+ conNew.getCurrentReading());
+					/*System.out.println("ZZZZZZZZZZ "
+							+ conNew.getCurrentReading());*/
 
 					conNew.setDifferenceInReading(conNew.getCurrentReading()
 							- conNew.getPreviousReading());
@@ -706,7 +706,7 @@ public class RecordReadingHome extends EntityHome<Route> {
 		q.setParameter("wsId", ws.getId());
 		if (q.getResultList().size() > 0) {
 			WaterMeter wm=(WaterMeter) q.getResultList().get(0);
-			System.out.println(".......................... "+wm.getSerial()+" ....... "+q.getResultList().size());
+			//System.out.println(".......................... "+wm.getSerial()+" ....... "+q.getResultList().size());
 			return (WaterMeter) q.getResultList().get(0);
 		} else {
 			return null;
@@ -928,10 +928,10 @@ public class RecordReadingHome extends EntityHome<Route> {
 							"La Ruta " + this.getInstance().getName()
 									+ " ha sido pre-emitida", new Object[0]);
 					facesMessages.addToControl("residentChooser",org.jboss.seam.international.StatusMessage.Severity.INFO,message);
-					System.out.println("..................... completo");
+					//System.out.println("..................... completo");
 					return "complete";
 				}
-				System.out.println("en el try ..................... nulo");
+				//System.out.println("en el try ..................... nulo");
 				return null;
 			} catch (Exception e) {
 				String message = Interpolator.instance().interpolate("#{messages['property.errorGenerateTax']}",new Object[0]);
@@ -1079,7 +1079,7 @@ public class RecordReadingHome extends EntityHome<Route> {
 
 		int monthInt = month.getMonthInt();		
 		int yearInt = year;
-		System.out.println("water supply>>>>>>>>>ServiceNumber:" + waterSupplyServiceNumber + " year:" + year + " month:" + monthInt + " observacionValor: "+observation);
+		//System.out.println("water supply>>>>>>>>>ServiceNumber:" + waterSupplyServiceNumber + " year:" + year + " month:" + monthInt + " observacionValor: "+observation);
 		Query query = this.getEntityManager().createNamedQuery("Consumption.findByWaterSupplyServiceNumber");
 		query.setParameter("year", yearInt);
 		query.setParameter("month", monthInt);
@@ -1101,7 +1101,7 @@ public class RecordReadingHome extends EntityHome<Route> {
 		if (waterService == null)
 			waterService = ServiceLocator.getInstance().findResource(WATER_SERVICE_NAME);
 		try {
-			System.out.println("preEmiteOneWaterService--->ObservacionValor:"+this.observation);
+			//System.out.println("preEmiteOneWaterService--->ObservacionValor:"+this.observation);
 			eo = waterService.calculatePreEmissionOrderWaterConsumption(
 					this.consumptions, userSession.getFiscalPeriod(),
 					userSession.getPerson(), year, month.getMonthInt(), observation);
@@ -1113,7 +1113,7 @@ public class RecordReadingHome extends EntityHome<Route> {
 				WaterBlockLog wbl = initializeBlock();
 				wbl.setEmissionOrder_id(eo.getId());
 				wbl.setResident(eo.getMunicipalBonds().get(0).getResident());
-				System.out.println("-------------------->>>>>>>>> "+eo.getMunicipalBonds().get(0).getNumber());
+				//System.out.println("-------------------->>>>>>>>> "+eo.getMunicipalBonds().get(0).getNumber());
 				
 				waterService.saveWaterBlockLog(wbl);
 				
@@ -1166,7 +1166,7 @@ public class RecordReadingHome extends EntityHome<Route> {
 	
 	private void updateConsumption(List<Consumption> consumptionsToUpdate){
 		if (consumptionsToUpdate.size() == 0)return;
-		System.out.println("_______________________________ llega para modificarssssssssssss "+consumptionsToUpdate.size());
+		//System.out.println("_______________________________ llega para modificarssssssssssss "+consumptionsToUpdate.size());
 		//entityManager.getTransaction().begin();
 		int i=0;
 		for (Consumption cc : consumptionsToUpdate) {	

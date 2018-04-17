@@ -989,7 +989,7 @@ public class PropertyHome extends EntityHome<Property> {
 	}
 
 	public void wire() {
-		System.out.println("--Ingreso a wire PropertyHome isfirsttime" + isFirstTime);
+		//System.out.println("--Ingreso a wire PropertyHome isfirsttime" + isFirstTime);
 
 		getDefinedInstance();
 
@@ -1049,7 +1049,7 @@ public class PropertyHome extends EntityHome<Property> {
 		calculateTotalAreaConstruction();
 
 		anioAppraisal = GregorianCalendar.getInstance().get(Calendar.YEAR);
-		System.out.println(">>>>>>>>>>>>>>>>> anioAppraisal: " + anioAppraisal);
+		//System.out.println(">>>>>>>>>>>>>>>>> anioAppraisal: " + anioAppraisal);
 		if (appraisalPeriod == null)
 			appraisalPeriod = findActiveAppraisalPeriod();
 
@@ -1058,7 +1058,7 @@ public class PropertyHome extends EntityHome<Property> {
 		}
 
 		checkingRecordsForProperty = findCheckingRecordsForProperty();
-		System.out.println("--sale de wire" + this.instance);
+		// System.out.println("--sale de wire" + this.instance);
 
 	}
 

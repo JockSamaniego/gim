@@ -166,10 +166,10 @@ public class ResidentHome extends EntityHome<Resident> {
         Resident resident = instance;
         if (resident.getClass() == LegalEntity.class) {
             LegalEntity legalEntity = (LegalEntity) resident;
-            System.out.println("LEADING YOU A CHOICE: entityType " + legalEntity.getLegalEntityType());
+            //System.out.println("LEADING YOU A CHOICE: entityType " + legalEntity.getLegalEntityType());
             if (legalEntity.getLegalEntityType() == LegalEntityType.PUBLIC) {
                 String code = (String) legalEntity.getCode();
-                System.out.println("LEADING YOU A CHOICE: code " + code);
+                //System.out.println("LEADING YOU A CHOICE: code " + code);
                 if (code == null || code.isEmpty()) {
                     String message = ResourceBundle.instance().getString("InvalidPublicEntityCodeException");
                     InvalidValue iv = new InvalidValue(message, LegalEntityType.class, "code", null, legalEntity);
@@ -213,7 +213,7 @@ public class ResidentHome extends EntityHome<Resident> {
                     try {
                         userws.setPhone(((Person) instance).getCurrentAddress().getPhoneNumber());
                     } catch (Exception ex) {
-                        System.out.println(" setPhone sri >>> error >>>>> <<<<<<");
+                        //System.out.println(" setPhone sri >>> error >>>>> <<<<<<");
                         ex.printStackTrace();
                         userws.setPhone("");
                     }
@@ -228,7 +228,7 @@ public class ResidentHome extends EntityHome<Resident> {
                     try {
                         userws.setPhone(((LegalEntity) instance).getCurrentAddress().getPhoneNumber());
                     } catch (Exception ex) {
-                        System.out.println(" setPhone sri >>> error >>>>> <<<<<<");
+                        //System.out.println(" setPhone sri >>> error >>>>> <<<<<<");
                         ex.printStackTrace();
                         userws.setPhone("");
                     }
@@ -236,7 +236,7 @@ public class ResidentHome extends EntityHome<Resident> {
                 this.sendToService(userws);
                 addFacesMessageFromResourceBundle("update.mail.sri");
             } catch (Exception e) {
-                System.out.println("save sri >>> error >>>>> " + e.getStackTrace().toString());
+                //System.out.println("save sri >>> error >>>>> " + e.getStackTrace().toString());
                 e.printStackTrace();
                 getFacesMessages().addFromResourceBundle(FacesMessage.SEVERITY_ERROR, "noUpdate.mail.sri");
             }
@@ -273,13 +273,13 @@ public class ResidentHome extends EntityHome<Resident> {
         log.info("UserClient client >>>>> <<<<<<");
         UserWS response;
         response = client.saveUser_XML(input, UserWS.class);
-        System.out.println("Estado >>>>>>>>>> " + response.getState());
+        //System.out.println("Estado >>>>>>>>>> " + response.getState());
 
         if (response.getMessageList() != null) {
             List<Message> mensajes = response.getMessageList();
-            for (Message mensaje : mensajes) {
+            /*for (Message mensaje : mensajes) {
                 System.out.println(mensaje.getType() + "\t" + mensaje.getIdentifier() + "\t" + mensaje.getMessage() + "\t" + mensaje.getAdditionalInformation());
-            }
+            }*/
         }
         return response;
     }

@@ -390,10 +390,10 @@ public class BusinessHome extends EntityHome<Business> {
 		localFeatureHome.getInstance().setLocal(local);
 		if (this.localFeature.getId() == null) {
 			localFeatureHome.persist();
-			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< esta en null ");
+			//System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< esta en null ");
 		} else {
 			localFeatureHome.update();
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>< si existe " + localFeature.getId());
+			//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>< si existe " + localFeature.getId());
 		}
 		local.setLocalFeature(localFeature);
 		addLocal();

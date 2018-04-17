@@ -245,9 +245,9 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		List<TillPermission> tillPermissions = query.getResultList();
 
 		//findTotalCollected(tillPermissions);
-		System.out.println("metodo mejorado...................................");
+		//System.out.println("metodo mejorado...................................");
 		findTotalCollected1(tillPermissions);
-		System.out.println("metodo mejorado...................................fin>>>>>>>>>>>><");
+		//System.out.println("metodo mejorado...................................fin>>>>>>>>>>>><");
 
 		if (startDate != null && startDate.equals(endDate)
 				&& tillPermissions.size() == 1) {
@@ -437,9 +437,9 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		if (cashiersId.size() < 1) {
 			cashiersId = null;
 		}else{
-			System.out.println("--------------------antes "+cashiersId.size());
+			//System.out.println("--------------------antes "+cashiersId.size());
 			cashiersId = uniqueValues(cashiersId);	
-			System.out.println("--------------------luego "+cashiersId.size());
+			//System.out.println("--------------------luego "+cashiersId.size());
 		}
 							
 		query.setParameter("startDate", startDate);
@@ -454,7 +454,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		List <Object[]> totalCashCollecteds=totalCollected1(cashiersId);
 		
 		for (TillPermission t : tillPermissions) {
-			System.out.println("-------------------------- "+t.getWorkday().getDate()+" ------------- "+t.getPerson().getId());
+			//System.out.println("-------------------------- "+t.getWorkday().getDate()+" ------------- "+t.getPerson().getId());
 			
 			TillPermissionDetail td = createTillPermissionDetail(t);
 			
@@ -672,7 +672,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		List<ClosingBoxDTO> results = NativeQueryResultsMapper.map(
 				query.getResultList(), ClosingBoxDTO.class);
 
-		System.out.println(results);
+		//System.out.println(results);
 
 		ClosingBoxDTO result = new ClosingBoxDTO();
 		if (!results.isEmpty()) {
@@ -731,7 +731,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		tid.setSubTotal(tid.getTotalAccounts().add(tid.getTotalInterests())
 				.add(tid.getTotalSurcharges())
 				.subtract(tid.getTotalDiscounts()));
-		System.out.println("tid.getSubTotal()................................. "+tid.getSubTotal());
+		//System.out.println("tid.getSubTotal()................................. "+tid.getSubTotal());
 		tillInstitutionDetails.add(tid);
 		// System.out.println("RRRRRRRR "+"name:"+tid.getName());
 		// System.out.println("RRRRRRRR "+"acco:"+tid.getTotalAccounts());
@@ -743,7 +743,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		// System.out.println("RRRRRRRR "+"subt:"+tid.getSubTotal());
 		// System.out.println("RRRRRRRR "+"comi:"+tid.getCommission());
 		// System.out.println("RRRRRRRR "+"ttax:"+totalTaxes);
-		System.out.println("RRRRRRRR " + "tota:" + tid.getTotal());
+		//System.out.println("RRRRRRRR " + "tota:" + tid.getTotal());
 
 		// Valores para EMAAL-EP
 		// tid = new TillInstitutionDetail();
@@ -896,14 +896,14 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		// Ajuste de Valores para GAD Municipal de Loja comisiones e impuestos
 		// fiscales
 		tid = tillInstitutionDetails.get(0);
-		System.out.println("tid.getSubTotal() 2222 ................................. "+tid.getSubTotal());
+		//System.out.println("tid.getSubTotal() 2222 ................................. "+tid.getSubTotal());
 		tid.setCommission(totalCommissions.multiply(new BigDecimal(-1)));
-		System.out.println("tid.getSubTotal() 3333 ................................. "+tid.getSubTotal());
+		//System.out.println("tid.getSubTotal() 3333 ................................. "+tid.getSubTotal());
 		tid.setSubTotal(tid.getSubTotal().add(totalTaxes));
-		System.out.println("tid.getSubTotal() 4444 ................................. "+tid.getSubTotal());
+		//System.out.println("tid.getSubTotal() 4444 ................................. "+tid.getSubTotal());
 		tid.setTotal(tid.getSubTotal().add(tid.getCommission())
 				.add(totalPaymentAgreements));
-		System.out.println("tid.getTotal() 5555 ................................. "+tid.getTotal());
+		//System.out.println("tid.getTotal() 5555 ................................. "+tid.getTotal());
 		tid.setTotalPaymentAgreements(totalPaymentAgreements);
 		// System.out.println("RRRRRRRR "+"name:"+tid.getName());
 		// System.out.println("RRRRRRRR "+"acco:"+tid.getTotalAccounts());
@@ -915,7 +915,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		// System.out.println("RRRRRRRR "+"subt:"+tid.getSubTotal());
 		// System.out.println("RRRRRRRR "+"comi:"+tid.getCommission());
 		// System.out.println("RRRRRRRR "+"ttax:"+totalTaxes);
-		System.out.println("RRRRRRRR " + "tota:" + tid.getTotal());
+		//System.out.println("RRRRRRRR " + "tota:" + tid.getTotal());
 	}
 
 	public BigDecimal getTotalByInstitutions() {
@@ -1446,7 +1446,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 			List<ClosignBoxDetailsTypesDTO> result = NativeQueryResultsMapper.map(
 					query.getResultList(), ClosignBoxDetailsTypesDTO.class);
 			
-			System.out.println("detalles result bd:"+result);
+			//System.out.println("detalles result bd:"+result);
 			
 			fractionValues = new HashMap<String, BigDecimal>();
 			totalCollectedByTill = BigDecimal.ZERO;
@@ -1923,7 +1923,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	@SuppressWarnings("unchecked")
 	public void loadReversedDepositsByCashierIdAndDate(Long cashierId,
 			Date startDate, Date endDate) {
-		System.out.println("Ingreso a loadReversedDepositsByCashierIdAndDay");
+		//System.out.println("Ingreso a loadReversedDepositsByCashierIdAndDay");
 		ReversedDeposits.clear();
 		Query query = getEntityManager().createNamedQuery(
 				"Deposit.findReversedDepositsByCashierIdAndDate");

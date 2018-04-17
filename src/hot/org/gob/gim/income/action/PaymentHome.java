@@ -216,7 +216,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	@SuppressWarnings("unchecked")
 	public void selectPaymentAgreement(BigInteger agreement_id){
 		
-		System.out.println("=============>"+agreement_id);
+		//System.out.println("=============>"+agreement_id);
 		//buscar el convenio en especifico
 		this.paymentAgreement= (PaymentAgreement)getEntityManager().
 				find(PaymentAgreement.class, new Long(agreement_id.toString()));
@@ -311,11 +311,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			Resident resident = (Resident) query.getSingleResult();
 			this.setResident(resident);
 
-			System.out.println("BD: " + resident.getName());
+			//System.out.println("BD: " + resident.getName());
 			this.criteria = this.identificationNumber;
 			// searchByCriteria();
 			findPaymentsBonds();
-			System.out.println("=======>");
+			//System.out.println("=======>");
 			
 		} catch (Exception e) {
 			this.setResident(null);
@@ -483,7 +483,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		try {
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-			System.out.println("TIME " + time.getTime());
+			//System.out.println("TIME " + time.getTime());
 
 			Query q1 = getEntityManager().createQuery("Select m from MunicipalBond m "
 					+ "JOIN m.deposits d "
@@ -493,18 +493,17 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			q1.setParameter("currentDate", formatter.parse(formatter.format(time.getTime())));
 			q1.setParameter("cashier", person);
 
-			System.out.println("Persona=====================================>: "+person.getId());
+			//System.out.println("Persona=====================================>: "+person.getId());
 			paymentsBonds = q1.getResultList();
-			System.out.println("SIZE: " + paymentsBonds.size());
+			//System.out.println("SIZE: " + paymentsBonds.size());
 		} catch (ParseException e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 		MunicipalBondItem root = new MunicipalBondItem(null);
 
 		for (MunicipalBond municipalBond : paymentsBonds) {
-			System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE " + municipalBond.getTaxableTotal()
-					+ " TAXES TOTAL " + municipalBond.getTaxesTotal());
+			
 			String entryId = municipalBond.getEntry().getId().toString();
 			MunicipalBondItem item = root.findNode(entryId, municipalBond);
 
@@ -548,7 +547,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			query.setParameter("municipalBondStatusId", pendingMunicipalBondStatusId);
 			List<BigInteger> mbs = query.getResultList();
 
-			System.out.println("MUNICIPAL BONDS EN CONVENIO " + mbs.size());
+			//System.out.println("MUNICIPAL BONDS EN CONVENIO " + mbs.size());
 			Map<String, Long> inPaymentAgreementMap = new HashMap<String, Long>();
 			for (BigInteger entryId : mbs) {
 				inPaymentAgreementMap.put(entryId.toString(), entryId.longValue());
@@ -625,8 +624,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		incomeService.calculatePayment(mbs, new Date(), true, true);
 		impugnmentsTotal = new ArrayList<Impugnment>();
 		for (MunicipalBond municipalBond : mbs) {
-			System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE " + municipalBond.getTaxableTotal()
-					+ " TAXES TOTAL " + municipalBond.getTaxesTotal());
+			//System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE " + municipalBond.getTaxableTotal()
+					//+ " TAXES TOTAL " + municipalBond.getTaxesTotal());
 			String entryId = municipalBond.getEntry().getId().toString();
 			MunicipalBondItem item = root.findNode(entryId, municipalBond);
 
@@ -785,7 +784,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void calculateCreditNoteValue(PaymentFraction fraction) {
-		System.out.println("CHECKING CREDIT NOTE VALUE");
+		//System.out.println("CHECKING CREDIT NOTE VALUE");
 		if (fraction.getPaymentType() == PaymentType.CREDIT_NOTE && fraction.getCreditNote() != null) {
 			BigDecimal received = fraction.getReceivedAmount();
 			BigDecimal availableBalance = fraction.getCreditNote().getAvailableAmount();
@@ -799,11 +798,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void calculatePaidTotal() {
-		System.out.println("INICIA CALCULO DE calculatePaidTotal");
+		//System.out.println("INICIA CALCULO DE calculatePaidTotal");
 		BigDecimal paidTotal = BigDecimal.ZERO;
 
 		if (this.isFullPayment) {
-			System.out.println("" + municipalBondItems.size());
+			//System.out.println("" + municipalBondItems.size());
 			if (municipalBondItems != null) {
 				for (MunicipalBondItem mbi : municipalBondItems) {
 					paidTotal = paidTotal.add(mbi.calculatePaymentTotal());
@@ -1015,7 +1014,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void clearValues(PaymentFraction fraction) {
-		System.out.println("VALUES CLEARED");
+		//System.out.println("VALUES CLEARED");
 		fraction.setReceivedAmount(BigDecimal.ZERO);
 		fraction.setFinantialInstitution(null);
 		fraction.setDocumentNumber(null);
@@ -1082,7 +1081,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public String saveForCompensationPayment() {
-		System.out.println("SAVING FOR COMPENSATION PAYMENT");
+		//System.out.println("SAVING FOR COMPENSATION PAYMENT");
 
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		try {
@@ -1102,7 +1101,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 	public String persist() {
 
-		System.out.println("PERSIST INICIO");
+		//System.out.println("PERSIST INICIO");
 
 		if (!getIsPaymentOk()) {
 			if (!paymentBlocked)
@@ -1139,10 +1138,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			} catch (InvoiceNumberOutOfRangeException e) {
 				addFacesMessageFromResourceBundle(e.getClass().getSimpleName(), e.getInvoiceNumber());
 			} catch (Exception e) {
-				System.out.println("GZ -----> Exception saving Deposits");
+				//System.out.println("GZ -----> Exception saving Deposits");
 				addFacesMessageFromResourceBundle(e.getClass().getSimpleName());
 				e.printStackTrace();
-				System.out.println("GZ -----> Returns error");
+				//System.out.println("GZ -----> Returns error");
 				return "unknownError";
 			}
 			return null;
@@ -1156,7 +1155,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void renderingDepositPDF(Long userId) {
-		System.out.println("<<<<----->>>>>renderingDepositPDF:" + paymentFileName);
+		//System.out.println("<<<<----->>>>>renderingDepositPDF:" + paymentFileName);
 		PdfExporter pdfExporter = new PdfExporter();
 		byte[] pdfBytes = pdfExporter.pdfExport("/income/report/Receipt.xhtml");
 		try {
@@ -1176,13 +1175,13 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 	public String print() {
 		String result = receiptPrintingManager.print(deposit);
-		System.out.println("RESULTADO ----> " + result + " " + receiptPrintingManager);
+		//System.out.println("RESULTADO ----> " + result + " " + receiptPrintingManager);
 		return result;
 	}
 
 	public String printAll() {
 		String result = receiptPrintingManager.print(deposits);
-		System.out.println("RESULTADO ----> " + result + " " + receiptPrintingManager);
+		//System.out.println("RESULTADO ----> " + result + " " + receiptPrintingManager);
 		return result;
 	}
 
@@ -1375,8 +1374,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 						remaining = remaining.subtract(capitalToPay);
 						remaining = remaining.subtract(taxesToPay);
 						remaining = remaining.subtract(surcharge);
-						System.out.println("OBLIGACION CANCELADA A ZERO --> "
-								+ municipalBond.getEntry().getDescription() + " " + municipalBond.getId());
+						/*System.out.println("OBLIGACION CANCELADA A ZERO --> "
+								+ municipalBond.getEntry().getDescription() + " " + municipalBond.getId());*/
 						if (index == municipalBonds.size()) {
 							deactivatePaymentAgreement = Boolean.TRUE;
 						}
@@ -1624,7 +1623,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void addPaymentFraction() {
-		System.out.println("SE AGREGA NUEVA FRACCION");
+		//System.out.println("SE AGREGA NUEVA FRACCION");
 		this.getInstance().add(new PaymentFraction());
 	}
 
@@ -1661,7 +1660,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	@SuppressWarnings("unchecked")
 	public List<CreditNote> findCreditNotes() {
 		creditNotes = getCreditNotes();
-		System.out.println("FINDING ACTIVE CREDIT NOTES");
+		//System.out.println("FINDING ACTIVE CREDIT NOTES");
 		if (resident != null) {
 			Query query = getPersistenceContext().createNamedQuery("CreditNote.findActiveByResidentId");
 			query.setParameter("residentId", resident.getId());
@@ -1676,8 +1675,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 		BigDecimal value = this.getInstance().getValue().setScale(2, RoundingMode.HALF_UP);
 		BigDecimal receivedAmount = getReceivedAmount().setScale(2, RoundingMode.HALF_UP);
-		System.out.println("VALUE = " + value);
-		System.out.println("RECEIVED AMOUNT = " + receivedAmount);
+		//System.out.println("VALUE = " + value);
+		//System.out.println("RECEIVED AMOUNT = " + receivedAmount);
 
 		if (paymentBlocked) {
 			addFacesMessageFromResourceBundle("payment.paymentBlockedAlertPriority");
@@ -1689,7 +1688,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			return Boolean.FALSE;
 		} else {
 			for (PaymentFraction fraction : payment.getPaymentFractions()) {
-				System.out.println("PAYMENT TYPE = " + fraction.getPaymentType());
+				//System.out.println("PAYMENT TYPE = " + fraction.getPaymentType());
 				fraction.setPaidAmount(fraction.getReceivedAmount());
 				if (fraction.getPaymentType() == PaymentType.CASH) {
 					if (fraction.getReceivedAmount() == BigDecimal.ZERO) {
@@ -1705,7 +1704,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 							|| fraction.getFinantialInstitution() == null || fraction.getAccountNumber().isEmpty()
 							|| fraction.getDocumentNumber().isEmpty()
 							|| fraction.getReceivedAmount() == BigDecimal.ZERO) {
-						System.out.println("CHECK FRACTION IS NOT VALID");
+						//System.out.println("CHECK FRACTION IS NOT VALID");
 						addFacesMessageFromResourceBundle("payment.checkDetailInvalid");
 						isPaymentOk = Boolean.FALSE;
 						break;
@@ -1719,7 +1718,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					if (fraction.getDocumentNumber() == null || fraction.getFinantialInstitution() == null
 							|| fraction.getDocumentNumber().isEmpty()
 							|| fraction.getReceivedAmount() == BigDecimal.ZERO) {
-						System.out.println("CREDIT_CARD FRACTION IS NOT VALID");
+						//System.out.println("CREDIT_CARD FRACTION IS NOT VALID");
 						addFacesMessageFromResourceBundle("payment.creditCardDetailInvalid");
 						isPaymentOk = Boolean.FALSE;
 						break;
@@ -1736,7 +1735,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 						if (received != null) {
 							BigDecimal availableBalance = fraction.getCreditNote().getAvailableAmount();
 							if (received.compareTo(availableBalance) > 0) {
-								System.out.println("CREDIT NOTE FRACTION IS NOT VALID");
+								//System.out.println("CREDIT NOTE FRACTION IS NOT VALID");
 								addFacesMessageFromResourceBundle("creditNote.availableAmountIsNotEnough");
 								isPaymentOk = Boolean.FALSE;
 								break;
@@ -1923,7 +1922,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	 * @return
 	 */
 	public boolean enableButtonPrint() {
-		System.out.println("AQUI");
+		//System.out.println("AQUI");
 		List<MunicipalBond> selected = selectedBonds;
 		boolean disabled = false;
 		if (!selected.isEmpty()) {
@@ -1937,7 +1936,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				}
 			}
 		}
-		System.out.println("====>" + disabled);
+		//System.out.println("====>" + disabled);
 		return disabled;
 	}
 
@@ -1980,7 +1979,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	 * @return
 	 */
 	public String listAgreed() {
-		System.out.println("INICIO");
+		//System.out.println("INICIO");
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 		String sql = "select pag.id as Agreement,\n" + " firstpaymentdate,\n" + "	resident.id as resident,\n"
 				+ "	resident.identificationnumber as ci, \n" + "	resident.name, \n" + "	pag.description, \n"
@@ -2023,7 +2022,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	
 	public void cleanSearch(){
 		this.lsr = new LinkedList<Data>();
-		System.out.println("===))(&%%");
+		//System.out.println("===))(&%%");
 	}
 
 	public class Data {

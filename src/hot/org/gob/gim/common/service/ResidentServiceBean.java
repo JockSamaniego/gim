@@ -145,20 +145,20 @@ public class ResidentServiceBean implements ResidentService {
 
 	@Override
 	public void save(Resident resident) throws IdentificationNumberExistsException{		
-		System.out.println("=======> INGRESO A GUARDAR CONTRIBUYENTE");
+		//System.out.println("=======> INGRESO A GUARDAR CONTRIBUYENTE");
 		if(resident.getId() != null){
 			try{
 				Resident r = find(resident.getIdentificationNumber());
 				if (r != null){
 					if (r.getId().longValue() == resident.getId().longValue()){
 						crudService.update(resident);
-						System.out.println("=======> ACTUALIZADO CONTRIBUYENTE CORRECTAMENTE con ids true, DNI:  " + resident.getIdentificationNumber());
+						//System.out.println("=======> ACTUALIZADO CONTRIBUYENTE CORRECTAMENTE con ids true, DNI:  " + resident.getIdentificationNumber());
 					}
 					else
 						throw new IdentificationNumberExistsException();
 				}else{
 					crudService.update(resident);
-					System.out.println("=======> ACTUALIZADO CONTRIBUYENTE CORRECTAMENTE: " + resident.getIdentificationNumber());
+					//System.out.println("=======> ACTUALIZADO CONTRIBUYENTE CORRECTAMENTE: " + resident.getIdentificationNumber());
 					//throw new IdentificationNumberExistsException();
 				}
 			}catch(NonUniqueIdentificationNumberException e){
@@ -174,7 +174,7 @@ public class ResidentServiceBean implements ResidentService {
 				verifyUniqueness(resident.getId(), resident.getIdentificationNumber(), resident.getIdentificationType());
 			}
 			crudService.create(resident);
-			System.out.println("=======> INSERTADO CONTRIBUYENTE : " + resident.getIdentificationNumber());
+			//System.out.println("=======> INSERTADO CONTRIBUYENTE : " + resident.getIdentificationNumber());
 		}
 	}
 

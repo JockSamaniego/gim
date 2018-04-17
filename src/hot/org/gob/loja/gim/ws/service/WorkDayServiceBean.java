@@ -125,7 +125,7 @@ public class WorkDayServiceBean implements WorkDay {
 //        String hashPassword = passwordManager.hash();
         String hashPassword = passwordManager.hash(request.getPassword());
 //        log.info("Authenticating user {0}, {1}", request.getUsername(), hashPassword);
-        System.out.println("Authenticating user: " + request.getUsername() + " " + hashPassword);
+        //System.out.println("Authenticating user: " + request.getUsername() + " " + hashPassword);
         Query query = em.createNamedQuery("User.findByUsernameAndPassword");
         query.setParameter("name", request.getUsername());
         query.setParameter("password", hashPassword);
@@ -186,7 +186,7 @@ public class WorkDayServiceBean implements WorkDay {
                 userSession.setTillPermission(tp);
             }
         }
-        System.out.println("USUARIO CONECTADO: " + user.getName());
+        //System.out.println("USUARIO CONECTADO: " + user.getName());
         return true;
     }
 
@@ -211,13 +211,13 @@ public class WorkDayServiceBean implements WorkDay {
         HttpServletRequest request = hrs;
         ip = request.getHeader("X-Forwarded-For");
         if (isIPAddress(ip)) {
-            System.out.println("IP Return:" + ip);
-            System.out.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: " + ip);
+            /*System.out.println("IP Return:" + ip);
+            System.out.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: " + ip);*/
             return ip;
         } else {
             ip = request.getRemoteAddr();
-            System.out.println("RemoteAddr:" + ip);
-            System.out.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: " + ip);
+            /*System.out.println("RemoteAddr:" + ip);
+            System.out.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: " + ip);*/
             return ip;
         }
 //		ip = request.getRemoteAddr(); //En algunos casos solamente detecta la IP del Proxy y no la del Equipo Local
@@ -501,7 +501,7 @@ public class WorkDayServiceBean implements WorkDay {
 
             // Send message
             Transport.send(message);
-            System.out.println("Sent message successfully....");
+            //System.out.println("Sent message successfully....");
         } catch (MessagingException mex) {
             mex.printStackTrace();
             System.out.println("error al enviar mensaje....: " + mex.getMessage());

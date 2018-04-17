@@ -310,10 +310,10 @@ public class MunicipalBondManager extends EntityController {
 			Long municipalBondStatusId = futureBondStatus.getId();
 			Long entryId = entry != null ? entry.getId() : null;
 
-			System.out.println("resident Id:" + residentId);
+			/*System.out.println("resident Id:" + residentId);
 			System.out.println("entry Id:" + entryId);
 			System.out.println("municipal status future:"
-					+ municipalBondStatusId);
+					+ municipalBondStatusId);*/
 
 			getDataModel().setCriteria(residentId, entryId,
 					municipalBondStatusId, true);
@@ -520,8 +520,8 @@ public class MunicipalBondManager extends EntityController {
 		.findResource(IncomeService.LOCAL_NAME);
 		MunicipalBond municipalBond = incomeService
 				.loadForPrinting(municipalBondId);
-		System.out.println("RECOVERED IN BACKING BEAN ---> "
-				+ municipalBond.getDeposits().size());
+		/*System.out.println("RECOVERED IN BACKING BEAN ---> "
+				+ municipalBond.getDeposits().size());*/
 		List<Deposit> deposits = municipalBond.getDeposits();
 		if (deposits.size() > 0) {
 			Deposit depositToPrint = deposits.get(deposits.size() - 1);
@@ -533,8 +533,8 @@ public class MunicipalBondManager extends EntityController {
 			receiptPrintingManager.setIsCertificate(isCertificate);
 			String result = receiptPrintingManager.print(depositToPrint);
 
-			System.out.println("RESULTADO ----> " + result + " "
-					+ receiptPrintingManager);
+			/*System.out.println("RESULTADO ----> " + result + " "
+					+ receiptPrintingManager);*/
 			if (isCertificate == null || !isCertificate)
 				incomeService.updateReprintings(municipalBond.getId());
 			isCertificate = false;
@@ -579,7 +579,7 @@ public class MunicipalBondManager extends EntityController {
 
 		MunicipalBondDataModel dataModel = (MunicipalBondDataModel) Contexts
 				.getConversationContext().get(MunicipalBondDataModel.class);
-		System.out.println("Data model en el getDataModel" + dataModel);
+		//System.out.println("Data model en el getDataModel" + dataModel);
 		return dataModel;
 	}
 
@@ -641,8 +641,8 @@ public class MunicipalBondManager extends EntityController {
 
 	public void updateStatus(MunicipalBond municipalBond,
 			MunicipalBondStatus municipalBondStatus) {
-		System.out.println("GZ -----> UpdateStatus executed for "
-				+ municipalBond.getId() + " FOR STATUS " + municipalBondStatus);
+		/*System.out.println("GZ -----> UpdateStatus executed for "
+				+ municipalBond.getId() + " FOR STATUS " + municipalBondStatus);*/
 		List<Long> selectedIds = new ArrayList<Long>();
 		selectedIds.add(municipalBond.getId());
 		updateStatus(selectedIds, municipalBondStatus);
@@ -690,12 +690,12 @@ public class MunicipalBondManager extends EntityController {
 			
 			Long municipalBondStatusId = futureBondStatus.getId();
 
-			System.out.println("municipal status future:" + municipalBondStatusId);
+			//System.out.println("municipal status future:" + municipalBondStatusId);
 			Date now = new Date();
 			
 			
 			for (MunicipalBond bond : getMunicipalBondsFormalizing(municipalBondStatusId, now)) {
-				System.out.println("ID bond model:" + bond.getId());
+				//System.out.println("ID bond model:" + bond.getId());
 				Query query = getEntityManager().createNamedQuery(
 						"MunicipalBond.findById");
 				query.setParameter("municipalBondId", bond.getId());
@@ -703,8 +703,8 @@ public class MunicipalBondManager extends EntityController {
 						.getSingleResult());
 			}
 
-			System.out.println("Litado a enviar a change:"
-					+ listadoSeleccionadas.size());
+			/*System.out.println("Litado a enviar a change:"
+					+ listadoSeleccionadas.size());*/
 			String explanation = systemParameterService
 					.findParameter("STATUS_CHANGE_FOMALIZE_EMISSION_EXPLANATION");
 			revenueService
@@ -724,17 +724,17 @@ public class MunicipalBondManager extends EntityController {
 			// System.out.println("Listado de obligaciones seleccionadas:"
 			// + getSelected());
 			List<Long> listSelected = getSelected();
-			System.out.println("Tamaño de listado de selecionadas:"
+			//System.out.println("Tamaño de listado de selecionadas:"
 					+ listSelected.size());
 			List<MunicipalBond> listadoSeleccionadas = new ArrayList<MunicipalBond>();
 			// System.out.println("Tamaño de modelo:"+getDataModel().getMunicipalBonds().size());
 
 			for (Long id : listSelected) {
-				System.out.println("Dentro del for 1");
-				System.out.println("ID Selected:" + id);
+				/*System.out.println("Dentro del for 1");
+				System.out.println("ID Selected:" + id);*/
 				for (MunicipalBond bond : getDataModel().getMunicipalBonds()) {
-					System.out.println("Dentro del for 2");
-					System.out.println("ID bond model:" + bond.getId());
+					/*System.out.println("Dentro del for 2");
+					System.out.println("ID bond model:" + bond.getId());*/
 					if (bond.getId().equals(id)) {
 						Query query = getEntityManager().createNamedQuery(
 								"MunicipalBond.findById");
@@ -746,8 +746,8 @@ public class MunicipalBondManager extends EntityController {
 				}
 			}
 
-			System.out.println("Litado a enviar a change:"
-					+ listadoSeleccionadas.size());
+			/*System.out.println("Litado a enviar a change:"
+					+ listadoSeleccionadas.size());*/
 			String explanation = systemParameterService
 					.findParameter("STATUS_CHANGE_FUTURE_EMISSION_EXPLANATION");
 			revenueService
@@ -796,7 +796,7 @@ public class MunicipalBondManager extends EntityController {
 	}
 
 	private void updateStatus(List<Long> selected, MunicipalBondStatus status) {
-		System.out.println("GZ -----> Invoking RevenueService " + status);
+		//System.out.println("GZ -----> Invoking RevenueService " + status);
 		revenueService.update(selected, status.getId(), userSession.getUser()
 				.getId(), observation);
 		findMunicipalBonds();
@@ -969,13 +969,13 @@ public class MunicipalBondManager extends EntityController {
 	public void setForReverse(MunicipalBond mb) {
 		this.municipalBond = mb;
 		observation = "";
-		System.out.println("Reseteaa observation/////////SetForReverse");
+		//System.out.println("Reseteaa observation/////////SetForReverse");
 	}
 
 	public void setForBlocked(MunicipalBond mb) {
 		this.municipalBond = mb;
 		observation = "";
-		System.out.println("Reseteaa observation/////////SetForBlocked");
+		//System.out.println("Reseteaa observation/////////SetForBlocked");
 	}
 
 	public void setForRejectedReverse(MunicipalBond mb) {
@@ -1014,14 +1014,14 @@ public class MunicipalBondManager extends EntityController {
 	public String updateReversedSelectedAll() {
 		reversedBondStatus = systemParameterService.materialize(
 				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_REVERSED");
-		System.out
+		/*System.out
 				.println("updateReversedSelectedAll>>>>>>>>>>>>>>>>>>reversedBondStatusValor: "
 						+ reversedBondStatus);
 		System.out.println("updateReversedSelectedAll -----> statusValor "
 				+ reversedBondStatus);
 		System.out
 				.println("updateReversedSelectedAll -----> observacionManagerValor "
-						+ observacionManager);
+						+ observacionManager);*/
 		revenueService.update(listForReverseAll, reversedBondStatus.getId(),
 				userSession.getUser().getId(), observacionManager);
 		return "persisted";

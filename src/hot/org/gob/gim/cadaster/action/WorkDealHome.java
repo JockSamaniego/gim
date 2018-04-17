@@ -303,7 +303,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 				aux = calculateValuesWS(wf, this.getInstance()
 						.getSewerageValue());
 				aux = aux.setScale(2, RoundingMode.HALF_UP);
-				System.out.println("Sin redondeo==>" + aux);
+				//System.out.println("Sin redondeo==>" + aux);
 				wf.setSewerageValue(aux);
 			}
 
@@ -376,7 +376,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 		aux = makeOperation(aux, typeOperation);
 		setValueColumn(aux, waterOrSewerage, position);
 
-		System.out.println("POS=>" + position + " - " + aux);
+		//System.out.println("POS=>" + position + " - " + aux);
 
 		// sumar y obtener el total de agua o alcantarillado
 		BigDecimal sumValue = BigDecimal.ZERO;
@@ -634,7 +634,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 					+ property.getLocation().getMainBlockLimit().getStreet()
 							.getName();
 
-			System.out.println("====>" + direction);
+			//System.out.println("====>" + direction);
 			workDealFraction.setAddress(direction);
 			
 			

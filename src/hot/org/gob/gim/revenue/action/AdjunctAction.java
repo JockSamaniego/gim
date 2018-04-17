@@ -232,7 +232,7 @@ public class AdjunctAction extends EntityController{
 	public void updatePropertyCode(){
 		PropertyReference reference = findCurrentAdjunct();
 		if(reference != null){
-			System.out.println("UPDATING PROPERTY CODE ----> Cadastral code set on code property!!");
+			//System.out.println("UPDATING PROPERTY CODE ----> Cadastral code set on code property!!");
 			reference.setCode(reference.getProperty().getCadastralCode());
 			reference.setOwner(reference.getProperty().getCurrentDomain().getResident().getName());
 			if(reference.getProperty().getLocation() != null){
@@ -261,7 +261,7 @@ public class AdjunctAction extends EntityController{
 	public void updateLocalCode(Long id){
 		BusinessLocalReference reference = findCurrentAdjunct();
 		if(reference != null && reference.getLocal() != null){
-			System.out.println("UPDATING LOCAL CODE ----> Local id set on code property!!");
+			//System.out.println("UPDATING LOCAL CODE ----> Local id set on code property!!");
 			reference.setCode(reference.getLocal().getId().toString());
 			reference.setOwner(reference.getLocal().getBusiness().getOwner().getName());
 			if (reference.getLocal().getBusiness().getManager() == null)
@@ -319,7 +319,7 @@ public class AdjunctAction extends EntityController{
 	private <T extends Adjunct> T findCurrentAdjunct(){
 		AdjunctHome home = (AdjunctHome) Contexts.getConversationContext().get(AdjunctHome.class);
 		if(home != null){
-			System.out.println("UPDATING PROPERTY CODE ----> Home found!!"+home);
+			//System.out.println("UPDATING PROPERTY CODE ----> Home found!!"+home);
 			T currentAdjunct = (T) home.getInstance();
 			return currentAdjunct;
 		}

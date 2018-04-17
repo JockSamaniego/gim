@@ -502,9 +502,9 @@ public class PaymentServiceBean implements PaymentService {
 		// comparar si
 		//System.out.println("========>cantidad "+bonds.size());
 		for (Bond bond : bonds) {			
-			System.out.println(bond.getAccount()+"\t"+bond.getNumber()+"\t"+bond.getDiscounts()+
+			/*System.out.println(bond.getAccount()+"\t"+bond.getNumber()+"\t"+bond.getDiscounts()+
 					"\t"+bond.getInterests()+"\t"+bond.getSurcharges()+"\t"+bond.getTaxes()+"\t"+bond.getTotal());
-			/*if (now.compareTo(bond.getExpirationDate()) == 1) {
+			if (now.compareTo(bond.getExpirationDate()) == 1) {
 				// System.out.println("=======================> deuda expirada");
 				// expiratedDate = Boolean.TRUE;
 				return true;
