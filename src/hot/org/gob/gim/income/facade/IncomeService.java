@@ -125,9 +125,9 @@ public interface IncomeService {
 	//@author
 	//@tag recaudacionesCoactivas
 	//@date 2016-07-08T15:25:11
-	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long id, Boolean coverInterest, String status);
+	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long id, Boolean coverInterest, String status, String type);
 	
-	public BigDecimal sumAccumulatedInterest(Long id, Boolean coverInterest, String status);
+	public BigDecimal sumAccumulatedInterest(Long id, Boolean coverInterest, String status, String type);
 	
 	//Jock Samaniego
 	//actualizar estado de convenios 21/09/2016

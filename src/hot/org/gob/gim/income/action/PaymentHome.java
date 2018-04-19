@@ -50,6 +50,8 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 
+import com.sun.tools.xjc.reader.dtd.bindinfo.BIAttribute;
+
 import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.AlertPriority;
 import ec.gob.gim.common.model.FiscalPeriod;
@@ -578,6 +580,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				clearDeposits();
 				hasConflict = Boolean.FALSE;
 				municipalBonds = findAgreementMunicipalBonds();
+				System.out.println("Total de bonds "+municipalBonds.size());
 				IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 				incomeService.calculatePayment(municipalBonds, new Date(), true, true);
 				logger.info("CALCULATE 2");
@@ -610,7 +613,13 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			Query query = getEntityManager().createNamedQuery("MunicipalBond.findByPaymentAgreementIdAndStatusId");
 			query.setParameter("municipalBondStatusId", inAgreementMunicipalBondStatusId);
 			query.setParameter("paymentAgreementId", paymentAgreement.getId());
-			return query.getResultList();
+			List<MunicipalBond> results = query.getResultList();
+			for (MunicipalBond municipalBond : results) {
+				for (Deposit deposit : municipalBond.getDeposits()) {
+					System.out.println("ID ====>"+deposit.getDate());
+				}
+			}
+			return results;
 		}
 		return null;
 	}
@@ -1022,8 +1031,12 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		calculateChange();
 	}
 
+	private Boolean canPass = false;
 	public void increase() {
 		depositTotal = depositTotal.add(deltaUp);
+		
+		//mac
+		canPass = true;
 		generateDeposits();
 	}
 
@@ -1123,7 +1136,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			try {
 				org.jboss.seam.transaction.Transaction.instance().setTransactionTimeout(1800);
 				Long tillId = userSession.getTillPermission().getTill().getId();
+				//@tag recaudacionCoactivas
+				//agregar el tipo de pago por defecto I (solo afecta convenios de pago)
 				incomeService.save(deposits, paymentAgreementId, tillId);
+				//fin recaudacionCoactivas
 				incomeService.deactivateCreditNotes(getInstance().getPaymentFractions());
 				receiptPrintingManager.print(deposits);
 				renderingDepositPDF(userSession.getUser().getId());
@@ -1257,6 +1273,16 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		}
 
 		if (paymentAgreement != null) {
+			/**
+			 * @author macartuche
+			 * agregado para juicios coactivos tratamiento en metodo separado
+			 */
+			if(paymentAgreement.getAgreementType()!=null && paymentAgreement.getAgreementType().toString().equals("COERCIVEJUDGEMENT")) {
+				this.coerciveJudgement(); 
+				//solo en juicio coactivo llamar a cobro por fracciones de Impuesto/Recargos/Interes/Capital
+				return;
+			}
+			
 			clearDeposits();
 			hasConflict = Boolean.FALSE;
 			deactivatePaymentAgreement = Boolean.FALSE;
@@ -1300,10 +1326,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				Boolean interestIsPayed=false;
 				BigDecimal sum = BigDecimal.ZERO;	
 
-				List<MunicipalbondAux> list = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID");
+				List<MunicipalbondAux> list = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID","I");
 				
 				if(list.isEmpty()){
-					sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID");					
+					sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", "I");					
 					if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
 						BigDecimal temp = remaining.add(sum);			
 						if(temp.compareTo(municipalBond.getInterest()) >= 0)
@@ -1392,8 +1418,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					//@author macartuche
 					//@date 2016-06-20T17:00:00
 					//@tag recaudacionCoactivas
-//					BigDecimal discount = municipalBond.getDiscount();
-//					deposit.setDiscount(discount);
+					//BigDecimal discount = municipalBond.getDiscount();
+					//deposit.setDiscount(discount);
 					if(deposit.getInterest().compareTo(interestToPay)<0){
 						deposit.setCapital(BigDecimal.ZERO);
 						remaining = BigDecimal.ZERO;
@@ -1439,10 +1465,285 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			} else {
 				this.getInstance().setValue(BigDecimal.ZERO);
 			}
-
 		}
 		//System.out.println("GENERATE DEPOSITS -----> ENDS");
 	}
+	
+	private void coerciveJudgement() {
+		//agregado macartuche
+		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+		clearDeposits();
+		hasConflict = Boolean.FALSE;
+		deactivatePaymentAgreement = Boolean.FALSE;
+		deposits = new LinkedList<Deposit>();
+		//System.out.println("GENERATE DEPOSITS -----> municipalBonds.size() " + municipalBonds.size());
+		BigDecimal remaining = depositTotal;
+		//System.out.println("GENERATE DEPOSITS -----> depositTotal " + depositTotal);
+		Integer index = 0;
+
+		MunicipalBond municipalBond = null;
+
+		while (remaining.compareTo(BigDecimal.ZERO) > 0) {
+			//System.out.println("GENERATE DEPOSITS -----> remaining " + remaining);
+
+			if (index < municipalBonds.size()) {
+				municipalBond = municipalBonds.get(index);
+				index++;
+			} else {
+				depositTotal = depositTotal.subtract(remaining);
+				deactivatePaymentAgreement = Boolean.TRUE;
+				break;
+			}
+
+			Deposit deposit = null;
+			Boolean createDeposit = Boolean.TRUE;
+			Boolean hasTaxes=false;
+			Boolean hasSurcharge=false;
+
+			if (municipalBond.getDeposits() != null && municipalBond.getDeposits().size() > 0) {
+				deposit = municipalBond.getDeposits().get(municipalBond.getDeposits().size() - 1);
+				if (deposit.getId() == null) {
+					createDeposit = Boolean.FALSE;
+				}
+			}
+
+			if (createDeposit) {
+				deposit = createDeposit(municipalBond.getDeposits().size() + 1);
+			}
+							
+			
+			BigDecimal value = BigDecimal.ZERO;
+			Map<String, Object> plainResult = new HashMap<String, Object>();
+		
+			
+			//4 rubros
+			//interes
+			List<MunicipalbondAux> ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "I");
+			if(ratesList.isEmpty() ){ //si no hay elementos no se ha pagado o no se termina de pagar
+				plainResult = calculateRate2(incomeService, municipalBond, "I", 
+									municipalBond.getInterest(), remaining, deposit);				
+				remaining 	= (BigDecimal)plainResult.get("remaining");
+				value 		= (BigDecimal)plainResult.get("value");			
+				hasConflict = (Boolean)plainResult.get("hasConflict");			
+				deltaUp		= (BigDecimal)plainResult.get("deltaUp");	
+				deltaDown	= (BigDecimal)plainResult.get("deltaDown");
+			}else{
+				value = BigDecimal.ZERO;
+			}
+			
+			deposit.setInterest(value); //fijar el interes depositado
+			deposit.setHasConflict(hasConflict);
+
+			//recargos
+			value = BigDecimal.ZERO;
+			if(!hasConflict){
+				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "S");
+				if(ratesList.isEmpty()){ //si no hay elementos no se ha pagado o no se termina de pagar
+					value = BigDecimal.ZERO;
+					plainResult = calculateRate2(incomeService, municipalBond, "S", 
+										municipalBond.getSurcharge(), remaining, deposit);
+					remaining 	= (BigDecimal)plainResult.get("remaining");
+					value 		= (BigDecimal)plainResult.get("value");	
+					hasSurcharge= true;
+					hasConflict = (Boolean)plainResult.get("hasConflict");
+					deltaUp		= (BigDecimal)plainResult.get("deltaUp");	
+					deltaDown		= (BigDecimal)plainResult.get("deltaDown");
+				}
+				deposit.setHasConflict(hasConflict);
+			}				
+			deposit.setSurcharge(value); //fijar los impuestos depositados	
+			
+			//impuestos
+			value = BigDecimal.ZERO;
+			if(!hasConflict){
+				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "T");
+				if(ratesList.isEmpty()){ //si no hay elementos no se ha pagado o no se termina de pagar
+					value = BigDecimal.ZERO;
+					plainResult = calculateRate2(incomeService, municipalBond, "T", 
+										municipalBond.getTaxesTotal(), remaining, deposit);
+					remaining 	= (BigDecimal)plainResult.get("remaining");
+					value 		= (BigDecimal)plainResult.get("value");	
+					hasTaxes	=true;
+					hasConflict = (Boolean)plainResult.get("hasConflict");
+					deltaUp		= (BigDecimal)plainResult.get("deltaUp");	
+					deltaDown		= (BigDecimal)plainResult.get("deltaDown");
+				}
+				deposit.setHasConflict(hasConflict);
+			}
+			deposit.setPaidTaxes(value); //fijar los impuestos depositados
+		
+			
+			//capital
+			value = BigDecimal.ZERO;
+			if(!hasConflict){
+				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "C");
+				if(ratesList.isEmpty()){ //si no hay elementos no se ha pagado o no se termina de pagar			
+					deposit.setDiscount(municipalBond.getDiscount());
+					plainResult = calculateRate2(incomeService, municipalBond, "C", 
+										municipalBond.getBalance(), remaining, deposit);
+					remaining 	= (BigDecimal)plainResult.get("remaining");
+					value 		= (BigDecimal)plainResult.get("value");
+					hasConflict = (Boolean)plainResult.get("hasConflict");
+					deltaUp		= (BigDecimal)plainResult.get("deltaUp");	
+					deltaDown		= (BigDecimal)plainResult.get("deltaDown");
+				}
+				deposit.setHasConflict(hasConflict);
+				
+			}
+			
+			//validar si se pone o no el descuento
+			BigDecimal validate = value.add(deposit.getInterest()).add(deposit.getSurcharge()).add(deposit.getPaidTaxes());
+			BigDecimal balanceMinusDiscount = municipalBond.getBalance().add(deposit.getInterest()).add(deposit.getSurcharge()).add(deposit.getPaidTaxes()).subtract(municipalBond.getDiscount());
+			if(validate.compareTo(balanceMinusDiscount)==0) {
+				deposit.setDiscount(municipalBond.getDiscount());
+				deposit.setCapital(value.add(municipalBond.getDiscount())); //fijar el capital depositado   
+			}else {
+				deposit.setDiscount(BigDecimal.ZERO);
+				deposit.setCapital(value);
+			}
+					
+			
+ 
+			//calcular el balance del municipalBond
+			BigDecimal  balance  = municipalBond.getBalance().subtract(deposit.getCapital());
+			
+			/*
+			if(hasSurcharge || hasTaxes){
+				BigDecimal sumTaxes = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", "T");
+				BigDecimal sumSurcharge = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", "S");
+				sumTaxes = (sumTaxes==null)? BigDecimal.ZERO : sumTaxes;
+				sumSurcharge = (sumSurcharge==null)? BigDecimal.ZERO : sumSurcharge;					
+				sumTaxes = sumTaxes.add(deposit.getPaidTaxes());
+				sumSurcharge = sumSurcharge.add(deposit.getSurcharge());
+				BigDecimal sumTotal = sumTaxes.add(sumSurcharge);					
+				balance = balance.subtract(sumTotal);
+			}
+			*/
+			deposit.setBalance(balance);
+			municipalBond.add(deposit);
+			this.getInstance().add(deposit);
+			
+			if (balance.compareTo(BigDecimal.ZERO)==0) {
+				deactivatePaymentAgreement = Boolean.TRUE;
+			}
+			
+			System.out.println("**********************************REMAINING: "+remaining);
+			System.out.println("Capital: "+deposit.getCapital());
+			System.out.println("interes: "+deposit.getInterest());
+			System.out.println("impuestos: "+deposit.getPaidTaxes());
+			System.out.println("recargos: "+deposit.getSurcharge());
+			System.out.println("Descuento: "+deposit.getDiscount());
+			System.out.println("Balance: "+deposit.getBalance());
+			
+			deposit.setValue(deposit.getCapital().add(deposit.getInterest()).add(deposit.getPaidTaxes())
+					.add(deposit.getSurcharge()).subtract(deposit.getDiscount()));
+			deposits.add(deposit);
+			
+			
+			if(hasConflict){
+//				deposit.setValue(null);
+//				deposit.setCapital(null);
+//				deposit.setBalance(null);
+				break;
+			}
+			canPass = false;
+		}
+		
+		if (!hasConflict) {
+			this.getInstance().setValue(depositTotal);
+		} else {
+			this.getInstance().setValue(BigDecimal.ZERO);
+		}
+
+	}
+ 
+	
+	private Map<String, Object> calculateRate2(IncomeService incomeService, 
+			MunicipalBond municipalBond, 
+			String itemType,
+			BigDecimal itemValue,
+			BigDecimal remaining,
+			Deposit deposit){
+		
+		Boolean itemHasDeposit=false;
+		BigDecimal sum= BigDecimal.ZERO;
+		Map<String, Object> result = new HashMap<String, Object>();
+		BigDecimal valueToPay = BigDecimal.ZERO;
+		BigDecimal value = BigDecimal.ZERO;
+		
+		//en caso que el interes/recargo/impuestos sean cero en el municipalbond
+		if(itemValue.compareTo(BigDecimal.ZERO)==0 || remaining.compareTo(BigDecimal.ZERO)==0){ 
+			result.put("value", BigDecimal.ZERO);
+			result.put("remaining", remaining);
+			result.put("hasConflict", false);
+			result.put("conflictingBond", null);
+			result.put("deltaUp", BigDecimal.ZERO);
+			result.put("deltaDown", BigDecimal.ZERO);
+			return result;
+		}
+				
+				
+		if(itemType != "C"){
+			List<MunicipalbondAux> ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", itemType);
+			if(ratesList.isEmpty()){
+				sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", itemType);					
+				if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
+					BigDecimal temp = remaining.add(sum);			
+					if(temp.compareTo(sum) >= 0){
+						itemHasDeposit= true;
+					}										
+				}
+			}
+		}
+		
+		
+		valueToPay = (itemHasDeposit)? compareCase(itemValue, sum): itemValue;
+		if(itemType.equals("C")) {
+			valueToPay = valueToPay.subtract(municipalBond.getDiscount());
+		}
+		if (remaining.compareTo(valueToPay) >= 0 && valueToPay.compareTo(BigDecimal.ZERO) ==1) {
+			value = valueToPay;
+			remaining = remaining.subtract(value);			
+		}else if(valueToPay.compareTo(BigDecimal.ZERO) ==1 ){
+			//abonos de rubro (impuesto, interes, recargo) - solo los de 20%
+			if(paymentAgreement.getLowerPercentage()!=null && paymentAgreement.getLowerPercentage()){
+				value = remaining;
+				remaining = BigDecimal.ZERO;
+			}else{
+				hasConflict = Boolean.TRUE;
+				deposit.setHasConflict(Boolean.TRUE);
+				conflictingBond = municipalBond;
+				deltaUp = valueToPay.subtract(remaining);
+				deltaDown = remaining;
+			}
+		}
+		
+		result.put("value", value);
+		result.put("remaining", remaining);
+		result.put("hasConflict", hasConflict);
+		result.put("conflictingBond", municipalBond);
+		result.put("deltaUp", deltaUp);
+		result.put("deltaDown", deltaDown);
+		return result;
+	}
+	
+	
+	private BigDecimal compareCase(BigDecimal value, BigDecimal sum){
+		BigDecimal realValue = BigDecimal.ZERO;
+		
+		if(value.compareTo(sum)> 0){
+			realValue = value.subtract(sum);
+		}else if(sum.compareTo(value)>=0){
+			realValue = value;
+		}
+		
+		return realValue;
+	}
+	
+ 
+	//public String ITEM_TYPE = "I";
+	 
+
 
 	private Deposit createDeposit(Integer ordinal) {
 		Deposit deposit = new Deposit();

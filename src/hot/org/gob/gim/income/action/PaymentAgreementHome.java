@@ -46,6 +46,7 @@ import org.jboss.seam.log.Log;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.Dividend;
 import ec.gob.gim.income.model.Payment;
 import ec.gob.gim.income.model.PaymentAgreement;
@@ -169,7 +170,8 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 
 	public void wire() {
 		getInstance();
-		if(getInstance().getId() != null)identificationNumber = getInstance().getResident().getIdentificationNumber(); 
+		if(getInstance().getId() != null)
+			identificationNumber = getInstance().getResident().getIdentificationNumber(); 
 		chargeControlMunicipalBondStates();
 		toActivePaymentAgreement();		
 		
