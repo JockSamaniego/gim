@@ -414,7 +414,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			this.inPaymentAgreementBonds = findInPaymentAgreementBonds(resident.getId());
 			this.municipalBondItems = findPendingMunicipalBondItems(resident.getId());
 			for (MunicipalBondItem mbi : municipalBondItems) {
-				mbi.calculateTotals(null, null);
+				mbi.calculateTotals(null, null, null);
 			}
 		} catch (EntryDefinitionNotFoundException e) {
 			String message = Interpolator.instance()
@@ -765,7 +765,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				fiscalPeriod);
 		for (MunicipalBondItem mbi : municipalBondItems) {
 			try {
-				mbi.calculateTotals(null, null);
+				mbi.calculateTotals(null, null, null);
 			} catch (Exception e) {
 				StatusMessages.instance().addFromResourceBundleOrDefault(Severity.ERROR, e.getClass().getSimpleName(),
 						e.getMessage(), mbi.getMunicipalBond().getEntry().getName(),
@@ -781,7 +781,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		this.municipalBondItems = findPendingMunicipalBondItems(resident, entryId);
 		for (MunicipalBondItem mbi : municipalBondItems) {
 			try {
-				mbi.calculateTotals(null, null);
+				mbi.calculateTotals(null, null, null);
 			} catch (Exception e) {
 				StatusMessages.instance().addFromResourceBundleOrDefault(Severity.ERROR, e.getClass().getSimpleName(),
 						e.getMessage(), mbi.getMunicipalBond().getEntry().getName(),

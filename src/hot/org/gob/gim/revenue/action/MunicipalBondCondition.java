@@ -52,6 +52,8 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private String MUNICIPAL_BOND_STATUS_ID_PAID_NAME = "MUNICIPAL_BOND_STATUS_ID_PAID";
 	private String MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL_NAME = "MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL";
 	private String MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION_NAME = "MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION";
+	//rfam 2018-05-03 abonos
+	private String MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION_NAME = "MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION";
 
 
 	private Date startDate;
@@ -206,6 +208,8 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		result.addAll(getResultList());
 		MunicipalBondUtil.setMunicipalBondStatus(findPendingStatus());
 		MunicipalBondUtil.setInAgreementStatus(findInAgreementStatus());
+		//rfam 2018
+		MunicipalBondUtil.setInSubscription(findInSubscriptionStatus());
 		return MunicipalBondUtil.fillMunicipalBondItems(result);
 	}
 	
@@ -217,6 +221,11 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private MunicipalBondStatus findInAgreementStatus(){
 		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
 		return systemParameterService.materialize(MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+	}
+	
+	private MunicipalBondStatus findInSubscriptionStatus(){
+		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+		return systemParameterService.materialize(MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 	}
 	
 	public void maxResultsReports() {

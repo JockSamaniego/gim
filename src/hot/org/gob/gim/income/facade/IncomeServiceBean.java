@@ -1405,8 +1405,10 @@ public class IncomeServiceBean implements IncomeService {
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
 		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
-		Long agreementMunicipalBondStatusId = systemParameterService
-				.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		Long agreementMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		//rfam 2018-05-03
+		Long subscriptionMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
+		
 
 		// Long futureMunicipalBondStatusId =
 		// systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
@@ -1414,7 +1416,7 @@ public class IncomeServiceBean implements IncomeService {
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(agreementMunicipalBondStatusId);
-		// statuses.add(futureMunicipalBondStatusId);
+		statuses.add(subscriptionMunicipalBondStatusId);
 
 		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
@@ -1470,8 +1472,9 @@ public class IncomeServiceBean implements IncomeService {
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
 		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
-		Long agreementMunicipalBondStatusId = systemParameterService
-				.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		Long agreementMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		//rfam 2018-05-03
+		Long subscriptionMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 
 		// Long futureMunicipalBondStatusId =
 		// systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
@@ -1479,8 +1482,7 @@ public class IncomeServiceBean implements IncomeService {
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(agreementMunicipalBondStatusId);
-
-		// statuses.add(futureMunicipalBondStatusId);
+		statuses.add(subscriptionMunicipalBondStatusId);
 
 		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdEntryIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
