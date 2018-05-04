@@ -80,7 +80,7 @@ import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondView;
-import ec.gob.gim.revenue.model.DTO.EmitterReportDTO; 
+import ec.gob.gim.revenue.model.DTO.EmitterReportDTO;
 
 @Name("workdayHome")
 public class WorkdayHome extends EntityHome<Workday> {
@@ -142,6 +142,13 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private BigDecimal currentValueAgreement;
 	private BigDecimal taxesValueAgreement;
 	private BigDecimal interestValueAgreement;
+	
+	private BigDecimal previousValueSubscription;
+	private BigDecimal totalValueSubscription;
+	private BigDecimal currentValueSubscription;
+	private BigDecimal taxesValueSubscription;
+	private BigDecimal interestValueSubscription;
+	
 	private BigDecimal realTotalEmitted;
 	private BigDecimal totalNullifieds;
 	private BigDecimal surchargesValueEffective;
@@ -171,6 +178,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private MunicipalBondStatus pendingStatus;
 	private MunicipalBondStatus cancelledBondStatus;
 	private MunicipalBondStatus futureBondStatus;
+	private MunicipalBondStatus subscriptionMunicipalBondStatus;
 
 	private String groupBy;
 	private String keygroupBy;
@@ -181,6 +189,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private Long externalPaidStatus;
 	private Long compensationStatus;
 	private Long agreementStatus;
+	private Long subscriptionStatus;
 	private Long totalMunicipalBondEmitted;
 	private Long totalMunicipalBondNullified;
 	private Branch branch;
@@ -224,6 +233,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private List<EntryTotalCollected> summaryTotalCollecteds;
 	private List<EntryTotalCollected> entryTotalCollectedsByCompensation;
 	private List<EntryTotalCollected> entryTotalCollectedsInAgreement;
+	private List<EntryTotalCollected> entryTotalCollectedsSubscription;
 	private List<EntryTotalCollected> taxesEmitted;
 	private List<EntryTotalCollected> taxesCancelled;
 	private List<EntryTotalCollected> taxesReversed;
@@ -242,7 +252,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private List<ReportView> totalNullified;
 	private List<ReportView> totalByCashier;
 	private List<MunicipalBondItem> municipalBondItems;
-	
+
 	private List<ReplacementAgreementDTO> replacementAgreements;
 	private List<ReplacementAccountDTO> replacementAccountDTOs;
 
@@ -581,6 +591,32 @@ public class WorkdayHome extends EntityHome<Workday> {
 		}
 		return totalValueAgreement;
 	}
+	
+	public BigDecimal totalSubscription() {
+		totalValueSubscription = BigDecimal.ZERO;
+		previousValueSubscription = BigDecimal.ZERO;
+		currentValueSubscription = BigDecimal.ZERO;
+		taxesValueSubscription = BigDecimal.ZERO;
+		interestValueSubscription = BigDecimal.ZERO;
+
+		if (entryTotalCollectedsSubscription == null)
+			return totalValueSubscription;
+		for (EntryTotalCollected e : entryTotalCollectedsSubscription) {
+			if (e.getTotal() != null)
+				totalValueSubscription = totalValueSubscription.add(e.getTotal());
+			if (e.getPreviousYears() != null)
+				previousValueSubscription = previousValueSubscription.add(e
+						.getPreviousYears());
+			if (e.getValue() != null)
+				currentValueSubscription = currentValueSubscription.add(e.getValue());
+			if (e.getInterest() != null)
+				interestValueSubscription = interestValueSubscription.add(e
+						.getInterest());
+			if (e.getTaxes() != null)
+				taxesValueSubscription = taxesValueSubscription.add(e.getTaxes());
+		}
+		return totalValueSubscription;
+	}
 
 	public BigDecimal totalCollectedByBranch() {
 		BigDecimal aux = BigDecimal.ZERO;
@@ -787,10 +823,10 @@ public class WorkdayHome extends EntityHome<Workday> {
 		endDate = startDate;
 		findWorkday(endDate);
 		generateClosingWorkdayCompleteReport();
-		
-		//rfarmijosm 2017-02-23
+
+		// rfarmijosm 2017-02-23
 		replacementPaymentReport();
-		
+
 		return "/income/report/ClosingWorkdayReport.xhtml";
 	}
 
@@ -1054,6 +1090,10 @@ public class WorkdayHome extends EntityHome<Workday> {
 		orderByGroupBy(entryTotalCollectedsByCompensation);
 		entryTotalCollectedsInAgreement = getAllTotalsPaymentAgrement();
 		orderByGroupBy(entryTotalCollectedsInAgreement);
+
+		entryTotalCollectedsSubscription = getAllTotalsSubscription();
+		orderByGroupBy(entryTotalCollectedsSubscription);
+
 		sumAllValuesByEntry();
 		totalDiscountCashCollected();
 		totalDiscountCompensationCollected();
@@ -1856,6 +1896,36 @@ public class WorkdayHome extends EntityHome<Workday> {
 		return currentPeriod;
 	}
 
+	private List<EntryTotalCollected> getAllTotalsSubscription() {
+		List<EntryTotalCollected> currentPeriod = getTotalSubscriptionByEntryCurrentPeriod(
+				startDate, endDate);
+		List<EntryTotalCollected> previousPeriod = getTotalSubscriptionByEntryPreviosuYears(
+				startDate, endDate);
+		List<EntryTotalCollected> missing = new ArrayList<EntryTotalCollected>();
+		for (EntryTotalCollected et1 : previousPeriod) {
+			boolean exist = false;
+			for (EntryTotalCollected et : currentPeriod) {
+				if (et.getId().equals(et1.getId())) {
+					exist = Boolean.TRUE;
+					et.setInterest(et.getInterest().add(et1.getInterest()));
+					et.setTaxes(et.getTaxes().add(et1.getTaxes()));
+					et.setSurcharge(et.getSurcharge().add(et1.getSurcharge()));
+					et.setDiscount(et.getDiscount().add(et1.getDiscount()));
+					et.setPreviousYears(et1.getValue());
+					et.setTotal(et.getTotal().add(et1.getTotal()));
+					break;
+				}
+			}
+			if (!exist) {
+				et1.setPreviousYears(et1.getValue());
+				et1.setValue(BigDecimal.ZERO);
+				missing.add(et1);
+			}
+		}
+		currentPeriod.addAll(missing);
+		return currentPeriod;
+	}
+
 	/**
 	 * Total recaudado años previos por entry del municipalBond
 	 * 
@@ -1888,6 +1958,64 @@ public class WorkdayHome extends EntityHome<Workday> {
 		return query.getResultList();
 	}
 
+	private List<EntryTotalCollected> getTotalSubscriptionByEntryPreviosuYears(
+			Date startDate, Date endDate) {
+		
+		Query query = getEntityManager().createNativeQuery(
+				"select 	e.id, "
+							+ "count(d.id) as municipalBondsNumber, " 
+							+ "e.name as entry, " 
+							+ "e.code as groupBy, "
+							+ "SUM(d.capital) as value, " 
+							+ "SUM(d.discount) as discount, "
+							+ "SUM(d.surcharge) as surcharge, " 
+							+ "SUM(d.interest) as interest, "
+							+ "SUM(d.paidTaxes) as taxes, "
+							+ "COALESCE(SUM (d.value), 0.00) as total, " 
+							+ "e.code as account, "
+							+ "FALSE as isDiscount "  
+					+ "from municipalbond m "
+					+ "inner join deposit d ON d.municipalbond_id = m.id "
+					+ "inner join entry e ON e.id = m.entry_id "
+					+ "left join account ac ON e.account_id = ac.id "
+					+ "where d.date Between '2018-05-03' and '2018-05-03' "
+					+ "AND m.emisionPeriod < '2018-01-01' "
+					+ "AND m.municipalBondStatus_id in (6,14) "
+					+ "AND (select count(*) "
+					+ "from municipalbondaux maux "
+					+ "where maux.municipalbond_id = m.id "
+					+ "AND maux.typepayment = 'SUBSCRIPTION' "
+					+ "AND maux.status = 'VALID') > 0 "
+					+ "GROUP BY e.id, e.name,e.code ORDER BY e.code");
+		//query.setParameter(1, property_id);
+
+		List<EntryTotalCollected> retorno = NativeQueryResultsMapper.map(
+				query.getResultList(), EntryTotalCollected.class);
+
+		return retorno;
+		/*String sql = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id,count(d.id), e.name,e.code, SUM(d.capital), SUM(d.discount), SUM(d.surcharge), "
+				+ " SUM(d.interest), SUM(d.paidTaxes), SUM (d.value)) from MunicipalBond m "
+				+ "join m.deposits d "
+				+ "join m.paymentAgreement pa "
+				+ "join m.entry e "
+				+ "left join e.account ac "
+				+ "where d.date Between :startDate and :endDate AND "
+				+ "m.emisionPeriod < :emisionPeriod AND "
+				+ "m.municipalBondStatus.id in (:municipalBondStatusIds) AND "
+				+ "pa is not null "
+				+ "GROUP BY e.id, e.name,e.code ORDER BY e.code";
+		List<Long> statusIds = new ArrayList<Long>();
+		statusIds.add(paidStatus);
+		statusIds.add(agreementStatus);
+		Query query = query = getEntityManager().createQuery(sql);
+		query.setParameter("startDate", startDate);
+		query.setParameter("endDate", endDate);
+		query.setParameter("emisionPeriod", userSession.getFiscalPeriod()
+				.getStartDate());
+		query.setParameter("municipalBondStatusIds", statusIds);
+		return query.getResultList();*/
+	}
+
 	/**
 	 * Total recaudado año actual por entry del municipalBond
 	 * 
@@ -1918,6 +2046,63 @@ public class WorkdayHome extends EntityHome<Workday> {
 				.getStartDate());
 		query.setParameter("municipalBondStatusIds", statusIds);
 		return query.getResultList();
+	}
+
+	private List<EntryTotalCollected> getTotalSubscriptionByEntryCurrentPeriod(
+			Date startDate, Date endDate) {
+		Query query = getEntityManager().createNativeQuery(
+				"select 	e.id, "
+							+ "count(d.id) as municipalBondsNumber, " 
+							+ "e.name as entry, " 
+							+ "e.code as groupBy, "
+							+ "SUM(d.capital) as value, " 
+							+ "SUM(d.discount) as discount, "
+							+ "SUM(d.surcharge) as surcharge, " 
+							+ "SUM(d.interest) as interest, "
+							+ "SUM(d.paidTaxes) as taxes, "
+							+ "COALESCE(SUM (d.value), 0.00) as total, " 
+							+ "e.code as account, "
+							+ "FALSE as isDiscount " 
+						+ "from municipalbond m "
+						+ "inner join deposit d ON d.municipalbond_id = m.id "
+						+ "inner join entry e ON e.id = m.entry_id "
+						+ "left join account ac ON e.account_id = ac.id "
+						+ "where d.date Between '2018-05-03' and '2018-05-03' "
+						+ "AND m.emisionPeriod = '2018-01-01' "
+						+ "AND m.municipalBondStatus_id in (6,14) "
+						+ "AND (select count(*) "
+						+ "from municipalbondaux maux "
+						+ "where maux.municipalbond_id = m.id "
+						+ "AND maux.typepayment = 'SUBSCRIPTION' "
+						+ "AND maux.status = 'VALID') > 0 "
+						+ "GROUP BY e.id, e.name,e.code ORDER BY e.code");
+		//query.setParameter(1, property_id);
+
+		List<EntryTotalCollected> retorno = NativeQueryResultsMapper.map(
+				query.getResultList(), EntryTotalCollected.class);
+
+		return retorno;
+
+		/*
+		 * String sql =
+		 * "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id,count(d.id), e.name,e.code, SUM(d.capital), SUM(d.discount), SUM(d.surcharge), "
+		 * +
+		 * " SUM(d.interest), SUM(d.paidTaxes), SUM (d.value)) from MunicipalBond m "
+		 * + "join m.deposits d " + "join m.paymentAgreement pa " +
+		 * "join m.entry e " + "left join e.account ac " +
+		 * "where d.date Between :startDate and :endDate AND " +
+		 * "m.emisionPeriod = :emisionPeriod AND " +
+		 * "m.municipalBondStatus.id in (:municipalBondStatusIds) AND " +
+		 * "pa is not null " + "GROUP BY e.id, e.name,e.code ORDER BY e.code";
+		 * List<Long> statusIds = new ArrayList<Long>();
+		 * statusIds.add(paidStatus); statusIds.add(subscriptionStatus); Query
+		 * query = getEntityManager().createQuery(sql);
+		 * query.setParameter("startDate", startDate);
+		 * query.setParameter("endDate", endDate);
+		 * query.setParameter("emisionPeriod", userSession.getFiscalPeriod()
+		 * .getStartDate()); query.setParameter("municipalBondStatusIds",
+		 * statusIds); return query.getResultList();
+		 */
 	}
 
 	/**
@@ -2004,6 +2189,9 @@ public class WorkdayHome extends EntityHome<Workday> {
 				.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
 		compensationStatus = systemParameterService
 				.findParameter("MUNICIPAL_BOND_STATUS_ID_COMPENSATION");
+
+		subscriptionStatus = systemParameterService
+				.findParameter("MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 	}
 
 	private List<Long> getPaidStatuses() {
@@ -2065,6 +2253,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 		entryTotalCollecteds = getTotalCollectedByEntry(false);
 		entryTotalCollectedsByCompensation = getTotalCompensationCollectedByEntry();
 		entryTotalCollectedsInAgreement = getTotalInAgreementCollectedByEntry();
+		entryTotalCollectedsSubscription = getTotalInSubscriptionCollectedByEntry();
+
 		if (discountsValueEffective == null)
 			discountsValueEffective = BigDecimal.ZERO;
 		if (discountsValueByCompensation == null)
@@ -2074,13 +2264,12 @@ public class WorkdayHome extends EntityHome<Workday> {
 		deposits = getDepositsFromPayments(payments);
 		servedPeople();
 		transactionsNumber();
-		//rfarmijosm 2017-02-20
+		// rfarmijosm 2017-02-20
 		replacementPaymentReport();
-	}	
-	
+	}
+
 	/**
-	 * rfarmijosm 2017-02-20
-	 * obtiene el reporte de bajas de mb con abonos
+	 * rfarmijosm 2017-02-20 obtiene el reporte de bajas de mb con abonos
 	 */
 	public void replacementPaymentReport() {
 		String sql = "select rpa.id, rpa.date f_baja, rpa.detail, rpa.total total_abanado, "
@@ -2094,14 +2283,16 @@ public class WorkdayHome extends EntityHome<Workday> {
 		Query query = getEntityManager().createNativeQuery(sql);
 		query.setParameter("startDate", startDate);
 		query.setParameter("endDate", endDate);
-		
-		replacementAgreements = NativeQueryResultsMapper.map(query.getResultList(), ReplacementAgreementDTO.class);
-		/*for(ReplacementAgreementDTO ra: replacementAgreements){
-			System.out.println(ra.getEnt_name()+" "+ra.getMb_number());
-		}*/
-		//return query.getResultList();
-		
-		String sqlPartidas="select ac.accountcode, ac.accountname, sum(it.total) total "
+
+		replacementAgreements = NativeQueryResultsMapper.map(
+				query.getResultList(), ReplacementAgreementDTO.class);
+		/*
+		 * for(ReplacementAgreementDTO ra: replacementAgreements){
+		 * System.out.println(ra.getEnt_name()+" "+ra.getMb_number()); }
+		 */
+		// return query.getResultList();
+
+		String sqlPartidas = "select ac.accountcode, ac.accountname, sum(it.total) total "
 				+ "from gimprod.ReplacementPaymentAgreement rpa "
 				+ "inner join gimprod.municipalbond mb on rpa.municipalbond_id = mb.id "
 				+ "left outer join gimprod.item it on mb.id = it.municipalbond_id "
@@ -2110,12 +2301,13 @@ public class WorkdayHome extends EntityHome<Workday> {
 				+ "where rpa.date between :startDate and :endDate "
 				+ "group by ac.accountcode, ac.accountname "
 				+ "order by ac.accountcode, ac.accountname";
-		
+
 		Query queryPartidas = getEntityManager().createNativeQuery(sqlPartidas);
 		queryPartidas.setParameter("startDate", startDate);
 		queryPartidas.setParameter("endDate", endDate);
-		
-		replacementAccountDTOs = NativeQueryResultsMapper.map(queryPartidas.getResultList(), ReplacementAccountDTO.class);
+
+		replacementAccountDTOs = NativeQueryResultsMapper.map(
+				queryPartidas.getResultList(), ReplacementAccountDTO.class);
 	}
 
 	/**
@@ -2559,14 +2751,14 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 		}
 
-		/*if (ids.size() > 0) {
-			System.out.println("::::::::::::::::::...son::::::::::::::::::: " + ids.size());
-			System.out
-					.println("::::::::::::::::::::.statusId::::::::::::::"
-							+ statusId
-							+ " :::::::::::::::::::::::::::::::::::::mistake in items :::::::::::::::::. "
-							+ ids);
-		}*/
+		/*
+		 * if (ids.size() > 0) {
+		 * System.out.println("::::::::::::::::::...son::::::::::::::::::: " +
+		 * ids.size()); System.out
+		 * .println("::::::::::::::::::::.statusId::::::::::::::" + statusId +
+		 * " :::::::::::::::::::::::::::::::::::::mistake in items :::::::::::::::::. "
+		 * + ids); }
+		 */
 
 	}
 
@@ -2793,7 +2985,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 	/**
 	 * Para reporte de saldos vigentes
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void generateCurrentBalanceReport() throws Exception {
 		isCurrentBalanceReport = Boolean.TRUE;
@@ -2805,7 +2998,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 	/**
 	 * Genera el reporte de emisión por partidas
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void generateEmissionGlobalReport() throws Exception {
 
@@ -2837,6 +3031,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 				statusIds.add(compensationMunicipalBondStatus.getId());
 				statusIds.add(inPaymentAgreementStatus.getId());
 				statusIds.add(blockedMunicipalBondStatus.getId());
+				statusIds.add(subscriptionMunicipalBondStatus.getId());
 			} else {
 				// Cuando seleccionan todos (RevenueReport)
 				statusIds.add(paidMunicipalBondStatus.getId());
@@ -2845,6 +3040,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 				statusIds.add(inPaymentAgreementStatus.getId());
 				statusIds.add(externalChannelStatus.getId());
 				statusIds.add(blockedMunicipalBondStatus.getId());
+				statusIds.add(subscriptionMunicipalBondStatus.getId());
 			}
 		}
 		// log.info("-------------------------2.------------------");
@@ -2884,8 +3080,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 		// Pago anticipado
 		entryTotalPrepaid = getTotalEmittedPrepaidByEntryAndStatus(explanation);
-		//System.out.println("Entru total prepaid antes de taxes prepaid:"
-				//+ entryTotalPrepaid.size());
+		// System.out.println("Entru total prepaid antes de taxes prepaid:"
+		// + entryTotalPrepaid.size());
 		// log.info("-------------------------6.------------------");
 		taxesPrepaid = getAllPrepaidTaxesTotalsByStatus(explanation);
 
@@ -2893,7 +3089,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 		entryTotalPrepaid.addAll(taxesPrepaid);
 		// log.info("-------------------------8.------------------");
 		orderByGroupBy(entryTotalPrepaid);
-		//System.out.println("Entru total prepaid:" + entryTotalPrepaid.size());
+		// System.out.println("Entru total prepaid:" +
+		// entryTotalPrepaid.size());
 
 		// //********fomalizacion***********////
 		entryTotalFormalize = getTotalEmittedFormalizeByEntryAndStatus(explanationFormalize);
@@ -2987,11 +3184,11 @@ public class WorkdayHome extends EntityHome<Workday> {
 							.setParametersFutureEmissionDTO(parameters);
 				}
 			}
-			//System.out.println("Retono Future:" + retorno);
+			// System.out.println("Retono Future:" + retorno);
 			return retorno;
 
 		} catch (Exception e) {
-			//System.out.println(e);
+			// System.out.println(e);
 			return new ArrayList<EntryTotalCollected>();
 		}
 	}
@@ -3016,11 +3213,11 @@ public class WorkdayHome extends EntityHome<Workday> {
 							.setParametersFutureEmissionDTO(parameters);
 				}
 			}
-			//System.out.println("Retono Future:" + retorno);
+			// System.out.println("Retono Future:" + retorno);
 			return retorno;
 
 		} catch (Exception e) {
-			//System.out.println(e);
+			// System.out.println(e);
 			return new ArrayList<EntryTotalCollected>();
 		}
 	}
@@ -3044,7 +3241,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 							.setParametersFutureEmissionDTO(parameters);
 				}
 			}
-			//System.out.println("Retono Future:" + retorno);
+			// System.out.println("Retono Future:" + retorno);
 			return retorno;
 		} catch (Exception e) {
 			System.out.println(e);
@@ -3068,10 +3265,10 @@ public class WorkdayHome extends EntityHome<Workday> {
 		query.setParameter("emisionPeriod", userSession.getFiscalPeriod()
 				.getStartDate());
 
-		//System.out
-				//.println("Periodo fiscal que se envia a consultar en obtener emisiones:"
-						//+ userSession.getFiscalPeriod().getStartDate());
-		//System.out.println("StatusId a enviar a consultar:" + statusIds);
+		// System.out
+		// .println("Periodo fiscal que se envia a consultar en obtener emisiones:"
+		// + userSession.getFiscalPeriod().getStartDate());
+		// System.out.println("StatusId a enviar a consultar:" + statusIds);
 		query.setParameter("startDate", startDate);
 		query.setParameter("endDate", endDate);
 		return query.getResultList();
@@ -3092,8 +3289,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private List<EntryTotalCollected> getAllEmissionTotalsFuturePeriods() {
 		Query query = getEntityManager().createNamedQuery(
 				"MunicipalBond.SumTotalEmittedBetweenDatesFuturePeriodsByItem");
-		//System.out.println("Status Ids que se envian a la consulta:"
-				//+ statusIds);
+		// System.out.println("Status Ids que se envian a la consulta:"
+		// + statusIds);
 		query.setParameter("statusId", futureBondStatus.getId());
 		query.setParameter("startDate", startDate);
 		query.setParameter("endDate", endDate);
@@ -3106,7 +3303,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	 * @return List<EntryTotalCollected>
 	 */
 	private List<EntryTotalCollected> getAllEmissionTotals() {
-		//System.out.println("Entra al gat All EmisionTOtals");
+		// System.out.println("Entra al gat All EmisionTOtals");
 		List<EntryTotalCollected> currentPeriod = getAllEmissionTotalsCurrentPeriod();
 		List<EntryTotalCollected> previousPeriod = getAllEmissionTotalsPreviousPeriods();
 		List<EntryTotalCollected> missing = new ArrayList<EntryTotalCollected>();
@@ -3260,8 +3457,10 @@ public class WorkdayHome extends EntityHome<Workday> {
 		if (!retorno.isEmpty()) {
 			for (EntryTotalCollected entryTotalCollected : retorno) {
 				if (entryTotalCollected.getParametersFutureEmission() == null) {
-					 throw new Exception("No existe configuracion de parametros futuros para la cuenta: "
-								+ entryTotalCollected.getAccount()+" - "+entryTotalCollected.getEntry());
+					throw new Exception(
+							"No existe configuracion de parametros futuros para la cuenta: "
+									+ entryTotalCollected.getAccount() + " - "
+									+ entryTotalCollected.getEntry());
 				} else {
 					ParameterFutureEmissionDTO parameters = new ObjectMapper()
 							.readValue(entryTotalCollected
@@ -3273,7 +3472,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 			}
 		}
-		//System.out.println("Retono Future:" + retorno);
+		// System.out.println("Retono Future:" + retorno);
 		return retorno;
 
 	}
@@ -3301,7 +3500,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 							.setParametersFutureEmissionDTO(parameters);
 				}
 			}
-			//System.out.println("Retono Future:" + retorno);
+			// System.out.println("Retono Future:" + retorno);
 			return retorno;
 		} catch (Exception e) {
 			System.out.println(e);
@@ -3328,7 +3527,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 							.setParametersFutureEmissionDTO(parameters);
 				}
 			}
-			//System.out.println("Retono Future:" + retorno);
+			// System.out.println("Retono Future:" + retorno);
 			return retorno;
 		} catch (Exception e) {
 			System.out.println(e);
@@ -3354,7 +3553,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 							.setParametersFutureEmissionDTO(parameters);
 				}
 			}
-			//System.out.println("Retono Future:" + retorno);
+			// System.out.println("Retono Future:" + retorno);
 			return retorno;
 		} catch (Exception e) {
 			System.out.println(e);
@@ -3442,7 +3641,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private List<EntryTotalCollected> getTotalEmittedFutureByEntryAndStatus(
 			Long statusId) throws Exception {
 		List<EntryTotalCollected> totals = new ArrayList<EntryTotalCollected>();
-		//System.out.println(municipalBondStatus);
+		// System.out.println(municipalBondStatus);
 		if (entry == null) {
 			if (municipalBondStatus == null) {
 				totals = getAllFutureTotals(statusId);
@@ -3490,10 +3689,10 @@ public class WorkdayHome extends EntityHome<Workday> {
 	 * @return
 	 */
 	private List<EntryTotalCollected> getTotalEmissionByEntry() {
-		//System.out.println("Entra al getTotalEmissionByEntry");
+		// System.out.println("Entra al getTotalEmissionByEntry");
 		List<EntryTotalCollected> totals = new ArrayList<EntryTotalCollected>();
 		if (entry == null) {
-			//System.out.println("entry == null");
+			// System.out.println("entry == null");
 			totals = getAllEmissionTotals();
 		} else {
 			totals = getAllEmissionTotalsByEntry(entry.getId());
@@ -3700,7 +3899,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 		return replacementAccountDTOs;
 	}
 
-	public void setReplacementAccountDTOs(List<ReplacementAccountDTO> replacementAccountDTOs) {
+	public void setReplacementAccountDTOs(
+			List<ReplacementAccountDTO> replacementAccountDTOs) {
 		this.replacementAccountDTOs = replacementAccountDTOs;
 	}
 
@@ -4129,6 +4329,10 @@ public class WorkdayHome extends EntityHome<Workday> {
 		futureBondStatus = systemParameterService.materialize(
 				MunicipalBondStatus.class,
 				"MUNICIPAL_BOND_STATUS_ID_FUTURE_ISSUANCE");
+
+		subscriptionMunicipalBondStatus = systemParameterService.materialize(
+				MunicipalBondStatus.class,
+				"MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 	}
 
 	public void loadDates() {
@@ -4696,9 +4900,19 @@ public class WorkdayHome extends EntityHome<Workday> {
 				"#{messages['workday.inPaymentAgreement']}", new Object[0]);
 		entryTotalCollected1.setGroupBy(message);
 		entryTotalCollected1.setTotal(totalInAgreement());
-
+		
 		totalCollecteds.add(entryTotalCollected1);
 
+		
+		EntryTotalCollected entryTotalCollected6 = new EntryTotalCollected();
+		message = Interpolator.instance().interpolate(
+				"#{messages['workday.subscriptionCollected']}", new Object[0]);
+		entryTotalCollected6.setGroupBy(message);
+		entryTotalCollected6.setTotal(totalSubscription());
+		
+		totalCollecteds.add(entryTotalCollected6);
+
+		
 		EntryTotalCollected entryTotalCollected2 = new EntryTotalCollected();
 		message = Interpolator.instance().interpolate(
 				"#{messages['workday.pendingPaid']}", new Object[0]);
@@ -4941,6 +5155,25 @@ public class WorkdayHome extends EntityHome<Workday> {
 		return query.getResultList();
 	}
 
+	public List<EntryTotalCollected> getTotalDepositsInSubscription() {
+
+		if (groupBy == null)
+			groupBy = "ac.accountCode";
+
+		String sql = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id,count(d.id), e.name,"
+				+ groupBy
+				+ ", SUM(d.value), "
+				+ " SUM(d.interest), SUM(d.paidTaxes)) from Deposit d join d.municipalBond m "
+				+ "join m.entry e left join e.account ac "
+				+ "where d.date Between :startDate and :endDate AND m.paymentAgreement is not null"
+				+ " GROUP BY e.id, e.name," + groupBy + " ORDER BY " + groupBy;
+
+		Query query = getEntityManager().createQuery(sql);
+		query.setParameter("startDate", startDate);
+		query.setParameter("endDate", endDate);
+		return query.getResultList();
+	}
+
 	public List<EntryTotalCollected> getTotalsInPaymentAgreementByItem(
 			boolean isPaidByCompensation) {
 		List<EntryTotalCollected> result;
@@ -5007,6 +5240,10 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 	public List<EntryTotalCollected> getTotalInAgreementCollectedByEntry() {
 		return getTotalDepositsInAgreement();
+	}
+
+	public List<EntryTotalCollected> getTotalInSubscriptionCollectedByEntry() {
+		return getTotalDepositsInSubscription();
 	}
 
 	public List<EntryTotalCollected> getTotalCollectedByEntry(
@@ -6362,6 +6599,15 @@ public class WorkdayHome extends EntityHome<Workday> {
 		return entryTotalCollectedsInAgreement;
 	}
 
+	public List<EntryTotalCollected> getEntryTotalCollectedsSubscription() {
+		return entryTotalCollectedsSubscription;
+	}
+
+	public void setEntryTotalCollectedsSubscription(
+			List<EntryTotalCollected> entryTotalCollectedsSubscription) {
+		this.entryTotalCollectedsSubscription = entryTotalCollectedsSubscription;
+	}
+
 	public List<EntryTotalCollected> getEntryTotalCancelled() {
 		return entryTotalCancelled;
 	}
@@ -6539,6 +6785,46 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 	public void setInterestValueAgreement(BigDecimal interestValueAgreement) {
 		this.interestValueAgreement = interestValueAgreement;
+	}
+	
+	public BigDecimal getPreviousValueSubscription() {
+		return previousValueSubscription;
+	}
+
+	public void setPreviousValueSubscription(BigDecimal previousValueSubscription) {
+		this.previousValueSubscription = previousValueSubscription;
+	}
+
+	public BigDecimal getTotalValueSubscription() {
+		return totalValueSubscription;
+	}
+
+	public void setTotalValueSubscription(BigDecimal totalValueSubscription) {
+		this.totalValueSubscription = totalValueSubscription;
+	}
+
+	public BigDecimal getCurrentValueSubscription() {
+		return currentValueSubscription;
+	}
+
+	public void setCurrentValueSubscription(BigDecimal currentValueSubscription) {
+		this.currentValueSubscription = currentValueSubscription;
+	}
+
+	public BigDecimal getTaxesValueSubscription() {
+		return taxesValueSubscription;
+	}
+
+	public void setTaxesValueSubscription(BigDecimal taxesValueSubscription) {
+		this.taxesValueSubscription = taxesValueSubscription;
+	}
+
+	public BigDecimal getInterestValueSubscription() {
+		return interestValueSubscription;
+	}
+
+	public void setInterestValueSubscription(BigDecimal interestValueSubscription) {
+		this.interestValueSubscription = interestValueSubscription;
 	}
 
 	public BigDecimal getCurrentDiscountsValueEffective() {
@@ -6855,21 +7141,24 @@ public class WorkdayHome extends EntityHome<Workday> {
 		return replacementAgreements;
 	}
 
-	public void setReplacementAgreements(List<ReplacementAgreementDTO> replacementAgreements) {
+	public void setReplacementAgreements(
+			List<ReplacementAgreementDTO> replacementAgreements) {
 		this.replacementAgreements = replacementAgreements;
 	}
+
 	/**
 	 * @author macartuche
-	 * @date 2018-01-31 08:33
-	 * Consulta por emisores
+	 * @date 2018-01-31 08:33 Consulta por emisores
 	 */
 	@SuppressWarnings("unchecked")
 	private List<EmitterReportDTO> resultList;
+
 	@SuppressWarnings("unchecked")
 	public void search() {
 		this.resultList = new ArrayList<EmitterReportDTO>();
-		StringBuffer sqlQuery = new StringBuffer("SELECT mb.emisiondate as emisionDate, ");
-				sqlQuery.append("mb.number as obligation, ")
+		StringBuffer sqlQuery = new StringBuffer(
+				"SELECT mb.emisiondate as emisionDate, ");
+		sqlQuery.append("mb.number as obligation, ")
 				.append("mb.servicedate as serviceDate, ")
 				.append("mbs.name as status,")
 				.append("re.identificationnumber as residentNumber, ")
@@ -6881,28 +7170,32 @@ public class WorkdayHome extends EntityHome<Workday> {
 				.append("emi.identificationnumber as emitterNumber, ")
 				.append("ent.name as entryName, ")
 				.append("mb.value as value, ")
-				.append("mb.paidtotal as paidTotal ") 
-				.append("FROM municipalbond mb ") 
-				.append("INNER JOIN municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id ") 
-				.append("INNER JOIN resident re on mb.resident_id = re.id ") 
-				.append("INNER JOIN resident emi on mb.emitter_id = emi.id ") 
-				.append("INNER JOIN entry ent on mb.entry_id = ent.id ") 
-				.append("LEFT JOIN VehicularFineReference vfr on mb.adjunct_id = vfr.id ") 
+				.append("mb.paidtotal as paidTotal ")
+				.append("FROM municipalbond mb ")
+				.append("INNER JOIN municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id ")
+				.append("INNER JOIN resident re on mb.resident_id = re.id ")
+				.append("INNER JOIN resident emi on mb.emitter_id = emi.id ")
+				.append("INNER JOIN entry ent on mb.entry_id = ent.id ")
+				.append("LEFT JOIN VehicularFineReference vfr on mb.adjunct_id = vfr.id ")
 				.append("WHERE mb.emisiondate between :start and :end ")
 				.append("AND entry_id in (580, 581, 582, 583, 584, 585) ");
-		if(this.municipalBondStatus!= null && this.municipalBondStatus.getId()!=0) {
+		if (this.municipalBondStatus != null
+				&& this.municipalBondStatus.getId() != 0) {
 			sqlQuery.append("AND mb.municipalbondstatus_id=:status ");
 		}
 		sqlQuery.append("ORDER BY emisionDate, ent.code, ent.name, mb.number ");
-		
-		Query query = this.getEntityManager().createNativeQuery(sqlQuery.toString());
+
+		Query query = this.getEntityManager().createNativeQuery(
+				sqlQuery.toString());
 		query.setParameter("start", this.startDate);
 		query.setParameter("end", this.endDate);
-		if(this.municipalBondStatus!= null && this.municipalBondStatus.getId()!=0) {
+		if (this.municipalBondStatus != null
+				&& this.municipalBondStatus.getId() != 0) {
 			query.setParameter("status", this.municipalBondStatus.getId());
 		}
-		this.resultList =  NativeQueryResultsMapper.map(query.getResultList(), EmitterReportDTO.class);
-		
+		this.resultList = NativeQueryResultsMapper.map(query.getResultList(),
+				EmitterReportDTO.class);
+
 	}
 
 	public List<EmitterReportDTO> getResultList() {
@@ -6912,7 +7205,5 @@ public class WorkdayHome extends EntityHome<Workday> {
 	public void setResultList(List<EmitterReportDTO> resultList) {
 		this.resultList = resultList;
 	}
-	
-	
-}
 
+}
