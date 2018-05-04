@@ -111,6 +111,23 @@
 				}
 				Richfaces.showModalPanel('depositConfirmPanel',{width:800, height:540});
 			}
+
+			////////////ABONOS
+			function registerSubscriptionPayment(hasCompensationBonds){
+				if(hasCompensationBonds){
+					Richfaces.showModalPanel('paymentEdit_confirmDialog',{width:350, height:160});
+				} else {
+					showFractionsPanel2();
+				}
+			}
+
+			function showFractionsPanel2(){
+				var confirmDialog = document.getElementById('paymentEdit_confirmDialog');
+				if(confirmDialog){
+					Richfaces.hideModalPanel('paymentEdit_confirmDialog');
+				}
+				Richfaces.showModalPanel('subscriptionPanel',{width:800, height:540});
+			}
 	      
 		</script>
 		</f:verbatim>
@@ -226,6 +243,15 @@
 									value="#{paymentHome.isFullPayment ? messages['payment.register'] : messages['deposit.register']}"
 									disabled="#{paymentHome.isPaymentButtonDisabled}"
 									focus="receivedAmount" />
+									
+								<a:commandButton id="registerSubscriptionBtn"
+									action="#{paymentHome.updateHasCompensationBonds('SUBSCRIPTION')}"
+									reRender="subscriptionPanel" ajaxSingle="true"
+									eventsQueue="gimEventsQueue"
+									oncomplete="registerSubscriptionPayment(#{paymentHome.hasCompensationBonds})"
+									value="Registrar abono"
+									disabled="#{paymentHome.isPaymentButtonDisabled}"
+									focus="receivedAmount" />			
 							</h:panelGrid>
 
 						</h:panelGrid>
@@ -281,6 +307,9 @@
 			oncomplete="showFractionsPanel()" />
 		<ui:include src="fragment/CompensationAccountStatePanel.xhtml" />
 		<ui:include src="fragment/DepositConfirmPanel.xhtml" />
+		<!-- PAGO ABONOS -->
+		<ui:include src="fragment/DepositSubscriptionPanel.xhtml" />
+		<!-- PAGO ABONOS -->
 		<ui:include src="PrintPDFPanel.xhtml" />
 		<s:button id="back" value="#{messages['common.back']}"
 			rendered="#{userSession.tillPermission == null or userSession.tillPermission.openingTime == null}"

@@ -33,6 +33,10 @@ public class NativeQueryResultsMapper {
                             		java.sql.Date fecha = (java.sql.Date) objectArr[i];
                             		Date d = new Date(fecha.getTime());
                                     BeanUtils.setProperty(t, mappingFields.get(i).getName(), d);
+                            	}else if(objectArr[i].getClass().toString().equals("class java.sql.Time")){
+                            		Time fecha = (Time) objectArr[i];
+                                    Date d = new Date(fecha.getTime());
+                                    BeanUtils.setProperty(t, mappingFields.get(i).getName(), d);
                             	}else{
                             		Timestamp fecha = (Timestamp) objectArr[i];
                                     Date d = new Date(fecha.getTime());

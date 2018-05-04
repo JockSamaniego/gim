@@ -20,10 +20,11 @@
 							<p:cell borderWidth="0" />
 						</f:facet>
 						<p:cell>
-							<p:image value="#{gim.institution.logo}" alignment="center" widht="1" height="1">
-                                <s:transformImageSize height="70" maintainRatio="true"/>
-                            </p:image>
-                        </p:cell>
+							<p:image value="#{gim.institution.logo}" alignment="center"
+								widht="1" height="1">
+								<s:transformImageSize height="70" maintainRatio="true" />
+							</p:image>
+						</p:cell>
 						<p:cell>
 							<p:font size="8" style="bold">
 								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
@@ -34,8 +35,10 @@
 							</p:font>
 
 							<p:font size="8" style="bold">
-								<p:paragraph alignment="center" rendered="#{!workdayHome.globalReport}">#{messages['INCOMEREPORT']}</p:paragraph>
-								<p:paragraph alignment="center" rendered="#{workdayHome.globalReport}">#{messages['INCOMEREPORTBYITEMS']}</p:paragraph>
+								<p:paragraph alignment="center"
+									rendered="#{!workdayHome.globalReport}">#{messages['INCOMEREPORT']}</p:paragraph>
+								<p:paragraph alignment="center"
+									rendered="#{workdayHome.globalReport}">#{messages['INCOMEREPORTBYITEMS']}</p:paragraph>
 							</p:font>
 						</p:cell>
 					</p:table>
@@ -136,7 +139,7 @@
 					</p:font>
 				</p:paragraph>
 			</p:cell>
-			
+
 			<p:cell colspan="1" rendered="#{not empty workdayHome.instance.id}">
 				<p:paragraph>
 					<p:font size="8" style="bold">
@@ -147,9 +150,9 @@
 					</p:font>
 				</p:paragraph>
 			</p:cell>
-			
-			<p:cell colspan="1" rendered="#{not empty workdayHome.instance.id}"/>
-			
+
+			<p:cell colspan="1" rendered="#{not empty workdayHome.instance.id}" />
+
 			<p:cell colspan="1">
 				<p:paragraph>
 					<p:font size="8" style="bold">
@@ -160,14 +163,15 @@
 					</p:font>
 				</p:paragraph>
 			</p:cell>
-			
-			<p:cell colspan="1"/>
+
+			<p:cell colspan="1" />
 
 		</p:table>
 
 		<ui:repeat var="_mainAccount" value="#{workdayHome.mainAccounts}">
-			<p:table rendered="#{not empty workdayHome.rootNode}" columns="#{workdayHome.columnsNumber}"
-				widthPercentage="100" headerRows="0" widths="#{workdayHome.columnsSize}">
+			<p:table rendered="#{not empty workdayHome.rootNode}"
+				columns="#{workdayHome.columnsNumber}" widthPercentage="100"
+				headerRows="0" widths="#{workdayHome.columnsSize}">
 				<p:font size="7" style="bold">
 					<f:facet name="defaultCell">
 						<p:cell borderWidth="0" />
@@ -184,7 +188,7 @@
 							<p:text value="#{messages['account']}" />
 						</p:paragraph>
 					</p:cell>
-					
+
 					<p:cell horizontalAlignment="center">
 						<p:paragraph>
 							<p:text value="#{messages['item.previousYears']}" />
@@ -196,29 +200,33 @@
 							<p:text value="#{messages['item.currentYear']}" />
 						</p:paragraph>
 					</p:cell>
-					
+
 					<p:cell horizontalAlignment="center">
 						<p:paragraph>
 							<p:text value="#{messages['item.nextYears']}" />
 						</p:paragraph>
 					</p:cell>
-					
-					<p:cell horizontalAlignment="center" rendered="#{!workdayHome.globalReport}">
+
+					<p:cell horizontalAlignment="center"
+						rendered="#{!workdayHome.globalReport}">
 						<p:paragraph>
 							<p:text value="#{messages['DESCTO']}" />
 						</p:paragraph>
 					</p:cell>
-					<p:cell horizontalAlignment="center" rendered="#{!workdayHome.globalReport}">
+					<p:cell horizontalAlignment="center"
+						rendered="#{!workdayHome.globalReport}">
 						<p:paragraph>
 							<p:text value="#{messages['RCGO']}" />
 						</p:paragraph>
 					</p:cell>
-					<p:cell horizontalAlignment="center" rendered="#{!workdayHome.globalReport}">
+					<p:cell horizontalAlignment="center"
+						rendered="#{!workdayHome.globalReport}">
 						<p:paragraph>
 							<p:text value="#{messages['INT.']}" />
 						</p:paragraph>
 					</p:cell>
-					<p:cell horizontalAlignment="center" rendered="#{!workdayHome.globalReport}">
+					<p:cell horizontalAlignment="center"
+						rendered="#{!workdayHome.globalReport}">
 						<p:paragraph>
 							<p:text value="#{messages['IMP.']}" />
 						</p:paragraph>
@@ -230,22 +238,20 @@
 					</p:cell>
 				</p:font>
 
-				<p:font size="7"
-					style="bold">
-					<p:cell borderWidth="0" borderWidthBottom="1"  horizontalAlignment="left">
+				<p:font size="7" style="bold">
+					<p:cell borderWidth="0" borderWidthBottom="1"
+						horizontalAlignment="left">
 						<p:paragraph>
-							<p:text
-								value="#{_mainAccount.account.accountCode}" />
+							<p:text value="#{_mainAccount.account.accountCode}" />
 						</p:paragraph>
 					</p:cell>
 
 					<p:cell borderWidth="0" borderWidthBottom="1">
 						<p:paragraph>
-							<p:text
-								value="#{_mainAccount.account.accountName}" />
+							<p:text value="#{_mainAccount.account.accountName}" />
 						</p:paragraph>
 					</p:cell>
-					
+
 					<p:cell horizontalAlignment="right" borderWidth="0"
 						borderWidthBottom="1">
 						<p:paragraph>
@@ -265,7 +271,7 @@
 							</p:text>
 						</p:paragraph>
 					</p:cell>
-					
+
 					<p:cell horizontalAlignment="right" borderWidth="0"
 						borderWidthBottom="1">
 						<p:paragraph>
@@ -318,7 +324,7 @@
 
 					<p:cell horizontalAlignment="right" borderWidth="0"
 						borderWidthBottom="1">
-						<p:paragraph>						
+						<p:paragraph>
 							<p:text
 								value="#{_mainAccount.children.size() > 0 ? '' : _mainAccount.total}">
 								<f:convertNumber pattern="#0.00" />
@@ -331,48 +337,53 @@
 				<ui:repeat value="#{_mainAccount.children}" var="_var">
 					<p:font size="7"
 						style="#{workdayHome.getFontStyle(workdayHome.parentsNumber(_var.account,_mainAccount.account))}">
-						<p:cell borderWidth="0" borderWidthBottom="1" rendered="#{_var.total != 0}">
+						<p:cell borderWidth="0" borderWidthBottom="1"
+							rendered="#{_var.total != 0}">
 							<p:paragraph>
 								<p:text
-									value="#{workdayHome.getIdentationWihtSpecificAccount(_var.account.accountCode, _var.account, _mainAccount.account)}"/>
+									value="#{workdayHome.getIdentationWihtSpecificAccount(_var.account.accountCode, _var.account, _mainAccount.account)}" />
 							</p:paragraph>
 						</p:cell>
 
-						<p:cell borderWidth="0" borderWidthBottom="1" rendered="#{_var.total != 0}">
+						<p:cell borderWidth="0" borderWidthBottom="1"
+							rendered="#{_var.total != 0}">
 							<p:paragraph>
 								<p:text
 									value="#{workdayHome.getIdentationWihtSpecificAccount(_var.account.accountName,_var.account, _mainAccount.account)}" />
 							</p:paragraph>
 						</p:cell>
-						
-						<p:cell horizontalAlignment="right" borderWidth="0" rendered="#{_var.total != 0}"
-							borderWidthBottom="1">
+
+						<p:cell horizontalAlignment="right" borderWidth="0"
+							rendered="#{_var.total != 0}" borderWidthBottom="1">
 							<p:paragraph>
-								<p:text value="#{_var.children.size() > 0 ? '' : _var.previousYears}">
+								<p:text
+									value="#{_var.children.size() > 0 ? '' : _var.previousYears}">
 									<f:convertNumber pattern="#0.00" />
 								</p:text>
 							</p:paragraph>
 						</p:cell>
 
-						<p:cell horizontalAlignment="right" borderWidth="0" rendered="#{_var.total != 0}"
-							borderWidthBottom="1">
+						<p:cell horizontalAlignment="right" borderWidth="0"
+							rendered="#{_var.total != 0}" borderWidthBottom="1">
 							<p:paragraph>
 								<p:text value="#{_var.children.size() > 0 ? '' : _var.value}">
 									<f:convertNumber pattern="#0.00" />
 								</p:text>
 							</p:paragraph>
 						</p:cell>
-						
-						<p:cell horizontalAlignment="right" borderWidth="0" rendered="#{_var.total != 0}"
-							borderWidthBottom="1">
+
+						<p:cell horizontalAlignment="right" borderWidth="0"
+							rendered="#{_var.total != 0}" borderWidthBottom="1">
 							<p:paragraph>
-								<p:text value="#{_var.children.size() > 0 ? '' : _var.nextYears}">
+								<p:text
+									value="#{_var.children.size() > 0 ? '' : _var.nextYears}">
 									<f:convertNumber pattern="#0.00" />
 								</p:text>
 							</p:paragraph>
 						</p:cell>
 
-						<p:cell horizontalAlignment="right" borderWidth="0" rendered="#{_var.total != 0 and !workdayHome.globalReport}"
+						<p:cell horizontalAlignment="right" borderWidth="0"
+							rendered="#{_var.total != 0 and !workdayHome.globalReport}"
 							borderWidthBottom="1">
 							<p:paragraph>
 								<p:text value="#{_var.children.size() > 0 ? '' : _var.discount}">
@@ -381,7 +392,8 @@
 							</p:paragraph>
 						</p:cell>
 
-						<p:cell horizontalAlignment="right" borderWidth="0" rendered="#{_var.total != 0 and !workdayHome.globalReport}"
+						<p:cell horizontalAlignment="right" borderWidth="0"
+							rendered="#{_var.total != 0 and !workdayHome.globalReport}"
 							borderWidthBottom="1">
 							<p:paragraph>
 								<p:text
@@ -391,7 +403,8 @@
 							</p:paragraph>
 						</p:cell>
 
-						<p:cell horizontalAlignment="right" borderWidth="0" rendered="#{_var.total != 0 and !workdayHome.globalReport}"
+						<p:cell horizontalAlignment="right" borderWidth="0"
+							rendered="#{_var.total != 0 and !workdayHome.globalReport}"
 							borderWidthBottom="1">
 							<p:paragraph>
 								<p:text value="#{_var.children.size() > 0 ? '' : _var.interest}">
@@ -400,7 +413,8 @@
 							</p:paragraph>
 						</p:cell>
 
-						<p:cell horizontalAlignment="right" borderWidth="0" rendered="#{_var.total != 0 and !workdayHome.globalReport}"
+						<p:cell horizontalAlignment="right" borderWidth="0"
+							rendered="#{_var.total != 0 and !workdayHome.globalReport}"
 							borderWidthBottom="1">
 							<p:paragraph>
 								<p:text value="#{_var.children.size() > 0 ? '' : _var.taxes}">
@@ -409,8 +423,8 @@
 							</p:paragraph>
 						</p:cell>
 
-						<p:cell horizontalAlignment="right" borderWidth="0" rendered="#{_var.total != 0}"
-							borderWidthBottom="1">
+						<p:cell horizontalAlignment="right" borderWidth="0"
+							rendered="#{_var.total != 0}" borderWidthBottom="1">
 							<p:paragraph>
 								<p:text value="#{_var.children.size() > 0 ? '' : _var.total}">
 									<f:convertNumber pattern="#0.00" />
@@ -423,36 +437,42 @@
 
 			</p:table>
 
-			<p:table rendered="#{not empty workdayHome.rootNode}" columns="#{workdayHome.columnsNumber}" spacingBefore="5"
-				widthPercentage="100" headerRows="0" widths="#{workdayHome.columnsSize}">
-			
+			<p:table rendered="#{not empty workdayHome.rootNode}"
+				columns="#{workdayHome.columnsNumber}" spacingBefore="5"
+				widthPercentage="100" headerRows="0"
+				widths="#{workdayHome.columnsSize}">
+
 
 				<p:font size="8" style="bold">
 					<p:cell borderWidth="0" />
 
-					<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
+					<p:cell horizontalAlignment="center" borderWidth="0"
+						borderWidthBottom="1">
 						<p:paragraph>
 							<p:text value="#{messages['common.subTotal']}" />
 						</p:paragraph>
 					</p:cell>
 
-					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:cell horizontalAlignment="right" borderWidth="0"
+						borderWidthBottom="1">
 						<p:paragraph>
 							<p:text value="#{_mainAccount.previousYears}">
 								<f:convertNumber pattern="#0.00" />
 							</p:text>
 						</p:paragraph>
 					</p:cell>
-					
-					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+
+					<p:cell horizontalAlignment="right" borderWidth="0"
+						borderWidthBottom="1">
 						<p:paragraph>
 							<p:text value="#{_mainAccount.value}">
 								<f:convertNumber pattern="#0.00" />
 							</p:text>
 						</p:paragraph>
 					</p:cell>
-					
-					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+
+					<p:cell horizontalAlignment="right" borderWidth="0"
+						borderWidthBottom="1">
 						<p:paragraph>
 							<p:text value="#{_mainAccount.nextYears}">
 								<f:convertNumber pattern="#0.00" />
@@ -481,7 +501,8 @@
 					<p:cell horizontalAlignment="right" borderWidth="0"
 						borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
 						<p:paragraph>
-							<p:text value="#{_mainAccount.interest}" rendered="#{!workdayHome.globalReport}">
+							<p:text value="#{_mainAccount.interest}"
+								rendered="#{!workdayHome.globalReport}">
 								<f:convertNumber pattern="#0.00" />
 							</p:text>
 						</p:paragraph>
@@ -520,7 +541,7 @@
 					<p:cell borderWidth="0" />
 				</f:facet>
 
-				<p:cell horizontalAlignment="center" borderWidth="0" >
+				<p:cell horizontalAlignment="center" borderWidth="0">
 					<p:paragraph>
 						<p:text value="#{messages['TOTAL']}" />
 					</p:paragraph>
@@ -528,9 +549,10 @@
 			</p:font>
 		</p:table>
 
-		<p:table rendered="#{not empty workdayHome.rootNode}" columns="#{workdayHome.columnsNumber}"
-			spacingBefore="13" spacingAfter="15" widthPercentage="100"
-			headerRows="0" widths="#{workdayHome.columnsSize}">
+		<p:table rendered="#{not empty workdayHome.rootNode}"
+			columns="#{workdayHome.columnsNumber}" spacingBefore="13"
+			spacingAfter="15" widthPercentage="100" headerRows="0"
+			widths="#{workdayHome.columnsSize}">
 			<p:font size="9" style="bold">
 				<f:facet name="defaultCell">
 					<p:cell borderWidth="0" />
@@ -547,7 +569,7 @@
 						<p:text value="#{messages['account']}" />
 					</p:paragraph>
 				</p:cell>
-				
+
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
 						<p:text value="#{messages['item.previousYears']}" />
@@ -559,29 +581,33 @@
 						<p:text value="#{messages['item.currentYear']}" />
 					</p:paragraph>
 				</p:cell>
-				
+
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
 						<p:text value="#{messages['item.nextYears']}" />
 					</p:paragraph>
 				</p:cell>
-				
-				<p:cell horizontalAlignment="center" rendered="#{!workdayHome.globalReport}">
+
+				<p:cell horizontalAlignment="center"
+					rendered="#{!workdayHome.globalReport}">
 					<p:paragraph>
 						<p:text value="#{messages['DESCTO']}" />
 					</p:paragraph>
 				</p:cell>
-				<p:cell horizontalAlignment="center" rendered="#{!workdayHome.globalReport}">
+				<p:cell horizontalAlignment="center"
+					rendered="#{!workdayHome.globalReport}">
 					<p:paragraph>
 						<p:text value="#{messages['RCGO']}" />
 					</p:paragraph>
 				</p:cell>
-				<p:cell horizontalAlignment="center" rendered="#{!workdayHome.globalReport}">
+				<p:cell horizontalAlignment="center"
+					rendered="#{!workdayHome.globalReport}">
 					<p:paragraph>
 						<p:text value="#{messages['INT.']}" />
 					</p:paragraph>
 				</p:cell>
-				<p:cell horizontalAlignment="center" rendered="#{!workdayHome.globalReport}">
+				<p:cell horizontalAlignment="center"
+					rendered="#{!workdayHome.globalReport}">
 					<p:paragraph>
 						<p:text value="#{messages['IMP.']}" />
 					</p:paragraph>
@@ -593,7 +619,8 @@
 				</p:cell>
 			</p:font>
 
-			<ui:repeat value="#{workdayHome.classificationBuildMainAccounts()}" var="_var">
+			<ui:repeat value="#{workdayHome.classificationBuildMainAccounts()}"
+				var="_var">
 				<p:font size="7" style="normal,italic,oblique">
 					<p:cell borderWidth="0" borderWidthBottom="1">
 						<p:paragraph>
@@ -606,44 +633,54 @@
 							<p:text value="#{_var.account.accountName}" />
 						</p:paragraph>
 					</p:cell>
-					
-					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+
+					<p:cell horizontalAlignment="right" borderWidth="0"
+						borderWidthBottom="1">
 						<p:paragraph>
-							<p:text rendered="#{workdayHome.existInDiscount(_var.account.accountCode)}"
-									value=" - #{_var.previousYears}">
-									<f:convertNumber pattern="#0.00" />
+							<p:text
+								rendered="#{workdayHome.existInDiscount(_var.account.accountCode)}"
+								value=" - #{_var.previousYears}">
+								<f:convertNumber pattern="#0.00" />
 							</p:text>
-							<p:text value="#{_var.previousYears}" rendered="#{not workdayHome.existInDiscount(_var.account.accountCode)}">
+							<p:text value="#{_var.previousYears}"
+								rendered="#{not workdayHome.existInDiscount(_var.account.accountCode)}">
 								<f:convertNumber pattern="#0.00" />
 							</p:text>
 						</p:paragraph>
 					</p:cell>
 
-					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:cell horizontalAlignment="right" borderWidth="0"
+						borderWidthBottom="1">
 						<p:paragraph>
-							<p:text rendered="#{workdayHome.existInDiscount(_var.account.accountCode)}"
-									value=" - #{_var.value}">
-									<f:convertNumber pattern="#0.00" />
-							</p:text>
-							<p:text value="#{_var.value}" rendered="#{not workdayHome.existInDiscount(_var.account.accountCode)}">
+							<p:text
+								rendered="#{workdayHome.existInDiscount(_var.account.accountCode)}"
+								value=" - #{_var.value}">
 								<f:convertNumber pattern="#0.00" />
 							</p:text>
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
-						<p:paragraph>
-							<p:text rendered="#{workdayHome.existInDiscount(_var.account.accountCode)}"
-									value=" - #{_var.nextYears}">
-									<f:convertNumber pattern="#0.00" />
-							</p:text>
-							<p:text value="#{_var.nextYears}" rendered="#{not workdayHome.existInDiscount(_var.account.accountCode)}">
+							<p:text value="#{_var.value}"
+								rendered="#{not workdayHome.existInDiscount(_var.account.accountCode)}">
 								<f:convertNumber pattern="#0.00" />
 							</p:text>
 						</p:paragraph>
 					</p:cell>
 
-					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
+					<p:cell horizontalAlignment="right" borderWidth="0"
+						borderWidthBottom="1">
+						<p:paragraph>
+							<p:text
+								rendered="#{workdayHome.existInDiscount(_var.account.accountCode)}"
+								value=" - #{_var.nextYears}">
+								<f:convertNumber pattern="#0.00" />
+							</p:text>
+							<p:text value="#{_var.nextYears}"
+								rendered="#{not workdayHome.existInDiscount(_var.account.accountCode)}">
+								<f:convertNumber pattern="#0.00" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" borderWidth="0"
+						borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
 						<p:paragraph>
 							<p:text value="#{_var.discount}">
 								<f:convertNumber pattern="#0.00" />
@@ -651,7 +688,8 @@
 						</p:paragraph>
 					</p:cell>
 
-					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
+					<p:cell horizontalAlignment="right" borderWidth="0"
+						borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
 						<p:paragraph>
 							<p:text value="#{_var.surcharge}">
 								<f:convertNumber pattern="#0.00" />
@@ -659,7 +697,8 @@
 						</p:paragraph>
 					</p:cell>
 
-					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
+					<p:cell horizontalAlignment="right" borderWidth="0"
+						borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
 						<p:paragraph>
 							<p:text value="#{_var.interest}">
 								<f:convertNumber pattern="#0.00" />
@@ -667,7 +706,8 @@
 						</p:paragraph>
 					</p:cell>
 
-					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
+					<p:cell horizontalAlignment="right" borderWidth="0"
+						borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
 						<p:paragraph>
 							<p:text value="#{_var.taxes}">
 								<f:convertNumber pattern="#0.00" />
@@ -675,15 +715,18 @@
 						</p:paragraph>
 					</p:cell>
 
-					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:cell horizontalAlignment="right" borderWidth="0"
+						borderWidthBottom="1">
 						<p:paragraph>
 							<p:font size="9" style="bold">
-								<p:text rendered="#{workdayHome.existInDiscount(_var.account.accountCode)}"
+								<p:text
+									rendered="#{workdayHome.existInDiscount(_var.account.accountCode)}"
 									value=" - #{_var.total}">
 								</p:text>
 							</p:font>
-						
-							<p:text value="#{_var.total}" rendered="#{!workdayHome.existInDiscount(_var.account.accountCode)}">
+
+							<p:text value="#{_var.total}"
+								rendered="#{!workdayHome.existInDiscount(_var.account.accountCode)}">
 								<f:convertNumber pattern="#0.00" />
 							</p:text>
 						</p:paragraph>
@@ -694,13 +737,15 @@
 			<p:font size="8" style="bold">
 				<p:cell borderWidth="0" />
 
-				<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
-					<p:paragraph>					
-						<p:text value="#{messages['item.total']}" />						
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{messages['item.total']}" />
 					</p:paragraph>
 				</p:cell>
-				
-				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+
+				<p:cell horizontalAlignment="right" borderWidth="0"
+					borderWidthBottom="1">
 					<p:paragraph>
 						<p:text value="#{workdayHome.valuePreviousYearsMainAccounts}">
 							<f:convertNumber pattern="#0.00" />
@@ -708,7 +753,8 @@
 					</p:paragraph>
 				</p:cell>
 
-				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+				<p:cell horizontalAlignment="right" borderWidth="0"
+					borderWidthBottom="1">
 					<p:paragraph>
 						<p:text value="#{workdayHome.valueMainAccounts}">
 							<f:convertNumber pattern="#0.00" />
@@ -716,15 +762,17 @@
 					</p:paragraph>
 				</p:cell>
 
-				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+				<p:cell horizontalAlignment="right" borderWidth="0"
+					borderWidthBottom="1">
 					<p:paragraph>
 						<p:text value="#{workdayHome.valueNextYearsMainAccounts}">
 							<f:convertNumber pattern="#0.00" />
 						</p:text>
 					</p:paragraph>
-				</p:cell>				
-				
-				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
+				</p:cell>
+
+				<p:cell horizontalAlignment="right" borderWidth="0"
+					borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
 					<p:paragraph>
 						<p:text value="#{workdayHome.discountMainAccounts}">
 							<f:convertNumber pattern="#0.00" />
@@ -732,7 +780,8 @@
 					</p:paragraph>
 				</p:cell>
 
-				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
+				<p:cell horizontalAlignment="right" borderWidth="0"
+					borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
 					<p:paragraph>
 						<p:text value="#{workdayHome.surchargeMainAccounts}">
 							<f:convertNumber pattern="#0.00" />
@@ -740,7 +789,8 @@
 					</p:paragraph>
 				</p:cell>
 
-				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
+				<p:cell horizontalAlignment="right" borderWidth="0"
+					borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
 					<p:paragraph>
 						<p:text value="#{workdayHome.interestMainAccounts}">
 							<f:convertNumber pattern="#0.00" />
@@ -748,7 +798,8 @@
 					</p:paragraph>
 				</p:cell>
 
-				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
+				<p:cell horizontalAlignment="right" borderWidth="0"
+					borderWidthBottom="1" rendered="#{!workdayHome.globalReport}">
 					<p:paragraph>
 						<p:text value="#{workdayHome.taxesMainAccounts}">
 							<f:convertNumber pattern="#0.00" />
@@ -756,7 +807,8 @@
 					</p:paragraph>
 				</p:cell>
 
-				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+				<p:cell horizontalAlignment="right" borderWidth="0"
+					borderWidthBottom="1">
 					<p:paragraph>
 						<p:text value="#{workdayHome.totalMainAccounts}">
 							<f:convertNumber pattern="#0.00" />
@@ -766,15 +818,16 @@
 
 			</p:font>
 		</p:table>
-		
+
 		<ui:include src="CompensationFragment.xhtml" />
-		
-		
-				<p:table columns="1" widthPercentage="100" headerRows="0" spacingBefore="50">
+
+
+		<p:table columns="1" widthPercentage="100" headerRows="0"
+			spacingBefore="50">
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="0" horizontalAlignment="center" />
 			</f:facet>
-					
+
 			<p:cell colspan="1">
 				<p:paragraph>
 					<p:font size="7" style="bold">
@@ -782,21 +835,19 @@
 					</p:font>
 				</p:paragraph>
 			</p:cell>
-						
+
 			<p:cell colspan="1">
 				<p:paragraph>
 					<p:font size="7" style="bold">
-						<p:text
-							value="#{workdayHome.incomeDelegate.name.toUpperCase()}" />
+						<p:text value="#{workdayHome.incomeDelegate.name.toUpperCase()}" />
 					</p:font>
 				</p:paragraph>
-			</p:cell>									
-			
+			</p:cell>
+
 			<p:cell colspan="1">
 				<p:paragraph>
 					<p:font size="7" style="bold">
-						<p:text
-							value="#{workdayHome.incomeCharge.name.toUpperCase()}" />
+						<p:text value="#{workdayHome.incomeCharge.name.toUpperCase()}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
