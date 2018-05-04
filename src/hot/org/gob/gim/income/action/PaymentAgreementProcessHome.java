@@ -25,6 +25,7 @@ import org.jboss.seam.log.Log;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.PaymentAgreement;
+import ec.gob.gim.income.model.PaymentMethod;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.security.model.MunicipalbondAux;
 
@@ -149,6 +150,13 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 				mba.setMunicipalbond(bond);
 				mba.setDeposit(getDeposit(bondAuxDTO.getDepositid()));
 				mba.setType(bondAuxDTO.getType());
+				
+				//@author macartuche
+				//@date 2018-05-04
+				//abonos
+				mba.setTypepayment(PaymentMethod.AGREEMENT.name());
+				//fin abonos
+				
 				this.auxList.add(mba);
 			}
 			
