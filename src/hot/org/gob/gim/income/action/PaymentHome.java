@@ -7,6 +7,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,12 +19,14 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.ServletContext;
 
@@ -32,6 +38,7 @@ import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
 import org.gob.gim.income.view.MunicipalBondItem;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
+import org.gob.loja.gim.ws.dto.FutureBond;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -50,14 +57,10 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 
-import com.sun.tools.xjc.reader.dtd.bindinfo.BIAttribute;
-
 import ec.gob.gim.common.model.Alert;
-import ec.gob.gim.common.model.AlertPriority;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
-import ec.gob.gim.common.model.SystemParameter;
 import ec.gob.gim.income.model.CreditNote;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.Payment;
@@ -71,18 +74,9 @@ import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.FinancialInstitutionType;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
-import ec.gob.gim.revenue.model.adjunct.ValuePair;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.gim.security.model.User;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.sql.*;
-import java.util.Locale;
-
-import javax.persistence.EntityManager;
 
 @Name("paymentHome")
 @Scope(ScopeType.CONVERSATION)
@@ -518,16 +512,16 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		items = root.getMunicipalBondItems();
 	}
 
-	private List<MunicipalBond> futureBonds;
+	private List<FutureBond> futureBonds;
 	private BigDecimal totalFutereBond = BigDecimal.ZERO;
 
 	public void findFutureEmision(Long residentId) {
 		try {
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			this.futureBonds = incomeService.findFutureBonds(residentId);
-			for (MunicipalBond mb : futureBonds) {
+			/*for (MunicipalBond mb : futureBonds) {
 				totalFutereBond = totalFutereBond.add(mb.getValue());
-			}
+			}*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2138,11 +2132,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		this.paymentInstanceName = paymentInstanceName;
 	}
 
-	public List<MunicipalBond> getFutureBonds() {
+	public List<FutureBond> getFutureBonds() {
 		return futureBonds;
 	}
 
-	public void setFutureBonds(List<MunicipalBond> futureBonds) {
+	public void setFutureBonds(List<FutureBond> futureBonds) {
 		this.futureBonds = futureBonds;
 	}
 

@@ -29,8 +29,32 @@
 		<rich:dataTable value="#{municipalBondCondition.futureBonds}"
 			rendered="#{not empty municipalBondCondition.futureBonds}"
 			var="_futureBond">
-
+			
 			<rich:column>
+				<f:facet name="header">#{messages['municipalBond.expirationdate']}</f:facet>
+				<h:outputText value="#{_futureBond.account}">
+				</h:outputText>
+			</rich:column>
+			
+			<rich:column>
+				<f:facet name="header">#{messages['municipalBond.expirationdate']}</f:facet>
+				<h:outputText value="#{_futureBond.serviceCode}">
+				</h:outputText>
+			</rich:column>
+			
+			<rich:column>
+				<f:facet name="header">#{messages['municipalBond.expirationdate']}</f:facet>
+				<h:outputText value="#{_futureBond.quantity}">
+				</h:outputText>
+			</rich:column>
+			
+			<rich:column>
+				<f:facet name="header">#{messages['municipalBond.expirationdate']}</f:facet>
+				<h:outputText value="#{_futureBond.total}">
+				</h:outputText>
+			</rich:column>
+
+			<!--  rich:column>
 				<f:facet name="header">#{messages['entry']}</f:facet>
 				<h:outputText value="#{_futureBond.entry.name}" />
 			</rich:column>
@@ -61,7 +85,7 @@
 					</rich:column>
 				</rich:columnGroup>
 			</f:facet>
-
+-->
 		</rich:dataTable>
 	</rich:panel>
 </ui:composition>
