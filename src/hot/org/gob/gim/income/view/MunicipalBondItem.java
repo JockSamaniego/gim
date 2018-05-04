@@ -151,7 +151,7 @@ public class MunicipalBondItem {
 		return aux;
 	}
 
-	public void calculateTotals(MunicipalBondStatus municipalBondStatus, MunicipalBondStatus inAgreementBondStatus) {
+	public void calculateTotals(MunicipalBondStatus municipalBondStatus, MunicipalBondStatus inAgreementBondStatus, MunicipalBondStatus inSubscriptionStatus) {
 		if (municipalBond != null) {
 			if (children.size() > 0) {
 				BigDecimal value = BigDecimal.ZERO;
@@ -161,18 +161,27 @@ public class MunicipalBondItem {
 				BigDecimal paidTotal = BigDecimal.ZERO;
 				BigDecimal taxesTotal = BigDecimal.ZERO;
 				BigDecimal totalCancelled = BigDecimal.ZERO;
+				
 
 				for (MunicipalBondItem mbi : children.values()) {				
-					mbi.calculateTotals(municipalBondStatus, inAgreementBondStatus);					
+					mbi.calculateTotals(municipalBondStatus, inAgreementBondStatus, inSubscriptionStatus);
 					if(municipalBondStatus == null || 
 							mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(municipalBondStatus.getId()) || 
 							parentsNumber(mbi) == 0 ||
 							mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inAgreementBondStatus.getId())){
+						
 						if(inAgreementBondStatus!= null && mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inAgreementBondStatus.getId())){
 							value = value.add(mbi.getMunicipalBond().getPaidTotal().subtract(mbi.getMunicipalBond().getInterest()).subtract(mbi.getMunicipalBond().getSurcharge()).add(mbi.getMunicipalBond().getDiscount()));
 						}else{
 							value = value.add(mbi.getMunicipalBond().getValue());							
-						}					
+						}
+						
+						if(inSubscriptionStatus!= null && mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inSubscriptionStatus.getId())){
+							value = value.add(mbi.getMunicipalBond().getPaidTotal().subtract(mbi.getMunicipalBond().getInterest()).subtract(mbi.getMunicipalBond().getSurcharge()).add(mbi.getMunicipalBond().getDiscount()));
+						}else{
+							value = value.add(mbi.getMunicipalBond().getValue());							
+						}
+						
 						paidTotal = paidTotal.add(mbi.getMunicipalBond().getPaidTotal());
 						interest = interest.add(mbi.getMunicipalBond().getInterest());
 						discount = discount.add(mbi.getMunicipalBond().getDiscount());
@@ -189,7 +198,7 @@ public class MunicipalBondItem {
 				municipalBond.setDiscount(discount);
 				municipalBond.setSurcharge(surcharge);
 				municipalBond.setTaxesTotal(taxesTotal);				
-				System.out.println("TOTAL CALCULADO ----> "	+ municipalBond.getEntry().getName() + " - " + municipalBond.getValue().floatValue());
+				//System.out.println("TOTAL CALCULADO ----> "	+ municipalBond.getEntry().getName() + " - " + municipalBond.getValue().floatValue());
 			}
 
 		}

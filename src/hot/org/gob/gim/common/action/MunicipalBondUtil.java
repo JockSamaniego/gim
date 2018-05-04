@@ -16,6 +16,10 @@ public class MunicipalBondUtil {
 	
 	private static MunicipalBondStatus inAgreementStatus;
 	
+	//rfam 2018-05-03 pagos por abonos
+	private static MunicipalBondStatus inSubscriptionStatus;
+	
+	
 	public static MunicipalBondStatus getMunicipalBondStatus() {
 		return municipalBondStatus;
 	}
@@ -38,13 +42,16 @@ public class MunicipalBondUtil {
 			if(municipalBond.getMunicipalBondStatus().equals(inAgreementStatus)){				
 				municipalBond.setTotalCancelled(sumTotalCancelled(municipalBond));
 			}
+			//rfam 2018-05-03 pagos por abonos
+			if(municipalBond.getMunicipalBondStatus().equals(inSubscriptionStatus)){				
+				municipalBond.setTotalCancelled(sumTotalCancelled(municipalBond));
+			}
 			MunicipalBondItem mbi = new MunicipalBondItem(municipalBond);
 			groupingItem.add(mbi);
 		}
-				
-		for (MunicipalBondItem mbi : root.getMunicipalBondItems()) {			
-			mbi.calculateTotals(municipalBondStatus, inAgreementStatus);	
-			
+		
+		for (MunicipalBondItem mbi : root.getMunicipalBondItems()) {
+			mbi.calculateTotals(municipalBondStatus, inAgreementStatus, inSubscriptionStatus);
 		}
 		return root.getMunicipalBondItems();
 	}
@@ -69,5 +76,13 @@ public class MunicipalBondUtil {
 		MunicipalBondUtil.inAgreementStatus = inAgreementStatus;
 	}
 
+	public static MunicipalBondStatus getInSubscriptionStatus() {
+		return inSubscriptionStatus;
+	}
+
+	public static void setInSubscriptionStatus(MunicipalBondStatus inSubscriptionStatus) {
+		MunicipalBondUtil.inSubscriptionStatus = inSubscriptionStatus;
+	}
+	
 
 }
