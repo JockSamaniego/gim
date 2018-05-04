@@ -709,6 +709,178 @@
 			</p:font>
 		</p:table>
 
+		<p:table spacingBefore='10' columns="5" widthPercentage="100"
+			headerRows="0"
+			rendered="#{workdayHome.entryTotalCollectedsSubscription.size()> 0 }"
+			widths="4 4 1 1 1">
+			<p:font size="8" style="bold">
+				<p:cell colspan="5">
+					<p:paragraph borderWidth="1">
+						<p:font size="10" style="bold">
+							<p:text value="#{messages['workday.subscriptionCollected']}: " />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+		
+		<p:table
+			rendered="#{workdayHome.entryTotalCollectedsSubscription.size() > 0}"
+			columns="7" widthPercentage="100" headerRows="0"
+			widths="2 4 1 1 1 1 1">
+			<p:font size="8" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['entry.code']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['entry']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['item.previousYears']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['item.currentYear']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['INT.']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['IMP.']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['item.total']}" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+			<p:font size="8" style="normal">
+				<ui:repeat value="#{workdayHome.entryTotalCollectedsSubscription}"
+					var="_var">
+					<p:cell rendered="#{!workdayHome.globalReport}">
+						<p:paragraph>
+							<p:text value="#{_var.account}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell rendered="#{workdayHome.globalReport}">
+						<p:paragraph>
+							<p:text value="#{_var.groupBy}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell>
+						<p:paragraph>
+							<p:text value="#{_var.entry}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_var.previousYears}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_var.value}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_var.interest}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_var.taxes}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:font size="7" style="bold">
+								<p:text value=" -- #{_var.total}" rendered="#{_var.isDiscount}" />
+							</p:font>
+							<p:text value="#{_var.total}" rendered="#{!_var.isDiscount}" />
+						</p:paragraph>
+					</p:cell>
+
+				</ui:repeat>
+			</p:font>
+		</p:table>
+		
+		<p:table
+			rendered="#{workdayHome.entryTotalCollectedsSubscription.size() > 0}"
+			spacingAfter="15" columns="7" widthPercentage="100" headerRows="0"
+			widths="2 4 1 1 1 1 1">
+			<p:font size="9" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center" borderWidth="0" />
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['totals']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{workdayHome.previousValueSubscription}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{workdayHome.currentValueSubscription}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{workdayHome.interestValueSubscription}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{workdayHome.taxesValueSubscription}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{workdayHome.totalValueSubscription}" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+		
+
 		<p:table spacingBefore='10' columns="1" widthPercentage="60"
 			headerRows="0"
 			rendered="#{workdayHome.summaryTotalCollecteds.size()>0}">

@@ -30,6 +30,10 @@
 						<ui:include src="AgreementCollectedDetailByEntry.xhtml" />
 					</rich:tab>
 
+					<rich:tab label="#{messages['workday.subscriptionCollected']}" switchType="client">
+						<ui:include src="SubscriptionCollectedDetailByEntry.xhtml" />
+					</rich:tab>
+
 				</rich:tabPanel>
 				<rich:dataTable id="summaryCollectedTable" var="_entryDetail"
 							value="#{workdayHome.summaryTotalCollecteds}"

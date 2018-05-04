@@ -12,6 +12,7 @@ import org.gob.gim.exception.NotActiveWorkdayException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
 import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
+import org.gob.loja.gim.ws.dto.FutureBond;
 
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
@@ -93,7 +94,7 @@ public interface IncomeService {
 	 * @param residentId
 	 * @return
 	 */
-	public List<MunicipalBond> findFutureBonds(Long residentId);
+	public List<FutureBond> findFutureBonds(Long residentId);
 	public void save(PaymentAgreement paymentAgreement, List<Long> municipalBondsIds);
 	public MunicipalBond loadForPrinting(Long municipalBondId);
 	public MunicipalBond loadMunicipalBond(Long municipalBondId);

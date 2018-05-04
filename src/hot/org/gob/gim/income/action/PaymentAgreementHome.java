@@ -282,7 +282,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			this.getInstance().setResident(resident);
 			this.municipalBondItems = findPendingDueMunicipalBondItems(resident.getId());
 			for(MunicipalBondItem mbi : municipalBondItems){
-				mbi.calculateTotals(null,null);
+				mbi.calculateTotals(null,null,null);
 			}
 			searchAgreements(resident.getId());
 			if (resident.getClass().getSimpleName().equalsIgnoreCase("Person")) {
