@@ -1112,6 +1112,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		}
 	}
 
+	
 	public String persist() {
 
 		//System.out.println("PERSIST INICIO");
@@ -1163,6 +1164,62 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			return null;
 		}
 	}
+	
+	
+	// PAGO ABONOS
+	//@author macartuche
+	//@date 2018-05-03
+	public String persistSubscription() {
+
+		if (!getIsPaymentOk()) {
+			if (!paymentBlocked)
+				facesMessages.addToControl("savePaymentBtn", Severity.ERROR,
+						"#{messages['payment.paymentDetailsMissed']}");
+			else
+				facesMessages.addToControl("savePaymentBtn", Severity.ERROR,
+						"#{messages['payment.paymentBlockedAlertPriority']}");
+			return null;
+		} else {
+
+			if (isFullPayment) {
+				deposits = fillDeposits();
+				
+			}
+			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+			Long paymentAgreementId = deactivatePaymentAgreement ? paymentAgreement.getId() : null;
+			
+			try {
+				org.jboss.seam.transaction.Transaction.instance().setTransactionTimeout(1800);
+				Long tillId = userSession.getTillPermission().getTill().getId();
+				//@tag recaudacionCoactivas
+				//agregar el tipo de pago por defecto I (solo afecta convenios de pago)
+				incomeService.save(deposits, paymentAgreementId, tillId);
+				//fin recaudacionCoactivas
+				incomeService.deactivateCreditNotes(getInstance().getPaymentFractions());
+				receiptPrintingManager.print(deposits);
+				renderingDepositPDF(userSession.getUser().getId());
+				
+				//@author macartuche  
+	            //@date 2016-07-01 11:16  
+	            //@tag InteresCeroInstPub  
+	            //No realizar el calculo de interes para instituciones publicas  
+	            //invocar al incomeservice  
+	            //incomeService.compensationPayment(deposits);  
+				
+			} catch (InvoiceNumberOutOfRangeException e) {
+				addFacesMessageFromResourceBundle(e.getClass().getSimpleName(), e.getInvoiceNumber());
+			} catch (Exception e) {
+				//System.out.println("GZ -----> Exception saving Deposits");
+				addFacesMessageFromResourceBundle(e.getClass().getSimpleName());
+				e.printStackTrace();
+				//System.out.println("GZ -----> Returns error");
+				return "unknownError";
+			}
+			return null;
+		}
+	}
+	
+	/// fin PAGO ABONOS
 
 	public void rePrint() {
 		deposits = fillDeposits2();
@@ -1222,6 +1279,13 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	private List<Deposit> fillDeposits() {
+
+		//CAMBIAR DE ACUERDO AL ABONO
+		//REALIZAR TIPO CONVENIO
+		//@author macartuche
+		
+		
+		
 		List<MunicipalBond> paidBonds = getSelected();
 		List<Deposit> deps = new LinkedList<Deposit>();
 		for (MunicipalBond mb : paidBonds) {
@@ -1985,8 +2049,26 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 		}
 		if (receivedAmount == null || value == null || value.compareTo(receivedAmount) > 0) {
-			addFacesMessageFromResourceBundle("payment.receivedAmountNotEnough");
-			return Boolean.FALSE;
+			
+			//pago por abonos ...
+			//el monto recibido es menor
+			if(this.isPaymentSubscription) {
+				for (PaymentFraction fraction : payment.getPaymentFractions()) {
+					fraction.setPaidAmount(fraction.getReceivedAmount());
+					if (fraction.getPaymentType() == PaymentType.CASH) {
+						if (fraction.getReceivedAmount() == BigDecimal.ZERO) {
+							addFacesMessageFromResourceBundle("payment.cashDetailInvalid");
+							isPaymentOk = Boolean.FALSE;
+							break;
+						}
+						fraction.setPaidAmount(fraction.getReceivedAmount().subtract(change));
+					}
+				}
+			}else {
+				addFacesMessageFromResourceBundle("payment.receivedAmountNotEnough");
+				return Boolean.FALSE;
+			}	
+			//fin pago por abonos
 		} else {
 			for (PaymentFraction fraction : payment.getPaymentFractions()) {
 				//System.out.println("PAYMENT TYPE = " + fraction.getPaymentType());
@@ -2081,6 +2163,28 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	public void updateHasCompensationBonds() {
+		//@author macartuche
+		//deshabilitar boton de registro de pago
+		this.canRegisterPayment=true;
+		//fin
+		clearFractions();
+		hasCompensationBonds = Boolean.FALSE;
+		selectedBonds = getSelected();
+		for (MunicipalBond bond : selectedBonds) {
+			if (bond.getMunicipalBondStatus().getId().longValue() == compensationStatusId.longValue()) {
+				hasCompensationBonds = Boolean.TRUE;
+				break;
+			}
+		}
+		// System.out.println("HAS COMPENSATION BONDS ----> "
+		// + hasCompensationBonds);
+	}
+	
+
+	private boolean isPaymentSubscription= false;
+	
+	public void updateHasCompensationBonds(String paymentType) {
+		this.isPaymentSubscription = true;
 		//@author macartuche
 		//deshabilitar boton de registro de pago
 		this.canRegisterPayment=true;
