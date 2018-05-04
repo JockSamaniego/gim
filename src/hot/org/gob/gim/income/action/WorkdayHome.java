@@ -1974,20 +1974,30 @@ public class WorkdayHome extends EntityHome<Workday> {
 							+ "COALESCE(SUM (d.value), 0.00) as total, " 
 							+ "e.code as account, "
 							+ "FALSE as isDiscount "  
-					+ "from municipalbond m "
-					+ "inner join deposit d ON d.municipalbond_id = m.id "
-					+ "inner join entry e ON e.id = m.entry_id "
-					+ "left join account ac ON e.account_id = ac.id "
-					+ "where d.date Between '2018-05-03' and '2018-05-03' "
-					+ "AND m.emisionPeriod < '2018-01-01' "
-					+ "AND m.municipalBondStatus_id in (6,14) "
-					+ "AND (select count(*) "
-					+ "from municipalbondaux maux "
-					+ "where maux.municipalbond_id = m.id "
-					+ "AND maux.typepayment = 'SUBSCRIPTION' "
-					+ "AND maux.status = 'VALID') > 0 "
-					+ "GROUP BY e.id, e.name,e.code ORDER BY e.code");
-		//query.setParameter(1, property_id);
+						+ "from municipalbond m "
+						+ "inner join deposit d ON d.municipalbond_id = m.id "
+						+ "inner join entry e ON e.id = m.entry_id "
+						+ "left join account ac ON e.account_id = ac.id "
+						+ "where d.date Between ?1 and ?2 "
+						+ "AND m.emisionPeriod < ?3 "
+						+ "AND m.municipalBondStatus_id in ?4 "
+						+ "AND (select count(*) "
+						+ "from municipalbondaux maux "
+						+ "where maux.municipalbond_id = m.id "
+						+ "AND maux.typepayment = 'SUBSCRIPTION' "
+						+ "AND maux.status = 'VALID') > 0 "
+						+ "GROUP BY e.id, e.name,e.code ORDER BY e.code");
+
+
+		query.setParameter(1, startDate);
+		query.setParameter(2, endDate);
+		query.setParameter(3, userSession.getFiscalPeriod().getStartDate());
+		
+		List<Long> statusIds = new ArrayList<Long>();
+		statusIds.add(paidStatus); 
+		statusIds.add(subscriptionStatus);
+		
+		query.setParameter(4,statusIds);
 
 		List<EntryTotalCollected> retorno = NativeQueryResultsMapper.map(
 				query.getResultList(), EntryTotalCollected.class);
@@ -2062,24 +2072,37 @@ public class WorkdayHome extends EntityHome<Workday> {
 							+ "SUM(d.paidTaxes) as taxes, "
 							+ "COALESCE(SUM (d.value), 0.00) as total, " 
 							+ "e.code as account, "
-							+ "FALSE as isDiscount " 
+							+ "FALSE as isDiscount "
 						+ "from municipalbond m "
 						+ "inner join deposit d ON d.municipalbond_id = m.id "
 						+ "inner join entry e ON e.id = m.entry_id "
 						+ "left join account ac ON e.account_id = ac.id "
-						+ "where d.date Between '2018-05-03' and '2018-05-03' "
-						+ "AND m.emisionPeriod = '2018-01-01' "
-						+ "AND m.municipalBondStatus_id in (6,14) "
+						+ "where d.date Between ?1 and ?2 "
+						+ "AND m.emisionPeriod = ?3 "
+						+ "AND m.municipalBondStatus_id in ?4 "
 						+ "AND (select count(*) "
 						+ "from municipalbondaux maux "
 						+ "where maux.municipalbond_id = m.id "
 						+ "AND maux.typepayment = 'SUBSCRIPTION' "
 						+ "AND maux.status = 'VALID') > 0 "
 						+ "GROUP BY e.id, e.name,e.code ORDER BY e.code");
-		//query.setParameter(1, property_id);
-
+		
+		query.setParameter(1, startDate);
+		query.setParameter(2, endDate);
+		query.setParameter(3, userSession.getFiscalPeriod().getStartDate());
+		
+		List<Long> statusIds = new ArrayList<Long>();
+		statusIds.add(paidStatus); 
+		statusIds.add(subscriptionStatus);
+		
+		query.setParameter(4,statusIds);
+		
 		List<EntryTotalCollected> retorno = NativeQueryResultsMapper.map(
 				query.getResultList(), EntryTotalCollected.class);
+		
+		for (EntryTotalCollected entryTotalCollected : retorno) {
+			entryTotalCollected.setPreviousYears(BigDecimal.ZERO);
+		}
 
 		return retorno;
 
@@ -2095,13 +2118,13 @@ public class WorkdayHome extends EntityHome<Workday> {
 		 * "m.municipalBondStatus.id in (:municipalBondStatusIds) AND " +
 		 * "pa is not null " + "GROUP BY e.id, e.name,e.code ORDER BY e.code";
 		 * List<Long> statusIds = new ArrayList<Long>();
-		 * statusIds.add(paidStatus); statusIds.add(subscriptionStatus); Query
-		 * query = getEntityManager().createQuery(sql);
+		 * statusIds.add(paidStatus); statusIds.add(subscriptionStatus); 
+		 * Query query = getEntityManager().createQuery(sql);
 		 * query.setParameter("startDate", startDate);
 		 * query.setParameter("endDate", endDate);
-		 * query.setParameter("emisionPeriod", userSession.getFiscalPeriod()
-		 * .getStartDate()); query.setParameter("municipalBondStatusIds",
-		 * statusIds); return query.getResultList();
+		 * query.setParameter("emisionPeriod", userSession.getFiscalPeriod().getStartDate()); 
+		 * query.setParameter("municipalBondStatusIds",statusIds); 
+		 * return query.getResultList();
 		 */
 	}
 
