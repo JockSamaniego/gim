@@ -339,6 +339,19 @@ public class FinantialServiceBean implements FinantialService{
 			QUOTAS_LIQUIDATION_SURCHARGES_QUERY + ") UNION (" + 
 			QUOTAS_LIQUIDATION_DISCOUNTS_QUERY + ") UNION (" + 
 			QUOTAS_LIQUIDATION_TAXES_QUERY+")";
+	
+	private final static String SUBSCRIPTION_REPORT  = 
+			"SELECT a.id, a.accountCode, a.previousYearsAccountCode, a.futureYearsAccountCode, a.budgetCertificateCode, a.accountName, sum(i.total) " +
+					"   FROM item i, municipalBond mb, entry e, account a " +
+					"   WHERE i.municipalBond_id=mb.id AND " +
+					"         i.entry_id = e.id AND " +
+					"         e.account_id = a.id AND " +
+					"         a.accountCode like :accountCode AND " +
+					"         mb.emisionDate BETWEEN :emisionStartDate AND :emisionEndDate AND " +
+					"         mb.liquidationDate BETWEEN :startDate AND :endDate AND " +
+					"         mb.municipalBondStatus_id in (:statuses)" +
+					"   GROUP BY a.id " +
+					"   ORDER BY a.accountCode ";
 
 	private final static String DUE_PORTFOLIO_QUERY = 
 			"SELECT a.id, a.accountCode, a.previousYearsAccountCode, a.futureYearsAccountCode, a.budgetCertificateCode, a.accountName, sum(paidTotal) " +
@@ -522,6 +535,13 @@ public class FinantialServiceBean implements FinantialService{
 							query.setParameter("emisionStartDate", emisionStartDate);
 							query.setParameter("emisionEndDate", emisionEndDate);
 							query.setParameter("entriesList", entriesListLong);
+						}else{
+							if(reportType == ReportType.SUBSCRIPTION){
+								query = entityManager.createNativeQuery(SUBSCRIPTION_REPORT);
+								statuses = getSubscriptionStatuses();
+								query.setParameter("emisionStartDate", emisionStartDate);
+								query.setParameter("emisionEndDate", emisionEndDate);
+							}
 						}						
 					}
 						
@@ -711,6 +731,9 @@ public class FinantialServiceBean implements FinantialService{
 			
 			if(criteria.getReportFilter() == ReportFilter.ALL || criteria.getReportFilter() == ReportFilter.CURRENT){
 				System.out.println("CALCULANDO AÑO ACTUAL");
+				if(criteria.getReportType() == ReportType.SUBSCRIPTION){
+					buildReport(criteria, report, ReportType.SUBSCRIPTION, criteria.getStartDate(), criteria.getEndDate(), fiscalPeriod.getStartDate(), fiscalPeriod.getEndDate(), ReportFilter.CURRENT);
+				}
 				if(criteria.getReportType() == ReportType.QUOTAS_LIQUIDATION){
 					buildReport(criteria, report, ReportType.QUOTAS_LIQUIDATION, criteria.getStartDate(), criteria.getEndDate(), fiscalPeriod.getStartDate(), fiscalPeriod.getEndDate(), ReportFilter.CURRENT);
 				}
@@ -899,10 +922,17 @@ public class FinantialServiceBean implements FinantialService{
 		return statuses; 
 	}
 	
+	
 	private List<Long> getPaidStatuses(){
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.PAID_BOND_STATUS));
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.PAID_FROM_EXTERNAL_CHANNEL_BOND_STATUS));
+		return statuses;
+	}
+	
+	private List<Long> getSubscriptionStatuses(){
+		List<Long> statuses = new ArrayList<Long>();
+		statuses.add((Long)systemParameterService.findParameter(IncomeService.SUBSCRIPTION_BOND_STATUS));
 		return statuses;
 	}
 	
