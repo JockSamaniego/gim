@@ -146,6 +146,10 @@ public abstract class Resident extends Identifiable{
 	
 	private boolean enabledIndividualPayment;
 	
+	//@author macartuche
+	//abonos
+	private boolean enablesubscription = Boolean.FALSE;
+	               
 	/**
 	 * Relationships
 	 */
@@ -528,6 +532,22 @@ public abstract class Resident extends Identifiable{
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
-	
+
+
+    
+    /**
+     * @author macartuche
+     * @return
+     */
+ 
+
+    
+	public boolean isEnablesubscription() {
+		return enablesubscription;
+	}
+
+	public void setEnablesubscription(boolean enablesubscription) {
+		this.enablesubscription = enablesubscription;
+	}
 
 }//end Resident

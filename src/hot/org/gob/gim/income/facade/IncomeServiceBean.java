@@ -42,6 +42,7 @@ import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
 import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.service.MunicipalBondService;
+import org.gob.loja.gim.ws.dto.FutureBond;
 
 import ec.common.sridocuments.v110.factura.Factura;
 //import ec.common.sridocuments.v110.factura.QueryBilling;
@@ -1405,8 +1406,10 @@ public class IncomeServiceBean implements IncomeService {
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
 		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
-		Long agreementMunicipalBondStatusId = systemParameterService
-				.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		Long agreementMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		//rfam 2018-05-03
+		Long subscriptionMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
+		
 
 		// Long futureMunicipalBondStatusId =
 		// systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
@@ -1414,7 +1417,7 @@ public class IncomeServiceBean implements IncomeService {
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(agreementMunicipalBondStatusId);
-		// statuses.add(futureMunicipalBondStatusId);
+		statuses.add(subscriptionMunicipalBondStatusId);
 
 		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
@@ -1470,8 +1473,9 @@ public class IncomeServiceBean implements IncomeService {
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
 		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
-		Long agreementMunicipalBondStatusId = systemParameterService
-				.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		Long agreementMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		//rfam 2018-05-03
+		Long subscriptionMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 
 		// Long futureMunicipalBondStatusId =
 		// systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
@@ -1479,8 +1483,7 @@ public class IncomeServiceBean implements IncomeService {
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(agreementMunicipalBondStatusId);
-
-		// statuses.add(futureMunicipalBondStatusId);
+		statuses.add(subscriptionMunicipalBondStatusId);
 
 		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdEntryIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
@@ -1611,8 +1614,8 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	@Override
-	public List<MunicipalBond> findFutureBonds(Long residentId) {
-		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+	public List<FutureBond> findFutureBonds(Long residentId) {
+		/*SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
 		Long futureMunicipalBondStatusId = systemParameterService
 				.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
@@ -1624,6 +1627,14 @@ public class IncomeServiceBean implements IncomeService {
 		query.setParameter("residentId", residentId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
+		return query.getResultList();*/
+		
+		
+		Long futureBondStatusId = systemParameterService.findParameter(IncomeServiceBean.FUTURE_BOND_STATUS);
+		Query query = entityManager.createNamedQuery("Bond.findFutureByStatusAndResidentId");
+		query.setParameter("residentId", residentId);
+		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
+		query.setParameter("pendingBondStatusId", futureBondStatusId);
 		return query.getResultList();
 	}
 

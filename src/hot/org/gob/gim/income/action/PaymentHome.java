@@ -7,6 +7,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,12 +19,14 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.ServletContext;
 
@@ -32,6 +38,7 @@ import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
 import org.gob.gim.income.view.MunicipalBondItem;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
+import org.gob.loja.gim.ws.dto.FutureBond;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -50,14 +57,10 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 
-import com.sun.tools.xjc.reader.dtd.bindinfo.BIAttribute;
-
 import ec.gob.gim.common.model.Alert;
-import ec.gob.gim.common.model.AlertPriority;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
-import ec.gob.gim.common.model.SystemParameter;
 import ec.gob.gim.income.model.CreditNote;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.Payment;
@@ -71,18 +74,9 @@ import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.FinancialInstitutionType;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
-import ec.gob.gim.revenue.model.adjunct.ValuePair;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.gim.security.model.User;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.sql.*;
-import java.util.Locale;
-
-import javax.persistence.EntityManager;
 
 @Name("paymentHome")
 @Scope(ScopeType.CONVERSATION)
@@ -414,7 +408,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			this.inPaymentAgreementBonds = findInPaymentAgreementBonds(resident.getId());
 			this.municipalBondItems = findPendingMunicipalBondItems(resident.getId());
 			for (MunicipalBondItem mbi : municipalBondItems) {
-				mbi.calculateTotals(null, null);
+				mbi.calculateTotals(null, null, null);
 			}
 		} catch (EntryDefinitionNotFoundException e) {
 			String message = Interpolator.instance()
@@ -518,16 +512,16 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		items = root.getMunicipalBondItems();
 	}
 
-	private List<MunicipalBond> futureBonds;
+	private List<FutureBond> futureBonds;
 	private BigDecimal totalFutereBond = BigDecimal.ZERO;
 
 	public void findFutureEmision(Long residentId) {
 		try {
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			this.futureBonds = incomeService.findFutureBonds(residentId);
-			for (MunicipalBond mb : futureBonds) {
+			/*for (MunicipalBond mb : futureBonds) {
 				totalFutereBond = totalFutereBond.add(mb.getValue());
-			}
+			}*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -765,7 +759,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				fiscalPeriod);
 		for (MunicipalBondItem mbi : municipalBondItems) {
 			try {
-				mbi.calculateTotals(null, null);
+				mbi.calculateTotals(null, null, null);
 			} catch (Exception e) {
 				StatusMessages.instance().addFromResourceBundleOrDefault(Severity.ERROR, e.getClass().getSimpleName(),
 						e.getMessage(), mbi.getMunicipalBond().getEntry().getName(),
@@ -781,7 +775,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		this.municipalBondItems = findPendingMunicipalBondItems(resident, entryId);
 		for (MunicipalBondItem mbi : municipalBondItems) {
 			try {
-				mbi.calculateTotals(null, null);
+				mbi.calculateTotals(null, null, null);
 			} catch (Exception e) {
 				StatusMessages.instance().addFromResourceBundleOrDefault(Severity.ERROR, e.getClass().getSimpleName(),
 						e.getMessage(), mbi.getMunicipalBond().getEntry().getName(),
@@ -1112,6 +1106,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		}
 	}
 
+	
 	public String persist() {
 
 		//System.out.println("PERSIST INICIO");
@@ -1163,6 +1158,62 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			return null;
 		}
 	}
+	
+	
+	// PAGO ABONOS
+	//@author macartuche
+	//@date 2018-05-03
+	public String persistSubscription() {
+
+		if (!getIsPaymentOk()) {
+			if (!paymentBlocked)
+				facesMessages.addToControl("savePaymentBtn", Severity.ERROR,
+						"#{messages['payment.paymentDetailsMissed']}");
+			else
+				facesMessages.addToControl("savePaymentBtn", Severity.ERROR,
+						"#{messages['payment.paymentBlockedAlertPriority']}");
+			return null;
+		} else {
+
+			if (isFullPayment) {
+				deposits = fillDeposits();
+				
+			}
+			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+			Long paymentAgreementId = deactivatePaymentAgreement ? paymentAgreement.getId() : null;
+			
+			try {
+				org.jboss.seam.transaction.Transaction.instance().setTransactionTimeout(1800);
+				Long tillId = userSession.getTillPermission().getTill().getId();
+				//@tag recaudacionCoactivas
+				//agregar el tipo de pago por defecto I (solo afecta convenios de pago)
+				incomeService.save(deposits, paymentAgreementId, tillId);
+				//fin recaudacionCoactivas
+				incomeService.deactivateCreditNotes(getInstance().getPaymentFractions());
+				receiptPrintingManager.print(deposits);
+				renderingDepositPDF(userSession.getUser().getId());
+				
+				//@author macartuche  
+	            //@date 2016-07-01 11:16  
+	            //@tag InteresCeroInstPub  
+	            //No realizar el calculo de interes para instituciones publicas  
+	            //invocar al incomeservice  
+	            //incomeService.compensationPayment(deposits);  
+				
+			} catch (InvoiceNumberOutOfRangeException e) {
+				addFacesMessageFromResourceBundle(e.getClass().getSimpleName(), e.getInvoiceNumber());
+			} catch (Exception e) {
+				//System.out.println("GZ -----> Exception saving Deposits");
+				addFacesMessageFromResourceBundle(e.getClass().getSimpleName());
+				e.printStackTrace();
+				//System.out.println("GZ -----> Returns error");
+				return "unknownError";
+			}
+			return null;
+		}
+	}
+	
+	/// fin PAGO ABONOS
 
 	public void rePrint() {
 		deposits = fillDeposits2();
@@ -1222,6 +1273,13 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	}
 
 	private List<Deposit> fillDeposits() {
+
+		//CAMBIAR DE ACUERDO AL ABONO
+		//REALIZAR TIPO CONVENIO
+		//@author macartuche
+		
+		
+		
 		List<MunicipalBond> paidBonds = getSelected();
 		List<Deposit> deps = new LinkedList<Deposit>();
 		for (MunicipalBond mb : paidBonds) {
@@ -1985,8 +2043,26 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 		}
 		if (receivedAmount == null || value == null || value.compareTo(receivedAmount) > 0) {
-			addFacesMessageFromResourceBundle("payment.receivedAmountNotEnough");
-			return Boolean.FALSE;
+			
+			//pago por abonos ...
+			//el monto recibido es menor
+			if(this.isPaymentSubscription) {
+				for (PaymentFraction fraction : payment.getPaymentFractions()) {
+					fraction.setPaidAmount(fraction.getReceivedAmount());
+					if (fraction.getPaymentType() == PaymentType.CASH) {
+						if (fraction.getReceivedAmount() == BigDecimal.ZERO) {
+							addFacesMessageFromResourceBundle("payment.cashDetailInvalid");
+							isPaymentOk = Boolean.FALSE;
+							break;
+						}
+						fraction.setPaidAmount(fraction.getReceivedAmount().subtract(change));
+					}
+				}
+			}else {
+				addFacesMessageFromResourceBundle("payment.receivedAmountNotEnough");
+				return Boolean.FALSE;
+			}	
+			//fin pago por abonos
 		} else {
 			for (PaymentFraction fraction : payment.getPaymentFractions()) {
 				//System.out.println("PAYMENT TYPE = " + fraction.getPaymentType());
@@ -2097,6 +2173,28 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		// System.out.println("HAS COMPENSATION BONDS ----> "
 		// + hasCompensationBonds);
 	}
+	
+
+	private boolean isPaymentSubscription= false;
+	
+	public void updateHasCompensationBonds(String paymentType) {
+		this.isPaymentSubscription = true;
+		//@author macartuche
+		//deshabilitar boton de registro de pago
+		this.canRegisterPayment=true;
+		//fin
+		clearFractions();
+		hasCompensationBonds = Boolean.FALSE;
+		selectedBonds = getSelected();
+		for (MunicipalBond bond : selectedBonds) {
+			if (bond.getMunicipalBondStatus().getId().longValue() == compensationStatusId.longValue()) {
+				hasCompensationBonds = Boolean.TRUE;
+				break;
+			}
+		}
+		// System.out.println("HAS COMPENSATION BONDS ----> "
+		// + hasCompensationBonds);
+	}
 
 	public Boolean getHasCompensationBonds() {
 		return hasCompensationBonds;
@@ -2138,11 +2236,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		this.paymentInstanceName = paymentInstanceName;
 	}
 
-	public List<MunicipalBond> getFutureBonds() {
+	public List<FutureBond> getFutureBonds() {
 		return futureBonds;
 	}
 
-	public void setFutureBonds(List<MunicipalBond> futureBonds) {
+	public void setFutureBonds(List<FutureBond> futureBonds) {
 		this.futureBonds = futureBonds;
 	}
 
