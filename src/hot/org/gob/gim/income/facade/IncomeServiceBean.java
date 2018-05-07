@@ -366,7 +366,7 @@ public class IncomeServiceBean implements IncomeService {
 		Long PAID_STATUS_ID = systemParameterService.findParameter(PAID_BOND_STATUS);
 		
 		Long SUBSCRIPTION_STATUS_ID = systemParameterService.findParameter(SUBSCRIPTION_BOND_STATUS);
-		sd
+		//sd
 		for (Deposit deposit : deposits) {
 			MunicipalBond municipalBond = deposit.getMunicipalBond();
 			/*System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE "
@@ -1126,7 +1126,6 @@ public class IncomeServiceBean implements IncomeService {
 			}
 			remaining = remaining.subtract(fraction.getPaidAmount());
 		}
-
 		// PREVIOUS ALGORITHM
 		Long PENDING_STATUS_ID = systemParameterService.findParameter(PENDING_BOND_STATUS);
 		changeMunicipalBondsStatus(depositIds, PENDING_STATUS_ID);
@@ -1194,6 +1193,8 @@ public class IncomeServiceBean implements IncomeService {
 		List<Long> municipalBondIds = new ArrayList<Long>();
 		Long PENDING_STATUS_ID = systemParameterService.findParameter(PENDING_BOND_STATUS);
 		Long PAYMENT_AGREEMENT_STATUS_ID = systemParameterService.findParameter(IN_PAYMENT_AGREEMENT_BOND_STATUS);
+		//rfam 2018-05-07 pagos en abonos
+		Long SUBSCRIPTION_STATUS_ID = systemParameterService.findParameter(SUBSCRIPTION_BOND_STATUS);
 		// boolean IS_ELECTRONIC_INVOIVE_ENABLE = systemParameterService
 		// .findParameter(ELECTRONIC_INVOICE_ENABLE);
 		for (BigInteger biid : municipalBonds) {
@@ -1224,7 +1225,7 @@ public class IncomeServiceBean implements IncomeService {
 
 		query.setParameter("id", PAYMENT_AGREEMENT_STATUS_ID);
 		MunicipalBondStatus paymentAgreementStatus = (MunicipalBondStatus) query.getSingleResult();
-
+				
 		query = entityManager.createNamedQuery("MunicipalBond.findByIdsToChangeStatus");
 		query.setParameter("municipalBondIds", municipalBondIds);
 		List<MunicipalBond> municipalBonds = query.getResultList();
