@@ -15,77 +15,34 @@
 				value="#{messages['payment.futureEmision']}" />
 		</f:facet>
 
-
-
-		<!--rich:dataTable value = " #  {    } "  var="_entryItem"
-		rendered=" # { not empty paymentHome .  futureBonds }"
-		rowClasses="rvgRowOne,rvgRowTwo" id="municipalBondsTable"
-		columnClasses="tableCellFont" style="margin-top:5px;">
-
-
-	</rich:dataTable-->
-
-
 		<rich:dataTable value="#{municipalBondCondition.futureBonds}"
 			rendered="#{not empty municipalBondCondition.futureBonds}"
 			var="_futureBond">
 			
 			<rich:column>
-				<f:facet name="header">#{messages['municipalBond.expirationdate']}</f:facet>
+				<f:facet name="header">#{messages['futureBond.account']}</f:facet>
 				<h:outputText value="#{_futureBond.account}">
 				</h:outputText>
 			</rich:column>
 			
 			<rich:column>
-				<f:facet name="header">#{messages['municipalBond.expirationdate']}</f:facet>
+				<f:facet name="header">#{messages['futureBond.serviceCode']}</f:facet>
 				<h:outputText value="#{_futureBond.serviceCode}">
 				</h:outputText>
 			</rich:column>
 			
-			<rich:column>
-				<f:facet name="header">#{messages['municipalBond.expirationdate']}</f:facet>
+			<rich:column styleClass="right">
+				<f:facet name="header">#{messages['futureBond.quantity']}</f:facet>
 				<h:outputText value="#{_futureBond.quantity}">
 				</h:outputText>
 			</rich:column>
 			
-			<rich:column>
-				<f:facet name="header">#{messages['municipalBond.expirationdate']}</f:facet>
+			<rich:column styleClass="right">
+				<f:facet name="header">#{messages['futureBond.total']}</f:facet>
 				<h:outputText value="#{_futureBond.total}">
 				</h:outputText>
 			</rich:column>
-
-			<!--  rich:column>
-				<f:facet name="header">#{messages['entry']}</f:facet>
-				<h:outputText value="#{_futureBond.entry.name}" />
-			</rich:column>
-
-			<rich:column>
-				<f:facet name="header">#{messages['municipalBond.expirationdate']}</f:facet>
-				<h:outputText value="#{_futureBond.expirationDate}">
-					<s:convertDateTime type="date" dateStyle="short"
-						pattern="#{messages['common.datePattern']}" />
-				</h:outputText>
-			</rich:column>
-
-			<rich:column styleClass="right">
-				<f:facet name="header">#{messages['municipalBond.value']}</f:facet>
-				<h:outputText value="#{_futureBond.value}" />
-			</rich:column>
-
-			<f:facet name="footer">
-				<rich:columnGroup>
-					<rich:column colspan="2">
-						<h:outputText
-							value="#{messages['municipalbond.totalFutureYears']}" />
-					</rich:column>
-					<rich:column styleClass="right">
-						<h:outputText value="#{municipalBondCondition.totalFutereBond}">
-							<f:convertNumber pattern="$####.00" />
-						</h:outputText>
-					</rich:column>
-				</rich:columnGroup>
-			</f:facet>
--->
+			
 		</rich:dataTable>
 	</rich:panel>
 </ui:composition>
