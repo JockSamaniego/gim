@@ -366,7 +366,6 @@ public class IncomeServiceBean implements IncomeService {
 		Long PAID_STATUS_ID = systemParameterService.findParameter(PAID_BOND_STATUS);
 		
 		Long SUBSCRIPTION_STATUS_ID = systemParameterService.findParameter(SUBSCRIPTION_BOND_STATUS);
-		sd
 		for (Deposit deposit : deposits) {
 			MunicipalBond municipalBond = deposit.getMunicipalBond();
 			/*System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE "

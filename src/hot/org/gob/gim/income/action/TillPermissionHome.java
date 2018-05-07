@@ -613,59 +613,46 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		String strListEmaalEp = systemParameterService
 				.findParameter(ENTRIES_EMAALEP_LIST);
 
-		String ssql = "select sum(i.total) as totalAccounts, "
-				+ "case when re.interest is null then 0 else re.interest end, "
-				+ "case when re.surcharge is null then 0 else re.surcharge end, "
-				+ "case when re.discount is null then 0 else re.discount end, "
-				+ "case when re.taxestotal is null then 0 else re.taxestotal end, "
-				+ "case when re1.paymentAgreements is null then 0 else re1.paymentAgreements end "
-				+ "from payment p "
-				+ "inner join deposit d on p.id = d.payment_id "
-				+ "inner join item i on d.municipalbond_id = i.municipalbond_id "
-				+ "inner join municipalbond mb on mb.id = i.municipalbond_id "
-				+ "left join (select p1.cashier_id as cashier_id , sum(mb1.interest)as interest,  sum(mb1.surcharge) as surcharge, sum(mb1.discount) as discount, sum(mb1.taxestotal) as taxestotal "
-				+ "from payment p1 "
-				+ "inner join deposit d1 on p1.id = d1.payment_id "
-				+ "inner join municipalbond mb1 on mb1.id = d1.municipalbond_id "
-				+ "where p1.date between '"
-				+ t.getWorkday().getDate()
-				+ "' and '"
-				+ t.getWorkday().getDate()
-				+ "' "
-				+ "and mb1.paymentagreement_id IS NULL "
-				+ "and p1.status = 'VALID' "
-				+ "and mb1.entry_id  not in ("
-				+ strListEmaalEp
-				+ ") "
-				+ "group by p1.cashier_id)re on re.cashier_id = p.cashier_id "
-				+"left JOIN(select sum(d.value) as paymentAgreements, " 
-							+"p.cashier_id "
-							+"from payment p inner join deposit d on p.id = d.payment_id " 
-							+"inner join municipalbond mb on mb.id = d.municipalbond_id "
-							+"where p.date between '"
-							+ t.getWorkday().getDate()
-							+ "' and '"
-							+ t.getWorkday().getDate() 
-							+ "' "
-							+"and mb.paymentagreement_id is not NULL "
-							+"and p.status = 'VALID' "
-							+"and mb.entry_id not in ("
-							+ strListEmaalEp
-							+ ") "
-							+"GROUP BY p.cashier_id) re1 on re1.cashier_id = p.cashier_id "
-				+ "where p.date between '"
-				+ t.getWorkday().getDate()
-				+ "' and '"
-				+ t.getWorkday().getDate()
-				+ "' "
-				+ "and mb.paymentagreement_id IS NULL "
-				+ "and p.cashier_id = "
-				+ t.getPerson().getId()
-				+ " and p.status = 'VALID' "
-				+ "and i.entry_id not in ("
-				+ strListEmaalEp
-				+ ") "
-				+ "GROUP BY re.interest,re.surcharge, re.discount, re.taxestotal, re1.paymentAgreements ";
+		String ssql = "select 	COALESCE(re.capital,0.00) totalAccounts, "
+								+"COALESCE(re.interest, 0.00) interest, "
+								+"COALESCE(re.surcharge, 0.00) surcharge, "
+								+"COALESCE(re.discount, 0.00) discount, "
+								+"COALESCE(re.taxestotal, 0.00) taxestotal, "
+								+"COALESCE(re1.paymentAgreements, 0.00) paymentAgreements "
+							+"from payment p " 
+							+"inner join deposit d on p.id = d.payment_id " 
+							+"inner join item i on d.municipalbond_id = i.municipalbond_id " 
+							+"inner join municipalbond mb on mb.id = i.municipalbond_id " 
+							+ "left join (select "
+											+"p1.cashier_id as cashier_id , " 
+											+"sum(d1.capital)as capital, "
+											+"sum(d1.interest)as interest, "  
+											+"sum(d1.surcharge) as surcharge, " 
+											+"sum(d1.discount) as discount, " 
+											+"sum(d1.paidtaxes) as taxestotal " 
+									+ "from payment p1 "
+									+ "inner join deposit d1 on p1.id = d1.payment_id "
+									+ "inner join municipalbond mb1 on mb1.id = d1.municipalbond_id "
+									+ "where p1.date between '"+ t.getWorkday().getDate()+ "' and '"+ t.getWorkday().getDate()+ "' "
+									+ "and mb1.paymentagreement_id IS NULL "
+									+ "and p1.status = 'VALID' "
+									+ "and mb1.entry_id  not in ("+ strListEmaalEp+ ") "
+									+ "group by p1.cashier_id)re on re.cashier_id = p.cashier_id "
+							+"left JOIN(select sum(d.value) as paymentAgreements, " 
+												+"p.cashier_id "
+										+"from payment p inner join deposit d on p.id = d.payment_id " 
+										+"inner join municipalbond mb on mb.id = d.municipalbond_id "
+										+"where p.date between '"+ t.getWorkday().getDate()+ "' and '"+ t.getWorkday().getDate()+ "' "
+										+"and mb.paymentagreement_id is not NULL "
+										+"and p.status = 'VALID' "
+										+"and mb.entry_id not in ("+ strListEmaalEp+ ") "
+										+"GROUP BY p.cashier_id) re1 on re1.cashier_id = p.cashier_id "
+							+ "where p.date between '"+ t.getWorkday().getDate()+ "' and '"	+ t.getWorkday().getDate()+ "' "
+							+ "and mb.paymentagreement_id IS NULL "
+							+ "and p.cashier_id = "	+ t.getPerson().getId()
+							+ " and p.status = 'VALID' "
+							+ "and i.entry_id not in ("	+ strListEmaalEp+ ") "
+							+ "GROUP BY re.capital,re.interest,re.surcharge, re.discount, re.taxestotal, re1.paymentAgreements ";
 
 		query = getEntityManager().createNativeQuery(ssql);
 
