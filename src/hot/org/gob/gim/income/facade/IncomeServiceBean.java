@@ -273,9 +273,7 @@ public class IncomeServiceBean implements IncomeService {
 		Workday workday = findActiveWorkday();
 		Long COMPENSATION_STATUS_ID = systemParameterService.findParameter(COMPENSATION_BOND_STATUS);
 		for (MunicipalBond municipalBond : municipalBonds) {
-			//@author
-			//para abonos
-			setToNextStatus(municipalBond, COMPENSATION_STATUS_ID, tillId, workday.getDate(), "");
+			setToNextStatus(municipalBond, COMPENSATION_STATUS_ID, tillId, workday.getDate());
 		}
 	}
 
@@ -379,8 +377,25 @@ public class IncomeServiceBean implements IncomeService {
 			// @tag recaudacionesCoactivas
 			createMunicipalBondsAux(deposit, municipalBond, paymentMethod);
 			
+			//agregado para abonos
+			if(paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+				
+				Query query = entityManager.createQuery("Select m from MunicipalBond m where id=:id");
+				query.setParameter("id", municipalBond.getId());				
+				MunicipalBond municipalBondUpdate = (MunicipalBond) query.getSingleResult();
+				
+				
+				query = entityManager.createNamedQuery("MunicipalBondStatus.findById");
+				query.setParameter("id", SUBSCRIPTION_STATUS_ID);
+				MunicipalBondStatus subscriptionBondStatus = (MunicipalBondStatus) query.getSingleResult();
+
+				municipalBondUpdate.setMunicipalBondStatus(subscriptionBondStatus);
+				entityManager.merge(municipalBondUpdate);
+			}
+			//fin abonos
+			
 			if (deposit.getBalance().compareTo(BigDecimal.ZERO) == 0) {
-				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId, deposit.getDate(), paymentMethod);
+				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId, deposit.getDate());
 			}
 		}
 		Date rightNow = new Date();
@@ -614,18 +629,11 @@ public class IncomeServiceBean implements IncomeService {
 		return response;
 	}
 
-	//@author macartuche
-	//agregar el metodo de pago
-	private void setToNextStatus(MunicipalBond municipalBond, Long nextStatusId, Long tillId, Date paymentDate, String paymentMethod)
+	private void setToNextStatus(MunicipalBond municipalBond, Long nextStatusId, Long tillId, Date paymentDate)
 			throws Exception {
 		if (municipalBond != null && municipalBond.getId() != null) {
 			MunicipalBondStatus paidStatus = systemParameterService.materialize(MunicipalBondStatus.class,
-					PAID_BOND_STATUS);
-			
-			//agregar abonos
-			MunicipalBondStatus subscriptionStatus = systemParameterService.materialize(MunicipalBondStatus.class,
-					SUBSCRIPTION_BOND_STATUS);
-			
+					PAID_BOND_STATUS);		
 			Long statusId;
 			MunicipalBondStatus statusIdPrevious;
 			Branch branch = findBranchByTillId(tillId);

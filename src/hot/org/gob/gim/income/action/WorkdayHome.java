@@ -29,8 +29,6 @@ import javax.persistence.Query;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.GimUtils;
-import org.gob.gim.common.NativeQueryResultColumn;
-import org.gob.gim.common.NativeQueryResultEntity;
 import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.MunicipalBondUtil;
@@ -51,7 +49,6 @@ import org.jboss.seam.log.Log;
 import org.richfaces.model.TreeNode;
 import org.richfaces.model.TreeNodeImpl;
 
-import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FinancialStatus;
