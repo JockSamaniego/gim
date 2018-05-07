@@ -3,7 +3,6 @@ package ec.gob.gim.security.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -74,6 +73,9 @@ public class MunicipalbondAux {
 	//interest - surcharge -capital - taxes
 	private String type;
 	
+	//@author macartuche
+	//agregado para abonos (SUBSCRIPTION - AGREEMENT)
+	private String typepayment;
  
 	private Boolean anotherItem;
 
@@ -186,6 +188,17 @@ public class MunicipalbondAux {
 	public void setAnotherItem(Boolean anotherItem) {
 		this.anotherItem = anotherItem;
 	}
-	
-	
+
+
+	public String getTypepayment() {
+		return typepayment;
+	}
+
+
+	public void setTypepayment(String typepayment) {
+		this.typepayment = typepayment;
+	}
+
+
+ 
 }
