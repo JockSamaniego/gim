@@ -1296,10 +1296,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 			//4 rubros
 			//interes
-			List<MunicipalbondAux> ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "I", PaymentMethod.AGREEMENT.name());
+			List<MunicipalbondAux> ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "I", PaymentMethod.SUBSCRIPTION.name());
 			if(ratesList.isEmpty() ){ //si no hay elementos no se ha pagado o no se termina de pagar
 				plainResult = calculateRate3(incomeService, municipalBond, "I", 
-									municipalBond.getInterest(), remaining, deposit, PaymentMethod.AGREEMENT.name());				
+									municipalBond.getInterest(), remaining, deposit, PaymentMethod.SUBSCRIPTION.name());				
 				remaining 	= (BigDecimal)plainResult.get("remaining");
 				value 		= (BigDecimal)plainResult.get("value");			
 				hasConflict = (Boolean)plainResult.get("hasConflict");			
@@ -1315,11 +1315,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			//recargos
 			value = BigDecimal.ZERO;
 			if(!hasConflict){
-				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "S", PaymentMethod.AGREEMENT.name());
+				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "S", PaymentMethod.SUBSCRIPTION.name());
 				if(ratesList.isEmpty()){ //si no hay elementos no se ha pagado o no se termina de pagar
 					value = BigDecimal.ZERO;
 					plainResult = calculateRate3(incomeService, municipalBond, "S", 
-										municipalBond.getSurcharge(), remaining, deposit, PaymentMethod.AGREEMENT.name());
+										municipalBond.getSurcharge(), remaining, deposit, PaymentMethod.SUBSCRIPTION.name());
 					remaining 	= (BigDecimal)plainResult.get("remaining");
 					value 		= (BigDecimal)plainResult.get("value");	
 					hasSurcharge= true;
@@ -1334,11 +1334,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			//impuestos
 			value = BigDecimal.ZERO;
 			if(!hasConflict){
-				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "T", PaymentMethod.AGREEMENT.name());
+				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "T", PaymentMethod.SUBSCRIPTION.name());
 				if(ratesList.isEmpty()){ //si no hay elementos no se ha pagado o no se termina de pagar
 					value = BigDecimal.ZERO;
 					plainResult = calculateRate3(incomeService, municipalBond, "T", 
-										municipalBond.getTaxesTotal(), remaining, deposit, PaymentMethod.AGREEMENT.name());
+										municipalBond.getTaxesTotal(), remaining, deposit, PaymentMethod.SUBSCRIPTION.name());
 					remaining 	= (BigDecimal)plainResult.get("remaining");
 					value 		= (BigDecimal)plainResult.get("value");	
 					hasTaxes	=true;
@@ -1354,11 +1354,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			//capital
 			value = BigDecimal.ZERO;
 			if(!hasConflict){
-				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "C", PaymentMethod.AGREEMENT.name());
+				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "C", PaymentMethod.SUBSCRIPTION.name());
 				if(ratesList.isEmpty()){ //si no hay elementos no se ha pagado o no se termina de pagar			
 					deposit.setDiscount(municipalBond.getDiscount());
 					plainResult = calculateRate3(incomeService, municipalBond, "C", 
-										municipalBond.getBalance(), remaining, deposit, PaymentMethod.AGREEMENT.name());
+										municipalBond.getBalance(), remaining, deposit, PaymentMethod.SUBSCRIPTION.name());
 					remaining 	= (BigDecimal)plainResult.get("remaining");
 					value 		= (BigDecimal)plainResult.get("value");
 					hasConflict = (Boolean)plainResult.get("hasConflict");
@@ -1489,7 +1489,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 				List<MunicipalbondAux> list = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID","I", PaymentMethod.AGREEMENT.name());
 				
 				if(list.isEmpty()){
-					sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", "I");					
+					sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", "I", PaymentMethod.AGREEMENT.name());					
 					if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
 						BigDecimal temp = remaining.add(sum);			
 						if(temp.compareTo(municipalBond.getInterest()) >= 0)
@@ -1848,7 +1848,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		if(itemType != "C"){
 			List<MunicipalbondAux> ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", itemType, paymentMethod);
 			if(ratesList.isEmpty()){
-				sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", itemType);					
+				sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", itemType, paymentMethod);					
 				if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
 					BigDecimal temp = remaining.add(sum);			
 					if(temp.compareTo(sum) >= 0){
@@ -1919,7 +1919,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		if(itemType != "C"){
 			List<MunicipalbondAux> ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", itemType, paymentMethod);
 			if(ratesList.isEmpty()){
-				sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", itemType);					
+				sum = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID", itemType, paymentMethod);					
 				if(sum!=null && sum.compareTo(BigDecimal.ZERO)>=0){
 					BigDecimal temp = remaining.add(sum);			
 					if(temp.compareTo(sum) >= 0){

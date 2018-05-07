@@ -45,6 +45,8 @@ public interface IncomeService {
 	
 	public final String FUTURE_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_FUTURE";
 	
+	//@author macartuche
+	public final String SUBSCRIPTION_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION";
 	
 	public final String ENABLE_RECEIPT_GENERATION = "ENABLE_RECEIPT_GENERATION";
 	public final String ELECTRONIC_INVOICE_ENABLE = "ELECTRONIC_INVOICE_ENABLE";
@@ -128,7 +130,7 @@ public interface IncomeService {
 	//@date 2016-07-08T15:25:11
 	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long id, Boolean coverInterest, String status, String type, String paymentType);
 	
-	public BigDecimal sumAccumulatedInterest(Long id, Boolean coverInterest, String status, String type);
+	public BigDecimal sumAccumulatedInterest(Long id, Boolean coverInterest, String status, String type, String paymentType);
 	
 	//Jock Samaniego
 	//actualizar estado de convenios 21/09/2016

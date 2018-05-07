@@ -62,6 +62,7 @@ import ec.gob.gim.income.model.LegalStatus;
 import ec.gob.gim.income.model.Payment;
 import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.income.model.PaymentFraction;
+import ec.gob.gim.income.model.PaymentMethod;
 import ec.gob.gim.income.model.PaymentType;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.ReceiptAuthorization;
@@ -272,7 +273,9 @@ public class IncomeServiceBean implements IncomeService {
 		Workday workday = findActiveWorkday();
 		Long COMPENSATION_STATUS_ID = systemParameterService.findParameter(COMPENSATION_BOND_STATUS);
 		for (MunicipalBond municipalBond : municipalBonds) {
-			setToNextStatus(municipalBond, COMPENSATION_STATUS_ID, tillId, workday.getDate());
+			//@author
+			//para abonos
+			setToNextStatus(municipalBond, COMPENSATION_STATUS_ID, tillId, workday.getDate(), "");
 		}
 	}
 
@@ -361,6 +364,9 @@ public class IncomeServiceBean implements IncomeService {
 	public void save(List<Deposit> deposits, Long paymentAgreementId, Long tillId, String paymentMethod) throws Exception {
 		// System.out.println("\n\nInicia grabacion");
 		Long PAID_STATUS_ID = systemParameterService.findParameter(PAID_BOND_STATUS);
+		
+		Long SUBSCRIPTION_STATUS_ID = systemParameterService.findParameter(SUBSCRIPTION_BOND_STATUS);
+		sd
 		for (Deposit deposit : deposits) {
 			MunicipalBond municipalBond = deposit.getMunicipalBond();
 			/*System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE "
@@ -372,9 +378,9 @@ public class IncomeServiceBean implements IncomeService {
 			// @date 2016-06-21
 			// @tag recaudacionesCoactivas
 			createMunicipalBondsAux(deposit, municipalBond, paymentMethod);
-
+			
 			if (deposit.getBalance().compareTo(BigDecimal.ZERO) == 0) {
-				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId, deposit.getDate());
+				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId, deposit.getDate(), paymentMethod);
 			}
 		}
 		Date rightNow = new Date();
@@ -389,7 +395,7 @@ public class IncomeServiceBean implements IncomeService {
 		Boolean itemIsPayed = false;
 
 		if (dep.getInterest().compareTo(BigDecimal.ZERO) > 0) {
-			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "I");
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "I", paymentMethod);
 			itemValue = mb.getInterest();
 			depositValue = dep.getInterest();
 			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
@@ -400,7 +406,7 @@ public class IncomeServiceBean implements IncomeService {
 				itemIsPayed = true;
 			}
 
-			if (mb.getPaymentAgreement() != null) {
+			if (mb.getPaymentAgreement() != null || paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
 				//si item esta pagado poner valor a true
 				if(itemIsPayed)
 					updateMunicipalbondAux(mb, "I");
@@ -416,7 +422,7 @@ public class IncomeServiceBean implements IncomeService {
 		itemIsPayed = false;
 
 		if (dep.getCapital().compareTo(BigDecimal.ZERO) > 0) {
-			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "C");
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "C", paymentMethod);
 			itemValue = mb.getBalance();
 			depositValue = dep.getCapital();
 			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
@@ -427,7 +433,7 @@ public class IncomeServiceBean implements IncomeService {
 				itemIsPayed = true;
 			}
 
-			if (mb.getPaymentAgreement() != null) {
+			if (mb.getPaymentAgreement() != null || paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
 				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "C", paymentMethod);
 				entityManager.persist(munAux);
 			}
@@ -439,7 +445,7 @@ public class IncomeServiceBean implements IncomeService {
 		itemIsPayed = false;
 
 		if (dep.getPaidTaxes().compareTo(BigDecimal.ZERO) > 0) {
-			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "T");
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "T", paymentMethod);
 			itemValue = mb.getTaxesTotal();
 			depositValue = dep.getPaidTaxes();
 			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
@@ -450,7 +456,7 @@ public class IncomeServiceBean implements IncomeService {
 				itemIsPayed = true;
 			}
 
-			if (mb.getPaymentAgreement() != null) {
+			if (mb.getPaymentAgreement() != null || paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
 				if(itemIsPayed)
 					updateMunicipalbondAux(mb, "T");
 				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "T", paymentMethod);
@@ -464,7 +470,7 @@ public class IncomeServiceBean implements IncomeService {
 		itemIsPayed = false;
 
 		if (dep.getSurcharge().compareTo(BigDecimal.ZERO) > 0) {
-			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "S");
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "S", paymentMethod);
 			itemValue = mb.getSurcharge();
 			depositValue = dep.getSurcharge();
 			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
@@ -475,7 +481,7 @@ public class IncomeServiceBean implements IncomeService {
 				itemIsPayed = true;
 			}
 
-			if (mb.getPaymentAgreement() != null) {
+			if (mb.getPaymentAgreement() != null || paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
 				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "S", paymentMethod);
 				entityManager.persist(munAux);
 			}
@@ -608,11 +614,18 @@ public class IncomeServiceBean implements IncomeService {
 		return response;
 	}
 
-	private void setToNextStatus(MunicipalBond municipalBond, Long nextStatusId, Long tillId, Date paymentDate)
+	//@author macartuche
+	//agregar el metodo de pago
+	private void setToNextStatus(MunicipalBond municipalBond, Long nextStatusId, Long tillId, Date paymentDate, String paymentMethod)
 			throws Exception {
 		if (municipalBond != null && municipalBond.getId() != null) {
 			MunicipalBondStatus paidStatus = systemParameterService.materialize(MunicipalBondStatus.class,
 					PAID_BOND_STATUS);
+			
+			//agregar abonos
+			MunicipalBondStatus subscriptionStatus = systemParameterService.materialize(MunicipalBondStatus.class,
+					SUBSCRIPTION_BOND_STATUS);
+			
 			Long statusId;
 			MunicipalBondStatus statusIdPrevious;
 			Branch branch = findBranchByTillId(tillId);
@@ -1692,7 +1705,7 @@ public class IncomeServiceBean implements IncomeService {
 	 * @tag recaudacionCoactivas Suma de los intereses que se acumulan por
 	 *      abonos menores al interes
 	 */
-	public BigDecimal sumAccumulatedInterest(Long municipalbondId, Boolean coverInterest, String status, String type) {
+	public BigDecimal sumAccumulatedInterest(Long municipalbondId, Boolean coverInterest, String status, String type, String paymentType) {
 
 		String query = " Select SUM(mba.payValue) from MunicipalbondAux mba "
 				+ " where mba.municipalbond.id=:munid and " + " mba.coveritem=:cover and " + " mba.status=:status and"
