@@ -1383,6 +1383,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			//calcular el balance del municipalBond
 			BigDecimal  balance  = municipalBond.getBalance().subtract(deposit.getCapital());		
 			deposit.setBalance(balance);
+			deposit.setValue(deposit.getCapital().add(deposit.getInterest()).add(deposit.getPaidTaxes())
+					.add(deposit.getSurcharge()).subtract(deposit.getDiscount()));
 			municipalBond.add(deposit);
 			this.getInstance().add(deposit);
 			
