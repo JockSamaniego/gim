@@ -419,6 +419,8 @@ public class IncomeServiceBean implements IncomeService {
 					itemIsPayed = true;
 			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
 				itemIsPayed = true;
+			}else if(sum == null && depositValue.compareTo(itemValue) >= 0 && paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+				itemIsPayed = true;
 			}
 
 			if (mb.getPaymentAgreement() != null || paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
@@ -446,6 +448,8 @@ public class IncomeServiceBean implements IncomeService {
 					itemIsPayed = true;
 			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
 				itemIsPayed = true;
+			}else if(sum == null && depositValue.compareTo(itemValue) >= 0 && paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+				itemIsPayed = true;
 			}
 
 			if (mb.getPaymentAgreement() != null || paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
@@ -468,6 +472,8 @@ public class IncomeServiceBean implements IncomeService {
 				if (temp.compareTo(itemValue) >= 0)
 					itemIsPayed = true;
 			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
+				itemIsPayed = true;
+			}else if(sum == null && depositValue.compareTo(itemValue) >= 0 && paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
 				itemIsPayed = true;
 			}
 
@@ -493,6 +499,8 @@ public class IncomeServiceBean implements IncomeService {
 				if (temp.compareTo(itemValue) >= 0)
 					itemIsPayed = true;
 			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
+				itemIsPayed = true;
+			}else if(sum == null && depositValue.compareTo(itemValue) >= 0 && paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
 				itemIsPayed = true;
 			}
 
