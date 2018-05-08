@@ -1202,7 +1202,7 @@ public class IncomeServiceBean implements IncomeService {
 		Long PENDING_STATUS_ID = systemParameterService.findParameter(PENDING_BOND_STATUS);
 		Long PAYMENT_AGREEMENT_STATUS_ID = systemParameterService.findParameter(IN_PAYMENT_AGREEMENT_BOND_STATUS);
 		//rfam 2018-05-07 pagos en abonos
-		Long SUBSCRIPTION_STATUS_ID = systemParameterService.findParameter(SUBSCRIPTION_BOND_STATUS);
+		//Long SUBSCRIPTION_STATUS_ID = systemParameterService.findParameter(SUBSCRIPTION_BOND_STATUS);
 		// boolean IS_ELECTRONIC_INVOIVE_ENABLE = systemParameterService
 		// .findParameter(ELECTRONIC_INVOICE_ENABLE);
 		for (BigInteger biid : municipalBonds) {
@@ -1219,7 +1219,28 @@ public class IncomeServiceBean implements IncomeService {
 			}
 		}
 		if (municipalBondIds.size() > 0) {
+			//todo verificar q se ha
 			persistChangeStatus(municipalBondIds, municipalBondStatusId, PENDING_STATUS_ID,
+					PAYMENT_AGREEMENT_STATUS_ID);
+		}
+		
+		//rfam reverso abonos 2018-05-08
+		query = entityManager.createNativeQuery(
+				"SELECT d.municipalBond_id " + 
+				"FROM gimprod.Deposit d " + 
+				"inner join gimprod.municipalbond mb on d.municipalbond_id = mb.id " + 
+				"WHERE d.id IN (:depositIds) and mb.municipalbondstatus_id = 14");
+		query.setParameter("depositIds", depositIds);
+		List<BigInteger> subscriptionBonds = query.getResultList(); 
+		List<Long> subscriptionBondsIds = new ArrayList<Long>();	
+		
+		for (BigInteger biid : subscriptionBonds) {
+			Long municipalBondId = biid.longValue();
+			subscriptionBondsIds.add(municipalBondId);			
+		}
+		
+		if (subscriptionBondsIds.size() > 0) {
+			persistChangeStatus(subscriptionBondsIds, municipalBondStatusId, PENDING_STATUS_ID,
 					PAYMENT_AGREEMENT_STATUS_ID);
 		}
 	}
@@ -1233,11 +1254,17 @@ public class IncomeServiceBean implements IncomeService {
 
 		query.setParameter("id", PAYMENT_AGREEMENT_STATUS_ID);
 		MunicipalBondStatus paymentAgreementStatus = (MunicipalBondStatus) query.getSingleResult();
+		
+		//rfam 2018-05-07 pagos en abonos
+		Long SUBSCRIPTION_STATUS_ID = systemParameterService.findParameter(SUBSCRIPTION_BOND_STATUS);
+		query.setParameter("id", SUBSCRIPTION_STATUS_ID);
+		MunicipalBondStatus subscriptiontStatus = (MunicipalBondStatus) query.getSingleResult();
 				
 		query = entityManager.createNamedQuery("MunicipalBond.findByIdsToChangeStatus");
 		query.setParameter("municipalBondIds", municipalBondIds);
 		List<MunicipalBond> municipalBonds = query.getResultList();
 		for (MunicipalBond mb : municipalBonds) {
+			MunicipalBondStatus currentStatus = mb.getMunicipalBondStatus();
 			mb.setMunicipalBondStatus(newBondStatus);
 			if (newBondStatus.getId().longValue() == PENDING_STATUS_ID.longValue()) {
 				mb.setLiquidationDate(null);
@@ -1247,10 +1274,42 @@ public class IncomeServiceBean implements IncomeService {
 					reactivatePaymentAgreement(mb.getPaymentAgreement().getId());
 				}
 				mb.setPrintingsNumber(0);
+				
+				//para el caso q liquide y tenga abonos, debe retornar a abono
+				if(!isSubscriptionBondReverseToPending(mb.getId().longValue())) {
+					mb.setMunicipalBondStatus(subscriptiontStatus);
+				}
+				
+				// identificar q es un abono rfam 2018-05-07
+				// e identificar si se pone a 3 o conserva el mismo porq ya tiene abonos previos
+				/*if (currentStatus.getId().longValue() == SUBSCRIPTION_STATUS_ID) {
+					if(!isSubscriptionBondReverseToPending(mb.getId().longValue())) {
+						mb.setMunicipalBondStatus(subscriptiontStatus);
+					}
+				}*/
 			} else {
 				mb.setLiquidationDate(null);
 				mb.setLiquidationTime(null);
 			}
+		}
+	}
+	/**
+	 * Determina el estado para el reverso de una obligacion de pago en abono
+	 * @param mb
+	 * @return
+	 */
+	private Boolean isSubscriptionBondReverseToPending(Long mbId) {
+		String sql = "select count(dep) from deposit dep where dep.municipalbond_id = :mbId and dep.status = :status";
+		Query query = entityManager.createNativeQuery(sql);
+		query.setParameter("mbId", mbId);
+		query.setParameter("status", "VALID");
+		BigInteger count = (BigInteger) query.getSingleResult();
+		if (count.intValue() > 1) {
+			// se queda en 14
+			return false;
+		} else {
+			// pasa a pendiente
+			return true;
 		}
 	}
 
