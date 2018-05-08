@@ -63,6 +63,7 @@ import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.CreditNote;
 import ec.gob.gim.income.model.Deposit;
+import ec.gob.gim.income.model.EntryTotalCollected;
 import ec.gob.gim.income.model.Payment;
 import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.income.model.PaymentFraction;
@@ -92,6 +93,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 	Log logger;
 
 	private List<MunicipalBondItem> municipalBondItems = new ArrayList<MunicipalBondItem>();
+	
+	private List<MunicipalBondItem> municipalBondSubscriptionsItems = new ArrayList<MunicipalBondItem>();
 
 	private List<MunicipalBond> municipalBonds;
 
@@ -411,6 +414,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 			for (MunicipalBondItem mbi : municipalBondItems) {
 				mbi.calculateTotals(null, null, null);
 			}
+			this.municipalBondSubscriptionsItems = findPendingMunicipalBondSubscriptionsItems(resident.getId());
+			for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
+				mbi.calculateTotals(null, null, null);
+			}
 		} catch (EntryDefinitionNotFoundException e) {
 			String message = Interpolator.instance()
 					.interpolate("#{messages['entryDefinition.entryDefinitionNotFoundException']}", new Object[0]);
@@ -643,6 +650,32 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		return root.getMunicipalBondItems();
 	}
 	
+	//Jock samaniego.. obligaciones con abonos..........
+	
+	private List<MunicipalBondItem> findPendingMunicipalBondSubscriptionsItems(Long residentId) throws Exception {
+
+		MunicipalBondItem root = new MunicipalBondItem(null);
+
+		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+		List<MunicipalBond> mbs = incomeService.findPendingBondsSubscriptions(residentId);
+		incomeService.calculatePayment(mbs, new Date(), true, true);
+		impugnmentsTotal = new ArrayList<Impugnment>();
+		for (MunicipalBond municipalBond : mbs) {
+			//System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE " + municipalBond.getTaxableTotal()
+					//+ " TAXES TOTAL " + municipalBond.getTaxesTotal());
+			String entryId = municipalBond.getEntry().getId().toString();
+			MunicipalBondItem item = root.findNode(entryId, municipalBond);
+
+			String groupingCode = municipalBond.getGroupingCode();
+			MunicipalBondItem groupingItem = item.findNode(groupingCode, municipalBond);
+
+			MunicipalBondItem mbi = new MunicipalBondItem(municipalBond);
+			groupingItem.add(mbi);
+			findPendingsImpugnments(municipalBond.getId());
+		}
+		return root.getMunicipalBondItems();
+	}
+	
 	//Jock Samaniego
 	//Para bloquear emisión
 	private Boolean isBlocketToCollect = Boolean.FALSE;
@@ -819,6 +852,27 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		}
 		this.getInstance().setValue(paidTotal);
 	}
+	
+	//Jock samaniego
+	
+	public void calculatePaidTotalSubscriptions(){
+		isFullPayment = Boolean.TRUE;
+		BigDecimal paidTotal = BigDecimal.ZERO;
+
+		if (this.isFullPayment) {
+			//System.out.println("" + municipalBondItems.size());
+			if (municipalBondSubscriptionsItems != null) {
+				for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
+					paidTotal = paidTotal.add(mbi.calculatePaymentTotal());
+				}
+			}
+		} else {
+			if (hasConflict != null && !hasConflict) {
+				paidTotal = depositTotal;
+			}
+		}
+		this.getInstance().setValue(paidTotal);
+	}
 
 	/**
 	 * mac
@@ -979,6 +1033,15 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 
 	public void setMunicipalBondItems(List<MunicipalBondItem> municipalBondItems) {
 		this.municipalBondItems = municipalBondItems;
+	}
+	
+	public List<MunicipalBondItem> getMunicipalBondSubscriptionsItems() {
+		return municipalBondSubscriptionsItems;
+	}
+
+	public void setMunicipalBondSubscriptionsItems(
+			List<MunicipalBondItem> municipalBondSubscriptionsItems) {
+		this.municipalBondSubscriptionsItems = municipalBondSubscriptionsItems;
 	}
 
 	public Boolean getAllBondsSelected() {
@@ -2731,6 +2794,26 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 		query.setParameter("name", "");
 		SystemParameter controlStates = (SystemParameter) query.getSingleResult();*/
 		states = controlStates.trim().split(",");
+	}
+	
+	//Jock samaniego... buscar abonos por obligacion
+	private String groupBy;
+	public List<EntryTotalCollected> getTotalDepositsInSubscriptionByMB(Long mb_id) {
+
+		if (groupBy == null)
+			groupBy = "ac.accountCode";
+
+		String sql = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id,count(d.id), e.name,"
+				+ groupBy
+				+ ", SUM(d.value), "
+				+ " SUM(d.interest), SUM(d.paidTaxes)) from Deposit d join d.municipalBond m "
+				+ "join m.entry e left join e.account ac "
+				+ "where m.id =:mb_id "
+				+ " GROUP BY e.id, e.name," + groupBy + " ORDER BY " + groupBy;
+
+		Query query = getEntityManager().createQuery(sql);
+		query.setParameter("mb_id", mb_id);
+		return query.getResultList();
 	}
 
 	public List<Impugnment> getImpugnmentsTotal() {

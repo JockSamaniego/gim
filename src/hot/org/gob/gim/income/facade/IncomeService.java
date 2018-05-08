@@ -39,7 +39,6 @@ public interface IncomeService {
 	public final String PAID_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_PAID";
 	public final String PAID_FROM_EXTERNAL_CHANNEL_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL";
 	public final String COMPENSATION_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_COMPENSATION";
-	public final String SUBSCRIPTION_BOND_STATUS= "MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION";
 	
 	public final String REVERSED_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_REVERSED"; 
 	public final String VOID_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_VOID";
@@ -84,6 +83,7 @@ public interface IncomeService {
 	public void updateMunicipalBonds(List<MunicipalBond> bonds);
 	
 	public List<MunicipalBond> findPendingBonds(Long residentId);
+	public List<MunicipalBond> findPendingBondsSubscriptions(Long residentId);
 	public List<MunicipalBond> findOnlyPendingBonds(Long residentId);
 	public List<MunicipalBond> findOnlyPendingBonds(Long residentId, Long EntryId);	
 	public List<MunicipalBond> findOnlyPendingAndInAgreementBonds(Long residentId);
