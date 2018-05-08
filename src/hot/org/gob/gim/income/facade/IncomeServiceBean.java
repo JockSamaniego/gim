@@ -1409,6 +1409,9 @@ public class IncomeServiceBean implements IncomeService {
 		query.setParameter("residentId", residentId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
+		
+		System.out.println(residentId);
+		System.out.println(statuses);
 		return query.getResultList();
 	}
 
