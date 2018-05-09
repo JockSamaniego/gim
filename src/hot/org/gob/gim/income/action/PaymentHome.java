@@ -404,6 +404,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			for (MunicipalBondItem mbi : municipalBondItems) {
 				mbi.calculateTotals(null, null, null);
 			}
+			//@author Jock
 			this.municipalBondSubscriptionsItems = findPendingMunicipalBondSubscriptionsItems(resident.getId());
 			for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
 				mbi.calculateTotals(null, null, null);
@@ -1047,6 +1048,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		this.allBondsSelected = allBondsSelected;
 	}
 
+	private Boolean enableSubscription=Boolean.FALSE;
 	public void changeSelectedTab(ValueChangeEvent vce) {
 		isFullPayment = !isFullPayment;
 		if (!isFullPayment) {
@@ -1055,6 +1057,13 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		resetPaymentTotals();
 		conflictingBond = null;
 		hasConflict = false;
+		
+		//@author mack
+		//@date 2018-05-09
+		//cambio tab de abonos
+		if(vce.getNewValue().equals("municipalBondsSubscriptions")) {
+			enableSubscription = Boolean.TRUE;
+		}
 	}
 
 	public Boolean getIsFullPayment() {
@@ -1293,8 +1302,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		List<MunicipalBond> selectedBonds = getSelected();
 		List<Long> idsBonds = new ArrayList<Long>();
 
-		
-		if (municipalBondSubscriptionsItems!=null) {
+		if(this.enableSubscription) {
 			for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
 				idsBonds.add(mbi.getMunicipalBond().getId());
 			}
@@ -1303,6 +1311,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				idsBonds.add(municipalBond.getId());
 			}
 		}
+		
 		
 		Query q = this.getEntityManager().createQuery("Select m from  MunicipalBond m where m.id in (:list)");
 		q.setParameter("list", idsBonds);
