@@ -112,6 +112,10 @@ public class MunicipalBondItem {
 			clone.setGroupingCode(municipalBond.getGroupingCode());
 			clone.setMunicipalBondStatus(municipalBond.getMunicipalBondStatus());
 			clone.setAdjunct(municipalBond.getAdjunct());
+			
+			//fijado id
+			clone.setId(municipalBond.getId());
+			//
 			item = new MunicipalBondItem(clone);
 			children.put(code, item);
 		}

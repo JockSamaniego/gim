@@ -648,10 +648,13 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	
 	//Jock samaniego.. obligaciones con abonos..........
 	
+	private List<MunicipalBond> bondSuscriptionts;
 	private List<MunicipalBondItem> findPendingMunicipalBondSubscriptionsItems(Long residentId) throws Exception {
 
 		MunicipalBondItem root = new MunicipalBondItem(null);
 
+		bondSuscriptionts = new ArrayList<MunicipalBond>();
+		
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		List<MunicipalBond> mbs = incomeService.findPendingBondsSubscriptions(residentId);
 		incomeService.calculatePayment(mbs, new Date(), true, true);
@@ -2000,7 +2003,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			return result;
 		}
 
-		if (itemType != "C") {
+		//if (itemType != "C") {
 			List<MunicipalbondAux> ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true,
 					"VALID", itemType, paymentMethod);
 			if (ratesList.isEmpty()) {
@@ -2013,7 +2016,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 					}
 				}
 			}
-		}
+		//}
 
 		valueToPay = (itemHasDeposit) ? compareCase(itemValue, sum) : itemValue;
 		if (itemType.equals("C")) {
