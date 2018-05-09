@@ -36,8 +36,6 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;

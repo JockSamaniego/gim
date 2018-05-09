@@ -172,19 +172,29 @@ public class MunicipalBondItem {
 					if(municipalBondStatus == null || 
 							mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(municipalBondStatus.getId()) || 
 							parentsNumber(mbi) == 0 ||
-							mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inAgreementBondStatus.getId())){
+							mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inAgreementBondStatus.getId()) ||
+							mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inSubscriptionStatus.getId())
+							){
 						
 						if(inAgreementBondStatus!= null && mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inAgreementBondStatus.getId())){
 							value = value.add(mbi.getMunicipalBond().getPaidTotal().subtract(mbi.getMunicipalBond().getInterest()).subtract(mbi.getMunicipalBond().getSurcharge()).add(mbi.getMunicipalBond().getDiscount()));
+						}else if(inSubscriptionStatus!= null && mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inSubscriptionStatus.getId())){
+							value = value.add(mbi.getMunicipalBond().getPaidTotal().subtract(mbi.getMunicipalBond().getInterest()).subtract(mbi.getMunicipalBond().getSurcharge()).add(mbi.getMunicipalBond().getDiscount()));							
 						}else{
 							value = value.add(mbi.getMunicipalBond().getValue());							
 						}
 						
-						if(inSubscriptionStatus!= null && mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inSubscriptionStatus.getId())){
+						/*if(inAgreementBondStatus!= null && mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inAgreementBondStatus.getId())){
 							value = value.add(mbi.getMunicipalBond().getPaidTotal().subtract(mbi.getMunicipalBond().getInterest()).subtract(mbi.getMunicipalBond().getSurcharge()).add(mbi.getMunicipalBond().getDiscount()));
 						}else{
 							value = value.add(mbi.getMunicipalBond().getValue());							
-						}
+						}*/
+												
+						/*if(inSubscriptionStatus!= null && mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inSubscriptionStatus.getId())){
+							value = value.add(mbi.getMunicipalBond().getPaidTotal().subtract(mbi.getMunicipalBond().getInterest()).subtract(mbi.getMunicipalBond().getSurcharge()).add(mbi.getMunicipalBond().getDiscount()));
+						}else{
+							value = value.add(mbi.getMunicipalBond().getValue());							
+						}*/
 						
 						paidTotal = paidTotal.add(mbi.getMunicipalBond().getPaidTotal());
 						interest = interest.add(mbi.getMunicipalBond().getInterest());
