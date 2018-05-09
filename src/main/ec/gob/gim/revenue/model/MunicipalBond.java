@@ -36,8 +36,6 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -66,7 +64,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 @NamedQueries(value = {
 		@NamedQuery(name = "MunicipalBond.findByResidentIdAndTypeAndStatus", query = "SELECT DISTINCT mb FROM MunicipalBond mb "
 				+ "LEFT JOIN FETCH mb.entry e "
-				+ "LEFT JOIN FETCH mb.institution "
+				//+ "LEFT JOIN FETCH mb.institution "
 				+ "LEFT JOIN FETCH mb.municipalBondStatus mbs "
 				+ "LEFT JOIN FETCH mb.receipt "
 				+ "LEFT JOIN FETCH mb.resident res "

@@ -112,6 +112,10 @@ public class MunicipalBondItem {
 			clone.setGroupingCode(municipalBond.getGroupingCode());
 			clone.setMunicipalBondStatus(municipalBond.getMunicipalBondStatus());
 			clone.setAdjunct(municipalBond.getAdjunct());
+			
+			//fijado id
+			//clone.setId(municipalBond.getId());
+			//
 			item = new MunicipalBondItem(clone);
 			children.put(code, item);
 		}
@@ -168,19 +172,29 @@ public class MunicipalBondItem {
 					if(municipalBondStatus == null || 
 							mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(municipalBondStatus.getId()) || 
 							parentsNumber(mbi) == 0 ||
-							mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inAgreementBondStatus.getId())){
+							mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inAgreementBondStatus.getId()) ||
+							mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inSubscriptionStatus.getId())
+							){
 						
 						if(inAgreementBondStatus!= null && mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inAgreementBondStatus.getId())){
 							value = value.add(mbi.getMunicipalBond().getPaidTotal().subtract(mbi.getMunicipalBond().getInterest()).subtract(mbi.getMunicipalBond().getSurcharge()).add(mbi.getMunicipalBond().getDiscount()));
+						}else if(inSubscriptionStatus!= null && mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inSubscriptionStatus.getId())){
+							value = value.add(mbi.getMunicipalBond().getPaidTotal().subtract(mbi.getMunicipalBond().getInterest()).subtract(mbi.getMunicipalBond().getSurcharge()).add(mbi.getMunicipalBond().getDiscount()));							
 						}else{
 							value = value.add(mbi.getMunicipalBond().getValue());							
 						}
 						
-						if(inSubscriptionStatus!= null && mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inSubscriptionStatus.getId())){
+						/*if(inAgreementBondStatus!= null && mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inAgreementBondStatus.getId())){
 							value = value.add(mbi.getMunicipalBond().getPaidTotal().subtract(mbi.getMunicipalBond().getInterest()).subtract(mbi.getMunicipalBond().getSurcharge()).add(mbi.getMunicipalBond().getDiscount()));
 						}else{
 							value = value.add(mbi.getMunicipalBond().getValue());							
-						}
+						}*/
+												
+						/*if(inSubscriptionStatus!= null && mbi.getMunicipalBond().getMunicipalBondStatus().getId().equals(inSubscriptionStatus.getId())){
+							value = value.add(mbi.getMunicipalBond().getPaidTotal().subtract(mbi.getMunicipalBond().getInterest()).subtract(mbi.getMunicipalBond().getSurcharge()).add(mbi.getMunicipalBond().getDiscount()));
+						}else{
+							value = value.add(mbi.getMunicipalBond().getValue());							
+						}*/
 						
 						paidTotal = paidTotal.add(mbi.getMunicipalBond().getPaidTotal());
 						interest = interest.add(mbi.getMunicipalBond().getInterest());
