@@ -295,6 +295,12 @@
 						<ui:include src="fragment/MunicipalBondsFutureTable.xhtml" />
 
 					</rich:tab>
+					<rich:tab id="municipalBondsSubscriptions"
+						label="Cuentas por abonos" ajaxSingle="true"
+						rendered="#{not empty paymentHome.municipalBondSubscriptionsItems}"
+						reRender="totalsPanel, municipalBondsPanel">
+						<ui:include src="fragment/MunicipalBondsSubscriptionsTable.xhtml" />
+					</rich:tab>
 				</rich:tabPanel>
 			</a:outputPanel>
 

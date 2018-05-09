@@ -389,6 +389,7 @@ public class IncomeServiceBean implements IncomeService {
 				query.setParameter("id", SUBSCRIPTION_STATUS_ID);
 				MunicipalBondStatus subscriptionBondStatus = (MunicipalBondStatus) query.getSingleResult();
 
+				municipalBondUpdate.setBalance(deposit.getBalance());
 				municipalBondUpdate.setMunicipalBondStatus(subscriptionBondStatus);
 				entityManager.merge(municipalBondUpdate);
 			}
@@ -448,7 +449,9 @@ public class IncomeServiceBean implements IncomeService {
 					itemIsPayed = true;
 			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
 				itemIsPayed = true;
-			}else if(sum == null && depositValue.compareTo(itemValue) >= 0 && paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+			}
+			
+			if(paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name()) && dep.getBalance().compareTo(BigDecimal.ZERO)==0) {
 				itemIsPayed = true;
 			}
 
@@ -1811,11 +1814,13 @@ public class IncomeServiceBean implements IncomeService {
 			query += "and mba.anotherItem is null ";
 		}
 		
+		query += "and mba.typepayment=:typepayment ";
 		Query sumInterest = entityManager.createQuery(query);
 		sumInterest.setParameter("munid", municipalbondId);
 		sumInterest.setParameter("cover", coverInterest);
 		sumInterest.setParameter("status", status);
 		sumInterest.setParameter("type", type);
+		sumInterest.setParameter("typepayment", paymentType);
 		
 		return (BigDecimal) sumInterest.getSingleResult();
 	}

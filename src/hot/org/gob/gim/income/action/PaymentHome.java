@@ -38,6 +38,7 @@ import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
 import org.gob.gim.income.view.MunicipalBondItem;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
+import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.loja.gim.ws.dto.FutureBond;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -1305,12 +1306,14 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		List<MunicipalBond> selectedBonds = getSelected();
 		List<Long> idsBonds = new ArrayList<Long>();
 
+
 		if(this.enableSubscription) {
 			for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
 				idsBonds.add(mbi.getMunicipalBond().getId());
 			}
 		}else {
 			for (MunicipalBond municipalBond : selectedBonds) {
+				//selectedNew.add(municipalBond);
 				idsBonds.add(municipalBond.getId());
 			}
 		}
@@ -1320,14 +1323,15 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		q.setParameter("list", idsBonds);
 		
 		List<MunicipalBond> selectedNew = (List<MunicipalBond>)q.getResultList(); 
-
+		//List<MunicipalBond> selectedNew2 = fin
+		
 		if (this.isPaymentSubscription) {
 			List<Deposit> deps = subscriptionDeposit(selectedNew);
 			return deps;
 		} else {
 
 			List<Deposit> deps = new LinkedList<Deposit>();
-			for (MunicipalBond mb : selectedNew) {
+			for (MunicipalBond mb : selectedBonds) {
 				Deposit deposit = createDeposit(1);
 				deposit.setBalance(BigDecimal.ZERO);
 				deposit.setCapital(mb.getValue());
@@ -1350,6 +1354,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	private List<Deposit> subscriptionDeposit(List<MunicipalBond> paidBonds) {
 
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+		MunicipalBondService mbService = ServiceLocator.getInstance().findResource(MunicipalBondService.LOCAL_NAME);
+		
 		Integer index = 0;
 		MunicipalBond municipalBond = null;
 		BigDecimal remaining = getReceivedAmount().setScale(2, RoundingMode.HALF_UP);
@@ -1449,7 +1455,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "C",
 						PaymentMethod.SUBSCRIPTION.name());
 				if (ratesList.isEmpty()) { // si no hay elementos no se ha pagado o no se termina de pagar
-					deposit.setDiscount(municipalBond.getDiscount());
+					
+					BigDecimal discount = mbService.calculateDiscount(municipalBond); 
+					
+					deposit.setDiscount(discount);
 					plainResult = calculateRate3(incomeService, municipalBond, "C", municipalBond.getBalance(),
 							remaining, deposit, PaymentMethod.SUBSCRIPTION.name());
 					remaining = (BigDecimal) plainResult.get("remaining");
@@ -1481,6 +1490,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			deposit.setValue(deposit.getCapital().add(deposit.getInterest()).add(deposit.getPaidTaxes())
 					.add(deposit.getSurcharge()).subtract(deposit.getDiscount()));
 			
+			municipalBond.setBalance(balance);					
 			municipalBond.add(deposit);
 			this.getInstance().add(deposit);
 
