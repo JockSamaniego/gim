@@ -1292,8 +1292,16 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		// @author macartuche
 		List<MunicipalBond> selectedBonds = getSelected();
 		List<Long> idsBonds = new ArrayList<Long>();
-		for (MunicipalBond municipalBond : selectedBonds) {
-			idsBonds.add(municipalBond.getId());
+
+		
+		if (municipalBondSubscriptionsItems!=null) {
+			for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
+				idsBonds.add(mbi.getMunicipalBond().getId());
+			}
+		}else {
+			for (MunicipalBond municipalBond : selectedBonds) {
+				idsBonds.add(municipalBond.getId());
+			}
 		}
 		
 		Query q = this.getEntityManager().createQuery("Select m from  MunicipalBond m where m.id in (:list)");
