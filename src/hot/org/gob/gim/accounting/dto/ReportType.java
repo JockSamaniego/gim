@@ -8,6 +8,7 @@ public enum ReportType {
 	QUOTAS_LIQUIDATION(new String("GAD")),
 	COMBINED(new String("GAD")),
 	BALANCE(new String("GAD")),
+	SUBSCRIPTION(new String("GAD")),
 	REVENUE_EMAALEP(new String("EMAALEP")),
 	INCOME_EMAALEP(new String("EMAALEP"));
 	

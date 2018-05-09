@@ -83,6 +83,7 @@ public interface IncomeService {
 	public void updateMunicipalBonds(List<MunicipalBond> bonds);
 	
 	public List<MunicipalBond> findPendingBonds(Long residentId);
+	public List<MunicipalBond> findPendingBondsSubscriptions(Long residentId);
 	public List<MunicipalBond> findOnlyPendingBonds(Long residentId);
 	public List<MunicipalBond> findOnlyPendingBonds(Long residentId, Long EntryId);	
 	public List<MunicipalBond> findOnlyPendingAndInAgreementBonds(Long residentId);

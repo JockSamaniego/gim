@@ -1469,6 +1469,26 @@ public class IncomeServiceBean implements IncomeService {
 		query.setParameter("residentId", residentId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
+		
+		System.out.println(residentId);
+		System.out.println(statuses);
+		return query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public List<MunicipalBond> findPendingBondsSubscriptions(Long residentId) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		Long subscriptionMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
+
+		List<Long> statuses = new ArrayList<Long>();
+		statuses.add(subscriptionMunicipalBondStatusId);
+
+		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
+		query.setParameter("residentId", residentId);
+		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
+		query.setParameter("municipalBondStatusIds", statuses);
 		return query.getResultList();
 	}
 
