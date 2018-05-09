@@ -597,6 +597,34 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		}
 
 	}
+	
+	public void calculateSubscriptionTotals() {
+		try {
+			//if (paymentAgreement != null) {
+				clearDeposits();
+				//hasConflict = Boolean.FALSE;
+				municipalBonds = findSubscriptionMunicipalBonds();
+				System.out.println("Total de bonds subscription ----------------> " + municipalBonds.size());
+				IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+				incomeService.calculatePayment(municipalBonds, new Date(), true, true);
+				logger.info("CALCULATE 2");
+				resetPaymentTotals();
+				logger.info("CALCULATE 3");
+
+				// obtener el tipo de acuerdo de pago
+				// 2016-07-19T12:56
+				// @tag recaudacionCoactivas
+				/*if (paymentAgreement.getAgreementType() != null && !paymentAgreement.getAgreementType().name().isEmpty()) {
+					agreementType = paymentAgreement.getAgreementType().name();
+				} else {
+					agreementType = "";
+				}*/
+			//}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 
 	@SuppressWarnings("unchecked")
 	private List<MunicipalBond> findAgreementMunicipalBonds() {
@@ -617,6 +645,27 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			return results;
 		}
 		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	//rfam 2018-05-09 para generar los convenios de pago
+	private List<MunicipalBond> findSubscriptionMunicipalBonds() {
+		//if (paymentAgreement != null) {
+			SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+			Long inSubscriptionMunicipalBondStatusId = systemParameterService
+					.findParameter(IncomeServiceBean.SUBSCRIPTION_BOND_STATUS);
+			Query query = getEntityManager().createNamedQuery("MunicipalBond.findBySubscriptionStatusId");
+			query.setParameter("municipalBondStatusId", inSubscriptionMunicipalBondStatusId);
+			//query.setParameter("paymentAgreementId", paymentAgreement.getId());
+			List<MunicipalBond> results = query.getResultList();
+			for (MunicipalBond municipalBond : results) {
+				for (Deposit deposit : municipalBond.getDeposits()) {
+					System.out.println("ID ====>" + deposit.getDate());
+				}
+			}
+			return results;
+		//}
+		//return null;
 	}
 
 	private List<MunicipalBondItem> findPendingMunicipalBondItems(Long residentId) throws Exception {
