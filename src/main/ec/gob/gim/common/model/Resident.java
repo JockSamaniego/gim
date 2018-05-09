@@ -148,6 +148,7 @@ public abstract class Resident extends Identifiable{
 	
 	//@author macartuche
 	//abonos
+	@Column(nullable = true)
 	private boolean enablesubscription = Boolean.FALSE;
 	               
 	/**
