@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -1190,10 +1191,13 @@ public class MunicipalBond implements Serializable {
 
 	public BigDecimal findPaidTotal() {
 		BigDecimal paidTotal = BigDecimal.ZERO;
+		Set<Deposit> deps = new HashSet<Deposit>();
+		
 		for (Deposit d : this.getDeposits()) {
+			deps.add(d);			
 			paidTotal = paidTotal.add(d.getValue());
-
 		}
+		System.out.println(deps);
 		return paidTotal;
 	}
 
