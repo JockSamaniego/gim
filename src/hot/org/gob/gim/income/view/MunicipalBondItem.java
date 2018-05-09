@@ -114,7 +114,7 @@ public class MunicipalBondItem {
 			clone.setAdjunct(municipalBond.getAdjunct());
 			
 			//fijado id
-			clone.setId(municipalBond.getId());
+			//clone.setId(municipalBond.getId());
 			//
 			item = new MunicipalBondItem(clone);
 			children.put(code, item);

@@ -405,10 +405,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				mbi.calculateTotals(null, null, null);
 			}
 			//@author Jock
-			this.municipalBondSubscriptionsItems = findPendingMunicipalBondSubscriptionsItems(resident.getId());
-			for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
-				mbi.calculateTotals(null, null, null);
-			}
+			//this.municipalBondSubscriptionsItems = findPendingMunicipalBondSubscriptionsItems(resident.getId());
+			//for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
+			//mbi.calculateTotals(null, null, null);
+//}
 		} catch (EntryDefinitionNotFoundException e) {
 			String message = Interpolator.instance()
 					.interpolate("#{messages['entryDefinition.entryDefinitionNotFoundException']}", new Object[0]);
@@ -1303,31 +1303,31 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		// REALIZAR TIPO CONVENIO
 		// @author macartuche
 		List<MunicipalBond> selectedBonds = getSelected();
-		List<Long> idsBonds = new ArrayList<Long>();
-
-		if(this.enableSubscription) {
-			for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
-				idsBonds.add(mbi.getMunicipalBond().getId());
-			}
-		}else {
-			for (MunicipalBond municipalBond : selectedBonds) {
-				idsBonds.add(municipalBond.getId());
-			}
-		}
-		
-		
-		Query q = this.getEntityManager().createQuery("Select m from  MunicipalBond m where m.id in (:list)");
-		q.setParameter("list", idsBonds);
-		
-		List<MunicipalBond> selectedNew = (List<MunicipalBond>)q.getResultList(); 
-
-		if (this.isPaymentSubscription) {
-			List<Deposit> deps = subscriptionDeposit(selectedNew);
-			return deps;
-		} else {
+//		List<Long> idsBonds = new ArrayList<Long>();
+//
+//		if(this.enableSubscription) {
+//			for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
+//				idsBonds.add(mbi.getMunicipalBond().getId());
+//			}
+//		}else {
+//			for (MunicipalBond municipalBond : selectedBonds) {
+//				idsBonds.add(municipalBond.getId());
+//			}
+//		}
+//		
+//		
+//		Query q = this.getEntityManager().createQuery("Select m from  MunicipalBond m where m.id in (:list)");
+//		q.setParameter("list", idsBonds);
+//		
+//		List<MunicipalBond> selectedNew = (List<MunicipalBond>)q.getResultList(); 
+//
+//		if (this.isPaymentSubscription) {
+//			List<Deposit> deps = subscriptionDeposit(selectedNew);
+//			return deps;
+//		} else {
 
 			List<Deposit> deps = new LinkedList<Deposit>();
-			for (MunicipalBond mb : selectedNew) {
+			for (MunicipalBond mb : selectedBonds) {
 				Deposit deposit = createDeposit(1);
 				deposit.setBalance(BigDecimal.ZERO);
 				deposit.setCapital(mb.getValue());
@@ -1338,7 +1338,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				deps.add(deposit);
 			}
 			return deps;
-		}
+//		}
 	}
 
 	/**
@@ -2298,22 +2298,22 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 			// pago por abonos ...
 			// el monto recibido es menor
-			if (this.isPaymentSubscription) {
-				for (PaymentFraction fraction : payment.getPaymentFractions()) {
-					fraction.setPaidAmount(fraction.getReceivedAmount());
-					if (fraction.getPaymentType() == PaymentType.CASH) {
-						if (fraction.getReceivedAmount() == BigDecimal.ZERO) {
-							addFacesMessageFromResourceBundle("payment.cashDetailInvalid");
-							isPaymentOk = Boolean.FALSE;
-							break;
-						}
-						fraction.setPaidAmount(fraction.getReceivedAmount().subtract(change));
-					}
-				}
-			} else {
+//			if (this.isPaymentSubscription) {
+//				for (PaymentFraction fraction : payment.getPaymentFractions()) {
+//					fraction.setPaidAmount(fraction.getReceivedAmount());
+//					if (fraction.getPaymentType() == PaymentType.CASH) {
+//						if (fraction.getReceivedAmount() == BigDecimal.ZERO) {
+//							addFacesMessageFromResourceBundle("payment.cashDetailInvalid");
+//							isPaymentOk = Boolean.FALSE;
+//							break;
+//						}
+//						fraction.setPaidAmount(fraction.getReceivedAmount().subtract(change));
+//					}
+//				}
+//			} else {
 				addFacesMessageFromResourceBundle("payment.receivedAmountNotEnough");
 				return Boolean.FALSE;
-			}
+//			}
 			// fin pago por abonos
 		} else {
 			for (PaymentFraction fraction : payment.getPaymentFractions()) {
