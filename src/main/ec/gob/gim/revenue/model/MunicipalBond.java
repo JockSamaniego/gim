@@ -65,7 +65,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 @NamedQueries(value = {
 		@NamedQuery(name = "MunicipalBond.findByResidentIdAndTypeAndStatus", query = "SELECT DISTINCT mb FROM MunicipalBond mb "
 				+ "LEFT JOIN FETCH mb.entry e "
-				//+ "LEFT JOIN FETCH mb.institution "
+				+ "LEFT JOIN FETCH mb.institution "
 				+ "LEFT JOIN FETCH mb.municipalBondStatus mbs "
 				+ "LEFT JOIN FETCH mb.receipt "
 				+ "LEFT JOIN FETCH mb.resident res "
