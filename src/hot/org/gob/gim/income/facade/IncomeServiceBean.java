@@ -14,10 +14,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -117,7 +119,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	private Deposit getLastDeposit(MunicipalBond municipalBond) {
 		Deposit deposit = null;
-		List<Deposit> deposits = municipalBond.getDeposits();
+		Set<Deposit> deposits = municipalBond.getDeposits();
 		for (Deposit d : deposits) {
 			if (deposit == null || deposit.getId().intValue() < d.getId().intValue()) {
 				deposit = d;

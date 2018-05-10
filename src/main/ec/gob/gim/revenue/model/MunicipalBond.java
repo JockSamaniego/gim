@@ -1085,7 +1085,7 @@ public class MunicipalBond implements Serializable {
 
 	@OneToMany(mappedBy = "municipalBond", fetch = FetchType.LAZY)
 	@OrderBy("date asc")
-	private List<Deposit> deposits;
+	private Set<Deposit> deposits;
 
 	@OneToMany(mappedBy = "municipalBond", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
@@ -1143,7 +1143,7 @@ public class MunicipalBond implements Serializable {
 		items = new TreeSet<Item>();
 		discountItems = new TreeSet<Item>();
 		surchargeItems = new TreeSet<Item>();
-		deposits = new LinkedList<Deposit>();
+		deposits = new HashSet<Deposit>();
 		taxItems = new TreeSet<TaxItem>();
 		printingsNumber = 0;
 		internalTramit = Boolean.FALSE;
@@ -1594,11 +1594,11 @@ public class MunicipalBond implements Serializable {
 		this.balance = balance;
 	}
 
-	public List<Deposit> getDeposits() {
+	public Set<Deposit> getDeposits() {
 		return deposits;
 	}
 
-	public void setDeposits(List<Deposit> deposits) {
+	public void setDeposits(Set<Deposit> deposits) {
 		this.deposits = deposits;
 	}
 

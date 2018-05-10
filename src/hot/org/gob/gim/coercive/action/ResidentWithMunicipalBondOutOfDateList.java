@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -492,11 +494,11 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 		
 		for(MunicipalBond mb : municipalBonds){
 			MunicipalBond municipalBond = incomeService.loadMunicipalBond(mb.getId());
-			List<Deposit> deposits = municipalBond.getDeposits();		
+			Set<Deposit> deposits = municipalBond.getDeposits();		
 			
 			Deposit depositToPrint = null;
 			if(deposits.size() > 0){
-				depositToPrint = deposits.get(deposits.size() - 1);
+				depositToPrint = (Deposit) Arrays.asList(deposits.toArray()).get(deposits.size() - 1);// deposits.get(deposits.size() - 1);
 			}else{
 				depositToPrint = new Deposit();
 				depositToPrint.setBalance(BigDecimal.ZERO);
@@ -523,11 +525,11 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 		if(revenueCharge == null) loadCharges();
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);		
 		MunicipalBond municipalBond = incomeService.loadMunicipalBond(municipalBondId);
-		List<Deposit> deposits = municipalBond.getDeposits();		
+		Set<Deposit> deposits = municipalBond.getDeposits();		
 		
 		Deposit depositToPrint = null;
 		if(deposits.size() > 0){
-			depositToPrint = deposits.get(deposits.size() - 1);
+			depositToPrint = (Deposit) Arrays.asList(deposits.toArray()).get(deposits.size() - 1);
 		}else{
 			depositToPrint = new Deposit();
 			depositToPrint.setBalance(BigDecimal.ZERO);
