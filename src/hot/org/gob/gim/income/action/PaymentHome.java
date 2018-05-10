@@ -1118,8 +1118,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 					enableSubscription = Boolean.TRUE;
 					isFullPayment = Boolean.TRUE;
 				}else if(vce.getNewValue().equals("municipalBondsTab")){
+					enableSubscription = Boolean.FALSE;
 					isFullPayment = Boolean.TRUE;
 				}else if(vce.getNewValue().equals("paymentAgreementsTab")){
+					enableSubscription = Boolean.FALSE;
 					isFullPayment = Boolean.FALSE;
 				}
 		
@@ -1367,32 +1369,12 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		// REALIZAR TIPO CONVENIO
 		// @author macartuche
 		List<MunicipalBond> selectedBonds = getSelected();
-		List<Long> idsBonds = new ArrayList<Long>();
-
-
-		List<MunicipalBond> temp = new ArrayList<MunicipalBond>();
 		List<MunicipalBond> selectedNew2 = new ArrayList<MunicipalBond>();
 		if(this.enableSubscription) {
 			selectedNew2 = municipalBondSubscriptionsItems;
-			//for (MunicipalBond mbi : municipalBondSubscriptionsItems) {
-			//	temp.add(mbi);
-			//	idsBonds.add(mbi.getId());
-			//}
 		}else {
 			selectedNew2 = selectedBonds;
-			//for (MunicipalBond municipalBond : selectedBonds) {
-			//	idsBonds.add(municipalBond.getId());
-			//}
-			//temp = selectedBonds;
 		}
-		
-		
-//		Query q = this.getEntityManager().createQuery("Select m from  MunicipalBond m where m.id in (:list)");
-//		q.setParameter("list", idsBonds);
-		
-//		List<MunicipalBond> selectedNew = (List<MunicipalBond>)q.getResultList(); 
-//		List<MunicipalBond> selectedNew2 = getDiscount(selectedNew, temp);
-		 
 		
 		if (this.isPaymentSubscription) {
 			List<Deposit> deps = subscriptionDeposit(selectedNew2);
@@ -1412,6 +1394,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			}
 			return deps;
 		}
+		
 	}
 	
 	private List<MunicipalBond> getDiscount(List<MunicipalBond> bondsBD, List<MunicipalBond> bondsCalculate){
