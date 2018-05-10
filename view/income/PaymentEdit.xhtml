@@ -296,7 +296,7 @@
 
 					</rich:tab>
 					<rich:tab id="municipalBondsSubscriptions"
-						label="Cuentas por abonos" ajaxSingle="true"
+						label="#{messages['subscription.payment']}" ajaxSingle="true"
 						rendered="#{not empty paymentHome.municipalBondSubscriptionsItems}"
 						reRender="totalsPanel, municipalBondsPanel">
 						<ui:include src="fragment/MunicipalBondsSubscriptionsTable.xhtml" />
