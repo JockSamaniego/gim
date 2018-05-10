@@ -138,7 +138,7 @@
 			</rich:column>
 		</rich:subTable>
 
-		<rich:subTable value="#{_municipalBond.deposits}" var="_deposit"
+		<rich:subTable value="#{_municipalBond.deposits.toArray()}" var="_deposit"
 			rendered="#{not empty _municipalBond.deposits}">
 
 			<rich:column

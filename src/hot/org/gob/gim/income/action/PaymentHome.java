@@ -1371,24 +1371,27 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 
 		List<MunicipalBond> temp = new ArrayList<MunicipalBond>();
+		List<MunicipalBond> selectedNew2 = new ArrayList<MunicipalBond>();
 		if(this.enableSubscription) {
-			for (MunicipalBond mbi : municipalBondSubscriptionsItems) {
-				temp.add(mbi);
-				idsBonds.add(mbi.getId());
-			}
+			selectedNew2 = municipalBondSubscriptionsItems;
+			//for (MunicipalBond mbi : municipalBondSubscriptionsItems) {
+			//	temp.add(mbi);
+			//	idsBonds.add(mbi.getId());
+			//}
 		}else {
-			for (MunicipalBond municipalBond : selectedBonds) {
-				idsBonds.add(municipalBond.getId());
-			}
-			temp = selectedBonds;
+			selectedNew2 = selectedBonds;
+			//for (MunicipalBond municipalBond : selectedBonds) {
+			//	idsBonds.add(municipalBond.getId());
+			//}
+			//temp = selectedBonds;
 		}
 		
 		
-		Query q = this.getEntityManager().createQuery("Select m from  MunicipalBond m where m.id in (:list)");
-		q.setParameter("list", idsBonds);
+//		Query q = this.getEntityManager().createQuery("Select m from  MunicipalBond m where m.id in (:list)");
+//		q.setParameter("list", idsBonds);
 		
-		List<MunicipalBond> selectedNew = (List<MunicipalBond>)q.getResultList(); 
-		List<MunicipalBond> selectedNew2 = getDiscount(selectedNew, temp);
+//		List<MunicipalBond> selectedNew = (List<MunicipalBond>)q.getResultList(); 
+//		List<MunicipalBond> selectedNew2 = getDiscount(selectedNew, temp);
 		 
 		
 		if (this.isPaymentSubscription) {
@@ -1397,7 +1400,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		} else {
 
 			List<Deposit> deps = new LinkedList<Deposit>();
-			for (MunicipalBond mb : selectedNew) {
+			for (MunicipalBond mb : selectedBonds) {
 				Deposit deposit = createDeposit(1);
 				deposit.setBalance(BigDecimal.ZERO);
 				deposit.setCapital(mb.getValue());
