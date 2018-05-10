@@ -84,15 +84,15 @@
 					<h:outputText value="#{municipalBondItemsForView.get(0).bondAddress}"/>
 					
 					<h:outputText value="#{messages['payment.cashier']}:" rendered="#{not empty municipalBondItemsForView.get(0).deposits}"/>
-					<h:outputText value="#{municipalBondItemsForView.get(0).deposits.get(0).payment.cashier.name}" rendered="#{not empty municipalBondItemsForView.get(0).deposits}"/>
+					<h:outputText value="#{municipalBondItemsForView.get(0).depositsList.get(0).payment.cashier.name}" rendered="#{not empty municipalBondItemsForView.get(0).deposits}"/>
 					
 					<h:outputText value="#{messages['municipalBond.paymentDate']}:" rendered="#{not empty municipalBondItemsForView.get(0).deposits}"/>
-					<h:outputText value="#{municipalBondItemsForView.get(0).deposits.get(0).date}" rendered="#{not empty municipalBondItemsForView.get(0).deposits}">
+					<h:outputText value="#{municipalBondItemsForView.get(0).depositsList.get(0).date}" rendered="#{not empty municipalBondItemsForView.get(0).deposits}">
 						<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
 					</h:outputText>
 					
 					<h:outputText value="#{messages['municipalBond.paymentTime']}:" rendered="#{not empty municipalBondItemsForView.get(0).deposits}"/>
-					<h:outputText value="#{municipalBondItemsForView.get(0).deposits.get(0).time}" rendered="#{not empty municipalBondItemsForView.get(0).deposits}">
+					<h:outputText value="#{municipalBondItemsForView.get(0).depositsList.get(0).time}" rendered="#{not empty municipalBondItemsForView.get(0).deposits}">
 						<f:convertDateTime pattern="#{messages['common.timePattern']}"/>
 					</h:outputText>			
 					
