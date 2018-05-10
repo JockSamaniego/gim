@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -57,7 +56,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 /**
  * @author gerson
  * @version 1.0
- * @created 04-Ago-2011 16:30:30
+	 * @created 04-Ago-2011 16:30:30
  */
 @Audited
 @Entity
@@ -65,7 +64,8 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 @NamedQueries(value = {
 		@NamedQuery(name = "MunicipalBond.findByResidentIdAndTypeAndStatus", query = "SELECT DISTINCT mb FROM MunicipalBond mb "
 				+ "LEFT JOIN FETCH mb.entry e "
-				+ "LEFT JOIN FETCH mb.institution "
+				//rfam 2018-05-10 este dato se obtine desde la vista Gim.java
+				//+ "LEFT JOIN FETCH mb.institution "
 				+ "LEFT JOIN FETCH mb.municipalBondStatus mbs "
 				+ "LEFT JOIN FETCH mb.receipt "
 				+ "LEFT JOIN FETCH mb.resident res "
