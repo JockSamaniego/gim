@@ -1372,9 +1372,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 		List<MunicipalBond> temp = new ArrayList<MunicipalBond>();
 		if(this.enableSubscription) {
-			for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
-				temp.add(mbi.getMunicipalBond());
-				idsBonds.add(mbi.getMunicipalBond().getId());
+			for (MunicipalBond mbi : municipalBondSubscriptionsItems) {
+				temp.add(mbi);
+				idsBonds.add(mbi.getId());
 			}
 		}else {
 			for (MunicipalBond municipalBond : selectedBonds) {
@@ -2060,7 +2060,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 						Boolean createDeposit = Boolean.TRUE;
 
 						if (municipalBond.getDeposits() != null && municipalBond.getDeposits().size() > 0) {
-							deposit = municipalBond.getDeposits().get(municipalBond.getDeposits().size() - 1);
+							deposit = (Deposit) Arrays.asList(municipalBond.getDeposits().toArray()).get(municipalBond.getDeposits().size() - 1);
 							if (deposit.getId() == null) {
 								createDeposit = Boolean.FALSE;
 							}
