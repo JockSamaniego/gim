@@ -1837,5 +1837,10 @@ public class MunicipalBond implements Serializable {
 	public void setSurchargeVoucher(BigDecimal surchargeVoucher) {
 		this.surchargeVoucher = surchargeVoucher;
 	}
+	
+	public List<Deposit> getDepositsList() {
+		List<Deposit> list = new ArrayList<Deposit>(this.deposits);
+		return list;
+	}
 
 }// end MunicipalBond
