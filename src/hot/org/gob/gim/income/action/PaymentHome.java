@@ -1371,9 +1371,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 		List<MunicipalBond> temp = new ArrayList<MunicipalBond>();
 		if(this.enableSubscription) {
-			for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
-				temp.add(mbi.getMunicipalBond());
-				idsBonds.add(mbi.getMunicipalBond().getId());
+			for (MunicipalBond mbi : municipalBondSubscriptionsItems) {
+				temp.add(mbi);
+				idsBonds.add(mbi.getId());
 			}
 		}else {
 			for (MunicipalBond municipalBond : selectedBonds) {
@@ -2311,7 +2311,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			return result;
 		}
 
-		//if (itemType != "C") {
+		if (itemType != "C") {
 			List<MunicipalbondAux> ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true,
 					"VALID", itemType, paymentMethod);
 			if (ratesList.isEmpty()) {
@@ -2324,8 +2324,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 					}
 				}
 			}
-		//}
+		}
 
+		 
 		valueToPay = (itemHasDeposit) ? compareCase(itemValue, sum) : itemValue;
 		if (itemType.equals("C")) {
 			valueToPay = valueToPay.subtract(municipalBond.getDiscount());
@@ -2351,7 +2352,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	private BigDecimal compareCase(BigDecimal value, BigDecimal sum) {
 		BigDecimal realValue = BigDecimal.ZERO;
 
-		if (value.compareTo(sum) > 0) {
+		 if (value.compareTo(sum) > 0) {
 			realValue = value.subtract(sum);
 		} else if (sum.compareTo(value) >= 0) {
 			realValue = value;
