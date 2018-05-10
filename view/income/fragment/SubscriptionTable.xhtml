@@ -9,26 +9,56 @@
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	
-	<s:decorate id="valueFieldSubscription" template="../../layout/edit.xhtml">
+	<s:decorate id="paymentAgreementField"
+		template="../../layout/edit.xhtml">
+		<ui:define name="label">#{messages['paymentAgreement.title']}:</ui:define>
+		<h:selectOneMenu id="paymentAgreement"
+			value="#{paymentHome.paymentAgreement}">
+			<s:selectItems value="#{paymentHome.paymentAgreements}"
+				var="paymentAgreement" label="#{paymentAgreement.description}"
+				noSelectionLabel="#{messages['common.choose']}" />
+			<s:convertEntity />
+			<a:support event="onchange" eventsQueue="gimQueue" ajaxSingle="true"
+				reRender="municipalBondsPanel, totalsPanel"
+				action="#{paymentHome.calculateTotals}" focus="value"/>
+		</h:selectOneMenu> -  
+		<h:outputText value=" #{messages[paymentHome.agreementType]}" 
+			style="font-size:13px; font-weight:bold;" ></h:outputText>
+	</s:decorate>
+
+	<s:decorate id="valueField" template="../../layout/edit.xhtml"  rendered="#{!paymentHome.agreementsBtn}">
 		<ui:define name="label">#{messages['payment.value']}:</ui:define>
 		<h:inputText id="value" value="#{paymentHome.depositTotal}"
 			styleClass="right"
-			style="font-size:16px; font-weight:bold; #{paymentHome.hasConflict ? 'color:red;' : 'color:green'}">
+			style="font-size:16px; font-weight:bold; #{paymentHome.hasConflict ? 'color:red;' : 'color:green'}"
+			disabled="#{paymentHome.paymentAgreement == null}">
 			<f:convertNumber
 				maxFractionDigits="#{messages['common.maxFractionDigits']}"
 				minFractionDigits="#{messages['common.minFractionDigits']}" />
 			<a:support event="onblur" eventsQueue="gimQueue"
-				action="#{paymentHome.generateDepositsBySubscriptions()}"
-				reRender="totalsPanel, subscriptionsBondsTable" />
+				action="#{paymentHome.generateDeposits}"
+				reRender="totalsPanel, decreaseDepositBtn, increaseDepositBtn, agreementBondsTable" />
 		</h:inputText>
+		<a:commandButton id="decreaseDepositBtn"
+			action="#{paymentHome.decrease}" ajaxSingle="true"
+			eventsQueue="gimEventsQueue"
+			value="#{messages['deposit.decrease']} #{paymentHome.deltaDown}"
+			rendered="#{paymentHome.hasConflict}"
+			reRender="totalsPanel, decreaseDepositBtn, increaseDepositBtn, agreementBondsTable" />
+		<a:commandButton id="increaseDepositBtn"
+			action="#{paymentHome.increase}" ajaxSingle="true"
+			eventsQueue="gimEventsQueue"
+			value="#{messages['deposit.increase']} #{paymentHome.deltaUp}"
+			rendered="#{paymentHome.hasConflict}"
+			reRender="totalsPanel, decreaseDepositBtn, increaseDepositBtn, agreementBondsTable" />
 	</s:decorate>
 
-	<rich:dataTable id="subscriptionsBondsTable"
-		value="#{paymentHome.municipalBondSubscriptionsItems}" var="_municipalBond"
+
+	<rich:dataTable id="agreementBondsTable"
+		value="#{paymentHome.municipalBonds}" var="_municipalBond"
 		rowClasses="rvgRowOne,rvgRowTwo" columnClasses="tableCellFont"
 		style="margin-top:5px;"
-		rendered="#{not empty paymentHome.municipalBondSubscriptionsItems}">
+		rendered="#{paymentHome.paymentAgreement != null}">
 
 		<f:facet name="header">
 			<rich:columnGroup>
