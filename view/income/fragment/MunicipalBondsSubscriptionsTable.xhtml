@@ -8,313 +8,223 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
-	
-	<rich:panel style="margin-top:5px;"
-		rendered="#{empty paymentHome.municipalBondSubscriptionsItems and not empty paymentHome.resident}">
-		<h:outputText style="font-weight:bold; font-size:25px; color:#FF0000"
-			value="#{messages['payment.noActiveAccountsReceivableFoundCheckPaymentAgreeements']}" />
-	</rich:panel>
 
-	<rich:dataTable value="#{paymentHome.municipalBondSubscriptionsItems}"
-		var="_entryItem"
-		rendered="#{not empty paymentHome.municipalBondSubscriptionsItems}"
-		rowClasses="rvgRowOne,rvgRowTwo" id="municipalBondsSubscriptionsTable"
-		columnClasses="tableCellFont" style="margin-top:5px;">
+	
+	<s:decorate id="valueFieldSubscription" template="../../layout/edit.xhtml">
+		<ui:define name="label">#{messages['payment.value']}:</ui:define>
+		<h:inputText id="value" value="#{paymentHome.depositTotal}"
+			styleClass="right"
+			style="font-size:16px; font-weight:bold; #{paymentHome.hasConflict ? 'color:red;' : 'color:green'}">
+			<f:convertNumber
+				maxFractionDigits="#{messages['common.maxFractionDigits']}"
+				minFractionDigits="#{messages['common.minFractionDigits']}" />
+			<a:support event="onblur" eventsQueue="gimQueue"
+				action="#{paymentHome.generateDepositsBySubscriptions()}"
+				reRender="totalsPanel, subscriptionsBondsTable" />
+		</h:inputText>
+	</s:decorate>
+
+	<rich:dataTable id="subscriptionsBondsTable"
+		value="#{paymentHome.municipalBondSubscriptionsItems}" var="_municipalBond"
+		rowClasses="rvgRowOne,rvgRowTwo" columnClasses="tableCellFont"
+		style="margin-top:5px;"
+		rendered="#{not empty paymentHome.municipalBondSubscriptionsItems}">
 
 		<f:facet name="header">
 			<rich:columnGroup>
-				<rich:column>
-					<h:selectBooleanCheckbox value="#{paymentHome.allBondsSelected}">
-						<a:support event="onchange" eventsQueue="gimQueue"
-							action="#{paymentHome.selectAllItems}" ajaxSingle="true"
-							reRender="municipalBondsPanel, totalsPanel" />
-					</h:selectBooleanCheckbox>
-				</rich:column>
-				<rich:column colspan="3" styleClass="left">
+				<rich:column styleClass="left" colspan="9">
 					<h:outputText styleClass="tableTitle"
-						value="#{messages['municipalBond.accountsReceivableTotal']}" />
-				</rich:column>
-				<rich:column>
-					<h:outputText value="#{messages['municipalBond.value']}" />
-				</rich:column>
-				<rich:column>
-					<h:outputText value="#{messages['municipalBond.interestsTotal']}" />
-				</rich:column>
-				<rich:column>
-					<h:outputText value="#{messages['municipalBond.discountsTotal']}" />
-				</rich:column>
-				<rich:column>
-					<h:outputText value="#{messages['municipalBond.surchargesTotal']}" />
-				</rich:column>
-				<rich:column>
-					<h:outputText value="#{messages['municipalBond.taxesTotal']}" />
-				</rich:column>
-				<rich:column>
-					<h:outputText value="#{messages['municipalBond.paidTotal']}" />
+						value="#{messages['payment.paymentAgreementBonds']}" />
 				</rich:column>
 			</rich:columnGroup>
 		</f:facet>
 
-		<rich:columnGroup styleClass="#{paymentHome.isInPaymentAgreement(_entryItem.municipalBond) ? 'paymentAgreementTitle' : 'entryTitle'}">
+		<rich:column styleClass="left entryTitle" rowspan="2" colspan="2" width="40%">
+			<h:outputText
+				value="#{_municipalBond.entry.name} - #{_municipalBond.transformedServiceDate}" />
+			<br />
+			<h:outputText style="font-weight:normal;"
+				value="#{_municipalBond.groupingCode} - #{empty _groupingItem.municipalBond.adjunct ? _groupingItem.municipalBond.address : _groupingItem.municipalBond.adjunct} (Vencida el #{_municipalBond.expirationDate})" />
+		</rich:column>
 
-			<rich:column>
-				<h:selectBooleanCheckbox value="#{_entryItem.isSelected}" disabled="#{!_entryItem.enableCheckBox}">
-					<a:support event="onchange" eventsQueue="gimQueue"
-						action="#{paymentHome.calculatePaidTotalSubscriptions()}"
-						ajaxSingle="true"
-						reRender="municipalBondsPanel, totalsPanel" />
-				</h:selectBooleanCheckbox>
+		<rich:column styleClass="center entryTitle">
+			<h:outputText style="font-weight:normal;"
+				value="#{messages['municipalBond.value']}" />
+		</rich:column>
+
+		<rich:column styleClass="center entryTitle">
+			<h:outputText style="font-weight:normal;"
+				value="#{messages['municipalBond.balance']}" />
+		</rich:column>
+
+		<rich:column styleClass="center entryTitle">
+			<h:outputText style="font-weight:normal;"
+				value="#{messages['municipalBond.interestsTotal']}" />
+		</rich:column>
+		
+		<rich:column styleClass="center entryTitle">
+			<h:outputText style="font-weight:normal;"
+				value="#{messages['municipalBond.surcharges']}" />
+		</rich:column>
+		
+		<rich:column styleClass="center entryTitle">
+			<h:outputText style="font-weight:normal;"
+				value="#{messages['municipalBond.discounts']}" />
+		</rich:column>
+
+		<rich:column styleClass="center entryTitle">
+			<h:outputText style="font-weight:normal;"
+				value="#{messages['municipalBond.taxesTotal']}" />
+		</rich:column>
+
+		<rich:column styleClass="center entryTitle">
+			<h:outputText style="font-weight:normal;"
+				value="#{messages['municipalBond.paidTotal']}" />
+		</rich:column>
+
+		<rich:column styleClass="right entryTitle" breakBefore="true" width="10%">
+			<h:outputText value="#{_municipalBond.value}" >
+				<f:convertNumber
+					maxFractionDigits="#{messages['common.maxFractionDigits']}"
+					minFractionDigits="#{messages['common.minFractionDigits']}" />
+			</h:outputText>
+		</rich:column>
+		<rich:column styleClass="right entryTitle" width="10%">
+			<h:outputText value="#{_municipalBond.balance}">
+				<f:convertNumber
+					maxFractionDigits="#{messages['common.maxFractionDigits']}"
+					minFractionDigits="#{messages['common.minFractionDigits']}" />
+			</h:outputText>
+		</rich:column>
+		<rich:column styleClass="right entryTitle" width="8%">
+			<h:outputText value="#{_municipalBond.interest}">
+				<f:convertNumber
+					maxFractionDigits="#{messages['common.maxFractionDigits']}"
+					minFractionDigits="#{messages['common.minFractionDigits']}" />
+			</h:outputText>
+		</rich:column>
+		<rich:column styleClass="right entryTitle" width="8%">
+			<h:outputText value="#{_municipalBond.surcharge}">
+				<f:convertNumber
+					maxFractionDigits="#{messages['common.maxFractionDigits']}"
+					minFractionDigits="#{messages['common.minFractionDigits']}" />
+			</h:outputText>
+		</rich:column>
+		<rich:column styleClass="right entryTitle" width="8%">
+			<h:outputText value="#{_municipalBond.discount}">
+				<f:convertNumber
+					maxFractionDigits="#{messages['common.maxFractionDigits']}"
+					minFractionDigits="#{messages['common.minFractionDigits']}" />
+			</h:outputText>
+		</rich:column>
+		<rich:column styleClass="right entryTitle" width="8%">
+			<h:outputText value="#{_municipalBond.taxesTotal}">
+				<f:convertNumber
+					maxFractionDigits="#{messages['common.maxFractionDigits']}"
+					minFractionDigits="#{messages['common.minFractionDigits']}" />
+			</h:outputText>
+		</rich:column>
+		<rich:column styleClass="right entryTitle" width="10%">
+			<h:outputText value="#{_municipalBond.paidTotal}">
+				<f:convertNumber
+					maxFractionDigits="#{messages['common.maxFractionDigits']}"
+					minFractionDigits="#{messages['common.minFractionDigits']}" />
+			</h:outputText>
+		</rich:column>
+
+		<rich:subTable rendered="#{empty _municipalBond.deposits}" value="1">
+			<rich:column styleClass="left" colspan="9">
+				<h:outputText value="#{messages['deposit.notRegisteredDeposits']}" />
 			</rich:column>
-
-			<rich:column styleClass="left" colspan="3">
-				<h:outputText styleClass="tableTitle" value="#{_entryItem.municipalBond.entry.name}">
-				</h:outputText>
-			</rich:column>
-
-			<!-- jjjjjjjjjjjjjjjjjjjjjjjjjjjj -->
-
-			<rich:column styleClass="right">
-				<h:outputText styleClass="tableTitle" value="#{_entryItem.municipalBond.value}">
-					<f:convertNumber
-						maxFractionDigits="#{messages['common.maxFractionDigits']}"
-						minFractionDigits="#{messages['common.minFractionDigits']}" />
-				</h:outputText>
-			</rich:column>
-
-			<rich:column styleClass="right">
-				<h:outputText styleClass="tableTitle"
-					value="#{_entryItem.municipalBond.interest}">
-					<f:convertNumber
-						maxFractionDigits="#{messages['common.maxFractionDigits']}"
-						minFractionDigits="#{messages['common.minFractionDigits']}" />
-				</h:outputText>
-			</rich:column>
-			<rich:column styleClass="right">
-				<h:outputText styleClass="tableTitle"
-					value="#{_entryItem.municipalBond.discount}">
-					<f:convertNumber
-						maxFractionDigits="#{messages['common.maxFractionDigits']}"
-						minFractionDigits="#{messages['common.minFractionDigits']}" />
-				</h:outputText>
-			</rich:column>
-			<rich:column styleClass="right">
-				<h:outputText styleClass="tableTitle"
-					value="#{_entryItem.municipalBond.surcharge}">
-					<f:convertNumber
-						maxFractionDigits="#{messages['common.maxFractionDigits']}"
-						minFractionDigits="#{messages['common.minFractionDigits']}" />
-				</h:outputText>
-			</rich:column>
-			<rich:column styleClass="right">
-				<h:outputText styleClass="tableTitle"
-					value="#{_entryItem.municipalBond.taxesTotal}">
-					<f:convertNumber
-						maxFractionDigits="#{messages['common.maxFractionDigits']}"
-						minFractionDigits="#{messages['common.minFractionDigits']}" />
-				</h:outputText>
-			</rich:column>
-			<rich:column styleClass="right">
-				<h:outputText styleClass="tableTitle"
-					value="#{_entryItem.municipalBond.paidTotal}">
-					<f:convertNumber
-						maxFractionDigits="#{messages['common.maxFractionDigits']}"
-						minFractionDigits="#{messages['common.minFractionDigits']}" />
-				</h:outputText>
-			</rich:column>
-		</rich:columnGroup>
-		<!-- jjjjjjjjjjjjjjjjjjjjjjjjjjjj -->
-
-
-
-
-		<rich:subTable value="#{_entryItem.municipalBondItems}"
-			var="_groupingItem">
-			<rich:columnGroup styleClass="groupingTitle">
-				<rich:column>
-					<h:selectBooleanCheckbox value="#{_groupingItem.isSelected}" disabled="#{!_groupingItem.enableCheckBox}">
-						<a:support event="onchange" eventsQueue="gimQueue"
-							action="#{paymentHome.calculatePaidTotalSubscriptions()}"
-							ajaxSingle="true"
-							reRender="municipalBondsPanel, totalsPanel" />
-					</h:selectBooleanCheckbox>
-				</rich:column>
-
-
-				<rich:column styleClass="left groupingTitle" colspan="3">
-					<h:outputText
-						value="#{_groupingItem.municipalBond.groupingCode} - #{empty _groupingItem.municipalBond.adjunct ? _groupingItem.municipalBond.address : _groupingItem.municipalBond.adjunct}" />
-				</rich:column>
-
-				<!-- kkkkkkkkkkkkkkkkkkkkkkkkkkkk -->
-
-				<rich:column styleClass="right">
-					<h:outputText styleClass="tableTitle"
-						value="#{_groupingItem.municipalBond.value}">
-						<f:convertNumber
-							maxFractionDigits="#{messages['common.maxFractionDigits']}"
-							minFractionDigits="#{messages['common.minFractionDigits']}" />
-					</h:outputText>
-				</rich:column>
-
-				<rich:column styleClass="right">
-					<h:outputText styleClass="tableTitle"
-						value="#{_groupingItem.municipalBond.interest}">
-						<f:convertNumber
-							maxFractionDigits="#{messages['common.maxFractionDigits']}"
-							minFractionDigits="#{messages['common.minFractionDigits']}" />
-					</h:outputText>
-				</rich:column>
-				<rich:column styleClass="right">
-					<h:outputText styleClass="tableTitle"
-						value="#{_groupingItem.municipalBond.discount}">
-						<f:convertNumber
-							maxFractionDigits="#{messages['common.maxFractionDigits']}"
-							minFractionDigits="#{messages['common.minFractionDigits']}" />
-					</h:outputText>
-				</rich:column>
-				<rich:column styleClass="right">
-					<h:outputText styleClass="tableTitle"
-						value="#{_groupingItem.municipalBond.surcharge}">
-						<f:convertNumber
-							maxFractionDigits="#{messages['common.maxFractionDigits']}"
-							minFractionDigits="#{messages['common.minFractionDigits']}" />
-					</h:outputText>
-				</rich:column>
-				<rich:column styleClass="right">
-					<h:outputText styleClass="tableTitle"
-						value="#{_groupingItem.municipalBond.taxesTotal}">
-						<f:convertNumber
-							maxFractionDigits="#{messages['common.maxFractionDigits']}"
-							minFractionDigits="#{messages['common.minFractionDigits']}" />
-					</h:outputText>
-				</rich:column>
-				<rich:column styleClass="right">
-					<h:outputText styleClass="tableTitle"
-						value="#{_groupingItem.municipalBond.paidTotal}">
-						<f:convertNumber
-							maxFractionDigits="#{messages['common.maxFractionDigits']}"
-							minFractionDigits="#{messages['common.minFractionDigits']}" />
-					</h:outputText>
-				</rich:column>
-			</rich:columnGroup>
-			<!-- kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk -->
-
-
-			<rich:subTable value="#{_groupingItem.municipalBondItems}"
-				var="_municipalBondItem">
-
-				<rich:column width="1%" styleClass="center">
-					<f:facet name="header">
-					</f:facet>
-					<h:selectBooleanCheckbox value="#{_municipalBondItem.isSelected}" disabled="#{!_municipalBondItem.enableCheckBox}">
-						<a:support event="onchange" eventsQueue="gimQueue"
-							action="#{paymentHome.calculatePaidTotalSubscriptions()}"
-							ajaxSingle="true"
-							reRender="municipalBondsPanel, totalsPanel" />
-					</h:selectBooleanCheckbox>
-				</rich:column>
-
-
-				<rich:column width="8%" styleClass="center">
-					<f:facet name="header">#{messages['municipalBond.emissionDate']}</f:facet>
-					<h:outputText
-						value="#{_municipalBondItem.municipalBond.emisionDate}"
-						styleClass="#{_municipalBondItem.municipalBond.municipalBondStatus.id == paymentHome.compensationStatusId ? 'blueFont' : ''}">
-						<s:convertDateTime type="date"
-							pattern="#{messages['common.datePattern']}" />
-					</h:outputText>
-				</rich:column>
-
-				<rich:column width="8%" styleClass="center">
-					<f:facet name="header">#{messages['municipalBond.expirationDate']}</f:facet>
-					<h:outputText
-						value="#{_municipalBondItem.municipalBond.expirationDate}"
-						styleClass="#{_municipalBondItem.municipalBond.municipalBondStatus.id == paymentHome.compensationStatusId ? 'blueFont' : ''}">
-						<s:convertDateTime type="date"
-							pattern="#{messages['common.datePattern']}" />
-					</h:outputText>
-				</rich:column>
-
-				<!-- rich:column width="10%" styleClass="center">
-							<f:facet name="header">#{messages['municipalBond.groupingCode']}</f:facet>
-							<h:outputText
-								value="#-{_municipalBondItem.municipalBond.groupingCode}" />
-						</rich:column -->
-
-				<rich:column >
-					<f:facet name="header">#{messages['municipalBond.observation']}</f:facet>
-					<h:outputText value="#{_municipalBondItem.serviceDate} / #{_municipalBondItem.municipalBond.description}" 
-						styleClass="#{_municipalBondItem.municipalBond.municipalBondStatus.id == paymentHome.compensationStatusId ? 'blueFont' : ''}"/>
-				</rich:column>
-
-				<rich:column width="8%" styleClass="right">
-					<f:facet name="header">#{messages['municipalBond.value']}</f:facet>
-					<h:outputText value="#{_municipalBondItem.municipalBond.value}"
-						styleClass="#{_municipalBondItem.municipalBond.municipalBondStatus.id == paymentHome.compensationStatusId ? 'blueFont' : ''}">
-						<f:convertNumber
-							maxFractionDigits="#{messages['common.maxFractionDigits']}"
-							minFractionDigits="#{messages['common.minFractionDigits']}" />
-					</h:outputText>
-				</rich:column>
-				<!-- 
-				<rich:column>
-					<f:facet name="header">#-{messages['municipalBond.dividendsTotal']}</f:facet>
-					<h:outputText value="#-{_municipalBondItem.dividendsTotal}">
-						<f:convertNumber />
-					</h:outputText>
-				</rich:column>
-				 -->
-				<rich:column width="8%" styleClass="right">
-					<f:facet name="header">#{messages['municipalBond.interestsTotal']}</f:facet>
-					<h:outputText value="#{_municipalBondItem.municipalBond.interest}"
-						styleClass="#{_municipalBondItem.municipalBond.municipalBondStatus.id == paymentHome.compensationStatusId ? 'blueFont' : ''}">
-						<f:convertNumber
-							maxFractionDigits="#{messages['common.maxFractionDigits']}"
-							minFractionDigits="#{messages['common.minFractionDigits']}" />
-					</h:outputText>
-				</rich:column>
-
-				<rich:column width="8%" styleClass="right">
-					<f:facet name="header">#{messages['municipalBond.discountsTotal']}</f:facet>
-					<h:outputText value="#{_municipalBondItem.municipalBond.discount}"
-						styleClass="#{_municipalBondItem.municipalBond.municipalBondStatus.id == paymentHome.compensationStatusId ? 'blueFont' : ''}">
-						<f:convertNumber
-							maxFractionDigits="#{messages['common.maxFractionDigits']}"
-							minFractionDigits="#{messages['common.minFractionDigits']}" />
-					</h:outputText>
-				</rich:column>
-
-				<rich:column width="8%" styleClass="right">
-					<f:facet name="header">#{messages['municipalBond.surchargesTotal']}</f:facet>
-					<h:outputText value="#{_municipalBondItem.municipalBond.surcharge}"
-						styleClass="#{_municipalBondItem.municipalBond.municipalBondStatus.id == paymentHome.compensationStatusId ? 'blueFont' : ''}">
-						<f:convertNumber
-							maxFractionDigits="#{messages['common.maxFractionDigits']}"
-							minFractionDigits="#{messages['common.minFractionDigits']}" />
-					</h:outputText>
-				</rich:column>
-				
-				<rich:column width="8%" styleClass="right">
-					<f:facet name="header">#{messages['municipalBond.taxesTotal']}</f:facet>
-					<h:outputText value="#{_municipalBondItem.municipalBond.taxesTotal}"
-						styleClass="#{_municipalBondItem.municipalBond.municipalBondStatus.id == paymentHome.compensationStatusId ? 'blueFont' : ''}">
-						<f:convertNumber
-							maxFractionDigits="#{messages['common.maxFractionDigits']}"
-							minFractionDigits="#{messages['common.minFractionDigits']}" />
-					</h:outputText>
-				</rich:column>
-
-				<rich:column width="8%" styleClass="right">
-					<f:facet name="header">#{messages['municipalBond.paidTotal']}</f:facet>
-					<h:outputText value="#{_municipalBondItem.municipalBond.paidTotal}"
-						styleClass="#{_municipalBondItem.municipalBond.municipalBondStatus.id == paymentHome.compensationStatusId ? 'blueFont' : ''}">
-						<f:convertNumber
-							maxFractionDigits="#{messages['common.maxFractionDigits']}"
-							minFractionDigits="#{messages['common.minFractionDigits']}" />
-					</h:outputText>
-				</rich:column>
-			</rich:subTable>
 		</rich:subTable>
+
+		<rich:subTable value="#{_municipalBond.deposits}" var="_deposit"
+			rendered="#{not empty _municipalBond.deposits}">
+
+			<rich:column
+				styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}"
+				width="2%">
+				<f:facet name="header">#{messages['deposit.number']}</f:facet>
+				<h:outputText value="#{_deposit.number}" />
+			</rich:column>
+			<rich:column
+				styleClass="center #{_deposit.id == null ? 'groupingTitle' : ''}" width="38%">
+				<f:facet name="header">#{messages['deposit.date']}</f:facet>
+				<h:outputText value="#{_deposit.date}">
+					<f:convertDateTime pattern="yyyy-MM-dd" />
+				</h:outputText>
+			</rich:column>
+
+			<rich:column
+				styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+				<f:facet name="header">#{messages['deposit.capital']}</f:facet>
+				<h:outputText value="#{_deposit.capital}">
+					<f:convertNumber
+						maxFractionDigits="#{messages['common.maxFractionDigits']}"
+						minFractionDigits="#{messages['common.minFractionDigits']}" />
+				</h:outputText>
+			</rich:column>
+			<rich:column
+				styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+				<f:facet name="header">#{messages['deposit.balance']}</f:facet>
+				<h:outputText value="#{_deposit.balance}">
+					<f:convertNumber
+						maxFractionDigits="#{messages['common.maxFractionDigits']}"
+						minFractionDigits="#{messages['common.minFractionDigits']}" />
+				</h:outputText>
+			</rich:column>
+			<rich:column
+				styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+				<f:facet name="header">#{messages['deposit.interest']}</f:facet>
+				<h:outputText value="#{_deposit.interest}">
+					<f:convertNumber
+						maxFractionDigits="#{messages['common.maxFractionDigits']}"
+						minFractionDigits="#{messages['common.minFractionDigits']}" />
+				</h:outputText>
+			</rich:column>
+			
+			<rich:column
+				styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+				<f:facet name="header">#{messages['deposit.surcharge']}</f:facet>
+				<h:outputText value="#{_deposit.surcharge}">
+					<f:convertNumber
+						maxFractionDigits="#{messages['common.maxFractionDigits']}"
+						minFractionDigits="#{messages['common.minFractionDigits']}" />
+				</h:outputText>
+			</rich:column>
+
+			<rich:column
+				styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+				<f:facet name="header">#{messages['deposit.discount']}</f:facet>
+				<h:outputText value="#{_deposit.discount}">
+					<f:convertNumber
+						maxFractionDigits="#{messages['common.maxFractionDigits']}"
+						minFractionDigits="#{messages['common.minFractionDigits']}" />
+				</h:outputText>
+			</rich:column>
+			
+			<rich:column
+				styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+				<f:facet name="header">#{messages['deposit.paidTaxes']}</f:facet>
+				<h:outputText
+					value="#{_deposit.balance == 0 ? _deposit.municipalBond.taxesTotal : 0}">
+					<f:convertNumber
+						maxFractionDigits="#{messages['common.maxFractionDigits']}"
+						minFractionDigits="#{messages['common.minFractionDigits']}" />
+				</h:outputText>
+			</rich:column>
+
+			<rich:column
+				styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
+				<f:facet name="header">#{messages['deposit.value']}</f:facet>
+				<h:outputText value="#{_deposit.value}">
+					<f:convertNumber
+						maxFractionDigits="#{messages['common.maxFractionDigits']}"
+						minFractionDigits="#{messages['common.minFractionDigits']}" />
+				</h:outputText>
+			</rich:column>
+		</rich:subTable>
+
 	</rich:dataTable>
 
 </ui:composition>
