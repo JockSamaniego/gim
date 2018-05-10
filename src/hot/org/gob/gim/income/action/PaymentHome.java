@@ -660,6 +660,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 					.findParameter(IncomeServiceBean.SUBSCRIPTION_BOND_STATUS);
 			Query query = getEntityManager().createNamedQuery("MunicipalBond.findBySubscriptionStatusId");
 			query.setParameter("municipalBondStatusId", inSubscriptionMunicipalBondStatusId);
+			query.setParameter("residentId", resident.getId());
 			//query.setParameter("paymentAgreementId", paymentAgreement.getId());
 			List<MunicipalBond> results = query.getResultList();
 			for (MunicipalBond municipalBond : results) {

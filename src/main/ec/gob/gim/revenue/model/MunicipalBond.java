@@ -505,8 +505,11 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "mb.municipalBondStatus.id=:municipalBondStatusId "
 				+ "ORDER BY expirationDate"),
 		//rfam 2018-05-09 consulta de obligaciones en abono
-		@NamedQuery(name = "MunicipalBond.findBySubscriptionStatusId", query = "SELECT mb FROM MunicipalBond mb LEFT JOIN FETCH mb.institution "
+		@NamedQuery(name = "MunicipalBond.findBySubscriptionStatusId", query = "SELECT mb FROM MunicipalBond mb "
+				+ "LEFT JOIN FETCH mb.institution "
+				+ "LEFT JOIN FETCH mb.resident res "
 				+ "WHERE mb.municipalBondStatus.id=:municipalBondStatusId "
+				+ "and mb.resident.id=:residentId "
 				+ "ORDER BY expirationDate"),
 
 		@NamedQuery(name = "MunicipalBond.findByStatusAndCashierAndDate", query = "SELECT mb FROM MunicipalBond mb "
