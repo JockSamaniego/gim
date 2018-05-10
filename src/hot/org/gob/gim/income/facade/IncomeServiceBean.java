@@ -443,11 +443,15 @@ public class IncomeServiceBean implements IncomeService {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "C", paymentMethod);
 			itemValue = mb.getBalance();
 			depositValue = dep.getCapital();
+			/*
 			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
 				BigDecimal temp = depositValue.add(sum);
 				if (temp.compareTo(itemValue) >= 0)
 					itemIsPayed = true;
 			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
+				itemIsPayed = true;
+			}*/
+			if( dep.getBalance().compareTo(BigDecimal.ZERO) == 0 && mb.getPaymentAgreement() != null ) {
 				itemIsPayed = true;
 			}
 			

@@ -1307,8 +1307,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		List<Long> idsBonds = new ArrayList<Long>();
 
 
+		List<MunicipalBond> temp = new ArrayList<MunicipalBond>();
 		if(this.enableSubscription) {
 			for (MunicipalBondItem mbi : municipalBondSubscriptionsItems) {
+				temp.add(mbi.getMunicipalBond());
 				idsBonds.add(mbi.getMunicipalBond().getId());
 			}
 		}else {
@@ -1316,6 +1318,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				//selectedNew.add(municipalBond);
 				idsBonds.add(municipalBond.getId());
 			}
+			temp = selectedBonds;
 		}
 		
 		
@@ -1323,10 +1326,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		q.setParameter("list", idsBonds);
 		
 		List<MunicipalBond> selectedNew = (List<MunicipalBond>)q.getResultList(); 
-		//List<MunicipalBond> selectedNew2 = fin
+		List<MunicipalBond> selectedNew2 = getDiscount(selectedNew, temp);
+		 
 		
 		if (this.isPaymentSubscription) {
-			List<Deposit> deps = subscriptionDeposit(selectedNew);
+			List<Deposit> deps = subscriptionDeposit(selectedNew2);
 			return deps;
 		} else {
 
@@ -1343,6 +1347,23 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			}
 			return deps;
 		}
+	}
+	
+	private List<MunicipalBond> getDiscount(List<MunicipalBond> bondsBD, List<MunicipalBond> bondsCalculate){
+		
+		List<MunicipalBond> retornoList = new ArrayList<MunicipalBond>();
+		for (MunicipalBond mbDB : bondsBD) {
+			for (MunicipalBond mbCalc : bondsCalculate) {
+				System.out.println("mbDB "+mbDB.getId());
+				System.out.println("mbCalc "+mbCalc.getId());
+				if(mbDB.getId().equals(mbCalc.getId())) {
+					mbDB.setDiscount(mbCalc.getDiscount());
+					retornoList.add(mbDB);
+					break;
+				}
+			}
+		}
+		return retornoList;
 	}
 
 	/**
@@ -1456,9 +1477,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 						PaymentMethod.SUBSCRIPTION.name());
 				if (ratesList.isEmpty()) { // si no hay elementos no se ha pagado o no se termina de pagar
 					
-					BigDecimal discount = mbService.calculateDiscount(municipalBond); 
+					//BigDecimal discount = mbService.calculateDiscount(municipalBond); 
 					
-					deposit.setDiscount(discount);
+					deposit.setDiscount(municipalBond.getDiscount());
 					plainResult = calculateRate3(incomeService, municipalBond, "C", municipalBond.getBalance(),
 							remaining, deposit, PaymentMethod.SUBSCRIPTION.name());
 					remaining = (BigDecimal) plainResult.get("remaining");
