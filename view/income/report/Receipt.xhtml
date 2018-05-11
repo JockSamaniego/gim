@@ -32,23 +32,23 @@
 					</p:cell>
 					<p:cell>
 						<p:font size="11" style="bold">
-							<p:paragraph alignment="center">#{_deposit.municipalBond.institution.name.toUpperCase()}</p:paragraph>
+							<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
 						</p:font>
 						<p:font size="5" style="bold">
 							<p:paragraph alignment="center">#{messages['receipt.subtitle']}</p:paragraph>
 						</p:font>
 						<p:font size="7" style="bold">
-							<p:paragraph alignment="center">#{messages['institution.ruc']}: #{_deposit.municipalBond.institution.number}</p:paragraph>
+							<p:paragraph alignment="center">#{messages['institution.ruc']}: #{gim.institution.number}</p:paragraph>
 						</p:font>
 						
-						<ui:repeat value="#{_deposit.municipalBond.institution.isSpecialTaxpayer ? 1 : null}">
+						<ui:repeat value="#{gim.institution.isSpecialTaxpayer ? 1 : null}">
 							<p:font size="5" style="bold">
-								<p:paragraph alignment="center">#{messages['receipt.specialTaxpayer']}: #{interpolator.interpolate(messages['receipt.specialTaxpayerResolution'], _deposit.municipalBond.institution.specialTaxpayerResolution,_deposit.municipalBond.institution.specialTaxpayerDateString)}</p:paragraph>
+								<p:paragraph alignment="center">#{messages['receipt.specialTaxpayer']}: #{interpolator.interpolate(messages['receipt.specialTaxpayerResolution'], gim.institution.specialTaxpayerResolution,gim.institution.specialTaxpayerDateString)}</p:paragraph>
 							</p:font>
 						</ui:repeat>
 						
 						<p:font size="5">
-							<p:paragraph alignment="center">#{messages['branch.main']}: #{_deposit.municipalBond.institution.address}. #{messages['institution.phone']}: #{_deposit.municipalBond.institution.phone} -  #{messages['institution.fax']}: #{_deposit.municipalBond.institution.fax}</p:paragraph>
+							<p:paragraph alignment="center">#{messages['branch.main']}: #{gim.institution.address}. #{messages['institution.phone']}: #{gim.institution.phone} -  #{messages['institution.fax']}: #{gim.institution.fax}</p:paragraph>
 							<ui:repeat value="#{_deposit.municipalBond.receipt != null ? 1 : null}">
 								<ui:repeat value="#{!receiptPrintingManager.getBranch(_deposit.municipalBond.receipt.branch).isMain ? 1 : null}">
 									<p:paragraph alignment="center">#{messages['branch.title']}: #{receiptPrintingManager.getBranch(_deposit.municipalBond.receipt.branch).name} - #{receiptPrintingManager.getBranch(_deposit.municipalBond.receipt.branch).address}</p:paragraph>
