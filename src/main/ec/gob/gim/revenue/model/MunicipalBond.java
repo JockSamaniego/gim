@@ -1091,7 +1091,7 @@ public class MunicipalBond implements Serializable {
 	private Entry entry;
 
 	@OneToMany(mappedBy = "municipalBond", fetch = FetchType.LAZY)
-	@OrderBy("date asc")
+	@OrderBy("date, time asc")
 	private Set<Deposit> deposits;
 
 	@OneToMany(mappedBy = "municipalBond", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
