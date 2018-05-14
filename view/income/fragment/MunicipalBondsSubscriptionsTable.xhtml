@@ -19,7 +19,7 @@
 				maxFractionDigits="#{messages['common.maxFractionDigits']}"
 				minFractionDigits="#{messages['common.minFractionDigits']}" />
 			<a:support event="onblur" eventsQueue="gimQueue"
-				action="#{paymentHome.generateDepositsBySubscriptions()}"
+				action="#{paymentHome.coerciveJudgementSubscriptions()}"
 				reRender="totalsPanel, subscriptionsBondsTable" />
 		</h:inputText>
 	</s:decorate>

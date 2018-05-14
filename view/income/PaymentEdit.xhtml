@@ -242,7 +242,8 @@
 									oncomplete="registerPayment(#{paymentHome.hasCompensationBonds})"
 									value="#{paymentHome.isFullPayment ? messages['payment.register'] : messages['deposit.register']}"
 									disabled="#{paymentHome.isPaymentButtonDisabled}"
-									focus="receivedAmount" />
+									focus="receivedAmount" 
+									rendered="#{!paymentHome.enableSubscription}"/>
 									
 								<a:commandButton id="registerSubscriptionBtn"
 									action="#{paymentHome.updateHasCompensationBonds('SUBSCRIPTION')}"
