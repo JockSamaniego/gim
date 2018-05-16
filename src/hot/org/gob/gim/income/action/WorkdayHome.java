@@ -1664,6 +1664,10 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 		entryTotalCollecteds = getAllTotalEffectiveCollectedByEntry();
 		orderByGroupBy(entryTotalCollecteds);
+		
+		entryTotalCollectedsSubscription = getAllTotalsPaymentSubscription();
+		orderByGroupBy(entryTotalCollectedsSubscription);
+		
 		entryTotalCollectedsInAgreement = getAllTotalsPaymentAgrement();
 		orderByGroupBy(entryTotalCollectedsInAgreement);
 		entryTotalCollectedsByCompensation = getAllTotalsCompensationCollectedByEntry();
@@ -1902,6 +1906,36 @@ public class WorkdayHome extends EntityHome<Workday> {
 		currentPeriod.addAll(missing);
 		return currentPeriod;
 	}
+	
+	private List<EntryTotalCollected> getAllTotalsPaymentSubscription() {
+		List<EntryTotalCollected> currentPeriod = getTotalInSubscriptionByEntryCurrentPeriod(
+				startDate, endDate);
+		List<EntryTotalCollected> previousPeriod = getTotalInSubscriptionByEntryPreviosuYears(
+				startDate, endDate);
+		List<EntryTotalCollected> missing = new ArrayList<EntryTotalCollected>();
+		for (EntryTotalCollected et1 : previousPeriod) {
+			boolean exist = false;
+			for (EntryTotalCollected et : currentPeriod) {
+				if (et.getId().equals(et1.getId())) {
+					exist = Boolean.TRUE;
+					et.setInterest(et.getInterest().add(et1.getInterest()));
+					et.setTaxes(et.getTaxes().add(et1.getTaxes()));
+					et.setSurcharge(et.getSurcharge().add(et1.getSurcharge()));
+					et.setDiscount(et.getDiscount().add(et1.getDiscount()));
+					et.setPreviousYears(et1.getValue());
+					et.setTotal(et.getTotal().add(et1.getTotal()));
+					break;
+				}
+			}
+			if (!exist) {
+				et1.setPreviousYears(et1.getValue());
+				et1.setValue(BigDecimal.ZERO);
+				missing.add(et1);
+			}
+		}
+		currentPeriod.addAll(missing);
+		return currentPeriod;
+	}
 
 	private List<EntryTotalCollected> getAllTotalsSubscription() {
 		List<EntryTotalCollected> currentPeriod = getTotalSubscriptionByEntryCurrentPeriod(
@@ -1956,6 +1990,34 @@ public class WorkdayHome extends EntityHome<Workday> {
 		List<Long> statusIds = new ArrayList<Long>();
 		statusIds.add(paidStatus);
 		statusIds.add(agreementStatus);
+		Query query = query = getEntityManager().createQuery(sql);
+		query.setParameter("startDate", startDate);
+		query.setParameter("endDate", endDate);
+		query.setParameter("emisionPeriod", userSession.getFiscalPeriod()
+				.getStartDate());
+		query.setParameter("municipalBondStatusIds", statusIds);
+		return query.getResultList();
+	}
+	
+	private List<EntryTotalCollected> getTotalInSubscriptionByEntryPreviosuYears(
+			Date startDate, Date endDate) {
+		String sql = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id,count(d.id), e.name,e.code, SUM(d.capital), SUM(d.discount), SUM(d.surcharge), "
+				+ " SUM(d.interest), SUM(d.paidTaxes), SUM (d.value)) from MunicipalBond m "
+				+ "join m.deposits d "
+				+ "join m.entry e "
+				+ "left join e.account ac "
+				+ "where d.date Between :startDate and :endDate "
+				+ "AND (select count(maux) "
+				+ "from MunicipalbondAux maux "
+				+ "where maux.municipalbond.id = m.id "
+				+ "AND maux.typepayment = 'SUBSCRIPTION' "
+				+ "AND maux.status = 'VALID') > 0 "
+				+ "AND m.emisionPeriod < :emisionPeriod AND "
+				+ "m.municipalBondStatus.id in (:municipalBondStatusIds) "
+				+ "GROUP BY e.id, e.name,e.code ORDER BY e.code";
+		List<Long> statusIds = new ArrayList<Long>();
+		statusIds.add(paidStatus);
+		statusIds.add(subscriptionStatus);
 		Query query = query = getEntityManager().createQuery(sql);
 		query.setParameter("startDate", startDate);
 		query.setParameter("endDate", endDate);
@@ -2056,6 +2118,34 @@ public class WorkdayHome extends EntityHome<Workday> {
 		List<Long> statusIds = new ArrayList<Long>();
 		statusIds.add(paidStatus);
 		statusIds.add(agreementStatus);
+		Query query = getEntityManager().createQuery(sql);
+		query.setParameter("startDate", startDate);
+		query.setParameter("endDate", endDate);
+		query.setParameter("emisionPeriod", userSession.getFiscalPeriod()
+				.getStartDate());
+		query.setParameter("municipalBondStatusIds", statusIds);
+		return query.getResultList();
+	}
+	
+	private List<EntryTotalCollected> getTotalInSubscriptionByEntryCurrentPeriod(
+			Date startDate, Date endDate) {
+		String sql = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id,count(d.id), e.name,e.code, SUM(d.capital), SUM(d.discount), SUM(d.surcharge), "
+				+ " SUM(d.interest), SUM(d.paidTaxes), SUM (d.value)) from MunicipalBond m "
+				+ "join m.deposits d "
+				+ "join m.entry e "
+				+ "left join e.account ac "
+				+ "where d.date Between :startDate and :endDate AND "
+				+ "m.emisionPeriod = :emisionPeriod AND "
+				+ "m.municipalBondStatus.id in (:municipalBondStatusIds) "
+				+ "AND (select count(maux) "
+				+ "from MunicipalbondAux maux "
+				+ "where maux.municipalbond.id = m.id "
+				+ "AND maux.typepayment = 'SUBSCRIPTION' "
+				+ "AND maux.status = 'VALID') > 0 "
+				+ "GROUP BY e.id, e.name,e.code ORDER BY e.code";
+		List<Long> statusIds = new ArrayList<Long>();
+		statusIds.add(paidStatus);
+		statusIds.add(subscriptionStatus);
 		Query query = getEntityManager().createQuery(sql);
 		query.setParameter("startDate", startDate);
 		query.setParameter("endDate", endDate);
@@ -2192,6 +2282,11 @@ public class WorkdayHome extends EntityHome<Workday> {
 				+ "join m.deposits d "
 				+ "left join m.paymentAgreement pa "
 				+ "where d.date Between :startDate and :endDate "
+				+"AND (select count(maux) "
+				+ "from MunicipalbondAux maux "
+				+ "where maux.municipalbond.id = m.id "
+				+ "AND maux.typepayment = 'SUBSCRIPTION' "
+				+ "AND maux.status = 'VALID') = 0 "
 				+ "AND m.emisionPeriod < :emisionPeriod "
 				+ "AND m.municipalBondStatus.id in (:municipalBondStatusIds) "
 				+ "AND pa is null) "
@@ -2242,7 +2337,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 			Date startDate, Date endDate) {
 		if (groupBy == null)
 			groupBy = "e.code";
-
+		
 		String sql = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id, count(m.id),e.name,"
 				+ groupBy
 				+ ", SUM(m.value), SUM(m.discount), SUM(m.surcharge),"
@@ -2253,6 +2348,11 @@ public class WorkdayHome extends EntityHome<Workday> {
 				+ "left join m.paymentAgreement pa "
 				+ "where d.date Between :startDate and :endDate "
 				+ "AND m.emisionPeriod = :emisionPeriod "
+				+"AND (select count(maux) "
+				+ "from MunicipalbondAux maux "
+				+ "where maux.municipalbond.id = m.id "
+				+ "AND maux.typepayment = 'SUBSCRIPTION' "
+				+ "AND maux.status = 'VALID') = 0 "
 				+ "AND m.municipalBondStatus.id in (:municipalBondStatusIds) "
 				+ "AND pa is null) "
 				+ "GROUP BY e.id, e.name, "
