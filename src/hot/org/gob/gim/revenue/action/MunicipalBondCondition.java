@@ -611,9 +611,9 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		try {
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			this.futureBonds = incomeService.findFutureBonds(residentId);
-			for (FutureBond mb : futureBonds) {
+			/*for (FutureBond mb : futureBonds) {
 				totalFutereBond = totalFutereBond.add(mb.getTotal());
-			}
+			}*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

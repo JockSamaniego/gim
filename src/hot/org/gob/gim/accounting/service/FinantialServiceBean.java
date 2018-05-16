@@ -64,6 +64,12 @@ public class FinantialServiceBean implements FinantialService{
 			"         mb.liquidationDate BETWEEN :startDate AND :endDate AND " +
 			"         mb.paymentAgreement_id is null AND " +
 			"         mb.municipalBondStatus_id in (:statuses)" +
+			//rfam 2018-05-14 para eviatar el pago en abonos
+			"		  AND (select count(maux) " + 
+			"         		from gimprod.MunicipalbondAux maux " + 
+			"				where maux.municipalbond_id = mb.id " + 
+			"				AND maux.typepayment = 'SUBSCRIPTION' " + 
+			"				AND maux.status = 'VALID') = 0 " +
 			"   GROUP BY a.id " +
 			"   ORDER BY a.accountCode ";
 	
@@ -125,6 +131,12 @@ public class FinantialServiceBean implements FinantialService{
 			"         mb.liquidationDate between :startDate AND :endDate AND " +
 			"         mb.paymentAgreement_id is null AND " +
 			"         mb.municipalBondStatus_id in (:statuses) " +
+			//rfam 2018-05-14 para eviatar el pago en abonos
+			"		  AND (select count(maux) " + 
+			"         		from gimprod.MunicipalbondAux maux " + 
+			"				where maux.municipalbond_id = mb.id " + 
+			"				AND maux.typepayment = 'SUBSCRIPTION' " + 
+			"				AND maux.status = 'VALID') = 0 " +
 			"   GROUP BY a.id " +
 			"   ORDER BY a.accountCode ";
 	
@@ -138,6 +150,12 @@ public class FinantialServiceBean implements FinantialService{
 			"         mb.liquidationDate between :startDate AND :endDate AND " +
 			"         mb.paymentAgreement_id is null AND " +
 			"         mb.municipalBondStatus_id in (:statuses) " +
+			//rfam 2018-05-14 para eviatar el pago en abonos
+			"		  AND (select count(maux) " + 
+			"         		from gimprod.MunicipalbondAux maux " + 
+			"				where maux.municipalbond_id = mb.id " + 
+			"				AND maux.typepayment = 'SUBSCRIPTION' " + 
+			"				AND maux.status = 'VALID') = 0 " +
 			"   GROUP BY a.id " +
 			"   ORDER BY a.accountCode ";	
 	
@@ -152,6 +170,12 @@ public class FinantialServiceBean implements FinantialService{
 			"          mb.liquidationDate between :startDate AND :endDate AND " +
 			"         mb.paymentAgreement_id is null AND " +
 			"          mb.municipalBondStatus_id in (:statuses) " +
+			//rfam 2018-05-14 para eviatar el pago en abonos
+			"		  AND (select count(maux) " + 
+			"         		from gimprod.MunicipalbondAux maux " + 
+			"				where maux.municipalbond_id = mb.id " + 
+			"				AND maux.typepayment = 'SUBSCRIPTION' " + 
+			"				AND maux.status = 'VALID') = 0 " +
 			"   GROUP BY a.id " +
 			"   ORDER BY a.accountCode ";
 	
@@ -1001,6 +1025,8 @@ public class FinantialServiceBean implements FinantialService{
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.BLOCKED_BOND_STATUS));
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.IN_PAYMENT_AGREEMENT_BOND_STATUS));
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.COMPENSATION_BOND_STATUS));
+		//rfam 2018-05-15 para soportar pagos en abonos
+		statuses.add((Long)systemParameterService.findParameter(IncomeService.SUBSCRIPTION_BOND_STATUS));
 		return statuses; 
 	}
 	
@@ -1044,6 +1070,8 @@ public class FinantialServiceBean implements FinantialService{
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.BLOCKED_BOND_STATUS));
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.IN_PAYMENT_AGREEMENT_BOND_STATUS));
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.COMPENSATION_BOND_STATUS));
+		//rfam 2018-05-15 para soportar pagos en abonos
+		statuses.add((Long)systemParameterService.findParameter(IncomeService.SUBSCRIPTION_BOND_STATUS));
 		return statuses; 
 	}
 	
