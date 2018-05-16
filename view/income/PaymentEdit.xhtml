@@ -252,6 +252,7 @@
 									oncomplete="registerSubscriptionPayment(#{paymentHome.hasCompensationBonds})"
 									value="Registrar abono"
 									disabled="#{paymentHome.isPaymentButtonDisabled}"
+									rendered="#{empty paymentHome.municipalBondSubscriptionsItems || paymentHome.enableSubscription}"
 									focus="receivedAmount" />			
 							</h:panelGrid>
 

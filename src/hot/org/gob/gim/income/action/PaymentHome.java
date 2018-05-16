@@ -2193,18 +2193,18 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	
 	
 	//Jock samaniego
-	public void generateDepositsBySubscriptions() {	
-	
-		
-		if(this.enableSubscription) {
-			municipalBonds = municipalBondSubscriptionsItems;
-		}else {
-			municipalBonds = selectedBonds;
-		}
-		
-		
-		this.coerciveJudgement();
-	}
+//	public void generateDepositsBySubscriptions() {	
+//	
+//		
+//		if(this.enableSubscription) {
+//			municipalBonds = municipalBondSubscriptionsItems;
+//		}else {
+//			municipalBonds = selectedBonds;
+//		}
+//		
+//		
+//		this.coerciveJudgement();
+//	}
 
 	private Map<String, Object> calculateRate2(IncomeService incomeService, MunicipalBond municipalBond,
 			String itemType, BigDecimal itemValue, BigDecimal remaining, Deposit deposit, String paymentMethod) {
@@ -2262,6 +2262,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 					deltaUp = valueToPay.subtract(remaining);
 					deltaDown = remaining;
 				}
+			}else{
+				value = remaining;
+				remaining = BigDecimal.ZERO;
 			}
 		}
 
