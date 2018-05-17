@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -21,6 +22,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.framework.EntityController;
 
 import ec.gob.gim.income.model.Branch;
+import ec.gob.gim.income.model.EntryTotalCollected;
 import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.TillPermissionDetail;
@@ -44,6 +46,7 @@ public class TillReportHome extends EntityController {
 	private Till till;
 	private Long paidStatus;
 	private Long compensationStatus;
+	private Long subscriptionStatus;
 	private Long externalPaidStatus;
 	private Long agreementStatus;
 	private TillPermission tillPermission;
@@ -120,13 +123,134 @@ public class TillReportHome extends EntityController {
 		query.setParameter("startDate", startDate);
 		query.setParameter("endDate", endDate);
 		
-		List<TillPermission> tillPermissions = query.getResultList();		
+		//List<TillPermission> tillPermissions = query.getResultList();		
 				
-		findTotalCollected(tillPermissions);
+		//findTotalCollected(tillPermissions);
+		this.tillPermissionsDetails = this.findTotalCollected(startDate, endDate, branch, till);
 				
-		if(tillPermissions.size() == 1){
+		/*if(tillPermissions.size() == 1){
 			tillPermission = tillPermissions.get(0);
-		}		
+		}*/		
+	}
+	
+	private List<TillPermissionDetail> findTotalCollected(Date startDate, Date endDate, Branch branch, Till till ){
+		
+		String sql = "select query_nivel1.date, "
+				+"query_nivel1.number, "
+				+"COALESCE(query_nivel1.totalEffective,0.00) +	coalesce(query_nivel1.totalPaymentAgreement, 0.00) + COALESCE(query_nivel1.totalSubscription, 0.00) as totalcollected, "
+				+"COALESCE(query_nivel1.totalCompensation, 0.00) as totalCompensation, "
+				+"coalesce (query_nivel1.initialbalance, 0.00) as initialbalance, "
+				+"COALESCE(query_nivel1.totalEffective,0.00) +	coalesce(query_nivel1.totalPaymentAgreement, 0.00) + COALESCE(query_nivel1.totalSubscription, 0.00) + COALESCE(query_nivel1.totalCompensation, 0.00) as total, "
+				+"query_nivel1.branch, "
+				+"query_nivel1.chargename, "
+				+"query_nivel1.opened "				
+			+"from "
+			+"(select 	wor.date, "
+						+"tpe.initialbalance, "
+						+"res.name as chargename, "
+						+"CASE  WHEN tpe.closingtime IS NULL AND tpe.openingtime IS NOT NULL THEN TRUE "
+							+"ELSE FALSE "
+						+"END as opened, "
+						+"(select sum(m1.paidTotal) " 
+						+"from payment p1 "
+						+"left join deposit d1 on d1.payment_id = p1.id "
+						+"left join municipalBond m1 ON m1.id = d1.municipalbond_id " 
+						+"where p1.date Between ?1 and ?2 "
+						+"and p1.cashier_id = res.id "
+						+"and m1.id is not null " 
+						+"and m1.municipalBondStatus_id in ?3 "
+						+"AND m1.paymentAgreement_id is null) as totalCompensation, "
+						+"(select sum(m2.paidTotal) " 
+						+"from payment p2 " 
+						+"left join deposit d2 on d2.payment_id = p2.id "
+						+"left join municipalBond m2 ON m2.id = d2.municipalbond_id " 
+						+"where p2.date Between ?4 and ?5 "
+						+"and p2.cashier_id = res.id "
+						+"and m2.id is not null " 
+						+"and m2.municipalBondStatus_id in ?6 "
+						+"AND m2.paymentAgreement_id is null ) as totalEffective, "
+						+"(select sum(d3.value) " 
+						+"from payment p3 " 
+						+"left join deposit d3 ON d3.payment_id = p3.id "
+						+"left join municipalbond m3 ON  m3.id = d3.municipalbond_id "
+						+"where p3.date Between ?7 and ?8 "
+						+"and d3.date Between ?9 and ?10 "
+						+"and p3.cashier_id = res.id "
+						+"and m3.id is not null " 
+						+"AND m3.paymentAgreement_id is  not null) as totalPaymentAgreement, "
+						+"(select 	SUM(d4.value) as total "
+						+"from payment p4 " 
+						+"left join deposit d4 ON d4.payment_id = p4.id "
+						+"left join municipalbond m4 ON  m4.id = d4.municipalbond_id "
+						+"where p4.date Between ?11 and ?12 "
+						+"and d4.date Between ?13 and ?14 "
+						+"and p4.cashier_id = res.id "
+						+"AND m4.municipalBondStatus_id in ?15 "
+						+"AND (select count(*) " 
+								+"from municipalbondaux maux " 
+								+"where maux.municipalbond_id = m4.id " 
+								+"AND maux.typepayment = 'SUBSCRIPTION' " 
+								+"AND maux.status = 'VALID') > 0) as totalSubscription, "
+						+"til.number, "
+						+"bra.name as branch "
+						+"from tillPermission tpe " 
+						+"left join till til ON til.id = tpe.till_id "
+						+"left join branch bra on bra.id = til.branch_id "
+						+"LEFT JOIN workday wor on wor.id = tpe.workday_id "
+						+"INNER JOIN resident res ON res.id = tpe.person_id "
+						+"where wor.date BETWEEN ?16 AND ?17 ";
+						sql += branch == null ? " and 1 = 1 " : "AND bra.id = ?18 ";
+						sql +=  till == null ? " and 1 = 1 " : "AND til.id = ?19 ";
+						sql += "ORDER BY wor.date, bra.id) as query_nivel1 "
+						+"where (COALESCE(query_nivel1.totalEffective,0.00) +	coalesce(query_nivel1.totalPaymentAgreement, 0.00) + COALESCE(query_nivel1.totalSubscription, 0.00) + COALESCE(query_nivel1.totalCompensation, 0.00)) > 0";
+		
+		Query query = getEntityManager().createNativeQuery(sql);
+				
+		query.setParameter(1, startDate);
+		query.setParameter(2, endDate);
+		
+		List<Long> statusIdsCompensation = new ArrayList<Long>();
+		statusIdsCompensation.add(compensationStatus); 
+		query.setParameter(3, statusIdsCompensation);
+		
+		query.setParameter(4, startDate);
+		query.setParameter(5, endDate);
+		
+		List<Long> statusIdsPaid = new ArrayList<Long>();
+		statusIdsPaid.add(paidStatus);
+		statusIdsPaid.add(externalPaidStatus);
+		query.setParameter(6, statusIdsPaid);
+		
+		query.setParameter(7, startDate);
+		query.setParameter(8, endDate);
+		query.setParameter(9, startDate);
+		query.setParameter(10, endDate);
+		
+		query.setParameter(11, startDate);
+		query.setParameter(12, endDate);
+		query.setParameter(13, startDate);
+		query.setParameter(14, endDate);
+		
+		List<Long> statusSubscription = new ArrayList<Long>();
+		statusSubscription.add(paidStatus); 
+		statusSubscription.add(subscriptionStatus);
+		
+		query.setParameter(15, statusSubscription);
+		
+		query.setParameter(16, startDate);
+		query.setParameter(17, endDate);
+		
+		if(branch != null) {
+			query.setParameter(18, branch.getId());
+		}
+		
+		if(till != null) {
+			query.setParameter(19, till.getId());
+		}
+		
+		List<TillPermissionDetail> retorno = NativeQueryResultsMapper.map(
+				query.getResultList(), TillPermissionDetail.class);
+		return retorno;
 	}
 	
 	/**
@@ -185,6 +309,7 @@ public class TillReportHome extends EntityController {
 		externalPaidStatus = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL");
 		agreementStatus= systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
 		compensationStatus = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_COMPENSATION");
+		subscriptionStatus = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 	}
 	
 	private List<Long> getPaidStatuses(){
@@ -214,11 +339,11 @@ public class TillReportHome extends EntityController {
 			BigDecimal totalEffective = (BigDecimal) findTotalCollectedByCashier(t.getWorkday().getDate(), t.getWorkday().getDate(), t.getPerson().getId(), paidStatuses);
 			BigDecimal totalPaymentAgreement = (BigDecimal) findTotalCollectedInAgreementByCashier(t.getWorkday().getDate(), t.getWorkday().getDate(), t.getPerson().getId());			
 			td.setTillPermission(t);			
-			td.setTotalCollected(totalEffective.add(totalPaymentAgreement));
+			td.setTotalCollected(totalEffective.add(totalPaymentAgreement));//pendiente de sacar
 			td.setTotalCompensationCollected(totalCompensation);					
 			td.setTillNumber(t.getTill().getNumber());
 			td.setBranch(t.getTill().getBranch().getName());
-			td.setTotal(globalTotal(td));
+			td.setTotal(globalTotal(td));//sacar***
 			if(td.getTotal().compareTo(BigDecimal.ZERO) == 1)tillPermissionsDetails.add(td);
 		}
 	}
@@ -337,6 +462,13 @@ public class TillReportHome extends EntityController {
 	public void setAgreementStatus(Long agreementStatus) {
 		this.agreementStatus = agreementStatus;
 	}
-	
+
+	public Long getSubscriptionStatus() {
+		return subscriptionStatus;
+	}
+
+	public void setSubscriptionStatus(Long subscriptionStatus) {
+		this.subscriptionStatus = subscriptionStatus;
+	}
 	
 }

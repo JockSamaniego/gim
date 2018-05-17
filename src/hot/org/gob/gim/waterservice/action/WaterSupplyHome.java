@@ -882,7 +882,7 @@ public void findMunicipalBondByState() {
 				//+ "LEFT JOIN FETCH res.currentAddress "
 				+ "LEFT JOIN FETCH mb.items it "
 				+ "LEFT JOIN FETCH it.entry "
-				+ "LEFT JOIN FETCH it.electronicItem "
+				//+ "LEFT JOIN FETCH it.electronicItem "
 				
 				//+ "LEFT JOIN FETCH mb.discountItems di "
 				//+ "LEFT JOIN FETCH di.entry "
@@ -992,7 +992,7 @@ public void findMunicipalBondByState() {
 				//+ "LEFT JOIN FETCH res.currentAddress "
 				+ "LEFT JOIN FETCH mb.items it "
 				+ "LEFT JOIN FETCH it.entry "
-				+ "LEFT JOIN FETCH it.electronicItem "
+				//+ "LEFT JOIN FETCH it.electronicItem "
 				//+ "LEFT JOIN FETCH mb.discountItems di "
 				//+ "LEFT JOIN FETCH di.entry "
 				+ "LEFT JOIN FETCH mb.deposits deposit "
