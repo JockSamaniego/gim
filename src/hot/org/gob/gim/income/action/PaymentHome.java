@@ -1110,6 +1110,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	private Boolean enableSubscription=Boolean.FALSE;
+	private Boolean emissionFuture=Boolean.FALSE;
+	private Boolean paymentAgree = Boolean.FALSE;
 	
 	public Boolean getEnableSubscription() {
 		return enableSubscription;
@@ -1119,6 +1121,22 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		this.enableSubscription = enableSubscription;
 	}
 
+	public Boolean getEmissionFuture() {
+		return emissionFuture;
+	}
+
+	public void setEmissionFuture(Boolean emissionFuture) {
+		this.emissionFuture = emissionFuture;
+	}
+
+	public Boolean getPaymentAgree() {
+		return paymentAgree;
+	}
+
+	public void setPaymentAgree(Boolean paymentAgree) {
+		this.paymentAgree = paymentAgree;
+	}
+
 	public void changeSelectedTab(ValueChangeEvent vce) {
 		//@author mack
 				//@date 2018-05-09
@@ -1126,12 +1144,23 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				if(vce.getNewValue().equals("municipalBondsSubscriptions")) {
 					enableSubscription = Boolean.TRUE;
 					isFullPayment = Boolean.TRUE;
+					emissionFuture = Boolean.FALSE;
+					paymentAgree = Boolean.FALSE;
 				}else if(vce.getNewValue().equals("municipalBondsTab")){
 					enableSubscription = Boolean.FALSE;
 					isFullPayment = Boolean.TRUE;
+					emissionFuture = Boolean.FALSE;
+					paymentAgree = Boolean.FALSE;
 				}else if(vce.getNewValue().equals("paymentAgreementsTab")){
 					enableSubscription = Boolean.FALSE;
 					isFullPayment = Boolean.FALSE;
+					emissionFuture = Boolean.FALSE;
+					paymentAgree = Boolean.TRUE;
+				}else if(vce.getNewValue().equals("futureEmisionsTab")){
+					enableSubscription = Boolean.FALSE;
+					isFullPayment = Boolean.FALSE;
+					emissionFuture = Boolean.TRUE;
+					paymentAgree = Boolean.FALSE;
 				}
 		
 		//isFullPayment = !isFullPayment;
