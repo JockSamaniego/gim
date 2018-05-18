@@ -240,10 +240,10 @@
 									reRender="depositConfirmPanel" ajaxSingle="true"
 									eventsQueue="gimEventsQueue"
 									oncomplete="registerPayment(#{paymentHome.hasCompensationBonds})"
-									value="#{paymentHome.isFullPayment ? messages['payment.register'] : messages['deposit.register']}"
+									value="#{paymentHome.isFullPayment ? messages['payment.register'] : messages['Registrar Abono Convenio']}"
 									disabled="#{paymentHome.isPaymentButtonDisabled}"
 									focus="receivedAmount" 
-									rendered="#{!paymentHome.enableSubscription}"/>
+									rendered="#{(!paymentHome.enableSubscription and !paymentHome.emissionFuture and empty paymentHome.municipalBondSubscriptionsItems) || (paymentHome.paymentAgree)}"/>
 									
 								<a:commandButton id="registerSubscriptionBtn"
 									action="#{paymentHome.updateHasCompensationBonds('SUBSCRIPTION')}"
@@ -253,7 +253,12 @@
 									value="Registrar abono"
 									disabled="#{paymentHome.isPaymentButtonDisabled}"
 									rendered="#{empty paymentHome.municipalBondSubscriptionsItems || paymentHome.enableSubscription}"
-									focus="receivedAmount" />			
+									focus="receivedAmount" />
+								<h:outputText id="subscriptionMessage"
+								value="Tiene pago por abono pendiente"
+								style="font-size:20px; font-weight:bold; color: red" styleClass="right" 
+								rendered="#{not empty paymentHome.municipalBondSubscriptionsItems and !paymentHome.enableSubscription and paymentHome.isFullPayment}"/>	
+												
 							</h:panelGrid>
 
 						</h:panelGrid>
@@ -288,7 +293,7 @@
 						<ui:include src="fragment/PaymentAgreementsTable.xhtml" />
 					</rich:tab>
 
-					<rich:tab id="futureEisionsTab"
+					<rich:tab id="futureEmisionsTab"
 						label="#{messages['payment.futureEmision']}"
 						rendered="#{not empty paymentHome.futureBonds}" ajaxSingle="true"
 						reRender="totalsPanel, municipalBondsPanel"
