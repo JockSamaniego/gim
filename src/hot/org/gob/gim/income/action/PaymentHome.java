@@ -1426,6 +1426,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		Integer index = 0;
 		MunicipalBond municipalBond = null;
 		BigDecimal remaining = getReceivedAmount().setScale(2, RoundingMode.HALF_UP);
+		//BigDecimal remaining = depositTotal; //AQUIIIIIII JOCK CAMBIA!!!.....
 		List<Deposit> depositsLocal = new LinkedList<Deposit>();
 
 		while (remaining.compareTo(BigDecimal.ZERO) > 0) {
@@ -1995,17 +1996,18 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	
 	
 	//Jock samaniego
-	public void generateDepositsBySubscriptions() {	
-	
+	public void generateDepositsBySubscriptions() {
 		
+		List<MunicipalBond> selectedNew2;
 		if(this.enableSubscription) {
-			municipalBonds = municipalBondSubscriptionsItems;
+			selectedNew2 = municipalBondSubscriptionsItems;
 		}else {
-			municipalBonds = selectedBonds;
+			selectedNew2 = selectedBonds;
 		}
 		
+		List<Deposit> deps = subscriptionDeposit(selectedNew2);
+		municipalBonds = selectedNew2;
 		
-		this.coerciveJudgement();
 	}
 
 	private Map<String, Object> calculateRate2(IncomeService incomeService, MunicipalBond municipalBond,
