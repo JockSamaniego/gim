@@ -240,9 +240,10 @@
 									reRender="depositConfirmPanel" ajaxSingle="true"
 									eventsQueue="gimEventsQueue"
 									oncomplete="registerPayment(#{paymentHome.hasCompensationBonds})"
-									value="#{paymentHome.isFullPayment ? messages['payment.register'] : messages['deposit.register']}"
+									value="#{paymentHome.isFullPayment ? messages['payment.register'] : messages['Registrar Abono Convenio']}"
 									disabled="#{paymentHome.isPaymentButtonDisabled}"
-									focus="receivedAmount" />
+									focus="receivedAmount" 
+									rendered="#{(!paymentHome.enableSubscription and !paymentHome.emissionFuture and empty paymentHome.municipalBondSubscriptionsItems) || (paymentHome.paymentAgree)}"/>
 									
 								<a:commandButton id="registerSubscriptionBtn"
 									action="#{paymentHome.updateHasCompensationBonds('SUBSCRIPTION')}"
@@ -251,7 +252,13 @@
 									oncomplete="registerSubscriptionPayment(#{paymentHome.hasCompensationBonds})"
 									value="Registrar abono"
 									disabled="#{paymentHome.isPaymentButtonDisabled}"
-									focus="receivedAmount" />			
+									rendered="#{(empty paymentHome.municipalBondSubscriptionsItems and !paymentHome.paymentAgree) || paymentHome.enableSubscription}"
+									focus="receivedAmount" />
+								<h:outputText id="subscriptionMessage"
+								value="Tiene pago por abono pendiente"
+								style="font-size:20px; font-weight:bold; color: red" styleClass="right" 
+								rendered="#{not empty paymentHome.municipalBondSubscriptionsItems and !paymentHome.enableSubscription and paymentHome.isFullPayment}"/>	
+												
 							</h:panelGrid>
 
 						</h:panelGrid>
@@ -262,14 +269,14 @@
 
 			<a:outputPanel id="municipalBondsPanel" ajaxRendered="true" rendered="#{!paymentHome.isBlocketToCollect}">
 				<rich:panel style="margin-top:5px;"
-					rendered="#{empty paymentHome.municipalBondItems and empty paymentHome.inPaymentAgreementBonds and not empty paymentHome.resident}">
+					rendered="#{empty paymentHome.municipalBondItems and empty paymentHome.inPaymentAgreementBonds and not empty paymentHome.resident and empty paymentHome.municipalBondSubscriptionsItems}">
 					<h:outputText
 						style="font-weight:bold; font-size:25px; color:#00FF00"
 						value="#{messages['payment.noAccountsReceivableFound']}" />
 				</rich:panel>
 
 				<rich:tabPanel id="accountStatusPanel"
-					rendered="#{not empty paymentHome.municipalBondItems or not empty paymentHome.inPaymentAgreementBonds}"
+					rendered="#{not empty paymentHome.municipalBondItems or not empty paymentHome.inPaymentAgreementBonds or not empty paymentHome.municipalBondSubscriptionsItems}"
 					tabClass="tabTitle"
 					valueChangeListener="#{paymentHome.changeSelectedTab}"
 					switchType="ajax" selectedTab="municipalBondsTab">
@@ -286,7 +293,7 @@
 						<ui:include src="fragment/PaymentAgreementsTable.xhtml" />
 					</rich:tab>
 
-					<rich:tab id="futureEisionsTab"
+					<rich:tab id="futureEmisionsTab"
 						label="#{messages['payment.futureEmision']}"
 						rendered="#{not empty paymentHome.futureBonds}" ajaxSingle="true"
 						reRender="totalsPanel, municipalBondsPanel"

@@ -362,9 +362,13 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 
 		@NamedQuery(name = "MunicipalBond.findEmittedByDatesAndEmitter", query = "SELECT mb from MunicipalBond mb "
 				+ "LEFT JOIN FETCH mb.receipt r "
-				+ "LEFT JOIN FETCH mb.resident resident "
-				+ "where mb.emisionDate Between :startDate and :endDate and mb.emitter is not null and mb.emitter.id = :personId "
-				+ "GROUP BY mb.emitter.name,mb.emitter.id, mb.id,resident.id, r.id"),
+				+ "JOIN FETCH mb.resident resident "
+				+ "JOIN FETCH mb.emitter emitter "
+				+ "where mb.emisionDate Between :startDate and :endDate "
+				//+ "and mb.emitter is not null "
+				+ "and emitter.id = :personId "
+				+ "GROUP BY emitter.name,emitter.id, mb.id,resident.id, r.id"),
+				//+ "GROUP BY emitter.name,emitter.id, mb.id,resident.id "),
 
 		@NamedQuery(name = "MunicipalBond.findMunicipalBondViewBetweenDates", query = "SELECT NEW ec.gob.gim.revenue.model.MunicipalBondView(mb.entry.id,mb.entry.name,mb.resident.name, mb.number, mb.address, sum(mb.value + mb.taxesTotal)) from MunicipalBond mb "
 				+ "where mb.emisionDate Between :startDate and :endDate AND "

@@ -501,6 +501,163 @@
 			</p:font>
 		</p:table>
 
+
+		<p:paragraph alignment="left" spacingAfter="15" spacingBefore="15">
+			<p:font size="14" name="HELVETICA" style="bold">
+				<p:text value="Pagos por Abonos: " rendered="#{tillPermissionHome.depositsForSubscription.size() > 0}"/>
+			</p:font>
+		</p:paragraph>
+
+
+
+
+		<p:table rendered="#{tillPermissionHome.depositsForSubscription.size() > 0}"
+			columns="8" widthPercentage="100" headerRows="0"
+			widths="2 2 4 4 1 1 1 1">
+			<p:font size="6" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['date']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['entry.budgetCertificate']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['entry']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['resident']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['item.value']}" />
+					</p:paragraph>
+				</p:cell>		
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['INT.']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['IMP.']}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['item.total']}" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+			<p:font size="6" style="bold">
+				<ui:repeat value="#{tillPermissionHome.depositsForSubscription}" var="_dep">
+					<p:cell>
+						<p:paragraph>
+							<p:text value="#{_dep.date} ">
+								<f:convertDateTime pattern="yyyy-MM-dd" />
+							</p:text>
+							<p:text value="#{_dep.time}">
+								<f:convertDateTime pattern="HH:mm" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell>
+						<p:paragraph>
+							<p:text value="#{_dep.municipalBond.entry.account.budgetCertificateCode}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell>
+						<p:paragraph>
+							<p:text value="#{_dep.municipalBond.entry.name}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text value="#{_dep.municipalBond.resident.name}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_dep.capital}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_dep.interest}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_dep.paidTaxes}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_dep.value}" />
+						</p:paragraph>
+					</p:cell>
+
+				</ui:repeat>
+			</p:font>
+
+			<p:font size="8" style="bold">
+				<p:cell borderWidth="0" />
+
+				<p:cell borderWidth="0" />
+
+				<p:cell borderWidth="0" />
+
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['totals']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{tillPermissionHome.depositsSubscriptionValues}" />
+					</p:paragraph>
+				</p:cell>				
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{tillPermissionHome.depositsSubscriptionInterests}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{tillPermissionHome.depositsSubscriptionTaxes}" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{tillPermissionHome.depositsSubscriptionTotal}" />
+					</p:paragraph>
+				</p:cell>
+
+			</p:font>
+		</p:table>
+
+
 		<p:table columns="1" widthPercentage="70" spacingBefore="15"
 			rendered="#{workdayHome.accountsForSummary.size() > 0}" widths="1">
 
