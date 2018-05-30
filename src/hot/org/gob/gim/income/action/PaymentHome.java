@@ -3189,4 +3189,20 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	public void setCanRegisterPayment(Boolean canRegisterPayment) {
 		this.canRegisterPayment = canRegisterPayment;
 	}
+	
+	/**
+	 * @author macartuche
+	 * @param roleKey
+	 * @return
+	 */
+	public Boolean hasRole(String roleKey) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		String role = systemParameterService.findParameter(roleKey);
+		if (role != null) {
+			return userSession.getUser().hasRole(role);
+		}
+		return false;
+	}
+
 }

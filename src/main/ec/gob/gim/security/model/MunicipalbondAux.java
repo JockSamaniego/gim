@@ -3,6 +3,7 @@ package ec.gob.gim.security.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -67,16 +68,19 @@ public class MunicipalbondAux {
 	@JoinColumn(name = "deposit_id")
 	private Deposit deposit;
 	
-	
+	 
 	private String status;
 	
 	//interest - surcharge -capital - taxes
+	@Column(nullable = true)
 	private String type;
 	
 	//@author macartuche
 	//agregado para abonos (SUBSCRIPTION - AGREEMENT)
+	@Column(nullable = true)
 	private String typepayment;
  
+	@Column(nullable = true)
 	private Boolean anotherItem;
 
 	public Long getId() {

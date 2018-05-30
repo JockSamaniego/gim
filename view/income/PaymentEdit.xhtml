@@ -252,7 +252,7 @@
 									oncomplete="registerSubscriptionPayment(#{paymentHome.hasCompensationBonds})"
 									value="Registrar abono"
 									disabled="#{paymentHome.isPaymentButtonDisabled}"
-									rendered="#{(empty paymentHome.municipalBondSubscriptionsItems and !paymentHome.paymentAgree) || paymentHome.enableSubscription}"
+									rendered="#{(empty paymentHome.municipalBondSubscriptionsItems and paymentHome.hasRole('PAYMENT_BY_SUBSCRIPTION'))}"
 									focus="receivedAmount" />
 								<h:outputText id="subscriptionMessage"
 								value="Tiene pago por abono pendiente"
@@ -266,7 +266,7 @@
 				</h:panelGrid>
 				<div style="clear: both" />
 			</rich:panel>
-
+			<!-- rendered="#{(empty paymentHome.municipalBondSubscriptionsItems and !paymentHome.paymentAgree) || paymentHome.enableSubscription}" -->
 			<a:outputPanel id="municipalBondsPanel" ajaxRendered="true" rendered="#{!paymentHome.isBlocketToCollect}">
 				<rich:panel style="margin-top:5px;"
 					rendered="#{empty paymentHome.municipalBondItems and empty paymentHome.inPaymentAgreementBonds and not empty paymentHome.resident and empty paymentHome.municipalBondSubscriptionsItems}">
