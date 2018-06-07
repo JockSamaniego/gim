@@ -46,6 +46,8 @@ import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.loja.gim.ws.dto.FutureBond;
 
+import com.google.common.base.Joiner;
+
 import ec.common.sridocuments.v110.factura.Factura;
 //import ec.common.sridocuments.v110.factura.QueryBilling;
 //import ec.common.sridocuments.v110.factura.ResultSet;
@@ -1759,14 +1761,54 @@ public class IncomeServiceBean implements IncomeService {
 	// @tag recaudacionCoactivas
 	// @date 2016-07-06T12:29
 	// realizar el reverso en municipalbondaux - abonos compensaciones
+	@SuppressWarnings("unchecked")
 	@Override
 	public void reversePaymentAgreements(List<Long> depositIds) throws ReverseNotAllowedException {
+
+		Query bonds = entityManager.createQuery("Select distinct mba.municipalbond.id "
+				+ "from MunicipalbondAux mba where mba.deposit.id in :list and mba.status='VALID' ");
+		bonds.setParameter("list", depositIds);
+		List<Long> bondIds = (List<Long>) bonds.getResultList();
+		if(!bondIds.isEmpty()) {
+			//reversar al estado anterior los rubros de interes y recargo
+			String types[] = {"I", "S"};
+			for (Long bondId : bondIds) {
+				for(String type : types) {
+					String query = "Select mba from MunicipalbondAux mba "
+							+ "where mba.municipalbond.id=:bondID  and mba.status='VALID' and mba.type=:type order by mba.id desc";
+					Query q = entityManager.createQuery(query);
+					q.setParameter("type", type);
+					q.setParameter("bondID", bondId);
+					
+					List<MunicipalbondAux> auxs = q.getResultList();
+					List<Long> mbaIds = new ArrayList<Long>();
+					int cont =0;
+					for(MunicipalbondAux mba: auxs) {						
+						if( (mba.getAnotherItem()!= null && mba.getAnotherItem() == true) && 
+							(mba.getCoveritem()!=null && mba.getCoveritem()==true) && cont > 0) {
+							break;
+						}else {
+							mbaIds.add(mba.getId());
+						}
+						cont++;
+					}
+					
+					if(!mbaIds.isEmpty()) {
+						Joiner joiner = Joiner.on(",");
+						String list = joiner.join(mbaIds);
+						String updateOlderAux = "Update MunicipalbondAux set anotheritem=null where id in ("+list+")";
+						q = entityManager.createNativeQuery(updateOlderAux);
+						q.executeUpdate();	
+					}
+				}
+			}
+		}
 
 		Query updateAux = entityManager.createNamedQuery("MunicipalbondAux.setAsVoid");
 		updateAux.setParameter("status", "VOID");
 		updateAux.setParameter("depositList", depositIds);
 		int state = updateAux.executeUpdate();
-
+	
 	}
 
 	/**
