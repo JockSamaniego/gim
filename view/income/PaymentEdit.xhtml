@@ -252,13 +252,17 @@
 									oncomplete="registerSubscriptionPayment(#{paymentHome.hasCompensationBonds})"
 									value="Registrar abono"
 									disabled="#{paymentHome.isPaymentButtonDisabled}"
-									rendered="#{(paymentHome.hasRole('PAYMENT_BY_SUBSCRIPTION'))}"
+									rendered="#{((empty paymentHome.municipalBondSubscriptionsItems and empty paymentHome.inPaymentAgreementBonds and !paymentHome.paymentAgree) || paymentHome.enableSubscription) and (paymentHome.hasRole('PAYMENT_BY_SUBSCRIPTION'))}"
 									focus="receivedAmount" />
 								<h:outputText id="subscriptionMessage"
 								value="Tiene pago por abono pendiente"
 								style="font-size:20px; font-weight:bold; color: red" styleClass="right" 
 								rendered="#{not empty paymentHome.municipalBondSubscriptionsItems and !paymentHome.enableSubscription and paymentHome.isFullPayment}"/>	
-												
+								
+								<h:outputText id="subscriptionRoleMessage"
+								value="Ud no tiene permisos para cobrar abonos"
+								style="font-size:20px; font-weight:bold; color: red" styleClass="right" 
+								rendered="#{!paymentHome.hasRole('PAYMENT_BY_SUBSCRIPTION') and paymentHome.enableSubscription}"/>				
 							</h:panelGrid>
 
 						</h:panelGrid>
