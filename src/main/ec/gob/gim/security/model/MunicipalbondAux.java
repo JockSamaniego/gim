@@ -68,13 +68,19 @@ public class MunicipalbondAux {
 	@JoinColumn(name = "deposit_id")
 	private Deposit deposit;
 	
-	
+	 
 	private String status;
 	
 	//interest - surcharge -capital - taxes
+	@Column(nullable = true)
 	private String type;
 	
+	//@author macartuche
+	//agregado para abonos (SUBSCRIPTION - AGREEMENT)
+	@Column(nullable = true)
+	private String typepayment;
  
+	@Column(nullable = true)
 	private Boolean anotherItem;
 
 	public Long getId() {
@@ -186,6 +192,17 @@ public class MunicipalbondAux {
 	public void setAnotherItem(Boolean anotherItem) {
 		this.anotherItem = anotherItem;
 	}
-	
-	
+
+
+	public String getTypepayment() {
+		return typepayment;
+	}
+
+
+	public void setTypepayment(String typepayment) {
+		this.typepayment = typepayment;
+	}
+
+
+ 
 }

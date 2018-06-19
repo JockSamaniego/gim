@@ -53,6 +53,7 @@ import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.EMoneyPayment;
+import ec.gob.gim.income.model.PaymentMethod;
 import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.Workday;
@@ -270,7 +271,7 @@ public class PaymentServiceBean implements PaymentService {
 						&& totalToPay.compareTo(payout.getAmount()) == 0) {
 					try {
 						incomeService.save(payout.getPaymentDate(),
-								payout.getBondIds(), cashier, tillId, payout.getTransactionId());
+								payout.getBondIds(), cashier, tillId, payout.getTransactionId(), PaymentMethod.NORMAL.name());
 					} catch (Exception e) {
 						e.printStackTrace();
 						serverLog.setMethodCompleted(false);

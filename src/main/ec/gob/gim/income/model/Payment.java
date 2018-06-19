@@ -114,6 +114,11 @@ import ec.gob.gim.common.model.Person;
 				 			   		"join m.entry e " +
 				 			   		"join e.account ac " +
 				 			   		"where payment.date Between :startDate and :endDate " +
+					 			   	" AND (select count(maux) " +
+									" from MunicipalbondAux maux " +
+									" where maux.municipalbond.id = m.id " +
+									" AND maux.typepayment = 'SUBSCRIPTION' " +
+									" AND maux.status = 'VALID') = 0 " +
 				 			   		"AND payment.status = 'VALID' " +
 				 			   		"AND payment.cashier.id = :cashierId " +
 				 			   		"AND m.municipalBondStatus.id in (:paidStatuses) " +

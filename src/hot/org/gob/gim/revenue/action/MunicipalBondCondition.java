@@ -22,6 +22,7 @@ import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.view.MunicipalBondItem;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
+import org.gob.loja.gim.ws.dto.FutureBond;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -52,6 +53,8 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private String MUNICIPAL_BOND_STATUS_ID_PAID_NAME = "MUNICIPAL_BOND_STATUS_ID_PAID";
 	private String MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL_NAME = "MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL";
 	private String MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION_NAME = "MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION";
+	//rfam 2018-05-03 abonos
+	private String MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION_NAME = "MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION";
 
 
 	private Date startDate;
@@ -75,7 +78,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	
 	private List<MunicipalBond> pendingBonds;
 	
-	private List<MunicipalBond> futureBonds;
+	private List<FutureBond> futureBonds;
 	private BigDecimal totalFutereBond;
 
 
@@ -193,10 +196,8 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 			List<MunicipalBond> pendingBonds = null;			
 			if(entry == null){
 				pendingBonds = incomeService.findOnlyPendingAndInAgreementBonds(resident.getId());
-				//System.out.println("1.................. "+pendingBonds.size());
 			}else{
 				pendingBonds = incomeService.findOnlyPendingAndInAgreementBonds(resident.getId(), entry.getId());
-				//System.out.println("2.................. "+pendingBonds.size());
 			}
 			
 			incomeService.calculatePayment(pendingBonds, new Date(), true, true);			
@@ -206,6 +207,8 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		result.addAll(getResultList());
 		MunicipalBondUtil.setMunicipalBondStatus(findPendingStatus());
 		MunicipalBondUtil.setInAgreementStatus(findInAgreementStatus());
+		//rfam 2018 pagos por abonos
+		MunicipalBondUtil.setInSubscriptionStatus(findInSubscriptionStatus());
 		return MunicipalBondUtil.fillMunicipalBondItems(result);
 	}
 	
@@ -217,6 +220,11 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private MunicipalBondStatus findInAgreementStatus(){
 		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
 		return systemParameterService.materialize(MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+	}
+	
+	private MunicipalBondStatus findInSubscriptionStatus(){
+		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+		return systemParameterService.materialize(MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 	}
 	
 	public void maxResultsReports() {
@@ -591,24 +599,32 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		this.currentDate = currentDate;
 	}
 		
-	public List<MunicipalBond> getFutureBonds() {
+	/*public List<MunicipalBond> getFutureBonds() {
 		return futureBonds;
 	}
 
 	public void setFutureBonds(List<MunicipalBond> futureBonds) {
 		this.futureBonds = futureBonds;
-	}
-	
+	}*/
+		
 	public void findFutureEmision(Long residentId) {
 		try {
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			this.futureBonds = incomeService.findFutureBonds(residentId);
-			for (MunicipalBond mb : futureBonds) {
-				totalFutereBond = totalFutereBond.add(mb.getValue());
-			}
+			/*for (FutureBond mb : futureBonds) {
+				totalFutereBond = totalFutereBond.add(mb.getTotal());
+			}*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public List<FutureBond> getFutureBonds() {
+		return futureBonds;
+	}
+
+	public void setFutureBonds(List<FutureBond> futureBonds) {
+		this.futureBonds = futureBonds;
 	}
 
 	public BigDecimal getTotalFutereBond() {
