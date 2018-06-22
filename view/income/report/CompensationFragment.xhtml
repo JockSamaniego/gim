@@ -8,551 +8,724 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 
-		<p:table spacingBefore='10' columns="5" widthPercentage="100" headerRows="0"  rendered="#{not empty workdayHome.entryTotalCollectedsByCompensation}"
-			widths="3 4 1 1 1">
-			<p:font size="8" style="bold">
-				<p:cell colspan="7">
-					<p:paragraph borderWidth="1">
-						<p:font size="10" style="bold">
-							<p:text value="#{messages['workday.compensationCollected']}: " />
-						</p:font>
-					</p:paragraph>
-				</p:cell>
-			</p:font>
-		</p:table>
+	<p:table spacingBefore='10' columns="5" widthPercentage="100"
+		headerRows="0"
+		rendered="#{not empty workdayHome.entryTotalCollectedsByCompensation}"
+		widths="3 4 1 1 1">
+		<p:font size="8" style="bold">
+			<p:cell colspan="7">
+				<p:paragraph borderWidth="1">
+					<p:font size="10" style="bold">
+						<p:text value="#{messages['workday.compensationCollected']}: " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+	</p:table>
 
-		<p:table rendered="#{not empty workdayHome.entryTotalCollectedsByCompensation}"
-			columns="#{workdayHome.globalReport ? 5 : 10}" widthPercentage="100" headerRows="0"
-			widths="#{workdayHome.globalReport ? '2 4 1 1 1' : '2 4 1 1 1 1 1 1 1 1'}">
-			<p:font size="6" style="bold">
-				<f:facet name="defaultCell">
-					<p:cell borderWidth="0" />
-				</f:facet>
+	<p:table
+		rendered="#{not empty workdayHome.entryTotalCollectedsByCompensation}"
+		columns="#{workdayHome.globalReport ? 5 : 10}" widthPercentage="100"
+		headerRows="0"
+		widths="#{workdayHome.globalReport ? '2 4 1 1 1' : '2 4 1 1 1 1 1 1 1 1'}">
+		<p:font size="6" style="bold">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
 
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{workdayHome.globalReport == null ? messages['accountCode'] :(workdayHome.globalReport ? messages['accountCode'] : messages['entry.code'])}" />
-					</p:paragraph>
-				</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text
+						value="#{workdayHome.globalReport == null ? messages['accountCode'] :(workdayHome.globalReport ? messages['accountCode'] : messages['entry.code'])}" />
+				</p:paragraph>
+			</p:cell>
 
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{workdayHome.globalReport == null ? messages['account'] :(workdayHome.globalReport ? messages['account'] : messages['entry'])}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center"  rendered="#{!workdayHome.globalReport}" >
-					<p:paragraph>
-						<p:text value="#{messages['income.bondsNumber']}" />
-					</p:paragraph>
-				</p:cell>
-						
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['item.currentYear']}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['item.previousYears']}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center" rendered="#{!workdayHome.globalReport}" >
-					<p:paragraph>
-						<p:text value="#{messages['municipalBond.discounts']}" />
-					</p:paragraph>
-				</p:cell>
-			
-				<p:cell horizontalAlignment="center" rendered="#{!workdayHome.globalReport}" >
-					<p:paragraph>
-						<p:text value="#{messages['municipalBond.surcharges']}" />
-					</p:paragraph>
-				</p:cell>
-				<p:cell horizontalAlignment="center" rendered="#{!workdayHome.globalReport}" >
-					<p:paragraph>
-						<p:text value="#{messages['municipalBond.interests']}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center" rendered="#{!workdayHome.globalReport}" >
-					<p:paragraph>
-						<p:text value="#{messages['IMP.']}" />
-					</p:paragraph>
-				</p:cell>
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['item.total']}" />
-					</p:paragraph>
-				</p:cell>
-			</p:font>
-			<p:font size="6" style="bold">
-				<ui:repeat value="#{workdayHome.entryTotalCollectedsByCompensation}" var="_var">
-					<p:cell rendered="#{!workdayHome.globalReport}"> 
-						<p:paragraph>
-							<p:text value="#{_var.account}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell rendered="#{workdayHome.globalReport}">
-						<p:paragraph>
-							<p:text value="#{_var.groupBy}" />
-						</p:paragraph>
-					</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text
+						value="#{workdayHome.globalReport == null ? messages['account'] :(workdayHome.globalReport ? messages['account'] : messages['entry'])}" />
+				</p:paragraph>
+			</p:cell>
 
-					<p:cell>
-						<p:paragraph>
-							<p:text value="#{_var.entry}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="right" rendered="#{!workdayHome.globalReport}">
-						<p:paragraph>
-							<p:text value="#{_var.municipalBondsNumber}"/>
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text value="#{_var.value}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text value="#{_var.previousYears}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="right" rendered="#{!workdayHome.globalReport}" >
-						<p:paragraph>
-							<p:text value="#{_var.discount}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="right" rendered="#{!workdayHome.globalReport}" >
-						<p:paragraph>
-							<p:text value="#{_var.surcharge}" />
-						</p:paragraph>
-					</p:cell>
+			<p:cell horizontalAlignment="center"
+				rendered="#{!workdayHome.globalReport}">
+				<p:paragraph>
+					<p:text value="#{messages['income.bondsNumber']}" />
+				</p:paragraph>
+			</p:cell>
 
-					<p:cell horizontalAlignment="right" rendered="#{!workdayHome.globalReport}" >
-						<p:paragraph>
-							<p:text value="#{_var.interest}" />
-						</p:paragraph>
-					</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['item.currentYear']}" />
+				</p:paragraph>
+			</p:cell>
 
-					<p:cell horizontalAlignment="right" rendered="#{!workdayHome.globalReport}" >
-						<p:paragraph>
-							<p:text value="#{_var.taxes}" />
-						</p:paragraph>
-					</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['item.previousYears']}" />
+				</p:paragraph>
+			</p:cell>
 
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text value="#{_var.total}" rendered="#{!_var.isDiscount}"/>
-						</p:paragraph>
-					</p:cell>
+			<p:cell horizontalAlignment="center"
+				rendered="#{!workdayHome.globalReport}">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.discounts']}" />
+				</p:paragraph>
+			</p:cell>
 
-				</ui:repeat>
-			</p:font>
-		</p:table>
-		
-		<p:table rendered="#{workdayHome.entryTotalCollectedsByCompensation.size() > 0}"
-			spacingAfter="15" columns="#{workdayHome.globalReport ? 5 : 10}" widthPercentage="100" headerRows="0"
-			widths="#{workdayHome.globalReport ? '2 4 1 1 1' : '2 4 1 1 1 1 1 1 1 1'}">
-			<p:font size="9" style="bold">
-				<f:facet name="defaultCell">
-					<p:cell borderWidth="0" />
-				</f:facet>
+			<p:cell horizontalAlignment="center"
+				rendered="#{!workdayHome.globalReport}">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.surcharges']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center"
+				rendered="#{!workdayHome.globalReport}">
+				<p:paragraph>
+					<p:text value="#{messages['municipalBond.interests']}" />
+				</p:paragraph>
+			</p:cell>
 
-				<p:cell horizontalAlignment="center" borderWidth="0">
-				</p:cell>
-
-				<p:cell horizontalAlignment="center">
+			<p:cell horizontalAlignment="center"
+				rendered="#{!workdayHome.globalReport}">
+				<p:paragraph>
+					<p:text value="#{messages['IMP.']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['item.total']}" />
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+		<p:font size="6" style="bold">
+			<ui:repeat value="#{workdayHome.entryTotalCollectedsByCompensation}"
+				var="_var">
+				<p:cell rendered="#{!workdayHome.globalReport}">
 					<p:paragraph>
-						<p:text value="#{messages['totals']}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="right" rendered="#{!workdayHome.globalReport}">
-					<p:paragraph>
-						<p:text value="#{workdayHome.totalBondsCollectedByCompensation}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{workdayHome.currentValueCompensation}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{workdayHome.previousValueCompensation}"/>
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="right" rendered="#{!workdayHome.globalReport}">
-					<p:paragraph>
-						<p:text value="#{workdayHome.discountsValueByCompensation}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="right" rendered="#{!workdayHome.globalReport}">
-					<p:paragraph>
-						<p:text value="#{workdayHome.surchargesValueCompensation}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="right" rendered="#{!workdayHome.globalReport}">
-					<p:paragraph>
-						<p:text value="#{workdayHome.interestValueCompensation}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="right" rendered="#{!workdayHome.globalReport}">
-					<p:paragraph>
-						<p:text value="#{workdayHome.taxesValueCompensation}"/>
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{workdayHome.totalValueByCompensation}" />
-					</p:paragraph>
-				</p:cell>
-			</p:font>
-		</p:table>		
-		
-		<p:table spacingBefore='10' columns="5" widthPercentage="100" headerRows="0"  rendered="#{not empty workdayHome.entryTotalDiscountByCompensation and workdayHome.globalReport}"
-			widths="3 4 1 1 1">
-			<p:font size="8" style="bold">
-				<p:cell colspan="7">
-					<p:paragraph borderWidth="1">
-						<p:font size="10" style="bold">
-							<p:text value="#{messages['item.totalDiscountCompensation']}: " />
-						</p:font>
-					</p:paragraph>
-				</p:cell>
-			</p:font>
-		</p:table>
-
-		<p:table rendered="#{not empty workdayHome.entryTotalDiscountByCompensation and workdayHome.globalReport}"
-			columns="5" widthPercentage="100" headerRows="0"
-			widths="2 4 1 1 1">
-			<p:font size="6" style="bold">
-				<f:facet name="defaultCell">
-					<p:cell borderWidth="0" />
-				</f:facet>
-
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['accountCode']}" />
+						<p:text value="#{_var.account}" />
 					</p:paragraph>
 				</p:cell>
 
-				<p:cell horizontalAlignment="center">
+				<p:cell rendered="#{workdayHome.globalReport}">
 					<p:paragraph>
-						<p:text value="#{messages['account']}" />
-					</p:paragraph>
-				</p:cell>
-						
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['item.currentYear']}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['item.previousYears']}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['item.total']}" />
-					</p:paragraph>
-				</p:cell>
-			</p:font>
-			<p:font size="6" style="bold">
-				<ui:repeat value="#{workdayHome.entryTotalDiscountByCompensation}" var="_var">
-					<p:cell> 
-						<p:paragraph>
-							<p:text value="#{_var.groupBy}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell>
-						<p:paragraph>
-							<p:text value="#{_var.entry}" />
-						</p:paragraph>
-					</p:cell>
-						
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text value="#{_var.value}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text value="#{_var.previousYears}" />
-						</p:paragraph>
-					</p:cell>	
-					
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text value="#{_var.total}"/>
-						</p:paragraph>
-					</p:cell>
-
-				</ui:repeat>
-			</p:font>
-		</p:table>
-		
-		<p:table rendered="#{not empty workdayHome.entryTotalDiscountByCompensation and workdayHome.globalReport}"
-			spacingAfter="15" columns="5" widthPercentage="100" headerRows="0"
-			widths="2 4 1 1 1">
-			<p:font size="9" style="bold">
-				<f:facet name="defaultCell">
-					<p:cell borderWidth="0" />
-				</f:facet>
-
-				<p:cell horizontalAlignment="center" borderWidth="0"/>
-						
-								
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['totals']}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{workdayHome.currentDiscountsValueCompensation}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{workdayHome.previousDiscountsValueCompensation}" />
+						<p:text value="#{_var.groupBy}" />
 					</p:paragraph>
 				</p:cell>
 
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{workdayHome.discountsValueByCompensation}" />
-					</p:paragraph>
-				</p:cell>
-			</p:font>
-		</p:table>	
-
-					
-		<p:table columns="6" widthPercentage="100" headerRows="0" spacingBefore="15"
-			rendered="#{workdayHome.entryTotalCollectedsInAgreement.size() > 0}"
-			widths="4 2 1 1 1 1">
-			<p:font size="8" style="bold">
-				<p:cell colspan="6">
-					<p:paragraph borderWidth="1">
-						<p:font size="10" style="bold">
-							<p:text value="#{messages['workday.inPaymentAgreement']}: " />
-						</p:font>
-					</p:paragraph>
-				</p:cell>
-			</p:font>
-		</p:table>
-		
-		
-		<p:table
-			rendered="#{workdayHome.entryTotalCollectedsInAgreement.size() > 0}"
-			columns="6" widthPercentage="100" headerRows="0"
-			widths="3 4 2 1 1 1">
-			<p:font size="6" style="bold">
-				<f:facet name="defaultCell">
-					<p:cell borderWidth="0" />
-				</f:facet>
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['entry.code']}" />
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['entry']}" />
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['item.value']}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['INT.']}" />
-					</p:paragraph>
-				</p:cell>
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['IMP.']}" />
-					</p:paragraph>
-				</p:cell>
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['item.total']}" />
-					</p:paragraph>
-				</p:cell>
-			</p:font>
-			
-			<p:font size="6" style="bold">
-				<ui:repeat value="#{workdayHome.entryTotalCollectedsInAgreement}" var="_var">
-					<p:cell horizontalAlignment="center">
-						<p:paragraph>
-							<p:text value="#{_var.groupBy}" />
-						</p:paragraph>
-					</p:cell>
-
-					<p:cell horizontalAlignment="left">
-						<p:paragraph>
-							<p:text value="#{_var.entry}" />
-						</p:paragraph>
-					</p:cell>
-
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text value="#{_var.value}" />
-						</p:paragraph>
-					</p:cell>				
-
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text value="#{_var.interest}" />
-						</p:paragraph>
-					</p:cell>
-
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text value="#{_var.taxes}" />
-						</p:paragraph>
-					</p:cell>
-
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text value="#{_var.total}" />
-						</p:paragraph>
-					</p:cell>
-
-				</ui:repeat>
-			</p:font>
-			
-			<p:font size="9" style="bold">
-				<f:facet name="defaultCell">
-					<p:cell borderWidth="0" />
-				</f:facet>
-
-				<p:cell horizontalAlignment="center" borderWidth="0">
-				</p:cell>
-
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{messages['totals']}" />
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{workdayHome.getTotalValue(workdayHome.entryTotalCollectedsInAgreement)}" />
-					</p:paragraph>
-				</p:cell>
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{workdayHome.getTotalInterests(workdayHome.entryTotalCollectedsInAgreement)}" />
-					</p:paragraph>
-				</p:cell>
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{workdayHome.getTotalTaxes(workdayHome.entryTotalCollectedsInAgreement)}" />
-					</p:paragraph>
-				</p:cell>
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{workdayHome.totalInAgreement()}" />
-					</p:paragraph>
-				</p:cell>
-			</p:font>
-			
-			
-		</p:table>	
-		
-		
-		<p:table spacingBefore='10' columns="1" widthPercentage="60" headerRows="0"  rendered="#{workdayHome.summaryTotalCollecteds.size()>0}">
-			<p:font size="8" style="bold">
 				<p:cell>
-					<p:paragraph borderWidth="0">
-						<p:font size="10" style="bold">
-							<p:text value="#{messages['summaryRecollected']}: " />
-						</p:font>
+					<p:paragraph>
+						<p:text value="#{_var.entry}" />
 					</p:paragraph>
 				</p:cell>
-			</p:font>
-		</p:table>
-		
-		<p:table rendered="#{workdayHome.summaryTotalCollecteds.size() > 0}" columns="2" widthPercentage="60" headerRows="0" widths="4 1">
-			<p:font size="8" style="bold">
-				<f:facet name="defaultCell">
-					<p:cell borderWidth="0" />
-				</f:facet>
 
+				<p:cell horizontalAlignment="right"
+					rendered="#{!workdayHome.globalReport}">
+					<p:paragraph>
+						<p:text value="#{_var.municipalBondsNumber}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.value}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.previousYears}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right"
+					rendered="#{!workdayHome.globalReport}">
+					<p:paragraph>
+						<p:text value="#{_var.discount}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right"
+					rendered="#{!workdayHome.globalReport}">
+					<p:paragraph>
+						<p:text value="#{_var.surcharge}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right"
+					rendered="#{!workdayHome.globalReport}">
+					<p:paragraph>
+						<p:text value="#{_var.interest}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right"
+					rendered="#{!workdayHome.globalReport}">
+					<p:paragraph>
+						<p:text value="#{_var.taxes}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.total}" rendered="#{!_var.isDiscount}" />
+					</p:paragraph>
+				</p:cell>
+
+			</ui:repeat>
+		</p:font>
+	</p:table>
+
+	<p:table
+		rendered="#{workdayHome.entryTotalCollectedsByCompensation.size() > 0}"
+		spacingAfter="15" columns="#{workdayHome.globalReport ? 5 : 10}"
+		widthPercentage="100" headerRows="0"
+		widths="#{workdayHome.globalReport ? '2 4 1 1 1' : '2 4 1 1 1 1 1 1 1 1'}">
+		<p:font size="9" style="bold">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell horizontalAlignment="center" borderWidth="0">
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['totals']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right"
+				rendered="#{!workdayHome.globalReport}">
+				<p:paragraph>
+					<p:text value="#{workdayHome.totalBondsCollectedByCompensation}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{workdayHome.currentValueCompensation}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{workdayHome.previousValueCompensation}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right"
+				rendered="#{!workdayHome.globalReport}">
+				<p:paragraph>
+					<p:text value="#{workdayHome.discountsValueByCompensation}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right"
+				rendered="#{!workdayHome.globalReport}">
+				<p:paragraph>
+					<p:text value="#{workdayHome.surchargesValueCompensation}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right"
+				rendered="#{!workdayHome.globalReport}">
+				<p:paragraph>
+					<p:text value="#{workdayHome.interestValueCompensation}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right"
+				rendered="#{!workdayHome.globalReport}">
+				<p:paragraph>
+					<p:text value="#{workdayHome.taxesValueCompensation}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{workdayHome.totalValueByCompensation}" />
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+	</p:table>
+
+	<p:table spacingBefore='10' columns="5" widthPercentage="100"
+		headerRows="0"
+		rendered="#{not empty workdayHome.entryTotalDiscountByCompensation and workdayHome.globalReport}"
+		widths="3 4 1 1 1">
+		<p:font size="8" style="bold">
+			<p:cell colspan="7">
+				<p:paragraph borderWidth="1">
+					<p:font size="10" style="bold">
+						<p:text value="#{messages['item.totalDiscountCompensation']}: " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+	</p:table>
+
+	<p:table
+		rendered="#{not empty workdayHome.entryTotalDiscountByCompensation and workdayHome.globalReport}"
+		columns="5" widthPercentage="100" headerRows="0" widths="2 4 1 1 1">
+		<p:font size="6" style="bold">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['accountCode']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['account']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['item.currentYear']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['item.previousYears']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['item.total']}" />
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+		<p:font size="6" style="bold">
+			<ui:repeat value="#{workdayHome.entryTotalDiscountByCompensation}"
+				var="_var">
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{_var.groupBy}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{_var.entry}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.value}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.previousYears}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.total}" />
+					</p:paragraph>
+				</p:cell>
+
+			</ui:repeat>
+		</p:font>
+	</p:table>
+
+	<p:table
+		rendered="#{not empty workdayHome.entryTotalDiscountByCompensation and workdayHome.globalReport}"
+		spacingAfter="15" columns="5" widthPercentage="100" headerRows="0"
+		widths="2 4 1 1 1">
+		<p:font size="9" style="bold">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell horizontalAlignment="center" borderWidth="0" />
+
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['totals']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{workdayHome.currentDiscountsValueCompensation}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{workdayHome.previousDiscountsValueCompensation}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{workdayHome.discountsValueByCompensation}" />
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+	</p:table>
+
+
+	<p:table columns="6" widthPercentage="100" headerRows="0"
+		spacingBefore="15"
+		rendered="#{workdayHome.entryTotalCollectedsInAgreement.size() > 0}"
+		widths="4 2 1 1 1 1">
+		<p:font size="8" style="bold">
+			<p:cell colspan="6">
+				<p:paragraph borderWidth="1">
+					<p:font size="10" style="bold">
+						<p:text value="#{messages['workday.inPaymentAgreement']}: " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+	</p:table>
+
+	<p:table
+		rendered="#{workdayHome.entryTotalCollectedsInAgreement.size() > 0}"
+		columns="6" widthPercentage="100" headerRows="0" widths="3 4 2 1 1 1">
+		<p:font size="6" style="bold">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['entry.code']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['entry']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['item.value']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['INT.']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['IMP.']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['item.total']}" />
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+
+		<p:font size="6" style="bold">
+			<ui:repeat value="#{workdayHome.entryTotalCollectedsInAgreement}"
+				var="_var">
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="#{messages['groupBy']}" />
+						<p:text value="#{_var.groupBy}" />
 					</p:paragraph>
 				</p:cell>
 
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_var.entry}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.value}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.interest}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.taxes}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.total}" />
+					</p:paragraph>
+				</p:cell>
+
+			</ui:repeat>
+		</p:font>
+
+		<p:font size="9" style="bold">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell horizontalAlignment="center" borderWidth="0">
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['totals']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text
+						value="#{workdayHome.getTotalValue(workdayHome.entryTotalCollectedsInAgreement)}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text
+						value="#{workdayHome.getTotalInterests(workdayHome.entryTotalCollectedsInAgreement)}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text
+						value="#{workdayHome.getTotalTaxes(workdayHome.entryTotalCollectedsInAgreement)}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{workdayHome.totalInAgreement()}" />
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+
+
+	</p:table>
+
+	<p:table columns="6" widthPercentage="100" headerRows="0"
+		spacingBefore="15"
+		rendered="#{workdayHome.entryTotalCollectedsSubscription.size() > 0}"
+		widths="4 2 1 1 1 1">
+		<p:font size="8" style="bold">
+			<p:cell colspan="6">
+				<p:paragraph borderWidth="1">
+					<p:font size="10" style="bold">
+						<p:text value="#{messages['workday.subscriptionCollected']}: " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+	</p:table>
+
+	<p:table
+		rendered="#{workdayHome.entryTotalCollectedsSubscription.size() > 0}"
+		columns="6" widthPercentage="100" headerRows="0" widths="3 4 2 1 1 1">
+		<p:font size="6" style="bold">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['entry.code']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['entry']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['item.value']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['INT.']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['IMP.']}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['item.total']}" />
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+
+		<p:font size="6" style="bold">
+			<ui:repeat value="#{workdayHome.entryTotalCollectedsSubscription}"
+				var="_var">
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="#{messages['item.total']}" />
+						<p:text value="#{_var.groupBy}" />
 					</p:paragraph>
 				</p:cell>
-				
-			</p:font>
-			<p:font size="6" style="bold">
-				<ui:repeat value="#{workdayHome.summaryTotalCollecteds}" var="_sum">
-					<p:cell>
-						<p:paragraph>
-							<p:text value="#{_sum.groupBy}" />
-						</p:paragraph>
-					</p:cell>
 
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text value="#{_sum.total}">
-								<f:convertNumber pattern="#0.00"/>
-							</p:text>
-						</p:paragraph>
-					</p:cell>
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_var.entry}" />
+					</p:paragraph>
+				</p:cell>
 
-				</ui:repeat>
-			</p:font>
-			
-			<p:font size="10" style="bold">
-					<p:cell horizontalAlignment="center">
-						<p:paragraph>
-							<p:text value="#{messages['item.total']}" />
-						</p:paragraph>
-					</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.value}" />
+					</p:paragraph>
+				</p:cell>
 
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text value="#{workdayHome.totalSummaryCollected}" />
-						</p:paragraph>
-					</p:cell>			
-			</p:font>
-		</p:table>	
-	
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.interest}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.taxes}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_var.total}" />
+					</p:paragraph>
+				</p:cell>
+
+			</ui:repeat>
+		</p:font>
+
+		<p:font size="9" style="bold">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell horizontalAlignment="center" borderWidth="0">
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['totals']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text
+						value="#{workdayHome.getTotalValue(workdayHome.entryTotalCollectedsSubscription)}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text
+						value="#{workdayHome.getTotalInterests(workdayHome.entryTotalCollectedsSubscription)}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text
+						value="#{workdayHome.getTotalTaxes(workdayHome.entryTotalCollectedsSubscription)}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{workdayHome.totalSubscription()}" />
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+
+	</p:table>
+
+	<p:table spacingBefore='10' columns="1" widthPercentage="60"
+		headerRows="0"
+		rendered="#{workdayHome.summaryTotalCollecteds.size()>0}">
+		<p:font size="8" style="bold">
+			<p:cell>
+				<p:paragraph borderWidth="0">
+					<p:font size="10" style="bold">
+						<p:text value="#{messages['summaryRecollected']}: " />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+	</p:table>
+
+	<p:table rendered="#{workdayHome.summaryTotalCollecteds.size() > 0}"
+		columns="2" widthPercentage="60" headerRows="0" widths="4 1">
+		<p:font size="8" style="bold">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['groupBy']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['item.total']}" />
+				</p:paragraph>
+			</p:cell>
+
+		</p:font>
+		<p:font size="6" style="bold">
+			<ui:repeat value="#{workdayHome.summaryTotalCollecteds}" var="_sum">
+				<p:cell>
+					<p:paragraph>
+						<p:text value="#{_sum.groupBy}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_sum.total}">
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+			</ui:repeat>
+		</p:font>
+
+		<p:font size="10" style="bold">
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="#{messages['item.total']}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{workdayHome.totalSummaryCollected}" />
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+	</p:table>
+
 </p:paragraph>

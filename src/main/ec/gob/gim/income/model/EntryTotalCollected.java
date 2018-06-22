@@ -2,22 +2,32 @@ package ec.gob.gim.income.model;
 
 import java.math.BigDecimal;
 
+import org.gob.gim.common.NativeQueryResultColumn;
+import org.gob.gim.common.NativeQueryResultEntity;
+
 import ec.gob.gim.income.model.dto.ParameterFutureEmissionDTO;
 
+@NativeQueryResultEntity
 public class EntryTotalCollected {
 	
+	@NativeQueryResultColumn(index = 3)
 	private String  groupBy;
 	
+	@NativeQueryResultColumn(index = 2)
 	private String  entry;
 	
+	@NativeQueryResultColumn(index = 10)
 	private String  account;
 	
 	private String parametersFutureEmission;
 	
+	@NativeQueryResultColumn(index = 0)	
 	private Long  id;
 	
+	@NativeQueryResultColumn(index = 1)
 	private Long  municipalBondsNumber;
 
+	@NativeQueryResultColumn(index = 4)
 	private BigDecimal value;
 	
 	private BigDecimal previousYears;
@@ -26,21 +36,27 @@ public class EntryTotalCollected {
 	
 	private BigDecimal futureYears;
 	
+	@NativeQueryResultColumn(index = 5)
 	private BigDecimal discount;
 	
 	private BigDecimal totalEmitted;
 	
+	@NativeQueryResultColumn(index = 6)
 	private BigDecimal surcharge;
 	
+	@NativeQueryResultColumn(index = 7)
 	private BigDecimal interest;
 	
+	@NativeQueryResultColumn(index = 8)
 	private BigDecimal taxes;
 	
+	@NativeQueryResultColumn(index = 9)
 	private BigDecimal total;
 	
+	@NativeQueryResultColumn(index = 11)
 	private Boolean isDiscount;
 	
-	private ParameterFutureEmissionDTO parametersFutureEmissionDTO;
+	private ParameterFutureEmissionDTO parametersFutureEmissionDTO = null;
 		
 	public EntryTotalCollected(){
 		this.isDiscount = Boolean.FALSE;

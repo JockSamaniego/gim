@@ -1064,7 +1064,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			}
 			
 			//poner condicion de si tiene convenio de pago
-			if(municipalBond.getPaymentAgreement()!=null){
+			if(municipalBond.getPaymentAgreement()!=null || municipalBond.getMunicipalBondStatus().getId().intValue() == 14 ){
 				//@author macartuche
 				//@date 2016-06-20T16:600:00
 				//@tag recaudacionCoactivas

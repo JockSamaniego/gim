@@ -16,8 +16,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,13 +42,15 @@ import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
 import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.service.MunicipalBondService;
+import org.gob.loja.gim.ws.dto.FutureBond;
+
+import com.google.common.base.Joiner;
 
 import ec.common.sridocuments.v110.factura.Factura;
 //import ec.common.sridocuments.v110.factura.QueryBilling;
 //import ec.common.sridocuments.v110.factura.ResultSet;
 //import ec.common.sridocuments.v110.factura.SQLException;
 import ec.common.sridocuments.v110.factura.XmlTransform;
-import ec.common.sridocuments.v110.factura.Factura.InfoAdicional.CampoAdicional;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
@@ -61,6 +63,7 @@ import ec.gob.gim.income.model.LegalStatus;
 import ec.gob.gim.income.model.Payment;
 import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.income.model.PaymentFraction;
+import ec.gob.gim.income.model.PaymentMethod;
 import ec.gob.gim.income.model.PaymentType;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.ReceiptAuthorization;
@@ -74,7 +77,6 @@ import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
-import ec.gob.gim.revenue.model.adjunct.ValuePair;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.loja.client.clients.ElectronicClient;
 import ec.gob.loja.client.model.DataWS;
@@ -115,7 +117,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	private Deposit getLastDeposit(MunicipalBond municipalBond) {
 		Deposit deposit = null;
-		List<Deposit> deposits = municipalBond.getDeposits();
+		Set<Deposit> deposits = municipalBond.getDeposits();
 		for (Deposit d : deposits) {
 			if (deposit == null || deposit.getId().intValue() < d.getId().intValue()) {
 				deposit = d;
@@ -315,7 +317,7 @@ public class IncomeServiceBean implements IncomeService {
 	// agregar el tipo de pago Interes/recargo/impuesto
 	@SuppressWarnings("unchecked")
 	public void save(Date paymentDate, List<Long> municipalBondIds,
-			Person cashier, Long tillId, String externalTransactionId) throws Exception {
+			Person cashier, Long tillId, String externalTransactionId, String paymentMethod) throws Exception {
 		Query query = entityManager
 				.createNamedQuery("MunicipalBond.findSimpleByIds");
 		query.setParameter("municipalBondIds", municipalBondIds);
@@ -327,7 +329,7 @@ public class IncomeServiceBean implements IncomeService {
 					cashier, tillId, externalTransactionId);
 			deposits.add(deposit);
 		}
-		save(deposits, null, tillId);
+		save(deposits, null, tillId, paymentMethod);
 	}
 
 	public void deactivateCreditNotes(List<PaymentFraction> paymentFractions) {
@@ -357,9 +359,11 @@ public class IncomeServiceBean implements IncomeService {
 
 	// @tag recaudacionCoactiva
 	// agregar el tipo de pago Interes/recargo/impuesto
-	public void save(List<Deposit> deposits, Long paymentAgreementId, Long tillId) throws Exception {
+	public void save(List<Deposit> deposits, Long paymentAgreementId, Long tillId, String paymentMethod) throws Exception {
 		// System.out.println("\n\nInicia grabacion");
 		Long PAID_STATUS_ID = systemParameterService.findParameter(PAID_BOND_STATUS);
+		
+		Long SUBSCRIPTION_STATUS_ID = systemParameterService.findParameter(SUBSCRIPTION_BOND_STATUS);
 		for (Deposit deposit : deposits) {
 			MunicipalBond municipalBond = deposit.getMunicipalBond();
 			/*System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE "
@@ -370,8 +374,26 @@ public class IncomeServiceBean implements IncomeService {
 			// @author macartuche
 			// @date 2016-06-21
 			// @tag recaudacionesCoactivas
-			createMunicipalBondsAux(deposit, municipalBond);
+			createMunicipalBondsAux(deposit, municipalBond, paymentMethod);
+			
+			//agregado para abonos
+			if(paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+				
+				Query query = entityManager.createQuery("Select m from MunicipalBond m where id=:id");
+				query.setParameter("id", municipalBond.getId());				
+				MunicipalBond municipalBondUpdate = (MunicipalBond) query.getSingleResult();
+				
+				
+				query = entityManager.createNamedQuery("MunicipalBondStatus.findById");
+				query.setParameter("id", SUBSCRIPTION_STATUS_ID);
+				MunicipalBondStatus subscriptionBondStatus = (MunicipalBondStatus) query.getSingleResult();
 
+				municipalBondUpdate.setBalance(deposit.getBalance());
+				municipalBondUpdate.setMunicipalBondStatus(subscriptionBondStatus);
+				entityManager.merge(municipalBondUpdate);
+			}
+			//fin abonos
+			
 			if (deposit.getBalance().compareTo(BigDecimal.ZERO) == 0) {
 				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId, deposit.getDate());
 			}
@@ -381,14 +403,14 @@ public class IncomeServiceBean implements IncomeService {
 		// System.out.println("Termina grabacion");
 	}
 
-	private void createMunicipalBondsAux(Deposit dep, MunicipalBond mb) {
+	private void createMunicipalBondsAux(Deposit dep, MunicipalBond mb, String paymentMethod) {
 		BigDecimal sum = BigDecimal.ZERO;
 		BigDecimal itemValue = BigDecimal.ZERO;
 		BigDecimal depositValue = BigDecimal.ZERO;
 		Boolean itemIsPayed = false;
 
 		if (dep.getInterest().compareTo(BigDecimal.ZERO) > 0) {
-			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "I");
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "I", paymentMethod);
 			itemValue = mb.getInterest();
 			depositValue = dep.getInterest();
 			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
@@ -397,14 +419,16 @@ public class IncomeServiceBean implements IncomeService {
 					itemIsPayed = true;
 			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
 				itemIsPayed = true;
+			}else if(sum == null && depositValue.compareTo(itemValue) >= 0 && paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+				itemIsPayed = true;
 			}
 
-			if (mb.getPaymentAgreement() != null) {
+			if (mb.getPaymentAgreement() != null || paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
 				//si item esta pagado poner valor a true
 				if(itemIsPayed)
 					updateMunicipalbondAux(mb, "I");
 				
-				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "I");
+				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "I", paymentMethod);
 				entityManager.persist(munAux);
 			}
 		}
@@ -415,19 +439,27 @@ public class IncomeServiceBean implements IncomeService {
 		itemIsPayed = false;
 
 		if (dep.getCapital().compareTo(BigDecimal.ZERO) > 0) {
-			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "C");
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "C", paymentMethod);
 			itemValue = mb.getBalance();
 			depositValue = dep.getCapital();
+			/*
 			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
 				BigDecimal temp = depositValue.add(sum);
 				if (temp.compareTo(itemValue) >= 0)
 					itemIsPayed = true;
 			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
 				itemIsPayed = true;
+			}*/
+			if( dep.getBalance().compareTo(BigDecimal.ZERO) == 0 && mb.getPaymentAgreement() != null ) {
+				itemIsPayed = true;
+			}
+			
+			if(paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name()) && dep.getBalance().compareTo(BigDecimal.ZERO)==0) {
+				itemIsPayed = true;
 			}
 
-			if (mb.getPaymentAgreement() != null) {
-				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "C");
+			if (mb.getPaymentAgreement() != null || paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "C", paymentMethod);
 				entityManager.persist(munAux);
 			}
 		}
@@ -435,10 +467,10 @@ public class IncomeServiceBean implements IncomeService {
 		sum = BigDecimal.ZERO;
 		itemValue = BigDecimal.ZERO;
 		depositValue = BigDecimal.ZERO;
-		itemIsPayed = false;
+		itemIsPayed = false; ////////////////////////////////////////////////////////////////////
 
 		if (dep.getPaidTaxes().compareTo(BigDecimal.ZERO) > 0) {
-			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "T");
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "T", paymentMethod);
 			itemValue = mb.getTaxesTotal();
 			depositValue = dep.getPaidTaxes();
 			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
@@ -447,12 +479,14 @@ public class IncomeServiceBean implements IncomeService {
 					itemIsPayed = true;
 			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
 				itemIsPayed = true;
+			}else if(sum == null && depositValue.compareTo(itemValue) >= 0 && paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+				itemIsPayed = true;
 			}
 
-			if (mb.getPaymentAgreement() != null) {
+			if (mb.getPaymentAgreement() != null || paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
 				if(itemIsPayed)
 					updateMunicipalbondAux(mb, "T");
-				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "T");
+				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "T", paymentMethod);
 				entityManager.persist(munAux);
 			}
 		}
@@ -463,7 +497,7 @@ public class IncomeServiceBean implements IncomeService {
 		itemIsPayed = false;
 
 		if (dep.getSurcharge().compareTo(BigDecimal.ZERO) > 0) {
-			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "S");
+			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "S", paymentMethod);
 			itemValue = mb.getSurcharge();
 			depositValue = dep.getSurcharge();
 			if (sum != null && sum.compareTo(BigDecimal.ZERO) >= 0) {
@@ -472,10 +506,15 @@ public class IncomeServiceBean implements IncomeService {
 					itemIsPayed = true;
 			} else if (sum == null && depositValue.compareTo(itemValue) >= 0 && mb.getPaymentAgreement() != null) {
 				itemIsPayed = true;
+			}else if(sum == null && depositValue.compareTo(itemValue) >= 0 && paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+				itemIsPayed = true;
 			}
 
-			if (mb.getPaymentAgreement() != null) {
-				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "S");
+			if (mb.getPaymentAgreement() != null || paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+				if(itemIsPayed)
+					updateMunicipalbondAux(mb, "S");
+				
+				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "S", paymentMethod);
 				entityManager.persist(munAux);
 			}
 		}
@@ -611,7 +650,7 @@ public class IncomeServiceBean implements IncomeService {
 			throws Exception {
 		if (municipalBond != null && municipalBond.getId() != null) {
 			MunicipalBondStatus paidStatus = systemParameterService.materialize(MunicipalBondStatus.class,
-					PAID_BOND_STATUS);
+					PAID_BOND_STATUS);		
 			Long statusId;
 			MunicipalBondStatus statusIdPrevious;
 			Branch branch = findBranchByTillId(tillId);
@@ -1112,7 +1151,6 @@ public class IncomeServiceBean implements IncomeService {
 			}
 			remaining = remaining.subtract(fraction.getPaidAmount());
 		}
-
 		// PREVIOUS ALGORITHM
 		Long PENDING_STATUS_ID = systemParameterService.findParameter(PENDING_BOND_STATUS);
 		changeMunicipalBondsStatus(depositIds, PENDING_STATUS_ID);
@@ -1180,6 +1218,8 @@ public class IncomeServiceBean implements IncomeService {
 		List<Long> municipalBondIds = new ArrayList<Long>();
 		Long PENDING_STATUS_ID = systemParameterService.findParameter(PENDING_BOND_STATUS);
 		Long PAYMENT_AGREEMENT_STATUS_ID = systemParameterService.findParameter(IN_PAYMENT_AGREEMENT_BOND_STATUS);
+		//rfam 2018-05-07 pagos en abonos
+		//Long SUBSCRIPTION_STATUS_ID = systemParameterService.findParameter(SUBSCRIPTION_BOND_STATUS);
 		// boolean IS_ELECTRONIC_INVOIVE_ENABLE = systemParameterService
 		// .findParameter(ELECTRONIC_INVOICE_ENABLE);
 		for (BigInteger biid : municipalBonds) {
@@ -1196,7 +1236,28 @@ public class IncomeServiceBean implements IncomeService {
 			}
 		}
 		if (municipalBondIds.size() > 0) {
+			//todo verificar q se ha
 			persistChangeStatus(municipalBondIds, municipalBondStatusId, PENDING_STATUS_ID,
+					PAYMENT_AGREEMENT_STATUS_ID);
+		}
+		
+		//rfam reverso abonos 2018-05-08
+		query = entityManager.createNativeQuery(
+				"SELECT d.municipalBond_id " + 
+				"FROM gimprod.Deposit d " + 
+				"inner join gimprod.municipalbond mb on d.municipalbond_id = mb.id " + 
+				"WHERE d.id IN (:depositIds) and mb.municipalbondstatus_id = 14");
+		query.setParameter("depositIds", depositIds);
+		List<BigInteger> subscriptionBonds = query.getResultList(); 
+		List<Long> subscriptionBondsIds = new ArrayList<Long>();	
+		
+		for (BigInteger biid : subscriptionBonds) {
+			Long municipalBondId = biid.longValue();
+			subscriptionBondsIds.add(municipalBondId);			
+		}
+		
+		if (subscriptionBondsIds.size() > 0) {
+			persistChangeStatus(subscriptionBondsIds, municipalBondStatusId, PENDING_STATUS_ID,
 					PAYMENT_AGREEMENT_STATUS_ID);
 		}
 	}
@@ -1210,11 +1271,17 @@ public class IncomeServiceBean implements IncomeService {
 
 		query.setParameter("id", PAYMENT_AGREEMENT_STATUS_ID);
 		MunicipalBondStatus paymentAgreementStatus = (MunicipalBondStatus) query.getSingleResult();
-
+		
+		//rfam 2018-05-07 pagos en abonos
+		Long SUBSCRIPTION_STATUS_ID = systemParameterService.findParameter(SUBSCRIPTION_BOND_STATUS);
+		query.setParameter("id", SUBSCRIPTION_STATUS_ID);
+		MunicipalBondStatus subscriptiontStatus = (MunicipalBondStatus) query.getSingleResult();
+				
 		query = entityManager.createNamedQuery("MunicipalBond.findByIdsToChangeStatus");
 		query.setParameter("municipalBondIds", municipalBondIds);
 		List<MunicipalBond> municipalBonds = query.getResultList();
 		for (MunicipalBond mb : municipalBonds) {
+			MunicipalBondStatus currentStatus = mb.getMunicipalBondStatus();
 			mb.setMunicipalBondStatus(newBondStatus);
 			if (newBondStatus.getId().longValue() == PENDING_STATUS_ID.longValue()) {
 				mb.setLiquidationDate(null);
@@ -1224,10 +1291,42 @@ public class IncomeServiceBean implements IncomeService {
 					reactivatePaymentAgreement(mb.getPaymentAgreement().getId());
 				}
 				mb.setPrintingsNumber(0);
+				
+				//para el caso q liquide y tenga abonos, debe retornar a abono
+				if(!isSubscriptionBondReverseToPending(mb.getId().longValue())) {
+					mb.setMunicipalBondStatus(subscriptiontStatus);
+				}
+				
+				// identificar q es un abono rfam 2018-05-07
+				// e identificar si se pone a 3 o conserva el mismo porq ya tiene abonos previos
+				/*if (currentStatus.getId().longValue() == SUBSCRIPTION_STATUS_ID) {
+					if(!isSubscriptionBondReverseToPending(mb.getId().longValue())) {
+						mb.setMunicipalBondStatus(subscriptiontStatus);
+					}
+				}*/
 			} else {
 				mb.setLiquidationDate(null);
 				mb.setLiquidationTime(null);
 			}
+		}
+	}
+	/**
+	 * Determina el estado para el reverso de una obligacion de pago en abono
+	 * @param mb
+	 * @return
+	 */
+	private Boolean isSubscriptionBondReverseToPending(Long mbId) {
+		String sql = "select count(dep) from deposit dep where dep.municipalbond_id = :mbId and dep.status = :status";
+		Query query = entityManager.createNativeQuery(sql);
+		query.setParameter("mbId", mbId);
+		query.setParameter("status", "VALID");
+		BigInteger count = (BigInteger) query.getSingleResult();
+		if (count.intValue() > 1) {
+			// se queda en 14
+			return false;
+		} else {
+			// pasa a pendiente
+			return true;
 		}
 	}
 
@@ -1379,6 +1478,26 @@ public class IncomeServiceBean implements IncomeService {
 		query.setParameter("residentId", residentId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
+		
+		System.out.println(residentId);
+		System.out.println(statuses);
+		return query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public List<MunicipalBond> findPendingBondsSubscriptions(Long residentId) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		Long subscriptionMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
+
+		List<Long> statuses = new ArrayList<Long>();
+		statuses.add(subscriptionMunicipalBondStatusId);
+
+		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
+		query.setParameter("residentId", residentId);
+		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
+		query.setParameter("municipalBondStatusIds", statuses);
 		return query.getResultList();
 	}
 
@@ -1405,8 +1524,10 @@ public class IncomeServiceBean implements IncomeService {
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
 		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
-		Long agreementMunicipalBondStatusId = systemParameterService
-				.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		Long agreementMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		//rfam 2018-05-03
+		Long subscriptionMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
+		
 
 		// Long futureMunicipalBondStatusId =
 		// systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
@@ -1414,7 +1535,7 @@ public class IncomeServiceBean implements IncomeService {
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(agreementMunicipalBondStatusId);
-		// statuses.add(futureMunicipalBondStatusId);
+		statuses.add(subscriptionMunicipalBondStatusId);
 
 		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
@@ -1470,8 +1591,9 @@ public class IncomeServiceBean implements IncomeService {
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
 		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
-		Long agreementMunicipalBondStatusId = systemParameterService
-				.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		Long agreementMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		//rfam 2018-05-03
+		Long subscriptionMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 
 		// Long futureMunicipalBondStatusId =
 		// systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
@@ -1479,8 +1601,7 @@ public class IncomeServiceBean implements IncomeService {
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(agreementMunicipalBondStatusId);
-
-		// statuses.add(futureMunicipalBondStatusId);
+		statuses.add(subscriptionMunicipalBondStatusId);
 
 		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdEntryIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
@@ -1611,8 +1732,8 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	@Override
-	public List<MunicipalBond> findFutureBonds(Long residentId) {
-		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+	public List<FutureBond> findFutureBonds(Long residentId) {
+		/*SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
 		Long futureMunicipalBondStatusId = systemParameterService
 				.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION");
@@ -1624,6 +1745,14 @@ public class IncomeServiceBean implements IncomeService {
 		query.setParameter("residentId", residentId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
+		return query.getResultList();*/
+		
+		
+		Long futureBondStatusId = systemParameterService.findParameter(IncomeServiceBean.FUTURE_BOND_STATUS);
+		Query query = entityManager.createNamedQuery("Bond.findFutureByStatusAndResidentId");
+		query.setParameter("residentId", residentId);
+		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
+		query.setParameter("pendingBondStatusId", futureBondStatusId);
 		return query.getResultList();
 	}
 
@@ -1631,14 +1760,54 @@ public class IncomeServiceBean implements IncomeService {
 	// @tag recaudacionCoactivas
 	// @date 2016-07-06T12:29
 	// realizar el reverso en municipalbondaux - abonos compensaciones
+	@SuppressWarnings("unchecked")
 	@Override
 	public void reversePaymentAgreements(List<Long> depositIds) throws ReverseNotAllowedException {
+
+		Query bonds = entityManager.createQuery("Select distinct mba.municipalbond.id "
+				+ "from MunicipalbondAux mba where mba.deposit.id in :list and mba.status='VALID' ");
+		bonds.setParameter("list", depositIds);
+		List<Long> bondIds = (List<Long>) bonds.getResultList();
+		if(!bondIds.isEmpty()) {
+			//reversar al estado anterior los rubros de interes y recargo
+			String types[] = {"I", "S"};
+			for (Long bondId : bondIds) {
+				for(String type : types) {
+					String query = "Select mba from MunicipalbondAux mba "
+							+ "where mba.municipalbond.id=:bondID  and mba.status='VALID' and mba.type=:type order by mba.id desc";
+					Query q = entityManager.createQuery(query);
+					q.setParameter("type", type);
+					q.setParameter("bondID", bondId);
+					
+					List<MunicipalbondAux> auxs = q.getResultList();
+					List<Long> mbaIds = new ArrayList<Long>();
+					int cont =0;
+					for(MunicipalbondAux mba: auxs) {						
+						if( (mba.getAnotherItem()!= null && mba.getAnotherItem() == true) && 
+							(mba.getCoveritem()!=null && mba.getCoveritem()==true) && cont > 0) {
+							break;
+						}else {
+							mbaIds.add(mba.getId());
+						}
+						cont++;
+					}
+					
+					if(!mbaIds.isEmpty()) {
+						Joiner joiner = Joiner.on(",");
+						String list = joiner.join(mbaIds);
+						String updateOlderAux = "Update MunicipalbondAux set anotheritem=null where id in ("+list+")";
+						q = entityManager.createNativeQuery(updateOlderAux);
+						q.executeUpdate();	
+					}
+				}
+			}
+		}
 
 		Query updateAux = entityManager.createNamedQuery("MunicipalbondAux.setAsVoid");
 		updateAux.setParameter("status", "VOID");
 		updateAux.setParameter("depositList", depositIds);
 		int state = updateAux.executeUpdate();
-
+	
 	}
 
 	/**
@@ -1648,23 +1817,26 @@ public class IncomeServiceBean implements IncomeService {
 	 *      estado, municipalbondId y si cubre o no el interes
 	 */
 	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long municipalbondId, Boolean coverInterest, String status,
-			String type) {
+			String type, String paymentType) {
 
 		String query = "Select mba from MunicipalbondAux mba "
 				+ "where mba.municipalbond.id=:munid and mba.status=:status" + " and mba.type=:type";
 		if (coverInterest != null) {
-			query += " and mba.coveritem=:cover";
+			query += " and mba.coveritem=:cover ";
 		}
 		
 		if(type=="I" || type=="S"){
 			query += " and mba.anotherItem is null ";
 		}
+		
+		query += "and mba.typepayment=:paymentType ";
 
 		Query interestIsPayedQuery = entityManager.createQuery(query);
 		interestIsPayedQuery.setParameter("munid", municipalbondId);
 		interestIsPayedQuery.setParameter("status", status);
 		interestIsPayedQuery.setParameter("type", type);
-
+		interestIsPayedQuery.setParameter("paymentType", paymentType);
+		
 		if (coverInterest != null) {
 			interestIsPayedQuery.setParameter("cover", coverInterest);
 		}
@@ -1678,21 +1850,23 @@ public class IncomeServiceBean implements IncomeService {
 	 * @tag recaudacionCoactivas Suma de los intereses que se acumulan por
 	 *      abonos menores al interes
 	 */
-	public BigDecimal sumAccumulatedInterest(Long municipalbondId, Boolean coverInterest, String status, String type) {
+	public BigDecimal sumAccumulatedInterest(Long municipalbondId, Boolean coverInterest, String status, String type, String paymentType) {
 
 		String query = " Select SUM(mba.payValue) from MunicipalbondAux mba "
 				+ " where mba.municipalbond.id=:munid and " + " mba.coveritem=:cover and " + " mba.status=:status and"
 				+ " mba.type=:type ";
 		
-		if( type == "I" || type == "T" ){
+		if( type == "I" || type == "S" ){
 			query += "and mba.anotherItem is null ";
 		}
 		
+		query += "and mba.typepayment=:typepayment ";
 		Query sumInterest = entityManager.createQuery(query);
 		sumInterest.setParameter("munid", municipalbondId);
 		sumInterest.setParameter("cover", coverInterest);
 		sumInterest.setParameter("status", status);
 		sumInterest.setParameter("type", type);
+		sumInterest.setParameter("typepayment", paymentType);
 		
 		return (BigDecimal) sumInterest.getSingleResult();
 	}
@@ -1710,8 +1884,13 @@ public class IncomeServiceBean implements IncomeService {
 	 * @return MunicipalbondAux
 	 */
 	private MunicipalbondAux createBondAux(Deposit deposit, MunicipalBond municipalBond, Boolean coverInterest,
-			String type) {
+			String type, String paymentMethod) {
 		MunicipalbondAux munAux = new MunicipalbondAux();
+		
+		//@author macartuche
+		//pagos abonos
+		munAux.setTypepayment(paymentMethod);
+		//fin pago abonos
 
 		BigDecimal valuePayed = BigDecimal.ZERO;
 		BigDecimal valueCover = BigDecimal.ZERO;
@@ -1786,5 +1965,16 @@ public class IncomeServiceBean implements IncomeService {
 	// Jock Samaniego.. 21/09/2016
 	public void updatePaymentAgreement(PaymentAgreement paymentAgreement) {
 		entityManager.merge(paymentAgreement);
+	}
+	
+	
+	public boolean checkIsPayed(Long municipalbondid, String type) {
+		Query q = entityManager.createQuery("Select mba from MunicipalbondAux mba "
+				+ "WHERE mba.type=:type and mba.status='VALID' and mba.coveritem=:cover and "
+				+ "mba.anotherItem=:cover and mba.municipalbond.id=:id");	 
+		q.setParameter("type", type);
+		q.setParameter("cover", true);
+		q.setParameter("id", municipalbondid);
+		return !q.getResultList().isEmpty();
 	}
 }

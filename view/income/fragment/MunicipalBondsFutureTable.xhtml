@@ -22,9 +22,40 @@
 
 
 	</rich:dataTable-->
-
-
+	
+	
 	<rich:dataTable value="#{paymentHome.futureBonds}"
+			rendered="#{not empty paymentHome.futureBonds}"
+			var="_futureBond">
+			
+			<rich:column>
+				<f:facet name="header">#{messages['futureBond.account']}</f:facet>
+				<h:outputText value="#{_futureBond.account}">
+				</h:outputText>
+			</rich:column>
+			
+			<rich:column>
+				<f:facet name="header">#{messages['futureBond.serviceCode']}</f:facet>
+				<h:outputText value="#{_futureBond.serviceCode}">
+				</h:outputText>
+			</rich:column>
+			
+			<rich:column styleClass="right">
+				<f:facet name="header">#{messages['futureBond.quantity']}</f:facet>
+				<h:outputText value="#{_futureBond.quantity}">
+				</h:outputText>
+			</rich:column>
+			
+			<rich:column styleClass="right">
+				<f:facet name="header">#{messages['futureBond.total']}</f:facet>
+				<h:outputText value="#{_futureBond.total}">
+				</h:outputText>
+			</rich:column>
+			
+		</rich:dataTable>
+
+
+	<!-- rich:dataTable value="#{paymentHome.futureBonds}"
 		rendered="#{not empty paymentHome.futureBonds}" var="_futureBond">
 
 		<f:facet name="header">
@@ -61,6 +92,6 @@
 			</rich:columnGroup>
 		</f:facet>
 
-	</rich:dataTable>
+	</rich:dataTable-->
 
 </ui:composition>

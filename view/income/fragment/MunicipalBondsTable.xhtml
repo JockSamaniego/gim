@@ -10,9 +10,15 @@
 	xmlns:rich="http://richfaces.org/rich">
 	
 	<rich:panel style="margin-top:5px;"
-		rendered="#{empty paymentHome.municipalBondItems and not empty paymentHome.resident}">
+		rendered="#{empty paymentHome.municipalBondItems and not empty paymentHome.resident and not empty paymentHome.inPaymentAgreementBonds}">
 		<h:outputText style="font-weight:bold; font-size:25px; color:#FF0000"
 			value="#{messages['payment.noActiveAccountsReceivableFoundCheckPaymentAgreeements']}" />
+	</rich:panel>
+
+	<rich:panel style="margin-top:5px;"
+		rendered="#{empty paymentHome.municipalBondItems and not empty paymentHome.resident and empty paymentHome.inPaymentAgreementBonds}">
+		<h:outputText style="font-weight:bold; font-size:25px; color:green"
+			value="No tiene obligaciones pendientes" />
 	</rich:panel>
 
 	<rich:dataTable value="#{paymentHome.municipalBondItems}"

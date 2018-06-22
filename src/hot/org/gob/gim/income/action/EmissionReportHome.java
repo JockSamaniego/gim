@@ -72,6 +72,7 @@ public class EmissionReportHome extends EntityController {
 	private MunicipalBondStatus pendingStatus;
 	private MunicipalBondStatus cancelledBondStatus;
 	private MunicipalBondStatus futureBondStatus;
+	private MunicipalBondStatus subscriptionBondStatus;
 	
 	private MunicipalBondStatus municipalBondStatus;
 	
@@ -415,6 +416,14 @@ public class EmissionReportHome extends EntityController {
 	public void setTotal_valor_reversadas(BigDecimal total_valor_reversadas) {
 		this.total_valor_reversadas = total_valor_reversadas;
 	}
+	
+	public MunicipalBondStatus getSubscriptionBondStatus() {
+		return subscriptionBondStatus;
+	}
+
+	public void setSubscriptionBondStatus(MunicipalBondStatus subscriptionBondStatus) {
+		this.subscriptionBondStatus = subscriptionBondStatus;
+	}
 
 	public void loadDefaultDates() {
 		if (isFirstTime) {
@@ -464,6 +473,9 @@ public class EmissionReportHome extends EntityController {
 		futureBondStatus = systemParameterService.materialize(
 				MunicipalBondStatus.class,
 				"MUNICIPAL_BOND_STATUS_ID_FUTURE_ISSUANCE");
+		subscriptionBondStatus = systemParameterService.materialize(
+				MunicipalBondStatus.class,
+				"MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 	}
 	
 	public void loadDates() {
@@ -573,6 +585,7 @@ public class EmissionReportHome extends EntityController {
 			statusIds.add(inPaymentAgreementStatus.getId());
 			statusIds.add(externalChannelStatus.getId());
 			statusIds.add(blockedMunicipalBondStatus.getId());
+			statusIds.add(subscriptionBondStatus.getId());
 			//statusIds.add(reversedMunicipalBondStatus.getId());
 		}
 		

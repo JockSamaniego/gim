@@ -45,7 +45,7 @@
 	</p:cell>
 	
 	<p:font size="6">
-	<ui:repeat var="_dep" value="#{_deposit.municipalBond.deposits}">
+	<ui:repeat var="_dep" value="#{_deposit.municipalBond.deposits.toArray()}">
 		<p:cell horizontalAlignment="center">
 			<p:paragraph>
 				<p:text value="#{_dep.date}">
