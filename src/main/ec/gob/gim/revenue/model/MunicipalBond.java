@@ -1846,5 +1846,19 @@ public class MunicipalBond implements Serializable {
 		List<Deposit> list = new ArrayList<Deposit>(this.deposits);
 		return list;
 	}
+	
+	//para venta de recipientes
+	
+	@Transient
+	private BigDecimal amountAux;
 
+	public BigDecimal getAmountAux() {
+		return amountAux;
+	}
+
+	public void setAmountAux(BigDecimal amountAux) {
+		this.amountAux = amountAux;
+	}
+
+	
 }// end MunicipalBond
