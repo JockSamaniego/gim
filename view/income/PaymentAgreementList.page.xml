@@ -10,4 +10,5 @@
 
    <param name="from"/>
    <param name="criteria" value="#{paymentAgreementList.criteria}"/>
+   <param name="paymentAgreementId" value="#{paymentAgreementHome.paymentAgreementId}"/>
 </page>
