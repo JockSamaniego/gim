@@ -1,7 +1,7 @@
 package org.gob.gim.revenue.action;
 
 import java.math.BigDecimal;
-import java.rmi.RemoteException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -322,7 +322,11 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						}
 					}
 				}
-				if (entry.getIsAmountEditable()) {
+				if(this.adjunctHome.getInstance().getDetails().get(1).getValueBoolean()){
+					entryValueItem.setAmount(this.instance.getAmountAux());
+				}
+				
+				if (entry.getIsAmountEditable() || this.adjunctHome.getInstance().getDetails().get(1).getValueBoolean()) {
 					if (entryValueItem.getAmount() == null
 							|| BigDecimal.ZERO.compareTo(entryValueItem
 									.getAmount()) > 0) {
@@ -560,14 +564,14 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 	private Adjunct createAdjunct(Entry entry) {
 		try {
-			System.out.println("CREATE ADJUNCT ----> "
-					+ entry.getAdjunctClassName());
+			/*System.out.println("CREATE ADJUNCT ----> "
+					+ entry.getAdjunctClassName());*/
 			if (entry.getAdjunctClassName() != null
 					&& !entry.getAdjunctClassName().trim().isEmpty()) {
 				Class<?> klass = Class.forName(entry.getAdjunctClassName());
 				Adjunct adjunct = (Adjunct) klass.newInstance();
-				System.out.println("ADJUNCT CREATED ----> "
-						+ adjunct.getClass().getSimpleName());
+				/*System.out.println("ADJUNCT CREATED ----> "
+						+ adjunct.getClass().getSimpleName());*/
 				this.adjunctUri = ADJUNCT_PREFIX
 						+ adjunct.getClass().getSimpleName() + ADJUNCT_SUFIX;
 				return adjunct;
@@ -1575,5 +1579,59 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				}
 			}
 		}
+		
+		/**
+		 * Permite buscar un numero de notificacion de simert en la bd
+		 * para evitar la duplicidad de multas de simert
+		 * rfam 2018-03-26
+		 * @param code
+		 * @return
+		 */
+		@SuppressWarnings("unused")
+		public Boolean findSimertfine(String code) {
+			Query q = getEntityManager().createNativeQuery("select count(*) from gimprod.vehicularfinereference vfr "
+					+ "inner join gimprod.municipalbond mb on vfr.id = mb.adjunct_id "
+					+ "where vfr.notificationnumber like concat('%', :criteria,'%') "
+					+ "and mb.municipalbondstatus_id in (3,4,5,6,7,10)");
+			q.setParameter("criteria", code);
+			BigInteger quantity = (BigInteger) q.getSingleResult();
+			if (quantity.intValue() <= 0) {
+				return false;
+			}else {
+				return true;	
+			}
+		}
+		
+		//jocksamaniego... para emision de recipientes........
+		
 
+		public List<String> chargeContainerTypes(){
+			List<String> containerTypes = new ArrayList<String>();
+			String types = systemParameterService.findParameter("CONTAINER_TYPES");
+			String[] parts = types.split(",");
+			for(int i=0;i<parts.length;i++){
+				containerTypes.add(parts[i]);
+			}
+			return containerTypes;
+		}
+		
+
+		public void changeContainerValues(){
+			String typeName = this.adjunctHome.getInstance().getDetails().get(0).getValue();
+			String typeValues = systemParameterService.findParameter(typeName);
+			if(typeValues!=null){
+				String[] containerValues = typeValues.split(",");
+				this.entryValueItems.get(0).setMainValue(new BigDecimal(containerValues[0]));
+				this.entryValueItems.get(0).setDescription(containerValues[1]);
+			}else{
+				this.entryValueItems.get(0).setMainValue(null);
+				this.entryValueItems.get(0).setDescription(null);
+			}
+			
+		}
+	
+		public void settingAmountAux(){
+			System.out.println("========= " +this.entryValueItems.get(0).getAmount());
+			this.instance.setAmountAux(this.entryValueItems.get(0).getAmount());
+		}
 }

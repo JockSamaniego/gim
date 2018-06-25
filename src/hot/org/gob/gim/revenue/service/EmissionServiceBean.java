@@ -31,9 +31,9 @@ public class EmissionServiceBean implements EmissionService {
 			ReportEmissionCriteria criteria) {
 		// TODO Auto-generated method stub
 		try {
-			
+
 			SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
-			System.out.println(dt1.format(criteria.getStartDate()));			
+			//System.out.println(dt1.format(criteria.getStartDate()));
 			Query query = entityManager
 					.createNativeQuery("select * from reports.sp_reporte_emision(?1, ?2, ?3, ?4)");
 			query.setParameter(1, dt1.format(criteria.getStartDate()));
@@ -55,10 +55,10 @@ public class EmissionServiceBean implements EmissionService {
 	public List<ReportEmissionDTO> findEmissionReportOtherDetails(
 			ReportEmissionCriteria criteria) {
 		// TODO Auto-generated method stub
-try {
-			
+		try {
+
 			SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
-			System.out.println(dt1.format(criteria.getStartDate()));			
+			//System.out.println(dt1.format(criteria.getStartDate()));
 			Query query = entityManager
 					.createNativeQuery("select * from reports.sp_reporte_emision_other_details(?1, ?2, ?3, ?4)");
 			query.setParameter(1, dt1.format(criteria.getStartDate()));

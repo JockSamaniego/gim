@@ -132,13 +132,13 @@ public class InspectionsHome extends EntityHome<Inspections> {
 		//if(getInstance() != null && getInstance().getLocal() != null) setResident(getInstance().getLocal().getBusiness().getOwner());
 	//	if(getInstance() != null && getInstance().getLocal() != null) setLocal(getInstance().getLocal());
 		
-		//System.out.println("Instancia: "+getInstance().getLocal().getBusiness().getOwner());
+		////System.out.println("Instancia: "+getInstance().getLocal().getBusiness().getOwner());
 	
-		//System.out.println("Instancia: "+getInstance().getInspector());
-		//System.out.println("Instancia: "+getInstance().getResident());
-		//	System.out.println("Instancia: "+getInstance().local.getResident());
-		//System.out.println("Instancia: "+getInstance().getLocal.getOwner());
-	  	//System.out.println("llega a qui y produce error");
+		////System.out.println("Instancia: "+getInstance().getInspector());
+		////System.out.println("Instancia: "+getInstance().getResident());
+		//	//System.out.println("Instancia: "+getInstance().local.getResident());
+		////System.out.println("Instancia: "+getInstance().getLocal.getOwner());
+	  	////System.out.println("llega a qui y produce error");
 	  	//if(!isFirstTime) return;			
 		//if(getInstance() != null && getInstance().getLocal() != null) setLocal(getInstance().getLocal());
 	  	
@@ -153,30 +153,30 @@ public class InspectionsHome extends EntityHome<Inspections> {
 	}*/
 	
 	public void loadTechnicalInformation(){
-		System.out.println("ddddddddddddddddddddd");
+		//System.out.println("ddddddddddddddddddddd");
 		if (this.getInspectionsId() != null) {
-			System.out.println("ddddddddddddddddddddd "+this.getInspectionsId());
+			//System.out.println("ddddddddddddddddddddd "+this.getInspectionsId());
 			Query q=this.getEntityManager().createNamedQuery("TechnicalInformation.findByInspection");
 			q.setParameter("idInspection", getInspectionsId());
 			if(q.getResultList().size()>0){
 				this.technicalInformation=(TechnicalInformation) q.getResultList().get(0);
 			}
 		}else{
-			System.out.println("///////////////////////////");
+			//System.out.println("///////////////////////////");
 		}
 	}
 
 	public void loadTransportTechnicalInformation(){
-		System.out.println("cccccccccccccccccccccccccccccccccccc");
+		//System.out.println("cccccccccccccccccccccccccccccccccccc");
 		if (this.getInspectionsId() != null) {
-			System.out.println("ccccccccccccccccccccccccccccc "+this.getInspectionsId());
+			//System.out.println("ccccccccccccccccccccccccccccc "+this.getInspectionsId());
 			Query q=this.getEntityManager().createNamedQuery("TransportTechnicalInformation.findByInspection");
 			q.setParameter("idInspection", getInspectionsId());
 			if(q.getResultList().size()>0){
 				this.transportTechnicalInformation=(TransportTechnicalInformation) q.getResultList().get(0);
 			}
 		}else{
-			System.out.println("///////////////////////////");
+			//System.out.println("///////////////////////////");
 		}
 	}
 
@@ -279,7 +279,7 @@ public class InspectionsHome extends EntityHome<Inspections> {
 	
 	@SuppressWarnings("unchecked")
 	public List<Local> findLocalesByResidentId(){
-		System.out.println("lleaga alear localesssssssss acctionsssssssss");
+		//System.out.println("lleaga alear localesssssssss acctionsssssssss");
 		if(resident != null){
 			Query query = getEntityManager().createNamedQuery("Local.findByOwnerId");
 			query.setParameter("ownerId", resident.getId());
@@ -415,17 +415,17 @@ public class InspectionsHome extends EntityHome<Inspections> {
 	}
 
 	public String saveOrUpdateTechnicalInfomation(){
-		System.out.println("llega al metodo de guardar....................");		
+		//System.out.println("llega al metodo de guardar....................");		
 		
 		if (this.technicalInformation.getId() == null) {
 			this.technicalInformation.setInspections(this.getInstance());
 			technicalInformationHome.setInstance(this.technicalInformation);
-			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< esta en null ");
+			//System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< esta en null ");
 			technicalInformationHome.persist();
 			return "updated";
 		}else{
 			technicalInformationHome.setInstance(this.technicalInformation);
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>< si existe "+technicalInformation.getId());
+			//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>< si existe "+technicalInformation.getId());
 			technicalInformationHome.update();
 			return "updated";
 		}
@@ -434,17 +434,17 @@ public class InspectionsHome extends EntityHome<Inspections> {
 	}
 
 	public String saveOrUpdateTransportTechnicalInfomation(){
-		System.out.println("llega al metodo de guardar....................");		
+		//System.out.println("llega al metodo de guardar....................");		
 		
 		if (this.transportTechnicalInformation.getId() == null) {
 			this.transportTechnicalInformation.setInspections(this.getInstance());
 			transportTechnicalInformationHome.setInstance(this.transportTechnicalInformation);
-			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< esta en null ");
+			//System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< esta en null ");
 			transportTechnicalInformationHome.persist();
 			return "updated0";
 		}else{
 			transportTechnicalInformationHome.setInstance(this.transportTechnicalInformation);
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>< si existe "+technicalInformation.getId());
+			//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>< si existe "+technicalInformation.getId());
 			transportTechnicalInformationHome.update();
 			return "updated0";
 		}

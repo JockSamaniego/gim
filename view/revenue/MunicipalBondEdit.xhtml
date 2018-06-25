@@ -25,11 +25,11 @@
 						</h:panelGrid>
 					</f:facet>
 					 <h:panelGrid id="checkIFrame" heigth="300">
-					 	 <iframe frameborder="0" align="left"
+					 	 <!-- iframe frameborder="0" align="left"
 				             src="http://192.168.1.28/novosga_gim/public/modules/sga.atendimento/index"
 				             name="PdfPnl" id="PdfPnl" scrolling="auto" width="1280" 
 				             height="240" marginheight="5" marginwidth="10">
-				         </iframe>
+				         </iframe -->
 					 </h:panelGrid>
 			</rich:simpleTogglePanel>
 			<div style="clear:both; height:20px" />
@@ -216,7 +216,7 @@
 
 
 								
-							<h:panelGrid
+							<h:panelGrid 
 								rendered="#{municipalBondHome.entry.id != null and municipalBondHome.entry.hasMultipleEmission == false and not empty municipalBondHome.entryValueItems}">
 
 								<s:decorate id="enabledExpirationDateField"
@@ -244,6 +244,12 @@
 										<a:support event="onchanged" ajaxSingle="true" eventsQueue="gimQueue"></a:support>								
 									</rich:calendar>
 								</s:decorate>	
+								
+							
+
+							
+
+							<h:panelGrid id="panelValues"  columns="1">
 
 								<s:decorate id="itemFieldEditableValue"
 									rendered="#{municipalBondHome.instance.entry.isValueEditable and municipalBondHome.entry.id != '654'}"
@@ -251,22 +257,24 @@
 									<ui:define name="label">#{not empty municipalBondHome.entry.amountLabel? municipalBondHome.entry.amountLabel : messages['municipalBond.taxableTotal']}: </ui:define>
 									<h:inputText id="itemEditable"
 										value="#{municipalBondHome.entryValueItems.get(0).mainValue}"
-										styleClass="right tableCellFont">
+										styleClass="right tableCellFont"
+										disabled="#{adjunctHome.instance.details.get(1).valueBoolean}">
 										<a:support event="onblur" eventsQueue="gimQueue" />
 									</h:inputText>
 								</s:decorate>
 
 								<s:decorate id="itemFieldEditableAmount"
-									rendered="#{municipalBondHome.instance.entry.isAmountEditable}"
+									rendered="#{municipalBondHome.instance.entry.isAmountEditable || adjunctHome.instance.details.get(1).valueBoolean}"
 									template="../layout/edit.xhtml">
-									<ui:define name="label">#{not empty municipalBondHome.entry.amountLabel? municipalBondHome.entry.amountLabel : messages['item.amount']}: </ui:define>
+									<ui:define name="label" rendered="#{!adjunctHome.instance.details.get(1).valueBoolean}" >#{not empty municipalBondHome.entry.amountLabel? municipalBondHome.entry.amountLabel : messages['item.amount']}: </ui:define>
+									<ui:define name="label" rendered="#{adjunctHome.instance.details.get(1).valueBoolean}" >#{messages['item.amount']}: </ui:define>
 									<h:inputText id="itemEditableAmount"
 										value="#{municipalBondHome.entryValueItems.get(0).amount}"
 										styleClass="right tableCellFont"
 										style="font-weight: bold;">
-										<a:support event="onblur" eventsQueue="gimQueue" />
+										<a:support event="onblur" eventsQueue="gimQueue" action="#{municipalBondHome.settingAmountAux()}" />
 									</h:inputText>
-								</s:decorate>
+								</s:decorate>						
 								
 								<s:decorate id="previousPaymentField"
 									template="../layout/edit.xhtml"
@@ -295,7 +303,9 @@
 										cols="45" rows="2">
 										
 									</h:inputTextarea>
-								</s:decorate>								
+								</s:decorate>	
+
+							</h:panelGrid>							
 
 								<div style="clear: both" />
 							</h:panelGrid>

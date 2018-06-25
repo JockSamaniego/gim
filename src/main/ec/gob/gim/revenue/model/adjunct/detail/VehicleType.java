@@ -17,7 +17,7 @@ import org.hibernate.envers.Audited;
 @NamedQueries(value = {
 		@NamedQuery(name = "VehicleType.findAll", query = "select o from VehicleType o order by o.name"),
 		@NamedQuery(name = "VehicleType.findForSimert", query = "select o from VehicleType o "
-				+ "where o.id in (1,19) order by o.name") 
+				+ "where o.id in (1,19,26) order by o.name") 
 })
 public class VehicleType {
 	@Id

@@ -102,6 +102,15 @@
 							bypassUpdates="true" ajaxSingle="true" />
 					</h:inputText>
 				</s:decorate>
+				
+				<s:decorate id="onservationsField" template="../layout/edit.xhtml">
+					<ui:define name="label">Observaciones</ui:define>
+					<h:inputText id="onservations" maxlength="100"
+						value="#{writeOffRequestHome.instance.observations}" size="100">
+						<a:support event="onblur" reRender="onservationsField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
 
 				<s:decorate id="internalProcessNumberField"
 					template="../layout/edit.xhtml">

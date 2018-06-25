@@ -8,19 +8,31 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.PasswordManager;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
+import org.gob.gim.common.exception.IdentificationNumberExistsException;
+import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.common.service.UserService;
 import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
 import org.gob.gim.income.view.MunicipalBondItem;
+import org.gob.loja.gim.ws.exception.AccountIsBlocked;
+import org.gob.loja.gim.ws.exception.AccountIsNotActive;
+import org.gob.loja.gim.ws.exception.InvalidUser;
+import org.gob.loja.gim.ws.exception.UserNotSaved;
+import org.gob.loja.gim.ws.service.GimService;
 import org.gob.loja.gim.ws.service.PaymentService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
@@ -34,11 +46,13 @@ import org.jboss.seam.log.Log;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.Dividend;
 import ec.gob.gim.income.model.Payment;
 import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
+import ec.gob.gim.security.model.User;
 
 @Name("paymentAgreementHome")
 public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
@@ -150,12 +164,16 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		}
 		
 	}
+	
+//	@In(create=true)
+//	GimService gimService;
 
 	public void wire() {
 		getInstance();
-		if(getInstance().getId() != null)identificationNumber = getInstance().getResident().getIdentificationNumber(); 
+		if(getInstance().getId() != null)
+			identificationNumber = getInstance().getResident().getIdentificationNumber(); 
 		chargeControlMunicipalBondStates();
-		toActivePaymentAgreement();		
+		//toActivePaymentAgreement();		
 		
 		if(getInstance().getId() != null && enterTOCalculate) {
 			//@author macartuche
@@ -164,9 +182,9 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			calculateBalanceForPay();
 			calculatePayedValue();
 			loadTotalDeposit();
-		}
+		}  
 	}
-	
+	 
 	//@author macartuche
 	//valor pagado y saldos
 	@In(create=true)
@@ -264,7 +282,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			this.getInstance().setResident(resident);
 			this.municipalBondItems = findPendingDueMunicipalBondItems(resident.getId());
 			for(MunicipalBondItem mbi : municipalBondItems){
-				mbi.calculateTotals(null,null);
+				mbi.calculateTotals(null,null,null);
 			}
 			searchAgreements(resident.getId());
 			if (resident.getClass().getSimpleName().equalsIgnoreCase("Person")) {
@@ -622,8 +640,13 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	private Boolean toActive = Boolean.FALSE;
 	private String[] statesString;
 	private List<Long> statesLong = new ArrayList<Long>();
+	private String activeMessage;
+	private Boolean isFirstTime = Boolean.TRUE;
 
 	public void toActivePaymentAgreement() {
+		//this.setInstance(payAgree);
+		getInstance();
+		chargeControlMunicipalBondStates();
 		if (!this.instance.getIsActive()) {
 			try {
 					String qryResult = "SELECT count(*) "
@@ -635,16 +658,21 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 					queryResult.setParameter("state_id", statesLong);
 					String result = queryResult.getSingleResult().toString();
 					if (Integer.parseInt(result) >= 1) {
+						this.activePaymentAgreement();
 						toActive = Boolean.TRUE;
+						activeMessage = "Info: El convenio se activo correctamente";
 					} else {
 						toActive = Boolean.FALSE;
+						activeMessage = "Error: El convenio no tiene obligaciones pendientes";
 					}
 			} catch (Exception e) {
 				toActive = Boolean.FALSE;
+				activeMessage = "Error: No se pudo activar el convenio";
 			}
 
 		} else {
 			toActive = Boolean.FALSE;
+			activeMessage = "Error: El convenio ya se encuentra activado";
 		}
 	}
 
@@ -653,6 +681,13 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		incomeService.updatePaymentAgreement(this.instance);
 		toActive = Boolean.TRUE;
+	}
+	
+	public void callWire(){
+		if(isFirstTime){
+			wire();
+			isFirstTime = Boolean.FALSE;
+		}
 	}
 
 	public Boolean getToActive() {
@@ -663,6 +698,14 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		this.toActive = toActive;
 	}
 	
+	public String getActiveMessage() {
+		return activeMessage;
+	}
+
+	public void setActiveMessage(String activeMessage) {
+		this.activeMessage = activeMessage;
+	}
+
 	public void chargeControlMunicipalBondStates(){
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
@@ -736,5 +779,15 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 
 	public void setMunicipalBonds(List<MunicipalBond> municipalBonds) {
 		this.municipalBonds = municipalBonds;
+	}
+	
+	public Boolean hasRole(String roleKey) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		String role = systemParameterService.findParameter(roleKey);
+		if (role != null) {
+			return userSession.getUser().hasRole(role);
+		}
+		return false;
 	}
 }

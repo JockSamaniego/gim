@@ -31,6 +31,10 @@ public class PropertyAppraisal extends Adjunct{
 	private BigDecimal realLotAppraisal;
 	private BigDecimal realBuildingAppraisal;
 	
+	//rfam 2017-12-15 aprobacion de ordenanza
+	private BigDecimal lotArea;
+	private BigDecimal constructionArea; 
+	
 	@ManyToOne
 	private Property property;
 	
@@ -184,6 +188,26 @@ public class PropertyAppraisal extends Adjunct{
 		if(realBuildingAppraisal == null){
 			this.realBuildingAppraisal = BigDecimal.ZERO;
 		}
+	}
+
+
+	public BigDecimal getLotArea() {
+		return lotArea;
+	}
+
+
+	public void setLotArea(BigDecimal lotArea) {
+		this.lotArea = lotArea;
+	}
+
+
+	public BigDecimal getConstructionArea() {
+		return constructionArea;
+	}
+
+
+	public void setConstructionArea(BigDecimal constructionArea) {
+		this.constructionArea = constructionArea;
 	}
 
 }

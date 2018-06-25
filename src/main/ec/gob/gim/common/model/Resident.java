@@ -115,7 +115,7 @@ import ec.gob.gim.security.model.User;
 								"NEW org.gob.loja.gim.ws.dto.Taxpayer(" +
 								"r.id, r.identificationNumber, r.name, r.email, currentAddress.street, currentAddress.phoneNumber) " +
 							  "FROM Resident r left join r.currentAddress currentAddress " +
-							  "WHERE r.identificationNumber LIKE :identificationNumber")*/				  
+							  "WHERE r.identificationNumber LIKE :identificationNumber")*/
 	}
 )
 
@@ -146,6 +146,11 @@ public abstract class Resident extends Identifiable{
 	
 	private boolean enabledIndividualPayment;
 	
+	//@author macartuche
+	//abonos
+	@Column(nullable = true)
+	private boolean enablesubscription = Boolean.FALSE;
+	               
 	/**
 	 * Relationships
 	 */
@@ -528,6 +533,22 @@ public abstract class Resident extends Identifiable{
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
-	
+
+
+    
+    /**
+     * @author macartuche
+     * @return
+     */
+ 
+
+    
+	public boolean isEnablesubscription() {
+		return enablesubscription;
+	}
+
+	public void setEnablesubscription(boolean enablesubscription) {
+		this.enablesubscription = enablesubscription;
+	}
 
 }//end Resident

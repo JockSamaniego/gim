@@ -72,6 +72,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	private Long paidStatusExternalChannel;
 	private List<Long> paidStatuses = new ArrayList<Long>();
 	private Long agreementStatus;
+	private Long subscriptionStatus;
 	private BigDecimal transferCollected;
 	private BigDecimal creditNoteCollected;
 	private BigDecimal totalCashCollected;
@@ -87,6 +88,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 
 	private List<CashRecord> bills;
 	private List<Deposit> depositsForAgreement;
+	private List<Deposit> depositsForSubscription;
 	private List<Deposit> deposits;
 	private List<Branch> branches;
 	private List<CashRecord> coins;
@@ -245,9 +247,9 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		List<TillPermission> tillPermissions = query.getResultList();
 
 		//findTotalCollected(tillPermissions);
-		System.out.println("metodo mejorado...................................");
+		//System.out.println("metodo mejorado...................................");
 		findTotalCollected1(tillPermissions);
-		System.out.println("metodo mejorado...................................fin>>>>>>>>>>>><");
+		//System.out.println("metodo mejorado...................................fin>>>>>>>>>>>><");
 
 		if (startDate != null && startDate.equals(endDate)
 				&& tillPermissions.size() == 1) {
@@ -437,9 +439,9 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		if (cashiersId.size() < 1) {
 			cashiersId = null;
 		}else{
-			System.out.println("--------------------antes "+cashiersId.size());
+			//System.out.println("--------------------antes "+cashiersId.size());
 			cashiersId = uniqueValues(cashiersId);	
-			System.out.println("--------------------luego "+cashiersId.size());
+			//System.out.println("--------------------luego "+cashiersId.size());
 		}
 							
 		query.setParameter("startDate", startDate);
@@ -454,7 +456,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		List <Object[]> totalCashCollecteds=totalCollected1(cashiersId);
 		
 		for (TillPermission t : tillPermissions) {
-			System.out.println("-------------------------- "+t.getWorkday().getDate()+" ------------- "+t.getPerson().getId());
+			//System.out.println("-------------------------- "+t.getWorkday().getDate()+" ------------- "+t.getPerson().getId());
 			
 			TillPermissionDetail td = createTillPermissionDetail(t);
 			
@@ -613,66 +615,53 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		String strListEmaalEp = systemParameterService
 				.findParameter(ENTRIES_EMAALEP_LIST);
 
-		String ssql = "select sum(i.total) as totalAccounts, "
-				+ "case when re.interest is null then 0 else re.interest end, "
-				+ "case when re.surcharge is null then 0 else re.surcharge end, "
-				+ "case when re.discount is null then 0 else re.discount end, "
-				+ "case when re.taxestotal is null then 0 else re.taxestotal end, "
-				+ "case when re1.paymentAgreements is null then 0 else re1.paymentAgreements end "
-				+ "from payment p "
-				+ "inner join deposit d on p.id = d.payment_id "
-				+ "inner join item i on d.municipalbond_id = i.municipalbond_id "
-				+ "inner join municipalbond mb on mb.id = i.municipalbond_id "
-				+ "left join (select p1.cashier_id as cashier_id , sum(mb1.interest)as interest,  sum(mb1.surcharge) as surcharge, sum(mb1.discount) as discount, sum(mb1.taxestotal) as taxestotal "
-				+ "from payment p1 "
-				+ "inner join deposit d1 on p1.id = d1.payment_id "
-				+ "inner join municipalbond mb1 on mb1.id = d1.municipalbond_id "
-				+ "where p1.date between '"
-				+ t.getWorkday().getDate()
-				+ "' and '"
-				+ t.getWorkday().getDate()
-				+ "' "
-				+ "and mb1.paymentagreement_id IS NULL "
-				+ "and p1.status = 'VALID' "
-				+ "and mb1.entry_id  not in ("
-				+ strListEmaalEp
-				+ ") "
-				+ "group by p1.cashier_id)re on re.cashier_id = p.cashier_id "
-				+"left JOIN(select sum(d.value) as paymentAgreements, " 
-							+"p.cashier_id "
-							+"from payment p inner join deposit d on p.id = d.payment_id " 
-							+"inner join municipalbond mb on mb.id = d.municipalbond_id "
-							+"where p.date between '"
-							+ t.getWorkday().getDate()
-							+ "' and '"
-							+ t.getWorkday().getDate() 
-							+ "' "
-							+"and mb.paymentagreement_id is not NULL "
-							+"and p.status = 'VALID' "
-							+"and mb.entry_id not in ("
-							+ strListEmaalEp
-							+ ") "
-							+"GROUP BY p.cashier_id) re1 on re1.cashier_id = p.cashier_id "
-				+ "where p.date between '"
-				+ t.getWorkday().getDate()
-				+ "' and '"
-				+ t.getWorkday().getDate()
-				+ "' "
-				+ "and mb.paymentagreement_id IS NULL "
-				+ "and p.cashier_id = "
-				+ t.getPerson().getId()
-				+ " and p.status = 'VALID' "
-				+ "and i.entry_id not in ("
-				+ strListEmaalEp
-				+ ") "
-				+ "GROUP BY re.interest,re.surcharge, re.discount, re.taxestotal, re1.paymentAgreements ";
+		String ssql = "select 	COALESCE(re.capital,0.00) totalAccounts, "
+								+"COALESCE(re.interest, 0.00) interest, "
+								+"COALESCE(re.surcharge, 0.00) surcharge, "
+								+"COALESCE(re.discount, 0.00) discount, "
+								+"COALESCE(re.taxestotal, 0.00) taxestotal, "
+								+"COALESCE(re1.paymentAgreements, 0.00) paymentAgreements "
+							+"from payment p " 
+							+"inner join deposit d on p.id = d.payment_id " 
+							+"inner join item i on d.municipalbond_id = i.municipalbond_id " 
+							+"inner join municipalbond mb on mb.id = i.municipalbond_id " 
+							+ "left join (select "
+											+"p1.cashier_id as cashier_id , " 
+											+"sum(d1.capital)as capital, "
+											+"sum(d1.interest)as interest, "  
+											+"sum(d1.surcharge) as surcharge, " 
+											+"sum(d1.discount) as discount, " 
+											+"sum(d1.paidtaxes) as taxestotal " 
+									+ "from payment p1 "
+									+ "inner join deposit d1 on p1.id = d1.payment_id "
+									+ "inner join municipalbond mb1 on mb1.id = d1.municipalbond_id "
+									+ "where p1.date between '"+ t.getWorkday().getDate()+ "' and '"+ t.getWorkday().getDate()+ "' "
+									+ "and mb1.paymentagreement_id IS NULL "
+									+ "and p1.status = 'VALID' "
+									+ "and mb1.entry_id  not in ("+ strListEmaalEp+ ") "
+									+ "group by p1.cashier_id)re on re.cashier_id = p.cashier_id "
+							+"left JOIN(select sum(d.value) as paymentAgreements, " 
+												+"p.cashier_id "
+										+"from payment p inner join deposit d on p.id = d.payment_id " 
+										+"inner join municipalbond mb on mb.id = d.municipalbond_id "
+										+"where p.date between '"+ t.getWorkday().getDate()+ "' and '"+ t.getWorkday().getDate()+ "' "
+										+"and mb.paymentagreement_id is not NULL "
+										+"and p.status = 'VALID' "
+										+"and mb.entry_id not in ("+ strListEmaalEp+ ") "
+										+"GROUP BY p.cashier_id) re1 on re1.cashier_id = p.cashier_id "
+							+ "where p.date between '"+ t.getWorkday().getDate()+ "' and '"	+ t.getWorkday().getDate()+ "' "
+							+ "and mb.paymentagreement_id IS NULL "
+							+ "and p.cashier_id = "	+ t.getPerson().getId()
+							+ " and p.status = 'VALID' "
+							+ "and i.entry_id not in ("	+ strListEmaalEp+ ") "
+							+ "GROUP BY re.capital,re.interest,re.surcharge, re.discount, re.taxestotal, re1.paymentAgreements ";
 
 		query = getEntityManager().createNativeQuery(ssql);
 
 		List<ClosingBoxDTO> results = NativeQueryResultsMapper.map(
 				query.getResultList(), ClosingBoxDTO.class);
 
-		System.out.println(results);
+		//System.out.println(results);
 
 		ClosingBoxDTO result = new ClosingBoxDTO();
 		if (!results.isEmpty()) {
@@ -731,7 +720,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		tid.setSubTotal(tid.getTotalAccounts().add(tid.getTotalInterests())
 				.add(tid.getTotalSurcharges())
 				.subtract(tid.getTotalDiscounts()));
-		System.out.println("tid.getSubTotal()................................. "+tid.getSubTotal());
+		//System.out.println("tid.getSubTotal()................................. "+tid.getSubTotal());
 		tillInstitutionDetails.add(tid);
 		// System.out.println("RRRRRRRR "+"name:"+tid.getName());
 		// System.out.println("RRRRRRRR "+"acco:"+tid.getTotalAccounts());
@@ -743,7 +732,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		// System.out.println("RRRRRRRR "+"subt:"+tid.getSubTotal());
 		// System.out.println("RRRRRRRR "+"comi:"+tid.getCommission());
 		// System.out.println("RRRRRRRR "+"ttax:"+totalTaxes);
-		System.out.println("RRRRRRRR " + "tota:" + tid.getTotal());
+		//System.out.println("RRRRRRRR " + "tota:" + tid.getTotal());
 
 		// Valores para EMAAL-EP
 		// tid = new TillInstitutionDetail();
@@ -896,14 +885,14 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		// Ajuste de Valores para GAD Municipal de Loja comisiones e impuestos
 		// fiscales
 		tid = tillInstitutionDetails.get(0);
-		System.out.println("tid.getSubTotal() 2222 ................................. "+tid.getSubTotal());
+		//System.out.println("tid.getSubTotal() 2222 ................................. "+tid.getSubTotal());
 		tid.setCommission(totalCommissions.multiply(new BigDecimal(-1)));
-		System.out.println("tid.getSubTotal() 3333 ................................. "+tid.getSubTotal());
+		//System.out.println("tid.getSubTotal() 3333 ................................. "+tid.getSubTotal());
 		tid.setSubTotal(tid.getSubTotal().add(totalTaxes));
-		System.out.println("tid.getSubTotal() 4444 ................................. "+tid.getSubTotal());
+		//System.out.println("tid.getSubTotal() 4444 ................................. "+tid.getSubTotal());
 		tid.setTotal(tid.getSubTotal().add(tid.getCommission())
 				.add(totalPaymentAgreements));
-		System.out.println("tid.getTotal() 5555 ................................. "+tid.getTotal());
+		//System.out.println("tid.getTotal() 5555 ................................. "+tid.getTotal());
 		tid.setTotalPaymentAgreements(totalPaymentAgreements);
 		// System.out.println("RRRRRRRR "+"name:"+tid.getName());
 		// System.out.println("RRRRRRRR "+"acco:"+tid.getTotalAccounts());
@@ -915,7 +904,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		// System.out.println("RRRRRRRR "+"subt:"+tid.getSubTotal());
 		// System.out.println("RRRRRRRR "+"comi:"+tid.getCommission());
 		// System.out.println("RRRRRRRR "+"ttax:"+totalTaxes);
-		System.out.println("RRRRRRRR " + "tota:" + tid.getTotal());
+		//System.out.println("RRRRRRRR " + "tota:" + tid.getTotal());
 	}
 
 	public BigDecimal getTotalByInstitutions() {
@@ -1063,7 +1052,8 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	
 	//richard
 	private List<Object[]> totalCollected1(List <Long> cashiersIds){		
-		String sql = "select p.cashier.id, p.date, sum(p.value) from Payment p " +
+		String sql = "select p.cashier.id, p.date, sum(d.value) from Deposit d " +
+				"left join d.payment p " +
 				"where p.date Between :startDate and :endDate " +
 				"and p.cashier.id in ( :cashiersIds ) " +
 				"and p.status = 'VALID' "
@@ -1391,6 +1381,43 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		}
 		return res;
 	}
+	
+	
+	public BigDecimal getDepositsSubscriptionValues() {
+		BigDecimal res = BigDecimal.ZERO;
+		for (Deposit d : depositsForSubscription) {
+			if (d.getCapital() != null)
+				res = res.add(d.getCapital());
+		}
+		return res;
+	}
+
+	public BigDecimal getDepositsSubscriptionTotal() {
+		BigDecimal res = BigDecimal.ZERO;
+		for (Deposit d : depositsForSubscription) {
+			if (d.getValue() != null)
+				res = res.add(d.getValue());
+		}
+		return res;
+	}
+
+	public BigDecimal getDepositsSubscriptionInterests() {
+		BigDecimal res = BigDecimal.ZERO;
+		for (Deposit d : depositsForSubscription) {
+			if (d.getInterest() != null)
+				res = res.add(d.getInterest());
+		}
+		return res;
+	}
+
+	public BigDecimal getDepositsSubscriptionTaxes() {
+		BigDecimal res = BigDecimal.ZERO;
+		for (Deposit d : depositsForSubscription) {
+			if (d.getPaidTaxes() != null)
+				res = res.add(d.getPaidTaxes());
+		}
+		return res;
+	}
 
 	/**
 	 * Detalle de pagos por tipo de pago, cajero y fecha
@@ -1446,7 +1473,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 			List<ClosignBoxDetailsTypesDTO> result = NativeQueryResultsMapper.map(
 					query.getResultList(), ClosignBoxDetailsTypesDTO.class);
 			
-			System.out.println("detalles result bd:"+result);
+			//System.out.println("detalles result bd:"+result);
 			
 			fractionValues = new HashMap<String, BigDecimal>();
 			totalCollectedByTill = BigDecimal.ZERO;
@@ -1523,6 +1550,14 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	public void setDepositsForAgreement(List<Deposit> depositsForAgreement) {
 		this.depositsForAgreement = depositsForAgreement;
 	}
+	
+	public List<Deposit> getDepositsForSubscription() {
+		return depositsForSubscription;
+	}
+
+	public void setDepositsForSubscription(List<Deposit> depositsForSubscription) {
+		this.depositsForSubscription = depositsForSubscription;
+	}
 
 	private void loadMunicipalBondStatus() {
 		if (systemParameterService == null) {
@@ -1535,6 +1570,8 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 				.findParameter("MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL");
 		agreementStatus = systemParameterService
 				.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		subscriptionStatus = systemParameterService
+				.findParameter("MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 		paidStatuses.clear();
 		paidStatuses.add(paidStatus);
 		paidStatuses.add(paidStatusExternalChannel);
@@ -1572,13 +1609,23 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		query.setParameter("cashierId", cashierId);
 		return query.getResultList();
 	}
+	
+	private List<Deposit> getDepositsFromBondsInSubscriptionByCashier(
+			Long cashierId, Date date) {
+		Query query = getEntityManager().createNamedQuery(
+				"Deposit.findDepositsFromBondsInSubscriptionFromPayments");
+		query.setParameter("startDate", date);
+		query.setParameter("endDate", date);
+		query.setParameter("cashierId", cashierId);
+		return query.getResultList();
+	}
 
 	/**
 	 * Recupera municipalbonds y deposits ordenados por entry y se genera el
 	 * árbol de resumen en caso de que sea null
 	 */
 	public void orderByEntry() {
-		if (paidStatus == null || agreementStatus == null)
+		if (paidStatus == null || agreementStatus == null || subscriptionStatus == null)
 			loadMunicipalBondStatus();
 		Date date = DateUtils.getTruncatedInstance(
 				getInstance().getOpeningTime()).getTime();
@@ -1588,6 +1635,9 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		municipalBonds = getMunicipalBondsByCashier(getInstance().getPerson()
 				.getId(), paidStatuses, date);
 		depositsForAgreement = getDepositsFromBondsInAgreementByCashier(
+				getInstance().getPerson().getId(), date);
+		
+		depositsForSubscription = getDepositsFromBondsInSubscriptionByCashier(
 				getInstance().getPerson().getId(), date);
 		if (workdayHome.getRootNode() == null) {
 			workdayHome.loadStatuses();
@@ -1870,6 +1920,14 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		this.agreementStatus = agreementStatus;
 	}
 
+	public Long getSubscriptionStatus() {
+		return subscriptionStatus;
+	}
+
+	public void setSubscriptionStatus(Long subscriptionStatus) {
+		this.subscriptionStatus = subscriptionStatus;
+	}
+
 	public Map<String, BigDecimal> getFractionValues() {
 		return fractionValues;
 	}
@@ -1923,7 +1981,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	@SuppressWarnings("unchecked")
 	public void loadReversedDepositsByCashierIdAndDate(Long cashierId,
 			Date startDate, Date endDate) {
-		System.out.println("Ingreso a loadReversedDepositsByCashierIdAndDay");
+		//System.out.println("Ingreso a loadReversedDepositsByCashierIdAndDay");
 		ReversedDeposits.clear();
 		Query query = getEntityManager().createNamedQuery(
 				"Deposit.findReversedDepositsByCashierIdAndDate");

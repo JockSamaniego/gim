@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.Local;
 
 import org.gob.loja.gim.ws.dto.ClosingStatement;
+import org.gob.loja.gim.ws.dto.FutureStatement;
 import org.gob.loja.gim.ws.dto.Payout;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.Statement;
@@ -53,4 +54,11 @@ public interface PaymentService {
 		//@date 2017-04-18T15:41:19
 		//metodo para consultar si el pago se encuentra efectuado en el sistema GIM
 	public TransactionData queryPayment(ServiceRequest request, String transactionId);
+	
+	/**
+	 * @autor rfarmijosm
+	 * //@date 2018-03-09T15:41:19
+	 * //metodo para consultar si existen pagos pendientes de emisiones futuras
+	 * */ 
+	public FutureStatement findFutureEmission(ServiceRequest request) throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations;
 }

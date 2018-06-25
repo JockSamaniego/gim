@@ -237,12 +237,13 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override//iva12%
+	@Override
+	//iva12%
 	public void calculatePayment(MunicipalBond municipalBond, Date paymentDate, Deposit deposit, boolean isNew,
 			boolean isEmission, boolean applyDiscounts, List<TaxRate> taxRatesActives, Object... facts)
 					throws EntryDefinitionNotFoundException {
 		
-//		System.out.println("<<<R>>>calculatePayment: \n\n\n\n\n");
+//		System.out.println("<<<R>>>calculatePayment: \n\n\n\n\n"); 
 		if (!isNew) {
 			EntryValueItem entryValueItem = new EntryValueItem();
 			entryValueItem.setMainValue(municipalBond.getBase());
@@ -299,7 +300,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	    }  		
 	    */
 	  
-		roundItems(municipalBond);///ya tiene los 48.10
+		roundItems(municipalBond);
+		///ya tiene los 48.10
 		BigDecimal paidTotal = municipalBond.getBalance();
 		paidTotal = paidTotal.add(municipalBond.getSurcharge());
 		
@@ -557,11 +559,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		if (municipalBond.getEntry() != null) {
 
 			List<byte[]> rulesToApply = new ArrayList<byte[]>();
-			System.out.println("=======> OBTIENE LOS ITEMS");
+			//System.out.println("=======> OBTIENE LOS ITEMS");
 			List<Item> itemFacts = municipalBond.getItems();
 
 			Date serviceDate = municipalBond.getServiceDate();
-			System.out.println("=======>serviceDate: " + serviceDate);
+			//System.out.println("=======>serviceDate: " + serviceDate);
 
 			// Crea item principal
 			Entry entry = municipalBond.getEntry();
@@ -810,7 +812,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				InputStream is = new ByteArrayInputStream(bos.toByteArray());
 				knowledgeBuilder.add(ResourceFactory.newInputStreamResource(is), ResourceType.DRL);
 				if (knowledgeBuilder.hasErrors()) {
-					System.out.println("RULES DEBUG -----> WARNING: Added Rule has errors");
+					//System.out.println("RULES DEBUG -----> WARNING: Added Rule has errors");
 					KnowledgeBuilderErrors errors = knowledgeBuilder.getErrors();
 					Iterator<KnowledgeBuilderError> it = errors.iterator();
 					while (it.hasNext()) {
@@ -845,9 +847,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			// "+factHandles.size());
 
 			if (factHandles.size() > 0) {
-				System.out.println("RULES DEBUG -----> Firing all rules ");
+				//System.out.println("RULES DEBUG -----> Firing all rules ");
 				int firedRules = session.fireAllRules();
-				System.out.println("RULES DEBUG -----> Rules applied " + firedRules);
+				//System.out.println("RULES DEBUG -----> Rules applied " + firedRules);
 			}
 
 			for (FactHandle factHandle : factHandles) {
@@ -869,9 +871,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	public BigDecimal calculateSurcharge(MunicipalBond municipalBond) {
 		BigDecimal surcharge = BigDecimal.ZERO;
 		for (Item i : municipalBond.getSurchargeItems()) {
-			System.out.println("item: " + i);
+			/*System.out.println("item: " + i);
 			System.out.println("item total: " + i.getTotal());
-			System.out.println("item total: " + i.getEntry().getCompleteName());
+			System.out.println("item total: " + i.getEntry().getCompleteName());*/
 			i.setTotal(i.getTotal().setScale(2, RoundingMode.HALF_UP));
 			BigDecimal aux = i.getTotal();
 			surcharge = surcharge.add(aux);
@@ -1061,23 +1063,49 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				expirationDate = DateUtils.truncate(lastDeposit.getDate());
 			}
 			
-			//@author macartuche
-			//@date 2016-06-20T16:600:00
-			//@tag recaudacionCoactivas
-			Query qaux = entityManager.createQuery(
-					"Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id and ma.status=:status"); // 
-			qaux.setParameter("id", municipalBond.getId());
-			qaux.setParameter("status", "VALID");
-			
-			List<MunicipalbondAux> datalist = qaux.getResultList();			
-			if(!datalist.isEmpty()){
-				//tomar la ultima instancia almacenada
-				int lastIndex = datalist.size()-1;
-				MunicipalbondAux aux = datalist.get(lastIndex);
-				if(!aux.getItconverinterest()){
-					expirationDate = DateUtils.truncate(municipalBond.getExpirationDate());
+			//poner condicion de si tiene convenio de pago
+			if(municipalBond.getPaymentAgreement()!=null || municipalBond.getMunicipalBondStatus().getId().intValue() == 14 ){
+				//@author macartuche
+				//@date 2016-06-20T16:600:00
+				//@tag recaudacionCoactivas
+				Query qaux = entityManager.createQuery(
+						"Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id and "
+						+ "ma.status=:status and ma.type=:type order by ma.liquidationDate "); 
+				qaux.setParameter("id", municipalBond.getId());
+				qaux.setParameter("status", "VALID");
+				qaux.setParameter("type", "I");
+				
+				List<MunicipalbondAux> datalist = qaux.getResultList();			
+				if(!datalist.isEmpty()){
+					//tomar la ultima instancia almacenada
+					int lastIndex = datalist.size()-1;
+					MunicipalbondAux aux = datalist.get(lastIndex);
+					if(aux.getCoveritem()!=null && !aux.getCoveritem()){
+						expirationDate = DateUtils.truncate(municipalBond.getExpirationDate());
+						//verficar si ha habido pagos de todo 
+						Query queryNewInterest = entityManager.createQuery(
+								"Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id and "
+								+ "ma.status=:status and ma.type=:type and ma.coveritem=:coveritem order by ma.liquidationDate desc "); 
+						queryNewInterest.setParameter("id", municipalBond.getId());
+						queryNewInterest.setParameter("status", "VALID");
+						queryNewInterest.setParameter("type", "I");
+						queryNewInterest.setParameter("coveritem", true);
+						
+						List<MunicipalbondAux> oldInterest = queryNewInterest.getResultList();	
+						if(!oldInterest.isEmpty()){
+							MunicipalbondAux bondAux = oldInterest.get(0);
+							expirationDate = DateUtils.truncate(bondAux.getLiquidationDate());
+						}
+						
+					}
+				}
+				if(municipalBond.getExpirationDate().after(expirationDate)){
+					expirationDate = municipalBond.getExpirationDate();
 				}
 			}
+			
+			
+			
 			
 			//@author macartuche
 			//@date 2016-07-21T16:41
@@ -1414,7 +1442,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		Query query = entityManager.createQuery(stringQuery);
 		Long size = (Long) query.getSingleResult();
 
-		System.out.println("CLASE RETORNADA " + size.getClass() + " CURRENT SIZE = " + size);
+		//System.out.println("CLASE RETORNADA " + size.getClass() + " CURRENT SIZE = " + size);
 
 		return size;
 	}
@@ -1456,7 +1484,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		Query query = entityManager.createQuery(stringQuery);
 		Long size = (Long) query.getSingleResult();
 
-		System.out.println("CLASE RETORNADA emisiones futuras: " + size.getClass() + " CURRENT SIZE = " + size);
+		//System.out.println("CLASE RETORNADA emisiones futuras: " + size.getClass() + " CURRENT SIZE = " + size);
 		return size;
 	}
 
@@ -1495,8 +1523,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		query.setParameter("now", now, TemporalType.DATE);
 		Long size = (Long) query.getSingleResult();
 
-		System.out.println("numero de obligaciones normalizar que devuelve el model: " + size.getClass()
-				+ " CURRENT SIZE = " + size);
+		/*System.out.println("numero de obligaciones normalizar que devuelve el model: " + size.getClass()
+				+ " CURRENT SIZE = " + size);*/
 		return size;
 
 	}

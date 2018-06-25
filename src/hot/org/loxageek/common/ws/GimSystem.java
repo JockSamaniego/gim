@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
 import org.gob.loja.gim.ws.dto.RealEstate;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
@@ -30,6 +31,7 @@ import org.gob.loja.gim.ws.exception.RealEstateNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNonUnique;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNotSaved;
+import org.gob.loja.gim.ws.exception.UserNotSaved;
 import org.gob.loja.gim.ws.service.GimService;
 
 /**
@@ -246,6 +248,32 @@ public class GimSystem {
 		return sr; 
 	}
 	
+	@WebMethod
+	public UserResponse createUser(ServiceRequest request, String username, String password) 
+	throws InvalidUser, AccountIsNotActive, AccountIsBlocked, UserNotSaved{
+		UserResponse data = gimService.saveUser(request,username, password);
+		InvalidateSession();
+		return data; 
+	}
+	
+	@WebMethod
+	public UserResponse login(ServiceRequest request, String username, String password) 
+	throws InvalidUser, AccountIsNotActive, AccountIsBlocked, UserNotSaved{
+		UserResponse data = gimService.login(username, password);
+		InvalidateSession();
+		return data; 
+	}
+	
+	
+//	@WebMethod
+//	public Boolean saveTaxpayer(ServiceRequest request, Taxpayer taxpayer) 
+//		throws InvalidUser, AccountIsNotActive, AccountIsBlocked, TaxpayerNotSaved{
+//		System.out.println("SAVE TAXPAYER FOR: "+taxpayer.getIdentificationNumber());
+//		Boolean ok = gimService.saveTaxpayer(request, taxpayer);
+//		InvalidateSession();
+//		return ok;
+//	}
+	
 	public List<RealEstate> findProperties(ServiceRequest request) {
 		List<RealEstate> properties = gimService.findProperties(request);
 		InvalidateSession();
@@ -270,6 +298,14 @@ public class GimSystem {
 	        	session.setMaxInactiveInterval(1);
 	        }
 	    }
+	}
+	
+	@WebMethod
+	public Boolean generateEmissionOrderQuantity(String name, String password, String identificationNumber, 
+			String accountCode, String pplessuser, Integer quantity) throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound, 
+			EmissionOrderNotGenerate, EmissionOrderNotSave, InvalidUser, AccountIsNotActive, AccountIsBlocked{
+		System.out.println("====> GENERATE EmissionOrder FOR: "+accountCode);
+		return gimService.generateEmissionOrder(name, password, identificationNumber, accountCode, pplessuser, quantity);
 	}
 
 }

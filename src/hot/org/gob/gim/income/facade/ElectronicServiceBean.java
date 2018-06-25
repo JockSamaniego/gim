@@ -75,9 +75,9 @@ public class ElectronicServiceBean implements ElectronicService {
             String checksum = FileUtilities.checkSumApacheCommons(xmlFileName);
             dataWS.setXmlFile(document);
             dataWS.setRucCompany(receipt.getMunicipalBond().getInstitution().getNumber());
-            System.out.println("cliente checksum ");
+            //System.out.println("cliente checksum ");
             dataWS.setCheksum(checksum);
-            System.out.println("enviar al servicio del SRI");
+            //System.out.println("enviar al servicio del SRI");
             dataWS = sendToSRIService(dataWS);
 //            new File(xmlFileName).delete();
         } catch (IOException ex) {
@@ -91,8 +91,8 @@ public class ElectronicServiceBean implements ElectronicService {
 	    ElectronicClient client = new ElectronicClient(uriElectronicService);
 	    DataWS response;
 	    response = client.reception_XML(input, DataWS.class);
-	    System.out.println("Access key " + response.getAccesKey() + " Autorizado en SRI: " + response.getAuthorized()
-	            + " Ambiente Contingencia: " + response.getContingencyEnvironment());
+	    /*System.out.println("Access key " + response.getAccesKey() + " Autorizado en SRI: " + response.getAuthorized()
+	            + " Ambiente Contingencia: " + response.getContingencyEnvironment());*/
 	    return response;
 	}
 
@@ -100,7 +100,7 @@ public class ElectronicServiceBean implements ElectronicService {
         DataWS dataWS = new DataWS();
         dataWS.setRucCompany(receipt.getMunicipalBond().getInstitution().getNumber());
         dataWS.setVoucherNumber(receipt.getReceiptNumber());
-        System.out.println("enviar consulta al servicio de Facturacion Electronica");
+        //System.out.println("enviar consulta al servicio de Facturacion Electronica");
         dataWS = sendConsultToSRIService(dataWS);
     	return dataWS;
 	}
@@ -110,8 +110,8 @@ public class ElectronicServiceBean implements ElectronicService {
 	    ElectronicClient client = new ElectronicClient(uriElectronicService);
 	    DataWS response;
 	    response = client.consultingVoucher_XML(input, DataWS.class);
-	    System.out.println("Access key " + response.getAccesKey() + " Autorizado en SRI: " + response.getAuthorized()
-	            + " Ambiente Contingencia: " + response.getContingencyEnvironment());
+	    /*System.out.println("Access key " + response.getAccesKey() + " Autorizado en SRI: " + response.getAuthorized()
+	            + " Ambiente Contingencia: " + response.getContingencyEnvironment());*/
 	    return response;
 	}
 
@@ -121,12 +121,12 @@ public class ElectronicServiceBean implements ElectronicService {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(beginDate);
 		cal.add(Calendar.SECOND, 1);
-		System.out.println("<<<R>>> Start Date: "+cal.getTime());
+		//System.out.println("<<<R>>> Start Date: "+cal.getTime());
 		query.setParameter("startDate", cal.getTime());
 		cal.setTime(endDate);
 		cal.add(Calendar.HOUR, 24);
 		cal.add(Calendar.SECOND, -1);
-		System.out.println("<<<R>>>   End Date: "+cal.getTime());
+		//System.out.println("<<<R>>>   End Date: "+cal.getTime());
 		query.setParameter("endDate", cal.getTime());
 //		query.setParameter("startDate", beginDate);
 //		query.setParameter("endDate", endDate);
@@ -137,7 +137,7 @@ public class ElectronicServiceBean implements ElectronicService {
 
 	@SuppressWarnings("unchecked")
 	public boolean authorizedElectronicReceipts(List<Receipt> receipts){
-		System.out.println("\n\n\n\n\n<<<R>>> Hora inicio: "+GregorianCalendar.getInstance().getTime());
+		//System.out.println("\n\n\n\n\n<<<R>>> Hora inicio: "+GregorianCalendar.getInstance().getTime());
 		List<Receipt> receiptsFull = new ArrayList<Receipt>();
 		List<Long> ids = new ArrayList<Long>();
 		int i = 0;
@@ -155,7 +155,7 @@ public class ElectronicServiceBean implements ElectronicService {
 			System.out.println("\n\n<<<R>>> receipt "+ i +" id: "+receipt.getId());
 			authorizedElectronicReceipt(receipt);
 		}
-		System.out.println("\n\n\n\n\n<<<R>>> Hora final: "+GregorianCalendar.getInstance().getTime());
+		//System.out.println("\n\n\n\n\n<<<R>>> Hora final: "+GregorianCalendar.getInstance().getTime());
 		return true;
 	}
 
@@ -165,29 +165,29 @@ public class ElectronicServiceBean implements ElectronicService {
 		StatusElectronicReceipt statusElectronicReceipt;
 		if ((receipt.getStatusElectronicReceipt().name().equals(StatusElectronicReceipt.PENDING.name()))
 				|| (receipt.getStatusElectronicReceipt().name().equals(StatusElectronicReceipt.CONTINGENCY.name()))){
-			System.out.println("<<<R>>> StatusElectronicReceipt: "+receipt.getStatusElectronicReceipt().name());
+			//System.out.println("<<<R>>> StatusElectronicReceipt: "+receipt.getStatusElectronicReceipt().name());
 			try {
 				DataWS signReceipt = sendElectronicReceipt(receipt);
 				if ((signReceipt.getAuthorized() != null) && (signReceipt.getAuthorized())){
-					System.out.println("<<<R>>> SriAuthorizationNumber: "+signReceipt.getAuthorizationNumber());
+					//System.out.println("<<<R>>> SriAuthorizationNumber: "+signReceipt.getAuthorizationNumber());
 					statusElectronicReceipt = StatusElectronicReceipt.AUTHORIZED;
 					updateReceipt(receipt, signReceipt.getAccesKey(), signReceipt.getAuthorizationNumber(), 
 							signReceipt.getAuthorizationDate(), signReceipt.getContingencyEnvironment(), statusElectronicReceipt);
 				}
 				else{
 					if ((signReceipt.getContingencyEnvironment() != null) && (signReceipt.getContingencyEnvironment())){
-						System.out.println("<<<R>>> En Contingencia: "+signReceipt.getAccesKey());
+						//System.out.println("<<<R>>> En Contingencia: "+signReceipt.getAccesKey());
 						statusElectronicReceipt = StatusElectronicReceipt.CONTINGENCY;
 						updateReceipt(receipt, signReceipt.getAccesKey(), "", 
 								receipt.getDate(), signReceipt.getContingencyEnvironment(), statusElectronicReceipt);
 					} else{
 						if (signReceipt.getReceived()){
-							System.out.println("<<<R>>> SOLO RECEPCION: "+signReceipt.getReceived());
+							//System.out.println("<<<R>>> SOLO RECEPCION: "+signReceipt.getReceived());
 							statusElectronicReceipt = StatusElectronicReceipt.RECEPTION;
 							updateReceipt(receipt, receipt.getSriAccessKey(), receipt.getAuthorizationNumber(), 
 									receipt.getDate(), receipt.isSriContingencyEnvironment(), statusElectronicReceipt);
 						} else {
-							System.out.println("<<<R>>> ERROR: "+signReceipt.getMessageList().toString());
+							//System.out.println("<<<R>>> ERROR: "+signReceipt.getMessageList().toString());
 							statusElectronicReceipt = StatusElectronicReceipt.ERROR;
 							updateReceipt(receipt, receipt.getSriAccessKey(), receipt.getAuthorizationNumber(), 
 									receipt.getDate(), receipt.isSriContingencyEnvironment(), statusElectronicReceipt);
@@ -195,7 +195,7 @@ public class ElectronicServiceBean implements ElectronicService {
 					}
 				}
 			} catch (Exception e) {
-				System.out.println(e);
+				//System.out.println(e);
 				return false;
 			}
 		}
@@ -215,14 +215,14 @@ public class ElectronicServiceBean implements ElectronicService {
 	}
 
 	public boolean consultElectronicReceipts(List<Receipt> receipts){
-		System.out.println("\n\n\n\n\n<<<R>>> Hora inicio: "+GregorianCalendar.getInstance().getTime());
+		//System.out.println("\n\n\n\n\n<<<R>>> Hora inicio: "+GregorianCalendar.getInstance().getTime());
 		int i = 0;
 		for (Receipt receipt : receipts) {
 			i++;
-			System.out.println("\n\n<<<R>>> receipt "+ i +" id: "+receipt.getId());
+			//System.out.println("\n\n<<<R>>> receipt "+ i +" id: "+receipt.getId());
 			consultElectronicReceipt(receipt);
 		}
-		System.out.println("\n\n\n\n\n<<<R>>> Hora final: "+GregorianCalendar.getInstance().getTime());
+		//System.out.println("\n\n\n\n\n<<<R>>> Hora final: "+GregorianCalendar.getInstance().getTime());
 		return true;
 	}
 
@@ -230,7 +230,7 @@ public class ElectronicServiceBean implements ElectronicService {
 	public void fillMapBranch(){
 //		System.out.println("\n<<<R>>> branch: ");
 		mapBranch.clear();
-		System.out.println("\n<<<R>>> branch: " + entityManager);
+		//System.out.println("\n<<<R>>> branch: " + entityManager);
 		Query query = entityManager.createNamedQuery("Branch.findAll");
 		List<Branch> list = new ArrayList<Branch>();
 		list = query.getResultList();
@@ -245,29 +245,29 @@ public class ElectronicServiceBean implements ElectronicService {
 		StatusElectronicReceipt statusElectronicReceipt;
 		if ((receipt.getStatusElectronicReceipt().name().equals(StatusElectronicReceipt.RECEPTION.name()))
 				|| (receipt.getStatusElectronicReceipt().name().equals(StatusElectronicReceipt.CONTINGENCY.name()))){
-			System.out.println("<<<R>>> StatusElectronicReceipt: "+receipt.getStatusElectronicReceipt().name());
+			//System.out.println("<<<R>>> StatusElectronicReceipt: "+receipt.getStatusElectronicReceipt().name());
 			try {
 				DataWS signReceipt = sendConsultElectronicReceipt(receipt);
 				if ((signReceipt.getAuthorized() != null) && (signReceipt.getAuthorized())){
-					System.out.println("<<<R>>> SriAuthorizationNumber: "+signReceipt.getAuthorizationNumber());
+					//System.out.println("<<<R>>> SriAuthorizationNumber: "+signReceipt.getAuthorizationNumber());
 					statusElectronicReceipt = StatusElectronicReceipt.AUTHORIZED;
 					updateReceipt(receipt, signReceipt.getAccesKey(), signReceipt.getAuthorizationNumber(), 
 							signReceipt.getAuthorizationDate(), signReceipt.getContingencyEnvironment(), statusElectronicReceipt);
 				}
 				else{
 					if ((signReceipt.getContingencyEnvironment() != null) && (signReceipt.getContingencyEnvironment())){
-						System.out.println("<<<R>>> En Contingencia: "+signReceipt.getAccesKey());
+						//System.out.println("<<<R>>> En Contingencia: "+signReceipt.getAccesKey());
 						statusElectronicReceipt = StatusElectronicReceipt.CONTINGENCY;
 						updateReceipt(receipt, signReceipt.getAccesKey(), "", 
 								receipt.getDate(), signReceipt.getContingencyEnvironment(), statusElectronicReceipt);
 					} else{
 						if (signReceipt.getReceived()){
-							System.out.println("<<<R>>> SOLO RECEPCION: "+signReceipt.getReceived());
+							//System.out.println("<<<R>>> SOLO RECEPCION: "+signReceipt.getReceived());
 							statusElectronicReceipt = StatusElectronicReceipt.RECEPTION;
 							updateReceipt(receipt, receipt.getSriAccessKey(), receipt.getAuthorizationNumber(), 
 									receipt.getDate(), receipt.isSriContingencyEnvironment(), statusElectronicReceipt);
 						} else {
-							System.out.println("<<<R>>> ERROR: "+signReceipt.getMessageList().toString());
+							//System.out.println("<<<R>>> ERROR: "+signReceipt.getMessageList().toString());
 							statusElectronicReceipt = StatusElectronicReceipt.ERROR;
 							updateReceipt(receipt, receipt.getSriAccessKey(), receipt.getAuthorizationNumber(), 
 									receipt.getDate(), receipt.isSriContingencyEnvironment(), statusElectronicReceipt);

@@ -108,7 +108,24 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 					" AND p.cashier.id = :cashierId " +
 					" AND d.status = 'VALID'" +
 					" AND p.status = 'VALID'" +
-					" ORDER BY d.id"),									
+					" ORDER BY d.id"),
+					
+		@NamedQuery(name="Deposit.findDepositsFromBondsInSubscriptionFromPayments", 
+					query="SELECT d FROM Deposit d " +
+							" LEFT JOIN FETCH d.municipalBond mb" +									
+							" LEFT JOIN FETCH mb.receipt r" +
+							" LEFT JOIN FETCH d.payment p" +					
+							" WHERE p.date between :startDate and :endDate " +
+							" AND d.date between :startDate and :endDate " +
+							" AND p.cashier.id = :cashierId " +
+							" AND (select count(maux) " +
+							" from MunicipalbondAux maux " +
+							" where maux.municipalbond.id = mb.id " +
+							" AND maux.typepayment = 'SUBSCRIPTION' " +
+							" AND maux.status = 'VALID') > 0 " +
+							" AND d.status = 'VALID'" +
+							" AND p.status = 'VALID'" +
+							" ORDER BY d.id"),
 					
 	@NamedQuery(name="Deposit.findDepositsByResidentIdAndCashierAndDate", 
 			query="SELECT distinct d FROM Deposit d " +
@@ -174,7 +191,8 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 			query="SELECT SUM(d.value) " +
 				  " FROM Deposit d " +
 				  " WHERE d.date = :paymentDate " +
-				  " AND d.payment.cashier.id = :cashierId"),
+				  " AND d.payment.cashier.id = :cashierId"), 
+				  //" AND d.status = 'VALID'"),
  
     @NamedQuery(name="Deposit.findByIds", 
 			query="SELECT DISTINCT d FROM Deposit d " +

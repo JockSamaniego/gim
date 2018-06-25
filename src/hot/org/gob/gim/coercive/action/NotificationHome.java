@@ -243,9 +243,8 @@ public class NotificationHome extends EntityHome<Notification> {
 //		this.notificationTask.setNotifier(null);
 		Date now = Calendar.getInstance().getTime();
 		//System.out.println("Responsable:" + person.getName());
-		System.out.println("000 valor:" + this.getNotificationTask().getId());
+		//System.out.println("000 valor:" + this.getNotificationTask().getId());
 		if (this.getNotificationTask().getId() == null) {
-			System.out.println("111");
 			// cerrar estado activo
 			NotificationTask last = getLastNotificationTask(this.getInstance());
 			last.setNotifiedDate(now);
@@ -255,12 +254,12 @@ public class NotificationHome extends EntityHome<Notification> {
 			// Almacenar nuevo estado
 			this.getNotificationTask().setActuary(userSession.getPerson());
 			if (this.isStateJuice) {
-				System.out.println("2222" + this.isStateJuice +  " person:" +person);
+				// System.out.println("2222" + this.isStateJuice +  " person:" +person);
 				this.notificationTask.setJudgmental(person);
 			}
 
 			if (this.isStateNotify) {
-				System.out.println("333" + this.isStateNotify +  " person:" +person);System.out.println("333" + this.isStateNotify +  " person:" +person);
+				//System.out.println("333" + this.isStateNotify +  " person:" +person);System.out.println("333" + this.isStateNotify +  " person:" +person);
 				this.notificationTask.setNotifier(person);
 			}
 
@@ -268,14 +267,14 @@ public class NotificationHome extends EntityHome<Notification> {
 			this.notificationTaskHome.persist();
 			this.getInstance().add(this.getNotificationTask());
 		} else {
-			System.out.println("444");
+			//System.out.println("444");
 			if (this.isStateJuice) {
-				System.out.println("555" + this.isStateJuice +  " person:" +person);
+				//System.out.println("555" + this.isStateJuice +  " person:" +person);
 				this.notificationTask.setJudgmental(person);
 			}
 
 			if (this.isStateNotify) {
-				System.out.println("666" + this.isStateNotify +  " person:" +person);
+				//System.out.println("666" + this.isStateNotify +  " person:" +person);
 				this.notificationTask.setNotifier(person);
 			}
 			this.notificationTaskHome.setInstance(this.getNotificationTask());
@@ -491,7 +490,7 @@ public class NotificationHome extends EntityHome<Notification> {
 
 			List<Entry> entries = new ArrayList<Entry>();
 
-			System.out.println("--------------------------- mb");
+			//System.out.println("--------------------------- mb");
 
 			for (MunicipalBond mb : municipalBonds) {
 				// System.out.println("el mb: "+mb.getNumber());
@@ -523,7 +522,7 @@ public class NotificationHome extends EntityHome<Notification> {
 			notification.setCreationTimeStamp(now);
 			// set anio notificacion
 			notification.setYear(Calendar.getInstance().get(Calendar.YEAR));
-			System.out.println("anio que se envia:" + notification.getYear());
+			//System.out.println("anio que se envia:" + notification.getYear());
 			// setear siguiente numero de notificacion
 			notification.setNumber(getNextNumberNotification(notification
 					.getYear()));
@@ -553,7 +552,7 @@ public class NotificationHome extends EntityHome<Notification> {
 
 	public int getNextNumberNotification(int year) {
 
-		System.out.println("anio que llega para obetener numero:" + year);
+		//System.out.println("anio que llega para obetener numero:" + year);
 		Query query = getPersistenceContext().createNamedQuery(
 				"Notification.actualNumber");
 		query.setParameter("year", year);
@@ -842,21 +841,20 @@ public class NotificationHome extends EntityHome<Notification> {
 		this.identificationNumber = new String();
 		this.isStateJuice = Boolean.FALSE;
 		this.isStateNotify = Boolean.FALSE;
-		System.out
-				.println("****************------------------------*****************////////////////************");
-		System.out.println("Entro al onchange:");
+		
+		//System.out.println("Entro al onchange:");
 		if (notificationTask.getNotificationTaskType().getName()
 				.equals("JUICIO")) {
-			System.out.println("ES juicio");			
+			//System.out.println("ES juicio");			
 			this.setIsStateJuice(Boolean.TRUE);
 			System.out.println("combo estados 111: " + this.isStateJuice);
 		}
 
 		if (notificationTask.getNotificationTaskType().getName()
 				.equals("NOTIFICADO")) {
-			System.out.println("ES Notificacion");			
+			//System.out.println("ES Notificacion");			
 			this.setIsStateNotify(Boolean.TRUE);
-			System.out.println("combo estados 222: " + this.isStateNotify);
+			//System.out.println("combo estados 222: " + this.isStateNotify);
 		}
 
 		if (!notificationTask.getNotificationTaskType().getName()
@@ -865,16 +863,16 @@ public class NotificationHome extends EntityHome<Notification> {
 						.equals("JUICIO")) {
 			this.setPerson(null);
 			this.setIdentificationNumber(new String());
-			System.out.println("combo estados 333:" + this.isStateNotify + " estadojuidio:"+ this.isStateJuice);
+			//System.out.println("combo estados 333:" + this.isStateNotify + " estadojuidio:"+ this.isStateJuice);
 		}
 
 		if (!isStateJuice && !isStateNotify) {
-			System.out.println("No en niguna iocion controlada");
-			System.out.println("combo estados 444:" + this.isStateNotify + " estadojuidio:"+ this.isStateJuice);
+			//System.out.println("No en niguna iocion controlada");
+			//System.out.println("combo estados 444:" + this.isStateNotify + " estadojuidio:"+ this.isStateJuice);
 		}
 
-		System.out.println("Es Juicio: " + isStateJuice);
-		System.out.println("Es Notificacion: " + isStateNotify);
+		//System.out.println("Es Juicio: " + isStateJuice);
+		//System.out.println("Es Notificacion: " + isStateNotify);
 	}
 	
 	public void reset() {
@@ -917,14 +915,13 @@ public class NotificationHome extends EntityHome<Notification> {
 //		this.isStateJuice = Boolean.FALSE;
 //		this.isStateNotify = Boolean.FALSE;
 		
-		System.out.println("****************combo resopnsable************");
-		System.out.println("Entro al onchange de responsable:");
+		//System.out.println("Entro al onchange de responsable:");
 		if (person.getName().equals(true)) {
-			System.out.println("0011: no esta vacia");
+			//System.out.println("0011: no esta vacia");
 			resetResponsible();
 			//this.isStateJuice = Boolean.FALSE;
 			//this.setIsStateJuice(Boolean.TRUE);
-			System.out.println("combo estados 0022: juicio" + this.isStateJuice+" notificacion:"+ this.isStateNotify);
+			//System.out.println("combo estados 0022: juicio" + this.isStateJuice+" notificacion:"+ this.isStateNotify);
 		}
 
 	}	
@@ -955,7 +952,7 @@ public class NotificationHome extends EntityHome<Notification> {
 		notificationTotalDescendentOrden = new ArrayList<NotificationTotalDescendenteOrdenDTO>();
 		try {
 			List i = query.getResultList();
-			System.out.println("lista size 2do query: "+i.size());
+			//System.out.println("lista size 2do query: "+i.size());
 			for (Object v : i) {
 				Object[] vl = (Object[]) v;
 				notificationTotalDescendentOrden.add(new NotificationTotalDescendenteOrdenDTO((String) vl[0],

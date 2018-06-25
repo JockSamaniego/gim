@@ -168,13 +168,13 @@ public class ConcessionGroupServiceBean implements ConcessionGroupService {
 
 		return calendar.getTime();*/
 		
-		System.out.println("------Fecha actual--------------");
-        System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(today));
+		//System.out.println("------Fecha actual--------------");
+        //System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(today));
 
         Calendar todayC = Calendar.getInstance();
         todayC.setTime(today);
         int todayMonth=todayC.get(Calendar.DAY_OF_MONTH);
-        System.out.println(todayMonth);
+        //System.out.println(todayMonth);
                         
         Calendar serviceDate = Calendar.getInstance();
         serviceDate.setTime(today);
@@ -182,18 +182,18 @@ public class ConcessionGroupServiceBean implements ConcessionGroupService {
         serviceDate.set(Calendar.MONTH, month-1);
         serviceDate.set(Calendar.DAY_OF_MONTH, 1);
         int serviceDateMaxDay=serviceDate.getActualMaximum(Calendar.DAY_OF_MONTH);
-        System.out.println("------Fecha sin revision de dias--------------");
-        System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(serviceDate.getTime()));
+        //System.out.println("------Fecha sin revision de dias--------------");
+        //System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(serviceDate.getTime()));
         
-        System.out.println(todayMonth +"    "+serviceDateMaxDay);
+        //System.out.println(todayMonth +"    "+serviceDateMaxDay);
                 
         if (todayMonth <= serviceDateMaxDay) {
             serviceDate.set(Calendar.DAY_OF_MONTH, todayMonth);
         }else{
             serviceDate.set(Calendar.DAY_OF_MONTH, serviceDateMaxDay);
         }
-        System.out.println("------Fecha final--------------");
-        System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(serviceDate.getTime()));
+        //System.out.println("------Fecha final--------------");
+        //System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(serviceDate.getTime()));
 
         return serviceDate.getTime();
 	}
@@ -217,9 +217,9 @@ public class ConcessionGroupServiceBean implements ConcessionGroupService {
 			ConcessionItem ci = cgr.getConcessionItem();
 			sql = sql+"update ConcessionItem set municipalbond_id = "+mb.getId()+" where id="+ci.getId()+";\n";
 		}
-		System.out.println(sql);
+		//System.out.println(sql);
 		Query q=entityManager.createNativeQuery(sql);
 		q.executeUpdate();
-		System.out.println("termina ahi>>>>>>>>>>>>>>>><<");
+		//System.out.println("termina ahi>>>>>>>>>>>>>>>><<");
 	}
 }
