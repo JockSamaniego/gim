@@ -136,4 +136,6 @@ public interface IncomeService {
 	//Jock Samaniego
 	//actualizar estado de convenios 21/09/2016
 	public void updatePaymentAgreement(PaymentAgreement paymentAgreement);
+	
+	public boolean checkIsPayed(Long municipalbondid, String type);
 }

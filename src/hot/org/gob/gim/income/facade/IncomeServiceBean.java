@@ -14,10 +14,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -53,7 +51,6 @@ import ec.common.sridocuments.v110.factura.Factura;
 //import ec.common.sridocuments.v110.factura.ResultSet;
 //import ec.common.sridocuments.v110.factura.SQLException;
 import ec.common.sridocuments.v110.factura.XmlTransform;
-import ec.common.sridocuments.v110.factura.Factura.InfoAdicional.CampoAdicional;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
@@ -80,7 +77,6 @@ import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
-import ec.gob.gim.revenue.model.adjunct.ValuePair;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.loja.client.clients.ElectronicClient;
 import ec.gob.loja.client.model.DataWS;
@@ -471,7 +467,7 @@ public class IncomeServiceBean implements IncomeService {
 		sum = BigDecimal.ZERO;
 		itemValue = BigDecimal.ZERO;
 		depositValue = BigDecimal.ZERO;
-		itemIsPayed = false;
+		itemIsPayed = false; ////////////////////////////////////////////////////////////////////
 
 		if (dep.getPaidTaxes().compareTo(BigDecimal.ZERO) > 0) {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "T", paymentMethod);
@@ -515,6 +511,9 @@ public class IncomeServiceBean implements IncomeService {
 			}
 
 			if (mb.getPaymentAgreement() != null || paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+				if(itemIsPayed)
+					updateMunicipalbondAux(mb, "S");
+				
 				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "S", paymentMethod);
 				entityManager.persist(munAux);
 			}
@@ -1857,7 +1856,7 @@ public class IncomeServiceBean implements IncomeService {
 				+ " where mba.municipalbond.id=:munid and " + " mba.coveritem=:cover and " + " mba.status=:status and"
 				+ " mba.type=:type ";
 		
-		if( type == "I" || type == "T" ){
+		if( type == "I" || type == "S" ){
 			query += "and mba.anotherItem is null ";
 		}
 		
@@ -1966,5 +1965,16 @@ public class IncomeServiceBean implements IncomeService {
 	// Jock Samaniego.. 21/09/2016
 	public void updatePaymentAgreement(PaymentAgreement paymentAgreement) {
 		entityManager.merge(paymentAgreement);
+	}
+	
+	
+	public boolean checkIsPayed(Long municipalbondid, String type) {
+		Query q = entityManager.createQuery("Select mba from MunicipalbondAux mba "
+				+ "WHERE mba.type=:type and mba.status='VALID' and mba.coveritem=:cover and "
+				+ "mba.anotherItem=:cover and mba.municipalbond.id=:id");	 
+		q.setParameter("type", type);
+		q.setParameter("cover", true);
+		q.setParameter("id", municipalbondid);
+		return !q.getResultList().isEmpty();
 	}
 }
