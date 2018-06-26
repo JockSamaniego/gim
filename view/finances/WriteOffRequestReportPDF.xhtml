@@ -29,7 +29,7 @@
 					</p:font>
 
 					<p:font size="7" style="bold">
-						<p:paragraph alignment="center" spacingAfter="5">RESOLUCIÓN DE BAJA DE TÍTULOS DE CRÉDITO</p:paragraph>
+						<p:paragraph alignment="center" spacingAfter="5">RESOLUCIÓN DE BAJA DE TÍTULOS DE CRÉDITO POR SUMINISTRO DE AGUA POTABLE</p:paragraph>
 					</p:font>
 
 					<p:font size="12">
@@ -1135,7 +1135,7 @@
 
 			<p:cell colspan="1" horizontalAlignment="center"
 				verticalAlignment="middle"
-				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'DE_LECTURA' or writeOffRequestHome.writeOffRequestSelected._type_code == 'INACCESIBLE'}">
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'DE_LECTURA'}">
 
 				<p:font size="8">
 					<p:paragraph alignment="center">EMITIR TITULO DE CREDITO</p:paragraph>
@@ -1159,7 +1159,7 @@
 			</p:cell>
 
 			<p:cell colspan="1"
-				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'NO_LIQUIDADA' or writeOffRequestHome.writeOffRequestSelected._type_code == 'ASIGNACION_CATEGORIA_CONSUMO' or writeOffRequestHome.writeOffRequestSelected._type_code == 'MEDIDOR_DEFECTUOSO' or writeOffRequestHome.writeOffRequestSelected._type_code == 'REGENERACION'}">
+				rendered="#{writeOffRequestHome.writeOffRequestSelected._type_code == 'NO_LIQUIDADA' or writeOffRequestHome.writeOffRequestSelected._type_code == 'ASIGNACION_CATEGORIA_CONSUMO' or writeOffRequestHome.writeOffRequestSelected._type_code == 'MEDIDOR_DEFECTUOSO' or writeOffRequestHome.writeOffRequestSelected._type_code == 'REGENERACION' or writeOffRequestHome.writeOffRequestSelected._type_code == 'INACCESIBLE' or writeOffRequestHome.writeOffRequestSelected._type_code == 'PROMEDIO'}">
 				
 			</p:cell>
 
