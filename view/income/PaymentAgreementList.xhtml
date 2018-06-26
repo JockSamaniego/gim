@@ -5,6 +5,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	template="../layout/template.xhtml">
 
@@ -30,7 +31,7 @@
 					includePageParams="false" />
 			</div>
 
-		</h:form>
+		
 
 		<rich:panel>
 			<f:facet name="header">
@@ -95,6 +96,17 @@
 							<f:param name="paymentAgreementId"
 								value="#{_paymentAgreement.id}" />
 						</s:button>
+						<a:commandButton id="activeBtn" 
+							action="#{paymentAgreementHome.toActivePaymentAgreement()}"
+							value="Activar"
+							oncomplete="#{rich:component('activeInfoPanel')}.show();"
+							includePageParams="false" propagation="join"
+							disabled="#{_paymentAgreement.isActive}"
+							reRender="activeForm"
+							rendered="#{paymentAgreementHome.hasRole('ACTIVE_PAYMENTAGREEMENT')}">
+							<f:param name="paymentAgreementId"
+								value="#{_paymentAgreement.id}" />
+						</a:commandButton>
 					</rich:column>
 				</rich:dataTable>
 
@@ -139,7 +151,59 @@
 		<s:div styleClass="actionButtons" rendered="#{empty from}">
 
 		</s:div>
+	</h:form>
 
-	</ui:define>
+	
+	
+	<rich:modalPanel id="activeInfoPanel" width="600" height="200">
 
+		<f:facet name="header">Activación de Convenio</f:facet>
+
+		<h:form id="activeForm">
+
+			<h:panelGrid>
+
+				<rich:panel>
+
+					<h:panelGrid columns="2">
+
+						<h:graphicImage value="/img/alert.png" style="margin-left: 2em" />
+
+						<h:outputText
+							value="#{paymentAgreementHome.activeMessage}"
+							style="font-size:large; color: red;margin-left: 2em; margin-right: 2em"
+							rendered="#{!paymentAgreementHome.toActive}" />
+
+						<h:outputText
+							value="#{paymentAgreementHome.activeMessage}"
+							style="font-size:large; color: green;margin-left: 2em; margin-right: 2em"
+							rendered="#{paymentAgreementHome.toActive}" />
+
+					</h:panelGrid>
+
+				<br />
+
+					<h:panelGroup>
+
+						<div class="actionButtons">
+							<a:commandButton id="activeButton"
+								value="Aceptar"
+								oncomplete="Richfaces.hideModalPanel('activeInfoPanel')"
+								includePageParams="false" propagation="join"
+								reRender="paymentAgreementAgreementList">
+
+							</a:commandButton>
+
+						</div>
+
+					</h:panelGroup>
+
+				</rich:panel>
+
+			</h:panelGrid>
+
+		</h:form>
+
+	</rich:modalPanel>
+</ui:define>
 </ui:composition>
