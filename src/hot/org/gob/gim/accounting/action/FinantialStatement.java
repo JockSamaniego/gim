@@ -129,7 +129,6 @@ public class FinantialStatement extends EntityController {
 					totalCredit = totalCredit.add(ai.getCredit());
 				}
 			}
-
 		}
 	}
 

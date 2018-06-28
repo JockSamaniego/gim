@@ -315,6 +315,17 @@ public class FinantialServiceBean implements FinantialService{
 			"          d.date between :startDate AND :endDate AND " +
 			"          mb.paymentAgreement_id is not null AND" +
 			"          d.balance = 0 ";	
+	//@author macartuche
+	//reporte x abonos != convenio de pago
+	private final static String INCOME_LIQUIDATED_SUBSCRIPTION_QUERY =
+			" SELECT sum(d.value) " +
+			"    FROM MunicipalBond mb, deposit d " +
+			"    WHERE d.municipalBond_id = mb.id AND " +
+			"          d.date between :startDate AND :endDate AND " +
+			"          mb.paymentAgreement_id is not null AND" +
+			"          d.balance = 0 ";	
+	//fin reporte x abono != convenio de pago
+	
 	
 	private final static String QUOTAS_LIQUIDATION_INCOME_QUERY = 
 			"SELECT a.id, a.accountCode, a.previousYearsAccountCode, a.futureYearsAccountCode, a.budgetCertificateCode, a.accountName, sum(i.total) " +
@@ -523,7 +534,15 @@ public class FinantialServiceBean implements FinantialService{
 	private AccountItem buildQuotasItem(Criteria criteria){
 		BigDecimal collected = findLiquidatedQuotas(criteria); 
 		BigDecimal liquidated = findCollectedQuotas(criteria);
-		Account account = findAccountByDefinedParameter("QUOTAS_ACCOUNT_ID");
+		
+		//@author macartuche
+		//convenio o abono
+		String accountParameter = "QUOTAS_ACCOUNT_ID";
+		if(criteria.getReportType().equals(ReportType.SUBSCRIPTION)) {
+			accountParameter = "QUOTAS_ACCOUNT_SUBSCRIPTION_ID";
+		}//fin convenio o abono
+		
+		Account account = findAccountByDefinedParameter(accountParameter);
 		AccountItem quotasItem = new AccountItem();
 		quotasItem.setAccountId(account.getId());
 		quotasItem.setAccountNumber(account.getAccountCode());
@@ -574,6 +593,11 @@ public class FinantialServiceBean implements FinantialService{
 	
 	@SuppressWarnings("unchecked")
 	private BigDecimal findLiquidatedQuotas(Criteria criteria){
+		String nativeQuery = INCOME_LIQUIDATED_QUOTAS_QUERY;
+		if(criteria.getReportType()==ReportType.SUBSCRIPTION) {
+			nativeQuery = INCOME_LIQUIDATED_SUBSCRIPTION_QUERY
+		}
+		
 		Query query = entityManager.createNativeQuery(INCOME_LIQUIDATED_QUOTAS_QUERY);
 		query.setParameter("startDate", criteria.getStartDate());
 		query.setParameter("endDate", criteria.getEndDate());
@@ -601,6 +625,7 @@ public class FinantialServiceBean implements FinantialService{
 				statuses = getVoidStatuses();
 			} else {
 				if(reportType == ReportType.QUOTAS_LIQUIDATION){
+					System.out.println(QUOTAS_LIQUIDATION_REPORT);
 					query = entityManager.createNativeQuery(QUOTAS_LIQUIDATION_REPORT);
 					statuses = getPaidStatuses();
 					query.setParameter("emisionStartDate", emisionStartDate);
@@ -652,11 +677,14 @@ public class FinantialServiceBean implements FinantialService{
 		List<Object[]> results = query.getResultList();
 		
 		for(Object[] row : results){
+			System.out.println("=>"+row[5]);
 			String accountNumber = findAccountNumber(row, reportFilter);
+			System.out.println("++>"+accountNumber);
 			AccountItem accountItem = report.get(accountNumber);
 			if(accountItem == null){
 				accountItem = create(accountNumber, row, criteria.getReportType());
 			}
+			System.out.println("=====>"+accountItem.getAccountName());
 			accountItem.setReportFilter(reportFilter);
 			setValue(accountItem, row, reportType);
 			report.put(accountNumber, accountItem);
@@ -874,11 +902,12 @@ public class FinantialServiceBean implements FinantialService{
 				}
 			}
 			
-			if(report.size() > 0 && criteria.getReportType() != ReportType.REVENUE && criteria.getReportType() != ReportType.REVENUE_EMAALEP && criteria.getReportType() != ReportType.SUBSCRIPTION ){
+			//&& criteria.getReportType() != ReportType.SUBSCRIPTION 
+			if(report.size() > 0 && criteria.getReportType() != ReportType.REVENUE && criteria.getReportType() != ReportType.REVENUE_EMAALEP ){
 				AccountItem interestItem = buildInterestItem(criteria, report);
 				report.put(interestItem.getAccountNumber(), interestItem);
 				if (criteria.getReportType() != ReportType.BALANCE){
-					AccountItem quotasItem = buildQuotasItem(criteria);
+					AccountItem quotasItem = buildQuotasItem(criteria); //AQUIIIIIIIIIIIIII
 					report.put(quotasItem.getAccountNumber(), quotasItem);
 				}
 			}
