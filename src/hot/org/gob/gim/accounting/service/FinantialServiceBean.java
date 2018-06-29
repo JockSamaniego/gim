@@ -306,12 +306,14 @@ public class FinantialServiceBean implements FinantialService{
 			"    WHERE d.municipalBond_id = mb.id AND " +
 			"          d.date between :startDate AND :endDate AND " +
 			"          mb.paymentAgreement_id is not null AND " +
-			"          d.balance > 0 ";
+			"          d.balance > 0 "+
+			"GROUP BY d.id";
 
 	//@author macartuche
 	//reporte x abonos != convenio de pago
 	private final static String INCOME_COLLECTED_SUBSCRIPTION_QUERY =
-				" SELECT sum(d.value) " +
+			"SELECT sum(a.value) FROM ("+
+				" SELECT d.value " +
 				"    FROM MunicipalBond mb, deposit d, municipalbondaux mba " +
 				"    WHERE d.municipalBond_id = mb.id  " +
 				"       AND mba.municipalbond_id = mb.id " +
@@ -319,7 +321,8 @@ public class FinantialServiceBean implements FinantialService{
 				"		AND mba.typepayment='SUBSCRIPTION' "+
 				"		AND d.date between :startDate AND :endDate  "+
 				"		AND d.status='VALID' "+
-				"		AND d.balance > 0";
+				"		AND d.balance > 0 "+
+				"GROUP BY d.id) as a";
 	//fin reporte x abono != convenio de pago
 	
 	private final static String INCOME_LIQUIDATED_QUOTAS_QUERY =
@@ -332,15 +335,17 @@ public class FinantialServiceBean implements FinantialService{
 	//@author macartuche
 	//reporte x abonos != convenio de pago
 	private final static String INCOME_LIQUIDATED_SUBSCRIPTION_QUERY =
-			" SELECT sum(d.value) " +
-			"    FROM MunicipalBond mb, deposit d, municipalbondaux mba " +
-			"    WHERE d.municipalBond_id = mb.id  " +
-			"       AND mba.municipalbond_id = mb.id " +
-			"		AND mba.deposit_id = d.id" +
-			"		AND mba.typepayment='SUBSCRIPTION' "+
-			"		AND d.date between :startDate AND :endDate  "+
-			"		AND d.status='VALID' "+
-			"		AND d.balance = 0";
+			"SELECT sum(a.value) FROM ("+ 
+				" SELECT d.value " +
+				"    FROM MunicipalBond mb, deposit d, municipalbondaux mba " +
+				"    WHERE d.municipalBond_id = mb.id  " +
+				"       AND mba.municipalbond_id = mb.id " +
+				"		AND mba.deposit_id = d.id" +
+				"		AND mba.typepayment='SUBSCRIPTION' "+
+				"		AND d.date between :startDate AND :endDate  "+
+				"		AND d.status='VALID' "+
+				"		AND d.balance = 0"+
+				"GROUP BY d.id) as a";
 	//fin reporte x abono != convenio de pago
 	
 	
