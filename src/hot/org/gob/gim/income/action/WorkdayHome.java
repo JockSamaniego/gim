@@ -1511,7 +1511,12 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 		sql = sql
 				+ "AND m.municipalBondStatus.id in (:municipalBondStatusIds) "
-				+ "AND pa is null)";
+				+ "AND pa is null) "
+				+"AND (select count(maux) "
+				+ "from MunicipalbondAux maux "
+				+ "where maux.municipalbond.id = m.id "
+				+ "AND maux.typepayment = 'SUBSCRIPTION' "
+				+ "AND maux.status = 'VALID') = 0 ";
 
 		Query query = getEntityManager().createQuery(sql);
 		query.setParameter("startDate", startDate);
@@ -2001,7 +2006,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	
 	private List<EntryTotalCollected> getTotalInSubscriptionByEntryPreviosuYears(
 			Date startDate, Date endDate) {
-		String sql = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id,count(d.id), e.name,e.code, SUM(d.capital), SUM(d.discount), SUM(d.surcharge), "
+		String sql = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id,count(d.id), e.name,e.code, SUM(d.capital)-SUM(d.discount), SUM(d.discount), SUM(d.surcharge), "
 				+ " SUM(d.interest), SUM(d.paidTaxes), SUM (d.value)) from MunicipalBond m "
 				+ "join m.deposits d "
 				+ "join m.entry e "
@@ -2129,7 +2134,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	
 	private List<EntryTotalCollected> getTotalInSubscriptionByEntryCurrentPeriod(
 			Date startDate, Date endDate) {
-		String sql = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id,count(d.id), e.name,e.code, SUM(d.capital), SUM(d.discount), SUM(d.surcharge), "
+		String sql = "select NEW ec.gob.gim.income.model.EntryTotalCollected(e.id,count(d.id), e.name,e.code, SUM(d.capital)- SUM(d.discount), SUM(d.discount), SUM(d.surcharge), "
 				+ " SUM(d.interest), SUM(d.paidTaxes), SUM (d.value)) from MunicipalBond m "
 				+ "join m.deposits d "
 				+ "join m.entry e "
