@@ -72,6 +72,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	private Long paidStatusExternalChannel;
 	private List<Long> paidStatuses = new ArrayList<Long>();
 	private Long agreementStatus;
+	private Long subscriptionStatus;
 	private BigDecimal transferCollected;
 	private BigDecimal creditNoteCollected;
 	private BigDecimal totalCashCollected;
@@ -87,6 +88,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 
 	private List<CashRecord> bills;
 	private List<Deposit> depositsForAgreement;
+	private List<Deposit> depositsForSubscription;
 	private List<Deposit> deposits;
 	private List<Branch> branches;
 	private List<CashRecord> coins;
@@ -1050,7 +1052,8 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	
 	//richard
 	private List<Object[]> totalCollected1(List <Long> cashiersIds){		
-		String sql = "select p.cashier.id, p.date, sum(p.value) from Payment p " +
+		String sql = "select p.cashier.id, p.date, sum(d.value) from Deposit d " +
+				"left join d.payment p " +
 				"where p.date Between :startDate and :endDate " +
 				"and p.cashier.id in ( :cashiersIds ) " +
 				"and p.status = 'VALID' "
@@ -1378,6 +1381,43 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		}
 		return res;
 	}
+	
+	
+	public BigDecimal getDepositsSubscriptionValues() {
+		BigDecimal res = BigDecimal.ZERO;
+		for (Deposit d : depositsForSubscription) {
+			if (d.getCapital() != null)
+				res = res.add(d.getCapital());
+		}
+		return res;
+	}
+
+	public BigDecimal getDepositsSubscriptionTotal() {
+		BigDecimal res = BigDecimal.ZERO;
+		for (Deposit d : depositsForSubscription) {
+			if (d.getValue() != null)
+				res = res.add(d.getValue());
+		}
+		return res;
+	}
+
+	public BigDecimal getDepositsSubscriptionInterests() {
+		BigDecimal res = BigDecimal.ZERO;
+		for (Deposit d : depositsForSubscription) {
+			if (d.getInterest() != null)
+				res = res.add(d.getInterest());
+		}
+		return res;
+	}
+
+	public BigDecimal getDepositsSubscriptionTaxes() {
+		BigDecimal res = BigDecimal.ZERO;
+		for (Deposit d : depositsForSubscription) {
+			if (d.getPaidTaxes() != null)
+				res = res.add(d.getPaidTaxes());
+		}
+		return res;
+	}
 
 	/**
 	 * Detalle de pagos por tipo de pago, cajero y fecha
@@ -1510,6 +1550,14 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	public void setDepositsForAgreement(List<Deposit> depositsForAgreement) {
 		this.depositsForAgreement = depositsForAgreement;
 	}
+	
+	public List<Deposit> getDepositsForSubscription() {
+		return depositsForSubscription;
+	}
+
+	public void setDepositsForSubscription(List<Deposit> depositsForSubscription) {
+		this.depositsForSubscription = depositsForSubscription;
+	}
 
 	private void loadMunicipalBondStatus() {
 		if (systemParameterService == null) {
@@ -1522,6 +1570,8 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 				.findParameter("MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL");
 		agreementStatus = systemParameterService
 				.findParameter("MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+		subscriptionStatus = systemParameterService
+				.findParameter("MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 		paidStatuses.clear();
 		paidStatuses.add(paidStatus);
 		paidStatuses.add(paidStatusExternalChannel);
@@ -1559,13 +1609,23 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		query.setParameter("cashierId", cashierId);
 		return query.getResultList();
 	}
+	
+	private List<Deposit> getDepositsFromBondsInSubscriptionByCashier(
+			Long cashierId, Date date) {
+		Query query = getEntityManager().createNamedQuery(
+				"Deposit.findDepositsFromBondsInSubscriptionFromPayments");
+		query.setParameter("startDate", date);
+		query.setParameter("endDate", date);
+		query.setParameter("cashierId", cashierId);
+		return query.getResultList();
+	}
 
 	/**
 	 * Recupera municipalbonds y deposits ordenados por entry y se genera el
 	 * árbol de resumen en caso de que sea null
 	 */
 	public void orderByEntry() {
-		if (paidStatus == null || agreementStatus == null)
+		if (paidStatus == null || agreementStatus == null || subscriptionStatus == null)
 			loadMunicipalBondStatus();
 		Date date = DateUtils.getTruncatedInstance(
 				getInstance().getOpeningTime()).getTime();
@@ -1575,6 +1635,9 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		municipalBonds = getMunicipalBondsByCashier(getInstance().getPerson()
 				.getId(), paidStatuses, date);
 		depositsForAgreement = getDepositsFromBondsInAgreementByCashier(
+				getInstance().getPerson().getId(), date);
+		
+		depositsForSubscription = getDepositsFromBondsInSubscriptionByCashier(
 				getInstance().getPerson().getId(), date);
 		if (workdayHome.getRootNode() == null) {
 			workdayHome.loadStatuses();
@@ -1855,6 +1918,14 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 
 	public void setAgreementStatus(Long agreementStatus) {
 		this.agreementStatus = agreementStatus;
+	}
+
+	public Long getSubscriptionStatus() {
+		return subscriptionStatus;
+	}
+
+	public void setSubscriptionStatus(Long subscriptionStatus) {
+		this.subscriptionStatus = subscriptionStatus;
 	}
 
 	public Map<String, BigDecimal> getFractionValues() {
