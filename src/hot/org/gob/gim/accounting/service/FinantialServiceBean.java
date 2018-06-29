@@ -307,6 +307,20 @@ public class FinantialServiceBean implements FinantialService{
 			"          d.date between :startDate AND :endDate AND " +
 			"          mb.paymentAgreement_id is not null AND " +
 			"          d.balance > 0 ";
+
+	//@author macartuche
+	//reporte x abonos != convenio de pago
+	private final static String INCOME_COLLECTED_SUBSCRIPTION_QUERY =
+				" SELECT sum(d.value) " +
+				"    FROM MunicipalBond mb, deposit d, municipalbondaux mba " +
+				"    WHERE d.municipalBond_id = mb.id  " +
+				"       AND mba.municipalbond_id = mb.id " +
+				"		AND mba.deposit_id = d.id" +
+				"		AND mba.typepayment='SUBSCRIPTION' "+
+				"		AND d.date between :startDate AND :endDate  "+
+				"		AND d.status='VALID' "+
+				"		AND d.balance > 0";
+	//fin reporte x abono != convenio de pago
 	
 	private final static String INCOME_LIQUIDATED_QUOTAS_QUERY =
 			" SELECT sum(d.value) " +
@@ -319,11 +333,14 @@ public class FinantialServiceBean implements FinantialService{
 	//reporte x abonos != convenio de pago
 	private final static String INCOME_LIQUIDATED_SUBSCRIPTION_QUERY =
 			" SELECT sum(d.value) " +
-			"    FROM MunicipalBond mb, deposit d " +
-			"    WHERE d.municipalBond_id = mb.id AND " +
-			"          d.date between :startDate AND :endDate AND " +
-			"          mb.paymentAgreement_id is not null AND" +
-			"          d.balance = 0 ";	
+			"    FROM MunicipalBond mb, deposit d, municipalbondaux mba " +
+			"    WHERE d.municipalBond_id = mb.id  " +
+			"       AND mba.municipalbond_id = mb.id " +
+			"		AND mba.deposit_id = d.id" +
+			"		AND mba.typepayment='SUBSCRIPTION' "+
+			"		AND d.date between :startDate AND :endDate  "+
+			"		AND d.status='VALID' "+
+			"		AND d.balance = 0";
 	//fin reporte x abono != convenio de pago
 	
 	
@@ -580,7 +597,11 @@ public class FinantialServiceBean implements FinantialService{
 	
 	@SuppressWarnings("unchecked")
 	private BigDecimal findCollectedQuotas(Criteria criteria){
-		Query query = entityManager.createNativeQuery(INCOME_COLLECTED_QUOTAS_QUERY);
+		String nativeQuery = INCOME_COLLECTED_QUOTAS_QUERY;
+		if(criteria.getReportType()==ReportType.SUBSCRIPTION) {
+			nativeQuery = INCOME_COLLECTED_SUBSCRIPTION_QUERY;
+		}
+		Query query = entityManager.createNativeQuery(nativeQuery);
 		query.setParameter("startDate", criteria.getStartDate());
 		query.setParameter("endDate", criteria.getEndDate());
 		List<BigDecimal> result = query.getResultList();
@@ -595,10 +616,10 @@ public class FinantialServiceBean implements FinantialService{
 	private BigDecimal findLiquidatedQuotas(Criteria criteria){
 		String nativeQuery = INCOME_LIQUIDATED_QUOTAS_QUERY;
 		if(criteria.getReportType()==ReportType.SUBSCRIPTION) {
-			nativeQuery = INCOME_LIQUIDATED_SUBSCRIPTION_QUERY
+			nativeQuery = INCOME_LIQUIDATED_SUBSCRIPTION_QUERY;
 		}
 		
-		Query query = entityManager.createNativeQuery(INCOME_LIQUIDATED_QUOTAS_QUERY);
+		Query query = entityManager.createNativeQuery(nativeQuery);
 		query.setParameter("startDate", criteria.getStartDate());
 		query.setParameter("endDate", criteria.getEndDate());
 		List<BigDecimal> result = query.getResultList();
@@ -677,14 +698,11 @@ public class FinantialServiceBean implements FinantialService{
 		List<Object[]> results = query.getResultList();
 		
 		for(Object[] row : results){
-			System.out.println("=>"+row[5]);
 			String accountNumber = findAccountNumber(row, reportFilter);
-			System.out.println("++>"+accountNumber);
 			AccountItem accountItem = report.get(accountNumber);
 			if(accountItem == null){
 				accountItem = create(accountNumber, row, criteria.getReportType());
 			}
-			System.out.println("=====>"+accountItem.getAccountName());
 			accountItem.setReportFilter(reportFilter);
 			setValue(accountItem, row, reportType);
 			report.put(accountNumber, accountItem);
