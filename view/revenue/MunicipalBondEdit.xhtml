@@ -264,7 +264,7 @@
 								</s:decorate>
 
 								<s:decorate id="itemFieldEditableAmount"
-									rendered="#{municipalBondHome.instance.entry.isAmountEditable || adjunctHome.instance.details.get(1).valueBoolean}"
+									rendered="#{municipalBondHome.instance.entry.isAmountEditable}"
 									template="../layout/edit.xhtml">
 									<ui:define name="label" rendered="#{!adjunctHome.instance.details.get(1).valueBoolean}" >#{not empty municipalBondHome.entry.amountLabel? municipalBondHome.entry.amountLabel : messages['item.amount']}: </ui:define>
 									<ui:define name="label" rendered="#{adjunctHome.instance.details.get(1).valueBoolean}" >#{messages['item.amount']}: </ui:define>
@@ -272,7 +272,7 @@
 										value="#{municipalBondHome.entryValueItems.get(0).amount}"
 										styleClass="right tableCellFont"
 										style="font-weight: bold;">
-										<a:support event="onblur" eventsQueue="gimQueue" action="#{municipalBondHome.settingAmountAux()}" />
+										<a:support event="onblur" eventsQueue="gimQueue" />
 									</h:inputText>
 								</s:decorate>						
 								

@@ -322,11 +322,8 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						}
 					}
 				}
-				if(this.adjunctHome.getInstance().getDetails().get(1).getValueBoolean()){
-					entryValueItem.setAmount(this.instance.getAmountAux());
-				}
 				
-				if (entry.getIsAmountEditable() || this.adjunctHome.getInstance().getDetails().get(1).getValueBoolean()) {
+				if (entry.getIsAmountEditable()) {
 					if (entryValueItem.getAmount() == null
 							|| BigDecimal.ZERO.compareTo(entryValueItem
 									.getAmount()) > 0) {
@@ -1629,9 +1626,5 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			}
 			
 		}
-	
-		public void settingAmountAux(){
-			System.out.println("========= " +this.entryValueItems.get(0).getAmount());
-			this.instance.setAmountAux(this.entryValueItems.get(0).getAmount());
-		}
+
 }
