@@ -74,6 +74,10 @@ public class FinantialStatement extends EntityController {
 	private BigDecimal totalDebit;
 
 	private Account quotasAccount;
+	
+	//@macartuche
+	private Account quotasAccountSubscription;
+	//
 
 	private Account interestAccount;
 
@@ -100,6 +104,11 @@ public class FinantialStatement extends EntityController {
 				SystemParameterService.LOCAL_NAME);
 		quotasAccount = systemParameterService.materialize(Account.class,
 				"QUOTAS_ACCOUNT_ID");
+		//@author macartuche
+		quotasAccountSubscription = systemParameterService.materialize(Account.class,
+				"QUOTAS_ACCOUNT_SUBSCRIPTION_ID");
+		//fin cuenta
+		
 		interestAccount = systemParameterService.materialize(Account.class,
 				"INTEREST_ACCOUNT_ID");
 	}
@@ -129,7 +138,6 @@ public class FinantialStatement extends EntityController {
 					totalCredit = totalCredit.add(ai.getCredit());
 				}
 			}
-
 		}
 	}
 
@@ -340,8 +348,13 @@ public class FinantialStatement extends EntityController {
 	}
 
 	private void separateQuotasAccountItem() {
-		if (quotasAccount == null)
+		if (quotasAccount == null || quotasAccountSubscription == null)
 			return;
+		//@macartuche
+		if(criteria.getReportType() == ReportType.SUBSCRIPTION) {
+			quotasAccount = quotasAccountSubscription;
+		}//fin
+		
 		for (AccountItem ai : accountItems) {
 			if (ai.getAccountNumber().equals(quotasAccount.getAccountCode())) {
 				quotasAccountItem = ai;
@@ -614,5 +627,14 @@ public class FinantialStatement extends EntityController {
 	public void setAccountItemsOrnato(List<AccountItem> accountItemsOrnato) {
 		this.accountItemsOrnato = accountItemsOrnato;
 	}
+
+	public Account getQuotasAccountSubscription() {
+		return quotasAccountSubscription;
+	}
+
+	public void setQuotasAccountSubscription(Account quotasAccountSubscription) {
+		this.quotasAccountSubscription = quotasAccountSubscription;
+	}
+
 	
 }
