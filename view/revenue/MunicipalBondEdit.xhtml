@@ -257,8 +257,7 @@
 									<ui:define name="label">#{not empty municipalBondHome.entry.amountLabel? municipalBondHome.entry.amountLabel : messages['municipalBond.taxableTotal']}: </ui:define>
 									<h:inputText id="itemEditable"
 										value="#{municipalBondHome.entryValueItems.get(0).mainValue}"
-										styleClass="right tableCellFont"
-										disabled="#{adjunctHome.instance.details.get(1).valueBoolean}">
+										styleClass="right tableCellFont">
 										<a:support event="onblur" eventsQueue="gimQueue" />
 									</h:inputText>
 								</s:decorate>
