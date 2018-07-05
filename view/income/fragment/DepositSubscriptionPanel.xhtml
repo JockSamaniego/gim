@@ -70,7 +70,7 @@
 							<h:selectOneMenu id="paymentType"
 								value="#{_fraction.paymentType}"
 								style="font-size:15px; width:102px;">
-								<s:selectItems value="#{paymentHome.paymentTypes}"
+								<s:selectItems value="#{paymentHome.paymentTypesubscriptions}"
 									var="_paymentType" label="#{messages[_paymentType.name()]}" />
 								<s:convertEnum />
 								<a:support event="onblur" action="#{paymentHome.calculateChange()}" reRender="changeField" />
