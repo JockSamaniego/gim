@@ -14,10 +14,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -53,7 +51,6 @@ import ec.common.sridocuments.v110.factura.Factura;
 //import ec.common.sridocuments.v110.factura.ResultSet;
 //import ec.common.sridocuments.v110.factura.SQLException;
 import ec.common.sridocuments.v110.factura.XmlTransform;
-import ec.common.sridocuments.v110.factura.Factura.InfoAdicional.CampoAdicional;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
@@ -80,7 +77,6 @@ import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
-import ec.gob.gim.revenue.model.adjunct.ValuePair;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.loja.client.clients.ElectronicClient;
 import ec.gob.loja.client.model.DataWS;
@@ -1293,11 +1289,8 @@ public class IncomeServiceBean implements IncomeService {
 				if (mb.getPaymentAgreement() != null) {
 					mb.setMunicipalBondStatus(paymentAgreementStatus);
 					reactivatePaymentAgreement(mb.getPaymentAgreement().getId());
-				}
-				mb.setPrintingsNumber(0);
-				
-				//para el caso q liquide y tenga abonos, debe retornar a abono
-				if(!isSubscriptionBondReverseToPending(mb.getId().longValue())) {
+				} //para el caso q liquide y tenga abonos, debe retornar a abono
+				else if(!isSubscriptionBondReverseToPending(mb.getId().longValue())) {
 					mb.setMunicipalBondStatus(subscriptiontStatus);
 				}
 				
@@ -1308,6 +1301,8 @@ public class IncomeServiceBean implements IncomeService {
 						mb.setMunicipalBondStatus(subscriptiontStatus);
 					}
 				}*/
+				
+				mb.setPrintingsNumber(0);
 			} else {
 				mb.setLiquidationDate(null);
 				mb.setLiquidationTime(null);
