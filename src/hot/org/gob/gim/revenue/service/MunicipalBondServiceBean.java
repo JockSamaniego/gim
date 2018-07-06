@@ -1063,45 +1063,50 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				expirationDate = DateUtils.truncate(lastDeposit.getDate());
 			}
 			
-			//poner condicion de si tiene convenio de pago
-			if(municipalBond.getPaymentAgreement()!=null){
-				//@author macartuche
-				//@date 2016-06-20T16:600:00
-				//@tag recaudacionCoactivas
-				Query qaux = entityManager.createQuery(
-						"Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id and "
-						+ "ma.status=:status and ma.type=:type order by ma.liquidationDate "); 
-				qaux.setParameter("id", municipalBond.getId());
-				qaux.setParameter("status", "VALID");
-				qaux.setParameter("type", "I");
-				
-				List<MunicipalbondAux> datalist = qaux.getResultList();			
-				if(!datalist.isEmpty()){
-					//tomar la ultima instancia almacenada
-					int lastIndex = datalist.size()-1;
-					MunicipalbondAux aux = datalist.get(lastIndex);
-					if(aux.getCoveritem()!=null && !aux.getCoveritem()){
-						expirationDate = DateUtils.truncate(municipalBond.getExpirationDate());
-						//verficar si ha habido pagos de todo 
-						Query queryNewInterest = entityManager.createQuery(
-								"Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id and "
-								+ "ma.status=:status and ma.type=:type and ma.coveritem=:coveritem order by ma.liquidationDate desc "); 
-						queryNewInterest.setParameter("id", municipalBond.getId());
-						queryNewInterest.setParameter("status", "VALID");
-						queryNewInterest.setParameter("type", "I");
-						queryNewInterest.setParameter("coveritem", true);
-						
-						List<MunicipalbondAux> oldInterest = queryNewInterest.getResultList();	
-						if(!oldInterest.isEmpty()){
-							MunicipalbondAux bondAux = oldInterest.get(0);
-							expirationDate = DateUtils.truncate(bondAux.getLiquidationDate());
+			//rfam 2018-07-03 se controla la creacion de mb porq no tienen estado inicial
+			if (municipalBond.getMunicipalBondStatus() != null) {
+				//poner condicion de si tiene convenio de pago
+				if (municipalBond.getPaymentAgreement() != null
+						|| municipalBond.getMunicipalBondStatus().getId().intValue() == 14) {
+					// @author macartuche
+					// @date 2016-06-20T16:600:00
+					// @tag recaudacionCoactivas
+					Query qaux = entityManager
+							.createQuery("Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id and "
+									+ "ma.status=:status and ma.type=:type order by ma.liquidationDate ");
+					qaux.setParameter("id", municipalBond.getId());
+					qaux.setParameter("status", "VALID");
+					qaux.setParameter("type", "I");
+
+					List<MunicipalbondAux> datalist = qaux.getResultList();
+					if (!datalist.isEmpty()) {
+						// tomar la ultima instancia almacenada
+						int lastIndex = datalist.size() - 1;
+						MunicipalbondAux aux = datalist.get(lastIndex);
+						if (aux.getCoveritem() != null && !aux.getCoveritem()) {
+							expirationDate = DateUtils.truncate(municipalBond.getExpirationDate());
+							// verficar si ha habido pagos de todo
+							Query queryNewInterest = entityManager.createQuery(
+									"Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id and "
+											+ "ma.status=:status and ma.type=:type and ma.coveritem=:coveritem order by ma.liquidationDate desc ");
+							queryNewInterest.setParameter("id", municipalBond.getId());
+							queryNewInterest.setParameter("status", "VALID");
+							queryNewInterest.setParameter("type", "I");
+							queryNewInterest.setParameter("coveritem", true);
+
+							List<MunicipalbondAux> oldInterest = queryNewInterest.getResultList();
+							if (!oldInterest.isEmpty()) {
+								MunicipalbondAux bondAux = oldInterest.get(0);
+								expirationDate = DateUtils.truncate(bondAux.getLiquidationDate());
+							}
+
 						}
-						
+					}
+					if (municipalBond.getExpirationDate().after(expirationDate)) {
+						expirationDate = municipalBond.getExpirationDate();
 					}
 				}
-				if(municipalBond.getExpirationDate().after(expirationDate)){
-					expirationDate = municipalBond.getExpirationDate();
-				}
+
 			}
 			
 			

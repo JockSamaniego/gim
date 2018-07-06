@@ -112,4 +112,8 @@ public interface MunicipalBondService {
 		   Long municipalBondStatusId);
 	
 	public Long findMunicipalBondsNumberFormalizer(Long municipalBondStatusId, Date now);
+	
+	//macartuche
+	//para abonos
+	public BigDecimal calculateDiscount(MunicipalBond municipalBond);
 }

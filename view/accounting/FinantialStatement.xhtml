@@ -118,6 +118,12 @@
 									rendered="#{finantialStatement.accountItems.size() > 0 and finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION'}"
 									value="#{messages['common.printBonds']}">
 								</a:commandButton>
+								<!-- @author macartuche -->
+								<a:commandButton id="printSubscription"
+									action="#{finantialStatement.generateReportBySubscription()}"
+									rendered="#{finantialStatement.accountItems.size() > 0 and finantialStatement.criteria.reportType.name() == 'SUBSCRIPTION'}"
+									value="#{messages['common.printBonds']}">
+								</a:commandButton>
 							</a:region>
 
 						</h:panelGrid>
@@ -133,12 +139,12 @@
 						<h:outputText value="#{_accountItem.accountName}" />
 					</rich:column>
 					<rich:column width="10%"
-						rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION'}">
+						rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION' and finantialStatement.criteria.reportType.name() != 'SUBSCRIPTION'}">
 						<f:facet name="header">#{messages['accountItem.debit']}</f:facet>
 						<h:outputText value="#{_accountItem.debit}" />
 					</rich:column>
 					<rich:column width="10%"
-						rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION' || finantialStatement.criteria.reportType.name() == 'COMBINED'}">
+						rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION' || finantialStatement.criteria.reportType.name() == 'SUBSCRIPTION' || finantialStatement.criteria.reportType.name() == 'COMBINED'}">
 						<f:facet name="header">#{messages['accountItem.credit']}</f:facet>
 						<h:outputText value="#{_accountItem.credit}" />
 					</rich:column>
@@ -168,14 +174,14 @@
 							</rich:column>
 
 							<rich:column styleClass="number tableCellFont"
-								rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION'}">
+								rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION' and finantialStatement.criteria.reportType.name() != 'SUBSCRIPTION'}">
 								<h:outputText value="#{finantialStatement.totalDebit}">
 									<f:convertNumber pattern="$ ####.00" />
 								</h:outputText>
 							</rich:column>
 
 							<rich:column styleClass="number tableCellFont"
-								rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION' || finantialStatement.criteria.reportType.name() == 'COMBINED'}">
+								rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION' || finantialStatement.criteria.reportType.name() == 'SUBSCRIPTION' || finantialStatement.criteria.reportType.name() == 'COMBINED'}">
 								<h:outputText value="#{finantialStatement.totalCredit}">
 									<f:convertNumber pattern="$ ####.00" />
 								</h:outputText>

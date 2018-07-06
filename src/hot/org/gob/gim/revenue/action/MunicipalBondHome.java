@@ -322,6 +322,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						}
 					}
 				}
+				
 				if (entry.getIsAmountEditable()) {
 					if (entryValueItem.getAmount() == null
 							|| BigDecimal.ZERO.compareTo(entryValueItem
@@ -1596,6 +1597,34 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			}else {
 				return true;	
 			}
+		}
+		
+		//jocksamaniego... para emision de recipientes........
+		
+
+		public List<String> chargeContainerTypes(){
+			List<String> containerTypes = new ArrayList<String>();
+			String types = systemParameterService.findParameter("CONTAINER_TYPES");
+			String[] parts = types.split(",");
+			for(int i=0;i<parts.length;i++){
+				containerTypes.add(parts[i]);
+			}
+			return containerTypes;
+		}
+		
+
+		public void changeContainerValues(){
+			String typeName = this.adjunctHome.getInstance().getDetails().get(0).getValue();
+			String typeValues = systemParameterService.findParameter(typeName);
+			if(typeValues!=null){
+				String[] containerValues = typeValues.split(",");
+				this.entryValueItems.get(0).setMainValue(new BigDecimal(containerValues[0]));
+				this.entryValueItems.get(0).setDescription(containerValues[1]);
+			}else{
+				this.entryValueItems.get(0).setMainValue(null);
+				this.entryValueItems.get(0).setDescription(null);
+			}
+			
 		}
 
 }

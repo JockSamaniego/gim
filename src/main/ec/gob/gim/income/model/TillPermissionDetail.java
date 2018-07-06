@@ -3,21 +3,47 @@ package ec.gob.gim.income.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.gob.gim.common.NativeQueryResultColumn;
+import org.gob.gim.common.NativeQueryResultEntity;
+
+@NativeQueryResultEntity
 public class TillPermissionDetail {
-	
+
+	@NativeQueryResultColumn(index = 0)
 	private Date date;		
+	
 	private TillPermission tillPermission;
+	
+	@NativeQueryResultColumn(index = 1)
 	private Integer tillNumber;
+	
 	private Integer servedPeople;
+	
+	@NativeQueryResultColumn(index = 2)
 	private BigDecimal totalCollected;	
-	private BigDecimal totalCompensationCollected;	
+	
+	@NativeQueryResultColumn(index = 3)
+	private BigDecimal totalCompensationCollected;
+	
 	private BigDecimal totalCreditNoteCollected;
+	
+	@NativeQueryResultColumn(index = 4)
 	private BigDecimal initialBalance;	
+	
+	@NativeQueryResultColumn(index = 5)
 	private BigDecimal total;
+	
+	@NativeQueryResultColumn(index = 6)
 	private String branch;	
-	private Long transactionsNumber;		
+	
+	private Long transactionsNumber;	
+	
+	@NativeQueryResultColumn(index = 7)
 	private String inChargeName;
+	
+	@NativeQueryResultColumn(index = 8)
 	private boolean isOpened;
+	
 	private boolean isTillBank;
 	
 	public TillPermission getTillPermission() {

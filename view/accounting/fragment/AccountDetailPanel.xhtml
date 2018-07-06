@@ -46,7 +46,7 @@
 							<rich:column colspan="3">
 								<h:outputText value="#{messages['accountDetail.totals']}" style="font-weight:bold; font-size:1.5em;"/>
 							</rich:column>
-							<rich:column styleClass="right" rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION'}">
+							<rich:column styleClass="right" rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION' and finantialStatement.criteria.reportType.name() != 'SUBSCRIPTION'}">
 								<h:outputText id="totalDebit" 
 									value="#{finantialStatement.detailTotal.debit}"
 									styleClass="right">
@@ -55,7 +55,7 @@
 										minFractionDigits="#{messages['common.minFractionDigits']}" />
 								</h:outputText>
 							</rich:column>
-							<rich:column styleClass="right" rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'COMBINED' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION'}">
+							<rich:column styleClass="right" rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'COMBINED' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION' || finantialStatement.criteria.reportType.name() == 'SUBSCRIPTION'}">
 								<h:outputText id="totalCredit" 
 									value="#{finantialStatement.detailTotal.credit}"
 									styleClass="right">
@@ -83,7 +83,7 @@
 						<h:outputText value="#{_accountDetail.residentName}" />
 					</rich:column>
 	
-					<rich:column width="15%" styleClass="right" rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION'}">
+					<rich:column width="15%" styleClass="right" rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION' and finantialStatement.criteria.reportType.name() != 'SUBSCRIPTION'}">
 						<f:facet name="header">#{messages['accountDetail.debit']}</f:facet>
 						<h:outputText value="#{_accountDetail.debit}">
 							<f:convertNumber
@@ -92,7 +92,7 @@
 						</h:outputText>
 					</rich:column>
 	
-					<rich:column width="15%" styleClass="right" rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'COMBINED' || finantialStatement.criteria.reportType.name() == 'COMBINED' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION'}">
+					<rich:column width="15%" styleClass="right" rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'COMBINED' || finantialStatement.criteria.reportType.name() == 'COMBINED' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION'  || finantialStatement.criteria.reportType.name() == 'SUBSCRIPTION'}">
 						<f:facet name="header">#{messages['accountDetail.credit']}</f:facet>
 						<h:outputText value="#{_accountDetail.credit}">
 							<f:convertNumber
