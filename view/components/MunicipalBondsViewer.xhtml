@@ -244,13 +244,12 @@
 					<h:outputText value="#{_municipalBondItem.municipalBond.number}" rendered="#{not municipalBondsViewerHome.hasDetailCheckerRole}"/>
 					<br />
 					<h:panelGroup rendered="#{municipalBondsViewerHome.hasDetailCheckerRole and (_municipalBondItem.municipalBond.entry.code == '00643' || _municipalBondItem.municipalBond.entry.code == '00644')}"  style = "display:block; text-align:center">
-						<h:outputText style="font-weight:bold; font-size:9px; color:red" value="Notificación" />
 						<br />
 						<a:commandLink id="viewerNotification" ajaxSingle="true" 
 									action="#{municipalBondsViewerHome.loadInfractionNotification(_municipalBondItem.municipalBond.adjunct.supportDocumentURL)}"
 									eventsQueue="gimEventsQueue" reRender="_infractionNotificationViewer"
-									oncomplete="Richfaces.showModalPanel('_infractionNotificationViewer',{width:820, height:570})"  >
-								<s:graphicImage value="/img/pdf.png" width="40%" height="40%" />
+									oncomplete="Richfaces.showModalPanel('_infractionNotificationViewer',{width:820, height:570})"  
+									value="Notificación">
 						</a:commandLink>
 					</h:panelGroup>
 				</rich:column>
