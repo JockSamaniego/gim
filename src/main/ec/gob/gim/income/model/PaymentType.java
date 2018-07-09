@@ -15,7 +15,11 @@ public enum PaymentType {
 	CREDIT_NOTE;
 	
 	static PaymentType[] types = new PaymentType[3];
-	static PaymentType[] devolutionTypes = new PaymentType[2];	
+	static PaymentType[] devolutionTypes = new PaymentType[2];
+	//macartuche
+	//para abonos solo activo el efectivo
+	static PaymentType[] suscriptionTypes = new PaymentType[1];
+	//fin 2018-07-05
 	
 	public static PaymentType[] getRestrictedPaymentTypes(){
 		types[0] = PaymentType.CASH;
@@ -39,6 +43,14 @@ public enum PaymentType {
 		types[4] = PaymentType.TRANSFER;
 		return types;
 	}
+	
+	//macartuche
+	//para abonos solo activo el efectivo
+	public static PaymentType[] getSuscriptionPaymentTypes() {
+		suscriptionTypes[0] = PaymentType.CASH;
+		return suscriptionTypes;
+	}
+	//fin 2018-07-05
 	
 	public static String getDevolutionName(PaymentType pt){
 		return "dv_" + pt.name();

@@ -524,7 +524,7 @@ public class FinantialServiceBean implements FinantialService{
 	}
 		
 	private void setValue(AccountItem accountItem, Object[] row, ReportType reportType){
-		if(reportType == ReportType.INCOME || reportType == ReportType.QUOTAS_LIQUIDATION){
+		if(reportType == ReportType.INCOME || reportType == ReportType.QUOTAS_LIQUIDATION || reportType == ReportType.SUBSCRIPTION){
 			accountItem.setCredit((BigDecimal)row[6]);
 		} else {
 			accountItem.setDebit((BigDecimal)row[6]);

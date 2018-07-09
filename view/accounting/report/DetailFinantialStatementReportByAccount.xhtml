@@ -175,13 +175,13 @@
 					</p:paragraph>
 				</p:cell>
 						
-				<p:cell horizontalAlignment="center" rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION'}">
+				<p:cell horizontalAlignment="center" rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION' and finantialStatement.criteria.reportType.name() != 'SUBSCRIPTION'}">
 					<p:paragraph>
 						<p:text value="#{messages['accountItem.debit']}" />
 					</p:paragraph>
 				</p:cell>
 				
-				<p:cell horizontalAlignment="center" rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION' || finantialStatement.criteria.reportType.name() == 'COMBINED'}">
+				<p:cell horizontalAlignment="center" rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION' || finantialStatement.criteria.reportType.name() == 'SUBSCRIPTION' || finantialStatement.criteria.reportType.name() == 'COMBINED'}">
 					<p:paragraph>
 						<p:text value="#{messages['accountItem.credit']}" />
 					</p:paragraph>
@@ -215,13 +215,13 @@
 						</p:paragraph>
 					</p:cell>
 					
-					<p:cell horizontalAlignment="right" rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION'}" >
+					<p:cell horizontalAlignment="right" rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION' and finantialStatement.criteria.reportType.name() != 'SUBSCRIPTION'}" >
 						<p:paragraph>
 							<p:text value="#{_var.debit}" />
 						</p:paragraph>
 					</p:cell>
 
-					<p:cell horizontalAlignment="right" rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION' || finantialStatement.criteria.reportType.name() == 'COMBINED'}">
+					<p:cell horizontalAlignment="right" rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION' || finantialStatement.criteria.reportType.name() == 'SUBSCRIPTION' || finantialStatement.criteria.reportType.name() == 'COMBINED'}">
 						<p:paragraph>							
 							<p:text value="#{_var.credit}" />
 						</p:paragraph>
@@ -258,7 +258,7 @@
 					</p:paragraph>
 				</p:cell>
 				
-				<p:cell horizontalAlignment="right" rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION'}">
+				<p:cell horizontalAlignment="right" rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION' and finantialStatement.criteria.reportType.name() != 'SUBSCRIPTION'}">
 					<p:paragraph>
 						<p:text value="#{finantialStatement.detailTotal.debit}">
 							<f:convertNumber maxFractionDigits="#{messages['common.maxFractionDigits']}"
@@ -267,7 +267,7 @@
 					</p:paragraph>
 				</p:cell>
 				
-				<p:cell horizontalAlignment="right" rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'COMBINED' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION'}">
+				<p:cell horizontalAlignment="right" rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'COMBINED' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION' || finantialStatement.criteria.reportType.name() == 'SUBSCRIPTION'}">
 					<p:paragraph>
 						<p:text value="#{finantialStatement.detailTotal.credit}">
 							<f:convertNumber maxFractionDigits="#{messages['common.maxFractionDigits']}"
