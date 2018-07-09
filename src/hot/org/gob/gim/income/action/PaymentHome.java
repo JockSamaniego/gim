@@ -1058,6 +1058,13 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		}
 	}
 
+	//macartuche
+	//para abonos solo activo el efectivo
+	public List<PaymentType> getPaymentTypesubscriptions() {
+		return Arrays.asList(PaymentType.getSuscriptionPaymentTypes());
+	}
+	//fin 2018-07-05
+	
 	private Boolean getHasCompensationCashierRole() {
 		return userSession.hasRole(UserSession.ROLE_NAME_COMPENSATION_CASHIER);
 	}

@@ -106,8 +106,8 @@ public class AccountItem implements Comparable<AccountItem>{
 	public String toString() {
 		// TODO Auto-generated method stub		
 		if(reportType.equals(ReportType.COMBINED)) return toStringCombinedReport();
-		if(reportType.equals(ReportType.INCOME) || reportType.equals(ReportType.QUOTAS_LIQUIDATION)) return toStringCreditReport();
-		if(!reportType.equals(ReportType.INCOME) && !reportType.equals(ReportType.QUOTAS_LIQUIDATION)) return toStringDebitReport(); 
+		if(reportType.equals(ReportType.INCOME) || reportType.equals(ReportType.QUOTAS_LIQUIDATION) || reportType.equals(ReportType.SUBSCRIPTION)) return toStringCreditReport();
+		if(!reportType.equals(ReportType.INCOME) && !reportType.equals(ReportType.QUOTAS_LIQUIDATION) && !reportType.equals(ReportType.SUBSCRIPTION)) return toStringDebitReport(); 
 		return super.toString();
 	}
 	

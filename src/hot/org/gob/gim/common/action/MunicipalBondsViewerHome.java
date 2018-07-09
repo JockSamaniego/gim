@@ -161,4 +161,22 @@ public class MunicipalBondsViewerHome extends EntityController{
 		this.deposits = deposits;
 	}
 	
+	//para notificaciones de fotomultas
+	// Jock Samaniego  06/07/2018
+	
+	String URLnotification;
+	
+	public String getURLnotification() {
+		return URLnotification;
+	}
+
+	public void setURLnotification(String uRLnotification) {
+		URLnotification = uRLnotification;
+	}
+
+	public void loadInfractionNotification(String ANTnotification){
+		System.out.println("======ANTnotification===> "+ANTnotification);
+		this.URLnotification = ANTnotification;
+	}
+	
 }
