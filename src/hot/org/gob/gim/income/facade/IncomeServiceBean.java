@@ -672,10 +672,11 @@ public class IncomeServiceBean implements IncomeService {
 							municipalBond.getMunicipalBondStatus().getId().equals(paymentAgreementStatus)) {
 						BigDecimal surcharge =  getItemValue(municipalBond.getId(), "S");
 						BigDecimal interest =  getItemValue(municipalBond.getId(), "I");
-						BigDecimal taxes =  getItemValue(municipalBond.getId(), "T");
+						BigDecimal taxesTotal =  getItemValue(municipalBond.getId(), "T");
 						
 						municipalBond.setSurcharge(surcharge);
 						municipalBond.setInterest(interest);
+						municipalBond.setTaxesTotal(taxesTotal);
 						
 					}
 					//fin 
