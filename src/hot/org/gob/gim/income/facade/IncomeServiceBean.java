@@ -391,7 +391,7 @@ public class IncomeServiceBean implements IncomeService {
 
 				municipalBondUpdate.setBalance(deposit.getBalance());
 				municipalBondUpdate.setMunicipalBondStatus(subscriptionBondStatus);
-				entityManager.merge(municipalBondUpdate);
+				municipalBond = entityManager.merge(municipalBondUpdate);
 			}
 			//fin abonos
 			
