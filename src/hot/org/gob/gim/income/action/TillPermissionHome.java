@@ -1465,6 +1465,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 				+"AND p.cashier_id = " + getInstance().getPerson().getId() +" "
 				+"AND p.status = 'VALID' "
 				+"GROUP BY pf.paymentType ORDER BY pf.paymentType";
+			System.out.println(sql);
 							
 			Query query = getEntityManager().createNativeQuery(sql);
 			query.setParameter("starDate", date);

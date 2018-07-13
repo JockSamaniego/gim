@@ -397,6 +397,9 @@ public class IncomeServiceBean implements IncomeService {
 			
 			if (deposit.getBalance().compareTo(BigDecimal.ZERO) == 0) {
 				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId, deposit.getDate());
+				//AGREGADO MACARTUCHE
+				System.out.println("Interes aumentado===>"+deposit.getMunicipalBond().getInterest());
+				deposit.setMunicipalBond(municipalBond);
 			}
 		}
 		Date rightNow = new Date();

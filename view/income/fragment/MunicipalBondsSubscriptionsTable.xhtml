@@ -206,8 +206,10 @@
 			<rich:column
 				styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
 				<f:facet name="header">#{messages['deposit.paidTaxes']}</f:facet>
-				<h:outputText
+				<!-- <h:outputText
 					value="#{_deposit.balance == 0 ? _deposit.municipalBond.taxesTotal : 0}">
+					 -->
+				<h:outputText value="#{_deposit.paidTaxes}">
 					<f:convertNumber
 						maxFractionDigits="#{messages['common.maxFractionDigits']}"
 						minFractionDigits="#{messages['common.minFractionDigits']}" />
