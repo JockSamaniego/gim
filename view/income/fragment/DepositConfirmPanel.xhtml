@@ -93,7 +93,7 @@
 									minFractionDigits="#{messages['common.minFractionDigits']}" />
 								<a:support event="onblur"
 									actionListener="#{paymentHome.calculateChange()}"
-									reRender="changeField, receivedAmount"
+									reRender="changeField, receivedAmount, savePaymentBtn"
 									ajaxSingle="true" />
 							</h:inputText>
 						</rich:column>
@@ -188,9 +188,9 @@
 						id="savePaymentBtn" ajaxSingle="true"
 						action="#{paymentHome.persist}"
 						value="#{messages['payment.save']}"
-						onclick="this.disabled=true;"
 						oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.showModalPanel(\'pdfPrinted\');' : ''}"
-						reRender="pdfPrinted"/>
+						reRender="pdfPrinted"
+						disabled="#{paymentHome.invalidAmount}"/>
 
 					<a:commandButton ajaxSingle="true"
 						value="#{messages['common.quit']}"
