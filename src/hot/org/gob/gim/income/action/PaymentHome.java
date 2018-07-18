@@ -2595,8 +2595,21 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		}
 		return receivedAmount;
 	}
+	
+	//Jock Samaniego
+	//Para control de boton de registro de pago
+	private Boolean invalidAmount;
+
+	public Boolean getInvalidAmount() {
+		return invalidAmount;
+	}
+
+	public void invalidAmount(Boolean invalidAmount) {
+		this.invalidAmount = invalidAmount;
+	}
 
 	public void calculateChange() {
+		this.invalidAmount = Boolean.TRUE;
 		BigDecimal value = this.getInstance().getValue();
 		BigDecimal receivedAmount = getReceivedAmount();
 		this.canRegisterPayment = true;
@@ -2604,9 +2617,15 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			if (value.compareTo(receivedAmount) <= 0) {
 				change = receivedAmount.subtract(value);
 				this.canRegisterPayment = false;
+				this.invalidAmount = Boolean.FALSE;
 			} else {
 				change = BigDecimal.ZERO;
+				if(receivedAmount.compareTo(BigDecimal.ZERO) > 0 && this.isPaymentSubscription){
+					this.invalidAmount = Boolean.FALSE;
+				}
 			}
+		}else{
+			this.invalidAmount = Boolean.TRUE;
 		}
 	}
 
@@ -2757,6 +2776,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	public void updateHasCompensationBonds() {
 		// @author macartuche
 		// deshabilitar boton de registro de pago
+		this.isPaymentSubscription = false;
 		this.canRegisterPayment = true;
 		// fin
 		clearFractions();
@@ -2773,6 +2793,15 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	private boolean isPaymentSubscription = false;
+	
+
+	public boolean isPaymentSubscription() {
+		return isPaymentSubscription;
+	}
+
+	public void setPaymentSubscription(boolean isPaymentSubscription) {
+		this.isPaymentSubscription = isPaymentSubscription;
+	}
 
 	public void updateHasCompensationBonds(String paymentType) {
 		this.isPaymentSubscription = true;
