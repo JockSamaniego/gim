@@ -1790,12 +1790,17 @@ public class IncomeServiceBean implements IncomeService {
 					List<Long> mbaIds = new ArrayList<Long>();
 					int cont =0;
 					for(MunicipalbondAux mba: auxs) {						
-						if( (mba.getAnotherItem()!= null && mba.getAnotherItem() == true) && 
-							(mba.getCoveritem()!=null && mba.getCoveritem()==true) && cont > 0) {
-							break;
-						}else {
-							mbaIds.add(mba.getId());
+						
+						if(depositIds.contains(mba.getDeposit().getId())) {
+							continue;
 						}
+						
+						if( (mba.getAnotherItem()!= null && mba.getAnotherItem() == true) && 
+							(mba.getCoveritem()!=null && mba.getCoveritem()==true)  ) {
+							break;
+						}
+						
+						mbaIds.add(mba.getId());
 						cont++;
 					}
 					
