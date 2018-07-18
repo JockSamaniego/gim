@@ -242,6 +242,16 @@
 								oncomplete="Richfaces.showModalPanel('_municipalBondViewer',{width:600, height:500})"
 								value="#{_municipalBondItem.municipalBond.number}" />
 					<h:outputText value="#{_municipalBondItem.municipalBond.number}" rendered="#{not municipalBondsViewerHome.hasDetailCheckerRole}"/>
+					<br />
+					<h:panelGroup rendered="#{municipalBondsViewerHome.hasDetailCheckerRole and (_municipalBondItem.municipalBond.entry.code == '00643' || _municipalBondItem.municipalBond.entry.code == '00644')}"  style = "display:block; text-align:center">
+						<br />
+						<a:commandLink id="viewerNotification" ajaxSingle="true" 
+									action="#{municipalBondsViewerHome.loadInfractionNotification(_municipalBondItem.municipalBond.adjunct.supportDocumentURL)}"
+									eventsQueue="gimEventsQueue" reRender="_infractionNotificationViewer"
+									oncomplete="Richfaces.showModalPanel('_infractionNotificationViewer',{width:820, height:570})"  
+									value="Notificación">
+						</a:commandLink>
+					</h:panelGroup>
 				</rich:column>
 				
 				<rich:column width="4%" styleClass="center">

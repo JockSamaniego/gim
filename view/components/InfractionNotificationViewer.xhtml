@@ -1,0 +1,46 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<style>
+.col {
+	width: 100px;
+}
+</style>
+
+	<rich:modalPanel id="#{id}_infractionNotificationViewer" width="700" height="600" style="overflow:auto">
+	<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText styleClass="formTitle" value="Detalle de la infracción" />				
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkMun2" />
+				<rich:componentControl for="#{id}_infractionNotificationViewer"
+					attachTo="hidelinkMun2" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+	<h:panelGrid styleClass="full" id="pdfImpresion" rendered="#{municipalBondsViewerHome.URLnotification != null and municipalBondsViewerHome.URLnotification != ''}" >
+		<s:div id="ObjContainer"
+				style="width: 800px; height: 480px;">
+				<object data="#{municipalBondsViewerHome.URLnotification}" style="width:100%; height:100%;"
+					type="application/pdf" />
+		</s:div>
+	</h:panelGrid>
+	
+	<h:panelGrid styleClass="full" id="noNotificacation" rendered="#{municipalBondsViewerHome.URLnotification == null || municipalBondsViewerHome.URLnotification == ''}" >
+		<s:div id="textContainer"
+				style="width: 800px; height: 480px;">
+				<h:outputText style="font-weight:bold; font-size:25px; color:red" value="No existe notificación registrada" />
+		</s:div>
+	</h:panelGrid>
+	</rich:modalPanel>
+
+</ui:composition>

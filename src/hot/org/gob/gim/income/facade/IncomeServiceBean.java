@@ -1289,11 +1289,8 @@ public class IncomeServiceBean implements IncomeService {
 				if (mb.getPaymentAgreement() != null) {
 					mb.setMunicipalBondStatus(paymentAgreementStatus);
 					reactivatePaymentAgreement(mb.getPaymentAgreement().getId());
-				}
-				mb.setPrintingsNumber(0);
-				
-				//para el caso q liquide y tenga abonos, debe retornar a abono
-				if(!isSubscriptionBondReverseToPending(mb.getId().longValue())) {
+				} //para el caso q liquide y tenga abonos, debe retornar a abono
+				else if(!isSubscriptionBondReverseToPending(mb.getId().longValue())) {
 					mb.setMunicipalBondStatus(subscriptiontStatus);
 				}
 				
@@ -1304,6 +1301,8 @@ public class IncomeServiceBean implements IncomeService {
 						mb.setMunicipalBondStatus(subscriptiontStatus);
 					}
 				}*/
+				
+				mb.setPrintingsNumber(0);
 			} else {
 				mb.setLiquidationDate(null);
 				mb.setLiquidationTime(null);

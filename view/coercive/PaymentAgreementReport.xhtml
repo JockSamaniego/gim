@@ -20,20 +20,34 @@
 
 				<h:panelGrid columns="4">
 
-					<s:decorate id="dateReportField" template="../layout/edit.xhtml">
-						<ui:define name="label">#{messages['Fecha Primer Pago']}:</ui:define>
+					<s:decorate id="startDateField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['common.from']}:</ui:define>
 						<rich:calendar id="startDate"
-							value="#{coerciveReportHome.dateReport}"
+							value="#{coerciveReportHome.startDate}"
 							datePattern="#{messages['common.datePattern']}">
-							<a:support event="onchanged" ajaxSingle="true"
-								reRender="startDate" />
+							<a:support event="onchanged" ajaxSingle="true" />
+						</rich:calendar>
+					</s:decorate>
+					
+					<s:decorate id="toDateField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['common.until']}:</ui:define>
+						<rich:calendar id="toDate"
+							value="#{coerciveReportHome.endDate}"
+							datePattern="#{messages['common.datePattern']}">
+							<a:support event="onchanged" ajaxSingle="true" />
 						</rich:calendar>
 					</s:decorate>
 
-					<a:commandButton id="createRoutePeriod" ajaxSingle="true"
-						action="#{coerciveReportHome.listPaymentAgreements()}"
+					<a:commandButton id="search" ajaxSingle="true"
+						action="#{coerciveReportHome.listExpired}"
 						value="#{messages['common.search']}"
-						reRender="obligationsList,readingManPanel,printId" />
+						reRender="obligationsList,readingManPanel" />
+					
+					
+					<a:commandButton id="clean" ajaxSingle="true"
+						action="#{coerciveReportHome.clean}"
+						value="#{messages['common.reset']}"
+						reRender="obligationsList,readingManPanel" />
 				</h:panelGrid>
 
 				<div style="clear: both">
@@ -47,117 +61,76 @@
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
 						<h:outputText
-							value="#{messages['Obligaciones Pendientes']} (#{coerciveReportHome.agreements.size()})" />
+							value="#{messages['paymentagreeement.expired']} (#{coerciveReportHome.expiredList.size()})" />
 
 					</h:panelGrid>
 				</f:facet>
 
-				<h:outputText value="#{messages['route.notRoutePeriods']}."
-					rendered="#{empty coerciveReportHome.agreements}" />
+				<h:outputText value="No hay datos."
+					rendered="#{empty coerciveReportHome.expiredList}" />
 
 
-				<rich:dataTable id="obligationsList" var="_pa"
-					rendered="#{not empty coerciveReportHome.agreements}"
-					value="#{coerciveReportHome.agreements}" rows="100"
+				<rich:dataTable id="obligationsList" var="_expired"
+					rendered="#{not empty coerciveReportHome.expiredList}"
+					value="#{coerciveReportHome.expiredList}" rows="20"
 					columnClasses="none,none,none,none,right,right,right"
 					onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
 					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
-					<rich:column>
-						<f:facet name="header">#{messages['resident.identificationNumber']}</f:facet>
-						<h:outputText value="#{_pa.resident.identificationNumber}" />
+					
+					<rich:column sortBy="#{_expired.paymentAgreementID}">
+						<f:facet name="header">#{messages['common.id']}</f:facet>
+						<h:outputText value="#{_expired.paymentAgreementID}" />
 					</rich:column>
-					<rich:column>
+					<rich:column sortBy="#{_expired.expiration}">
+						<f:facet name="header">#{messages['paymentagreeement.lastPaymentDate']}</f:facet>
+						<h:outputText value="#{_expired.expiration}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column sortBy="#{_expired.identification}">
+						<f:facet name="header">#{messages['common.identificationNumber']}</f:facet>
+						<h:outputText value="#{_expired.identification}" />
+					</rich:column>
+					
+					<rich:column sortBy="#{_expired.names}">
 						<f:facet name="header">#{messages['resident']}</f:facet>
-						<h:outputText value="#{_pa.resident.name}" />
+						<h:outputText value="#{_expired.names}" />
 					</rich:column>
-					<rich:column sortBy="#{_pa.description}">
-						<f:facet name="header">#{messages['paymentAgreement.description']}</f:facet>
-						<h:outputText value="#{_pa.description}">
-							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
-						</h:outputText>
-					</rich:column>
-					<rich:column sortBy="#{_pa.firstPaymentDate}">
-						<f:facet name="header">#{messages['paymentAgreement.firstPaymentDate']}</f:facet>
-						<h:outputText value="#{_pa.firstPaymentDate}">
-							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
-						</h:outputText>
-					</rich:column>
-					<rich:column sortBy="#{_pa.dividendsNumber}">
-						<f:facet name="header">#{messages['paymentAgreement.dividendsNumber']}</f:facet>
-						<h:outputText value="#{_pa.dividendsNumber}">
+					
+					<rich:column >
+						<f:facet name="header">#{messages['paymentagreeement.payedValue']}</f:facet>
+						<h:outputText value="#{_expired.payed}">
 						</h:outputText>
 					</rich:column>
 
-					<rich:column sortBy="#{_pa.alreadyPayed}">
-						<f:facet name="header">#{messages['paymentAgreement.alreadyPayed']}</f:facet>
-						<h:outputText value="#{_pa.alreadyPayed}">
-						</h:outputText>
-					</rich:column>
+					 
 
-					<rich:column sortBy="#{_pa.notPayedYet}">
-						<f:facet name="header">#{messages['paymentAgreement.notPayedYet']}</f:facet>
-						<h:outputText value="#{_pa.notPayedYet}">
-						</h:outputText>
-					</rich:column>
-
-					<rich:column sortBy="#{_pa.notPayedYet}">
+					<rich:column >
 						<f:facet name="header">#{messages['common.action']}</f:facet>
 
 						<a:commandButton id="accountDetailBtn"
 							value="#{messages['finantialStatement.detail']}"
-							action="#{coerciveReportHome.selectPaymentAgreement(_pa)}"
+							action="#{coerciveReportHome.selectPaymentAgreement(_expired)}"
 							eventsQueue="gimEventsQueue" ajaxSingle="true"
 							reRender="paymentAgreementList,sc3,paymentAgrrementDetailPanel"
 							oncomplete="Richfaces.showModalPanel('paymentAgrrementDetailPanel')" />
 					</rich:column>
 
-					<f:facet name="footer">
-
-						<rich:columnGroup>
-							<rich:column colspan="2" style="text-align:right;">Totales</rich:column>
-							<rich:column style="text-align:right;">
-								<h:outputText value="#{coerciveReportHome.quantity}"
-									style="text-align:right;">
-								</h:outputText>
-							</rich:column>
-							<rich:column style="text-align:right;">
-								<h:outputText value="#{coerciveReportHome.total}"
-									style="text-align:right;">
-									<f:convertNumber currencySymbol="$" groupingUsed="true"
-										maxFractionDigits="2" type="currency" />
-								</h:outputText>
-							</rich:column>
-						</rich:columnGroup>
-					</f:facet>
+					 
 
 				</rich:dataTable>
 				<rich:datascroller align="center" for="obligationsList"
 					maxPages="20" id="sc2" />
 				<div style="clear: both" />
 			</rich:panel>
+ 
 
-
-			<div class="actionButtons">
-
-				<!-- h:commandButton
-					action=" # { excelExporter.export('route:obligationsList')}"
-					value="Export" / -->
-
-				<s:button view="/coercive/report/PendingMunicipalBondExcel.xhtml"
-					id="printIdss" propagation="join"
-					value="#{messages['common.download.excel']}" />
-
-				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
-					propagation="end" view="/home.xhtml" />
-
-			</div>
-
-
-			<rich:modalPanel id="paymentAgrrementDetailPanel" minHeight="540"
-				minWidth="800" height="540" width="800">
+			<rich:modalPanel id="paymentAgrrementDetailPanel" minHeight="270"
+				minWidth="800"  >
 				<f:facet name="header">
 					<h:panelGroup>
-						<h:outputText value="Detalla del convenio"></h:outputText>
+						<h:outputText value="#{messages['paymentagreeement.detail']}"></h:outputText>
 					</h:panelGroup>
 				</f:facet>
 				<f:facet name="controls">
@@ -170,114 +143,74 @@
 					</h:panelGroup>
 				</f:facet>
 
-				<rich:panel style="height:460px; padding">
-					<h:panelGrid columns="1">
-						<h:outputText value="Detalle del convenio" />
+				<rich:panel  >
+					<h:panelGrid columns="4"  width="100%" >
+						<h:outputText  style="font-weight:bold;"
+							value="#{messages['common.identificationNumber']}" /> 
 						<h:outputText
-							value="#{coerciveReportHome.paymentAgreement.resident.identificationNumber}" />
+							value="#{coerciveReportHome.selected.identification}" />
+						
+						<h:outputText style="font-weight:bold;"
+							value="#{messages['resident.firstName']}:" /> 	
 						<h:outputText
-							value="#{coerciveReportHome.paymentAgreement.resident.name}" />
+							value="#{coerciveReportHome.selected.names}" />
+							
+						<h:outputText style="font-weight:bold;"
+							value="#{messages['boundary.description']}:" /> 							
 						<h:outputText
-							value="#{coerciveReportHome.paymentAgreement.description}" />
-						<h:outputText
-							value="#{coerciveReportHome.paymentAgreement.firstPaymentDate}">
-							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							value="#{coerciveReportHome.selected.description}">
 						</h:outputText>
 					</h:panelGrid>
-
-
-					<rich:dataTable id="paymentAgreementList" var="_paMb"
-						value="#{coerciveReportHome.bondsAgreement}" rows="15"
-						columnClasses="center,left,left,center,right"
-						onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
-						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
-						<rich:column>
-							<f:facet name="header">#{messages['municipalBond.creationDate']}</f:facet>
-							<h:outputText value="#{_paMb.creationDate}">
-								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
-							</h:outputText>
-						</rich:column>
-						<rich:column>
-							<f:facet name="header">#{messages['entry']}</f:facet>
-							<h:outputText value="#{_paMb.entry.name}">
-							</h:outputText>
-						</rich:column>
-						<rich:column>
-							<f:facet name="header">#{messages['municipalBondStatus']}</f:facet>
-							<h:outputText value="#{_paMb.municipalBondStatus.name}" />
-						</rich:column>
-						<rich:column>
-							<f:facet name="header">#{messages['municipalBond.liquidationDate']}</f:facet>
-							<h:outputText value="#{_paMb.liquidationDate}"
-								rendered="#{_paMb.deposits.size() gt 0}">
-								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
-							</h:outputText>
-							<h:outputText value="..."
-								rendered="#{_paMb.deposits.size() lt 0}" />
-						</rich:column>
-						<rich:column>
-							<f:facet name="header">#{messages['municipalBond.value']}</f:facet>
-							<h:outputText value="#{_paMb.value}" />
-						</rich:column>
-					</rich:dataTable>
-					<rich:datascroller align="center" for="paymentAgreementList"
-						maxPages="20" id="sc3" />
-
-					<rich:panel>
-						<f:facet name="header">
-							<h:outputText value="#{messages['paymentAgreement.dividends']}" />
-						</f:facet>
-
-						<rich:extendedDataTable height="280px" width="100%"
-							id="dividendsTable" var="_dividend"
-							value="#{coerciveReportHome.paymentAgreement.dividends}"
-							rendered="#{coerciveReportHome.paymentAgreement.dividends.size() > 0}"
-							columnClasses="right, right, right">
-
-							<rich:column width="200">
-								<f:facet name="header">
-								#{messages['dividend.date']}
-							</f:facet>
-								<rich:calendar value="#{_dividend.date}" size="10"
-									disabled="true" datePattern="#{messages['common.datePattern']}" />
-							</rich:column>
-							<rich:column width="200" styleClass="right">
-								<f:facet name="header">
-								#{messages['dividend.balance']}
-							</f:facet>
-								<h:inputText value="#{_dividend.balance}"
-									style="width:100%; border: 0px solid;" styleClass="right">
-									<f:convertNumber
-										maxFractionDigits="#{messages['common.maxFractionDigits']}"
-										minFractionDigits="#{messages['common.minFractionDigits']}" />
-								</h:inputText>
-							</rich:column>
-							<rich:column width="200" styleClass="right">
-								<f:facet name="header">
-								#{messages['dividend.amount']}
-							</f:facet>
-								<h:inputText value="#{_dividend.amount}"
-									style="width:100%; border: 0px solid;" styleClass="right">
-									<f:convertNumber
-										maxFractionDigits="#{messages['common.maxFractionDigits']}"
-										minFractionDigits="#{messages['common.minFractionDigits']}" />
-								</h:inputText>
-							</rich:column>
-						</rich:extendedDataTable>
-					</rich:panel>
 					<div style="clear: both" />
+					
+					<h:panelGrid columns="2" style="width: 100%">
+						<h:panelGrid columns="2" width="100%" >
+							<h:outputText style="font-size:20px; font-weight:bold;"
+								value="#{messages['dividens.totals']}: " /> 
+							<h:outputText style="font-size:20px; "
+								value="#{coerciveReportHome.totalQuotes}" />
+
+							<h:outputText style="font-size:20px; font-weight:bold;"
+								value="#{messages['dividens.payments']}: " /> 
+							<h:outputText style="font-size:20px; "
+								value="#{coerciveReportHome.totalPayedQuotes}" />
+
+							<h:outputText style="font-size:20px; font-weight:bold;"
+								value="#{messages['paymentagreeement.lastPaymentDate']}: " /> 
+							<h:outputText style="font-size:20px; "
+								value="#{coerciveReportHome.selected.expiration}" >
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />		
+							</h:outputText>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2" width="100%" columnClasses="right,right">
+							<h:outputText value="#{messages['dividend.balance']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{coerciveReportHome.balanceForPay}" style="font-size:40px; font-weight:bold;">
+								<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+										
+							<h:outputText value="#{messages['municipalBond.totalCancelled']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{coerciveReportHome.payedValue}" style="font-size:40px; font-weight:bold;">
+								<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+											
+							<h:outputText value="#{messages['VOID']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{coerciveReportHome.canceledValue}" style="font-size:40px; font-weight:bold;">
+								<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>											
+						</h:panelGrid>						
+					</h:panelGrid>
 				</rich:panel>
 
 
 
 				<div class="actionButtons">
-
-					<s:button
-						view="/accounting/report/DetailFinantialStatementReportByAccount.xhtml"
-						id="printId"
-						rendered="#{not empty finantialStatement.accountDetails}"
-						action="#{finantialStatement.prePrintAction(true)}"
-						propagation="join" value="#{messages['common.print']}" />
 
 					<a:commandButton ajaxSingle="true"
 						value="#{messages['common.quit']}"
