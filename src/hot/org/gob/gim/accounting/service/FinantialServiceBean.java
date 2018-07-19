@@ -409,6 +409,22 @@ public class FinantialServiceBean implements FinantialService{
 			"    mb.paymentAgreement_id IS NOT NULL AND " +
 			"          mb.municipalBondStatus_id in (:statuses) ";
 	
+	//@autor macartuche
+	private final static String SUSCRIPTION_LIQUIDATION_INTEREST_QUERY =
+	" select sum(a.interest) from ( " +
+	"    SELECT " +
+	"	 DISTINCT mb.interest, mb.id "+		
+	"    FROM MunicipalBond mb  " +
+	"    	join deposit d on d.municipalbond_id = mb.id   " +
+	"    	join municipalbondaux mba on mba.deposit_id = d.id  " +
+	"    WHERE mb.liquidationDate between :startDate AND :endDate AND " +
+	"    	mba.municipalbond_id = mb.id AND	 " +
+	"    	d.status='VALID' AND	 " +
+	"    	mba.status='VALID' AND	 " +
+	"       mb.municipalBondStatus_id in (:statuses) AND"+
+	"       mba.typepayment='SUBSCRIPTION') as a";
+	//interes para abonos pagos completos
+	
 	private final static String QUOTAS_LIQUIDATION_REPORT  = "("+QUOTAS_LIQUIDATION_INCOME_QUERY + ") UNION (" +
 			QUOTAS_LIQUIDATION_SURCHARGES_QUERY + ") UNION (" + 
 			QUOTAS_LIQUIDATION_DISCOUNTS_QUERY + ") UNION (" + 
@@ -585,6 +601,10 @@ public class FinantialServiceBean implements FinantialService{
 		Query query = null;
 		if(criteria.getReportType() == ReportType.QUOTAS_LIQUIDATION){
 			query = entityManager.createNativeQuery(QUOTAS_LIQUIDATION_INTEREST_QUERY);
+		}else if(criteria.getReportType() == ReportType.SUBSCRIPTION) {
+			//@author macartuche
+			query = entityManager.createNativeQuery(SUSCRIPTION_LIQUIDATION_INTEREST_QUERY);
+			//fin --interes value for subscription
 		}else{
 			query = entityManager.createNativeQuery(INCOME_INTEREST_QUERY);
 		}

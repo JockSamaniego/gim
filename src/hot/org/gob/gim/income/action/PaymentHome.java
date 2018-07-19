@@ -1152,6 +1152,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 					isFullPayment = Boolean.FALSE;
 					emissionFuture = Boolean.FALSE;
 					paymentAgree = Boolean.FALSE;
+					//calculateTotals();
+					calculateSubscriptionTotals();
 				}else if(vce.getNewValue().equals("municipalBondsTab")){
 					enableSubscription = Boolean.FALSE;
 					isFullPayment = Boolean.TRUE;
@@ -1432,6 +1434,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				deposit.setCapital(mb.getValue());
 				deposit.setInterest(mb.getInterest());
 				deposit.setValue(mb.getPaidTotal());
+				//@author macartuche 2018-07-10
+				deposit.setSurcharge(mb.getSurcharge());
+				deposit.setPaidTaxes(mb.getTaxesTotal());
+				//fin agregar surcharge al deposit, produccion no existe
 				mb.add(deposit);
 				this.getInstance().add(deposit);
 				deps.add(deposit);
