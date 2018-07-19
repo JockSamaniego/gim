@@ -75,6 +75,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.revenue.model.EntryStructureType;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
@@ -680,6 +681,8 @@ public class IncomeServiceBean implements IncomeService {
 						municipalBond.setSurcharge(surcharge);
 						municipalBond.setInterest(interest);
 						municipalBond.setTaxesTotal(taxesTotal);
+						
+						municipalBond = this.municipalBondService.addChildrenItem(municipalBond, new Date(), EntryStructureType.SURCHARGE, false, false, surcharge);
 						
 					}
 					//fin 
