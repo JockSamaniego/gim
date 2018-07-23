@@ -683,7 +683,7 @@ public class IncomeServiceBean implements IncomeService {
 						municipalBond.setTaxesTotal(taxesTotal);
 						
 						municipalBond = this.municipalBondService.addChildrenItem(municipalBond, new Date(), EntryStructureType.SURCHARGE, false, false, surcharge);
-						
+						//
 					}
 					//fin 
 					statusId = systemParameterService.findParameter(PAID_BOND_STATUS);
