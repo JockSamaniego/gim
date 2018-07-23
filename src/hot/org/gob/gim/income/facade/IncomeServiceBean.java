@@ -379,20 +379,20 @@ public class IncomeServiceBean implements IncomeService {
 			createMunicipalBondsAux(deposit, municipalBond, paymentMethod);
 			
 			//agregado para abonos
+			Query query = entityManager.createQuery("Select m from MunicipalBond m where id=:id");
 			if(paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
 				
-				Query query = entityManager.createQuery("Select m from MunicipalBond m where id=:id");
-				query.setParameter("id", municipalBond.getId());				
+				/*query.setParameter("id", municipalBond.getId());				
 				MunicipalBond municipalBondUpdate = (MunicipalBond) query.getSingleResult();
-				
+				*/
 				
 				query = entityManager.createNamedQuery("MunicipalBondStatus.findById");
 				query.setParameter("id", SUBSCRIPTION_STATUS_ID);
 				MunicipalBondStatus subscriptionBondStatus = (MunicipalBondStatus) query.getSingleResult();
 
-				municipalBondUpdate.setBalance(deposit.getBalance());
-				municipalBondUpdate.setMunicipalBondStatus(subscriptionBondStatus);
-				municipalBond = entityManager.merge(municipalBondUpdate);
+				municipalBond.setBalance(deposit.getBalance());
+				municipalBond.setMunicipalBondStatus(subscriptionBondStatus);
+				//municipalBond = entityManager.merge(municipalBondUpdate);
 			}
 			//fin abonos
 			
