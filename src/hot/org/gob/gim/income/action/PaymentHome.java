@@ -1152,6 +1152,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 					isFullPayment = Boolean.FALSE;
 					emissionFuture = Boolean.FALSE;
 					paymentAgree = Boolean.FALSE;
+					//calculateTotals();
+					calculateSubscriptionTotals();
 				}else if(vce.getNewValue().equals("municipalBondsTab")){
 					enableSubscription = Boolean.FALSE;
 					isFullPayment = Boolean.TRUE;
