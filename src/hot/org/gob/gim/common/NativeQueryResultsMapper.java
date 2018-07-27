@@ -2,6 +2,7 @@ package org.gob.gim.common;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,10 @@ public class NativeQueryResultsMapper {
                             		java.sql.Date fecha = (java.sql.Date) objectArr[i];
                             		Date d = new Date(fecha.getTime());
                                     BeanUtils.setProperty(t, mappingFields.get(i).getName(), d);
+                            	}else if(objectArr[i].getClass().toString().equals("class java.sql.Time")){
+                            		Time fecha = (Time) objectArr[i];
+                                    Date d = new Date(fecha.getTime());
+                                    BeanUtils.setProperty(t, mappingFields.get(i).getName(), d);
                             	}else{
                             		Timestamp fecha = (Timestamp) objectArr[i];
                                     Date d = new Date(fecha.getTime());
@@ -39,10 +44,11 @@ public class NativeQueryResultsMapper {
                             	}
                             }
 
-                        } else {
-                            BeanUtils.setProperty(t, mappingFields.get(i).getName(), objectArr[i]);
-                        }
-                    }
+	                        } else {
+	                        	
+	                            BeanUtils.setProperty(t, mappingFields.get(i).getName(), objectArr[i]);
+	                        }
+	                    }
 
                 }
                 ret.add(t);
@@ -63,17 +69,17 @@ public class NativeQueryResultsMapper {
         return ret;
     }
 
-    // Get ordered list of fields
-    private static <T> List<Field> getNativeQueryResultColumnAnnotatedFields(Class<T> genericType) {
-        Field[] fields = genericType.getDeclaredFields();
-        List<Field> orderedFields = Arrays.asList(new Field[fields.length]);
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(NativeQueryResultColumn.class)) {
-                NativeQueryResultColumn nqrc = field.getAnnotation(NativeQueryResultColumn.class);
-                orderedFields.set(nqrc.index(), field);
-            }
-        }
-        return orderedFields;
-    }
+	    // Get ordered list of fields
+	    private static <T> List<Field> getNativeQueryResultColumnAnnotatedFields(Class<T> genericType) {
+	        Field[] fields = genericType.getDeclaredFields();
+	        List<Field> orderedFields = Arrays.asList(new Field[fields.length]);
+	        for (Field field : fields) {
+	            if (field.isAnnotationPresent(NativeQueryResultColumn.class)) {
+	                NativeQueryResultColumn nqrc = field.getAnnotation(NativeQueryResultColumn.class);
+	                orderedFields.set(nqrc.index(), field);
+	            }
+	        }
+	        return orderedFields;
+	    }
 
 }

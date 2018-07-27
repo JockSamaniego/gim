@@ -12,6 +12,7 @@ import org.gob.gim.exception.NotActiveWorkdayException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
 import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
+import org.gob.loja.gim.ws.dto.FutureBond;
 
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
@@ -44,6 +45,8 @@ public interface IncomeService {
 	
 	public final String FUTURE_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_FUTURE";
 	
+	//@author macartuche
+	public final String SUBSCRIPTION_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION";
 	
 	public final String ENABLE_RECEIPT_GENERATION = "ENABLE_RECEIPT_GENERATION";
 	public final String ELECTRONIC_INVOICE_ENABLE = "ELECTRONIC_INVOICE_ENABLE";
@@ -66,8 +69,8 @@ public interface IncomeService {
 	void calculatePayment(List<MunicipalBond> municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount, Object ... facts) throws EntryDefinitionNotFoundException;
 	public void deactivateCreditNotes(List<PaymentFraction> paymentFractions);
 	
-	public void save(Date paymentDate, List<Long> municipalBondIds, Person cashier, Long tillId, String externalTransactionId) throws Exception;
-	public void save(List<Deposit> deposits, Long paymentAgreementId, Long tillId) throws Exception;
+	public void save(Date paymentDate, List<Long> municipalBondIds, Person cashier, Long tillId, String externalTransactionId, String paymentMethod) throws Exception;
+	public void save(List<Deposit> deposits, Long paymentAgreementId, Long tillId, String paymentMethod) throws Exception;
 	public void saveForCompensationPayment(List<MunicipalBond> municipalBonds, Long tillId) throws Exception;
 	public void setAsPrinted(List<Long> printedDepositIds);
 	
@@ -80,6 +83,7 @@ public interface IncomeService {
 	public void updateMunicipalBonds(List<MunicipalBond> bonds);
 	
 	public List<MunicipalBond> findPendingBonds(Long residentId);
+	public List<MunicipalBond> findPendingBondsSubscriptions(Long residentId);
 	public List<MunicipalBond> findOnlyPendingBonds(Long residentId);
 	public List<MunicipalBond> findOnlyPendingBonds(Long residentId, Long EntryId);	
 	public List<MunicipalBond> findOnlyPendingAndInAgreementBonds(Long residentId);
@@ -92,7 +96,7 @@ public interface IncomeService {
 	 * @param residentId
 	 * @return
 	 */
-	public List<MunicipalBond> findFutureBonds(Long residentId);
+	public List<FutureBond> findFutureBonds(Long residentId);
 	public void save(PaymentAgreement paymentAgreement, List<Long> municipalBondsIds);
 	public MunicipalBond loadForPrinting(Long municipalBondId);
 	public MunicipalBond loadMunicipalBond(Long municipalBondId);
@@ -125,11 +129,13 @@ public interface IncomeService {
 	//@author
 	//@tag recaudacionesCoactivas
 	//@date 2016-07-08T15:25:11
-	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long id, Boolean coverInterest, String status);
+	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long id, Boolean coverInterest, String status, String type, String paymentType);
 	
-	public BigDecimal sumAccumulatedInterest(Long id, Boolean coverInterest, String status);
+	public BigDecimal sumAccumulatedInterest(Long id, Boolean coverInterest, String status, String type, String paymentType);
 	
 	//Jock Samaniego
 	//actualizar estado de convenios 21/09/2016
 	public void updatePaymentAgreement(PaymentAgreement paymentAgreement);
+	
+	public boolean checkIsPayed(Long municipalbondid, String type);
 }

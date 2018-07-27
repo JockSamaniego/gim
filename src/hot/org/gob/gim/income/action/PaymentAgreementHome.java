@@ -46,6 +46,7 @@ import org.jboss.seam.log.Log;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.Dividend;
 import ec.gob.gim.income.model.Payment;
 import ec.gob.gim.income.model.PaymentAgreement;
@@ -169,9 +170,10 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 
 	public void wire() {
 		getInstance();
-		if(getInstance().getId() != null)identificationNumber = getInstance().getResident().getIdentificationNumber(); 
+		if(getInstance().getId() != null)
+			identificationNumber = getInstance().getResident().getIdentificationNumber(); 
 		chargeControlMunicipalBondStates();
-		toActivePaymentAgreement();		
+		//toActivePaymentAgreement();		
 		
 		if(getInstance().getId() != null && enterTOCalculate) {
 			//@author macartuche
@@ -280,7 +282,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			this.getInstance().setResident(resident);
 			this.municipalBondItems = findPendingDueMunicipalBondItems(resident.getId());
 			for(MunicipalBondItem mbi : municipalBondItems){
-				mbi.calculateTotals(null,null);
+				mbi.calculateTotals(null,null,null);
 			}
 			searchAgreements(resident.getId());
 			if (resident.getClass().getSimpleName().equalsIgnoreCase("Person")) {
@@ -638,8 +640,13 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	private Boolean toActive = Boolean.FALSE;
 	private String[] statesString;
 	private List<Long> statesLong = new ArrayList<Long>();
+	private String activeMessage;
+	private Boolean isFirstTime = Boolean.TRUE;
 
 	public void toActivePaymentAgreement() {
+		//this.setInstance(payAgree);
+		getInstance();
+		chargeControlMunicipalBondStates();
 		if (!this.instance.getIsActive()) {
 			try {
 					String qryResult = "SELECT count(*) "
@@ -651,16 +658,21 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 					queryResult.setParameter("state_id", statesLong);
 					String result = queryResult.getSingleResult().toString();
 					if (Integer.parseInt(result) >= 1) {
+						this.activePaymentAgreement();
 						toActive = Boolean.TRUE;
+						activeMessage = "Info: El convenio se activo correctamente";
 					} else {
 						toActive = Boolean.FALSE;
+						activeMessage = "Error: El convenio no tiene obligaciones pendientes";
 					}
 			} catch (Exception e) {
 				toActive = Boolean.FALSE;
+				activeMessage = "Error: No se pudo activar el convenio";
 			}
 
 		} else {
 			toActive = Boolean.FALSE;
+			activeMessage = "Error: El convenio ya se encuentra activado";
 		}
 	}
 
@@ -669,6 +681,13 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		incomeService.updatePaymentAgreement(this.instance);
 		toActive = Boolean.TRUE;
+	}
+	
+	public void callWire(){
+		if(isFirstTime){
+			wire();
+			isFirstTime = Boolean.FALSE;
+		}
 	}
 
 	public Boolean getToActive() {
@@ -679,6 +698,14 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		this.toActive = toActive;
 	}
 	
+	public String getActiveMessage() {
+		return activeMessage;
+	}
+
+	public void setActiveMessage(String activeMessage) {
+		this.activeMessage = activeMessage;
+	}
+
 	public void chargeControlMunicipalBondStates(){
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
@@ -752,5 +779,15 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 
 	public void setMunicipalBonds(List<MunicipalBond> municipalBonds) {
 		this.municipalBonds = municipalBonds;
+	}
+	
+	public Boolean hasRole(String roleKey) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		String role = systemParameterService.findParameter(roleKey);
+		if (role != null) {
+			return userSession.getUser().hasRole(role);
+		}
+		return false;
 	}
 }

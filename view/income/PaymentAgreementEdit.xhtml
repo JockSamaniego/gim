@@ -89,7 +89,6 @@
 						</h:outputText>			
 					</h:panelGrid>
 				</h:panelGrid>
-				<div style="clear: both"/>
 			</rich:panel>
 
 			<a:outputPanel id="municipalBondsPanel" ajaxRendered="true" rendered="#{empty paymentAgreementHome.instance.id}">
@@ -408,11 +407,15 @@
 				</rich:dataTable>
 			</a:outputPanel>
 			<div class="actionButtons" align="right">
-				<s:button id="activeBtn" disabled="#{!paymentAgreementHome.toActive}"    
-						action="#{paymentAgreementHome.activePaymentAgreement()}"
-						value="Activar"
-						reRender="paymentAgreement">
-				</s:button>
+				<a:commandButton id="activeBtn" 
+							action="#{paymentAgreementHome.toActivePaymentAgreement()}"
+							value="Activar"
+							oncomplete="#{rich:component('activeInfoPanel')}.show();"
+							includePageParams="false" propagation="join" 
+							disabled="#{_paymentAgreement.isActive}"
+							reRender="activeForm"
+							rendered="#{paymentAgreementHome.hasRole('ACTIVE_PAYMENTAGREEMENT')}">
+				</a:commandButton>
 
 				<a:commandButton 
 								id="viewer" 
@@ -751,6 +754,56 @@
 				</h:form>
 		</rich:modalPanel>
 		<!-- fin @tag convenioPago -->
+		<rich:modalPanel id="activeInfoPanel" width="600" height="200">
+
+		<f:facet name="header">Activación de Convenio</f:facet>
+
+		<h:form id="activeForm">
+
+			<h:panelGrid>
+
+				<rich:panel>
+
+					<h:panelGrid columns="2">
+
+						<h:graphicImage value="/img/alert.png" style="margin-left: 2em" />
+
+						<h:outputText
+							value="#{paymentAgreementHome.activeMessage}"
+							style="font-size:large; color: red;margin-left: 2em; margin-right: 2em"
+							rendered="#{!paymentAgreementHome.toActive}" />
+
+						<h:outputText
+							value="#{paymentAgreementHome.activeMessage}"
+							style="font-size:large; color: green;margin-left: 2em; margin-right: 2em"
+							rendered="#{paymentAgreementHome.toActive}" />
+
+					</h:panelGrid>
+
+				<br />
+
+					<h:panelGroup>
+
+						<div class="actionButtons">
+							<a:commandButton id="activeButton"
+								value="Aceptar"
+								oncomplete="Richfaces.hideModalPanel('activeInfoPanel')"
+								includePageParams="false" propagation="join">
+
+							</a:commandButton>
+
+						</div>
+
+					</h:panelGroup>
+
+				</rich:panel>
+
+			</h:panelGrid>
+
+		</h:form>
+
+	</rich:modalPanel>
+
 
 	</ui:define>
 </ui:composition>

@@ -64,6 +64,12 @@ public class FinantialServiceBean implements FinantialService{
 			"         mb.liquidationDate BETWEEN :startDate AND :endDate AND " +
 			"         mb.paymentAgreement_id is null AND " +
 			"         mb.municipalBondStatus_id in (:statuses)" +
+			//rfam 2018-05-14 para eviatar el pago en abonos
+			"		  AND (select count(maux) " + 
+			"         		from gimprod.MunicipalbondAux maux " + 
+			"				where maux.municipalbond_id = mb.id " + 
+			"				AND maux.typepayment = 'SUBSCRIPTION' " + 
+			"				AND maux.status = 'VALID') = 0 " +
 			"   GROUP BY a.id " +
 			"   ORDER BY a.accountCode ";
 	
@@ -125,6 +131,12 @@ public class FinantialServiceBean implements FinantialService{
 			"         mb.liquidationDate between :startDate AND :endDate AND " +
 			"         mb.paymentAgreement_id is null AND " +
 			"         mb.municipalBondStatus_id in (:statuses) " +
+			//rfam 2018-05-14 para eviatar el pago en abonos
+			"		  AND (select count(maux) " + 
+			"         		from gimprod.MunicipalbondAux maux " + 
+			"				where maux.municipalbond_id = mb.id " + 
+			"				AND maux.typepayment = 'SUBSCRIPTION' " + 
+			"				AND maux.status = 'VALID') = 0 " +
 			"   GROUP BY a.id " +
 			"   ORDER BY a.accountCode ";
 	
@@ -138,6 +150,12 @@ public class FinantialServiceBean implements FinantialService{
 			"         mb.liquidationDate between :startDate AND :endDate AND " +
 			"         mb.paymentAgreement_id is null AND " +
 			"         mb.municipalBondStatus_id in (:statuses) " +
+			//rfam 2018-05-14 para eviatar el pago en abonos
+			"		  AND (select count(maux) " + 
+			"         		from gimprod.MunicipalbondAux maux " + 
+			"				where maux.municipalbond_id = mb.id " + 
+			"				AND maux.typepayment = 'SUBSCRIPTION' " + 
+			"				AND maux.status = 'VALID') = 0 " +
 			"   GROUP BY a.id " +
 			"   ORDER BY a.accountCode ";	
 	
@@ -152,6 +170,12 @@ public class FinantialServiceBean implements FinantialService{
 			"          mb.liquidationDate between :startDate AND :endDate AND " +
 			"         mb.paymentAgreement_id is null AND " +
 			"          mb.municipalBondStatus_id in (:statuses) " +
+			//rfam 2018-05-14 para eviatar el pago en abonos
+			"		  AND (select count(maux) " + 
+			"         		from gimprod.MunicipalbondAux maux " + 
+			"				where maux.municipalbond_id = mb.id " + 
+			"				AND maux.typepayment = 'SUBSCRIPTION' " + 
+			"				AND maux.status = 'VALID') = 0 " +
 			"   GROUP BY a.id " +
 			"   ORDER BY a.accountCode ";
 	
@@ -245,6 +269,23 @@ public class FinantialServiceBean implements FinantialService{
 			"     ORDER BY r.name";		
 			
 	
+	private final static String SUBSCRIPTION_DETAIL_QUERY = 
+			" SELECT mb.number, r.identificationNumber, r.name , sum(total), mb.expirationDate " +
+			"     FROM MunicipalBond mb, item i, entry e, account a, resident r " +			
+			"     WHERE i.municipalBond_id=mb.id AND " +
+			"         i.entry_id = e.id AND " +
+			"         e.account_id = a.id AND " +
+			"         a.id = :accountId AND " +
+			"         mb.resident_id = r.id AND " +
+			"         mb.liquidationDate BETWEEN :startDate AND :endDate " +
+			"			AND (select count(*) " +
+			"			from municipalbondaux maux " +
+			"			where maux.municipalbond_id = mb.id " +
+			"			AND maux.typepayment = 'SUBSCRIPTION' " +
+			"			AND maux.status = 'VALID') > 0 AND " +
+			"         mb.municipalBondStatus_id in (:statuses)" +			
+			"     GROUP BY mb.id, r.id " +
+			"     ORDER BY r.name";	
 	
 	/**
 	 * En el query siguiente deberia manejarse por la fecha de liquidacion del MunicipalBond en lugar
@@ -266,6 +307,22 @@ public class FinantialServiceBean implements FinantialService{
 			"          d.date between :startDate AND :endDate AND " +
 			"          mb.paymentAgreement_id is not null AND " +
 			"          d.balance > 0 ";
+
+	//@author macartuche
+	//reporte x abonos != convenio de pago
+	private final static String INCOME_COLLECTED_SUBSCRIPTION_QUERY =
+			"SELECT sum(a.value) FROM ("+
+				" SELECT d.value " +
+				"    FROM MunicipalBond mb, deposit d, municipalbondaux mba " +
+				"    WHERE d.municipalBond_id = mb.id  " +
+				"       AND mba.municipalbond_id = mb.id " +
+				"		AND mba.deposit_id = d.id" +
+				"		AND mba.typepayment='SUBSCRIPTION' "+
+				"		AND d.date between :startDate AND :endDate  "+
+				"		AND d.status='VALID' "+
+				"		AND d.balance > 0 "+
+				"GROUP BY d.id) as a";
+	//fin reporte x abono != convenio de pago
 	
 	private final static String INCOME_LIQUIDATED_QUOTAS_QUERY =
 			" SELECT sum(d.value) " +
@@ -274,6 +331,22 @@ public class FinantialServiceBean implements FinantialService{
 			"          d.date between :startDate AND :endDate AND " +
 			"          mb.paymentAgreement_id is not null AND" +
 			"          d.balance = 0 ";	
+	//@author macartuche
+	//reporte x abonos != convenio de pago
+	private final static String INCOME_LIQUIDATED_SUBSCRIPTION_QUERY =
+			"SELECT sum(a.value) FROM ("+ 
+				" SELECT d.value " +
+				"    FROM MunicipalBond mb, deposit d, municipalbondaux mba " +
+				"    WHERE d.municipalBond_id = mb.id  " +
+				"       AND mba.municipalbond_id = mb.id " +
+				"		AND mba.deposit_id = d.id" +
+				"		AND mba.typepayment='SUBSCRIPTION' "+
+				"		AND d.date between :startDate AND :endDate  "+
+				"		AND d.status='VALID' "+
+				"		AND d.balance = 0"+
+				"GROUP BY d.id) as a";
+	//fin reporte x abono != convenio de pago
+	
 	
 	private final static String QUOTAS_LIQUIDATION_INCOME_QUERY = 
 			"SELECT a.id, a.accountCode, a.previousYearsAccountCode, a.futureYearsAccountCode, a.budgetCertificateCode, a.accountName, sum(i.total) " +
@@ -335,10 +408,96 @@ public class FinantialServiceBean implements FinantialService{
 			"    mb.paymentAgreement_id IS NOT NULL AND " +
 			"          mb.municipalBondStatus_id in (:statuses) ";
 	
+	//@autor macartuche
+	private final static String SUSCRIPTION_LIQUIDATION_INTEREST_QUERY =
+	" select sum(a.interest) from ( " +
+	"    SELECT " +
+	"	 DISTINCT mb.interest, mb.id "+		
+	"    FROM MunicipalBond mb  " +
+	"    	join deposit d on d.municipalbond_id = mb.id   " +
+	"    	join municipalbondaux mba on mba.deposit_id = d.id  " +
+	"    WHERE mb.liquidationDate between :startDate AND :endDate AND " +
+	"    	mba.municipalbond_id = mb.id AND	 " +
+	"    	d.status='VALID' AND	 " +
+	"    	mba.status='VALID' AND	 " +
+	"       mb.municipalBondStatus_id in (:statuses) AND"+
+	"       mba.typepayment='SUBSCRIPTION') as a";
+	//interes para abonos pagos completos
+	
 	private final static String QUOTAS_LIQUIDATION_REPORT  = "("+QUOTAS_LIQUIDATION_INCOME_QUERY + ") UNION (" +
 			QUOTAS_LIQUIDATION_SURCHARGES_QUERY + ") UNION (" + 
 			QUOTAS_LIQUIDATION_DISCOUNTS_QUERY + ") UNION (" + 
 			QUOTAS_LIQUIDATION_TAXES_QUERY+")";
+	
+	private final static String SUBSCRIPTION_INCOME_QUERY = 
+			"SELECT a.id, a.accountCode, a.previousYearsAccountCode, a.futureYearsAccountCode, a.budgetCertificateCode, a.accountName, sum(i.total) " +
+			"   FROM item i, municipalBond mb, entry e, account a " +
+			"   WHERE i.municipalBond_id=mb.id AND " +
+			"         i.entry_id = e.id AND " +
+			"         e.account_id = a.id AND " +
+			"         a.accountCode like :accountCode AND " +
+			"         mb.liquidationDate BETWEEN :startDate AND :endDate AND " +
+			"         mb.municipalBondStatus_id in (:statuses)" +
+			"			AND (select count(*) " +
+			"			from municipalbondaux maux " +
+			"			where maux.municipalbond_id = mb.id " +
+			"			AND maux.typepayment = 'SUBSCRIPTION' " +
+			"			AND maux.status = 'VALID') > 0 " +
+			"   GROUP BY a.id " +
+			"   ORDER BY a.accountCode ";
+	
+	private final static String SUBSCRIPTION_SURCHARGES_QUERY = 
+			"SELECT a.id, a.accountCode, a.previousYearsAccountCode, a.futureYearsAccountCode, a.budgetCertificateCode, a.accountName, sum(total) " +
+			"   FROM item i, municipalBond mb, entry e, account a " +
+			"   WHERE i.surchargedBond_id=mb.id AND " +
+			"         i.entry_id = e.id AND " +
+			"         e.account_id = a.id AND " +
+			"         mb.liquidationDate between :startDate AND :endDate AND " +
+			"         mb.municipalBondStatus_id in (:statuses) " +
+			"			AND (select count(*) " +
+			"			from municipalbondaux maux " +
+			"			where maux.municipalbond_id = mb.id " +
+			"			AND maux.typepayment = 'SUBSCRIPTION' " +
+			"			AND maux.status = 'VALID') > 0 " +
+			"   GROUP BY a.id " +
+			"   ORDER BY a.accountCode ";
+	
+	private final static String SUBSCRIPTION_DISCOUNTS_QUERY = 
+			"SELECT a.id, a.accountCode, a.previousYearsAccountCode, a.futureYearsAccountCode, a.budgetCertificateCode, a.accountName, -sum(total) " +
+			"   FROM item i, municipalBond mb, entry e, account a " +
+			"   WHERE i.discountedBond_id=mb.id AND " +
+			"         i.entry_id = e.id AND " +
+			"         e.account_id = a.id AND " +
+			"         mb.liquidationDate between :startDate AND :endDate AND " +
+			"         mb.municipalBondStatus_id in (:statuses) " +
+			"			AND (select count(*) " +
+			"			from municipalbondaux maux " +
+			"			where maux.municipalbond_id = mb.id " +
+			"			AND maux.typepayment = 'SUBSCRIPTION' " +
+			"			AND maux.status = 'VALID') > 0 " +
+			"   GROUP BY a.id " +
+			"   ORDER BY a.accountCode ";	
+	
+	private final static String SUBSCRIPTION_TAXES_QUERY = 
+			" SELECT a.id, a.accountCode, a.previousYearsAccountCode, a.futureYearsAccountCode, a.budgetCertificateCode, a.accountName, sum(i.value) " +
+			"    FROM taxitem i, municipalBond mb, tax t, account a " +
+			"    WHERE i.municipalBond_id=mb.id AND " +
+			"	       i.tax_id = t.id AND " +
+			"          t.taxAccount_id = a.id AND " +
+			"          mb.liquidationDate between :startDate AND :endDate AND " +
+			"          mb.municipalBondStatus_id in (:statuses) " +
+			"			AND (select count(*) " +
+			"			from municipalbondaux maux " +
+			"			where maux.municipalbond_id = mb.id " +
+			"			AND maux.typepayment = 'SUBSCRIPTION' " +
+			"			AND maux.status = 'VALID') > 0 " +
+			"   GROUP BY a.id " +
+			"   ORDER BY a.accountCode ";
+	
+	private final static String SUBSCRIPTION_REPORT  =  "("+SUBSCRIPTION_INCOME_QUERY + ") UNION (" +
+			SUBSCRIPTION_SURCHARGES_QUERY + ") UNION (" + 
+			SUBSCRIPTION_DISCOUNTS_QUERY + ") UNION (" + 
+			SUBSCRIPTION_TAXES_QUERY+")";
 
 	private final static String DUE_PORTFOLIO_QUERY = 
 			"SELECT a.id, a.accountCode, a.previousYearsAccountCode, a.futureYearsAccountCode, a.budgetCertificateCode, a.accountName, sum(paidTotal) " +
@@ -380,7 +539,7 @@ public class FinantialServiceBean implements FinantialService{
 	}
 		
 	private void setValue(AccountItem accountItem, Object[] row, ReportType reportType){
-		if(reportType == ReportType.INCOME || reportType == ReportType.QUOTAS_LIQUIDATION){
+		if(reportType == ReportType.INCOME || reportType == ReportType.QUOTAS_LIQUIDATION || reportType == ReportType.SUBSCRIPTION){
 			accountItem.setCredit((BigDecimal)row[6]);
 		} else {
 			accountItem.setDebit((BigDecimal)row[6]);
@@ -411,8 +570,16 @@ public class FinantialServiceBean implements FinantialService{
 	
 	private AccountItem buildQuotasItem(Criteria criteria){
 		BigDecimal collected = findLiquidatedQuotas(criteria); 
-		BigDecimal liquidated = findCollectedQuotas(criteria);
-		Account account = findAccountByDefinedParameter("QUOTAS_ACCOUNT_ID");
+		BigDecimal liquidated = findCollectedQuotas(criteria);//*
+		
+		//@author macartuche
+		//convenio o abono
+		String accountParameter = "QUOTAS_ACCOUNT_ID";
+		if(criteria.getReportType().equals(ReportType.SUBSCRIPTION)) {
+			accountParameter = "QUOTAS_ACCOUNT_SUBSCRIPTION_ID";
+		}//fin convenio o abono
+		
+		Account account = findAccountByDefinedParameter(accountParameter);
 		AccountItem quotasItem = new AccountItem();
 		quotasItem.setAccountId(account.getId());
 		quotasItem.setAccountNumber(account.getAccountCode());
@@ -433,6 +600,10 @@ public class FinantialServiceBean implements FinantialService{
 		Query query = null;
 		if(criteria.getReportType() == ReportType.QUOTAS_LIQUIDATION){
 			query = entityManager.createNativeQuery(QUOTAS_LIQUIDATION_INTEREST_QUERY);
+		}else if(criteria.getReportType() == ReportType.SUBSCRIPTION) {
+			//@author macartuche
+			query = entityManager.createNativeQuery(SUSCRIPTION_LIQUIDATION_INTEREST_QUERY);
+			//fin --interes value for subscription
 		}else{
 			query = entityManager.createNativeQuery(INCOME_INTEREST_QUERY);
 		}
@@ -450,7 +621,11 @@ public class FinantialServiceBean implements FinantialService{
 	
 	@SuppressWarnings("unchecked")
 	private BigDecimal findCollectedQuotas(Criteria criteria){
-		Query query = entityManager.createNativeQuery(INCOME_COLLECTED_QUOTAS_QUERY);
+		String nativeQuery = INCOME_COLLECTED_QUOTAS_QUERY;
+		if(criteria.getReportType()==ReportType.SUBSCRIPTION) {
+			nativeQuery = INCOME_COLLECTED_SUBSCRIPTION_QUERY;
+		}
+		Query query = entityManager.createNativeQuery(nativeQuery);
 		query.setParameter("startDate", criteria.getStartDate());
 		query.setParameter("endDate", criteria.getEndDate());
 		List<BigDecimal> result = query.getResultList();
@@ -463,7 +638,12 @@ public class FinantialServiceBean implements FinantialService{
 	
 	@SuppressWarnings("unchecked")
 	private BigDecimal findLiquidatedQuotas(Criteria criteria){
-		Query query = entityManager.createNativeQuery(INCOME_LIQUIDATED_QUOTAS_QUERY);
+		String nativeQuery = INCOME_LIQUIDATED_QUOTAS_QUERY;
+		if(criteria.getReportType()==ReportType.SUBSCRIPTION) {
+			nativeQuery = INCOME_LIQUIDATED_SUBSCRIPTION_QUERY;
+		}
+		
+		Query query = entityManager.createNativeQuery(nativeQuery);
 		query.setParameter("startDate", criteria.getStartDate());
 		query.setParameter("endDate", criteria.getEndDate());
 		List<BigDecimal> result = query.getResultList();
@@ -490,6 +670,7 @@ public class FinantialServiceBean implements FinantialService{
 				statuses = getVoidStatuses();
 			} else {
 				if(reportType == ReportType.QUOTAS_LIQUIDATION){
+					System.out.println(QUOTAS_LIQUIDATION_REPORT);
 					query = entityManager.createNativeQuery(QUOTAS_LIQUIDATION_REPORT);
 					statuses = getPaidStatuses();
 					query.setParameter("emisionStartDate", emisionStartDate);
@@ -522,6 +703,11 @@ public class FinantialServiceBean implements FinantialService{
 							query.setParameter("emisionStartDate", emisionStartDate);
 							query.setParameter("emisionEndDate", emisionEndDate);
 							query.setParameter("entriesList", entriesListLong);
+						}else{
+							if(reportType == ReportType.SUBSCRIPTION){
+								query = entityManager.createNativeQuery(SUBSCRIPTION_REPORT);
+								statuses = getSubscriptionStatuses();
+							}
 						}						
 					}
 						
@@ -597,6 +783,11 @@ public class FinantialServiceBean implements FinantialService{
 						if(reportType == ReportType.BALANCE){
 							statuses = getBalancesStatuses();
 							sql = BALANCE_DETAIL_QUERY;
+						}else{
+							if(reportType == ReportType.SUBSCRIPTION){
+								statuses = getSubscriptionStatuses();
+								sql = SUBSCRIPTION_DETAIL_QUERY;
+							}
 						}
 					}
 				}
@@ -684,6 +875,9 @@ public class FinantialServiceBean implements FinantialService{
 		} else {
 			if(criteria.getReportFilter() == ReportFilter.ALL || criteria.getReportFilter() == ReportFilter.PREVIOUS){
 				System.out.println("CALCULANDO AÑOS PREVIOS");
+				if(criteria.getReportType() == ReportType.SUBSCRIPTION){
+					buildReport(criteria, report, ReportType.SUBSCRIPTION, criteria.getStartDate(), criteria.getEndDate(), fiscalPeriod.getStartDate(), fiscalPeriod.getEndDate(), ReportFilter.CURRENT);
+				}
 				if(criteria.getReportType() == ReportType.REVENUE || criteria.getReportType() == ReportType.COMBINED){
 					buildReport(criteria, report, ReportType.REVENUE, previousYearsStartDate, previousYearsEndDate, null, null, ReportFilter.PREVIOUS);
 				}
@@ -711,6 +905,9 @@ public class FinantialServiceBean implements FinantialService{
 			
 			if(criteria.getReportFilter() == ReportFilter.ALL || criteria.getReportFilter() == ReportFilter.CURRENT){
 				System.out.println("CALCULANDO AÑO ACTUAL");
+				if(criteria.getReportType() == ReportType.SUBSCRIPTION){
+					buildReport(criteria, report, ReportType.SUBSCRIPTION, criteria.getStartDate(), criteria.getEndDate(), fiscalPeriod.getStartDate(), fiscalPeriod.getEndDate(), ReportFilter.CURRENT);
+				}
 				if(criteria.getReportType() == ReportType.QUOTAS_LIQUIDATION){
 					buildReport(criteria, report, ReportType.QUOTAS_LIQUIDATION, criteria.getStartDate(), criteria.getEndDate(), fiscalPeriod.getStartDate(), fiscalPeriod.getEndDate(), ReportFilter.CURRENT);
 				}
@@ -747,11 +944,12 @@ public class FinantialServiceBean implements FinantialService{
 				}
 			}
 			
-			if(report.size() > 0 && criteria.getReportType() != ReportType.REVENUE && criteria.getReportType() != ReportType.REVENUE_EMAALEP){
+			//&& criteria.getReportType() != ReportType.SUBSCRIPTION 
+			if(report.size() > 0 && criteria.getReportType() != ReportType.REVENUE && criteria.getReportType() != ReportType.REVENUE_EMAALEP ){
 				AccountItem interestItem = buildInterestItem(criteria, report);
 				report.put(interestItem.getAccountNumber(), interestItem);
 				if (criteria.getReportType() != ReportType.BALANCE){
-					AccountItem quotasItem = buildQuotasItem(criteria);
+					AccountItem quotasItem = buildQuotasItem(criteria); //AQUIIIIIIIIIIIIII
 					report.put(quotasItem.getAccountNumber(), quotasItem);
 				}
 			}
@@ -857,6 +1055,15 @@ public class FinantialServiceBean implements FinantialService{
 				report = findDetail(criteria, accountId, ReportType.QUOTAS_LIQUIDATION, report, criteria.getStartDate(),criteria.getEndDate(), minimumBondDate, previousYearsEndDate);
 			}
 		}
+		if(criteria.getReportType() == ReportType.SUBSCRIPTION){
+			if(reportFilter == ReportFilter.CURRENT){
+				report = findDetail(criteria, accountId, ReportType.SUBSCRIPTION, report, criteria.getStartDate(),criteria.getEndDate(), fiscalPeriod.getStartDate(), fiscalPeriod.getEndDate());
+			}
+			
+			if(reportFilter == ReportFilter.PREVIOUS){
+				report = findDetail(criteria, accountId, ReportType.SUBSCRIPTION, report, criteria.getStartDate(),criteria.getEndDate(), minimumBondDate, previousYearsEndDate);
+			}
+		}
 		return report;
 	}
 	
@@ -889,6 +1096,8 @@ public class FinantialServiceBean implements FinantialService{
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.BLOCKED_BOND_STATUS));
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.IN_PAYMENT_AGREEMENT_BOND_STATUS));
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.COMPENSATION_BOND_STATUS));
+		//rfam 2018-05-15 para soportar pagos en abonos
+		statuses.add((Long)systemParameterService.findParameter(IncomeService.SUBSCRIPTION_BOND_STATUS));
 		return statuses; 
 	}
 	
@@ -899,7 +1108,15 @@ public class FinantialServiceBean implements FinantialService{
 		return statuses; 
 	}
 	
+	
 	private List<Long> getPaidStatuses(){
+		List<Long> statuses = new ArrayList<Long>();
+		statuses.add((Long)systemParameterService.findParameter(IncomeService.PAID_BOND_STATUS));
+		statuses.add((Long)systemParameterService.findParameter(IncomeService.PAID_FROM_EXTERNAL_CHANNEL_BOND_STATUS));
+		return statuses;
+	}
+	
+	private List<Long> getSubscriptionStatuses(){
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.PAID_BOND_STATUS));
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.PAID_FROM_EXTERNAL_CHANNEL_BOND_STATUS));
@@ -924,6 +1141,8 @@ public class FinantialServiceBean implements FinantialService{
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.BLOCKED_BOND_STATUS));
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.IN_PAYMENT_AGREEMENT_BOND_STATUS));
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.COMPENSATION_BOND_STATUS));
+		//rfam 2018-05-15 para soportar pagos en abonos
+		statuses.add((Long)systemParameterService.findParameter(IncomeService.SUBSCRIPTION_BOND_STATUS));
 		return statuses; 
 	}
 	

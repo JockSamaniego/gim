@@ -12,6 +12,7 @@ import javax.persistence.Query;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.income.facade.IncomeService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -250,7 +251,10 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		//rfarmijosm 2016-03-20 pedido de alice
 		Long  blockedBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_BLOCKED");
 		//rfarmijosm 2016-10-18 pedido de alice
-		Long futureBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE");
+		Long futureBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE");		
+		
+		//rfam 2018-05-15 para soportar pagos en abonos
+		Long subscriptionBondStatusId = systemParameterService.findParameter(IncomeService.SUBSCRIPTION_BOND_STATUS);
 				
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
@@ -259,6 +263,9 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		statuses.add(blockedBondStatusId);
 		//rfarmijosm 2016-10-18 pedido de alice
 		statuses.add(futureBondStatusId);
+		
+		//rfarmijosm 2018-05-15 soportar pagos en abonos
+		statuses.add(subscriptionBondStatusId);
 		
 		Query query = null;
 		if(resident != null && entry == null && (code == null || code.trim().isEmpty()) ){

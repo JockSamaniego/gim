@@ -18,6 +18,9 @@
 			<property name="hibernate.format_sql" value="false" />
 			<property name="hibernate.default_schema" value="gimprod" />
 			<property name="javax.persistence.query.timeout" value="180000" />
+			
+			<property name="hibernate.generate_statistics" value="false" />
+			
 			<property name="hibernate.jdbc.use_streams_for_binary"
 				value="true" />
 			<property name="jboss.entity.manager.factory.jndi.name"

@@ -3,6 +3,7 @@ package ec.gob.gim.security.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -37,7 +38,11 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 					query = "SELECT mba FROM MunicipalbondAux mba where mba.deposit in :depositList"),
 		@NamedQuery(name="MunicipalbondAux.setAsVoid", 
 		query="UPDATE MunicipalbondAux mba SET mba.status = :status "
-				+ "WHERE mba.deposit.id in :depositList ")})
+				+ "WHERE mba.deposit.id in :depositList "),
+		@NamedQuery(name="MunicipalbondAux.setAsVoidByDeposit", 
+		query="UPDATE MunicipalbondAux mba SET mba.status = :status "
+				+ "WHERE mba.deposit.id=:depositID ")		
+})
 
 public class MunicipalbondAux {
 
@@ -54,9 +59,9 @@ public class MunicipalbondAux {
 	
 	private BigDecimal payValue;
 	
-	private BigDecimal interest;
+	private BigDecimal balance;
 	
-	private Boolean itconverinterest;
+	private Boolean coveritem;
 	
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -67,9 +72,20 @@ public class MunicipalbondAux {
 	@JoinColumn(name = "deposit_id")
 	private Deposit deposit;
 	
-	
+	 
 	private String status;
 	
+	//interest - surcharge -capital - taxes
+	@Column(nullable = true)
+	private String type;
+	
+	//@author macartuche
+	//agregado para abonos (SUBSCRIPTION - AGREEMENT)
+	@Column(nullable = true)
+	private String typepayment;
+ 
+	@Column(nullable = true)
+	private Boolean anotherItem;
 
 	public Long getId() {
 		return id;
@@ -99,14 +115,14 @@ public class MunicipalbondAux {
 	public void setLiquidationTime(Date liquidationTime) {
 		this.liquidationTime = liquidationTime;
 	}
-
-	public Boolean getItconverinterest() {
-		return itconverinterest;
+	
+	public Boolean getCoveritem() {
+		return coveritem;
 	}
 
 
-	public void setItconverinterest(Boolean itconverinterest) {
-		this.itconverinterest = itconverinterest;
+	public void setCoveritem(Boolean coveritem) {
+		this.coveritem = coveritem;
 	}
 
 
@@ -129,14 +145,15 @@ public class MunicipalbondAux {
 		this.payValue = payValue;
 	}
 
+	
 
-	public BigDecimal getInterest() {
-		return interest;
+	public BigDecimal getBalance() {
+		return balance;
 	}
 
 
-	public void setInterest(BigDecimal interest) {
-		this.interest = interest;
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
 	}
 
 
@@ -146,6 +163,7 @@ public class MunicipalbondAux {
 
 
 	public void setDeposit(Deposit deposit) {
+		
 		this.deposit = deposit;
 	}
 
@@ -158,4 +176,37 @@ public class MunicipalbondAux {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+
+	public String getType() {
+		return type;
+	}
+
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+
+	public Boolean getAnotherItem() {
+		return anotherItem;
+	}
+
+
+	public void setAnotherItem(Boolean anotherItem) {
+		this.anotherItem = anotherItem;
+	}
+
+
+	public String getTypepayment() {
+		return typepayment;
+	}
+
+
+	public void setTypepayment(String typepayment) {
+		this.typepayment = typepayment;
+	}
+
+
+ 
 }

@@ -1,9 +1,12 @@
 package org.gob.gim.revenue.action;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
@@ -522,9 +525,9 @@ public class MunicipalBondManager extends EntityController {
 				.loadForPrinting(municipalBondId);
 		/*System.out.println("RECOVERED IN BACKING BEAN ---> "
 				+ municipalBond.getDeposits().size());*/
-		List<Deposit> deposits = municipalBond.getDeposits();
+		Set<Deposit> deposits = municipalBond.getDeposits();
 		if (deposits.size() > 0) {
-			Deposit depositToPrint = deposits.get(deposits.size() - 1);
+			Deposit depositToPrint = (Deposit) Arrays.asList(deposits.toArray()).get(deposits.size() - 1);
 			depositToPrint.setMunicipalBond(municipalBond);
 
 			Long printingsNumber = new Long(municipalBond.getPrintingsNumber());
@@ -551,9 +554,9 @@ public class MunicipalBondManager extends EntityController {
 		.findResource(IncomeService.LOCAL_NAME);
 		MunicipalBond municipalBond = incomeService
 				.loadForPrinting(municipalBondId);
-		List<Deposit> deposits = municipalBond.getDeposits();
+		Set<Deposit> deposits = municipalBond.getDeposits();
 		if (municipalBond.getDeposits().size() > 0) {
-			Deposit depositToPrint = deposits.get(deposits.size() - 1);
+			Deposit depositToPrint = (Deposit) Arrays.asList(deposits.toArray()).get(deposits.size() - 1);
 			municipalBond.setDeposits(deposits);
 			depositToPrint.setMunicipalBond(municipalBond);
 
