@@ -15,7 +15,9 @@ import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.TaxRate;
 import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.revenue.model.EntryStructureType;
 import ec.gob.gim.revenue.model.Exemption;
+import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
@@ -116,4 +118,8 @@ public interface MunicipalBondService {
 	//macartuche
 	//para abonos
 	public BigDecimal calculateDiscount(MunicipalBond municipalBond);
+	
+	MunicipalBond addChildrenItem(MunicipalBond municipalBond, Date serviceDate,
+			EntryStructureType entryStructureType,
+			boolean isEmission, Boolean internalTramit, BigDecimal value) throws EntryDefinitionNotFoundException;
 }

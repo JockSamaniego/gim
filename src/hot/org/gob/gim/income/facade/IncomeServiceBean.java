@@ -75,6 +75,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.revenue.model.EntryStructureType;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
@@ -378,20 +379,21 @@ public class IncomeServiceBean implements IncomeService {
 			createMunicipalBondsAux(deposit, municipalBond, paymentMethod);
 			
 			//agregado para abonos
-			if(paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+			Query query = entityManager.createQuery("Select m from MunicipalBond m where id=:id");
+			if(paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())
+					&& deposit.getBalance().compareTo(BigDecimal.ZERO) != 0) {
 				
-				Query query = entityManager.createQuery("Select m from MunicipalBond m where id=:id");
-				query.setParameter("id", municipalBond.getId());				
+				/*query.setParameter("id", municipalBond.getId());				
 				MunicipalBond municipalBondUpdate = (MunicipalBond) query.getSingleResult();
-				
+				*/
 				
 				query = entityManager.createNamedQuery("MunicipalBondStatus.findById");
 				query.setParameter("id", SUBSCRIPTION_STATUS_ID);
 				MunicipalBondStatus subscriptionBondStatus = (MunicipalBondStatus) query.getSingleResult();
 
-				municipalBondUpdate.setBalance(deposit.getBalance());
-				municipalBondUpdate.setMunicipalBondStatus(subscriptionBondStatus);
-				municipalBond = entityManager.merge(municipalBondUpdate);
+				municipalBond.setBalance(deposit.getBalance());
+				municipalBond.setMunicipalBondStatus(subscriptionBondStatus);
+				entityManager.merge(municipalBond);
 			}
 			//fin abonos
 			
@@ -681,6 +683,8 @@ public class IncomeServiceBean implements IncomeService {
 						municipalBond.setInterest(interest);
 						municipalBond.setTaxesTotal(taxesTotal);
 						
+						municipalBond = this.municipalBondService.addChildrenItem(municipalBond, new Date(), EntryStructureType.SURCHARGE, false, false, surcharge);
+						//
 					}
 					//fin 
 					statusId = systemParameterService.findParameter(PAID_BOND_STATUS);
