@@ -414,7 +414,7 @@ public class IncomeServiceBean implements IncomeService {
 		BigDecimal itemValue = BigDecimal.ZERO;
 		BigDecimal depositValue = BigDecimal.ZERO;
 		Boolean itemIsPayed = false;
-
+		//agregando validacion !=null
 		if (dep.getInterest()!=null && dep.getInterest().compareTo(BigDecimal.ZERO) > 0) {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "I", paymentMethod);
 			itemValue = mb.getInterest();
@@ -443,7 +443,7 @@ public class IncomeServiceBean implements IncomeService {
 		itemValue = BigDecimal.ZERO;
 		depositValue = BigDecimal.ZERO;
 		itemIsPayed = false;
-
+		//agregando validacion !=null
 		if (dep.getCapital()!=null && dep.getCapital().compareTo(BigDecimal.ZERO) > 0) {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "C", paymentMethod);
 			itemValue = mb.getBalance();
@@ -474,7 +474,7 @@ public class IncomeServiceBean implements IncomeService {
 		itemValue = BigDecimal.ZERO;
 		depositValue = BigDecimal.ZERO;
 		itemIsPayed = false; ////////////////////////////////////////////////////////////////////
-
+		//agregando validacion !=null
 		if (dep.getPaidTaxes()!=null && dep.getPaidTaxes().compareTo(BigDecimal.ZERO) > 0) {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "T", paymentMethod);
 			itemValue = mb.getTaxesTotal();
@@ -501,7 +501,7 @@ public class IncomeServiceBean implements IncomeService {
 		itemValue = BigDecimal.ZERO;
 		depositValue = BigDecimal.ZERO;
 		itemIsPayed = false;
-
+		//agregando validacion !=null
 		if (dep.getSurcharge()!=null && dep.getSurcharge().compareTo(BigDecimal.ZERO) > 0) {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "S", paymentMethod);
 			itemValue = mb.getSurcharge();
