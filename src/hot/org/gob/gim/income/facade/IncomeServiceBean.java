@@ -308,6 +308,9 @@ public class IncomeServiceBean implements IncomeService {
 		deposit.setStatus(FinancialStatus.VALID);
 		deposit.setTime(paymentDate);
 		deposit.setValue(municipalBond.getPaidTotal());
+		//rfam 2018-07-30		
+		deposit.setSurcharge(municipalBond.getSurcharge());
+		deposit.setDiscount(municipalBond.getDiscount());
 
 		municipalBond.add(deposit);
 		payment.add(deposit);
