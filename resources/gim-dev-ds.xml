@@ -12,3 +12,4 @@
       <password>postgres</password>
    </local-tx-datasource>
 </datasources>
+
