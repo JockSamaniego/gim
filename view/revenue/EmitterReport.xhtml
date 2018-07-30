@@ -46,14 +46,6 @@
 						<s:convertEntity />
 					</h:selectOneMenu>
 				</s:decorate>
-				
-				<s:decorate id="notificationNumberField" template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['VehicularFineReference.startDate']}:</ui:define>
-					<rich:calendar value="#{workdayHome.startDate}" required="true"
-						enableManualInput="false"
-						datePattern="#{messages['common.datePattern']}">
-					</rich:calendar>
-				</s:decorate>
 
 <!-- 				<g:entryChooser id="entryChooser" label="#{messages['entry']}" -->
 <!-- 					criteria="#{workdayHome.criteriaEntry}" -->
