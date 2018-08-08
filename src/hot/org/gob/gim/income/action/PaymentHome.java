@@ -2666,6 +2666,16 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			// pago por abonos ...
 			// el monto recibido es menor
 			if (this.isPaymentSubscription) {
+				//@macartuche 2018-07-31
+				//en este caso por primera vez se fija el valor dle payment al valor recibido
+				this.getInstance().setValue(receivedAmount);
+				payment.setValue(receivedAmount);
+				
+				System.out.println("received "+receivedAmount);
+				System.out.println("isntance "+this.getInstance().getValue());
+				System.out.println("payment "+payment.getValue());
+				//
+				
 				for (PaymentFraction fraction : payment.getPaymentFractions()) {
 					fraction.setPaidAmount(fraction.getReceivedAmount());
 					if (fraction.getPaymentType() == PaymentType.CASH) {
