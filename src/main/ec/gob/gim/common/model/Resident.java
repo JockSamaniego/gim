@@ -150,6 +150,9 @@ public abstract class Resident extends Identifiable{
 	//abonos
 	@Column(nullable = true)
 	private boolean enablesubscription = Boolean.FALSE;
+	
+	//rfam 2018-08-08
+	private Boolean generateUniqueAccountt = Boolean.FALSE;
 	               
 	/**
 	 * Relationships
@@ -549,6 +552,14 @@ public abstract class Resident extends Identifiable{
 
 	public void setEnablesubscription(boolean enablesubscription) {
 		this.enablesubscription = enablesubscription;
+	}
+
+	public Boolean getGenerateUniqueAccountt() {
+		return generateUniqueAccountt;
+	}
+
+	public void setGenerateUniqueAccountt(Boolean generateUniqueAccountt) {
+		this.generateUniqueAccountt = generateUniqueAccountt;
 	}
 
 }//end Resident
