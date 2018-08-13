@@ -56,8 +56,8 @@ public class VehicularFineReference extends Adjunct {
 		pair = new ValuePair("Fecha citación",
 				infringementDate != null ? DateUtils.formatFullDate(infringementDate) : "-");
 		details.add(pair);
-
-		pair = new ValuePair(".", "-");
+		
+		pair = new ValuePair("Tipo", vehicleType != null ? vehicleType.getName().toUpperCase() : "-");
 		details.add(pair);
 
 		return details;
