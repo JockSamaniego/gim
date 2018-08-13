@@ -57,8 +57,7 @@ public class VehicularFineReference extends Adjunct {
 				infringementDate != null ? DateUtils.formatFullDate(infringementDate) : "-");
 		details.add(pair);
 
-		pair = new ValuePair(".", "-");
-		details.add(pair);
+		
 
 		return details;
 	}
