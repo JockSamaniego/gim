@@ -486,6 +486,7 @@ public class ResidentHome extends EntityHome<Resident> {
 	}
 
 	public void createUniqueAccounttUser(String identificationNumber) {
+		System.out.println("--------------------cuenta unica "+identificationNumber);
 		Form form = new Form();
 		form.param("identificationNumber", identificationNumber);
 
