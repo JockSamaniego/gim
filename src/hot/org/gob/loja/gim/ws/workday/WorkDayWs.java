@@ -58,8 +58,8 @@ import org.jboss.seam.security.Identity;
 //        (serviceName = "WorkDayWs")
 public class WorkDayWs {
 
-  /*  @Resource
-    WebServiceContext wsContext;*/
+    @Resource
+    WebServiceContext wsContext;
 
     @EJB
     private WorkDay service;
@@ -122,6 +122,10 @@ public class WorkDayWs {
         }
         InvalidateSession();
 
+    }*/
+    
+    public void openWorkDay(ServiceRequest request) throws DateNoAvalible, InvalidUser, InterestRateNoDefined, TaxesNoDefined, CashierOpen, ExistsDuplicateUsers, Exception {
+    	//service.
     }
 
     private void InvalidateSession() {
@@ -134,6 +138,6 @@ public class WorkDayWs {
             hsr.getSession().setMaxInactiveInterval(1);
         }
 
-    }*/
+    }
 
 }

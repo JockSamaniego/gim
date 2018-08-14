@@ -1,84 +1,12 @@
 package org.gob.loja.gim.ws.service;
 
-import ec.gob.gim.common.model.Person;
-import ec.gob.gim.income.model.Till;
-import ec.gob.gim.income.model.TillPermission;
-import ec.gob.gim.parking.model.Journal;
-import ec.gob.gim.security.model.Role;
-import org.gob.loja.gim.ws.service.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
-import org.gob.loja.gim.ws.dto.ServiceRequest;
-import org.gob.loja.gim.ws.exception.InvalidUser;
-
-import ec.gob.gim.security.model.User;
-import ec.gob.gim.waterservice.model.Consumption;
-import ec.gob.gim.waterservice.model.WaterMeterStatus;
-import ec.gob.gim.wsrest.dto.ConsumptionPackage;
-import ec.gob.gim.wsrest.dto.DtoConsumption;
-import ec.gob.gim.wsrest.dto.DtoRoute;
-import ec.gob.gim.wsrest.dto.RoutePackage;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.faces.context.ExternalContext;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.xml.ws.WebServiceContext;
-import org.gob.gim.common.DateUtils;
-import org.gob.gim.common.PasswordManager;
-import org.gob.gim.common.ServiceLocator;
-import org.gob.gim.common.action.Gim;
-import org.gob.gim.common.action.UserSession;
-import org.gob.gim.common.service.SystemParameterService;
-import org.gob.gim.income.action.TillPermissionHome;
-import org.gob.gim.income.action.TillPermissionHomeWs;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.log.Log;
-import org.jboss.seam.security.Credentials;
-import org.jboss.seam.security.Identity;
 import org.gob.gim.income.action.WorkdayHome;
-import org.gob.gim.income.action.WorkdayHomeWs;
-import org.gob.gim.income.action.WorkdayList;
-import org.gob.loja.gim.ws.exception.CashierOpen;
-import org.gob.loja.gim.ws.exception.DateNoAvalible;
-import org.gob.loja.gim.ws.exception.ExistsDuplicateUsers;
-import org.gob.loja.gim.ws.exception.InterestRateNoDefined;
-import org.gob.loja.gim.ws.exception.TaxesNoDefined;
-import static org.jboss.seam.ScopeType.SESSION;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Install;
-import static org.jboss.seam.annotations.Install.BUILT_IN;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
+import org.jboss.seam.annotations.In;
 
 @Stateless(name = "WorkDay")
 //@Name("WorkDayWsb")
@@ -89,8 +17,18 @@ public class WorkDayServiceBean implements WorkDay {
 
     @PersistenceContext
     EntityManager em;
-
+    
+    private Boolean needsInterestRateDefined = Boolean.FALSE;
+    private Boolean needsTaxRateDefined = Boolean.FALSE;
+    private Boolean closingWorkday = Boolean.FALSE;
+    private Boolean existsCurrentWorkday = Boolean.FALSE;
+    private Boolean fromIncome = Boolean.FALSE;
+    private Boolean existOpenedTills = Boolean.FALSE;
+    
     @In(create = true)
+    private WorkdayHome who;
+
+    /*@In(create = true)
     private PasswordManager passwordManager = new PasswordManager();
 
     @In(create = true)
@@ -204,20 +142,17 @@ public class WorkDayServiceBean implements WorkDay {
             }
         }
         return null;
-    }
+    }*/
 
-    public String findIpRemoteMachine(HttpServletRequest hrs) {
+    /*public String findIpRemoteMachine(HttpServletRequest hrs) {
 //        ExternalContext context = //javax.faces.context.FacesContext.getCurrentInstance().getExternalContext();
         HttpServletRequest request = hrs;
         ip = request.getHeader("X-Forwarded-For");
         if (isIPAddress(ip)) {
-            /*System.out.println("IP Return:" + ip);
-            System.out.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: " + ip);*/
+      
             return ip;
         } else {
             ip = request.getRemoteAddr();
-            /*System.out.println("RemoteAddr:" + ip);
-            System.out.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: " + ip);*/
             return ip;
         }
 //		ip = request.getRemoteAddr(); //En algunos casos solamente detecta la IP del Proxy y no la del Equipo Local
@@ -225,7 +160,7 @@ public class WorkDayServiceBean implements WorkDay {
 //		return ip;
     }
 
-    public boolean isCashier() {
+    /*public boolean isCashier() {
         SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
         String cashierRoleName = systemParameterService.findParameter("ROLE_NAME_CASHIER");
 
@@ -559,6 +494,18 @@ public class WorkDayServiceBean implements WorkDay {
         } else {
             who.setExistOpenedTills(false);
         }
-    }
+    }*/
+
+	@Override
+	public Boolean openWorkday() {
+		// TODO Auto-generated method stub
+		return Boolean.FALSE;
+	}
+
+	@Override
+	public Boolean closeWorkday() {
+		// TODO Auto-generated method stub
+		return Boolean.FALSE;
+	}
 
 }
