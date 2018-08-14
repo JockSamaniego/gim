@@ -1,22 +1,44 @@
 package org.gob.loja.gim.ws.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
-import org.gob.gim.income.action.WorkdayHome;
-import org.jboss.seam.annotations.In;
+import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.income.facade.IncomeService;
+import org.gob.loja.gim.ws.dto.ServiceRequest;
+import org.jboss.seam.core.Interpolator;
 
-@Stateless(name = "WorkDay")
-//@Name("WorkDayWsb")
-//@Scope(SESSION)
-//@Startup
+import ec.gob.gim.common.model.Person;
+import ec.gob.gim.income.model.Tax;
+import ec.gob.gim.income.model.TaxRate;
+import ec.gob.gim.income.model.TillPermission;
+import ec.gob.gim.income.model.Workday;
+
+@Stateless(name = "WorkDayService")
 @Interceptors({SecurityInterceptor.class})
-public class WorkDayServiceBean implements WorkDay {
+public class WorkDayServiceBean implements WorkDayService {
 
     @PersistenceContext
-    EntityManager em;
+	private EntityManager em;
+
+	@EJB
+	private SystemParameterService systemParameterService;
+
+	@EJB
+	private IncomeService incomeService;
     
     private Boolean needsInterestRateDefined = Boolean.FALSE;
     private Boolean needsTaxRateDefined = Boolean.FALSE;
@@ -25,8 +47,8 @@ public class WorkDayServiceBean implements WorkDay {
     private Boolean fromIncome = Boolean.FALSE;
     private Boolean existOpenedTills = Boolean.FALSE;
     
-    @In(create = true)
-    private WorkdayHome who;
+    /*@In(create = true)
+    private WorkdayHome who;*/
 
     /*@In(create = true)
     private PasswordManager passwordManager = new PasswordManager();
@@ -497,15 +519,199 @@ public class WorkDayServiceBean implements WorkDay {
     }*/
 
 	@Override
-	public Boolean openWorkday() {
+	public Boolean openWorkday(ServiceRequest request) {
 		// TODO Auto-generated method stub
 		return Boolean.FALSE;
 	}
 
 	@Override
-	public Boolean closeWorkday() {
+	public Boolean closeWorkday(ServiceRequest request) {
 		// TODO Auto-generated method stub
 		return Boolean.FALSE;
 	}
+	/**
+	 * rfam 2018-08-14
+	 * encontrar la jornada de trabajo actual que este aperturada
+	 * @return
+	 */
+	private Long findWorkdayId() {
+		Query query = em.createNamedQuery(
+				"Workday.findCurrentWorkday");
+		List<Workday> list = query.getResultList();
+		Long c = null;
+		if (list != null && list.size() > 0) {
+			c = list.get(0).getId();
+		}
+		return c;
+	}
+	
+	/**
+	 * determinar el numero de cajas abiertas para una jornada de trabajo
+	 * @param workdayId
+	 * @return
+	 */
+	private Long getNumberOfTillOpened(Long workdayId) {
+		Query query = em.createNamedQuery(
+				"TillPermission.findNumberOpenTillsByWorkday");
+		query.setParameter("workdayId", workdayId);
+		return (Long) query.getSingleResult();
+	}
+	
+	
+	private boolean existsTaxRates() {
+		Query query = em.createNamedQuery(
+				"Tax.findByEntryNotNull");
+		Calendar now = Calendar.getInstance();
+		List<Tax> taxes = query.getResultList();
+		for (Tax t : taxes) {
+			TaxRate tr = findActiveTaxRate(t);
+			if (tr == null)
+				return false;
+			if (now.getTime().before(tr.getStartDate())
+					|| now.getTime().after(tr.getEndDate())) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private TaxRate findActiveTaxRate(Tax t) {
+		Query query = em.createNamedQuery(
+				"TaxRate.findActiveByTaxIdAndPaymentDate");
+		query.setParameter("taxId", t.getId());
+		query.setParameter("paymentDate", new Date());
+		List<TaxRate> list = query.getResultList();
+		if (list.size() > 0)
+			return list.get(0);
+		return null;
+	}
+	
+	private Long nextCharge() {
+		Query query = em.createNamedQuery("Workday.findLastCharge");
+		Long c = (Long) query.getSingleResult();
+		if (c == null) {
+			return 1L;
+		}
+		return c + 1;
+	}
+	
+	/*
+	 * this.getInstance().setCharge(nextCharge());
+			Calendar now = Calendar.getInstance();
+			this.getInstance().setDate(now.getTime());
+			this.getInstance().setOpeningTime(now.getTime());
+			isFirstTime = false;
+	 */
+	
+	private boolean existsDuplicateUsers(List <TillPermission> permissions) {
+		boolean aux = false;
+		String rootRoleName = findAdministratorRole();
+
+		List<Person> cashiers = new ArrayList<Person>();
+		for (TillPermission t : permissions) {
+			if (!t.getPerson().getUser().hasRole(rootRoleName)) {
+				if (!cashiers.contains(t.getPerson())) {
+					cashiers.add(t.getPerson());
+				} else {
+					return true;
+				}
+			}
+		}
+		return aux;
+	}
+	
+	private String findAdministratorRole() {
+		systemParameterService = ServiceLocator.getInstance().findResource(
+				SystemParameterService.LOCAL_NAME);
+		return systemParameterService.findParameter("ROLE_NAME_ADMINISTRATOR");
+	}
+	
+	private void updateTills(List <TillPermission> permissions) {
+		for (TillPermission tp : permissions) {
+			if (tp.getPerson() != tp.getTill().getPerson()) {
+				tp.getTill().setPerson(tp.getPerson());
+			}
+		}
+	}
+
+	private void openTillsBank(List <TillPermission> permissions) {
+		Calendar cal = new GregorianCalendar();
+		for (TillPermission tp : permissions) {
+			if ((!tp.isEnabled()) && (tp.getOpeningTime() != null)) {
+				tp.setOpeningTime(null);
+			}
+			//rfam 2018-08-14 apertura automatica de bancos
+			if(tp.isEnabled() && tp.getOpeningTime() == null && tp.getTill().isTillBank()) {
+				tp.setOpeningTime(cal.getTime());
+				tp.setInitialBalance(BigDecimal.ZERO);
+			}
+		}
+	}
+	
+	public boolean isDateAvailable(Date d, Workday workDay) {
+		Query query = null;
+		if (true) {
+		//if (isFromIncome) {
+			query = em.createNamedQuery(
+					"Workday.findByIncomeOpeningAndDate").setParameter("date",d);
+		} else {
+			query = em.createNamedQuery(
+					"Workday.findByRevenueOpeningAndDate").setParameter("date",d);
+		}
+
+		List<Workday> workdays = query.getResultList();
+		if (workdays != null && workdays.size() > 0
+				&& workdays.get(0).getId() != workDay.getId()) {
+			return false;
+		}
+		return true;
+	}
+
+	
+	/*private String save(Workday workDay) {
+		try {
+			Calendar current = DateUtils.getTruncatedInstance(Calendar .getInstance().getTime());
+			if (!isDateAvailable(this.getInstance().getDate())
+					|| (this.getInstance().getDate().before(current.getTime()))) {
+				String message = Interpolator.instance()
+						.interpolate("#{messages['workday.dateNoAvailable']}",
+								new Object[0]);
+				facesMessages
+						.addToControl(
+								"",
+								org.jboss.seam.international.StatusMessage.Severity.ERROR,
+								message);
+				return "failed";
+			}
+
+			if (!isChargeAvailable()) {
+				String message = Interpolator.instance().interpolate(
+						"#{messages['workday.chargeNoAvailable']}",
+						new Object[0]);
+				facesMessages
+						.addToControl(
+								"",
+								org.jboss.seam.international.StatusMessage.Severity.ERROR,
+								message);
+				return "failed";
+			}
+
+			if (isFromIncome) {
+				this.getInstance().setIsIncomeOpening(true);
+			} else {
+				this.getInstance().setIsRevenueOpening(true);
+			}
+
+			//TillPermission tillPermision;
+
+			return super.persist();
+
+		} catch (Exception e) {
+			System.out
+					.println("::::::::::::::::::::::::exception:::::::::::::::::::::::::::::::::::::: "
+							+ e);
+		}
+		return "failed";
+	}*/
 
 }
