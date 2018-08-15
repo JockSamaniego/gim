@@ -3263,7 +3263,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				.findResource(SystemParameterService.LOCAL_NAME);
 		String role = systemParameterService.findParameter(roleKey);
 		if (role != null) {
-			return userSession.getUser().hasRole(role);
+			if(userSession !=null && userSession.getUser() != null) {
+				return userSession.getUser().hasRole(role);
+			}else { 
+				return false;
+			}
 		}
 		return false;
 	}
