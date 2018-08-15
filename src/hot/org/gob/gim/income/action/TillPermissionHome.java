@@ -1056,6 +1056,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 				"left join d.payment p " +
 				"where p.date Between :startDate and :endDate " +
 				"and p.cashier.id in ( :cashiersIds ) " +
+				"and d.status = 'VALID' " +
 				"and p.status = 'VALID' "
 				+ "group by p.cashier.id, p.date "
 				+ "order by p.date";

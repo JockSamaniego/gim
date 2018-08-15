@@ -6071,6 +6071,12 @@ public class WorkdayHome extends EntityHome<Workday> {
 			if ((!tp.isEnabled()) && (tp.getOpeningTime() != null)) {
 				tp.setOpeningTime(null);
 			}
+			
+			//rfam 2018-08-14 apertura automatica de bancos
+			if(tp.isEnabled() && tp.getOpeningTime() == null && tp.getTill().isTillBank()) {
+				tp.setOpeningTime(cal.getTime());
+				tp.setInitialBalance(BigDecimal.ZERO);
+			}
 		}
 	}
 
@@ -6181,7 +6187,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 				this.getInstance().setIsRevenueOpening(true);
 			}
 
-			TillPermission tillPermision;
+			//TillPermission tillPermision;
 
 			return super.persist();
 

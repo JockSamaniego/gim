@@ -741,7 +741,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	private List<MunicipalBond> municipalbondList;
 	
 	public void loadMunicipalBondPayments(){
-		municipalBonds = findAgreementMunicipalBonds(this.getInstance().getId()); 
+		municipalBonds = findAgreementMunicipalBonds(this.getInstance().getId());
 	}
 	
 	
