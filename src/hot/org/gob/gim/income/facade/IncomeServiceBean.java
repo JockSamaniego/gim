@@ -33,6 +33,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.Gim;
 import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.CreditNoteValueNotValidException;
@@ -44,6 +45,8 @@ import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.loja.gim.ws.dto.FutureBond;
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.In;
 
 import com.google.common.base.Joiner;
 
@@ -308,6 +311,9 @@ public class IncomeServiceBean implements IncomeService {
 		deposit.setStatus(FinancialStatus.VALID);
 		deposit.setTime(paymentDate);
 		deposit.setValue(municipalBond.getPaidTotal());
+		//rfam 2018-07-30		
+		deposit.setSurcharge(municipalBond.getSurcharge());
+		deposit.setDiscount(municipalBond.getDiscount());
 
 		municipalBond.add(deposit);
 		payment.add(deposit);
@@ -379,20 +385,21 @@ public class IncomeServiceBean implements IncomeService {
 			createMunicipalBondsAux(deposit, municipalBond, paymentMethod);
 			
 			//agregado para abonos
-			if(paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+			Query query = entityManager.createQuery("Select m from MunicipalBond m where id=:id");
+			if(paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())
+					&& deposit.getBalance().compareTo(BigDecimal.ZERO) != 0) {
 				
-				Query query = entityManager.createQuery("Select m from MunicipalBond m where id=:id");
-				query.setParameter("id", municipalBond.getId());				
+				/*query.setParameter("id", municipalBond.getId());				
 				MunicipalBond municipalBondUpdate = (MunicipalBond) query.getSingleResult();
-				
+				*/
 				
 				query = entityManager.createNamedQuery("MunicipalBondStatus.findById");
 				query.setParameter("id", SUBSCRIPTION_STATUS_ID);
 				MunicipalBondStatus subscriptionBondStatus = (MunicipalBondStatus) query.getSingleResult();
 
-				municipalBondUpdate.setBalance(deposit.getBalance());
-				municipalBondUpdate.setMunicipalBondStatus(subscriptionBondStatus);
-				municipalBond = entityManager.merge(municipalBondUpdate);
+				municipalBond.setBalance(deposit.getBalance());
+				municipalBond.setMunicipalBondStatus(subscriptionBondStatus);
+				entityManager.merge(municipalBond);
 			}
 			//fin abonos
 			
@@ -413,8 +420,8 @@ public class IncomeServiceBean implements IncomeService {
 		BigDecimal itemValue = BigDecimal.ZERO;
 		BigDecimal depositValue = BigDecimal.ZERO;
 		Boolean itemIsPayed = false;
-
-		if (dep.getInterest().compareTo(BigDecimal.ZERO) > 0) {
+		//agregando validacion !=null
+		if (dep.getInterest()!=null && dep.getInterest().compareTo(BigDecimal.ZERO) > 0) {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "I", paymentMethod);
 			itemValue = mb.getInterest();
 			depositValue = dep.getInterest();
@@ -442,8 +449,8 @@ public class IncomeServiceBean implements IncomeService {
 		itemValue = BigDecimal.ZERO;
 		depositValue = BigDecimal.ZERO;
 		itemIsPayed = false;
-
-		if (dep.getCapital().compareTo(BigDecimal.ZERO) > 0) {
+		//agregando validacion !=null
+		if (dep.getCapital()!=null && dep.getCapital().compareTo(BigDecimal.ZERO) > 0) {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "C", paymentMethod);
 			itemValue = mb.getBalance();
 			depositValue = dep.getCapital();
@@ -473,8 +480,8 @@ public class IncomeServiceBean implements IncomeService {
 		itemValue = BigDecimal.ZERO;
 		depositValue = BigDecimal.ZERO;
 		itemIsPayed = false; ////////////////////////////////////////////////////////////////////
-
-		if (dep.getPaidTaxes().compareTo(BigDecimal.ZERO) > 0) {
+		//agregando validacion !=null
+		if (dep.getPaidTaxes()!=null && dep.getPaidTaxes().compareTo(BigDecimal.ZERO) > 0) {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "T", paymentMethod);
 			itemValue = mb.getTaxesTotal();
 			depositValue = dep.getPaidTaxes();
@@ -500,8 +507,8 @@ public class IncomeServiceBean implements IncomeService {
 		itemValue = BigDecimal.ZERO;
 		depositValue = BigDecimal.ZERO;
 		itemIsPayed = false;
-
-		if (dep.getSurcharge().compareTo(BigDecimal.ZERO) > 0) {
+		//agregando validacion !=null
+		if (dep.getSurcharge()!=null && dep.getSurcharge().compareTo(BigDecimal.ZERO) > 0) {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "S", paymentMethod);
 			itemValue = mb.getSurcharge();
 			depositValue = dep.getSurcharge();
@@ -570,6 +577,8 @@ public class IncomeServiceBean implements IncomeService {
 		return mapBranch;
 	}
 
+	@In(scope=ScopeType.APPLICATION)
+	Gim gim;
 	public DataWS authorizedElectronicReceipt(Receipt receipt) throws Exception {
 		String sriEnvironment = systemParameterService.findParameter(ELECTRONIC_INVOICE_ENVIRONMENT);
 		JAXBContext jaxbContext = JAXBContext.newInstance(Factura.class);
@@ -605,10 +614,13 @@ public class IncomeServiceBean implements IncomeService {
 			document = FileUtilities.convertir_file_to_ByteArray(output);
 			String checksum = FileUtilities.checkSumApacheCommons(xmlFileName);
 			dataWS.setXmlFile(document);
-			dataWS.setRucCompany(receipt.getMunicipalBond().getInstitution()
-					.getNumber());
+//			dataWS.setRucCompany(receipt.getMunicipalBond().getInstitution()
+//					.getNumber());
+			dataWS.setRucCompany(gim.getInstitution().getNumber());
 			//System.out.println("cliente checksum ");
 			dataWS.setCheksum(checksum);
+//			dataWS.setCorrespondingTo(correspondingTo);
+//			dataWS.setpa
 			dataWS = sendToService(dataWS);
 			new File(xmlFileName).delete();
 		} catch (IOException ex) {
@@ -683,7 +695,7 @@ public class IncomeServiceBean implements IncomeService {
 						municipalBond.setTaxesTotal(taxesTotal);
 						
 						municipalBond = this.municipalBondService.addChildrenItem(municipalBond, new Date(), EntryStructureType.SURCHARGE, false, false, surcharge);
-						
+						//
 					}
 					//fin 
 					statusId = systemParameterService.findParameter(PAID_BOND_STATUS);

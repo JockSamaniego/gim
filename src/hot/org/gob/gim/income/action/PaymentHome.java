@@ -59,6 +59,7 @@ import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 
 import ec.gob.gim.common.model.Alert;
+import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -487,10 +488,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 			Query q1 = getEntityManager().createQuery("Select m from MunicipalBond m " + "JOIN m.deposits d "
 					+ "JOIN d.payment p "
-					+ "where m.resident.id=:resident_id and m.liquidationDate >= :currentDate and p.cashier =:cashier ");
+					+ "where m.resident.id=:resident_id and d.date >= :currentDate and p.cashier =:cashier and d.status=:status");
 			q1.setParameter("resident_id", resident.getId());
 			q1.setParameter("currentDate", formatter.parse(formatter.format(time.getTime())));
 			q1.setParameter("cashier", person);
+			q1.setParameter("status", FinancialStatus.VALID);
 
 			// System.out.println("Persona=====================================>:
 			// "+person.getId());
@@ -2666,6 +2668,16 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			// pago por abonos ...
 			// el monto recibido es menor
 			if (this.isPaymentSubscription) {
+				//@macartuche 2018-07-31
+				//en este caso por primera vez se fija el valor dle payment al valor recibido
+				this.getInstance().setValue(receivedAmount);
+				payment.setValue(receivedAmount);
+				
+				System.out.println("received "+receivedAmount);
+				System.out.println("isntance "+this.getInstance().getValue());
+				System.out.println("payment "+payment.getValue());
+				//
+				
 				for (PaymentFraction fraction : payment.getPaymentFractions()) {
 					fraction.setPaidAmount(fraction.getReceivedAmount());
 					if (fraction.getPaymentType() == PaymentType.CASH) {
@@ -3251,7 +3263,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				.findResource(SystemParameterService.LOCAL_NAME);
 		String role = systemParameterService.findParameter(roleKey);
 		if (role != null) {
-			return userSession.getUser().hasRole(role);
+			if(userSession !=null && userSession.getUser() != null) {
+				return userSession.getUser().hasRole(role);
+			}else { 
+				return false;
+			}
 		}
 		return false;
 	}

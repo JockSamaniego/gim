@@ -43,6 +43,15 @@
 								reRender="nameId" />
 						</h:inputText>
 					</s:decorate>
+					
+					<s:decorate id="emailField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['delegate.email']}:</ui:define>
+						<h:inputText id="email" required="true"
+							value="#{taxpayerRecordHome.delegate.email}" size="50">
+							<a:support event="onblur" ajaxSingle="true" bypassUpdates="true"
+								reRender="email" />
+						</h:inputText>
+					</s:decorate>
 
 					<s:decorate id="startDateField" template="../../layout/edit.xhtml">
 						<ui:define name="label">#{messages['delegate.startDate']}:</ui:define>
