@@ -244,16 +244,29 @@
 									disabled="#{paymentHome.isPaymentButtonDisabled}"
 									focus="receivedAmount" 
 									rendered="#{(!paymentHome.enableSubscription and !paymentHome.emissionFuture and empty paymentHome.municipalBondSubscriptionsItems) || (paymentHome.paymentAgree)}"/>
-									
+								<br />	
 								<a:commandButton id="registerSubscriptionBtn"
 									action="#{paymentHome.updateHasCompensationBonds('SUBSCRIPTION')}"
 									reRender="subscriptionPanel" ajaxSingle="true"
 									eventsQueue="gimEventsQueue"
 									oncomplete="registerSubscriptionPayment(#{paymentHome.hasCompensationBonds})"
 									value="Registrar abono"
+									
+									style="position: relative !important; 
+											background-image: none !important;
+											vertical-align: top !important;
+											width: 100% !important;
+											height: 40px; 
+											padding: 5px; font-size: 22px;
+											color: red !important; 
+											text-align: center; 
+											box-shadow: inset 2 2px red !important;
+											text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); 
+
+											"
 									disabled="#{paymentHome.isPaymentButtonDisabled}"
 									rendered="#{((empty paymentHome.municipalBondSubscriptionsItems and empty paymentHome.inPaymentAgreementBonds and !paymentHome.paymentAgree) || paymentHome.enableSubscription) and (paymentHome.hasRole('PAYMENT_BY_SUBSCRIPTION'))}"
-									focus="receivedAmount" />
+									focus="receivedAmount"  />
 								<h:outputText id="subscriptionMessage"
 								value="Tiene pago por abono pendiente"
 								style="font-size:20px; font-weight:bold; color: red" styleClass="right" 

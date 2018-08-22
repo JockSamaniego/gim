@@ -83,14 +83,14 @@
 
 					<a:outputPanel id="totalsPanel" ajaxRendered="true">
 						<h:panelGrid columnClasses="topAligned right" width="100%">
-							<h:outputText id="totalValueField"
-								value="#{paymentHome.instance.value}" size="10"
-								style="font-size:110px; font-weight:bold;" styleClass="right"
-								maxlength="12">
-								<f:convertNumber
-									maxFractionDigits="#{messages['common.maxFractionDigits']}"
-									minFractionDigits="#{messages['common.minFractionDigits']}" />
-							</h:outputText>
+<!-- 							<h:outputText id="totalValueField" -->
+<!-- 								value="#{paymentHome.instance.value}" size="10" -->
+<!-- 								style="font-size:110px; font-weight:bold;" styleClass="right" -->
+<!-- 								maxlength="12"> -->
+<!-- 								<f:convertNumber -->
+<!-- 									maxFractionDigits="#{messages['common.maxFractionDigits']}" -->
+<!-- 									minFractionDigits="#{messages['common.minFractionDigits']}" /> -->
+<!-- 							</h:outputText> -->
 							<h:panelGrid columns="2" style="float:right;">
 								 <a:commandButton id="registerPaymentBtn"
 									action="#{paymentHome.rePrint}" ajaxSingle="true"
