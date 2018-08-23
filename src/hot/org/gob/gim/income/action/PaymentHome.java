@@ -2236,6 +2236,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			}
 			canPass = false;
 		}
+		
+		if(depositTotal.compareTo(BigDecimal.ZERO) <= 0){
+			depositTotal = BigDecimal.ZERO;
+		}
 
 		if (!hasConflict) {
 			this.getInstance().setValue(depositTotal);
@@ -2602,7 +2606,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	
 	//Jock Samaniego
 	//Para control de boton de registro de pago
-	private Boolean invalidAmount;
+	private Boolean invalidAmount = Boolean.TRUE;
 
 	public Boolean getInvalidAmount() {
 		return invalidAmount;
@@ -2788,6 +2792,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	public void updateHasCompensationBonds() {
+		deactivatePayBtn();
 		// @author macartuche
 		// deshabilitar boton de registro de pago
 		this.isPaymentSubscription = false;
@@ -2818,6 +2823,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	public void updateHasCompensationBonds(String paymentType) {
+		deactivatePayBtn();
 		this.isPaymentSubscription = true;
 		// @author macartuche
 		// deshabilitar boton de registro de pago
@@ -3272,4 +3278,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		return false;
 	}
 
+	public void deactivatePayBtn(){
+		this.invalidAmount = Boolean.TRUE;
+	}
 }
