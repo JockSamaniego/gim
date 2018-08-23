@@ -71,12 +71,28 @@
 								var="paymentAgreement" label="#{paymentAgreement.description}"
 								noSelectionLabel="#{messages['common.choose']}" />
 							<s:convertEntity />
-							<a:support event="onchange" eventsQueue="gimQueue"
+							<a:support event="onchange" eventsQueue="gimQueue" action="#{paymentAgreementProcessHome.setValues}"
 								ajaxSingle="true" reRender="callSP" focus="value" />
 
 						</h:selectOneMenu>
 					</s:decorate>
-
+					
+					
+					<s:decorate id="changeType"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">Cambiar a juicio coactivo:</ui:define>
+						<h:selectBooleanCheckbox value="#{paymentAgreementProcessHome.changeType}"  >
+								<a:support event="onchange" ajaxSingle="true"  inmediate="true"  />
+							</h:selectBooleanCheckbox>
+					</s:decorate>
+					
+					<s:decorate id="changeLowerPercentage"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">Activar abonos de rubros:</ui:define>
+						<h:selectBooleanCheckbox value="#{paymentAgreementProcessHome.changeLowerPercentage}"  >
+								<a:support event="onchange" ajaxSingle="true"  inmediate="true"  />
+							</h:selectBooleanCheckbox>
+					</s:decorate>
 					<div style="clear: both"></div>
 				
 					
@@ -97,7 +113,9 @@
 
 						<rich:column styleClass="action" id="coverDB">
 							<f:facet name="header">Cubre rubro</f:facet>
-							<h:selectBooleanCheckbox value="#{_bond.coveritem}"  />
+							<h:selectBooleanCheckbox value="#{_bond.coveritem}"  >
+								<a:support event="onchange" ajaxSingle="true"  inmediate="true"  />
+							</h:selectBooleanCheckbox>
 						</rich:column>
 
 						<rich:column styleClass="action" id="balanceDB">
@@ -234,7 +252,9 @@
 						
 						<rich:column styleClass="action" id="other">
 							<f:facet name="header">Otro rubro</f:facet> 
-							<h:selectBooleanCheckbox value="#{_bondaux.anotherItem}"  />	
+							<h:selectBooleanCheckbox value="#{_bondaux.anotherItem}" >
+								<a:support event="onchange" ajaxSingle="true"  inmediate="true"  />
+							</h:selectBooleanCheckbox>	
 						</rich:column>
 						
 					</rich:dataTable>

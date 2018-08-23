@@ -63,6 +63,9 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 	
 	private List<MunicipalbondAux> bdList;
 	
+	private Boolean changeType = false;
+	private Boolean changeLowerPercentage=false;
+	
 	public void initialize(){
 		
 	}
@@ -89,6 +92,8 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 	public void clearSearchPanel() {
 		this.setCriteria(null);
 		residents = null;
+		this.changeLowerPercentage=false;
+		this.changeType=false;
 	}
 	
 	public void search() {
@@ -112,6 +117,13 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 		}
 	}
 
+	public void setValues(){
+		if(this.paymentAgreementSelected!=null) {
+			this.changeType = (this.paymentAgreementSelected.getAgreementType().toString().equals("COERCIVEJUDGEMENT"))? true:false;
+			this.changeLowerPercentage = (this.paymentAgreementSelected.getLowerPercentage()!=null && this.paymentAgreementSelected.getLowerPercentage())? true: false;
+			
+		}
+	}
 	public void callSP(){
 		if(this.paymentAgreementSelected != null){
 			String query = "SELECT * FROM sp_paymentagreement_lower_percentege( "+this.paymentAgreementSelected.getId()+") ";
@@ -123,6 +135,9 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 			List<BondAuxDTO> list = NativeQueryResultsMapper.map(q.getResultList(), BondAuxDTO.class);
 			this.auxList = new ArrayList<MunicipalbondAux>(); 
 			MunicipalBond bond = null;
+			
+			//cambiar el tipo 
+			
 			for (BondAuxDTO bondAuxDTO : list) {
 				
 				MunicipalbondAux mba = new MunicipalbondAux();
@@ -152,9 +167,23 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 	//@Transactional
 	public void saveBondsAux(){
 		
-		 
-		//actualizar valores existentes en la bd
 		joinTransaction();
+		if(this.paymentAgreementSelected != null){
+			if(this.changeType) {
+				this.paymentAgreementSelected.setAgreementType(AgreementType.COERCIVEJUDGEMENT);
+				getEntityManager().merge(this.paymentAgreementSelected);
+				getEntityManager().flush();
+			}
+			
+			if(this.changeLowerPercentage) {
+				this.paymentAgreementSelected.setLowerPercentage(Boolean.TRUE);
+				getEntityManager().merge(this.paymentAgreementSelected);
+				getEntityManager().flush();
+			}
+		}
+		
+		//actualizar valores existentes en la bd
+
 		for (MunicipalbondAux municipalbondAux : this.bdList) {
 			System.out.println(municipalbondAux.getId()+" | "+municipalbondAux.getBalance()+" | "+
 								municipalbondAux.getCoveritem()+" | "+
@@ -178,6 +207,8 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 	 
 		}
 		
+
+		//clearSearchPanel();
 	}
 	
 	@SuppressWarnings("unused")
@@ -298,6 +329,22 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 
 	public void setBdList(List<MunicipalbondAux> bdList) {
 		this.bdList = bdList;
+	}
+
+	public Boolean getChangeType() {
+		return changeType;
+	}
+
+	public void setChangeType(Boolean changeType) {
+		this.changeType = changeType;
+	}
+
+	public Boolean getChangeLowerPercentage() {
+		return changeLowerPercentage;
+	}
+
+	public void setChangeLowerPercentage(Boolean changeLowerPercentage) {
+		this.changeLowerPercentage = changeLowerPercentage;
 	}
 	
 	

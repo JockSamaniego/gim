@@ -1386,8 +1386,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable{
 					//@author macartuche
 					//@date 2016-06-20T17:00:00
 					//@tag recaudacionCoactivas
-//					BigDecimal discount = municipalBond.getDiscount();
-//					deposit.setDiscount(discount);
+					//BigDecimal discount = municipalBond.getDiscount();
+					//deposit.setDiscount(discount);
 					if(deposit.getInterest().compareTo(interestToPay)<0){
 						deposit.setCapital(BigDecimal.ZERO);
 						remaining = BigDecimal.ZERO;
