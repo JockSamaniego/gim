@@ -22,6 +22,7 @@ import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.view.MunicipalBondItem;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
+import org.gob.loja.gim.ws.dto.BondSummary;
 import org.gob.loja.gim.ws.dto.FutureBond;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -79,6 +80,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private List<MunicipalBond> pendingBonds;
 	
 	private List<FutureBond> futureBonds;
+	private List<BondSummary> bondDownSumary;
 	private BigDecimal totalFutereBond;
 
 
@@ -633,6 +635,29 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 
 	public void setTotalFutereBond(BigDecimal totalFutereBond) {
 		this.totalFutereBond = totalFutereBond;
+	}
+	
+	
+	public List<BondSummary> getBondDownSumary() {
+		return bondDownSumary;
+	}
+
+	public void setBondDownSumary(List<BondSummary> bondDownSumary) {
+		this.bondDownSumary = bondDownSumary;
+	}
+
+	/**
+	 * rfam 2018-08-31 ML-JC-2048-267 visualizar bajas
+	 * @param residentId
+	 */
+	public void findBondsDown() {
+		try {
+			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+			this.bondDownSumary = incomeService.findBondsDownStatus(resident.getId());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
