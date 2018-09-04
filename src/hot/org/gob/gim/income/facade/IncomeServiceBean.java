@@ -33,6 +33,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.Gim;
 import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.CreditNoteValueNotValidException;
@@ -44,6 +45,8 @@ import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.loja.gim.ws.dto.FutureBond;
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.In;
 
 import com.google.common.base.Joiner;
 
@@ -574,6 +577,8 @@ public class IncomeServiceBean implements IncomeService {
 		return mapBranch;
 	}
 
+	@In(scope=ScopeType.APPLICATION)
+	Gim gim;
 	public DataWS authorizedElectronicReceipt(Receipt receipt) throws Exception {
 		String sriEnvironment = systemParameterService.findParameter(ELECTRONIC_INVOICE_ENVIRONMENT);
 		JAXBContext jaxbContext = JAXBContext.newInstance(Factura.class);
@@ -609,10 +614,13 @@ public class IncomeServiceBean implements IncomeService {
 			document = FileUtilities.convertir_file_to_ByteArray(output);
 			String checksum = FileUtilities.checkSumApacheCommons(xmlFileName);
 			dataWS.setXmlFile(document);
-			dataWS.setRucCompany(receipt.getMunicipalBond().getInstitution()
-					.getNumber());
+//			dataWS.setRucCompany(receipt.getMunicipalBond().getInstitution()
+//					.getNumber());
+			dataWS.setRucCompany(gim.getInstitution().getNumber());
 			//System.out.println("cliente checksum ");
 			dataWS.setCheksum(checksum);
+//			dataWS.setCorrespondingTo(correspondingTo);
+//			dataWS.setpa
 			dataWS = sendToService(dataWS);
 			new File(xmlFileName).delete();
 		} catch (IOException ex) {

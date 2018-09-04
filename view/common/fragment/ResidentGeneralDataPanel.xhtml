@@ -89,6 +89,11 @@
 			<ui:define name="label">#{messages['resident.enabledIndividualPayment']}</ui:define>
 			<h:selectBooleanCheckbox id="enabledIndividualPayment" value="#{residentHome.instance.enabledIndividualPayment}" disabled="#{!residentHome.hasRole('ROLE_NAME_ENABLED_INDIVIDUAL_PAYMENT')}" /> 
 		</s:decorate>
+		
+		<s:decorate id="uniqueAccounttField" template="../../layout/edit.xhtml" >
+			<ui:define name="label">#{messages['resident.uniqueAccountt']}</ui:define>
+			<h:selectBooleanCheckbox id="uniqueAccountt" value="#{residentHome.instance.generateUniqueAccountt}" /> 
+		</s:decorate>
 
 		<div style="clear: both"><span class="required">*</span>
 		#{messages['common.requiredFields']}</div>
