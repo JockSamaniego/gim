@@ -11,6 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -21,6 +23,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.cadaster.model.Street;
+import ec.gob.gim.cadaster.model.TerritorialDivision;
 
 /**
  * @author gerson
@@ -72,6 +75,13 @@ public class Route implements Serializable{
 	@OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<RoutePeriod> routePeriods;
+	
+	/**
+	 * parroquia a la que pertenece
+	 */
+	@ManyToOne
+	@JoinColumn(name = "parish_id")
+	private TerritorialDivision parish;
 
 	public Route() {
 		routePeriods = new ArrayList<RoutePeriod>();
