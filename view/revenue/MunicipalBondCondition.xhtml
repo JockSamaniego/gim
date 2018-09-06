@@ -111,7 +111,7 @@
 							<a:commandButton id="viewerNotification" ajaxSingle="true"
 								action="#{municipalBondCondition.findBondsDown()}"
 								eventsQueue="gimEventsQueue"
-								reRender="_infractionNotificationViewer"
+								reRender="bondsDownStatusPanel, downBondsTable"
 								oncomplete="Richfaces.showModalPanel('bondsDownStatusPanel',{width:700, height:450})"
 								value="Bajas">
 							</a:commandButton>
