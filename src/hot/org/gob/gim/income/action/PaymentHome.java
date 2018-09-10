@@ -2098,27 +2098,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			deposit.setInterest(value); // fijar el interes depositado
 			deposit.setHasConflict(hasConflict);
 
-			// recargos
-			value = BigDecimal.ZERO;
-			if (!hasConflict) {
-				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "S",
-						PaymentMethod.SUBSCRIPTION.name());
-				if (ratesList.isEmpty()) { // si no hay elementos no se ha pagado o no se termina de pagar
-					value = BigDecimal.ZERO;
-					plainResult = calculateRate2(incomeService, municipalBond, "S", municipalBond.getSurcharge(),
-							remaining, deposit, PaymentMethod.SUBSCRIPTION.name());
-					remaining = (BigDecimal) plainResult.get("remaining");
-					value = (BigDecimal) plainResult.get("value");
-					hasSurcharge = true;
-					hasConflict = (Boolean) plainResult.get("hasConflict");
-					deltaUp = (BigDecimal) plainResult.get("deltaUp");
-					deltaDown = (BigDecimal) plainResult.get("deltaDown");
-				}
-				deposit.setHasConflict(hasConflict);
-			}
-			deposit.setSurcharge(value); // fijar los impuestos depositados
-
-			// impuestos
+			//impuestos
 			value = BigDecimal.ZERO;
 			if (!hasConflict) {
 				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "T",
@@ -2138,6 +2118,28 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			}
 			deposit.setPaidTaxes(value); // fijar los impuestos depositados
 
+			// recargos
+			value = BigDecimal.ZERO;
+			if (!hasConflict) {
+				ratesList = incomeService.getBondsAuxByIdAndStatus(municipalBond.getId(), true, "VALID", "S",
+						PaymentMethod.SUBSCRIPTION.name());
+				if (ratesList.isEmpty()) { // si no hay elementos no se ha pagado o no se termina de pagar
+					value = BigDecimal.ZERO;
+					plainResult = calculateRate2(incomeService, municipalBond, "S", municipalBond.getSurcharge(),
+							remaining, deposit, PaymentMethod.SUBSCRIPTION.name());
+					remaining = (BigDecimal) plainResult.get("remaining");
+					value = (BigDecimal) plainResult.get("value");
+					hasSurcharge = true;
+					hasConflict = (Boolean) plainResult.get("hasConflict");
+					deltaUp = (BigDecimal) plainResult.get("deltaUp");
+					deltaDown = (BigDecimal) plainResult.get("deltaDown");
+				}
+				deposit.setHasConflict(hasConflict);
+			}
+			deposit.setSurcharge(value); // fijar los impuestos depositados
+			
+			
+			
 			// capital
 			value = BigDecimal.ZERO;
 			if (!hasConflict) {
@@ -2154,7 +2156,6 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 					deltaDown = (BigDecimal) plainResult.get("deltaDown");
 				}
 				deposit.setHasConflict(hasConflict);
-
 			}
 
 			// validar si se pone o no el descuento
@@ -2169,10 +2170,19 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				deposit.setDiscount(BigDecimal.ZERO);
 				deposit.setCapital(value);
 			}
-
+			
 			// calcular el balance del municipalBond
 			BigDecimal balance = municipalBond.getBalance().subtract(deposit.getCapital());
 
+			
+			/*
+			if(municipalBond.getSurcharge().compareTo(BigDecimal.ZERO)==1) {
+				BigDecimal sumSurcharge = incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID","S", PaymentMethod.SUBSCRIPTION.name());
+				sumSurcharge =  (sumSurcharge==null)? BigDecimal.ZERO : sumSurcharge; 
+				sumSurcharge = sumSurcharge.add(deposit.getSurcharge());				
+				balance = municipalBond.getSurcharge().subtract(sumSurcharge);
+			}
+			*/
 			/*
 			 * if(hasSurcharge || hasTaxes){ BigDecimal sumTaxes =
 			 * incomeService.sumAccumulatedInterest(municipalBond.getId(), false, "VALID",

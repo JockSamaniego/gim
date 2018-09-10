@@ -471,7 +471,7 @@ public class IncomeServiceBean implements IncomeService {
 		sum = BigDecimal.ZERO;
 		itemValue = BigDecimal.ZERO;
 		depositValue = BigDecimal.ZERO;
-		itemIsPayed = false;
+		itemIsPayed = false; ////////////////////////////////////////////////////////////////////
 
 		if (dep.getPaidTaxes().compareTo(BigDecimal.ZERO) > 0) {
 			sum = sumAccumulatedInterest(mb.getId(), false, "VALID", "T", paymentMethod);
@@ -515,6 +515,9 @@ public class IncomeServiceBean implements IncomeService {
 			}
 
 			if (mb.getPaymentAgreement() != null || paymentMethod.equals(PaymentMethod.SUBSCRIPTION.name())) {
+				if(itemIsPayed)
+					updateMunicipalbondAux(mb, "S");
+				
 				MunicipalbondAux munAux = createBondAux(dep, mb, itemIsPayed, "S", paymentMethod);
 				entityManager.persist(munAux);
 			}
@@ -1857,7 +1860,7 @@ public class IncomeServiceBean implements IncomeService {
 				+ " where mba.municipalbond.id=:munid and " + " mba.coveritem=:cover and " + " mba.status=:status and"
 				+ " mba.type=:type ";
 		
-		if( type == "I" || type == "T" ){
+		if( type == "I" || type == "S" ){
 			query += "and mba.anotherItem is null ";
 		}
 		
@@ -1966,5 +1969,16 @@ public class IncomeServiceBean implements IncomeService {
 	// Jock Samaniego.. 21/09/2016
 	public void updatePaymentAgreement(PaymentAgreement paymentAgreement) {
 		entityManager.merge(paymentAgreement);
+	}
+	
+	
+	public boolean checkIsPayed(Long municipalbondid, String type) {
+		Query q = entityManager.createQuery("Select mba from MunicipalbondAux mba "
+				+ "WHERE mba.type=:type and mba.status='VALID' and mba.coveritem=:cover and "
+				+ "mba.anotherItem=:cover and mba.municipalbond.id=:id");	 
+		q.setParameter("type", type);
+		q.setParameter("cover", true);
+		q.setParameter("id", municipalbondid);
+		return !q.getResultList().isEmpty();
 	}
 }
