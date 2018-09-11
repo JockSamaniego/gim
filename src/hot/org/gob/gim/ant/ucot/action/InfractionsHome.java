@@ -3,6 +3,7 @@ package org.gob.gim.ant.ucot.action;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -11,6 +12,8 @@ import ec.gob.gim.ant.ucot.model.*;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 
+import org.gob.gim.common.action.UserSession;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
@@ -78,7 +81,8 @@ public class InfractionsHome extends EntityHome<Infractions> {
 		this.message = message;
 	}
 	
-	
+	@In(scope = ScopeType.SESSION, value = "userSession")
+	UserSession userSession;
 
 	public String saveInfraction(Bulletin bulletin){
 		getInstance().setBulletin(bulletin);
@@ -99,7 +103,10 @@ public class InfractionsHome extends EntityHome<Infractions> {
 				}
 
 				//guardado en BD
-		
+				this.getInstance().setCreationDate(new Date());
+				this.getInstance().setResponsible_user(userSession.getUser().getResident().getName());
+				this.getInstance().setResponsible(userSession.getPerson());
+				
 		persist();
 		return "/ant/ucot/InfractionsList.xhtml";
 	}

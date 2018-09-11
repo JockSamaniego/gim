@@ -25,6 +25,7 @@ import org.hibernate.envers.Audited;
 
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.ItemCatalog;
+import ec.gob.gim.common.model.Person;
  
 
 /**
@@ -69,6 +70,9 @@ public class Infractions {
 	@Temporal(TemporalType.DATE)
 	private Date citationDate;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date creationDate;
+	
 	@Temporal(TemporalType.TIME)
 	private Date citationTime;
 	
@@ -91,6 +95,14 @@ public class Infractions {
 	private BigDecimal points;
 	
 	private BigDecimal value;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "responsible_id")
+	private Person responsible;
+	
+	@JoinColumn(name = "responsible_user")
+	@Column(length = 40)
+	private String responsible_user;
 	
 	@Temporal(TemporalType.DATE)
 	private Date nullifiedDate;
@@ -137,6 +149,14 @@ public class Infractions {
 
 	public void setCitationDate(Date citationDate) {
 		this.citationDate = citationDate;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	public Boolean getInPhysic() {
@@ -251,5 +271,20 @@ public class Infractions {
 		this.yellow = yellow;
 	}
 	
+	public Person getResponsible() {
+		return responsible;
+	}
+
+	public void setResponsible(Person responsible) {
+		this.responsible = responsible;
+	}
+
+	public String getResponsible_user() {
+		return responsible_user;
+	}
+
+	public void setResponsible_user(String responsible_user) {
+		this.responsible_user = responsible_user;
+	}
 	
 }
