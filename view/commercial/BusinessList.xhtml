@@ -4,6 +4,7 @@
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	template="../layout/template.xhtml">
@@ -42,9 +43,9 @@
 					includePageParams="false" />
 			</div>
 
-		</h:form>
+		
 
-		<rich:panel>
+		<rich:panel id = "businessPanel">
 			<f:facet name="header">
 				<h:panelGrid columns="3" columnClasses="headerTitle,">
 					<h:outputText
@@ -89,8 +90,7 @@
 						</f:facet>
 						<h:outputText value="#{_business.id}" />
 					</h:column>
-					
-					
+										
 					<h:column>
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">
@@ -149,11 +149,19 @@
 							<f:param name="businessId" value="#{_business.id}" />
 						</s:link>
             #{' '}
+            	<a:commandButton id="CadasterViewButton"
+					value="#{messages['common.view']}"
+					action="#{businessHome.chargeLocalBusiness(_business)}"
+					oncomplete="#{rich:component('ViewCadasterDates')}.show();"
+					propagation="join"
+					reRender="ViewCadasterDates, businessPanel">
+				</a:commandButton>
+           
             <s:button view="/commercial/BusinessEdit.xhtml"
 							value="#{messages['common.edit']}" propagation="none"
 							id="businessEdit" rendered="#{empty from}">
 							<f:param name="businessId" value="#{_business.id}" />
-						</s:button>
+						</s:button>						
 					</rich:column>
 				</rich:dataTable>
 
@@ -188,6 +196,162 @@
 			</s:link>
 
 		</div>
+	
+
+
+	<rich:modalPanel id="ViewCadasterDates" width="880" height="600"
+		style="overflow:scroll">
+
+		<f:facet name="header">Información del Local Comercial</f:facet>
+
+		<f:facet name="controls">
+
+			<h:panelGroup>
+
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink2" />
+
+				<rich:componentControl for="ViewCadasterDates" attachTo="hidelink2"
+					operation="hide" event="onclick" />
+
+			</h:panelGroup>
+
+		</f:facet>
+
+		<h:form id="cadasterFormView">
+
+			<h:panelGrid>
+
+				<rich:panel>
+
+					<h:panelGrid columns="2">
+
+						<h:graphicImage value="/img/msginfo.png" style="margin-left: 4em" />
+
+						<h:outputText
+							value="#{businessHome.local.name}"
+							style="font-size:large; color: black;margin-left: 2em" />
+
+					</h:panelGrid>
+
+				</rich:panel>
+
+				<br />
+
+				<rich:panel>
+
+					<h:panelGrid columns="2" width="800">
+
+						<h:outputText
+							value="Nombre del propietario o representante legal:"
+							style="margin-left: 1em;font-size:large"></h:outputText>
+
+						<h:outputText value="#{businessHome.instance.owner.name}"
+							style="margin-left: 1em;font-size:large;color:black"></h:outputText>
+
+						<h:outputText value="Número de RUC del establecimiento:"
+							style="margin-left: 1em;font-size:large"></h:outputText>
+
+						<h:outputText value="#{businessHome.local.business.cedruc}"
+							style="margin-left: 1em;font-size:large;color:black"></h:outputText>
+
+						<h:outputText value="Provincia:"
+							style="margin-left: 1em;font-size:large"></h:outputText>
+
+						<h:outputText value="LOJA"
+							style="margin-left: 1em;font-size:large;color:black"></h:outputText>
+
+						<h:outputText value="Cantón:"
+							style="margin-left: 1em;font-size:large"></h:outputText>
+
+						<h:outputText value="#{businessHome.local.address.city}"
+							style="margin-left: 1em;font-size:large;color:black"></h:outputText>
+
+						<h:outputText value="Parroquia:"
+							style="margin-left: 1em;font-size:large"></h:outputText>
+
+						<h:outputText value="#{businessHome.local.address.parish}"
+							style="margin-left: 1em;font-size:large;color:black"></h:outputText>
+
+						<h:outputText value="Barrio:"
+							style="margin-left: 1em;font-size:large"></h:outputText>
+
+						<h:outputText value="#{businessHome.local.address.neighborhood}"
+							style="margin-left: 1em;font-size:large;color:black"></h:outputText>
+
+						<h:outputText value="Dirección:"
+							style="margin-left: 1em;font-size:large"></h:outputText>
+
+						<h:outputText value="#{businessHome.local.address.street}"
+							style="margin-left: 1em;font-size:large;color:black"></h:outputText>
+
+						<h:outputText value="Código del establecimiento:"
+							style="margin-left: 1em;font-size:large"></h:outputText>
+
+						<h:outputText value="#{businessHome.local.code}"
+							style="margin-left: 1em;font-size:large;color:black"></h:outputText>
+
+						<h:outputText value="Actividad(es)/tipo(s) de establecimiento(s):"
+							style="margin-left: 1em;font-size:large"></h:outputText>
+
+						<h:outputText value="#{businessHome.economic_Activity}"
+							style="margin-left: 1em;font-size:large;color:black"></h:outputText>
+					</h:panelGrid>
+
+					<h:panelGrid style="text-align: center" width="800">
+						<h:outputText value=""
+							style="margin-left: 1em;font-size:large"></h:outputText>
+						<h:outputText value="Permisos de Funcionamiento:"
+							style="margin-left: 1em;font-size:large; color: red; align:center"></h:outputText>
+						<h:outputText value="No existen registros de permisos de funcionamiento"
+							style="margin-left: 1em;font-size:large; color: black"
+							rendered="#{empty businessHome.licenseList}"></h:outputText>
+
+							<rich:dataTable id="LicenseList" var="_license"
+											value="#{businessHome.licenseList}"
+											rendered="#{not empty businessHome.licenseList}">
+
+									<rich:column styleClass="action" style="align:center;">
+										<f:facet name="header">Año:</f:facet>
+										<h:outputText value="#{_license.date_emission}" >
+											<f:convertDateTime type="date" pattern="yyyy"/>
+										</h:outputText>
+									</rich:column>
+
+									<rich:column styleClass="action" style="align:center;">
+										<f:facet name="header">Fecha de Emisión:</f:facet>
+										<h:outputText value="#{_license.date_emission}" />
+									</rich:column>
+
+									<rich:column styleClass="action" style="align:center;">
+										<f:facet name="header">Emitido por:</f:facet>
+										<h:outputText value="#{_license.responsible_user}" />
+									</rich:column>
+									
+							</rich:dataTable>
+
+					</h:panelGrid>
+
+				</rich:panel>
+
+				<br />
+	
+						<div class="actionButtons">
+
+							<a:commandButton ajaxSingle="true"
+								value="#{messages['common.back']}"
+								oncomplete="Richfaces.hideModalPanel('ViewCadasterDates');"
+								bypassUpdates="true" />
+
+						</div>
+				
+
+			</h:panelGrid>
+
+		</h:form>
+
+	</rich:modalPanel>
+	</h:form>
 	</ui:define>
 
 </ui:composition>
