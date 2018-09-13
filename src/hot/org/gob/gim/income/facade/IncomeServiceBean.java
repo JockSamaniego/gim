@@ -2016,7 +2016,7 @@ public class IncomeServiceBean implements IncomeService {
 				+ "from MunicipalBond mb " 
 				+ "JOIN mb.entry entry "
 				+ "where mb.municipalBondStatus.id = :statusId and mb.resident.id = :residentId "
-				+ "ORDER BY mb.number, mb.emisionDate";
+				+ "ORDER BY mb.reversedResolution, mb.number, mb.emisionDate";
 		Query q= entityManager.createQuery(sql);
 		q.setParameter("statusId", reversedStatusId);
 		q.setParameter("residentId", residentId);
