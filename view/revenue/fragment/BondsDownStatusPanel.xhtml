@@ -13,7 +13,7 @@
 		style="overflow:auto">
 		<f:facet name="header">
 			<h:panelGroup>
-				<h:outputText value="#{messages['entryDefinition']}"></h:outputText>
+				<h:outputText value="Detalle de Bajas"></h:outputText>
 			</h:panelGroup>
 		</f:facet>
 		<f:facet name="controls">
@@ -27,44 +27,52 @@
 
 		<h:form id="definition" styleClass="edit">
 
+			<rich:datascroller id="sc2" for="downBondsTable" maxPages="7"  />
+			
 			<rich:dataTable id="downBondsTable"
 				value="#{municipalBondCondition.bondDownSumary}" var="_mb"
 				rowClasses="rvgRowOne,rvgRowTwo" columnClasses="tableCellFont"
-				style="margin-top:5px;">
+				style="margin-top:5px;"  rows="10">
+				
+				<rich:column>
+					<f:facet name="header">#{messages['municipalBond.reversedResolution']}</f:facet>
+					<h:outputText value="#{_mb.reversedResolution}" style="font-size: 10px"/>
+				</rich:column>
 
 				<rich:column>
 					<f:facet name="header">#{messages['municipalBond.number']}</f:facet>
-					<h:outputText value="#{_mb.number}" />
+					<h:outputText value="#{_mb.number}" style="font-size: 10px"/>
 				</rich:column>
 
 				<rich:column>
 					<f:facet name="header">#{messages['municipalBond.entry']}</f:facet>
-					<h:outputText value="#{_mb.account}" />
+					<h:outputText value="#{_mb.account}" style="font-size: 10px"/>
 				</rich:column>
 				
 				<rich:column>
 					<f:facet name="header">#{messages['municipalBond.base']}</f:facet>
-					<h:outputText value="#{_mb.value}" />
+					<h:outputText value="#{_mb.value}" style="font-size: 10px">
+						<f:convertNumber pattern="$####.00" />
+					</h:outputText>
 				</rich:column>
 
 				<rich:column>
 					<f:facet name="header">#{messages['municipalBond.emisionDate']}</f:facet>
-					<h:outputText value="#{_mb.emisionDate}" />
+					<h:outputText value="#{_mb.emisionDate}" style="font-size: 10px">
+						<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+					</h:outputText>
 				</rich:column>
 
 				<rich:column>
-					<f:facet name="header">#{messages['municipalBond.reversedDate]}</f:facet>
-					<h:outputText value="#{_mb.reversedDate}" />
-				</rich:column>
-
-				<rich:column>
-					<f:facet name="header">#{messages['municipalBond.reversedResolution']}</f:facet>
-					<h:outputText value="#{_mb.reversedResolution}" />
+					<f:facet name="header">#{messages['municipalBond.reversedDate']}</f:facet>
+					<h:outputText value="#{_mb.reversedDate}" style="font-size: 10px">
+						<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+					</h:outputText>
 				</rich:column>
 
 			</rich:dataTable>
-
-
 
 		</h:form>
 
