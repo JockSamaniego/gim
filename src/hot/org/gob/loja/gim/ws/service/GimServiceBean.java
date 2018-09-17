@@ -528,6 +528,8 @@ public class GimServiceBean implements GimService{
 			EmisionDetail emisionDetail) {
 		// TODO Auto-generated method stub
 		
+		MunicipalBondStatus mbs = systemParameterService.materialize(MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING");
+		
 		//List<ANTReference> AntRef = new ArrayList<ANTReference>();
 		Query query = em.createNamedQuery("ANTReference.findFoto-Multa");	
 		query.setParameter("contraventionNumber", emisionDetail.getContraventionNumber());
@@ -584,8 +586,8 @@ public class GimServiceBean implements GimService{
 					pf.setSupportDocumentURL(emisionDetail.getSupportDocumentURL());
 					pf.setTotal(emisionDetail.getTotal());
 					pf.setVehicleType(emisionDetail.getVehicleType());
-					
-					
+					pf.setStatus(mbs);
+										
 					em.persist(pf);
 					
 					if (fiscalPeriodCurrent == null){
