@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,9 +25,14 @@ import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 
+
 @Audited
 @Entity
 @TableGenerator(name = "PhotoFineGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "PhotoFine", initialValue = 1, allocationSize = 1)
+@NamedQueries(value = {
+		@NamedQuery(name = "PhotoFine.findByContraventionNumber", query = "select pf.contraventionNumber from PhotoFine pf "				
+				+ "where lower(pf.contraventionNumber) = lower(:contraventionNumber)")
+})
 public class PhotoFine implements Serializable {
 
 	/**
@@ -51,7 +58,7 @@ public class PhotoFine implements Serializable {
 	private String description;
 
 	private String address;
-	
+
 	private Boolean isEmitted;
 
 	/**
@@ -116,10 +123,12 @@ public class PhotoFine implements Serializable {
 	@JoinColumn(name = "municipalbond_id")
 	private MunicipalBond municipalBond;
 
-	18
-	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "municipalBondStatus_id")
+	private MunicipalBondStatus status;
+
 	public PhotoFine() {
-		reversedDate = new Date();
+		creationDate = new Date();
 		isEmitted = Boolean.FALSE;
 	}
 
@@ -310,7 +319,13 @@ public class PhotoFine implements Serializable {
 	public void setIsEmitted(Boolean isEmitted) {
 		this.isEmitted = isEmitted;
 	}
-	
-	
+
+	public MunicipalBondStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(MunicipalBondStatus status) {
+		this.status = status;
+	}
 
 }
