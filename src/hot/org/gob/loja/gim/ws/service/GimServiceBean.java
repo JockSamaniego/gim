@@ -63,6 +63,7 @@ import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
+import ec.gob.gim.revenue.model.PhotoFine;
 import ec.gob.gim.revenue.model.adjunct.ANTReference;
 import ec.gob.gim.security.model.User;
 
@@ -532,8 +533,72 @@ public class GimServiceBean implements GimService{
 		query.setParameter("contraventionNumber", emisionDetail.getContraventionNumber());
 		//AntRef = query.getResultList();
 		if(query.getResultList().size()<=0){
+			
+			Resident resident;
+			try {
+				
+				User user = findUser(name, password);
+				if (user == null){
+					//throw new InvalidUser();
+					return "Emisión fallida. Usuario Inválido";
+				}
+				Person emitter = findPersonFromUser(user.getId());
+				
+				resident = residentService.find(identificationNumber);
+			
+				if (resident == null){
+					//throw new TaxpayerNotFound();
+					return "Emisión fallida. Contribuyente No Encontrado";
+				}
+				//Entry entry = revenueService.findByAccountCode(accountCode);
+				Entry entry = revenueService.findEntryByCode(accountCode);
+				if (entry == null){
+					//throw new EntryNotFound();
+					return "Emisión fallida. Rubro No Encontrado";
+				}
+				
+				Date currentDate = java.util.Calendar.getInstance().getTime();
+				List<FiscalPeriod> fiscalPeriods = revenueService.findFiscalPeriodCurrent(currentDate);
+				
+				FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null && !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
+				
+				PhotoFine pf = new PhotoFine();
+				pf.setAddress(emisionDetail.getAddress());
+				pf.setAmount(BigDecimal.ONE);
+				pf.setCitationDate(emisionDetail.getCitationDate());
+				pf.setContraventionNumber(emisionDetail.getContraventionNumber());
+				pf.setDescription(emisionDetail.getDescription());
+				pf.setEntry(entry);
+				pf.setFiscalPeriod(fiscalPeriodCurrent);
+				pf.setNumberPlate(emisionDetail.getNumberPlate());
+				pf.setOriginator(emitter);
+				pf.setReference(emisionDetail.getReference());
+				pf.setResident(resident);
+				pf.setServiceType(emisionDetail.getServiceType());
+				pf.setSpeeding(emisionDetail.getSpeeding());
+				pf.setSupportDocumentURL(emisionDetail.getSupportDocumentURL());
+				pf.setTotal(emisionDetail.getTotal());
+				pf.setVehicleType(emisionDetail.getVehicleType());
+				
+				
+				em.persist(pf);
+				
+				if (fiscalPeriodCurrent == null){
+					//throw new FiscalPeriodNotFound();
+					return "Emisión fallida. Periódo Fiscal No Encontrado";
+				}
+			
+				return "Foto-multa emitida con éxito";			
+			}catch(NonUniqueIdentificationNumberException e){
+				//throw new TaxpayerNonUnique();
+				return "Emisión fallida. Número de identificación No Único";
+			} catch (Exception e) {
+				//throw new EmissionOrderNotSave();
+				return "Emisión fallida. Orden de emisión No Guardada";
+			}
+			
 		
-			try{
+			/*try{
 				Resident resident = residentService.find(identificationNumber);
 				if (resident == null){
 					//throw new TaxpayerNotFound();
@@ -651,7 +716,7 @@ public class GimServiceBean implements GimService{
 			} catch (Exception e) {
 				//throw new EmissionOrderNotSave();
 				return "Emisión fallida. Orden de emisión No Guardada";
-			}		
+			}*/		
 		}else{
 			return "Emisión fallida. La Foto-multa ya ha sido emitida";
 		}
