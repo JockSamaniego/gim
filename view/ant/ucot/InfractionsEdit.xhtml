@@ -70,7 +70,10 @@
             <s:decorate id="citationDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.citationdate']}</ui:define>
                 <rich:calendar id="citationDate" required="true"
-                          value="#{infractionsHome.instance.citationDate}" datePattern="dd/MM/yyyy" />
+                          value="#{infractionsHome.instance.citationDate}" datePattern="dd/MM/yyyy" >
+                          <f:validator validatorId="currentDateValidator" />
+                          <a:support event="onchanged" reRender="citationDateField" bypassUpdates="true" ajaxSingle="true" />
+                </rich:calendar>
             </s:decorate>
 
             <s:decorate id="citationTimeField" template="../../layout/edit.xhtml">
@@ -150,21 +153,24 @@
                 </h:panelGrid>      
             </f:facet>
             
+            <s:decorate id="identificationField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.identification']}</ui:define>
+                <h:inputText id="identification"
+                              size="15"
+                              maxlength="10"
+                              value="#{infractionsHome.instance.identification}">
+                              <f:validator validatorId="identificationNumberValidator"/>
+                              <a:support event="onblur" ajaxSingle="true" action="#{infractionsHome.findResidentName()}" reRender="nameField, identificationField" />
+                </h:inputText>              
+            </s:decorate>
+            
             <s:decorate id="nameField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.name']}</ui:define>
                 <h:inputText id="name"
                               size="50"
                               maxlength="50"
                               value="#{infractionsHome.instance.name}"/>
-            </s:decorate>
-
-            <s:decorate id="identificationField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['infraction.identification']}</ui:define>
-                <h:inputText id="identification"
-                              size="15"
-                              maxlength="10"
-                              value="#{infractionsHome.instance.identification}"/>
-            </s:decorate>
+            </s:decorate>      
 
             <s:decorate id="licensePlateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.plate']}</ui:define>
@@ -174,22 +180,33 @@
                               value="#{infractionsHome.instance.licensePlate}"/>
             </s:decorate>
 
-            <s:decorate id="articleField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['infraction.article']}</ui:define>
-                <h:inputText id="article"
-                           size="15"
-                      maxlength="10"
-                          value="#{infractionsHome.instance.article}">
+            <s:decorate id="basicSalaryField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Salario Básico</ui:define>
+                <h:inputText id="identification"
+                              size="15"
+                              maxlength="10"
+                              value="#{infractionsHome.salary}">
+                              <a:support event="onblur" ajaxSingle="true" action="#{infractionsHome.calculateValue()}" reRender="valueField" />
                 </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="articleField"
+                template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.article']}</ui:define>
+                <h:selectOneMenu id="articleNumber" value="#{infractionsHome.instance.article}" >
+                  <s:selectItems value="#{infractionsHome.chargeArticles()}" var="article" 
+                  label="#{article}" itemValue="#{article}" noSelectionLabel="Seleccione uno" />
+                  <a:support event="onchange" ajaxSingle="true" reRender="numeralField,infractionPointField,porcentageField,valueField" action="#{infractionsHome.resetValues()}" />
+                </h:selectOneMenu>
             </s:decorate>
 
             <s:decorate id="numeralField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.numeral']}</ui:define>
-                <h:inputText id="numeral"
-                           size="15"
-                      maxlength="10"
-                          value="#{infractionsHome.instance.numeral}">
-                </h:inputText>
+                <h:selectOneMenu id="numeral" value="#{infractionsHome.instance.numeral}" >
+                  <s:selectItems value="#{infractionsHome.findNumeralByArticle(infractionsHome.instance.article)}" var="numeral" 
+                  label="#{numeral}" itemValue="#{numeral}" noSelectionLabel="Seleccione uno" />
+                  <a:support event="onchange" ajaxSingle="true" action="#{infractionsHome.chargeValues()}" reRender="infractionPointField,porcentageField,valueField" />
+                </h:selectOneMenu>
             </s:decorate>
             
             <s:decorate id="numberPartField" template="../../layout/edit.xhtml">
@@ -222,18 +239,8 @@
                               value="#{infractionsHome.instance.points}" />
             </s:decorate>
 
-            <s:decorate id="basicSalaryField" template="../../layout/edit.xhtml">
-                <ui:define name="label">Salario Básico</ui:define>
-                <h:inputText id="identification"
-                              size="15"
-                              maxlength="10"
-                              value="#{infractionsHome.salary}">
-                              <a:support event="onblur" ajaxSingle="true" action="#{infractionsHome.calculateValue()}" reRender="valueField" />
-                </h:inputText>
-            </s:decorate>
-
             <s:decorate id="porcentageField" template="../../layout/edit.xhtml">
-                <ui:define name="label">Porcentaje</ui:define>
+                <ui:define name="label">Porcentaje (%)</ui:define>
                 <h:inputText id="article"
                            size="15"
                       maxlength="10"
@@ -243,7 +250,7 @@
             </s:decorate>
 
             <s:decorate id="valueField" template="../../layout/edit.xhtml">
-                <ui:define name="label">Valor de Multa</ui:define>
+                <ui:define name="label">Valor de Multa ($)</ui:define>
                 <h:inputText id="numeral"
                            size="15"
                       maxlength="10"
