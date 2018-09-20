@@ -1055,7 +1055,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
     private String motivationSolvency;
     private String copiesNumberSolvency;
     private BigDecimal totalSolvency;
-    private Delegate revenueDelegateSolvency;
+    private Resident revenueDelegateSolvency;
     private Charge revenueChargeSolvency;	
     private Delegate incomeDelegateSolvency;
 	private Charge incomeChargeSolvency;
@@ -1113,10 +1113,10 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	public void setTotalSolvency(BigDecimal totalSolvency) {
 		this.totalSolvency = totalSolvency;
 	}
-	public Delegate getRevenueDelegateSolvency() {
+	public Resident getRevenueDelegateSolvency() {
 		return revenueDelegateSolvency;
 	}
-	public void setRevenueDelegateSolvency(Delegate revenueDelegateSolvency) {
+	public void setRevenueDelegateSolvency(Resident revenueDelegateSolvency) {
 		this.revenueDelegateSolvency = revenueDelegateSolvency;
 	}
 	public Charge getRevenueChargeSolvency() {
@@ -1187,7 +1187,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			motivationSolvency = SRHome.getMotivation();
 			copiesNumberSolvency = SRHome.getCopiesNumber();
 			totalSolvency = SRHome.getTotal();
-			revenueDelegateSolvency = SRHome.getRevenueDelegate();
+			revenueDelegateSolvency = SRHome.getResponsableUser();
 			revenueChargeSolvency = SRHome.getRevenueCharge();
 			incomeDelegateSolvency = SRHome.getIncomeDelegate();
 			incomeChargeSolvency = SRHome.getIncomeCharge();

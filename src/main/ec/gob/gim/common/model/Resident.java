@@ -97,7 +97,9 @@ import ec.gob.gim.security.model.User;
 						"NEW org.gob.loja.gim.ws.dto.Taxpayer(" +
 						"p.id, p.identificationNumber, p.firstName, p.lastName, p.email) " +
 					  "FROM Person p " +
-					  "WHERE p.identificationNumber LIKE upper(:identificationNumber)")
+					  "WHERE p.identificationNumber LIKE upper(:identificationNumber)"),
+		@NamedQuery(name = "Resident.findResidentByIds", query = "SELECT "
+				+ "resident FROM Resident resident WHERE resident.id in (:idUsers)")
 			  /*@NamedQuery(name="Taxpayer.findLegalEntityFullByIdentification", 
 						query="SELECT " +
 								"NEW org.gob.loja.gim.ws.dto.Taxpayer(" +
