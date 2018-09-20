@@ -25,7 +25,6 @@ import org.hibernate.envers.Audited;
 
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.ItemCatalog;
-import ec.gob.gim.common.model.Person;
  
 
 /**
@@ -47,7 +46,8 @@ import ec.gob.gim.common.model.Person;
 
 @NamedQueries(value = {
 		@NamedQuery(name = "infractions.findByBulletinId", query = "Select i from Infractions i where i.bulletin.id = :bulletinId"),
-		@NamedQuery(name = "infractions.findBySerial", query = "Select i from Infractions i where i.serial = :serial")})
+		@NamedQuery(name = "infractions.findBySerial", query = "Select i from Infractions i where i.serial = :serial"),
+		@NamedQuery(name = "infractions.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum")})
 
 public class Infractions {
 
@@ -69,9 +69,6 @@ public class Infractions {
 	
 	@Temporal(TemporalType.DATE)
 	private Date citationDate;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date creationDate;
 	
 	@Temporal(TemporalType.TIME)
 	private Date citationTime;
@@ -95,14 +92,6 @@ public class Infractions {
 	private BigDecimal points;
 	
 	private BigDecimal value;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "responsible_id")
-	private Person responsible;
-	
-	@JoinColumn(name = "responsible_user")
-	@Column(length = 40)
-	private String responsible_user;
 	
 	@Temporal(TemporalType.DATE)
 	private Date nullifiedDate;
@@ -149,14 +138,6 @@ public class Infractions {
 
 	public void setCitationDate(Date citationDate) {
 		this.citationDate = citationDate;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
 	}
 
 	public Boolean getInPhysic() {
@@ -271,20 +252,5 @@ public class Infractions {
 		this.yellow = yellow;
 	}
 	
-	public Person getResponsible() {
-		return responsible;
-	}
-
-	public void setResponsible(Person responsible) {
-		this.responsible = responsible;
-	}
-
-	public String getResponsible_user() {
-		return responsible_user;
-	}
-
-	public void setResponsible_user(String responsible_user) {
-		this.responsible_user = responsible_user;
-	}
 	
 }
