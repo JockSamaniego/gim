@@ -3,6 +3,7 @@ package org.gob.gim.validator;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -39,10 +40,10 @@ javax.faces.validator.Validator, Serializable{
 			Object value) throws ValidatorException {
 		if (value != null) {	
 			Date today = new Date();
-			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-			String selectDate = formatter.format(value);
-			String currentDate = formatter.format(today);
-			if (selectDate.compareTo(currentDate) > 0){	
+			SimpleDateFormat formatter  = new SimpleDateFormat("dd/MM/yyyy");
+			Date selectDate = formatter.parse(formatter.format(value),new ParsePosition(0));
+			Date currentDate = formatter.parse(formatter.format(today),new ParsePosition(0));
+			if (selectDate.after(currentDate)){	
 				message = Interpolator.instance().interpolate(
 						"La fecha sobrepasa a la actual",
 						new Object[0]);
