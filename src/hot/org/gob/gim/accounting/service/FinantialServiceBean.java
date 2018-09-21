@@ -876,7 +876,7 @@ public class FinantialServiceBean implements FinantialService{
 			if(criteria.getReportFilter() == ReportFilter.ALL || criteria.getReportFilter() == ReportFilter.PREVIOUS){
 				System.out.println("CALCULANDO AÑOS PREVIOS");
 				if(criteria.getReportType() == ReportType.SUBSCRIPTION){
-					buildReport(criteria, report, ReportType.SUBSCRIPTION, criteria.getStartDate(), criteria.getEndDate(), fiscalPeriod.getStartDate(), fiscalPeriod.getEndDate(), ReportFilter.CURRENT);
+					buildReport(criteria, report, ReportType.SUBSCRIPTION, criteria.getStartDate(), criteria.getEndDate(), minimumBondDate, previousYearsEndDate, ReportFilter.PREVIOUS);
 				}
 				if(criteria.getReportType() == ReportType.REVENUE || criteria.getReportType() == ReportType.COMBINED){
 					buildReport(criteria, report, ReportType.REVENUE, previousYearsStartDate, previousYearsEndDate, null, null, ReportFilter.PREVIOUS);

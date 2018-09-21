@@ -142,12 +142,12 @@
 			widths="3 4 1 1 1">
 			<p:font size="8" style="bold">
 				<p:cell colspan="7">
-					<p:paragraph borderWidth="1" rendered = "#{finantialStatement.criteria.getReportType() != ReportType.SUBSCRIPTION}">
+					<p:paragraph borderWidth="1" rendered = "#{finantialStatement.criteria.getReportType() != 'SUBSCRIPTION'}">
 						<p:font size="10" style="bold">
 							<p:text value="#{messages['income.collectedByAgreement']}:" />
 						</p:font>
 					</p:paragraph>
-					<p:paragraph borderWidth="1" rendered = "#{finantialStatement.criteria.getReportType() == ReportType.SUBSCRIPTION}">
+					<p:paragraph borderWidth="1" rendered = "#{finantialStatement.criteria.getReportType() == 'SUBSCRIPTION'}">
 						<p:font size="10" style="bold">
 							<p:text value="#{messages['income.collectedByQuotas']}:" />
 						</p:font>
