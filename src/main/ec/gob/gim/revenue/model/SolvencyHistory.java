@@ -74,6 +74,10 @@ public class SolvencyHistory {
 	private Resident user;
 	
 	@ManyToOne
+	@JoinColumn(name="responsable_id")
+	private Resident responsable;
+	
+	@ManyToOne
 	@JoinColumn(name="property_id")
 	private Property property;
 	
@@ -85,7 +89,7 @@ public class SolvencyHistory {
 		
 	}
 
-	public SolvencyHistory(Resident resident, String motivation, SolvencyHistoryType solvencyHistoryType, Entry entry, Property property, Resident user, String certificateNumber, String copiesNumber, String applicantIdentificationNumber){
+	public SolvencyHistory(Resident resident, String motivation, SolvencyHistoryType solvencyHistoryType, Entry entry, Property property, Resident user, Resident responsable, String certificateNumber, String copiesNumber, String applicantIdentificationNumber){
 		this.setResident(resident);
 		this.setMotivation(motivation);
 		this.setSolvencyHistoryType(solvencyHistoryType);
@@ -95,6 +99,7 @@ public class SolvencyHistory {
 		this.setCreationDate(calendar.getTime());
 		this.setCreationTime(calendar.getTime());
 		this.setUser(user);
+		this.setResponsable(responsable);
 		this.setCertificateNumber(certificateNumber);
 		this.setCopiesNumber(copiesNumber);
 		this.setApplicantIdentificationNumber(applicantIdentificationNumber);
@@ -154,6 +159,14 @@ public class SolvencyHistory {
 
 	public void setUser(Resident user) {
 		this.user = user;
+	}
+
+	public Resident getResponsable() {
+		return responsable;
+	}
+
+	public void setResponsable(Resident responsable) {
+		this.responsable = responsable;
 	}
 
 	public Property getProperty() {

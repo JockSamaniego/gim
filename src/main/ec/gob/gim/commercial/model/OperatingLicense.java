@@ -1,5 +1,6 @@
 package ec.gob.gim.commercial.model;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -25,7 +26,10 @@ import ec.gob.gim.common.model.Person;
 @TableGenerator(name = "OperatingLicenseGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "OperatingLicense", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
 		@NamedQuery(name = "Local.findByPaperCode", query = "SELECT operatingLicense from OperatingLicense operatingLicense WHERE "
-				+ "operatingLicense.paper_code = :code and operatingLicense.nullified = false "), })
+				+ "operatingLicense.paper_code = :code and operatingLicense.nullified = false "), 
+		@NamedQuery(name = "Local.findByLocalCode", query = "SELECT operatingLicense from OperatingLicense operatingLicense WHERE "
+				+ "operatingLicense.local_code = :localCode and operatingLicense.nullified = false ORDER BY operatingLicense.date_emission DESC")
+})
 public class OperatingLicense {
 
 	@Id
@@ -47,6 +51,10 @@ public class OperatingLicense {
 	@JoinColumn(name = "local_ruc")
 	@Column(length = 20)
 	private String local_ruc;
+	
+	@JoinColumn(name = "local_id")
+	@Column(length = 20)
+	private Long local_id;
 
 	@JoinColumn(name = "responsible_user")
 	@Column(length = 40)
@@ -59,7 +67,7 @@ public class OperatingLicense {
 	@JoinColumn(name = "paper_code")
 	@Column(length = 20)
 	private String paper_code;
-
+	
 	@Column(length = 120)
 	private String economic_activity;
 
@@ -122,6 +130,14 @@ public class OperatingLicense {
 
 	public void setLocal_ruc(String local_ruc) {
 		this.local_ruc = local_ruc;
+	}
+
+	public Long getLocal_id() {
+		return local_id;
+	}
+
+	public void setLocal_id(Long local_id) {
+		this.local_id = local_id;
 	}
 
 	public String getResponsible_user() {

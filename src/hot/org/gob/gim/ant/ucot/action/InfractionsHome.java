@@ -2,9 +2,14 @@ package org.gob.gim.ant.ucot.action;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import ec.gob.gim.ant.ucot.model.*;
@@ -14,6 +19,7 @@ import ec.gob.gim.common.model.Resident;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
+import org.primefaces.component.sheet.Sheet;
 
 @Name("infractionsHome")
 public class InfractionsHome extends EntityHome<Infractions> {
@@ -57,6 +63,7 @@ public class InfractionsHome extends EntityHome<Infractions> {
 		if (type != null) {
 			getInstance().setType(type);
 		}*/
+		findSalaryBasic();
 	}
 
 	public boolean isWired() {
@@ -155,4 +162,71 @@ public class InfractionsHome extends EntityHome<Infractions> {
 			this.getInstance().setValue(new BigDecimal(0));
 		}
 	}
+	
+	public void findResidentName(){
+		List<String> names = new ArrayList<String>();
+		Query query = getEntityManager().createNamedQuery(
+				"infractions.findResidentNameByIdent");
+		query.setParameter("identNum", this.instance.getIdentification());
+		names = query.getResultList();
+		if(names.size()>0){
+			this.instance.setName(names.get(0));
+		}else{
+			this.instance.setName("No registrado");	
+		}
+		
+	}
+
+	public List<String> chargeArticles(){
+		List<String> articles = new ArrayList();
+		String query = "SELECT DISTINCT co.article FROM gimprod.coip co ORDER BY co.article ASC ";
+		Query q = this.getEntityManager().createNativeQuery(query);
+		articles = q.getResultList();
+		System.out.println("articles size "+articles.size());
+		return articles;
+	}
+	
+	public List<String> findNumeralByArticle(String article){
+		List<String> numerals = new ArrayList<String>();
+		String query = "SELECT co.numeral FROM gimprod.coip co WHERE co.article = '"+this.instance.getArticle()+"' ORDER BY co.numeral ASC";
+		Query q = this.getEntityManager().createNativeQuery(query);
+		numerals = q.getResultList();
+		System.out.println("numerals size "+numerals.size());
+		return numerals;
+	}
+	
+	public void chargeValues(){
+		List<BigDecimal> pointsList = new ArrayList<BigDecimal>();
+		List<BigDecimal> percentajeList = new ArrayList<BigDecimal>();
+		String query = "SELECT co.points FROM gimprod.coip co WHERE co.article = '"+this.instance.getArticle()+"' And co.numeral = '"+this.instance.getNumeral()+"'";
+		Query q = this.getEntityManager().createNativeQuery(query);
+		pointsList = q.getResultList();
+		this.instance.setPoints(pointsList.get(0));
+		
+		String query2 = "SELECT co.percentaje FROM gimprod.coip co WHERE co.article = '"+this.instance.getArticle()+"' And co.numeral = '"+this.instance.getNumeral()+"'";
+		Query q2 = this.getEntityManager().createNativeQuery(query2);
+		percentajeList = q2.getResultList();
+		this.porcentage = percentajeList.get(0);
+	
+		calculateValue();
+	}
+	
+	public void findSalaryBasic(){
+		if(this.salary == null){
+			Date date = new Date();
+			SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+			String today = dt.format(date);
+			String query = "SELECT fp.basicsalaryunifiedforrevenue FROM gimprod.fiscalperiod fp WHERE fp.startdate <= '"+today+"' AND fp.enddate >= '"+today+"'";
+			Query q = this.getEntityManager().createNativeQuery(query);
+			this.salary = (BigDecimal) q.getResultList().get(0);
+		}
+		
+	}
+	
+	public void resetValues(){
+		this.instance.setPoints(null);
+		this.porcentage = null;
+		this.instance.setValue(null);		
+	}
+	
 }

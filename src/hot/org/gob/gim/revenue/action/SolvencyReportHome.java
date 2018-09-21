@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.common.ServiceLocator;
@@ -208,7 +209,7 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		}else{
 			finalIdentificationNumber=resident.getIdentificationNumber();
 		}
-		SolvencyHistory solvencyHistory = new SolvencyHistory(resident, motivation, SolvencyHistoryType.GENERAL, entry, null, userSession.getPerson(),certificateNumber, copiesNumber, finalIdentificationNumber);
+		SolvencyHistory solvencyHistory = new SolvencyHistory(resident, motivation, SolvencyHistoryType.GENERAL, entry, null, userSession.getPerson(),responsableUser, certificateNumber, copiesNumber, finalIdentificationNumber);
 		if (observation != null) {
 			solvencyHistory.setObservation(observation);
 		}
@@ -290,6 +291,7 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		pendingBondStatus = systemParameterService.materialize(MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING");
 		solvencyReportType = SolvencyReportType.SOLVENCY_REPORT_BY_RESIDENT;
 		loadCharge();
+		findResponsableUsersList();
 	}
 	
 	private SolvencyReportType solvencyReportByEntry = SolvencyReportType.SOLVENCY_REPORT_BY_ENTRY;
@@ -718,5 +720,47 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 	public void setObservation(String observation) {
 		this.observation = observation;
 	}
+	
+	// Jock Samaniego
+	//Para almacenar el responsable en autorizar el certificado de solvencia
+	
+	private List<Resident> responsableUsers;
+		
+	private Resident responsableUser;
+	private String[] userIds;
+
+	public List<Resident> getResponsableUsers() {
+		return responsableUsers;
+	}
+
+	public void setResponsableUsers(List<Resident> responsableUsers) {
+		this.responsableUsers = responsableUsers;
+	}
+
+	public Resident getResponsableUser() {
+		return responsableUser;
+	}
+
+	public void setResponsableUser(Resident responsableUser) {
+		this.responsableUser = responsableUser;
+	}
+	
+	private void findResponsableUsersList(){
+		responsableUsers = new ArrayList<Resident>();
+		String  ids = systemParameterService.findParameter("RESPONSABLE_USER_SOLVENCY_CERTIFICATE");
+		userIds = ids.trim().split(",");
+		List<Long> idUsers = new ArrayList<Long>();
+		for(String us: userIds){
+			idUsers.add(Long.parseLong(us));
+		}
+		Query query = getEntityManager().createNamedQuery("Resident.findResidentByIds");
+		query.setParameter("idUsers", idUsers);
+		try {
+			responsableUsers = query.getResultList();
+			
+		} catch (Exception e) {
+			addFacesMessageFromResourceBundle("resident.notFound");
+		}
+	}		
 		
 }

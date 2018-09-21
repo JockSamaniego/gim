@@ -44,6 +44,7 @@ import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
 import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.service.MunicipalBondService;
+import org.gob.loja.gim.ws.dto.BondSummary;
 import org.gob.loja.gim.ws.dto.FutureBond;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -2003,5 +2004,22 @@ public class IncomeServiceBean implements IncomeService {
 		q.setParameter("cover", true);
 		q.setParameter("id", municipalbondid);
 		return !q.getResultList().isEmpty();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<BondSummary> findBondsDownStatus(Long residentId) {
+		Long reversedStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_REVERSED");
+		
+		String sql = "SELECT NEW org.gob.loja.gim.ws.dto.BondSummary(mb.id, mb.number, entry.name, mb.groupingCode, mb.emisionDate, mb.serviceDate,"
+				+ "mb.expirationDate, mb.value, mb.reversedResolution, mb.reversedDate) "
+				+ "from MunicipalBond mb " 
+				+ "JOIN mb.entry entry "
+				+ "where mb.municipalBondStatus.id = :statusId and mb.resident.id = :residentId "
+				+ "ORDER BY mb.reversedResolution, mb.number, mb.emisionDate";
+		Query q= entityManager.createQuery(sql);
+		q.setParameter("statusId", reversedStatusId);
+		q.setParameter("residentId", residentId);
+		return q.getResultList();
 	}
 }
