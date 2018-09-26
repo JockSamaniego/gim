@@ -13,9 +13,11 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import ec.gob.gim.ant.ucot.model.*;
+import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
@@ -135,6 +137,7 @@ public class InfractionsHome extends EntityHome<Infractions> {
 	
 	private BigDecimal salary;
 	private BigDecimal porcentage;
+	private String detail;
 	
 	public BigDecimal getSalary() {
 		return salary;
@@ -150,6 +153,14 @@ public class InfractionsHome extends EntityHome<Infractions> {
 
 	public void setPorcentage(BigDecimal porcentage) {
 		this.porcentage = porcentage;
+	}
+
+	public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
 	}
 
 	public void calculateValue(){
@@ -196,19 +207,17 @@ public class InfractionsHome extends EntityHome<Infractions> {
 	}
 	
 	public void chargeValues(){
-		List<BigDecimal> pointsList = new ArrayList<BigDecimal>();
-		List<BigDecimal> percentajeList = new ArrayList<BigDecimal>();
-		String query = "SELECT co.points FROM gimprod.coip co WHERE co.article = '"+this.instance.getArticle()+"' And co.numeral = '"+this.instance.getNumeral()+"'";
+		String query = "SELECT co.points AS points, co.percentaje AS percentaje, co.detail AS detail FROM gimprod.coip co WHERE co.article = '"+this.instance.getArticle()+"' And co.numeral = '"+this.instance.getNumeral()+"'";
 		Query q = this.getEntityManager().createNativeQuery(query);
-		pointsList = q.getResultList();
-		this.instance.setPoints(pointsList.get(0));
-		
-		String query2 = "SELECT co.percentaje FROM gimprod.coip co WHERE co.article = '"+this.instance.getArticle()+"' And co.numeral = '"+this.instance.getNumeral()+"'";
-		Query q2 = this.getEntityManager().createNativeQuery(query2);
-		percentajeList = q2.getResultList();
-		this.porcentage = percentajeList.get(0);
-	
-		calculateValue();
+		List<CoipDTO> coipList = NativeQueryResultsMapper.map(q.getResultList(), CoipDTO.class);
+		if(!coipList.isEmpty()){
+			this.instance.setPoints(coipList.get(0).getPoints());
+			this.porcentage = coipList.get(0).getPercetaje();
+			this.detail = coipList.get(0).getDetail();
+			calculateValue();
+		}else{
+			resetValues();
+		}	
 	}
 	
 	public void findSalaryBasic(){
@@ -226,7 +235,8 @@ public class InfractionsHome extends EntityHome<Infractions> {
 	public void resetValues(){
 		this.instance.setPoints(null);
 		this.porcentage = null;
-		this.instance.setValue(null);		
+		this.instance.setValue(null);	
+		this.detail = null;
 	}
 	
 }
