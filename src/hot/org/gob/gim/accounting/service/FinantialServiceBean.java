@@ -306,8 +306,7 @@ public class FinantialServiceBean implements FinantialService{
 			"    WHERE d.municipalBond_id = mb.id AND " +
 			"          d.date between :startDate AND :endDate AND " +
 			"          mb.paymentAgreement_id is not null AND " +
-			"          d.balance > 0 "+
-			"GROUP BY d.id";
+			"          d.balance > 0 ";
 
 	//@author macartuche
 	//reporte x abonos != convenio de pago
@@ -571,7 +570,7 @@ public class FinantialServiceBean implements FinantialService{
 	
 	private AccountItem buildQuotasItem(Criteria criteria){
 		BigDecimal collected = findLiquidatedQuotas(criteria); 
-		BigDecimal liquidated = findCollectedQuotas(criteria);
+		BigDecimal liquidated = findCollectedQuotas(criteria);//*
 		
 		//@author macartuche
 		//convenio o abono
