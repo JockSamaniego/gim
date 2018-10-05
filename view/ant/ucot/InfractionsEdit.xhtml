@@ -196,7 +196,7 @@
                 <h:selectOneMenu id="articleNumber" value="#{infractionsHome.instance.article}" >
                   <s:selectItems value="#{infractionsHome.chargeArticles()}" var="article" 
                   label="#{article}" itemValue="#{article}" noSelectionLabel="Seleccione uno" />
-                  <a:support event="onchange" ajaxSingle="true" reRender="numeralField,infractionPointField,porcentageField,valueField" action="#{infractionsHome.resetValues()}" />
+                  <a:support event="onchange" ajaxSingle="true" reRender="numeralField,infractionPointField,porcentageField,valueField,detailField" action="#{infractionsHome.resetValues()}" />
                 </h:selectOneMenu>
             </s:decorate>
 
@@ -205,7 +205,7 @@
                 <h:selectOneMenu id="numeral" value="#{infractionsHome.instance.numeral}" >
                   <s:selectItems value="#{infractionsHome.findNumeralByArticle(infractionsHome.instance.article)}" var="numeral" 
                   label="#{numeral}" itemValue="#{numeral}" noSelectionLabel="Seleccione uno" />
-                  <a:support event="onchange" ajaxSingle="true" action="#{infractionsHome.chargeValues()}" reRender="infractionPointField,porcentageField,valueField" />
+                  <a:support event="onchange" ajaxSingle="true" action="#{infractionsHome.chargeValues()}" reRender="infractionPointField,porcentageField,valueField,detailField" />
                 </h:selectOneMenu>
             </s:decorate>
             
@@ -257,6 +257,15 @@
                           value="#{infractionsHome.instance.value}">
                           <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/>
                 </h:inputText>
+            </s:decorate>
+            
+            <s:decorate id="detailField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Detalle</ui:define>
+                <h:inputTextarea id="numeral"
+                			readonly= "true"
+                           size="15"
+                          value="#{infractionsHome.detail}">
+                </h:inputTextarea>
             </s:decorate>
         
             <div style="clear:both" />
