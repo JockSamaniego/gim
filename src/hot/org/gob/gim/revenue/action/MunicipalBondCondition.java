@@ -1,5 +1,10 @@
 package org.gob.gim.revenue.action;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -39,6 +44,7 @@ import org.jboss.seam.log.Log;
 
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.finances.model.DTO.MetadataBondDTO;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
@@ -82,6 +88,11 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private List<FutureBond> futureBonds;
 	private List<BondSummary> bondDownSumary;
 	private BigDecimal totalFutereBond;
+	
+	private BigDecimal totalInterestRemision= BigDecimal.ZERO;
+	private BigDecimal totalSurchargeRemision = BigDecimal.ZERO ;
+	
+	
 
 
 	public List<MunicipalBond> getResult() {
@@ -344,6 +355,23 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	public void setResident(Resident resident) {
 		this.resident = resident;
 	}
+	
+
+	public BigDecimal getTotalInterestRemision() {
+		return totalInterestRemision;
+	}
+
+	public void setTotalInterestRemision(BigDecimal totalInterestRemision) {
+		this.totalInterestRemision = totalInterestRemision;
+	}
+	
+	public BigDecimal getTotalSurchargeRemision() {
+		return totalSurchargeRemision;
+	}
+
+	public void setTotalSurchargeRemision(BigDecimal totalSurchargeRemision) {
+		this.totalSurchargeRemision = totalSurchargeRemision;
+	}
 
 	@SuppressWarnings("unchecked")
 	public void searchResidentByCriteria() {
@@ -400,16 +428,33 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 
 	public void chargeResults() throws Exception{
 		try{
+			this.totalInterestRemision = BigDecimal.ZERO;
+			this.totalSurchargeRemision = BigDecimal.ZERO;
 			totalFutereBond = BigDecimal.ZERO;
 			municipalBondItemsResult = getMunicipalBondItems();	
 			findFutureEmision(resident.getId());
 			calculateTotal();
+			this.calculateValuesRemision();
 		} catch (Exception e) {	
 			log.info("==== EXCEPTION CHARGE RESULTS: #0", e);
 			String message = Interpolator.instance().interpolate("#{messages['entryDefinition.entryDefinitionNotFoundException']}", new Object[0]);
 			facesMessages.addToControl("",org.jboss.seam.international.StatusMessage.Severity.ERROR,message);			
 		}
 	}
+	
+	public void calculateValuesRemision() throws JsonParseException, JsonMappingException, IOException {
+		
+		for ( MunicipalBondItem item : this.municipalBondItemsResult) {
+			
+			String _json= item.getMunicipalBond().getMetadata();
+			MetadataBondDTO meta = new ObjectMapper().readValue(item.getMunicipalBond().getMetadata(), MetadataBondDTO.class);
+			this.totalInterestRemision = this.totalInterestRemision.add(meta.getInterest());
+			this.totalSurchargeRemision = this.totalSurchargeRemision.add(meta.getSurcharge());
+		}
+		
+	}
+	
+
 
 	public void residentSelectedListener(ActionEvent event) {
 		UIComponent component = event.getComponent();

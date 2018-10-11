@@ -30,6 +30,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.builder.KnowledgeBuilder;
@@ -55,6 +57,7 @@ import org.gob.gim.revenue.view.EntryValueItem;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.LegalEntity;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.finances.model.DTO.MetadataBondDTO;
 import ec.gob.gim.income.model.CompensationReceipt;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.InterestRate;
@@ -110,7 +113,10 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	@EJB
 	ResidentService residentService;
 
+
 	public static final String PENDING_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_PENDING";
+	
+	private MetadataBondDTO metadataDto;
 
 	// @author macartuche
 	// @date 2016-06-27 11:42
@@ -277,6 +283,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		if (deposit == null) {
 			municipalBond.setBalance(municipalBond.getValue());
 		}
+		this.metadataDto = new MetadataBondDTO();
 		// municipalBond.setBalance(municipalBond.getBalance().add(municipalBond.getSurcharge()).subtract(municipalBond.getDiscount()));
 		calculateInterest(municipalBond, deposit, paymentDate);// luego de
 																// pruebas de
@@ -318,6 +325,28 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		 */
 
 		roundItems(municipalBond);
+		
+		//TODO aqui lo de remision
+		
+		//para casos de remision interes
+		Map<String, Object>cases = compareCases(municipalBond.getExpirationDate(),municipalBond.getSurcharge(), paymentDate, municipalBond);
+		BigDecimal newSurharged	 = (BigDecimal)cases.get("nuevoValor");
+		
+		//todo armar JSON y setear
+		this.metadataDto.setSurcharge((BigDecimal)cases.get("totalExonerado"));
+		String json="";
+		try {
+			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			json = ow.writeValueAsString(this.metadataDto);	
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		municipalBond.setMetadata(json);
+		
+		municipalBond.setSurcharge(newSurharged);
+		//*************
+		
 		// /ya tiene los 48.10
 		BigDecimal paidTotal = municipalBond.getBalance();
 		paidTotal = paidTotal.add(municipalBond.getSurcharge());
@@ -1516,11 +1545,13 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				// paymentDate, balance, interest);
 			}
 
-			//para casos de remision				
+			//para casos de remision interes
 			Map<String, Object> cases = compareCases(expirationDate, interest, paymentDate, municipalBond);
 			BigDecimal newInterest	 = (BigDecimal)cases.get("nuevoValor");
 			
+			this.metadataDto.setInterest((BigDecimal)cases.get("totalExonerado"));
 			interest = newInterest;
+			
 		}
 		
 		
@@ -1576,7 +1607,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 					response.put("case", "1");
 					response.put("porcentajeExonerado", "100%");
 					response.put("totalExonerado", value);
-					response.put("nuevoInteres", BigDecimal.ZERO);
+					response.put("nuevoValor", BigDecimal.ZERO);
 					response.put("FechaVencimiento", expirationDate);
 					response.put("FechaPago", paymentDate);
 					
@@ -1589,7 +1620,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 					response.put("case", "2");
 					response.put("porcentajeExonerado", "75%");
 					response.put("totalExonerado", interesExonerado);
-					response.put("nuevoInteres", newInterest);
+					response.put("nuevoValor", newInterest);
 					response.put("FechaVencimiento", expirationDate);
 					response.put("FechaPago", paymentDate);
 					
@@ -1603,7 +1634,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 					response.put("case", "3");
 					response.put("porcentajeExonerado", "50%");
 					response.put("totalExonerado", interesExonerado);
-					response.put("nuevoInteres", newInterest);
+					response.put("nuevoValor", newInterest);
 					response.put("FechaVencimiento", expirationDate);
 					response.put("FechaPago", paymentDate);
 					
@@ -1612,7 +1643,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 					response.put("case", "0");
 					response.put("porcentajeExonerado", "0%");
 					response.put("totalExonerado", BigDecimal.ZERO);
-					response.put("nuevoInteres", value);
+					response.put("nuevoValor", value);
 					response.put("FechaVencimiento", expirationDate);
 					response.put("FechaPago", paymentDate);
 				}
@@ -1620,23 +1651,24 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				
 				//CALCULO NORMAL DE INTERES
 				response.put("case", "0");
-				response.put("porcentajeInteres", "0%");
-				response.put("porcentajeExonerado", BigDecimal.ZERO);
-				response.put("nuevoInteres", value);
+				response.put("porcentajeExonerado", "0%");
+				response.put("nuevoValor", value);
 				response.put("FechaVencimiento", expirationDate);
 				response.put("FechaVencimiento", expirationDate);
-				response.put("FechaPago", paymentDate);				
+				response.put("FechaPago", paymentDate);
+				response.put("totalExonerado", BigDecimal.ZERO);
 			}
 									 						
 		} catch (ParseException e) {
 			//CALCULO NORMAL DE INTERES
 			response.put("case", "0");
-			response.put("porcentajeInteres", "0%");
 			response.put("porcentajeExonerado", BigDecimal.ZERO);
-			response.put("nuevoInteres", value);
+			response.put("nuevoValor", value);
 			response.put("FechaVencimiento", expirationDate);
 			response.put("FechaVencimiento", expirationDate);
-			response.put("FechaPago", paymentDate);				
+			response.put("FechaPago", paymentDate);			
+			response.put("porcentajeExonerado", "0%");
+			response.put("totalExonerado", BigDecimal.ZERO);
 			e.printStackTrace();
 		}
 		
@@ -1644,6 +1676,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		
 		return response;
 	}
+	
 	
 	
 	private static Date stringToDate(String strDate) throws ParseException {

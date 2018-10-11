@@ -1134,6 +1134,9 @@ public class MunicipalBond implements Serializable {
 	//aumentar campo de interesfactura
 	private BigDecimal interestVoucher;
 	private BigDecimal surchargeVoucher;
+	
+	
+	private String metadata;
 
 	public MunicipalBond() {
 		// creationDate = Calendar.getInstance().getTime();
@@ -1842,6 +1845,15 @@ public class MunicipalBond implements Serializable {
 		this.surchargeVoucher = surchargeVoucher;
 	}
 	
+	
+	public String getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(String metadata) {
+		this.metadata = metadata;
+	}
+
 	public List<Deposit> getDepositsList() {
 		List<Deposit> list = new ArrayList<Deposit>(this.deposits);
 		return list;
