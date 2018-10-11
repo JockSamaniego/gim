@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1514,11 +1515,19 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				// this.calculateInterestForInterestRateOutDate(interestRateList,
 				// paymentDate, balance, interest);
 			}
+
+			//para casos de remision				
+			Map<String, Object> cases = compareCases(expirationDate, interest, paymentDate, municipalBond);
+			BigDecimal newInterest	 = (BigDecimal)cases.get("nuevoValor");
+			
+			interest = newInterest;
 		}
+		
+		
 
-		interest = interest.setScale(2, RoundingMode.HALF_UP);
+		interest = interest.setScale(2, RoundingMode.HALF_UP);		
 		municipalBond.setInterest(interest);
-
+		
 		// @tag interesFactElec
 		// aumentar campo de interesfactura
 		if (municipalBond.getInterestVoucher() != null) {
@@ -1527,6 +1536,122 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		// fin @tag interesFactElec
 		// System.out.println("INTERESTS -----> ENDS With value "+interest);
 	}
+	
+	/**
+	 * REMISION
+	 * @param expirationDate
+	 */
+	private static Map<String, Object> compareCases(Date expirationDate, BigDecimal value, 
+			Date paymentDate, MunicipalBond mb) {
+		
+		
+		String case1StringRemission = "2018-04-02";
+		//dentro de 90 dias reduccion del 100%
+		String case1StringMaxPayment = "2018-12-28";
+		
+		//de 91 y 150 dias reduccion del 75%
+		String case2StringStart = "2018-12-29";
+		String case2StringEnd= "2019-02-28";
+		
+		//de 151 a 180 dias reduccion del 50%
+		String case3StringStart = "2019-03-01";
+		String case3StringEnd = "2019-03-30";
+		
+		
+		Map<String, Object> response = new HashMap<String, Object>();
+		value = value.setScale(2, RoundingMode.HALF_UP);
+		
+		try {
+			Date dateCase1Remission = stringToDate(case1StringRemission);
+			
+			Date dateCase1MaxPayment = stringToDate(case1StringMaxPayment);
+			Date dateCase2StartPayment = stringToDate(case2StringStart);
+			Date dateCase2EndPayment = stringToDate(case2StringEnd);
+			Date dateCase3StartPayment = stringToDate(case3StringStart);
+			Date dateCase3EndPayment = stringToDate(case3StringEnd);			
+					
+			if (expirationDate.compareTo(dateCase1Remission)<= 0 ) {
+				if(paymentDate.compareTo(dateCase1MaxPayment)<=0) {
+					
+					response.put("case", "1");
+					response.put("porcentajeExonerado", "100%");
+					response.put("totalExonerado", value);
+					response.put("nuevoInteres", BigDecimal.ZERO);
+					response.put("FechaVencimiento", expirationDate);
+					response.put("FechaPago", paymentDate);
+					
+				}else if( paymentDate.compareTo(dateCase2StartPayment) >=0 && 
+						  paymentDate.compareTo(dateCase2EndPayment) <=0) {		
+					
+					double porcentage75 = 75/100;
+					BigDecimal interesExonerado = value.divide(new BigDecimal(porcentage75), RoundingMode.HALF_UP);
+					BigDecimal newInterest = value.subtract(interesExonerado);					
+					response.put("case", "2");
+					response.put("porcentajeExonerado", "75%");
+					response.put("totalExonerado", interesExonerado);
+					response.put("nuevoInteres", newInterest);
+					response.put("FechaVencimiento", expirationDate);
+					response.put("FechaPago", paymentDate);
+					
+				}else if( paymentDate.compareTo(dateCase3StartPayment) >=0 && 
+						  paymentDate.compareTo(dateCase3EndPayment) <=0) {
+					
+					double porcentage50 = 50/100;
+					BigDecimal interesExonerado = value.divide(new BigDecimal(porcentage50), 
+							RoundingMode.HALF_UP);
+					BigDecimal newInterest = value.subtract(interesExonerado);					
+					response.put("case", "3");
+					response.put("porcentajeExonerado", "50%");
+					response.put("totalExonerado", interesExonerado);
+					response.put("nuevoInteres", newInterest);
+					response.put("FechaVencimiento", expirationDate);
+					response.put("FechaPago", paymentDate);
+					
+				}else {				
+					//CALCULO NORMAL DE INTERES
+					response.put("case", "0");
+					response.put("porcentajeExonerado", "0%");
+					response.put("totalExonerado", BigDecimal.ZERO);
+					response.put("nuevoInteres", value);
+					response.put("FechaVencimiento", expirationDate);
+					response.put("FechaPago", paymentDate);
+				}
+			}else {
+				
+				//CALCULO NORMAL DE INTERES
+				response.put("case", "0");
+				response.put("porcentajeInteres", "0%");
+				response.put("porcentajeExonerado", BigDecimal.ZERO);
+				response.put("nuevoInteres", value);
+				response.put("FechaVencimiento", expirationDate);
+				response.put("FechaVencimiento", expirationDate);
+				response.put("FechaPago", paymentDate);				
+			}
+									 						
+		} catch (ParseException e) {
+			//CALCULO NORMAL DE INTERES
+			response.put("case", "0");
+			response.put("porcentajeInteres", "0%");
+			response.put("porcentajeExonerado", BigDecimal.ZERO);
+			response.put("nuevoInteres", value);
+			response.put("FechaVencimiento", expirationDate);
+			response.put("FechaVencimiento", expirationDate);
+			response.put("FechaPago", paymentDate);				
+			e.printStackTrace();
+		}
+		
+
+		
+		return response;
+	}
+	
+	
+	private static Date stringToDate(String strDate) throws ParseException {
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = format.parse(strDate);
+		return date;
+	}
+	
 
 	// @author macartuche
 	// 2016-07-21T16:51
