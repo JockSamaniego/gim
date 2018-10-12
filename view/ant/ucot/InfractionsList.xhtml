@@ -13,8 +13,8 @@
     <h:form id="infractionsSearch" styleClass="edit">
     <h:outputText styleClass="formTitle" value="#{messages['ucot.infractionManager']}" />
 
-        <rich:simpleTogglePanel label="#{messages['ucot.searchFilter']}" switchType="ajax">
-
+        <rich:simpleTogglePanel label="#{messages['ucot.searchFilter']}" switchType="ajax" >
+        <h:panelGrid columns="2" > 
             <s:decorate id="bulletinField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['bulletin']}:</ui:define>
                 <h:inputText id="bulletinStart"
@@ -79,19 +79,27 @@
                 <rich:calendar id="citationDate2"
                           value="#{infractionsList.dateUntil}" datePattern="dd/MM/yyyy" />
             </s:decorate>
+            <s:decorate id="photoFineField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.photoFine']}?</ui:define>
+                <h:selectBooleanCheckbox id="photoFine"
+                                      value="#{infractionsList.infractions.photoFine}">
+                </h:selectBooleanCheckbox>
+            </s:decorate>
+            
 
+        </h:panelGrid>
         </rich:simpleTogglePanel>
 
         <div class="actionButtons">
-            <h:commandButton id="search" value="#{messages['common.search']}" action="/ant/ucot/InfractionsList.xhtml"/>
+            <h:commandButton id="search" value="#{messages['common.search']}" reRender="infractionTablePanel" />
             <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
         </div>
 
     </h:form>
 
-    <rich:panel>
+    <rich:panel id="infractionTablePanel">
         <f:facet name="header">
-            <h:panelGrid columns="2" columnClasses="headerTitle,">
+            <h:panelGrid columns="3" columnClasses="headerTitle,">
                 <h:outputText
                     value=" #{messages['infractions.searchResults']} (#{empty infractionsList.resultList ? 0 : (infractionsList.paginated ? infractionsList.resultCount : infractionsList.resultList.size)})" />
                    <s:button view="/ant/ucot/BulletinList.xhtml"
@@ -220,20 +228,15 @@
             <f:facet name="header">#{messages['common.action']}</f:facet>
             <s:button view="/ant/ucot/InfractionsEdit.xhtml"
                    value="#{messages['common.edit']}"
+                   action="#{infractionsHome.prepareToEdit()}"
              propagation="none"
                       id="infractionsEdit">
                 <f:param name="infractionsId"
                         value="#{_infractions.id}"/>
             </s:button>
-            <s:button view="/ant/ucot/InfractionStatusList.xhtml"
-                   value="#{messages['status']}s"
-             propagation="none"
-                      id="infractionStatus">
-                <f:param name="infractionsId"
-                        value="#{_infractions.id}"/>
-            </s:button>
             <s:button view="/ant/ucot/InfractionSentencesList.xhtml"
-                   value="#{messages['sentence']}"
+                   value="#{messages['process']}s"
+                   action="#{infractionsHome.isNotPhotoFineFR()}"
              propagation="none"
                       id="infractionSentences">
                 <f:param name="infractionsId"

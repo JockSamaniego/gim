@@ -14,40 +14,60 @@
     <h:form id="infractionStatus" styleClass="edit">
 
         <rich:panel>
-            <f:facet name="header">#{infractionStatusHome.managed ? messages['status.Edit'] : messages['status.Create']}</f:facet>
+            <f:facet name="header">#{messages['process.archiveData']}</f:facet>
 
-			<s:decorate id="infractionField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['infraction']}:</ui:define>
-                <h:inputText id="infraction"
-                           size="30"
+			     <s:decorate id="infractionField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Fecha de #{messages['process.archive']}:</ui:define>
+                <rich:calendar disabled = "true"
+                           datePattern="dd/MM/yyyy"
+                          value="#{infractionSentencesHome.instance.archivedDate}">
+                </rich:calendar>
+            </s:decorate>
+
+            <s:decorate id="archivedHangerField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['process.archivedHanger']}:</ui:define>
+                <h:inputText id="archivedHanger"
+                           size="23"
                            required="true"
-                           readonly="true"
                       maxlength="30"
-                          value="#{infractionStatusHome.instance.infraction.serial}">
+                          value="#{infractionSentencesHome.instance.archivedHanger}">
                 </h:inputText>
             </s:decorate>
 
-            <s:decorate id="statusNameField"
-              template="../../layout/edit.xhtml">
-              <ui:define name="label">#{messages['agent.name']}</ui:define>
-              <h:selectOneMenu id="nameType" value="#{infractionStatusHome.instance.name}" required="true">
-                <s:selectItems value="#{infractionStatusHome.typesStatus}" var="status" label="#{status.name}" itemValue="#{status}" />
-                <a:support event="onchange" ajaxSingle="true" />
-                <s:convertEntity></s:convertEntity>
-              </h:selectOneMenu>
+            <s:decorate id="archivedShelfField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['process.archivedShelf']}:</ui:define>
+                <h:inputText id="archivedShelf"
+                           size="23"
+                           required="true"
+                      maxlength="30"
+                          value="#{infractionSentencesHome.instance.archivedShelf}">
+                </h:inputText>
             </s:decorate>
 
-            <s:decorate id="statusDateField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['bulletin.creationDate']}</ui:define>
-                <rich:calendar id="statusDate"
-                         required="true"
-                          value="#{infractionStatusHome.instance.statusDate}" datePattern="MM/dd/yyyy" />
+            <s:decorate id="archivedFolderField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['process.archivedFolder']}:</ui:define>
+                <h:inputText id="archivedFolder"
+                           size="23"
+                           required="true"
+                      maxlength="30"
+                          value="#{infractionSentencesHome.instance.archivedFolder}">
+                </h:inputText>
             </s:decorate>
-            
-            <s:decorate id="detailStatusField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['alert.openDetail']}</ui:define>
-                <h:inputTextarea id="statusDetail"
-                      value="#{infractionStatusHome.instance.detail}" >
+
+            <s:decorate id="archivedContentField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['process.archivedContent']}:</ui:define>
+                <h:inputText id="archivedContent"
+                           size="23"
+                           required="true"
+                      maxlength="30"
+                          value="#{infractionSentencesHome.instance.archivedContent}">
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="archivedDetailField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['process.archivedDetail']}:</ui:define>
+                <h:inputTextarea id="archivedDetail" size="40"
+                      value="#{infractionSentencesHome.instance.archivedDetail}" >
                 </h:inputTextarea>
             </s:decorate>
 
@@ -60,28 +80,14 @@
 
         <div class="actionButtons">
 
-            <h:commandButton id="save"
-                          value="#{messages['common.save']}"
-                         action="#{infractionStatusHome.persist}"
-                       disabled="#{!infractionStatusHome.wired}"
-                       rendered="#{!infractionStatusHome.managed}"/>
-
             <h:commandButton id="update"
                           value="#{messages['common.save']}"
-                         action="#{infractionStatusHome.update}"
-                       rendered="#{infractionStatusHome.managed}"/>
-
-            <h:commandButton id="delete"
-                          value="#{messages['common.delete']}"
-                         action="#{infractionStatusHome.remove}"
-                      immediate="true"
-                       disabled="true"
-                       rendered="#{infractionStatusHome.managed}"/>
+                         action="#{infractionSentencesHome.saveArchivedData()}" />
 
             <s:button id="cancel"
                    value="#{messages['common.cancel']}"
              propagation="end"
-                    view="/ant/ucot/InfractionStatusList.xhtml" />
+                    view="/ant/ucot/InfractionSentencesList.xhtml" />
 
         </div>
     </h:form>
