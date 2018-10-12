@@ -834,7 +834,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 
 		@NamedQuery(name = "Bond.findByStatusAndResidentId", query = "SELECT NEW org.gob.loja.gim.ws.dto.Bond("
 				+ "    mb.id, mb.number, e.name, mb.groupingCode, mb.paidTotal, mb.serviceDate, mb.expirationDate, "
-				+ "  mb.interest, mb.surcharge, mb.taxesTotal, mb.discount )"
+				+ "  mb.interest, mb.surcharge, mb.taxesTotal, mb.discount, mb.metadata )"
 				+ "  FROM "
 				+ "    MunicipalBond mb "
 				+ "    JOIN mb.entry e "

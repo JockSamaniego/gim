@@ -780,6 +780,9 @@ public class PaymentServiceBean implements PaymentService {
 				incomeService.calculatePayment(workDayDate, pendingBondIds,
 						true, true);
 				bonds = findPendingBonds(taxpayer.getId());
+				for (Bond bond : bonds) {
+					System.out.println(bond.getMetadata());
+				}
 				loadBondsDetail(bonds);
 			} catch (EntryDefinitionNotFoundException e) {
 				e.printStackTrace();
