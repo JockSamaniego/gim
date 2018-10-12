@@ -41,9 +41,9 @@
             <s:decorate id="citationDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.citationdate']}</ui:define>
                 <rich:calendar id="citationDate" required="true"
-                          value="#{infractionsHome.instance.citationDate}" datePattern="dd/MM/yyyy" >
+                          value="#{infractionsHome.instance.citationDate}" datePattern="#{messages['common.datePattern']}" ajaxSingle="true" >
+                          <a:support event="onchanged" action="#{infractionsHome.findSalaryBasic()}" reRender="citationDateField,basicSalaryField,panelPenalties" ajaxSingle="true" />
                           <f:validator validatorId="currentDateValidator" />
-                          <a:support event="onchanged" reRender="citationDateField" bypassUpdates="true" ajaxSingle="true" />
                 </rich:calendar>
             </s:decorate>
 
@@ -146,21 +146,13 @@
                 </h:selectOneMenu>
             </s:decorate>
             
-            <s:decorate id="numberPartField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['infraction.numberPart']}</ui:define>
-                <h:inputText id="numberPart"
-                           size="15"
-                      maxlength="10"
-                          value="#{infractionsHome.instance.partNumber}">
-                </h:inputText>
-            </s:decorate>
-            <s:decorate id="radarCodeField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.photoFine}">
-                <ui:define name="label">#{messages['agent.code']} de #{messages['ucot.radar']}</ui:define>
-                <h:inputText id="radarCode"
+            <s:decorate id="citationNumberField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.photoFine}">
+                <ui:define name="label">#{messages['infraction.citationNumber']}</ui:define>
+                <h:inputText id="citationNumber"
                            size="15"
                            required="#{infractionsHome.instance.photoFine}"
                       maxlength="20"
-                          value="#{infractionsHome.instance.radarCode}">
+                          value="#{infractionsHome.instance.citationNumber}">
                 </h:inputText>
             </s:decorate>          
 

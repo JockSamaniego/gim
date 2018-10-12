@@ -253,15 +253,17 @@ public class InfractionsHome extends EntityHome<Infractions> {
 	}
 	
 	public void findSalaryBasic(){
-		if(this.salary == null){
-			Date date = new Date();
-			SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
-			String today = dt.format(date);
-			String query = "SELECT fp.basicsalaryunifiedforrevenue FROM gimprod.fiscalperiod fp WHERE fp.startdate <= '"+today+"' AND fp.enddate >= '"+today+"'";
-			Query q = this.getEntityManager().createNativeQuery(query);
-			this.salary = (BigDecimal) q.getResultList().get(0);
-		}
-		
+		String dateInfraction;
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+		if(this.instance.getCitationDate() == null){
+			dateInfraction = dt.format(new Date());
+		}else{
+			dateInfraction = dt.format(this.getInstance().getCitationDate());
+		}		
+		String query = "SELECT fp.basicsalaryunifiedforrevenue FROM gimprod.fiscalperiod fp WHERE fp.startdate <= '"+dateInfraction+"' AND fp.enddate >= '"+dateInfraction+"'";
+		Query q = this.getEntityManager().createNativeQuery(query);
+		this.salary = (BigDecimal) q.getResultList().get(0);	
+		calculateValue();
 	}
 	
 	public void resetValues(){
@@ -322,9 +324,9 @@ public class InfractionsHome extends EntityHome<Infractions> {
 				message=null;
 
 				
-				boolean exist  = radarCodeExist(this.instance.getRadarCode());
+				boolean exist  = citationNumberExist(this.instance.getCitationNumber());
 				if(exist){
-					message="El código de radar ya existe";
+					message="El número de citación ya existe";
 					return "/ant/ucot/PhotoFineFREdit.xhtml";
 				}
 
@@ -338,11 +340,11 @@ public class InfractionsHome extends EntityHome<Infractions> {
 		return "/ant/ucot/PhotoFineFRList.xhtml";
 	}
 	
-	public Boolean radarCodeExist(String radarCode){
+	public Boolean citationNumberExist(String citationNumber){
 		List<Infractions> infractions = new ArrayList();
 		Query query = getEntityManager().createNamedQuery(
-				"infractions.findByRadarCode");
-		query.setParameter("radarCode", radarCode);
+				"infractions.findByCitationNumber");
+		query.setParameter("citationNumber", citationNumber);
 		infractions = query.getResultList();
 		
 		if(infractions.size()>0){

@@ -17,8 +17,8 @@
         <h:panelGrid columns="2"> 
 
             <s:decorate template="../../layout/display.xhtml">
-                <ui:define name="label">#{messages['agent.code']} de #{messages['ucot.radar']}:</ui:define>
-                <h:inputText id="radarCode" value="#{fixedRadarList.infractions.radarCode}"/>
+                <ui:define name="label">#{messages['infraction.citationNumber']}:</ui:define>
+                <h:inputText id="citationNumber" value="#{fixedRadarList.infractions.citationNumber}"/>
             </s:decorate>
 
             <s:decorate template="../../layout/display.xhtml">
@@ -35,27 +35,29 @@
                 <ui:define name="label">#{messages['infraction.article']}:</ui:define>
                 <h:inputText id="article" value="#{fixedRadarList.infractions.article}"/>
             </s:decorate>
-            
-            <s:decorate template="../../layout/display.xhtml">
-                <ui:define name="label">#{messages['infraction.numeral']}:</ui:define>
-                <h:inputText id="numeral" value="#{fixedRadarList.infractions.numeral}"/>
-            </s:decorate>
-            
-            <s:decorate template="../../layout/display.xhtml">
-                <ui:define name="label">#{messages['infraction.numberPart']}:</ui:define>
-                <h:inputText id="partNumber" value="#{fixedRadarList.infractions.partNumber}"/>
-            </s:decorate>
 
             <s:decorate id="citationDateField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['ucot.From']}:</ui:define>
+                <ui:define name="label">#{messages['ucot.From']}(citación):</ui:define>
                 <rich:calendar id="citationDate"
                           value="#{fixedRadarList.dateFrom}" datePattern="dd/MM/yyyy" />
             </s:decorate>
 
             <s:decorate id="citationDateField2" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['ucot.Until']}:</ui:define>
+                <ui:define name="label">#{messages['ucot.Until']}(citación):</ui:define>
                 <rich:calendar id="citationDate2"
                           value="#{fixedRadarList.dateUntil}" datePattern="dd/MM/yyyy" />
+            </s:decorate>    
+            
+            <s:decorate id="citationDateField3" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.From']}(registro):</ui:define>
+                <rich:calendar id="citationDate3"
+                          value="#{fixedRadarList.dateFrom2}" datePattern="dd/MM/yyyy" />
+            </s:decorate>
+
+            <s:decorate id="citationDateField4" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.Until']}(registro):</ui:define>
+                <rich:calendar id="citationDate4"
+                          value="#{fixedRadarList.dateUntil2}" datePattern="dd/MM/yyyy" />
             </s:decorate>         
 
         </h:panelGrid>
@@ -94,11 +96,11 @@
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{fixedRadarList}"/>
-                    <ui:param name="propertyLabel" value="#{messages['agent.code']} de #{messages['ucot.radar']}"/>
-                    <ui:param name="propertyPath" value="infractions.radarCode"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction.citationNumber']}"/>
+                    <ui:param name="propertyPath" value="infractions.citationNumber"/>
                 </ui:include>
             </f:facet>
-            <h:outputText value="#{_infractions.radarCode}"/>
+            <h:outputText value="#{_infractions.citationNumber}"/>
         </rich:column>
 
         <rich:column styleClass="action" style="align:center;">
@@ -165,25 +167,16 @@
             </f:facet>
             <h:outputText value="#{_infractions.numeral}"/>
         </rich:column>
+
         <rich:column styleClass="action" style="align:center;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{fixedRadarList}"/>
-                    <ui:param name="propertyLabel" value="#{messages['infraction.inphysic']}"/>
-                    <ui:param name="propertyPath" value="infractions.inPhysic"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction.place']}"/>
+                    <ui:param name="propertyPath" value="infractions.infractionPlace"/>
                 </ui:include>
             </f:facet>
-            <h:selectBooleanCheckbox value="#{_infractions.inPhysic}" disabled="true"/>
-        </rich:column>
-        <rich:column styleClass="action" style="align:center;">
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{fixedRadarList}"/>
-                    <ui:param name="propertyLabel" value="#{messages['infraction.nullified']}"/>
-                    <ui:param name="propertyPath" value="infractions.archived"/>
-                </ui:include>
-            </f:facet>
-            <h:selectBooleanCheckbox value="#{_infractions.nullified}" disabled="true"/>
+            <h:outputText value="#{_infractions.infractionPlace}" disabled="true"/>
         </rich:column>
 
         <rich:column styleClass="action">

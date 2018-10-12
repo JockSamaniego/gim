@@ -88,9 +88,9 @@
             <s:decorate id="citationDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.citationdate']}</ui:define>
                 <rich:calendar id="citationDate" required="true"
-                          value="#{infractionsHome.instance.citationDate}" datePattern="dd/MM/yyyy" >
-                          <f:validator validatorId="currentDateValidator" />
-                          <a:support event="onchanged" reRender="citationDateField" bypassUpdates="true" ajaxSingle="true" />
+                          value="#{infractionsHome.instance.citationDate}" datePattern="#{messages['common.datePattern']}" ajaxSingle="true" >
+                          <a:support event="onchanged" action="#{infractionsHome.findSalaryBasic()}" reRender="citationDateField,basicSalaryField,panelPenalties" ajaxSingle="true" />
+                		  <f:validator validatorId="currentDateValidator" />
                 </rich:calendar>
             </s:decorate>
 
@@ -259,7 +259,6 @@
                 <ui:define name="label">#{messages['agent.code']} de #{messages['ucot.radar']}</ui:define>
                 <h:inputText id="radarCode"
                            size="15"
-                           required="#{infractionsHome.instance.photoFine}"
                       maxlength="20"
                           value="#{infractionsHome.instance.radarCode}">
                 </h:inputText>

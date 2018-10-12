@@ -40,7 +40,7 @@ import ec.gob.gim.common.model.Person;
 @NamedQueries(value = {
 		@NamedQuery(name = "infractions.findByBulletinId", query = "Select i from Infractions i where i.bulletin.id = :bulletinId"),
 		@NamedQuery(name = "infractions.findBySerial", query = "Select i from Infractions i where i.serial = :serial"),
-		@NamedQuery(name = "infractions.findByRadarCode", query = "Select i from Infractions i where i.radarCode = :radarCode"),
+		@NamedQuery(name = "infractions.findByCitationNumber", query = "Select i from Infractions i where i.citationNumber = :citationNumber"),
 		@NamedQuery(name = "infractions.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum")})
 
 public class Infractions {
@@ -110,6 +110,7 @@ public class Infractions {
 	private String infractionPlace;
 	private Boolean photoFine;
 	private Boolean fixedRadar;
+	private String citationNumber;
 
 	public Long getId() {
 		return id;
@@ -317,6 +318,14 @@ public class Infractions {
 
 	public void setFixedRadar(Boolean fixedRadar) {
 		this.fixedRadar = fixedRadar;
+	}
+
+	public String getCitationNumber() {
+		return citationNumber;
+	}
+
+	public void setCitationNumber(String citationNumber) {
+		this.citationNumber = citationNumber;
 	}
 
 }
