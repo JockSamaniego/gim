@@ -119,6 +119,7 @@ public class InfractionsHome extends EntityHome<Infractions> {
 				}
 
 				//guardado en BD
+				this.getInstance().setFixedRadar(Boolean.FALSE);
 				this.getInstance().setCreationDate(new Date());				 
 		        this.getInstance().setResponsible_user(userSession.getUser().getResident().getName());	 
 		        this.getInstance().setResponsible(userSession.getPerson());
@@ -311,8 +312,8 @@ public class InfractionsHome extends EntityHome<Infractions> {
 	
 	public void prepareToCreateAndEditPhotoFine(){
 		wire();
-		this.instance.setPhotoFine(Boolean.TRUE);
-		this.instance.setFixedRadar(Boolean.TRUE);
+		this.getInstance().setPhotoFine(Boolean.TRUE);
+		this.getInstance().setFixedRadar(Boolean.TRUE);
 	}
 
 	public String savePhotoFineFR(){
