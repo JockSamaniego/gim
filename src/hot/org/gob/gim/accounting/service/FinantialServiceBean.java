@@ -437,6 +437,7 @@ public class FinantialServiceBean implements FinantialService{
 			"         e.account_id = a.id AND " +
 			"         a.accountCode like :accountCode AND " +
 			"         mb.liquidationDate BETWEEN :startDate AND :endDate AND " +
+			"		  mb.emisionDate BETWEEN :emisionStartDate AND :emisionEndDate AND " +
 			"         mb.municipalBondStatus_id in (:statuses)" +
 			"			AND (select count(*) " +
 			"			from municipalbondaux maux " +
@@ -453,6 +454,7 @@ public class FinantialServiceBean implements FinantialService{
 			"         i.entry_id = e.id AND " +
 			"         e.account_id = a.id AND " +
 			"         mb.liquidationDate between :startDate AND :endDate AND " +
+			"		  mb.emisionDate BETWEEN :emisionStartDate AND :emisionEndDate AND " +
 			"         mb.municipalBondStatus_id in (:statuses) " +
 			"			AND (select count(*) " +
 			"			from municipalbondaux maux " +
@@ -469,6 +471,7 @@ public class FinantialServiceBean implements FinantialService{
 			"         i.entry_id = e.id AND " +
 			"         e.account_id = a.id AND " +
 			"         mb.liquidationDate between :startDate AND :endDate AND " +
+			"		  mb.emisionDate BETWEEN :emisionStartDate AND :emisionEndDate AND " +
 			"         mb.municipalBondStatus_id in (:statuses) " +
 			"			AND (select count(*) " +
 			"			from municipalbondaux maux " +
@@ -485,6 +488,7 @@ public class FinantialServiceBean implements FinantialService{
 			"	       i.tax_id = t.id AND " +
 			"          t.taxAccount_id = a.id AND " +
 			"          mb.liquidationDate between :startDate AND :endDate AND " +
+			"		  mb.emisionDate BETWEEN :emisionStartDate AND :emisionEndDate AND " +
 			"          mb.municipalBondStatus_id in (:statuses) " +
 			"			AND (select count(*) " +
 			"			from municipalbondaux maux " +
@@ -707,6 +711,8 @@ public class FinantialServiceBean implements FinantialService{
 							if(reportType == ReportType.SUBSCRIPTION){
 								query = entityManager.createNativeQuery(SUBSCRIPTION_REPORT);
 								statuses = getSubscriptionStatuses();
+								query.setParameter("emisionStartDate", emisionStartDate);
+								query.setParameter("emisionEndDate", emisionEndDate);
 							}
 						}						
 					}
@@ -876,7 +882,7 @@ public class FinantialServiceBean implements FinantialService{
 			if(criteria.getReportFilter() == ReportFilter.ALL || criteria.getReportFilter() == ReportFilter.PREVIOUS){
 				System.out.println("CALCULANDO AÑOS PREVIOS");
 				if(criteria.getReportType() == ReportType.SUBSCRIPTION){
-					buildReport(criteria, report, ReportType.SUBSCRIPTION, criteria.getStartDate(), criteria.getEndDate(), fiscalPeriod.getStartDate(), fiscalPeriod.getEndDate(), ReportFilter.CURRENT);
+					buildReport(criteria, report, ReportType.SUBSCRIPTION, criteria.getStartDate(), criteria.getEndDate(), minimumBondDate, previousYearsEndDate, ReportFilter.PREVIOUS);
 				}
 				if(criteria.getReportType() == ReportType.REVENUE || criteria.getReportType() == ReportType.COMBINED){
 					buildReport(criteria, report, ReportType.REVENUE, previousYearsStartDate, previousYearsEndDate, null, null, ReportFilter.PREVIOUS);

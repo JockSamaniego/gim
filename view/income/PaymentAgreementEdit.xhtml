@@ -656,8 +656,8 @@
 							</rich:column>
 						</rich:subTable>
 				
-						<rich:subTable value="#{_municipalBond.deposits}" var="_deposit"
-							rendered="#{not empty _municipalBond.deposits}">
+						<rich:subTable value="#{_municipalBond.depositsList}" var="_deposit"
+							rendered="#{not empty _municipalBond.depositsList}">
 				
 							<rich:column
 								styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}"

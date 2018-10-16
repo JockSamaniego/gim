@@ -12,6 +12,8 @@
 
 	<ui:define name="body">
 	<ui:include src="../components/InfractionNotificationViewer.xhtml" />
+	<ui:include src="fragment/BondsDownStatusPanel.xhtml" />
+	
 
 		<a:form id="municipalBondSearch" styleClass="edit">
 			<ui:debug id="uiDebug" />
@@ -94,7 +96,7 @@
 					reRender="municipalBondsViewerCmp" disabled="false">
 					<s:div styleClass="actionButtons"
 						rendered="#{not empty municipalBondCondition.result}">
-						<h:panelGrid columns="2">
+						<h:panelGrid columns="4">
 							<s:button
 								view="/revenue/report/ResidentMunicipalBondConditionReport.xhtml"
 								id="print" propagation="join" value="#{messages['common.print']}">
@@ -103,8 +105,17 @@
 							<h:commandButton id="senMail" 
 								value="#{messages['common.sendAccountState']}"
 								action="#{municipalBondCondition.notifyPendingBonds()}" 
-								disabled="#{empty municipalBondCondition.resident.email}"/>							
-							
+								disabled="#{empty municipalBondCondition.resident.email}"/>
+
+							<!--rfam 2018-08-31 ML-JC-2048-267 visualizar bajas  -->
+							<a:commandButton id="viewerNotification" ajaxSingle="true"
+								action="#{municipalBondCondition.findBondsDown()}"
+								eventsQueue="gimEventsQueue"
+								reRender="bondsDownStatusPanel, downBondsTable"
+								oncomplete="Richfaces.showModalPanel('bondsDownStatusPanel',{width:700, height:450})"
+								value="Bajas">
+							</a:commandButton>
+
 						</h:panelGrid>
 												
 					</s:div>

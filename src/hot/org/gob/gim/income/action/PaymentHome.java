@@ -59,6 +59,7 @@ import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 
 import ec.gob.gim.common.model.Alert;
+import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -487,10 +488,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 			Query q1 = getEntityManager().createQuery("Select m from MunicipalBond m " + "JOIN m.deposits d "
 					+ "JOIN d.payment p "
-					+ "where m.resident.id=:resident_id and m.liquidationDate >= :currentDate and p.cashier =:cashier ");
+					+ "where m.resident.id=:resident_id and d.date >= :currentDate and p.cashier =:cashier and d.status=:status");
 			q1.setParameter("resident_id", resident.getId());
 			q1.setParameter("currentDate", formatter.parse(formatter.format(time.getTime())));
 			q1.setParameter("cashier", person);
+			q1.setParameter("status", FinancialStatus.VALID);
 
 			// System.out.println("Persona=====================================>:
 			// "+person.getId());
@@ -2234,6 +2236,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			}
 			canPass = false;
 		}
+		
+		if(depositTotal.compareTo(BigDecimal.ZERO) <= 0){
+			depositTotal = BigDecimal.ZERO;
+		}
 
 		if (!hasConflict) {
 			this.getInstance().setValue(depositTotal);
@@ -2600,7 +2606,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	
 	//Jock Samaniego
 	//Para control de boton de registro de pago
-	private Boolean invalidAmount;
+	private Boolean invalidAmount = Boolean.TRUE;
 
 	public Boolean getInvalidAmount() {
 		return invalidAmount;
@@ -2786,6 +2792,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	public void updateHasCompensationBonds() {
+		deactivatePayBtn();
 		// @author macartuche
 		// deshabilitar boton de registro de pago
 		this.isPaymentSubscription = false;
@@ -2816,6 +2823,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	public void updateHasCompensationBonds(String paymentType) {
+		deactivatePayBtn();
 		this.isPaymentSubscription = true;
 		// @author macartuche
 		// deshabilitar boton de registro de pago
@@ -3261,9 +3269,16 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				.findResource(SystemParameterService.LOCAL_NAME);
 		String role = systemParameterService.findParameter(roleKey);
 		if (role != null) {
-			return userSession.getUser().hasRole(role);
+			if(userSession !=null && userSession.getUser() != null) {
+				return userSession.getUser().hasRole(role);
+			}else { 
+				return false;
+			}
 		}
 		return false;
 	}
 
+	public void deactivatePayBtn(){
+		this.invalidAmount = Boolean.TRUE;
+	}
 }

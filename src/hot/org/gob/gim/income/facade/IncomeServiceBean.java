@@ -33,6 +33,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.Gim;
 import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.CreditNoteValueNotValidException;
@@ -43,7 +44,10 @@ import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
 import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.service.MunicipalBondService;
+import org.gob.loja.gim.ws.dto.BondSummary;
 import org.gob.loja.gim.ws.dto.FutureBond;
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.In;
 
 import com.google.common.base.Joiner;
 
@@ -574,6 +578,8 @@ public class IncomeServiceBean implements IncomeService {
 		return mapBranch;
 	}
 
+	@In(scope=ScopeType.APPLICATION)
+	Gim gim;
 	public DataWS authorizedElectronicReceipt(Receipt receipt) throws Exception {
 		String sriEnvironment = systemParameterService.findParameter(ELECTRONIC_INVOICE_ENVIRONMENT);
 		JAXBContext jaxbContext = JAXBContext.newInstance(Factura.class);
@@ -609,10 +615,13 @@ public class IncomeServiceBean implements IncomeService {
 			document = FileUtilities.convertir_file_to_ByteArray(output);
 			String checksum = FileUtilities.checkSumApacheCommons(xmlFileName);
 			dataWS.setXmlFile(document);
-			dataWS.setRucCompany(receipt.getMunicipalBond().getInstitution()
-					.getNumber());
+//			dataWS.setRucCompany(receipt.getMunicipalBond().getInstitution()
+//					.getNumber());
+			dataWS.setRucCompany(gim.getInstitution().getNumber());
 			//System.out.println("cliente checksum ");
 			dataWS.setCheksum(checksum);
+//			dataWS.setCorrespondingTo(correspondingTo);
+//			dataWS.setpa
 			dataWS = sendToService(dataWS);
 			new File(xmlFileName).delete();
 		} catch (IOException ex) {
@@ -1995,5 +2004,22 @@ public class IncomeServiceBean implements IncomeService {
 		q.setParameter("cover", true);
 		q.setParameter("id", municipalbondid);
 		return !q.getResultList().isEmpty();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<BondSummary> findBondsDownStatus(Long residentId) {
+		Long reversedStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_REVERSED");
+		
+		String sql = "SELECT NEW org.gob.loja.gim.ws.dto.BondSummary(mb.id, mb.number, entry.name, mb.groupingCode, mb.emisionDate, mb.serviceDate,"
+				+ "mb.expirationDate, mb.value, mb.reversedResolution, mb.reversedDate) "
+				+ "from MunicipalBond mb " 
+				+ "JOIN mb.entry entry "
+				+ "where mb.municipalBondStatus.id = :statusId and mb.resident.id = :residentId "
+				+ "ORDER BY mb.reversedResolution, mb.number, mb.emisionDate";
+		Query q= entityManager.createQuery(sql);
+		q.setParameter("statusId", reversedStatusId);
+		q.setParameter("residentId", residentId);
+		return q.getResultList();
 	}
 }

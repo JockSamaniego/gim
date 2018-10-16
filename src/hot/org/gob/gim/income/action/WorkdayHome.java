@@ -1376,8 +1376,13 @@ public class WorkdayHome extends EntityHome<Workday> {
 				+ "join i.tax t "
 				+ "join t.taxAccount ac "
 				+ "where "
-				+ "i.value > 0 and "
-				+ "m.id in "
+				+ "i.value > 0 "
+				+"AND (select count(maux) "
+				+ "from MunicipalbondAux maux "
+				+ "where maux.municipalbond.id = m.id "
+				+ "AND maux.typepayment = 'SUBSCRIPTION' "
+				+ "AND maux.status = 'VALID') = 0 "
+				+ "and m.id in "
 				+ "(select distinct (m.id) from MunicipalBond m "
 				+ "join m.deposits d "
 				+ "left join m.paymentAgreement pa "
@@ -1570,8 +1575,13 @@ public class WorkdayHome extends EntityHome<Workday> {
 				+ "join i.entry e "
 				+ "left join e.account ac "
 				+ "where "
-				+ "i.total > 0 and "
-				+ "m.id in "
+				+ "i.total > 0 "
+				+"AND (select count(maux) "
+				+ "from MunicipalbondAux maux "
+				+ "where maux.municipalbond.id = m.id "
+				+ "AND maux.typepayment = 'SUBSCRIPTION' "
+				+ "AND maux.status = 'VALID') = 0 "
+				+ "and m.id in "
 				+ "(select distinct (m.id) from MunicipalBond m "
 				+ "join m.deposits d "
 				+ "left join m.paymentAgreement pa "
@@ -6071,6 +6081,12 @@ public class WorkdayHome extends EntityHome<Workday> {
 			if ((!tp.isEnabled()) && (tp.getOpeningTime() != null)) {
 				tp.setOpeningTime(null);
 			}
+			
+			//rfam 2018-08-14 apertura automatica de bancos
+			if(tp.isEnabled() && tp.getOpeningTime() == null && tp.getTill().isTillBank()) {
+				tp.setOpeningTime(cal.getTime());
+				tp.setInitialBalance(BigDecimal.ZERO);
+			}
 		}
 	}
 
@@ -6181,7 +6197,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 				this.getInstance().setIsRevenueOpening(true);
 			}
 
-			TillPermission tillPermision;
+			//TillPermission tillPermision;
 
 			return super.persist();
 

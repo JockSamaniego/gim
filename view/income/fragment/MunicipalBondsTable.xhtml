@@ -47,7 +47,7 @@
 					<h:outputText value="#{messages['municipalBond.interestsTotal']}" />
 				</rich:column>
 				<rich:column>
-					<h:outputText value="#{messages['municipalBond.discountsTotal']}" />
+					<h:outputText value=	 "#{messages['municipalBond.discountsTotal']}" />
 				</rich:column>
 				<rich:column>
 					<h:outputText value="#{messages['municipalBond.surchargesTotal']}" />
@@ -68,7 +68,7 @@
 					<a:support event="onchange" eventsQueue="gimQueue"
 						action="#{paymentHome.calculatePaidTotal()}"
 						ajaxSingle="true"
-						reRender="municipalBondsPanel, totalsPanel" />
+						reRender="municipalBoz|ndsPanel, totalsPanel" />
 				</h:selectBooleanCheckbox>
 			</rich:column>
 

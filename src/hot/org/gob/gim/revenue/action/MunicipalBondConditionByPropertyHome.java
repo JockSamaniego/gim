@@ -175,7 +175,7 @@ public class MunicipalBondConditionByPropertyHome extends EntityHome<MunicipalBo
 			return "failed";
 		}
 
-		SolvencyHistory solvencyHistory = new SolvencyHistory(resident, motivation, SolvencyHistoryType.DOMAIN_TRANSFER, null, property, userSession.getPerson(), null, null, null);
+		SolvencyHistory solvencyHistory = new SolvencyHistory(resident, motivation, SolvencyHistoryType.DOMAIN_TRANSFER, null, property, userSession.getPerson(),null, null, null, null);
 		solvencyHistoryHome.setInstance(solvencyHistory);
 		
 		if (solvencyHistoryHome.save() != "persisted"){
