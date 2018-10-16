@@ -146,4 +146,7 @@ public interface IncomeService {
 	 * @return
 	 */
 	public List<BondSummary> findBondsDownStatus(Long residentId);
+	
+	public boolean verifyApplyDiscount(Long entryId, String groupingCode, Long residentId);
+	
 }
