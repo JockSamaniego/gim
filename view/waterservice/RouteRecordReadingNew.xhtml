@@ -31,6 +31,7 @@
 		<ui:include src="fragment/ConsumptionValidatePanel.xhtml" />
 		<ui:include src="fragment/PreEmissionWaterServicePanel.xhtml" />
 		<ui:include src="fragment/WaterMeterAddPanel.xhtml" />
+		<ui:include src="fragment/ConsumptionObservationPanel.xhtml" />
 		<!--  ui:include src="fragment/.xhtml" /-->
 
 		<h:form id="routeRecording" styleClass="edit">
@@ -244,7 +245,7 @@
 								<rich:column style="text-align:right;">
 									<f:facet name="header">#{messages['route.differenceInReading']}</f:facet>
 									<h:outputText value="#{service.amount}" id="diffRead" />
-								</rich:column>
+								</rich:column>								
 
 								<rich:column styleClass="action">
 									<f:facet name="header">#{messages['route.validRecord']}</f:facet>
@@ -252,6 +253,18 @@
 										value="/img/#{service.isValidReading ? 'true.png' : 'error.gif'}"
 										id="isValidRead" />
 								</rich:column>
+								
+								<rich:column styleClass="action">
+									<f:facet name="header">#{messages['route.observations']}</f:facet>
+									<a:commandLink id="observationId"
+										value="Ver"
+										action="#{routeHome.selectInfoConsumption(service)}"
+										oncomplete="Richfaces.showModalPanel('consumptionObservationPanel',{width:400, height:400})"
+										title="observaciones" reRender="waterMeterTable, waterMetersPanel"
+										disabled="#{!service.disabled}" />
+								</rich:column>
+								
+								
 								<h:column>
 									<f:facet name="header">#{messages['route.error']}</f:facet>
 									<h:outputText value="#{service.errorMessage}" id="errMess" />
