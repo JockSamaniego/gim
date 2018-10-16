@@ -19,6 +19,24 @@
                     value="#{infractionsHome.managed ? messages['infraction.Edit'] : messages['infraction.Create']}" />
                 </h:panelGrid>      
             </f:facet>
+            
+            <s:decorate id="registerDateField" template="../../layout/edit.xhtml"
+            			rendered="#{!infractionsHome.infractionToEdit}">
+                <ui:define name="label">#{messages['infraction.registerDate']}</ui:define>
+                <rich:calendar id="registerDate"
+                          value="#{infractionsHome.registerDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                </rich:calendar>
+            </s:decorate>
+            
+            <s:decorate id="creationDateField" template="../../layout/edit.xhtml"
+            			rendered="#{infractionsHome.infractionToEdit}">
+                <ui:define name="label">#{messages['infraction.registerDate']}</ui:define>
+                <rich:calendar id="creationDate"
+                          value="#{infractionsHome.instance.creationDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                </rich:calendar>
+            </s:decorate>
 
             <s:decorate id="agentField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['ucot.agent']}</ui:define>
@@ -70,9 +88,9 @@
             <s:decorate id="citationDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.citationdate']}</ui:define>
                 <rich:calendar id="citationDate" required="true"
-                          value="#{infractionsHome.instance.citationDate}" datePattern="dd/MM/yyyy" >
-                          <f:validator validatorId="currentDateValidator" />
-                          <a:support event="onchanged" reRender="citationDateField" bypassUpdates="true" ajaxSingle="true" />
+                          value="#{infractionsHome.instance.citationDate}" datePattern="#{messages['common.datePattern']}" ajaxSingle="true" >
+                          <a:support event="onchanged" action="#{infractionsHome.findSalaryBasic()}" reRender="citationDateField,basicSalaryField,panelPenalties" ajaxSingle="true" />
+                		  <f:validator validatorId="currentDateValidator" />
                 </rich:calendar>
             </s:decorate>
 
@@ -86,6 +104,14 @@
                     <s:convertDateTime type="time"/>
                     <a:support event="onblur" reRender="citationTimeField" bypassUpdates="true" ajaxSingle="true"/>
                 </h:inputText>
+            </s:decorate>
+            
+            <s:decorate id="placeField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.place']}</ui:define>
+                <h:inputTextarea id="infractionPlace"
+                           size="15"
+                          value="#{infractionsHome.instance.infractionPlace}">
+                </h:inputTextarea>
             </s:decorate>
 
             <s:decorate id="colorPersonalField" template="../../layout/edit.xhtml" 
@@ -145,7 +171,7 @@
 
         <h:panelGrid columns="1" > 
 
-          <rich:panel>
+          <rich:panel id="panelInformation">
             <f:facet name="header">
                 <h:panelGrid columns="1" columnClasses="headerTitle,">
                   <h:outputText
@@ -157,7 +183,7 @@
                 <ui:define name="label">#{messages['infraction.identification']}</ui:define>
                 <h:inputText id="identification"
                               size="15"
-                              maxlength="10"
+                              maxlength="15"
                               value="#{infractionsHome.instance.identification}">
                               <f:validator validatorId="identificationNumberValidator"/>
                               <a:support event="onblur" ajaxSingle="true" action="#{infractionsHome.findResidentName()}" reRender="nameField, identificationField" />
@@ -181,7 +207,7 @@
             </s:decorate>
 
             <s:decorate id="basicSalaryField" template="../../layout/edit.xhtml">
-                <ui:define name="label">Salario Básico</ui:define>
+                <ui:define name="label">#{messages['ucot.basicSalary']}</ui:define>
                 <h:inputText id="identification"
                               size="15"
                               maxlength="10"
@@ -190,19 +216,31 @@
                 </h:inputText>
             </s:decorate>
 
+           <h:panelGrid columns="2" > 
+
             <s:decorate id="articleField"
                 template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.article']}</ui:define>
-                <h:selectOneMenu id="articleNumber" value="#{infractionsHome.instance.article}" >
+                <h:selectOneMenu id="articleNumber" value="#{infractionsHome.instance.article}" required="true" >
                   <s:selectItems value="#{infractionsHome.chargeArticles()}" var="article" 
                   label="#{article}" itemValue="#{article}" noSelectionLabel="Seleccione uno" />
                   <a:support event="onchange" ajaxSingle="true" reRender="numeralField,infractionPointField,porcentageField,valueField,detailField" action="#{infractionsHome.resetValues()}" />
-                </h:selectOneMenu>
+                </h:selectOneMenu>   
             </s:decorate>
 
+            <s:decorate id="photoFineField"
+                template="../../layout/edit.xhtml">
+            <ui:define name="label">#{messages['infraction.photoFine']}?</ui:define>
+                <h:selectBooleanCheckbox id="photoFine"
+                                      value="#{infractionsHome.instance.photoFine}">
+                        <a:support event="onchange" ajaxSingle="true" reRender="panelInformation,panelPenalties" />
+                </h:selectBooleanCheckbox>
+            </s:decorate>
+          </h:panelGrid>   
+          
             <s:decorate id="numeralField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.numeral']}</ui:define>
-                <h:selectOneMenu id="numeral" value="#{infractionsHome.instance.numeral}" >
+                <h:selectOneMenu id="numeral" value="#{infractionsHome.instance.numeral}" required="true" >
                   <s:selectItems value="#{infractionsHome.findNumeralByArticle(infractionsHome.instance.article)}" var="numeral" 
                   label="#{numeral}" itemValue="#{numeral}" noSelectionLabel="Seleccione uno" />
                   <a:support event="onchange" ajaxSingle="true" action="#{infractionsHome.chargeValues()}" reRender="infractionPointField,porcentageField,valueField,detailField" />
@@ -216,7 +254,15 @@
                       maxlength="10"
                           value="#{infractionsHome.instance.partNumber}">
                 </h:inputText>
-            </s:decorate>         
+            </s:decorate>
+            <s:decorate id="radarCodeField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.photoFine}">
+                <ui:define name="label">#{messages['agent.code']} de #{messages['ucot.radar']}</ui:define>
+                <h:inputText id="radarCode"
+                           size="15"
+                      maxlength="20"
+                          value="#{infractionsHome.instance.radarCode}">
+                </h:inputText>
+            </s:decorate>          
 
             
             <div style="clear:both" />
@@ -224,7 +270,7 @@
           </rich:panel>
 
 
-          <rich:panel>
+          <rich:panel id = "panelPenalties">
             <f:facet name="header">
                 <h:panelGrid columns="1" columnClasses="headerTitle,">
                   <h:outputText
@@ -232,15 +278,16 @@
                 </h:panelGrid>      
             </f:facet>
             <s:decorate id="infractionPointField" template="../../layout/edit.xhtml">
-                <ui:define name="label">Puntos</ui:define>
+                <ui:define name="label">#{messages['infraction.points']}</ui:define>
                 <h:inputText id="licensePlate"
                                size="15"
+                               required="true"
                                maxlength="10"
                               value="#{infractionsHome.instance.points}" />
             </s:decorate>
 
             <s:decorate id="porcentageField" template="../../layout/edit.xhtml">
-                <ui:define name="label">Porcentaje (%)</ui:define>
+                <ui:define name="label">#{messages['infraction.percentaje']} (%)</ui:define>
                 <h:inputText id="article"
                            size="15"
                       maxlength="10"
@@ -250,9 +297,10 @@
             </s:decorate>
 
             <s:decorate id="valueField" template="../../layout/edit.xhtml">
-                <ui:define name="label">Valor de Multa ($)</ui:define>
+                <ui:define name="label">#{messages['infraction.penaltyValue']} ($)</ui:define>
                 <h:inputText id="numeral"
                            size="15"
+                           required="true"
                       maxlength="10"
                           value="#{infractionsHome.instance.value}">
                           <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/>
@@ -260,7 +308,7 @@
             </s:decorate>
             
             <s:decorate id="detailField" template="../../layout/edit.xhtml">
-                <ui:define name="label">Detalle</ui:define>
+                <ui:define name="label">#{messages['ucot.detail']}</ui:define>
                 <h:inputTextarea id="numeral"
                 			readonly= "true"
                            size="15"
