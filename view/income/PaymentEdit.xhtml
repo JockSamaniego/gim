@@ -267,8 +267,16 @@
 									focus="receivedAmount" 
 									rendered="#{((!paymentHome.enableSubscription and !paymentHome.emissionFuture) || (paymentHome.paymentAgree)) and paymentHome.resident != null}"/>
 											
+							</h:panelGrid >
+																
+							<h:panelGrid columns="2" style="float:right;">
+								<h:outputText id="completePaymentMsg"
+								value="Marque la casilla si el abono o convenio será pagado en su totalidad"
+								style="font-size:14px; font-weight:bold; color: red" styleClass="right" />		
+								<h:selectBooleanCheckbox value="#{paymentHome.completePayment}" >
+									<a:support event="onchange" ajaxSingle="true" action="#{paymentHome.search}"/>
+								</h:selectBooleanCheckbox>
 							</h:panelGrid>
-
 						</h:panelGrid>
 					</a:outputPanel>
 				</h:panelGrid>

@@ -212,8 +212,9 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 			}else{
 				pendingBonds = incomeService.findOnlyPendingAndInAgreementBonds(resident.getId(), entry.getId());
 			}
-			
-			incomeService.calculatePayment(pendingBonds, new Date(), true, true);			
+			//remision
+			//se agrega variable false al final para pago completo, ya que es estado de cuenta
+			incomeService.calculatePayment(pendingBonds, new Date(), true, true, false);			
 			result.addAll(pendingBonds);
 		}	
 		
@@ -278,7 +279,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		}
 		
 		try {
-			incomeService.calculatePayment(mbs, new Date(), true, true);
+			incomeService.calculatePayment(mbs, new Date(), true, true, false);
 		} catch (EntryDefinitionNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

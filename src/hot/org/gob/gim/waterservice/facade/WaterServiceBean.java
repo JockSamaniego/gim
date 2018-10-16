@@ -331,7 +331,7 @@ public class WaterServiceBean implements WaterService {
 		if (emissionOrder.getMunicipalBonds() != null
 				&& emissionOrder.getMunicipalBonds().size() > 0) {
 			municipalBondService.createItemsToMunicipalBond(
-					emissionOrder.getMunicipalBonds(), null, true, true, false);
+					emissionOrder.getMunicipalBonds(), null, true, true, false, Boolean.FALSE);
 		}
 
 		return emissionOrder;

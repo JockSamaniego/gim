@@ -124,7 +124,7 @@ public class RevenueServiceBean implements RevenueService {
 			throws EntryDefinitionNotFoundException {
 
 		return municipalBondService.createMunicipalBond(resident, fiscalPeriod,
-				entry, entryValueItem, isEmission, true, facts);
+				entry, entryValueItem, isEmission, true, Boolean.FALSE, facts);
 	}
 
 	/*

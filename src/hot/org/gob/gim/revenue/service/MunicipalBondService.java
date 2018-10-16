@@ -30,27 +30,33 @@ public interface MunicipalBondService {
 	public MunicipalBond createMunicipalBond(Resident resident,
 			FiscalPeriod fiscalPeriod, Entry entry,
 			EntryValueItem entryValueItem, boolean isEmission,
-			boolean applyDiscounts, Object... facts)
+			boolean applyDiscounts, 
+			boolean completePayment,
+			Object... facts)
 			throws EntryDefinitionNotFoundException;
 
 	public void calculatePayment(MunicipalBond municipalBond, Date paymentDate,
 			Deposit deposit, boolean isNew, boolean isEmission,
-			boolean applyDiscounts, List<TaxRate> taxRatesActives,
-			Object... facts) throws EntryDefinitionNotFoundException;
+			boolean applyDiscounts, 
+			Boolean completePayment,
+			List<TaxRate> taxRatesActives,
+			Object... facts) throws EntryDefinitionNotFoundException;  //1 desde vista cajero
 
 	MunicipalBond findByResidentIdAndEntryIdAndServiceDateAndGroupingCode(
 			Long residentId, Long entryId, Date serviceDate, String groupingCode);
 
 	public void createItemsToMunicipalBond(List<MunicipalBond> bonds,
 			BigDecimal amount, boolean isNew, boolean isEmission,
-			boolean internalTramit) throws EntryDefinitionNotFoundException;
+			boolean internalTramit, boolean completePayment) throws EntryDefinitionNotFoundException;
 
 	public void createItemsToMunicipalBond(MunicipalBond municipalBond,
 			EntryValueItem entryValueItem, boolean isNew, boolean isEmission,
 			Object... facts) throws EntryDefinitionNotFoundException;
 
 	public void changeExemptionInMunicipalBond(MunicipalBond municipalBond,
-			boolean isNew, boolean isEmission, Object... facts)
+			boolean isNew, boolean isEmission, 
+			boolean completePayment,
+			Object... facts)
 			throws EntryDefinitionNotFoundException;
 
 	List<MunicipalBond> findPendingsByGroupingCode(String groupingCode);

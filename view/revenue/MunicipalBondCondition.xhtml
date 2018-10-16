@@ -66,7 +66,7 @@
 				<a:outputPanel ajaxRendered="true">					
 					
 					<a:commandButton id="search" value="#{messages['common.search']}"
-						action="#{municipalBondCondition.chargeResults()}" reRender="txtInterest,txtSurcharged, contentPanel, messages" disabled="#{municipalBondCondition.resident == null}">						
+						action="#{municipalBondCondition.chargeResults()}" reRender="remisionPanel, txtInterest,txtSurcharged, contentPanel, messages" disabled="#{municipalBondCondition.resident == null}">						
 					</a:commandButton>
 					
 					<s:button id="reset" value="#{messages['common.reset']}"
@@ -78,9 +78,30 @@
 		<h:form>
 			<div class="results">
 				
-				Interes:<h:outputText id="txtInterest" value="#{municipalBondCondition.totalInterestRemision}"></h:outputText>
-				Recargo:<h:outputText id="txtSurcharged" value="#{municipalBondCondition.totalSurchargeRemision}"></h:outputText>
-				
+				<rich:panel id="remisionPanel">
+					<f:facet name="header">
+						<h:outputText value="Valores de remisión"
+							styleClass="formTitle right" />
+					</f:facet>
+					<div class="right">
+						<div>
+							<h:outputText value="Interes: " style="font-size:20px; font-weight:bold;"/>			
+							<h:outputText id="txtInterest" value="#{municipalBondCondition.totalInterestRemision}" style="font-size:20px; font-weight:bold; " styleClass="right" >
+								<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</div>
+						<div>
+							<h:outputText value="Recargo: " style="font-size:20px; font-weight:bold;"/>
+							<h:outputText id="txtSurcharged" value="#{municipalBondCondition.totalSurchargeRemision}" style="font-size:20px; font-weight:bold; " styleClass="right">
+								<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</div>
+					</div>									
+				</rich:panel>
 				<rich:panel id="contentPanel">
 					<a:outputPanel ajaxRendered="false">		
 				<h:outputText

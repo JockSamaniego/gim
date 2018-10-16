@@ -344,7 +344,7 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 		
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		try {
-			incomeService.calculatePayment(bondsForCalculate, new Date(), true, true);
+			incomeService.calculatePayment(bondsForCalculate, new Date(), true, true, false);
 			incomeService.updateMunicipalBonds(bondsForCalculate);
 			totalPending();
 		} catch (EntryDefinitionNotFoundException e) {

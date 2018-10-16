@@ -214,7 +214,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	public MunicipalBond createMunicipalBond(Resident resident,
 			FiscalPeriod fiscalPeriod, Entry entry,
 			EntryValueItem entryValueItem, boolean isEmission,
-			boolean applyDiscounts, Object... facts)
+			boolean applyDiscounts, boolean completePayment,
+			Object... facts)
 			throws EntryDefinitionNotFoundException {
 
 		Date now = Calendar.getInstance().getTime();
@@ -252,16 +253,18 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		if (aux)
 			municipalBond.setExpirationDate(expirationDate);
 		calculatePayment(municipalBond, now, null, true, isEmission,
-				applyDiscounts, null, facts);
+				applyDiscounts, completePayment, null,  facts);
 		return municipalBond;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	// iva12%
+	//1 desde vista cajer@
 	public void calculatePayment(MunicipalBond municipalBond, Date paymentDate,
 			Deposit deposit, boolean isNew, boolean isEmission,
-			boolean applyDiscounts, List<TaxRate> taxRatesActives,
+			boolean applyDiscounts, 
+			Boolean completePayment,
+			List<TaxRate> taxRatesActives,
 			Object... facts) throws EntryDefinitionNotFoundException {
 
 		// System.out.println("<<<R>>>calculatePayment: \n\n\n\n\n");
@@ -285,12 +288,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		}
 		this.metadataDto = new MetadataBondDTO();
 		// municipalBond.setBalance(municipalBond.getBalance().add(municipalBond.getSurcharge()).subtract(municipalBond.getDiscount()));
-		calculateInterest(municipalBond, deposit, paymentDate);// luego de
-																// pruebas de
-																// coactivas y
-																// de interes
-																// cero remover
-																// ******
+		calculateInterest(municipalBond, deposit, paymentDate, completePayment);// remision
 
 		// @author macartuche
 		// @date 2016-06-27 10:33
@@ -327,9 +325,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		roundItems(municipalBond);
 		
 		//TODO aqui lo de remision
-		
-		//para casos de remision interes
-		Map<String, Object>cases = compareCases(municipalBond.getExpirationDate(),municipalBond.getSurcharge(), paymentDate, municipalBond);
+		Map<String, Object>cases = compareCases(municipalBond.getExpirationDate(),municipalBond.getSurcharge(), paymentDate, municipalBond, completePayment);
 		BigDecimal newSurharged	 = (BigDecimal)cases.get("nuevoValor");
 		
 		//todo armar JSON y setear
@@ -566,7 +562,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 	public void createItemsToMunicipalBond(List<MunicipalBond> bonds,
 			BigDecimal amount, boolean isNew, boolean isEmission,
-			boolean internalTramit) throws EntryDefinitionNotFoundException {
+			boolean internalTramit, boolean completePayment) throws EntryDefinitionNotFoundException {
 
 		if (bonds == null || bonds.size() == 0)
 			return;
@@ -655,7 +651,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 					// mainItem.setTotal(mainItem.getTotal().subtract(mb.getPreviousPayment()));
 				}
 
-				calculatePayment(mb, now, null, true, isEmission, true,
+				calculatePayment(mb, now, null, true, isEmission, true, completePayment,
 						activeTaxRates, itemFacts);
 
 				if (mb.getPaidTotal().compareTo(BigDecimal.ZERO) < 1) {
@@ -684,7 +680,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	}
 
 	public void changeExemptionInMunicipalBond(MunicipalBond municipalBond,
-			boolean isNew, boolean isEmission, Object... facts)
+			boolean isNew, boolean isEmission,
+			boolean completePayment,
+			Object... facts)
 			throws EntryDefinitionNotFoundException {
 		if (municipalBond.getEntry() != null) {
 
@@ -707,7 +705,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			municipalBond.setDiscount(calculateDiscount(municipalBond));
 			municipalBond.setSurcharge(calculateSurcharge(municipalBond));
 			calculatePayment(municipalBond, municipalBond.getEmisionDate(),
-					null, false, isEmission, true, null, facts);
+					null, false, isEmission, true,  completePayment, null, facts);
 
 			// if(isNew && municipalBond.getPreviousPayment() != null &&
 			// municipalBond.getPreviousPayment().compareTo(BigDecimal.ZERO) > 0
@@ -1380,7 +1378,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 	@SuppressWarnings("unchecked")
 	private void calculateInterest(MunicipalBond municipalBond,
-			Deposit lastDeposit, Date paymentDate) {
+			Deposit lastDeposit, Date paymentDate, boolean completePayment) {
 		// System.out.println("INTERESTS -----> BEGINS=============>>>>>>>>>>>>>1234");
 		BigDecimal interest = BigDecimal.ZERO;
 		BigDecimal balance = municipalBond.getBalance().subtract(
@@ -1546,12 +1544,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			}
 
 			//para casos de remision interes
-			Map<String, Object> cases = compareCases(expirationDate, interest, paymentDate, municipalBond);
-			BigDecimal newInterest	 = (BigDecimal)cases.get("nuevoValor");
+			Map<String, Object> cases = compareCases(expirationDate, interest, paymentDate, municipalBond, completePayment);
+			BigDecimal newInterest	 = (BigDecimal)cases.get("nuevoValor");		
 			
 			this.metadataDto.setInterest((BigDecimal)cases.get("totalExonerado"));
-			interest = newInterest;
-			
+			interest = newInterest;			
 		}
 		
 		
@@ -1573,33 +1570,34 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	 * @param expirationDate
 	 */
 	private static Map<String, Object> compareCases(Date expirationDate, BigDecimal value, 
-			Date paymentDate, MunicipalBond mb) {
+			Date paymentDate, MunicipalBond mb, boolean completePayment) {
 		
-		
+//		System.out.println("NUMBER "+mb.getNumber());
 		String case1StringRemission = "2018-04-02";
 		//dentro de 90 dias reduccion del 100%
 		String case1StringMaxPayment = "2018-12-28";
-		
-		//de 91 y 150 dias reduccion del 75%
-		String case2StringStart = "2018-12-29";
-		String case2StringEnd= "2019-02-28";
-		
-		//de 151 a 180 dias reduccion del 50%
-		String case3StringStart = "2019-03-01";
-		String case3StringEnd = "2019-03-30";
-		
-		
+		  
 		Map<String, Object> response = new HashMap<String, Object>();
 		value = value.setScale(2, RoundingMode.HALF_UP);
 		
+		if(mb.getMunicipalBondStatus().getId().intValue() == 14 || 
+				mb.getPaymentAgreement()!=null ) {
+			expirationDate = mb.getExpirationDate();
+		}
+		
+		//respuesta por defecto en caso que no se exogenere el interes o recargo
+		Map<String, Object> responseDefault = new HashMap<String, Object>(); 
+		responseDefault.put("case", "0");
+		responseDefault.put("porcentajeExonerado", "0%");
+		responseDefault.put("totalExonerado", BigDecimal.ZERO);
+		responseDefault.put("nuevoValor", value);
+		responseDefault.put("FechaVencimiento", expirationDate);
+		responseDefault.put("FechaPago", paymentDate);
+		 
 		try {
 			Date dateCase1Remission = stringToDate(case1StringRemission);
 			
-			Date dateCase1MaxPayment = stringToDate(case1StringMaxPayment);
-			Date dateCase2StartPayment = stringToDate(case2StringStart);
-			Date dateCase2EndPayment = stringToDate(case2StringEnd);
-			Date dateCase3StartPayment = stringToDate(case3StringStart);
-			Date dateCase3EndPayment = stringToDate(case3StringEnd);			
+			Date dateCase1MaxPayment = stringToDate(case1StringMaxPayment); 		
 					
 			if (expirationDate.compareTo(dateCase1Remission)<= 0 ) {
 				if(paymentDate.compareTo(dateCase1MaxPayment)<=0) {
@@ -1611,69 +1609,31 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 					response.put("FechaVencimiento", expirationDate);
 					response.put("FechaPago", paymentDate);
 					
-				}else if( paymentDate.compareTo(dateCase2StartPayment) >=0 && 
-						  paymentDate.compareTo(dateCase2EndPayment) <=0) {		
-					
-					double porcentage75 = 75/100;
-					BigDecimal interesExonerado = value.divide(new BigDecimal(porcentage75), RoundingMode.HALF_UP);
-					BigDecimal newInterest = value.subtract(interesExonerado);					
-					response.put("case", "2");
-					response.put("porcentajeExonerado", "75%");
-					response.put("totalExonerado", interesExonerado);
-					response.put("nuevoValor", newInterest);
-					response.put("FechaVencimiento", expirationDate);
-					response.put("FechaPago", paymentDate);
-					
-				}else if( paymentDate.compareTo(dateCase3StartPayment) >=0 && 
-						  paymentDate.compareTo(dateCase3EndPayment) <=0) {
-					
-					double porcentage50 = 50/100;
-					BigDecimal interesExonerado = value.divide(new BigDecimal(porcentage50), 
-							RoundingMode.HALF_UP);
-					BigDecimal newInterest = value.subtract(interesExonerado);					
-					response.put("case", "3");
-					response.put("porcentajeExonerado", "50%");
-					response.put("totalExonerado", interesExonerado);
-					response.put("nuevoValor", newInterest);
-					response.put("FechaVencimiento", expirationDate);
-					response.put("FechaPago", paymentDate);
-					
 				}else {				
-					//CALCULO NORMAL DE INTERES
-					response.put("case", "0");
-					response.put("porcentajeExonerado", "0%");
-					response.put("totalExonerado", BigDecimal.ZERO);
-					response.put("nuevoValor", value);
-					response.put("FechaVencimiento", expirationDate);
-					response.put("FechaPago", paymentDate);
+					//CALCULO NORMAL DE INTERES/RECARGO
+					response = responseDefault;
 				}
 			}else {
 				
-				//CALCULO NORMAL DE INTERES
-				response.put("case", "0");
-				response.put("porcentajeExonerado", "0%");
-				response.put("nuevoValor", value);
-				response.put("FechaVencimiento", expirationDate);
-				response.put("FechaVencimiento", expirationDate);
-				response.put("FechaPago", paymentDate);
-				response.put("totalExonerado", BigDecimal.ZERO);
+				//CALCULO NORMAL DE INTERES/RECARGO
+				response = responseDefault;
 			}
 									 						
 		} catch (ParseException e) {
 			//CALCULO NORMAL DE INTERES
-			response.put("case", "0");
-			response.put("porcentajeExonerado", BigDecimal.ZERO);
-			response.put("nuevoValor", value);
-			response.put("FechaVencimiento", expirationDate);
-			response.put("FechaVencimiento", expirationDate);
-			response.put("FechaPago", paymentDate);			
-			response.put("porcentajeExonerado", "0%");
-			response.put("totalExonerado", BigDecimal.ZERO);
+			response = responseDefault;
 			e.printStackTrace();
 		}
 		
-
-		
+		//ABONOS O CONVENIOS
+		if(mb.getMunicipalBondStatus().getId().intValue() == 14 || 
+				mb.getPaymentAgreement()!=null ) {
+				
+				if(!completePayment) { 
+					//si no es pago completo no se exonera interes/recargo, se devuelve valor calculado
+					response = responseDefault;
+				}			
+		}
 		return response;
 	}
 	
