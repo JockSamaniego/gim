@@ -16,6 +16,11 @@ public class QueryBondsAux {
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);		
 		return incomeService.checkIsPayed(municipalbondID, type);
 	}
+	
+	public static boolean applyDiscount(Long entryId, String groupingCode, Long residentId) {
+		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+		return incomeService.verifyApplyDiscount(entryId, groupingCode, residentId);
+	}
 
-
+	
 }
