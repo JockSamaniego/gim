@@ -25,15 +25,14 @@
 			</h:panelGroup>
 		</f:facet>
 
-		<h:form id="consumptionObservationPanelForm">
-
-
-
-			<a:commandLink id="observationId" value="Ver"
-				action="#{routeHome.selectInfoConsumption(service)}"
-				oncomplete="Richfaces.showModalPanel('consumptionObservationPanel',{width:400, height:400})"
-				title="observaciones" reRender="waterMeterTable, waterMetersPanel"
-				disabled="#{!service.disabled}" />
+		<h:form id="consumptionObservationForm">
+		
+		
+			<h:outputText value="Servicio: #{routeHome.infoConsumption.waterSupply.serviceNumber}" style="font-weight:bold; font-size:14px;"></h:outputText>
+			<br/>
+			<h:outputText value="Orden: #{routeHome.infoConsumption.waterSupply.routeOrder}" style="font-weight:bold; font-size:14px;"></h:outputText>
+			<br/>
+			<h:outputText value="#{routeHome.infoConsumption.observations}" style="font-weight:bold; font-size:20px;"></h:outputText>
 
 			<div class="actionButtons">
 
