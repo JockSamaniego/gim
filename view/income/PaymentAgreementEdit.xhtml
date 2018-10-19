@@ -406,6 +406,15 @@
 					</rich:subTable>
 				</rich:dataTable>
 			</a:outputPanel>
+			
+			<h:outputText value="Activar pago total para remisión" style="font-size: 20px; font-weight: bold"/>
+			<h:selectBooleanCheckbox value="#{paymentAgreementHome.instance.isFullPayment}"  
+			    disabled="#{!paymentAgreementHome.instance.isActive}">
+				<a:support event="onchange"
+					eventsQueue="gimQueue" 
+					action="#{paymentAgreementHome.update}"
+					ajaxSingle="true"   />
+			</h:selectBooleanCheckbox>
 			<div class="actionButtons" align="right">
 				<a:commandButton id="activeBtn" 
 							action="#{paymentAgreementHome.toActivePaymentAgreement()}"

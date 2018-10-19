@@ -133,29 +133,29 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	@Override
-	public void calculatePayment(MunicipalBond municipalBond, boolean isForPay, boolean applyDiscount, boolean completePayment)
+	public void calculatePayment(MunicipalBond municipalBond, boolean isForPay, boolean applyDiscount)
 			throws EntryDefinitionNotFoundException {
 		Date now = Calendar.getInstance().getTime();
-		this.calculatePayment(municipalBond, now, isForPay, applyDiscount, completePayment);
+		this.calculatePayment(municipalBond, now, isForPay, applyDiscount);
 	}
 
 	@Override //2 llamada
 	public void calculatePayment(MunicipalBond municipalBond,
-			Date paymentServiceDate, boolean isForPay, boolean applyDiscount, boolean completePayment)
+			Date paymentServiceDate, boolean isForPay, boolean applyDiscount)
 			throws EntryDefinitionNotFoundException {
 		Object[] objects = null;
-		calculatePayment(municipalBond, paymentServiceDate, isForPay, applyDiscount, completePayment, objects);
+		calculatePayment(municipalBond, paymentServiceDate, isForPay, applyDiscount, objects);
 	}
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void calculatePayment(Date paymentDate, List<Long> municipalBondIds, boolean isForPay, boolean applyDiscount, boolean completePayment)
+	public void calculatePayment(Date paymentDate, List<Long> municipalBondIds, boolean isForPay, boolean applyDiscount)
 			throws EntryDefinitionNotFoundException {
 		// List<MunicipalBond> municipalBonds =
 		// findMunicipalBonds(municipalBondIds);
 		List<MunicipalBond> municipalBonds = findMunicipalBondsPaymentPlatform(municipalBondIds);
 		for (MunicipalBond municipalBond : municipalBonds) {
-			this.calculatePayment(municipalBond, paymentDate, isForPay, applyDiscount, completePayment);
+			this.calculatePayment(municipalBond, paymentDate, isForPay, applyDiscount);
 		}
 	}
 
@@ -187,10 +187,10 @@ public class IncomeServiceBean implements IncomeService {
 
 	@Override  //1
 	public void calculatePayment(List<MunicipalBond> municipalBonds,
-			Date paymentServiceDate, boolean isForPay, boolean applyDiscount, boolean completePayment)
+			Date paymentServiceDate, boolean isForPay, boolean applyDiscount)
 			throws EntryDefinitionNotFoundException { 
 		for (MunicipalBond municipalBond : municipalBonds) {
-			this.calculatePayment(municipalBond, paymentServiceDate, isForPay, applyDiscount, completePayment);
+			this.calculatePayment(municipalBond, paymentServiceDate, isForPay, applyDiscount);
 		}
 	}
 
@@ -204,17 +204,16 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	@Override
-	public void calculatePayment(MunicipalBond municipalBond, boolean isForPay, boolean applyDiscount, boolean completePayment, Object... facts)
+	public void calculatePayment(MunicipalBond municipalBond, boolean isForPay, boolean applyDiscount, Object... facts)
 			throws EntryDefinitionNotFoundException {
 		Date now = Calendar.getInstance().getTime();
-		this.calculatePayment(municipalBond, now, isForPay, applyDiscount, completePayment, facts);
+		this.calculatePayment(municipalBond, now, isForPay, applyDiscount, facts);
 
 	}
 
 	@Override //3
 	public void calculatePayment(MunicipalBond municipalBond,
 			Date paymentServiceDate, boolean isForPay, boolean applyDiscount,
-			boolean completePayment,
 			Object... facts) throws EntryDefinitionNotFoundException {
 
 		// System.out.println("IncomeServiceBean -----> BEGINS CALCULATE
@@ -225,7 +224,7 @@ public class IncomeServiceBean implements IncomeService {
 			municipalBond.setBalance(lastDeposit.getBalance());
 		}
 		municipalBondService.calculatePayment(municipalBond, paymentServiceDate, lastDeposit, !isForPay, !isForPay,
-				applyDiscount, completePayment, null);
+				applyDiscount, null);
 		/*
 		 * System.out
 		 * .println("\n\n\n\n\nBASE IMPONIBLE EN IncomeService -----> TAXABLE "
@@ -236,9 +235,9 @@ public class IncomeServiceBean implements IncomeService {
 
 	@Override
 	public void calculatePayment(List<MunicipalBond> municipalBonds, Date paymentServiceDate, boolean isForPay,
-			boolean applyDiscount, boolean completePayment, Object... facts) throws EntryDefinitionNotFoundException {
+			boolean applyDiscount, Object... facts) throws EntryDefinitionNotFoundException {
 		for (MunicipalBond municipalBond : municipalBonds) {
-			this.calculatePayment(municipalBond, paymentServiceDate, isForPay, applyDiscount, completePayment, facts);
+			this.calculatePayment(municipalBond, paymentServiceDate, isForPay, applyDiscount, facts);
 		}
 	}
 
@@ -1668,6 +1667,11 @@ public class IncomeServiceBean implements IncomeService {
 		query.setParameter("municipalBondStatusId", inPaymentAgreementMunicipalBondStatusId);
 		query.executeUpdate();
 
+	}
+	
+	
+	public void update(PaymentAgreement paymentAgreement) {
+		entityManager.merge(paymentAgreement);
 	}
 
 	@SuppressWarnings("unchecked")

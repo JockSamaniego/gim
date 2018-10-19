@@ -60,14 +60,14 @@ public interface IncomeService {
 	List<InterestRate> findInterestRateByExpirationDate(Date endDate);
 	InterestRate findInterestRateById(Long interestRateId);
 	*/
-	void calculatePayment(MunicipalBond municipalBond, boolean isForPay, boolean applyDiscount, boolean completePayment) throws EntryDefinitionNotFoundException;
-	void calculatePayment(MunicipalBond municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount, boolean completePayment) throws EntryDefinitionNotFoundException;   //2
-	void calculatePayment(List<MunicipalBond> municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount, boolean completePayment) throws EntryDefinitionNotFoundException; //1 desde vista cajerita
-	void calculatePayment(Date paymentDate, List<Long> municipalBondIds, boolean isForPay, boolean applyDiscount, boolean completePayment) throws EntryDefinitionNotFoundException;
+	void calculatePayment(MunicipalBond municipalBond, boolean isForPay, boolean applyDiscount) throws EntryDefinitionNotFoundException;
+	void calculatePayment(MunicipalBond municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount) throws EntryDefinitionNotFoundException;   //2
+	void calculatePayment(List<MunicipalBond> municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount) throws EntryDefinitionNotFoundException; //1 desde vista cajerita
+	void calculatePayment(Date paymentDate, List<Long> municipalBondIds, boolean isForPay, boolean applyDiscount) throws EntryDefinitionNotFoundException;
 	
-	void calculatePayment(MunicipalBond municipalBond, boolean isForPay, boolean applyDiscount,  boolean completePayment,Object ... facts) throws EntryDefinitionNotFoundException;
-	void calculatePayment(MunicipalBond municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount, boolean completePayment, Object ... facts) throws EntryDefinitionNotFoundException; //3
-	void calculatePayment(List<MunicipalBond> municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount, boolean completePayment, Object ... facts) throws EntryDefinitionNotFoundException;
+	void calculatePayment(MunicipalBond municipalBond, boolean isForPay, boolean applyDiscount, Object ... facts) throws EntryDefinitionNotFoundException;
+	void calculatePayment(MunicipalBond municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount, Object ... facts) throws EntryDefinitionNotFoundException; //3
+	void calculatePayment(List<MunicipalBond> municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount, Object ... facts) throws EntryDefinitionNotFoundException;
 	public void deactivateCreditNotes(List<PaymentFraction> paymentFractions);
 	
 	public void save(Date paymentDate, List<Long> municipalBondIds, Person cashier, Long tillId, String externalTransactionId, String paymentMethod) throws Exception;
@@ -146,4 +146,11 @@ public interface IncomeService {
 	 * @return
 	 */
 	public List<BondSummary> findBondsDownStatus(Long residentId);
+	
+	/**
+	 * Para remision caso en que se pague todo el convenio
+	 * @author macartuche
+	 * @param paymentAgreement
+	 */
+	public void update(PaymentAgreement paymentAgreement); 
 }

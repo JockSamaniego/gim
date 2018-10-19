@@ -385,6 +385,11 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	}
 
 	public void searchResident() {
+		//REMISION
+		//encerar valores
+		totalInterestRemision = BigDecimal.ZERO;
+		totalSurchargeRemision = BigDecimal.ZERO;
+		
 		//System.out.println("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
 		Query query = getEntityManager().createNamedQuery("Resident.findByIdentificationNumber");
 		query.setParameter("identificationNumber", this.identificationNumber);

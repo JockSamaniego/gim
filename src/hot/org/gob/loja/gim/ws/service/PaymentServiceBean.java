@@ -188,7 +188,7 @@ public class PaymentServiceBean implements PaymentService {
 				List<Bond> bonds = new ArrayList<Bond>();
 				if (pendingBondIds.size() > 0) {
 					try {
-						incomeService.calculatePayment(workDayDate, pendingBondIds, true, true, false);
+						incomeService.calculatePayment(workDayDate, pendingBondIds, true, true);
 						bonds = findPendingBonds(taxpayer.getId());
 						// esta imprimiendo el log de lo q se retorna quitar
 						// luego de las pruebas						
@@ -778,7 +778,7 @@ public class PaymentServiceBean implements PaymentService {
 		if (pendingBondIds.size() > 0) {
 			try {
 				incomeService.calculatePayment(workDayDate, pendingBondIds,
-						true, true, false);
+						true, true);
 				bonds = findPendingBonds(taxpayer.getId());				
 				loadBondsDetail(bonds);
 			} catch (EntryDefinitionNotFoundException e) {

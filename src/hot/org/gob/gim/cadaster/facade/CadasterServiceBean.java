@@ -520,7 +520,7 @@ public class CadasterServiceBean implements CadasterService {
 
 		if (bonds != null && bonds.size() > 0)
 			municipalBondService.createItemsToMunicipalBond(bonds, null, true,
-					true, false, Boolean.FALSE);
+					true, false);
 
 		return bonds;
 
@@ -687,7 +687,7 @@ public class CadasterServiceBean implements CadasterService {
 
 		if (bonds != null && bonds.size() > 0)
 			municipalBondService.createItemsToMunicipalBond(bonds, null, true,
-					true, false, Boolean.FALSE);
+					true, false);
 
 		return bonds;
 

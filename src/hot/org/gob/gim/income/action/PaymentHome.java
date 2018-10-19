@@ -178,10 +178,6 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	// que sea mayor o igual al monto de cobro
 	private Boolean canRegisterPayment = true;
 	
-	
-	//REMISION 2018
-	private Boolean completePayment = false;
-
 	public UserSession getUserSession() {
 		return userSession;
 	}
@@ -578,16 +574,26 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 		return pas;
 	}
-
+	
+	//REMISION
+	Boolean forcedToPayAll = Boolean.FALSE;
 	public void calculateTotals() {
 		try {
+			forcedToPayAll = Boolean.FALSE;
 			if (paymentAgreement != null) {
+				
+				//REMISION
+				//@macartuche
+				//mostrar el mensaje de que debe forzar a cobrar toda la deuda
+				forcedToPayAll = paymentAgreement.getIsFullPayment();
+				
+				//fin cambio
 				clearDeposits();
 				hasConflict = Boolean.FALSE;
 				municipalBonds = findAgreementMunicipalBonds();
 				System.out.println("Total de bonds " + municipalBonds.size());
 				IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
-				incomeService.calculatePayment(municipalBonds, new Date(), true, true, completePayment);
+				incomeService.calculatePayment(municipalBonds, new Date(), true, true);
 				logger.info("CALCULATE 2");
 				resetPaymentTotals();
 				logger.info("CALCULATE 3");
@@ -616,7 +622,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				municipalBondSubscriptionsItems = findSubscriptionMunicipalBonds();
 				System.out.println("Total de bonds subscription ----------------> " + municipalBondSubscriptionsItems.size());
 				IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
-				incomeService.calculatePayment(municipalBondSubscriptionsItems, new Date(), true, true, completePayment);
+				incomeService.calculatePayment(municipalBondSubscriptionsItems, new Date(), true, true);
 				logger.info("CALCULATE 2");
 				resetPaymentTotals();
 				logger.info("CALCULATE 3");
@@ -685,7 +691,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		List<MunicipalBond> mbs = incomeService.findPendingBonds(residentId);
-		incomeService.calculatePayment(mbs, new Date(), true, true, completePayment); //remision
+		incomeService.calculatePayment(mbs, new Date(), true, true); //remision
 		impugnmentsTotal = new ArrayList<Impugnment>();
 		for (MunicipalBond municipalBond : mbs) {
 			// System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE " +
@@ -718,7 +724,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		List<MunicipalBond> mbs = incomeService.findPendingBondsSubscriptions(residentId);
-		incomeService.calculatePayment(mbs, new Date(), true, true, completePayment);
+		incomeService.calculatePayment(mbs, new Date(), true, true);
 		impugnmentsTotal = new ArrayList<Impugnment>();
 		for (MunicipalBond municipalBond : mbs) {
 			//System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE " + municipalBond.getTaxableTotal()
@@ -3286,11 +3292,12 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		this.invalidAmount = Boolean.TRUE;
 	}
 
-	public Boolean getCompletePayment() {
-		return completePayment;
+	public Boolean getForcedToPayAll() {
+		return forcedToPayAll;
 	}
 
-	public void setCompletePayment(Boolean completePayment) {
-		this.completePayment = completePayment;
-	}
+	public void setForcedToPayAll(Boolean forcedToPayAll) {
+		this.forcedToPayAll = forcedToPayAll;
+	}	
+	
 }

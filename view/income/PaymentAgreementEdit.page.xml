@@ -34,7 +34,7 @@
    <navigation from-action="#{paymentAgreementHome.update}">
       <rule if-outcome="updated">
          <end-conversation/>
-         <redirect view-id="/income/PaymentAgreementEdit.xhtml"/>
+         <redirect view-id="/income/PaymentAgreementList.xhtml"/>
       </rule>
    </navigation>
 

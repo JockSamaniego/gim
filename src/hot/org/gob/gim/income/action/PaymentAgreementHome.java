@@ -790,4 +790,21 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		}
 		return false;
 	}
+	
+	/**
+	 * @macartuche
+	 * REMISION activar para pago completo
+	 */
+	
+	public String update() {
+		String outcome = null;
+		try{
+			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+			incomeService.update(getInstance());
+			outcome = "updated";
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return outcome;
+	}
 }
