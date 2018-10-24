@@ -31,6 +31,7 @@ import javax.persistence.Query;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.Gim;
 import org.gob.gim.common.service.CrudService;
@@ -41,6 +42,8 @@ import org.gob.gim.exception.NotActiveWorkdayException;
 import org.gob.gim.exception.ReceiptAuthorizationDoesNotExistException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
 import org.gob.gim.exception.ReverseNotAllowedException;
+import org.gob.gim.income.dto.ApplyDiscountDTO;
+import org.gob.gim.income.dto.BondAuxDTO;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.loja.gim.ws.dto.BondSummary;
@@ -2026,5 +2029,57 @@ public class IncomeServiceBean implements IncomeService {
 		q.setParameter("statusId", reversedStatusId);
 		q.setParameter("residentId", residentId);
 		return q.getResultList();
+	}
+
+	@Override
+	/**
+	 * rfam 2018-10-16 verificar si se aplica el 10% de descuento en un pago completo
+	 */
+	public boolean verifyApplyDiscount(Long entryId, String groupingCode, Long residentId) {
+		Query q = entityManager.createNativeQuery("select count(CASE WHEN mb.municipalbondstatus_id = 3 THEN 1 END) as pendientes, " + 
+				"count(CASE WHEN mb.municipalbondstatus_id = 6 THEN 1 END) as pagadas, " + 
+				"count(CASE WHEN mb.municipalbondstatus_id = 14 THEN 1 END) as abonos, " + 
+				"count(CASE WHEN mb.municipalbondstatus_id = 4 THEN 1 END) as convenio, " + 
+				"count(CASE WHEN mb.municipalbondstatus_id = 7 THEN 1 END) as compensacion, " + 
+				"count(CASE WHEN mb.expirationdate < current_date THEN 1 END) as vencidas, " +
+				"count(CASE WHEN mb.municipalbondstatus_id = 13 THEN 1 END) as futuras, "+
+				"count(CASE WHEN mb.municipalbondstatus_id = 11 THEN 1 END) as pagadas_ext "+
+				"from municipalbond mb " + 
+				"where mb.entry_id = :entryId " + 
+				"and mb.groupingcode = :groupId " + 
+				"and mb.resident_id = :residentId ");	 
+		q.setParameter("entryId", entryId);
+		q.setParameter("groupId", groupingCode);
+		q.setParameter("residentId", residentId);
+		//q.getResultList().isEmpty();
+		//System.out.println("el tamanio ................ "+q.getResultList().size());
+		
+		@SuppressWarnings("unchecked")
+		List<ApplyDiscountDTO> list = NativeQueryResultsMapper.map(q.getResultList(), ApplyDiscountDTO.class);
+		if (list.size() == 0) {
+			return false;
+		}else {
+			ApplyDiscountDTO apply = list.get(0);
+			if (apply.getVencidas().intValue() > 0) {
+				return false;
+			}
+			
+			if (apply.getAbonos().intValue() > 0 || apply.getConvenios().intValue() > 0) {
+				return false;
+			}
+			
+			if (apply.getPagadas().intValue() > 0 || apply.getPagadasExternas().intValue() > 0) {
+				return false;
+			}
+			
+			if (apply.getFuturas().intValue() > 0) {
+				return false;
+			}
+			
+			//int amountFees = apply.getPendientes().intValue() + apply.getFuturas().intValue();
+			return true;
+		}
+		
+		//return false;
 	}
 }

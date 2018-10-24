@@ -59,9 +59,9 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private String MUNICIPAL_BOND_STATUS_ID_COMPENSATION_NAME = "MUNICIPAL_BOND_STATUS_ID_COMPENSATION";
 	private String MUNICIPAL_BOND_STATUS_ID_PAID_NAME = "MUNICIPAL_BOND_STATUS_ID_PAID";
 	private String MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL_NAME = "MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL";
-	private String MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION_NAME = "MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION";
+	//private String MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION_NAME = "MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION";
 	//rfam 2018-05-03 abonos
-	private String MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION_NAME = "MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION";
+	//private String MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION_NAME = "MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION";
 
 
 	private Date startDate;
@@ -147,14 +147,18 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		Long MUNICIPAL_BOND_STATUS_ID_PAID = systemParameterService.findParameter(MUNICIPAL_BOND_STATUS_ID_PAID_NAME);
 		Long MUNICIPAL_BOND_STATUS_ID_COMPENSATION = systemParameterService.findParameter(MUNICIPAL_BOND_STATUS_ID_COMPENSATION_NAME);
 		Long MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL = systemParameterService.findParameter(MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL_NAME);
+		
+		//rfam 2018-10-02 se qita porq las futuras se presentan en el esta normla del cuenta
 		//richardmijo 2015-09
-		Long MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION = systemParameterService.findParameter(MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION_NAME);
+		//Long MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION = systemParameterService.findParameter(MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION_NAME);
 		
 		municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_BLOCKED);			
 		municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_PAID);
 		municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_COMPENSATION);
 		municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL);
-		municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION);
+
+		//rfam 2018-10-02 se qita porq las futuras se presentan en el esta normla del cuenta
+		//municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION);
 		
 		systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
 	}

@@ -153,4 +153,7 @@ public interface IncomeService {
 	 * @param paymentAgreement
 	 */
 	public void update(PaymentAgreement paymentAgreement); 
+	
+	public boolean verifyApplyDiscount(Long entryId, String groupingCode, Long residentId);
+	
 }

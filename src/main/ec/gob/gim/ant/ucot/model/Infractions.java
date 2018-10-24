@@ -1,10 +1,8 @@
 package ec.gob.gim.ant.ucot.model;
  
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,16 +14,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.hibernate.envers.Audited;
-
-import ec.gob.gim.cadaster.model.Property;
-import ec.gob.gim.common.model.ItemCatalog;
- 
+import ec.gob.gim.common.model.Person;
 
 /**
  * 
@@ -47,6 +40,7 @@ import ec.gob.gim.common.model.ItemCatalog;
 @NamedQueries(value = {
 		@NamedQuery(name = "infractions.findByBulletinId", query = "Select i from Infractions i where i.bulletin.id = :bulletinId"),
 		@NamedQuery(name = "infractions.findBySerial", query = "Select i from Infractions i where i.serial = :serial"),
+		@NamedQuery(name = "infractions.findByCitationNumber", query = "Select i from Infractions i where i.citationNumber = :citationNumber"),
 		@NamedQuery(name = "infractions.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum")})
 
 public class Infractions {
@@ -70,6 +64,9 @@ public class Infractions {
 	@Temporal(TemporalType.DATE)
 	private Date citationDate;
 	
+	@Temporal(TemporalType.TIMESTAMP) 
+	private Date creationDate;
+	 	
 	@Temporal(TemporalType.TIME)
 	private Date citationTime;
 	
@@ -91,6 +88,14 @@ public class Infractions {
 	
 	private BigDecimal points;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "responsible_id") 
+	private Person responsible;
+	   
+	@JoinColumn(name = "responsible_user")	 
+	@Column(length = 100)	 
+	private String responsible_user;
+	 
 	private BigDecimal value;
 	
 	@Temporal(TemporalType.DATE)
@@ -99,6 +104,13 @@ public class Infractions {
 	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
 	@JoinColumn(name="bulletin_id")
 	private Bulletin bulletin;
+	
+	//Para fotomultas
+	private String radarCode;
+	private String infractionPlace;
+	private Boolean photoFine;
+	private Boolean fixedRadar;
+	private String citationNumber;
 
 	public Long getId() {
 		return id;
@@ -251,6 +263,69 @@ public class Infractions {
 	public void setYellow(Boolean yellow) {
 		this.yellow = yellow;
 	}
-	
-	
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Person getResponsible() {
+		return responsible;
+	}
+
+	public void setResponsible(Person responsible) {
+		this.responsible = responsible;
+	}
+
+	public String getResponsible_user() {
+		return responsible_user;
+	}
+
+	public void setResponsible_user(String responsible_user) {
+		this.responsible_user = responsible_user;
+	}
+
+	public String getRadarCode() {
+		return radarCode;
+	}
+
+	public void setRadarCode(String radarCode) {
+		this.radarCode = radarCode;
+	}
+
+	public String getInfractionPlace() {
+		return infractionPlace;
+	}
+
+	public void setInfractionPlace(String infractionPlace) {
+		this.infractionPlace = infractionPlace;
+	}
+
+	public Boolean getPhotoFine() {
+		return photoFine;
+	}
+
+	public void setPhotoFine(Boolean photoFine) {
+		this.photoFine = photoFine;
+	}
+
+	public Boolean getFixedRadar() {
+		return fixedRadar;
+	}
+
+	public void setFixedRadar(Boolean fixedRadar) {
+		this.fixedRadar = fixedRadar;
+	}
+
+	public String getCitationNumber() {
+		return citationNumber;
+	}
+
+	public void setCitationNumber(String citationNumber) {
+		this.citationNumber = citationNumber;
+	}
+
 }
