@@ -1665,8 +1665,30 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			this.getInstance().setValue(BigDecimal.ZERO);
 			return;
 		}
+		
 
 		if (paymentAgreement != null) {
+			//revisar primero si esta activado el pago completo para remision
+			//2018-10-22
+			//@macartuche
+			if(paymentAgreement.getIsFullPayment()!=null && paymentAgreement.getIsFullPayment()) {
+				//comprobar si es el pago completo
+				BigDecimal totalPayRemission = BigDecimal.ZERO;
+				for (MunicipalBond mbr : municipalBonds) {
+					totalPayRemission = totalPayRemission.add(mbr.getPaidTotal());
+				}
+				 
+				if(depositTotal.compareTo(totalPayRemission)< 0) {
+					 
+					hasConflict = Boolean.TRUE;
+					deltaUp = totalPayRemission.subtract(depositTotal);
+					this.getInstance().setValue(BigDecimal.ZERO);
+					getIsPaymentButtonDisabled();
+					return;
+				}
+				 
+			}//fin check remision
+			
 			/**
 			 * @author macartuche agregado para juicios coactivos tratamiento en metodo
 			 *         separado

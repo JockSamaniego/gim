@@ -49,6 +49,7 @@ import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.FiscalPeriodService;
 import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.income.action.AgreementType;
 import org.gob.gim.income.service.TaxRateService;
 import org.gob.gim.income.service.TaxService;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
@@ -1621,15 +1622,27 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			 	Object[] objects = getPaymentAgreementData(mb);
 				//aqui consultar de acuerdo al convenio
 				//si no es pago completo no se exonera interes/recargo, se devuelve valor calculado
-				if(!(Boolean)objects[1]) {
-					response = responseDefault;
-				}		
+			 	Boolean isFullPayment = (Boolean)objects[1];
+			 	Boolean applyRemission = (Boolean)objects[2];
+			 	
+			 	String type = (String)objects[3];
+			 	if(type.equals(AgreementType.REGULAR.name()) || type.equals(AgreementType.COERCIVEJUDGEMENT.name())) {
+			 		if(!isFullPayment) {
+						response = responseDefault;
+					}
+			 	}else if(type.equals(AgreementType.REMISSION.name())) {
+			 		if(!applyRemission) {
+			 			response = responseDefault;
+			 		}
+			 	}
+			 	
+						
 		}
 		return response;
 	}
 	
 	private Object[] getPaymentAgreementData(MunicipalBond mb) {
-		String query = "Select pa.id, pa.isfullpayment "
+		String query = "Select pa.id, pa.isfullpayment, applyreferral, agreementtype "
 				+ "from paymentagreement pa join municipalbond mb on mb.paymentagreement_id = pa.id "
 				+ "where mb.id="+mb.getId();
 		Object[] data = (Object[])entityManager.createNativeQuery(query).getSingleResult();

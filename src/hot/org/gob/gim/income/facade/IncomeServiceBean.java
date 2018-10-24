@@ -28,7 +28,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.swing.plaf.multi.MultiInternalFrameUI;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
@@ -1672,6 +1671,7 @@ public class IncomeServiceBean implements IncomeService {
 	
 	public void update(PaymentAgreement paymentAgreement) {
 		entityManager.merge(paymentAgreement);
+		entityManager.flush();
 	}
 
 	@SuppressWarnings("unchecked")

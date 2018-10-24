@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<page xmlns="http://jboss.com/products/seam/pages"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
-      no-conversation-view-id="/income/PaymentAgreementList.xhtml"
-      login-required="true">
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	no-conversation-view-id="/income/PaymentAgreementList.xhtml"
+	login-required="true">
 
-   <begin-conversation join="true" flush-mode="MANUAL"/>
+	<begin-conversation join="true" flush-mode="MANUAL" />
 
-   <action execute="#{paymentAgreementHome.callWire}"/>
+	<action execute="#{paymentAgreementHome.callWire}" />
 
-   <param name="paymentAgreementFrom"/>
-   <param name="paymentAgreementId" value="#{paymentAgreementHome.paymentAgreementId}"/>
-   <param name="paymentAgreementTypeFrom"/>
-   <param name="paymentAgreementTypeId" value="#{paymentAgreementTypeHome.paymentAgreementTypeId}"/>
+	<param name="paymentAgreementFrom" />
+	<param name="paymentAgreementId" value="#{paymentAgreementHome.paymentAgreementId}" />
+	<param name="paymentAgreementTypeFrom" />
+	<param name="paymentAgreementTypeId" value="#{paymentAgreementTypeHome.paymentAgreementTypeId}" />
 
-   <param name="personFrom"/>
-   <param name="personId" value="#{personHome.personId}"/>
+	<param name="personFrom" />
+	<param name="personId" value="#{personHome.personId}" />
 
-   <param name="residentFrom"/>
-   <param name="residentId" value="#{residentHome.residentId}"/>
+	<param name="residentFrom" />
+	<param name="residentId" value="#{residentHome.residentId}" />
 
-   <param name="invoiceFrom"/>
-   <param name="invoiceId" value="#{invoiceHome.invoiceId}"/>
-   <param name="invoiceTypeFrom"/>
-   <param name="invoiceTypeId" value="#{invoiceTypeHome.invoiceTypeId}"/>
+	<param name="invoiceFrom" />
+	<param name="invoiceId" value="#{invoiceHome.invoiceId}" />
+	<param name="invoiceTypeFrom" />
+	<param name="invoiceTypeId" value="#{invoiceTypeHome.invoiceTypeId}" />
 
-   <navigation from-action="#{paymentAgreementHome.persist}">
-      <rule if-outcome="persisted">         
-         <redirect view-id="/income/PaymentAgreementEdit.xhtml"/>
-      </rule>
-   </navigation>
+	<navigation from-action="#{paymentAgreementHome.persist}">
+		<rule if-outcome="persisted">
+			<redirect view-id="/income/PaymentAgreementEdit.xhtml" />
+		</rule>
+	</navigation>
 
-   <navigation from-action="#{paymentAgreementHome.update}">
-      <rule if-outcome="updated">
-         <end-conversation/>
-         <redirect view-id="/income/PaymentAgreementList.xhtml"/>
-      </rule>
-   </navigation>
+	<navigation from-action="#{paymentAgreementHome.update}">
+		<rule if-outcome="updated">
+			<end-conversation />
+			<redirect view-id="/income/PaymentAgreementEdit.xhtml" />
+		</rule>
+	</navigation>
 
-   <navigation from-action="#{paymentAgreementHome.remove}">
-      <rule if-outcome="removed">
-         <end-conversation/>
-         <redirect view-id="/income/PaymentAgreementList.xhtml"/>
-      </rule>
-   </navigation>
+
+	<navigation from-action="#{paymentAgreementHome.remove}">
+		<rule if-outcome="removed">
+			<end-conversation />
+			<redirect view-id="/income/PaymentAgreementList.xhtml" />
+		</rule>
+	</navigation>
 
 </page>
