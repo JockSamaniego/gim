@@ -318,7 +318,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		try{
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			//@tag recaudacionCoactivas
-			incomeService.calculatePayment(mbs, new Date(), true, true, false);
+			incomeService.calculatePayment(mbs, new Date(), true, true);
 			
 		} catch(Exception e){
 			addFacesMessageFromResourceBundle(e.getMessage());

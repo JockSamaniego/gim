@@ -250,8 +250,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		municipalBond
 				.setPreviousPayment(entryValueItem.getPreviousPayment() != null ? entryValueItem
 						.getPreviousPayment() : BigDecimal.ZERO);
-		createItemsToMunicipalBond(municipalBond, entryValueItem, true,
-				isEmission, facts);
+		createItemsToMunicipalBond(municipalBond, entryValueItem, true,isEmission, facts);
 		if (aux)
 			municipalBond.setExpirationDate(expirationDate);
 		calculatePayment(municipalBond, now, null, true, isEmission,
@@ -343,10 +342,10 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		// municipalBond.getPreviousPayment() : BigDecimal.ZERO);
 		municipalBond.setPaidTotal(paidTotal);
 	}
+ 
 
-	private List<AuxCreateItem> findByStructuresType(MunicipalBond mb,
-			Date serviceDate, EntryStructureType entryStructureType,
-			List<byte[]> rulesToApply, boolean isEmission)
+	private List<AuxCreateItem> findByStructuresType(MunicipalBond mb,Date serviceDate, 
+			EntryStructureType entryStructureType, List<byte[]> rulesToApply, boolean isEmission)
 			throws EntryDefinitionNotFoundException {
 
 		List<AuxCreateItem> list = new ArrayList<AuxCreateItem>();
@@ -398,10 +397,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 				if (!internalTramit || (internalTramit && emitOnInternal)) {
 					Item saved = containItem(mb, edchild.getEntry());
-					saved = buildItem(edchild, new EntryValueItem(), ac
-							.getEntryStructure().getChild().getIsTaxable(), ac
-							.getEntryStructure().getTargetEntry(), null,
-							itemFacts, saved, false);
+					saved = buildItem(edchild, new EntryValueItem(), ac.getEntryStructure().getChild().getIsTaxable(), 
+							ac.getEntryStructure().getTargetEntry(), null,itemFacts, saved, false);
 					saved.setEntry(edchild.getEntry());
 					addItem(mb, saved, ac.getEntryStructureType());
 					// System.out.println("LXGK -----> ITEM ADDED");
@@ -442,9 +439,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 							rulesToApply, itemFacts, saved, true);
 					
 					//TODO-REMISION
-					if(saved.getSurchargedBond()!=null) {
-						saved.setTotal(municipalBond.getSurcharge());
-					}
+//					if(saved.getSurchargedBond()!=null) {
+//						saved.setTotal(municipalBond.getSurcharge());
+//					}
 					saved.setEntry(edchild.getEntry());
 					addItem(municipalBond, saved, entryStructureType);
 					// System.out.println("LXGK -----> ITEM ADDED");
@@ -1150,8 +1147,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			if (factHandles.size() > 0) {
 				// System.out.println("RULES DEBUG -----> Firing all rules ");
 				int firedRules = session.fireAllRules();
-				// System.out.println("RULES DEBUG -----> Rules applied " +
-				// firedRules);
+				 System.out.println("RULES DEBUG -----> Rules applied " +
+				 firedRules);
 			}
 
 			for (FactHandle factHandle : factHandles) {

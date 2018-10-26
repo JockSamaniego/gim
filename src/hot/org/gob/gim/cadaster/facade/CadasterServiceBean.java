@@ -899,7 +899,7 @@ public class CadasterServiceBean implements CadasterService {
 								exemptionValue = percentage.multiply(propertyAppraisal.getCommercialAppraisal()).divide(new BigDecimal(100)); 
 								propertyAppraisal.setExemptionValue(exemptionValue);
 								//remision x defecto se pasa false porque no es pago, no implica calculo ni nada
-								municipalBondService.changeExemptionInMunicipalBond(mb,false, true, Boolean.FALSE, propertyAppraisal);
+								municipalBondService.changeExemptionInMunicipalBond(mb,false, true, propertyAppraisal);
 								flag=true;
 							}
 						}
@@ -914,7 +914,7 @@ public class CadasterServiceBean implements CadasterService {
 							// ex.getReference());
 							//remision x defecto se pasa false porque no es pago, no implica calculo ni nada
 							municipalBondService.changeExemptionInMunicipalBond(mb,
-									false, true, Boolean.FALSE, propertyAppraisal);
+									false, true, propertyAppraisal);
 						}
 					} else { // las demas exenciones por propiedad
 						List<ExemptionForProperty> exForProperties = ex
@@ -942,7 +942,7 @@ public class CadasterServiceBean implements CadasterService {
 											exemptionValue = percentage.multiply(propertyAppraisal.getCommercialAppraisal()).divide(new BigDecimal(100)); 
 											propertyAppraisal.setExemptionValue(exemptionValue);
 											//remision x defecto se pasa false porque no es pago, no implica calculo ni nada
-											municipalBondService.changeExemptionInMunicipalBond(mb,false, true, Boolean.FALSE, propertyAppraisal);
+											municipalBondService.changeExemptionInMunicipalBond(mb,false, true, propertyAppraisal);
 //											flag=true;
 //										}
 //									}
@@ -955,7 +955,7 @@ public class CadasterServiceBean implements CadasterService {
 									//remision x defecto se pasa false porque no es pago, no implica calculo ni nada
 									municipalBondService
 									.changeExemptionInMunicipalBond(mb,
-											false, true, Boolean.FALSE, propertyAppraisal);
+											false, true, propertyAppraisal);
 								}
 //								System.out
 //										.println("======>>Exencion por propiedad: "
