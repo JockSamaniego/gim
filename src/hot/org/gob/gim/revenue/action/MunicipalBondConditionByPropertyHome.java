@@ -227,7 +227,7 @@ public class MunicipalBondConditionByPropertyHome extends EntityHome<MunicipalBo
 			MunicipalBondService municipalBondService = ServiceLocator.getInstance().findResource(MunicipalBondService.LOCAL_NAME);			
 			//List<MunicipalBond> mbs = incomeService.findOnlyPendingBonds(133359L);	
 			List<MunicipalBond> mbs = municipalBondService.findPendingsByGroupingCode(property.getCadastralCode());
-			incomeService.calculatePayment(mbs, new Date(), true, true, false);			
+			incomeService.calculatePayment(mbs, new Date(), true, true);			
 			result.addAll(mbs);
 		}		
 		MunicipalBondUtil.setMunicipalBondStatus(findPendingStatus());		
