@@ -37,8 +37,24 @@ public class Bond {
 		this.taxes = taxes;
 		this.discounts = discounts;
 		this.bondsDetail = new ArrayList<BondDetail>();
-		//this.metadata = metadata;
 	}
+	
+	/*public Bond(Long id, Long number, String account, String serviceCode, BigDecimal total, Date serviceDate, Date expirationDate, 
+			BigDecimal interests, BigDecimal surcharges, BigDecimal taxes, BigDecimal discounts, String metadata) {
+		this.id = id;
+		this.number =  number;
+		this.account = account;
+		this.serviceCode = serviceCode;
+		this.serviceDate = serviceDate;
+		this.expirationDate = expirationDate;
+		this.total = total;
+		this.interests = interests;
+		this.surcharges = surcharges;
+		this.taxes = taxes;
+		this.discounts = discounts;
+		this.bondsDetail = new ArrayList<BondDetail>();
+		this.metadata = metadata;
+	}*/
 	
 	public Long getId() {
 		return id;
@@ -136,11 +152,11 @@ public class Bond {
 	 * REMISION
 	 * @return
 	 */
-//	public String getMetadata() {
-//		return metadata;
-//	}
-//
-//	public void setMetadata(String metadata) {
-//		this.metadata = metadata;
-//	}		
+	/*public String getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(String metadata) {
+		this.metadata = metadata;
+	}		*/
 }
