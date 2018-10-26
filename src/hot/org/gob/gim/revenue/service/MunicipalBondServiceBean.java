@@ -118,7 +118,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 	public static final String PENDING_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_PENDING";
 	
-	private MetadataBondDTO metadataDto;
+	private MetadataBondDTO metadataDto = new MetadataBondDTO();
 
 	// @author macartuche
 	// @date 2016-06-27 11:42
