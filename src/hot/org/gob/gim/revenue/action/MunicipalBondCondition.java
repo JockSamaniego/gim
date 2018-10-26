@@ -218,7 +218,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 			}
 			//remision
 			//se agrega variable false al final para pago completo, ya que es estado de cuenta
-			incomeService.calculatePayment(pendingBonds, new Date(), true, true, false);			
+			incomeService.calculatePayment(pendingBonds, new Date(), true, true);			
 			result.addAll(pendingBonds);
 		}	
 		
@@ -283,7 +283,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		}
 		
 		try {
-			incomeService.calculatePayment(mbs, new Date(), true, true, false);
+			incomeService.calculatePayment(mbs, new Date(), true, true);
 		} catch (EntryDefinitionNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
