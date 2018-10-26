@@ -18,13 +18,13 @@ public class Bond {
 	private BigDecimal taxes;
 	private BigDecimal discounts;
 	private List<BondDetail> bondsDetail;
-	private String metadata;
+	//private String metadata;
 	
 	public Bond() {
 	}
 	
 	public Bond(Long id, Long number, String account, String serviceCode, BigDecimal total, Date serviceDate, Date expirationDate, 
-			BigDecimal interests, BigDecimal surcharges, BigDecimal taxes, BigDecimal discounts, String metadata) {
+			BigDecimal interests, BigDecimal surcharges, BigDecimal taxes, BigDecimal discounts) {
 		this.id = id;
 		this.number =  number;
 		this.account = account;
@@ -37,7 +37,7 @@ public class Bond {
 		this.taxes = taxes;
 		this.discounts = discounts;
 		this.bondsDetail = new ArrayList<BondDetail>();
-		this.metadata = metadata;
+		//this.metadata = metadata;
 	}
 	
 	public Long getId() {
@@ -136,11 +136,11 @@ public class Bond {
 	 * REMISION
 	 * @return
 	 */
-	public String getMetadata() {
-		return metadata;
-	}
-
-	public void setMetadata(String metadata) {
-		this.metadata = metadata;
-	}		
+//	public String getMetadata() {
+//		return metadata;
+//	}
+//
+//	public void setMetadata(String metadata) {
+//		this.metadata = metadata;
+//	}		
 }
