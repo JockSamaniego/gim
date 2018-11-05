@@ -1,14 +1,10 @@
 package ec.gob.gim.revenue.model;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
-
-import ec.gob.gim.income.model.PaymentFraction; 
 
 @Entity
 @TableGenerator(
@@ -29,8 +25,8 @@ public class PaymentTypeSRI {
 	
 	private String name;
 		
-	@OneToOne(fetch=FetchType.LAZY)
-	private PaymentFraction fraction;
+	/*@OneToOne(fetch=FetchType.LAZY)
+	private PaymentFraction fraction;*/
 
 	public Long getId() {
 		return id;
@@ -56,11 +52,11 @@ public class PaymentTypeSRI {
 		this.name = name;
 	}
 
-	public PaymentFraction getFraction() {
+	/*public PaymentFraction getFraction() {
 		return fraction;
 	}
 
 	public void setFraction(PaymentFraction fraction) {
 		this.fraction = fraction;
-	}
+	}*/
 }

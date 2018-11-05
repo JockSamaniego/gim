@@ -94,7 +94,9 @@ public class PaymentFraction {
 	
 	//macartuche
 	//2018-11-05 15:18 para codigo de pago SRI
-	@OneToOne(mappedBy = "fraction", fetch = FetchType.LAZY)
+	//@OneToOne(mappedBy = "fraction", fetch = FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="paymentTypesri_id")
 	private PaymentTypeSRI paymentTypesri;
 	
 	public PaymentFraction() {
