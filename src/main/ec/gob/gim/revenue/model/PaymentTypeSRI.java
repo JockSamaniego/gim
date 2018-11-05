@@ -6,6 +6,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.envers.Audited;
+
+@Audited
 @Entity
 @TableGenerator(
 		name = "PaymentTypeSRIGenerator", 
