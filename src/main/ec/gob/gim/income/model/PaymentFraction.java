@@ -16,12 +16,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.revenue.model.FinancialInstitution;
+import ec.gob.gim.revenue.model.PaymentTypeSRI;
 
 @Audited
 @Entity
@@ -88,6 +90,12 @@ public class PaymentFraction {
 	
 	@Transient
 	private List<Deposit> deposits;	
+	
+	
+	//macartuche
+	//2018-11-05 15:18 para codigo de pago SRI
+	@OneToOne(mappedBy = "fraction", fetch = FetchType.LAZY)
+	private PaymentTypeSRI paymentTypesri;
 	
 	public PaymentFraction() {
 		deposits = new ArrayList<Deposit>();
@@ -187,6 +195,14 @@ public class PaymentFraction {
 		if(d != null && deposits.contains(d)){
 			deposits.remove(d);
 		}
+	}
+	
+	public PaymentTypeSRI getPaymentTypesri() {
+		return paymentTypesri;
+	}
+
+	public void setPaymentTypesri(PaymentTypeSRI paymentTypesri) {
+		this.paymentTypesri = paymentTypesri;
 	}
 
 
