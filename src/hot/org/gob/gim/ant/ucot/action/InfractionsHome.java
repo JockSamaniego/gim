@@ -11,12 +11,15 @@ import javax.faces.event.ValueChangeEvent;
 import javax.persistence.Query;
 
 import ec.gob.gim.ant.ucot.model.*;
+import ec.gob.gim.common.model.Resident;
 
+import org.gob.gim.common.action.ResidentHome;
 import org.gob.gim.common.action.UserSession;
 import org.jboss.seam.ScopeType;
 import org.gob.gim.common.NativeQueryResultsMapper;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityHome;
 
 @Name("infractionsHome")
