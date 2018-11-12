@@ -460,6 +460,8 @@ public class Property {
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	@OrderBy("date desc")
 	private List<Appraisal> appraisals;
+	
+	
 
 	public Property() {
 		this.propertyLandUses = new ArrayList<PropertyLandUse>();
@@ -607,10 +609,24 @@ public class Property {
 		return numberFormat;
 	}
 
+	//macartuche
+	//cambio clave catastral
 	public String getFormattedNumber() {
-		return getNumberFormat().format(number);
+		return getNumberFormat2().format(number);
 	}
 
+	/**
+	 * @macartuche
+	 * Predio-Lote 3 digitos
+	 * @return
+	 */
+	private java.text.NumberFormat getNumberFormat2() {
+		java.text.NumberFormat numberFormat = new java.text.DecimalFormat("000");
+		numberFormat.setMaximumIntegerDigits(3);
+		return numberFormat;
+	}
+	
+	
 	public String getFormattedBuildingNumber() {
 		return getNumberFormat().format(buildingNumber);
 	}
@@ -1207,5 +1223,6 @@ public class Property {
 	public void setPropertyLocationType(PropertyLocationType propertyLocationType) {
 		this.propertyLocationType = propertyLocationType;
 	}
-
+ 
+	
 }
