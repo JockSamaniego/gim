@@ -842,7 +842,8 @@ public class PropertyHome extends EntityHome<Property> {
 		// logger.info("populateCadastralCode() parishe #0, zone #1", parish,
 		// zone);
 
-		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "0000");
+//		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "0000"); //antigua clave
+		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "00"); //nueva clave catastral
 		cadastralCodeBuffer.append(zone != null ? zone.getCode() : "00");
 		cadastralCodeBuffer.append(sector != null ? sector.getCode() : "00");
 		cadastralCodeBuffer
@@ -1400,7 +1401,7 @@ public class PropertyHome extends EntityHome<Property> {
 	 * @return List<BlockLimit>
 	 */
 	public List<BlockLimit> populateLimits() {
-		// logger.info("========= Ingreso a populateLimits(), con instance
+		 logger.info("========= Ingreso a populateLimits(), con instance");
 		// block: #0",
 		// this.getInstance().getBlock().getId());
 		if (this.getInstance().getBlock() != null && this.getInstance().getBlock().getId() != null) {

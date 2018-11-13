@@ -628,11 +628,11 @@ public class Property {
 	
 	
 	public String getFormattedBuildingNumber() {
-		return getNumberFormat().format(buildingNumber);
+		return getNumberFormat2().format(buildingNumber);
 	}
 
 	public String getFormattedHousingUnitNumber() {
-		return getNumberFormat().format(housingUnitNumber);
+		return getNumberFormat2().format(housingUnitNumber);
 	}
 
 	public String getFormattedFloorNumber() {
