@@ -1271,7 +1271,8 @@ public class PropertyHome extends EntityHome<Property> {
 	private List<TerritorialDivision> findTerritorialDivisions(Long parentId) {
 		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParent");
 		query.setParameter("parentId", parentId);
-		return query.getResultList();
+		List<TerritorialDivision> td = query.getResultList(); 
+		return td;
 	}
 
 	/**
