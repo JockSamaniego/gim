@@ -184,9 +184,10 @@
                 <h:inputText id="identification"
                               size="15"
                               maxlength="15"
-                              value="#{infractionsHome.instance.identification}">
-                              <f:validator validatorId="identificationNumberValidator"/>
-                              <a:support event="onblur" ajaxSingle="true" action="#{infractionsHome.findResidentName()}" reRender="nameField, identificationField" />
+                              value="#{infractionsHome.instance.identification}"
+                              ajaxSingle="true" >
+                              <f:validator validatorId="identificationNumberInfractionValidator"/>
+                              <a:support event="onblur" action="#{infractionsHome.findResidentName()}" reRender="nameField, identificationField" ajaxSingle="true"  />   				  
                 </h:inputText>              
             </s:decorate>
             

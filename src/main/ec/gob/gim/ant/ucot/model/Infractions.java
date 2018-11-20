@@ -41,7 +41,8 @@ import ec.gob.gim.common.model.Person;
 		@NamedQuery(name = "infractions.findByBulletinId", query = "Select i from Infractions i where i.bulletin.id = :bulletinId"),
 		@NamedQuery(name = "infractions.findBySerial", query = "Select i from Infractions i where i.serial = :serial"),
 		@NamedQuery(name = "infractions.findByCitationNumber", query = "Select i from Infractions i where i.citationNumber = :citationNumber"),
-		@NamedQuery(name = "infractions.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum")})
+		@NamedQuery(name = "infractions.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum"),
+		@NamedQuery(name = "infractions.findResidentByIdent", query = "Select r from Resident r where r.identificationNumber = :identNum")})
 
 public class Infractions {
 
