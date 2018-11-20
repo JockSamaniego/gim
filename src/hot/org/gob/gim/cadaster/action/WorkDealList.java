@@ -29,7 +29,13 @@ public class WorkDealList extends EntityQuery<WorkDeal> {
 	public WorkDealList() {
 		setEjbql(EJBQL);
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
+		//rfam 2018-10-31
+		setOrderColumn("workDeal.id");
+		setOrderDirection("desc");
+		//rfam 2018-10-31
 		setMaxResults(25);
+		
+		
 	}
 
 
