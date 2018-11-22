@@ -85,6 +85,7 @@ import ec.gob.gim.revenue.model.EntryStructureType;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
+import ec.gob.gim.revenue.model.PaymentTypeSRI;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.loja.client.clients.ElectronicClient;
 import ec.gob.loja.client.model.DataWS;
@@ -301,6 +302,13 @@ public class IncomeServiceBean implements IncomeService {
 		if (till.isTillBank()) {
 			payment.getPaymentFractions().get(0).setPaidAmount(municipalBond.getPaidTotal());
 			payment.getPaymentFractions().get(0).setReceivedAmount(municipalBond.getPaidTotal());
+			
+			//macartuche
+			Query queryType = entityManager.createNamedQuery("PaymentTypeSRI.findByType");
+			queryType.setParameter("type", PaymentType.CASH);
+			PaymentTypeSRI typeSri = (PaymentTypeSRI)queryType.getSingleResult();
+			payment.getPaymentFractions().get(0).setPaymentTypesri(typeSri);			//
+			
 		}
 		Deposit deposit = new Deposit();
 		deposit.setBalance(BigDecimal.ZERO);

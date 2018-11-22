@@ -98,6 +98,9 @@ public class PaymentFraction {
 	@JoinColumn(name="paymentTypesri_id")
 	private PaymentTypeSRI paymentTypesri;
 	
+	@Transient
+	private String codeSRI;
+	
 	public PaymentFraction() {
 		deposits = new ArrayList<Deposit>();
 		receivedAmount = BigDecimal.ZERO;
@@ -206,5 +209,11 @@ public class PaymentFraction {
 		this.paymentTypesri = paymentTypesri;
 	}
 
+	public String getCodeSRI() {
+		return codeSRI;
+	}
 
+	public void setCodeSRI(String codeSRI) {
+		this.codeSRI = codeSRI;
+	}
 }

@@ -1,12 +1,19 @@
 package ec.gob.gim.revenue.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.envers.Audited;
+
+import ec.gob.gim.income.model.PaymentType;
 
 @Audited
 @Entity
@@ -18,7 +25,9 @@ import org.hibernate.envers.Audited;
 		pkColumnValue = "PaymentTypeSRI", 
 		initialValue = 1, allocationSize = 1
 )
-
+@NamedQueries(value = {
+		@NamedQuery(name = "PaymentTypeSRI.findByType", query = "select f from PaymentTypeSRI f where f.paymentType = :type"),
+		@NamedQuery(name = "PaymentTypeSRI.findByCode", query = "select f from PaymentTypeSRI f where f.code = :code")})
 public class PaymentTypeSRI {
 	@Id
 	@GeneratedValue(generator = "PaymentTypeSRIGenerator", strategy = GenerationType.TABLE)
@@ -28,8 +37,9 @@ public class PaymentTypeSRI {
 	
 	private String name;
 		
-	/*@OneToOne(fetch=FetchType.LAZY)
-	private PaymentFraction fraction;*/
+	@Enumerated(EnumType.STRING)
+	@Column(length=15)
+	private PaymentType paymentType;
 
 	public Long getId() {
 		return id;
@@ -55,11 +65,11 @@ public class PaymentTypeSRI {
 		this.name = name;
 	}
 
-	/*public PaymentFraction getFraction() {
-		return fraction;
+	public PaymentType getPaymentType() {
+		return paymentType;
 	}
 
-	public void setFraction(PaymentFraction fraction) {
-		this.fraction = fraction;
-	}*/
+	public void setPaymentType(PaymentType paymentType) {
+		this.paymentType = paymentType;
+	}
 }
