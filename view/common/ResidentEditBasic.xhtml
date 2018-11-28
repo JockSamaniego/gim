@@ -1,0 +1,99 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+	<ui:debug />
+    <h:form id="resident" styleClass="edit"> 	    
+    	<rich:panel>
+	        <f:facet name="header">
+	          <h:panelGrid columns="1" columnClasses="headerTitle,">
+	            <h:outputText value="#{messages['resident.editFormTitle']}" />
+	          </h:panelGrid>
+	        </f:facet>
+				<h:panelGrid columns="1" width="100%">
+					<s:decorate id="emailField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['resident.email']}</ui:define>
+						<h:inputText id="email" size="50" required="true"
+							value="#{residentHome.instance.email}">
+							<f:validator validatorId="emailValidator" />
+						</h:inputText>
+					</s:decorate>
+
+          <s:decorate id="streetField" template="../layout/edit.xhtml">
+            <ui:define name="label">#{messages['resident.street']}:</ui:define>
+            <h:inputText id="street" required="true" size="60" maxlength="60" style="text-transform: uppercase"
+              value="#{residentHome.instance.currentAddress.street}">
+            </h:inputText>
+          </s:decorate>
+
+          <s:decorate id="neighborhoodField" template="../layout/edit.xhtml">
+            <ui:define name="label">#{messages['resident.neighborhood']}:</ui:define>
+            <h:inputText id="neighborhood" size="60" maxlength="60" style="text-transform: uppercase"
+              value="#{residentHome.instance.currentAddress.neighborhood}">
+            </h:inputText>
+          </s:decorate>
+          
+          <s:decorate id="cityField" template="../layout/edit.xhtml">
+            <ui:define name="label">#{messages['resident.city']}:</ui:define>
+            <h:inputText id="city" required="true" size="25" maxlength="25" style="text-transform: uppercase"
+              value="#{residentHome.instance.currentAddress.city}">
+            </h:inputText>
+          </s:decorate>
+
+          <s:decorate id="countryField" template="../layout/edit.xhtml">
+            <ui:define name="label">#{messages['resident.country']}:</ui:define>
+            <h:inputText id="country" required="true" size="25" maxlength="25" style="text-transform: uppercase"
+              value="#{residentHome.instance.currentAddress.country}">
+            </h:inputText>
+          </s:decorate>
+
+          <s:decorate id="phoneNumberField" template="../layout/edit.xhtml">
+            <ui:define name="label">#{messages['resident.phone']}:</ui:define>
+            <h:inputText id="phoneNumber" size="15" maxlength="15"
+              value="#{residentHome.instance.currentAddress.phoneNumber}">
+            </h:inputText>
+          </s:decorate>
+
+          <s:decorate id="mobileNumberField" template="../layout/edit.xhtml">
+            <ui:define name="label">#{messages['resident.cellphone']}:</ui:define>
+            <h:inputText id="mobileNumber" size="15" maxlength="15"
+              value="#{residentHome.instance.currentAddress.mobileNumber}">
+            </h:inputText>
+          </s:decorate>
+
+          <div style="clear: both"><span class="required">*</span>
+              #{messages['common.requiredFields']}</div>
+				</h:panelGrid>
+			</rich:panel>
+    
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{residentHome.save()}"
+                       disabled="#{!residentHome.wired}"
+                       rendered="#{!residentHome.managed}"/>
+                       
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{residentHome.save()}"
+                       rendered="#{residentHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/common/ResidentList.xhtml"/>
+
+        </div>
+    </h:form>
+</ui:define>
+
+</ui:composition>
