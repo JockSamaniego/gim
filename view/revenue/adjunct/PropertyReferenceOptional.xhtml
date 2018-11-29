@@ -1,0 +1,41 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<a:outputPanel id="propertyReferenceOptionalPanel">
+	
+		<s:decorate id="propertyOptionalCheckField" template="../../layout/edit.xhtml">
+			<h:outputLabel value="#{messages['municipalBondEdit.emitWithoutProperty']}" />
+			<h:selectBooleanCheckbox id="emitWithoutProperty"
+				value="#{adjunctHome.instance.emitWithoutProperty}">
+				<a:support event="onchange" ajaxSingle="true"
+					action="#{adjunctAction.resetPropertyOptionalValues}"
+					reRender="propertyReferenceOptionalPanel" />
+			</h:selectBooleanCheckbox>	
+		</s:decorate>
+		
+		<s:decorate id="propertyOptionalField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['cadaster.property']}:</ui:define>
+			<h:selectOneMenu id="property"
+				value="#{adjunctHome.instance.property}"
+				disabled="#{adjunctHome.instance.emitWithoutProperty}">
+				<s:selectItems value="#{adjunctAction.findPropertiesByResidentId()}" 
+							   var="property"
+							   label="#{property}"
+							   noSelectionLabel="#{messages['common.choose']}" />
+				<s:convertEntity />
+				<a:support  event="onchange" 
+							action="#{adjunctAction.updatePropertyOptionalCode()}" 
+							ajaxSingle="true"/>
+			</h:selectOneMenu>
+		</s:decorate>
+		
+	</a:outputPanel>
+
+</ui:composition>
