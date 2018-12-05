@@ -56,13 +56,13 @@
 						value="#{messages['resident.searchResults']} (#{empty residentList.resultList ? 0 : (residentList.paginated ? residentList.resultCount : residentList.resultList.size)})" />
 					<s:button view="/common/ResidentEdit.xhtml" id="createPerson"
 						propagation="none" value="#{messages['resident.createPerson']}"
-						rendered="#{empty from}">
+						rendered="#{empty from and !paymentHome.hasRole('EDIT_RESIDENT_BASIC')}">
 						<f:param name="residentId" />
 						<f:param name="residentType" value="Person"/>
 					</s:button>
 					<s:button view="/common/ResidentEdit.xhtml" id="createLegalEntity"
 						propagation="none" value="#{messages['resident.createLegalEntity']}"
-						rendered="#{empty from}">
+						rendered="#{empty from and !paymentHome.hasRole('EDIT_RESIDENT_BASIC')}">
 						<f:param name="residentId" />
 						<f:param name="residentType" value="LegalEntity"/>
 					</s:button>
@@ -137,7 +137,7 @@
 					<h:form>
 						<f:facet name="header">#{messages['common.action']}</f:facet>
             			<s:button view="/common/ResidentEdit.xhtml" value="#{messages['common.edit']}"
-							propagation="none" id="residentEdit" rendered="#{empty from}">
+							propagation="none" id="residentEdit" rendered="#{empty from and !paymentHome.hasRole('EDIT_RESIDENT_BASIC')}">
 							<f:param name="residentId" value="#{_resident.id}" />
 							<f:param name="residentType" value="#{_resident.class.simpleName}"/>
 						</s:button>
@@ -149,7 +149,13 @@
 								action="#{residentHome.loadHistoryChangeForResident(_resident.id)}"
 								reRender="historyChangeResidentPanel" ajaxSingle="true"
 								oncomplete="Richfaces.showModalPanel('historyChangeResidentPanel')"
-								value="#{messages['common.history']}" />
+								value="#{messages['common.history']}" 
+								rendered="#{!paymentHome.hasRole('EDIT_RESIDENT_BASIC')}"/>
+						<s:button view="/common/ResidentEditBasic.xhtml" value="#{messages['common.edit']}"
+							propagation="none" id="residentEditBasic" rendered="#{empty from and paymentHome.hasRole('EDIT_RESIDENT_BASIC')}">
+							<f:param name="residentId" value="#{_resident.id}" />
+							<f:param name="residentType" value="#{_resident.class.simpleName}"/>
+						</s:button>
 					</h:form>
 					</rich:column>
 				</rich:dataTable>

@@ -32,6 +32,7 @@ import ec.gob.gim.revenue.model.adjunct.BusinessLocalReference;
 import ec.gob.gim.revenue.model.adjunct.DomainTransfer;
 import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
 import ec.gob.gim.revenue.model.adjunct.PropertyReference;
+import ec.gob.gim.revenue.model.adjunct.PropertyReferenceOptional;
 import ec.gob.gim.revenue.model.adjunct.detail.EarlyTransferDiscount;
 import ec.gob.gim.revenue.model.adjunct.detail.VehicleType;
 
@@ -240,7 +241,7 @@ public class AdjunctAction extends EntityController{
 			}
 		}
 	}
-	
+		
 	@SuppressWarnings("unchecked")
 	public List<Local> findLocalesByResidentId(){
 		Long residentId = findSelectedResidentId();
@@ -385,4 +386,24 @@ public class AdjunctAction extends EntityController{
 		}
 	}
 	
+	//Para seleccion de propiedad opcional
+	//Jock Samaniego
+	//29-11-2018
+	
+	public void updatePropertyOptionalCode(){
+		PropertyReferenceOptional reference = findCurrentAdjunct();
+		if(reference != null){
+			//System.out.println("UPDATING PROPERTY CODE ----> Cadastral code set on code property!!");
+			reference.setCode(reference.getProperty().getCadastralCode());
+			reference.setOwner(reference.getProperty().getCurrentDomain().getResident().getName());
+			if(reference.getProperty().getLocation() != null){
+				reference.setLocation(reference.getProperty().getLocation().getMainBlockLimit().getStreet().getName());
+			}
+		}
+	}
+	
+	public void resetPropertyOptionalValues(){
+		PropertyReferenceOptional reference = findCurrentAdjunct();
+		reference.setProperty(null);
+	}
 }

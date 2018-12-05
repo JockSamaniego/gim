@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <page xmlns="http://jboss.com/products/seam/pages"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd" login-required="true">
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      no-conversation-view-id="/common/ResidentList.xhtml"
+      login-required="true">
 
-   <param name="firstResult" value="#{residentList.firstResult}"/>
-   <param name="sort" value="#{residentList.orderColumn}"/>
-   <param name="dir" value="#{residentList.orderDirection}"/>
-   <param name="logic" value="#{residentList.restrictionLogicOperator}"/>
+   <begin-conversation join="true" flush-mode="MANUAL"/>
 
-   <param name="from"/>
-   <param name="criteria" value="#{residentList.criteria}"/>
-   <param name="residentType" value="#{residentList.residentType}"/>
-   
+   <action execute="#{residentHome.wire}"/>
+
+   <param name="residentFrom"/>
+   <param name="residentId" value="#{residentHome.residentId}"/>
+   <param name="residentType" value="#{residentHome.residentType}"/>
+
    <navigation>
       <rule if-outcome="persisted">
          <end-conversation/>
