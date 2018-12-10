@@ -541,7 +541,7 @@ public class GimServiceBean implements GimService{
 
 			if (query2.getResultList().size() <= 0) {
 								
-				Resident resident;
+				/*Resident resident;
 				try {
 					
 					User user = findUser(name, password);
@@ -602,10 +602,10 @@ public class GimServiceBean implements GimService{
 				} catch (Exception e) {
 					//throw new EmissionOrderNotSave();
 					return "Emisión fallida. Orden de emisión No Guardada";
-				}
+				}*/
 				
 			
-				/*try{
+				try{
 					Resident resident = residentService.find(identificationNumber);
 					if (resident == null){
 						//throw new TaxpayerNotFound();
@@ -684,7 +684,7 @@ public class GimServiceBean implements GimService{
 					///
 					//revenueService.emit(mb, user);
 					///
-					System.out.println("=========> MUNICIPAL BOND: ");
+					/*System.out.println("=========> MUNICIPAL BOND: ");
 					System.out.println("===> RESIDENT: " + mb.getResident().getName());
 					System.out.println("===> DIRECCION: " + mb.getAddress());
 					System.out.println("===> DESCRIPCION: " + mb.getDescription());
@@ -703,9 +703,9 @@ public class GimServiceBean implements GimService{
 					System.out.println("===> NUMBER: " + mb.getNumber());
 					System.out.println("===> MUNICIPALBONDSTATUS: " + (mb.getMunicipalBondStatus() != null ? mb.getMunicipalBondStatus().getName():null));
 					System.out.println("===> MUNICIPALBONDTYPE: " + (mb.getMunicipalBondType() != null ? mb.getMunicipalBondType():null));
-					System.out.println("===> MUNICIPALBONDLEGALSTATUS: " + (mb.getLegalStatus() != null ? mb.getLegalStatus().name() : null));
+					System.out.println("===> MUNICIPALBONDLEGALSTATUS: " + (mb.getLegalStatus() != null ? mb.getLegalStatus().name() : null));*/
 					
-					System.out.println("::::::generateEmissionOrder: SAVED OK!!");
+					System.out.println("::::::generateEmissionOrder: SAVED OK!! ...Multas ANT - Rubro");
 					
 					
 					EmissionOrder eo = createEmisionOrder(emitter, "Multas ANT - Rubro: " + entry.getCode());
@@ -723,7 +723,7 @@ public class GimServiceBean implements GimService{
 				} catch (Exception e) {
 					//throw new EmissionOrderNotSave();
 					return "Emisión fallida. Orden de emisión No Guardada";
-				}*/
+				}
 			}else{
 				return "Emisión fallida. La foto multa ya consta registrada en el sistema";
 			}
