@@ -77,6 +77,7 @@ public class CreditNote {
 	@JoinColumn(name="creditNoteType_id")
 	private CreditNoteType creditNoteType;
 	
+	private Long parentCreditNote_id;
 	
 	public CreditNote() {
 		paymentFractions = new ArrayList<PaymentFraction>();
@@ -240,6 +241,14 @@ public class CreditNote {
 
 	public void setAvailableAmount(BigDecimal availableAmount) {
 		this.availableAmount = availableAmount;
+	}
+
+	public Long getParentCreditNote_id() {
+		return parentCreditNote_id;
+	}
+
+	public void setParentCreditNote_id(Long parentCreditNote_id) {
+		this.parentCreditNote_id = parentCreditNote_id;
 	}
 
 
