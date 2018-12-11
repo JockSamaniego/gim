@@ -77,10 +77,32 @@
 								<a:support event="onchange"
 									eventsQueue="gimQueue"
 									action="#{paymentHome.clearValues(_fraction)}"
-									reRender="receivedAmountColumn, finantialInstitutionColumn, documentNumberColumn, accountNumberColumn" />
+									reRender="receivedAmountColumn, finantialInstitutionColumn, paymentTypeSRIColumn, documentNumberColumn, accountNumberColumn" />
 							</h:selectOneMenu>
 						</rich:column>
 						
+						
+						<rich:column width="110" sortable="false" id="paymentTypeSRIColumn">
+							<f:facet name="header">
+								SRI
+							</f:facet>
+							<h:selectOneMenu id="paymentTypeSRI"
+								value="#{_fraction.paymentTypesri}"
+								rendered="#{_fraction.paymentType.name() == 'CREDIT_NOTE' 
+										|| _fraction.paymentType.name() == 'CASH' 
+										|| _fraction.paymentType.name() == 'CREDIT_CARD' 
+										|| _fraction.paymentType.name() == 'CHECK' 
+										|| _fraction.paymentType.name() == 'TRANSFER'}"
+								style="font-size:15px; width:102px;">
+								<s:selectItems value="#{paymentHome.getSRICodes(_fraction.paymentType)}" var="_finantialInstitution"
+									label="#{_finantialInstitution.name}"  />
+									<a:support event="onchange"
+									eventsQueue="gimQueue"  />
+								<s:convertEntity />
+							</h:selectOneMenu>
+						</rich:column>
+
+
 						<rich:column id="receivedAmountColumn" width="140" sortable="false">
 							<f:facet name="header">
 								#{messages['payment.receivedAmount']}
