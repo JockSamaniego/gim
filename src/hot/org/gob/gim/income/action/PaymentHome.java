@@ -1216,8 +1216,17 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	public void clearFractions() {
-		getInstance().getPaymentFractions().clear();
-		getInstance().add(new PaymentFraction());
+		getInstance().getPaymentFractions().clear();		
+		//macartuche
+		//formas de pago
+		PaymentFraction pf = new PaymentFraction();
+		Query q = this.getEntityManager().createNamedQuery("PaymentTypeSRI.findByType");
+		q.setParameter("type", PaymentType.CASH);
+		List<PaymentTypeSRI> list = q.getResultList();
+		if(!list.isEmpty())
+			pf.setPaymentTypesri(list.get(0));
+		//fin
+		getInstance().add(pf);
 		change = BigDecimal.ZERO;
 	}
 
