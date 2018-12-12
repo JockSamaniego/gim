@@ -7,6 +7,7 @@ import java.util.Calendar;
 public class InterestPublicInstitutionUtils {
 	
 	private static Integer[] idsInstitution = new Integer[]{
+			0
 //     270463, 221017, 270627, 29811, 271405, 272514, 261241, 272727, 48716, 206276, 273190, 273293,
 //	 267352, 121462, 270227, 268360, 261702, 200444, 216727, 273132, 273547, 33916, 212121, 254283, 
 //	 66135, 257621, 247891, 254761, 255546, 258193, 258412, 256396, 210938, 256635, 256317, 9183,
@@ -48,7 +49,8 @@ public class InterestPublicInstitutionUtils {
 	
 	
 	public static Boolean isPublicInstitution(Long residentId){
-		return publicInstitution.contains(residentId.intValue());
+		return false;
+		//return publicInstitution.contains(residentId.intValue());
 	}
 		
 }
