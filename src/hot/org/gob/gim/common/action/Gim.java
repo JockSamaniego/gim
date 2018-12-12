@@ -59,8 +59,8 @@ public class Gim extends EntityController {
 		 * @fecha: 3/10/2016
 		 * @tag:Instituciones publicas
 		 */
-		ResidentService residentService = ServiceLocator.getInstance().findResource(ResidentService.LOCAL_NAME);
-		residentService.loadPublicInstitutions();
+		//ResidentService residentService = ServiceLocator.getInstance().findResource(ResidentService.LOCAL_NAME);
+		//residentService.loadPublicInstitutions();
 	}
 
 	public void refreshSystemparameters() {
