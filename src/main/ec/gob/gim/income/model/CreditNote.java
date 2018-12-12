@@ -79,6 +79,7 @@ public class CreditNote {
 	
 	private Long parentCreditNote_id;
 	
+	
 	public CreditNote() {
 		paymentFractions = new ArrayList<PaymentFraction>();
 		municipalBonds = new ArrayList<MunicipalBond>();

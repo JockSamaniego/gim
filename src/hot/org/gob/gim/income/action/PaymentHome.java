@@ -82,6 +82,7 @@ import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.FinancialInstitutionType;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
+import ec.gob.gim.revenue.model.PaymentTypeSRI;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.gim.security.model.User;
@@ -181,6 +182,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	// para deshabilitar boton de registro de pago hasta ingresar los valores y
 	// que sea mayor o igual al monto de cobro
 	private Boolean canRegisterPayment = true;
+	
+	private List<PaymentTypeSRI> sriTypes;
 	
 	public UserSession getUserSession() {
 		return userSession;
@@ -405,6 +408,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	private void findPendingBonds() throws Exception {
 		logger.info("FIND PENDING BONDS " + resident.getName());
 		loadLists();
+		//macartuche
+		loadListsSRI();
+		//
 		try {
 			findFutureEmision(resident.getId());
 			this.inPaymentAgreementBonds = findInPaymentAgreementBonds(resident.getId());
@@ -1210,8 +1216,17 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	public void clearFractions() {
-		getInstance().getPaymentFractions().clear();
-		getInstance().add(new PaymentFraction());
+		getInstance().getPaymentFractions().clear();		
+		//macartuche
+		//formas de pago
+		PaymentFraction pf = new PaymentFraction();
+		Query q = this.getEntityManager().createNamedQuery("PaymentTypeSRI.findByType");
+		q.setParameter("type", PaymentType.CASH);
+		List<PaymentTypeSRI> list = q.getResultList();
+		if(!list.isEmpty())
+			pf.setPaymentTypesri(list.get(0));
+		//fin
+		getInstance().add(pf);
 		change = BigDecimal.ZERO;
 	}
 
@@ -2502,6 +2517,63 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			stateBanks = findFinantialInstitutions(FinancialInstitutionType.STATE_BANK);
 		creditNotes = findCreditNotes();
 	}
+	
+	//macartuche
+		//tipos de pago SRI
+		public List<PaymentTypeSRI> transferList;
+		public List<PaymentTypeSRI> creditNoteList;
+		public List<PaymentTypeSRI> cashList;
+		public List<PaymentTypeSRI> checkList;
+		public List<PaymentTypeSRI> creditCardList;
+		
+		private void loadListsSRI() {
+			if (transferList == null)
+				transferList = findSRIcodes(PaymentType.TRANSFER);
+			
+			if (creditNoteList == null) {
+				creditNoteList = findSRIcodes(PaymentType.CREDIT_NOTE);
+			}
+			
+			if (cashList == null) {
+				cashList = findSRIcodes(PaymentType.CASH);
+			}
+
+			if (checkList == null) {
+				checkList = findSRIcodes(PaymentType.CHECK);
+			}
+			
+			if (creditCardList == null) {
+				creditCardList = findSRIcodes(PaymentType.CREDIT_CARD);
+			}
+		}
+		
+		@SuppressWarnings("unchecked")
+		private List<PaymentTypeSRI> findSRIcodes(PaymentType type) {
+			Query query = getPersistenceContext().createNamedQuery("PaymentTypeSRI.findByType");
+			query.setParameter("type", type);
+			return query.getResultList();
+		}
+		
+		public List<PaymentTypeSRI> getSRICodes(PaymentType paymentType) {
+			
+			System.out.println("Tipo de pago: "+paymentType.name());
+			
+			
+			if (paymentType == PaymentType.CHECK) {
+				return checkList;
+			} else if (paymentType == PaymentType.CREDIT_CARD) {
+				return creditCardList;
+			} else if (paymentType == PaymentType.TRANSFER) {
+				return transferList;
+			}else if (paymentType == PaymentType.CASH) {
+				return cashList;
+			}else if (paymentType == PaymentType.CREDIT_NOTE) {
+				return creditNoteList;
+			}
+			
+			return new ArrayList<PaymentTypeSRI>();
+		}
+	//
 
 	@SuppressWarnings("unchecked")
 	private List<FinancialInstitution> findFinantialInstitutions(FinancialInstitutionType finantialInstitutionType) {
