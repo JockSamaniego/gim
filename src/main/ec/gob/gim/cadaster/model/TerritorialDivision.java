@@ -37,6 +37,8 @@ import org.hibernate.envers.Audited;
 		@NamedQuery(name = "TerritorialDivision.findByCodeAndParent", query = "select o from TerritorialDivision o where "
 				+ "o.code=:code and o.parent = :parent"),
 		@NamedQuery(name = "TerritorialDivision.findByParent", query = "select o from TerritorialDivision o where o.parent.id = :parentId order by o.code"),
+		//@tag cambioClave
+		@NamedQuery(name = "TerritorialDivision.findByParentNew", query = "select o from TerritorialDivision o where o.parent.id = :parentId and o.classifierGeo = :classifierGeo order by o.code"),
 		//@tag predioColoma
 		@NamedQuery(name = "TerritorialDivision.findByParentAndSpecial", query = "select o from TerritorialDivision o where o.parent.id = :parentId and type=:type order by o.code"),
 		
@@ -78,6 +80,11 @@ public class TerritorialDivision {
 	//@author macartuche
 	//@date 2016-10-27T16:07
 	private String type;
+	
+	//macartuche
+	//2018-11-08
+	//para los nuevo codigos
+	private Boolean classifierGeo=Boolean.FALSE;
 
 	public TerritorialDivision() {
 		this.territorialDivisions = new ArrayList<TerritorialDivision>();
@@ -223,4 +230,15 @@ public class TerritorialDivision {
 		this.type = type;
 	}
 
+	
+	//@tag cambioClaves
+	//@author macartuche
+	//@date 2018-1108T11:31
+	public Boolean getClassifierGeo() {
+		return classifierGeo;
+	}
+
+	public void setClassifierGeo(Boolean classifierGeo) {
+		this.classifierGeo = classifierGeo;
+	}
 }// end TerritorialDivision

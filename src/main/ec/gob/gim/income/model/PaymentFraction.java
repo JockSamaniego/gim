@@ -70,18 +70,19 @@ public class PaymentFraction {
 	private CreditNote creditNote;
 
 	@Transient
-	private List<Deposit> deposits;
-
-	// macartuche
-	// 2018-11-05 15:18 para codigo de pago SRI
-	// @OneToOne(mappedBy = "fraction", fetch = FetchType.LAZY)
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "paymentTypesri_id")
+	private List<Deposit> deposits;	
+	
+	
+	//macartuche
+	//2018-11-05 15:18 para codigo de pago SRI
+	//@OneToOne(mappedBy = "fraction", fetch = FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="paymentTypesri_id")
 	private PaymentTypeSRI paymentTypesri;
-
+	
 	@Transient
 	private String codeSRI;
-
+	
 	public PaymentFraction() {
 		deposits = new ArrayList<Deposit>();
 		receivedAmount = BigDecimal.ZERO;
@@ -180,7 +181,7 @@ public class PaymentFraction {
 			deposits.remove(d);
 		}
 	}
-
+	
 	public PaymentTypeSRI getPaymentTypesri() {
 		return paymentTypesri;
 	}

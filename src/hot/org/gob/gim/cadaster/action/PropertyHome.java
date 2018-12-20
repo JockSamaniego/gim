@@ -691,13 +691,13 @@ public class PropertyHome extends EntityHome<Property> {
 			return;
 
 		if (parish == null)
-			parish = findTerritorialDivision(5, 9, territorialDivisionHome.findDefaultCanton());
+			parish = findTerritorialDivision(4, 6, territorialDivisionHome.findDefaultCanton());
 
 		if (zone == null)
-			zone = findTerritorialDivision(9, 11, parish);
+			zone = findTerritorialDivision(6, 8, parish);
 
 		if (sector == null) {
-			sector = findTerritorialDivision(11, 13, zone);
+			sector = findTerritorialDivision(8, 10, zone);
 		}
 
 		prepareViewHistory();
@@ -842,7 +842,8 @@ public class PropertyHome extends EntityHome<Property> {
 		// logger.info("populateCadastralCode() parishe #0, zone #1", parish,
 		// zone);
 
-		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "0000");
+//		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "0000"); //antigua clave
+		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "00"); //nueva clave catastral
 		cadastralCodeBuffer.append(zone != null ? zone.getCode() : "00");
 		cadastralCodeBuffer.append(sector != null ? sector.getCode() : "00");
 		cadastralCodeBuffer
@@ -1270,7 +1271,8 @@ public class PropertyHome extends EntityHome<Property> {
 	private List<TerritorialDivision> findTerritorialDivisions(Long parentId) {
 		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParent");
 		query.setParameter("parentId", parentId);
-		return query.getResultList();
+		List<TerritorialDivision> td = query.getResultList(); 
+		return td;
 	}
 
 	/**
@@ -1400,7 +1402,7 @@ public class PropertyHome extends EntityHome<Property> {
 	 * @return List<BlockLimit>
 	 */
 	public List<BlockLimit> populateLimits() {
-		// logger.info("========= Ingreso a populateLimits(), con instance
+		 logger.info("========= Ingreso a populateLimits(), con instance");
 		// block: #0",
 		// this.getInstance().getBlock().getId());
 		if (this.getInstance().getBlock() != null && this.getInstance().getBlock().getId() != null) {
