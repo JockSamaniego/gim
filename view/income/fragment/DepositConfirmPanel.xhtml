@@ -11,8 +11,8 @@
 	<!-- ui:debug /-->
 	<rich:modalPanel 
 		id="depositConfirmPanel"
-		minHeight="540" minWidth="800"
-		height="540" width="800">
+		minHeight="540" minWidth="900"
+		height="540" width="900">
 		<f:facet name="header">
 			<h:panelGroup>
 				<h:outputText value="#{messages['payment.confirm']}"></h:outputText>
@@ -81,7 +81,6 @@
 							</h:selectOneMenu>
 						</rich:column>
 						
-						
 						<rich:column width="110" sortable="false" id="paymentTypeSRIColumn">
 							<f:facet name="header">
 								SRI
@@ -101,8 +100,8 @@
 								<s:convertEntity />
 							</h:selectOneMenu>
 						</rich:column>
-
-
+						
+						
 						<rich:column id="receivedAmountColumn" width="140" sortable="false">
 							<f:facet name="header">
 								#{messages['payment.receivedAmount']}

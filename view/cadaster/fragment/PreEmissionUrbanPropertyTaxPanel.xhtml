@@ -32,7 +32,7 @@
 								<h:selectOneMenu id="parishe"
 									value="#{emissionOrderHome.parish}">
 									<s:selectItems
-										value="#{emissionOrderHome.findParishes(defaultCanton.id)}"
+										value="#{emissionOrderHome.findParishes(defaultCanton.id, true)}"
 										var="parish" label="#{parish.code} - #{parish.name}"
 										noSelectionLabel="#{messages['common.shouldSelected']}" />
 									<s:convertEntity />
