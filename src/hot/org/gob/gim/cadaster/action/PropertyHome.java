@@ -1290,7 +1290,23 @@ public class PropertyHome extends EntityHome<Property> {
 	 */
 
 	public List<TerritorialDivision> findParishes(Long defaultCantonId) {
-		return findTerritorialDivisions(defaultCantonId);
+		//return findTerritorialDivisions(defaultCantonId);
+		//@tag cambioClave
+		return findTerritorialDivisionsNew(defaultCantonId);
+	}
+	
+	/**
+	 * macartuche
+	 * @tag cambioClave
+	 * @param parentId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private List<TerritorialDivision> findTerritorialDivisionsNew(Long parentId) {
+		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParentNew");
+		query.setParameter("parentId", parentId);
+		query.setParameter("classifierGeo", Boolean.TRUE);
+		return query.getResultList();
 	}
 
 	public List<TerritorialDivision> findZones() {
