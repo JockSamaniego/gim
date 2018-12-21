@@ -121,7 +121,7 @@
 				<ui:define name="label">#{messages['property.floor']}:</ui:define>
 				<a:region>
 				<h:inputText id="floorNumber" required="true" disabled="#{propertySpecialHome.idDefined and !propertySpecialHome.instance.duplicate}"
-					value="#{propertySpecialHome.instance.floorNumber}" size="3" maxlength="3"
+					value="#{propertySpecialHome.instance.floorNumber}" size="2" maxlength="2"
 					>
 					<a:support event="onblur" ajaxSingle="true"
 						reRender="floorNumberField, cadastralCodePanel"

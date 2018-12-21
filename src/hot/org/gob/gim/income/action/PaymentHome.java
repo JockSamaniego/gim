@@ -183,6 +183,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	// que sea mayor o igual al monto de cobro
 	private Boolean canRegisterPayment = true;
 	
+	
 	private List<PaymentTypeSRI> sriTypes;
 	
 	public UserSession getUserSession() {
@@ -2518,70 +2519,72 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		creditNotes = findCreditNotes();
 	}
 	
-	//macartuche
-		//tipos de pago SRI
-		public List<PaymentTypeSRI> transferList;
-		public List<PaymentTypeSRI> creditNoteList;
-		public List<PaymentTypeSRI> cashList;
-		public List<PaymentTypeSRI> checkList;
-		public List<PaymentTypeSRI> creditCardList;
-		
-		private void loadListsSRI() {
-			if (transferList == null)
-				transferList = findSRIcodes(PaymentType.TRANSFER);
-			
-			if (creditNoteList == null) {
-				creditNoteList = findSRIcodes(PaymentType.CREDIT_NOTE);
-			}
-			
-			if (cashList == null) {
-				cashList = findSRIcodes(PaymentType.CASH);
-			}
-
-			if (checkList == null) {
-				checkList = findSRIcodes(PaymentType.CHECK);
-			}
-			
-			if (creditCardList == null) {
-				creditCardList = findSRIcodes(PaymentType.CREDIT_CARD);
-			}
-		}
-		
-		@SuppressWarnings("unchecked")
-		private List<PaymentTypeSRI> findSRIcodes(PaymentType type) {
-			Query query = getPersistenceContext().createNamedQuery("PaymentTypeSRI.findByType");
-			query.setParameter("type", type);
-			return query.getResultList();
-		}
-		
-		public List<PaymentTypeSRI> getSRICodes(PaymentType paymentType) {
-			
-			System.out.println("Tipo de pago: "+paymentType.name());
-			
-			
-			if (paymentType == PaymentType.CHECK) {
-				return checkList;
-			} else if (paymentType == PaymentType.CREDIT_CARD) {
-				return creditCardList;
-			} else if (paymentType == PaymentType.TRANSFER) {
-				return transferList;
-			}else if (paymentType == PaymentType.CASH) {
-				return cashList;
-			}else if (paymentType == PaymentType.CREDIT_NOTE) {
-				return creditNoteList;
-			}
-			
-			return new ArrayList<PaymentTypeSRI>();
-		}
-	//
-
+	 
 	@SuppressWarnings("unchecked")
 	private List<FinancialInstitution> findFinantialInstitutions(FinancialInstitutionType finantialInstitutionType) {
 		Query query = getPersistenceContext().createNamedQuery("FinancialInstitution.findByType");
 		query.setParameter("type", finantialInstitutionType);
 		return query.getResultList();
 	}
+	
+	//macartuche
+	//tipos de pago SRI
+	public List<PaymentTypeSRI> transferList;
+	public List<PaymentTypeSRI> creditNoteList;
+	public List<PaymentTypeSRI> cashList;
+	public List<PaymentTypeSRI> checkList;
+	public List<PaymentTypeSRI> creditCardList;
+	
+	private void loadListsSRI() {
+		if (transferList == null)
+			transferList = findSRIcodes(PaymentType.TRANSFER);
+		
+		if (creditNoteList == null) {
+			creditNoteList = findSRIcodes(PaymentType.CREDIT_NOTE);
+		}
+		
+		if (cashList == null) {
+			cashList = findSRIcodes(PaymentType.CASH);
+		}
 
+		if (checkList == null) {
+			checkList = findSRIcodes(PaymentType.CHECK);
+		}
+		
+		if (creditCardList == null) {
+			creditCardList = findSRIcodes(PaymentType.CREDIT_CARD);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<PaymentTypeSRI> findSRIcodes(PaymentType type) {
+		Query query = getPersistenceContext().createNamedQuery("PaymentTypeSRI.findByType");
+		query.setParameter("type", type);
+		return query.getResultList();
+	}
+	
+	public List<PaymentTypeSRI> getSRICodes(PaymentType paymentType) {
+		
+		System.out.println("Tipo de pago: "+paymentType.name());
+		
+		
+		if (paymentType == PaymentType.CHECK) {
+			return checkList;
+		} else if (paymentType == PaymentType.CREDIT_CARD) {
+			return creditCardList;
+		} else if (paymentType == PaymentType.TRANSFER) {
+			return transferList;
+		}else if (paymentType == PaymentType.CASH) {
+			return cashList;
+		}else if (paymentType == PaymentType.CREDIT_NOTE) {
+			return creditNoteList;
+		}
+		
+		return new ArrayList<PaymentTypeSRI>();
+	}
+	//
+	
+	
 	private List<MunicipalBond> getSelected() {
 		selectedBonds = new ArrayList<MunicipalBond>();
 		for (MunicipalBondItem mbi : municipalBondItems) {
@@ -3418,6 +3421,13 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 	public void setForcedToPayAll(Boolean forcedToPayAll) {
 		this.forcedToPayAll = forcedToPayAll;
-	}	
-	
+	}
+
+	public List<PaymentTypeSRI> getSriTypes() {
+		return sriTypes;
+	}
+
+	public void setSriTypes(List<PaymentTypeSRI> sriTypes) {
+		this.sriTypes = sriTypes;
+	}		
 }

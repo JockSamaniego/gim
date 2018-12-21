@@ -205,7 +205,7 @@
 								</a:commandButton>
 							</a:region>
 
-							<s:button view="/cadaster/PropertyEdit.xhtml"
+							<s:button view="/cadaster/PropertySpecialEdit.xhtml"
 								includePageParams="false" value="#{messages['common.view']}"
 								propagation="none" id="view">
 								<f:param name="propertyId" value="#{_property.id}" />
@@ -221,7 +221,7 @@
 								<f:param name="isUrban" value="#{propertyHome.urban}" />
 							</s:button>
 
-							<s:button view="/cadaster/PropertyEdit.xhtml"
+							<s:button view="/cadaster/PropertySpecialEdit.xhtml"
 								includePageParams="false" value="#{messages['common.edit']}"
 								propagation="none" id="propertyEdit"
 								rendered="#{not _property.deleted}">
@@ -271,7 +271,7 @@
 
 
 							<!--nuevo boton puesto para el reporteeeeeeeee	.....................................................	-->
-							<s:button view="/cadaster/PropertyEdit.xhtml"
+							<s:button view="/cadaster/PropertySpecialEdit.xhtml"
 								includePageParams="false" value="Reporte" propagation="none"
 								id="Reporte_Urbano">
 								<f:param name="propertyId" value="#{_property.id}" />
