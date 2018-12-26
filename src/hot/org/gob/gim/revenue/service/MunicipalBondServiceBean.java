@@ -311,6 +311,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		try {
 			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 			json = ow.writeValueAsString(this.metadataDto);	
+			
+			//fijar los datos para la impresion, valores transient
+			//macartuche 2018-10-25
+			municipalBond.setInterestRemission(this.metadataDto.getInterest());
+			municipalBond.setSurchargeRemission(this.metadataDto.getSurcharge());
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

@@ -1137,6 +1137,13 @@ public class MunicipalBond implements Serializable {
 	
 	
 	private String metadata;
+	
+	@Transient  //for print
+	private BigDecimal interestRemission=BigDecimal.ZERO;
+	
+	@Transient //for print
+	private BigDecimal surchargeRemission=BigDecimal.ZERO;
+	
 
 	public MunicipalBond() {
 		// creationDate = Calendar.getInstance().getTime();
@@ -1857,6 +1864,22 @@ public class MunicipalBond implements Serializable {
 	public List<Deposit> getDepositsList() {
 		List<Deposit> list = new ArrayList<Deposit>(this.deposits);
 		return list;
+	}
+
+	public BigDecimal getInterestRemission() {
+		return interestRemission;
+	}
+
+	public void setInterestRemission(BigDecimal interestRemission) {
+		this.interestRemission = interestRemission;
+	}
+
+	public BigDecimal getSurchargeRemission() {
+		return surchargeRemission;
+	}
+
+	public void setSurchargeRemission(BigDecimal surchargeRemission) {
+		this.surchargeRemission = surchargeRemission;
 	}
 
 }// end MunicipalBond

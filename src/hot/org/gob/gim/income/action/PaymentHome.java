@@ -31,6 +31,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.ServletContext;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -63,6 +65,7 @@ import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.finances.model.DTO.MetadataBondDTO;
 import ec.gob.gim.income.model.CreditNote;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.EntryTotalCollected;
@@ -74,6 +77,7 @@ import ec.gob.gim.income.model.PaymentRestriction;
 import ec.gob.gim.income.model.PaymentType;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.TillPermission;
+import ec.gob.gim.income.model.dto.ParameterFutureEmissionDTO;
 import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.FinancialInstitutionType;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -1320,11 +1324,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				deposits = fillDeposits();
 			}
 
+			
 			// @author macartuche
 			// unicamente para pagos normales
 			/// para convenios se va por otro metodo
-			// REVISAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR EN PRUEBAS SI CONVENIO VIENE POR
-			// AQUI!!!!!!!
 			String paymentMethod = (this.isPaymentSubscription) ? PaymentMethod.SUBSCRIPTION.name()
 					: PaymentMethod.NORMAL.name();
 			// fin pago abonos
@@ -1364,8 +1367,31 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 	public void rePrint() {
 		deposits = fillDeposits2();
+		//@macartuche remision ... recorrer cada bond para fijar el interes y recargo
+		fillMetadata(deposits);
 		receiptPrintingManager.print(deposits);
 		renderingDepositPDF(userSession.getUser().getId());
+	}
+	
+	private void fillMetadata(List<Deposit> deposits) {
+		for (Deposit localDeposit : deposits) {
+			MunicipalBond mb = localDeposit.getMunicipalBond();
+			if(mb.getMetadata()!=null && !mb.getMetadata().isEmpty()) {
+				try {
+					MetadataBondDTO metadataDto = new ObjectMapper()
+							.readValue(mb
+									.getMetadata(),
+									MetadataBondDTO.class);
+					
+					//fijar los datos para la impresion, valores transient
+					//macartuche 2018-10-25
+					mb.setInterestRemission(metadataDto.getInterest());
+					mb.setSurchargeRemission(metadataDto.getSurcharge());
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public void renderingDepositPDF(Long userId) {
