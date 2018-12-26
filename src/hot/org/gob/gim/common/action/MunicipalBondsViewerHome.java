@@ -73,7 +73,7 @@ public class MunicipalBondsViewerHome extends EntityController{
 		if (municipalBondId != null){
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);			
 			MunicipalBond municipalBond = incomeService.loadMunicipalBond(municipalBondId);
-			if(municipalBond != null && getStatusesForCalculate().contains(municipalBond.getMunicipalBondStatus().getId())) incomeService.calculatePayment(municipalBond, true, true);
+			if(municipalBond != null && getStatusesForCalculate().contains(municipalBond.getMunicipalBondStatus().getId())) incomeService.calculatePayment(municipalBond, true, true, false);
 			municipalBonds.add(municipalBond);
 			resident = municipalBond.getResident();
 			deposits = loadDeposits(municipalBondId);

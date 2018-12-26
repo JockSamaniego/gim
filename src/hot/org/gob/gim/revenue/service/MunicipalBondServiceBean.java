@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.builder.KnowledgeBuilder;
@@ -46,6 +49,7 @@ import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.FiscalPeriodService;
 import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.income.action.AgreementType;
 import org.gob.gim.income.service.TaxRateService;
 import org.gob.gim.income.service.TaxService;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
@@ -54,9 +58,11 @@ import org.gob.gim.revenue.view.EntryValueItem;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.LegalEntity;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.finances.model.DTO.MetadataBondDTO;
 import ec.gob.gim.income.model.CompensationReceipt;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.InterestRate;
+import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.StatusElectronicReceipt;
 import ec.gob.gim.income.model.Tax;
@@ -109,7 +115,10 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	@EJB
 	ResidentService residentService;
 
+
 	public static final String PENDING_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_PENDING";
+	
+	private MetadataBondDTO metadataDto;
 
 	// @author macartuche
 	// @date 2016-06-27 11:42
@@ -207,7 +216,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	public MunicipalBond createMunicipalBond(Resident resident,
 			FiscalPeriod fiscalPeriod, Entry entry,
 			EntryValueItem entryValueItem, boolean isEmission,
-			boolean applyDiscounts, Object... facts)
+			boolean applyDiscounts,
+			Object... facts)
 			throws EntryDefinitionNotFoundException {
 
 		Date now = Calendar.getInstance().getTime();
@@ -245,19 +255,26 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		if (aux)
 			municipalBond.setExpirationDate(expirationDate);
 		calculatePayment(municipalBond, now, null, true, isEmission,
-				applyDiscounts, null, facts);
+				applyDiscounts, null,  facts);
 		return municipalBond;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	// iva12%
+	//1 desde vista cajer@
 	public void calculatePayment(MunicipalBond municipalBond, Date paymentDate,
 			Deposit deposit, boolean isNew, boolean isEmission,
-			boolean applyDiscounts, List<TaxRate> taxRatesActives,
+			boolean applyDiscounts, 
+			List<TaxRate> taxRatesActives,
 			Object... facts) throws EntryDefinitionNotFoundException {
 
 		// System.out.println("<<<R>>>calculatePayment: \n\n\n\n\n");
+		this.metadataDto = new MetadataBondDTO();
+//		Map<String, Object>cases = compareCases(municipalBond.getExpirationDate(),municipalBond.getSurcharge(), paymentDate, municipalBond, completePayment);
+//		BigDecimal newSurharged	 = (BigDecimal)cases.get("nuevoValor");
+//		municipalBond.setSurcharge(newSurharged);
+		
+		
 		if (!isNew) {
 			EntryValueItem entryValueItem = new EntryValueItem();
 			entryValueItem.setMainValue(municipalBond.getBase());
@@ -276,47 +293,38 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		if (deposit == null) {
 			municipalBond.setBalance(municipalBond.getValue());
 		}
+		
 		// municipalBond.setBalance(municipalBond.getBalance().add(municipalBond.getSurcharge()).subtract(municipalBond.getDiscount()));
-		calculateInterest(municipalBond, deposit, paymentDate);// luego de
-																// pruebas de
-																// coactivas y
-																// de interes
-																// cero remover
-																// ******
+		calculateInterest(municipalBond, deposit, paymentDate);// remision
 
-		// @author macartuche
-		// @date 2016-06-27 10:33
-		// @tag InteresCeroInstPub
-		// No realizar el calculo de interes para instituciones publicas
-		/*
-		 * Boolean interestCero_publiCompany =
-		 * systemParameterService.findParameter
-		 * (COLLECT_INTEREST_PUBLIC_COMPANY); if(interestCero_publiCompany){
-		 * boolean isPublic =
-		 * InterestPublicInstitutionUtils.isPublicInstitution(
-		 * municipalBond.getResident().getId()); if(isPublic){
-		 * System.out.println("Number: "+municipalBond.getNumber()+" Service: "+
-		 * municipalBond.getGroupingCode()+ " Interes anterior calculado "+
-		 * municipalBond.getInterest()+ " nuevo interes: 0.00");
-		 * municipalBond.setInterest(BigDecimal.ZERO);
-		 * //if(municipalBond.getReceipt()!=null){ // Receipt receipt =
-		 * municipalBond.getReceipt(); // Query compensationQuery =
-		 * entityManager.createQuery(
-		 * "Select cr from CompensationReceipt cr where cr.receipt.id=:receiptid"
-		 * ); // compensationQuery.setParameter("receiptid", receipt.getId());
-		 * // List<CompensationReceipt> list =
-		 * compensationQuery.getResultList(); // if(!list.isEmpty()){ //
-		 * CompensationReceipt cr = list.get(0); //
-		 * System.out.println("Interes CompensationReceipt "+cr.getInterest());
-		 * // if(cr.getInterest().compareTo(BigDecimal.ZERO)==1){ //
-		 * municipalBond.setInterest(cr.getInterest()); //
-		 * System.out.println("=======================>"
-		 * +receipt.toString()+" interest CR: "+cr.getInterest()); // } // } //}
-		 * }else{ calculateInterest(municipalBond, deposit, paymentDate); }
-		 * }else{ calculateInterest(municipalBond, deposit, paymentDate); }
-		 */
 
 		roundItems(municipalBond);
+		
+		//TODO-REMISION
+//		Map<String, Object> cases = compareCases(municipalBond.getExpirationDate(),municipalBond.getSurcharge(), paymentDate, municipalBond);
+//		BigDecimal newSurharged	 = (BigDecimal)cases.get("nuevoValor");
+//		municipalBond.setSurcharge(newSurharged);
+		//todo armar JSON y setear
+		
+		String json="";
+
+		try {
+			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			json = ow.writeValueAsString(this.metadataDto);	
+			
+			//fijar los datos para la impresion, valores transient
+			//macartuche 2018-10-25
+			municipalBond.setInterestRemission(this.metadataDto.getInterest());
+			municipalBond.setSurchargeRemission(this.metadataDto.getSurcharge());
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		municipalBond.setMetadata(json);
+		
+
+		//*************
+		
 		// /ya tiene los 48.10
 		BigDecimal paidTotal = municipalBond.getBalance();
 		paidTotal = paidTotal.add(municipalBond.getSurcharge());
@@ -432,6 +440,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 					saved = buildItem(edchild, new EntryValueItem(), e
 							.getChild().getIsTaxable(), e.getTargetEntry(),
 							rulesToApply, itemFacts, saved, true);
+					
+					//TODO-REMISION
+					if(saved.getSurchargedBond()!=null) {
+						saved.setTotal(municipalBond.getSurcharge());
+					}
 					saved.setEntry(edchild.getEntry());
 					addItem(municipalBond, saved, entryStructureType);
 					// System.out.println("LXGK -----> ITEM ADDED");
@@ -654,7 +667,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	}
 
 	public void changeExemptionInMunicipalBond(MunicipalBond municipalBond,
-			boolean isNew, boolean isEmission, Object... facts)
+			boolean isNew, boolean isEmission,
+			Object... facts)
 			throws EntryDefinitionNotFoundException {
 		if (municipalBond.getEntry() != null) {
 
@@ -1158,6 +1172,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 	public BigDecimal calculateSurcharge(MunicipalBond municipalBond) {
 		BigDecimal surcharge = BigDecimal.ZERO;
+		BigDecimal exoneratedSurcharge = BigDecimal.ZERO;
 		for (Item i : municipalBond.getSurchargeItems()) {
 			/*
 			 * System.out.println("item: " + i);
@@ -1165,10 +1180,20 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			 * System.out.println("item total: " +
 			 * i.getEntry().getCompleteName());
 			 */
-			i.setTotal(i.getTotal().setScale(2, RoundingMode.HALF_UP));
+			//TODO-REMISION
+			BigDecimal total = i.getTotal().setScale(2, RoundingMode.HALF_UP);
+			Map<String, Object> cases = compareCases(municipalBond.getExpirationDate(), total, new Date(), municipalBond);
+			BigDecimal newSurharged	 = (BigDecimal)cases.get("nuevoValor");
+			BigDecimal exonerated = (BigDecimal)cases.get("totalExonerado");
+//			i.setTotal(i.getTotal().setScale(2, RoundingMode.HALF_UP));
+			
+			i.setTotal(newSurharged.setScale(2, RoundingMode.HALF_UP));
 			BigDecimal aux = i.getTotal();
 			surcharge = surcharge.add(aux);
+			exoneratedSurcharge = exoneratedSurcharge.add(exonerated);
 		}
+		
+		this.metadataDto.setSurcharge(exoneratedSurcharge);
 		return surcharge;
 	}
 
@@ -1514,11 +1539,20 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				// this.calculateInterestForInterestRateOutDate(interestRateList,
 				// paymentDate, balance, interest);
 			}
+
+			//para casos de remision interes
+			Map<String, Object> cases = compareCases(expirationDate, interest, paymentDate, municipalBond);
+			BigDecimal newInterest	 = (BigDecimal)cases.get("nuevoValor");		
+			
+			this.metadataDto.setInterest((BigDecimal)cases.get("totalExonerado"));
+			interest = newInterest;			
 		}
+		
+		
 
-		interest = interest.setScale(2, RoundingMode.HALF_UP);
+		interest = interest.setScale(2, RoundingMode.HALF_UP);		
 		municipalBond.setInterest(interest);
-
+		
 		// @tag interesFactElec
 		// aumentar campo de interesfactura
 		if (municipalBond.getInterestVoucher() != null) {
@@ -1527,6 +1561,107 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		// fin @tag interesFactElec
 		// System.out.println("INTERESTS -----> ENDS With value "+interest);
 	}
+	
+	/**
+	 * REMISION
+	 * @param expirationDate
+	 */
+	private Map<String, Object> compareCases(Date expirationDate, BigDecimal value, 
+			Date paymentDate, MunicipalBond mb) {
+		
+//		System.out.println("NUMBER "+mb.getNumber());
+		String case1StringRemission = "2018-04-02";
+		//dentro de 90 dias reduccion del 100%
+		String case1StringMaxPayment = "2018-12-28";
+		  
+		Map<String, Object> response = new HashMap<String, Object>();
+		value = value.setScale(2, RoundingMode.HALF_UP);
+		
+		if( mb.getPaymentAgreement()!=null ) {
+			expirationDate = mb.getExpirationDate();
+		}
+		
+		//respuesta por defecto en caso que no se exogenere el interes o recargo
+		Map<String, Object> responseDefault = new HashMap<String, Object>(); 
+		responseDefault.put("case", "0");
+		responseDefault.put("porcentajeExonerado", "0%");
+		responseDefault.put("totalExonerado", BigDecimal.ZERO);
+		responseDefault.put("nuevoValor", value);
+		responseDefault.put("FechaVencimiento", expirationDate);
+		responseDefault.put("FechaPago", paymentDate);
+		 
+		try {
+			Date dateCase1Remission = stringToDate(case1StringRemission);
+			
+			Date dateCase1MaxPayment = stringToDate(case1StringMaxPayment); 		
+					
+			if (expirationDate.compareTo(dateCase1Remission)<= 0 ) {
+				if(paymentDate.compareTo(dateCase1MaxPayment)<=0) {
+					
+					response.put("case", "1");
+					response.put("porcentajeExonerado", "100%");
+					response.put("totalExonerado", value);
+					response.put("nuevoValor", BigDecimal.ZERO);
+					response.put("FechaVencimiento", expirationDate);
+					response.put("FechaPago", paymentDate);
+					
+				}else {				
+					//CALCULO NORMAL DE INTERES/RECARGO
+					response = responseDefault;
+				}
+			}else {
+				
+				//CALCULO NORMAL DE INTERES/RECARGO
+				response = responseDefault;
+			}
+									 						
+		} catch (ParseException e) {
+			//CALCULO NORMAL DE INTERES
+			response = responseDefault;
+			e.printStackTrace();
+		}
+		
+		//ABONOS O CONVENIOS
+		//mb.getMunicipalBondStatus().getId().intValue() == 14 
+		if( mb.getPaymentAgreement()!=null ) {
+			 	Object[] objects = getPaymentAgreementData(mb);
+				//aqui consultar de acuerdo al convenio
+				//si no es pago completo no se exonera interes/recargo, se devuelve valor calculado
+			 	Boolean isFullPayment = (Boolean)objects[1];
+			 	Boolean applyRemission = (Boolean)objects[2];
+			 	
+			 	String type = (String)objects[3];
+			 	if(type.equals(AgreementType.REGULAR.name()) || type.equals(AgreementType.COERCIVEJUDGEMENT.name())) {
+			 		if(!isFullPayment) {
+						response = responseDefault;
+					}
+			 	}else if(type.equals(AgreementType.REMISSION.name())) {
+			 		if(!applyRemission) {
+			 			response = responseDefault;
+			 		}
+			 	}
+			 	
+						
+		}
+		return response;
+	}
+	
+	private Object[] getPaymentAgreementData(MunicipalBond mb) {
+		String query = "Select pa.id, pa.isfullpayment, applyreferral, agreementtype "
+				+ "from paymentagreement pa join municipalbond mb on mb.paymentagreement_id = pa.id "
+				+ "where mb.id="+mb.getId();
+		Object[] data = (Object[])entityManager.createNativeQuery(query).getSingleResult();
+		return data;
+	}
+	
+	
+	
+	private static Date stringToDate(String strDate) throws ParseException {
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = format.parse(strDate);
+		return date;
+	}
+	
 
 	// @author macartuche
 	// 2016-07-21T16:51
@@ -1889,4 +2024,5 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		return size;
 
 	}
+
 }

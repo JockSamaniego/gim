@@ -90,6 +90,8 @@
 	<filter-mapping>
 		<filter-name>Seam Filter</filter-name>
 		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher> 
 	</filter-mapping>
 	<!-- Seam -->
 	<listener>
@@ -105,7 +107,7 @@
 	<servlet>
 		<servlet-name>Faces Servlet</servlet-name>
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>PaymentPlatform</servlet-name>

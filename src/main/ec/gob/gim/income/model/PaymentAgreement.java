@@ -117,6 +117,13 @@ public class PaymentAgreement {
 	@Column(length = 20)
 	private AgreementType agreementType;
 	
+	private Boolean isFullPayment=Boolean.FALSE;
+	
+	private Boolean applyReferral;
+	
+	private Long userUpdate;
+	
+	
 	public AgreementType getAgreementType() {
 		return agreementType;
 	}
@@ -264,18 +271,39 @@ public class PaymentAgreement {
 		return notPayedYet;
 	}
 
-
 	public void setNotPayedYet(Integer notPayedYet) {
 		this.notPayedYet = notPayedYet;
 	}
-
 
 	public Boolean getLowerPercentage() {
 		return lowerPercentage;
 	}
 
-
 	public void setLowerPercentage(Boolean lowerPercentage) {
 		this.lowerPercentage = lowerPercentage;
+	}
+
+	public Boolean getIsFullPayment() {
+		return isFullPayment;
+	}
+
+	public void setIsFullPayment(Boolean isFullPayment) {
+		this.isFullPayment = isFullPayment;
+	}
+
+	public Boolean getApplyReferral() {
+		return applyReferral;
+	}
+
+	public void setApplyReferral(Boolean applyReferral) {
+		this.applyReferral = applyReferral;
+	}
+
+	public Long getUserUpdate() {
+		return userUpdate;
+	}
+
+	public void setUserUpdate(Long userUpdate) {
+		this.userUpdate = userUpdate;
 	}
 }

@@ -1,5 +1,6 @@
 package org.gob.gim.income.view;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
@@ -7,9 +8,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
 
+import ec.gob.gim.finances.model.DTO.MetadataBondDTO;
 import ec.gob.gim.income.model.PaymentRestriction;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
@@ -165,7 +172,10 @@ public class MunicipalBondItem {
 				BigDecimal paidTotal = BigDecimal.ZERO;
 				BigDecimal taxesTotal = BigDecimal.ZERO;
 				BigDecimal totalCancelled = BigDecimal.ZERO;
-				
+				//Remision 2018-10-11
+				BigDecimal totalInterestRemision = BigDecimal.ZERO;
+				BigDecimal totalSurchargedRemision = BigDecimal.ZERO;
+				MetadataBondDTO meta = new MetadataBondDTO();
 
 				for (MunicipalBondItem mbi : children.values()) {				
 					mbi.calculateTotals(municipalBondStatus, inAgreementBondStatus, inSubscriptionStatus);
@@ -202,6 +212,27 @@ public class MunicipalBondItem {
 						surcharge = surcharge.add(mbi.getMunicipalBond().getSurcharge());
 						taxesTotal = taxesTotal.add(mbi.getMunicipalBond().getTaxesTotal());
 						totalCancelled = totalCancelled.add(mbi.getMunicipalBond().getTotalCancelled() == null ? BigDecimal.ZERO : mbi.getMunicipalBond().getTotalCancelled());
+						
+						//Remision 2018-10-11
+						
+						String _json= mbi.getMunicipalBond().getMetadata();
+						
+						try {
+							meta = new ObjectMapper().readValue(_json, MetadataBondDTO.class);
+							totalInterestRemision = totalInterestRemision.add(meta.getInterest());
+							totalSurchargedRemision = totalSurchargedRemision.add(meta.getSurcharge());
+						} catch (JsonParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (JsonMappingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						
 					}					
 				}
 				
@@ -211,7 +242,29 @@ public class MunicipalBondItem {
 				municipalBond.setInterest(interest);
 				municipalBond.setDiscount(discount);
 				municipalBond.setSurcharge(surcharge);
-				municipalBond.setTaxesTotal(taxesTotal);				
+				municipalBond.setTaxesTotal(taxesTotal);
+				
+				//Remision 2018-10-11
+				ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+				String json;
+				try {
+					meta.setInterest(totalInterestRemision);
+					meta.setSurcharge(totalSurchargedRemision);
+					
+					json = ow.writeValueAsString(meta);
+					municipalBond.setMetadata(json);
+				} catch (JsonGenerationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+				
+				
 				//System.out.println("TOTAL CALCULADO ----> "	+ municipalBond.getEntry().getName() + " - " + municipalBond.getValue().floatValue());
 			}
 

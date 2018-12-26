@@ -141,7 +141,7 @@ public class IncomeServiceBean implements IncomeService {
 		this.calculatePayment(municipalBond, now, isForPay, applyDiscount);
 	}
 
-	@Override//iva12%
+	@Override //2 llamada
 	public void calculatePayment(MunicipalBond municipalBond,
 			Date paymentServiceDate, boolean isForPay, boolean applyDiscount)
 			throws EntryDefinitionNotFoundException {
@@ -187,7 +187,7 @@ public class IncomeServiceBean implements IncomeService {
 		return null;
 	}
 
-	@Override  //iva12%
+	@Override  //1
 	public void calculatePayment(List<MunicipalBond> municipalBonds,
 			Date paymentServiceDate, boolean isForPay, boolean applyDiscount)
 			throws EntryDefinitionNotFoundException { 
@@ -213,7 +213,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	}
 
-	@Override//iva12%
+	@Override //3
 	public void calculatePayment(MunicipalBond municipalBond,
 			Date paymentServiceDate, boolean isForPay, boolean applyDiscount,
 			Object... facts) throws EntryDefinitionNotFoundException {
@@ -1669,6 +1669,12 @@ public class IncomeServiceBean implements IncomeService {
 		query.setParameter("municipalBondStatusId", inPaymentAgreementMunicipalBondStatusId);
 		query.executeUpdate();
 
+	}
+	
+	
+	public void update(PaymentAgreement paymentAgreement) {
+		entityManager.merge(paymentAgreement);
+		entityManager.flush();
 	}
 
 	@SuppressWarnings("unchecked")

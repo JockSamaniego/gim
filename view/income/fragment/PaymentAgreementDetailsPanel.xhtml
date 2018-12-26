@@ -143,6 +143,7 @@
 							<s:selectItems value="#{agreementTypes}" var="type"
 								label="#{messages[type.name()]}" />
 							<s:convertEnum />
+							<a:support event="onchange" ajaxSingle="true" action="#{paymentAgreementHome.verifyForRemission}" />
 						</h:selectOneMenu>
 					</s:decorate>
 					

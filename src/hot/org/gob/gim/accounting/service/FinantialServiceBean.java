@@ -709,6 +709,8 @@ public class FinantialServiceBean implements FinantialService{
 							query.setParameter("entriesList", entriesListLong);
 						}else{
 							if(reportType == ReportType.SUBSCRIPTION){
+
+								System.out.println(SUBSCRIPTION_REPORT);
 								query = entityManager.createNativeQuery(SUBSCRIPTION_REPORT);
 								statuses = getSubscriptionStatuses();
 								query.setParameter("emisionStartDate", emisionStartDate);

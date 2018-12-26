@@ -834,7 +834,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 
 		@NamedQuery(name = "Bond.findByStatusAndResidentId", query = "SELECT NEW org.gob.loja.gim.ws.dto.Bond("
 				+ "    mb.id, mb.number, e.name, mb.groupingCode, mb.paidTotal, mb.serviceDate, mb.expirationDate, "
-				+ "  mb.interest, mb.surcharge, mb.taxesTotal, mb.discount )"
+				+ "  mb.interest, mb.surcharge, mb.taxesTotal, mb.discount, mb.metadata )"
 				+ "  FROM "
 				+ "    MunicipalBond mb "
 				+ "    JOIN mb.entry e "
@@ -1134,6 +1134,16 @@ public class MunicipalBond implements Serializable {
 	//aumentar campo de interesfactura
 	private BigDecimal interestVoucher;
 	private BigDecimal surchargeVoucher;
+	
+	
+	private String metadata;
+	
+	@Transient  //for print
+	private BigDecimal interestRemission=BigDecimal.ZERO;
+	
+	@Transient //for print
+	private BigDecimal surchargeRemission=BigDecimal.ZERO;
+	
 
 	public MunicipalBond() {
 		// creationDate = Calendar.getInstance().getTime();
@@ -1842,9 +1852,34 @@ public class MunicipalBond implements Serializable {
 		this.surchargeVoucher = surchargeVoucher;
 	}
 	
+	
+	public String getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(String metadata) {
+		this.metadata = metadata;
+	}
+
 	public List<Deposit> getDepositsList() {
 		List<Deposit> list = new ArrayList<Deposit>(this.deposits);
 		return list;
+	}
+
+	public BigDecimal getInterestRemission() {
+		return interestRemission;
+	}
+
+	public void setInterestRemission(BigDecimal interestRemission) {
+		this.interestRemission = interestRemission;
+	}
+
+	public BigDecimal getSurchargeRemission() {
+		return surchargeRemission;
+	}
+
+	public void setSurchargeRemission(BigDecimal surchargeRemission) {
+		this.surchargeRemission = surchargeRemission;
 	}
 
 }// end MunicipalBond

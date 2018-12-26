@@ -31,6 +31,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.ServletContext;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -63,6 +65,7 @@ import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.finances.model.DTO.MetadataBondDTO;
 import ec.gob.gim.income.model.CreditNote;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.EntryTotalCollected;
@@ -74,6 +77,7 @@ import ec.gob.gim.income.model.PaymentRestriction;
 import ec.gob.gim.income.model.PaymentType;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.TillPermission;
+import ec.gob.gim.income.model.dto.ParameterFutureEmissionDTO;
 import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.FinancialInstitutionType;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -177,7 +181,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	// para deshabilitar boton de registro de pago hasta ingresar los valores y
 	// que sea mayor o igual al monto de cobro
 	private Boolean canRegisterPayment = true;
-
+	
 	public UserSession getUserSession() {
 		return userSession;
 	}
@@ -574,10 +578,20 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 		return pas;
 	}
-
+	
+	//REMISION
+	Boolean forcedToPayAll = Boolean.FALSE;
 	public void calculateTotals() {
 		try {
+			forcedToPayAll = Boolean.FALSE;
 			if (paymentAgreement != null) {
+				
+				//REMISION
+				//@macartuche
+				//mostrar el mensaje de que debe forzar a cobrar toda la deuda
+				forcedToPayAll = paymentAgreement.getIsFullPayment();
+				
+				//fin cambio
 				clearDeposits();
 				hasConflict = Boolean.FALSE;
 				municipalBonds = findAgreementMunicipalBonds();
@@ -681,7 +695,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		List<MunicipalBond> mbs = incomeService.findPendingBonds(residentId);
-		incomeService.calculatePayment(mbs, new Date(), true, true);
+		incomeService.calculatePayment(mbs, new Date(), true, true); //remision
 		impugnmentsTotal = new ArrayList<Impugnment>();
 		for (MunicipalBond municipalBond : mbs) {
 			// System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE " +
@@ -1310,11 +1324,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				deposits = fillDeposits();
 			}
 
+			
 			// @author macartuche
 			// unicamente para pagos normales
 			/// para convenios se va por otro metodo
-			// REVISAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR EN PRUEBAS SI CONVENIO VIENE POR
-			// AQUI!!!!!!!
 			String paymentMethod = (this.isPaymentSubscription) ? PaymentMethod.SUBSCRIPTION.name()
 					: PaymentMethod.NORMAL.name();
 			// fin pago abonos
@@ -1354,8 +1367,31 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 	public void rePrint() {
 		deposits = fillDeposits2();
+		//@macartuche remision ... recorrer cada bond para fijar el interes y recargo
+		fillMetadata(deposits);
 		receiptPrintingManager.print(deposits);
 		renderingDepositPDF(userSession.getUser().getId());
+	}
+	
+	private void fillMetadata(List<Deposit> deposits) {
+		for (Deposit localDeposit : deposits) {
+			MunicipalBond mb = localDeposit.getMunicipalBond();
+			if(mb.getMetadata()!=null && !mb.getMetadata().isEmpty()) {
+				try {
+					MetadataBondDTO metadataDto = new ObjectMapper()
+							.readValue(mb
+									.getMetadata(),
+									MetadataBondDTO.class);
+					
+					//fijar los datos para la impresion, valores transient
+					//macartuche 2018-10-25
+					mb.setInterestRemission(metadataDto.getInterest());
+					mb.setSurchargeRemission(metadataDto.getSurcharge());
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public void renderingDepositPDF(Long userId) {
@@ -1655,8 +1691,30 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			this.getInstance().setValue(BigDecimal.ZERO);
 			return;
 		}
+		
 
 		if (paymentAgreement != null) {
+			//revisar primero si esta activado el pago completo para remision
+			//2018-10-22
+			//@macartuche
+			if(paymentAgreement.getIsFullPayment()!=null && paymentAgreement.getIsFullPayment()) {
+				//comprobar si es el pago completo
+				BigDecimal totalPayRemission = BigDecimal.ZERO;
+				for (MunicipalBond mbr : municipalBonds) {
+					totalPayRemission = totalPayRemission.add(mbr.getPaidTotal());
+				}
+				 
+				if(depositTotal.compareTo(totalPayRemission)< 0) {
+					 
+					hasConflict = Boolean.TRUE;
+					deltaUp = totalPayRemission.subtract(depositTotal);
+					this.getInstance().setValue(BigDecimal.ZERO);
+					getIsPaymentButtonDisabled();
+					return;
+				}
+				 
+			}//fin check remision
+			
 			/**
 			 * @author macartuche agregado para juicios coactivos tratamiento en metodo
 			 *         separado
@@ -3281,4 +3339,13 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	public void deactivatePayBtn(){
 		this.invalidAmount = Boolean.TRUE;
 	}
+
+	public Boolean getForcedToPayAll() {
+		return forcedToPayAll;
+	}
+
+	public void setForcedToPayAll(Boolean forcedToPayAll) {
+		this.forcedToPayAll = forcedToPayAll;
+	}	
+	
 }

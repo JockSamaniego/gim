@@ -898,7 +898,8 @@ public class CadasterServiceBean implements CadasterService {
 								BigDecimal percentage = (efp.getDiscountPercentage()==null)? ex.getDiscountPercentage() : efp.getDiscountPercentage();
 								exemptionValue = percentage.multiply(propertyAppraisal.getCommercialAppraisal()).divide(new BigDecimal(100)); 
 								propertyAppraisal.setExemptionValue(exemptionValue);
-								municipalBondService.changeExemptionInMunicipalBond(mb,false, true, propertyAppraisal);
+								//remision x defecto se pasa false porque no es pago, no implica calculo ni nada
+								municipalBondService.changeExemptionInMunicipalBond(mb,false, true, Boolean.FALSE, propertyAppraisal);
 								flag=true;
 							}
 						}
@@ -911,8 +912,9 @@ public class CadasterServiceBean implements CadasterService {
 							propertyAppraisal.setExemptionValue(exemptionValue);
 							// mb.setReference(mb.getReference() + " " +
 							// ex.getReference());
+							//remision x defecto se pasa false porque no es pago, no implica calculo ni nada
 							municipalBondService.changeExemptionInMunicipalBond(mb,
-									false, true, propertyAppraisal);
+									false, true, Boolean.FALSE, propertyAppraisal);
 						}
 					} else { // las demas exenciones por propiedad
 						List<ExemptionForProperty> exForProperties = ex
@@ -939,7 +941,8 @@ public class CadasterServiceBean implements CadasterService {
 											BigDecimal percentage = (exemptionForProperty.getDiscountPercentage()==null)? ex.getDiscountPercentage() : exemptionForProperty.getDiscountPercentage();
 											exemptionValue = percentage.multiply(propertyAppraisal.getCommercialAppraisal()).divide(new BigDecimal(100)); 
 											propertyAppraisal.setExemptionValue(exemptionValue);
-											municipalBondService.changeExemptionInMunicipalBond(mb,false, true, propertyAppraisal);
+											//remision x defecto se pasa false porque no es pago, no implica calculo ni nada
+											municipalBondService.changeExemptionInMunicipalBond(mb,false, true, Boolean.FALSE, propertyAppraisal);
 //											flag=true;
 //										}
 //									}
@@ -949,9 +952,10 @@ public class CadasterServiceBean implements CadasterService {
 									propertyAppraisal
 											.setExemptionValue(propertyAppraisal
 													.getCommercialAppraisal());
+									//remision x defecto se pasa false porque no es pago, no implica calculo ni nada
 									municipalBondService
 									.changeExemptionInMunicipalBond(mb,
-											false, true, propertyAppraisal);
+											false, true, Boolean.FALSE, propertyAppraisal);
 								}
 //								System.out
 //										.println("======>>Exencion por propiedad: "

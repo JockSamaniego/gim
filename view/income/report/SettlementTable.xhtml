@@ -314,6 +314,37 @@
 
 	</p:table>
 	
+	<p:table columns="2" widthPercentage="100" spacingAfter="5" widths="12 12" >
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" />
+		</f:facet>	
+		<p:cell horizontalAlignment="center" rendered="#{_deposit.municipalBond.metadata!=null}">
+			<p:table columns="2" widthPercentage="100" widths="12 12" horizontalAlignment="right" >
+
+				<p:font size="6">
+					<p:cell horizontalAlignment="center" >
+						<p:paragraph alignment="center">Remisión interes</p:paragraph>
+					</p:cell> 
+					<p:cell horizontalAlignment="center" >
+						<p:paragraph alignment="center">Remisión recargo</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="center" >
+						<p:paragraph alignment="center">$#{_deposit.municipalBond.interestRemission}</p:paragraph>
+					</p:cell> 
+					<p:cell horizontalAlignment="center" >
+						<p:paragraph alignment="center">$#{_deposit.municipalBond.surchargeRemission}</p:paragraph>
+					</p:cell> 
+				</p:font>
+			</p:table>
+		</p:cell>
+		
+		<p:cell horizontalAlignment="justify" rendered="#{_deposit.municipalBond.interestRemission!=0 or _deposit.municipalBond.surchargeRemission!=0}">
+			<p:paragraph>
+				<p:font size="6">Me acojo y acepto los estipulado en las disipaciones generales cuarta para la ley de fomento productivo atracción de inversiones generación de empleo</p:font>
+			</p:paragraph>
+		</p:cell>
+	</p:table>
+	
 	<p:table columns="3" widthPercentage="100" spacingAfter="5" widths="12 1 12" rendered="#{_deposit.municipalBond.entry.explanatoryNote != null}">
 		<f:facet name="defaultCell">
 			<p:cell borderWidth="0" />
