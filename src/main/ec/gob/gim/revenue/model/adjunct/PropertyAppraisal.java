@@ -134,10 +134,27 @@ public class PropertyAppraisal extends Adjunct{
 //		pair = new ValuePair("Clave anterior",previousCadastralCode);
 		pair = new ValuePair("Clave Catastral Anterior",previousCadastralCode);
 		details.add(pair);
+		
+		
+		//rfam 2018-12-26
+		pair = new ValuePair("Área Lote",lotArea != null ? lotArea.toString() : "-");
+		details.add(pair);
+		
+		pair = new ValuePair("Área Construcción",constructionArea != null ? constructionArea.toString() : "-");
+		details.add(pair);		
+		
+		
 		pair = new ValuePair("Avaluo terreno", lotAppraisal != null ? lotAppraisal.toString() : "");
 		details.add(pair);
-		pair = new ValuePair("Avaluo construccion",buildingAppraisal != null ? buildingAppraisal.toString() : "");
+		pair = new ValuePair("Avaluo construcción",buildingAppraisal != null ? buildingAppraisal.toString() : "");
 		details.add(pair);
+		
+		//rfam 2018-12-26 se presenta solo en el caso de ser mayor a cero
+		if (improvementAppraisal != null && improvementAppraisal.intValue() > 0) {
+			pair = new ValuePair("Avaluo mejoras", improvementAppraisal != null ? improvementAppraisal.toString() : "");
+			details.add(pair);
+		}
+		
 		pair = new ValuePair("Avaluo comercial",commercialAppraisal != null ? commercialAppraisal.toString() : "");
 		details.add(pair);
 		pair = new ValuePair("Valor de exencion",exemptionValue != null ? exemptionValue.toString() : "");
