@@ -1443,34 +1443,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 			}
 
-			// @author macartuche
-			// @date 2016-07-21T16:41
-			// @tag InteresCeroInstPub
-			Boolean interestCero_publiCompany = systemParameterService
-					.findParameter(COLLECT_INTEREST_PUBLIC_COMPANY);
-			if (interestCero_publiCompany) {
-				/*
-				 * @author Rene
-				 * 
-				 * @date 2016-08-24
-				 */
-				boolean isPublic = residentService
-						.isPublicInstitution(municipalBond.getResident()
-								.getId());
-				if (isPublic) {
-					Calendar transitionDate = InterestPublicInstitutionUtils.transitionDate;
-					Calendar paymentCalendar = Calendar.getInstance();
-					paymentCalendar.setTime(paymentDate);
-					if (paymentCalendar.after(transitionDate)) {
-						// /se realiza el cambio de fecha de pago
-						// solo para calculo de interes, no para fecha real de
-						// pago
-						paymentDate = transitionDate.getTime();
-					}
-					checkCompensationReceipt(municipalBond);
-				}
-			}
-			// fin @tag InteresCeroInstPub
+			//macartuche 2018-12-12T12:32:00
+			//eliminando interes en inst publicas
 
 			paymentDate = DateUtils.truncate(paymentDate);
 			// System.out.println("INTERESTS -----> Expiration date?
@@ -1569,7 +1543,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 //		System.out.println("NUMBER "+mb.getNumber());
 		String case1StringRemission = "2018-04-02";
 		//dentro de 90 dias reduccion del 100%
-		String case1StringMaxPayment = "2018-12-28";
+		String case1StringMaxPayment = "2018-12-29";
 		  
 		Map<String, Object> response = new HashMap<String, Object>();
 		value = value.setScale(2, RoundingMode.HALF_UP);

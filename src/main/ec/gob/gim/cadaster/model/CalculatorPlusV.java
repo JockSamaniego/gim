@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class CalculatorPlusV {
-	private BigDecimal propertyValue	=BigDecimal.ZERO;
+	/*private BigDecimal propertyValue	=BigDecimal.ZERO;
 	private BigDecimal improvementsValue=BigDecimal.ZERO;
 	private BigDecimal acquisitionCost	=BigDecimal.ZERO;
 	private BigDecimal cemValue			=BigDecimal.ZERO;
@@ -85,5 +85,5 @@ public class CalculatorPlusV {
 
 	public void setRate(BigDecimal rate) {
 		this.rate = rate;
-	}			
+	}*/			
 }

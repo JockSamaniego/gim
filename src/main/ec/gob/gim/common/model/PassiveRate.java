@@ -30,7 +30,7 @@ import ec.gob.gim.security.model.User;
  * @version 1.0
  * @created 2013-05-05
  */
-@Audited
+/*@Audited
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @TableGenerator(
@@ -46,10 +46,10 @@ import ec.gob.gim.security.model.User;
 		@NamedQuery(name="PassiveRate.findAVG", 
 			query = "select pr from PassiveRate pr where isActive=:isActive")
 		}
-	)
+	)*/
  public class PassiveRate {
 
-	@Id
+	/*@Id
 	@GeneratedValue(generator="PassiveRateGenerator", strategy=GenerationType.TABLE)
 	private Long id;
 	
@@ -64,16 +64,11 @@ import ec.gob.gim.security.model.User;
 		
 	}
 
-	/**
-	 * @return the id
-	 */
 	public Long getId() {
 		return id;
 	}
 
-	/**
-	 * @param id the id to set
-	 */
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -100,5 +95,5 @@ import ec.gob.gim.security.model.User;
 
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
-	}	
+	}*/	
 }

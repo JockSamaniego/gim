@@ -691,13 +691,16 @@ public class PropertySpecialHome extends EntityHome<Property> {
 			return;
 
 		if (parish == null)
-			parish = findTerritorialDivision(5, 9, territorialDivisionHome.findDefaultCanton());
+			//parish = findTerritorialDivision(5, 9, territorialDivisionHome.findDefaultCanton());//anterior clave
+			parish = findTerritorialDivision(4, 6, territorialDivisionHome.findDefaultCanton());
 
 		if (zone == null)
-			zone = findTerritorialDivision(9, 11, parish);
+			//zone = findTerritorialDivision(9, 11, parish); anterior clave
+			zone = findTerritorialDivision(6, 8, parish);
 
 		if (sector == null) {
-			sector = findTerritorialDivision(11, 13, zone);
+			//sector = findTerritorialDivision(11, 13, zone); anterior clave
+			sector = findTerritorialDivision(8, 10, zone);
 		}
 
 		prepareViewHistory();
@@ -842,7 +845,8 @@ public class PropertySpecialHome extends EntityHome<Property> {
 		// logger.info("populateCadastralCode() parishe #0, zone #1", parish,
 		// zone);
 
-		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "0000");
+//		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "0000"); //antigua clave
+		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "00");
 		cadastralCodeBuffer.append(zone != null ? zone.getCode() : "00");
 		cadastralCodeBuffer.append(sector != null ? sector.getCode() : "00");
 		cadastralCodeBuffer
