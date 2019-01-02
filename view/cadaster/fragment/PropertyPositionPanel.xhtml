@@ -28,7 +28,7 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{territorialDivisionTypes.get(2).name}:</ui:define>
 				<h:selectOneMenu id="parishe" value="#{propertyHome.parish}"
-					required="true" disabled="#{propertyHome.idDefined}">
+					required="true">
 					<s:selectItems
 						value="#{propertyHome.findParishes(defaultCanton.id)}"
 						var="parish" label="#{parish.code} - #{parish.name}"
@@ -44,7 +44,7 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{territorialDivisionTypes.get(3).name}:</ui:define>
 				<h:selectOneMenu id="zone" value="#{propertyHome.zone}"
-					required="true" disabled="#{propertyHome.idDefined}">
+					required="true">
 					<s:selectItems value="#{propertyHome.findZones()}" var="zone"
 						label="#{zone.name}"
 						noSelectionLabel="#{messages['common.shouldSelected']}" />
@@ -59,7 +59,7 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{territorialDivisionTypes.get(4).name}:</ui:define>
 				<h:selectOneMenu id="sector" value="#{propertyHome.sector}"
-					required="true" disabled="#{propertyHome.idDefined}">
+					required="true">
 					<s:selectItems value="#{propertyHome.populateSectors()}"
 						var="sector" label="#{sector.name}"
 						noSelectionLabel="#{messages['common.shouldSelected']}" />
@@ -74,7 +74,7 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{messages['block']}:</ui:define>
 				<h:selectOneMenu id="block" value="#{propertyHome.instance.block}"
-					required="true" disabled="#{propertyHome.idDefined}">
+					required="true">
 					<s:selectItems value="#{propertyHome.populateBlocks()}" var="block"
 						label="#{block.code}"
 						noSelectionLabel="#{messages['common.shouldSelected']}" />
