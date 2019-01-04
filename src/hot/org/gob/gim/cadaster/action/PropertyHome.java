@@ -315,12 +315,12 @@ public class PropertyHome extends EntityHome<Property> {
 		}
 
 		if (isUrban) {
-			if (!isValidPreviousCadastralCode()) {
+			/*if (!isValidPreviousCadastralCode()) {
 				String message = Interpolator.instance()
 						.interpolate("#{messages['property.errorPreviousCadastralCode']}", new Object[0]);
 				facesMessages.addToControl("", org.jboss.seam.international.StatusMessage.Severity.ERROR, message);
 				return "failed";
-			}
+			}*/
 			if (!isValidAliquotForProperty()) {
 				String message = Interpolator.instance().interpolate("#{messages['property.errorPropertyAliquots']}",
 						new Object[0]);
