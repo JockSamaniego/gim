@@ -2582,4 +2582,15 @@ public class PropertyHome extends EntityHome<Property> {
 			System.out.println("error: no se completó la activación!!");
 		}
 	}
+	
+	public Boolean hasRole(String roleKey) {
+        if (systemParameterService == null) {
+            systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+        }
+        String role = systemParameterService.findParameter(roleKey);
+        if (role != null) {
+            return userSession.getUser().hasRole(role);
+        }
+        return false;
+    }
 }
