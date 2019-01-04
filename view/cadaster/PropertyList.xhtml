@@ -33,6 +33,13 @@
 						value="#{propertyList.cadastralCodeCriteria}" size="40"
 						maxlength="40" />
 				</s:decorate>
+				
+				<s:decorate template="../layout/display.xhtml" rendered="#{propertyHome.hasRole('SEARCH_PREVIOUS_CADASTER_CODE')}">
+					<ui:define name="label">#{messages['property.cadastralCode']} Anterior: </ui:define>
+					<h:inputText id="previousCadastralCodeCriteria"
+						value="#{propertyList.previousCadastralCodeCriteria}" size="40"
+						maxlength="40" />
+				</s:decorate>
 
 			</rich:simpleTogglePanel>
 
