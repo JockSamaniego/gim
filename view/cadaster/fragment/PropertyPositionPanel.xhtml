@@ -106,7 +106,7 @@
 				<a:region>
 				<h:inputText id="buildingNumber" required="true"
 					value="#{propertyHome.instance.buildingNumber}" size="3"
-					maxlength="3" disabled="#{!propertyHome.instance.duplicate}">
+					maxlength="3" >
 					<a:support event="onblur" ajaxSingle="true"
 						reRender="buildingNumberField, cadastralCodePanel"
 						action="#{propertyHome.populateCadastralCode()}" />
@@ -119,7 +119,7 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{messages['property.floor']}:</ui:define>
 				<a:region>
-				<h:inputText id="floorNumber" required="true" disabled="#{!propertyHome.instance.duplicate}"
+				<h:inputText id="floorNumber" required="true" 
 					value="#{propertyHome.instance.floorNumber}" size="2" maxlength="2"
 					>
 					<a:support event="onblur" ajaxSingle="true"
@@ -136,7 +136,7 @@
 				<a:region>
 				<h:inputText id="housingUnitNumber" required="true"
 					value="#{propertyHome.instance.housingUnitNumber}" size="3"
-					maxlength="3" disabled="#{!propertyHome.instance.duplicate}">
+					maxlength="3" >
 					<a:support event="onblur" ajaxSingle="true"
 						reRender="housingUnitNumberField, cadastralCodePanel"
 						action="#{propertyHome.populateCadastralCode()}" />
