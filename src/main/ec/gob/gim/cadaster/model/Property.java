@@ -1224,5 +1224,16 @@ public class Property {
 		this.propertyLocationType = propertyLocationType;
 	}
  
-	
+	// para consultas por la clave antigua
+	@Column(name = "cadastralcode_old")
+	private String cadastralCode_old;
+
+	public String getCadastralCode_old() {
+		return cadastralCode_old;
+	}
+
+	public void setCadastralCode_old(String cadastralCode_old) {
+		this.cadastralCode_old = cadastralCode_old;
+	}
+
 }

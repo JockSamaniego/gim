@@ -40,6 +40,7 @@ public class PropertyList extends EntityQuery<Property> {
 			"lower(resident.name) like lower(concat(:el1,'%')))",
 			"(lower(property.previousCadastralCode) like lower(concat(#{propertyList.cadastralCodeCriteria},'%')) or " +
 			"lower(property.cadastralCode) like lower(concat('%',:el2,'%')))",
+			"lower(property.cadastralCode_old) like lower(concat(#{propertyList.previousCadastralCodeCriteria},'%'))",
 			"pt.id = #{propertyList.propertyTypeId}",};
 
 	private String residentCriteria;
@@ -160,6 +161,17 @@ public class PropertyList extends EntityQuery<Property> {
 
 	public boolean isUrban() {
 		return isUrban;
+	}
+	
+	private String previousCadastralCodeCriteria;
+
+	public String getPreviousCadastralCodeCriteria() {
+		return previousCadastralCodeCriteria;
+	}
+
+	public void setPreviousCadastralCodeCriteria(
+			String previousCadastralCodeCriteria) {
+		this.previousCadastralCodeCriteria = previousCadastralCodeCriteria;
 	}
 	
 }
