@@ -70,6 +70,7 @@ public class NotificationHome extends EntityHome<Notification> {
 	private static final long serialVersionUID = 1L;
 	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
 	private static final String PENDING_BOND_STATUS_ID = "MUNICIPAL_BOND_STATUS_ID_PENDING";
+	private static final String AGREEMENT_BOND_STATUS_ID = "MUNICIPAL_BOND_STATUS_ID_AGREEMENT";
 
 	private SystemParameterService systemParameterService;
 
@@ -580,11 +581,11 @@ public class NotificationHome extends EntityHome<Notification> {
 		Query query = null;
 		if (entryId == null) {
 			query = getEntityManager().createNamedQuery(
-					"MunicipalBond.findExpiratedByResidentIdAndAmount");
+					"MunicipalBond.findExpiratedByResidentIdAndAmountAndStatus");
 		} else {
 			query = getEntityManager()
 					.createNamedQuery(
-							"MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmount");
+							"MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmountAndStatus");
 			query.setParameter("entryId", entryId);
 		}
 
@@ -596,13 +597,28 @@ public class NotificationHome extends EntityHome<Notification> {
 				.findParameter(PENDING_BOND_STATUS_ID);
 		query.setParameter("residentIds", ids);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
-		query.setParameter("municipalBondStatusId",
-				pendingMunicipalBondStatusId);
+		query.setParameter("municipalBondStatusIds", findMunicipalBondStatusIdsList());
 		query.setParameter("expirationDate", expirationDate);
 		query.setParameter("value", amount);
 
 		return query.getResultList();
 
+	}
+	
+	public List<Long> findMunicipalBondStatusIdsList(){
+		List<Long> statusIds = new ArrayList();
+		statusIds.add(findPendingMunicipalBondStatus().getId());
+		statusIds.add(findAgreementMunicipalBondStatus().getId());
+		return statusIds;
+	}
+	
+	public MunicipalBondStatus findPendingMunicipalBondStatus(){
+		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+		return systemParameterService.materialize(MunicipalBondStatus.class, PENDING_BOND_STATUS_ID);		
+	}
+	public MunicipalBondStatus findAgreementMunicipalBondStatus(){
+		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+		return systemParameterService.materialize(MunicipalBondStatus.class, AGREEMENT_BOND_STATUS_ID);		
 	}
 
 	public String confirmPrinting() {

@@ -487,6 +487,14 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "mb.municipalBondStatus.id=:municipalBondStatusId AND "
 				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
 				+ "ORDER BY mb.entry.id"),
+				
+		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndAmountAndStatus", query = "SELECT mb FROM MunicipalBond mb LEFT JOIN FETCH mb.entry "
+				+ "WHERE "
+				+ "mb.resident.id in (:residentIds) AND "
+				+ "mb.municipalBondType=:municipalBondType AND "
+				+ "mb.municipalBondStatus.id in (:municipalBondStatusIds) AND "
+				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
+				+ "ORDER BY mb.entry.id"),
 
 		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmount", query = "SELECT mb FROM MunicipalBond mb "
 				+ "WHERE "
@@ -494,6 +502,15 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "mb.resident.id in (:residentIds) AND "
 				+ "mb.municipalBondType=:municipalBondType AND "
 				+ "mb.municipalBondStatus.id=:municipalBondStatusId AND "
+				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
+				+ "ORDER BY mb.entry.id"),
+				
+		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmountAndStatus", query = "SELECT mb FROM MunicipalBond mb "
+				+ "WHERE "
+				+ "mb.entry.id = :entryId AND "
+				+ "mb.resident.id in (:residentIds) AND "
+				+ "mb.municipalBondType=:municipalBondType AND "
+				+ "mb.municipalBondStatus.id in (:municipalBondStatusIds) AND "
 				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
 				+ "ORDER BY mb.entry.id"),
 
