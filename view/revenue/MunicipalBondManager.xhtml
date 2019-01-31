@@ -82,11 +82,17 @@
 			<div class="actionButtons">
 				<a:commandButton id="search" value="#{messages['common.search']}"
 					action="#{municipalBondManager.findMunicipalBonds()}"
-					reRender="resultsPanel,municipalBondsTable" />
+					reRender="resultsPanel,municipalBondsTable,resultsFuturePanel" />
 				
 				<s:button id="resetId" value="#{messages['common.reset']}" includePageParams="false" propagation="none">
 				</s:button>
 			</div>
+			
+			<a:outputPanel id="resultsFuturePanel" ajaxRendered="false">
+				<rich:panel rendered="#{municipalBondManager.isFuture}">
+					<h:outputText value="No se puede anular emisiones futuras" style='font-size: 16px; font-weight: bold; color: red' />
+				</rich:panel>
+			</a:outputPanel>
 
 			<a:outputPanel id="resultsPanel" ajaxRendered="false">
 
@@ -298,7 +304,7 @@
 							rendered="#{municipalBondManager.isCurrentDay(_municipalBond.emisionDate) and municipalBondManager.hasRole('ROLE_NAME_MANAGER_VOIDER') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
 							action="#{municipalBondManager.updateStatus(_municipalBond, municipalBondManager.canceledBondStatus)}"
 							value="#{messages['municipalBond.nullify']}"
-							reRender="resultsPanel" />
+							reRender="resultsPanel,resultsFuturePanel" />
 
 						<a:region>
 							<a:commandButton id="reprintId"
