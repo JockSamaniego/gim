@@ -689,6 +689,7 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 
 				MunicipalBond mb = revenueService.createMunicipalBond(resident, entry, fiscalPeriod, entryValueItem, true);
 
+				mb.setGroupingCode(this.getInstance().getCode()+" - "+this.getInstance().getYear());
 				mb.setAdjunct(budgr);
 				//mb.setExpirationDate(expirationDate);
 				mb.setServiceDate(currentDate);
@@ -703,6 +704,11 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 				mb.calculateValue();
 				mb.setEmisionPeriod(emisionPeriod);
 				//mb.setAddress(resident.getCurrentAddress() != null ? resident.getCurrentAddress().toString() : "");
+
+				//rfam 2019-01-29
+				if (this.getInstance().getReference() != null) {
+					mb.setReference(this.getInstance().getReference());
+				}
 				
 				emissionOrder.add(mb);
 			}
@@ -712,11 +718,7 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 			if (quantity > 1) {
 
 				BigDecimal value = bi.getTotal().divide(bi.getQuantity(), 3,RoundingMode.HALF_EVEN);
-
 				Date serviceDate = currentDate;
-
-				/*System.out.println(".... el value " + value + " ------------ "+ serviceDate);
-				System.out.println(".... el feeee " + bi.getQuantity()+ " ------------ " + serviceDate);*/
 
 				for (int i = 1; i <= quantity; i++) {
 					try {
@@ -728,10 +730,10 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 						entryValueItem.setExpirationDate(expirationDate);
 						entryValueItem.setResetValue(Boolean.FALSE);
 						entryValueItem.setReference("");
-						
 
 						MunicipalBond mb = revenueService.createMunicipalBond(resident, entry, fiscalPeriod, entryValueItem, true);
-
+						
+						mb.setGroupingCode(this.getInstance().getCode()+" - "+this.getInstance().getYear());
 						mb.setAdjunct(budgr);
 						mb.setExpirationDate(expirationDate);
 						mb.setServiceDate(serviceDate);
@@ -741,11 +743,14 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 						
 						mb.setTimePeriod(entry.getTimePeriod());
 						mb.setCreationTime(new Date());
-						//mb.setPaidTotal(bi.getTotal());
 						mb.setMunicipalBondStatus(mbs);
 						mb.calculateValue();
 						mb.setEmisionPeriod(emisionPeriod);
-						//mb.setAddress(resident.getCurrentAddress() != null ? resident.getCurrentAddress().toString() : "");
+						
+						//rfam 2019-01-29
+						if (this.getInstance().getReference() != null) {
+							mb.setReference(this.getInstance().getReference());
+						}
 						
 						serviceDate = expirationDate;
 						
@@ -827,6 +832,8 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 	@Override
 	public String persist() {
 		// TODO Auto-generated method stub
+		//rfam 2019-01-28 
+		generateCode();
 		this.getInstance().setRegister(userSession.getPerson());
 		return super.persist();
 	}

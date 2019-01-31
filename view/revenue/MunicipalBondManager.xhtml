@@ -117,7 +117,7 @@
 										action="#{municipalBondManager.changeListForBlocked()}"
 										ajaxSingle="true" 
 										oncomplete="Richfaces.showModalPanel('confirmAllBlockedPanel',{width:350, height:250})"
-										rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_INVALIDATOR') and (municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || municipalBondManager.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
+										rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_BLOCKER') and (municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || municipalBondManager.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
 										focus="observationAllBlocked" />
 
 
