@@ -1,7 +1,5 @@
 package org.gob.gim.coercive.action;
 
-
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +58,13 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 	
 	private static final String PENDING_BOND_STATUS_ID = "MUNICIPAL_BOND_STATUS_ID_PENDING";
 	
+	private static final String AGREEMENT_BOND_STATUS_ID = "MUNICIPAL_BOND_STATUS_ID_AGREEMENT";
+	
 	private MunicipalBondStatus municipalBondStatus = findPendingMunicipalBondStatus();
+	
+	private MunicipalBondStatus municipalBondStatus2 = findAgreementMunicipalBondStatus();
+	
+	private List<MunicipalBondStatus> municipalBondStatusList = findMunicipalBondStatusList();
 	
 	private MunicipalBondType municipalBondType = MunicipalBondType.CREDIT_ORDER;
 	
@@ -97,6 +101,26 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 		this.municipalBondStatus = municipalBondStatus;
 	}
 	
+	
+	public MunicipalBondStatus getMunicipalBondStatus2() {
+		return municipalBondStatus2;
+	}
+
+	public void setMunicipalBondStatus2(MunicipalBondStatus municipalBondStatus2) {
+		this.municipalBondStatus2 = municipalBondStatus2;
+	}
+
+
+	public List<MunicipalBondStatus> getMunicipalBondStatusList() {
+		return municipalBondStatusList;
+	}
+
+	public void setMunicipalBondStatusList(
+			List<MunicipalBondStatus> municipalBondStatusList) {
+		this.municipalBondStatusList = municipalBondStatusList;
+	}
+
+
 	private static final Pattern SUBJECT_PATTERN = Pattern.compile("^select\\s+(\\w+(?:\\s*\\.\\s*\\w+)*?)(?:\\s*,\\s*(\\w+(?:\\s*\\.\\s*\\w+)*?))*?\\s+from", Pattern.CASE_INSENSITIVE); 
 	   private static final Pattern FROM_PATTERN = Pattern.compile("(^|\\s)(from)\\s",       Pattern.CASE_INSENSITIVE);
 	   private static final Pattern WHERE_PATTERN = Pattern.compile("\\s(where)\\s",         Pattern.CASE_INSENSITIVE);
@@ -153,7 +177,7 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 			"entry.id = #{residentWithMunicipalBondOutOfDateList.entry.id}",				
 			"mb.value >= #{residentWithMunicipalBondOutOfDateList.amount}",				
 			"mb.municipalBondType = #{residentWithMunicipalBondOutOfDateList.municipalBondType}",			
-			"mb.municipalBondStatus = #{residentWithMunicipalBondOutOfDateList.municipalBondStatus}",
+			"mb.municipalBondStatus in #{residentWithMunicipalBondOutOfDateList.municipalBondStatusList}",
 			"mb.expirationDate <= #{residentWithMunicipalBondOutOfDateList.expirationDate} and mb.notification IS NULL",};
 
 	public ResidentWithMunicipalBondOutOfDateList() {
@@ -173,7 +197,6 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 			setExpirationDate(now.getTime());// la fecha menos los n días
 		}		
 	}
-	
 	
 	private boolean rebuiltRequired = false;
 	
@@ -317,16 +340,16 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 		if(!detailFromNotification && residentId != null){		
 			Query query = null;
 			if(entry == null){
-				query = getEntityManager().createNamedQuery("MunicipalBond.findExpiratedByResidentIdAndAmount");
+				query = getEntityManager().createNamedQuery("MunicipalBond.findExpiratedByResidentIdAndAmountAndStatus");
 			}else{
-				query = getEntityManager().createNamedQuery("MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmount");
+				query = getEntityManager().createNamedQuery("MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmountAndStatus");
 				query.setParameter("entryId", entry.getId());
 			}		
 			List<Long> ids = new ArrayList<Long>();
 			ids.add(residentId);
 			query.setParameter("residentIds", ids);
 			query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
-			query.setParameter("municipalBondStatusId", municipalBondStatus.getId());			
+			query.setParameter("municipalBondStatusIds", findMunicipalBondStatusIdsList());		
 			query.setParameter("expirationDate", expirationDate);
 			query.setParameter("value", amount);
 			System.out.println("residentIds:"+ ids);
@@ -356,9 +379,12 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 	private List<MunicipalBond> filterOnlyPendingBonds(List<MunicipalBond> municipalBonds){
 		List<MunicipalBond> list = new ArrayList<MunicipalBond>();
 		if(municipalBonds == null) return list;
-		MunicipalBondStatus pending = findPendingMunicipalBondStatus();		
+		MunicipalBondStatus pending = findPendingMunicipalBondStatus();	
+		MunicipalBondStatus agreement = findAgreementMunicipalBondStatus();
 		for(MunicipalBond mb:municipalBonds){
-			if(!list.contains(mb) && mb.getMunicipalBondStatus().equals(pending)) list.add(mb);
+			if(!list.contains(mb) && (mb.getMunicipalBondStatus().equals(pending) || mb.getMunicipalBondStatus().equals(agreement))){
+				 list.add(mb);
+			}
 		}
 		return list;
 	}
@@ -389,9 +415,12 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 	private void totalPending(){
 		total = BigDecimal.ZERO;
 		if(municipalBonds == null) return;
-		MunicipalBondStatus pending = findPendingMunicipalBondStatus();		
+		MunicipalBondStatus pending = findPendingMunicipalBondStatus();
+		MunicipalBondStatus agreement = findAgreementMunicipalBondStatus();
 		for(MunicipalBond mb :municipalBonds){
-			if(mb.getMunicipalBondStatus().equals(pending))total = total.add(mb.getPaidTotal());
+			if(mb.getMunicipalBondStatus().equals(pending) || mb.getMunicipalBondStatus().equals(agreement)){
+				total = total.add(mb.getPaidTotal());
+			}
 		}
 	}
 
@@ -408,6 +437,24 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 	public MunicipalBondStatus findPendingMunicipalBondStatus(){
 		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
 		return systemParameterService.materialize(MunicipalBondStatus.class, PENDING_BOND_STATUS_ID);		
+	}
+	public MunicipalBondStatus findAgreementMunicipalBondStatus(){
+		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+		return systemParameterService.materialize(MunicipalBondStatus.class, AGREEMENT_BOND_STATUS_ID);		
+	}
+	
+	public List<MunicipalBondStatus> findMunicipalBondStatusList(){
+		List<MunicipalBondStatus> status = new ArrayList();
+		status.add(findPendingMunicipalBondStatus());
+		status.add(findAgreementMunicipalBondStatus());
+		return status;
+	}
+	
+	public List<Long> findMunicipalBondStatusIdsList(){
+		List<Long> statusIds = new ArrayList();
+		statusIds.add(findPendingMunicipalBondStatus().getId());
+		statusIds.add(findAgreementMunicipalBondStatus().getId());
+		return statusIds;
 	}
 	
 	public void clearSearchResidentPanel() {

@@ -146,7 +146,7 @@
 			</s:decorate>
 		</h:panelGrid>
 
-		<h:panelGrid id="cadastralCodePanel" columns="2" >
+		<h:panelGrid id="cadastralCodePanel" columns="3" >
 
 			<s:decorate id="cadastralCodeField"
 				template="../../layout/vertical-edit.xhtml">
@@ -164,9 +164,20 @@
 				<h:inputText id="previousCadastralCode"
 					value="#{propertyHome.instance.previousCadastralCode}" size="30"
 					maxlength="30" styleClass="cadasterCodeLabel"
-					disabled="true">
+					disabled="false">
 				</h:inputText>
 			</s:decorate>
+			
+			<s:decorate id="territorialCodeField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.territorialCode']}:</ui:define>
+				<h:inputText id="territorialCode"
+					value="#{propertyHome.instance.cadastralCode_old}" 
+					size="30" maxlength="30"
+					styleClass="cadasterCodeLabel" disabled="true">
+				</h:inputText>
+			</s:decorate>
+			
 		</h:panelGrid>
 
 		<h:panelGrid columns="4">
