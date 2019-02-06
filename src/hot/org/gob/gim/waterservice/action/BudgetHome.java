@@ -151,7 +151,7 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 		}
 		calculateTotalBudget();
 		isFirsttime = false;
-		generateCode();
+		//generateCode();
 	}
 
 	public void generateCode() {
