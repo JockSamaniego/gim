@@ -1,27 +1,137 @@
-<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
-                 xmlns:ui="http://java.sun.com/jsf/facelets"
-                 xmlns:h="http://java.sun.com/jsf/html"
-                 xmlns:f="http://java.sun.com/jsf/core"
-                 xmlns:s="http://jboss.com/products/seam/taglib">
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
 
-    <div class="prop">
+	<ui:define name="body">
 
-        <s:label styleClass="name #{invalid?'errors':''}">
-            <ui:insert name="label"/>
-            <s:span styleClass="required" rendered="#{required}">*</s:span>
-        </s:label>
+		<h:form id="report" styleClass="edit">
 
-        <span class="value #{invalid?'errors':''}">
-            <s:validateAll>
-                <ui:insert/>
-            </s:validateAll>
-        </span>
+			<ui:debug id="uiDebug" />
+			<rich:panel>
 
-        <span class="error">
-            <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors"/>
-            <s:message styleClass="errors" for="#{id}"/>
-        </span>
+				<f:facet name="header">
+            	#{messages['report']}
+            </f:facet>
 
-    </div>
+				<h:panelGrid columns="2">
+					<s:decorate id="startDateField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['report.startDate']}:</ui:define>
+						<rich:calendar value="#{disableVoucherHome.startDate}" required="true"
+							enableManualInput="false"
+							datePattern="#{messages['common.datePattern']}">
+						</rich:calendar>
+					</s:decorate>
+					
+					<s:decorate id="endDateField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['report.endDate']}:</ui:define>
+						<rich:calendar value="#{disableVoucherHome.endDate}" required="true"
+							enableManualInput="false"
+							datePattern="#{messages['common.datePattern']}">
+						</rich:calendar>
+					</s:decorate>
+				</h:panelGrid>
+				
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+				<div class="actionButtons">
+
+					<a:commandButton id="generateReport"
+						reRender="resultList" 
+						value="#{messages['common.search']}"
+						action="#{disableVoucherHome.searchBonds()}" />
+
+				</div>
+			</rich:panel>
+ 
+ 			
+ 			<rich:panel id="resultList">
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="Facturas" />					 
+					</h:panelGrid>
+				</f:facet>
+				<h:outputText value="#{disableVoucherHome.compensationList.size()}"/>
+				<div class="results" id="dataResult">
+
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty disableVoucherHome.compensationList}" />
+
+					 <rich:dataTable id="compensationList" var="_receipt"
+							value="#{disableVoucherHome.compensationList}"
+							rowClasses="rvgRowOne,rvgRowTwo"
+							rendered="#{not empty disableVoucherHome.compensationList}">
+
+							<rich:column sortBy="#{_receipt.id}" styleClass="left">
+								<f:facet name="header">
+									<h:outputText value="ID" />
+								</f:facet>
+								<h:outputText value="#{_receipt.id}"/>
+							</rich:column>
+							
+							<rich:column sortBy="#{_receipt.name}" styleClass="right">
+								<f:facet name="header">
+									<h:outputText value="Nombres" />
+								</f:facet>
+								<h:outputText value="#{_receipt.name}"/>
+							</rich:column>
+							
+							<rich:column sortBy="#{_receipt.date}" styleClass="right">
+								<f:facet name="header">
+									<h:outputText value="Fecha de emisión" />
+								</f:facet>
+								<h:outputText value="#{_receipt.date}"/>
+							</rich:column>
+
+
+							<rich:column sortBy="#{_receipt.authorizationDate}" styleClass="right">
+								<f:facet name="header">
+									<h:outputText value="Fecha de autorización" />
+								</f:facet>
+								<h:outputText value="#{_receipt.authorizationDate}"/>
+							</rich:column>
+
+							<rich:column sortBy="#{_receipt.sequential}" styleClass="right">
+								<f:facet name="header">
+									<h:outputText value="Secuencial" />
+								</f:facet>
+								<h:outputText value="#{_receipt.sequential}"/>
+							</rich:column>
+
+							
+
+							<rich:column sortBy="#{_receipt.identification}" styleClass="right">
+								<f:facet name="header">
+									<h:outputText value="Identificacion" />
+								</f:facet>
+								<h:outputText value="#{_receipt.identification}"/>
+							</rich:column>
+
+							 
+							 <rich:column sortBy="#{_receipt.total}" styleClass="right">
+								<f:facet name="header">
+									<h:outputText value="Total" />
+								</f:facet>
+								<h:outputText value="#{_receipt.total}"/>
+							</rich:column>
+
+							 
+						</rich:dataTable>
+				</div>
+			</rich:panel>
+		</h:form>
+
+	</ui:define>
 
 </ui:composition>
