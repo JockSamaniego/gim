@@ -1120,11 +1120,11 @@ public class MunicipalBond implements Serializable {
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private Set<TaxItem> taxItems;
 
-	@NotAudited
+	//@NotAudited
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Resident resident;
 
-	@NotAudited
+	//@NotAudited
 	@ManyToOne(fetch = FetchType.LAZY)
 	private FiscalPeriod fiscalPeriod;
 
@@ -1140,7 +1140,7 @@ public class MunicipalBond implements Serializable {
 	@JoinColumn(name = "originator_id")
 	private Person originator;
 
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	//@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST,
 			CascadeType.MERGE })
 	@JoinColumn(name = "adjunct_id")

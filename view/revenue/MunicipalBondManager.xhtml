@@ -82,10 +82,15 @@
 			<div class="actionButtons">
 				<a:commandButton id="search" value="#{messages['common.search']}"
 					action="#{municipalBondManager.findMunicipalBonds()}"
-					reRender="resultsPanel,municipalBondsTable,resultsFuturePanel" />
+					reRender="resultsPanel,municipalBondsTable,resultsFuturePanel,printReport" />
 				
-				<s:button id="resetId" value="#{messages['common.reset']}" includePageParams="false" propagation="none">
-				</s:button>
+				<s:button id="resetId" value="#{messages['common.reset']}" includePageParams="false" propagation="none" reRender="printReport">
+				</s:button>			
+				<s:button
+					view="/revenue/report/MunicipalBondManagerReport.xhtml"
+					id="printReport"
+					disabled = "#{municipalBonds.rowCount == 0}"
+					value="#{messages['common.print']}" />
 			</div>
 			
 			<a:outputPanel id="resultsFuturePanel" ajaxRendered="false">
@@ -123,7 +128,7 @@
 										action="#{municipalBondManager.changeListForBlocked()}"
 										ajaxSingle="true" 
 										oncomplete="Richfaces.showModalPanel('confirmAllBlockedPanel',{width:350, height:250})"
-										rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_INVALIDATOR') and (municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || municipalBondManager.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
+										rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_BLOCKER') and (municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || municipalBondManager.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
 										focus="observationAllBlocked" />
 
 

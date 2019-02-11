@@ -20,8 +20,8 @@ public class BudgetReference extends Adjunct {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(budgetCode != null ? budgetCode : "ND");
-		sb.append(" - ");
+		/*sb.append(budgetCode != null ? budgetCode : "ND");
+		sb.append(" - ");*/
 		sb.append(cadastralCode != null ? cadastralCode : "ND");
 		return sb.toString();
 	}
