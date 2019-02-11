@@ -261,7 +261,7 @@
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_PREEMISSION') and _municipalBond.municipalBondStatus.equals(municipalBondManager.preEmitBondStatus)}"
 							action="#{municipalBondManager.updateStatus(_municipalBond, municipalBondManager.rejectedBondStatus)}"
 							value="#{messages['municipalBond.reject']}"
-							reRender="resultsPanel" />
+							reRender="resultsPanel, resultsFuturePanel" />
 
 						<a:commandButton id="blockId"
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_BLOCKER') and _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus)}"
@@ -278,7 +278,7 @@
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_UNBLOCKER') and _municipalBond.municipalBondStatus.equals(municipalBondManager.blockedBondStatus)}"
 							action="#{municipalBondManager.updateStatus(_municipalBond, municipalBondManager.pendingBondStatus)}"
 							value="#{messages['municipalBond.enable']}"
-							reRender="resultsPanel" />
+							reRender="resultsPanel, resultsFuturePanel" />
 
 						<a:commandButton id="reverseId"
 							action="#{municipalBondManager.setForReverse(_municipalBond)}"
@@ -302,9 +302,11 @@
 
 						<a:commandButton id="nullifyId"
 							rendered="#{municipalBondManager.isCurrentDay(_municipalBond.emisionDate) and municipalBondManager.hasRole('ROLE_NAME_MANAGER_VOIDER') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
-							action="#{municipalBondManager.updateStatus(_municipalBond, municipalBondManager.canceledBondStatus)}"
+							action="#{municipalBondManager.putVoidBond(_municipalBond, municipalBondManager.canceledBondStatus)}"
 							value="#{messages['municipalBond.nullify']}"
-							reRender="resultsPanel,resultsFuturePanel" />
+							reRender="resultsPanel, resultsFuturePanel" >														  
+						</a:commandButton>
+							
 
 						<a:region>
 							<a:commandButton id="reprintId"
@@ -389,7 +391,7 @@
 
 					<h:panelGroup>
 						<div class="actionButtons">
-							<a:commandButton id="closingBtn" reRender="resultsPanel"
+							<a:commandButton id="closingBtn" reRender="resultsPanel, resultsFuturePanel"
 								action="#{municipalBondManager.updateStatus(municipalBondManager.municipalBond, municipalBondManager.reversedBondStatus)}"
 								value="#{messages['municipalBond.reverse']}"
 								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanel\');' : ''}" />
