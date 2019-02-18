@@ -36,11 +36,11 @@
 							</p:font>
 
 							<p:font size="8" style="bold">
-								<p:paragraph alignment="center">#{messages['JEFATURA DE RENTAS']}</p:paragraph>
+								<p:paragraph alignment="center">#{messages['DIRECCIÓN FINANCIERA']}</p:paragraph>
 							</p:font>
 
 							<p:font size="8" style="bold">
-								<p:paragraph alignment="center">#{messages['REPORTE DE OBLIGACIONES']}</p:paragraph>
+								<p:paragraph alignment="center">#{messages['REPORTE DE SALDOS DE EMISIONES FUTURAS']}</p:paragraph>
 							</p:font>
 						</p:cell>
 						<p:cell>
@@ -67,7 +67,7 @@
 		</p:font>
 	</f:facet>
 
-	<p:font size="8" name="HELVETICA">
+	<p:font size="7" name="HELVETICA">
 
 		<p:paragraph alignment="left">
 			<p:font size="12" style="bold" name="HELVETICA">
@@ -80,10 +80,10 @@
 
 		<p:paragraph alignment="left">
 			<p:font size="12" style="bold" name="HELVETICA">
-				<p:text value="#{messages['creditNote.startDate']}: " />
+				<p:text value="#{messages['futureBond.startDate']}: " />
 			</p:font>
 			<p:font size="12" name="HELVETICA">
-				<p:text value="#{municipalBondManager.startDate}">
+				<p:text value="#{municipalBondHome.futureStartDate}">
 					<f:convertDateTime pattern="#{messages['common.datePattern']}" />
 				</p:text>
 			</p:font>
@@ -91,144 +91,136 @@
 
 		<p:paragraph alignment="left">
 			<p:font size="12" style="bold" name="HELVETICA">
-				<p:text value="#{messages['creditNote.endDate']}: " />
+				<p:text value="#{messages['futureBond.endDate']}: " />
 			</p:font>
 			<p:font size="12" name="HELVETICA">
-				<p:text value="#{municipalBondManager.endDate}">
+				<p:text value="#{municipalBondHome.futureEndDate}">
 					<f:convertDateTime pattern="#{messages['common.datePattern']}" />
 				</p:text>
 			</p:font>
 		</p:paragraph>
 
 		<p:table columns="8" widthPercentage="100" spacingBefore="15"
-			widths="1 2 2 1 1 1 1 1" rendered="#{municipalBonds.rowCount != 0}">
+			widths="2 2 1 1 1 1 1 1" rendered="#{municipalBondHome.futureList.size() > 0}">
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="1" />
 			</f:facet>
 
+			<p:cell horizontalAlignment="center" grayFill="0.70">
+				<p:paragraph spacingAfter="2">
+					<p:font size="7" style="bold" name="HELVETICA">
+						<p:text value="#{messages['futureEmission.futureCode']}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center" grayFill="0.80">
+				<p:paragraph spacingAfter="2">
+					<p:font size="7" style="bold" name="HELVETICA">
+						<p:text value="#{messages['futureEmission.futureName']}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
 			<p:cell horizontalAlignment="center" grayFill="0.60">
 				<p:paragraph spacingAfter="2">
-					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['municipalBond.number']}" />
+					<p:font size="7" style="bold" name="HELVETICA">
+						<p:text value="#{messages['futureEmission.previousBalance']}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
-			<p:cell horizontalAlignment="center" grayFill="0.70">
+			<p:cell horizontalAlignment="center" grayFill="0.60">
 				<p:paragraph spacingAfter="2">
-					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['entry']}" />
-					</p:font>
-				</p:paragraph>
-			</p:cell>
-			<p:cell horizontalAlignment="center" grayFill="0.70">
-				<p:paragraph spacingAfter="2">
-					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['resident']}" />
-					</p:font>
-				</p:paragraph>
-			</p:cell>
-			<p:cell horizontalAlignment="center" grayFill="0.70">
-				<p:paragraph spacingAfter="2">
-					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['municipalBond.status']}" />
+					<p:font size="7" style="bold" name="HELVETICA">
+						<p:text value="#{messages['futureEmission.futureEmission']}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
 
 			<p:cell horizontalAlignment="center" grayFill="0.60">
 				<p:paragraph spacingAfter="2">
-					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['municipalBond.value']}" />
+					<p:font size="7" style="bold" name="HELVETICA">
+						<p:text value="#{messages['futureEmission.advancePayment']}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
 			
 			<p:cell horizontalAlignment="center" grayFill="0.60">
 				<p:paragraph spacingAfter="2">
-					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['municipalBond.emision']}" />
+					<p:font size="7" style="bold" name="HELVETICA">
+						<p:text value="#{messages['futureEmission.paymentFormalization']}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
 			
 			<p:cell horizontalAlignment="center" grayFill="0.60">
 				<p:paragraph spacingAfter="2">
-					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['municipalBond.expiration']}" />
+					<p:font size="7" style="bold" name="HELVETICA">
+						<p:text value="#{messages['futureEmission.advanceAndFormalization']}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
 			
 			<p:cell horizontalAlignment="center" grayFill="0.60"> 
 		        <p:paragraph spacingAfter="2"> 
-		          <p:font size="8" style="bold" name="HELVETICA"> 
-		            <p:text value="#{messages['municipalBond.liquidationDate']}" /> 
+		          <p:font size="7" style="bold" name="HELVETICA"> 
+		            <p:text value="#{messages['futureEmission.currentBalance']}" /> 
 		          </p:font> 
 		        </p:paragraph> 
 		      </p:cell>
 
-			<ui:repeat value="#{municipalBonds.getMunicipalBonds()}" var="_municipalBond">
+			<ui:repeat value="#{municipalBondHome.futureList}" var="_futureBalance">
 
-				<p:cell>
+				<p:cell horizontalAlignment="left">
 					<p:paragraph>
-						<p:text value="#{_municipalBond.number}" />
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{_municipalBond.entry.name}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{_municipalBond.resident.name}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{_municipalBond.municipalBondStatus.name}" />
+						<p:text value="#{_futureBalance.futureCode}" />
 					</p:paragraph>
 				</p:cell>
 
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_futureBalance.futureName}" />
+					</p:paragraph>
+				</p:cell>
+				
 				<p:cell horizontalAlignment="right">
 					<p:paragraph>
-						<p:text value="#{_municipalBond.paidTotal}" />
+						<p:text value="#{_futureBalance.previousBalance}" />
 					</p:paragraph>
 				</p:cell>
 				
-				<p:cell horizontalAlignment="center">
+				<p:cell horizontalAlignment="right">
 					<p:paragraph>
-						<p:text value="#{_municipalBond.emisionDate}">
-							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
-						</p:text>
+						<p:text value="#{_futureBalance.futureEmission}" />
 					</p:paragraph>
 				</p:cell>
-				
-				<p:cell horizontalAlignment="center">
+
+				<p:cell horizontalAlignment="right">
 					<p:paragraph>
-						<p:text value="#{_municipalBond.expirationDate}">
-							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
-						</p:text>
+						<p:text value="#{_futureBalance.advancePayment}" />
 					</p:paragraph>
 				</p:cell>
 				
-				<p:cell horizontalAlignment="center"> 
-		          <p:paragraph> 
-		            <p:text value="#{_municipalBond.liquidationDate}"> 
-		              <f:convertDateTime pattern="#{messages['common.datePattern']}" /> 
-		            </p:text> 
-		          </p:paragraph> 
-		        </p:cell> 
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_futureBalance.paymentFormalization}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_futureBalance.advanceAndFormalization}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{_futureBalance.currentBalance}" />
+					</p:paragraph>
+				</p:cell> 
 
 			</ui:repeat>
 
 		</p:table>
-
-
+		
 	</p:font>
-
-
+	
 </p:document>

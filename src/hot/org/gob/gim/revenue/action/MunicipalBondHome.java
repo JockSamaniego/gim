@@ -19,6 +19,7 @@ import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.InvalidEmissionException;
+import org.gob.gim.income.facade.FutureEmissionBalance;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
 import org.gob.gim.revenue.service.MunicipalBondService;
@@ -45,6 +46,7 @@ import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.income.model.dto.FutureEmissionDTO;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.EntryType;
@@ -1626,5 +1628,45 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			}
 			
 		}
+		
+		//para consultar el saldo de emisiones futuras 
+	    //JOck Samaniego 
+	    //11-02-2019 
+	     
+	    private Date futureStartDate; 
+	    private Date futureEndDate; 
+	    private List<FutureEmissionDTO> futureList; 
+	 
+	    public Date getFutureStartDate() { 
+	      return futureStartDate; 
+	    } 
+	 
+	    public void setFutureStartDate(Date futureStartDate) { 
+	      this.futureStartDate = futureStartDate; 
+	    } 
+	 
+	    public Date getFutureEndDate() { 
+	      return futureEndDate; 
+	    } 
+	 
+	    public void setFutureEndDate(Date futureEndDate) { 
+	      this.futureEndDate = futureEndDate; 
+	    } 
+	     
+	    public List<FutureEmissionDTO> getFutureList() { 
+	      return futureList; 
+	    } 
+	 
+	    public void setFutureList(List<FutureEmissionDTO> futureList) { 
+	      this.futureList = futureList; 
+	    } 
+	 
+	    public String generateFutureEmissionBalanceReport(){ 
+	      FutureEmissionBalance futureEmissionBalance = ServiceLocator.getInstance().findResource(FutureEmissionBalance.LOCAL_NAME);   
+	      futureList = new ArrayList(); 
+	      futureList = futureEmissionBalance.generateFutureEmissionBalance(futureStartDate, futureEndDate); 
+	      System.out.println("------- " + futureList.size()); 
+	      return "/income/report/FutureEmissionBalanceReport.xhtml";
+	    } 
 
 }
