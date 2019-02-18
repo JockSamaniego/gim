@@ -113,7 +113,7 @@
 					<f:facet name="header">
 						<rich:columnGroup>
 
-							<rich:column colspan="9">
+							<rich:column colspan="10">
 								<h:panelGrid columns="3" columnClasses="left formTitle,right," width="100%">
 									<h:outputText
 										value="#{messages['municipalBond.searchResults']}" />
@@ -155,7 +155,7 @@
 								</h:panelGrid>
 							</rich:column>
 
-							<rich:column colspan="9" breakBefore="true" styleClass="right">
+							<rich:column colspan="10" breakBefore="true" styleClass="right">
 								<g:dataScroller maxPages="10" for="municipalBondsTable"
 									style="float:right;" />
 							</rich:column>
@@ -250,6 +250,17 @@
 								pattern="#{messages['common.datePattern']}" />
 						</h:outputText>
 					</rich:column>
+					
+					<rich:column 
+			            styleClass="#{municipalBondManager.showWarned(_municipalBond)}"> 
+			            <f:facet name="header"> 
+			            #{messages['municipalBond.liquidationDate']} 
+			          </f:facet> 
+			            <h:outputText value="#{_municipalBond.liquidationDate}"> 
+			              <s:convertDateTime type="date" dateStyle="short" 
+			                pattern="#{messages['common.datePattern']}" /> 
+			            </h:outputText> 
+			          </rich:column>
 
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet>
