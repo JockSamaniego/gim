@@ -29,11 +29,13 @@ import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondView;
+import ec.gob.gim.revenue.model.adjunct.ANTReference;
 
 @Name("emissionOrderHome")
 @Scope(ScopeType.CONVERSATION)
@@ -1096,6 +1098,30 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		//System.out.println("---------------------------------"+count);
 		loadPending();
 		return "updated";
+	}
+	
+	
+	//consulta de pdf Ant
+	//jock samaniego
+	//18-02-2019
+	
+	String URLnotification;
+	
+	public String getURLnotification() {
+		return URLnotification;
+	}
+
+	public void setURLnotification(String uRLnotification) {
+		URLnotification = uRLnotification;
+	}
+
+	public void loadInfractionNotification(Long adjunct_id){
+		String query = "Select ant from ANTReference ant where ant.id =:adj_id";
+		Query q = this.getEntityManager().createQuery(query);
+		q.setParameter("adj_id", adjunct_id);
+		ANTReference ant = (ANTReference) q.getSingleResult();	
+		System.out.println("======ANTnotification===> "+ant.getSupportDocumentURL());
+		this.URLnotification = ant.getSupportDocumentURL();
 	}
 		
 }
