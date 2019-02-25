@@ -35,6 +35,20 @@
 							datePattern="#{messages['common.datePattern']}">
 						</rich:calendar>
 					</s:decorate>
+														
+					<s:decorate id="rucField" template="../layout/edit.xhtml">
+						<ui:define name="label">RUC:</ui:define>
+						 <h:inputText id="ruc" value="#{disableVoucherHome.ruc}" size="20" maxlength="20"/>
+					</s:decorate>
+					
+					<div></div>
+					
+					<s:decorate id="facturaField" template="../layout/edit.xhtml">
+						<ui:define name="label">Factura:</ui:define>
+						 <h:inputText id="receipt" value="#{disableVoucherHome.receipt}" size="20" maxlength="20"/>
+					</s:decorate>
+					
+					<div></div>
 				</h:panelGrid>
 				
 
@@ -46,19 +60,26 @@
 				<div class="actionButtons">
 
 					<a:commandButton id="generateReport"
-						reRender="contentPanel"
+						reRender="contentPanel, idMessage"
 						value="#{messages['common.search']}"
 						action="#{disableVoucherHome.searchBonds()}" />
 
 				</div>
 			</rich:panel>
 			
+			
+						
 			<rich:panel id="contentPanel">
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
 						<h:outputText value="Compensaciones" />
 					</h:panelGrid>
 				</f:facet>
+				
+				<h:outputText value="#{disableVoucherHome.message}" id="idMessage" 
+				rendered="#{not empty disableVoucherHome.message}"
+				style="font-size:20px; font-weight: bold"
+				/>
 				
 				<div class="number">
 					<a:commandButton id="reverseBtn"						
@@ -72,18 +93,17 @@
 
 					<h:outputText value="#{messages['common.noResultsReturned']}"
 						rendered="#{empty disableVoucherHome.compensationList}" />
-
-
+						
 					<rich:dataTable id="billingsTable" var="_receipt"
 						value="#{disableVoucherHome.compensationList}"
 						rowClasses="rvgRowOne,rvgRowTwo"
 						rendered="#{not empty disableVoucherHome.compensationList}">
 
-						<rich:column sortBy="#{_receipt.id}" styleClass="action">
+						<rich:column sortBy="#{_receipt.number}" styleClass="action">
 							<f:facet name="header">
-								<h:outputText value="ID" />
+								<h:outputText value="Obligación" />
 							</f:facet>
-							<h:outputText value="#{_receipt.id}"></h:outputText>
+							<h:outputText value="#{_receipt.number}"></h:outputText>
 						</rich:column>
 						
 						
@@ -137,6 +157,14 @@
 							</h:outputText>
 						</rich:column>
 						
+						<rich:column sortBy="#{_receipt.status}" styleClass="right" >
+							<f:facet name="header">
+								<h:outputText value="Estado" />
+							</f:facet>
+							<h:outputText value="#{_receipt.status}" >
+							</h:outputText>
+						</rich:column>
+						
 						<f:facet name="footer">
 							<rich:columnGroup columnClasses=",number">
 								<rich:column colspan="6">
@@ -170,8 +198,10 @@
 
 					<h:panelGroup>
 						<div class="actionButtons">
-							<a:commandButton id="closingBtn" action="#{disableVoucherHome.reverseBonds}"
-								value="#{messages['income.forcedClosingTill']}"
+							<a:commandButton id="closingBtn"
+							 	action="#{disableVoucherHome.reverseBonds}"
+								value="Reversar facturas"
+								reRender="contentPanel, idMessage"
 								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmOpeningPanel\');' : ''}" />
 
 							<a:commandButton id="cancelBtn" ajaxSingle="true"

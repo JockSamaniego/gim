@@ -30,21 +30,31 @@ public class ReceiptDTO {
 	private String identification;
 	
 	@NativeQueryResultColumn(index = 6)
+	private StatusElectronicReceipt status;
+		
+	@NativeQueryResultColumn(index = 7)
 	private Long bondid;
 	
-	@NativeQueryResultColumn(index = 7)
+	@NativeQueryResultColumn(index = 8)
 	private BigDecimal total;
+	
+	@NativeQueryResultColumn(index = 9)
+	private Long number;
 
+  
 	public ReceiptDTO(Long id, String name, Date emission, Date authorizationDate, String sequential,
-			String identification, Long bondid, BigDecimal total) {		
+			String identification, StatusElectronicReceipt status, Long bondid, BigDecimal total, Long number) {
+		super();
 		this.id = id;
 		this.name = name;
 		this.emission = emission;
 		this.authorizationDate = authorizationDate;
 		this.sequential = sequential;
 		this.identification = identification;
+		this.status = status;
 		this.bondid = bondid;
 		this.total = total;
+		this.number = number;
 	}
 
 	public Long getId() {
@@ -110,5 +120,22 @@ public class ReceiptDTO {
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
+
+	public StatusElectronicReceipt getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusElectronicReceipt status) {
+		this.status = status;
+	}
+
+	public Long getNumber() {
+		return number;
+	}
+
+	public void setNumber(Long number) {
+		this.number = number;
+	}
+	
 	
 }
