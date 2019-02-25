@@ -1,0 +1,219 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="report" styleClass="edit">
+
+			<ui:debug id="uiDebug" />
+			<rich:panel>
+				<f:facet name="header">
+            	#{messages['report']}
+            </f:facet>
+
+				<h:panelGrid columns="2">
+					<s:decorate id="startDateField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['report.startDate']}:</ui:define>
+						<rich:calendar value="#{disableVoucherHome.startDate}" required="true"
+							enableManualInput="false"
+							datePattern="#{messages['common.datePattern']}">
+						</rich:calendar>
+					</s:decorate>
+					
+					<s:decorate id="endDateField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['report.endDate']}:</ui:define>
+						<rich:calendar value="#{disableVoucherHome.endDate}" required="true"
+							enableManualInput="false"
+							datePattern="#{messages['common.datePattern']}">
+						</rich:calendar>
+					</s:decorate>
+														
+					<s:decorate id="rucField" template="../layout/edit.xhtml">
+						<ui:define name="label">RUC:</ui:define>
+						 <h:inputText id="ruc" value="#{disableVoucherHome.ruc}" size="20" maxlength="20"/>
+					</s:decorate>
+					
+					<div></div>
+					
+					<s:decorate id="facturaField" template="../layout/edit.xhtml">
+						<ui:define name="label">Factura:</ui:define>
+						 <h:inputText id="receipt" value="#{disableVoucherHome.receipt}" size="20" maxlength="20"/>
+					</s:decorate>
+					
+					<div></div>
+				</h:panelGrid>
+				
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+				<div class="actionButtons">
+
+					<a:commandButton id="generateReport"
+						reRender="contentPanel, idMessage"
+						value="#{messages['common.search']}"
+						action="#{disableVoucherHome.searchBonds()}" />
+
+				</div>
+			</rich:panel>
+			
+			
+						
+			<rich:panel id="contentPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="Compensaciones" />
+					</h:panelGrid>
+				</f:facet>
+				
+				<h:outputText value="#{disableVoucherHome.message}" id="idMessage" 
+				rendered="#{not empty disableVoucherHome.message}"
+				style="font-size:20px; font-weight: bold"
+				/>
+				
+				<div class="number">
+					<a:commandButton id="reverseBtn"						
+						value="Reversar facturas"
+						reRender="confirmOpeningPanel" ajaxSingle="true"
+						oncomplete="Richfaces.showModalPanel('confirmOpeningPanel',{width:350, height:250})"
+						rendered="#{not empty disableVoucherHome.compensationList}" />
+				</div>
+
+				<div class="results" id="tillPermissionList">
+
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty disableVoucherHome.compensationList}" />
+						
+					<rich:dataTable id="billingsTable" var="_receipt"
+						value="#{disableVoucherHome.compensationList}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty disableVoucherHome.compensationList}">
+
+						<rich:column sortBy="#{_receipt.number}" styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="Obligación" />
+							</f:facet>
+							<h:outputText value="#{_receipt.number}"></h:outputText>
+						</rich:column>
+						
+						
+						<rich:column sortBy="#{_receipt.emission}">
+							<f:facet name="header">
+								<h:outputText value="Fecha emisión" />
+							</f:facet>
+							<h:outputText value="#{_receipt.emission}" >
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_receipt.name}" styleClass="left" >
+							<f:facet name="header">
+								<h:outputText value="Nombres" />
+							</f:facet>
+							<h:outputText value="#{_receipt.name}" />
+						</rich:column>
+
+
+						<rich:column sortBy="#{_receipt.identification}" styleClass="left" >
+							<f:facet name="header">
+								<h:outputText value="Identificacion" />
+							</f:facet>
+							<h:outputText value="#{_receipt.identification}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_receipt.authorizationDate}">
+							<f:facet name="header">
+								<h:outputText value="Autorizacion" />
+							</f:facet>
+							<h:outputText value="#{_receipt.authorizationDate}" >
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_receipt.sequential}" styleClass="right" >
+							<f:facet name="header">
+								<h:outputText value="Secuencial" />
+							</f:facet>
+							<h:outputText value="#{_receipt.sequential}" />
+						</rich:column>
+
+
+						<rich:column sortBy="#{_receipt.total}" styleClass="right" >
+							<f:facet name="header">
+								<h:outputText value="Total" />
+							</f:facet>
+							<h:outputText value="#{_receipt.total}" >
+								<f:convertNumber pattern="#0.00" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column sortBy="#{_receipt.status}" styleClass="right" >
+							<f:facet name="header">
+								<h:outputText value="Estado" />
+							</f:facet>
+							<h:outputText value="#{_receipt.status}" >
+							</h:outputText>
+						</rich:column>
+						
+						<f:facet name="footer">
+							<rich:columnGroup columnClasses=",number">
+								<rich:column colspan="6">
+									<h:outputText value="#{messages['item.total']}:"
+										styleClass="labelBold" />
+								</rich:column>
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText
+										value="#{disableVoucherHome.total}">
+										<f:convertNumber pattern="$ ####.00" />
+									</h:outputText>
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+
+					</rich:dataTable>
+				</div>
+			</rich:panel>
+ 		</h:form>
+ 		
+ 		<rich:modalPanel id="confirmOpeningPanel" width="350" height="250">
+			<f:facet name="header">Confirmación</f:facet>
+			<h:form id="confirmReverse">
+				<h:panelGrid>
+					<h:outputText value="El reverso de facturas en el sistema GIM, implica que ya se han anulado las facturas ante el S.R.I. Queda bajo la responsabilidad de la persona que realiza el reverso en el GIM y sistema de Facturación"></h:outputText>
+					<s:decorate id="conceptField" template="../layout/edit.xhtml">
+						<ui:define name="label">Detalle de reverso:</ui:define>
+						<h:inputTextarea id="observation" cols="40" rows="6"
+							value="#{disableVoucherHome.observation}" required="true" />
+					</s:decorate>
+
+					<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="closingBtn"
+							 	action="#{disableVoucherHome.reverseBonds}"
+								value="Reversar facturas"
+								reRender="contentPanel, idMessage"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmOpeningPanel\');' : ''}" />
+
+							<a:commandButton id="cancelBtn" ajaxSingle="true"
+								value="#{messages['common.cancel']}"
+								oncomplete="Richfaces.hideModalPanel('confirmOpeningPanel');"
+								bypassUpdates="true" />
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
+ 		
+	</ui:define>
+
+</ui:composition>
