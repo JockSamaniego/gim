@@ -16,40 +16,67 @@
         <rich:panel>
             <f:facet name="header">#{infractionSentencesHome.managed ? messages['sentence.Edit'] : messages['sentence.Create']}</f:facet>
 
-            <s:decorate id="infractionField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['infraction']}:</ui:define>
-                <h:inputText id="infraction"
-                           size="30"
-                           required="true"
-                           readonly="true"
-                      maxlength="30"
-                          value="#{infractionSentencesHome.instance.infraction.serial}">
-                </h:inputText>
+            <s:decorate id="registerDateField" template="../../layout/edit.xhtml"
+                  rendered="#{!infractionSentencesHome.processToEdit}">
+                <ui:define name="label">#{messages['infraction.registerDate']}</ui:define>
+                <rich:calendar id="registerDate"
+                          value="#{infractionSentencesHome.registerDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                </rich:calendar>
             </s:decorate>
-
-            <s:decorate id="judgeField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['sentence.judge']}:</ui:define>
-                <h:inputText id="judge"
-                           size="30"
-                           required="true"
-                      maxlength="30"
-                          value="#{infractionSentencesHome.instance.judge}">
-                </h:inputText>
+            
+            <s:decorate id="creationDateField" template="../../layout/edit.xhtml"
+                  rendered="#{infractionSentencesHome.processToEdit}">
+                <ui:define name="label">#{messages['infraction.registerDate']}</ui:define>
+                <rich:calendar id="creationDate"
+                          value="#{infractionSentencesHome.instance.creationDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                </rich:calendar>
             </s:decorate>
-
+            
+            <s:decorate id="sentenceDateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['process.resolutionDate']}</ui:define>
+                <rich:calendar id="sentenceDate" required="true"
+                          value="#{infractionSentencesHome.instance.resolutionDate}" datePattern="dd/MM/yyyy" >
+                          <f:validator validatorId="currentDateValidator" />
+                          <a:support event="onchanged" reRender="sentenceDateField" bypassUpdates="true" ajaxSingle="true" />
+                 </rich:calendar>
+            </s:decorate>
+            
             <s:decorate id="processNumberField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['sentence.numberProcess']}:</ui:define>
                 <h:inputText id="processNumber"
-                           size="30"
+                           size="20"
                            required="true"
                       maxlength="30"
                           value="#{infractionSentencesHome.instance.processNumber}">
                 </h:inputText>
             </s:decorate>
+            
+            <s:decorate id="identificationJugdeField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['process.judgeIdentification']}</ui:define>
+                <h:inputText id="judgeIdentification"
+                              size="20"
+                              maxlength="15"
+                              value="#{infractionSentencesHome.instance.judgeIdentification}">
+                              <f:validator validatorId="identificationNumberValidator"/>
+                              <a:support event="onblur" ajaxSingle="true" action="#{infractionSentencesHome.findResidentName()}" reRender="judgeNameField,identificationJugdeField" />
+                </h:inputText>              
+            </s:decorate>
 
+            <s:decorate id="judgeNameField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['process.judgeName']}:</ui:define>
+                <h:inputText id="judge"
+                           size="40"
+                           required="true"
+                      maxlength="40"
+                          value="#{infractionSentencesHome.instance.judgeName}">
+                </h:inputText>
+            </s:decorate>
+            
             <s:decorate id="sentenceTypeField"
               template="../../layout/edit.xhtml">
-              <ui:define name="label">#{messages['bulletin.type']}:</ui:define>
+              <ui:define name="label">#{messages['process.type']}:</ui:define>
               <h:selectOneMenu id="sentenceType" value="#{infractionSentencesHome.instance.type}" required="true">
                 <s:selectItems value="#{infractionSentencesHome.typesSentence}" var="sentenceType" label="#{sentenceType.name}" itemValue="#{sentenceType}" />
                 <a:support event="onchange" ajaxSingle="true" />
@@ -57,9 +84,19 @@
               </h:selectOneMenu>
             </s:decorate>
 
+            <s:decorate id="axisField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['process.axisNumber']}:</ui:define>
+                <h:inputText id="judge"
+                           size="20"
+                           required="true"
+                      maxlength="50"
+                          value="#{infractionSentencesHome.instance.axisNumber}">
+                </h:inputText>
+            </s:decorate>
+
             <s:decorate id="descriptionField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['alert.openDetail']}</ui:define>
-                <h:inputTextarea id="sentenceDetail"
+                <ui:define name="label">#{messages['process.adjunts']}</ui:define>
+                <h:inputTextarea id="sentenceDetail" size="40"
                       value="#{infractionSentencesHome.instance.description}" >
                 </h:inputTextarea>
             </s:decorate>
@@ -76,7 +113,7 @@
 
             <h:commandButton id="save"
                           value="#{messages['common.save']}"
-                         action="#{infractionSentencesHome.persist}"
+                         action="#{infractionSentencesHome.saveInfractionProcess()}"
                        disabled="#{!infractionSentencesHome.wired}"
                        rendered="#{!infractionSentencesHome.managed}"/>
 

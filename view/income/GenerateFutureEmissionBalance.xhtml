@@ -1,0 +1,42 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+  xmlns:s="http://jboss.com/products/seam/taglib" 
+  xmlns:ui="http://java.sun.com/jsf/facelets" 
+  xmlns:f="http://java.sun.com/jsf/core" 
+  xmlns:h="http://java.sun.com/jsf/html" 
+  xmlns:rich="http://richfaces.org/rich" 
+  xmlns:a="http://richfaces.org/a4j" 
+  template="../layout/template.xhtml" login-required="true"> 
+ 
+  <ui:define name="body"> 
+ 
+    <h1>#{messages['futureBond.generateBalanceReport']}</h1> 
+    <h:form id="notificationSummarySearch" styleClass="edit"> 
+      <rich:simpleTogglePanel label="#{messages['futureBond.filter']}" 
+        switchType="ajax"> 
+ 
+        <s:decorate template="../layout/edit.xhtml"> 
+          <ui:define name="label">#{messages['futureBond.startDate']}</ui:define> 
+          <rich:calendar id="start" value="#{municipalBondHome.futureStartDate}" datePattern="#{messages['common.datePattern']}" 
+            currentDate="" 
+            required="true"/> 
+        </s:decorate> 
+ 
+        <s:decorate template="../layout/edit.xhtml"> 
+          <ui:define name="label">#{messages['futureBond.endDate']}</ui:define> 
+          <rich:calendar id="start" value="#{municipalBondHome.futureEndDate}" datePattern="#{messages['common.datePattern']}" 
+            required="true"/> 
+        </s:decorate> 
+ 
+      </rich:simpleTogglePanel> 
+ 
+      <div class="actionButtons"> 
+        <a:commandButton id="print" value="#{messages['common.print']}" 
+          action="#{municipalBondHome.generateFutureEmissionBalanceReport()}" />
+      </div> 
+      
+    </h:form> 
+  </ui:define> 
+ 
+</ui:composition> 

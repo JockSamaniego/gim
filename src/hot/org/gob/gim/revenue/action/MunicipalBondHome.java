@@ -1,7 +1,7 @@
 package org.gob.gim.revenue.action;
 
 import java.math.BigDecimal;
-import java.rmi.RemoteException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.InvalidEmissionException;
+import org.gob.gim.income.facade.FutureEmissionBalance;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
 import org.gob.gim.revenue.service.MunicipalBondService;
@@ -45,6 +46,7 @@ import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.income.model.dto.FutureEmissionDTO;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.EntryType;
@@ -322,6 +324,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						}
 					}
 				}
+				
 				if (entry.getIsAmountEditable()) {
 					if (entryValueItem.getAmount() == null
 							|| BigDecimal.ZERO.compareTo(entryValueItem
@@ -560,14 +563,14 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 	private Adjunct createAdjunct(Entry entry) {
 		try {
-			System.out.println("CREATE ADJUNCT ----> "
-					+ entry.getAdjunctClassName());
+			/*System.out.println("CREATE ADJUNCT ----> "
+					+ entry.getAdjunctClassName());*/
 			if (entry.getAdjunctClassName() != null
 					&& !entry.getAdjunctClassName().trim().isEmpty()) {
 				Class<?> klass = Class.forName(entry.getAdjunctClassName());
 				Adjunct adjunct = (Adjunct) klass.newInstance();
-				System.out.println("ADJUNCT CREATED ----> "
-						+ adjunct.getClass().getSimpleName());
+				/*System.out.println("ADJUNCT CREATED ----> "
+						+ adjunct.getClass().getSimpleName());*/
 				this.adjunctUri = ADJUNCT_PREFIX
 						+ adjunct.getClass().getSimpleName() + ADJUNCT_SUFIX;
 				return adjunct;
@@ -1054,7 +1057,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
     private String motivationSolvency;
     private String copiesNumberSolvency;
     private BigDecimal totalSolvency;
-    private Delegate revenueDelegateSolvency;
+    private Resident revenueDelegateSolvency;
     private Charge revenueChargeSolvency;	
     private Delegate incomeDelegateSolvency;
 	private Charge incomeChargeSolvency;
@@ -1112,10 +1115,10 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	public void setTotalSolvency(BigDecimal totalSolvency) {
 		this.totalSolvency = totalSolvency;
 	}
-	public Delegate getRevenueDelegateSolvency() {
+	public Resident getRevenueDelegateSolvency() {
 		return revenueDelegateSolvency;
 	}
-	public void setRevenueDelegateSolvency(Delegate revenueDelegateSolvency) {
+	public void setRevenueDelegateSolvency(Resident revenueDelegateSolvency) {
 		this.revenueDelegateSolvency = revenueDelegateSolvency;
 	}
 	public Charge getRevenueChargeSolvency() {
@@ -1186,7 +1189,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			motivationSolvency = SRHome.getMotivation();
 			copiesNumberSolvency = SRHome.getCopiesNumber();
 			totalSolvency = SRHome.getTotal();
-			revenueDelegateSolvency = SRHome.getRevenueDelegate();
+			revenueDelegateSolvency = SRHome.getResponsableUser();
 			revenueChargeSolvency = SRHome.getRevenueCharge();
 			incomeDelegateSolvency = SRHome.getIncomeDelegate();
 			incomeChargeSolvency = SRHome.getIncomeCharge();
@@ -1575,5 +1578,95 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				}
 			}
 		}
+		
+		/**
+		 * Permite buscar un numero de notificacion de simert en la bd
+		 * para evitar la duplicidad de multas de simert
+		 * rfam 2018-03-26
+		 * @param code
+		 * @return
+		 */
+		@SuppressWarnings("unused")
+		public Boolean findSimertfine(String code) {
+			Query q = getEntityManager().createNativeQuery("select count(*) from gimprod.vehicularfinereference vfr "
+					+ "inner join gimprod.municipalbond mb on vfr.id = mb.adjunct_id "
+					+ "where vfr.notificationnumber like concat('%', :criteria,'%') "
+					+ "and mb.municipalbondstatus_id in (3,4,5,6,7,10)");
+			q.setParameter("criteria", code);
+			BigInteger quantity = (BigInteger) q.getSingleResult();
+			if (quantity.intValue() <= 0) {
+				return false;
+			}else {
+				return true;	
+			}
+		}
+		
+		//jocksamaniego... para emision de recipientes........
+		
+
+		public List<String> chargeContainerTypes(){
+			List<String> containerTypes = new ArrayList<String>();
+			String types = systemParameterService.findParameter("CONTAINER_TYPES");
+			String[] parts = types.split(",");
+			for(int i=0;i<parts.length;i++){
+				containerTypes.add(parts[i]);
+			}
+			return containerTypes;
+		}
+		
+
+		public void changeContainerValues(){
+			String typeName = this.adjunctHome.getInstance().getDetails().get(0).getValue();
+			String typeValues = systemParameterService.findParameter(typeName);
+			if(typeValues!=null){
+				String[] containerValues = typeValues.split(",");
+				this.entryValueItems.get(0).setMainValue(new BigDecimal(containerValues[0]));
+				this.entryValueItems.get(0).setDescription(containerValues[1]);
+			}else{
+				this.entryValueItems.get(0).setMainValue(null);
+				this.entryValueItems.get(0).setDescription(null);
+			}
+			
+		}
+		
+		//para consultar el saldo de emisiones futuras 
+	    //JOck Samaniego 
+	    //11-02-2019 
+	     
+	    private Date futureStartDate; 
+	    private Date futureEndDate; 
+	    private List<FutureEmissionDTO> futureList; 
+	 
+	    public Date getFutureStartDate() { 
+	      return futureStartDate; 
+	    } 
+	 
+	    public void setFutureStartDate(Date futureStartDate) { 
+	      this.futureStartDate = futureStartDate; 
+	    } 
+	 
+	    public Date getFutureEndDate() { 
+	      return futureEndDate; 
+	    } 
+	 
+	    public void setFutureEndDate(Date futureEndDate) { 
+	      this.futureEndDate = futureEndDate; 
+	    } 
+	     
+	    public List<FutureEmissionDTO> getFutureList() { 
+	      return futureList; 
+	    } 
+	 
+	    public void setFutureList(List<FutureEmissionDTO> futureList) { 
+	      this.futureList = futureList; 
+	    } 
+	 
+	    public String generateFutureEmissionBalanceReport(){ 
+	      FutureEmissionBalance futureEmissionBalance = ServiceLocator.getInstance().findResource(FutureEmissionBalance.LOCAL_NAME);   
+	      futureList = new ArrayList(); 
+	      futureList = futureEmissionBalance.generateFutureEmissionBalance(futureStartDate, futureEndDate); 
+	      System.out.println("------- " + futureList.size()); 
+	      return "/income/report/FutureEmissionBalanceReport.xhtml";
+	    } 
 
 }

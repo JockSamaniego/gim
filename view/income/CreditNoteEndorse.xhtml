@@ -15,33 +15,55 @@
 
             <h:outputText styleClass="formTitle"
                           value="#{messages['common.endorseCreditNote']}" />
-            <rich:panel>
-               <f:facet name="header">#{messages['common.creditNoteDates']}</f:facet>
-               <h:panelGrid>
-               	<s:decorate id="creditNoteResolutionField" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['creditNote.resolutionNumber']}
-							</ui:define>
-							<h:inputText id="creditNoteResolution" size="30" readonly="true"
-								value="#{creditNoteHome.creditNoteSelected.resolutionNumber}" />
-				</s:decorate>
-				<s:decorate id="creditNoteValueField" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['creditNote.value']}
-							</ui:define>
-							<h:inputText id="creditNoteValue" size="30" readonly="true"
-								value="#{creditNoteHome.creditNoteSelected.value}" />
-				</s:decorate>
-				<s:decorate id="creditNoteDescriptionField" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['creditNote.description']}
-							</ui:define>
-							<h:inputTextarea id="creditNoteValue" readonly="true"
-								value="#{creditNoteHome.creditNoteSelected.description}" />
-				</s:decorate>
-               </h:panelGrid>
-            </rich:panel>
+
             <rich:panel>
                 <f:facet name="header">#{messages['common.endorseDates']}</f:facet>
-                <h:panelGrid columns="2" width="100%">
-                    <h:panelGrid>
+                <h:panelGrid columns="2" width="100%"> 
+                   <h:panelGrid>
+                     <f:facet name="header">
+                            <h:outputText value="#{messages['common.creditNote']}" />
+                        </f:facet>
+                      <s:decorate id="creditNoteResolutionField" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['creditNote.resolutionNumber']}
+                            </ui:define>
+                            <h:inputText id="creditNoteResolution" size="30" readonly="true"
+                              value="#{creditNoteHome.creditNoteSelected.resolutionNumber}" />
+                      </s:decorate>
+                      <s:decorate id="creditNoteValueField" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['creditNote.value']}
+                            </ui:define>
+                            <h:inputText id="creditNoteValue" size="30" readonly="true"
+                              value="#{creditNoteHome.creditNoteSelected.value}" />
+                      </s:decorate>
+                      <s:decorate id="creditNoteDescriptionField" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['creditNote.description']}
+                            </ui:define>
+                            <h:inputTextarea id="creditNoteValue" readonly="true"
+                              value="#{creditNoteHome.creditNoteSelected.description}" />
+                      </s:decorate>
+                      <s:decorate id="endoserUserField" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['common.endorseUser']}</ui:define>
+                            <h:inputText id="endorseUser" size="60" readonly="true"
+                              value="#{creditNoteHome.userSession.user.resident.name}" />
+                      </s:decorate>
+                      
+                              <s:decorate id="endorseDateField" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['common.endorseDate']}</ui:define>
+                            <h:inputText id="endorseDate" size="60" readonly="true"
+                              value="#{creditNoteHome.now.time}" >
+                              <f:convertDateTime
+                                pattern="#{messages['common.dateTimePattern']}" />
+                            </h:inputText>
+                      </s:decorate>
+
+                      <s:decorate id="endorseDetailField" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['common.reasonToEndorse']}</ui:define>
+                            <h:inputTextarea id="openDetail" required="true"
+                              value="#{creditNoteHome.endorseDetail}" />
+                      </s:decorate>
+                   </h:panelGrid>
+
+                   <h:panelGrid>
                         <f:facet name="header">
                             <h:outputText value="#{messages['common.residentEndorsePrevious']}" />
                         </f:facet>
@@ -56,43 +78,7 @@
                                            residentChosenListenerName="previousResidentSelectedListener"
                                            required="true" disabled="true" />
                     </h:panelGrid>
-                    <h:panelGrid>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['common.residentEndorseCurrent']}" />
-                        </f:facet>
-                        <g:residentChooser id="doneByChooser"
-                                           resident="#{creditNoteHome.currentResident}"
-                                           criteria="#{creditNoteHome.criteria}"
-                                           bean="#{creditNoteHome}" searchAction="searchResidentCurrent"
-                                           residentsList="#{creditNoteHome.residents}"
-                                           identificationNumber="#{creditNoteHome.identificationNumberCurrent}"
-                                           searchByCriteriaAction="searchByCriteria"
-                                           clearSearchPanelAction="clearSearchPanel"
-                                           residentChosenListenerName="currentSelectedListener"
-                                           required="true" />
-                    </h:panelGrid>
-                </h:panelGrid>
-				
-				<s:decorate id="endoserUserField" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['common.endorseUser']}</ui:define>
-							<h:inputText id="endorseUser" size="60" readonly="true"
-								value="#{creditNoteHome.userSession.user.resident.name}" />
-				</s:decorate>
-				
-                <s:decorate id="endorseDateField" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['common.endorseDate']}</ui:define>
-							<h:inputText id="endorseDate" size="60" readonly="true"
-								value="#{creditNoteHome.now.time}" >
-								<f:convertDateTime
-									pattern="#{messages['common.dateTimePattern']}" />
-							</h:inputText>
-				</s:decorate>
-
-				<s:decorate id="endorseDetailField" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['common.reasonToEndorse']}</ui:define>
-							<h:inputTextarea id="openDetail" required="true"
-								value="#{creditNoteHome.endorseDetail}" />
-				</s:decorate>
+                </h:panelGrid>			
 
                 <div style="clear: both">
                     <span class="required">*</span>
@@ -101,10 +87,91 @@
 
             </rich:panel>
 
+            <rich:panel>
+              <f:facet name="header">
+                <h:panelGrid columns="5" width="100%">
+                        <h:outputText value="#{messages['common.endoserCreditNoteTo']}" />
+                        <h:outputText value="#{messages['accountItem.balance']}:" style="float:right;" />
+                        <h:outputText value="#{creditNoteHome.creditNoteSelected.availableAmount}" style="font-size: 16px; color: black" />
+                        <h:outputText value="#{messages['common.totalEndorse']}:" style="float:right;" />
+                        <h:outputText value="#{creditNoteHome.calculateTotalEndorse()}" style="font-size: 16px; color: red" id="totalEndorseValue" />
+                </h:panelGrid>
+              </f:facet> 
+                 
+                  <rich:dataTable id="tableCreditNoteEndorseItems" var="_creditNoteEndorse"
+                      value="#{creditNoteHome.listToEndorse}">
+
+                      <f:facet name="header">
+                        <h:panelGrid columns="2" width="100%"
+                          columnClasses="left headerTitle,">
+                          <h:outputText value="#{messages['common.resident']}s" />
+                          <a:commandButton value="#{messages['common.add']}"
+                            reRender="tableCreditNoteEndorseItems, messages"
+                            action="#{creditNoteHome.addCreditNoteEndorse()}"
+                            style="float:right" ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:panelGrid>
+                      </f:facet>
+
+                      <rich:column styleClass="center"  width="20%">
+                        <f:facet name="header">
+                          <h:outputText
+                            value="#{messages['resident.identificationNumber']}" />
+                        </f:facet>
+                        <h:inputText value="#{_creditNoteEndorse.identificationNumber}" >
+                        	<a:support event="onblur" action="#{creditNoteHome.searchResidentName(_creditNoteEndorse)}" ajaxSingle="true" reRender="nameResident,mainValue">
+                        	</a:support>
+                        </h:inputText>
+                      </rich:column>
+
+                      <rich:column styleClass="center" width="50%">
+                        <f:facet name="header">
+                          <h:outputText
+                            value="#{messages['person.name']}" />
+                        </f:facet>
+                        <h:outputText id="nameResident"
+                          value="#{_creditNoteEndorse.name}"
+                          styleClass="right tableCellFont">
+                        </h:outputText>
+                      </rich:column>
+
+                      <rich:column styleClass="center" width="20%">
+                        <f:facet name="header">
+                          <h:outputText
+                            value="#{messages['common.value']}" />
+                        </f:facet>
+                        <h:inputText id="mainValue" disabled="#{!_creditNoteEndorse.isValid}"
+                          value="#{_creditNoteEndorse.value}"
+                          styleClass="right tableCellFont"
+                          style="background-color: #{_creditNoteEndorse.color}">
+                          <a:support ajaxSingle="true" event="onblur" reRender="totalEndorseValue,save,mainValue"></a:support>
+                        </h:inputText>
+                        <rich:message for="mainValue" styleClass="errors">
+                          <f:facet name="errorMarker">
+                            <h:graphicImage url="/img/msgerror.png" />
+                          </f:facet>
+                        </rich:message>
+                      </rich:column>
+
+                      <rich:column styleClass="action" width="10%">
+                        <f:facet name="header">
+                          <h:outputText value="#{messages['common.action']}" />
+                        </f:facet>
+                        <a:commandButton value="#{messages['common.remove']}"
+                          reRender="tableCreditNoteEndorseItems, messages,totalEndorseValue,save" ajaxSingle="true"
+                          action="#{creditNoteHome.remove(_creditNoteEndorse)}"
+                          eventsQueue="gimQueue">
+                        </a:commandButton>
+                      </rich:column>
+                    </rich:dataTable>
+                    
+                
+            </rich:panel>
+
             <div class="actionButtons">
 
                 <h:commandButton id="save" value="#{messages['common.save']}"
-					action="#{creditNoteHome.saveCreditNoteEndorse()}" />
+					action="#{creditNoteHome.saveCreditNoteEndorse()}" 
+					disabled="#{!creditNoteHome.isValidEndorse}" />
 								
                 <s:button id="cancelEdit" value="#{messages['common.cancel']}"
 					propagation="end" view="/income/CreditNoteList.xhtml" />

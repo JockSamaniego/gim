@@ -1,5 +1,10 @@
 package org.gob.gim.revenue.action;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -22,6 +27,8 @@ import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.view.MunicipalBondItem;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
+import org.gob.loja.gim.ws.dto.BondSummary;
+import org.gob.loja.gim.ws.dto.FutureBond;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -37,6 +44,7 @@ import org.jboss.seam.log.Log;
 
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.finances.model.DTO.MetadataBondDTO;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
@@ -51,7 +59,9 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private String MUNICIPAL_BOND_STATUS_ID_COMPENSATION_NAME = "MUNICIPAL_BOND_STATUS_ID_COMPENSATION";
 	private String MUNICIPAL_BOND_STATUS_ID_PAID_NAME = "MUNICIPAL_BOND_STATUS_ID_PAID";
 	private String MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL_NAME = "MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL";
-	private String MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION_NAME = "MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION";
+	//private String MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION_NAME = "MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION";
+	//rfam 2018-05-03 abonos
+	//private String MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION_NAME = "MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION";
 
 
 	private Date startDate;
@@ -75,8 +85,14 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	
 	private List<MunicipalBond> pendingBonds;
 	
-	private List<MunicipalBond> futureBonds;
+	private List<FutureBond> futureBonds;
+	private List<BondSummary> bondDownSumary;
 	private BigDecimal totalFutereBond;
+	
+	private BigDecimal totalInterestRemision= BigDecimal.ZERO;
+	private BigDecimal totalSurchargeRemision = BigDecimal.ZERO ;
+	
+	
 
 
 	public List<MunicipalBond> getResult() {
@@ -131,14 +147,18 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		Long MUNICIPAL_BOND_STATUS_ID_PAID = systemParameterService.findParameter(MUNICIPAL_BOND_STATUS_ID_PAID_NAME);
 		Long MUNICIPAL_BOND_STATUS_ID_COMPENSATION = systemParameterService.findParameter(MUNICIPAL_BOND_STATUS_ID_COMPENSATION_NAME);
 		Long MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL = systemParameterService.findParameter(MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL_NAME);
+		
+		//rfam 2018-10-02 se qita porq las futuras se presentan en el esta normla del cuenta
 		//richardmijo 2015-09
-		Long MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION = systemParameterService.findParameter(MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION_NAME);
+		//Long MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION = systemParameterService.findParameter(MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION_NAME);
 		
 		municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_BLOCKED);			
 		municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_PAID);
 		municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_COMPENSATION);
 		municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL);
-		municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION);
+
+		//rfam 2018-10-02 se qita porq las futuras se presentan en el esta normla del cuenta
+		//municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION);
 		
 		systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
 	}
@@ -193,12 +213,11 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 			List<MunicipalBond> pendingBonds = null;			
 			if(entry == null){
 				pendingBonds = incomeService.findOnlyPendingAndInAgreementBonds(resident.getId());
-				System.out.println("1.................. "+pendingBonds.size());
 			}else{
 				pendingBonds = incomeService.findOnlyPendingAndInAgreementBonds(resident.getId(), entry.getId());
-				System.out.println("2.................. "+pendingBonds.size());
 			}
-			
+			//remision
+			//se agrega variable false al final para pago completo, ya que es estado de cuenta
 			incomeService.calculatePayment(pendingBonds, new Date(), true, true);			
 			result.addAll(pendingBonds);
 		}	
@@ -206,6 +225,8 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		result.addAll(getResultList());
 		MunicipalBondUtil.setMunicipalBondStatus(findPendingStatus());
 		MunicipalBondUtil.setInAgreementStatus(findInAgreementStatus());
+		//rfam 2018 pagos por abonos
+		MunicipalBondUtil.setInSubscriptionStatus(findInSubscriptionStatus());
 		return MunicipalBondUtil.fillMunicipalBondItems(result);
 	}
 	
@@ -217,6 +238,11 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private MunicipalBondStatus findInAgreementStatus(){
 		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
 		return systemParameterService.materialize(MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_IN_PAYMENT_AGREEMENT");
+	}
+	
+	private MunicipalBondStatus findInSubscriptionStatus(){
+		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+		return systemParameterService.materialize(MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 	}
 	
 	public void maxResultsReports() {
@@ -334,10 +360,27 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	public void setResident(Resident resident) {
 		this.resident = resident;
 	}
+	
+
+	public BigDecimal getTotalInterestRemision() {
+		return totalInterestRemision;
+	}
+
+	public void setTotalInterestRemision(BigDecimal totalInterestRemision) {
+		this.totalInterestRemision = totalInterestRemision;
+	}
+	
+	public BigDecimal getTotalSurchargeRemision() {
+		return totalSurchargeRemision;
+	}
+
+	public void setTotalSurchargeRemision(BigDecimal totalSurchargeRemision) {
+		this.totalSurchargeRemision = totalSurchargeRemision;
+	}
 
 	@SuppressWarnings("unchecked")
 	public void searchResidentByCriteria() {
-		System.out.println("SEARCH RESIDENT BY CRITERIA " + this.criteria);
+		//System.out.println("SEARCH RESIDENT BY CRITERIA " + this.criteria);
 		if (this.criteria != null && !this.criteria.isEmpty()) {
 			Query query = getEntityManager().createNamedQuery("Resident.findByCriteria");
 			query.setParameter("criteria", this.criteria);
@@ -346,7 +389,12 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	}
 
 	public void searchResident() {
-		System.out.println("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
+		//REMISION
+		//encerar valores
+		totalInterestRemision = BigDecimal.ZERO;
+		totalSurchargeRemision = BigDecimal.ZERO;
+		
+		//System.out.println("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
 		Query query = getEntityManager().createNamedQuery("Resident.findByIdentificationNumber");
 		query.setParameter("identificationNumber", this.identificationNumber);
 		try {
@@ -390,16 +438,33 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 
 	public void chargeResults() throws Exception{
 		try{
+			this.totalInterestRemision = BigDecimal.ZERO;
+			this.totalSurchargeRemision = BigDecimal.ZERO;
 			totalFutereBond = BigDecimal.ZERO;
 			municipalBondItemsResult = getMunicipalBondItems();	
 			findFutureEmision(resident.getId());
 			calculateTotal();
+			this.calculateValuesRemision();
 		} catch (Exception e) {	
 			log.info("==== EXCEPTION CHARGE RESULTS: #0", e);
 			String message = Interpolator.instance().interpolate("#{messages['entryDefinition.entryDefinitionNotFoundException']}", new Object[0]);
 			facesMessages.addToControl("",org.jboss.seam.international.StatusMessage.Severity.ERROR,message);			
 		}
 	}
+	
+	public void calculateValuesRemision() throws JsonParseException, JsonMappingException, IOException {
+		
+		for ( MunicipalBondItem item : this.municipalBondItemsResult) {
+			
+			String _json= item.getMunicipalBond().getMetadata();
+			MetadataBondDTO meta = new ObjectMapper().readValue(item.getMunicipalBond().getMetadata(), MetadataBondDTO.class);
+			this.totalInterestRemision = this.totalInterestRemision.add(meta.getInterest());
+			this.totalSurchargeRemision = this.totalSurchargeRemision.add(meta.getSurcharge());
+		}
+		
+	}
+	
+
 
 	public void residentSelectedListener(ActionEvent event) {
 		UIComponent component = event.getComponent();
@@ -591,24 +656,32 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		this.currentDate = currentDate;
 	}
 		
-	public List<MunicipalBond> getFutureBonds() {
+	/*public List<MunicipalBond> getFutureBonds() {
 		return futureBonds;
 	}
 
 	public void setFutureBonds(List<MunicipalBond> futureBonds) {
 		this.futureBonds = futureBonds;
-	}
-	
+	}*/
+		
 	public void findFutureEmision(Long residentId) {
 		try {
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			this.futureBonds = incomeService.findFutureBonds(residentId);
-			for (MunicipalBond mb : futureBonds) {
-				totalFutereBond = totalFutereBond.add(mb.getValue());
-			}
+			/*for (FutureBond mb : futureBonds) {
+				totalFutereBond = totalFutereBond.add(mb.getTotal());
+			}*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public List<FutureBond> getFutureBonds() {
+		return futureBonds;
+	}
+
+	public void setFutureBonds(List<FutureBond> futureBonds) {
+		this.futureBonds = futureBonds;
 	}
 
 	public BigDecimal getTotalFutereBond() {
@@ -617,6 +690,29 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 
 	public void setTotalFutereBond(BigDecimal totalFutereBond) {
 		this.totalFutereBond = totalFutereBond;
+	}
+	
+	
+	public List<BondSummary> getBondDownSumary() {
+		return bondDownSumary;
+	}
+
+	public void setBondDownSumary(List<BondSummary> bondDownSumary) {
+		this.bondDownSumary = bondDownSumary;
+	}
+
+	/**
+	 * rfam 2018-08-31 ML-JC-2048-267 visualizar bajas
+	 * @param residentId
+	 */
+	public void findBondsDown() {
+		try {
+			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+			this.bondDownSumary = incomeService.findBondsDownStatus(resident.getId());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

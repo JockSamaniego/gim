@@ -40,15 +40,21 @@ public class WriteOffRequestDTO {
 	
 	@NativeQueryResultColumn(index = 10)
 	private String request_number;
-
+	
 	@NativeQueryResultColumn(index = 11)
+	private Integer _days;
+
+	@NativeQueryResultColumn(index = 12)
 	private String internal_process_number;
 	
-	@NativeQueryResultColumn(index = 12)
+	@NativeQueryResultColumn(index = 13)
 	private String detail_responsible;
 	
-	@NativeQueryResultColumn(index = 13)
+	@NativeQueryResultColumn(index = 14)
 	private String _type_code;
+	
+	@NativeQueryResultColumn(index = 15)
+	private String _observations;
 	
 	public Long getId() {
 		return id;
@@ -164,6 +170,22 @@ public class WriteOffRequestDTO {
 
 	public void set_type_code(String _type_code) {
 		this._type_code = _type_code;
+	}
+
+	public Integer get_days() {
+		return _days;
+	}
+
+	public void set_days(Integer _days) {
+		this._days = _days;
+	}
+
+	public String get_observations() {
+		return _observations;
+	}
+
+	public void set_observations(String _observations) {
+		this._observations = _observations;
 	}
 	
 }

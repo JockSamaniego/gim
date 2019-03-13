@@ -11,7 +11,10 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.gob.gim.commercial.action.BusinessHome;
+import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
@@ -20,6 +23,7 @@ import org.jboss.seam.framework.EntityController;
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.commercial.model.Local;
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.CurrencyDevaluation;
@@ -28,6 +32,7 @@ import ec.gob.gim.revenue.model.adjunct.BusinessLocalReference;
 import ec.gob.gim.revenue.model.adjunct.DomainTransfer;
 import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
 import ec.gob.gim.revenue.model.adjunct.PropertyReference;
+import ec.gob.gim.revenue.model.adjunct.PropertyReferenceOptional;
 import ec.gob.gim.revenue.model.adjunct.detail.EarlyTransferDiscount;
 import ec.gob.gim.revenue.model.adjunct.detail.VehicleType;
 
@@ -77,6 +82,10 @@ public class AdjunctAction extends EntityController{
 //			this.setAddressAdjunct(property.getAddress());
 			changePropertyTaxableBase();
 			//propertyAppraisal.setCode(propertyAppraisal.getPreviousCadastralCode()+" - "+propertyAppraisal.getCadastralCode());
+			//property.getBuildings()
+			//rfam 2017-12-15 aprobacion de ordenanza
+			propertyAppraisal.setLotArea(BigDecimal.ONE);
+			propertyAppraisal.setConstructionArea(BigDecimal.ONE);
 		}
 	}
 	
@@ -224,7 +233,7 @@ public class AdjunctAction extends EntityController{
 	public void updatePropertyCode(){
 		PropertyReference reference = findCurrentAdjunct();
 		if(reference != null){
-			System.out.println("UPDATING PROPERTY CODE ----> Cadastral code set on code property!!");
+			//System.out.println("UPDATING PROPERTY CODE ----> Cadastral code set on code property!!");
 			reference.setCode(reference.getProperty().getCadastralCode());
 			reference.setOwner(reference.getProperty().getCurrentDomain().getResident().getName());
 			if(reference.getProperty().getLocation() != null){
@@ -232,7 +241,7 @@ public class AdjunctAction extends EntityController{
 			}
 		}
 	}
-	
+		
 	@SuppressWarnings("unchecked")
 	public List<Local> findLocalesByResidentId(){
 		Long residentId = findSelectedResidentId();
@@ -253,7 +262,7 @@ public class AdjunctAction extends EntityController{
 	public void updateLocalCode(Long id){
 		BusinessLocalReference reference = findCurrentAdjunct();
 		if(reference != null && reference.getLocal() != null){
-			System.out.println("UPDATING LOCAL CODE ----> Local id set on code property!!");
+			//System.out.println("UPDATING LOCAL CODE ----> Local id set on code property!!");
 			reference.setCode(reference.getLocal().getId().toString());
 			reference.setOwner(reference.getLocal().getBusiness().getOwner().getName());
 			if (reference.getLocal().getBusiness().getManager() == null)
@@ -311,7 +320,7 @@ public class AdjunctAction extends EntityController{
 	private <T extends Adjunct> T findCurrentAdjunct(){
 		AdjunctHome home = (AdjunctHome) Contexts.getConversationContext().get(AdjunctHome.class);
 		if(home != null){
-			System.out.println("UPDATING PROPERTY CODE ----> Home found!!"+home);
+			//System.out.println("UPDATING PROPERTY CODE ----> Home found!!"+home);
 			T currentAdjunct = (T) home.getInstance();
 			return currentAdjunct;
 		}
@@ -353,5 +362,48 @@ public class AdjunctAction extends EntityController{
 
 	public void setDesactiveLocals(List<Local> desactiveLocals) {
 		this.desactiveLocals = desactiveLocals;
+	}
+	
+	//Jock Samaniego
+	//Para obtener lista de tipos de domainTransfer
+	
+	private List<ItemCatalog> transferTypes;
+	private ItemCatalogService itemCatalogService;
+	
+	public List<ItemCatalog> domainTransferTypes(){
+		initializeService();
+		transferTypes = new ArrayList<ItemCatalog>();
+		transferTypes = itemCatalogService.findItemsForCatalogCode(
+				CatalogConstants.CATALOG_TYPES_DOMAIN_TRANSFER);
+		
+		return transferTypes;
+	}
+	
+	public void initializeService() {
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
+	}
+	
+	//Para seleccion de propiedad opcional
+	//Jock Samaniego
+	//29-11-2018
+	
+	public void updatePropertyOptionalCode(){
+		PropertyReferenceOptional reference = findCurrentAdjunct();
+		if(reference != null){
+			//System.out.println("UPDATING PROPERTY CODE ----> Cadastral code set on code property!!");
+			reference.setCode(reference.getProperty().getCadastralCode());
+			reference.setOwner(reference.getProperty().getCurrentDomain().getResident().getName());
+			if(reference.getProperty().getLocation() != null){
+				reference.setLocation(reference.getProperty().getLocation().getMainBlockLimit().getStreet().getName());
+			}
+		}
+	}
+	
+	public void resetPropertyOptionalValues(){
+		PropertyReferenceOptional reference = findCurrentAdjunct();
+		reference.setProperty(null);
 	}
 }

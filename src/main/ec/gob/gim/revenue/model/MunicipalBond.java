@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -28,6 +28,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -55,7 +56,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 /**
  * @author gerson
  * @version 1.0
- * @created 04-Ago-2011 16:30:30
+	 * @created 04-Ago-2011 16:30:30
  */
 @Audited
 @Entity
@@ -63,7 +64,8 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 @NamedQueries(value = {
 		@NamedQuery(name = "MunicipalBond.findByResidentIdAndTypeAndStatus", query = "SELECT DISTINCT mb FROM MunicipalBond mb "
 				+ "LEFT JOIN FETCH mb.entry e "
-				+ "LEFT JOIN FETCH mb.institution "
+				//rfam 2018-05-10 este dato se obtine desde la vista Gim.java
+				//+ "LEFT JOIN FETCH mb.institution "
 				+ "LEFT JOIN FETCH mb.municipalBondStatus mbs "
 				+ "LEFT JOIN FETCH mb.receipt "
 				+ "LEFT JOIN FETCH mb.resident res "
@@ -360,9 +362,13 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 
 		@NamedQuery(name = "MunicipalBond.findEmittedByDatesAndEmitter", query = "SELECT mb from MunicipalBond mb "
 				+ "LEFT JOIN FETCH mb.receipt r "
-				+ "LEFT JOIN FETCH mb.resident resident "
-				+ "where mb.emisionDate Between :startDate and :endDate and mb.emitter is not null and mb.emitter.id = :personId "
-				+ "GROUP BY mb.emitter.name,mb.emitter.id, mb.id,resident.id, r.id"),
+				+ "JOIN FETCH mb.resident resident "
+				+ "JOIN FETCH mb.emitter emitter "
+				+ "where mb.emisionDate Between :startDate and :endDate "
+				//+ "and mb.emitter is not null "
+				+ "and emitter.id = :personId "
+				+ "GROUP BY emitter.name,emitter.id, mb.id,resident.id, r.id"),
+				//+ "GROUP BY emitter.name,emitter.id, mb.id,resident.id "),
 
 		@NamedQuery(name = "MunicipalBond.findMunicipalBondViewBetweenDates", query = "SELECT NEW ec.gob.gim.revenue.model.MunicipalBondView(mb.entry.id,mb.entry.name,mb.resident.name, mb.number, mb.address, sum(mb.value + mb.taxesTotal)) from MunicipalBond mb "
 				+ "where mb.emisionDate Between :startDate and :endDate AND "
@@ -481,6 +487,14 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "mb.municipalBondStatus.id=:municipalBondStatusId AND "
 				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
 				+ "ORDER BY mb.entry.id"),
+				
+		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndAmountAndStatus", query = "SELECT mb FROM MunicipalBond mb LEFT JOIN FETCH mb.entry "
+				+ "WHERE "
+				+ "mb.resident.id in (:residentIds) AND "
+				+ "mb.municipalBondType=:municipalBondType AND "
+				+ "mb.municipalBondStatus.id in (:municipalBondStatusIds) AND "
+				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
+				+ "ORDER BY mb.entry.id"),
 
 		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmount", query = "SELECT mb FROM MunicipalBond mb "
 				+ "WHERE "
@@ -488,6 +502,15 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "mb.resident.id in (:residentIds) AND "
 				+ "mb.municipalBondType=:municipalBondType AND "
 				+ "mb.municipalBondStatus.id=:municipalBondStatusId AND "
+				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
+				+ "ORDER BY mb.entry.id"),
+				
+		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmountAndStatus", query = "SELECT mb FROM MunicipalBond mb "
+				+ "WHERE "
+				+ "mb.entry.id = :entryId AND "
+				+ "mb.resident.id in (:residentIds) AND "
+				+ "mb.municipalBondType=:municipalBondType AND "
+				+ "mb.municipalBondStatus.id in (:municipalBondStatusIds) AND "
 				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
 				+ "ORDER BY mb.entry.id"),
 
@@ -501,6 +524,13 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 		@NamedQuery(name = "MunicipalBond.findByPaymentAgreementIdAndStatusId", query = "SELECT mb FROM MunicipalBond mb LEFT JOIN FETCH mb.institution "
 				+ "WHERE mb.paymentAgreement.id=:paymentAgreementId AND "
 				+ "mb.municipalBondStatus.id=:municipalBondStatusId "
+				+ "ORDER BY expirationDate"),
+		//rfam 2018-05-09 consulta de obligaciones en abono
+		@NamedQuery(name = "MunicipalBond.findBySubscriptionStatusId", query = "SELECT mb FROM MunicipalBond mb "
+				+ "LEFT JOIN FETCH mb.institution "
+				+ "LEFT JOIN FETCH mb.resident res "
+				+ "WHERE mb.municipalBondStatus.id=:municipalBondStatusId "
+				+ "and mb.resident.id=:residentId "
 				+ "ORDER BY expirationDate"),
 
 		@NamedQuery(name = "MunicipalBond.findByStatusAndCashierAndDate", query = "SELECT mb FROM MunicipalBond mb "
@@ -821,6 +851,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 
 		@NamedQuery(name = "Bond.findByStatusAndResidentId", query = "SELECT NEW org.gob.loja.gim.ws.dto.Bond("
 				+ "    mb.id, mb.number, e.name, mb.groupingCode, mb.paidTotal, mb.serviceDate, mb.expirationDate, "
+				//+ "  mb.interest, mb.surcharge, mb.taxesTotal, mb.discount, mb.metadata )"
 				+ "  mb.interest, mb.surcharge, mb.taxesTotal, mb.discount )"
 				+ "  FROM "
 				+ "    MunicipalBond mb "
@@ -905,13 +936,24 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 		@NamedQuery(name = "MunicipalBond.findLastId", query = "select max(municipalBond.id) from MunicipalBond municipalBond"),
 		
 		@NamedQuery(name = "MunicipalBond.findLastNumber", query = "select municipalBond.number from MunicipalBond municipalBond WHERE "
-				+ "municipalBond.id = :id")
+				+ "municipalBond.id = :id"),
+		
+		@NamedQuery(name = "Bond.findFutureByStatusAndResidentId", query = "SELECT NEW org.gob.loja.gim.ws.dto.FutureBond( "
+				+ "e.name, mb.groupingCode, count(mb), sum(mb.paidTotal), sum(mb.interest), sum(mb.surcharge), sum(mb.taxesTotal), sum(mb.discount) ) "
+				+ "FROM MunicipalBond mb "
+				+ "JOIN mb.entry e "
+				+ "WHERE "
+				+ "mb.resident.id=:residentId AND "
+				+ "mb.municipalBondType=:municipalBondType AND "
+				+ "mb.municipalBondStatus.id = :pendingBondStatusId "
+				+ "group by e.name, mb.groupingCode "
+				+ "order by e.name, mb.groupingCode ")
 })
 //
 public class MunicipalBond implements Serializable {
 
 	/**
-	 * 
+	 *  
 	 */
 	private static final long serialVersionUID = 18386387333339876L;
 
@@ -1071,17 +1113,18 @@ public class MunicipalBond implements Serializable {
 	private Entry entry;
 
 	@OneToMany(mappedBy = "municipalBond", fetch = FetchType.LAZY)
-	private List<Deposit> deposits;
+	@OrderBy("date, time asc")
+	private Set<Deposit> deposits;
 
 	@OneToMany(mappedBy = "municipalBond", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private Set<TaxItem> taxItems;
 
-	@NotAudited
+	//@NotAudited
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Resident resident;
 
-	@NotAudited
+	//@NotAudited
 	@ManyToOne(fetch = FetchType.LAZY)
 	private FiscalPeriod fiscalPeriod;
 
@@ -1097,7 +1140,7 @@ public class MunicipalBond implements Serializable {
 	@JoinColumn(name = "originator_id")
 	private Person originator;
 
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	//@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST,
 			CascadeType.MERGE })
 	@JoinColumn(name = "adjunct_id")
@@ -1109,6 +1152,16 @@ public class MunicipalBond implements Serializable {
 	//aumentar campo de interesfactura
 	private BigDecimal interestVoucher;
 	private BigDecimal surchargeVoucher;
+	
+	
+	private String metadata;
+	
+	@Transient  //for print
+	private BigDecimal interestRemission=BigDecimal.ZERO;
+	
+	@Transient //for print
+	private BigDecimal surchargeRemission=BigDecimal.ZERO;
+	
 
 	public MunicipalBond() {
 		// creationDate = Calendar.getInstance().getTime();
@@ -1129,7 +1182,7 @@ public class MunicipalBond implements Serializable {
 		items = new TreeSet<Item>();
 		discountItems = new TreeSet<Item>();
 		surchargeItems = new TreeSet<Item>();
-		deposits = new LinkedList<Deposit>();
+		deposits = new HashSet<Deposit>();
 		taxItems = new TreeSet<TaxItem>();
 		printingsNumber = 0;
 		internalTramit = Boolean.FALSE;
@@ -1177,10 +1230,13 @@ public class MunicipalBond implements Serializable {
 
 	public BigDecimal findPaidTotal() {
 		BigDecimal paidTotal = BigDecimal.ZERO;
+		Set<Deposit> deps = new HashSet<Deposit>();
+		
 		for (Deposit d : this.getDeposits()) {
+			deps.add(d);			
 			paidTotal = paidTotal.add(d.getValue());
-
 		}
+		System.out.println(deps);
 		return paidTotal;
 	}
 
@@ -1577,11 +1633,11 @@ public class MunicipalBond implements Serializable {
 		this.balance = balance;
 	}
 
-	public List<Deposit> getDeposits() {
+	public Set<Deposit> getDeposits() {
 		return deposits;
 	}
 
-	public void setDeposits(List<Deposit> deposits) {
+	public void setDeposits(Set<Deposit> deposits) {
 		this.deposits = deposits;
 	}
 
@@ -1812,6 +1868,36 @@ public class MunicipalBond implements Serializable {
 
 	public void setSurchargeVoucher(BigDecimal surchargeVoucher) {
 		this.surchargeVoucher = surchargeVoucher;
+	}
+	
+	
+	public String getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(String metadata) {
+		this.metadata = metadata;
+	}
+
+	public List<Deposit> getDepositsList() {
+		List<Deposit> list = new ArrayList<Deposit>(this.deposits);
+		return list;
+	}
+
+	public BigDecimal getInterestRemission() {
+		return interestRemission;
+	}
+
+	public void setInterestRemission(BigDecimal interestRemission) {
+		this.interestRemission = interestRemission;
+	}
+
+	public BigDecimal getSurchargeRemission() {
+		return surchargeRemission;
+	}
+
+	public void setSurchargeRemission(BigDecimal surchargeRemission) {
+		this.surchargeRemission = surchargeRemission;
 	}
 
 }// end MunicipalBond

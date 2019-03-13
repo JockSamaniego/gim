@@ -59,8 +59,8 @@ public class Gim extends EntityController {
 		 * @fecha: 3/10/2016
 		 * @tag:Instituciones publicas
 		 */
-		ResidentService residentService = ServiceLocator.getInstance().findResource(ResidentService.LOCAL_NAME);
-		residentService.loadPublicInstitutions();
+		//ResidentService residentService = ServiceLocator.getInstance().findResource(ResidentService.LOCAL_NAME);
+		//residentService.loadPublicInstitutions();
 	}
 
 	public void refreshSystemparameters() {
@@ -82,7 +82,7 @@ public class Gim extends EntityController {
 	}
 
 	public void unregisterSession(User user) {
-		System.out.println("SESSION UNREGISTERED FOR USER " + user.getName());
+		//System.out.println("SESSION UNREGISTERED FOR USER " + user.getName());
 		if (isSessionActive(user)) {
 			activeSessions.remove(user);
 		} else {
@@ -97,14 +97,14 @@ public class Gim extends EntityController {
 	}
 
 	public Boolean registerSession(User user) {
-		System.out.println("REGISTERING SESSION EXECUTED");
+		//System.out.println("REGISTERING SESSION EXECUTED");
 		Boolean isActive = Boolean.FALSE;
 		if (isActive == null || !isActive) {
 			activeSessions.put(user, Boolean.TRUE);
-			System.out.println("SESSION REGISTERED" + Identity.instance());
+			//System.out.println("SESSION REGISTERED" + Identity.instance());
 			return Boolean.TRUE;
 		}
-		System.out.println("SESSION ALREADY REGISTERED ");
+		//System.out.println("SESSION ALREADY REGISTERED ");
 		return Boolean.FALSE;
 	}
 
@@ -118,7 +118,7 @@ public class Gim extends EntityController {
 
 	public HttpSession getHttpSession() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-		System.out.println("FACES CONTEXT ----> "+facesContext);
+		//System.out.println("FACES CONTEXT ----> "+facesContext);
 		if(facesContext != null){
 			ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
 			Object session = context.getSession(Boolean.FALSE);

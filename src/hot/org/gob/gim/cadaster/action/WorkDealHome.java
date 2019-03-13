@@ -16,8 +16,6 @@ import org.gob.gim.cadaster.facade.CadasterService;
 import org.gob.gim.cadaster.service.WorkDealFractionService;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
-import org.gob.gim.revenue.action.MunicipalBondDataModel;
-import org.jboss.resteasy.core.NoMessageBodyWriterFoundFailure;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -25,7 +23,6 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Transactional;
-import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
@@ -303,7 +300,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 				aux = calculateValuesWS(wf, this.getInstance()
 						.getSewerageValue());
 				aux = aux.setScale(2, RoundingMode.HALF_UP);
-				System.out.println("Sin redondeo==>" + aux);
+				//System.out.println("Sin redondeo==>" + aux);
 				wf.setSewerageValue(aux);
 			}
 
@@ -340,26 +337,30 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	 */
 	private void compareCases(BigDecimal totalSum, BigDecimal valueCompare,
 			String waterOrSewerage) {
-
-		// System.out.println("sumatoria==>" + totalSum + "- valor: " + value);
-		int roundSeg = totalSum.compareTo(valueCompare);
-		// System.out.println("Compare==>" + roundSeg);
-		int i = 0;
-		int limit = this.instance.getWorkDealFractions().size();
-		while (roundSeg != 0) {
-			switch (roundSeg) {
-			case -1:
-				roundSeg = addOrSubstractToRow(i, 1, waterOrSewerage,
-						valueCompare);
-				break;
-			case 1:
-				roundSeg = addOrSubstractToRow(i, -1, waterOrSewerage,
-						valueCompare);
-				break;
-			}
-			i++;
-			if (i == limit) {
-				i = 0;
+		//rfam 2018-11-05 
+		if(this.getInstance()
+				.getWorkDealFractions().size()>0){
+		
+			// System.out.println("sumatoria==>" + totalSum + "- valor: " + value);
+			int roundSeg = totalSum.compareTo(valueCompare);
+			// System.out.println("Compare==>" + roundSeg);
+			int i = 0;
+			int limit = this.instance.getWorkDealFractions().size();
+			while (roundSeg != 0) {
+				switch (roundSeg) {
+				case -1:
+					roundSeg = addOrSubstractToRow(i, 1, waterOrSewerage,
+							valueCompare);
+					break;
+				case 1:
+					roundSeg = addOrSubstractToRow(i, -1, waterOrSewerage,
+							valueCompare);
+					break;
+				}
+				i++;
+				if (i == limit) {
+					i = 0;
+				}
 			}
 		}
 	}
@@ -376,7 +377,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 		aux = makeOperation(aux, typeOperation);
 		setValueColumn(aux, waterOrSewerage, position);
 
-		System.out.println("POS=>" + position + " - " + aux);
+		//System.out.println("POS=>" + position + " - " + aux);
 
 		// sumar y obtener el total de agua o alcantarillado
 		BigDecimal sumValue = BigDecimal.ZERO;
@@ -385,9 +386,9 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 			value = getValueDetail(waterOrSewerage, i);
 			sumValue = sumValue.add(value);
 		}
-
 		updateTotals(sumValue, waterOrSewerage);
 		return sumValue.compareTo(valueCompare);
+		
 	}
 
 	/**
@@ -410,10 +411,15 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 	 * @return
 	 */
 	private BigDecimal getValueDetail(String waterOrSewerage, int position) {
-		WorkDealFraction aux = this.instance.getWorkDealFractions().get(
-				position);
-		return (waterOrSewerage.equals("water")) ? aux.getWaterValue() : aux
-				.getSewerageValue();
+		if(this.getInstance()
+				.getWorkDealFractions().size()>0){
+			WorkDealFraction aux = this.instance.getWorkDealFractions().get(
+					position);
+			return (waterOrSewerage.equals("water")) ? aux.getWaterValue() : aux
+					.getSewerageValue();	
+		}
+		return BigDecimal.ZERO;
+		
 	}
 
 	/**
@@ -450,30 +456,36 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 				.setScale(2, RoundingMode.HALF_UP);
 		if (total.compareTo(workDealValue) != 0) {
 			BigDecimal difference = workDealValue.subtract(total);
-			this.getInstance()
-					.getWorkDealFractions()
-					.get(this.getInstance().getWorkDealFractions().size() - 1)
-					.setSharedValue(
-							this.getInstance()
-									.getWorkDealFractions()
-									.get(this.getInstance()
-											.getWorkDealFractions().size() - 1)
-									.getSharedValue().add(difference));
-			this.getInstance()
-					.getWorkDealFractions()
-					.get(this.getInstance().getWorkDealFractions().size() - 1)
-					.setTotal(
-							this.getInstance()
-									.getWorkDealFractions()
-									.get(this.getInstance()
-											.getWorkDealFractions().size() - 1)
-									.getTotal().add(difference));
-			totalSharedValue = BigDecimal.ZERO;
-			total = BigDecimal.ZERO;
-			for (WorkDealFraction wf : this.getInstance()
-					.getWorkDealFractions()) {
-				totalSharedValue = totalSharedValue.add(wf.getSharedValue());
-				total = total.add(wf.getTotal());
+			WorkDeal wd = this.getInstance();
+			
+			if(this.getInstance()
+					.getWorkDealFractions().size()>0){
+				
+				this.getInstance()
+						.getWorkDealFractions()
+						.get(this.getInstance().getWorkDealFractions().size() - 1)
+						.setSharedValue(
+								this.getInstance()
+										.getWorkDealFractions()
+										.get(this.getInstance()
+												.getWorkDealFractions().size() - 1)
+										.getSharedValue().add(difference));
+				this.getInstance()
+						.getWorkDealFractions()
+						.get(this.getInstance().getWorkDealFractions().size() - 1)
+						.setTotal(
+								this.getInstance()
+										.getWorkDealFractions()
+										.get(this.getInstance()
+												.getWorkDealFractions().size() - 1)
+										.getTotal().add(difference));
+				totalSharedValue = BigDecimal.ZERO;
+				total = BigDecimal.ZERO;
+				for (WorkDealFraction wf : this.getInstance()
+						.getWorkDealFractions()) {
+					totalSharedValue = totalSharedValue.add(wf.getSharedValue());
+					total = total.add(wf.getTotal());
+				}
 			}
 		}
 	}
@@ -634,7 +646,7 @@ public class WorkDealHome extends EntityHome<WorkDeal> {
 					+ property.getLocation().getMainBlockLimit().getStreet()
 							.getName();
 
-			System.out.println("====>" + direction);
+			//System.out.println("====>" + direction);
 			workDealFraction.setAddress(direction);
 			
 			

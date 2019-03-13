@@ -46,6 +46,8 @@ public class WriteOffDetail {
 	private Long newCurrentReading;
 	
 	private Long newPreviousReading;
+	
+	private Boolean isActive = Boolean.TRUE;
 
 	@ManyToOne
 	@JoinColumn(name = "oldmb_id")
@@ -161,6 +163,14 @@ public class WriteOffDetail {
 
 	public void setWriteOffRequest(WriteOffRequest writeOffRequest) {
 		this.writeOffRequest = writeOffRequest;
+	}
+	
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	@Override

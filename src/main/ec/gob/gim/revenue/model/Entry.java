@@ -236,6 +236,15 @@ public class Entry extends Identifiable{
 	@Column(length = 250)
 	private String completeName;
 	
+	/**
+	 * @author rfam
+	 * @date 2017-12-01
+	 * nota aclaratoria ML-JRM-2017-884-M
+	 * @return
+	 */
+	@Column(length = 100)
+	private String explanatoryNote;
+	
 	public ReceiptType getReceiptType() {
 		return receiptType;
 	}
@@ -682,6 +691,14 @@ public class Entry extends Identifiable{
 
 	public void setCompleteName(String completeName) {
 		this.completeName = completeName;
+	}
+
+	public String getExplanatoryNote() {
+		return explanatoryNote;
+	}
+
+	public void setExplanatoryNote(String explanatoryNote) {
+		this.explanatoryNote = explanatoryNote;
 	}
 		
 	

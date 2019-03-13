@@ -120,7 +120,7 @@
 									value="Editar"
 									ajaxSingle="true" bypassUpdates="true" style="margin-left: 10px;"
 									action="#{writeOffRequestHome.prepareEditWriteOffRequest(_writeOffRequest.id)}"
-								/>
+									rendered="#{writeOffRequestHome.render_edit_button(_writeOffRequest._days)}" />
 
 							</a:region>
 

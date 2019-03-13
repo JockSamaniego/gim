@@ -8,6 +8,7 @@
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:m="http://code.google.com/p/gmaps4jsf/"
 	template="../layout/template.xhtml">
 
 	<ui:define name="body">
@@ -30,6 +31,7 @@
 		<ui:include src="fragment/ConsumptionValidatePanel.xhtml" />
 		<ui:include src="fragment/PreEmissionWaterServicePanel.xhtml" />
 		<ui:include src="fragment/WaterMeterAddPanel.xhtml" />
+		<ui:include src="fragment/ConsumptionObservationPanel.xhtml" />
 		<!--  ui:include src="fragment/.xhtml" /-->
 
 		<h:form id="routeRecording" styleClass="edit">
@@ -243,7 +245,7 @@
 								<rich:column style="text-align:right;">
 									<f:facet name="header">#{messages['route.differenceInReading']}</f:facet>
 									<h:outputText value="#{service.amount}" id="diffRead" />
-								</rich:column>
+								</rich:column>								
 
 								<rich:column styleClass="action">
 									<f:facet name="header">#{messages['route.validRecord']}</f:facet>
@@ -251,8 +253,14 @@
 										value="/img/#{service.isValidReading ? 'true.png' : 'error.gif'}"
 										id="isValidRead" />
 								</rich:column>
+								
 								<h:column>
 									<f:facet name="header">#{messages['route.error']}</f:facet>
+									<a:commandLink id="observationId" value="Ver"
+										action="#{routeHome.selectInfoConsumption(service)}"
+										oncomplete="Richfaces.showModalPanel('consumptionObservationPanel',{width:200, height:200})"
+										title="observaciones" reRender="consumptionObservationForm"
+										rendered="#{ !(service.observations == null) and (service.observations.length() gt 0) }" />
 									<h:outputText value="#{service.errorMessage}" id="errMess" />
 								</h:column>
 							</rich:dataTable>
@@ -271,6 +279,18 @@
 					propagation="end"
 					view="/waterservice/#{empty routeFrom ? 'RouteList' : routeFrom}.xhtml" />
 			</div>
+			
+			<!-- rich 
+			: 
+			panel>
+            < f:facet name="header">Google maps</f:facet>
+            <m:map address="Dublin" width="500px" height="500px">
+               <m:mapControl name="GLargeMapControl" position="G_ANCHOR_BOTTOM_RIGHT"/>
+               <m:mapControl name="GMapTypeControl"/>                           
+        	</m:map>
+  </rich:panel-->
+  
+			
 		</h:form>
 	</ui:define>
 

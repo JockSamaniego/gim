@@ -42,7 +42,8 @@ import ec.gob.gim.common.model.ItemCatalog;
 )
 @NamedQueries(value = {
 		@NamedQuery(name = "bulletin.findBySerial", query = "Select b from Bulletin b where b.startNumber <= :serial AND b.endNumber >= :serial"),
-		@NamedQuery(name = "bulletin.findByRank", query = "Select b from Bulletin b where b.startNumber > :startSerial AND b.endNumber < :endSerial")})
+		@NamedQuery(name = "bulletin.findByRank", query = "Select b from Bulletin b where b.startNumber > :startSerial AND b.endNumber < :endSerial"),
+		@NamedQuery(name = "bulletin.findById", query = "Select b from Bulletin b where b.id = :id")})
 
 
 public class Bulletin {

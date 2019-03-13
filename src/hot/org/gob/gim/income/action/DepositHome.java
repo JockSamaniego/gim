@@ -1,5 +1,5 @@
 package org.gob.gim.income.action;
-
+	
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -10,7 +10,6 @@ import javax.persistence.Query;
 
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
-import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.income.facade.IncomeService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;

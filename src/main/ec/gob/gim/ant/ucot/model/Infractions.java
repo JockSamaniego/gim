@@ -1,9 +1,8 @@
 package ec.gob.gim.ant.ucot.model;
  
-
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,16 +14,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.hibernate.envers.Audited;
-
-import ec.gob.gim.cadaster.model.Property;
-import ec.gob.gim.common.model.ItemCatalog;
- 
+import ec.gob.gim.common.model.Person;
 
 /**
  * 
@@ -45,7 +39,10 @@ import ec.gob.gim.common.model.ItemCatalog;
 
 @NamedQueries(value = {
 		@NamedQuery(name = "infractions.findByBulletinId", query = "Select i from Infractions i where i.bulletin.id = :bulletinId"),
-		@NamedQuery(name = "infractions.findBySerial", query = "Select i from Infractions i where i.serial = :serial")})
+		@NamedQuery(name = "infractions.findBySerial", query = "Select i from Infractions i where i.serial = :serial"),
+		@NamedQuery(name = "infractions.findByCitationNumber", query = "Select i from Infractions i where i.citationNumber = :citationNumber"),
+		@NamedQuery(name = "infractions.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum"),
+		@NamedQuery(name = "infractions.findResidentByIdent", query = "Select r from Resident r where r.identificationNumber = :identNum")})
 
 public class Infractions {
 
@@ -62,9 +59,15 @@ public class Infractions {
 	@Column(length=10)
 	private String numeral;
 	
+	@Column(length=10)
+	private String partNumber;
+	
 	@Temporal(TemporalType.DATE)
 	private Date citationDate;
 	
+	@Temporal(TemporalType.TIMESTAMP) 
+	private Date creationDate;
+	 	
 	@Temporal(TemporalType.TIME)
 	private Date citationTime;
 	
@@ -72,13 +75,43 @@ public class Infractions {
 	
 	private String identification;
 	
+	private String name;
+	
 	private String licensePlate;
 	
-	private Boolean archived;	
+	private Boolean nullified;
+	
+	private Boolean digitized;
+	
+	private Boolean white_green;
+	
+	private Boolean yellow;
+	
+	private BigDecimal points;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "responsible_id") 
+	private Person responsible;
+	   
+	@JoinColumn(name = "responsible_user")	 
+	@Column(length = 100)	 
+	private String responsible_user;
+	 
+	private BigDecimal value;
+	
+	@Temporal(TemporalType.DATE)
+	private Date nullifiedDate;
 	
 	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
 	@JoinColumn(name="bulletin_id")
 	private Bulletin bulletin;
+	
+	//Para fotomultas
+	private String radarCode;
+	private String infractionPlace;
+	private Boolean photoFine;
+	private Boolean fixedRadar;
+	private String citationNumber;
 
 	public Long getId() {
 		return id;
@@ -144,14 +177,13 @@ public class Infractions {
 		this.licensePlate = licensePlate;
 	}
 
-	public Boolean getArchived() {
-		return archived;
+	public Boolean getNullified() {
+		return nullified;
 	}
 
-	public void setArchived(Boolean archived) {
-		this.archived = archived;
+	public void setNullified(Boolean nullified) {
+		this.nullified = nullified;
 	}
-
 
 	public Bulletin getBulletin() {
 		return bulletin;
@@ -168,5 +200,133 @@ public class Infractions {
 	public void setCitationTime(Date citationTime) {
 		this.citationTime = citationTime;
 	}
-	
+
+	public String getPartNumber() {
+		return partNumber;
+	}
+
+	public void setPartNumber(String partNumber) {
+		this.partNumber = partNumber;
+	}
+
+	public Date getNullifiedDate() {
+		return nullifiedDate;
+	}
+
+	public void setNullifiedDate(Date nullifiedDate) {
+		this.nullifiedDate = nullifiedDate;
+	}
+
+	public Boolean getDigitized() {
+		return digitized;
+	}
+
+	public void setDigitized(Boolean digitized) {
+		this.digitized = digitized;
+	}
+
+	public BigDecimal getPoints() {
+		return points;
+	}
+
+	public void setPoints(BigDecimal points) {
+		this.points = points;
+	}
+
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Boolean getWhite_green() {
+		return white_green;
+	}
+
+	public void setWhite_green(Boolean white_green) {
+		this.white_green = white_green;
+	}
+
+	public Boolean getYellow() {
+		return yellow;
+	}
+
+	public void setYellow(Boolean yellow) {
+		this.yellow = yellow;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Person getResponsible() {
+		return responsible;
+	}
+
+	public void setResponsible(Person responsible) {
+		this.responsible = responsible;
+	}
+
+	public String getResponsible_user() {
+		return responsible_user;
+	}
+
+	public void setResponsible_user(String responsible_user) {
+		this.responsible_user = responsible_user;
+	}
+
+	public String getRadarCode() {
+		return radarCode;
+	}
+
+	public void setRadarCode(String radarCode) {
+		this.radarCode = radarCode;
+	}
+
+	public String getInfractionPlace() {
+		return infractionPlace;
+	}
+
+	public void setInfractionPlace(String infractionPlace) {
+		this.infractionPlace = infractionPlace;
+	}
+
+	public Boolean getPhotoFine() {
+		return photoFine;
+	}
+
+	public void setPhotoFine(Boolean photoFine) {
+		this.photoFine = photoFine;
+	}
+
+	public Boolean getFixedRadar() {
+		return fixedRadar;
+	}
+
+	public void setFixedRadar(Boolean fixedRadar) {
+		this.fixedRadar = fixedRadar;
+	}
+
+	public String getCitationNumber() {
+		return citationNumber;
+	}
+
+	public void setCitationNumber(String citationNumber) {
+		this.citationNumber = citationNumber;
+	}
+
 }

@@ -7,11 +7,13 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.income.facade.IncomeService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -207,7 +209,7 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		}else{
 			finalIdentificationNumber=resident.getIdentificationNumber();
 		}
-		SolvencyHistory solvencyHistory = new SolvencyHistory(resident, motivation, SolvencyHistoryType.GENERAL, entry, null, userSession.getPerson(),certificateNumber, copiesNumber, finalIdentificationNumber);
+		SolvencyHistory solvencyHistory = new SolvencyHistory(resident, motivation, SolvencyHistoryType.GENERAL, entry, null, userSession.getPerson(),responsableUser, certificateNumber, copiesNumber, finalIdentificationNumber);
 		if (observation != null) {
 			solvencyHistory.setObservation(observation);
 		}
@@ -250,7 +252,10 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		//rfarmijosm 2016-03-20 pedido de alice
 		Long  blockedBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_BLOCKED");
 		//rfarmijosm 2016-10-18 pedido de alice
-		Long futureBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE");
+		Long futureBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE");		
+		
+		//rfam 2018-05-15 para soportar pagos en abonos
+		Long subscriptionBondStatusId = systemParameterService.findParameter(IncomeService.SUBSCRIPTION_BOND_STATUS);
 				
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
@@ -259,6 +264,9 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		statuses.add(blockedBondStatusId);
 		//rfarmijosm 2016-10-18 pedido de alice
 		statuses.add(futureBondStatusId);
+		
+		//rfarmijosm 2018-05-15 soportar pagos en abonos
+		statuses.add(subscriptionBondStatusId);
 		
 		Query query = null;
 		if(resident != null && entry == null && (code == null || code.trim().isEmpty()) ){
@@ -283,6 +291,7 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		pendingBondStatus = systemParameterService.materialize(MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING");
 		solvencyReportType = SolvencyReportType.SOLVENCY_REPORT_BY_RESIDENT;
 		loadCharge();
+		findResponsableUsersList();
 	}
 	
 	private SolvencyReportType solvencyReportByEntry = SolvencyReportType.SOLVENCY_REPORT_BY_ENTRY;
@@ -711,5 +720,47 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 	public void setObservation(String observation) {
 		this.observation = observation;
 	}
+	
+	// Jock Samaniego
+	//Para almacenar el responsable en autorizar el certificado de solvencia
+	
+	private List<Resident> responsableUsers;
+		
+	private Resident responsableUser;
+	private String[] userIds;
+
+	public List<Resident> getResponsableUsers() {
+		return responsableUsers;
+	}
+
+	public void setResponsableUsers(List<Resident> responsableUsers) {
+		this.responsableUsers = responsableUsers;
+	}
+
+	public Resident getResponsableUser() {
+		return responsableUser;
+	}
+
+	public void setResponsableUser(Resident responsableUser) {
+		this.responsableUser = responsableUser;
+	}
+	
+	private void findResponsableUsersList(){
+		responsableUsers = new ArrayList<Resident>();
+		String  ids = systemParameterService.findParameter("RESPONSABLE_USER_SOLVENCY_CERTIFICATE");
+		userIds = ids.trim().split(",");
+		List<Long> idUsers = new ArrayList<Long>();
+		for(String us: userIds){
+			idUsers.add(Long.parseLong(us));
+		}
+		Query query = getEntityManager().createNamedQuery("Resident.findResidentByIds");
+		query.setParameter("idUsers", idUsers);
+		try {
+			responsableUsers = query.getResultList();
+			
+		} catch (Exception e) {
+			addFacesMessageFromResourceBundle("resident.notFound");
+		}
+	}		
 		
 }

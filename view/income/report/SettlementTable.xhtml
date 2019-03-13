@@ -27,12 +27,17 @@
 		</p:cell>
 		<p:cell horizontalAlignment="center" grayFill="0.90">
 			<p:font size="6" style="bold">
-				<p:paragraph alignment="center">#{messages['item.code']}</p:paragraph>
+				<p:paragraph alignment="center">
+					<p:text value="#{empty _deposit.municipalBond.receipt ? 'Rubro' : 	messages['item.code']}"></p:text>	
+				</p:paragraph>
 			</p:font>
 		</p:cell>
 		<p:cell horizontalAlignment="center" grayFill="0.90">
 			<p:font size="6" style="bold">
-				<p:paragraph alignment="center">#{messages['entry']}</p:paragraph>
+				<p:paragraph alignment="center">
+
+					<p:text value="#{empty _deposit.municipalBond.receipt ? 'Concepto' : 	messages['entry']}"></p:text>					
+				</p:paragraph>
 			</p:font>
 		</p:cell>
 		<p:cell horizontalAlignment="center" grayFill="0.90">
@@ -238,25 +243,115 @@
 		</p:table>
 	</ui:repeat>
 
+	<p:table columns="2" widthPercentage="100" spacingBefore="25" widths="50 50" horizontalAlignment="center" >
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" />
+		</f:facet>	
+	
+		<p:cell horizontalAlignment="left">
 
-	<p:table columns="3" widthPercentage="50" spacingAfter="10" widths="12 1 12" horizontalAlignment="right" rendered="#{not receiptPrintingManager.isCertificate}">
+
+			<p:table columns="2" widthPercentage="100" widths="50 50" horizontalAlignment="right" >
+					
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0.5" />
+				</f:facet>
+					<p:font size="8">
+						<p:cell horizontalAlignment="left">
+							<p:font size="7">
+								<p:paragraph alignment="center">Administración Tributaria:</p:paragraph>
+							</p:font>
+						</p:cell>
+						
+						<p:cell horizontalAlignment="left">
+							<p:font size="7">
+								<p:paragraph alignment="center">Dirección Financiera</p:paragraph>
+							</p:font>
+						</p:cell>
+			
+						<p:cell horizontalAlignment="left">
+							<p:font size="7">
+								<p:paragraph alignment="left">Departamento que lo emite:</p:paragraph>
+							</p:font>
+						</p:cell>
+						
+						<p:cell horizontalAlignment="left">
+							<p:font size="7">
+								<p:paragraph alignment="center">Jefatura de Rentas</p:paragraph>
+							</p:font>
+						</p:cell>
+					</p:font>
+			</p:table>
+
+
+		</p:cell>
+
+		<p:cell horizontalAlignment="right">
+	
+	
+	
+			<p:table columns="3" widthPercentage="100" widths="12 1 12" horizontalAlignment="right" rendered="#{not receiptPrintingManager.isCertificate}">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+				
+				<p:font size="8">
+					<p:cell horizontalAlignment="center" borderWidthTop="1">
+						<p:paragraph alignment="center">#{messages['receipt.authorizedSignature']}</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="center" >
+						#{' '}
+					</p:cell>
+					<p:cell horizontalAlignment="center" borderWidthTop="1">
+						<p:paragraph alignment="center">#{messages['receipt.clientSignature']}</p:paragraph>
+					</p:cell>
+				</p:font>
+			</p:table>
+	
+	
+	
+		</p:cell>
+
+	</p:table>
+	
+	<p:table columns="2" widthPercentage="100" spacingAfter="5" widths="12 12" >
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" />
+		</f:facet>	
+		<p:cell horizontalAlignment="center" rendered="#{_deposit.municipalBond.metadata!=null}">
+			<p:table columns="2" widthPercentage="100" widths="12 12" horizontalAlignment="right" >
+
+				<p:font size="6">
+					<p:cell horizontalAlignment="center" >
+						<p:paragraph alignment="center">Remisión interes</p:paragraph>
+					</p:cell> 
+					<p:cell horizontalAlignment="center" >
+						<p:paragraph alignment="center">Remisión recargo</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="center" >
+						<p:paragraph alignment="center">$#{_deposit.municipalBond.interestRemission}</p:paragraph>
+					</p:cell> 
+					<p:cell horizontalAlignment="center" >
+						<p:paragraph alignment="center">$#{_deposit.municipalBond.surchargeRemission}</p:paragraph>
+					</p:cell> 
+				</p:font>
+			</p:table>
+		</p:cell>
+		
+		<p:cell horizontalAlignment="justify" rendered="#{_deposit.municipalBond.interestRemission!=0 or _deposit.municipalBond.surchargeRemission!=0}">
+			<p:paragraph>
+				<p:font size="6">Me acojo y acepto los estipulado en las disipaciones generales cuarta para la ley de fomento productivo atracción de inversiones generación de empleo</p:font>
+			</p:paragraph>
+		</p:cell>
+	</p:table>
+	
+	<p:table columns="3" widthPercentage="100" spacingAfter="5" widths="12 1 12" rendered="#{_deposit.municipalBond.entry.explanatoryNote != null}">
 		<f:facet name="defaultCell">
 			<p:cell borderWidth="0" />
 		</f:facet>
-		<p:cell colspan="3">
-			<p:paragraph><p:font size="30">#{' '}</p:font></p:paragraph>
+		<p:cell colspan="3" horizontalAlignment="center">
+			<p:paragraph><p:font size="8">#{_deposit.municipalBond.entry.explanatoryNote}</p:font></p:paragraph>
 		</p:cell>
-		<p:font size="8">
-			<p:cell horizontalAlignment="center" borderWidthTop="1">
-				<p:paragraph alignment="center">#{messages['receipt.authorizedSignature']}</p:paragraph>
-			</p:cell>
-			<p:cell horizontalAlignment="center" >
-				#{' '}
-			</p:cell>
-			<p:cell horizontalAlignment="center" borderWidthTop="1">
-				<p:paragraph alignment="center">#{messages['receipt.clientSignature']}</p:paragraph>
-			</p:cell>
-		</p:font>
 	</p:table>
 
 	<p:barCode  type="code128" barHeight="25" textSize="10" rendered="#{not receiptPrintingManager.isCertificate and !_deposit.municipalBond.receipt.electronicReceipt}"

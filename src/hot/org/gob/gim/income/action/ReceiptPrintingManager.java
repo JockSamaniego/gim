@@ -52,7 +52,7 @@ public class ReceiptPrintingManager{
 
 	@SuppressWarnings("unchecked")
 	public Long[] getPrintings(){
-		System.out.println("INGRESO AQUIIIIIIIIIII ");
+		//System.out.println("INGRESO AQUIIIIIIIIIII ");
 		Query q = entityManager.createNamedQuery("SystemParameter.findByName");
 		q.setParameter("name", "PRINT_DOUBLE_PAPER");
 		List<SystemParameter> list= q.getResultList();
@@ -78,7 +78,7 @@ public class ReceiptPrintingManager{
 	
 	public String print(Deposit deposit){
 		depositsToPrint.clear();
-		System.out.println("A IMPRIMIR DEPOSITO "+deposit);
+		//System.out.println("A IMPRIMIR DEPOSITO "+deposit);
 		depositsToPrint.add(deposit);
 		return "sentToPrint";
 	}
@@ -86,7 +86,7 @@ public class ReceiptPrintingManager{
 	public String print(List<Deposit> deposits){
 		depositsToPrint.clear();
 		depositsToPrint.addAll(deposits);
-		System.out.println("A IMPRIMIR DEPOSITOS "+depositsToPrint.size());
+		//System.out.println("A IMPRIMIR DEPOSITOS "+depositsToPrint.size());
 		return "sentToPrint";
 	}
 	
@@ -123,14 +123,14 @@ public class ReceiptPrintingManager{
 	
 	// TODO Esto se esta llamando varias veces desde el reporte
 	public ReceiptAuthorization getReceiptAuthorization(String number){
-		System.out.println("Recovering ReceiptAuthorization NUMBER -----> "+number);
+		//System.out.println("Recovering ReceiptAuthorization NUMBER -----> "+number);
 		Query query = entityManager.createNamedQuery("ReceiptAuthorization.findByNumber");
 		query.setParameter("number", number);
 		return (ReceiptAuthorization) query.getSingleResult();
 	}
 
 	public ReceiptAuthorization getReceiptAuthorization(Long id){
-		System.out.println("Recovering ReceiptAuthorization ID -----> "+id);
+		//System.out.println("Recovering ReceiptAuthorization ID -----> "+id);
 		Query query = entityManager.createNamedQuery("ReceiptAuthorization.findById");
 		query.setParameter("id", id);
 		return (ReceiptAuthorization) query.getSingleResult();

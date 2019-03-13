@@ -15,7 +15,9 @@ import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.TaxRate;
 import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.revenue.model.EntryStructureType;
 import ec.gob.gim.revenue.model.Exemption;
+import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
@@ -28,13 +30,15 @@ public interface MunicipalBondService {
 	public MunicipalBond createMunicipalBond(Resident resident,
 			FiscalPeriod fiscalPeriod, Entry entry,
 			EntryValueItem entryValueItem, boolean isEmission,
-			boolean applyDiscounts, Object... facts)
+			boolean applyDiscounts, 
+			Object... facts)
 			throws EntryDefinitionNotFoundException;
 
 	public void calculatePayment(MunicipalBond municipalBond, Date paymentDate,
 			Deposit deposit, boolean isNew, boolean isEmission,
-			boolean applyDiscounts, List<TaxRate> taxRatesActives,
-			Object... facts) throws EntryDefinitionNotFoundException;
+			boolean applyDiscounts, 
+			List<TaxRate> taxRatesActives,
+			Object... facts) throws EntryDefinitionNotFoundException;  //1 desde vista cajero
 
 	MunicipalBond findByResidentIdAndEntryIdAndServiceDateAndGroupingCode(
 			Long residentId, Long entryId, Date serviceDate, String groupingCode);
@@ -48,7 +52,8 @@ public interface MunicipalBondService {
 			Object... facts) throws EntryDefinitionNotFoundException;
 
 	public void changeExemptionInMunicipalBond(MunicipalBond municipalBond,
-			boolean isNew, boolean isEmission, Object... facts)
+			boolean isNew, boolean isEmission, 
+			Object... facts)
 			throws EntryDefinitionNotFoundException;
 
 	List<MunicipalBond> findPendingsByGroupingCode(String groupingCode);
@@ -112,4 +117,12 @@ public interface MunicipalBondService {
 		   Long municipalBondStatusId);
 	
 	public Long findMunicipalBondsNumberFormalizer(Long municipalBondStatusId, Date now);
+	
+	//macartuche
+	//para abonos
+	public BigDecimal calculateDiscount(MunicipalBond municipalBond);
+	
+	MunicipalBond addChildrenItem(MunicipalBond municipalBond, Date serviceDate,
+			EntryStructureType entryStructureType,
+			boolean isEmission, Boolean internalTramit, BigDecimal value) throws EntryDefinitionNotFoundException;
 }

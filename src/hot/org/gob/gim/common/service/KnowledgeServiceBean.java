@@ -43,7 +43,7 @@ public class KnowledgeServiceBean implements KnowledgeService{
 		InputStream is = new ByteArrayInputStream(bytes);
 		KnowledgeBuilder knowledgeBuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
 		knowledgeBuilder.add(ResourceFactory.newInputStreamResource(is), ResourceType.DRL);
-		System.out.println("---- Added resource bytes drools");
+		//System.out.println("---- Added resource bytes drools");
 		return knowledgeBuilder;
 	}
 
@@ -51,7 +51,7 @@ public class KnowledgeServiceBean implements KnowledgeService{
 	public KnowledgeBuilder addResourceDrools(String pathRulesFile) {
 		KnowledgeBuilder knowledgeBuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
 		knowledgeBuilder.add(ResourceFactory.newFileResource(pathRulesFile), ResourceType.DRL);
-		System.out.println("---- Added resource file drools");
+		//System.out.println("---- Added resource file drools");
 		return knowledgeBuilder;
 	}
 
@@ -62,7 +62,7 @@ public class KnowledgeServiceBean implements KnowledgeService{
 			InputStream is = new ByteArrayInputStream(bytes);
 			knowledgeBuilder.add(ResourceFactory.newInputStreamResource(is), ResourceType.DRL);
 		}
-		System.out.println("---- Added resource byte List drools");
+		//System.out.println("---- Added resource byte List drools");
 		return knowledgeBuilder;
 	}
 
@@ -82,7 +82,7 @@ public class KnowledgeServiceBean implements KnowledgeService{
 	@Override
 	public void addKnowledgePackages(Collection<KnowledgePackage> knowledgePackages){
         knowledgeBase.addKnowledgePackages(knowledgePackages);
-        System.out.println("=== Resources add in knowledgeBase: " + knowledgeBase.getKnowledgePackages().size());
+        //System.out.println("=== Resources add in knowledgeBase: " + knowledgeBase.getKnowledgePackages().size());
         if (session == null)
         	session = knowledgeBase.newStatefulKnowledgeSession();        
 	}
@@ -121,10 +121,10 @@ public class KnowledgeServiceBean implements KnowledgeService{
 		FactHandle factHandle = session.getFactHandle(object); 
 		
 		if (factHandle == null){
-			System.out.println("===== Insertando new Fact");
+			//System.out.println("===== Insertando new Fact");
 			factHandle = session.insert(object);
 		}else{
-			System.out.println("===== Updating new Fact");
+			//System.out.println("===== Updating new Fact");
 			session.update(factHandle, object);
 		}
 		
@@ -145,7 +145,7 @@ public class KnowledgeServiceBean implements KnowledgeService{
 		if (session == null)
 			session = knowledgeBase.newStatefulKnowledgeSession();
 		Collection<FactHandle> factHandles = session.getFactHandles();
-		System.out.println("=== Tamanio factHandles: " + factHandles.size() + ", " + factHandles.isEmpty() + ", " + !factHandles.isEmpty());
+		//System.out.println("=== Tamanio factHandles: " + factHandles.size() + ", " + factHandles.isEmpty() + ", " + !factHandles.isEmpty());
 		return factHandles.size() > 0 ? Boolean.TRUE : Boolean.FALSE; 
 	}
 
@@ -167,7 +167,7 @@ public class KnowledgeServiceBean implements KnowledgeService{
 		if (session == null)
 			session = knowledgeBase.newStatefulKnowledgeSession();
 		int total = session.fireAllRules();
-		System.out.println("Fire Rules...........: " + total);	
+		//System.out.println("Fire Rules...........: " + total);	
 	}
 
 	/**
@@ -198,7 +198,7 @@ public class KnowledgeServiceBean implements KnowledgeService{
 		KnowledgeRuntimeLoggerFactory.newConsoleLogger(session);
 		//Only now we will fire the rules which are already in the agenda
 		int total = session.fireAllRules();
-		System.out.println("Fire Rules...........: " + total);
+		//System.out.println("Fire Rules...........: " + total);
 	}
 
 }

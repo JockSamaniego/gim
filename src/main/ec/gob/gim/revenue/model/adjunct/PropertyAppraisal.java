@@ -31,6 +31,15 @@ public class PropertyAppraisal extends Adjunct{
 	private BigDecimal realLotAppraisal;
 	private BigDecimal realBuildingAppraisal;
 	
+	//rfam 2017-12-15 aprobacion de ordenanza
+	private BigDecimal lotArea;
+	private BigDecimal constructionArea;
+	
+	//rfam 2018-12-56 avaluo de mejoras para sinat
+	private BigDecimal improvementAppraisal;
+	
+	//private String territorialCode;
+
 	@ManyToOne
 	private Property property;
 	
@@ -118,15 +127,34 @@ public class PropertyAppraisal extends Adjunct{
 	public List<ValuePair> getDetails(){
 		List<ValuePair> details = new LinkedList<ValuePair>();
 //		ValuePair pair = new ValuePair("Clave catastral",cadastralCode);
-		ValuePair pair = new ValuePair("Codigo Territorial",cadastralCode);
+		//rfam 2018-12-26
+		ValuePair pair = new ValuePair("Clave Catastral",cadastralCode);
 		details.add(pair);
+		//rfam 2018-12-26
 //		pair = new ValuePair("Clave anterior",previousCadastralCode);
-		pair = new ValuePair("Clave Catastral",previousCadastralCode);
+		pair = new ValuePair("Clave Catastral Anterior",previousCadastralCode);
 		details.add(pair);
+		
+		
+		//rfam 2018-12-26
+		pair = new ValuePair("Área Lote",lotArea != null ? lotArea.toString() : "-");
+		details.add(pair);
+		
+		pair = new ValuePair("Área Construcción",constructionArea != null ? constructionArea.toString() : "-");
+		details.add(pair);		
+		
+		
 		pair = new ValuePair("Avaluo terreno", lotAppraisal != null ? lotAppraisal.toString() : "");
 		details.add(pair);
-		pair = new ValuePair("Avaluo construccion",buildingAppraisal != null ? buildingAppraisal.toString() : "");
+		pair = new ValuePair("Avaluo construcción",buildingAppraisal != null ? buildingAppraisal.toString() : "");
 		details.add(pair);
+		
+		//rfam 2018-12-26 se presenta solo en el caso de ser mayor a cero
+		if (improvementAppraisal != null && improvementAppraisal.intValue() > 0) {
+			pair = new ValuePair("Avaluo mejoras", improvementAppraisal != null ? improvementAppraisal.toString() : "");
+			details.add(pair);
+		}
+		
 		pair = new ValuePair("Avaluo comercial",commercialAppraisal != null ? commercialAppraisal.toString() : "");
 		details.add(pair);
 		pair = new ValuePair("Valor de exencion",exemptionValue != null ? exemptionValue.toString() : "");
@@ -184,6 +212,35 @@ public class PropertyAppraisal extends Adjunct{
 		if(realBuildingAppraisal == null){
 			this.realBuildingAppraisal = BigDecimal.ZERO;
 		}
+	}
+
+
+	public BigDecimal getLotArea() {
+		return lotArea;
+	}
+
+
+	public void setLotArea(BigDecimal lotArea) {
+		this.lotArea = lotArea;
+	}
+
+
+	public BigDecimal getConstructionArea() {
+		return constructionArea;
+	}
+
+
+	public void setConstructionArea(BigDecimal constructionArea) {
+		this.constructionArea = constructionArea;
+	}
+	
+	public BigDecimal getImprovementAppraisal() {
+		return improvementAppraisal;
+	}
+
+
+	public void setImprovementAppraisal(BigDecimal improvementAppraisal) {
+		this.improvementAppraisal = improvementAppraisal;
 	}
 
 }

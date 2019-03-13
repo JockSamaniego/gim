@@ -6,9 +6,19 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+//import org.glassfish.jersey.client.ClientConfig;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.dto.HistoryChangeResident;
 import org.gob.gim.common.service.ResidentService;
@@ -16,10 +26,14 @@ import org.gob.gim.common.service.SystemParameterService;
 import org.hibernate.validator.InvalidValue;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.core.ResourceBundle;
 import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.framework.EntityHome;
+import org.jboss.seam.log.Log;
 
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.commercial.model.Business;
@@ -34,9 +48,6 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.loja.client.clients.UserClient;
 import ec.gob.loja.client.model.Message;
 import ec.gob.loja.client.model.UserWS;
-import javax.faces.application.FacesMessage;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.log.Log;
 
 @Name("residentHome")
 public class ResidentHome extends EntityHome<Resident> {
@@ -55,9 +66,15 @@ public class ResidentHome extends EntityHome<Resident> {
 
     @In
     FacesMessages facesMessages;
+    
+    @In(create = true)
+	private Renderer renderer;
 
     @In(scope = ScopeType.SESSION, value = "userSession")
     UserSession userSession;
+    
+    @Logger
+	Log logger;
 
     public String getCountry() {
         return country;
@@ -166,10 +183,10 @@ public class ResidentHome extends EntityHome<Resident> {
         Resident resident = instance;
         if (resident.getClass() == LegalEntity.class) {
             LegalEntity legalEntity = (LegalEntity) resident;
-            System.out.println("LEADING YOU A CHOICE: entityType " + legalEntity.getLegalEntityType());
+            //System.out.println("LEADING YOU A CHOICE: entityType " + legalEntity.getLegalEntityType());
             if (legalEntity.getLegalEntityType() == LegalEntityType.PUBLIC) {
                 String code = (String) legalEntity.getCode();
-                System.out.println("LEADING YOU A CHOICE: code " + code);
+                //System.out.println("LEADING YOU A CHOICE: code " + code);
                 if (code == null || code.isEmpty()) {
                     String message = ResourceBundle.instance().getString("InvalidPublicEntityCodeException");
                     InvalidValue iv = new InvalidValue(message, LegalEntityType.class, "code", null, legalEntity);
@@ -183,6 +200,15 @@ public class ResidentHome extends EntityHome<Resident> {
 
     public String save() {
         String outcome = null;
+        
+        //2018-08-08 rfam para el control de cuenta unica
+        if(this.getInstance().getGenerateUniqueAccountt()) {
+        	if(this.getInstance().getEmail()==null || this.getInstance().getEmail().equals("")) {
+        		getFacesMessages().addFromResourceBundle(FacesMessage.SEVERITY_ERROR, "Correo es necesario para cuenta única");
+        		return null;
+        	}
+        }
+        
         try {
             if (!isPublicEntityCodeValid()) {
                 return null;
@@ -200,6 +226,11 @@ public class ResidentHome extends EntityHome<Resident> {
             } else {
                 outcome = "persisted";
             }
+            //rfam 2018-08-08 creacion de cuenta unica
+            if(this.getInstance().getGenerateUniqueAccountt()) {
+            	createUniqueAccounttUser(this.getInstance().getIdentificationNumber());	
+            }
+            
             try {
                 UserWS userws = new UserWS();
                 if (residentType.equalsIgnoreCase("Person")) {
@@ -213,7 +244,7 @@ public class ResidentHome extends EntityHome<Resident> {
                     try {
                         userws.setPhone(((Person) instance).getCurrentAddress().getPhoneNumber());
                     } catch (Exception ex) {
-                        System.out.println(" setPhone sri >>> error >>>>> <<<<<<");
+                        //System.out.println(" setPhone sri >>> error >>>>> <<<<<<");
                         ex.printStackTrace();
                         userws.setPhone("");
                     }
@@ -228,7 +259,7 @@ public class ResidentHome extends EntityHome<Resident> {
                     try {
                         userws.setPhone(((LegalEntity) instance).getCurrentAddress().getPhoneNumber());
                     } catch (Exception ex) {
-                        System.out.println(" setPhone sri >>> error >>>>> <<<<<<");
+                        //System.out.println(" setPhone sri >>> error >>>>> <<<<<<");
                         ex.printStackTrace();
                         userws.setPhone("");
                     }
@@ -236,7 +267,7 @@ public class ResidentHome extends EntityHome<Resident> {
                 this.sendToService(userws);
                 addFacesMessageFromResourceBundle("update.mail.sri");
             } catch (Exception e) {
-                System.out.println("save sri >>> error >>>>> " + e.getStackTrace().toString());
+                //System.out.println("save sri >>> error >>>>> " + e.getStackTrace().toString());
                 e.printStackTrace();
                 getFacesMessages().addFromResourceBundle(FacesMessage.SEVERITY_ERROR, "noUpdate.mail.sri");
             }
@@ -273,13 +304,13 @@ public class ResidentHome extends EntityHome<Resident> {
         log.info("UserClient client >>>>> <<<<<<");
         UserWS response;
         response = client.saveUser_XML(input, UserWS.class);
-        System.out.println("Estado >>>>>>>>>> " + response.getState());
+        //System.out.println("Estado >>>>>>>>>> " + response.getState());
 
         if (response.getMessageList() != null) {
             List<Message> mensajes = response.getMessageList();
-            for (Message mensaje : mensajes) {
+            /*for (Message mensaje : mensajes) {
                 System.out.println(mensaje.getType() + "\t" + mensaje.getIdentifier() + "\t" + mensaje.getMessage() + "\t" + mensaje.getAdditionalInformation());
-            }
+            }*/
         }
         return response;
     }
@@ -430,9 +461,63 @@ public class ResidentHome extends EntityHome<Resident> {
         }
         return false;
     }
-    
-    public void prueba(){
-    	
-    }
 
+	private String messageUniqueAccount;
+	private String checkingURL;
+	private String auth_username = "usrBA-AR";
+	private String auth_password = "ua.ws@Sistem2";
+	private String serviceUniqueAccountURL = "http://192.168.1.185:8080/services/gadloja";	
+    
+    public String getMessageUniqueAccount() {
+		return messageUniqueAccount;
+	}
+
+	public void setMessageUniqueAccount(String messageUniqueAccount) {
+		this.messageUniqueAccount = messageUniqueAccount;
+	}
+
+
+	public String getCheckingURL() {
+		return checkingURL;
+	}
+
+	public void setCheckingURL(String checkingURL) {
+		this.checkingURL = checkingURL;
+	}
+
+	public void createUniqueAccounttUser(String identificationNumber) {
+		System.out.println("--------------------cuenta unica "+identificationNumber);
+		Form form = new Form();
+		form.param("identificationNumber", identificationNumber);
+
+		Client client = javax.ws.rs.client.ClientBuilder.newClient();
+		WebTarget webTarget = client.target(serviceUniqueAccountURL).path("restapi");
+		webTarget.register(new org.glassfish.jersey.client.filter.HttpBasicAuthFilter(auth_username, auth_password));
+		Response response = webTarget.path("createUserInComplaintBD").request()
+				.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED));
+		String responseDetail = response.readEntity(String.class);
+		try {
+			JSONObject jo = new JSONObject(responseDetail);
+			String status = jo.getString("status");
+			if (status.equals("ok")) {
+				this.messageUniqueAccount = jo.getString("message");
+				this.checkingURL = jo.getString("url");
+				sendMail(renderer);
+			}
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    @Asynchronous
+	private void sendMail(Renderer r){
+		try {
+			logger.info("Renderer "+r);
+			r.render("/common/email/NewUserUniqueAccount.xhtml");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+    
 }

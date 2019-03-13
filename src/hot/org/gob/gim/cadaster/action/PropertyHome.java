@@ -315,12 +315,12 @@ public class PropertyHome extends EntityHome<Property> {
 		}
 
 		if (isUrban) {
-			if (!isValidPreviousCadastralCode()) {
+			/*if (!isValidPreviousCadastralCode()) {
 				String message = Interpolator.instance()
 						.interpolate("#{messages['property.errorPreviousCadastralCode']}", new Object[0]);
 				facesMessages.addToControl("", org.jboss.seam.international.StatusMessage.Severity.ERROR, message);
 				return "failed";
-			}
+			}*/
 			if (!isValidAliquotForProperty()) {
 				String message = Interpolator.instance().interpolate("#{messages['property.errorPropertyAliquots']}",
 						new Object[0]);
@@ -691,13 +691,13 @@ public class PropertyHome extends EntityHome<Property> {
 			return;
 
 		if (parish == null)
-			parish = findTerritorialDivision(5, 9, territorialDivisionHome.findDefaultCanton());
+			parish = findTerritorialDivision(4, 6, territorialDivisionHome.findDefaultCanton());
 
 		if (zone == null)
-			zone = findTerritorialDivision(9, 11, parish);
+			zone = findTerritorialDivision(6, 8, parish);
 
 		if (sector == null) {
-			sector = findTerritorialDivision(11, 13, zone);
+			sector = findTerritorialDivision(8, 10, zone);
 		}
 
 		prepareViewHistory();
@@ -842,7 +842,8 @@ public class PropertyHome extends EntityHome<Property> {
 		// logger.info("populateCadastralCode() parishe #0, zone #1", parish,
 		// zone);
 
-		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "0000");
+//		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "0000"); //antigua clave
+		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "00"); //nueva clave catastral
 		cadastralCodeBuffer.append(zone != null ? zone.getCode() : "00");
 		cadastralCodeBuffer.append(sector != null ? sector.getCode() : "00");
 		cadastralCodeBuffer
@@ -989,7 +990,7 @@ public class PropertyHome extends EntityHome<Property> {
 	}
 
 	public void wire() {
-		System.out.println("--Ingreso a wire PropertyHome isfirsttime" + isFirstTime);
+		//System.out.println("--Ingreso a wire PropertyHome isfirsttime" + isFirstTime);
 
 		getDefinedInstance();
 
@@ -1049,7 +1050,7 @@ public class PropertyHome extends EntityHome<Property> {
 		calculateTotalAreaConstruction();
 
 		anioAppraisal = GregorianCalendar.getInstance().get(Calendar.YEAR);
-		System.out.println(">>>>>>>>>>>>>>>>> anioAppraisal: " + anioAppraisal);
+		//System.out.println(">>>>>>>>>>>>>>>>> anioAppraisal: " + anioAppraisal);
 		if (appraisalPeriod == null)
 			appraisalPeriod = findActiveAppraisalPeriod();
 
@@ -1058,7 +1059,7 @@ public class PropertyHome extends EntityHome<Property> {
 		}
 
 		checkingRecordsForProperty = findCheckingRecordsForProperty();
-		System.out.println("--sale de wire" + this.instance);
+		// System.out.println("--sale de wire" + this.instance);
 
 	}
 
@@ -1270,7 +1271,8 @@ public class PropertyHome extends EntityHome<Property> {
 	private List<TerritorialDivision> findTerritorialDivisions(Long parentId) {
 		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParent");
 		query.setParameter("parentId", parentId);
-		return query.getResultList();
+		List<TerritorialDivision> td = query.getResultList(); 
+		return td;
 	}
 
 	/**
@@ -1288,7 +1290,23 @@ public class PropertyHome extends EntityHome<Property> {
 	 */
 
 	public List<TerritorialDivision> findParishes(Long defaultCantonId) {
-		return findTerritorialDivisions(defaultCantonId);
+		//return findTerritorialDivisions(defaultCantonId);
+		//@tag cambioClave
+		return findTerritorialDivisionsNew(defaultCantonId);
+	}
+	
+	/**
+	 * macartuche
+	 * @tag cambioClave
+	 * @param parentId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private List<TerritorialDivision> findTerritorialDivisionsNew(Long parentId) {
+		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParentNew");
+		query.setParameter("parentId", parentId);
+		query.setParameter("classifierGeo", Boolean.TRUE);
+		return query.getResultList();
 	}
 
 	public List<TerritorialDivision> findZones() {
@@ -1400,7 +1418,7 @@ public class PropertyHome extends EntityHome<Property> {
 	 * @return List<BlockLimit>
 	 */
 	public List<BlockLimit> populateLimits() {
-		// logger.info("========= Ingreso a populateLimits(), con instance
+		 logger.info("========= Ingreso a populateLimits(), con instance");
 		// block: #0",
 		// this.getInstance().getBlock().getId());
 		if (this.getInstance().getBlock() != null && this.getInstance().getBlock().getId() != null) {
@@ -2448,17 +2466,18 @@ public class PropertyHome extends EntityHome<Property> {
 			this.selectedPropertyViewHistory = getEntityManager().find(Property.class, propertySelectedId);
 			this.listPropertyHistory.clear();
 			this.listDomainHistory.clear();
-			this.propertySelectedCadastralCode = selectedPropertyViewHistory.getPreviousCadastralCode();
+			//this.propertySelectedCadastralCode = selectedPropertyViewHistory.getPreviousCadastralCode();
 
 			/* PROPIEDAD */
 			String qryProperty = "select rev.timestamp," + "rev.username," + "pro.CADASTRALCODE," + "pro.area,"
 					+ "pro.front," + "pro.frontslength," + "pro.observations," + "pro.side "
 					+ "from gimprod.revision rev " + "inner join gimaudit.property_aud pro on rev.id=pro.rev "
-					+ "where pro.previouscadastralcode = ? " + "order by rev.timestamp desc";
+					+ "where pro.id = ? " + "order by rev.timestamp desc";
 
 			Query queryProperty = this.getEntityManager().createNativeQuery(qryProperty);
 
-			queryProperty.setParameter(1, this.propertySelectedCadastralCode);
+			//queryProperty.setParameter(1, this.propertySelectedCadastralCode);
+			queryProperty.setParameter(1, propertySelectedId);
 			List<Object[]> resultProperties = queryProperty.getResultList();
 
 			/* DOMINIOS */
@@ -2564,4 +2583,15 @@ public class PropertyHome extends EntityHome<Property> {
 			System.out.println("error: no se completó la activación!!");
 		}
 	}
+	
+	public Boolean hasRole(String roleKey) {
+        if (systemParameterService == null) {
+            systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+        }
+        String role = systemParameterService.findParameter(roleKey);
+        if (role != null) {
+            return userSession.getUser().hasRole(role);
+        }
+        return false;
+    }
 }

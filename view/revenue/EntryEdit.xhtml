@@ -263,6 +263,13 @@
 					<ui:define name="label">#{messages['entry.adjunct']}:</ui:define>
 					<h:inputText id="adjunct" size="65" value="#{entryHome.instance.adjunctClassName}" />
 				</s:decorate>
+				
+				<s:decorate id="explanatoryNoteLabel" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['entry.explanatoryNote']}:</ui:define>
+					<h:inputText id="groupingCode" size="65" maxlength="80"
+						value="#{entryHome.instance.explanatoryNote}">
+					</h:inputText>
+				</s:decorate>											
 
 				<div style="clear: both">
 					<span class="required">*</span>

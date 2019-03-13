@@ -10,11 +10,11 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.gob.loja.gim.ws.dto.ClosingStatement;
+import org.gob.loja.gim.ws.dto.FutureStatement;
 import org.gob.loja.gim.ws.dto.Payout;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.Statement;
@@ -61,8 +61,8 @@ public class PaymentPlatform {
 	@WebMethod
 	public Statement findStatement(ServiceRequest request)
 			throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations {
-		System.out.println(
-				"FINDING SATATEMENT FOR " + request.getIdentificationNumber() + " with USER: " + request.getUsername());
+		// System.out.println(
+			//	"FINDING SATATEMENT FOR " + request.getIdentificationNumber() + " with USER: " + request.getUsername());
 		Statement statement = new Statement();
 		try {
 			statement = service.findStatement(request);
@@ -88,8 +88,7 @@ public class PaymentPlatform {
 
 	@WebMethod
 	public Boolean validateOpenTill(ServiceRequest request) {
-		System.out.println(
-				"FINDING SATATEMENT FOR " + request.getIdentificationNumber() + " with USER: " + request.getUsername());
+		// System.out.println("FINDING SATATEMENT FOR " + request.getIdentificationNumber() + " with USER: " + request.getUsername());
 		Boolean isOpen = null;
 		try {
 			isOpen = service.isTillOpen(request);
@@ -102,7 +101,7 @@ public class PaymentPlatform {
 			isOpen = Boolean.FALSE;
 		}
 		InvalidateSession();
-		System.out.println(">>> isOpen " + isOpen);
+		// System.out.println(">>> isOpen " + isOpen);
 		return isOpen;
 	}
 
@@ -130,7 +129,7 @@ public class PaymentPlatform {
 	@WebMethod
 	public Boolean registerDeposit(ServiceRequest request, Payout payout) throws PayoutNotAllowed, InvalidPayout,
 			TaxpayerNotFound, InvalidUser, NotActiveWorkday, NotOpenTill, HasNoObligations {
-		System.out.println("FINDING PENDING BONDS FOR " + request.getIdentificationNumber());
+		// System.out.println("FINDING PENDING BONDS FOR " + request.getIdentificationNumber());
 		boolean registro = false;
 		try {
 			registro = service.registerDeposit(request, payout);
@@ -162,7 +161,7 @@ public class PaymentPlatform {
 
 	@WebMethod
 	public ClosingStatement findDeposits(ServiceRequest request, Date paymentDate) throws InvalidUser {
-		System.out.println("FINDING CLOSING STATEMENT FOR " + request.getIdentificationNumber());
+		// System.out.println("FINDING CLOSING STATEMENT FOR " + request.getIdentificationNumber());
 		ClosingStatement closingStatement = null;
 		try {
 			closingStatement = service.findDeposits(request, paymentDate);
@@ -181,7 +180,7 @@ public class PaymentPlatform {
 			final HttpServletRequest hsr = (HttpServletRequest) sr;
 			HttpSession session = hsr.getSession(false);
 			if (session != null) {
-				System.out.println("Invalidate Session Active PaymentPlatform");
+				// System.out.println("Invalidate Session Active PaymentPlatform");
 				session.invalidate();
 				session.setMaxInactiveInterval(1);
 			}
@@ -326,8 +325,8 @@ public class PaymentPlatform {
 	@WebMethod
 	public Statement debtConsult(ServiceRequest request)
 			throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations {
-		System.out.println(
-				"FINDING SATATEMENT FOR " + request.getIdentificationNumber() + " with USER: " + request.getUsername());
+		// System.out.println(
+			//	"FINDING SATATEMENT FOR " + request.getIdentificationNumber() + " with USER: " + request.getUsername());
 		Statement statement = new Statement();
 		try {
 			statement = service.debtConsult(request);
@@ -358,7 +357,7 @@ public class PaymentPlatform {
 	@WebMethod
 	public TransactionData reversePayment (ServiceRequest request,
 			Payout payout){
-		System.out.println("Llega al metodo de reverso");
+		// System.out.println("Llega al metodo de reverso");
 		
 		return this.service.reversePaymentBank(request, payout);
 	}
@@ -368,4 +367,45 @@ public class PaymentPlatform {
 	public TransactionData  queryPayment(ServiceRequest request, String transactionId){
 		return this.service.queryPayment(request, transactionId);
 	}
+	
+	
+	/**
+	 * Permite identificar si el contribuyente tiene pendientes emisiones futuras
+	 * 
+	 * @param request
+	 *            Detalle del peticionario del servicio
+	 * @return Estado de cuenta del contribuyente solicitado en el request
+	 * @throws PayoutNotAllowed
+	 * @throws TaxpayerNotFound
+	 * @throws NotActiveWorkday
+	 */
+	@WebMethod
+	public FutureStatement findFutureEmission(ServiceRequest request)
+			throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations {
+		//System.out.println(
+			//	"FINDING SATATEMENT FOR " + request.getIdentificationNumber() + " with USER: " + request.getUsername());
+		FutureStatement statement = new FutureStatement();
+		try {
+			statement = service.findFutureEmission(request);
+		} catch (PayoutNotAllowed e) {
+			InvalidateSession();
+			throw e;
+		} catch (TaxpayerNotFound e) {
+			InvalidateSession();
+			throw e;
+		} catch (InvalidUser e) {
+			InvalidateSession();
+			throw e;
+		} catch (NotActiveWorkday e) {
+			InvalidateSession();
+			throw e;
+		} catch (HasNoObligations e) {
+			InvalidateSession();
+			throw e;
+		}
+		InvalidateSession();
+		return statement;
+	}
+	
+	
 }

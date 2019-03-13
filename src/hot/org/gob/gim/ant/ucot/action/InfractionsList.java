@@ -16,6 +16,7 @@ public class InfractionsList extends EntityQuery<Infractions> {
 	private static final String EJBQL = "select infractions from Infractions infractions";
 
 	private static final String[] RESTRICTIONS = {
+		"infractions.fixedRadar = #{infractionsList.fixedRadar}",
 		"lower(infractions.identification) like lower(concat('%',#{infractionsList.infractions.identification},'%'))",
 		"infractions.serial >= #{infractionsList.startSerial}",
 		"infractions.serial <= #{infractionsList.endSerial}",
@@ -23,7 +24,11 @@ public class InfractionsList extends EntityQuery<Infractions> {
 		"lower(infractions.licensePlate) like lower(concat('%',#{infractionsList.infractions.licensePlate},'%'))",
 		"infractions.citationDate >= #{infractionsList.dateFrom}",
 		"infractions.citationDate <= #{infractionsList.dateUntil}",
-		"lower(infractions.bulletin.agent.resident.identificationNumber) like lower(concat('%',#{infractionsList.agent},'%'))",};
+		"lower(infractions.bulletin.agent.resident.identificationNumber) like lower(concat('%',#{infractionsList.agent},'%'))",
+		"lower(infractions.article) like lower(concat('%',#{infractionsList.infractions.article},'%'))",
+		"lower(infractions.numeral) like lower(concat('%',#{infractionsList.infractions.numeral},'%'))",
+		"lower(infractions.partNumber) like lower(concat('%',#{infractionsList.infractions.partNumber},'%'))",
+		"infractions.photoFine = #{infractionsList.infractions.photoFine}",};
 
 	private Infractions infractions = new Infractions();
 	private BigInteger startSerial;
@@ -31,6 +36,7 @@ public class InfractionsList extends EntityQuery<Infractions> {
 	private Date dateFrom;
 	private Date dateUntil;
 	private String agent;
+	private Boolean fixedRadar=Boolean.FALSE;
 
 	public InfractionsList() {
 		setEjbql(EJBQL);
@@ -93,5 +99,12 @@ public class InfractionsList extends EntityQuery<Infractions> {
 		this.agent = agent;
 	}
 
+	public Boolean getFixedRadar() {
+		return fixedRadar;
+	}
+
+	public void setFixedRadar(Boolean fixedRadar) {
+		this.fixedRadar = fixedRadar;
+	}
 	
 }

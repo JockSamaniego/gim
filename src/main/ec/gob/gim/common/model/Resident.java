@@ -97,7 +97,9 @@ import ec.gob.gim.security.model.User;
 						"NEW org.gob.loja.gim.ws.dto.Taxpayer(" +
 						"p.id, p.identificationNumber, p.firstName, p.lastName, p.email) " +
 					  "FROM Person p " +
-					  "WHERE p.identificationNumber LIKE upper(:identificationNumber)")
+					  "WHERE p.identificationNumber LIKE upper(:identificationNumber)"),
+		@NamedQuery(name = "Resident.findResidentByIds", query = "SELECT "
+				+ "resident FROM Resident resident WHERE resident.id in (:idUsers)")
 			  /*@NamedQuery(name="Taxpayer.findLegalEntityFullByIdentification", 
 						query="SELECT " +
 								"NEW org.gob.loja.gim.ws.dto.Taxpayer(" +
@@ -115,7 +117,7 @@ import ec.gob.gim.security.model.User;
 								"NEW org.gob.loja.gim.ws.dto.Taxpayer(" +
 								"r.id, r.identificationNumber, r.name, r.email, currentAddress.street, currentAddress.phoneNumber) " +
 							  "FROM Resident r left join r.currentAddress currentAddress " +
-							  "WHERE r.identificationNumber LIKE :identificationNumber")*/				  
+							  "WHERE r.identificationNumber LIKE :identificationNumber")*/
 	}
 )
 
@@ -146,6 +148,15 @@ public abstract class Resident extends Identifiable{
 	
 	private boolean enabledIndividualPayment;
 	
+	//@author macartuche
+	//abonos
+	@Column(nullable = true)
+	private boolean enablesubscription = Boolean.FALSE;
+	
+	//rfam 2018-08-08
+	@Column(nullable = true)
+	private Boolean generateUniqueAccountt = Boolean.FALSE;
+	               
 	/**
 	 * Relationships
 	 */
@@ -528,6 +539,30 @@ public abstract class Resident extends Identifiable{
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
-	
+
+
+    
+    /**
+     * @author macartuche
+     * @return
+     */
+ 
+
+    
+	public boolean isEnablesubscription() {
+		return enablesubscription;
+	}
+
+	public void setEnablesubscription(boolean enablesubscription) {
+		this.enablesubscription = enablesubscription;
+	}
+
+	public Boolean getGenerateUniqueAccountt() {
+		return generateUniqueAccountt;
+	}
+
+	public void setGenerateUniqueAccountt(Boolean generateUniqueAccountt) {
+		this.generateUniqueAccountt = generateUniqueAccountt;
+	}
 
 }//end Resident

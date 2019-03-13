@@ -37,6 +37,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.core.Interpolator;
 import org.jboss.seam.framework.EntityController;
 
+import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.income.model.Account;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -74,6 +75,10 @@ public class FinantialStatement extends EntityController {
 	private BigDecimal totalDebit;
 
 	private Account quotasAccount;
+	
+	//@macartuche
+	private Account quotasAccountSubscription;
+	//
 
 	private Account interestAccount;
 
@@ -100,6 +105,11 @@ public class FinantialStatement extends EntityController {
 				SystemParameterService.LOCAL_NAME);
 		quotasAccount = systemParameterService.materialize(Account.class,
 				"QUOTAS_ACCOUNT_ID");
+		//@author macartuche
+		quotasAccountSubscription = systemParameterService.materialize(Account.class,
+				"QUOTAS_ACCOUNT_SUBSCRIPTION_ID");
+		//fin cuenta
+		
 		interestAccount = systemParameterService.materialize(Account.class,
 				"INTEREST_ACCOUNT_ID");
 	}
@@ -107,7 +117,7 @@ public class FinantialStatement extends EntityController {
 	public void sumTotalDebit() {
 		totalDebit = BigDecimal.ZERO;
 		if (accountItems == null)
-			return;
+			return;	
 		for (AccountItem ai : accountItems) {
 			if (ai.getDebit() != null)
 				totalDebit = totalDebit.add(ai.getDebit());
@@ -122,14 +132,20 @@ public class FinantialStatement extends EntityController {
 	public void sumTotalCredit() {
 		totalCredit = BigDecimal.ZERO;
 		Long accountId = findAccountByDefinedParameter("QUOTAS_ACCOUNT_ID");
+		ReportType type = ReportType.QUOTAS_LIQUIDATION;
+		//@macartuche
+		if(criteria.getReportType() == ReportType.SUBSCRIPTION) {
+			accountId = findAccountByDefinedParameter("QUOTAS_ACCOUNT_SUBSCRIPTION_ID");
+			type = ReportType.SUBSCRIPTION;
+		}
+		//
 		for (AccountItem ai : accountItems) {
 			if (ai.getCredit() != null) {
 				if (!(ai.getAccountId().equals(accountId) && criteria
-						.getReportType().equals(ReportType.QUOTAS_LIQUIDATION))) {
+						.getReportType().equals(type))) {
 					totalCredit = totalCredit.add(ai.getCredit());
 				}
 			}
-
 		}
 	}
 
@@ -228,7 +244,35 @@ public class FinantialStatement extends EntityController {
 		calculateMunicipalBondsValues();
 		return "/accounting/report/ReportByMunicipalBond.xhtml";
 	}
-
+	
+	//@author macartuche --abonos
+	public String generateReportBySubscription() {
+		getPaidStatuses();
+		loadFiscalPeriod(this.criteria.getFiscalPeriodId());
+		municipalBonds = findMunicipalBondsInSusbscriptionByStatus(paidBondStatuses);
+		calculateMunicipalBondsValues();
+		return "/accounting/report/ReportByMunicipalBond.xhtml";
+	}
+	//fin abonos
+	
+	
+	
+		
+	public List<MunicipalBond> findMunicipalBondsInSusbscriptionByStatus(
+			List<Long> statuses) {
+		Query query = getEntityManager().createQuery("SELECT distinct mba.municipalbond FROM MunicipalbondAux mba "
+				+ " join mba.deposit dep "
+				+ " WHERE mba.municipalbond.liquidationDate BETWEEN :startDate AND :endDate AND mba.municipalbond.municipalBondStatus.id in(:statusIds)"
+				+ " AND dep.status=:status "
+				+ " and mba.typepayment=:type");
+		query.setParameter("statusIds", statuses);
+		query.setParameter("startDate", criteria.getStartDate());
+		query.setParameter("endDate", criteria.getEndDate());
+		query.setParameter("status", FinancialStatus.VALID);
+		query.setParameter("type", "SUBSCRIPTION");
+		return query.getResultList();
+	}
+	
 	public List<MunicipalBond> findMunicipalBondsInPaymentAgreementByStatus(
 			List<Long> statuses) {
 		Query query = getEntityManager().createNamedQuery(
@@ -277,6 +321,8 @@ public class FinantialStatement extends EntityController {
 
 		quotasAccountItem = null;
 		Map<String, AccountItem> report;
+		
+		
 		FinantialService finantialService = ServiceLocator.getInstance()
 				.findResource(FinantialService.LOCAL_NAME);
 		if (criteria.getReportType() == ReportType.DUE_PORTFOLIO) {
@@ -287,6 +333,12 @@ public class FinantialStatement extends EntityController {
 		accountItems = new LinkedList<AccountItem>();
 		accountItems.addAll(report.values());
 
+		for ( Map.Entry<String, AccountItem> entry: report.entrySet()) {
+			String key = entry.getKey();
+			AccountItem acc = entry.getValue();
+		    
+		    System.out.println(acc.getAccountName());
+		}
 		Collections.sort(accountItems);
 		sumTotalCredit();
 		sumTotalDebit();
@@ -296,7 +348,7 @@ public class FinantialStatement extends EntityController {
 		/*
 		 * René Ortega Implementacion Memo: ML-DF-2015-1069 2015-12-15
 		*/
-		accountItemsOrnato = new ArrayList<AccountItem>();
+		/*accountItemsOrnato = new ArrayList<AccountItem>();
 		if (criteria.getReportType() == ReportType.BALANCE) {
 			systemParameterService = ServiceLocator.getInstance().findResource(
 					SystemParameterService.LOCAL_NAME);
@@ -335,13 +387,18 @@ public class FinantialStatement extends EntityController {
 			accountItems.get(index).setDebit(valorTotal);
 			
 			totalResolutionOrnato = valorTotal;
-		}
+		}*/
 
 	}
 
 	private void separateQuotasAccountItem() {
-		if (quotasAccount == null)
+		if (quotasAccount == null || quotasAccountSubscription == null)
 			return;
+		//@macartuche
+		if(criteria.getReportType() == ReportType.SUBSCRIPTION) {
+			quotasAccount = quotasAccountSubscription;
+		}//fin
+		
 		for (AccountItem ai : accountItems) {
 			if (ai.getAccountNumber().equals(quotasAccount.getAccountCode())) {
 				quotasAccountItem = ai;
@@ -614,5 +671,14 @@ public class FinantialStatement extends EntityController {
 	public void setAccountItemsOrnato(List<AccountItem> accountItemsOrnato) {
 		this.accountItemsOrnato = accountItemsOrnato;
 	}
+
+	public Account getQuotasAccountSubscription() {
+		return quotasAccountSubscription;
+	}
+
+	public void setQuotasAccountSubscription(Account quotasAccountSubscription) {
+		this.quotasAccountSubscription = quotasAccountSubscription;
+	}
+
 	
 }

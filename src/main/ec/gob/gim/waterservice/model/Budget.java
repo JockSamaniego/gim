@@ -82,6 +82,14 @@ public class Budget {
 	
 	@Column(length = 30)
 	private String cadastralCode;
+	
+	
+	/**
+	 * valor q sera puesto en el titulo de credito -> referencia
+	 * la observacion es solo para el presupuesto
+	 * @author rfam 2019-01-29
+	 */
+	private String reference;
 
 	/*
 	 * Relationships
@@ -349,6 +357,16 @@ public class Budget {
 	public void setHouseNumber(String houseNumber) {
 		this.houseNumber = houseNumber;
 	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+	
+	
 	/*
 	 * public BudgetEntry getBudgetEntry() { return budgetEntry; }
 	 * 

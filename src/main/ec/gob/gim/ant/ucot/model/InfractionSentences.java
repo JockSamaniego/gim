@@ -1,6 +1,8 @@
 package ec.gob.gim.ant.ucot.model;
  
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,10 +15,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.ItemCatalog;
+import ec.gob.gim.common.model.Person;
 
 /**
  * 
@@ -45,8 +50,11 @@ public class InfractionSentences {
 	@Column(length=30)
 	private String processNumber;
 
+	@Column(length=15)
+	private String judgeIdentification;
+	
 	@Column(length=100)
-	private String judge;
+	private String judgeName;
 	
 	@Column(length=100)
 	private String description;
@@ -58,7 +66,47 @@ public class InfractionSentences {
 	@ManyToOne
 	@JoinColumn(name="infractions_id")
 	private Infractions infraction;
-	 
+	
+	@Temporal(TemporalType.DATE)
+	private Date resolutionDate;
+	
+	@Temporal(TemporalType.TIMESTAMP) 
+	private Date creationDate;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "responsible_id") 
+	private Person responsible;
+	   
+	@JoinColumn(name = "responsible_user")	 
+	@Column(length = 100)	 
+	private String responsible_user;
+	
+	private String axisNumber;
+	
+	//Datos para archivo de documentos............................
+	
+	@Temporal(TemporalType.TIMESTAMP) 
+	private Date archivedDate;
+	
+	private String archivedHanger;
+	
+	private String archivedShelf;
+	
+	private String archivedFolder;
+	
+	private String archivedContent;
+	
+	private String archivedDetail;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "archived_responsible_id") 
+	private Person archivedResponsible;
+	   
+	@JoinColumn(name = "responsible_user")	 
+	@Column(length = 100)	 
+	private String archivedResponsible_user;
+
+	//SETTERS AND GETTERS.................................................... 
 	public Long getId() {
 		return id;
 	}
@@ -75,12 +123,21 @@ public class InfractionSentences {
 		this.processNumber = processNumber;
 	}
 
-	public String getJudge() {
-		return judge;
+
+	public String getJudgeIdentification() {
+		return judgeIdentification;
 	}
 
-	public void setJudge(String judge) {
-		this.judge = judge;
+	public void setJudgeIdentification(String judgeIdentification) {
+		this.judgeIdentification = judgeIdentification;
+	}
+
+	public String getJudgeName() {
+		return judgeName;
+	}
+
+	public void setJudgeName(String judgeName) {
+		this.judgeName = judgeName;
 	}
 
 	public String getDescription() {
@@ -105,7 +162,112 @@ public class InfractionSentences {
 
 	public void setInfraction(Infractions infraction) {
 		this.infraction = infraction;
-	} 
+	}
+
+	public Date getResolutionDate() {
+		return resolutionDate;
+	}
+
+	public void setResolutionDate(Date resolutionDate) {
+		this.resolutionDate = resolutionDate;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Person getResponsible() {
+		return responsible;
+	}
+
+	public void setResponsible(Person responsible) {
+		this.responsible = responsible;
+	}
+
+	public String getResponsible_user() {
+		return responsible_user;
+	}
+
+	public void setResponsible_user(String responsible_user) {
+		this.responsible_user = responsible_user;
+	}
+
+	public String getAxisNumber() {
+		return axisNumber;
+	}
+
+	public void setAxisNumber(String axisNumber) {
+		this.axisNumber = axisNumber;
+	}
+
+	public Date getArchivedDate() {
+		return archivedDate;
+	}
+
+	public void setArchivedDate(Date archivedDate) {
+		this.archivedDate = archivedDate;
+	}
+
+	public String getArchivedHanger() {
+		return archivedHanger;
+	}
+
+	public void setArchivedHanger(String archivedHanger) {
+		this.archivedHanger = archivedHanger;
+	}
+
+	public String getArchivedShelf() {
+		return archivedShelf;
+	}
+
+	public void setArchivedShelf(String archivedShelf) {
+		this.archivedShelf = archivedShelf;
+	}
+
+	public String getArchivedFolder() {
+		return archivedFolder;
+	}
+
+	public void setArchivedFolder(String archivedFolder) {
+		this.archivedFolder = archivedFolder;
+	}
+
+	public String getArchivedContent() {
+		return archivedContent;
+	}
+
+	public void setArchivedContent(String archivedContent) {
+		this.archivedContent = archivedContent;
+	}
+
+	public String getArchivedDetail() {
+		return archivedDetail;
+	}
+
+	public void setArchivedDetail(String archivedDetail) {
+		this.archivedDetail = archivedDetail;
+	}
+
+	public Person getArchivedResponsible() {
+		return archivedResponsible;
+	}
+
+	public void setArchivedResponsible(Person archivedResponsible) {
+		this.archivedResponsible = archivedResponsible;
+	}
+
+	public String getArchivedResponsible_user() {
+		return archivedResponsible_user;
+	}
+
+	public void setArchivedResponsible_user(String archivedResponsible_user) {
+		this.archivedResponsible_user = archivedResponsible_user;
+	}
+
 	
 }
 	

@@ -17,6 +17,7 @@ import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.CreditNoteValueNotValidException;
 import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
+import org.gob.gim.revenue.view.EntryValueItem;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -26,6 +27,7 @@ import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.CreditNote;
 import ec.gob.gim.income.model.EndorseCreditNote;
 import ec.gob.gim.income.model.LegalStatus;
+import ec.gob.gim.income.model.dto.CreditNoteDTO;
 import ec.gob.gim.revenue.model.MunicipalBond;
 
 @Name("creditNoteHome")
@@ -83,9 +85,9 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 		if (getInstance().getResident() != null) {
 			setResident(getInstance().getResident());
 			setIdentificationNumber(getResident().getIdentificationNumber());
-			System.out.println("============> "+identificationNumber);
+			/*System.out.println("============> "+identificationNumber);
 			System.out.println("============> "+resident.getIdentificationNumber());
-			System.out.println("============> "+getInstance().getId());
+			System.out.println("============> "+getInstance().getId());*/
 		}
 	}
 
@@ -299,7 +301,6 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 	private String identificationNumberPrevious;
 	private String identificationNumberCurrent;
 	private Long residentId;
-	private EndorseCreditNote endorseCreditNote;
 	private CreditNote creditNoteSelected;
 	private Calendar now;
 	private String endorseDetail;
@@ -347,14 +348,6 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 		this.residentId = residentId;
 	}
 
-	public EndorseCreditNote getEndorseCreditNote() {
-		return endorseCreditNote;
-	}
-
-	public void setEndorseCreditNote(EndorseCreditNote endorseCreditNote) {
-		this.endorseCreditNote = endorseCreditNote;
-	}
-
 	public CreditNote getCreditNoteSelected() {
 		return creditNoteSelected;
 	}
@@ -397,49 +390,80 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 	}
 	
 	public String saveCreditNoteEndorse(){
-		endorseCreditNote = new EndorseCreditNote();
-		endorseCreditNote.setCurrentResident(currentResident);
-		endorseCreditNote.setEndorseDate(now.getTime());
-		endorseCreditNote.setEndorseUser(userSession.getUser());
-		endorseCreditNote.setCreditNote(creditNoteSelected);
-		endorseCreditNote.setPreviousResident(previousResident);
-		endorseCreditNote.setEndorseDetail(endorseDetail);
-		EntityManager em = getEntityManager();
-		//em.merge(creditNoteSelected);
-		em.persist(endorseCreditNote);
+		BigDecimal totalEndorseSave = BigDecimal.ZERO;
+		for(CreditNoteDTO cndto: listToEndorse){
+			if(cndto.getIsValid() && cndto.getValue()!=null){
+				if(cndto.getValue().compareTo(BigDecimal.ZERO)>0){
+					totalEndorseSave = totalEndorseSave.add(cndto.getValue());
+					
+					CreditNote cNote = new CreditNote();
+					cNote.setCreditNoteType(this.creditNoteSelected.getCreditNoteType());
+					cNote.setDescription(this.creditNoteSelected.getDescription()+" (Endoso)");
+					cNote.setDate(now.getTime());
+					cNote.setIsActive(Boolean.TRUE);
+					cNote.setReference(this.creditNoteSelected.getReference());
+					cNote.setResolutionNumber(this.creditNoteSelected.getResolutionNumber());
+					cNote.setUseToPay(this.creditNoteSelected.getUseToPay());
+										
+					cNote.setAvailableAmount(cndto.getValue());
+					cNote.setValue(cndto.getValue());
+					Resident currentRes = searchResidentCurrent(cndto.getIdentificationNumber()).get(0);
+					cNote.setResident(currentRes);
+					cNote.setParentCreditNote_id(this.creditNoteSelected.getId());
+					EntityManager em = getEntityManager();
+					em.persist(cNote);
+					
+					EndorseCreditNote ecNote = new EndorseCreditNote();
+					ecNote.setCurrentResident(currentRes);
+					ecNote.setPreviousResident(previousResident);
+					ecNote.setEndorseDate(now.getTime());
+					ecNote.setEndorseUser(userSession.getUser());
+					ecNote.setCreditNote(creditNoteSelected);
+					ecNote.setEndorseDetail(endorseDetail);
+					em.persist(ecNote);
+				}
+			}	
+		}
+		BigDecimal actualAmount = this.creditNoteSelected.getAvailableAmount().subtract(totalEndorseSave);
 		setInstance(creditNoteSelected);
-		this.instance.setResident(currentResident);
+		this.instance.setAvailableAmount(actualAmount);
+		if(actualAmount.compareTo(BigDecimal.ZERO)<=0){
+			this.instance.setIsActive(Boolean.FALSE);
+		}
 		super.update();
+		this.listToEndorse = new ArrayList<CreditNoteDTO>();
+		this.isValidEndorse = Boolean.FALSE;
+		this.endorseDetail =  null;
 		return "/income/CreditNoteList.xhtml";
+	}
+	
+	public void createCreditNote(){
+		
+	}
+	
+	public void createCreditNoteEndorse(){
+		
 	}
 		
 	//metodos necesarios
 
-	public void searchResidentCurrent() {
+	public List<Resident> searchResidentCurrent(String numIde) {
+		List<Resident> residents = new ArrayList();
         Query query = getEntityManager().createNamedQuery(
                 "Resident.findByIdentificationNumber");
         query.setParameter("identificationNumber",
-                this.identificationNumberCurrent);
-        try {
-            Resident resident = (Resident) query.getSingleResult();
-            this.setCurrentResident(resident);
-
-            if (resident.getId() == null) {
-                addFacesMessageFromResourceBundle("resident.notFound");
-            }
-        } catch (Exception e) {
-            this.setCurrentResident(null);
-            addFacesMessageFromResourceBundle("resident.notFound");
-        }
+        		numIde);
+            residents = query.getResultList();
+            return residents;
     }
 	
-	public void currentSelectedListener(ActionEvent event) {
-        UIComponent component = event.getComponent();
-        Resident resident = (Resident) component.getAttributes()
-                .get("resident");
-        this.setCurrentResident(resident);
-        this.setIdentificationNumberCurrent(resident.getIdentificationNumber());
-    }
+//	public void currentSelectedListener(ActionEvent event) {
+//        UIComponent component = event.getComponent();
+//        Resident resident = (Resident) component.getAttributes()
+//                .get("resident");
+//        this.setCurrentResident(resident);
+//        this.setIdentificationNumberCurrent(resident.getIdentificationNumber());
+//    }
 	
 	public void previousResidentSelectedListener(ActionEvent event) {
         UIComponent component = event.getComponent();
@@ -466,4 +490,71 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
             addFacesMessageFromResourceBundle("resident.notFound");
         }
     }
+	
+	//para endoso multiple de notas de credito
+	//Jock Samaniego
+	//04-12-2018
+	
+	private List<CreditNoteDTO> listToEndorse = new ArrayList();
+	private Boolean isValidEndorse = Boolean.FALSE;
+	
+	public List<CreditNoteDTO> getListToEndorse() {
+		return listToEndorse;
+	}
+
+	public void setListToEndorse(List<CreditNoteDTO> listToEndorse) {
+		this.listToEndorse = listToEndorse;
+	}
+	
+	public Boolean getIsValidEndorse() {
+		return isValidEndorse;
+	}
+
+	public void setIsValidEndorse(Boolean isValidEndorse) {
+		this.isValidEndorse = isValidEndorse;
+	}
+
+	
+	public BigDecimal calculateTotalEndorse(){
+		BigDecimal totalEndorse = BigDecimal.ZERO;
+		for(CreditNoteDTO cn: listToEndorse){
+			if(cn.getIsValid() && cn.getValue()!=null){
+				if(cn.getValue().compareTo(BigDecimal.ZERO)<=0){
+					cn.setColor("red");
+				}else{
+					totalEndorse = totalEndorse.add(cn.getValue());
+					cn.setColor("white");
+				}
+			}		
+		}
+		if(totalEndorse.compareTo(BigDecimal.ZERO)<=0 || totalEndorse.compareTo(this.creditNoteSelected.getAvailableAmount())>0){
+			this.isValidEndorse = Boolean.FALSE;
+		}else{
+			this.isValidEndorse = Boolean.TRUE;
+		}
+		return totalEndorse;
+	}
+	
+	public void addCreditNoteEndorse() {
+		CreditNoteDTO creditNoteItem = new CreditNoteDTO();
+		creditNoteItem.setIsValid(Boolean.FALSE);
+		creditNoteItem.setColor("white");
+		listToEndorse.add(creditNoteItem);
+	}
+	
+	public void remove(CreditNoteDTO creditNote) {
+		listToEndorse.remove(creditNote);
+		this.calculateTotalEndorse();
+	}
+	
+	public void searchResidentName(CreditNoteDTO _creditNoteEndorse){
+		List<Resident> rdts = searchResidentCurrent(_creditNoteEndorse.getIdentificationNumber());
+		if(rdts.size()>0){
+			_creditNoteEndorse.setName(rdts.get(0).getName());
+			_creditNoteEndorse.setIsValid(Boolean.TRUE);
+		}else{
+			_creditNoteEndorse.setName("No existe el contribuyente");
+		}
+
+	}
 }

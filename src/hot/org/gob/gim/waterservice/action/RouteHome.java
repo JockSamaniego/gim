@@ -275,7 +275,7 @@ public class RouteHome extends EntityHome<Route> {
 	public void updateServiceOrderAll() {
 		if (systemParameterService == null) systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
 		changeIn = systemParameterService.findParameter("AMOUNT_BETWEEN_WATER_ROUTE");
-		System.out.println("========> changeIn " + changeIn);
+		//System.out.println("========> changeIn " + changeIn);
 		if (changeIn != null) {
 			if (waterSupplies != null) {
 				//int routeOrderActual = 0;
@@ -377,7 +377,7 @@ public class RouteHome extends EntityHome<Route> {
 		serviceNumber = null;
 		countServicesNumber();
 		shoudPreEmit = isRouteEmited();
-		System.out.println("ha sido pre-emitida..........................................." + shoudPreEmit);
+		//System.out.println("ha sido pre-emitida..........................................." + shoudPreEmit);
 		// la consulta debe ser de un mes atras para poder cargar la lectura
 		// anterior
 		int monthInt = month.getMonthInt() - 1;
@@ -1173,7 +1173,7 @@ public class RouteHome extends EntityHome<Route> {
 	//@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	private void updateConsumption(List<Consumption> consumptionsToUpdate){
 		if (consumptionsToUpdate.size() == 0)return;
-		System.out.println("_______________________________ llega para modificarssssssssssss "+consumptionsToUpdate.size());
+		//System.out.println("_______________________________ llega para modificarssssssssssss "+consumptionsToUpdate.size());
 		//entityManager.getTransaction().begin();
 		int i=0;
 		for (Consumption cc : consumptionsToUpdate) {	
@@ -1269,7 +1269,7 @@ public class RouteHome extends EntityHome<Route> {
 	}*/
 
 	public String waterPreEmited() {
-		System.out.println(">>>>>>>>>>>>>>>>>>>entra a preemitir agua");
+		//System.out.println(">>>>>>>>>>>>>>>>>>>entra a preemitir agua");
 		if (this.consumptions.size() == servicesNumber.intValue()) {
 			return preEmiteWater();
 		} else {
@@ -1335,7 +1335,7 @@ public class RouteHome extends EntityHome<Route> {
 			}
 			if (consumptions != null) {
 				int intConsumptions = consumptions.size();
-				System.out.println("............................. " + actualConsumptions + " ...... " + intConsumptions);
+				//System.out.println("............................. " + actualConsumptions + " ...... " + intConsumptions);
 				return true;
 			} else {
 				return false;
@@ -1475,7 +1475,7 @@ public class RouteHome extends EntityHome<Route> {
 			query.setParameter("routeId", this.getInstance().getId());
 			query.setParameter("overAmount", this.valueValidation);
 			consumptionsReport = query.getResultList();
-			System.out.println("los errores sobre " + consumptionsReport.size());
+			//System.out.println("los errores sobre " + consumptionsReport.size());
 		}
 	}
 
@@ -1488,7 +1488,7 @@ public class RouteHome extends EntityHome<Route> {
 			query.setParameter("routeId", this.getInstance().getId());
 			query.setParameter("overAmount", this.valueValidation);
 			consumptionsReport = query.getResultList();
-			System.out.println("los errores bajo " + consumptionsReport.size());
+			//System.out.println("los errores bajo " + consumptionsReport.size());
 		}
 	}
 
@@ -1715,7 +1715,7 @@ public class RouteHome extends EntityHome<Route> {
 		serviceNumber = null;
 		countServicesNumber();// este metodo esta bien... solo hace un conteo
 		shoudPreEmit = isRouteEmited();// metodo corregido
-		System.out.println("ha sido pre-emitida..........................................." + shoudPreEmit);
+		//System.out.println("ha sido pre-emitida..........................................." + shoudPreEmit);
 		//aqui cambia todo
 		// consulto los id's de consumos ya generados para el mes seleccionado
 		List<Long> consumptionAlreadyGenerated = findConsumptionAlreadyGenerated();

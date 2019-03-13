@@ -3,10 +3,16 @@ package ec.gob.gim.revenue.model.adjunct;
 public class ValuePair {
 	private String label;
 	private String value;
+	private Boolean valueBoolean;
 	
 	public ValuePair(String label, String value){
 		this.label = label;
 		this.value = value;
+	}
+	
+	public ValuePair(String label, Boolean valueBoolean){
+		this.label = label;
+		this.valueBoolean = valueBoolean;
 	}
 	
 	public String getLabel() {
@@ -20,6 +26,14 @@ public class ValuePair {
 	}
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public Boolean getValueBoolean() {
+		return valueBoolean;
+	}
+
+	public void setValueBoolean(Boolean valueBoolean) {
+		this.valueBoolean = valueBoolean;
 	}
 	
 	

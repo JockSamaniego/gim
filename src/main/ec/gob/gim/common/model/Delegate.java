@@ -29,6 +29,11 @@ public class Delegate {
 	
 	private String name;
 	
+	/**
+	 * notificacion al correo por cualquier novedad
+	 */
+	private String email;
+	
 	@Temporal(TemporalType.DATE)
 	private Date startDate;
 	
@@ -86,6 +91,14 @@ public class Delegate {
 
 	public Charge getCharge() {
 		return charge;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 }

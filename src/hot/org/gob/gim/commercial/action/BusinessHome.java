@@ -390,10 +390,10 @@ public class BusinessHome extends EntityHome<Business> {
 		localFeatureHome.getInstance().setLocal(local);
 		if (this.localFeature.getId() == null) {
 			localFeatureHome.persist();
-			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< esta en null ");
+			//System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< esta en null ");
 		} else {
 			localFeatureHome.update();
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>< si existe " + localFeature.getId());
+			//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>< si existe " + localFeature.getId());
 		}
 		local.setLocalFeature(localFeature);
 		addLocal();
@@ -687,6 +687,7 @@ public class BusinessHome extends EntityHome<Business> {
 		license.setDate_emission(emissionDate);
 		license.setLocal_code(this.local.getCode());
 		license.setLocal_ruc(this.local.getBusiness().getCedruc());
+		license.setLocal_id(this.local.getId());
 		license.setPaper_code(codePaper);
 		license.setResponsible_user(userSession.getUser().getResident().getName());
 		license.setResponsible(userSession.getPerson());
@@ -884,5 +885,29 @@ public class BusinessHome extends EntityHome<Business> {
 				"QUINARA", "SAN LUCAS", "SAN PEDRO DE VILCABAMBA", "SANTIAGO", "TAQUIL", "VILCABAMBA", "YANGANA"));
 		Collections.sort(parishNames);
 		return parishNames;
+	}
+	
+	//Jock Samaniego
+	//Para visualizar informacion del local comercial y permisos de funcionamiento por parte de higiene
+	private List<OperatingLicense> licenseList;
+	
+	public List<OperatingLicense> getLicenseList() {
+		return licenseList;
+	}
+
+	public void setLicenseList(List<OperatingLicense> licenseList) {
+		this.licenseList = licenseList;
+	}
+
+	public void chargeLocalBusiness(Business _business){
+		licenseList = new ArrayList();
+		this.setInstance(_business);
+		beforeEditLocal(_business.getLocales().get(0));
+		if(_business.getLocales().get(0).getCode() != null){
+			Query query = getEntityManager().createNamedQuery("Local.findByLocalCode");
+			query.setParameter("localCode", _business.getLocales().get(0).getCode());
+			licenseList = query.getResultList();
+		}
+			
 	}
 }

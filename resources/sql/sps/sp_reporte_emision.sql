@@ -32,11 +32,11 @@ BEGIN
 		emision.accountCode, 
 		emision.accountName, 
 		coalesce(emision.cantidad,0) as cantidad_emisiones,
-		coalesce(emision.total,0) - coalesce(bajas_current.total,0) as valor_emision,
+		coalesce(emision.total,0) as valor_emision,
 		COALESCE(bajas_current.cantidad, 0) as cantidad_bajas,
 		COALESCE(bajas_current.total,0.00) AS valor_bajas,
-		coalesce(emision.total,0) as total_emision
-	from 
+		(coalesce(emision.total,0) + coalesce(bajas_current.total,0)) as total_emision
+		from 
 		(
 		    --reporte emision
 		    SELECT 	a.id as account_id, 
@@ -71,27 +71,21 @@ BEGIN
 		    --AND a.accountCode like '%'
 		    AND mb.emisionDate BETWEEN sdate and edate
 		    AND mb.municipalBondStatus_id in (9)
-		    and mb.reverseddate BETWEEN sdate and edate
+		    --and mb.reverseddate BETWEEN sdate and edate
 		    AND (cuentaid IS NULL or a.id= cuentaid)
 		    GROUP BY a.id
 		    ORDER BY a.accountCode
 		) as bajas_current on emision.accountcode = bajas_current.accountcode
 		ORDER BY emision.accountCode ASC)
 		UNION
-		((SELECT  taxes.id, 
-			taxes.accountCode, 
-			taxes.description,
-			taxes.cantidad as cantidad,
-			taxes.valor_emision - COALESCE(taxes_bajas.valor,0.00) as valor_emision,
-			COALESCE(taxes_bajas.cantidad,0.00)::integer as cantidad_bajas,
-			COALESCE(taxes_bajas.valor,0.00) as valor_bajas,
-			taxes.valor_emision as total_emision
-		FROM
 		(select  t.id, 
 			ac.accountCode, 
 			t.description,
 			count(*) as cantidad,
-			SUM(ti.value) as valor_emision
+			SUM(ti.value) as valor_emision,
+			0 as cantidad_bajas,
+			0.00 as valor_bajas,
+			SUM(ti.value) as total_emision
 		from MunicipalBond mb 
 		INNER join taxItem ti ON ti.municipalbond_id = mb.id
 		left join tax t ON ti.tax_id = t.id
@@ -100,21 +94,7 @@ BEGIN
 		AND mb.municipalBondStatus_id in (SELECT UNNEST(string_to_array(estados_ids, ',')::BIGINT[]))
 		and t.id NOT IN (2)
 		AND 1 = return_iva
-		GROUP BY t.id, t.name, ac.accountCode ORDER BY ac.accountCode) as taxes
-		left JOIN 
-		(select  t.id, 
-			count(*) AS cantidad, 
-			SUM(ti.value) as valor
-		from MunicipalBond mb 
-		INNER join taxItem ti ON ti.municipalbond_id = mb.id
-		left join tax t ON ti.tax_id = t.id
-		left join Account ac  ON ac.id = t.taxaccount_id
-		where mb.emisionDate BETWEEN sdate and edate
-		and mb.reversedDate BETWEEN sdate and edate
-		and t.id not in (2)
-		AND mb.municipalBondStatus_id in (9) 
-		AND 1 = return_iva
-		GROUP BY t.id, t.description,ac.accountCode ORDER BY ac.accountCode)as taxes_bajas ON taxes.id = taxes_bajas.id)))final_result
+		GROUP BY t.id, t.name, ac.accountCode ORDER BY ac.accountCode))final_result
 		ORDER BY final_result.accountCode ;
 
 END

@@ -1,0 +1,182 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<!-- ui:debug /-->
+	<rich:modalPanel 
+		id="subscriptionPanel"
+		minHeight="540" minWidth="800"
+		height="540" width="800">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="ABONOS"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkSubsc" />
+				<rich:componentControl for="subscriptionPanel" attachTo="hidelinkSubsc"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="paymentSubscriptionConfirm" styleClass="edit">
+			<a:region id="paymentPanel">
+				<rich:panel style="height:460px;">
+					<rich:panel id="errorSubscriptionPanel" style="height:50px; width:100%; overflow:auto;">
+						<rich:messages errorClass="errors" ajaxRendered="true" style="padding-top:0px; margin-top:0px; font-size:small;"/>
+					</rich:panel>
+	
+					<h:panelGrid width="100%" columns="2" columnClasses="headerTitle right, right">
+						<h:outputText value="#{messages['payment.value']}:" style="font-size:35px; font-weight:bold;"/>
+						<h:inputText id="value" value="#{paymentHome.instance.value}"
+							styleClass="right" style="font-size:35px; font-weight:bold;"
+							size="12" readonly="true">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:inputText>
+					</h:panelGrid>
+					
+					<div style="clear: both" />
+					
+					<!-- BEGIN TABLE -->
+					
+					<rich:extendedDataTable  height="280px" 
+						id="paymentSubscriptionDetails" var="_fraction"
+						value="#{paymentHome.instance.paymentFractions}"
+						columnClasses="center, center, right">
+						<f:facet name="header">
+							<h:panelGrid columns="2" columnClasses="left headerTitle,">
+								<h:outputText value="#{messages['payment.detail']}" />
+								<a:commandButton value="#{messages['common.add']}"
+									action="#{paymentHome.addPaymentFraction()}"
+									reRender="paymentSubscriptionDetails"/>
+							</h:panelGrid>
+							
+						</f:facet>
+	
+						<rich:column width="110" sortable="false">
+							<f:facet name="header">
+								#{messages['payment.type']}
+							</f:facet>
+							<h:selectOneMenu id="paymentType"
+								value="#{_fraction.paymentType}"
+								style="font-size:15px; width:102px;">
+								<s:selectItems value="#{paymentHome.paymentTypesubscriptions}"
+									var="_paymentType" label="#{messages[_paymentType.name()]}" />
+								<s:convertEnum />
+								<a:support event="onblur" action="#{paymentHome.calculateChange()}" reRender="changeField" />
+								<a:support event="onchange"
+									eventsQueue="gimQueue"
+									action="#{paymentHome.clearValues(_fraction)}"
+									reRender="receivedAmountColumn, finantialInstitutionColumn, documentNumberColumn, accountNumberColumn" />
+							</h:selectOneMenu>
+						</rich:column>
+						
+						<rich:column id="receivedAmountColumn" width="140" sortable="false">
+							<f:facet name="header">
+								#{messages['payment.receivedAmount']}
+							</f:facet>
+							<h:inputText id="receivedAmount"
+								value="#{_fraction.receivedAmount}" styleClass="right"
+								style="font-size:15px; font-weight:bold;" size="7">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+								<a:support event="onblur"
+									actionListener="#{paymentHome.calculateChange()}"
+									reRender="changeField, receivedAmount, savePaymentBtn"
+									ajaxSingle="true" />
+								<a:support event="onkeypress"
+									actionListener="#{paymentHome.deactivatePayBtn()}"
+									reRender="savePaymentBtn"
+									ajaxSingle="true" />
+							</h:inputText>
+						</rich:column>
+						
+						 
+						 
+						
+						 
+						<rich:column width="60" sortable="false">
+							<f:facet name="header">
+								#{messages['common.action']}
+							</f:facet>
+							<a:commandButton value="#{messages['common.remove']}"
+								actionListener="#{paymentHome.removePaymentFraction(_fraction)}"
+								action="#{paymentHome.calculateChange()}"
+								reRender="paymentSubscriptionDetails" />
+						</rich:column>
+						
+					</rich:extendedDataTable>
+					
+					<!-- END TABLE -->
+					
+					<h:panelGrid width="100%" columns="2" columnClasses="headerTitle right, right">
+						<h:outputText value="#{messages['payment.change']}:" style="font-size:35px; font-weight:bold;"/>
+						<h:inputText id="changeField" value="#{paymentHome.change}"
+							styleClass="right" style="font-size:35px; font-weight:bold;"
+							size="12" readonly="true">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:inputText>
+					</h:panelGrid>
+					
+					<div style="clear: both" />
+				</rich:panel>
+	
+				<div class="actionButtons">
+					<a:commandButton
+						id="savePaymentBtn" ajaxSingle="true"
+						action="#{paymentHome.persist}"
+						value="#{messages['payment.save']}"
+						oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.showModalPanel(\'pdfPrinted\');' : ''}"
+						reRender="pdfPrinted"
+						disabled="#{paymentHome.invalidAmount}"
+						onclick="this.disabled=true;" />
+
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.quit']}"
+						oncomplete="Richfaces.hideModalPanel('subscriptionPanel');"
+						bypassUpdates="true" />
+	
+				</div>
+			</a:region>
+		</h:form>
+
+	</rich:modalPanel>
+
+
+	<rich:modalPanel id="printConfirmPanel2" width="250" height="150">
+		<f:facet name="header">#{messages['payment.printed']}</f:facet>
+		<h:form id="printConfirm2">
+			<h:panelGrid>
+				<h:panelGrid columns="2">
+					<h:graphicImage value="/img/alert.png" />
+					<h:outputText value="#{messages['payment.registerNewPayment']}"
+						style="font-size:large;" />
+				</h:panelGrid>
+				<h:panelGroup>
+					<div class="actionButtons">
+						<a:commandButton style="width:100px" id="printingSuccessBtn2"
+							action="#{paymentHome.confirmPrinting}"
+							value="#{messages['payment.create']}"
+							oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'printConfirmPanel\');' : ''}" />
+					</div>
+				</h:panelGroup>
+			</h:panelGrid>
+		</h:form>
+
+	</rich:modalPanel>
+
+
+</ui:composition>

@@ -1,6 +1,7 @@
 package org.gob.gim.ant.ucot.action;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -10,7 +11,9 @@ import ec.gob.gim.common.model.ItemCatalog;
 
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.UserSession;
 import org.gob.gim.revenue.service.ItemCatalogService;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
@@ -46,8 +49,19 @@ public class InfractionSentencesHome extends EntityHome<InfractionSentences> {
 			wire();
 		}
 	}
+	
+	private Date registerDate;
+
+	public Date getRegisterDate() {
+		return registerDate;
+	}
+
+	public void setRegisterDate(Date registerDate) {
+		this.registerDate = registerDate;
+	}
 
 	public void wire() {
+		registerDate = new Date();
 		getInstance();
 		/*ItemCatalog type = itemCatalogHome.getDefinedInstance();
 		if (type != null) {
@@ -117,4 +131,66 @@ public class InfractionSentencesHome extends EntityHome<InfractionSentences> {
 		infractionSentences = query.getResultList();
 	}
 	
+	private Boolean processToEdit = Boolean.FALSE;
+
+	public Boolean getProcessToEdit() {
+		return processToEdit;
+	}
+
+	public void setProcessToEdit(Boolean processToEdit) {
+		this.processToEdit = processToEdit;
+	}
+
+	public void prepareToEdit(){
+		processToEdit = Boolean.TRUE;
+	}
+	
+	public void prepareToArchived(){
+		wire();
+		if(this.instance.getArchivedDate() == null){
+			this.instance.setArchivedDate(registerDate);
+		}			
+	}
+	
+	public void findResidentName(){
+		if(this.instance.getJudgeIdentification() != null && this.instance.getJudgeIdentification() != ""){
+			List<String> names = new ArrayList<String>();
+			Query query = getEntityManager().createNamedQuery(
+					"infractions.findResidentNameByIdent");
+			query.setParameter("identNum", this.instance.getJudgeIdentification());
+			names = query.getResultList();
+			if(names.size()>0){
+				this.instance.setJudgeName(names.get(0));
+			}else{
+				this.instance.setJudgeName("No registrado");	
+			}	
+		}else{
+			this.instance.setJudgeName(null);
+		}			
+	}
+	
+	@In(scope = ScopeType.SESSION, value = "userSession") 
+	UserSession userSession;
+	
+	public String saveInfractionProcess(){
+		
+		this.getInstance().setCreationDate(new Date());				 
+        this.getInstance().setResponsible_user(userSession.getUser().getResident().getName());	 
+        this.getInstance().setResponsible(userSession.getPerson());
+
+		persist();
+		return "/ant/ucot/InfractionSentencesList.xhtml";
+	}
+	
+	//para archivado.................
+	public String saveArchivedData(){
+		
+		this.getInstance().setArchivedResponsible_user(userSession.getUser().getResident().getName());	 
+        this.getInstance().setArchivedResponsible(userSession.getPerson());
+        
+		update();
+		return "/ant/ucot/InfractionSentencesList.xhtml";
+	}
 }
+
+

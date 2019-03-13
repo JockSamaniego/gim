@@ -33,7 +33,7 @@ public class IdentificationNumberUniquenessValidator implements
 			try {
 				Long residentId = (Long) component.getAttributes().get("residentId");
 				IdentificationType identificationType = (IdentificationType) component.getAttributes().get("identificationType");
-				System.out.println("REMEBER A DAY: identificationType "+identificationType);
+				//System.out.println("REMEBER A DAY: identificationType "+identificationType);
 				ResidentService residentService = ServiceLocator.getInstance().findResource(ResidentService.LOCAL_NAME);
 				residentService.verifyUniqueness(residentId, nid, identificationType);
 			} catch (Exception e) {

@@ -151,7 +151,7 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 		}
 		calculateTotalBudget();
 		isFirsttime = false;
-		generateCode();
+		//generateCode();
 	}
 
 	public void generateCode() {
@@ -252,7 +252,7 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 			bi.setValue(budgetEntry.getValue());
 			this.getInstance().add(bi);	
 		}else{
-			System.out.println("ya existe en la lista");
+			//System.out.println("ya existe en la lista");
 		}
 		
 	}
@@ -669,8 +669,8 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 			budgr.setBudgetCode(this.getInstance().getCode()+" - "+this.getInstance().getYear());
 			budgr.setCadastralCode(this.getInstance().getCadastralCode());
 			
-			System.out.println("............ " + bi.getQuantity());
-			System.out.println("------------ " + bi.getTotal());
+			/*System.out.println("............ " + bi.getQuantity());
+			System.out.println("------------ " + bi.getTotal());*/
 
 			entry = bi.getBudgetEntry().getEntry();
 
@@ -689,6 +689,7 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 
 				MunicipalBond mb = revenueService.createMunicipalBond(resident, entry, fiscalPeriod, entryValueItem, true);
 
+				mb.setGroupingCode(this.getInstance().getCode()+" - "+this.getInstance().getYear());
 				mb.setAdjunct(budgr);
 				//mb.setExpirationDate(expirationDate);
 				mb.setServiceDate(currentDate);
@@ -703,6 +704,11 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 				mb.calculateValue();
 				mb.setEmisionPeriod(emisionPeriod);
 				//mb.setAddress(resident.getCurrentAddress() != null ? resident.getCurrentAddress().toString() : "");
+
+				//rfam 2019-01-29
+				if (this.getInstance().getReference() != null) {
+					mb.setReference(this.getInstance().getReference());
+				}
 				
 				emissionOrder.add(mb);
 			}
@@ -712,11 +718,7 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 			if (quantity > 1) {
 
 				BigDecimal value = bi.getTotal().divide(bi.getQuantity(), 3,RoundingMode.HALF_EVEN);
-
 				Date serviceDate = currentDate;
-
-				System.out.println(".... el value " + value + " ------------ "+ serviceDate);
-				System.out.println(".... el feeee " + bi.getQuantity()+ " ------------ " + serviceDate);
 
 				for (int i = 1; i <= quantity; i++) {
 					try {
@@ -728,10 +730,10 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 						entryValueItem.setExpirationDate(expirationDate);
 						entryValueItem.setResetValue(Boolean.FALSE);
 						entryValueItem.setReference("");
-						
 
 						MunicipalBond mb = revenueService.createMunicipalBond(resident, entry, fiscalPeriod, entryValueItem, true);
-
+						
+						mb.setGroupingCode(this.getInstance().getCode()+" - "+this.getInstance().getYear());
 						mb.setAdjunct(budgr);
 						mb.setExpirationDate(expirationDate);
 						mb.setServiceDate(serviceDate);
@@ -741,11 +743,14 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 						
 						mb.setTimePeriod(entry.getTimePeriod());
 						mb.setCreationTime(new Date());
-						//mb.setPaidTotal(bi.getTotal());
 						mb.setMunicipalBondStatus(mbs);
 						mb.calculateValue();
 						mb.setEmisionPeriod(emisionPeriod);
-						//mb.setAddress(resident.getCurrentAddress() != null ? resident.getCurrentAddress().toString() : "");
+						
+						//rfam 2019-01-29
+						if (this.getInstance().getReference() != null) {
+							mb.setReference(this.getInstance().getReference());
+						}
 						
 						serviceDate = expirationDate;
 						
@@ -754,7 +759,7 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 					} catch (Exception e) {
 						String messages = ResourceBundle.instance().getString(e.getMessage());
 						StatusMessages.instance().add(Severity.ERROR, messages, entry.getName(), serviceDate);
-						System.out.println(messages + "\n" + entry.getName() + "\n" + serviceDate);
+						//System.out.println(messages + "\n" + entry.getName() + "\n" + serviceDate);
 					}
 				}
 			}
@@ -827,6 +832,8 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 	@Override
 	public String persist() {
 		// TODO Auto-generated method stub
+		//rfam 2019-01-28 
+		generateCode();
 		this.getInstance().setRegister(userSession.getPerson());
 		return super.persist();
 	}
@@ -865,8 +872,8 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 		
 		String code = budget.getCode().toString();
 		
-		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX code " + budget.getCode());
-		System.out.println("start "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(budget.getDate()));
+		/*System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX code " + budget.getCode());
+		System.out.println("start "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(budget.getDate()));*/
 		
 		int actualMonth;
 		int year;
@@ -882,12 +889,12 @@ public class BudgetHome extends EntityHome<Budget> implements Serializable {
 		Calendar endDate = Calendar.getInstance();
 		endDate.set(year, (actualMonth - 1), endDayOfMonth);
 		
-		System.out.println("start "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(startDate.getTime()));
+		/*System.out.println("start "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(startDate.getTime()));
 		System.out.println("end   "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(endDate.getTime()));
 		
 		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX start date " + startDate.getTime());
 		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX end date " + endDate.getTime());
-		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX resident id " + budget.getResidentId());
+		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX resident id " + budget.getResidentId());*/
 		
 		Query q = this.getEntityManager().createQuery(sentence);
 		q.setParameter("firstDayMonth", startDate.getTime());

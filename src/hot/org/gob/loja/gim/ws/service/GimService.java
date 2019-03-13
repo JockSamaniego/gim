@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.ejb.Local;
 
+import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
 import org.gob.loja.gim.ws.dto.RealEstate;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
@@ -59,9 +60,26 @@ public interface GimService {
 			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
 			AccountIsBlocked;
 	
+	Boolean generateEmissionOrder(String name, String password,
+			String identificationNumber, String accountCode, String pplessUser, Integer quantity)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
+	
 	StatementReport buildReport(ServiceRequest request, Date startDate, Date endDate, String reportType, Long entryId)
 			throws InvalidUser;
 	
 	List<RealEstate> findProperties(ServiceRequest request);
+	
+	/**
+	 * @author macartuche
+	 * @param identificationNumber
+	 * @param username
+	 * @param password
+	 * @return
+	 */
+	UserResponse  saveUser(ServiceRequest request, String username, String password);
+	UserResponse login(String username, String password);
 	
 }

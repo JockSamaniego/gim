@@ -1,5 +1,6 @@
 package org.gob.gim.ant.ucot.action;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +18,7 @@ import ec.gob.gim.ant.ucot.model.Agent;
 import ec.gob.gim.ant.ucot.model.Bulletin;
 import ec.gob.gim.ant.ucot.model.Infractions;
 import ec.gob.gim.common.model.ItemCatalog;
+import ec.gob.gim.ant.ucot.model.InfractionDTO;
 
 @Name("bulletinHome")
 public class BulletinHome extends EntityHome<Bulletin> {
@@ -208,5 +210,42 @@ public class BulletinHome extends EntityHome<Bulletin> {
 		if(infractions.size()>0){
 			haveInfractions = Boolean.TRUE;
 		}
+	}
+	
+	private List<InfractionDTO> infractionsDelivered;
+	
+	public List<InfractionDTO> getInfractionsDelivered() {
+		return infractionsDelivered;
+	}
+
+	public void setInfractionsDelivered(List<InfractionDTO> infractionsDelivered) {
+		this.infractionsDelivered = infractionsDelivered;
+	}
+
+	public void searchInfractionsDelivered(Long bulletinId){
+		infractionsDelivered = new ArrayList();
+		Query query = getEntityManager().createNamedQuery(
+				"bulletin.findById");
+		query.setParameter("id", bulletinId);
+		Bulletin bulletin = (Bulletin) query.getSingleResult();
+		this.setInstance(bulletin);
+		for(int i=bulletin.getStartNumber().intValue(); i<=bulletin.getEndNumber().intValue(); i++){
+			InfractionDTO infractionDTO = new InfractionDTO();
+			infractionDTO.setSerial(Integer.toString(i));
+			try{
+				Query query2 = getEntityManager().createNamedQuery(
+						"infractions.findBySerial");
+				query2.setParameter("serial", new BigInteger(String.valueOf(i)));
+				Infractions infraction = (Infractions) query2.getSingleResult();
+				//System.out.println(infraction.getSerial());
+				//System.out.println("entregadooooo");
+				infractionDTO.setDelivered(Boolean.TRUE);
+			}catch (Exception e){
+				//System.out.println(i+" nooooo entregado");
+				infractionDTO.setDelivered(Boolean.FALSE);
+			}
+			infractionsDelivered.add(infractionDTO);
+		}
+		
 	}
 }

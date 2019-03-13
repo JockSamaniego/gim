@@ -19,12 +19,15 @@
 				noSelectionLabel="#{messages['common.choose']}" />
 			<s:convertEntity />
 			<a:support event="onchange" eventsQueue="gimQueue" ajaxSingle="true"
-				reRender="municipalBondsPanel, totalsPanel"
+				reRender="municipalBondsPanel, totalsPanel, msgRemission"
 				action="#{paymentHome.calculateTotals}" focus="value"/>
 		</h:selectOneMenu> -  
 		<h:outputText value=" #{messages[paymentHome.agreementType]}" 
 			style="font-size:13px; font-weight:bold;" ></h:outputText>
 	</s:decorate>
+	
+	<h:outputText value="El contribuyente debe cancelar todo el convenio!" 
+			style="font-size:30px; font-weight:bold; color: red" id="msgRemission" rendered="#{paymentHome.forcedToPayAll}"></h:outputText>
 
 	<s:decorate id="valueField" template="../../layout/edit.xhtml"  rendered="#{!paymentHome.agreementsBtn}">
 		<ui:define name="label">#{messages['payment.value']}:</ui:define>
@@ -168,7 +171,7 @@
 			</rich:column>
 		</rich:subTable>
 
-		<rich:subTable value="#{_municipalBond.deposits}" var="_deposit"
+		<rich:subTable value="#{_municipalBond.depositsList}" var="_deposit"
 			rendered="#{not empty _municipalBond.deposits}">
 
 			<rich:column

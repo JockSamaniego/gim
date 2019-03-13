@@ -293,7 +293,11 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 				+ "LEFT JOIN location.mainBlockLimit mainBlockLimit "
 				+ "LEFT JOIN mainBlockLimit.street mainStreet "
 				+ "LEFT JOIN location.neighborhood nb "
-				+ "WHERE p.currentDomain.resident.identificationNumber = :identificationNumber order by p.cadastralCode")
+				+ "WHERE p.currentDomain.resident.identificationNumber = :identificationNumber order by p.cadastralCode"),
+	@NamedQuery(name = "Property.findByResidentsIds", 
+			    query = "SELECT p FROM Property p " +
+			    		"WHERE p.currentDomain.resident.id in (:ids) "+
+			    		"AND p.deleted = FALSE ")
 })
 public class Property {
 
@@ -456,6 +460,8 @@ public class Property {
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	@OrderBy("date desc")
 	private List<Appraisal> appraisals;
+	
+	
 
 	public Property() {
 		this.propertyLandUses = new ArrayList<PropertyLandUse>();
@@ -603,16 +609,30 @@ public class Property {
 		return numberFormat;
 	}
 
+	//macartuche
+	//cambio clave catastral
 	public String getFormattedNumber() {
-		return getNumberFormat().format(number);
+		return getNumberFormat2().format(number);
 	}
 
+	/**
+	 * @macartuche
+	 * Predio-Lote 3 digitos
+	 * @return
+	 */
+	private java.text.NumberFormat getNumberFormat2() {
+		java.text.NumberFormat numberFormat = new java.text.DecimalFormat("000");
+		numberFormat.setMaximumIntegerDigits(3);
+		return numberFormat;
+	}
+	
+	
 	public String getFormattedBuildingNumber() {
-		return getNumberFormat().format(buildingNumber);
+		return getNumberFormat2().format(buildingNumber);
 	}
 
 	public String getFormattedHousingUnitNumber() {
-		return getNumberFormat().format(housingUnitNumber);
+		return getNumberFormat2().format(housingUnitNumber);
 	}
 
 	public String getFormattedFloorNumber() {
@@ -1202,6 +1222,18 @@ public class Property {
 
 	public void setPropertyLocationType(PropertyLocationType propertyLocationType) {
 		this.propertyLocationType = propertyLocationType;
+	}
+ 
+	// para consultas por la clave antigua
+	@Column(name = "cadastralcode_old")
+	private String cadastralCode_old;
+
+	public String getCadastralCode_old() {
+		return cadastralCode_old;
+	}
+
+	public void setCadastralCode_old(String cadastralCode_old) {
+		this.cadastralCode_old = cadastralCode_old;
 	}
 
 }

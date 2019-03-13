@@ -898,6 +898,7 @@ public class CadasterServiceBean implements CadasterService {
 								BigDecimal percentage = (efp.getDiscountPercentage()==null)? ex.getDiscountPercentage() : efp.getDiscountPercentage();
 								exemptionValue = percentage.multiply(propertyAppraisal.getCommercialAppraisal()).divide(new BigDecimal(100)); 
 								propertyAppraisal.setExemptionValue(exemptionValue);
+								//remision x defecto se pasa false porque no es pago, no implica calculo ni nada
 								municipalBondService.changeExemptionInMunicipalBond(mb,false, true, propertyAppraisal);
 								flag=true;
 							}
@@ -911,6 +912,7 @@ public class CadasterServiceBean implements CadasterService {
 							propertyAppraisal.setExemptionValue(exemptionValue);
 							// mb.setReference(mb.getReference() + " " +
 							// ex.getReference());
+							//remision x defecto se pasa false porque no es pago, no implica calculo ni nada
 							municipalBondService.changeExemptionInMunicipalBond(mb,
 									false, true, propertyAppraisal);
 						}
@@ -939,6 +941,7 @@ public class CadasterServiceBean implements CadasterService {
 											BigDecimal percentage = (exemptionForProperty.getDiscountPercentage()==null)? ex.getDiscountPercentage() : exemptionForProperty.getDiscountPercentage();
 											exemptionValue = percentage.multiply(propertyAppraisal.getCommercialAppraisal()).divide(new BigDecimal(100)); 
 											propertyAppraisal.setExemptionValue(exemptionValue);
+											//remision x defecto se pasa false porque no es pago, no implica calculo ni nada
 											municipalBondService.changeExemptionInMunicipalBond(mb,false, true, propertyAppraisal);
 //											flag=true;
 //										}
@@ -949,6 +952,7 @@ public class CadasterServiceBean implements CadasterService {
 									propertyAppraisal
 											.setExemptionValue(propertyAppraisal
 													.getCommercialAppraisal());
+									//remision x defecto se pasa false porque no es pago, no implica calculo ni nada
 									municipalBondService
 									.changeExemptionInMunicipalBond(mb,
 											false, true, propertyAppraisal);

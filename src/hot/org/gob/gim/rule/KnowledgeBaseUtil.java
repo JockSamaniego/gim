@@ -48,7 +48,7 @@ public class KnowledgeBaseUtil {
 		InputStream is = new ByteArrayInputStream(bytes);
 		knowledgeBuilder.add(ResourceFactory.newInputStreamResource(is), ResourceType.DRL);
 		//getKnowledgeBuilder().add(ResourceFactory.newInputStreamResource(is), ResourceType.DRL);
-		System.out.println("---- Added resource file drools");
+		//System.out.println("---- Added resource file drools");
 		//return getKnowledgeBuilder();
 		return knowledgeBuilder;
 	}
@@ -56,7 +56,7 @@ public class KnowledgeBaseUtil {
 	public void  addResourceDrools(String pathRulesFile, KnowledgeBuilder knowledgeBuilder){
 		
 		knowledgeBuilder.add(ResourceFactory.newFileResource(pathRulesFile), ResourceType.DRL);
-		System.out.println("---- Added resource file drools");
+		//System.out.println("---- Added resource file drools");
 		//return getKnowledgeBuilder();
 		//return knowledgeBuilder;
 	}
@@ -68,7 +68,7 @@ public class KnowledgeBaseUtil {
 			knowledgeBuilder.add(ResourceFactory.newInputStreamResource(is), ResourceType.DRL);
 			//addResourceDrools(bytes);
 		}
-		System.out.println("---- Added resource List files drools");
+		//System.out.println("---- Added resource List files drools");
 		//return getKnowledgeBuilder();
 		return knowledgeBuilder;
 	}
@@ -86,7 +86,7 @@ public class KnowledgeBaseUtil {
 	 */
 	public void addKnowledgePackages(Collection<KnowledgePackage> knowledgePackages){
         knowledgeBase.addKnowledgePackages(knowledgePackages);
-        System.out.println("=== Resources add in knowledgeBase: " + knowledgeBase.getKnowledgePackages().size());
+        //System.out.println("=== Resources add in knowledgeBase: " + knowledgeBase.getKnowledgePackages().size());
         if (session == null)
         	session = knowledgeBase.newStatefulKnowledgeSession();        
 	}
@@ -147,10 +147,10 @@ public class KnowledgeBaseUtil {
 		FactHandle factHandle = session.getFactHandle(object); 
 		
 		if (factHandle == null){
-			System.out.println("===== Insertando new Fact");
+			//System.out.println("===== Insertando new Fact");
 			factHandle = session.insert(object); 
 		}else{
-			System.out.println("===== Updating new Fact");
+			//System.out.println("===== Updating new Fact");
 			session.update(factHandle, object);
 		}
 		
@@ -203,7 +203,7 @@ public class KnowledgeBaseUtil {
 		//KnowledgeRuntimeLoggerFactory.newConsoleLogger(session);
 		//Only now we will fire the rules which are already in the agenda
 		int total = session.fireAllRules();
-		System.out.println("Fire Rules...........: " + total);
+		//System.out.println("Fire Rules...........: " + total);
 	}
 	
 	public void invokeRules(Object... object){

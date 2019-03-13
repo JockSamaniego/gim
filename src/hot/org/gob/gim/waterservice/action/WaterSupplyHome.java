@@ -608,8 +608,8 @@ public class WaterSupplyHome extends EntityHome<WaterSupply> {
 		int startMonth = actualMonth - monthsNumber;
 		int year = Integer.parseInt(new SimpleDateFormat("yyyy")
 				.format(new Date()));
-		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX " + actualMonth
-				+ " ------ " + startMonth + " ------ " + year);
+		/*System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX " + actualMonth
+				+ " ------ " + startMonth + " ------ " + year);*/
 		Query q = this.getEntityManager().createNamedQuery(
 				"Consumption.findByWaterSupplyBetweenMonth");
 		q.setParameter("waterSupplyId", this.getInstance().getId());
@@ -630,8 +630,8 @@ public class WaterSupplyHome extends EntityHome<WaterSupply> {
 			qBack.setParameter("monthStart", 12);
 			qBack.setParameter("monthEnd", (12 - monthBack));
 			consumptions.addAll(qBack.getResultList());
-			System.out.println("meses atras................... " + monthBack
-					+ " " + yearBack + " el tamanio es " + consumptions.size());
+			/*System.out.println("meses atras................... " + monthBack
+					+ " " + yearBack + " el tamanio es " + consumptions.size());*/
 		}
 
 		findMunicipalBound();
@@ -818,7 +818,7 @@ public class WaterSupplyHome extends EntityHome<WaterSupply> {
 		municipalBondStatuses.add(preEmitStatus);
 		municipalBondStatuses.add(reversedStatus);
 		municipalBondStatuses.add(blockedStatus);
-		System.out.println("loadMunicipalBondStatus>>>>>>>>>municipalBondStatusesValor:"+municipalBondStatuses);
+		//System.out.println("loadMunicipalBondStatus>>>>>>>>>municipalBondStatusesValor:"+municipalBondStatuses);
 		return;
 	}
 
@@ -882,7 +882,7 @@ public void findMunicipalBondByState() {
 				//+ "LEFT JOIN FETCH res.currentAddress "
 				+ "LEFT JOIN FETCH mb.items it "
 				+ "LEFT JOIN FETCH it.entry "
-				+ "LEFT JOIN FETCH it.electronicItem "
+				//+ "LEFT JOIN FETCH it.electronicItem "
 				
 				//+ "LEFT JOIN FETCH mb.discountItems di "
 				//+ "LEFT JOIN FETCH di.entry "
@@ -925,25 +925,25 @@ public void findMunicipalBondByState() {
 			posicion = 0;
 			locations = new ArrayList<Integer>();
 			matches = 0;
-			System.out.println("findTotalsByMunicipalBondByState>>>>>>>>>>sc.getMunicipalBond().getNumberValor:"+ sc.getMunicipalBond().getNumber());
+			//System.out.println("findTotalsByMunicipalBondByState>>>>>>>>>>sc.getMunicipalBond().getNumberValor:"+ sc.getMunicipalBond().getNumber());
 
 			for (StatusChange scaux : scs) {
 				if (sc.getMunicipalBond().getId().equals(scaux.getMunicipalBond().getId())) {
-					System.out.println(posicion+ " en: comparing========================"+ sc.getMunicipalBond().getId() + " = "
-							+ scaux.getMunicipalBond().getId());
+					/*System.out.println(posicion+ " en: comparing========================"+ sc.getMunicipalBond().getId() + " = "
+							+ scaux.getMunicipalBond().getId());*/
 					matches++;
 					locations.add(posicion);
 				}
 				posicion++;
 			}
-			System.out.println("");
+			//System.out.println("");
 			if (matches > 1) {
 				int passses = 0;
 				for (Integer location : locations) {
 					if (passses != 0) {
-						System.out
+						/*System.out
 								.println("removiendo: >>>>>>>>>>>>>>>>>>>>>>> "
-										+ location.intValue());
+										+ location.intValue());*/
 						if (!removeLocations.contains(location)) {
 							removeLocations.add(location);
 						}
@@ -962,15 +962,15 @@ public void findMunicipalBondByState() {
 			// location.intValue()+" ------ "+sc_reomved.getMunicipalBond().getPaidTotal());
 		}
 
-		System.out.println(":::::::::::: los tamanos son : " + scs.size()
-				+ " lo eliminado " + statusChanges.size());
+		/*System.out.println(":::::::::::: los tamanos son : " + scs.size()
+				+ " lo eliminado " + statusChanges.size());*/
 
 		for (StatusChange sc : statusChanges) {
 			interest = interest.add(sc.getMunicipalBond().getInterest());
-			System.out.println(sc.getMunicipalBond().getValue() + " ---- "
+			/*System.out.println(sc.getMunicipalBond().getValue() + " ---- "
 					+ sc.getMunicipalBond().getPaidTotal() + " ---- "
 					+ sc.getMunicipalBond().getInterest() + " ---- "
-					+ sc.getMunicipalBond().getTaxesTotal());
+					+ sc.getMunicipalBond().getTaxesTotal());*/
 			paidTotal = paidTotal.add(sc.getMunicipalBond().getValue());
 		}
 		System.out
@@ -992,7 +992,7 @@ public void findMunicipalBondByState() {
 				//+ "LEFT JOIN FETCH res.currentAddress "
 				+ "LEFT JOIN FETCH mb.items it "
 				+ "LEFT JOIN FETCH it.entry "
-				+ "LEFT JOIN FETCH it.electronicItem "
+				//+ "LEFT JOIN FETCH it.electronicItem "
 				//+ "LEFT JOIN FETCH mb.discountItems di "
 				//+ "LEFT JOIN FETCH di.entry "
 				+ "LEFT JOIN FETCH mb.deposits deposit "
@@ -1402,10 +1402,10 @@ public void findMunicipalBondByState() {
 		int cantidad = 0;
 		if (q.getResultList().size() > 0) {
 			cantidad = Integer.parseInt(q.getSingleResult().toString());
-			System.out.println("la cantidad en consulta es::::: " + cantidad);
+			//System.out.println("la cantidad en consulta es::::: " + cantidad);
 		}
-		System.out.println("la cantidad es::::: " + cantidad + " -------- "
-				+ checkExemption());
+		/*System.out.println("la cantidad es::::: " + cantidad + " -------- "
+				+ checkExemption());*/
 		if (cantidad <= 0) {
 			this.setInstance(ws);
 			this.update();
@@ -1543,7 +1543,7 @@ public void findMunicipalBondByState() {
 	
 	public void runReportAll() {
 		this.sequence = 0;
-		System.out.println("runReport>>>>>>>>>>>>>>>municipalBondStatusValue:"+ municipalBondStatus);
+		//System.out.println("runReport>>>>>>>>>>>>>>>municipalBondStatusValue:"+ municipalBondStatus);
 		loadMunicipalBondStatusStart();
 		clearValuesAll();
 		findMunicipalBondByStateAll();
@@ -1551,7 +1551,7 @@ public void findMunicipalBondByState() {
 	
 	public void findMunicipalBondByStateAll() {
 
-		System.out.println("findMunicipalBondByState>>>>>>>>>>>>>>>userSession.getUser().getIdValue:"+ userSession.getUser().getId());
+		//System.out.println("findMunicipalBondByState>>>>>>>>>>>>>>>userSession.getUser().getIdValue:"+ userSession.getUser().getId());
 		String sentencia = "select distinct(sc) from StatusChange sc "
 				+ "LEFT JOIN FETCH sc.municipalBond mb "
 				+ "LEFT JOIN FETCH mb.adjunct "
@@ -1584,11 +1584,11 @@ public void findMunicipalBondByState() {
 		
 		for(StatusChange sc : statusChanges){
 			MunicipalBondManager.listForReverseAll.add(sc.getMunicipalBond().getId());
-			System.out.println("findMunicipalBondByStateAll>>>>>>sc.getMunicipalBond().getIdValor:"+sc.getMunicipalBond().getId());
+			//System.out.println("findMunicipalBondByStateAll>>>>>>sc.getMunicipalBond().getIdValor:"+sc.getMunicipalBond().getId());
 		}
 		
-		System.out.println("findMunicipalBondByState>>>>>>listForReverseAllValor:"+ MunicipalBondManager.listForReverseAll.toString()
-						   +" >>>tamano"+MunicipalBondManager.listForReverseAll.size());
+		/*System.out.println("findMunicipalBondByState>>>>>>listForReverseAllValor:"+ MunicipalBondManager.listForReverseAll.toString()
+						   +" >>>tamano"+MunicipalBondManager.listForReverseAll.size());*/
 		
 		findTotalsByMunicipalBondByState(statusChanges);
 	}
@@ -1637,7 +1637,7 @@ public void findMunicipalBondByState() {
 		String sql = getSqlReport();
 		
 		
-		System.out.println("---------------------------isPreviosYear "+isPreviosYear);
+		/*System.out.println("---------------------------isPreviosYear "+isPreviosYear);
 		System.out.println("-------------- "+wbl.getId());
 		System.out.println("-------------- "+wSupply.getId()+" ----- "+wSupply.getServiceNumber());
 		System.out.println("-------------- "+actualYear);
@@ -1645,7 +1645,7 @@ public void findMunicipalBondByState() {
 		System.out.println("-------------- "+actualToMonth);
 		System.out.println("-------------- "+actualFromDate);
 		System.out.println("-------------- "+actualToDate);
-		System.out.println("--------------------------- ");
+		System.out.println("--------------------------- ");*/
 		
 		if(isPreviosYear){
 			Query query = this.getEntityManager().createNativeQuery(sql);
@@ -1729,14 +1729,14 @@ public void findMunicipalBondByState() {
         previousDate.add(Calendar.MONTH, -4);
                 
         SimpleDateFormat print = new SimpleDateFormat("yyyy-MM-dd");
-        System.out.println("actual fecha: " +print.format(actualDate.getTime()));
-        System.out.println("privia fecha: " +print.format(previousDate.getTime()));
+        //System.out.println("actual fecha: " +print.format(actualDate.getTime()));
+        //System.out.println("privia fecha: " +print.format(previousDate.getTime()));
         
         int actualYear = actualDate.get(Calendar.YEAR);
 		this.actualYear = actualYear;
         int previousYear = previousDate.get(Calendar.YEAR);
         
-        System.out.println("los años::::::... actual "+actualYear+"   previo "+previousYear );
+        //System.out.println("los años::::::... actual "+actualYear+"   previo "+previousYear );
         
 		if (actualYear > previousYear) {
 			isPreviosYear=Boolean.TRUE;

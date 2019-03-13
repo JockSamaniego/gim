@@ -18,7 +18,7 @@ public class ServiceLocator {
     private ServiceLocator(){
         try {
             Properties p = System.getProperties();
-            System.out.println("POLICY ADDED");
+            //System.out.println("POLICY ADDED");
             this.initialContext = new InitialContext(p);
             this.cache = Collections.synchronizedMap(new HashMap<String, Object>());
         } catch (NamingException ex) {
