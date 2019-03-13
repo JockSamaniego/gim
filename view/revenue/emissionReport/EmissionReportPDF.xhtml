@@ -50,12 +50,14 @@
 	<p:font size="9" name="HELVETICA">
 
 		<p:paragraph alignment="right" spacingAfter="10">
-			<p:font size="8" name="HELVETICA">
+			<p:font size="8" name="HELVETICA" style="bold">
 				<p:text value="#{messages['common.date']}: " />
+			</p:font>
+			<p:font size="8" name="HELVETICA">
 				<p:text value="#{currentDatetime}">
 					<f:convertDateTime
 						pattern="#{messages['common.dateFullTimePattern']}" />
-				</p:text>
+			</p:text>
 			</p:font>
 		</p:paragraph>
 
@@ -114,6 +116,21 @@
 					</p:font>
 				</p:paragraph>
 			</p:cell>
+			
+			<p:cell colspan="2" rendered="#{not empty emissionReportHome.charge}">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['workday.emisionPart']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{emissionReportHome.charge}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			
+			
+			
 		</p:table>
 		
 		<p:table rendered="#{not empty emissionReportHome.allResults}" columns="7"
