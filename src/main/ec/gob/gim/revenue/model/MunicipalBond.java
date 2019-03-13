@@ -487,6 +487,14 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "mb.municipalBondStatus.id=:municipalBondStatusId AND "
 				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
 				+ "ORDER BY mb.entry.id"),
+				
+		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndAmountAndStatus", query = "SELECT mb FROM MunicipalBond mb LEFT JOIN FETCH mb.entry "
+				+ "WHERE "
+				+ "mb.resident.id in (:residentIds) AND "
+				+ "mb.municipalBondType=:municipalBondType AND "
+				+ "mb.municipalBondStatus.id in (:municipalBondStatusIds) AND "
+				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
+				+ "ORDER BY mb.entry.id"),
 
 		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmount", query = "SELECT mb FROM MunicipalBond mb "
 				+ "WHERE "
@@ -494,6 +502,15 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "mb.resident.id in (:residentIds) AND "
 				+ "mb.municipalBondType=:municipalBondType AND "
 				+ "mb.municipalBondStatus.id=:municipalBondStatusId AND "
+				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
+				+ "ORDER BY mb.entry.id"),
+				
+		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmountAndStatus", query = "SELECT mb FROM MunicipalBond mb "
+				+ "WHERE "
+				+ "mb.entry.id = :entryId AND "
+				+ "mb.resident.id in (:residentIds) AND "
+				+ "mb.municipalBondType=:municipalBondType AND "
+				+ "mb.municipalBondStatus.id in (:municipalBondStatusIds) AND "
 				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
 				+ "ORDER BY mb.entry.id"),
 
@@ -1103,11 +1120,11 @@ public class MunicipalBond implements Serializable {
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private Set<TaxItem> taxItems;
 
-	@NotAudited
+	//@NotAudited
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Resident resident;
 
-	@NotAudited
+	//@NotAudited
 	@ManyToOne(fetch = FetchType.LAZY)
 	private FiscalPeriod fiscalPeriod;
 
@@ -1123,7 +1140,7 @@ public class MunicipalBond implements Serializable {
 	@JoinColumn(name = "originator_id")
 	private Person originator;
 
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	//@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST,
 			CascadeType.MERGE })
 	@JoinColumn(name = "adjunct_id")

@@ -34,8 +34,16 @@
 					type="application/pdf" />
 		</s:div>
 	</h:panelGrid>
+
+	<h:panelGrid styleClass="full" id="pdfImpresion2" rendered="#{emissionOrderHome.URLnotification != null and emissionOrderHome.URLnotification != ''}" >
+		<s:div id="ObjContainer2"
+				style="width: 800px; height: 480px;">
+				<object data="#{emissionOrderHome.URLnotification}" style="width:100%; height:100%;"
+					type="application/pdf" />
+		</s:div>
+	</h:panelGrid>
 	
-	<h:panelGrid styleClass="full" id="noNotificacation" rendered="#{municipalBondsViewerHome.URLnotification == null || municipalBondsViewerHome.URLnotification == ''}" >
+	<h:panelGrid styleClass="full" id="noNotificacation" rendered="#{(municipalBondsViewerHome.URLnotification == null || municipalBondsViewerHome.URLnotification == '') and (emissionOrderHome.URLnotification == null || emissionOrderHome.URLnotification == '')}" >
 		<s:div id="textContainer"
 				style="width: 800px; height: 480px;">
 				<h:outputText style="font-weight:bold; font-size:25px; color:red" value="No existe notificación registrada" />
