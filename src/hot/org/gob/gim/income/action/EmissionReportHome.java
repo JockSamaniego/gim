@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
+import javax.persistence.Query;
 
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
@@ -27,11 +28,11 @@ import com.google.common.base.Joiner;
 
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
+import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.DTO.ReportEmissionDTO;
 import ec.gob.gim.revenue.model.criteria.ReportEmissionCriteria;
-
 
 /**
  * @author Rene
@@ -40,29 +41,29 @@ import ec.gob.gim.revenue.model.criteria.ReportEmissionCriteria;
 @Name("emissionReportHome")
 @Scope(ScopeType.CONVERSATION)
 public class EmissionReportHome extends EntityController {
-	
+
 	private static final long serialVersionUID = 1L;
 	/*
 	 * INYENCCIONES
 	 */
 	@In
 	FacesMessages facesMessages;
-	
+
 	/*
 	 * ATRIBUTOS
 	 */
-	
+
 	private boolean isFirstTime = true;
-	
+
 	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
-	
+
 	private SystemParameterService systemParameterService;
-	
+
 	private EmissionService emissionService;
-	
+
 	public static String REVENUE_SERVICE_NAME = "/gim/RevenueService/local";
 	private final static String ENTRIES_EMAALEP_LIST = "ENTRIES_EMAALEP_LIST";
-	
+
 	private MunicipalBondStatus inPaymentAgreementStatus;
 	private MunicipalBondStatus externalChannelStatus;
 	private MunicipalBondStatus paidMunicipalBondStatus;
@@ -73,80 +74,81 @@ public class EmissionReportHome extends EntityController {
 	private MunicipalBondStatus cancelledBondStatus;
 	private MunicipalBondStatus futureBondStatus;
 	private MunicipalBondStatus subscriptionBondStatus;
-	
+
 	private MunicipalBondStatus municipalBondStatus;
-	
+
 	private Date startDate;
 	private Date endDate;
-	
+
 	private Charge incomeCharge;
 	private Charge revenueCharge;
 	private Delegate incomeDelegate;
 	private Delegate revenueDelegate;
-	
+
 	private String explanation;
 	private String explanationFormalize;
-	
+
 	private String criteriaEntry;
 	private Entry entry;
 	private String entryCode;
 	private List<Entry> entries;
-	
+
 	private List<ReportEmissionDTO> allResults = new ArrayList<ReportEmissionDTO>();
-	
+
 	private List<ReportEmissionDTO> detailsResults = new ArrayList<ReportEmissionDTO>();
-	
+
 	private List<ReportEmissionDTO> detailsFuturas = new ArrayList<ReportEmissionDTO>();
-	
+
 	private List<ReportEmissionDTO> detailsFormalizacionesPagoAnticipado = new ArrayList<ReportEmissionDTO>();
-	
+
 	private List<ReportEmissionDTO> detailsFormalizacionesNormales = new ArrayList<ReportEmissionDTO>();
-	
+
 	private List<ReportEmissionDTO> detailsAnuladas = new ArrayList<ReportEmissionDTO>();
-	
+
 	private List<ReportEmissionDTO> detailsReversadas = new ArrayList<ReportEmissionDTO>();
-	
+
 	private Long total_cant_emisiones;
-	
+
 	private BigDecimal total_valor_emision;
-	
+
 	private Long total_cant_bajas;
-	
+
 	private BigDecimal total_valor_bajas;
-	
+
 	private BigDecimal total_emision;
-	
+
+	private Integer charge;
+
 	/*
 	 * detalles
 	 */
-	
+
 	private Long total_futuras;
-	
+
 	private BigDecimal total_valor_futuras;
-	
+
 	private Long total_formalizaciones_pago_anticipado;
-	
+
 	private BigDecimal total_valor_formalizaciones_pago_anticipado;
-	
+
 	private Long total_formalizaciones_normales;
-	
+
 	private BigDecimal total_valor_formalizaciones_normales;
 
 	private Long total_anuladas;
-	
+
 	private BigDecimal total_valor_anuladas;
-	
+
 	private Long total_reversadas;
-	
+
 	private BigDecimal total_valor_reversadas;
-	
+
 	private Boolean renderPrint = Boolean.FALSE;
-	
 
 	public EmissionReportHome() {
-		
+
 	}
-	
+
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -194,7 +196,7 @@ public class EmissionReportHome extends EntityController {
 	public void setEntries(List<Entry> entries) {
 		this.entries = entries;
 	}
-	
+
 	public MunicipalBondStatus getMunicipalBondStatus() {
 		return municipalBondStatus;
 	}
@@ -250,7 +252,7 @@ public class EmissionReportHome extends EntityController {
 	public void setTotal_emision(BigDecimal total_emision) {
 		this.total_emision = total_emision;
 	}
-	
+
 	public Long getTotal_futuras() {
 		return total_futuras;
 	}
@@ -333,7 +335,7 @@ public class EmissionReportHome extends EntityController {
 
 	public void setDetailsFormalizacionesPagoAnticipado(
 			List<ReportEmissionDTO> detailsFormalizacionesPagoAnticipado) {
-	this.detailsFormalizacionesPagoAnticipado = detailsFormalizacionesPagoAnticipado;
+		this.detailsFormalizacionesPagoAnticipado = detailsFormalizacionesPagoAnticipado;
 	}
 
 	public List<ReportEmissionDTO> getDetailsFormalizacionesNormales() {
@@ -352,7 +354,7 @@ public class EmissionReportHome extends EntityController {
 	public void setDetailsAnuladas(List<ReportEmissionDTO> detailsAnuladas) {
 		this.detailsAnuladas = detailsAnuladas;
 	}
-	
+
 	public Charge getIncomeCharge() {
 		return incomeCharge;
 	}
@@ -384,7 +386,7 @@ public class EmissionReportHome extends EntityController {
 	public void setRevenueDelegate(Delegate revenueDelegate) {
 		this.revenueDelegate = revenueDelegate;
 	}
-	
+
 	public Boolean getRenderPrint() {
 		return renderPrint;
 	}
@@ -392,7 +394,7 @@ public class EmissionReportHome extends EntityController {
 	public void setRenderPrint(Boolean renderPrint) {
 		this.renderPrint = renderPrint;
 	}
-	
+
 	public List<ReportEmissionDTO> getDetailsReversadas() {
 		return detailsReversadas;
 	}
@@ -400,7 +402,7 @@ public class EmissionReportHome extends EntityController {
 	public void setDetailsReversadas(List<ReportEmissionDTO> detailsReversadas) {
 		this.detailsReversadas = detailsReversadas;
 	}
-	
+
 	public Long getTotal_reversadas() {
 		return total_reversadas;
 	}
@@ -416,13 +418,33 @@ public class EmissionReportHome extends EntityController {
 	public void setTotal_valor_reversadas(BigDecimal total_valor_reversadas) {
 		this.total_valor_reversadas = total_valor_reversadas;
 	}
-	
+
 	public MunicipalBondStatus getSubscriptionBondStatus() {
 		return subscriptionBondStatus;
 	}
 
-	public void setSubscriptionBondStatus(MunicipalBondStatus subscriptionBondStatus) {
+	public void setSubscriptionBondStatus(
+			MunicipalBondStatus subscriptionBondStatus) {
 		this.subscriptionBondStatus = subscriptionBondStatus;
+	}
+
+	public Integer getCharge() {
+		return charge;
+	}
+
+	public void setCharge(Integer charge) {
+		this.charge = charge;
+	}
+
+	private void findWorkday(Date date) {
+		Query query = getEntityManager().createNamedQuery("Workday.findByDate");
+		query.setParameter("date", date);
+		List<Workday> list = query.getResultList();
+		if (list.size() > 0) {
+			this.charge = list.get(0).getId().intValue();
+		} else {
+			this.charge = null;
+		}
 	}
 
 	public void loadDefaultDates() {
@@ -439,17 +461,17 @@ public class EmissionReportHome extends EntityController {
 					.findParameter("STATUS_CHANGE_FOMALIZE_EMISSION_EXPLANATION");
 		}
 	}
-	
+
 	private void initializeServices() {
 		systemParameterService = ServiceLocator.getInstance().findResource(
 				SystemParameterService.LOCAL_NAME);
-		
+
 		if (emissionService == null) {
 			emissionService = ServiceLocator.getInstance().findResource(
 					emissionService.LOCAL_NAME);
 		}
 	}
-	
+
 	private void loadMunicipalBondStatus() {
 		if (pendingStatus != null)
 			return;
@@ -477,7 +499,7 @@ public class EmissionReportHome extends EntityController {
 				MunicipalBondStatus.class,
 				"MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
 	}
-	
+
 	public void loadDates() {
 		if (isFirstTime) {
 			Calendar c = Calendar.getInstance();
@@ -488,7 +510,7 @@ public class EmissionReportHome extends EntityController {
 		}
 
 	}
-	
+
 	private void loadCharge() {
 		incomeCharge = getCharge("DELEGATE_ID_INCOME");
 		if (incomeCharge != null) {
@@ -505,7 +527,7 @@ public class EmissionReportHome extends EntityController {
 			}
 		}
 	}
-	
+
 	private Charge getCharge(String systemParameter) {
 		if (systemParameterService == null)
 			systemParameterService = ServiceLocator.getInstance().findResource(
@@ -514,7 +536,7 @@ public class EmissionReportHome extends EntityController {
 				systemParameter);
 		return charge;
 	}
-	
+
 	public void loadReversedStatus() {
 		if (systemParameterService == null) {
 			systemParameterService = ServiceLocator.getInstance().findResource(
@@ -523,7 +545,7 @@ public class EmissionReportHome extends EntityController {
 		cancelledBondStatus = systemParameterService.materialize(
 				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_VOID");
 	}
-	
+
 	public void searchEntry() {
 		if (entryCode != null) {
 			RevenueService revenueService = ServiceLocator.getInstance()
@@ -542,7 +564,7 @@ public class EmissionReportHome extends EntityController {
 			}
 		}
 	}
-	
+
 	public void searchEntryByCriteria() {
 		// logger.info("SEARCH Entry BY CRITERIA "+this.criteriaEntry);
 		if (this.criteriaEntry != null && !this.criteriaEntry.isEmpty()) {
@@ -551,12 +573,12 @@ public class EmissionReportHome extends EntityController {
 			entries = revenueService.findEntryByCriteria(criteriaEntry);
 		}
 	}
-	
+
 	public void clearSearchEntryPanel() {
 		this.setCriteriaEntry(null);
 		entries = null;
 	}
-	
+
 	public void entrySelectedListener(ActionEvent event) {
 		UIComponent component = event.getComponent();
 		Entry entry = (Entry) component.getAttributes().get("entry");
@@ -567,12 +589,22 @@ public class EmissionReportHome extends EntityController {
 			setEntryCode(entry.getCode());
 		}
 	}
-	
-	public void generateReport(){
+
+	public void generateReport() {
+
+		this.charge = null;
 		
+		if (startDate != null && endDate != null && startDate.equals(endDate)) {
+			findWorkday(startDate);
+		} else {
+			this.charge = null;
+		}
+		System.out.println("CARGO:---------------");	
+		System.out.println(this.charge);
+
 		this.renderPrint = Boolean.FALSE;
-		
-		List <Long> statusIds = new ArrayList<Long>();
+
+		List<Long> statusIds = new ArrayList<Long>();
 
 		if (municipalBondStatus != null) {
 			// Cuando seleccionan un estado (RevenueReport)
@@ -586,42 +618,48 @@ public class EmissionReportHome extends EntityController {
 			statusIds.add(externalChannelStatus.getId());
 			statusIds.add(blockedMunicipalBondStatus.getId());
 			statusIds.add(subscriptionBondStatus.getId());
-			//statusIds.add(reversedMunicipalBondStatus.getId());
+			// statusIds.add(reversedMunicipalBondStatus.getId());
 		}
-		
+
 		Joiner joiner = Joiner.on(",");
-		
+
 		String join = joiner.join(statusIds);
-		
-		
+
 		ReportEmissionCriteria criteria = new ReportEmissionCriteria();
 		criteria.setStartDate(this.startDate);
 		criteria.setEndDate(this.endDate);
-		
-		criteria.setAccount_id(this.entry == null ? "null" : this.entry.getAccount().getId().toString());
+
+		criteria.setAccount_id(this.entry == null ? "null" : this.entry
+				.getAccount().getId().toString());
 		criteria.setStatus_ids(join);
-		
+
 		this.allResults = this.emissionService.findEmissionReport(criteria);
-		
+
 		this.total_cant_bajas = new Long(0);
 		this.total_cant_emisiones = new Long(0);
 		this.total_emision = BigDecimal.ZERO;
 		this.total_valor_bajas = BigDecimal.ZERO;
 		this.total_valor_emision = BigDecimal.ZERO;
-		
+
 		for (ReportEmissionDTO reportEmissionDTO : allResults) {
-			this.total_cant_bajas = this.total_cant_bajas + reportEmissionDTO.getCantidad_bajas();
-			this.total_cant_emisiones = this.total_cant_emisiones + reportEmissionDTO.getCantidad_emisiones();
-			this.total_emision = this.total_emision.add(reportEmissionDTO.getTotal_emision());
-			this.total_valor_bajas = this.total_valor_bajas.add(reportEmissionDTO.getValor_bajas());
-			this.total_valor_emision = this.total_valor_emision.add(reportEmissionDTO.getValor_emision());
+			this.total_cant_bajas = this.total_cant_bajas
+					+ reportEmissionDTO.getCantidad_bajas();
+			this.total_cant_emisiones = this.total_cant_emisiones
+					+ reportEmissionDTO.getCantidad_emisiones();
+			this.total_emision = this.total_emision.add(reportEmissionDTO
+					.getTotal_emision());
+			this.total_valor_bajas = this.total_valor_bajas
+					.add(reportEmissionDTO.getValor_bajas());
+			this.total_valor_emision = this.total_valor_emision
+					.add(reportEmissionDTO.getValor_emision());
 		}
-		
-		this.detailsResults = this.emissionService.findEmissionReportOtherDetails(criteria);
-		
-		//System.out.println("-----Detalles------");
-		//System.out.println(this.detailsResults);
-		
+
+		this.detailsResults = this.emissionService
+				.findEmissionReportOtherDetails(criteria);
+
+		// System.out.println("-----Detalles------");
+		// System.out.println(this.detailsResults);
+
 		this.detailsFormalizacionesNormales = new ArrayList<ReportEmissionDTO>();
 		this.detailsFormalizacionesPagoAnticipado = new ArrayList<ReportEmissionDTO>();
 		this.detailsFuturas = new ArrayList<ReportEmissionDTO>();
@@ -637,32 +675,49 @@ public class EmissionReportHome extends EntityController {
 		this.total_valor_futuras = BigDecimal.ZERO;
 		this.total_valor_anuladas = BigDecimal.ZERO;
 		this.total_valor_reversadas = BigDecimal.ZERO;
-		
+
 		for (ReportEmissionDTO reportEmissionDTO : this.detailsResults) {
-			if(reportEmissionDTO.getTipo().equals("FUTURA")){
+			if (reportEmissionDTO.getTipo().equals("FUTURA")) {
 				this.detailsFuturas.add(reportEmissionDTO);
-				this.total_futuras = this.total_futuras +  reportEmissionDTO.getCantidad_emisiones();
-				this.total_valor_futuras = this.total_valor_futuras.add(reportEmissionDTO.getTotal_emision());
-			}else if(reportEmissionDTO.getTipo().equals("FORMALIZACIONES PAGO ANTICIPADO")){
-				this.detailsFormalizacionesPagoAnticipado.add(reportEmissionDTO);
-				this.total_formalizaciones_pago_anticipado = this.total_formalizaciones_pago_anticipado +  reportEmissionDTO.getCantidad_emisiones();
-				this.total_valor_formalizaciones_pago_anticipado = this.total_valor_formalizaciones_pago_anticipado.add(reportEmissionDTO.getTotal_emision());
-			}else if(reportEmissionDTO.getTipo().equals("FORMALIZACIONES NORMALES")){
+				this.total_futuras = this.total_futuras
+						+ reportEmissionDTO.getCantidad_emisiones();
+				this.total_valor_futuras = this.total_valor_futuras
+						.add(reportEmissionDTO.getTotal_emision());
+			} else if (reportEmissionDTO.getTipo().equals(
+					"FORMALIZACIONES PAGO ANTICIPADO")) {
+				this.detailsFormalizacionesPagoAnticipado
+						.add(reportEmissionDTO);
+				this.total_formalizaciones_pago_anticipado = this.total_formalizaciones_pago_anticipado
+						+ reportEmissionDTO.getCantidad_emisiones();
+				this.total_valor_formalizaciones_pago_anticipado = this.total_valor_formalizaciones_pago_anticipado
+						.add(reportEmissionDTO.getTotal_emision());
+			} else if (reportEmissionDTO.getTipo().equals(
+					"FORMALIZACIONES NORMALES")) {
 				this.detailsFormalizacionesNormales.add(reportEmissionDTO);
-				this.total_formalizaciones_normales = this.total_formalizaciones_normales +  reportEmissionDTO.getCantidad_emisiones();
-				this.total_valor_formalizaciones_normales = this.total_valor_formalizaciones_normales.add(reportEmissionDTO.getTotal_emision());
-			}else if(reportEmissionDTO.getTipo().equals("ANULADAS")){
+				this.total_formalizaciones_normales = this.total_formalizaciones_normales
+						+ reportEmissionDTO.getCantidad_emisiones();
+				this.total_valor_formalizaciones_normales = this.total_valor_formalizaciones_normales
+						.add(reportEmissionDTO.getTotal_emision());
+			} else if (reportEmissionDTO.getTipo().equals("ANULADAS")) {
 				this.detailsAnuladas.add(reportEmissionDTO);
-				this.total_anuladas = this.total_anuladas +  reportEmissionDTO.getCantidad_emisiones();
-				this.total_valor_anuladas = this.total_valor_anuladas.add(reportEmissionDTO.getTotal_emision());
-			}else if(reportEmissionDTO.getTipo().equals("REVERSADAS")){
+				this.total_anuladas = this.total_anuladas
+						+ reportEmissionDTO.getCantidad_emisiones();
+				this.total_valor_anuladas = this.total_valor_anuladas
+						.add(reportEmissionDTO.getTotal_emision());
+			} else if (reportEmissionDTO.getTipo().equals("REVERSADAS")) {
 				this.detailsReversadas.add(reportEmissionDTO);
-				this.total_reversadas = this.total_reversadas +  reportEmissionDTO.getCantidad_emisiones();
-				this.total_valor_reversadas = this.total_valor_reversadas.add(reportEmissionDTO.getTotal_emision());
+				this.total_reversadas = this.total_reversadas
+						+ reportEmissionDTO.getCantidad_emisiones();
+				this.total_valor_reversadas = this.total_valor_reversadas
+						.add(reportEmissionDTO.getTotal_emision());
 			}
 		}
-		
-		if(this.allResults.size()>0 || this.detailsAnuladas.size()>0 || this.detailsFormalizacionesNormales.size()>0 || this.detailsFormalizacionesPagoAnticipado.size()>0 || this.detailsFuturas.size()>0 || this.detailsReversadas.size()>0){
+
+		if (this.allResults.size() > 0 || this.detailsAnuladas.size() > 0
+				|| this.detailsFormalizacionesNormales.size() > 0
+				|| this.detailsFormalizacionesPagoAnticipado.size() > 0
+				|| this.detailsFuturas.size() > 0
+				|| this.detailsReversadas.size() > 0) {
 			this.renderPrint = Boolean.TRUE;
 		}
 	}
