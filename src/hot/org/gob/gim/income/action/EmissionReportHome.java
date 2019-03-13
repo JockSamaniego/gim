@@ -599,9 +599,7 @@ public class EmissionReportHome extends EntityController {
 		} else {
 			this.charge = null;
 		}
-		System.out.println("CARGO:---------------");	
-		System.out.println(this.charge);
-
+		
 		this.renderPrint = Boolean.FALSE;
 
 		List<Long> statusIds = new ArrayList<Long>();
