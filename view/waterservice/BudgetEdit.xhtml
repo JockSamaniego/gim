@@ -114,22 +114,31 @@
 					</h:panelGrid>
 				</f:facet>
 
-				<h:panelGrid columns="4" >
+				<h:panelGrid columns="5" >
 
 					<s:decorate id="telephoneField" template="../layout/vertical-edit.xhtml">
 						<ui:define name="label">#{messages['budget.telephone']}:</ui:define>
-						<h:inputText value="#{budgetHome.instance.telephone}" maxlength="20" size="20"/>
+						<h:inputText value="#{budgetHome.instance.telephone}" maxlength="20" size="15"/>
 					</s:decorate>
 					
 					<s:decorate id="houseNumberField" template="../layout/vertical-edit.xhtml">
 						<ui:define name="label">#{messages['budget.houseNumber']}:</ui:define>
-						<h:inputText value="#{budgetHome.instance.houseNumber}" maxlength="10" size="20"/>
+						<h:inputText value="#{budgetHome.instance.houseNumber}" maxlength="10" size="15"/>
 					</s:decorate>
 					
 					<s:decorate id="addressBudgetField"
 						template="../layout/vertical-edit.xhtml">
 						<ui:define name="label">#{messages['budget.description']}:</ui:define>
 						<h:inputText value="#{budgetHome.instance.description}"
+							maxlength="255" size="50">
+							<a:support event="onblur" ajaxSingle="true" />
+						</h:inputText>
+					</s:decorate>
+					
+					<s:decorate id="referenceBudgetField"
+						template="../layout/vertical-edit.xhtml">
+						<ui:define name="label">#{messages['budget.reference']}:</ui:define>
+						<h:inputText value="#{budgetHome.instance.reference}"
 							maxlength="255" size="50">
 							<a:support event="onblur" ajaxSingle="true" />
 						</h:inputText>

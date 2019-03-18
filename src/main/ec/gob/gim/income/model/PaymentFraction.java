@@ -22,72 +22,66 @@ import javax.persistence.Transient;
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.revenue.model.FinancialInstitution;
+import ec.gob.gim.revenue.model.PaymentTypeSRI;
 
 @Audited
 @Entity
-@TableGenerator(
-	 name="PaymentFractionGenerator",
-	 table="IdentityGenerator",
-	 pkColumnName="name",
-	 valueColumnName="value",
-	 pkColumnValue="PaymentFraction",
-	 initialValue=1, allocationSize=1
-)
+@TableGenerator(name = "PaymentFractionGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "PaymentFraction", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
-		
-		@NamedQuery( name="PaymentFraction.findByPaymentId",
-			query="SELECT pf FROM PaymentFraction pf WHERE pf.payment.id = :paymentId"),
-			
-		@NamedQuery(name="PaymentFraction.SumTotalBetweenDatesByCashierAndValids", 
-		    query="select pf.paymentType, sum(pf.paidAmount) from PaymentFraction pf " +				 			    	
-			   		"where pf.payment.date Between :startDate and :endDate " +			   		
-			    	"AND pf.payment.cashier.id = :cashierId " +
-			   		"AND pf.payment.status = 'VALID'" +
-			   		"GROUP BY pf.paymentType ORDER BY pf.paymentType" ),
-		   		
-		@NamedQuery(name="PaymentFraction.findForViewByDateAndPaymentTypeByCashier",			 			
-		    query="select distinct NEW ec.gob.gim.income.model.PaymentFractionView(pf.id, r.name, r.identificationNumber,pf.accountNumber, pf.documentNumber, pf.paidAmount, pf.paymentType, fi.name, p.date, p.time) from Payment p " +
-		    		"left join p.paymentFractions pf " +
-		    		"left join pf.finantialInstitution fi " +
-		    		"left join p.deposits d " +
-		    		"left join d.municipalBond mb " +
-		    		"left join mb.resident r " +
-		    		"where p.date Between :startDate and :endDate " +
- 			    	"AND p.cashier.id = :cashierId " +
- 			    	"AND pf.paymentType = :paymentType " +
- 			   		"AND p.status = 'VALID' ORDER BY r.name")})
+
+		@NamedQuery(name = "PaymentFraction.findByPaymentId", query = "SELECT pf FROM PaymentFraction pf WHERE pf.payment.id = :paymentId"),
+
+		@NamedQuery(name = "PaymentFraction.SumTotalBetweenDatesByCashierAndValids", query = "select pf.paymentType, sum(pf.paidAmount) from PaymentFraction pf "
+				+ "where pf.payment.date Between :startDate and :endDate " + "AND pf.payment.cashier.id = :cashierId "
+				+ "AND pf.payment.status = 'VALID'" + "GROUP BY pf.paymentType ORDER BY pf.paymentType"),
+
+		@NamedQuery(name = "PaymentFraction.findForViewByDateAndPaymentTypeByCashier", query = "select distinct NEW ec.gob.gim.income.model.PaymentFractionView(pf.id, r.name, r.identificationNumber,pf.accountNumber, pf.documentNumber, pf.paidAmount, pf.paymentType, fi.name, p.date, p.time) from Payment p "
+				+ "left join p.paymentFractions pf " + "left join pf.finantialInstitution fi "
+				+ "left join p.deposits d " + "left join d.municipalBond mb " + "left join mb.resident r "
+				+ "where p.date Between :startDate and :endDate " + "AND p.cashier.id = :cashierId "
+				+ "AND pf.paymentType = :paymentType " + "AND p.status = 'VALID' ORDER BY r.name") })
 
 public class PaymentFraction {
 	@Id
-	@GeneratedValue(generator="PaymentFractionGenerator",strategy=GenerationType.TABLE)
+	@GeneratedValue(generator = "PaymentFractionGenerator", strategy = GenerationType.TABLE)
 	private Long id;
-	
+
 	private String accountNumber;
-	
+
 	// Puede ser numero de nota de deposito, numero de cheque, etc.
 	private String documentNumber;
-	
+
 	private BigDecimal receivedAmount;
-	
+
 	private BigDecimal paidAmount;
-	
+
 	@Enumerated(EnumType.STRING)
-	@Column(length=15)
+	@Column(length = 15)
 	private PaymentType paymentType;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="finantialInstitution_id")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "finantialInstitution_id")
 	private FinancialInstitution finantialInstitution;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Payment payment;
-	
-	@ManyToOne(fetch=FetchType.LAZY) 
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	private CreditNote creditNote;
-	
-	
+
 	@Transient
 	private List<Deposit> deposits;	
+	
+	
+	//macartuche
+	//2018-11-05 15:18 para codigo de pago SRI
+	//@OneToOne(mappedBy = "fraction", fetch = FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="paymentTypesri_id")
+	private PaymentTypeSRI paymentTypesri;
+	
+	@Transient
+	private String codeSRI;
 	
 	public PaymentFraction() {
 		deposits = new ArrayList<Deposit>();
@@ -95,7 +89,7 @@ public class PaymentFraction {
 		paidAmount = BigDecimal.ZERO;
 		paymentType = PaymentType.CASH;
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -103,7 +97,7 @@ public class PaymentFraction {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public String getAccountNumber() {
 		return accountNumber;
 	}
@@ -119,7 +113,7 @@ public class PaymentFraction {
 	public void setDocumentNumber(String documentNumber) {
 		this.documentNumber = documentNumber;
 	}
-	
+
 	public BigDecimal getReceivedAmount() {
 		return receivedAmount;
 	}
@@ -136,7 +130,6 @@ public class PaymentFraction {
 		this.finantialInstitution = finantialInstitution;
 	}
 
-	
 	public PaymentType getPaymentType() {
 		return paymentType;
 	}
@@ -152,7 +145,7 @@ public class PaymentFraction {
 	public void setPayment(Payment payment) {
 		this.payment = payment;
 	}
-	
+
 	public CreditNote getCreditNote() {
 		return creditNote;
 	}
@@ -169,7 +162,6 @@ public class PaymentFraction {
 		this.paidAmount = paidAmount;
 	}
 
-	
 	public List<Deposit> getDeposits() {
 		return deposits;
 	}
@@ -177,17 +169,32 @@ public class PaymentFraction {
 	public void setDeposits(List<Deposit> deposits) {
 		this.deposits = deposits;
 	}
-	public void add(Deposit d){
-		if(d != null && !deposits.contains(d)){
+
+	public void add(Deposit d) {
+		if (d != null && !deposits.contains(d)) {
 			deposits.add(d);
 		}
 	}
-	
-	public void remove(Deposit d){
-		if(d != null && deposits.contains(d)){
+
+	public void remove(Deposit d) {
+		if (d != null && deposits.contains(d)) {
 			deposits.remove(d);
 		}
 	}
+	
+	public PaymentTypeSRI getPaymentTypesri() {
+		return paymentTypesri;
+	}
 
+	public void setPaymentTypesri(PaymentTypeSRI paymentTypesri) {
+		this.paymentTypesri = paymentTypesri;
+	}
 
+	public String getCodeSRI() {
+		return codeSRI;
+	}
+
+	public void setCodeSRI(String codeSRI) {
+		this.codeSRI = codeSRI;
+	}
 }

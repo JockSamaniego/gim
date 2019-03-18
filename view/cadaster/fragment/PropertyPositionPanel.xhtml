@@ -28,7 +28,7 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{territorialDivisionTypes.get(2).name}:</ui:define>
 				<h:selectOneMenu id="parishe" value="#{propertyHome.parish}"
-					required="true" disabled="#{propertyHome.idDefined}">
+					required="true">
 					<s:selectItems
 						value="#{propertyHome.findParishes(defaultCanton.id)}"
 						var="parish" label="#{parish.code} - #{parish.name}"
@@ -44,7 +44,7 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{territorialDivisionTypes.get(3).name}:</ui:define>
 				<h:selectOneMenu id="zone" value="#{propertyHome.zone}"
-					required="true" disabled="#{propertyHome.idDefined}">
+					required="true">
 					<s:selectItems value="#{propertyHome.findZones()}" var="zone"
 						label="#{zone.name}"
 						noSelectionLabel="#{messages['common.shouldSelected']}" />
@@ -59,7 +59,7 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{territorialDivisionTypes.get(4).name}:</ui:define>
 				<h:selectOneMenu id="sector" value="#{propertyHome.sector}"
-					required="true" disabled="#{propertyHome.idDefined}">
+					required="true">
 					<s:selectItems value="#{propertyHome.populateSectors()}"
 						var="sector" label="#{sector.name}"
 						noSelectionLabel="#{messages['common.shouldSelected']}" />
@@ -74,7 +74,7 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{messages['block']}:</ui:define>
 				<h:selectOneMenu id="block" value="#{propertyHome.instance.block}"
-					required="true" disabled="#{propertyHome.idDefined}">
+					required="true">
 					<s:selectItems value="#{propertyHome.populateBlocks()}" var="block"
 						label="#{block.code}"
 						noSelectionLabel="#{messages['common.shouldSelected']}" />
@@ -92,8 +92,7 @@
 				<ui:define name="label">#{messages['property']}:</ui:define>
 				<a:region>
 				<h:inputText id="propertyNumber" required="true"
-					value="#{propertyHome.instance.number}" size="3" maxlength="3"
-					disabled="#{propertyHome.idDefined}">
+					value="#{propertyHome.instance.number}" size="3" maxlength="3">
 					<a:support event="onblur" ajaxSingle="true"
 						reRender="propertyNumberField, cadastralCodePanel"
 						action="#{propertyHome.populateCadastralCode()}" />
@@ -107,7 +106,7 @@
 				<a:region>
 				<h:inputText id="buildingNumber" required="true"
 					value="#{propertyHome.instance.buildingNumber}" size="3"
-					maxlength="3" disabled="#{propertyHome.idDefined and !propertyHome.instance.duplicate}">
+					maxlength="3" >
 					<a:support event="onblur" ajaxSingle="true"
 						reRender="buildingNumberField, cadastralCodePanel"
 						action="#{propertyHome.populateCadastralCode()}" />
@@ -120,8 +119,8 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{messages['property.floor']}:</ui:define>
 				<a:region>
-				<h:inputText id="floorNumber" required="true" disabled="#{propertyHome.idDefined and !propertyHome.instance.duplicate}"
-					value="#{propertyHome.instance.floorNumber}" size="3" maxlength="3"
+				<h:inputText id="floorNumber" required="true" 
+					value="#{propertyHome.instance.floorNumber}" size="2" maxlength="2"
 					>
 					<a:support event="onblur" ajaxSingle="true"
 						reRender="floorNumberField, cadastralCodePanel"
@@ -137,7 +136,7 @@
 				<a:region>
 				<h:inputText id="housingUnitNumber" required="true"
 					value="#{propertyHome.instance.housingUnitNumber}" size="3"
-					maxlength="3" disabled="#{propertyHome.idDefined and !propertyHome.instance.duplicate}">
+					maxlength="3" >
 					<a:support event="onblur" ajaxSingle="true"
 						reRender="housingUnitNumberField, cadastralCodePanel"
 						action="#{propertyHome.populateCadastralCode()}" />
@@ -147,7 +146,7 @@
 			</s:decorate>
 		</h:panelGrid>
 
-		<h:panelGrid id="cadastralCodePanel" columns="2" >
+		<h:panelGrid id="cadastralCodePanel" columns="3" >
 
 			<s:decorate id="cadastralCodeField"
 				template="../../layout/vertical-edit.xhtml">
@@ -165,9 +164,20 @@
 				<h:inputText id="previousCadastralCode"
 					value="#{propertyHome.instance.previousCadastralCode}" size="30"
 					maxlength="30" styleClass="cadasterCodeLabel"
-					disabled="#{disabled}">
+					disabled="false">
 				</h:inputText>
 			</s:decorate>
+			
+			<s:decorate id="territorialCodeField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.territorialCode']}:</ui:define>
+				<h:inputText id="territorialCode"
+					value="#{propertyHome.instance.cadastralCode_old}" 
+					size="30" maxlength="30"
+					styleClass="cadasterCodeLabel" disabled="true">
+				</h:inputText>
+			</s:decorate>
+			
 		</h:panelGrid>
 
 		<h:panelGrid columns="4">

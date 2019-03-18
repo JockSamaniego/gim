@@ -487,6 +487,14 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "mb.municipalBondStatus.id=:municipalBondStatusId AND "
 				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
 				+ "ORDER BY mb.entry.id"),
+				
+		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndAmountAndStatus", query = "SELECT mb FROM MunicipalBond mb LEFT JOIN FETCH mb.entry "
+				+ "WHERE "
+				+ "mb.resident.id in (:residentIds) AND "
+				+ "mb.municipalBondType=:municipalBondType AND "
+				+ "mb.municipalBondStatus.id in (:municipalBondStatusIds) AND "
+				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
+				+ "ORDER BY mb.entry.id"),
 
 		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmount", query = "SELECT mb FROM MunicipalBond mb "
 				+ "WHERE "
@@ -494,6 +502,15 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 				+ "mb.resident.id in (:residentIds) AND "
 				+ "mb.municipalBondType=:municipalBondType AND "
 				+ "mb.municipalBondStatus.id=:municipalBondStatusId AND "
+				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
+				+ "ORDER BY mb.entry.id"),
+				
+		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmountAndStatus", query = "SELECT mb FROM MunicipalBond mb "
+				+ "WHERE "
+				+ "mb.entry.id = :entryId AND "
+				+ "mb.resident.id in (:residentIds) AND "
+				+ "mb.municipalBondType=:municipalBondType AND "
+				+ "mb.municipalBondStatus.id in (:municipalBondStatusIds) AND "
 				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
 				+ "ORDER BY mb.entry.id"),
 
@@ -834,6 +851,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 
 		@NamedQuery(name = "Bond.findByStatusAndResidentId", query = "SELECT NEW org.gob.loja.gim.ws.dto.Bond("
 				+ "    mb.id, mb.number, e.name, mb.groupingCode, mb.paidTotal, mb.serviceDate, mb.expirationDate, "
+				//+ "  mb.interest, mb.surcharge, mb.taxesTotal, mb.discount, mb.metadata )"
 				+ "  mb.interest, mb.surcharge, mb.taxesTotal, mb.discount )"
 				+ "  FROM "
 				+ "    MunicipalBond mb "
@@ -1102,11 +1120,11 @@ public class MunicipalBond implements Serializable {
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private Set<TaxItem> taxItems;
 
-	@NotAudited
+	//@NotAudited
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Resident resident;
 
-	@NotAudited
+	//@NotAudited
 	@ManyToOne(fetch = FetchType.LAZY)
 	private FiscalPeriod fiscalPeriod;
 
@@ -1122,7 +1140,7 @@ public class MunicipalBond implements Serializable {
 	@JoinColumn(name = "originator_id")
 	private Person originator;
 
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	//@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST,
 			CascadeType.MERGE })
 	@JoinColumn(name = "adjunct_id")
@@ -1134,6 +1152,16 @@ public class MunicipalBond implements Serializable {
 	//aumentar campo de interesfactura
 	private BigDecimal interestVoucher;
 	private BigDecimal surchargeVoucher;
+	
+	
+	private String metadata;
+	
+	@Transient  //for print
+	private BigDecimal interestRemission=BigDecimal.ZERO;
+	
+	@Transient //for print
+	private BigDecimal surchargeRemission=BigDecimal.ZERO;
+	
 
 	public MunicipalBond() {
 		// creationDate = Calendar.getInstance().getTime();
@@ -1842,9 +1870,34 @@ public class MunicipalBond implements Serializable {
 		this.surchargeVoucher = surchargeVoucher;
 	}
 	
+	
+	public String getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(String metadata) {
+		this.metadata = metadata;
+	}
+
 	public List<Deposit> getDepositsList() {
 		List<Deposit> list = new ArrayList<Deposit>(this.deposits);
 		return list;
+	}
+
+	public BigDecimal getInterestRemission() {
+		return interestRemission;
+	}
+
+	public void setInterestRemission(BigDecimal interestRemission) {
+		this.interestRemission = interestRemission;
+	}
+
+	public BigDecimal getSurchargeRemission() {
+		return surchargeRemission;
+	}
+
+	public void setSurchargeRemission(BigDecimal surchargeRemission) {
+		this.surchargeRemission = surchargeRemission;
 	}
 
 }// end MunicipalBond

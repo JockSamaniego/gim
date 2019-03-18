@@ -8,10 +8,10 @@ import org.jboss.seam.framework.EntityQuery;
 import ec.gob.gim.cadaster.model.CapitalGain;
  
 
-@Name("calculatorList")
-public class CalculatorList extends EntityQuery<CapitalGain> {
+//@Name("calculatorList")
+public class CalculatorList /*extends EntityQuery<CapitalGain>*/ {
 
-	private static final long serialVersionUID = 1L;
+	/*private static final long serialVersionUID = 1L;
 
 	private static final String EJBQL = "select cg from CapitalGain cg ";
 
@@ -38,6 +38,6 @@ public class CalculatorList extends EntityQuery<CapitalGain> {
 
 	public void setCadastralCode(String cadastralCode) {
 		this.cadastralCode = cadastralCode;
-	}
+	}*/
 	
 }

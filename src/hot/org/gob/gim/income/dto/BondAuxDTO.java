@@ -1,7 +1,6 @@
 package org.gob.gim.income.dto;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.Date;
 
 import org.gob.gim.common.NativeQueryResultColumn;

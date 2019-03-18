@@ -321,6 +321,8 @@ public class FinantialStatement extends EntityController {
 
 		quotasAccountItem = null;
 		Map<String, AccountItem> report;
+		
+		
 		FinantialService finantialService = ServiceLocator.getInstance()
 				.findResource(FinantialService.LOCAL_NAME);
 		if (criteria.getReportType() == ReportType.DUE_PORTFOLIO) {
@@ -331,6 +333,12 @@ public class FinantialStatement extends EntityController {
 		accountItems = new LinkedList<AccountItem>();
 		accountItems.addAll(report.values());
 
+		for ( Map.Entry<String, AccountItem> entry: report.entrySet()) {
+			String key = entry.getKey();
+			AccountItem acc = entry.getValue();
+		    
+		    System.out.println(acc.getAccountName());
+		}
 		Collections.sort(accountItems);
 		sumTotalCredit();
 		sumTotalDebit();

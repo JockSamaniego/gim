@@ -443,7 +443,7 @@
 					rendered="#{workDealHome.managed and false}" />
 
 				<a:commandButton id="calculate" action="#{workDealHome.calculate()}"
-					reRender="workDealPanel, valuesPanel, panelWorkDeal"
+					reRender="workDealPanel, valuesPanel, panelWorkDeal,panelTotals,workDealTable"
 					value="#{messages['common.calculate']}">
 				</a:commandButton>
 

@@ -107,7 +107,18 @@
 								maxFractionDigits="#{messages['common.maxFractionDigits']}"
 								minFractionDigits="#{messages['common.minFractionDigits']}" />
 						</h:outputText>
-					</h:column>					
+					</h:column>	
+					
+					<h:column>
+						<f:facet name="header">
+							#{messages['accountItem.balance']}
+						</f:facet>
+						<h:outputText value="#{_creditNote.availableAmount}" >
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</h:column>				
 					
 					<h:column styleClass="action">
 						<f:facet name="header">

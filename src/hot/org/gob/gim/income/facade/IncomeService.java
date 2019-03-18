@@ -12,6 +12,7 @@ import org.gob.gim.exception.NotActiveWorkdayException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
 import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
+import org.gob.loja.gim.ws.dto.BondSummary;
 import org.gob.loja.gim.ws.dto.FutureBond;
 
 import ec.gob.gim.common.model.FinancialStatus;
@@ -60,12 +61,12 @@ public interface IncomeService {
 	InterestRate findInterestRateById(Long interestRateId);
 	*/
 	void calculatePayment(MunicipalBond municipalBond, boolean isForPay, boolean applyDiscount) throws EntryDefinitionNotFoundException;
-	void calculatePayment(MunicipalBond municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount) throws EntryDefinitionNotFoundException;
-	void calculatePayment(List<MunicipalBond> municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount) throws EntryDefinitionNotFoundException;
+	void calculatePayment(MunicipalBond municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount) throws EntryDefinitionNotFoundException;   //2
+	void calculatePayment(List<MunicipalBond> municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount) throws EntryDefinitionNotFoundException; //1 desde vista cajerita
 	void calculatePayment(Date paymentDate, List<Long> municipalBondIds, boolean isForPay, boolean applyDiscount) throws EntryDefinitionNotFoundException;
 	
 	void calculatePayment(MunicipalBond municipalBond, boolean isForPay, boolean applyDiscount, Object ... facts) throws EntryDefinitionNotFoundException;
-	void calculatePayment(MunicipalBond municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount, Object ... facts) throws EntryDefinitionNotFoundException;
+	void calculatePayment(MunicipalBond municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount, Object ... facts) throws EntryDefinitionNotFoundException; //3
 	void calculatePayment(List<MunicipalBond> municipalBond, Date paymentServiceDate, boolean isForPay, boolean applyDiscount, Object ... facts) throws EntryDefinitionNotFoundException;
 	public void deactivateCreditNotes(List<PaymentFraction> paymentFractions);
 	
@@ -138,4 +139,21 @@ public interface IncomeService {
 	public void updatePaymentAgreement(PaymentAgreement paymentAgreement);
 	
 	public boolean checkIsPayed(Long municipalbondid, String type);
+	
+	/**
+	 * @author macartuche
+	 * @param residentId
+	 * @return
+	 */
+	public List<BondSummary> findBondsDownStatus(Long residentId);
+	
+	/**
+	 * Para remision caso en que se pague todo el convenio
+	 * @author macartuche
+	 * @param paymentAgreement
+	 */
+	public void update(PaymentAgreement paymentAgreement); 
+	
+	public boolean verifyApplyDiscount(Long entryId, String groupingCode, Long residentId);
+	
 }

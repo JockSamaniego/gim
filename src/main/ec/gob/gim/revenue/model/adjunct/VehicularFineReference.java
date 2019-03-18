@@ -38,6 +38,9 @@ public class VehicularFineReference extends Adjunct {
 		
 		sb.append(" - ");
 		sb.append(numberPlate != null ? numberPlate : "ND");
+		
+		sb.append(" - ");
+		sb.append(notificationNumber != null ? notificationNumber.toUpperCase() : "ND");
 		return sb.toString().toUpperCase();
 	}
 
@@ -47,11 +50,14 @@ public class VehicularFineReference extends Adjunct {
 		ValuePair pair = new ValuePair("Placa N°", numberPlate != null ? numberPlate : "-");
 		details.add(pair);
 
+		pair = new ValuePair("Nro. Infracción", notificationNumber != null ? notificationNumber.toUpperCase() : "-");
+		details.add(pair);
+		
 		pair = new ValuePair("Fecha citación",
 				infringementDate != null ? DateUtils.formatFullDate(infringementDate) : "-");
 		details.add(pair);
-
-		pair = new ValuePair("Nro. Infracción", notificationNumber != null ? notificationNumber.toUpperCase() : "-");
+		
+		pair = new ValuePair("Tipo", vehicleType != null ? vehicleType.getName().toUpperCase() : "-");
 		details.add(pair);
 
 		return details;

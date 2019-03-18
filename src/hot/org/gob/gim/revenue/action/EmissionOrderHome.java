@@ -29,11 +29,13 @@ import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondView;
+import ec.gob.gim.revenue.model.adjunct.ANTReference;
 
 @Name("emissionOrderHome")
 @Scope(ScopeType.CONVERSATION)
@@ -140,14 +142,17 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		StringBuffer cadastralCodeBuffer = new StringBuffer();
 		cadastralCodeBuffer.append(province.getCode());
 		cadastralCodeBuffer.append(canton.getCode());
-		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "0000");
+		//cadastralCodeBuffer.append(parish != null ? parish.getCode() : "0000");//antigua clve
+		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "00"); //nueva clave catastral
 		cadastralCodeBuffer.append(zone != null ? zone.getCode() : "00");
 		cadastralCodeBuffer.append(sector != null ? sector.getCode() : "00");
-		cadastralCodeBuffer.append(block != null && block.getId() != null ? block.getCode() : "00");
-		cadastralCodeBuffer.append(property != null && property.getId() != null ? property.getFormattedNumber() : "00");
-		cadastralCodeBuffer.append(getBuildingNumber() != null ? getNumberFormat().format(getBuildingNumber()) : "00");
+		cadastralCodeBuffer.append(block != null && block.getId() != null ? block.getCode() : "000");
+		cadastralCodeBuffer.append(property != null && property.getId() != null ? property.getFormattedNumber() : "000");//cambio macartuche		
+		//cadastralCodeBuffer.append(getBuildingNumber() != null ? getNumberFormat().format(getBuildingNumber()) : "00"); //antigua clave
+		cadastralCodeBuffer.append(getBuildingNumber() != null ? getNumberFormatNew().format(getBuildingNumber()) : "000"); //nueva clave
 		cadastralCodeBuffer.append(floorNumber != null ? getNumberFormat().format(floorNumber) : "00");
-		cadastralCodeBuffer.append(housingUnitNumber != null ? getNumberFormat().format(housingUnitNumber) : "00");
+		//cadastralCodeBuffer.append(housingUnitNumber != null ? getNumberFormat().format(housingUnitNumber) : "00"); //antigua clave
+		cadastralCodeBuffer.append(housingUnitNumber != null ? getNumberFormatNew().format(housingUnitNumber) : "000"); //nueva clave
 		setCadastralCode(cadastralCodeBuffer.toString());
 	}
 
@@ -170,6 +175,12 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 	private java.text.NumberFormat getNumberFormat() {
 		java.text.NumberFormat numberFormat = new java.text.DecimalFormat("00");
 		numberFormat.setMaximumIntegerDigits(2);
+		return numberFormat;
+	}
+	
+	private java.text.NumberFormat getNumberFormatNew() {
+		java.text.NumberFormat numberFormat = new java.text.DecimalFormat("000");
+		numberFormat.setMaximumIntegerDigits(3);
 		return numberFormat;
 	}
 
@@ -410,14 +421,29 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		resetPropety();
 	}
 
-	public List<TerritorialDivision> findParishes(Long defaultCantonId) {
-		return findTerritorialDivisions(defaultCantonId);
+	public List<TerritorialDivision> findParishes(Long defaultCantonId, Boolean newCadastralKey) {
+		//@tag cambioClave
+		return (newCadastralKey)? findTerritorialDivisionsNew(defaultCantonId): findTerritorialDivisions(defaultCantonId);
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<TerritorialDivision> findTerritorialDivisions(Long parentId) {
 		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParent");
 		query.setParameter("parentId", parentId);
+		return query.getResultList();
+	}
+	
+	/**
+	 * macartuche
+	 * @tag cambioClave
+	 * @param parentId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private List<TerritorialDivision> findTerritorialDivisionsNew(Long parentId) {
+		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParentNew");
+		query.setParameter("parentId", parentId);
+		query.setParameter("classifierGeo", Boolean.TRUE);
 		return query.getResultList();
 	}
 	
@@ -1072,6 +1098,30 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		//System.out.println("---------------------------------"+count);
 		loadPending();
 		return "updated";
+	}
+	
+	
+	//consulta de pdf Ant
+	//jock samaniego
+	//18-02-2019
+	
+	String URLnotification;
+	
+	public String getURLnotification() {
+		return URLnotification;
+	}
+
+	public void setURLnotification(String uRLnotification) {
+		URLnotification = uRLnotification;
+	}
+
+	public void loadInfractionNotification(Long adjunct_id){
+		String query = "Select ant from ANTReference ant where ant.id =:adj_id";
+		Query q = this.getEntityManager().createQuery(query);
+		q.setParameter("adj_id", adjunct_id);
+		ANTReference ant = (ANTReference) q.getSingleResult();	
+		System.out.println("======ANTnotification===> "+ant.getSupportDocumentURL());
+		this.URLnotification = ant.getSupportDocumentURL();
 	}
 		
 }

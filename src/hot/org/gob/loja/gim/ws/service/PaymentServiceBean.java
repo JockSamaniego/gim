@@ -191,7 +191,7 @@ public class PaymentServiceBean implements PaymentService {
 						incomeService.calculatePayment(workDayDate, pendingBondIds, true, true);
 						bonds = findPendingBonds(taxpayer.getId());
 						// esta imprimiendo el log de lo q se retorna quitar
-						// luego de las pruebas
+						// luego de las pruebas						
 						Boolean control = comparateBondsDates(bonds);
 						loadBondsDetail(bonds);
 					} catch (EntryDefinitionNotFoundException e) {
@@ -779,7 +779,7 @@ public class PaymentServiceBean implements PaymentService {
 			try {
 				incomeService.calculatePayment(workDayDate, pendingBondIds,
 						true, true);
-				bonds = findPendingBonds(taxpayer.getId());
+				bonds = findPendingBonds(taxpayer.getId());				
 				loadBondsDetail(bonds);
 			} catch (EntryDefinitionNotFoundException e) {
 				e.printStackTrace();

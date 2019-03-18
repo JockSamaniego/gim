@@ -38,7 +38,11 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 					query = "SELECT mba FROM MunicipalbondAux mba where mba.deposit in :depositList"),
 		@NamedQuery(name="MunicipalbondAux.setAsVoid", 
 		query="UPDATE MunicipalbondAux mba SET mba.status = :status "
-				+ "WHERE mba.deposit.id in :depositList ")})
+				+ "WHERE mba.deposit.id in :depositList "),
+		@NamedQuery(name="MunicipalbondAux.setAsVoidByDeposit", 
+		query="UPDATE MunicipalbondAux mba SET mba.status = :status "
+				+ "WHERE mba.deposit.id=:depositID ")		
+})
 
 public class MunicipalbondAux {
 

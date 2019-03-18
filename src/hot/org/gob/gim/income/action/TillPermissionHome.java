@@ -1056,6 +1056,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 				"left join d.payment p " +
 				"where p.date Between :startDate and :endDate " +
 				"and p.cashier.id in ( :cashiersIds ) " +
+				"and d.status = 'VALID' " +
 				"and p.status = 'VALID' "
 				+ "group by p.cashier.id, p.date "
 				+ "order by p.date";
@@ -1465,6 +1466,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 				+"AND p.cashier_id = " + getInstance().getPerson().getId() +" "
 				+"AND p.status = 'VALID' "
 				+"GROUP BY pf.paymentType ORDER BY pf.paymentType";
+			System.out.println(sql);
 							
 			Query query = getEntityManager().createNativeQuery(sql);
 			query.setParameter("starDate", date);

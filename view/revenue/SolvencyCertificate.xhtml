@@ -75,6 +75,15 @@
 						value="#{solvencyReportHome.motivation}" required="true" disabled="true" />
 				</s:decorate>
 				
+				<s:decorate id="subscribeField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['solvencyHistory.subscribe']}:</ui:define>
+					<h:selectOneMenu id="subscribe" required="true"
+						value="#{solvencyReportHome.responsableUser}">
+						<s:selectItems value="#{solvencyReportHome.responsableUsers}" var="resident"
+							label="#{resident.name}"/>
+					</h:selectOneMenu>
+				</s:decorate>
+				
 				<s:decorate id="observation" template="../layout/edit.xhtml">
 					<ui:define name="label">#{messages['solvencyHistory.observation']}:</ui:define>
 					<h:inputText id="obs" size="70" maxlength="100"

@@ -17,7 +17,7 @@ import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.PassiveRate;
 
-@Audited
+/*@Audited
 @Entity
 @TableGenerator(
 	 name="CapitalGainGenerator",
@@ -26,10 +26,10 @@ import ec.gob.gim.common.model.PassiveRate;
 	 valueColumnName="value",
 	 pkColumnValue="CapitalGain",
 	 initialValue=1, allocationSize=1
-)
+)*/
 public class CapitalGain {
 	
-	@Id
+	/*@Id
 	@GeneratedValue(generator="CapitalGainGenerator",strategy=GenerationType.TABLE)
 	private Long id;
 		
@@ -250,5 +250,5 @@ public class CapitalGain {
 	public void setAdjustementFactor(BigDecimal adjustementFactor) {
 		this.adjustementFactor = adjustementFactor;
 	}
-	
+*/	
 }

@@ -1,5 +1,6 @@
 package org.gob.gim.revenue.action;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -285,6 +286,10 @@ public class MunicipalBondManager extends EntityController {
 
 	@End
 	public String findMunicipalBonds() {
+		//macartuche
+		this.isFuture=Boolean.FALSE;
+		//fin
+		
 		if (resident != null || entry != null || startDate != null
 				|| endDate != null || municipalBondStatus != null
 
@@ -642,10 +647,54 @@ public class MunicipalBondManager extends EntityController {
 		return false;
 	}
 
+	private Boolean isFuture=Boolean.FALSE;
+	private Boolean isVoid=Boolean.FALSE;
+	
+	//macartuche
+	//metodo auxiliar de boton anulacion
+	public void putVoidBond(MunicipalBond municipalBond,
+			MunicipalBondStatus municipalBondStatus) {
+		isVoid = Boolean.TRUE;
+		updateStatus(municipalBond, municipalBondStatus);
+		//encerar variables
+		isVoid = Boolean.FALSE;		
+	}
+	//fin
+	
 	public void updateStatus(MunicipalBond municipalBond,
 			MunicipalBondStatus municipalBondStatus) {
 		/*System.out.println("GZ -----> UpdateStatus executed for "
 				+ municipalBond.getId() + " FOR STATUS " + municipalBondStatus);*/
+		//macartuche
+		//verificar si ha estado en estado futura(solo en boton anular) caso contrario no es posible anular 
+		System.out.println("==============================================>"+isVoid);
+		if(isVoid){
+			
+			Long futureStatus = systemParameterService
+					.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_ISSUANCE");
+			
+			//auditoria
+			Query qaudit = getEntityManager().createNativeQuery("select count(*) from gimaudit.municipalbond_aud "
+					+ " where municipalbondstatus_id="+futureStatus
+					+ " and  id="+municipalBond.getId());
+			Integer auditTotal= ((BigInteger)qaudit.getSingleResult()).intValue();
+			//statuschange
+			Query qsch = getEntityManager().createNativeQuery("select count(*) from gimprod.statuschange  "
+					+ " where municipalbondstatus_id="+futureStatus
+					+ " and municipalbond_id="+municipalBond.getId());
+			Integer statusChTotal= ((BigInteger)qsch.getSingleResult()).intValue();
+			
+			
+			if(auditTotal >0 || statusChTotal > 0){
+				isFuture = Boolean.TRUE;
+				return;
+			}
+		}else{
+			isFuture = Boolean.FALSE;
+		}
+			
+		//fin macartuche
+		
 		List<Long> selectedIds = new ArrayList<Long>();
 		selectedIds.add(municipalBond.getId());
 		updateStatus(selectedIds, municipalBondStatus);
@@ -1033,4 +1082,22 @@ public class MunicipalBondManager extends EntityController {
 	public int getNumberMunicipalBondsFormalize(){
 		return this.municipalBondsFormalizing.size();
 	}
+
+	public Boolean getIsFuture() {
+		return isFuture;
+	}
+
+	public void setIsFuture(Boolean isFuture) {
+		this.isFuture = isFuture;
+	}
+
+	public Boolean getIsVoid() {
+		return isVoid;
+	}
+
+	public void setIsVoid(Boolean isVoid) {
+		this.isVoid = isVoid;
+	}
+	
+	
 }

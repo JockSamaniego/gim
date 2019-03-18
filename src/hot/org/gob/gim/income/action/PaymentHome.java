@@ -31,6 +31,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.ServletContext;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -59,9 +61,11 @@ import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 
 import ec.gob.gim.common.model.Alert;
+import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.finances.model.DTO.MetadataBondDTO;
 import ec.gob.gim.income.model.CreditNote;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.EntryTotalCollected;
@@ -73,10 +77,12 @@ import ec.gob.gim.income.model.PaymentRestriction;
 import ec.gob.gim.income.model.PaymentType;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.TillPermission;
+import ec.gob.gim.income.model.dto.ParameterFutureEmissionDTO;
 import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.FinancialInstitutionType;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
+import ec.gob.gim.revenue.model.PaymentTypeSRI;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.gim.security.model.User;
@@ -176,7 +182,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	// para deshabilitar boton de registro de pago hasta ingresar los valores y
 	// que sea mayor o igual al monto de cobro
 	private Boolean canRegisterPayment = true;
-
+	
+	
+	private List<PaymentTypeSRI> sriTypes;
+	
 	public UserSession getUserSession() {
 		return userSession;
 	}
@@ -400,6 +409,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	private void findPendingBonds() throws Exception {
 		logger.info("FIND PENDING BONDS " + resident.getName());
 		loadLists();
+		//macartuche
+		loadListsSRI();
+		//
 		try {
 			findFutureEmision(resident.getId());
 			this.inPaymentAgreementBonds = findInPaymentAgreementBonds(resident.getId());
@@ -487,10 +499,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 			Query q1 = getEntityManager().createQuery("Select m from MunicipalBond m " + "JOIN m.deposits d "
 					+ "JOIN d.payment p "
-					+ "where m.resident.id=:resident_id and m.liquidationDate >= :currentDate and p.cashier =:cashier ");
+					+ "where m.resident.id=:resident_id and d.date >= :currentDate and p.cashier =:cashier and d.status=:status");
 			q1.setParameter("resident_id", resident.getId());
 			q1.setParameter("currentDate", formatter.parse(formatter.format(time.getTime())));
 			q1.setParameter("cashier", person);
+			q1.setParameter("status", FinancialStatus.VALID);
 
 			// System.out.println("Persona=====================================>:
 			// "+person.getId());
@@ -572,10 +585,20 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 		return pas;
 	}
-
+	
+	//REMISION
+	Boolean forcedToPayAll = Boolean.FALSE;
 	public void calculateTotals() {
 		try {
+			forcedToPayAll = Boolean.FALSE;
 			if (paymentAgreement != null) {
+				
+				//REMISION
+				//@macartuche
+				//mostrar el mensaje de que debe forzar a cobrar toda la deuda
+				forcedToPayAll = paymentAgreement.getIsFullPayment();
+				
+				//fin cambio
 				clearDeposits();
 				hasConflict = Boolean.FALSE;
 				municipalBonds = findAgreementMunicipalBonds();
@@ -679,7 +702,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		List<MunicipalBond> mbs = incomeService.findPendingBonds(residentId);
-		incomeService.calculatePayment(mbs, new Date(), true, true);
+		incomeService.calculatePayment(mbs, new Date(), true, true); //remision
 		impugnmentsTotal = new ArrayList<Impugnment>();
 		for (MunicipalBond municipalBond : mbs) {
 			// System.out.println("BASE IMPONIBLE EN PaymentHome -----> TAXABLE " +
@@ -1152,6 +1175,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 					isFullPayment = Boolean.FALSE;
 					emissionFuture = Boolean.FALSE;
 					paymentAgree = Boolean.FALSE;
+					//calculateTotals();
+					calculateSubscriptionTotals();
 				}else if(vce.getNewValue().equals("municipalBondsTab")){
 					enableSubscription = Boolean.FALSE;
 					isFullPayment = Boolean.TRUE;
@@ -1192,8 +1217,17 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	public void clearFractions() {
-		getInstance().getPaymentFractions().clear();
-		getInstance().add(new PaymentFraction());
+		getInstance().getPaymentFractions().clear();		
+		//macartuche
+		//formas de pago
+		PaymentFraction pf = new PaymentFraction();
+		Query q = this.getEntityManager().createNamedQuery("PaymentTypeSRI.findByType");
+		q.setParameter("type", PaymentType.CASH);
+		List<PaymentTypeSRI> list = q.getResultList();
+		if(!list.isEmpty())
+			pf.setPaymentTypesri(list.get(0));
+		//fin
+		getInstance().add(pf);
 		change = BigDecimal.ZERO;
 	}
 
@@ -1306,11 +1340,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				deposits = fillDeposits();
 			}
 
+			
 			// @author macartuche
 			// unicamente para pagos normales
 			/// para convenios se va por otro metodo
-			// REVISAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR EN PRUEBAS SI CONVENIO VIENE POR
-			// AQUI!!!!!!!
 			String paymentMethod = (this.isPaymentSubscription) ? PaymentMethod.SUBSCRIPTION.name()
 					: PaymentMethod.NORMAL.name();
 			// fin pago abonos
@@ -1350,8 +1383,31 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 	public void rePrint() {
 		deposits = fillDeposits2();
+		//@macartuche remision ... recorrer cada bond para fijar el interes y recargo
+		fillMetadata(deposits);
 		receiptPrintingManager.print(deposits);
 		renderingDepositPDF(userSession.getUser().getId());
+	}
+	
+	private void fillMetadata(List<Deposit> deposits) {
+		for (Deposit localDeposit : deposits) {
+			MunicipalBond mb = localDeposit.getMunicipalBond();
+			if(mb.getMetadata()!=null && !mb.getMetadata().isEmpty()) {
+				try {
+					MetadataBondDTO metadataDto = new ObjectMapper()
+							.readValue(mb
+									.getMetadata(),
+									MetadataBondDTO.class);
+					
+					//fijar los datos para la impresion, valores transient
+					//macartuche 2018-10-25
+					mb.setInterestRemission(metadataDto.getInterest());
+					mb.setSurchargeRemission(metadataDto.getSurcharge());
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public void renderingDepositPDF(Long userId) {
@@ -1432,6 +1488,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				deposit.setCapital(mb.getValue());
 				deposit.setInterest(mb.getInterest());
 				deposit.setValue(mb.getPaidTotal());
+				//@author macartuche 2018-07-10
+				deposit.setSurcharge(mb.getSurcharge());
+				deposit.setPaidTaxes(mb.getTaxesTotal());
+				//fin agregar surcharge al deposit, produccion no existe
 				mb.add(deposit);
 				this.getInstance().add(deposit);
 				deps.add(deposit);
@@ -1647,8 +1707,30 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			this.getInstance().setValue(BigDecimal.ZERO);
 			return;
 		}
+		
 
 		if (paymentAgreement != null) {
+			//revisar primero si esta activado el pago completo para remision
+			//2018-10-22
+			//@macartuche
+			if(paymentAgreement.getIsFullPayment()!=null && paymentAgreement.getIsFullPayment()) {
+				//comprobar si es el pago completo
+				BigDecimal totalPayRemission = BigDecimal.ZERO;
+				for (MunicipalBond mbr : municipalBonds) {
+					totalPayRemission = totalPayRemission.add(mbr.getPaidTotal());
+				}
+				 
+				if(depositTotal.compareTo(totalPayRemission)< 0) {
+					 
+					hasConflict = Boolean.TRUE;
+					deltaUp = totalPayRemission.subtract(depositTotal);
+					this.getInstance().setValue(BigDecimal.ZERO);
+					getIsPaymentButtonDisabled();
+					return;
+				}
+				 
+			}//fin check remision
+			
 			/**
 			 * @author macartuche agregado para juicios coactivos tratamiento en metodo
 			 *         separado
@@ -2228,6 +2310,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			}
 			canPass = false;
 		}
+		
+		if(depositTotal.compareTo(BigDecimal.ZERO) <= 0){
+			depositTotal = BigDecimal.ZERO;
+		}
 
 		if (!hasConflict) {
 			this.getInstance().setValue(depositTotal);
@@ -2432,14 +2518,73 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			stateBanks = findFinantialInstitutions(FinancialInstitutionType.STATE_BANK);
 		creditNotes = findCreditNotes();
 	}
-
+	
+	 
 	@SuppressWarnings("unchecked")
 	private List<FinancialInstitution> findFinantialInstitutions(FinancialInstitutionType finantialInstitutionType) {
 		Query query = getPersistenceContext().createNamedQuery("FinancialInstitution.findByType");
 		query.setParameter("type", finantialInstitutionType);
 		return query.getResultList();
 	}
+	
+	//macartuche
+	//tipos de pago SRI
+	public List<PaymentTypeSRI> transferList;
+	public List<PaymentTypeSRI> creditNoteList;
+	public List<PaymentTypeSRI> cashList;
+	public List<PaymentTypeSRI> checkList;
+	public List<PaymentTypeSRI> creditCardList;
+	
+	private void loadListsSRI() {
+		if (transferList == null)
+			transferList = findSRIcodes(PaymentType.TRANSFER);
+		
+		if (creditNoteList == null) {
+			creditNoteList = findSRIcodes(PaymentType.CREDIT_NOTE);
+		}
+		
+		if (cashList == null) {
+			cashList = findSRIcodes(PaymentType.CASH);
+		}
 
+		if (checkList == null) {
+			checkList = findSRIcodes(PaymentType.CHECK);
+		}
+		
+		if (creditCardList == null) {
+			creditCardList = findSRIcodes(PaymentType.CREDIT_CARD);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<PaymentTypeSRI> findSRIcodes(PaymentType type) {
+		Query query = getPersistenceContext().createNamedQuery("PaymentTypeSRI.findByType");
+		query.setParameter("type", type);
+		return query.getResultList();
+	}
+	
+	public List<PaymentTypeSRI> getSRICodes(PaymentType paymentType) {
+		
+		System.out.println("Tipo de pago: "+paymentType.name());
+		
+		
+		if (paymentType == PaymentType.CHECK) {
+			return checkList;
+		} else if (paymentType == PaymentType.CREDIT_CARD) {
+			return creditCardList;
+		} else if (paymentType == PaymentType.TRANSFER) {
+			return transferList;
+		}else if (paymentType == PaymentType.CASH) {
+			return cashList;
+		}else if (paymentType == PaymentType.CREDIT_NOTE) {
+			return creditNoteList;
+		}
+		
+		return new ArrayList<PaymentTypeSRI>();
+	}
+	//
+	
+	
 	private List<MunicipalBond> getSelected() {
 		selectedBonds = new ArrayList<MunicipalBond>();
 		for (MunicipalBondItem mbi : municipalBondItems) {
@@ -2591,8 +2736,21 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		}
 		return receivedAmount;
 	}
+	
+	//Jock Samaniego
+	//Para control de boton de registro de pago
+	private Boolean invalidAmount = Boolean.TRUE;
+
+	public Boolean getInvalidAmount() {
+		return invalidAmount;
+	}
+
+	public void invalidAmount(Boolean invalidAmount) {
+		this.invalidAmount = invalidAmount;
+	}
 
 	public void calculateChange() {
+		this.invalidAmount = Boolean.TRUE;
 		BigDecimal value = this.getInstance().getValue();
 		BigDecimal receivedAmount = getReceivedAmount();
 		this.canRegisterPayment = true;
@@ -2600,9 +2758,15 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			if (value.compareTo(receivedAmount) <= 0) {
 				change = receivedAmount.subtract(value);
 				this.canRegisterPayment = false;
+				this.invalidAmount = Boolean.FALSE;
 			} else {
 				change = BigDecimal.ZERO;
+				if(receivedAmount.compareTo(BigDecimal.ZERO) > 0 && this.isPaymentSubscription){
+					this.invalidAmount = Boolean.FALSE;
+				}
 			}
+		}else{
+			this.invalidAmount = Boolean.TRUE;
 		}
 	}
 
@@ -2641,6 +2805,16 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			// pago por abonos ...
 			// el monto recibido es menor
 			if (this.isPaymentSubscription) {
+				//@macartuche 2018-07-31
+				//en este caso por primera vez se fija el valor dle payment al valor recibido
+				this.getInstance().setValue(receivedAmount);
+				payment.setValue(receivedAmount);
+				
+				System.out.println("received "+receivedAmount);
+				System.out.println("isntance "+this.getInstance().getValue());
+				System.out.println("payment "+payment.getValue());
+				//
+				
 				for (PaymentFraction fraction : payment.getPaymentFractions()) {
 					fraction.setPaidAmount(fraction.getReceivedAmount());
 					if (fraction.getPaymentType() == PaymentType.CASH) {
@@ -2751,8 +2925,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	public void updateHasCompensationBonds() {
+		deactivatePayBtn();
 		// @author macartuche
 		// deshabilitar boton de registro de pago
+		this.isPaymentSubscription = false;
 		this.canRegisterPayment = true;
 		// fin
 		clearFractions();
@@ -2769,8 +2945,18 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	private boolean isPaymentSubscription = false;
+	
+
+	public boolean isPaymentSubscription() {
+		return isPaymentSubscription;
+	}
+
+	public void setPaymentSubscription(boolean isPaymentSubscription) {
+		this.isPaymentSubscription = isPaymentSubscription;
+	}
 
 	public void updateHasCompensationBonds(String paymentType) {
+		deactivatePayBtn();
 		this.isPaymentSubscription = true;
 		// @author macartuche
 		// deshabilitar boton de registro de pago
@@ -3216,9 +3402,32 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				.findResource(SystemParameterService.LOCAL_NAME);
 		String role = systemParameterService.findParameter(roleKey);
 		if (role != null) {
-			return userSession.getUser().hasRole(role);
+			if(userSession !=null && userSession.getUser() != null) {
+				return userSession.getUser().hasRole(role);
+			}else { 
+				return false;
+			}
 		}
 		return false;
 	}
 
+	public void deactivatePayBtn(){
+		this.invalidAmount = Boolean.TRUE;
+	}
+
+	public Boolean getForcedToPayAll() {
+		return forcedToPayAll;
+	}
+
+	public void setForcedToPayAll(Boolean forcedToPayAll) {
+		this.forcedToPayAll = forcedToPayAll;
+	}
+
+	public List<PaymentTypeSRI> getSriTypes() {
+		return sriTypes;
+	}
+
+	public void setSriTypes(List<PaymentTypeSRI> sriTypes) {
+		this.sriTypes = sriTypes;
+	}		
 }

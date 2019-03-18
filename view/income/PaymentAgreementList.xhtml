@@ -90,12 +90,14 @@
 
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet>
+						
 						<s:button view="/income/PaymentAgreementEdit.xhtml"
 							value="#{messages['common.view']}" propagation="none"
 							id="paymentAgreementEdit" rendered="#{empty from}">
 							<f:param name="paymentAgreementId"
 								value="#{_paymentAgreement.id}" />
 						</s:button>
+						
 						<a:commandButton id="activeBtn" 
 							action="#{paymentAgreementHome.toActivePaymentAgreement()}"
 							value="Activar"
@@ -103,10 +105,23 @@
 							includePageParams="false" propagation="join"
 							disabled="#{_paymentAgreement.isActive}"
 							reRender="activeForm"
-							rendered="#{paymentAgreementHome.hasRole('ACTIVE_PAYMENTAGREEMENT')}">
+							rendered="#{paymentAgreementHome.hasRole('ACTIVE_PAYMENTAGREEMENT') }">
 							<f:param name="paymentAgreementId"
 								value="#{_paymentAgreement.id}" />
 						</a:commandButton>
+						
+						
+						<a:commandButton id="activeRemisionBtn" 							
+							value="#{paymentAgreementHome.isfullPayment(_paymentAgreement.id) ? 'Activar pago compl.' : 'Desactivar pago compl.'}"
+							oncomplete="#{rich:component('activeRemissionPanel')}.show();"
+							includePageParams="false" propagation="join"
+							reRender="activeRemissionPanel, msgRem"
+							disabled="#{!_paymentAgreement.isActive}"
+							rendered="#{paymentAgreementHome.hasRole('ACTIVATE_REMISSION_PAYMENTAGREEMENT') and !_paymentAgreement.applyReferral}">
+							<f:param name="paymentAgreementId"
+								value="#{_paymentAgreement.id}" />							 
+						</a:commandButton>
+
 					</rich:column>
 				</rich:dataTable>
 
@@ -178,32 +193,53 @@
 							value="#{paymentAgreementHome.activeMessage}"
 							style="font-size:large; color: green;margin-left: 2em; margin-right: 2em"
 							rendered="#{paymentAgreementHome.toActive}" />
-
 					</h:panelGrid>
-
-				<br />
-
+					<br />
 					<h:panelGroup>
-
 						<div class="actionButtons">
 							<a:commandButton id="activeButton"
 								value="Aceptar"
 								oncomplete="Richfaces.hideModalPanel('activeInfoPanel')"
 								includePageParams="false" propagation="join"
 								reRender="paymentAgreementAgreementList">
-
 							</a:commandButton>
-
 						</div>
-
 					</h:panelGroup>
-
 				</rich:panel>
-
 			</h:panelGrid>
-
 		</h:form>
+	</rich:modalPanel>
+	
+	
+	<rich:modalPanel id="activeRemissionPanel" width="400" height="200">
+		<f:facet name="header">Activación de Pago Completo - Remisión</f:facet>
 
+		
+		<h:form id="activeRemissionForm">
+			<h:panelGrid>
+				<rich:panel>
+					<h:panelGrid columns="2" >
+						<h:graphicImage value="/img/alert.png" style="margin-left: 2em" />
+						<h:outputText id="msgRem"
+							value="Confirmación de acción"
+							style="font-size:large; color: green; margin-left: 2em; margin-right: 2em" />				
+					</h:panelGrid>
+					<br />
+					
+				</rich:panel>
+				<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="activeRemissionButton"
+								value="Aceptar"
+								action="#{paymentAgreementHome.updatePA()}"
+								oncomplete="Richfaces.hideModalPanel('activeRemissionPanel')"
+								includePageParams="false" propagation="join"
+								reRender="paymentAgreementAgreementList">
+							</a:commandButton>
+						</div>
+					</h:panelGroup>
+			</h:panelGrid>
+		</h:form>
 	</rich:modalPanel>
 </ui:define>
 </ui:composition>

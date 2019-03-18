@@ -23,10 +23,13 @@ import ec.gob.gim.cadaster.model.CapitalGain;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.PassiveRate; 
 
-@Name("calculatorHome")
-public class CalculatorHome extends EntityHome<CapitalGain> {
+//@Name("calculatorHome")
+public class CalculatorHome 
+/*extends EntityHome<CapitalGain> 
+ * {
+ */{
 	
-	private static final long serialVersionUID = 1L;
+	/*private static final long serialVersionUID = 1L;
 	public BigDecimal SBU = new BigDecimal(375).multiply(new BigDecimal(24));
 	public BigDecimal paidTotal = BigDecimal.ZERO;
 	
@@ -60,10 +63,10 @@ public class CalculatorHome extends EntityHome<CapitalGain> {
 		return (Long) getId();
 	}
 	
-	/**
+	
 	 * Persiste o actualiza el Block
 	 * 
-	 */
+	 
 	public String save(){
 		//this.getInstance().setSector(sector);
 		if(isManaged()){
@@ -352,5 +355,5 @@ public class CalculatorHome extends EntityHome<CapitalGain> {
 
 	public void setTaxable(BigDecimal taxable) {
 		this.taxable = taxable;
-	}	
+	}*/	
 }

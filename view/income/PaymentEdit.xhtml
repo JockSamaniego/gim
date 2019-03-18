@@ -225,7 +225,7 @@
 									maxFractionDigits="#{messages['common.maxFractionDigits']}"
 									minFractionDigits="#{messages['common.minFractionDigits']}" />
 							</h:outputText>
-							<h:panelGrid columns="2" style="float:right;">
+							<h:panelGrid columns="4" style="float:right;">
 								<a:commandButton id="generateAccountStateBtn"
 									action="#{paymentHome.confirmCompensationAccountState()}"
 									reRender="compensationAccountStatePanel" ajaxSingle="true"
@@ -235,6 +235,28 @@
 									rendered="#{paymentHome.isAccountStateButtonRendered}"
 									disabled="#{paymentHome.isPaymentButtonDisabled}" />
 
+								<h:outputText id="subscriptionMessage"
+								value="Tiene pago por abono pendiente"
+								style="font-size:14px; font-weight:bold; color: red" styleClass="right" 
+								rendered="#{not empty paymentHome.municipalBondSubscriptionsItems and !paymentHome.enableSubscription and paymentHome.isFullPayment and paymentHome.resident != null}"/>	
+								
+								<h:outputText id="subscriptionRoleMessage"
+								value="Ud no tiene permisos para cobrar abonos"
+								style="font-size:20px; font-weight:bold; color: red" styleClass="right" 
+								rendered="#{!paymentHome.hasRole('PAYMENT_BY_SUBSCRIPTION') and paymentHome.enableSubscription}"/>
+
+								<a:commandButton id="registerSubscriptionBtn"
+									action="#{paymentHome.updateHasCompensationBonds('SUBSCRIPTION')}"
+									reRender="subscriptionPanel" ajaxSingle="true"
+									eventsQueue="gimEventsQueue"
+									oncomplete="registerSubscriptionPayment(#{paymentHome.hasCompensationBonds})"
+									value="Registrar abono"
+									disabled="#{paymentHome.isPaymentButtonDisabled}"
+									rendered="#{(((empty paymentHome.inPaymentAgreementBonds and !paymentHome.paymentAgree and empty paymentHome.municipalBondSubscriptionsItems) || paymentHome.enableSubscription) and (paymentHome.hasRole('PAYMENT_BY_SUBSCRIPTION'))) and paymentHome.resident != null}"
+									focus="receivedAmount"  
+									style="	background: rgba(191, 189, 63, 1) !important;"
+									/>
+								<rich:spacer width="350"/>	
 								<a:commandButton id="registerPaymentBtn"
 									action="#{paymentHome.updateHasCompensationBonds}"
 									reRender="depositConfirmPanel" ajaxSingle="true"
@@ -243,28 +265,9 @@
 									value="#{paymentHome.isFullPayment ? messages['payment.register'] : messages['Registrar Abono Convenio']}"
 									disabled="#{paymentHome.isPaymentButtonDisabled}"
 									focus="receivedAmount" 
-									rendered="#{(!paymentHome.enableSubscription and !paymentHome.emissionFuture and empty paymentHome.municipalBondSubscriptionsItems) || (paymentHome.paymentAgree)}"/>
-									
-								<a:commandButton id="registerSubscriptionBtn"
-									action="#{paymentHome.updateHasCompensationBonds('SUBSCRIPTION')}"
-									reRender="subscriptionPanel" ajaxSingle="true"
-									eventsQueue="gimEventsQueue"
-									oncomplete="registerSubscriptionPayment(#{paymentHome.hasCompensationBonds})"
-									value="Registrar abono"
-									disabled="#{paymentHome.isPaymentButtonDisabled}"
-									rendered="#{((empty paymentHome.municipalBondSubscriptionsItems and empty paymentHome.inPaymentAgreementBonds and !paymentHome.paymentAgree) || paymentHome.enableSubscription) and (paymentHome.hasRole('PAYMENT_BY_SUBSCRIPTION'))}"
-									focus="receivedAmount" />
-								<h:outputText id="subscriptionMessage"
-								value="Tiene pago por abono pendiente"
-								style="font-size:20px; font-weight:bold; color: red" styleClass="right" 
-								rendered="#{not empty paymentHome.municipalBondSubscriptionsItems and !paymentHome.enableSubscription and paymentHome.isFullPayment}"/>	
-								
-								<h:outputText id="subscriptionRoleMessage"
-								value="Ud no tiene permisos para cobrar abonos"
-								style="font-size:20px; font-weight:bold; color: red" styleClass="right" 
-								rendered="#{!paymentHome.hasRole('PAYMENT_BY_SUBSCRIPTION') and paymentHome.enableSubscription}"/>				
-							</h:panelGrid>
-
+									rendered="#{((!paymentHome.enableSubscription and !paymentHome.emissionFuture) || (paymentHome.paymentAgree)) and paymentHome.resident != null}"/>
+											
+							</h:panelGrid >																
 						</h:panelGrid>
 					</a:outputPanel>
 				</h:panelGrid>

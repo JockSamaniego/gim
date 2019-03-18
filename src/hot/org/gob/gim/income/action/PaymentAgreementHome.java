@@ -741,7 +741,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	private List<MunicipalBond> municipalbondList;
 	
 	public void loadMunicipalBondPayments(){
-		municipalBonds = findAgreementMunicipalBonds(this.getInstance().getId()); 
+		municipalBonds = findAgreementMunicipalBonds(this.getInstance().getId());
 	}
 	
 	
@@ -790,4 +790,65 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		}
 		return false;
 	}
+	
+	/**
+	 * @return 
+	 * @macartuche
+	 * REMISION activar para pago completo
+	 */
+	
+	public void updatePA() { 
+		try{
+			Long id = getPaymentAgreementId();
+			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+			PaymentAgreement paBD = getEntityManager().find(PaymentAgreement.class, id);
+			paBD.setIsFullPayment(!paBD.getIsFullPayment());
+			paBD.setUserUpdate(userSession.getUser().getId());		
+			incomeService.update(paBD); 
+		}catch (Exception e){
+			e.printStackTrace();
+		} 
+	}
+	
+	public Long idPayment ;
+	public Boolean remissionActive=Boolean.FALSE;
+	public String messageRemission="";
+	
+	public boolean isfullPayment(Long paymentAgreementId) { 
+		PaymentAgreement paBD = getEntityManager().find(PaymentAgreement.class, paymentAgreementId);
+		return !paBD.getIsFullPayment(); 		
+	}
+	
+	
+	public void verifyForRemission() {
+		if(this.getInstance()!=null) {			
+			Boolean applyReferral = this.getInstance().getAgreementType().equals(AgreementType.REMISSION)? true: false;
+			this.getInstance().setApplyReferral(applyReferral);
+		}
+	}
+
+	public Long getIdPayment() {
+		return idPayment;
+	}
+
+	public void setIdPayment(Long idPayment) {
+		this.idPayment = idPayment;
+	}
+
+	public Boolean getRemissionActive() {
+		return remissionActive;
+	}
+
+	public void setRemissionActive(Boolean remissionActive) {
+		this.remissionActive = remissionActive;
+	}
+
+	public String getMessageRemission() {
+		return messageRemission;
+	}
+
+	public void setMessageRemission(String messageRemission) {
+		this.messageRemission = messageRemission;
+	}
+		
 }
