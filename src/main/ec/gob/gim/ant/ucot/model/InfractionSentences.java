@@ -49,12 +49,6 @@ public class InfractionSentences {
 
 	@Column(length=30)
 	private String processNumber;
-
-	@Column(length=15)
-	private String judgeIdentification;
-	
-	@Column(length=100)
-	private String judgeName;
 	
 	@Column(length=100)
 	private String description;
@@ -67,9 +61,6 @@ public class InfractionSentences {
 	@JoinColumn(name="infractions_id")
 	private Infractions infraction;
 	
-	@Temporal(TemporalType.DATE)
-	private Date resolutionDate;
-	
 	@Temporal(TemporalType.TIMESTAMP) 
 	private Date creationDate;
 	
@@ -80,8 +71,6 @@ public class InfractionSentences {
 	@JoinColumn(name = "responsible_user")	 
 	@Column(length = 100)	 
 	private String responsible_user;
-	
-	private String axisNumber;
 	
 	//Datos para archivo de documentos............................
 	
@@ -124,22 +113,6 @@ public class InfractionSentences {
 	}
 
 
-	public String getJudgeIdentification() {
-		return judgeIdentification;
-	}
-
-	public void setJudgeIdentification(String judgeIdentification) {
-		this.judgeIdentification = judgeIdentification;
-	}
-
-	public String getJudgeName() {
-		return judgeName;
-	}
-
-	public void setJudgeName(String judgeName) {
-		this.judgeName = judgeName;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -164,14 +137,6 @@ public class InfractionSentences {
 		this.infraction = infraction;
 	}
 
-	public Date getResolutionDate() {
-		return resolutionDate;
-	}
-
-	public void setResolutionDate(Date resolutionDate) {
-		this.resolutionDate = resolutionDate;
-	}
-
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -194,14 +159,6 @@ public class InfractionSentences {
 
 	public void setResponsible_user(String responsible_user) {
 		this.responsible_user = responsible_user;
-	}
-
-	public String getAxisNumber() {
-		return axisNumber;
-	}
-
-	public void setAxisNumber(String axisNumber) {
-		this.axisNumber = axisNumber;
 	}
 
 	public Date getArchivedDate() {

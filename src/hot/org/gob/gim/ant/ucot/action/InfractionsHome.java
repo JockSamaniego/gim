@@ -11,12 +11,19 @@ import javax.faces.event.ValueChangeEvent;
 import javax.persistence.Query;
 
 import ec.gob.gim.ant.ucot.model.*;
+import ec.gob.gim.commercial.model.Business;
+import ec.gob.gim.commercial.model.Local;
+import ec.gob.gim.common.model.Address;
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 
 import org.gob.gim.common.action.ResidentHome;
 import org.gob.gim.common.action.UserSession;
 import org.jboss.seam.ScopeType;
+import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.NativeQueryResultsMapper;
+import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
@@ -29,6 +36,25 @@ public class InfractionsHome extends EntityHome<Infractions> {
 	BulletinHome bulletinHome;
 	/*@In(create = true)
 	ItemCatalogHome itemCatalogHome;*/
+	
+	private List<ItemCatalog> typesSentence;
+	private ItemCatalogService itemCatalogService;
+
+	public List<ItemCatalog> getTypesSentence() {
+		return typesSentence;
+	}
+
+	public void setTypesSentence(List<ItemCatalog> typesSentence) {
+		this.typesSentence = typesSentence;
+	}
+
+	public ItemCatalogService getItemCatalogService() {
+		return itemCatalogService;
+	}
+
+	public void setItemCatalogService(ItemCatalogService itemCatalogService) {
+		this.itemCatalogService = itemCatalogService;
+	}
 
 	public void setInfractionsId(Long id) {
 		setId(id);
@@ -79,10 +105,21 @@ public class InfractionsHome extends EntityHome<Infractions> {
 			getInstance().setType(type);
 		}*/
 		findSalaryBasic();
+		initializeService();
+		typesSentence = new ArrayList<ItemCatalog>();
+		typesSentence = itemCatalogService.findItemsForCatalogCode(
+						CatalogConstants.CATALOG_TYPES_SENTENCE);
 	}
 
 	public boolean isWired() {
 		return true;
+	}
+	
+	public void initializeService() {
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
 	}
 
 	public Infractions getDefinedInstance() {
@@ -327,7 +364,7 @@ public class InfractionsHome extends EntityHome<Infractions> {
 				message=null;
 
 				
-				boolean exist  = citationNumberExist(this.instance.getCitationNumber());
+				boolean exist  = axisNumberExist(this.instance.getAxisNumber());
 				if(exist){
 					message="El número de citación ya existe";
 					return "/ant/ucot/PhotoFineFREdit.xhtml";
@@ -343,11 +380,11 @@ public class InfractionsHome extends EntityHome<Infractions> {
 		return "/ant/ucot/PhotoFineFRList.xhtml";
 	}
 	
-	public Boolean citationNumberExist(String citationNumber){
+	public Boolean axisNumberExist(String axisNumber){
 		List<Infractions> infractions = new ArrayList();
 		Query query = getEntityManager().createNamedQuery(
-				"infractions.findByCitationNumber");
-		query.setParameter("citationNumber", citationNumber);
+				"infractions.findByAxisNumber");
+		query.setParameter("axisNumber", axisNumber);
 		infractions = query.getResultList();
 		
 		if(infractions.size()>0){
@@ -355,5 +392,29 @@ public class InfractionsHome extends EntityHome<Infractions> {
 		}
 		return false;
 		
+	}
+	
+	private InfractionSentences sentence;
+	
+	public InfractionSentences getSentence() {
+		return sentence;
+	}
+
+	public void setSentence(InfractionSentences sentence) {
+		this.sentence = sentence;
+	}
+
+	public void createSentence() {
+		this.sentence = new InfractionSentences();
+	
+	}
+	
+	public void removeSentence(InfractionSentences sentence) {
+		this.instance.remove(sentence);
+	}
+	
+	public void addSentence() {
+		this.sentence.setCreationDate(this.registerDate);
+		this.getInstance().add(this.sentence);
 	}
 }

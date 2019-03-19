@@ -240,9 +240,13 @@ public class BulletinHome extends EntityHome<Bulletin> {
 				//System.out.println(infraction.getSerial());
 				//System.out.println("entregadooooo");
 				infractionDTO.setDelivered(Boolean.TRUE);
+				infractionDTO.setNullified(infraction.getNullified() == null ? false : infraction.getNullified());
+				infractionDTO.setInconsistent(infraction.getInconsistent() == null ? false : infraction.getInconsistent());
 			}catch (Exception e){
 				//System.out.println(i+" nooooo entregado");
 				infractionDTO.setDelivered(Boolean.FALSE);
+				infractionDTO.setNullified(null);
+				infractionDTO.setInconsistent(null);
 			}
 			infractionsDelivered.add(infractionDTO);
 		}

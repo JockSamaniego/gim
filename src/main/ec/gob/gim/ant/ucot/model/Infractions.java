@@ -2,7 +2,10 @@ package ec.gob.gim.ant.ucot.model;
  
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,10 +17,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
+
+import ec.gob.gim.commercial.model.Business;
+import ec.gob.gim.commercial.model.Local;
 import ec.gob.gim.common.model.Person;
 
 /**
@@ -40,7 +49,7 @@ import ec.gob.gim.common.model.Person;
 @NamedQueries(value = {
 		@NamedQuery(name = "infractions.findByBulletinId", query = "Select i from Infractions i where i.bulletin.id = :bulletinId"),
 		@NamedQuery(name = "infractions.findBySerial", query = "Select i from Infractions i where i.serial = :serial"),
-		@NamedQuery(name = "infractions.findByCitationNumber", query = "Select i from Infractions i where i.citationNumber = :citationNumber"),
+		@NamedQuery(name = "infractions.findByAxisNumber", query = "Select i from Infractions i where i.axisNumber = :axisNumber"),
 		@NamedQuery(name = "infractions.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum"),
 		@NamedQuery(name = "infractions.findResidentByIdent", query = "Select r from Resident r where r.identificationNumber = :identNum")})
 
@@ -106,12 +115,27 @@ public class Infractions {
 	@JoinColumn(name="bulletin_id")
 	private Bulletin bulletin;
 	
+	private Boolean inconsistent;
+	
+	@Temporal(TemporalType.DATE)
+	private Date inconsistentDate;
+	
+	@OneToMany(mappedBy = "infraction", cascade = CascadeType.ALL)
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private List<InfractionSentences> sentences;
+	
+	
+	
+	public Infractions() {
+		sentences = new ArrayList<InfractionSentences>();
+	}
+
 	//Para fotomultas
 	private String radarCode;
 	private String infractionPlace;
 	private Boolean photoFine;
 	private Boolean fixedRadar;
-	private String citationNumber;
+	private String axisNumber;
 
 	public Long getId() {
 		return id;
@@ -321,12 +345,48 @@ public class Infractions {
 		this.fixedRadar = fixedRadar;
 	}
 
-	public String getCitationNumber() {
-		return citationNumber;
+	public String getAxisNumber() {
+		return axisNumber;
 	}
 
-	public void setCitationNumber(String citationNumber) {
-		this.citationNumber = citationNumber;
+	public void setAxisNumber(String axisNumber) {
+		this.axisNumber = axisNumber;
 	}
 
+	public Boolean getInconsistent() {
+		return inconsistent;
+	}
+
+	public void setInconsistent(Boolean inconsistent) {
+		this.inconsistent = inconsistent;
+	}
+
+	public Date getInconsistentDate() {
+		return inconsistentDate;
+	}
+
+	public void setInconsistentDate(Date inconsistentDate) {
+		this.inconsistentDate = inconsistentDate;
+	}
+	
+	public List<InfractionSentences> getSentences() {
+		return sentences;
+	}
+
+	public void setSentences(List<InfractionSentences> sentences) {
+		this.sentences = sentences;
+	}
+
+	public void remove(InfractionSentences sentence) {
+		boolean removed = this.sentences.remove(sentence);
+		if (removed)
+			sentence.setInfraction((Infractions) null);
+	}
+	
+	public void add(InfractionSentences sentence) {
+		if (!this.sentences.contains(sentence) && sentence != null) {
+			this.sentences.add(sentence);
+			sentence.setInfraction((Infractions) this);
+		}
+	}
 }
