@@ -40,14 +40,6 @@
                               value="#{infractionsHome.instance.fixedRadar?'Si':'No'}"/>
             </s:decorate>
 
-            <s:decorate id="radarCodeField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.photoFine}">
-                <ui:define name="label">#{messages['agent.code']} de #{messages['ucot.radar']}:</ui:define>
-                <h:outputText id="name"
-                              size="50"
-                              maxlength="50"
-                              value="#{infractionsHome.instance.radarCode}"/>
-            </s:decorate>
-
             <s:decorate id="citationDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.citationdate']}:</ui:define>
                 <h:outputText id="name"

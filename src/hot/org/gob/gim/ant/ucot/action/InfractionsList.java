@@ -51,7 +51,7 @@ public class InfractionsList extends EntityQuery<Infractions> {
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
 		setOrderColumn("infractions.serial");
 		setOrderDirection("asc");
-		setMaxResults(100);
+		setMaxResults(500);
 	}
 	
 	@Override

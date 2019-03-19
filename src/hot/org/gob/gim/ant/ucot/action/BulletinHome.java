@@ -252,4 +252,9 @@ public class BulletinHome extends EntityHome<Bulletin> {
 		}
 		
 	}
+	
+	public String printInfractionsDelivered(Long bulletinId){
+		searchInfractionsDelivered(bulletinId);
+		return "/ant/ucot/report/InfractionsDeliveredReport.xhtml";
+	}
 }
