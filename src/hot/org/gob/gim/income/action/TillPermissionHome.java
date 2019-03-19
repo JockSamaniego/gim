@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.persistence.Query;
 
+import org.drools.base.accumulators.SumAccumulateFunction;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
@@ -38,6 +39,7 @@ import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.TillPermissionDetail;
 import ec.gob.gim.income.model.dto.ClosignBoxDetailsTypesDTO;
 import ec.gob.gim.income.model.dto.ClosingBoxDTO;
+import ec.gob.gim.income.model.dto.SummaryClosingBoxDTO;
 import ec.gob.gim.revenue.model.MunicipalBond;
 
 @Name("tillPermissionHome")
@@ -1488,6 +1490,8 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 			}
 			
 			totalTransactionByCashier(getInstance().getPerson().getId(), date);
+			
+			findSummaryClosingBox(date);
 		}
 	}
 
@@ -2007,6 +2011,75 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 
 	public void setPaidStatuses(List<Long> paidStatuses) {
 		this.paidStatuses = paidStatuses;
+	}
+	
+	//Para obtener el resumen de recaudacion al cierre de caja
+	//Jock Samaniego
+	//18-03-2019
+	
+	private SummaryClosingBoxDTO summaryFinal;
+	
+	public SummaryClosingBoxDTO getSummaryFinal() {
+		return summaryFinal;
+	}
+
+	public void setSummaryFinal(SummaryClosingBoxDTO summaryFinal) {
+		this.summaryFinal = summaryFinal;
+	}
+
+	public void findSummaryClosingBox(Date date){
+		int numberPayments = 0;
+		BigDecimal totalValue = BigDecimal.ZERO;
+		BigDecimal totalInterest = BigDecimal.ZERO;
+		BigDecimal totalSurcharge = BigDecimal.ZERO;
+		BigDecimal totalTaxes = BigDecimal.ZERO;
+		BigDecimal totalDiscount = BigDecimal.ZERO;
+		BigDecimal totalType = BigDecimal.ZERO;
+		
+		summaryFinal = new SummaryClosingBoxDTO();
+		String sql = "select pf.paymentType as paymenttype, "
+				+"count(p.id) as numberpayments, "
+				+"sum(mb.value) as totalvalue, "
+				+"sum(mb.interest) as totalinterest, "
+				+"sum(mb.surcharge) as totalsurcharge, "
+				+"sum(mb.taxestotal) as totaltaxes, "
+				+"sum(mb.discount) as totaldiscount, "
+				+"sum(pf.paidAmount) as totaltype "			
+				+"from gimprod.paymentFraction pf "
+				+"inner join gimprod.payment p on (p.id = pf.payment_id ) "
+				+"inner join gimprod.deposit d on (p.id = d.payment_id) "
+				+"inner join gimprod.municipalbond mb on (mb.id = d.municipalbond_id) "
+				+"where p.date Between :starDate and :endDate "
+				+"AND p.cashier_id = " + getInstance().getPerson().getId() +" "
+				+"AND p.status = 'VALID' "
+				+"GROUP BY pf.paymentType ORDER BY pf.paymentType";
+			System.out.println(sql);
+							
+			Query query = getEntityManager().createNativeQuery(sql);
+			query.setParameter("starDate", date);
+			query.setParameter("endDate", date);
+			
+			List<SummaryClosingBoxDTO> result = NativeQueryResultsMapper.map(
+					query.getResultList(), SummaryClosingBoxDTO.class);
+			
+			for (SummaryClosingBoxDTO summaryClosingBoxDTO : result) {
+				numberPayments = numberPayments + summaryClosingBoxDTO.getNumberPayments();
+				totalValue = totalValue.add(summaryClosingBoxDTO.getTotalValue());
+				totalInterest = totalInterest.add(summaryClosingBoxDTO.getTotalInterest());
+				totalSurcharge = totalSurcharge.add(summaryClosingBoxDTO.getTotalSurcharge());
+				totalTaxes = totalTaxes.add(summaryClosingBoxDTO.getTotalTaxes());
+				totalDiscount = totalDiscount.add(summaryClosingBoxDTO.getTotalDiscount());
+				totalType = totalType.add(summaryClosingBoxDTO.getTotalType());
+			}
+			
+			summaryFinal.setPaymentType("TODOS");
+			summaryFinal.setNumberPayments(numberPayments);
+			summaryFinal.setTotalValue(totalValue);
+			summaryFinal.setTotalInterest(totalInterest);
+			summaryFinal.setTotalSurcharge(totalSurcharge);
+			summaryFinal.setTotalTaxes(totalTaxes);
+			summaryFinal.setTotalDiscount(totalDiscount);
+			summaryFinal.setTotalType(totalType);
 	}
 
 }
