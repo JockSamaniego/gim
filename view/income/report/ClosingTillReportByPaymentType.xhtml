@@ -200,6 +200,23 @@
 						<p:cell>
 							<p:paragraph borderWidth="1">
 								<p:font size="8">
+									<p:text value="#{messages['summary.bondsNumber']}"/>
+								</p:font>
+							</p:paragraph>
+						</p:cell>		
+						<p:cell horizontalAlignment="right">
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{tillPermissionHome.summaryFinal.numberMunicipalBonds}">
+										<f:convertNumber pattern="#0" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						
+						<p:cell>
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
 									<p:text value="#{messages['summary.totalValue']}" />
 								</p:font>
 							</p:paragraph>
@@ -251,7 +268,7 @@
 						<p:cell>
 							<p:paragraph borderWidth="1">
 								<p:font size="8">
-									<p:text value="#{messages['summary.totalTaxes']}" />
+									<p:text value="#{messages['summary.totalTaxes']}(12%)" />
 								</p:font>
 							</p:paragraph>
 						</p:cell>		

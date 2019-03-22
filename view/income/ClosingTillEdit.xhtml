@@ -119,10 +119,17 @@
 			            </f:facet>
 
 					<h:panelGrid columns="1">
-							
+					
 							<s:decorate template="../layout/edit.xhtml">
 								<ui:define name="label">#{messages['summary.numberPayments']}:</ui:define>
 								<h:inputText value="#{tillPermissionHome.summaryFinal.numberPayments}" disabled="true"
+									styleClass="right">
+								</h:inputText>
+							</s:decorate>
+							
+							<s:decorate template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['summary.bondsNumber']}:</ui:define>
+								<h:inputText value="#{tillPermissionHome.summaryFinal.numberMunicipalBonds}" disabled="true"
 									styleClass="right">
 								</h:inputText>
 							</s:decorate>
@@ -149,7 +156,7 @@
 							</s:decorate>
 							
 							<s:decorate template="../layout/edit.xhtml">
-								<ui:define name="label">#{messages['summary.totalTaxes']}:</ui:define>
+								<ui:define name="label">#{messages['summary.totalTaxes']}(12%):</ui:define>
 								<h:inputText value="#{tillPermissionHome.summaryFinal.totalTaxes}" disabled="true"
 									styleClass="right">
 								</h:inputText>

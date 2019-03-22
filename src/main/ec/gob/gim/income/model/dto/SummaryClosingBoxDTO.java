@@ -15,21 +15,24 @@ public class SummaryClosingBoxDTO {
 	private int numberPayments;
 	
 	@NativeQueryResultColumn(index = 2)
-	private BigDecimal totalValue;
+	private int numberMunicipalBonds;
 	
 	@NativeQueryResultColumn(index = 3)
-	private BigDecimal totalInterest;
+	private BigDecimal totalValue;
 	
 	@NativeQueryResultColumn(index = 4)
-	private BigDecimal totalSurcharge;
+	private BigDecimal totalInterest;
 	
 	@NativeQueryResultColumn(index = 5)
-	private BigDecimal totalTaxes;
+	private BigDecimal totalSurcharge;
 	
 	@NativeQueryResultColumn(index = 6)
-	private BigDecimal totalDiscount;
+	private BigDecimal totalTaxes;
 	
 	@NativeQueryResultColumn(index = 7)
+	private BigDecimal totalDiscount;
+	
+	@NativeQueryResultColumn(index = 8)
 	private BigDecimal totalType;
 
 	public String getPaymentType() {
@@ -95,7 +98,13 @@ public class SummaryClosingBoxDTO {
 	public void setTotalType(BigDecimal totalType) {
 		this.totalType = totalType;
 	}
-	
-	
+
+	public int getNumberMunicipalBonds() {
+		return numberMunicipalBonds;
+	}
+
+	public void setNumberMunicipalBonds(int numberMunicipalBonds) {
+		this.numberMunicipalBonds = numberMunicipalBonds;
+	}
 	
 }
