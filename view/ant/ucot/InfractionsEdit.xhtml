@@ -89,8 +89,9 @@
             <s:decorate id="citationDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.citationdate']}</ui:define>
                 <rich:calendar id="citationDate" required="true"
-                          value="#{infractionsHome.instance.citationDate}" datePattern="#{messages['common.datePattern']}" ajaxSingle="true" >
-                          <a:support event="onchanged" action="#{infractionsHome.findSalaryBasic()}" reRender="citationDateField,basicSalaryField,panelPenalties" ajaxSingle="true" />
+                          value="#{infractionsHome.instance.citationDate}" datePattern="#{messages['common.datePattern']}" ajaxSingle="true"                          
+                          enableManualInput="true">
+                          <a:support event="ondateselected" action="#{infractionsHome.findSalaryBasic()}" reRender="citationDateField,basicSalaryField,panelPenalties" ajaxSingle="true" />
                       <f:validator validatorId="currentDateValidator" />
                 </rich:calendar>
             </s:decorate>

@@ -1010,21 +1010,24 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 	private List<EmissionOrder> emissionOrders;
 	private String identificationNumber;
 	private String residentName;
+	private Date dateFrom;
+	private Date dateUntil;
 	
 	public void loadPending(){
-		
-		
-		
+			
 		String EJBQL = "select e from EmissionOrder e "
 		+"left join fetch e.municipalBonds m "
 		+"left join fetch m.resident res "
 		+"left join fetch m.receipt "
 		+"left join fetch m.entry entry "
-		+ "LEFT JOIN FETCH m.adjunct "
+		+ "LEFT JOIN FETCH m.adjunct adj "
 		+ "where ";
 		//+ "(lower(m.resident.name) like lower(concat(#{emissionOrderList.resident},'%'))) "
 		if (identificationNumber != null && !identificationNumber.equals("")) {
 			EJBQL = EJBQL + "(lower(m.resident.identificationNumber) like lower(concat(:identificationNumber,'%'))) and ";	
+		}
+		if ((dateFrom != null && !dateFrom.equals("")) && (dateUntil != null && !dateUntil.equals(""))) {
+			EJBQL = EJBQL + " (adj.citationDate between :dateFrom and :dateUntil) and ";	
 		}
 		EJBQL = EJBQL + " e.isDispatched= false and entry.id in (643,644) ";
 		
@@ -1033,8 +1036,20 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		if(identificationNumber!=null && !identificationNumber.equals("")){
 			q.setParameter("identificationNumber", identificationNumber);
 		}
+		if ((dateFrom != null && !dateFrom.equals("")) && (dateUntil != null && !dateUntil.equals(""))) {
+			q.setParameter("dateFrom", dateFrom);
+			q.setParameter("dateUntil", dateUntil);
+		}
 		//System.out.println("------------------- "+identificationNumber+"    -  "+residentName+"    "+q.getResultList().size());
 		emissionOrders = q.getResultList();
+	}
+	
+	public void resetValues(){
+		emissionOrders = new ArrayList<EmissionOrder>();
+		identificationNumber = null;
+		residentName = null;
+		dateFrom = null;
+		dateUntil = null;
 	}
 
 	public List<EmissionOrder> getEmissionOrders() {
@@ -1061,6 +1076,22 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		this.residentName = residentName;
 	}
 	
+	public Date getDateFrom() {
+		return dateFrom;
+	}
+
+	public void setDateFrom(Date dateFrom) {
+		this.dateFrom = dateFrom;
+	}
+
+	public Date getDateUntil() {
+		return dateUntil;
+	}
+
+	public void setDateUntil(Date dateUntil) {
+		this.dateUntil = dateUntil;
+	}
+
 	public void changeSelectedEmissionOrder(EmissionOrder eo, boolean selected){
 		eo.setIsSelected(!selected);
 	}
