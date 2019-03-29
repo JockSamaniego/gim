@@ -34,7 +34,7 @@ public class BulletinList extends EntityQuery<Bulletin> {
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
 		setOrderColumn("bulletin.startNumber");
 		setOrderDirection("asc");
-		setMaxResults(25);
+		setMaxResults(500);
 	}
 	
 	@Override

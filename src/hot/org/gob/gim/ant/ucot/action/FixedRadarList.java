@@ -17,8 +17,8 @@ public class FixedRadarList extends EntityQuery<Infractions> {
 
 	private static final String[] RESTRICTIONS = {
 		"infractions.fixedRadar = #{fixedRadarList.fixedRadar}",
+		"infractions.axisNumber = #{fixedRadarList.infractions.axisNumber}",
 		"lower(infractions.identification) like lower(concat('%',#{fixedRadarList.infractions.identification},'%'))",
-		"infractions.citationNumber = #{fixedRadarList.infractions.citationNumber}",
 		"lower(infractions.licensePlate) like lower(concat('%',#{fixedRadarList.infractions.licensePlate},'%'))",
 		"infractions.citationDate >= #{fixedRadarList.dateFrom}",
 		"infractions.citationDate <= #{fixedRadarList.dateUntil}",
@@ -37,9 +37,9 @@ public class FixedRadarList extends EntityQuery<Infractions> {
 	public FixedRadarList() {
 		setEjbql(EJBQL);
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
-		setOrderColumn("infractions.id");
+		setOrderColumn("infractions.creationDate");
 		setOrderDirection("asc");
-		setMaxResults(25);
+		setMaxResults(500);
 	}
 	
 	@Override

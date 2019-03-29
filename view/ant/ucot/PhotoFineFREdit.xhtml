@@ -10,7 +10,7 @@
     template="../../layout/template.xhtml">
 
 <ui:define name="body">
-
+	<ui:include src="fragment/SentenceEditPanel.xhtml" />
     <h:form id="infractions" styleClass="edit" >
         <rich:panel id="infractionsPanel" >
             <f:facet name="header">
@@ -41,8 +41,9 @@
             <s:decorate id="citationDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.citationdate']}</ui:define>
                 <rich:calendar id="citationDate" required="true"
-                          value="#{infractionsHome.instance.citationDate}" datePattern="#{messages['common.datePattern']}" ajaxSingle="true" >
-                          <a:support event="onchanged" action="#{infractionsHome.findSalaryBasic()}" reRender="citationDateField,basicSalaryField,panelPenalties" ajaxSingle="true" />
+                          value="#{infractionsHome.instance.citationDate}" datePattern="#{messages['common.datePattern']}" ajaxSingle="true" 
+                          enableManualInput="true">
+                          <a:support event="ondateselected" action="#{infractionsHome.findSalaryBasic()}" reRender="citationDateField,basicSalaryField,panelPenalties" ajaxSingle="true" />
                           <f:validator validatorId="currentDateValidator" />
                 </rich:calendar>
             </s:decorate>
@@ -147,13 +148,12 @@
                 </h:selectOneMenu>
             </s:decorate>
             
-            <s:decorate id="citationNumberField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.photoFine}">
-                <ui:define name="label">#{messages['infraction.citationNumber']}</ui:define>
-                <h:inputText id="citationNumber"
+            <s:decorate id="axisNumberField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.photoFine}">
+                <ui:define name="label">#{messages['process.axisNumber']}</ui:define>
+                <h:inputText id="axisNumber"
                            size="15"
-                           required="#{infractionsHome.instance.photoFine}"
                       maxlength="20"
-                          value="#{infractionsHome.instance.citationNumber}">
+                          value="#{infractionsHome.instance.axisNumber}">
                 </h:inputText>
             </s:decorate>          
 
@@ -226,6 +226,72 @@
 
             <div style="clear:both">
             </div>
+            
+            <rich:panel id="sentencesPanel" style="border:0px">
+
+					<rich:dataTable id="itemsSentences" var="_sentence"
+						value="#{infractionsHome.instance.sentences}"
+						columnClasses="number, number" width="100%">
+						<f:facet name="header">
+							<h:panelGrid columns="2" columnClasses="headerTitle,"
+								styleClass="left">
+								<h:outputText value="#{messages['process']}s"
+									styleClass="left" />
+
+								<a:commandButton id="createSentence"
+									
+									action="#{infractionsHome.createSentence()}"
+									reRender="sentenceEditPanel" ajaxSingle="true"
+									eventsQueue="gimEventsQueue"
+									oncomplete="Richfaces.showModalPanel('sentenceEditPanel',{width:600, height:500})"
+									value="#{messages['sentence.Create']}" />
+							</h:panelGrid>
+						</f:facet>
+
+						<h:outputText value="#{messages['items.resultsItemNotFound']}"
+							rendered="#{empty infractionsHome.instance.sentences}" />
+
+						<rich:column rendered="#{not empty infractionsHome.instance.sentences}"
+							styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['sentence.numberProcess']}" />
+							</f:facet>
+							<h:outputText value="#{_sentence.processNumber}" />
+						</rich:column>
+						<rich:column rendered="#{not empty infractionsHome.instance.sentences}"
+							styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['process.type']}" />
+							</f:facet>
+							<h:outputText value="#{_sentence.type.name}" />
+						</rich:column>
+
+						<rich:column rendered="#{not empty infractionsHome.instance.sentences}"
+							styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['process.adjunts']}" />
+							</f:facet>
+							<h:outputText value="#{_sentence.description}" />
+						</rich:column>
+
+						<rich:column rendered="#{not empty infractionsHome.instance.sentences}"
+							styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['common.action']}" />
+							</f:facet>
+
+							<a:commandButton id="removeSentence"
+								action="#{infractionsHome.removeSentence(_sentence)}"
+								reRender="itemsSentences" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								value="#{messages['common.delete']}" />
+
+						</rich:column>
+					</rich:dataTable>
+
+					<div style="clear: both"></div>
+
+				</rich:panel>
 
   </rich:panel>
 

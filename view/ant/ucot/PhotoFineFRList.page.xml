@@ -13,7 +13,7 @@
    <param name="article" value="#{fixedRadarList.infractions.article}"/>
    <param name="numeral" value="#{fixedRadarList.infractions.numeral}"/>
    <param name="licensePlate" value="#{fixedRadarList.infractions.licensePlate}"/>
-   <param name="citationNumber" value="#{fixedRadarList.infractions.citationNumber}"/>
+   <param name="citationNumber" value="#{fixedRadarList.infractions.axisNumber}"/>
    
    <param name="dateFrom" value="#{fixedRadarList.dateFrom}" converterId="org.jboss.seam.ui.DateTimeConverter" /> 
    <param name="dateUntil" value="#{fixedRadarList.dateUntil}" converterId="org.jboss.seam.ui.DateTimeConverter" />

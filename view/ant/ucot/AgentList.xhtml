@@ -32,7 +32,7 @@
 
     <rich:panel>
         <f:facet name="header">
-            <h:panelGrid columns="2" columnClasses="headerTitle,">
+            <h:panelGrid columns="3" columnClasses="headerTitle,">
                 <h:outputText
                     value=" #{messages['agent.searchResults']} (#{empty agentList.resultList ? 0 : (agentList.paginated ? agentList.resultCount : agentList.resultList.size)})" />
                    <s:button view="/ant/ucot/AgentEdit.xhtml"
@@ -41,6 +41,11 @@
                             value="#{messages['common.create']} #{messages['ucot.agent']}">
                        <f:param name="agentId"/>
                    </s:button>
+                   <s:button
+						view="/ant/ucot/report/AgentsReport.xhtml"
+						id="printReport"
+						disabled = "#{empty agentList.resultList}"
+						value="#{messages['common.print']}" />
             </h:panelGrid>      
         </f:facet>
     <div class="results" id="agentList">

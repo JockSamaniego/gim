@@ -40,14 +40,6 @@
                               value="#{infractionsHome.instance.fixedRadar?'Si':'No'}"/>
             </s:decorate>
 
-            <s:decorate id="radarCodeField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.photoFine}">
-                <ui:define name="label">#{messages['agent.code']} de #{messages['ucot.radar']}:</ui:define>
-                <h:outputText id="name"
-                              size="50"
-                              maxlength="50"
-                              value="#{infractionsHome.instance.radarCode}"/>
-            </s:decorate>
-
             <s:decorate id="citationDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.citationdate']}:</ui:define>
                 <h:outputText id="name"
@@ -143,19 +135,6 @@
               value="#{infractionSentencesHome.infractionSentences}"
            rendered="#{infractionSentencesHome.infractionSentences.size()>0}">
 
-        <rich:column styleClass="action" style="align:center;">
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{infractionSentencesList}"/>
-                    <ui:param name="propertyLabel" value="#{messages['process.resolutionDate']}"/>
-                    <ui:param name="propertyPath" value="infractionSentences.resolutionDate"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_infractionSentences.resolutionDate}">
-                <f:convertDateTime pattern="dd/MM/yyyy" />
-            </h:outputText>
-        </rich:column>
-
          <rich:column styleClass="action" style="align:right;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
@@ -165,28 +144,6 @@
                 </ui:include>
             </f:facet>
             <h:outputText value="#{_infractionSentences.processNumber}"/>
-        </rich:column>
-
-        <rich:column styleClass="action" style="align:left;">
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{infractionSentencesList}"/>
-                    <ui:param name="propertyLabel" value="#{messages['process.judgeIdentification']}"/>
-                    <ui:param name="propertyPath" value="infractionSentences.judgeIdentification"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_infractionSentences.judgeIdentification}"/>
-        </rich:column>
-
-        <rich:column styleClass="action" style="align:left;">
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{infractionSentencesList}"/>
-                    <ui:param name="propertyLabel" value="#{messages['process.judgeName']}"/>
-                    <ui:param name="propertyPath" value="infractionSentences.judgeName"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_infractionSentences.judgeName}"/>
         </rich:column>
        
         <rich:column styleClass="action" style="align:center;">
@@ -198,17 +155,6 @@
                 </ui:include>
             </f:facet>
             <h:outputText value="#{_infractionSentences.type.name}"/>
-        </rich:column>
-
-         <rich:column styleClass="action" style="align:left;">
-            <f:facet name="header">
-                <ui:include src="../../layout/sort.xhtml">
-                    <ui:param name="entityList" value="#{infractionSentencesList}"/>
-                    <ui:param name="propertyLabel" value="#{messages['process.axisNumber']}"/>
-                    <ui:param name="propertyPath" value="infractionSentences.axisNumber"/>
-                </ui:include>
-            </f:facet>
-            <h:outputText value="#{_infractionSentences.axisNumber}"/>
         </rich:column>
 
         <rich:column styleClass="action" style="align:left;">
