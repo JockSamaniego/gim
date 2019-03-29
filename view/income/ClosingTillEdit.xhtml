@@ -69,7 +69,7 @@
 					</s:decorate>
 
 				</h:panelGrid>
-
+			<h:panelGrid columns="3">
 				<h:panelGrid columns="1">
 					<c:forEach var="_tillInst"
 						items="#{tillPermissionHome.tillInstitutionDetails}">
@@ -106,9 +106,79 @@
 
 
 					</h:panelGrid>
-
 				</h:panelGrid>
+				<h:panelGrid>
+					<rich:spacer width="100px" />
+				</h:panelGrid>
+				<rich:panel id="summaryPanel" >
+			            <f:facet name="header">
+			                <h:panelGrid columns="1" columnClasses="headerTitle,">
+			                  <h:outputText
+			                    value="#{messages['summary.collectedSummary']}" />
+			                </h:panelGrid>      
+			            </f:facet>
 
+					<h:panelGrid columns="1">
+					
+							<s:decorate template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['summary.numberPayments']}:</ui:define>
+								<h:inputText value="#{tillPermissionHome.summaryFinal.numberPayments}" disabled="true"
+									styleClass="right">
+								</h:inputText>
+							</s:decorate>
+							
+							<s:decorate template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['summary.bondsNumber']}:</ui:define>
+								<h:inputText value="#{tillPermissionHome.summaryFinal.numberMunicipalBonds}" disabled="true"
+									styleClass="right">
+								</h:inputText>
+							</s:decorate>
+							
+							<s:decorate template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['summary.totalValue']}:</ui:define>
+								<h:inputText value="#{tillPermissionHome.summaryFinal.totalValue}" disabled="true"
+									styleClass="right">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['summary.totalInterest']}:</ui:define>
+								<h:inputText value="#{tillPermissionHome.summaryFinal.totalInterest}" disabled="true"
+									styleClass="right">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['summary.totalSurcharge']}:</ui:define>
+								<h:inputText value="#{tillPermissionHome.summaryFinal.totalSurcharge}" disabled="true"
+									styleClass="right">
+								</h:inputText>
+							</s:decorate>
+							
+							<s:decorate template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['summary.totalTaxes']}(12%):</ui:define>
+								<h:inputText value="#{tillPermissionHome.summaryFinal.totalTaxes}" disabled="true"
+									styleClass="right">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['summary.totalDiscount']}:</ui:define>
+								<h:inputText value="#{tillPermissionHome.summaryFinal.totalDiscount}" disabled="true"
+									styleClass="right">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['summary.totalType']}:</ui:define>
+								<h:inputText value="#{tillPermissionHome.summaryFinal.totalType}" disabled="true"
+									styleClass="right">
+								</h:inputText>
+							</s:decorate>
+
+					</h:panelGrid>
+				</rich:panel>
+			</h:panelGrid>
 				<div style="clear: both">
 					<span class="required">*</span>
 					#{messages['common.requiredFields']}

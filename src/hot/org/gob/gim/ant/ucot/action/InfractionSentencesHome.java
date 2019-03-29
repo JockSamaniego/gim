@@ -152,7 +152,7 @@ public class InfractionSentencesHome extends EntityHome<InfractionSentences> {
 		}			
 	}
 	
-	public void findResidentName(){
+	/*public void findResidentName(){
 		if(this.instance.getJudgeIdentification() != null && this.instance.getJudgeIdentification() != ""){
 			List<String> names = new ArrayList<String>();
 			Query query = getEntityManager().createNamedQuery(
@@ -167,7 +167,7 @@ public class InfractionSentencesHome extends EntityHome<InfractionSentences> {
 		}else{
 			this.instance.setJudgeName(null);
 		}			
-	}
+	}*/
 	
 	@In(scope = ScopeType.SESSION, value = "userSession") 
 	UserSession userSession;

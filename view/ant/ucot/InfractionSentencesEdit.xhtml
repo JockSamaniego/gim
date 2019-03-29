@@ -34,15 +34,6 @@
                 </rich:calendar>
             </s:decorate>
             
-            <s:decorate id="sentenceDateField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['process.resolutionDate']}</ui:define>
-                <rich:calendar id="sentenceDate" required="true"
-                          value="#{infractionSentencesHome.instance.resolutionDate}" datePattern="dd/MM/yyyy" >
-                          <f:validator validatorId="currentDateValidator" />
-                          <a:support event="onchanged" reRender="sentenceDateField" bypassUpdates="true" ajaxSingle="true" />
-                 </rich:calendar>
-            </s:decorate>
-            
             <s:decorate id="processNumberField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['sentence.numberProcess']}:</ui:define>
                 <h:inputText id="processNumber"
@@ -51,28 +42,7 @@
                       maxlength="30"
                           value="#{infractionSentencesHome.instance.processNumber}">
                 </h:inputText>
-            </s:decorate>
-            
-            <s:decorate id="identificationJugdeField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['process.judgeIdentification']}</ui:define>
-                <h:inputText id="judgeIdentification"
-                              size="20"
-                              maxlength="15"
-                              value="#{infractionSentencesHome.instance.judgeIdentification}">
-                              <f:validator validatorId="identificationNumberValidator"/>
-                              <a:support event="onblur" ajaxSingle="true" action="#{infractionSentencesHome.findResidentName()}" reRender="judgeNameField,identificationJugdeField" />
-                </h:inputText>              
-            </s:decorate>
-
-            <s:decorate id="judgeNameField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['process.judgeName']}:</ui:define>
-                <h:inputText id="judge"
-                           size="40"
-                           required="true"
-                      maxlength="40"
-                          value="#{infractionSentencesHome.instance.judgeName}">
-                </h:inputText>
-            </s:decorate>
+            </s:decorate>     
             
             <s:decorate id="sentenceTypeField"
               template="../../layout/edit.xhtml">
@@ -84,23 +54,12 @@
               </h:selectOneMenu>
             </s:decorate>
 
-            <s:decorate id="axisField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['process.axisNumber']}:</ui:define>
-                <h:inputText id="judge"
-                           size="20"
-                           required="true"
-                      maxlength="50"
-                          value="#{infractionSentencesHome.instance.axisNumber}">
-                </h:inputText>
-            </s:decorate>
-
             <s:decorate id="descriptionField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['process.adjunts']}</ui:define>
                 <h:inputTextarea id="sentenceDetail" size="40"
                       value="#{infractionSentencesHome.instance.description}" >
                 </h:inputTextarea>
             </s:decorate>
-
 
             <div style="clear:both">
                 <span class="required">*</span>

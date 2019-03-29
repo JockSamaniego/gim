@@ -21,7 +21,7 @@
 						<h:outputText value="#{messages['emissionOrder']}" />
 					</h:panelGrid>
 				</f:facet>
-				<h:panelGrid columns="1">
+				<h:panelGrid columns="1" id="searchPanel">
 					<s:decorate template="../layout/display.xhtml">
 						<ui:define name="label">#{messages['resident.identificationNumber']}</ui:define>
 						<h:inputText id="identificationNumber"
@@ -39,6 +39,24 @@
 								reRender="residentName" />
 						</h:inputText>
 					</s:decorate>
+					
+					<s:decorate id="dateFromField" template="../layout/edit.xhtml">
+		                <ui:define name="label">#{messages['ucot.From']}(citación):</ui:define>
+		                <rich:calendar id="dateFrom"
+		                          value="#{emissionOrderHome.dateFrom}" datePattern="dd/MM/yyyy" >
+		                          <a:support event="onchanged" ajaxSingle="true"
+									reRender="dateFrom" />
+						</rich:calendar>
+		            </s:decorate>
+
+		            <s:decorate id="dateUntilField" template="../layout/edit.xhtml">
+		                <ui:define name="label">#{messages['ucot.Until']}(citación):</ui:define>
+		                <rich:calendar id="dateUntil"
+		                          value="#{emissionOrderHome.dateUntil}" datePattern="dd/MM/yyyy" >
+		                          <a:support event="onchanged" ajaxSingle="true"
+									reRender="dateUntil" />
+		                </rich:calendar>
+		            </s:decorate>
 				</h:panelGrid>
 
 				<a:commandButton id="loadBt" ajaxSingle="true"
@@ -46,6 +64,12 @@
 					eventsQueue="gimEventsQueue"
 					reRender="emissionOrderTable,sc2,txtTotal"
 					value="#{messages['common.search']}" />
+				
+				<a:commandButton id="resetBt" ajaxSingle="true"
+					action="#{emissionOrderHome.resetValues()}"
+					eventsQueue="gimEventsQueue"
+					reRender="emissionOrderTable,sc2,txtTotal,searchPanel"
+					value="#{messages['common.reset']}" />
 
 			</rich:panel>
 
@@ -153,12 +177,12 @@
 						<s:button view="/revenue/EmissionOrderEdit.xhtml"
 							value="#{messages['common.detail']}" propagation="none"
 							id="municipalBondList"
-							rendered="#{_emissionOrder.municipalBonds.size() > 1}">
+							rendered="#{_emissionOrder.municipalBonds.size() > 1 and paymentHome.hasRole('ROLE_NAME_EMISOR')}">
 							<f:param name="emissionOrderId" value="#{_emissionOrder.id}" />
 						</s:button>
 
 						<a:commandButton id="viewer" ajaxSingle="true"
-							rendered="#{_emissionOrder.municipalBonds.size() == 1}"
+							rendered="#{_emissionOrder.municipalBonds.size() == 1 and paymentHome.hasRole('ROLE_NAME_EMISOR')}"
 							action="#{municipalBondsViewerHome.loadMunicipalBond(_emissionOrder.municipalBonds.get(0))}"
 							eventsQueue="gimEventsQueue" reRender="_municipalBondViewer"
 							oncomplete="Richfaces.showModalPanel('_municipalBondViewer',{width:700, height:500})"
@@ -166,13 +190,13 @@
 
 						<a:commandButton id="emitEmissionOrder"
 							value="#{messages['common.emit']}"
-							rendered="#{_emissionOrder.municipalBonds.size() == 1}"
+							rendered="#{_emissionOrder.municipalBonds.size() == 1 and paymentHome.hasRole('ROLE_NAME_EMISOR')}"
 							action="#{emissionOrderHome.emitEmissionOrder(_emissionOrder)}" />
 
 
 						<a:commandButton id="rejectEmissionOrder"
 							value="#{messages['municipalBond.reject']}"
-							rendered="#{_emissionOrder.municipalBonds.size() == 1}"
+							rendered="#{_emissionOrder.municipalBonds.size() == 1 and paymentHome.hasRole('ROLE_NAME_EMISOR')}"
 							action="#{emissionOrderHome.rejectEmissionOrder(_emissionOrder)}" />
 							
 						<a:commandButton id="viewerNotification" ajaxSingle="true" 
