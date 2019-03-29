@@ -20,6 +20,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityController;
 
+import ec.gob.gim.cadaster.model.Building;
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.commercial.model.Local;
@@ -79,14 +80,56 @@ public class AdjunctAction extends EntityController{
 			propertyAppraisal.setRealLotAppraisal(currentDomain.getLotAppraisal());
 			propertyAppraisal.setRealBuildingAppraisal(currentDomain.getBuildingAppraisal());
 			propertyAppraisal.setCommercialAppraisal(currentDomain.getCommercialAppraisal());
+			
+			//macartuche 
+			//2019-03-13 16:07
+			BigDecimal constructionArea = calculateTotalAreaConstruction(property);
+			propertyAppraisal.setLotArea(property.getArea());
+			propertyAppraisal.setConstructionArea(constructionArea);
 //			this.setAddressAdjunct(property.getAddress());
 			changePropertyTaxableBase();
 			//propertyAppraisal.setCode(propertyAppraisal.getPreviousCadastralCode()+" - "+propertyAppraisal.getCadastralCode());
 			//property.getBuildings()
 			//rfam 2017-12-15 aprobacion de ordenanza
-			propertyAppraisal.setLotArea(BigDecimal.ONE);
-			propertyAppraisal.setConstructionArea(BigDecimal.ONE);
+			//propertyAppraisal.setLotArea(BigDecimal.ONE);
+			//propertyAppraisal.setConstructionArea(BigDecimal.ONE);
 		}
+	}
+	
+	/***/
+	private BigDecimal calculateTotalAreaConstruction(Property _property) {
+		BigDecimal res = new BigDecimal(0);
+		if (_property != null) {
+			for (Building b : _property.getBuildings()) {
+				if (b.getTotalArea() == null) {
+					updateTotalArea(b, _property);
+					res = res.add(b.getTotalArea());
+				} else {
+					res = res.add(b.getTotalArea());
+				}
+			}
+		}
+
+		return res;		
+	}
+	
+	private void updateTotalArea(Building building, Property _property) {
+		if (_property.getPropertyType().getId().equals(1L)) { //urbano
+			building.setTotalArea(calculateTotalArea(building));
+		} else {
+			if (building.getArea() != null) {
+				building.setTotalArea(building.getArea());
+			} else {
+				building.setTotalArea(BigDecimal.ZERO);
+			}
+		}
+
+	}
+	
+	private BigDecimal calculateTotalArea(Building building) {
+		if (building != null && building.getArea() != null && building.getFloorsNumber() != null)
+			return building.getArea().multiply(BigDecimal.valueOf(building.getFloorsNumber()));
+		return new BigDecimal(0);
 	}
 	
 	public void changePropertyTaxableBase(){
