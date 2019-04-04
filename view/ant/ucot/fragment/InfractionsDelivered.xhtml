@@ -77,6 +77,18 @@
 							<f:facet name="header">#{messages['infraction.infractionDelivered']}</f:facet>
 							<h:outputText value="Entregada" style="color:green" rendered="#{_infraction.delivered}" />
 							<h:outputText value="No Entregada" style="color:red" rendered="#{!_infraction.delivered}" />
+						</rich:column>
+						<rich:column styleClass="action" style="align:center;">
+							<f:facet name="header">#{messages['infraction.nullified']}</f:facet>
+							<h:outputText value="Sin Registro" style="color:grey" rendered="#{_infraction.nullified == null}" />
+							<h:outputText value="Anulada" style="color:red" rendered="#{_infraction.nullified and _infraction.nullified != null}" />
+							<h:outputText value="No Anulada" style="color:green" rendered="#{!_infraction.nullified and _infraction.nullified != null}" />
+						</rich:column>
+						<rich:column styleClass="action" style="align:center;">
+							<f:facet name="header">#{messages['infraction.inconsistent']}</f:facet>
+							<h:outputText value="Sin Registro" style="color:grey" rendered="#{_infraction.inconsistent == null}" />
+							<h:outputText value="Inconsistente" style="color:red" rendered="#{_infraction.inconsistent and _infraction.inconsistent != null}" />
+							<h:outputText value="No Inconsistente" style="color:green" rendered="#{!_infraction.inconsistent and _infraction.inconsistent != null}" />
 						</rich:column>	
 					
 					</rich:scrollableDataTable>

@@ -166,8 +166,161 @@
 
 		</p:table>
 		
+			<p:table columns="1" widthPercentage="40" headerRows="0" spacingBefore="15">
+					<p:font size="9" style="bold">
+						<p:cell>
+							<p:paragraph borderWidth="1">
+								<p:font size="9" style="bold">
+									<p:text value="#{messages['summary.collectedSummary']}: " />
+								</p:font>								
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+			</p:table>
+			<p:table columns="2" widthPercentage="40" headerRows="0"
+					widths="3 3">
+					<p:font size="8">
+						<p:cell>
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{messages['summary.numberPayments']}"/>
+								</p:font>
+							</p:paragraph>
+						</p:cell>		
+						<p:cell horizontalAlignment="right">
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{tillPermissionHome.summaryFinal.numberPayments}">
+										<f:convertNumber pattern="#0" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						
+						<p:cell>
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{messages['summary.bondsNumber']}"/>
+								</p:font>
+							</p:paragraph>
+						</p:cell>		
+						<p:cell horizontalAlignment="right">
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{tillPermissionHome.summaryFinal.numberMunicipalBonds}">
+										<f:convertNumber pattern="#0" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						
+						<p:cell>
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{messages['summary.totalValue']}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>		
+						<p:cell horizontalAlignment="right">
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{tillPermissionHome.summaryFinal.totalValue}">
+										<f:convertNumber pattern="#0.00" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						
+						<p:cell>
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{messages['summary.totalInterest']}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>		
+						<p:cell horizontalAlignment="right">
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{tillPermissionHome.summaryFinal.totalInterest}">
+										<f:convertNumber pattern="#0.00" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						
+						<p:cell>
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{messages['summary.totalSurcharge']}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>		
+						<p:cell horizontalAlignment="right">
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{tillPermissionHome.summaryFinal.totalSurcharge}">
+										<f:convertNumber pattern="#0.00" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						
+						<p:cell>
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{messages['summary.totalTaxes']}(12%)" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>		
+						<p:cell horizontalAlignment="right">
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{tillPermissionHome.summaryFinal.totalTaxes}">
+										<f:convertNumber pattern="#0.00" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						
+						<p:cell>
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{messages['summary.totalDiscount']}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>		
+						<p:cell horizontalAlignment="right">
+							<p:paragraph borderWidth="1">
+								<p:font size="8">
+									<p:text value="#{tillPermissionHome.summaryFinal.totalDiscount}">
+										<f:convertNumber pattern="#0.00" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						
+						<p:cell>
+							<p:paragraph borderWidth="1">
+								<p:font size="8" style="bold">
+									<p:text value="#{messages['summary.totalType']}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>		
+						<p:cell horizontalAlignment="right">
+							<p:paragraph borderWidth="1">
+								<p:font size="8" style="bold">
+									<p:text value="#{tillPermissionHome.summaryFinal.totalType}">
+										<f:convertNumber pattern="#0.00" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+				</p:table>
+			
+		
 			<p:table columns="2" widthPercentage="50" headerRows="0"
-					widths="4 2">
+					widths="4 2" spacingBefore="20">
 					<p:font size="8" style="bold">
 						<p:cell>
 							<p:paragraph borderWidth="1">

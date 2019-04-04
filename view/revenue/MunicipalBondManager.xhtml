@@ -82,11 +82,22 @@
 			<div class="actionButtons">
 				<a:commandButton id="search" value="#{messages['common.search']}"
 					action="#{municipalBondManager.findMunicipalBonds()}"
-					reRender="resultsPanel,municipalBondsTable" />
+					reRender="resultsPanel,municipalBondsTable,resultsFuturePanel,printReport" />
 				
-				<s:button id="resetId" value="#{messages['common.reset']}" includePageParams="false" propagation="none">
-				</s:button>
+				<s:button id="resetId" value="#{messages['common.reset']}" includePageParams="false" propagation="none" reRender="printReport">
+				</s:button>			
+				<s:button
+					view="/revenue/report/MunicipalBondManagerReport.xhtml"
+					id="printReport"
+					disabled = "#{municipalBonds.rowCount == 0}"
+					value="#{messages['common.print']}" />
 			</div>
+			
+			<a:outputPanel id="resultsFuturePanel" ajaxRendered="false">
+				<rich:panel rendered="#{municipalBondManager.isFuture}">
+					<h:outputText value="No se puede anular emisiones futuras" style='font-size: 16px; font-weight: bold; color: red' />
+				</rich:panel>
+			</a:outputPanel>
 
 			<a:outputPanel id="resultsPanel" ajaxRendered="false">
 
@@ -102,7 +113,7 @@
 					<f:facet name="header">
 						<rich:columnGroup>
 
-							<rich:column colspan="9">
+							<rich:column colspan="10">
 								<h:panelGrid columns="3" columnClasses="left formTitle,right," width="100%">
 									<h:outputText
 										value="#{messages['municipalBond.searchResults']}" />
@@ -117,7 +128,7 @@
 										action="#{municipalBondManager.changeListForBlocked()}"
 										ajaxSingle="true" 
 										oncomplete="Richfaces.showModalPanel('confirmAllBlockedPanel',{width:350, height:250})"
-										rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_INVALIDATOR') and (municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || municipalBondManager.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
+										rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_BLOCKER') and (municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || municipalBondManager.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
 										focus="observationAllBlocked" />
 
 
@@ -144,7 +155,7 @@
 								</h:panelGrid>
 							</rich:column>
 
-							<rich:column colspan="9" breakBefore="true" styleClass="right">
+							<rich:column colspan="10" breakBefore="true" styleClass="right">
 								<g:dataScroller maxPages="10" for="municipalBondsTable"
 									style="float:right;" />
 							</rich:column>
@@ -210,7 +221,7 @@
 					<rich:column
 						styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
 						<f:facet name="header">
-						#{messages['municipalBond.value']}
+						#{messages['municipalBond.paidTotal']}
 					</f:facet>
 						<h:outputText
 							value="#{_municipalBond.paidTotal}">
@@ -239,6 +250,17 @@
 								pattern="#{messages['common.datePattern']}" />
 						</h:outputText>
 					</rich:column>
+					
+					<rich:column 
+			            styleClass="#{municipalBondManager.showWarned(_municipalBond)}"> 
+			            <f:facet name="header"> 
+			            #{messages['municipalBond.liquidationDate']} 
+			          </f:facet> 
+			            <h:outputText value="#{_municipalBond.liquidationDate}"> 
+			              <s:convertDateTime type="date" dateStyle="short" 
+			                pattern="#{messages['common.datePattern']}" /> 
+			            </h:outputText> 
+			          </rich:column>
 
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet>
@@ -255,7 +277,7 @@
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_PREEMISSION') and _municipalBond.municipalBondStatus.equals(municipalBondManager.preEmitBondStatus)}"
 							action="#{municipalBondManager.updateStatus(_municipalBond, municipalBondManager.rejectedBondStatus)}"
 							value="#{messages['municipalBond.reject']}"
-							reRender="resultsPanel" />
+							reRender="resultsPanel, resultsFuturePanel" />
 
 						<a:commandButton id="blockId"
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_BLOCKER') and _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus)}"
@@ -272,7 +294,7 @@
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_UNBLOCKER') and _municipalBond.municipalBondStatus.equals(municipalBondManager.blockedBondStatus)}"
 							action="#{municipalBondManager.updateStatus(_municipalBond, municipalBondManager.pendingBondStatus)}"
 							value="#{messages['municipalBond.enable']}"
-							reRender="resultsPanel" />
+							reRender="resultsPanel, resultsFuturePanel" />
 
 						<a:commandButton id="reverseId"
 							action="#{municipalBondManager.setForReverse(_municipalBond)}"
@@ -296,9 +318,11 @@
 
 						<a:commandButton id="nullifyId"
 							rendered="#{municipalBondManager.isCurrentDay(_municipalBond.emisionDate) and municipalBondManager.hasRole('ROLE_NAME_MANAGER_VOIDER') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
-							action="#{municipalBondManager.updateStatus(_municipalBond, municipalBondManager.canceledBondStatus)}"
+							action="#{municipalBondManager.putVoidBond(_municipalBond, municipalBondManager.canceledBondStatus)}"
 							value="#{messages['municipalBond.nullify']}"
-							reRender="resultsPanel" />
+							reRender="resultsPanel, resultsFuturePanel" >														  
+						</a:commandButton>
+							
 
 						<a:region>
 							<a:commandButton id="reprintId"
@@ -383,7 +407,7 @@
 
 					<h:panelGroup>
 						<div class="actionButtons">
-							<a:commandButton id="closingBtn" reRender="resultsPanel"
+							<a:commandButton id="closingBtn" reRender="resultsPanel, resultsFuturePanel"
 								action="#{municipalBondManager.updateStatus(municipalBondManager.municipalBond, municipalBondManager.reversedBondStatus)}"
 								value="#{messages['municipalBond.reverse']}"
 								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanel\');' : ''}" />

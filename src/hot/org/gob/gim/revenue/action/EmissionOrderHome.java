@@ -29,11 +29,13 @@ import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondView;
+import ec.gob.gim.revenue.model.adjunct.ANTReference;
 
 @Name("emissionOrderHome")
 @Scope(ScopeType.CONVERSATION)
@@ -1008,21 +1010,24 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 	private List<EmissionOrder> emissionOrders;
 	private String identificationNumber;
 	private String residentName;
+	private Date dateFrom;
+	private Date dateUntil;
 	
 	public void loadPending(){
-		
-		
-		
+			
 		String EJBQL = "select e from EmissionOrder e "
 		+"left join fetch e.municipalBonds m "
 		+"left join fetch m.resident res "
 		+"left join fetch m.receipt "
 		+"left join fetch m.entry entry "
-		+ "LEFT JOIN FETCH m.adjunct "
+		+ "LEFT JOIN FETCH m.adjunct adj "
 		+ "where ";
 		//+ "(lower(m.resident.name) like lower(concat(#{emissionOrderList.resident},'%'))) "
 		if (identificationNumber != null && !identificationNumber.equals("")) {
 			EJBQL = EJBQL + "(lower(m.resident.identificationNumber) like lower(concat(:identificationNumber,'%'))) and ";	
+		}
+		if ((dateFrom != null && !dateFrom.equals("")) && (dateUntil != null && !dateUntil.equals(""))) {
+			EJBQL = EJBQL + " (adj.citationDate between :dateFrom and :dateUntil) and ";	
 		}
 		EJBQL = EJBQL + " e.isDispatched= false and entry.id in (643,644) ";
 		
@@ -1031,8 +1036,20 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		if(identificationNumber!=null && !identificationNumber.equals("")){
 			q.setParameter("identificationNumber", identificationNumber);
 		}
+		if ((dateFrom != null && !dateFrom.equals("")) && (dateUntil != null && !dateUntil.equals(""))) {
+			q.setParameter("dateFrom", dateFrom);
+			q.setParameter("dateUntil", dateUntil);
+		}
 		//System.out.println("------------------- "+identificationNumber+"    -  "+residentName+"    "+q.getResultList().size());
 		emissionOrders = q.getResultList();
+	}
+	
+	public void resetValues(){
+		emissionOrders = new ArrayList<EmissionOrder>();
+		identificationNumber = null;
+		residentName = null;
+		dateFrom = null;
+		dateUntil = null;
 	}
 
 	public List<EmissionOrder> getEmissionOrders() {
@@ -1059,6 +1076,22 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		this.residentName = residentName;
 	}
 	
+	public Date getDateFrom() {
+		return dateFrom;
+	}
+
+	public void setDateFrom(Date dateFrom) {
+		this.dateFrom = dateFrom;
+	}
+
+	public Date getDateUntil() {
+		return dateUntil;
+	}
+
+	public void setDateUntil(Date dateUntil) {
+		this.dateUntil = dateUntil;
+	}
+
 	public void changeSelectedEmissionOrder(EmissionOrder eo, boolean selected){
 		eo.setIsSelected(!selected);
 	}
@@ -1096,6 +1129,30 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		//System.out.println("---------------------------------"+count);
 		loadPending();
 		return "updated";
+	}
+	
+	
+	//consulta de pdf Ant
+	//jock samaniego
+	//18-02-2019
+	
+	String URLnotification;
+	
+	public String getURLnotification() {
+		return URLnotification;
+	}
+
+	public void setURLnotification(String uRLnotification) {
+		URLnotification = uRLnotification;
+	}
+
+	public void loadInfractionNotification(Long adjunct_id){
+		String query = "Select ant from ANTReference ant where ant.id =:adj_id";
+		Query q = this.getEntityManager().createQuery(query);
+		q.setParameter("adj_id", adjunct_id);
+		ANTReference ant = (ANTReference) q.getSingleResult();	
+		System.out.println("======ANTnotification===> "+ant.getSupportDocumentURL());
+		this.URLnotification = ant.getSupportDocumentURL();
 	}
 		
 }

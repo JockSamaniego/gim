@@ -6,8 +6,10 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityQuery;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Name("infractionsList")
 public class InfractionsList extends EntityQuery<Infractions> {
@@ -24,10 +26,14 @@ public class InfractionsList extends EntityQuery<Infractions> {
 		"lower(infractions.licensePlate) like lower(concat('%',#{infractionsList.infractions.licensePlate},'%'))",
 		"infractions.citationDate >= #{infractionsList.dateFrom}",
 		"infractions.citationDate <= #{infractionsList.dateUntil}",
+		"infractions.creationDate >= #{infractionsList.dateFrom2}",
+		"infractions.creationDate <= #{infractionsList.dateUntil2}",
 		"lower(infractions.bulletin.agent.resident.identificationNumber) like lower(concat('%',#{infractionsList.agent},'%'))",
 		"lower(infractions.article) like lower(concat('%',#{infractionsList.infractions.article},'%'))",
 		"lower(infractions.numeral) like lower(concat('%',#{infractionsList.infractions.numeral},'%'))",
 		"lower(infractions.partNumber) like lower(concat('%',#{infractionsList.infractions.partNumber},'%'))",
+		"infractions.inconsistent = #{infractionsList.infractions.inconsistent}",
+		"infractions.nullified = #{infractionsList.infractions.nullified}",
 		"infractions.photoFine = #{infractionsList.infractions.photoFine}",};
 
 	private Infractions infractions = new Infractions();
@@ -35,6 +41,8 @@ public class InfractionsList extends EntityQuery<Infractions> {
 	private BigInteger endSerial;
 	private Date dateFrom;
 	private Date dateUntil;
+	private Date dateFrom2;
+	private Date dateUntil2;
 	private String agent;
 	private Boolean fixedRadar=Boolean.FALSE;
 
@@ -43,7 +51,7 @@ public class InfractionsList extends EntityQuery<Infractions> {
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
 		setOrderColumn("infractions.serial");
 		setOrderDirection("asc");
-		setMaxResults(25);
+		setMaxResults(500);
 	}
 	
 	@Override
@@ -105,6 +113,22 @@ public class InfractionsList extends EntityQuery<Infractions> {
 
 	public void setFixedRadar(Boolean fixedRadar) {
 		this.fixedRadar = fixedRadar;
+	}
+
+	public Date getDateFrom2() {
+		return dateFrom2;
+	}
+
+	public void setDateFrom2(Date dateFrom2) {
+		this.dateFrom2 = dateFrom2;
+	}
+
+	public Date getDateUntil2() {
+		return dateUntil2;
+	}
+
+	public void setDateUntil2(Date dateUntil2) {
+		this.dateUntil2 = dateUntil2;
 	}
 	
 }

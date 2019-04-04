@@ -39,7 +39,7 @@
 
     <rich:panel>
         <f:facet name="header">
-          	<h:panelGrid columns="2" columnClasses="headerTitle,">
+          	<h:panelGrid columns="3" columnClasses="headerTitle,">
 				<h:outputText
 					value=" #{messages['bulletin.searchResults']} (#{empty bulletinList.resultList ? 0 : (bulletinList.paginated ? bulletinList.resultCount : bulletinList.resultList.size)})" />
 			       <s:button view="/ant/ucot/BulletinEdit.xhtml"
@@ -48,6 +48,11 @@
 			                value="#{messages['common.create']} #{messages['bulletin']}">
 			           <f:param name="bulletinId"/>
 			       </s:button>
+			       <s:button
+						view="/ant/ucot/report/BulletinsReport.xhtml"
+						id="printReport"
+						disabled = "#{empty bulletinList.resultList}"
+						value="#{messages['common.print']}" />
 			</h:panelGrid>      
         </f:facet>
     <div class="results" id="bulletinList">
@@ -147,6 +152,7 @@
                       id="createInfraction">
                 <f:param name="bulletinId"
                         value="#{_bulletin.id}"/>
+                <f:param name="infractionsId" />
             </s:button>
 
 
@@ -154,8 +160,13 @@
                   action="#{bulletinHome.searchInfractionsDelivered(_bulletin.id)}"
                   reRender="infractionsDelivered" ajaxSingle="true"
                   eventsQueue="gimQueue"
-                  oncomplete="Richfaces.showModalPanel('infractionsDelivered',{width:600, height:500})"
+                  oncomplete="Richfaces.showModalPanel('infractionsDelivered',{width:600, height:550})"
                   value="Listado" />
+                  
+              <a:commandButton       
+                            action="#{bulletinHome.printInfractionsDelivered(_bulletin.id)}"
+                            id="printReport" 
+                            value="#{messages['common.print']}" />
             
         </rich:column>
     </rich:dataTable>

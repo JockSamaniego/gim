@@ -27,9 +27,9 @@ public class AgentList extends EntityQuery<Agent> {
 	public AgentList() {
 		setEjbql(EJBQL);
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
-		setOrderColumn("agent.resident.identificationNumber");
+		setOrderColumn("agent.resident.name");
 		setOrderDirection("asc");
-		setMaxResults(25);
+		setMaxResults(500);
 	}
 	
 	private String criteriaSearch;

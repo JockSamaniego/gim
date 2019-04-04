@@ -315,12 +315,12 @@ public class PropertyHome extends EntityHome<Property> {
 		}
 
 		if (isUrban) {
-			if (!isValidPreviousCadastralCode()) {
+			/*if (!isValidPreviousCadastralCode()) {
 				String message = Interpolator.instance()
 						.interpolate("#{messages['property.errorPreviousCadastralCode']}", new Object[0]);
 				facesMessages.addToControl("", org.jboss.seam.international.StatusMessage.Severity.ERROR, message);
 				return "failed";
-			}
+			}*/
 			if (!isValidAliquotForProperty()) {
 				String message = Interpolator.instance().interpolate("#{messages['property.errorPropertyAliquots']}",
 						new Object[0]);
@@ -2466,17 +2466,18 @@ public class PropertyHome extends EntityHome<Property> {
 			this.selectedPropertyViewHistory = getEntityManager().find(Property.class, propertySelectedId);
 			this.listPropertyHistory.clear();
 			this.listDomainHistory.clear();
-			this.propertySelectedCadastralCode = selectedPropertyViewHistory.getPreviousCadastralCode();
+			//this.propertySelectedCadastralCode = selectedPropertyViewHistory.getPreviousCadastralCode();
 
 			/* PROPIEDAD */
 			String qryProperty = "select rev.timestamp," + "rev.username," + "pro.CADASTRALCODE," + "pro.area,"
 					+ "pro.front," + "pro.frontslength," + "pro.observations," + "pro.side "
 					+ "from gimprod.revision rev " + "inner join gimaudit.property_aud pro on rev.id=pro.rev "
-					+ "where pro.previouscadastralcode = ? " + "order by rev.timestamp desc";
+					+ "where pro.id = ? " + "order by rev.timestamp desc";
 
 			Query queryProperty = this.getEntityManager().createNativeQuery(qryProperty);
 
-			queryProperty.setParameter(1, this.propertySelectedCadastralCode);
+			//queryProperty.setParameter(1, this.propertySelectedCadastralCode);
+			queryProperty.setParameter(1, propertySelectedId);
 			List<Object[]> resultProperties = queryProperty.getResultList();
 
 			/* DOMINIOS */
@@ -2582,4 +2583,15 @@ public class PropertyHome extends EntityHome<Property> {
 			System.out.println("error: no se completó la activación!!");
 		}
 	}
+	
+	public Boolean hasRole(String roleKey) {
+        if (systemParameterService == null) {
+            systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+        }
+        String role = systemParameterService.findParameter(roleKey);
+        if (role != null) {
+            return userSession.getUser().hasRole(role);
+        }
+        return false;
+    }
 }

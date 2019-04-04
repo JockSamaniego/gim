@@ -17,8 +17,8 @@
         <h:panelGrid columns="2"> 
 
             <s:decorate template="../../layout/display.xhtml">
-                <ui:define name="label">#{messages['infraction.citationNumber']}:</ui:define>
-                <h:inputText id="citationNumber" value="#{fixedRadarList.infractions.citationNumber}"/>
+                <ui:define name="label">#{messages['process.axisNumber']}:</ui:define>
+                <h:inputText id="axisNumber" value="#{fixedRadarList.infractions.axisNumber}"/>
             </s:decorate>
 
             <s:decorate template="../../layout/display.xhtml">
@@ -81,6 +81,11 @@
                             value="#{messages['common.create']} #{messages['infraction.photoFine']}">
                        <f:param name="infractionsId" />
                    </s:button>
+                   <s:button
+						view="/ant/ucot/report/PhotoFineFRReport.xhtml"
+						id="printReport"
+						disabled = "#{empty fixedRadarList.resultList}"
+						value="#{messages['common.print']}" />
             </h:panelGrid>      
         </f:facet>
     <div class="results" id="fixedRadarList">
@@ -92,15 +97,16 @@
                 var="_infractions"
               value="#{fixedRadarList.resultList}"
            rendered="#{not empty fixedRadarList.resultList}">
-        <rich:column styleClass="action" style="align:right;">
+           
+        <rich:column styleClass="action" style="align:center;">
             <f:facet name="header">
                 <ui:include src="../../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{fixedRadarList}"/>
-                    <ui:param name="propertyLabel" value="#{messages['infraction.citationNumber']}"/>
-                    <ui:param name="propertyPath" value="infractions.citationNumber"/>
+                    <ui:param name="propertyLabel" value="#{messages['process.axisNumber']}"/>
+                    <ui:param name="propertyPath" value="infractions.axisNumber"/>
                 </ui:include>
             </f:facet>
-            <h:outputText value="#{_infractions.citationNumber}"/>
+            <h:outputText value="#{_infractions.axisNumber}"/>
         </rich:column>
 
         <rich:column styleClass="action" style="align:center;">

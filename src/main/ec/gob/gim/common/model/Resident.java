@@ -154,6 +154,7 @@ public abstract class Resident extends Identifiable{
 	private boolean enablesubscription = Boolean.FALSE;
 	
 	//rfam 2018-08-08
+	@Column(nullable = true)
 	private Boolean generateUniqueAccountt = Boolean.FALSE;
 	               
 	/**
