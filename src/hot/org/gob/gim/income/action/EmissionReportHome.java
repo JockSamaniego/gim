@@ -441,7 +441,7 @@ public class EmissionReportHome extends EntityController {
 		query.setParameter("date", date);
 		List<Workday> list = query.getResultList();
 		if (list.size() > 0) {
-			this.charge = list.get(0).getId().intValue();
+			this.charge = list.get(0).getCharge().intValue();
 		} else {
 			this.charge = null;
 		}
