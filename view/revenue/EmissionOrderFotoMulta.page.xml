@@ -9,6 +9,8 @@
    <action execute="#{emissionOrderHome.wire}"/>
 
    <param name="emissionOrderFrom"/>
+   <param name="sort" value="#{emissionOrderList.orderColumn}"/>
+   <param name="dir" value="#{emissionOrderList.orderDirection}"/>
    <param name="emissionOrderId" value="#{emissionOrderHome.emissionOrderId}"/>
        
    <navigation>

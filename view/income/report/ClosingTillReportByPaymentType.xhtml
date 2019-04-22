@@ -186,34 +186,8 @@
 									<p:text value="#{messages['summary.numberPayments']}"/>
 								</p:font>
 							</p:paragraph>
-						</p:cell>		
-						<p:cell horizontalAlignment="right">
-							<p:paragraph borderWidth="1">
-								<p:font size="8">
-									<p:text value="#{tillPermissionHome.summaryFinal.numberPayments}">
-										<f:convertNumber pattern="#0" />
-									</p:text>
-								</p:font>
-							</p:paragraph>
-						</p:cell>
-						
-						<p:cell>
-							<p:paragraph borderWidth="1">
-								<p:font size="8">
-									<p:text value="#{messages['summary.bondsNumber']}"/>
-								</p:font>
-							</p:paragraph>
-						</p:cell>		
-						<p:cell horizontalAlignment="right">
-							<p:paragraph borderWidth="1">
-								<p:font size="8">
-									<p:text value="#{tillPermissionHome.summaryFinal.numberMunicipalBonds}">
-										<f:convertNumber pattern="#0" />
-									</p:text>
-								</p:font>
-							</p:paragraph>
-						</p:cell>
-						
+						</p:cell>			
+			
 						<p:cell>
 							<p:paragraph borderWidth="1">
 								<p:font size="8">
@@ -224,7 +198,7 @@
 						<p:cell horizontalAlignment="right">
 							<p:paragraph borderWidth="1">
 								<p:font size="8">
-									<p:text value="#{tillPermissionHome.summaryFinal.totalValue}">
+									<p:text value="#{tillPermissionHome.summaryFinal.totalCapital}">
 										<f:convertNumber pattern="#0.00" />
 									</p:text>
 								</p:font>
@@ -302,14 +276,14 @@
 						<p:cell>
 							<p:paragraph borderWidth="1">
 								<p:font size="8" style="bold">
-									<p:text value="#{messages['summary.totalType']}" />
+									<p:text value="#{messages['summary.totalCollected']}" />
 								</p:font>
 							</p:paragraph>
 						</p:cell>		
 						<p:cell horizontalAlignment="right">
 							<p:paragraph borderWidth="1">
 								<p:font size="8" style="bold">
-									<p:text value="#{tillPermissionHome.summaryFinal.totalType}">
+									<p:text value="#{tillPermissionHome.summaryFinal.totalPayment}">
 										<f:convertNumber pattern="#0.00" />
 									</p:text>
 								</p:font>

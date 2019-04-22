@@ -52,6 +52,7 @@ import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.TaxItem;
 import ec.gob.gim.income.model.TaxpayerRecord;
+import ec.gob.gim.revenue.model.impugnment.Impugnment;
 
 /**
  * @author gerson
@@ -1899,5 +1900,20 @@ public class MunicipalBond implements Serializable {
 	public void setSurchargeRemission(BigDecimal surchargeRemission) {
 		this.surchargeRemission = surchargeRemission;
 	}
+	
+	//para impugnaciones
+	@OneToOne(mappedBy="municipalBond", fetch = FetchType.LAZY)
+	private Impugnment impugnment;
+
+
+	public Impugnment getImpugnment() {
+		return impugnment;
+	}
+
+	public void setImpugnment(Impugnment impugnment) {
+		this.impugnment = impugnment;
+	}
+	
+	
 
 }// end MunicipalBond
