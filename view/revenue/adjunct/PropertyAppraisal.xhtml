@@ -48,7 +48,7 @@
 				</h:selectOneMenu>
 		</h:panelGrid>
 		
-		<h:panelGrid columns="6" id="dataAppraisalPanel">
+		<h:panelGrid columns="7" id="dataAppraisalPanel">
 
 			<s:decorate id="cadastralCodeField"
 				template="../../layout/vertical-edit.xhtml">
@@ -101,6 +101,24 @@
 				<ui:define name="label">#{messages['domain.exemptionValue']}</ui:define>
 				<h:inputText id="exemptionValue" styleClass="right" 
 					value="#{adjunctHome.instance.exemptionValue}" size="10"/>
+			</s:decorate>
+			
+			
+			<s:decorate id="areaValueField" 
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">Area</ui:define>
+				<h:inputText id="areaValue" styleClass="right" 
+					value="#{adjunctHome.instance.lotArea}" size="10"/>
+			</s:decorate>
+
+			<s:decorate id="constructionAreaValueField" 
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">Area total de construcción</ui:define>
+				<h:inputText id="constructionAreaValue" styleClass="right" 
+					value="#{adjunctHome.instance.constructionArea}" size="10">
+					<f:convertNumber maxFractionDigits="#{messages['common.maxFractionDigits']}" 
+					minFractionDigits="#{messages['common.minFractionDigits']}" />
+				</h:inputText>
 			</s:decorate>
 			
 		</h:panelGrid>
