@@ -77,6 +77,18 @@
                               readonly="true">
                 </h:inputText>
             </s:decorate>
+            
+            <s:decorate id="allSelectedField" template="../layout/edit.xhtml">
+                <ui:define name="label">SELECCIONAR TODO</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="allSelected"
+                					  value="#{emissionOrderHome.allSelectedCheck}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeAllItemRevision()}" ajaxSingle="true" reRender="panelInformation,revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+            </s:decorate>
+            
 
             <s:decorate id="ownerIdentificationField" template="../layout/edit.xhtml">
                 <ui:define name="label">#{messages['fotomulta.ownerIdentification']}</ui:define>

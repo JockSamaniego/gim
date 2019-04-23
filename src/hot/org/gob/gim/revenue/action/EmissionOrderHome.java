@@ -1417,4 +1417,33 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		}
 		return false;
 	}
+	
+	private Boolean allSelectedCheck = Boolean.FALSE;
+	
+	public Boolean getAllSelectedCheck() {
+		return allSelectedCheck;
+	}
+
+	public void setAllSelectedCheck(Boolean allSelectedCheck) {
+		this.allSelectedCheck = allSelectedCheck;
+	}
+
+	public void changeAllItemRevision(){
+		revisionFM.setOwnerIdentification(allSelectedCheck);
+		revisionFM.setInfractionNumber(allSelectedCheck);
+		revisionFM.setOffenderPlate(allSelectedCheck);
+	    revisionFM.setInfractionDate(allSelectedCheck);
+	    revisionFM.setInfractionPlace(allSelectedCheck);
+	    revisionFM.setSpeedLimitDetected(allSelectedCheck);
+	    revisionFM.setEstablishedSpeedLimit(allSelectedCheck);
+	    revisionFM.setEquipmentSerialNumber(allSelectedCheck);
+	    revisionFM.setOffenderService(allSelectedCheck);
+	    revisionFM.setInfractionAmount(allSelectedCheck);
+	    revisionFM.setBallotGenerationDate(allSelectedCheck);
+	    revisionFM.setThreePhotographs(allSelectedCheck);
+	    revisionFM.setDetailsMotivation(allSelectedCheck);
+	    revisionFM.setBallotNotification(allSelectedCheck);
+	    revisionFM.setApprovalCertificate(allSelectedCheck);
+	    changeItemRevision();
+	}
 }
