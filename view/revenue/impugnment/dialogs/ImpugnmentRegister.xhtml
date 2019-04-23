@@ -179,13 +179,22 @@
 
 				<div class="actionButtons">
 					<a:region>
+						<a:commandButton id="registerDirectButton" ajaxSingle="true"
+							value="#{messages['revenue.impugnments.impugnment_save']}s"
+							actionListener="#{impugnmentHome.registerImpugnment()}"
+							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
+							bypassUpdates="true"
+							action="#{emissionOrderHome.loadPending()}"
+							reRender="emissionOrderTable,sc2,txtTotal"
+							rendered="#{impugnmentHome.isCreateAction and !impugnmentHome.isUserWithRolVer() and impugnmentHome.directButton}" />
+					
 						<a:commandButton id="registerButton" ajaxSingle="true"
 							value="#{messages['revenue.impugnments.impugnment_save']}"
 							reRender="paginador,impugnmentsTable,lblNumberResults"
 							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
 							bypassUpdates="true"
 							actionListener="#{impugnmentHome.registerImpugnment()}"
-							rendered="#{impugnmentHome.isCreateAction and !impugnmentHome.isUserWithRolVer()}" />
+							rendered="#{impugnmentHome.isCreateAction and !impugnmentHome.isUserWithRolVer() and !impugnmentHome.directButton}" />
 
 						<a:commandButton id="updateButton" ajaxSingle="true"
 							value="#{messages['revenue.impugnments.impugnment_update']}"

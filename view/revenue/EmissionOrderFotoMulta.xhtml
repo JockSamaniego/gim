@@ -10,7 +10,9 @@
 
 	<ui:define name="body">
 	
+	<ui:include src="impugnment/dialogs/ImpugnmentRegister.xhtml" />
 	<ui:include src="../components/InfractionNotificationViewer.xhtml" />
+	<ui:include src="fragment/RevisionEmissionOrderFMDetails.xhtml" />
 		<h:form id="orderEmissionEdit" styleClass="edit">
 			<h:outputText styleClass="formTitle"
 				value="#{messages['EMISSION_ORDERPM']}" />
@@ -22,6 +24,15 @@
 					</h:panelGrid>
 				</f:facet>
 				<h:panelGrid columns="1" id="searchPanel">
+					<s:decorate template="../layout/display.xhtml">
+						<ui:define name="label">#{messages['emissionOrder.number']}</ui:define>
+						<h:inputText id="emissionNumber"
+							value="#{emissionOrderHome.emissionNumber}">
+							<a:support event="onblur" ajaxSingle="true"
+								reRender="emissionNumber" />
+						</h:inputText>
+					</s:decorate>
+				
 					<s:decorate template="../layout/display.xhtml">
 						<ui:define name="label">#{messages['resident.identificationNumber']}</ui:define>
 						<h:inputText id="identificationNumber"
@@ -57,27 +68,55 @@
 									reRender="dateUntil" />
 		                </rich:calendar>
 		            </s:decorate>
+		            
+		            <s:decorate id="revisionStatusField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['fotomulta.revisionStatus']}:</ui:define>
+						<h:selectOneMenu id="revisionStatus" required="true"
+							value="#{emissionOrderHome.revisionStatusUCOT}">
+							<s:selectItems value="#{emissionOrderHome.revisionStatusFM}" var="status"
+								label="#{status}"/>
+							<a:support event="onchange" ajaxSingle="true"
+									reRender="revisionStatus" />
+						</h:selectOneMenu>
+					</s:decorate>
+					
+					<s:decorate id="impugnmentStatusField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['fotomulta.impugnmentStatus']}:</ui:define>
+						<h:selectOneMenu id="impugnmentStatus" required="true"
+							value="#{emissionOrderHome.impugnmentStatusUCOT}">
+							<s:selectItems value="#{emissionOrderHome.impugnmentStatusFM}" var="impugnment"
+								label="#{impugnment}"/>
+							<a:support event="onchange" ajaxSingle="true"
+									reRender="impugnmentStatus" />
+						</h:selectOneMenu>
+					</s:decorate>
+				
 				</h:panelGrid>
 
 				<a:commandButton id="loadBt" ajaxSingle="true"
 					action="#{emissionOrderHome.loadPending()}"
 					eventsQueue="gimEventsQueue"
-					reRender="emissionOrderTable,sc2,txtTotal"
+					reRender="emissionOrderTable,sc2,txtTotal, printReport"
 					value="#{messages['common.search']}" />
 				
 				<a:commandButton id="resetBt" ajaxSingle="true"
 					action="#{emissionOrderHome.resetValues()}"
 					eventsQueue="gimEventsQueue"
-					reRender="emissionOrderTable,sc2,txtTotal,searchPanel"
+					reRender="emissionOrderTable,sc2,txtTotal,searchPanel,revisionStatusField, printReport"
 					value="#{messages['common.reset']}" />
 
 			</rich:panel>
 
-			<rich:panel>
+			<rich:panel id="emissionOrderPanel">
 				<f:facet name="header">
 					<h:panelGrid columns="3" columnClasses="headerTitle,">
 						<h:outputText id="txtTotal"
 							value="#{messages['municipalBond.searchResults']} (#{empty emissionOrderHome.emissionOrders ? 0 : (emissionOrderHome.emissionOrders.size())})" />
+						<s:button
+							view="/revenue/report/EmissionOrderFotoMultaReport.xhtml"
+							id="printReport"
+							disabled = "#{emissionOrderHome.emissionOrders.size() == 0 || emissionOrderHome.emissionOrders == null}"
+							value="#{messages['common.print']}" />
 					</h:panelGrid>
 				</f:facet>
 
@@ -86,11 +125,12 @@
 				<rich:dataTable id="emissionOrderTable" var="_emissionOrder"
 					value="#{emissionOrderHome.emissionOrders}" rows="25">
 
-					<rich:column>
+					<rich:column rendered="#{emissionOrderHome.hasRole('ROLE_NAME_EMISOR')}">
 						<f:facet name="header">
 							<h:outputText value="#{_emissionOrder.id}" />
 						</f:facet>
-						<h:selectBooleanCheckbox value="#{ _emissionOrder.isSelected}">
+						<h:selectBooleanCheckbox value="#{ _emissionOrder.isSelected}"
+							disabled="#{_emissionOrder.revisionFM.status != 'APROBADA' || (_emissionOrder.municipalBonds.get(0).impugnment != null and _emissionOrder.municipalBonds.get(0).impugnment.status.name != 'RECHAZADA')}">
 							<a:support event="onchange" ajaxSingle="true"
 								bypassUpdates="true" eventsQueue="gimQueue"
 								action="#{emissionOrderHome.changeSelectedEmissionOrder(_emissionOrder, _emissionOrder.isSelected)}" />
@@ -133,6 +173,18 @@
 							<f:convertDateTime pattern="dd/MM/yyyy" />
 						</h:outputText>
 					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{emissionOrderList}" />
+								<ui:param name="propertyLabel" value="#{messages['resident.identificationNumber']}" />
+								<ui:param name="propertyPath" value="m.resident.identificationNumber" />
+							</ui:include>
+						</f:facet>
+						<h:outputText
+							value="#{_emissionOrder.municipalBonds.size() == 1 ? _emissionOrder.municipalBonds.get(0).resident.identificationNumber : ''}" />
+					</h:column>
 
 					<h:column>
 						<f:facet name="header">
@@ -171,18 +223,44 @@
 								<f:convertDateTime pattern="yyyy-MM-dd" />
 							</h:outputText>
 					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{emissionOrderList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['fotomulta.revisionUCOT']}" />
+								<ui:param name="propertyPath" value="e.revisionFM.status" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_emissionOrder.revisionFM.status}" rendered="#{_emissionOrder.revisionFM != null}" />
+						<h:outputText value="PENDIENTE" rendered="#{_emissionOrder.revisionFM == null}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{emissionOrderList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['fotomulta.impugnment?']}" />
+								<ui:param name="propertyPath" value="m.impugnment.status.name" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_emissionOrder.municipalBonds.size() == 1 ? _emissionOrder.municipalBonds.get(0).impugnment.status.name : ''}" rendered="#{_emissionOrder.municipalBonds.get(0).impugnment!= null}" />
+						<h:outputText value="NO IMPUGNADA" rendered="#{_emissionOrder.municipalBonds.get(0).impugnment == null}" />
+					</h:column>
 
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet>
 						<s:button view="/revenue/EmissionOrderEdit.xhtml"
 							value="#{messages['common.detail']}" propagation="none"
 							id="municipalBondList"
-							rendered="#{_emissionOrder.municipalBonds.size() > 1 and paymentHome.hasRole('ROLE_NAME_EMISOR')}">
+							rendered="#{_emissionOrder.municipalBonds.size() > 1 and emissionOrderHome.hasRole('ROLE_NAME_EMISOR')}">
 							<f:param name="emissionOrderId" value="#{_emissionOrder.id}" />
 						</s:button>
 
 						<a:commandButton id="viewer" ajaxSingle="true"
-							rendered="#{_emissionOrder.municipalBonds.size() == 1 and paymentHome.hasRole('ROLE_NAME_EMISOR')}"
+							rendered="#{_emissionOrder.municipalBonds.size() == 1 and emissionOrderHome.hasRole('ROLE_NAME_EMISOR')}"
 							action="#{municipalBondsViewerHome.loadMunicipalBond(_emissionOrder.municipalBonds.get(0))}"
 							eventsQueue="gimEventsQueue" reRender="_municipalBondViewer"
 							oncomplete="Richfaces.showModalPanel('_municipalBondViewer',{width:700, height:500})"
@@ -190,20 +268,31 @@
 
 						<a:commandButton id="emitEmissionOrder"
 							value="#{messages['common.emit']}"
-							rendered="#{_emissionOrder.municipalBonds.size() == 1 and paymentHome.hasRole('ROLE_NAME_EMISOR')}"
-							action="#{emissionOrderHome.emitEmissionOrder(_emissionOrder)}" />
+							rendered="#{_emissionOrder.municipalBonds.size() == 1 and emissionOrderHome.hasRole('ROLE_NAME_EMISOR')}"
+							action="#{emissionOrderHome.emitEmissionOrder(_emissionOrder)}" 
+							disabled="#{_emissionOrder.revisionFM.status != 'APROBADA' || (_emissionOrder.municipalBonds.get(0).impugnment != null and _emissionOrder.municipalBonds.get(0).impugnment.status.name != 'RECHAZADA')}" />
 
 
 						<a:commandButton id="rejectEmissionOrder"
 							value="#{messages['municipalBond.reject']}"
-							rendered="#{_emissionOrder.municipalBonds.size() == 1 and paymentHome.hasRole('ROLE_NAME_EMISOR')}"
-							action="#{emissionOrderHome.rejectEmissionOrder(_emissionOrder)}" />
+							rendered="#{_emissionOrder.municipalBonds.size() == 1 and emissionOrderHome.hasRole('ROLE_NAME_EMISOR')}"
+							action="#{emissionOrderHome.rejectEmissionOrder(_emissionOrder)}" 
+							disabled="#{_emissionOrder.revisionFM.status != 'RECHAZADA'}" />
 							
 						<a:commandButton id="viewerNotification" ajaxSingle="true" 
-									action="#{emissionOrderHome.loadInfractionNotification(_emissionOrder.municipalBonds.get(0).adjunct.id)}"
+									action="#{emissionOrderHome.loadInfractionNotification(_emissionOrder)}"
 									eventsQueue="gimEventsQueue" reRender="_infractionNotificationViewer"
-									oncomplete="Richfaces.showModalPanel('_infractionNotificationViewer',{width:820, height:570})"  
-									value="Pdf">
+									oncomplete="Richfaces.showModalPanel('_infractionNotificationViewer',{width:1200, height:570})"  
+									value="#{messages['fotomulta.pdfNotification']}">
+						</a:commandButton>
+						
+						<a:commandButton id="infractionImpugnment" ajaxSingle="true" 
+									actionListener="#{impugnmentHome.prepareDirectRegisterImpugnment(_emissionOrder)}"
+									eventsQueue="gimEventsQueue" reRender="impugnmentRegisterPanel"
+									oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:550})"  
+									value="#{messages['fotomulta.impugnment']}"
+									disabled="#{_emissionOrder.municipalBonds.size() != 1 || _emissionOrder.municipalBonds.get(0).impugnment != null}"
+									rendered="#{emissionOrderHome.hasRole('ROLE_REVISOR_UCOT')}" >
 						</a:commandButton>
 
 					</rich:column>
@@ -217,10 +306,11 @@
 			<div class="actionButtons">
 
 				<a:commandButton id="emitEmissionOrder"
-					value="#{messages['common.emit']}"
+					value="#{messages['fotomulta.emitSelected']}"
 					action="#{emissionOrderHome.multipleEmission()}"
 					reRender="emissionOrderTable,sc2,txtTotal"
-					eventsQueue="gimEventsQueue" />
+					eventsQueue="gimEventsQueue" 
+					rendered="#{emissionOrderHome.hasRole('ROLE_NAME_EMISOR')}"/>
 
 				<!-- h:commandButton id="emitEmissionOrder2"
 					value="#{messages['common.emit hcb']}"
@@ -232,7 +322,8 @@
 					value="#{messages['municipalBond.reject']}"
 					action="#{emissionOrderHome.multipleReject()}"
 					reRender="emissionOrderTable,sc2,txtTotal"
-					eventsQueue="gimEventsQueue" />
+					eventsQueue="gimEventsQueue" 
+					rendered="false" />
 
 
 				<s:button id="back" value="#{messages['common.back']}"

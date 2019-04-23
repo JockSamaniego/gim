@@ -16,11 +16,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Person;
 
 /**
@@ -96,6 +98,9 @@ public class EmissionOrder {
 	@JoinColumn(name="emissionOrder_id")
 	private List<MunicipalBond> municipalBonds;
 	
+	@OneToOne(mappedBy="emissionOrder", fetch = FetchType.EAGER)
+	private RevisionEmissionOrderFM revisionFM;
+	
 	public EmissionOrder(){
 		municipalBonds = new ArrayList<MunicipalBond>();
 		isDispatched = Boolean.FALSE;
@@ -168,5 +173,14 @@ public class EmissionOrder {
 	public void setIsDispatched(Boolean isDispatched) {
 		this.isDispatched = isDispatched;
 	}
+
+	public RevisionEmissionOrderFM getRevisionFM() {
+		return revisionFM;
+	}
+
+	public void setRevisionFM(RevisionEmissionOrderFM revisionFM) {
+		this.revisionFM = revisionFM;
+	}
+
 
 }

@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.service.ImpugnmentService;
 import org.gob.gim.revenue.service.ItemCatalogService;
+import org.gob.loja.gim.ws.dto.EmisionDetail;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -18,7 +22,9 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityController;
 
 import ec.gob.gim.common.model.ItemCatalog;
+import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.adjunct.ANTReference;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.revenue.model.impugnment.criteria.ImpugnmentSearchCriteria;
 import ec.gob.gim.revenue.model.impugnment.dto.ImpugnmentDTO;
@@ -361,10 +367,9 @@ public class ImpugnmentHome extends EntityController {
 	}
 
 	public void registerImpugnment() {
-
+		EntityManager em = getEntityManager();
 		if (impugnmentSelected.getMunicipalBond() == null
 				|| impugnmentSelected.getNumberInfringement() == null
-				|| impugnmentSelected.getMunicipalBond().getNumber() == null
 				|| impugnmentSelected.getMunicipalBond().getId() == null
 				|| (impugnmentSelected.getNumberTramit() == null && isUserWithRolCoercive())) {
 			facesMessages.addToControl("",
@@ -375,6 +380,7 @@ public class ImpugnmentHome extends EntityController {
 			this.impugnmentSelected.setType(typeImpugnmentFotoMulta);
 			this.impugnmentSelected.setUserRegister(this.userSession.getUser());
 			this.impugnmentService.save(impugnmentSelected);
+			em.refresh(orderSelected);
 			this.impugnments = this.impugnmentService
 					.findImpugnmentsForCriteria(criteria);
 		}
@@ -467,6 +473,41 @@ public class ImpugnmentHome extends EntityController {
 		} else {
 			return Boolean.FALSE;
 		}
+	}
+	
+	//para creacion de impugnación directo desde la orden de emision (fotomultas)
+	//Jock Samaniego
+	//11-04-2019
+	
+	private Boolean directButton = Boolean.FALSE;
+	private EmissionOrder orderSelected;
+	
+	public Boolean getDirectButton() {
+		return directButton;
+	}
+
+	public void setDirectButton(Boolean directButton) {
+		this.directButton = directButton;
+	}
+
+	public EmissionOrder getOrderSelected() {
+		return orderSelected;
+	}
+
+	public void setOrderSelected(EmissionOrder orderSelected) {
+		this.orderSelected = orderSelected;
+	}
+
+	public void prepareDirectRegisterImpugnment(EmissionOrder emissionOrder) {
+		this.orderSelected = emissionOrder;
+		directButton = Boolean.TRUE;
+		String query = "Select ant from ANTReference ant where ant.id =:adj_id";
+		Query q = this.getEntityManager().createQuery(query);
+		q.setParameter("adj_id", emissionOrder.getMunicipalBonds().get(0).getAdjunct().getId());
+		ANTReference ant = (ANTReference) q.getSingleResult();
+		preparaRegisterImpugnment();
+		this.impugnmentSelected.setNumberInfringement(ant.getContraventionNumber());
+		searchMunicipalBond();
 	}
 
 }

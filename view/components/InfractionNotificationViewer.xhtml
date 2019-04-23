@@ -13,10 +13,11 @@
 }
 </style>
 
-	<rich:modalPanel id="#{id}_infractionNotificationViewer" width="700" height="600" style="overflow:auto">
-	<f:facet name="header">
+	<rich:modalPanel id="#{id}_infractionNotificationViewer" width="900" height="600" style="overflow:auto">
+
+		<f:facet name="header">
 			<h:panelGroup>
-				<h:outputText styleClass="formTitle" value="Detalle de la infracción" />				
+				<h:outputText styleClass="formTitle" value="#{messages['fotomulta.infractionDetail']}" />				
 			</h:panelGroup>
 		</f:facet>
 		<f:facet name="controls">
@@ -27,28 +28,340 @@
 					attachTo="hidelinkMun2" operation="hide" event="onclick" />
 			</h:panelGroup>
 		</f:facet>
-	<h:panelGrid styleClass="full" id="pdfImpresion" rendered="#{municipalBondsViewerHome.URLnotification != null and municipalBondsViewerHome.URLnotification != ''}" >
-		<s:div id="ObjContainer"
-				style="width: 800px; height: 480px;">
-				<object data="#{municipalBondsViewerHome.URLnotification}" style="width:100%; height:100%;"
-					type="application/pdf" />
-		</s:div>
-	</h:panelGrid>
+	<h:form id="infractionViewerForm" styleClass="edit">
+	<h:panelGrid styleClass="full" id="pdfImpresion" columns="2"  >
+    <h:panelGrid styleClass="full" id="pdfImpresion1" rendered="#{municipalBondsViewerHome.URLnotification != null and municipalBondsViewerHome.URLnotification != ''}" >
+      <s:div id="ObjContainer"
+          style="width: 800px; height: 480px;">
+          <object data="#{municipalBondsViewerHome.URLnotification}" style="width:100%; height:100%;"
+            type="application/pdf" />
+      </s:div>
+    </h:panelGrid>
 
-	<h:panelGrid styleClass="full" id="pdfImpresion2" rendered="#{emissionOrderHome.URLnotification != null and emissionOrderHome.URLnotification != ''}" >
-		<s:div id="ObjContainer2"
-				style="width: 800px; height: 480px;">
-				<object data="#{emissionOrderHome.URLnotification}" style="width:100%; height:100%;"
-					type="application/pdf" />
-		</s:div>
-	</h:panelGrid>
-	
-	<h:panelGrid styleClass="full" id="noNotificacation" rendered="#{(municipalBondsViewerHome.URLnotification == null || municipalBondsViewerHome.URLnotification == '') and (emissionOrderHome.URLnotification == null || emissionOrderHome.URLnotification == '')}" >
-		<s:div id="textContainer"
-				style="width: 800px; height: 480px;">
-				<h:outputText style="font-weight:bold; font-size:25px; color:red" value="No existe notificación registrada" />
-		</s:div>
-	</h:panelGrid>
+    <h:panelGrid styleClass="full" id="pdfImpresion2" rendered="#{emissionOrderHome.URLnotification != null and emissionOrderHome.URLnotification != ''}" >
+      <s:div id="ObjContainer2"
+          style="width: 800px; height: 480px;">
+          <object data="#{emissionOrderHome.URLnotification}" style="width:100%; height:100%;"
+            type="application/pdf" />
+      </s:div>
+    </h:panelGrid>
+    
+    <h:panelGrid styleClass="full" id="noNotificacation" rendered="#{(municipalBondsViewerHome.URLnotification == null || municipalBondsViewerHome.URLnotification == '') and (emissionOrderHome.URLnotification == null || emissionOrderHome.URLnotification == '')}" >
+      <s:div id="textContainer"
+          style="width: 800px; height: 480px;">
+          <h:outputText style="font-weight:bold; font-size:25px; color:red" value="No existe notificación registrada" />
+      </s:div>
+    </h:panelGrid>
+          <rich:panel id="panelInformation" rendered="#{emissionOrderHome.hasRole('ROLE_REVISOR_UCOT')}">
+            <f:facet name="header">
+                <h:panelGrid columns="1" columnClasses="headerTitle,">
+                  <h:outputText
+                    value="#{messages['fotomulta.revisionInfractionForm']}" />
+                </h:panelGrid>      
+            </f:facet>
+            
+            <s:decorate id="revisionDateField" template="../layout/edit.xhtml"
+                  rendered="#{!infractionsHome.infractionToEdit}">
+                <ui:define name="label">#{messages['ucot.revisionDate']}:</ui:define>
+                <rich:calendar id="registerDate"
+                          value="#{emissionOrderHome.revisionFM.revisionDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                </rich:calendar>
+            </s:decorate>
+            
+            <s:decorate id="reviserUserField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.reviserUser']}:</ui:define>
+                <h:inputText id="identification"
+                              size="50"
+                              value="#{emissionOrderHome.revisionFM.reviserName}"
+                              readonly="true">
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="ownerIdentificationField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.ownerIdentification']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="ownerIdentification"
+                                      value="#{emissionOrderHome.revisionFM.ownerIdentification}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="ownerIdentificationButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.ownerIdentification')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+             <s:decorate id="infractionNumberField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.infractionNumber']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="infractionNumber"
+                                      value="#{emissionOrderHome.revisionFM.infractionNumber}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="infractionNumberButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.infractionNumber')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="offenderPlateField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.offenderPlate']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="offenderPlate"
+                                      value="#{emissionOrderHome.revisionFM.offenderPlate}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="offenderPlateButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.offenderPlate')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="infractionDateField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.infractionDate']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="infractionDate"
+                                      value="#{emissionOrderHome.revisionFM.infractionDate}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="infractionDateButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.infractionDate')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="infractionPlaceField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.infractionPlace']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="infractionPlace"
+                                      value="#{emissionOrderHome.revisionFM.infractionPlace}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="infractionPlaceButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.infractionPlace')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="speedLimitDetectedField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.speedLimitDetected']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="speedLimitDetected"
+                                      value="#{emissionOrderHome.revisionFM.speedLimitDetected}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="speedLimitDetectedButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.speedLimitDetected')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="establishedSpeedLimitField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.establishedSpeedLimit']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="establishedSpeedLimit"
+                                      value="#{emissionOrderHome.revisionFM.establishedSpeedLimit}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="establishedSpeedLimitButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.establishedSpeedLimit')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="equipmentSerialNumberField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.equipmentSerialNumber']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="equipmentSerialNumber"
+                                      value="#{emissionOrderHome.revisionFM.equipmentSerialNumber}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="equipmentSerialNumberButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.equipmentSerialNumber')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="offenderServiceField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.offenderService']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="offenderService"
+                                      value="#{emissionOrderHome.revisionFM.offenderService}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+               <a:commandButton id="offenderServiceButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.offenderService')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="infractionAmountField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.infractionAmount']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="infractionAmount"
+                                      value="#{emissionOrderHome.revisionFM.infractionAmount}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="infractionAmountButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.infractionAmount')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="ballotGenerationDateField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.ballotGenerationDate']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="ballotGenerationDate"
+                                      value="#{emissionOrderHome.revisionFM.ballotGenerationDate}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="ballotGenerationDateButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.ballotGenerationDate')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="threePhotographsField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.threePhotographs']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="threePhotographs"
+                                      value="#{emissionOrderHome.revisionFM.threePhotographs}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="threePhotographsButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.threePhotographs')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="detailsMotivationField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.detailsMotivation']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="detailsMotivation"
+                                      value="#{emissionOrderHome.revisionFM.detailsMotivation}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="detailsMotivationButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.detailsMotivation')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="ballotNotificationField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.ballotNotification']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="ballotNotification"
+                                      value="#{emissionOrderHome.revisionFM.ballotNotification}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="ballotNotificationButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.ballotNotification')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+
+            <s:decorate id="bapprovalCertificateField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.approvalCertificate']}</ui:define>
+                <rich:spacer width="50 px" />
+                <h:selectBooleanCheckbox id="approvalCertificate"
+                                      value="#{emissionOrderHome.revisionFM.approvalCertificate}"
+                                      disabled="#{emissionOrderHome.orderSelected.revisionFM != null}">
+                                      <a:support event="onchange" action="#{emissionOrderHome.changeItemRevision()}" ajaxSingle="true" reRender="revisionButtons" />
+                </h:selectBooleanCheckbox>
+                <rich:spacer width="50 px" />
+                <a:commandButton id="approvalCertificateButton"
+								action="#{emissionOrderHome.viewDetails('fotomulta.approvalCertificate')}"
+								reRender="revisionDetails" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
+								value="#{messages['fotomulta.details']}" />
+            </s:decorate>
+            <div style="clear:both" />
+            	<rich:panel id="revisionButtons">
+		            <h:panelGrid columns="3">
+
+							<a:commandButton ajaxSingle="true" id="approvedButton"
+								eventsQueue="gimEventsQueue"
+								action="#{emissionOrderHome.saveRevisionApprovedFM()}"
+								value="#{messages['fotomulta.revisionApproved']}" reRender="emissionOrderTable,sc2,txtTotal"
+								disabled="#{!emissionOrderHome.revisionButton || emissionOrderHome.orderSelected.revisionFM != null}" 
+								oncomplete="Richfaces.hideModalPanel('#{id}_infractionNotificationViewer');" />
+
+							<a:commandButton ajaxSingle="true" id="rejectedButton"
+								eventsQueue="gimEventsQueue"
+								action="#{emissionOrderHome.saveRevisionRejectedFM()}"
+								value="#{messages['fotomulta.revisionRejected']}" reRender="emissionOrderTable,sc2,txtTotal"
+								disabled="#{emissionOrderHome.revisionButton || emissionOrderHome.orderSelected.revisionFM != null}" 
+								oncomplete="Richfaces.hideModalPanel('#{id}_infractionNotificationViewer');" />
+								
+							<a:commandButton id="loadBt2" ajaxSingle="true"
+				                  eventsQueue="gimEventsQueue"
+				                  value="#{messages['common.quit']}" 
+				                  oncomplete="Richfaces.hideModalPanel('#{id}_infractionNotificationViewer');" />
+						
+		          	</h:panelGrid> 		          	         
+            		<div style="clear:both" />
+            	</rich:panel>
+          </rich:panel>
+		</h:panelGrid>
+			
+	</h:form>
 	</rich:modalPanel>
 
 </ui:composition>
