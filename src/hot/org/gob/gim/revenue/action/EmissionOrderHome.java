@@ -1047,7 +1047,7 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 			EJBQL = EJBQL + "(e.id = :emissionNumber) and ";	
 		}
 		if ((dateFrom != null && !dateFrom.equals("")) && (dateUntil != null && !dateUntil.equals(""))) {
-			EJBQL = EJBQL + " (adj.citationDate between :dateFrom and :dateUntil) and ";	
+			EJBQL = EJBQL + " (DATE(adj.citationDate) between :dateFrom and :dateUntil) and ";	
 		}
 		if(revisionStatusUCOT != null){
 			if(!revisionStatusUCOT.equals("TODOS") && !revisionStatusUCOT.equals("PENDIENTE")){
