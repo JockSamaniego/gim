@@ -2030,10 +2030,11 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	public void findSummaryClosingBox(Date date){
 		List<SummaryClosingBoxDTO> listDTO = new ArrayList<SummaryClosingBoxDTO>();
 		summaryFinal = new SummaryClosingBoxDTO();
-		String sql = "select * from gimprod.resumen_cierre_cajas('"+date+"', "+ getInstance().getPerson().getId() +")";
+		String sql = "select * from gimprod.resumen_cierre_cajas(:date,:user_id)";
 							
 			Query query = getEntityManager().createNativeQuery(sql);
-			
+			query.setParameter("date", date);
+			query.setParameter("user_id", getInstance().getPerson().getId());
 			listDTO = NativeQueryResultsMapper.map(
 					query.getResultList(), SummaryClosingBoxDTO.class);
 			summaryFinal = listDTO.get(0);
