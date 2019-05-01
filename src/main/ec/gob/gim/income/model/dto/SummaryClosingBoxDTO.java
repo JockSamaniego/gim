@@ -1,7 +1,6 @@
 package ec.gob.gim.income.model.dto;
 
 import java.math.BigDecimal;
-
 import org.gob.gim.common.NativeQueryResultColumn;
 import org.gob.gim.common.NativeQueryResultEntity;
 
@@ -9,54 +8,29 @@ import org.gob.gim.common.NativeQueryResultEntity;
 public class SummaryClosingBoxDTO {
 
 	@NativeQueryResultColumn(index = 0)
-	private String paymentType;
-	
+	private BigDecimal totalCapital;
+
 	@NativeQueryResultColumn(index = 1)
-	private int numberPayments;
-	
-	@NativeQueryResultColumn(index = 2)
-	private int numberMunicipalBonds;
-	
-	@NativeQueryResultColumn(index = 3)
-	private BigDecimal totalValue;
-	
-	@NativeQueryResultColumn(index = 4)
 	private BigDecimal totalInterest;
-	
-	@NativeQueryResultColumn(index = 5)
+
+	@NativeQueryResultColumn(index = 2)
 	private BigDecimal totalSurcharge;
-	
-	@NativeQueryResultColumn(index = 6)
+
+	@NativeQueryResultColumn(index = 3)
 	private BigDecimal totalTaxes;
-	
-	@NativeQueryResultColumn(index = 7)
+
+	@NativeQueryResultColumn(index = 4)
 	private BigDecimal totalDiscount;
-	
-	@NativeQueryResultColumn(index = 8)
-	private BigDecimal totalType;
 
-	public String getPaymentType() {
-		return paymentType;
+	@NativeQueryResultColumn(index = 5)
+	private BigDecimal totalPayment;
+
+	public BigDecimal getTotalCapital() {
+		return totalCapital;
 	}
 
-	public void setPaymentType(String paymentType) {
-		this.paymentType = paymentType;
-	}
-
-	public int getNumberPayments() {
-		return numberPayments;
-	}
-
-	public void setNumberPayments(int numberPayments) {
-		this.numberPayments = numberPayments;
-	}
-
-	public BigDecimal getTotalValue() {
-		return totalValue;
-	}
-
-	public void setTotalValue(BigDecimal totalValue) {
-		this.totalValue = totalValue;
+	public void setTotalCapital(BigDecimal totalCapital) {
+		this.totalCapital = totalCapital;
 	}
 
 	public BigDecimal getTotalInterest() {
@@ -91,20 +65,13 @@ public class SummaryClosingBoxDTO {
 		this.totalDiscount = totalDiscount;
 	}
 
-	public BigDecimal getTotalType() {
-		return totalType;
+	public BigDecimal getTotalPayment() {
+		return totalPayment;
 	}
 
-	public void setTotalType(BigDecimal totalType) {
-		this.totalType = totalType;
+	public void setTotalPayment(BigDecimal totalPayment) {
+		this.totalPayment = totalPayment;
 	}
 
-	public int getNumberMunicipalBonds() {
-		return numberMunicipalBonds;
-	}
 
-	public void setNumberMunicipalBonds(int numberMunicipalBonds) {
-		this.numberMunicipalBonds = numberMunicipalBonds;
-	}
-	
 }

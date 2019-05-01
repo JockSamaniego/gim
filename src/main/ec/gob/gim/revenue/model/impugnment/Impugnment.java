@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -74,8 +75,7 @@ public class Impugnment implements Serializable {
 	@JoinColumn(name = "status_itm_id", nullable = false, referencedColumnName = "id")
 	private ItemCatalog status;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "municipalBond_id", nullable = false, referencedColumnName = "id")
+	@OneToOne(fetch=FetchType.LAZY)
 	private MunicipalBond municipalBond;
 
 	@ManyToOne(fetch = FetchType.EAGER)

@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.cadaster.action.PropertyList;
@@ -35,6 +36,7 @@ import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondView;
+import ec.gob.gim.revenue.model.RevisionEmissionOrderFM;
 import ec.gob.gim.revenue.model.adjunct.ANTReference;
 
 @Name("emissionOrderHome")
@@ -111,7 +113,7 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 	 private void loadMunicipalBonds(){
 		 Query query = getEntityManager().createNamedQuery("EmissionOrder.findMunicipalBondViewByEmissionOrderId");
 		 query.setParameter("id", getEmissionOrderId());
-		 municipalBonds = query.getResultList();
+		 municipalBonds = query.getResultList(); 
 	 }
 	 
 	public void wire() {
@@ -123,6 +125,13 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 			}else{
 				getInstance();
 			}	
+			SystemParameterService systemParameterService = ServiceLocator.getInstance()
+					.findResource(SystemParameterService.LOCAL_NAME);
+			String revisionFM = systemParameterService.findParameter("fotomulta.revisionStatus");
+			revisionStatusFM = revisionFM.trim().split(",");
+			String impugnmentFM = systemParameterService.findParameter("fotomulta.impugnmentStatus");
+			impugnmentStatusFM = impugnmentFM.trim().split(",");
+			orderListAux = new ArrayList<EmissionOrder>();
 		}			
 	}
 
@@ -1012,6 +1021,9 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 	private String residentName;
 	private Date dateFrom;
 	private Date dateUntil;
+	private String revisionStatusUCOT;
+	private String impugnmentStatusUCOT;
+	private Long emissionNumber; 
 	
 	public void loadPending(){
 			
@@ -1021,14 +1033,43 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		+"left join fetch m.receipt "
 		+"left join fetch m.entry entry "
 		+ "LEFT JOIN FETCH m.adjunct adj "
+		+ "LEFT JOIN FETCH e.revisionFM rfm "
+		+ "LEFT JOIN FETCH m.impugnment imp "
 		+ "where ";
 		//+ "(lower(m.resident.name) like lower(concat(#{emissionOrderList.resident},'%'))) "
 		if (identificationNumber != null && !identificationNumber.equals("")) {
 			EJBQL = EJBQL + "(lower(m.resident.identificationNumber) like lower(concat(:identificationNumber,'%'))) and ";	
 		}
-		if ((dateFrom != null && !dateFrom.equals("")) && (dateUntil != null && !dateUntil.equals(""))) {
-			EJBQL = EJBQL + " (adj.citationDate between :dateFrom and :dateUntil) and ";	
+		if (residentName != null && !residentName.equals("")) {
+			EJBQL = EJBQL + "(lower(m.resident.name) like lower(concat(:residentName,'%'))) and ";	
 		}
+		if (emissionNumber != null && !emissionNumber.equals("")) {
+			EJBQL = EJBQL + "(e.id = :emissionNumber) and ";	
+		}
+		if ((dateFrom != null && !dateFrom.equals("")) && (dateUntil != null && !dateUntil.equals(""))) {
+			EJBQL = EJBQL + " (DATE(adj.citationDate) between :dateFrom and :dateUntil) and ";	
+		}
+		if(revisionStatusUCOT != null){
+			if(!revisionStatusUCOT.equals("TODOS") && !revisionStatusUCOT.equals("PENDIENTE")){
+				EJBQL = EJBQL + " (rfm.status = :revisionStatusUCOT) and ";
+			}
+		}
+		if(revisionStatusUCOT != null){
+			if(revisionStatusUCOT.equals("PENDIENTE")){
+				EJBQL = EJBQL + " (rfm is null) and ";
+			}
+		}
+		if(impugnmentStatusUCOT != null){
+			if(!impugnmentStatusUCOT.equals("TODOS") && !impugnmentStatusUCOT.equals("NO IMPUGNADA")){
+				EJBQL = EJBQL + " (imp.status.name = :impugnmentStatusUCOT) and ";
+			}
+		}
+		if(impugnmentStatusUCOT != null){
+			if(impugnmentStatusUCOT.equals("NO IMPUGNADA")){
+				EJBQL = EJBQL + " (imp is null) and ";
+			}
+		}
+		
 		EJBQL = EJBQL + " e.isDispatched= false and entry.id in (643,644) ";
 		
 		Query q=this.getEntityManager().createQuery(EJBQL);
@@ -1036,20 +1077,41 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		if(identificationNumber!=null && !identificationNumber.equals("")){
 			q.setParameter("identificationNumber", identificationNumber);
 		}
+		if(residentName!=null && !residentName.equals("")){
+			q.setParameter("residentName", residentName);
+		}
+		if(emissionNumber!=null && !emissionNumber.equals("")){
+			q.setParameter("emissionNumber", emissionNumber);
+		}
 		if ((dateFrom != null && !dateFrom.equals("")) && (dateUntil != null && !dateUntil.equals(""))) {
 			q.setParameter("dateFrom", dateFrom);
 			q.setParameter("dateUntil", dateUntil);
 		}
+		if(revisionStatusUCOT != null){
+			if(!revisionStatusUCOT.equals("TODOS") && !revisionStatusUCOT.equals("PENDIENTE")){
+				q.setParameter("revisionStatusUCOT", revisionStatusUCOT);
+			}		
+		}		
+		if(impugnmentStatusUCOT != null){
+			if(!impugnmentStatusUCOT.equals("TODOS") && !impugnmentStatusUCOT.equals("NO IMPUGNADA")){
+				q.setParameter("impugnmentStatusUCOT", impugnmentStatusUCOT);		
+			}
+		}
+			
 		//System.out.println("------------------- "+identificationNumber+"    -  "+residentName+"    "+q.getResultList().size());
 		emissionOrders = q.getResultList();
 	}
 	
 	public void resetValues(){
 		emissionOrders = new ArrayList<EmissionOrder>();
+		this.orderListAux = new ArrayList<EmissionOrder>();
 		identificationNumber = null;
 		residentName = null;
 		dateFrom = null;
 		dateUntil = null;
+		revisionStatusUCOT = "TODOS";
+		impugnmentStatusUCOT = "TODOS";
+		emissionNumber = null;
 	}
 
 	public List<EmissionOrder> getEmissionOrders() {
@@ -1092,40 +1154,67 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		this.dateUntil = dateUntil;
 	}
 
+	public String getRevisionStatusUCOT() {
+		return revisionStatusUCOT;
+	}
+
+	public void setRevisionStatusUCOT(String revisionStatusUCOT) {
+		this.revisionStatusUCOT = revisionStatusUCOT;
+	}
+	
+	public String getImpugnmentStatusUCOT() {
+		return impugnmentStatusUCOT;
+	}
+
+	public void setImpugnmentStatusUCOT(String impugnmentStatusUCOT) {
+		this.impugnmentStatusUCOT = impugnmentStatusUCOT;
+	}
+
+	public Long getEmissionNumber() {
+		return emissionNumber;
+	}
+
+	public void setEmissionNumber(Long emissionNumber) {
+		this.emissionNumber = emissionNumber;
+	}
+
 	public void changeSelectedEmissionOrder(EmissionOrder eo, boolean selected){
 		eo.setIsSelected(!selected);
+		if(eo.getIsSelected()){
+			this.orderListAux.add(eo);
+		}else{
+			this.orderListAux.remove(eo);
+		}
+		
 	}
 	
 //Autor: Jock Samaniego
 //Para emitir o rechazar multiples ordenes de fotomultas.
 	public String multipleEmission(){
-		int count=0;
-		if (emissionOrders != null) {
-			for (int i = 0; i < emissionOrders.size(); i++) {
-				if (emissionOrders.get(i).getIsSelected() == true) {
-					emitEmissionOrder(emissionOrders.get(i));
+		if (this.orderListAux != null) {
+			for (int i = 0; i < this.orderListAux.size(); i++) {
+				if (this.orderListAux.get(i).getIsSelected() == true) {
+					emitEmissionOrder(this.orderListAux.get(i));
 					//System.out.println("--------------------------orden de emision " + (count + 1) + " terminada");
-					count++;
 				}
 			}
-			
 		}
+		this.orderListAux = new ArrayList<EmissionOrder>();
 		//System.out.println("---------------------------------"+count);
 		loadPending();
 		return "updated";
 	}
 	
 	public String multipleReject(){
-		int count = 0;
-		if (emissionOrders != null) {
-			for (int i = 0; i < emissionOrders.size(); i++) {
-				if (emissionOrders.get(i).getIsSelected() == true) {
-					rejectEmissionOrder(emissionOrders.get(i));
+		if (this.orderListAux != null) {
+			for (int i = 0; i < this.orderListAux.size(); i++) {
+				if (this.orderListAux.get(i).getIsSelected() == true) {
+					rejectEmissionOrder(this.orderListAux.get(i));
 					//System.out.println("---------------------------------orden de emision " + (count + 1) + " rechazada");
-					count++;
 				}
 			}
 		}
+		this.orderListAux = new ArrayList<EmissionOrder>();
 		//System.out.println("---------------------------------"+count);
 		loadPending();
 		return "updated";
@@ -1146,13 +1235,215 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		URLnotification = uRLnotification;
 	}
 
-	public void loadInfractionNotification(Long adjunct_id){
+	public void loadInfractionNotification(EmissionOrder emissionOrder){
+		this.orderSelected = emissionOrder;
+		//em.refresh(this.orderSelected);
 		String query = "Select ant from ANTReference ant where ant.id =:adj_id";
 		Query q = this.getEntityManager().createQuery(query);
-		q.setParameter("adj_id", adjunct_id);
+		q.setParameter("adj_id", emissionOrder.getMunicipalBonds().get(0).getAdjunct().getId());
 		ANTReference ant = (ANTReference) q.getSingleResult();	
 		System.out.println("======ANTnotification===> "+ant.getSupportDocumentURL());
 		this.URLnotification = ant.getSupportDocumentURL();
+		if(this.orderSelected.getRevisionFM() == null){
+			reviserInfractionProcess();
+		}else{
+			this.revisionFM = this.orderSelected.getRevisionFM();
+		}
 	}
 		
+	
+	//Para revision de infracciones, aprobacion o rechazo UCOT
+	//Jock Samaniego
+	//29-03-2019
+	
+	private RevisionEmissionOrderFM revisionFM;
+	private String revisionItemDetails;
+	private String revisionItemTitle;
+	private Boolean revisionButton = Boolean.FALSE;
+	private String[] revisionStatusFM;
+	private String[] impugnmentStatusFM;
+	private EmissionOrder orderSelected;
+	private List<EmissionOrder> orderListAux;
+	
+	EntityManager em = getEntityManager();
+	
+	public RevisionEmissionOrderFM getRevisionFM() {
+		return revisionFM;
+	}
+
+	public void setRevisionFM(RevisionEmissionOrderFM revisionFM) {
+		this.revisionFM = revisionFM;
+	}
+
+	public String getRevisionItemDetails() {
+		return revisionItemDetails;
+	}
+
+	public void setRevisionItemDetails(String revisionItemDetails) {
+		this.revisionItemDetails = revisionItemDetails;
+	}
+
+	public String getRevisionItemTitle() {
+		return revisionItemTitle;
+	}
+
+	public void setRevisionItemTitle(String revisionItemTitle) {
+		this.revisionItemTitle = revisionItemTitle;
+	}
+
+	public Boolean getRevisionButton() {
+		return revisionButton;
+	}
+
+	public void setRevisionButton(Boolean revisionButton) {
+		this.revisionButton = revisionButton;
+	}
+
+	public String[] getRevisionStatusFM() {
+		return revisionStatusFM;
+	}
+
+	public void setRevisionStatusFM(String[] revisionStatusFM) {
+		this.revisionStatusFM = revisionStatusFM;
+	}
+
+	public EmissionOrder getOrderSelected() {
+		return orderSelected;
+	}
+
+	public void setOrderSelected(EmissionOrder orderSelected) {
+		this.orderSelected = orderSelected;
+	}
+
+	public String[] getImpugnmentStatusFM() {
+		return impugnmentStatusFM;
+	}
+
+	public void setImpugnmentStatusFM(String[] impugnmentStatusFM) {
+		this.impugnmentStatusFM = impugnmentStatusFM;
+	}
+
+	public List<EmissionOrder> getOrderListAux() {
+		return orderListAux;
+	}
+
+	public void setOrderListAux(List<EmissionOrder> orderListAux) {
+		this.orderListAux = orderListAux;
+	}
+
+	public void reviserInfractionProcess(){
+		this.revisionButton = Boolean.FALSE;
+		revisionFM = new RevisionEmissionOrderFM();
+		revisionFM.setReviserUserId(this.userSession.getPerson().getUser().getId());
+		revisionFM.setRevisionDate(new Date());
+		revisionFM.setReviserName(this.userSession.getPerson().getUser().getResident().getName());
+		revisionFM.setEmissionOrder(this.orderSelected);
+		
+		revisionFM.setOwnerIdentification(Boolean.FALSE);
+		revisionFM.setInfractionNumber(Boolean.FALSE);
+		revisionFM.setOffenderPlate(Boolean.FALSE);
+	    revisionFM.setInfractionDate(Boolean.FALSE);
+	    revisionFM.setInfractionPlace(Boolean.FALSE);
+	    revisionFM.setSpeedLimitDetected(Boolean.FALSE);
+	    revisionFM.setEstablishedSpeedLimit(Boolean.FALSE);
+	    revisionFM.setEquipmentSerialNumber(Boolean.FALSE);
+	    revisionFM.setOffenderService(Boolean.FALSE);
+	    revisionFM.setInfractionAmount(Boolean.FALSE);
+	    revisionFM.setBallotGenerationDate(Boolean.FALSE);
+	    revisionFM.setThreePhotographs(Boolean.FALSE);
+	    revisionFM.setDetailsMotivation(Boolean.FALSE);
+	    revisionFM.setBallotNotification(Boolean.FALSE);
+	    revisionFM.setApprovalCertificate(Boolean.FALSE);
+	}
+	
+	public void viewDetails(String revisionItem){
+		revisionItemTitle=revisionItem;
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		revisionItemDetails = systemParameterService.findParameter(revisionItem);
+	}
+	
+	public void saveRevisionApprovedFM(){
+		revisionFM.setStatus("APROBADA");	
+		em.persist(revisionFM);
+		em.flush();
+		//em.refresh(revisionFM);
+		em.refresh(orderSelected);
+		loadPending();
+	}
+	
+	public void saveRevisionRejectedFM(){
+		revisionFM.setStatus("RECHAZADA");
+		em.persist(revisionFM);
+		em.flush();
+		//em.refresh(revisionFM);
+		em.refresh(orderSelected);
+		loadPending();
+	}
+	
+	public void changeItemRevision(){
+		if(!revisionFM.getOwnerIdentification() ||
+		   !revisionFM.getInfractionNumber() ||
+		   !revisionFM.getOffenderPlate() ||
+		   !revisionFM.getInfractionDate() ||
+		   !revisionFM.getInfractionPlace() ||
+		   !revisionFM.getSpeedLimitDetected() ||
+		   !revisionFM.getEstablishedSpeedLimit() ||
+		   !revisionFM.getEquipmentSerialNumber() ||
+		   !revisionFM.getOffenderService() ||
+		   !revisionFM.getInfractionAmount() ||
+		   !revisionFM.getBallotGenerationDate() ||
+		   !revisionFM.getThreePhotographs() ||
+		   !revisionFM.getDetailsMotivation() ||
+		   !revisionFM.getBallotNotification() ||
+		   !revisionFM.getApprovalCertificate()){
+				this.revisionButton = Boolean.FALSE;
+			
+		}else{
+			this.revisionButton = Boolean.TRUE;
+		}
+	}
+	
+	public Boolean hasRole(String roleKey) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		String role = systemParameterService.findParameter(roleKey);
+		if (role != null) {
+			if(userSession !=null && userSession.getUser() != null) {
+				return userSession.getUser().hasRole(role);
+			}else { 
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	private Boolean allSelectedCheck = Boolean.FALSE;
+	
+	public Boolean getAllSelectedCheck() {
+		return allSelectedCheck;
+	}
+
+	public void setAllSelectedCheck(Boolean allSelectedCheck) {
+		this.allSelectedCheck = allSelectedCheck;
+	}
+
+	public void changeAllItemRevision(){
+		revisionFM.setOwnerIdentification(allSelectedCheck);
+		revisionFM.setInfractionNumber(allSelectedCheck);
+		revisionFM.setOffenderPlate(allSelectedCheck);
+	    revisionFM.setInfractionDate(allSelectedCheck);
+	    revisionFM.setInfractionPlace(allSelectedCheck);
+	    revisionFM.setSpeedLimitDetected(allSelectedCheck);
+	    revisionFM.setEstablishedSpeedLimit(allSelectedCheck);
+	    revisionFM.setEquipmentSerialNumber(allSelectedCheck);
+	    revisionFM.setOffenderService(allSelectedCheck);
+	    revisionFM.setInfractionAmount(allSelectedCheck);
+	    revisionFM.setBallotGenerationDate(allSelectedCheck);
+	    revisionFM.setThreePhotographs(allSelectedCheck);
+	    revisionFM.setDetailsMotivation(allSelectedCheck);
+	    revisionFM.setBallotNotification(allSelectedCheck);
+	    revisionFM.setApprovalCertificate(allSelectedCheck);
+	    changeItemRevision();
+	}
 }
