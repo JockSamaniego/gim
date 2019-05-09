@@ -1014,5 +1014,16 @@ public class GimServiceBean implements GimService{
 		}
 		//return Boolean.FALSE;
 	}
-	
+
+	/**
+	 * Agregado para matriculacion/turnos
+	 * @param identification
+	 * @return
+	 */
+	@Override
+	public boolean searchDueDebts(ServiceRequest request) {
+			Query q = em.createNativeQuery("select hasdebts_ from sp_hasduedebts(:identification)");
+			q.setParameter("identification", request.getIdentificationNumber());				
+			return (Boolean)q.getSingleResult();
+	}
 }
