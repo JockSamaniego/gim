@@ -311,9 +311,13 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 					if (entryValueItem.getMainValue() == null
 							|| BigDecimal.ZERO.compareTo(entryValueItem
 									.getMainValue()) > 0) {
-						addFacesMessageFromResourceBundle("revenue.taxableBaseIsNegative");
-						municipalBonds.clear();
-						return;
+						//2019-05-01 rfam para q no valide la utilidad rubro 1
+						if(entry.getId().intValue() != 1){
+							addFacesMessageFromResourceBundle("revenue.taxableBaseIsNegative");
+							municipalBonds.clear();
+							return;	
+						}
+						
 					}
 					if(entry.getId()==654){
 						int compare=entryValueItem.getMainValue().compareTo(valueControl);
