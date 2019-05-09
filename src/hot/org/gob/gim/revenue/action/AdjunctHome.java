@@ -13,6 +13,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
 
 import ec.gob.gim.revenue.model.Adjunct;
+import ec.gob.gim.revenue.model.adjunct.Vehicle;
 
 @Name("adjunctHome")
 public class AdjunctHome extends EntityHome<Adjunct> {
@@ -34,8 +35,23 @@ public class AdjunctHome extends EntityHome<Adjunct> {
 			
 			List<Adjunct> adjuncts = query.getResultList();
 		 
-			if(adjuncts != null && adjuncts.size() == 1){
-				setInstance(adjuncts.get(0));
+			if(adjuncts != null && adjuncts.size() > 0){
+				
+				Adjunct adj = adjuncts.get(0);
+				
+				Vehicle veh = (Vehicle) adj;
+				Vehicle vehNew = new Vehicle();
+				vehNew.setCode(veh.getCode());
+				vehNew.setCubicCentimeters(veh.getCubicCentimeters());
+				vehNew.setEngineNumber(veh.getEngineNumber());
+				vehNew.setOrderNumber(null);
+				vehNew.setVehicleMaker(veh.getVehicleMaker());
+				vehNew.setVehicleType(veh.getVehicleType());
+				vehNew.setVin(veh.getVin());
+				vehNew.setWeightCapacity(veh.getWeightCapacity());
+				vehNew.setYear(veh.getYear());
+				vehNew.setLicensePlate(veh.getLicensePlate());
+				setInstance(vehNew);
 			}
 		} catch(Exception e){
 			e.printStackTrace();
@@ -50,5 +66,7 @@ public class AdjunctHome extends EntityHome<Adjunct> {
 		}
 		return false;
 	}
+	
+	
 
 }
