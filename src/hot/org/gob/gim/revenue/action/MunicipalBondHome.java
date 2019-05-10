@@ -1671,6 +1671,10 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	      futureList = futureEmissionBalance.generateFutureEmissionBalance(futureStartDate, futureEndDate); 
 	      System.out.println("------- " + futureList.size()); 
 	      return "/income/report/FutureEmissionBalanceReport.xhtml";
-	    } 
+	    }
+	    
+	    //rfam 2019-05-09 crtv confirmar pagos no efectuados en RTV
+	    
+	    
 
 }
