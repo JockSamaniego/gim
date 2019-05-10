@@ -1376,60 +1376,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				// No realizar el calculo de interes para instituciones publicas
 				// invocar al incomeservice
 				// incomeService.compensationPayment(deposits);
-				
-				//agregado para CRTV
-				
-				List<Long> crtv_entries = Arrays.asList(new Long[] {3L, 627L});
-				for (Deposit dep : deposits) {
-					if(crtv_entries.contains(dep.getMunicipalBond().getEntry().getId())) {
-						Query q1 = this.getEntityManager().createNativeQuery("select v.ordernumber from vehicle v where v.id = :adjunctid");						
-						q1.setParameter("adjunctid", dep.getMunicipalBond().getAdjunct().getId());
-						String orderNumber = (String)q1.getSingleResult();
-						
-						Query q = this.getEntityManager().createNativeQuery("select * from sp_getSum_from_orders(:adjunctid)");
-						q.setParameter("adjunctid", dep.getMunicipalBond().getAdjunct().getId());
-						List<CRTV_ORDER> ordersList = NativeQueryResultsMapper.map(q.getResultList(), CRTV_ORDER.class);
-						
-						List<Item> items = dep.getMunicipalBond().getItems();
-						Item it = items.get(0);
-						double valor = it.getValue().doubleValue();	
-						String identification = dep.getMunicipalBond().getResident().getIdentificationNumber();
-						//fecha y hora de solicitud
-						Date date = Calendar.getInstance().getTime();
-						DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");  
-						String strDate = dateFormat.format(date);  								
-						 
-						
-						//no se ha grabado AUN en la bd el deposito actual
-						if(!ordersList.isEmpty()) { 
-							CRTV_ORDER order = ordersList.get(0);
-							identification = order.getIdentification();
-							valor = valor + order.getSumtotal().doubleValue();
-							orderNumber= order.getOrdernumber();
-						}
-						
-						String tipoIdent = (identification.length()==10)? "CED" : "RUC";
-						//llamar al servicio web
-						WsPagoSolicitudExecute wspago = new WsPagoSolicitudExecute();
-						wspago.setOrdenespagotipoiden(tipoIdent);
-						wspago.setOrdenespagoidentidad(identification);
-						wspago.setOrdenespagoservicio("SOL");
-						wspago.setValor_pagar(valor);
-						wspago.setCodigo_transaccion("13");
-						wspago.setOrdenespagobanco("LOJ");
-						wspago.setOrdenespagosucursal("SUC");
-						wspago.setOrdenespagocanal("WEB");
-						wspago.setProvincia("LOJ");
-						wspago.setFecha_hora_trx(strDate);
-						wspago.setFecha_hora_conta(strDate);							
-						wspago.setNro_solicitud(orderNumber);
-						
-						WsPagoSolicitudSoapPortProxy wsportProxy = new WsPagoSolicitudSoapPortProxy();
-						WsPagoSolicitudExecuteResponse executeRes = wsportProxy.execute(wspago);
-						///ni idea el resto
-					}					
-				}
-
+				 
 			} catch (InvoiceNumberOutOfRangeException e) {
 				addFacesMessageFromResourceBundle(e.getClass().getSimpleName(), e.getInvoiceNumber());
 			} catch (Exception e) {

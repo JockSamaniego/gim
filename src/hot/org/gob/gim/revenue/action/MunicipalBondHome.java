@@ -1709,9 +1709,5 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 		public void setServiceCrtvData(String serviceCrtvData) {
 			this.serviceCrtvData = serviceCrtvData;
-		}
-	    
-	    
-	    
-
+		} 
 }
