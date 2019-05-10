@@ -1,6 +1,7 @@
 package org.gob.gim.common.service;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,4 +69,15 @@ public class SystemParameterServiceBean implements SystemParameterService{
 	    return null;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<Long> findListIds(String name){
+		List<Long> ids = new ArrayList<Long>();
+		String findParameter = this.findParameter(name);
+		String[] idsAux =  findParameter.trim().split(",");
+		for(String e : idsAux){
+			ids.add(Long.parseLong(e));
+		}
+		return ids;
+		
+	}
 }

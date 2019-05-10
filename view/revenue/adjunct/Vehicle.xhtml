@@ -65,6 +65,13 @@
 				<s:convertEntity />
 			</h:selectOneMenu>
 		</s:decorate>
+		
+		<s:decorate id="orderNumberField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['vehicle.orderNumber']}:</ui:define>
+			<h:inputText id="orderNumber" value="#{adjunctHome.instance.orderNumber}">
+			</h:inputText>
+		</s:decorate>
+		
 	</a:outputPanel>
 
 </ui:composition>
