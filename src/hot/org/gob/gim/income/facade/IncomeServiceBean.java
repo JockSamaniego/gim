@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -380,6 +381,8 @@ public class IncomeServiceBean implements IncomeService {
 	// agregar el tipo de pago Interes/recargo/impuesto
 	public void save(List<Deposit> deposits, Long paymentAgreementId, Long tillId, String paymentMethod) throws Exception {
 		// System.out.println("\n\nInicia grabacion");
+		
+ 
 		Long PAID_STATUS_ID = systemParameterService.findParameter(PAID_BOND_STATUS);
 		
 		Long SUBSCRIPTION_STATUS_ID = systemParameterService.findParameter(SUBSCRIPTION_BOND_STATUS);
@@ -419,6 +422,8 @@ public class IncomeServiceBean implements IncomeService {
 				//AGREGADO MACARTUCHE
 				System.out.println("Interes aumentado===>"+deposit.getMunicipalBond().getInterest());
 				deposit.setMunicipalBond(municipalBond);
+				
+				
 			}
 		}
 		Date rightNow = new Date();

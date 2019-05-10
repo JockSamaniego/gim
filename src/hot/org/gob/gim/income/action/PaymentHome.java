@@ -33,6 +33,7 @@ import javax.servlet.ServletContext;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -59,7 +60,12 @@ import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
+ 
 
+import SMTATM.WsPagoSolicitudExecute;
+import SMTATM.WsPagoSolicitudExecuteResponse;
+import SMTATM.WsPagoSolicitudSoapPortProxy;
+import ec.gob.gim.ant.ucot.model.CoipDTO;
 import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.FiscalPeriod;
@@ -80,9 +86,11 @@ import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.dto.ParameterFutureEmissionDTO;
 import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.FinancialInstitutionType;
+import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.PaymentTypeSRI;
+import ec.gob.gim.revenue.model.DTO.CRTV_ORDER;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.gim.security.model.User;
@@ -1358,6 +1366,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				incomeService.save(deposits, paymentAgreementId, tillId, paymentMethod);
 				// fin recaudacionCoactivas
 				incomeService.deactivateCreditNotes(getInstance().getPaymentFractions());
+				
 				receiptPrintingManager.print(deposits);
 				renderingDepositPDF(userSession.getUser().getId());
 
@@ -1367,6 +1376,59 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				// No realizar el calculo de interes para instituciones publicas
 				// invocar al incomeservice
 				// incomeService.compensationPayment(deposits);
+				
+				//agregado para CRTV
+				
+				List<Long> crtv_entries = Arrays.asList(new Long[] {3L, 627L});
+				for (Deposit dep : deposits) {
+					if(crtv_entries.contains(dep.getMunicipalBond().getEntry().getId())) {
+						Query q1 = this.getEntityManager().createNativeQuery("select v.ordernumber from vehicle v where v.id = :adjunctid");						
+						q1.setParameter("adjunctid", dep.getMunicipalBond().getAdjunct().getId());
+						String orderNumber = (String)q1.getSingleResult();
+						
+						Query q = this.getEntityManager().createNativeQuery("select * from sp_getSum_from_orders(:adjunctid)");
+						q.setParameter("adjunctid", dep.getMunicipalBond().getAdjunct().getId());
+						List<CRTV_ORDER> ordersList = NativeQueryResultsMapper.map(q.getResultList(), CRTV_ORDER.class);
+						
+						List<Item> items = dep.getMunicipalBond().getItems();
+						Item it = items.get(0);
+						double valor = it.getValue().doubleValue();	
+						String identification = dep.getMunicipalBond().getResident().getIdentificationNumber();
+						//fecha y hora de solicitud
+						Date date = Calendar.getInstance().getTime();
+						DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");  
+						String strDate = dateFormat.format(date);  								
+						 
+						
+						//no se ha grabado AUN en la bd el deposito actual
+						if(!ordersList.isEmpty()) { 
+							CRTV_ORDER order = ordersList.get(0);
+							identification = order.getIdentification();
+							valor = valor + order.getSumtotal().doubleValue();
+							orderNumber= order.getOrdernumber();
+						}
+						
+						String tipoIdent = (identification.length()==10)? "CED" : "RUC";
+						//llamar al servicio web
+						WsPagoSolicitudExecute wspago = new WsPagoSolicitudExecute();
+						wspago.setOrdenespagotipoiden(tipoIdent);
+						wspago.setOrdenespagoidentidad(identification);
+						wspago.setOrdenespagoservicio("SOL");
+						wspago.setValor_pagar(valor);
+						wspago.setCodigo_transaccion("13");
+						wspago.setOrdenespagobanco("LOJ");
+						wspago.setOrdenespagosucursal("SUC");
+						wspago.setOrdenespagocanal("WEB");
+						wspago.setProvincia("LOJ");
+						wspago.setFecha_hora_trx(strDate);
+						wspago.setFecha_hora_conta(strDate);							
+						wspago.setNro_solicitud(orderNumber);
+						
+						WsPagoSolicitudSoapPortProxy wsportProxy = new WsPagoSolicitudSoapPortProxy();
+						WsPagoSolicitudExecuteResponse executeRes = wsportProxy.execute(wspago);
+						///ni idea el resto
+					}					
+				}
 
 			} catch (InvoiceNumberOutOfRangeException e) {
 				addFacesMessageFromResourceBundle(e.getClass().getSimpleName(), e.getInvoiceNumber());
