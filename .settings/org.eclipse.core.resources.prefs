@@ -1,5 +1,11 @@
 eclipse.preferences.version=1
 encoding//resources/import-dev.sql=UTF-8
+encoding//src/hot/SMTATM/WsPagoSolicitud.java=UTF-8
+encoding//src/hot/SMTATM/WsPagoSolicitudExecute.java=UTF-8
+encoding//src/hot/SMTATM/WsPagoSolicitudExecuteResponse.java=UTF-8
+encoding//src/hot/SMTATM/WsPagoSolicitudLocator.java=UTF-8
+encoding//src/hot/SMTATM/WsPagoSolicitudSoapBindingStub.java=UTF-8
+encoding//src/hot/SMTATM/WsPagoSolicitudSoapPort.java=UTF-8
 encoding//src/hot/org/gob/gim/waterservice/action/WaterSupplyHome.java=UTF-8
 encoding//src/main/ec/gob/gim/waterservice/model=UTF-8
 encoding//view/coercive/report/NotificationReport.xhtml=UTF-8

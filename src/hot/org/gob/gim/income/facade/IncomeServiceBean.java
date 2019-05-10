@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -53,6 +54,9 @@ import org.jboss.seam.annotations.In;
 
 import com.google.common.base.Joiner;
 
+import SMTATM.WsPagoSolicitudExecute;
+import SMTATM.WsPagoSolicitudExecuteResponse;
+import SMTATM.WsPagoSolicitudSoapPortProxy;
 import ec.common.sridocuments.v110.factura.Factura;
 //import ec.common.sridocuments.v110.factura.QueryBilling;
 //import ec.common.sridocuments.v110.factura.ResultSet;
@@ -82,10 +86,12 @@ import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.EntryStructureType;
+import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.PaymentTypeSRI;
+import ec.gob.gim.revenue.model.DTO.CRTV_ORDER;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.loja.client.clients.ElectronicClient;
 import ec.gob.loja.client.model.DataWS;
@@ -380,6 +386,8 @@ public class IncomeServiceBean implements IncomeService {
 	// agregar el tipo de pago Interes/recargo/impuesto
 	public void save(List<Deposit> deposits, Long paymentAgreementId, Long tillId, String paymentMethod) throws Exception {
 		// System.out.println("\n\nInicia grabacion");
+		
+ 
 		Long PAID_STATUS_ID = systemParameterService.findParameter(PAID_BOND_STATUS);
 		
 		Long SUBSCRIPTION_STATUS_ID = systemParameterService.findParameter(SUBSCRIPTION_BOND_STATUS);
@@ -419,7 +427,51 @@ public class IncomeServiceBean implements IncomeService {
 				//AGREGADO MACARTUCHE
 				System.out.println("Interes aumentado===>"+deposit.getMunicipalBond().getInterest());
 				deposit.setMunicipalBond(municipalBond);
-			}
+				
+				
+				//agregado para CRTV
+				//ya que no guarda en la BD hasta luego de poner nuevo pago 
+				//se valida que el deposito este pagado
+				List<Long> crtv_entries = systemParameterService.findListIds("CRTV_ENTRIES");
+				//List<Long> crtv_entries = Arrays.asList(new Long[] {3L, 627L});				
+				if(crtv_entries.contains(deposit.getMunicipalBond().getEntry().getId())) {
+					Query q1 = entityManager.createNativeQuery("select v.orderNumber from Vehicle v where v.id = :adjunctid");						
+					q1.setParameter("adjunctid", deposit.getMunicipalBond().getAdjunct().getId());
+					String orderNumber = (String)q1.getSingleResult();
+						
+					Query q = entityManager.createNativeQuery("select * from sp_getSum_from_orders(:adjunctid)");
+					q.setParameter("adjunctid", deposit.getMunicipalBond().getAdjunct().getId());
+					List<CRTV_ORDER> ordersList = NativeQueryResultsMapper.map(q.getResultList(), CRTV_ORDER.class);
+						
+					List<Item> items = deposit.getMunicipalBond().getItems();
+					Item it = items.get(0);
+					double valor = it.getValue().doubleValue();	
+					String identification = deposit.getMunicipalBond().getResident().getIdentificationNumber();
+					//fecha y hora de solicitud
+					Date date = Calendar.getInstance().getTime();
+					DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+					String strDate = dateFormat.format(date);  								
+						 
+					//no se ha grabado AUN en la bd el deposito actual
+					if(!ordersList.isEmpty()) { 
+						CRTV_ORDER order = ordersList.get(0);
+						identification = order.getIdentification();
+						valor = valor + order.getSumtotal().doubleValue();
+						orderNumber= order.getOrdernumber();
+					}
+						
+					String tipoIdent = (identification.length()==10)? "CED" : "RUC";
+
+					//llamar al servicio web
+					WsPagoSolicitudExecuteResponse response = CallCRTV.callNotification(identification, tipoIdent, valor, strDate, orderNumber);
+					System.out.println("NUMERO DE ORDEN "+orderNumber);
+					System.out.println(response.getCod_transaccion());
+					System.out.println(response.getCodigo_error());
+					System.out.println(response.getMensaje());
+					System.out.println(response.getSecuencia_recibo());
+					///ni idea el resto
+				}					
+			}			
 		}
 		Date rightNow = new Date();
 		deactivatePaymentAgreement(paymentAgreementId, rightNow);

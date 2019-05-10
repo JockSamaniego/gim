@@ -53,6 +53,7 @@ import ec.gob.gim.revenue.model.EntryType;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
+import ec.gob.gim.revenue.model.DTO.CrtvVehicleDataDTO;
 import ec.gob.gim.security.model.Role;
 //macartuche
 //antclient
@@ -1671,10 +1672,42 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	      futureList = futureEmissionBalance.generateFutureEmissionBalance(futureStartDate, futureEndDate); 
 	      System.out.println("------- " + futureList.size()); 
 	      return "/income/report/FutureEmissionBalanceReport.xhtml";
+	    } 
+	    
+	    //Para consultas crtv
+	    //jock samaniego
+	    // 10-05-2019
+	    
+	    private String licensePlate;
+	    private CrtvVehicleDataDTO crtvData;
+	    private String serviceCrtvData = "http://190.214.31.163:8080/WSSCRTV/aconsultartvws.aspx";
+	    
+	    public void findCrtvVehicleData(){
+	    		//.....................method
+	    	
 	    }
-	    
-	    //rfam 2019-05-09 crtv confirmar pagos no efectuados en RTV
-	    
-	    
 
+		public String getLicensePlate() {
+			return licensePlate;
+		}
+
+		public void setLicensePlate(String licensePlate) {
+			this.licensePlate = licensePlate;
+		}
+
+		public CrtvVehicleDataDTO getCrtvData() {
+			return crtvData;
+		}
+
+		public void setCrtvData(CrtvVehicleDataDTO crtvData) {
+			this.crtvData = crtvData;
+		}
+
+		public String getServiceCrtvData() {
+			return serviceCrtvData;
+		}
+
+		public void setServiceCrtvData(String serviceCrtvData) {
+			this.serviceCrtvData = serviceCrtvData;
+		} 
 }
