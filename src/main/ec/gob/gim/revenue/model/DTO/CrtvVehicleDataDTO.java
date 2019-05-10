@@ -17,6 +17,7 @@ public class CrtvVehicleDataDTO {
 	public String getLicensePlate() {
 		return licensePlate;
 	}
+	
 
 	public void setLicensePlate(String licensePlate) {
 		this.licensePlate = licensePlate;
