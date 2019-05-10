@@ -26,6 +26,9 @@ public class Vehicle extends Adjunct {
 
 	private String orderNumber;
 	private String licensePlate;
+	
+	
+	private String notificationWSResult;
 
 	public String getVin() {
 		return vin;
@@ -121,4 +124,15 @@ public class Vehicle extends Adjunct {
 
 		return details;
 	}
+
+	public String getNotificationWSResult() {
+		return notificationWSResult;
+	}
+
+	public void setNotificationWSResult(String notificationWSResult) {
+		this.notificationWSResult = notificationWSResult;
+	}
+	
+	
+	
 }

@@ -1,6 +1,11 @@
 package org.gob.gim.income.facade;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import SMTATM.WsPagoSolicitudExecute;
 import SMTATM.WsPagoSolicitudExecuteResponse;
@@ -28,5 +33,23 @@ public class CallCRTV {
 		WsPagoSolicitudSoapPortProxy wsportProxy = new WsPagoSolicitudSoapPortProxy();
 		return wsportProxy.execute(wspago);
 
+	}
+	
+	
+	public static String notificationResultTOJson(WsPagoSolicitudExecuteResponse result) {
+		String json = "";
+		try {
+			json = new ObjectMapper().writeValueAsString(result);
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return json;
 	}
 }
