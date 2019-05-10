@@ -1,5 +1,7 @@
 package org.gob.gim.common.service;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 @Local
@@ -9,4 +11,5 @@ public interface SystemParameterService {
 	public void updateParameters();
 	public <T> T findParameter(String name);
 	public <T> T materialize(Class<?> klass, String parameterName);
+	public List<Long> findEntries(String name);
 }

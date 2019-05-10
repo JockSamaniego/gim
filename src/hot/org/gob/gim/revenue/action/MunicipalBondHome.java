@@ -53,6 +53,7 @@ import ec.gob.gim.revenue.model.EntryType;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
+import ec.gob.gim.revenue.model.DTO.CrtvVehicleDataDTO;
 import ec.gob.gim.security.model.Role;
 //macartuche
 //antclient
@@ -1672,5 +1673,45 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	      System.out.println("------- " + futureList.size()); 
 	      return "/income/report/FutureEmissionBalanceReport.xhtml";
 	    } 
+	    
+	    //Para consultas crtv
+	    //jock samaniego
+	    // 10-05-2019
+	    
+	    private String licensePlate;
+	    private CrtvVehicleDataDTO crtvData;
+	    private String serviceCrtvData = "http://190.214.31.163:8080/WSSCRTV/aconsultartvws.aspx";
+	    
+	    public void findCrtvVehicleData(){
+	    	
+	    	//.....................method
+	    }
+
+		public String getLicensePlate() {
+			return licensePlate;
+		}
+
+		public void setLicensePlate(String licensePlate) {
+			this.licensePlate = licensePlate;
+		}
+
+		public CrtvVehicleDataDTO getCrtvData() {
+			return crtvData;
+		}
+
+		public void setCrtvData(CrtvVehicleDataDTO crtvData) {
+			this.crtvData = crtvData;
+		}
+
+		public String getServiceCrtvData() {
+			return serviceCrtvData;
+		}
+
+		public void setServiceCrtvData(String serviceCrtvData) {
+			this.serviceCrtvData = serviceCrtvData;
+		}
+	    
+	    
+	    
 
 }
