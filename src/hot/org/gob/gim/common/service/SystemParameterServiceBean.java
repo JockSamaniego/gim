@@ -70,14 +70,14 @@ public class SystemParameterServiceBean implements SystemParameterService{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Long> findEntries(String name){
-		List<Long> entries = new ArrayList<Long>();
+	public List<Long> findListIds(String name){
+		List<Long> ids = new ArrayList<Long>();
 		String findParameter = this.findParameter(name);
-		String[] entriesAux =  findParameter.trim().split(",");
-		for(String e : entriesAux){
-			entries.add(Long.parseLong(e));
+		String[] idsAux =  findParameter.trim().split(",");
+		for(String e : idsAux){
+			ids.add(Long.parseLong(e));
 		}
-		return entries;
+		return ids;
 		
 	}
 }

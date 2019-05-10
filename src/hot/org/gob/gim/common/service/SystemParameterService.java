@@ -11,5 +11,5 @@ public interface SystemParameterService {
 	public void updateParameters();
 	public <T> T findParameter(String name);
 	public <T> T materialize(Class<?> klass, String parameterName);
-	public List<Long> findEntries(String name);
+	public List<Long> findListIds(String name);
 }
