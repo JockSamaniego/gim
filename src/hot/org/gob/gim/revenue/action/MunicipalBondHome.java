@@ -1683,8 +1683,8 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	    private String serviceCrtvData = "http://190.214.31.163:8080/WSSCRTV/aconsultartvws.aspx";
 	    
 	    public void findCrtvVehicleData(){
+	    		//.....................method
 	    	
-	    	//.....................method
 	    }
 
 		public String getLicensePlate() {
