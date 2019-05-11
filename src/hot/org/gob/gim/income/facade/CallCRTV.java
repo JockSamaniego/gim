@@ -2,6 +2,9 @@ package org.gob.gim.income.facade;
 
 import java.rmi.RemoteException;
 
+import SMTATM.ConsultaRTVwsExecute;
+import SMTATM.ConsultaRTVwsExecuteResponse;
+import SMTATM.ConsultaRTVwsSoapPortProxy;
 import SMTATM.WsPagoSolicitudExecute;
 import SMTATM.WsPagoSolicitudExecuteResponse;
 import SMTATM.WsPagoSolicitudSoapPortProxy;
@@ -29,4 +32,17 @@ public class CallCRTV {
 		return wsportProxy.execute(wspago);
 
 	}
+	
+	//consulta de datos vehiculares CRTV
+	public static ConsultaRTVwsExecuteResponse findVehicleData(String placa) throws RemoteException {
+		//llamar al servicio web
+		ConsultaRTVwsExecute wsConsulta = new ConsultaRTVwsExecute();
+		wsConsulta.setPlaca(placa.toUpperCase());
+		wsConsulta.setProcesocodigo("GADMATREN");
+		
+		ConsultaRTVwsSoapPortProxy wsProxy = new ConsultaRTVwsSoapPortProxy();
+		return wsProxy.execute(wsConsulta);
+
+	}
+	
 }

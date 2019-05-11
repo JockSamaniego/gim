@@ -2,6 +2,7 @@ package org.gob.gim.revenue.action;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.InvalidEmissionException;
+import org.gob.gim.income.facade.CallCRTV;
 import org.gob.gim.income.facade.FutureEmissionBalance;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
@@ -38,6 +40,8 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 
+import SMTATM.ConsultaRTVwsExecuteResponse;
+import SMTATM.SDTTARIFAORDENPAGOSDTTARIFAORDENPAGOItem;
 import ec.gob.gim.commercial.model.FireNames;
 import ec.gob.gim.commercial.model.FireRates;
 import ec.gob.gim.common.model.Alert;
@@ -53,7 +57,6 @@ import ec.gob.gim.revenue.model.EntryType;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
-import ec.gob.gim.revenue.model.DTO.CrtvVehicleDataDTO;
 import ec.gob.gim.security.model.Role;
 //macartuche
 //antclient
@@ -731,6 +734,8 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		isFirstTime = false;
 		BusinessHome.myId = null;
 		bondIsWire = Boolean.TRUE;
+		licensePlate = null;
+		responseCRTV = null;
 	}
 
 	public boolean isWired() {
@@ -1679,12 +1684,12 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	    // 10-05-2019
 	    
 	    private String licensePlate;
-	    private CrtvVehicleDataDTO crtvData;
-	    private String serviceCrtvData = "http://190.214.31.163:8080/WSSCRTV/aconsultartvws.aspx";
+	    ConsultaRTVwsExecuteResponse responseCRTV;
 	    
-	    public void findCrtvVehicleData(){
+	    public void findCrtvVehicleData() throws RemoteException{
 	    		//.....................method
-	    	
+	    	responseCRTV = new ConsultaRTVwsExecuteResponse();
+	    	responseCRTV = CallCRTV.findVehicleData(licensePlate);	    	
 	    }
 
 		public String getLicensePlate() {
@@ -1695,19 +1700,29 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			this.licensePlate = licensePlate;
 		}
 
-		public CrtvVehicleDataDTO getCrtvData() {
-			return crtvData;
+		public ConsultaRTVwsExecuteResponse getResponseCRTV() {
+			return responseCRTV;
 		}
 
-		public void setCrtvData(CrtvVehicleDataDTO crtvData) {
-			this.crtvData = crtvData;
+		public void setResponseCRTV(ConsultaRTVwsExecuteResponse responseCRTV) {
+			this.responseCRTV = responseCRTV;
 		}
 
-		public String getServiceCrtvData() {
-			return serviceCrtvData;
+		public Boolean hasRole(String roleKey) {
+			SystemParameterService systemParameterService = ServiceLocator.getInstance()
+					.findResource(SystemParameterService.LOCAL_NAME);
+			String role = systemParameterService.findParameter(roleKey);
+			if (role != null) {
+				if(userSession !=null && userSession.getUser() != null) {
+					return userSession.getUser().hasRole(role);
+				}else { 
+					return false;
+				}
+			}
+			return false;
 		}
-
-		public void setServiceCrtvData(String serviceCrtvData) {
-			this.serviceCrtvData = serviceCrtvData;
-		} 
+		
+		public void cleanCrtvVehicleData(){
+			this.responseCRTV = null;
+		}
 }
