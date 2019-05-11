@@ -92,6 +92,7 @@ import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.PaymentTypeSRI;
 import ec.gob.gim.revenue.model.DTO.CRTV_ORDER;
+import ec.gob.gim.revenue.model.adjunct.Vehicle;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.loja.client.clients.ElectronicClient;
 import ec.gob.loja.client.model.DataWS;
@@ -464,11 +465,20 @@ public class IncomeServiceBean implements IncomeService {
 
 					//llamar al servicio web
 					WsPagoSolicitudExecuteResponse response = CallCRTV.callNotification(identification, tipoIdent, valor, strDate, orderNumber);
+					String json = CallCRTV.notificationResultTOJson(response);
+					//guardar la rta del servicio web
+					Query updateVehicle = entityManager.createQuery("Update Vehicle v "
+							+ "set v.notificationWSResult=:json "
+							+ "Where v.orderNumber=:orderNumber");
+					updateVehicle.setParameter("json", json);
+					updateVehicle.setParameter("orderNumber", orderNumber);					
+					int updateCount = updateVehicle.executeUpdate();
 					System.out.println("NUMERO DE ORDEN "+orderNumber);
 					System.out.println(response.getCod_transaccion());
 					System.out.println(response.getCodigo_error());
 					System.out.println(response.getMensaje());
 					System.out.println(response.getSecuencia_recibo());
+					System.out.println("Rows Updated vehicle "+updateCount);
 					///ni idea el resto
 				}					
 			}			

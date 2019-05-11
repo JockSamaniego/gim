@@ -1,5 +1,12 @@
 eclipse.preferences.version=1
 encoding//resources/import-dev.sql=UTF-8
+encoding//src/hot/SMTATM/ConsultaRTVws.java=UTF-8
+encoding//src/hot/SMTATM/ConsultaRTVwsExecute.java=UTF-8
+encoding//src/hot/SMTATM/ConsultaRTVwsExecuteResponse.java=UTF-8
+encoding//src/hot/SMTATM/ConsultaRTVwsLocator.java=UTF-8
+encoding//src/hot/SMTATM/ConsultaRTVwsSoapBindingStub.java=UTF-8
+encoding//src/hot/SMTATM/ConsultaRTVwsSoapPort.java=UTF-8
+encoding//src/hot/SMTATM/SDTTARIFAORDENPAGOSDTTARIFAORDENPAGOItem.java=UTF-8
 encoding//src/hot/SMTATM/WsPagoSolicitud.java=UTF-8
 encoding//src/hot/SMTATM/WsPagoSolicitudExecute.java=UTF-8
 encoding//src/hot/SMTATM/WsPagoSolicitudExecuteResponse.java=UTF-8

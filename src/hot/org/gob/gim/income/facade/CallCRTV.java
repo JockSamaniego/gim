@@ -1,6 +1,14 @@
 package org.gob.gim.income.facade;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
+
+import SMTATM.ConsultaRTVwsExecute;
+import SMTATM.ConsultaRTVwsExecuteResponse;
+import SMTATM.ConsultaRTVwsSoapPortProxy;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import SMTATM.WsPagoSolicitudExecute;
 import SMTATM.WsPagoSolicitudExecuteResponse;
@@ -29,4 +37,35 @@ public class CallCRTV {
 		return wsportProxy.execute(wspago);
 
 	}
+	
+	
+	public static String notificationResultTOJson(WsPagoSolicitudExecuteResponse result) {
+		String json = "";
+		try {
+			json = new ObjectMapper().writeValueAsString(result);
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return json;
+	}
+	
+	//consulta de datos vehiculares CRTV
+	public static ConsultaRTVwsExecuteResponse findVehicleData(String placa) throws RemoteException {
+		//llamar al servicio web
+		ConsultaRTVwsExecute wsConsulta = new ConsultaRTVwsExecute();
+		wsConsulta.setPlaca(placa.toUpperCase());
+		wsConsulta.setProcesocodigo("GADMATREN");
+		
+		ConsultaRTVwsSoapPortProxy wsProxy = new ConsultaRTVwsSoapPortProxy();
+		return wsProxy.execute(wsConsulta);
+
+	}
+	
 }
