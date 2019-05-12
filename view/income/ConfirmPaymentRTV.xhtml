@@ -11,87 +11,27 @@
 
 	<ui:define name="body">
 
-		<h:form id="workday" styleClass="edit">
+		<h:form id="crtv" styleClass="edit">
 			<ui:debug id="uidebug" />
 
-			<h:outputText styleClass="formTitle"
-				rendered="#{!workdayHome.needsInterestRateDefined and !workdayHome.needsTaxRateDefined and workdayHome.closingWorkday and !workdayHome.existsCurrentWorkday and !workdayHome.readyForPrint and !workdayHome.existOpenedTills}"
-				value="#{messages['workdayClosingOrEmpty']}" />
-
-			<h:outputText styleClass="formTitle"
-				rendered="#{!workdayHome.needsInterestRateDefined and workdayHome.needsTaxRateDefined and workdayHome.existsCurrentWorkday == null and !workdayHome.existOpenedTills}"
-				value="#{messages['taxRatesUndefined']}" />
-				
-			<h:outputText styleClass="formTitle"
-				rendered="#{workdayHome.needsInterestRateDefined and workdayHome.existsCurrentWorkday == null and !workdayHome.existOpenedTills}"
-				value="#{messages['interestRatesUndefined']}" />
-				
-			<h:outputText styleClass="formTitle"
-				rendered="#{workdayHome.existOpenedTills}"
-				value="#{messages['workday.existOpenedTills']}" />
-				
-			<h:outputText styleClass="formTitle"
-				rendered="#{workdayHome.existOpenedTills}"
-				value="#{messages['workday.existOpenedTills']}" />
-
-			<h:outputText styleClass="formTitle"
-				rendered="#{!workdayHome.needsInterestRateDefined and !workdayHome.needsTaxRateDefined and workdayHome.existsCurrentWorkday == null and !workdayHome.existOpenedTills}"
-				value="#{messages['common.edit']} #{messages['workday']}" />
-				
-			<rich:panel
-				rendered="#{!workdayHome.needsInterestRateDefined  and !workdayHome.needsTaxRateDefined and workdayHome.renderPanel and !workdayHome.existOpenedTills}">
-
+			<rich:panel>
 				<f:facet name="header">
-            	#{messages['workday']}
+            	#{messages['crtv.pendingPaymentsToConfirm']}
             </f:facet>
 
-				<s:decorate id="chargeField" template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['workday.charge']}:</ui:define>
-					<h:inputText id="charge" size="15" maxlength="14" readonly="true"
-						value="#{workdayHome.instance.charge}">
-						<a:support event="onblur" reRender="chargeField" bypassUpdates="true" ajaxSingle="true" />
+				<s:decorate id="confirmationNumberField"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['crtv.confirmationNumber']}:</ui:define>
+					<h:inputText id="confirmationNumber" size="15" maxlength="14"
+						value="#{municipalBondHome.confirmationNumberCRTV}">
+						<a:support event="onblur" reRender="chargeField"
+							bypassUpdates="true" ajaxSingle="true" />
 					</h:inputText>
 				</s:decorate>
-
-				<s:decorate id="dateField" template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['workday.date']}:</ui:define>
-					<rich:calendar value="#{workdayHome.instance.date}" disabled="#{workdayHome.managed}"
-						enableManualInput="false"
-						datePattern="#{messages['common.datePattern']}" ajaxSingle="true">
-					</rich:calendar>
-				</s:decorate>
-
-				<s:decorate id="observationField" template="../layout/edit.xhtml" rendered="#{workdayHome.fromIncome}">
-					<ui:define name="label">#{messages['workday.observations']}:</ui:define>
-					<h:inputTextarea id="observation"
-						disabled="#{workdayHome.readyForPrint}"
-						value="#{workdayHome.instance.incomeObservations}" cols="50" rows="4">						
-					</h:inputTextarea>
-				</s:decorate>
 				
-				<s:decorate id="revenueObservationField" template="../layout/edit.xhtml" rendered="#{!workdayHome.fromIncome}">
-					<ui:define name="label">#{messages['workday.observations']}:</ui:define>
-					<h:inputTextarea id="revenueObservation"
-						disabled="#{workdayHome.readyForPrint}"
-						value="#{workdayHome.instance.revenueObservations}" cols="50" rows="4">
-						<a:support event="onblur" reRender="revenueObservationField"
-							bypassUpdates="true" ajaxSingle="true" />
-					</h:inputTextarea>
-				</s:decorate>
-
-				<s:decorate id="branchField" template="../layout/edit.xhtml" 
-					rendered="#{!workdayHome.closingWorkday and workdayHome.fromIncome}">
-					<ui:define name="label">#{messages['branch']}:</ui:define>
-					<h:selectOneMenu id="branch" value="#{workdayHome.branch}">
-						<s:selectItems value="#{workdayHome.findBranches()}" required="true"
-							var="type" label="#{messages[type.name]}"
-							noSelectionLabel="#{messages['common.chooseOption']}" />
-						<s:convertEntity/>								
-						<a:support event="onchange" ajaxSingle="true"
-							reRender="contentPanel" />
-						
-					</h:selectOneMenu>
-				</s:decorate>
+				<a:commandButton value="#{messages['common.search']}"
+								action="#{municipalBondHome.findBondsByConfirmationNumber()}" 
+								reRender="contentPanel, errors, paymentsTable" />
 
 				<div style="clear: both">
 					<span class="required">*</span>
@@ -100,106 +40,96 @@
 
 			</rich:panel>
 
-			<rich:panel id="contentPanel"
-				rendered="#{!workdayHome.needsInterestRateDefined  and !workdayHome.needsTaxRateDefined and !workdayHome.closingWorkday and workdayHome.existsCurrentWorkday == null and workdayHome.fromIncome and !workdayHome.existOpenedTills}">
-				<f:facet name="header">#{messages['tillPermission']} (#{empty workdayHome.tillPermissionsByBranch ? 0 : workdayHome.tillPermissionsByBranch.size})
+			<rich:panel id="contentPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText id="branchCount"
+							value="#{messages['tills']}" />
+					</h:panelGrid>
 				</f:facet>
 
-				<a:outputPanel styleClass="results" id="tillPermissionsList">
-					<h:messages errorClass="errors" />
-					<h:outputText
-						value="#{messages['tillPermission.returnedNoResults']}"
-						rendered="#{empty workdayHome.tillPermissionsByBranch}" />
+				<rich:dataTable id="paymentsTable" var="_payment"
+					value="#{municipalBondHome.bondByConfirmationNumber}" rowClasses="rvgRowOne,rvgRowTwo">
 
+					
+					<rich:column sortBy="#{_payment.bondId}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['common.id']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.bondId}"/>
+					</rich:column>
 
-					<rich:dataTable id="tillPermissionsTable" var="_tillPermission"
-						value="#{workdayHome.tillPermissionsByBranch}"
-						rowClasses="rvgRowOne,rvgRowTwo"
-						rendered="#{not empty workdayHome.tillPermissionsByBranch}">
+					<rich:column sortBy="#{_payment.residentIdentification}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['resident.identificationNumber']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.residentIdentification}"/>
+					</rich:column>
+					
+					<rich:column sortBy="#{_payment.residentName}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['resident.name']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.residentName}"/>
+					</rich:column>
+					
+					<rich:column sortBy="#{_payment.bondState}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.status']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.bondState}"/>
+					</rich:column>
+					
+					<rich:column sortBy="#{_payment.bondEntryName}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.entry']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.bondEntryName}" styleClass="right"/>
+					</rich:column>
+					
+					<rich:column sortBy="#{_payment.bondNumber}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.number']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.bondNumber}" styleClass="right"/>
+					</rich:column>
+					
+					<rich:column sortBy="#{_payment.bondBase}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.base']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.bondBase}" styleClass="right"/>
+					</rich:column>
+					
+					<rich:column sortBy="#{_payment.bondPaidtotal}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.paidTotal']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.bondPaidtotal}" styleClass="right"/>
+					</rich:column>
 
-						<rich:column styleClass="action" style="align:center;">
-							<f:facet name="header">
-								<h:outputText value="#{messages['tillPermission.isEnabled']}" />
-							</f:facet>
-							<h:selectBooleanCheckbox value="#{_tillPermission.enabled}">
-								<a:support event="onchange" ajaxSingle="true" />
-							</h:selectBooleanCheckbox>
-						</rich:column>
-
-						<rich:column sortBy="#{_tillPermission.till.number}"
-							styleClass="action">
-							<f:facet name="header">
-								<h:outputText value="#{messages['till.number']}" />
-							</f:facet>
-							<h:outputText value="#{_tillPermission.till.number}" size="12"
-								styleClass="right" required="true">
-								<a:support event="onblur" ajaxSingle="true" />
-							</h:outputText>
-						</rich:column>
-						
-						<rich:column sortBy="#{_tillPermission.till.windowNumber}"
-							styleClass="action">
-							<f:facet name="header">
-								<h:outputText value="#{messages['till.windowNumber']}" />
-							</f:facet>
-							<h:outputText value="#{_tillPermission.till.windowNumber}" size="12"
-								styleClass="right" required="true" />
-						</rich:column>
-						
-						<rich:column styleClass="action">
-							<f:facet name="header">
-								<h:outputText value="#{messages['tillPermission.isOpened']}" />
-							</f:facet>
-							<h:outputText value="#{_tillPermission.openingTime == null ? messages['common.no'] : messages['common.yes']}" size="12"
-								styleClass="right" required="true" />
-						</rich:column>
-
-						<rich:column sortBy="#{_tillPermission.person}"
-							styleClass="action">
-							<f:facet name="header">
-								<h:outputText value="#{messages['user']}" />
-							</f:facet>							
-							<h:selectOneMenu id="user" required="true" converter="org.gob.gim.common.IdentifiableConverter"
-								disabled="#{_tillPermission.openingTime != null}"
-								value="#{_tillPermission.person}">
-								<s:selectItems value="#{workdayHome.findCashiers()}" required="true"
-									var="_person" label="#{messages[_person.name]}"
-									noSelectionLabel="#{messages['common.chooseOption']}" />								
-								<a:support event="onchange" ajaxSingle="true"/>								
-							</h:selectOneMenu>																			
-						</rich:column>
-
-					</rich:dataTable>
-
-				</a:outputPanel>
+				</rich:dataTable>
 
 			</rich:panel>
-			
+
+
 			<div class="actionButtons">
-			
-				<s:button view="/income/report/ClosingWorkdayReport.xhtml" id="print"
-					rendered="#{workdayHome.readyForPrint}" propagation="join"
-					value="#{messages['common.print']}" />
 
 				<h:commandButton id="save" value="#{messages['common.save']}"
-					rendered="#{!workdayHome.needsInterestRateDefined  and !workdayHome.needsTaxRateDefined and !workdayHome.closingWorkday and workdayHome.existsCurrentWorkday == null and workdayHome.fromIncome and !workdayHome.existOpenedTills}"
-					action="#{workdayHome.save()}"/>
-
+					action="#{municipalBondHome.executeConfirmationByConfirmationNumberCRTV()}" />
 
 				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
 					includePageParams="false"
 					rendered="#{workdayHome.readyForPrint == null}" propagation="end"
-					view="/income/WorkdayList.xhtml" />
+					view="/income/ConfirmPaymentRTV.xhtml" />
 
 				<s:button id="back" value="#{messages['common.back']}"
-					includePageParams="false" propagation="none"
-					view="/income/WorkdayList.xhtml"
-					rendered="#{workdayHome.readyForPrint != null}">
-					<f:param name="isFromIncome" value="true"></f:param>	
+					includePageParams="false" propagation="none" view="/home.xhtml"
+					includePageParams="false">
 				</s:button>
 
 			</div>
-		</h:form>	
+		</h:form>
 
 	</ui:define>
 
