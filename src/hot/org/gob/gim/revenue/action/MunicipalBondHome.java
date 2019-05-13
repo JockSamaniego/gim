@@ -1677,7 +1677,16 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	      futureList = futureEmissionBalance.generateFutureEmissionBalance(futureStartDate, futureEndDate); 
 	      System.out.println("------- " + futureList.size()); 
 	      return "/income/report/FutureEmissionBalanceReport.xhtml";
-	    } 
+	    }
+	    
+	    public boolean isInParametersOrder(){
+	    	List<Long> crtv_entries = systemParameterService.findListIds("CRTV_ENTRIES");
+			if(crtv_entries.contains(this.getInstance().getEntry().getId())) {
+				return true;
+			}else {
+				return false;
+			}
+	    }
 	    
 	    //Para consultas crtv
 	    //jock samaniego

@@ -9,6 +9,14 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 	<a:outputPanel id="vehiclePanel">
+	
+		<s:decorate id="orderNumberField" template="../../layout/edit.xhtml" rendered="#{municipalBondHome.isInParametersOrder()}">
+			<ui:define name="label">#{messages['vehicle.orderNumber']}:</ui:define>
+			<h:inputText  id="orderNumber" value="#{adjunctHome.instance.orderNumber}" required="true" 
+			requiredMessage="Campo obligatorio" style="text-transform: uppercase">
+			</h:inputText>
+		</s:decorate>
+	
 		<s:decorate id="codeField" template="../../layout/edit.xhtml">
 			<ui:define name="label">#{messages['vehicle.plate']}:</ui:define>
 			<h:inputText id="code" value="#{adjunctHome.instance.code}" size="10">
@@ -64,12 +72,6 @@
 					label="#{vehicleType.name}" />
 				<s:convertEntity />
 			</h:selectOneMenu>
-		</s:decorate>
-		
-		<s:decorate id="orderNumberField" template="../../layout/edit.xhtml">
-			<ui:define name="label">#{messages['vehicle.orderNumber']}:</ui:define>
-			<h:inputText id="orderNumber" value="#{adjunctHome.instance.orderNumber}">
-			</h:inputText>
 		</s:decorate>
 		
 	</a:outputPanel>
