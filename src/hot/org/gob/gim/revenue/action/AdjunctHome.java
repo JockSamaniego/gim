@@ -30,10 +30,12 @@ public class AdjunctHome extends EntityHome<Adjunct> {
 	@SuppressWarnings("unchecked")
 	public void findByCode(){
 		Query query = getEntityManager().createNamedQuery("Adjunct.findByCode");
-		query.setParameter("code", getInstance().getCode());
+		query.setParameter("code", getInstance().getCode().toUpperCase());
 		try{
 			
 			List<Adjunct> adjuncts = query.getResultList();
+			
+			Vehicle vehAux = (Vehicle) this.getInstance();
 		 
 			if(adjuncts != null && adjuncts.size() > 0){
 				
@@ -44,13 +46,19 @@ public class AdjunctHome extends EntityHome<Adjunct> {
 				vehNew.setCode(veh.getCode());
 				vehNew.setCubicCentimeters(veh.getCubicCentimeters());
 				vehNew.setEngineNumber(veh.getEngineNumber());
-				vehNew.setOrderNumber(null);
+				vehNew.setOrderNumber(vehAux.getOrderNumber());
 				vehNew.setVehicleMaker(veh.getVehicleMaker());
 				vehNew.setVehicleType(veh.getVehicleType());
 				vehNew.setVin(veh.getVin());
 				vehNew.setWeightCapacity(veh.getWeightCapacity());
 				vehNew.setYear(veh.getYear());
-				vehNew.setLicensePlate(veh.getLicensePlate());
+				vehNew.setLicensePlate(veh.getCode());
+				setInstance(vehNew);
+			}else {
+				Vehicle vehNew = new Vehicle();
+				vehNew.setCode(getInstance().getCode());
+				vehNew.setLicensePlate(getInstance().getCode());
+				vehNew.setOrderNumber(vehAux.getOrderNumber());
 				setInstance(vehNew);
 			}
 		} catch(Exception e){
@@ -66,7 +74,5 @@ public class AdjunctHome extends EntityHome<Adjunct> {
 		}
 		return false;
 	}
-	
-	
 
 }
