@@ -1744,6 +1744,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 					+ "join municipalbond mb on adj.id = mb.adjunct_id " 
 					+ "join resident re on mb.resident_id = re.id "
 					+ "join municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id "
+					+ "join entry ent on mb.entry_id = ent.id "
 					+ "where ve.ordernumber = :confirmationNumber";
 
 			Query q = this.getEntityManager().createNativeQuery(sql);
@@ -1763,29 +1764,34 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		String identification = "";
 		
 		for(CRTV_MunicipalBonds item :bondByConfirmationNumber) {
-			identification= item.getResidentIdentification();
-			tipoIdent = (item.getResidentIdentification().length()==10)? "CED" : "RUC";
-			valor = item.getBondBase().doubleValue();
-			
+			if(item.getBondState().equals("PAGADA") || item.getBondState().equals("PAGADA POR MEDIO EXTERNO") ) {
+				identification= item.getResidentIdentification();
+				tipoIdent = (item.getResidentIdentification().length()==10)? "CED" : "RUC";
+				valor = item.getBondBase().doubleValue();	
+			}			
 		}
 
 		//llamar al servicio web
 		WsPagoSolicitudExecuteResponse response;
 		try {
-			response = CallCRTV.callNotification(identification, tipoIdent, valor, strDate, confirmationNumberCRTV);
-			String json = CallCRTV.notificationResultTOJson(response);
-			// guardar la rta del servicio web
-			Query updateVehicle = this.getEntityManager().createQuery(
-					"Update Vehicle v set v.notificationWSResult=:json where v.orderNumber = :orderNumber");
-			updateVehicle.setParameter("json", json);
-			updateVehicle.setParameter("orderNumber", confirmationNumberCRTV);
-			int updateCount = updateVehicle.executeUpdate();
-			System.out.println("NUMERO DE ORDEN " + confirmationNumberCRTV);
-			System.out.println(response.getCod_transaccion());
-			System.out.println(response.getCodigo_error());
-			System.out.println(response.getMensaje());
-			System.out.println(response.getSecuencia_recibo());
-			System.out.println("Rows Updated vehicle " + updateCount);
+			if(valor > 0) {
+				response = CallCRTV.callNotification(identification, tipoIdent, valor, strDate, confirmationNumberCRTV);
+				String json = CallCRTV.notificationResultTOJson(response);
+				// guardar la rta del servicio web
+				Query updateVehicle = this.getEntityManager().createQuery(
+						"Update Vehicle v set v.notificationWSResult=:json where v.orderNumber = :orderNumber");
+				updateVehicle.setParameter("json", json);
+				updateVehicle.setParameter("orderNumber", confirmationNumberCRTV);
+				int updateCount = updateVehicle.executeUpdate();
+				System.out.println("NUMERO DE ORDEN " + confirmationNumberCRTV);
+				System.out.println(response.getCod_transaccion());
+				System.out.println(response.getCodigo_error());
+				System.out.println(response.getMensaje());
+				System.out.println(response.getSecuencia_recibo());
+				System.out.println("Rows Updated vehicle " + updateCount);	
+			}else {
+				System.out.println("No hay valor pagado " + valor);
+			}			
 
 		} catch (RemoteException e) {
 			System.out.println("ERROR NUMERO DE ORDEN " + confirmationNumberCRTV);
