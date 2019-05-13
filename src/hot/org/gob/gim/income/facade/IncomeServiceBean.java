@@ -473,12 +473,7 @@ public class IncomeServiceBean implements IncomeService {
 					updateVehicle.setParameter("json", json);
 					updateVehicle.setParameter("orderNumber", orderNumber);					
 					int updateCount = updateVehicle.executeUpdate();
-					System.out.println("NUMERO DE ORDEN "+orderNumber);
-					System.out.println(response.getCod_transaccion());
-					System.out.println(response.getCodigo_error());
-					System.out.println(response.getMensaje());
-					System.out.println(response.getSecuencia_recibo());
-					System.out.println("Rows Updated vehicle "+updateCount);
+					 
 					///ni idea el resto
 				}					
 			}			
