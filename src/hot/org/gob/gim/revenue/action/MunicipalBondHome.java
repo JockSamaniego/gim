@@ -1736,6 +1736,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		
 		public void cleanCrtvVehicleData(){
 			this.responseCRTV = null;
+			this.licensePlate = null;
 		}
 		
 	//rfam 2019-05-12
