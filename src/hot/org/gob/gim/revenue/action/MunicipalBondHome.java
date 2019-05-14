@@ -1771,20 +1771,23 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
 		String strDate = dateFormat.format(date);  		
 		String identification = "";
+		Long number =0L;
 		
 		for(CRTV_MunicipalBonds item :bondByConfirmationNumber) {
 			if(item.getBondState().equals("PAGADA") || item.getBondState().equals("PAGADA POR MEDIO EXTERNO") ) {
 				identification= item.getResidentIdentification();
 				tipoIdent = (item.getResidentIdentification().length()==10)? "CED" : "RUC";
 				valor = item.getBondBase().doubleValue();	
-			}			
+				number = item.getBondNumber();
+			}
+			
 		}
 
 		//llamar al servicio web
 		WsPagoSolicitudExecuteResponse response;
 		try {
 			if(valor > 0) {
-				response = CallCRTV.callNotification(identification, tipoIdent, valor, strDate, confirmationNumberCRTV);
+				response = CallCRTV.callNotification(identification, tipoIdent, valor, strDate, confirmationNumberCRTV, number);
 				String json = CallCRTV.notificationResultTOJson(response);
 				// guardar la rta del servicio web
 				Query updateVehicle = this.getEntityManager().createQuery(

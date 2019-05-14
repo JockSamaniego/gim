@@ -17,14 +17,14 @@ import SMTATM.WsPagoSolicitudSoapPortProxy;
 public class CallCRTV {
 
 	public static WsPagoSolicitudExecuteResponse callNotification(String identification, String identificationType, 
-			double valor, String callDate, String orderNumber) throws RemoteException {
+			double valor, String callDate, String orderNumber, Long number) throws RemoteException {
 		//llamar al servicio web
 		WsPagoSolicitudExecute wspago = new WsPagoSolicitudExecute();
 		wspago.setOrdenespagotipoiden(identificationType);
 		wspago.setOrdenespagoidentidad(identification);
 		wspago.setOrdenespagoservicio("SOL");
 		wspago.setValor_pagar(valor);
-		wspago.setCodigo_transaccion("13");
+		wspago.setCodigo_transaccion(number.toString());
 		wspago.setOrdenespagobanco("LOJ");
 		wspago.setOrdenespagosucursal("SUC");
 		wspago.setOrdenespagocanal("WEB");

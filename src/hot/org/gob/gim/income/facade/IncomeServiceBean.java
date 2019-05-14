@@ -464,7 +464,8 @@ public class IncomeServiceBean implements IncomeService {
 					String tipoIdent = (identification.length()==10)? "CED" : "RUC";
 
 					//llamar al servicio web
-					WsPagoSolicitudExecuteResponse response = CallCRTV.callNotification(identification, tipoIdent, valor, strDate, orderNumber);
+					WsPagoSolicitudExecuteResponse response = CallCRTV.callNotification(identification, tipoIdent, valor, strDate, 
+							orderNumber, deposit.getMunicipalBond().getNumber());
 					String json = CallCRTV.notificationResultTOJson(response);
 					//guardar la rta del servicio web
 					Query updateVehicle = entityManager.createQuery("Update Vehicle v "
