@@ -446,7 +446,7 @@ public class IncomeServiceBean implements IncomeService {
 						
 					List<Item> items = deposit.getMunicipalBond().getItems();
 					Item it = items.get(0);
-					double valor = it.getValue().doubleValue();	
+					double valor = it.getTotal().doubleValue();	
 					String identification = deposit.getMunicipalBond().getResident().getIdentificationNumber();
 					//fecha y hora de solicitud
 					Date date = Calendar.getInstance().getTime();
