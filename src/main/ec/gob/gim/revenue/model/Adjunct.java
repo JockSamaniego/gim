@@ -35,7 +35,7 @@ import ec.gob.gim.revenue.model.adjunct.ValuePair;
 		@NamedQuery(name="Adjunct.findById",
 					query="select o from Adjunct o where o.id = :id"),
 		@NamedQuery(name="Adjunct.findByCode",
-				query="select o from Adjunct o where o.code = :code")
+				query="select o from Adjunct o where o.code = :code order by o.id DESC")
 })
 public abstract class Adjunct {
 	@Id

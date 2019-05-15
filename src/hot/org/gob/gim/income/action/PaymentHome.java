@@ -33,6 +33,7 @@ import javax.servlet.ServletContext;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -59,7 +60,12 @@ import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
+ 
 
+import SMTATM.WsPagoSolicitudExecute;
+import SMTATM.WsPagoSolicitudExecuteResponse;
+import SMTATM.WsPagoSolicitudSoapPortProxy;
+import ec.gob.gim.ant.ucot.model.CoipDTO;
 import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.FiscalPeriod;
@@ -80,9 +86,11 @@ import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.dto.ParameterFutureEmissionDTO;
 import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.FinancialInstitutionType;
+import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.PaymentTypeSRI;
+import ec.gob.gim.revenue.model.DTO.CRTV_ORDER;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.gim.security.model.User;
@@ -1358,6 +1366,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				incomeService.save(deposits, paymentAgreementId, tillId, paymentMethod);
 				// fin recaudacionCoactivas
 				incomeService.deactivateCreditNotes(getInstance().getPaymentFractions());
+				
 				receiptPrintingManager.print(deposits);
 				renderingDepositPDF(userSession.getUser().getId());
 
@@ -1367,7 +1376,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				// No realizar el calculo de interes para instituciones publicas
 				// invocar al incomeservice
 				// incomeService.compensationPayment(deposits);
-
+				 
 			} catch (InvoiceNumberOutOfRangeException e) {
 				addFacesMessageFromResourceBundle(e.getClass().getSimpleName(), e.getInvoiceNumber());
 			} catch (Exception e) {

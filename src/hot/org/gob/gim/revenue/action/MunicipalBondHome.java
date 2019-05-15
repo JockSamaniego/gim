@@ -2,6 +2,8 @@ package org.gob.gim.revenue.action;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.rmi.RemoteException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,10 +17,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.commercial.action.BusinessHome;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.InvalidEmissionException;
+import org.gob.gim.income.facade.CallCRTV;
 import org.gob.gim.income.facade.FutureEmissionBalance;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
@@ -38,6 +42,8 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
 
+import SMTATM.ConsultaRTVwsExecuteResponse;
+import SMTATM.WsPagoSolicitudExecuteResponse;
 import ec.gob.gim.commercial.model.FireNames;
 import ec.gob.gim.commercial.model.FireRates;
 import ec.gob.gim.common.model.Alert;
@@ -53,6 +59,7 @@ import ec.gob.gim.revenue.model.EntryType;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
+import ec.gob.gim.revenue.model.DTO.CRTV_MunicipalBonds;
 import ec.gob.gim.security.model.Role;
 //macartuche
 //antclient
@@ -730,6 +737,8 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		isFirstTime = false;
 		BusinessHome.myId = null;
 		bondIsWire = Boolean.TRUE;
+		licensePlate = null;
+		responseCRTV = null;
 	}
 
 	public boolean isWired() {
@@ -1671,6 +1680,153 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	      futureList = futureEmissionBalance.generateFutureEmissionBalance(futureStartDate, futureEndDate); 
 	      System.out.println("------- " + futureList.size()); 
 	      return "/income/report/FutureEmissionBalanceReport.xhtml";
-	    } 
+	    }
+	    
+	    public boolean isInParametersOrder(){
+	    	List<Long> crtv_entries = systemParameterService.findListIds("CRTV_ENTRIES");
+			if(crtv_entries.contains(this.getInstance().getEntry().getId())) {
+				return true;
+			}else {
+				return false;
+			}
+	    }
+	    
+	    //Para consultas crtv
+	    //jock samaniego
+	    // 10-05-2019
+	    
+	    private String licensePlate;
+	    ConsultaRTVwsExecuteResponse responseCRTV;
+	    
+	    public void findCrtvVehicleData() throws RemoteException{
+	    		//.....................method
+	    	responseCRTV = new ConsultaRTVwsExecuteResponse();
+	    	responseCRTV = CallCRTV.findVehicleData(licensePlate);	    	
+	    }
 
+		public String getLicensePlate() {
+			return licensePlate;
+		}
+
+		public void setLicensePlate(String licensePlate) {
+			this.licensePlate = licensePlate;
+		}
+
+		public ConsultaRTVwsExecuteResponse getResponseCRTV() {
+			return responseCRTV;
+		}
+
+		public void setResponseCRTV(ConsultaRTVwsExecuteResponse responseCRTV) {
+			this.responseCRTV = responseCRTV;
+		}
+
+		public Boolean hasRole(String roleKey) {
+			SystemParameterService systemParameterService = ServiceLocator.getInstance()
+					.findResource(SystemParameterService.LOCAL_NAME);
+			String role = systemParameterService.findParameter(roleKey);
+			if (role != null) {
+				if(userSession !=null && userSession.getUser() != null) {
+					return userSession.getUser().hasRole(role);
+				}else { 
+					return false;
+				}
+			}
+			return false;
+		}
+		
+		public void cleanCrtvVehicleData(){
+			this.responseCRTV = null;
+			this.licensePlate = null;
+		}
+		
+	//rfam 2019-05-12
+	//crtv
+	private String confirmationNumberCRTV;
+	private List<CRTV_MunicipalBonds> bondByConfirmationNumber;
+
+	@SuppressWarnings("unchecked")
+	public void findBondsByConfirmationNumber() {
+		if (confirmationNumberCRTV != null && !confirmationNumberCRTV.equals("")) {
+
+			String sql = "select mb.id, re.identificationnumber, re.name contribuyente, mbs.name estado, ent.name rubro, mb.number, mb.base, mb.value, mb.paidtotal "
+					+ "from vehicle ve " 
+					+ "join adjunct adj on ve.id = adj.id "
+					+ "join municipalbond mb on adj.id = mb.adjunct_id " 
+					+ "join resident re on mb.resident_id = re.id "
+					+ "join municipalbondstatus mbs on mb.municipalbondstatus_id = mbs.id "
+					+ "join entry ent on mb.entry_id = ent.id "
+					+ "where ve.ordernumber = :confirmationNumber";
+
+			Query q = this.getEntityManager().createNativeQuery(sql);
+			q.setParameter("confirmationNumber", this.confirmationNumberCRTV);
+
+			bondByConfirmationNumber = NativeQueryResultsMapper.map(q.getResultList(), CRTV_MunicipalBonds.class);
+
+		}
+	}
+	
+	public void executeConfirmationByConfirmationNumberCRTV() {
+		String tipoIdent = "CED";
+		double valor = 0 ;
+		Date date = Calendar.getInstance().getTime();
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+		String strDate = dateFormat.format(date);  		
+		String identification = "";
+		Long number =0L;
+		
+		for(CRTV_MunicipalBonds item :bondByConfirmationNumber) {
+			if(item.getBondState().equals("PAGADA") || item.getBondState().equals("PAGADA POR MEDIO EXTERNO") ) {
+				identification= item.getResidentIdentification();
+				tipoIdent = (item.getResidentIdentification().length()==10)? "CED" : "RUC";
+				valor = item.getBondBase().doubleValue();	
+				number = item.getBondNumber();
+			}
+			
+		}
+
+		//llamar al servicio web
+		WsPagoSolicitudExecuteResponse response;
+		try {
+			if(valor > 0) {
+				response = CallCRTV.callNotification(identification, tipoIdent, valor, strDate, confirmationNumberCRTV, number);
+				String json = CallCRTV.notificationResultTOJson(response);
+				// guardar la rta del servicio web
+				Query updateVehicle = this.getEntityManager().createQuery(
+						"Update Vehicle v set v.notificationWSResult=:json where v.orderNumber = :orderNumber");
+				updateVehicle.setParameter("json", json);
+				updateVehicle.setParameter("orderNumber", confirmationNumberCRTV);
+				int updateCount = updateVehicle.executeUpdate();
+				System.out.println("NUMERO DE ORDEN " + confirmationNumberCRTV);
+				System.out.println(response.getCod_transaccion());
+				System.out.println(response.getCodigo_error());
+				System.out.println(response.getMensaje());
+				System.out.println(response.getSecuencia_recibo());
+				System.out.println("Rows Updated vehicle " + updateCount);	
+			}else {
+				System.out.println("No hay valor pagado " + valor);
+			}			
+
+		} catch (RemoteException e) {
+			System.out.println("ERROR NUMERO DE ORDEN " + confirmationNumberCRTV);
+			e.printStackTrace();
+		}
+	}
+
+	public String getConfirmationNumberCRTV() {
+		return confirmationNumberCRTV;
+	}
+
+	public void setConfirmationNumberCRTV(String confirmationNumberCRTV) {
+		this.confirmationNumberCRTV = confirmationNumberCRTV;
+	}
+
+	public List<CRTV_MunicipalBonds> getBondByConfirmationNumber() {
+		return bondByConfirmationNumber;
+	}
+
+	public void setBondByConfirmationNumber(List<CRTV_MunicipalBonds> bondByConfirmationNumber) {
+		this.bondByConfirmationNumber = bondByConfirmationNumber;
+	}
+		
+		
 }
