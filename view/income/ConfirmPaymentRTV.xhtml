@@ -1,0 +1,135 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="crtv" styleClass="edit">
+			<ui:debug id="uidebug" />
+
+			<rich:panel>
+				<f:facet name="header">
+            	#{messages['crtv.pendingPaymentsToConfirm']}
+            </f:facet>
+
+				<s:decorate id="confirmationNumberField"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['crtv.confirmationNumber']}:</ui:define>
+					<h:inputText id="confirmationNumber" size="15" maxlength="14"
+						value="#{municipalBondHome.confirmationNumberCRTV}">
+						<a:support event="onblur" reRender="chargeField"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+				
+				<a:commandButton value="#{messages['common.search']}"
+								action="#{municipalBondHome.findBondsByConfirmationNumber()}" 
+								reRender="contentPanel, errors, paymentsTable" />
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<rich:panel id="contentPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText id="branchCount"
+							value="#{messages['tills']}" />
+					</h:panelGrid>
+				</f:facet>
+
+				<rich:dataTable id="paymentsTable" var="_payment"
+					value="#{municipalBondHome.bondByConfirmationNumber}" rowClasses="rvgRowOne,rvgRowTwo">
+
+					
+					<rich:column sortBy="#{_payment.bondId}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['common.id']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.bondId}"/>
+					</rich:column>
+
+					<rich:column sortBy="#{_payment.residentIdentification}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['resident.identificationNumber']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.residentIdentification}"/>
+					</rich:column>
+					
+					<rich:column sortBy="#{_payment.residentName}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['resident.name']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.residentName}"/>
+					</rich:column>
+					
+					<rich:column sortBy="#{_payment.bondState}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.status']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.bondState}"/>
+					</rich:column>
+					
+					<rich:column sortBy="#{_payment.bondEntryName}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.entry']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.bondEntryName}" styleClass="right"/>
+					</rich:column>
+					
+					<rich:column sortBy="#{_payment.bondNumber}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.number']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.bondNumber}" styleClass="right"/>
+					</rich:column>
+					
+					<rich:column sortBy="#{_payment.bondBase}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.base']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.bondBase}" styleClass="right"/>
+					</rich:column>
+					
+					<rich:column sortBy="#{_payment.bondPaidtotal}" styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['municipalBond.paidTotal']}" />
+						</f:facet>
+						<h:outputText value="#{_payment.bondPaidtotal}" styleClass="right"/>
+					</rich:column>
+
+				</rich:dataTable>
+
+			</rich:panel>
+
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{municipalBondHome.executeConfirmationByConfirmationNumberCRTV()}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					includePageParams="false"
+					rendered="#{workdayHome.readyForPrint == null}" propagation="end"
+					view="/income/ConfirmPaymentRTV.xhtml" />
+
+				<s:button id="back" value="#{messages['common.back']}"
+					includePageParams="false" propagation="none" view="/home.xhtml">
+				</s:button>
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

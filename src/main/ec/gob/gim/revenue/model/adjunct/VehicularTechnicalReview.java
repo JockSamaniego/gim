@@ -12,8 +12,8 @@ import ec.gob.gim.revenue.model.adjunct.detail.VehicleMaker;
 import ec.gob.gim.revenue.model.adjunct.detail.VehicleType;
 
 @Entity
-@DiscriminatorValue(value = "VEH")
-public class Vehicle extends Adjunct {
+@DiscriminatorValue("REV") 
+public class VehicularTechnicalReview extends Adjunct{
 	private String vin;
 	private String engineNumber;
 	private Integer year;
@@ -23,92 +23,56 @@ public class Vehicle extends Adjunct {
 	private VehicleMaker vehicleMaker;
 	@ManyToOne
 	private VehicleType vehicleType;
-
-	private String orderNumber;
-	private String licensePlate;
 	
-	
-	private String notificationWSResult;
-
 	public String getVin() {
 		return vin;
 	}
-
 	public void setVin(String vin) {
 		this.vin = vin;
 	}
-
 	public String getEngineNumber() {
 		return engineNumber;
 	}
-
 	public void setEngineNumber(String engineNumber) {
 		this.engineNumber = engineNumber;
 	}
-
 	public VehicleMaker getVehicleMaker() {
 		return vehicleMaker;
 	}
-
 	public void setVehicleMaker(VehicleMaker vehicleMaker) {
 		this.vehicleMaker = vehicleMaker;
 	}
-
 	public VehicleType getVehicleType() {
 		return vehicleType;
 	}
-
 	public void setVehicleType(VehicleType vehicleType) {
 		this.vehicleType = vehicleType;
 	}
-
 	public Integer getYear() {
 		return year;
 	}
-
 	public void setYear(Integer year) {
 		this.year = year;
 	}
-
 	public Double getCubicCentimeters() {
 		return cubicCentimeters;
 	}
-
 	public void setCubicCentimeters(Double cubicCentimeters) {
 		this.cubicCentimeters = cubicCentimeters;
 	}
-
 	public Double getWeightCapacity() {
 		return weightCapacity;
 	}
-
 	public void setWeightCapacity(Double weightCapacity) {
 		this.weightCapacity = weightCapacity;
-	}
-
-	public String getOrderNumber() {
-		return orderNumber;
-	}
-
-	public void setOrderNumber(String orderNumber) {
-		this.orderNumber = orderNumber;
+	} 
+	
+	@Override
+	public String toString() {	
+		return vehicleMaker.getName() + " - Chasis: " + vin + " - Motor: " + engineNumber;
 	}
 	
-	public String getLicensePlate() {
-		return licensePlate;
-	}
-
-	public void setLicensePlate(String licensePlate) {
-		this.licensePlate = licensePlate;
-	}
-
-	@Override
-	public String toString() {
-		return vehicleMaker.getName() + " - Chasis: " + vin + " - Motor: "
-				+ engineNumber;
-	}
-
-	public List<ValuePair> getDetails() {
+	public List<ValuePair> getDetails(){
 		List<ValuePair> details = new LinkedList<ValuePair>();
 		ValuePair pair = new ValuePair("Marca", vehicleMaker.getName());
 		details.add(pair);
@@ -116,23 +80,11 @@ public class Vehicle extends Adjunct {
 		details.add(pair);
 		pair = new ValuePair("Numero motor: ", engineNumber);
 		details.add(pair);
-		pair = new ValuePair("Año", year != null ? year.toString() : "");
+		pair = new ValuePair("Año", year!=null ? year.toString(): "");
 		details.add(pair);
-		pair = new ValuePair("Cilindraje",
-				cubicCentimeters != null ? cubicCentimeters.toString() : "");
+		pair = new ValuePair("Cilindraje", cubicCentimeters!=null ? cubicCentimeters.toString(): "");
 		details.add(pair);
-
+		
 		return details;
-	}
-
-	public String getNotificationWSResult() {
-		return notificationWSResult;
-	}
-
-	public void setNotificationWSResult(String notificationWSResult) {
-		this.notificationWSResult = notificationWSResult;
-	}
-	
-	
-	
+	}	
 }

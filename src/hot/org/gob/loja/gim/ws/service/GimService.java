@@ -82,4 +82,12 @@ public interface GimService {
 	UserResponse  saveUser(ServiceRequest request, String username, String password);
 	UserResponse login(String username, String password);
 	
+	/**
+	 * CRTV - TURNOS
+	 * @author macartuche
+	 * @param identification
+	 * @return
+	 */
+	boolean searchDueDebts(ServiceRequest request);
+	
 }
