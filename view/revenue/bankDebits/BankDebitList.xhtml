@@ -1,0 +1,153 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="../../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:include src="dialogs/BankDebitRegister.xhtml" />
+
+		<h:form id="bankDebitListForm" styleClass="edit" prependId="false">
+			<h:outputText styleClass="formTitle" value="Débitos bancarios" />
+
+			<rich:simpleTogglePanel label="Buscador de registro de Débito"
+				switchType="ajax">
+
+				<s:decorate template="../../layout/display.xhtml">
+					<ui:define name="label">Servicio</ui:define>
+					<h:inputText id="serviceNumber"
+						value="#{bankDebitHome.criteria.servicenumber}" size="40"
+						maxlength="40">
+						<a:support ajaxSingle="true" event="onblur"></a:support>
+					</h:inputText>
+
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+			<div class="actionButtons">
+
+				<a:commandButton id="btnSearch" value="#{messages['common.search']}"
+					reRender="paginador,debitsTable,lblNumberResults" ajaxSingle="true"
+					bypassUpdates="true"
+					actionListener="#{bankDebitHome.searchDebits()}" />
+
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none">
+				</s:button>
+			</div>
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputFormat id="lblNumberResults"
+							value="#{messages['revenue.impugnments.impugnment_number_results']}">
+							<f:param value="#{bankDebitHome.debits.size()}" />
+						</h:outputFormat>
+
+						<a:commandButton id="createDebit" ajaxSingle="true"
+							eventsQueue="gimQueue" value="Registrar Débito"
+							oncomplete="Richfaces.showModalPanel('bankDebitRegisterPanel',{width:450, height:350})"
+							reRender="bankDebitRegisterPanel"
+							actionListener="#{bankDebitHome.preparaRegisterDebit()}" />
+					</h:panelGrid>
+
+				</f:facet>
+
+				<div class="results" id="debitsList">
+
+					<rich:datascroller id="paginador" align="right" for="debitsTable"
+						maxPages="20" />
+					<rich:spacer height="5" />
+
+					<rich:dataTable id="debitsTable" var="_debit" width="100%"
+						value="#{bankDebitHome.debits}"
+						columnClasses="center, center, center, center, center, center,center,center, center"
+						rows="25">
+						<rich:column>
+							<f:facet name="header">
+								ID
+							</f:facet>
+							<h:outputText value="#{_debit.id}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Identificación
+							</f:facet>
+							<h:outputText value="#{_debit.identificationNumber}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Contribuyente
+							</f:facet>
+							<h:outputText value="#{_debit.residentName}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Tipo Cuenta
+							</f:facet>
+							<h:outputText value="#{_debit.accountType}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Número Cuenta
+							</f:facet>
+							<h:outputText value="#{_debit.accountNumber}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Titular Cuenta
+							</f:facet>
+							<h:outputText value="#{_debit.accountHolder}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Servicio
+							</f:facet>
+							<h:outputText value="#{_debit.servicenumber}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Activo
+							</f:facet>
+							<h:graphicImage
+								value="/img/#{_debit.active ? 'true.png' : 'error.gif'}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Acciones
+							</f:facet>
+							<div align="center">
+
+								<a:commandButton value="Editar"
+									reRender="bankDebitRegisterPanel" ajaxSingle="true"
+									eventsQueue="gimQueue"
+									oncomplete="Richfaces.showModalPanel('bankDebitRegisterPanel',{width:450, height:400})"
+									actionListener="#{bankDebitHome.prepareUpdateDebit(_debit.id)}">
+								</a:commandButton>
+							</div>
+
+						</rich:column>
+
+					</rich:dataTable>
+				</div>
+			</rich:panel>
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
