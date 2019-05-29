@@ -25,7 +25,7 @@
 				</f:facet>
 				<h:panelGrid columns="1" id="searchPanel">
 					<s:decorate template="../layout/display.xhtml">
-						<ui:define name="label">#{messages['emissionOrder.number']}</ui:define>
+						<ui:define name="label">#{messages['emissionOrder.number']}:</ui:define>
 						<h:inputText id="emissionNumber"
 							value="#{emissionOrderHome.emissionNumber}">
 							<a:support event="onblur" ajaxSingle="true"
@@ -34,7 +34,7 @@
 					</s:decorate>
 				
 					<s:decorate template="../layout/display.xhtml">
-						<ui:define name="label">#{messages['resident.identificationNumber']}</ui:define>
+						<ui:define name="label">#{messages['resident.identificationNumber']}:</ui:define>
 						<h:inputText id="identificationNumber"
 							value="#{emissionOrderHome.identificationNumber}">
 							<a:support event="onblur" ajaxSingle="true"
@@ -43,7 +43,7 @@
 					</s:decorate>
 
 					<s:decorate template="../layout/display.xhtml">
-						<ui:define name="label">#{messages['resident.name']}</ui:define>
+						<ui:define name="label">#{messages['resident.name']}:</ui:define>
 						<h:inputText id="residentName"
 							value="#{emissionOrderHome.residentName}">
 							<a:support event="onblur" ajaxSingle="true"
@@ -69,6 +69,24 @@
 		                </rich:calendar>
 		            </s:decorate>
 		            
+		            <s:decorate id="dateFromField2" template="../layout/edit.xhtml">
+		                <ui:define name="label">#{messages['ucot.From']}(revisión):</ui:define>
+		                <rich:calendar id="dateFrom2"
+		                          value="#{emissionOrderHome.dateFrom2}" datePattern="dd/MM/yyyy" >
+		                          <a:support event="onchanged" ajaxSingle="true"
+									reRender="dateFrom2" />
+						</rich:calendar>
+		            </s:decorate>
+
+		            <s:decorate id="dateUntilField2" template="../layout/edit.xhtml">
+		                <ui:define name="label">#{messages['ucot.Until']}(revisión):</ui:define>
+		                <rich:calendar id="dateUntil2"
+		                          value="#{emissionOrderHome.dateUntil2}" datePattern="dd/MM/yyyy" >
+		                          <a:support event="onchanged" ajaxSingle="true"
+									reRender="dateUntil2" />
+		                </rich:calendar>
+		            </s:decorate>
+		            
 		            <s:decorate id="revisionStatusField" template="../layout/edit.xhtml">
 						<ui:define name="label">#{messages['fotomulta.revisionStatus']}:</ui:define>
 						<h:selectOneMenu id="revisionStatus" required="true"
@@ -90,33 +108,61 @@
 									reRender="impugnmentStatus" />
 						</h:selectOneMenu>
 					</s:decorate>
+					
+					<s:decorate id="reportUserField" template="../layout/edit.xhtml" >
+		                <ui:define name="label">#{messages['fotomulta.reportUser?']}</ui:define>
+		                <h:selectBooleanCheckbox id="reportUser"
+		                                      value="#{emissionOrderHome.reportForUser}">
+		                                  <a:support event="onchange" ajaxSingle="true" reRender="reviserPanel,reportUser" />
+		                </h:selectBooleanCheckbox>
+		            </s:decorate>
+					
+					<h:panelGrid columns="1" id="reviserPanel">
+						<s:decorate id="reviserUserField" template="../layout/edit.xhtml" rendered="#{emissionOrderHome.reportForUser}">
+						    <ui:define name="label">#{messages['fotomulta.reviserUser']}:</ui:define>
+							<h:selectOneMenu id="reviserUser" required="#{emissionOrderHome.reportForUser}"
+								value="#{emissionOrderHome.reviserUser}">
+								<s:selectItems value="#{emissionOrderHome.reviserUsers}" var="reviser"
+									label="#{reviser.name}" itemValue="#{reviser.userId}" noSelectionLabel="Seleccione Uno"/>
+								<a:support event="onchange" ajaxSingle="true" 
+										reRender="reviserUser" />
+							</h:selectOneMenu>
+						</s:decorate>
+					</h:panelGrid>
 				
 				</h:panelGrid>
 
 				<a:commandButton id="loadBt" ajaxSingle="true"
 					action="#{emissionOrderHome.loadPending()}"
 					eventsQueue="gimEventsQueue"
-					reRender="emissionOrderTable,sc2,txtTotal, printReport"
+					reRender="emissionOrderTable,sc2,txtTotal, printReport, printReport2"
 					value="#{messages['common.search']}" />
 				
 				<a:commandButton id="resetBt" ajaxSingle="true"
 					action="#{emissionOrderHome.resetValues()}"
 					eventsQueue="gimEventsQueue"
-					reRender="emissionOrderTable,sc2,txtTotal,searchPanel,revisionStatusField, printReport"
+					reRender="emissionOrderTable,sc2,txtTotal,searchPanel,revisionStatusField, printReport, printReport2"
 					value="#{messages['common.reset']}" />
 
 			</rich:panel>
 
 			<rich:panel id="emissionOrderPanel">
 				<f:facet name="header">
-					<h:panelGrid columns="3" columnClasses="headerTitle,">
+					<h:panelGrid columns="4" columnClasses="headerTitle,">
 						<h:outputText id="txtTotal"
 							value="#{messages['municipalBond.searchResults']} (#{empty emissionOrderHome.emissionOrders ? 0 : (emissionOrderHome.emissionOrders.size())})" />
 						<s:button
 							view="/revenue/report/EmissionOrderFotoMultaReport.xhtml"
 							id="printReport"
 							disabled = "#{emissionOrderHome.emissionOrders.size() == 0 || emissionOrderHome.emissionOrders == null}"
-							value="#{messages['common.print']}" />
+							value="#{messages['common.print']} Tabla" />
+						<s:button
+							rendered="#{emissionOrderHome.hasRole('ROLE_REVISOR_UCOT')}"
+							view="/revenue/report/RevisedEmissionFotoMultaReport.xhtml"
+							id="printReport2"
+							disabled = "#{emissionOrderHome.emissionOrders.size() == 0 || emissionOrderHome.emissionOrders == null || (emissionOrderHome.revisionStatusUCOT != 'APROBADA' and emissionOrderHome.revisionStatusUCOT != 'RECHAZADA')}"
+							value="#{messages['common.print']} Revisadas" 
+							action="#{emissionOrderHome.findAndPrintRevisedEmissions()}" />
 					</h:panelGrid>
 				</f:facet>
 
@@ -293,6 +339,15 @@
 									value="#{messages['fotomulta.impugnment']}"
 									disabled="#{_emissionOrder.municipalBonds.size() != 1 || _emissionOrder.municipalBonds.get(0).impugnment != null}"
 									rendered="#{emissionOrderHome.hasRole('ROLE_REVISOR_UCOT')}" >
+						</a:commandButton>
+						
+						<a:commandButton id="infractionImpugnmentStatus" ajaxSingle="true" 
+									actionListener="#{impugnmentHome.prepareDirectStatusChangeImpugnment(_emissionOrder)}"
+									eventsQueue="gimEventsQueue" reRender="impugnmentRegisterPanel" 
+									oncomplete="Richfaces.showModalPanel('impugnmentRegisterPanel',{width:450, height:610})"
+									value="#{messages['fotomulta.impugnmentProcess']}"
+									disabled="#{_emissionOrder.municipalBonds.size() != 1 || _emissionOrder.municipalBonds.get(0).impugnment == null || _emissionOrder.municipalBonds.get(0).impugnment.status.id != 1}"
+									rendered="#{emissionOrderHome.hasRole('ROLE_REVISOR_UCOT')}">
 						</a:commandButton>
 
 					</rich:column>

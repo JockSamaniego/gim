@@ -1902,7 +1902,7 @@ public class MunicipalBond implements Serializable {
 	}
 	
 	//para impugnaciones
-	@OneToOne(mappedBy="municipalBond", fetch = FetchType.LAZY)
+	@OneToOne(mappedBy="municipalBond", fetch = FetchType.EAGER)
 	private Impugnment impugnment;
 
 

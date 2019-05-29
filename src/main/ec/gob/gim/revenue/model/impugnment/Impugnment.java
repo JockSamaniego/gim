@@ -75,7 +75,7 @@ public class Impugnment implements Serializable {
 	@JoinColumn(name = "status_itm_id", nullable = false, referencedColumnName = "id")
 	private ItemCatalog status;
 
-	@OneToOne(fetch=FetchType.LAZY)
+	@OneToOne(fetch=FetchType.EAGER)
 	private MunicipalBond municipalBond;
 
 	@ManyToOne(fetch = FetchType.EAGER)
