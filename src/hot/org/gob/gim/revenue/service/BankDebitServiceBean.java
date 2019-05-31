@@ -1,5 +1,7 @@
 package org.gob.gim.revenue.service;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -14,6 +16,7 @@ import org.gob.gim.common.service.CrudService;
 import ec.gob.gim.revenue.model.bankDebit.BankDebit;
 import ec.gob.gim.revenue.model.bankDebit.criteria.BankDebitSearchCriteria;
 import ec.gob.gim.revenue.model.bankDebit.dto.BankDebitDTO;
+import ec.gob.gim.revenue.model.bankDebit.dto.BankDebitReportDTO;
 import ec.gob.gim.waterservice.model.WaterSupply;
 
 /**
@@ -32,18 +35,19 @@ public class BankDebitServiceBean implements BankDebitService {
 	@Override
 	public List<BankDebitDTO> findDebitsForCriteria(
 			BankDebitSearchCriteria criteria) {
-		Query query = entityManager.createNativeQuery("SELECT ban.id, "
-															+"res.identificationnumber, "
-															+"res.name, "
-															+"ica.name, "
-															+"ban.accountnumber, "
-															+"ban.accountholder, "
-															+"was.servicenumber, "
-															+"ban.active "
-												+"FROM bankdebit ban " 
-												+"INNER JOIN watersupply was ON was.id = ban.watersupply_id "
-												+"INNER JOIN resident res ON res.id = was.serviceowner_id "
-												+"INNER JOIN itemcatalog ica ON ica.id = ban.accounttype_itm_id");
+		Query query = entityManager
+				.createNativeQuery("SELECT ban.id, "
+						+ "res.identificationnumber, "
+						+ "res.name, "
+						+ "ica.name as account_type, "
+						+ "ban.accountnumber, "
+						+ "ban.accountholder, "
+						+ "was.servicenumber, "
+						+ "ban.active "
+						+ "FROM bankdebit ban "
+						+ "INNER JOIN watersupply was ON was.id = ban.watersupply_id "
+						+ "INNER JOIN resident res ON res.id = was.serviceowner_id "
+						+ "INNER JOIN itemcatalog ica ON ica.id = ban.accounttype_itm_id");
 
 		List<BankDebitDTO> retorno = NativeQueryResultsMapper.map(
 				query.getResultList(), BankDebitDTO.class);
@@ -79,7 +83,7 @@ public class BankDebitServiceBean implements BankDebitService {
 		Query query = entityManager.createNamedQuery("BankDebit.findById");
 		query.setParameter("bankDebitId", bankDebitId);
 		List<BankDebit> resultList = query.getResultList();
-		if(resultList.isEmpty()){
+		if (resultList.isEmpty()) {
 			return null;
 		}
 		return resultList.get(0);
@@ -88,6 +92,156 @@ public class BankDebitServiceBean implements BankDebitService {
 	@Override
 	public BankDebit update(BankDebit debit) {
 		return crudService.update(debit);
+	}
+
+	@Override
+	public List<BankDebitDTO> findBankDebits(Integer serviceNumver, Integer firstRow, Integer numberOfRows) {
+		String qryBase = "SELECT ban.id, "
+				+ "res.identificationnumber, "
+				+ "res.name, "
+				+ "ica.name as account_type, "
+				+ "ban.accountnumber, "
+				+ "ban.accountholder, "
+				+ "was.servicenumber, "
+				+ "ban.active "
+				+ "FROM bankdebit ban "
+				+ "INNER JOIN watersupply was ON was.id = ban.watersupply_id "
+				+ "INNER JOIN resident res ON res.id = was.serviceowner_id "
+				+ "INNER JOIN itemcatalog ica ON ica.id = ban.accounttype_itm_id";
+
+		String finalQuery = qryBase;
+
+		/*
+		 * if (cadastralCode != null) { finalQuery = finalQuery +
+		 * conditionAdditional; }
+		 * 
+		 * finalQuery = finalQuery + " order by wf.property.cadastralCode ASC"
+		 */
+
+		Query query = entityManager.createNativeQuery(finalQuery);
+		/*
+		 * query.setParameter("workDeal_id", workDeal_id); if (cadastralCode !=
+		 * null) { query.setParameter("cadastralCode", cadastralCode+"%"); }
+		 */
+		query.setFirstResult(firstRow);
+		query.setMaxResults(numberOfRows);
+
+		List<BankDebitDTO> retorno = NativeQueryResultsMapper.map(
+				query.getResultList(), BankDebitDTO.class);
+
+		return retorno;
+	}
+
+	@Override
+	public Integer findBankDebitNumber(Integer serviceNumver) {
+
+		String qryBase = "SELECT count(*) " + "FROM bankdebit ban "
+				+ "INNER JOIN watersupply was ON was.id = ban.watersupply_id "
+				+ "INNER JOIN resident res ON res.id = was.serviceowner_id "
+				+ "INNER JOIN itemcatalog ica ON ica.id = ban.accounttype_itm_id";
+		
+		//String conditionAdditional = " and wf.property.cadastralCode=:cadastralCode";
+		String finalQuery = qryBase;
+
+		/*if (cadastralCode != null) {
+			finalQuery = finalQuery + conditionAdditional;
+		}*/
+
+		Query query = entityManager.createNativeQuery(finalQuery);
+		/*query.setParameter("workDeal_id", workDeal_id);
+		if (cadastralCode != null) {
+			query.setParameter("cadastralCode", cadastralCode);
+		}*/
+		Integer size = ((BigInteger)query.getSingleResult()).intValue(); 
+		return size;
+
+	}
+
+	@Override
+	public BankDebitDTO findDtoById(Long bankDebitId) {
+		String qryBase = "SELECT ban.id, "
+				+ "res.identificationnumber, "
+				+ "res.name, "
+				+ "ica.name as account_type, "
+				+ "ban.accountnumber, "
+				+ "ban.accountholder, "
+				+ "was.servicenumber, "
+				+ "ban.active "
+				+ "FROM bankdebit ban "
+				+ "INNER JOIN watersupply was ON was.id = ban.watersupply_id "
+				+ "INNER JOIN resident res ON res.id = was.serviceowner_id "
+				+ "INNER JOIN itemcatalog ica ON ica.id = ban.accounttype_itm_id "
+				+ "WHERE ban.id = ?1";
+		Query query = entityManager.createNativeQuery(qryBase);
+		query.setParameter(1, bankDebitId);
+		
+		List<BankDebitDTO> retorno = NativeQueryResultsMapper.map(
+				query.getResultList(), BankDebitDTO.class);
+		
+		if(retorno.size() > 0 ){
+			return retorno.get(0);
+		}
+
+		return null;
+		
+	}
+
+	@Override
+	public List<Long> getBankDebitResidents() {
+		String sql = "SELECT "
+							+"CAST (res.id AS INTEGER) as id "
+						+"FROM "
+						+"bankdebit AS ban "
+						+"INNER JOIN watersupply was ON ban.watersupply_id = was.id "
+						+"INNER JOIN resident AS res ON was.serviceowner_id = res.id "
+						+"WHERE ban.active = true"; 
+		Query query = entityManager.createNativeQuery(sql);
+		List<Integer> resultList = query.getResultList();
+		List<Long> result = new ArrayList<Long>();
+		
+		for (Integer _value : resultList) {
+			result.add(_value.longValue());
+		}
+		
+		return result;
+	}
+
+	@Override
+	public List<BankDebitReportDTO> getDataReport() {
+		
+		String qryBase = "SELECT "
+									+"res.identificationnumber, "
+									+"res.name contribuyente, "
+									+"itm.name tipo_cuenta, "
+									+"ban.accountnumber as numero_cuenta, "
+									+"ban.accountholder as titular, "
+									+"was.servicenumber servicio, "
+									+"COUNT(distinct mbo.id) as cantidad, "
+									+"SUM(mbo.paidtotal) as valor "
+						+"FROM "
+						+"bankdebit AS ban "
+						+"INNER JOIN watersupply was ON was.id = ban.watersupply_id "
+						+"INNER JOIN consumption AS con ON con.watersupply_id = was.id "
+						+"INNER JOIN waterservicereference AS wsr ON wsr.consumption_id = con.id "
+						+"INNER JOIN municipalbond AS mbo ON wsr.id = mbo.adjunct_id "
+						+"INNER JOIN resident res ON res.id = was.serviceowner_id "
+						+"INNER JOIN itemcatalog itm ON itm.id = ban.accounttype_itm_id "
+						+"WHERE ban.active = true "
+						+"AND mbo.municipalbondstatus_id IN (3,4) "
+						+"GROUP BY res.identificationnumber, "
+									+"res.name, "
+									+"itm.name, "
+									+"ban.accountnumber, "
+									+"ban.accountholder, "
+									+"was.servicenumber "
+						+"ORDER BY 2, 6 ASC";
+		Query query = entityManager.createNativeQuery(qryBase);
+		
+		List<BankDebitReportDTO> retorno = NativeQueryResultsMapper.map(
+				query.getResultList(), BankDebitReportDTO.class);
+		
+		return retorno;
+		
 	}
 
 }

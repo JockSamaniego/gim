@@ -6,9 +6,12 @@ import java.util.List;
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
-import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.income.service.PaymentLocalService;
+import org.gob.gim.revenue.action.bankDebit.pagination.BankDebitDataModel;
 import org.gob.gim.revenue.service.BankDebitService;
 import org.gob.gim.revenue.service.ItemCatalogService;
+import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
+import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -20,6 +23,7 @@ import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.revenue.model.bankDebit.BankDebit;
 import ec.gob.gim.revenue.model.bankDebit.criteria.BankDebitSearchCriteria;
 import ec.gob.gim.revenue.model.bankDebit.dto.BankDebitDTO;
+import ec.gob.gim.revenue.model.bankDebit.dto.BankDebitReportDTO;
 import ec.gob.gim.waterservice.model.WaterSupply;
 
 @Name("bankDebitHome")
@@ -41,7 +45,7 @@ public class BankDebitHome extends EntityController {
 
 	private ItemCatalogService itemCatalogService;
 
-	private SystemParameterService systemParameterService;
+	private PaymentLocalService paymentService;
 
 	/**
 	 * criterios
@@ -52,7 +56,7 @@ public class BankDebitHome extends EntityController {
 	// @In(create = true,required= false)
 	// ImpugnmentDataModel dataModel;
 
-	private BankDebitSearchCriteria criteria;
+	private BankDebitSearchCriteria criteria = new BankDebitSearchCriteria();
 
 	private List<BankDebitDTO> debits = new ArrayList<BankDebitDTO>();
 
@@ -72,6 +76,8 @@ public class BankDebitHome extends EntityController {
 
 	private Boolean isRegister = Boolean.FALSE;
 	private Boolean isEdit = Boolean.FALSE;
+	
+	private List<BankDebitReportDTO> dataReporte = new ArrayList<BankDebitReportDTO>();
 
 	public BankDebitHome() {
 		loadDebits();
@@ -172,7 +178,7 @@ public class BankDebitHome extends EntityController {
 	public void setIsEdit(Boolean isEdit) {
 		this.isEdit = isEdit;
 	}
-	
+
 	public Boolean getActive() {
 		return active;
 	}
@@ -180,16 +186,40 @@ public class BankDebitHome extends EntityController {
 	public void setActive(Boolean active) {
 		this.active = active;
 	}
+	
+	public List<BankDebitReportDTO> getDataReporte() {
+		return dataReporte;
+	}
+
+	public void setDataReporte(List<BankDebitReportDTO> dataReporte) {
+		this.dataReporte = dataReporte;
+	}
+
+	public void wire() {
+
+		this.initializeService();
+		
+		getDataModel().setCriteria(serviceNumber);
+		getDataModel().setRowCount(getDataModel().getObjectsNumber());
+	}
+
+	private BankDebitDataModel getDataModel() {
+
+		BankDebitDataModel dataModel = (BankDebitDataModel) Component
+				.getInstance(BankDebitDataModel.class, true);
+		return dataModel;
+	}
 
 	public void findDebits() {
 
 		this.debits = this.bankDebitService.findDebitsForCriteria(criteria);
+		System.out.println(this.debits);
 	}
 
 	public void loadDebits() {
 		initializeService();
 		this.criteria = new BankDebitSearchCriteria();
-		findDebits();
+		//findDebits();
 
 		typesAccounts = itemCatalogService
 				.findItemsForCatalogCode(CatalogConstants.CATALOG_TYPES_BANK_ACCOUNT);
@@ -205,6 +235,12 @@ public class BankDebitHome extends EntityController {
 			itemCatalogService = ServiceLocator.getInstance().findResource(
 					ItemCatalogService.LOCAL_NAME);
 		}
+		
+		if (paymentService == null) {
+			paymentService = ServiceLocator.getInstance().findResource(
+					PaymentLocalService.LOCAL_NAME);
+		}
+		
 		/*
 		 * if (systemParameterService == null) { systemParameterService =
 		 * ServiceLocator.getInstance().findResource(
@@ -213,8 +249,10 @@ public class BankDebitHome extends EntityController {
 	}
 
 	public void searchDebits() {
-
-		this.debits = this.bankDebitService.findDebitsForCriteria(criteria);
+		//this.debits = this.bankDebitService.findDebitsForCriteria(criteria);
+		getDataModel().setCriteria(serviceNumber);
+		getDataModel().setRowCount(getDataModel().getObjectsNumber());
+		System.out.println(this.debits);
 	}
 
 	public void preparaRegisterDebit() {
@@ -232,6 +270,29 @@ public class BankDebitHome extends EntityController {
 		System.out.println("llega al preparaRegisterDebit");
 
 	}
+	
+	public String generateReport() {
+
+		//TODO llamar a servicio para calculo por persona y luego generar reporte con deudas de servicio de agua potable
+		try {
+			dataReporte = new ArrayList<BankDebitReportDTO>();
+			List<Long> residentIds = this.bankDebitService.getBankDebitResidents();
+			Boolean result = this.paymentService.calculateDebts(residentIds);
+			System.out.println(result);
+			
+			//Generar el reporte
+			
+			dataReporte = this.bankDebitService.getDataReport();
+			
+			return "/revenue/bankDebits/BankDebitReportPDF.xhtml";
+			
+		} catch (Exception e) {
+			System.out.println("Error al calcular los valores pendientes a pagar");
+			e.printStackTrace();
+			return "";
+		}
+		
+	}
 
 	public void prepareUpdateDebit(Long debitId) {
 		this.isRegister = Boolean.FALSE;
@@ -243,7 +304,8 @@ public class BankDebitHome extends EntityController {
 			this.nameOwner = this.debitSelected.getWaterSupply()
 					.getServiceOwner().getName();
 			this.waterSupplySelect = this.debitSelected.getWaterSupply();
-			this.serviceNumber = this.debitSelected.getWaterSupply().getServiceNumber();
+			this.serviceNumber = this.debitSelected.getWaterSupply()
+					.getServiceNumber();
 			this.typeAccount = this.debitSelected.getAccountType();
 			this.accountNumber = this.debitSelected.getAccountNumber();
 			this.accountHolder = this.debitSelected.getAccountHolder();
@@ -312,7 +374,7 @@ public class BankDebitHome extends EntityController {
 		}
 
 	}
-	
+
 	public void updateDebit() {
 		if (this.waterSupplySelect == null || this.identificacionOwner == null
 				|| this.nameOwner == null || this.typeAccount == null

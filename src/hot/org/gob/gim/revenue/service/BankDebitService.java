@@ -7,7 +7,7 @@ import javax.ejb.Local;
 import ec.gob.gim.revenue.model.bankDebit.BankDebit;
 import ec.gob.gim.revenue.model.bankDebit.criteria.BankDebitSearchCriteria;
 import ec.gob.gim.revenue.model.bankDebit.dto.BankDebitDTO;
-import ec.gob.gim.revenue.model.impugnment.Impugnment;
+import ec.gob.gim.revenue.model.bankDebit.dto.BankDebitReportDTO;
 import ec.gob.gim.waterservice.model.WaterSupply;
 
 /**
@@ -29,5 +29,15 @@ public interface BankDebitService {
 	public BankDebit findById(Long bankDebitId);
 	
 	public BankDebit update(BankDebit debit);
+	
+	public List<BankDebitDTO> findBankDebits (Integer serviceNumver, Integer firstRow,Integer numberOfRows);
+	
+	public Integer findBankDebitNumber(Integer serviceNumver);
+	
+	public BankDebitDTO findDtoById(Long bankDebitId);
+	
+	public List<Long> getBankDebitResidents();
+	
+	public List<BankDebitReportDTO> getDataReport();
 		
 }
