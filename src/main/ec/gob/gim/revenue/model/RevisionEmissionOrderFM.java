@@ -34,7 +34,7 @@ public class RevisionEmissionOrderFM {
 	@GeneratedValue(generator = "RevisionEmissionOrderFMGenerator", strategy = GenerationType.TABLE)
 	private Long id;
 	
-	@OneToOne(fetch=FetchType.EAGER)
+	@OneToOne(fetch=FetchType.LAZY)
 	private EmissionOrder emissionOrder;
 	
 	private Long reviserUserId;
@@ -60,6 +60,12 @@ public class RevisionEmissionOrderFM {
 	private Boolean detailsMotivation;
 	private Boolean ballotNotification;
 	private Boolean approvalCertificate;
+	
+	private String offenderName;
+	private String vehiclePlate;
+	private String articleNumber;
+	private String observation;
+	
 	public Long getId() {
 		return id;
 	}
@@ -187,6 +193,30 @@ public class RevisionEmissionOrderFM {
 	}
 	public void setReviserName(String reviserName) {
 		this.reviserName = reviserName;
+	}
+	public String getOffenderName() {
+		return offenderName;
+	}
+	public void setOffenderName(String offenderName) {
+		this.offenderName = offenderName;
+	}
+	public String getVehiclePlate() {
+		return vehiclePlate;
+	}
+	public void setVehiclePlate(String vehiclePlate) {
+		this.vehiclePlate = vehiclePlate;
+	}
+	public String getArticleNumber() {
+		return articleNumber;
+	}
+	public void setArticleNumber(String articleNumber) {
+		this.articleNumber = articleNumber;
+	}
+	public String getObservation() {
+		return observation;
+	}
+	public void setObservation(String observation) {
+		this.observation = observation;
 	}
 		
 }

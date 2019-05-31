@@ -180,13 +180,22 @@
 				<div class="actionButtons">
 					<a:region>
 						<a:commandButton id="registerDirectButton" ajaxSingle="true"
-							value="#{messages['revenue.impugnments.impugnment_save']}s"
+							value="#{messages['revenue.impugnments.impugnment_save']}"
 							actionListener="#{impugnmentHome.registerImpugnment()}"
 							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
 							bypassUpdates="true"
 							action="#{emissionOrderHome.loadPending()}"
 							reRender="emissionOrderTable,sc2,txtTotal"
 							rendered="#{impugnmentHome.isCreateAction and !impugnmentHome.isUserWithRolVer() and impugnmentHome.directButton}" />
+							
+						<a:commandButton id="statusChangeDirectButton" ajaxSingle="true"
+							value="#{messages['revenue.impugnments.impugnment_update']}"
+							actionListener="#{impugnmentHome.statusChangeUpdateImpugnment()}"
+							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
+							bypassUpdates="true"
+							action="#{emissionOrderHome.loadPending()}"
+							reRender="emissionOrderTable,sc2,txtTotal"			
+							rendered="#{impugnmentHome.isStatusChangeAction and impugnmentHome.isUserWithRolMatriculacion() and impugnmentHome.directButton}" />
 					
 						<a:commandButton id="registerButton" ajaxSingle="true"
 							value="#{messages['revenue.impugnments.impugnment_save']}"
@@ -210,7 +219,7 @@
 							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
 							bypassUpdates="true"
 							actionListener="#{impugnmentHome.statusChangeUpdateImpugnment()}"
-							rendered="#{impugnmentHome.isStatusChangeAction and impugnmentHome.isUserWithRolMatriculacion()}" />
+							rendered="#{impugnmentHome.isStatusChangeAction and impugnmentHome.isUserWithRolMatriculacion() and !impugnmentHome.directButton}" />
 
 						<a:commandButton ajaxSingle="true"
 							value="#{messages['common.cancel']}"
