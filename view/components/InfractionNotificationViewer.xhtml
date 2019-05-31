@@ -344,6 +344,39 @@
 								oncomplete="Richfaces.showModalPanel('revisionDetailsPanel')"
 								value="#{messages['fotomulta.details']}" />
             </s:decorate>
+            <div style="clear: both" />
+				        <rich:spacer height="20 px" />
+				        <h:outputText value="--------- #{messages['fotomulta.reportAdditionalData']} ----------" 
+				        				style="font-weight:bold; font-size:10px; color:red"/>
+            <s:decorate id="offenderNameField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.offenderName']}:*</ui:define>
+                <h:inputText id="offenderName"
+                              size="50"
+                              value="#{emissionOrderHome.revisionFM.offenderName}">
+                        <a:support event="onblur" ajaxSingle="true" reRender="offenderName, revisionButtons" />
+                </h:inputText>
+            </s:decorate>
+            <s:decorate id="vehiclePlateField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.vehiclePlate']}:*</ui:define>
+                <h:inputText id="vehiclePlate"
+                              value="#{emissionOrderHome.revisionFM.vehiclePlate}">
+                        <a:support event="onblur" ajaxSingle="true" reRender="vehiclePlate, revisionButtons" />
+                </h:inputText>
+            </s:decorate>
+            <s:decorate id="articleNumberField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.articleNumber']}:*</ui:define>
+                <h:inputText id="articleNumber"
+                              value="#{emissionOrderHome.revisionFM.articleNumber}">
+                         <a:support event="onblur" ajaxSingle="true" reRender="articleNumber, revisionButtons" />
+                </h:inputText>
+            </s:decorate>
+            <s:decorate id="observationField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['fotomulta.observation']}:</ui:define>
+                <h:inputTextarea id="observation"
+                              value="#{emissionOrderHome.revisionFM.observation}">
+                        <a:support event="onblur" ajaxSingle="true" reRender="observation" />
+                </h:inputTextarea>
+            </s:decorate>
             <div style="clear:both" />
             	<rich:panel id="revisionButtons">
 		            <h:panelGrid columns="3">
@@ -352,14 +385,14 @@
 								eventsQueue="gimEventsQueue"
 								action="#{emissionOrderHome.saveRevisionApprovedFM()}"
 								value="#{messages['fotomulta.revisionApproved']}" reRender="emissionOrderTable,sc2,txtTotal"
-								disabled="#{!emissionOrderHome.revisionButton || emissionOrderHome.orderSelected.revisionFM != null}" 
+								disabled="#{!emissionOrderHome.revisionButton || emissionOrderHome.orderSelected.revisionFM != null || emissionOrderHome.completeAdditionalData()}" 
 								oncomplete="Richfaces.hideModalPanel('#{id}_infractionNotificationViewer');" />
 
 							<a:commandButton ajaxSingle="true" id="rejectedButton"
 								eventsQueue="gimEventsQueue"
 								action="#{emissionOrderHome.saveRevisionRejectedFM()}"
 								value="#{messages['fotomulta.revisionRejected']}" reRender="emissionOrderTable,sc2,txtTotal"
-								disabled="#{emissionOrderHome.revisionButton || emissionOrderHome.orderSelected.revisionFM != null}" 
+								disabled="#{emissionOrderHome.revisionButton || emissionOrderHome.orderSelected.revisionFM != null || emissionOrderHome.completeAdditionalData()}" 
 								oncomplete="Richfaces.hideModalPanel('#{id}_infractionNotificationViewer');" />
 								
 							<a:commandButton id="loadBt2" ajaxSingle="true"

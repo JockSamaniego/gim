@@ -32,6 +32,10 @@ import org.jboss.seam.framework.EntityHome;
 @Name("infractionsHome")
 public class InfractionsHome extends EntityHome<Infractions> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@In(create = true)
 	BulletinHome bulletinHome;
 	/*@In(create = true)
@@ -417,4 +421,21 @@ public class InfractionsHome extends EntityHome<Infractions> {
 		this.sentence.setCreationDate(this.registerDate);
 		this.getInstance().add(this.sentence);
 	}
+	
+	//para reporte de infracciones
+	private List<Infractions> infracts = new ArrayList<Infractions>();
+	
+	public List<Infractions> getInfracts() {
+		return infracts;
+	}
+
+	public void setInfracts(List<Infractions> infracts) {
+		this.infracts = infracts;
+	}
+
+	public void setInfractionsInNewArray(List<Infractions> infractions){
+		this.infracts = new ArrayList<Infractions>();
+		this.infracts = infractions;
+	}
+	
 }

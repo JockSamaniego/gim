@@ -339,8 +339,8 @@ public class ImpugnmentHome extends EntityController {
 		this.stateForImpugnmentFotoMultaEdit = null;
 	}
 
-	public void prepareStatusChangeImpugnment(Long impugnmentId) {
-		this.impugnmentSelected = impugnmentService.findById(impugnmentId);
+	public void prepareStatusChangeImpugnment(EmissionOrder orderselected) {
+		this.impugnmentSelected = orderselected.getMunicipalBonds().get(0).getImpugnment();
 		this.isCreateAction = Boolean.FALSE;
 		this.isEditAction = Boolean.FALSE;
 		this.isStatusChangeAction = Boolean.TRUE;
@@ -424,6 +424,7 @@ public class ImpugnmentHome extends EntityController {
 	}
 
 	public void statusChangeUpdateImpugnment() {
+		EntityManager em = getEntityManager();
 		if (this.stateForImpugnmentFotoMultaEdit == null) {
 			facesMessages.addToControl("",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
@@ -433,6 +434,7 @@ public class ImpugnmentHome extends EntityController {
 			this.impugnmentSelected.setUserUpdate(this.userSession.getUser());
 			this.impugnmentSelected.setUpdateDate(new Date());
 			this.impugnmentService.update(impugnmentSelected);
+			em.refresh(orderSelected);
 			this.impugnments = this.impugnmentService
 					.findImpugnmentsForCriteria(criteria);
 		}
@@ -509,5 +511,11 @@ public class ImpugnmentHome extends EntityController {
 		this.impugnmentSelected.setNumberInfringement(ant.getContraventionNumber());
 		searchMunicipalBond();
 	}
-
+	
+	public void prepareDirectStatusChangeImpugnment(EmissionOrder emissionOrder){
+		this.orderSelected = emissionOrder;
+		directButton = Boolean.TRUE;
+		prepareStatusChangeImpugnment(emissionOrder);
+		
+	}
 }

@@ -144,46 +144,47 @@
                 <ui:define name="label">#{messages['infraction.inphysic']}</ui:define>
                 <h:selectBooleanCheckbox id="inPhysic"
                                       value="#{infractionsHome.instance.inPhysic}">
-                        <a:support event="onchange" ajaxSingle="true" reRender="statusPanel" />
+                        <a:support event="onchange" ajaxSingle="true" reRender="digitizedPanel" />
                 </h:selectBooleanCheckbox>
             </s:decorate>
-
-            <s:decorate id="digitizedField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.inPhysic}">
-                <ui:define name="label">#{messages['infraction.digitized']}</ui:define>
-                <h:selectBooleanCheckbox id="digitized"
-                                      value="#{infractionsHome.instance.digitized}">
-                </h:selectBooleanCheckbox>
-            </s:decorate>
-          
+			<h:panelGrid columns="1" id="digitizedPanel">
+	            <s:decorate id="digitizedField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.inPhysic}">
+	                <ui:define name="label">#{messages['infraction.digitized']}</ui:define>
+	                <h:selectBooleanCheckbox id="digitized"
+	                                      value="#{infractionsHome.instance.digitized}">
+	                </h:selectBooleanCheckbox>
+	            </s:decorate>
+          	</h:panelGrid>
             <s:decorate id="nullifiedField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.nullified']}</ui:define>
                 <h:selectBooleanCheckbox id="nullified"
                                       value="#{infractionsHome.instance.nullified}">
-                         <a:support event="onchange" ajaxSingle="true" reRender="statusPanel" />
+                         <a:support event="onchange" ajaxSingle="true" reRender="nullifiedDatePanel" />
                 </h:selectBooleanCheckbox>
             </s:decorate>
-          
-            <s:decorate id="nullifiedDateField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.nullified}">
-                <ui:define name="label">#{messages['infraction.nullifiedDate']}</ui:define>
-                <rich:calendar id="nullifiedDate"
-                          value="#{infractionsHome.instance.nullifiedDate}" datePattern="dd/MM/yyyy" 
-                          required="#{infractionsHome.instance.nullified}"/>
-            </s:decorate>
-           
+          	<h:panelGrid columns="1" id="nullifiedDatePanel">
+	            <s:decorate id="nullifiedDateField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.nullified}">
+	                <ui:define name="label">#{messages['infraction.nullifiedDate']}</ui:define>
+	                <rich:calendar id="nullifiedDate"
+	                          value="#{infractionsHome.instance.nullifiedDate}" datePattern="dd/MM/yyyy" 
+	                          required="#{infractionsHome.instance.nullified}"/>
+	            </s:decorate>
+           </h:panelGrid>
             <s:decorate id="inconsistentField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.inconsistent']}</ui:define>
                 <h:selectBooleanCheckbox id="inconsistent"
                                       value="#{infractionsHome.instance.inconsistent}">
-                         <a:support event="onchange" ajaxSingle="true" reRender="statusPanel" />
+                         <a:support event="onchange" ajaxSingle="true" reRender="inconsistentDatePanel" />
                 </h:selectBooleanCheckbox>
             </s:decorate>
-
-            <s:decorate id="inconsistentDateField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.inconsistent}">
-                <ui:define name="label">#{messages['infraction.inconsistentDate']}</ui:define>
-                <rich:calendar id="inconsistentDate"
-                          value="#{infractionsHome.instance.inconsistentDate}" datePattern="dd/MM/yyyy" 
-                          required="#{infractionsHome.instance.inconsistent}"/>
-            </s:decorate>
+			<h:panelGrid columns="1" id="inconsistentDatePanel">
+	            <s:decorate id="inconsistentDateField" template="../../layout/edit.xhtml" rendered="#{infractionsHome.instance.inconsistent}">
+	                <ui:define name="label">#{messages['infraction.inconsistentDate']}</ui:define>
+	                <rich:calendar id="inconsistentDate"
+	                          value="#{infractionsHome.instance.inconsistentDate}" datePattern="dd/MM/yyyy" 
+	                          required="#{infractionsHome.instance.inconsistent}"/>
+	            </s:decorate>
+	         </h:panelGrid>   
         </h:panelGrid>
         <h:panelGrid columns="1" > 
 

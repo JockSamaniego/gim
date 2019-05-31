@@ -4,13 +4,16 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.cadaster.action.PropertyList;
 import org.gob.gim.cadaster.facade.CadasterService;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.Gim;
 import org.gob.gim.common.action.UserSession;
@@ -37,6 +40,9 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondView;
 import ec.gob.gim.revenue.model.RevisionEmissionOrderFM;
+import ec.gob.gim.revenue.model.DTO.RevisedEmissionsUcotDTO;
+import ec.gob.gim.revenue.model.DTO.ReviserUCOTUserDTO;
+import ec.gob.gim.revenue.model.DTO.VehicleUniqueDataDTO;
 import ec.gob.gim.revenue.model.adjunct.ANTReference;
 
 @Name("emissionOrderHome")
@@ -132,6 +138,7 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 			String impugnmentFM = systemParameterService.findParameter("fotomulta.impugnmentStatus");
 			impugnmentStatusFM = impugnmentFM.trim().split(",");
 			orderListAux = new ArrayList<EmissionOrder>();
+			findAllReviserUser();
 		}			
 	}
 
@@ -1021,9 +1028,14 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 	private String residentName;
 	private Date dateFrom;
 	private Date dateUntil;
+	private Date dateFrom2;
+	private Date dateUntil2;
 	private String revisionStatusUCOT;
 	private String impugnmentStatusUCOT;
-	private Long emissionNumber; 
+	private Long emissionNumber;
+	private Long reviserUser;
+	private Boolean reportForUser = Boolean.FALSE;
+	private List<ReviserUCOTUserDTO> reviserUsers;
 	
 	public void loadPending(){
 			
@@ -1049,6 +1061,9 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		if ((dateFrom != null && !dateFrom.equals("")) && (dateUntil != null && !dateUntil.equals(""))) {
 			EJBQL = EJBQL + " (DATE(adj.citationDate) between :dateFrom and :dateUntil) and ";	
 		}
+		if ((dateFrom2 != null && !dateFrom2.equals("")) && (dateUntil2 != null && !dateUntil2.equals(""))) {
+			EJBQL = EJBQL + " (DATE(rfm.revisionDate) between :dateFrom2 and :dateUntil2) and ";	
+		}
 		if(revisionStatusUCOT != null){
 			if(!revisionStatusUCOT.equals("TODOS") && !revisionStatusUCOT.equals("PENDIENTE")){
 				EJBQL = EJBQL + " (rfm.status = :revisionStatusUCOT) and ";
@@ -1070,6 +1085,10 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 			}
 		}
 		
+		if (reviserUser != null && reportForUser) {
+			EJBQL = EJBQL + "(rfm.reviserUserId = :reviserUser) and ";	
+		}
+		
 		EJBQL = EJBQL + " e.isDispatched= false and entry.id in (643,644) ";
 		
 		Query q=this.getEntityManager().createQuery(EJBQL);
@@ -1087,6 +1106,10 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 			q.setParameter("dateFrom", dateFrom);
 			q.setParameter("dateUntil", dateUntil);
 		}
+		if ((dateFrom2 != null && !dateFrom2.equals("")) && (dateUntil2 != null && !dateUntil2.equals(""))) {
+			q.setParameter("dateFrom2", dateFrom2);
+			q.setParameter("dateUntil2", dateUntil2);
+		}
 		if(revisionStatusUCOT != null){
 			if(!revisionStatusUCOT.equals("TODOS") && !revisionStatusUCOT.equals("PENDIENTE")){
 				q.setParameter("revisionStatusUCOT", revisionStatusUCOT);
@@ -1096,6 +1119,9 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 			if(!impugnmentStatusUCOT.equals("TODOS") && !impugnmentStatusUCOT.equals("NO IMPUGNADA")){
 				q.setParameter("impugnmentStatusUCOT", impugnmentStatusUCOT);		
 			}
+		}
+		if(reviserUser!=null && reportForUser){
+			q.setParameter("reviserUser", reviserUser);
 		}
 			
 		//System.out.println("------------------- "+identificationNumber+"    -  "+residentName+"    "+q.getResultList().size());
@@ -1109,9 +1135,13 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		residentName = null;
 		dateFrom = null;
 		dateUntil = null;
+		dateFrom2 = null;
+		dateUntil2 = null;
 		revisionStatusUCOT = "TODOS";
 		impugnmentStatusUCOT = "TODOS";
 		emissionNumber = null;
+		reviserUser = null;
+		reportForUser = Boolean.FALSE;
 	}
 
 	public List<EmissionOrder> getEmissionOrders() {
@@ -1154,6 +1184,22 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		this.dateUntil = dateUntil;
 	}
 
+	public Date getDateFrom2() {
+		return dateFrom2;
+	}
+
+	public void setDateFrom2(Date dateFrom2) {
+		this.dateFrom2 = dateFrom2;
+	}
+
+	public Date getDateUntil2() {
+		return dateUntil2;
+	}
+
+	public void setDateUntil2(Date dateUntil2) {
+		this.dateUntil2 = dateUntil2;
+	}
+
 	public String getRevisionStatusUCOT() {
 		return revisionStatusUCOT;
 	}
@@ -1176,6 +1222,30 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 
 	public void setEmissionNumber(Long emissionNumber) {
 		this.emissionNumber = emissionNumber;
+	}
+
+	public Long getReviserUser() {
+		return reviserUser;
+	}
+
+	public void setReviserUser(Long reviserUser) {
+		this.reviserUser = reviserUser;
+	}
+
+	public List<ReviserUCOTUserDTO> getReviserUsers() {
+		return reviserUsers;
+	}
+
+	public void setReviserUsers(List<ReviserUCOTUserDTO> reviserUsers) {
+		this.reviserUsers = reviserUsers;
+	}
+
+	public Boolean getReportForUser() {
+		return reportForUser;
+	}
+
+	public void setReportForUser(Boolean reportForUser) {
+		this.reportForUser = reportForUser;
 	}
 
 	public void changeSelectedEmissionOrder(EmissionOrder eo, boolean selected){
@@ -1236,6 +1306,7 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 	}
 
 	public void loadInfractionNotification(EmissionOrder emissionOrder){
+		this.allSelectedCheck = Boolean.FALSE;
 		this.orderSelected = emissionOrder;
 		//em.refresh(this.orderSelected);
 		String query = "Select ant from ANTReference ant where ant.id =:adj_id";
@@ -1404,6 +1475,17 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		}
 	}
 	
+	public Boolean completeAdditionalData(){
+		if(revisionFM != null){
+			if((revisionFM.getOffenderName() != null && !revisionFM.getOffenderName().equals(""))
+					&& (revisionFM.getVehiclePlate() != null && !revisionFM.getVehiclePlate().equals(""))
+					&& (revisionFM.getArticleNumber() != null && !revisionFM.getArticleNumber().equals(""))){
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	public Boolean hasRole(String roleKey) {
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
@@ -1445,5 +1527,115 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 	    revisionFM.setBallotNotification(allSelectedCheck);
 	    revisionFM.setApprovalCertificate(allSelectedCheck);
 	    changeItemRevision();
+	}
+	
+	public void findAllReviserUser(){	
+		reviserUsers = new ArrayList<ReviserUCOTUserDTO>();
+		Query query = getEntityManager().createNativeQuery("select DISTINCT rfm.revisername, rfm.reviseruserid FROM gimprod.revisionemissionorderfm rfm");
+		reviserUsers = NativeQueryResultsMapper.map(query.getResultList(), ReviserUCOTUserDTO.class);
+	}
+	
+	
+	List<RevisedEmissionsUcotDTO> revisedEmissions;
+	
+	public List<RevisedEmissionsUcotDTO> getRevisedEmissions() {
+		return revisedEmissions;
+	}
+
+	public void setRevisedEmissions(List<RevisedEmissionsUcotDTO> revisedEmissions) {
+		this.revisedEmissions = revisedEmissions;
+	}
+
+	public void findAndPrintRevisedEmissions(){
+		revisedEmissions = new ArrayList<RevisedEmissionsUcotDTO>();	
+		String EJBQL = "SELECT NEW ec.gob.gim.revenue.model.DTO.RevisedEmissionsUcotDTO(res.identificationNumber, rfm.offenderName, rfm.articleNumber, "
+				+ "adj.contraventionNumber, e.id, rfm.vehiclePlate, adj.citationDate, m.base) "
+				+"from EmissionOrder e "
+				+"left join e.municipalBonds m "
+				+"left join m.resident res "
+				+"left join m.receipt "
+				+"left join m.entry entry "
+				+ "LEFT JOIN m.adjunct adj "
+				+ "LEFT JOIN e.revisionFM rfm "
+				+ "LEFT JOIN m.impugnment imp "
+				+ "where ";
+				//+ "(lower(m.resident.name) like lower(concat(#{emissionOrderList.resident},'%'))) "
+				if (identificationNumber != null && !identificationNumber.equals("")) {
+					EJBQL = EJBQL + "(lower(m.resident.identificationNumber) like lower(concat(:identificationNumber,'%'))) and ";	
+				}
+				if (residentName != null && !residentName.equals("")) {
+					EJBQL = EJBQL + "(lower(m.resident.name) like lower(concat(:residentName,'%'))) and ";	
+				}
+				if (emissionNumber != null && !emissionNumber.equals("")) {
+					EJBQL = EJBQL + "(e.id = :emissionNumber) and ";	
+				}
+				if ((dateFrom != null && !dateFrom.equals("")) && (dateUntil != null && !dateUntil.equals(""))) {
+					EJBQL = EJBQL + " (DATE(adj.citationDate) between :dateFrom and :dateUntil) and ";	
+				}
+				if ((dateFrom2 != null && !dateFrom2.equals("")) && (dateUntil2 != null && !dateUntil2.equals(""))) {
+					EJBQL = EJBQL + " (DATE(rfm.revisionDate) between :dateFrom2 and :dateUntil2) and ";	
+				}
+				if(revisionStatusUCOT != null){
+					if(!revisionStatusUCOT.equals("TODOS") && !revisionStatusUCOT.equals("PENDIENTE")){
+						EJBQL = EJBQL + " (rfm.status = :revisionStatusUCOT) and ";
+					}
+				}
+				if(revisionStatusUCOT != null){
+					if(revisionStatusUCOT.equals("PENDIENTE")){
+						EJBQL = EJBQL + " (rfm is null) and ";
+					}
+				}
+				if(impugnmentStatusUCOT != null){
+					if(!impugnmentStatusUCOT.equals("TODOS") && !impugnmentStatusUCOT.equals("NO IMPUGNADA")){
+						EJBQL = EJBQL + " (imp.status.name = :impugnmentStatusUCOT) and ";
+					}
+				}
+				if(impugnmentStatusUCOT != null){
+					if(impugnmentStatusUCOT.equals("NO IMPUGNADA")){
+						EJBQL = EJBQL + " (imp is null) and ";
+					}
+				}
+				
+				if (reviserUser != null && reportForUser) {
+					EJBQL = EJBQL + "(rfm.reviserUserId = :reviserUser) and ";	
+				}
+				
+				EJBQL = EJBQL + " e.isDispatched= false and entry.id in (643,644) ";
+				
+				Query q=this.getEntityManager().createQuery(EJBQL);
+				
+				if(identificationNumber!=null && !identificationNumber.equals("")){
+					q.setParameter("identificationNumber", identificationNumber);
+				}
+				if(residentName!=null && !residentName.equals("")){
+					q.setParameter("residentName", residentName);
+				}
+				if(emissionNumber!=null && !emissionNumber.equals("")){
+					q.setParameter("emissionNumber", emissionNumber);
+				}
+				if ((dateFrom != null && !dateFrom.equals("")) && (dateUntil != null && !dateUntil.equals(""))) {
+					q.setParameter("dateFrom", dateFrom);
+					q.setParameter("dateUntil", dateUntil);
+				}
+				if ((dateFrom2 != null && !dateFrom2.equals("")) && (dateUntil2 != null && !dateUntil2.equals(""))) {
+					q.setParameter("dateFrom2", dateFrom2);
+					q.setParameter("dateUntil2", dateUntil2);
+				}
+				if(revisionStatusUCOT != null){
+					if(!revisionStatusUCOT.equals("TODOS") && !revisionStatusUCOT.equals("PENDIENTE")){
+						q.setParameter("revisionStatusUCOT", revisionStatusUCOT);
+					}		
+				}		
+				if(impugnmentStatusUCOT != null){
+					if(!impugnmentStatusUCOT.equals("TODOS") && !impugnmentStatusUCOT.equals("NO IMPUGNADA")){
+						q.setParameter("impugnmentStatusUCOT", impugnmentStatusUCOT);		
+					}
+				}
+				if(reviserUser!=null && reportForUser){
+					q.setParameter("reviserUser", reviserUser);
+				}
+					
+				//System.out.println("------------------- "+identificationNumber+"    -  "+residentName+"    "+q.getResultList().size());
+				revisedEmissions = q.getResultList();					
 	}
 }
