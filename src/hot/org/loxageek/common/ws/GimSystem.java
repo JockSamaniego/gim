@@ -307,5 +307,11 @@ public class GimSystem {
 		System.out.println("====> GENERATE EmissionOrder FOR: "+accountCode);
 		return gimService.generateEmissionOrder(name, password, identificationNumber, accountCode, pplessuser, quantity);
 	}
+	
+	
+	@WebMethod
+	public Boolean checkForDebts(ServiceRequest request) throws TaxpayerNotFound, InvalidUser, AccountIsNotActive, AccountIsBlocked, TaxpayerNonUnique{
+		return gimService.searchDueDebts(request);
+	}
 
 }

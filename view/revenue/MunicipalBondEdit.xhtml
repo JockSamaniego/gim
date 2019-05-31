@@ -40,48 +40,138 @@
 						value="#{messages['revenue.emissionMunicipalBond']}" />
 				</f:facet>
 				
-			<h:panelGrid columns="2" width="100%"
-					columnClasses="topAligned, topAligned right">
-					
-				<a:outputPanel id="searchPanel">
-				<g:residentChooser id="residentChooser"
-					resident="#{municipalBondHome.instance.resident}"
-					criteria="#{municipalBondHome.criteria}"
-					bean="#{municipalBondHome}" searchAction="searchResident"
-					residentsList="#{municipalBondHome.residents}"
-					identificationNumber="#{municipalBondHome.identificationNumber}"
-					searchByCriteriaAction="searchResidentByCriteria"
-					clearSearchPanelAction="clearSearchResidentPanel"
-					residentChosenListenerName="residentSelectedListener"
-					reRender="entryChooser-reason,entryChooser-name, _itemsTable, entryChooser-entryCode, entryChooser-openSearchPanelBtn, detailsTable, emitPanel, alertPanel" />
+			<h:panelGrid styleClass="full" id="panelEmitBonds" columns="3"  >
+					<h:panelGrid columns="2" width="100%"
+							columnClasses="topAligned, topAligned right">
+							
+						<a:outputPanel id="searchPanel">
+						<g:residentChooser id="residentChooser"
+							resident="#{municipalBondHome.instance.resident}"
+							criteria="#{municipalBondHome.criteria}"
+							bean="#{municipalBondHome}" searchAction="searchResident"
+							residentsList="#{municipalBondHome.residents}"
+							identificationNumber="#{municipalBondHome.identificationNumber}"
+							searchByCriteriaAction="searchResidentByCriteria"
+							clearSearchPanelAction="clearSearchResidentPanel"
+							residentChosenListenerName="residentSelectedListener"
+							reRender="entryChooser-reason,entryChooser-name, _itemsTable, entryChooser-entryCode, entryChooser-openSearchPanelBtn, detailsTable, emitPanel, alertPanel" />
 
-				<g:entryChooser id="entryChooser" label="#{messages['entry']}"
-					reasonLabel="#{messages['entry.reason']}" showReason="true"
-					criteria="#{municipalBondHome.criteriaEntry}"
-					entry="#{municipalBondHome.entry}"
-					entryCode="#{municipalBondHome.entryCode}"
-					disabled="#{municipalBondHome.instance.resident == null}"
-					bean="#{municipalBondHome}" searchAction="searchEntry"
-					entriesList="#{municipalBondHome.entries}"
-					searchByCriteriaAction="searchEntryByCriteria"
-					clearSearchPanelAction="clearSearchEntryPanel"
-					entryChosenListenerName="entrySelectedListener"
-					reRender="fieldsPanel, adjunctPanel,messages, _itemsTable, serviceDateShortPanel, municipalBondEditTitle,emitPanel" />
-				</a:outputPanel>
-				
-				<a:outputPanel id="alertPanel" ajaxRendered="true">
-						<a:commandLink id="alertField"
-							value="#{municipalBondHome.blocketMessage}"
-							rendered="#{municipalBondHome.pendingAlerts.size()==0 ? false : true}"
-							style="font-size:40px; font-weight:bold;color:#{municipalBondHome.colorMessage}" styleClass="center"
-							reRender="alertListPanel"
-							oncomplete="Richfaces.showModalPanel('alertListPanel')">
-						</a:commandLink>
-				</a:outputPanel>
-			</h:panelGrid>
+						<g:entryChooser id="entryChooser" label="#{messages['entry']}"
+							reasonLabel="#{messages['entry.reason']}" showReason="true"
+							criteria="#{municipalBondHome.criteriaEntry}"
+							entry="#{municipalBondHome.entry}"
+							entryCode="#{municipalBondHome.entryCode}"
+							disabled="#{municipalBondHome.instance.resident == null}"
+							bean="#{municipalBondHome}" searchAction="searchEntry"
+							entriesList="#{municipalBondHome.entries}"
+							searchByCriteriaAction="searchEntryByCriteria"
+							clearSearchPanelAction="clearSearchEntryPanel"
+							entryChosenListenerName="entrySelectedListener"
+							reRender="fieldsPanel, adjunctPanel,messages, _itemsTable, serviceDateShortPanel, municipalBondEditTitle,emitPanel" />
+						</a:outputPanel>
+						
+						<a:outputPanel id="alertPanel" ajaxRendered="true">
+								<a:commandLink id="alertField"
+									value="#{municipalBondHome.blocketMessage}"
+									rendered="#{municipalBondHome.pendingAlerts.size()==0 ? false : true}"
+									style="font-size:40px; font-weight:bold;color:#{municipalBondHome.colorMessage}" styleClass="center"
+									reRender="alertListPanel"
+									oncomplete="Richfaces.showModalPanel('alertListPanel')">
+								</a:commandLink>
+						</a:outputPanel>
+					</h:panelGrid>
+
+					<rich:spacer width="200 px" />
+
+					<rich:panel id="vehiclePanelInformation" rendered="#{municipalBondHome.hasRole('ROLE_EMITTER_CRTV')}">
+			            <f:facet name="header">
+			                <h:panelGrid columns="1" columnClasses="headerTitle,">
+			                  <h:outputText
+			                    value="#{messages['crtv.infoPanel']}" />
+			                </h:panelGrid>      
+			            </f:facet>
+			            <h:panelGrid styleClass="full" id="searchVehicleData" columns="3"  >         
+				            <s:decorate id="vehiclePlateField" template="../layout/edit.xhtml">
+				                <ui:define name="label">#{messages['vehicle.plate']}:</ui:define>
+				                <h:inputText id="vehiclePlate"
+				                          value="#{municipalBondHome.licensePlate}"
+				                          style="text-transform: uppercase">
+				                          <a:support event="onblur" eventsQueue="gimQueue" reRender="searchVehicleData" />
+				                </h:inputText>
+				            </s:decorate>
+				            <a:commandButton value="#{messages['crtv.search']}"  id="searchBtn"						
+												propagation="join"
+												action="#{municipalBondHome.findCrtvVehicleData()}"
+												style="float:right"
+												reRender="vehiclePanelInformation" ajaxSingle="true" 
+												disabled="#{municipalBondHome.licensePlate == null || municipalBondHome.licensePlate == '' || municipalBondHome.responseCRTV != null}"/>
+												
+							<a:commandButton id="reset" value="#{messages['common.reset']}"
+											action="#{municipalBondHome.cleanCrtvVehicleData()}"
+											reRender="vehiclePanelInformation"/>			            
+				        </h:panelGrid>
+				        <rich:spacer height="10 px" />
+				        <s:decorate id="ownerNameField" template="../layout/edit.xhtml">
+				                <ui:define name="label">#{messages['crtv.ownerName']}:</ui:define>
+				                <h:inputText id="ownerName"
+				                          value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.propietario : ''}"
+				                          readonly="true"
+				                          size="40">
+				                </h:inputText>
+				        </s:decorate>
+				        <s:decorate id="ownerIdentificationField" template="../layout/edit.xhtml">
+				                <ui:define name="label">#{messages['crtv.ownerIdentification']}:</ui:define>
+				                <h:inputText id="ownerIdentification"
+				                          value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.identificacion : ''}"
+				                          readonly="true">
+				                </h:inputText>
+				        </s:decorate>
+				        <s:decorate id="documentField" template="../layout/edit.xhtml">
+				                <ui:define name="label">#{messages['crtv.document']}:</ui:define>
+				                <h:inputText id="document"
+				                          value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.documento : ''}"
+				                          readonly="true">
+				                </h:inputText>
+				        </s:decorate>
+				        <s:decorate id="plateField" template="../layout/edit.xhtml">
+				                <ui:define name="label">#{messages['vehicle.plate']}:</ui:define>
+				                <h:inputText id="plate"
+				                          value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.placa1 : ''}"
+				                          readonly="true">
+				                </h:inputText>
+				        </s:decorate>
+				        <s:decorate id="totalValueField" template="../layout/edit.xhtml">
+				                <ui:define name="label">#{messages['crtv.totalValue']}:</ui:define>
+				                <h:inputText id="totalValue"
+				                          value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.valor_total : ''}"
+				                          readonly="true">
+				                </h:inputText>
+				        </s:decorate>
+				        <s:decorate id="paidOrderCodeField" template="../layout/edit.xhtml">
+				                <ui:define name="label">#{messages['crtv.paidOrderCode']}:</ui:define>
+				                <h:inputText id="paidOrderCode"
+				                          value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.ordenespagocodigo : ''}"
+				                          readonly="true">
+				                </h:inputText>
+				        </s:decorate>
+				        <div style="clear: both" />
+				        <rich:spacer height="20 px" />
+				        <h:outputText value="--------- #{messages['crtv.itemsPaidOrder']} ----------" 
+				        				style="font-weight:bold; font-size:10px; color:red"/>
+						<ui:repeat value="#{municipalBondHome.responseCRTV.sdttarifaordenpago}" var="_item" >
+							<s:decorate id="paidOrderCodeField" template="../layout/edit.xhtml">
+				                <ui:define name="label">#{_item.tarifaRevisionCabeceraDescripcion}:</ui:define>
+				                <h:inputText id="paidOrderCode"
+				                          value="#{_item.tarifaRevisionDetalleValor}"
+				                          readonly="true">
+				                </h:inputText>
+				        	</s:decorate>
+						</ui:repeat>
+			            <div style="clear: both" />
+			        </rich:panel>
+				</h:panelGrid>
 				<div style="clear: both" />
 			
-
 			</rich:panel>
 
 			<a:region>
@@ -92,10 +182,10 @@
 				<h:panelGrid  id="emitPanel" columns="1" width="100%" rendered="#{!municipalBondHome.isBlocketToEmit}">
 					<rich:panel style="width:100%" id="detailsTable">
 						<f:facet name="header">
-										<h:panelGrid columns="3" width="100%"
+										<h:panelGrid columns="1" width="100%"
 											columnClasses="left headerTitle,">
 											<h:outputText value="#{messages['municipalBond.detail']}" />
-											<a:commandButton value="Activar locales"  id="active"
+											<!--  <a:commandButton value="Activar locales"  id="active"
 											    disabled="#{municipalBondHome.instance.resident == null}"
 												propagation="join"
 												action="#{localFeatureHome.viewTableLocals()}"
@@ -108,7 +198,7 @@
 												value="#{messages['common.create']} #{messages['commercial.bussines']}"	
 												action="#{businessHome.navegation('municipal')}">
 												<f:param name="businessId" />
-											</s:button>
+											</s:button> -->
 										</h:panelGrid>
 						 </f:facet>
 
