@@ -30,9 +30,9 @@ public interface BankDebitService {
 	
 	public BankDebit update(BankDebit debit);
 	
-	public List<BankDebitDTO> findBankDebits (Integer serviceNumver, Integer firstRow,Integer numberOfRows);
+	public List<BankDebitDTO> findBankDebits (BankDebitSearchCriteria criteria, Integer firstRow,Integer numberOfRows);
 	
-	public Integer findBankDebitNumber(Integer serviceNumver);
+	public Integer findBankDebitNumber(BankDebitSearchCriteria criteria);
 	
 	public BankDebitDTO findDtoById(Long bankDebitId);
 	

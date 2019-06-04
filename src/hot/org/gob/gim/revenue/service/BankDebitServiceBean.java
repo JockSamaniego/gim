@@ -46,7 +46,7 @@ public class BankDebitServiceBean implements BankDebitService {
 						+ "ban.active "
 						+ "FROM bankdebit ban "
 						+ "INNER JOIN watersupply was ON was.id = ban.watersupply_id "
-						+ "INNER JOIN resident res ON res.id = was.serviceowner_id "
+						+ "INNER JOIN resident res ON res.id = was.recipeowner_id "
 						+ "INNER JOIN itemcatalog ica ON ica.id = ban.accounttype_itm_id");
 
 		List<BankDebitDTO> retorno = NativeQueryResultsMapper.map(
@@ -95,30 +95,51 @@ public class BankDebitServiceBean implements BankDebitService {
 	}
 
 	@Override
-	public List<BankDebitDTO> findBankDebits(Integer serviceNumver, Integer firstRow, Integer numberOfRows) {
+	public List<BankDebitDTO> findBankDebits(BankDebitSearchCriteria criteria, Integer firstRow, Integer numberOfRows) {
 		String qryBase = "SELECT ban.id, "
-				+ "res.identificationnumber, "
-				+ "res.name, "
-				+ "ica.name as account_type, "
-				+ "ban.accountnumber, "
-				+ "ban.accountholder, "
-				+ "was.servicenumber, "
-				+ "ban.active "
-				+ "FROM bankdebit ban "
-				+ "INNER JOIN watersupply was ON was.id = ban.watersupply_id "
-				+ "INNER JOIN resident res ON res.id = was.serviceowner_id "
-				+ "INNER JOIN itemcatalog ica ON ica.id = ban.accounttype_itm_id";
+								+ "res.identificationnumber, "
+								+ "res.name, "
+								+ "ica.name as account_type, "
+								+ "ban.accountnumber, "
+								+ "ban.accountholder, "
+								+ "was.servicenumber, "
+								+ "ban.active "
+						+ "FROM bankdebit ban "
+						+ "INNER JOIN watersupply was ON was.id = ban.watersupply_id "
+						+ "INNER JOIN resident res ON res.id = was.recipeowner_id "
+						+ "INNER JOIN itemcatalog ica ON ica.id = ban.accounttype_itm_id "
+						+ "WHERE 1 = 1 ";
 
 		String finalQuery = qryBase;
-
-		/*
-		 * if (cadastralCode != null) { finalQuery = finalQuery +
-		 * conditionAdditional; }
-		 * 
-		 * finalQuery = finalQuery + " order by wf.property.cadastralCode ASC"
-		 */
+		if (criteria.getServicenumber() != null ) { 
+			finalQuery = finalQuery + "AND was.servicenumber =:servicenumber " ; 
+		}
+		
+		if (criteria.getReceiptIdentification() != null && criteria.getReceiptIdentification() != "") { 
+			finalQuery = finalQuery + "AND res.identificationnumber =:receiptIdentification " ; 
+		}
+		
+		if (criteria.getReceiptName() != null && criteria.getReceiptName() != "") { 
+			finalQuery = finalQuery + "AND res.name like :receiptName " ; 
+		}
+	  
+		finalQuery = finalQuery + " ORDER BY ban.active DESC,res.name ASC, was.servicenumber ASC";
+		
 
 		Query query = entityManager.createNativeQuery(finalQuery);
+		
+		if (criteria.getServicenumber() != null) { 
+			query.setParameter("servicenumber", criteria.getServicenumber());
+		}
+		
+		if (criteria.getReceiptIdentification() != null && criteria.getReceiptIdentification() != "") { 
+			query.setParameter("receiptIdentification", criteria.getReceiptIdentification()); 
+		}
+		
+		if (criteria.getReceiptName() != null && criteria.getReceiptName() != "") { 
+			query.setParameter("receiptName", "%"+criteria.getReceiptName()+"%"); 
+		}
+		
 		/*
 		 * query.setParameter("workDeal_id", workDeal_id); if (cadastralCode !=
 		 * null) { query.setParameter("cadastralCode", cadastralCode+"%"); }
@@ -133,11 +154,11 @@ public class BankDebitServiceBean implements BankDebitService {
 	}
 
 	@Override
-	public Integer findBankDebitNumber(Integer serviceNumver) {
+	public Integer findBankDebitNumber(BankDebitSearchCriteria criteria) {
 
 		String qryBase = "SELECT count(*) " + "FROM bankdebit ban "
 				+ "INNER JOIN watersupply was ON was.id = ban.watersupply_id "
-				+ "INNER JOIN resident res ON res.id = was.serviceowner_id "
+				+ "INNER JOIN resident res ON res.id = was.recipeowner_id "
 				+ "INNER JOIN itemcatalog ica ON ica.id = ban.accounttype_itm_id";
 		
 		//String conditionAdditional = " and wf.property.cadastralCode=:cadastralCode";
@@ -169,7 +190,7 @@ public class BankDebitServiceBean implements BankDebitService {
 				+ "ban.active "
 				+ "FROM bankdebit ban "
 				+ "INNER JOIN watersupply was ON was.id = ban.watersupply_id "
-				+ "INNER JOIN resident res ON res.id = was.serviceowner_id "
+				+ "INNER JOIN resident res ON res.id = was.recipeowner_id "
 				+ "INNER JOIN itemcatalog ica ON ica.id = ban.accounttype_itm_id "
 				+ "WHERE ban.id = ?1";
 		Query query = entityManager.createNativeQuery(qryBase);
@@ -193,7 +214,7 @@ public class BankDebitServiceBean implements BankDebitService {
 						+"FROM "
 						+"bankdebit AS ban "
 						+"INNER JOIN watersupply was ON ban.watersupply_id = was.id "
-						+"INNER JOIN resident AS res ON was.serviceowner_id = res.id "
+						+"INNER JOIN resident AS res ON was.recipeowner_id = res.id "
 						+"WHERE ban.active = true"; 
 		Query query = entityManager.createNativeQuery(sql);
 		List<Integer> resultList = query.getResultList();
@@ -224,7 +245,7 @@ public class BankDebitServiceBean implements BankDebitService {
 						+"INNER JOIN consumption AS con ON con.watersupply_id = was.id "
 						+"INNER JOIN waterservicereference AS wsr ON wsr.consumption_id = con.id "
 						+"INNER JOIN municipalbond AS mbo ON wsr.id = mbo.adjunct_id "
-						+"INNER JOIN resident res ON res.id = was.serviceowner_id "
+						+"INNER JOIN resident res ON res.id = was.recipeowner_id "
 						+"INNER JOIN itemcatalog itm ON itm.id = ban.accounttype_itm_id "
 						+"WHERE ban.active = true "
 						+"AND mbo.municipalbondstatus_id IN (3,4) "

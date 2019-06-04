@@ -70,7 +70,7 @@ import ec.gob.gim.revenue.model.Contract;
 		@NamedQuery(name = "WaterSupply.findByActiveExemption", query = "SELECT count(waterSupply.id) FROM WaterSupply waterSupply "
 				+ "LEFT JOIN waterSupply.serviceOwner serviceOwner "
 				+ "WHERE waterSupply.serviceOwner.id = :idResident and (waterSupply.applyElderlyExemption = true or waterSupply.applySpecialExemption = true) "),
-		@NamedQuery(name = "WaterSupply.findByServiceNumber", query = "SELECT ws FROM WaterSupply ws LEFT JOIN FETCH ws.serviceOwner seo WHERE ws.serviceNumber = :serviceNumber")
+		@NamedQuery(name = "WaterSupply.findByServiceNumber", query = "SELECT ws FROM WaterSupply ws LEFT JOIN FETCH ws.recipeOwner seo WHERE ws.serviceNumber = :serviceNumber")
 })
 public class WaterSupply {
 

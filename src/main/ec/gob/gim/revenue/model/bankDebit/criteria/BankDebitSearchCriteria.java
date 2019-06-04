@@ -1,25 +1,46 @@
 package ec.gob.gim.revenue.model.bankDebit.criteria;
 
-import ec.gob.gim.common.model.ItemCatalog;
-
 public class BankDebitSearchCriteria {
 
-	private String servicenumber;
+	private Integer servicenumber;
+	private String receiptIdentification;
+	private String receiptName;
 
 	public BankDebitSearchCriteria() {
+		this.servicenumber = null;
+		this.receiptIdentification = null;
+		this.receiptName = null;
 	}
 
-	public String getServicenumber() {
+	public Integer getServicenumber() {
 		return servicenumber;
 	}
 
-	public void setServicenumber(String servicenumber) {
+	public void setServicenumber(Integer servicenumber) {
 		this.servicenumber = servicenumber;
+	}
+	
+	public String getReceiptIdentification() {
+		return receiptIdentification;
+	}
+
+	public void setReceiptIdentification(String receiptIdentification) {
+		this.receiptIdentification = receiptIdentification;
+	}
+
+	public String getReceiptName() {
+		return receiptName;
+	}
+
+	public void setReceiptName(String receiptName) {
+		this.receiptName = receiptName;
 	}
 
 	@Override
 	public String toString() {
-		return "BankDebitSearchCriteria [servicenumber=" + servicenumber + "]";
+		return "BankDebitSearchCriteria [servicenumber=" + servicenumber
+				+ ", receiptIdentification=" + receiptIdentification
+				+ ", receiptName=" + receiptName + "]";
 	}
-	
+
 }

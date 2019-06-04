@@ -15,6 +15,7 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
+import ec.gob.gim.revenue.model.bankDebit.criteria.BankDebitSearchCriteria;
 import ec.gob.gim.revenue.model.bankDebit.dto.BankDebitDTO;
 
 /**
@@ -34,7 +35,7 @@ public class BankDebitDataModel extends PageableDataModel<BankDebitDTO, Long> {
 	private EntityManager entityManager;
 
 	// Criteria
-	private Integer serviceNumber;
+	private BankDebitSearchCriteria criteria;
 
 	private BankDebitService bankDebitService;
 
@@ -49,8 +50,8 @@ public class BankDebitDataModel extends PageableDataModel<BankDebitDTO, Long> {
 		}
 	}
 
-	public void setCriteria(Integer serviceNumber) {
-		this.serviceNumber = serviceNumber;
+	public void setCriteria(BankDebitSearchCriteria criteria) {
+		this.criteria = criteria;
 	}
 
 	/*
@@ -76,7 +77,7 @@ public class BankDebitDataModel extends PageableDataModel<BankDebitDTO, Long> {
 		// TODO Auto-generated method stub
 
 		List<BankDebitDTO> debits = bankDebitService.findBankDebits(
-				this.serviceNumber, firstRow, numberOfRows);
+				this.criteria, firstRow, numberOfRows);
 		return debits;
 	}
 
@@ -113,7 +114,7 @@ public class BankDebitDataModel extends PageableDataModel<BankDebitDTO, Long> {
 	 */
 	@Override
 	public int getObjectsNumber() {
-		return bankDebitService.findBankDebitNumber(this.serviceNumber).intValue();
+		return bankDebitService.findBankDebitNumber(this.criteria).intValue();
 	}
 
 	@Override

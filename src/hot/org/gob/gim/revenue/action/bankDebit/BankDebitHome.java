@@ -10,7 +10,6 @@ import org.gob.gim.income.service.PaymentLocalService;
 import org.gob.gim.revenue.action.bankDebit.pagination.BankDebitDataModel;
 import org.gob.gim.revenue.service.BankDebitService;
 import org.gob.gim.revenue.service.ItemCatalogService;
-import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -58,8 +57,6 @@ public class BankDebitHome extends EntityController {
 
 	private BankDebitSearchCriteria criteria = new BankDebitSearchCriteria();
 
-	private List<BankDebitDTO> debits = new ArrayList<BankDebitDTO>();
-
 	private BankDebit debitSelected;
 
 	private ItemCatalog typeAccount;
@@ -78,8 +75,11 @@ public class BankDebitHome extends EntityController {
 	private Boolean isEdit = Boolean.FALSE;
 	
 	private List<BankDebitReportDTO> dataReporte = new ArrayList<BankDebitReportDTO>();
+	
+	private boolean isFirstTime = true;
 
 	public BankDebitHome() {
+		this.criteria = new BankDebitSearchCriteria();
 		loadDebits();
 	}
 
@@ -89,14 +89,6 @@ public class BankDebitHome extends EntityController {
 
 	public void setCriteria(BankDebitSearchCriteria criteria) {
 		this.criteria = criteria;
-	}
-
-	public List<BankDebitDTO> getDebits() {
-		return debits;
-	}
-
-	public void setDebits(List<BankDebitDTO> debits) {
-		this.debits = debits;
 	}
 
 	public BankDebit getDebitSelected() {
@@ -196,11 +188,15 @@ public class BankDebitHome extends EntityController {
 	}
 
 	public void wire() {
-
-		this.initializeService();
 		
-		getDataModel().setCriteria(serviceNumber);
-		getDataModel().setRowCount(getDataModel().getObjectsNumber());
+		if (isFirstTime) {
+			isFirstTime = Boolean.FALSE;
+			this.initializeService();
+			
+			getDataModel().setCriteria(this.criteria);
+			getDataModel().setRowCount(getDataModel().getObjectsNumber());
+		}
+		
 	}
 
 	private BankDebitDataModel getDataModel() {
@@ -210,11 +206,11 @@ public class BankDebitHome extends EntityController {
 		return dataModel;
 	}
 
-	public void findDebits() {
+	/*public void findDebits() {
 
 		this.debits = this.bankDebitService.findDebitsForCriteria(criteria);
 		System.out.println(this.debits);
-	}
+	}*/
 
 	public void loadDebits() {
 		initializeService();
@@ -250,9 +246,8 @@ public class BankDebitHome extends EntityController {
 
 	public void searchDebits() {
 		//this.debits = this.bankDebitService.findDebitsForCriteria(criteria);
-		getDataModel().setCriteria(serviceNumber);
+		getDataModel().setCriteria(this.criteria);
 		getDataModel().setRowCount(getDataModel().getObjectsNumber());
-		System.out.println(this.debits);
 	}
 
 	public void preparaRegisterDebit() {
@@ -370,7 +365,8 @@ public class BankDebitHome extends EntityController {
 			this.debitSelected.setAccountType(typeAccount);
 			this.debitSelected.setWaterSupply(waterSupplySelect);
 			this.bankDebitService.save(debitSelected);
-			this.debits = this.bankDebitService.findDebitsForCriteria(criteria);
+			/*getDataModel().setCriteria(this.criteria);
+			getDataModel().setRowCount(getDataModel().getObjectsNumber());*/
 		}
 
 	}
@@ -389,7 +385,8 @@ public class BankDebitHome extends EntityController {
 			this.debitSelected.setWaterSupply(waterSupplySelect);
 			this.debitSelected.setActive(this.active);
 			this.bankDebitService.update(debitSelected);
-			this.debits = this.bankDebitService.findDebitsForCriteria(criteria);
+			/*getDataModel().setCriteria(this.criteria);
+			getDataModel().setRowCount(getDataModel().getObjectsNumber());*/
 			this.debitSelected = null;
 		}
 

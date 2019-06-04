@@ -27,7 +27,7 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 @Audited
 @Entity
 @TableGenerator(name = "BankDebitGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "BankDebit", initialValue = 1, allocationSize = 1)
-@NamedQueries(value = { @NamedQuery(name = "BankDebit.findById", query = "select ban from BankDebit ban join fetch ban.waterSupply ws join fetch ws.serviceOwner res where ban.id=:bankDebitId"), })
+@NamedQueries(value = { @NamedQuery(name = "BankDebit.findById", query = "select ban from BankDebit ban join fetch ban.waterSupply ws join fetch ws.recipeOwner res where ban.id=:bankDebitId"), })
 public class BankDebit implements Serializable {
 
 	/**
