@@ -1,0 +1,59 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	
+	<s:decorate id="waterMeterDisabledPanel" template="../../layout/edit.xhtml">
+		<ui:define name="label">#{messages['waterservice.routeId']}:</ui:define>
+		<h:inputText id="value" value="#{waterMeterHome.route_id}"
+			styleClass="left">
+			<a:support event="onblur" eventsQueue="gimQueue"
+				reRender="value" />
+		</h:inputText>
+	</s:decorate>
+	
+	<div class="actionButtons">
+            <h:commandButton id="search2" value="#{messages['common.search']}" reRender="waterMeterDisabledTable">
+            </h:commandButton>
+    </div>
+    
+    <rich:spacer height="20px"></rich:spacer>
+
+	<rich:dataTable id="waterMeterDisabledTable"
+		value="#{waterMeterHome.findWaterMeterDisabled()}" var="_disabled"
+		rowClasses="rvgRowOne,rvgRowTwo" columnClasses="tableCellFont"
+		style="margin-top:5px;"
+		rendered="#{waterMeterHome.findWaterMeterDisabled().size()>0}">
+		<rich:column styleClass="action" style="align:right;">
+            <f:facet name="header">#{messages['waterservice.serviceNumber']}
+            </f:facet>
+            <h:outputText value="#{_disabled.serviceNumber}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:right;">
+            <f:facet name="header">
+                #{messages['waterservice.totalFalse']}
+            </f:facet>
+            <h:outputText value="#{_disabled.totalFalse}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:right;">
+            <f:facet name="header">
+                #{messages['waterservice.totalTrue']}
+            </f:facet>
+            <h:outputText value="#{_disabled.totalTrue}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:right;">
+            <f:facet name="header">
+               #{messages['waterservice.totalCount']}
+            </f:facet>
+            <h:outputText value="#{_disabled.totalCount}"/>
+        </rich:column>   	        
+	</rich:dataTable>
+
+</ui:composition>
