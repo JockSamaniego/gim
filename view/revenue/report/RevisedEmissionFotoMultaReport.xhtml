@@ -9,13 +9,21 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	title="#{messages['notifications']}" subject="report" type="pdf"
-	size="A5" margins="40 20 30 20" keywords="mykeyword" author="jlgranda"
+	size="A5" margins="20 20 20 20" keywords="mykeyword" author="jlgranda"
 	creator="loxageek">
 
 	<f:facet name="header">
 		<p:font size="7" name="HELVETICA">
-			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
-				<p:paragraph>
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">				
+			</p:header>
+			<p:footer borderWidthTop="1" borderColorTop="blue"
+				borderWidthBottom="0" alignment="center">
+	 			[<p:pageNumber />]
+			</p:footer>
+		</p:font>
+	</f:facet>
+
+	<p:paragraph>
 					<p:table columns="3" widthPercentage="100" spacingAfter="15"
 						widths="1 5 2">
 						<f:facet name="defaultCell">
@@ -36,11 +44,13 @@
 							</p:font>
 
 							<p:font size="8" style="bold">
-								<p:paragraph alignment="center">#{messages['UCOT']}</p:paragraph>
+								<p:paragraph alignment="center" rendered="#{emissionOrderHome.hasRole('ROLE_REVISOR_UCOT')}">#{messages['UCOT']}</p:paragraph>
+								<p:paragraph alignment="center" rendered="#{!emissionOrderHome.hasRole('ROLE_REVISOR_UCOT')}">#{messages['RENTAS']}</p:paragraph>
 							</p:font>
 
 							<p:font size="8" style="bold">
-								<p:paragraph alignment="center">#{messages['REPORTE DE INFRACCIONES']}</p:paragraph>
+								<p:paragraph alignment="center">#{messages['REPORTE DE REVISIÓN FOTO MULTAS']}</p:paragraph>
+								<p:paragraph alignment="center">#{emissionOrderHome.revisionStatusUCOT}</p:paragraph>
 							</p:font>
 						</p:cell>
 						<p:cell>
@@ -59,13 +69,6 @@
 
 					</p:table>
 				</p:paragraph>
-			</p:header>
-			<p:footer borderWidthTop="1" borderColorTop="blue"
-				borderWidthBottom="0" alignment="center">
-	 			[<p:pageNumber />]
-			</p:footer>
-		</p:font>
-	</f:facet>
 
 	<p:font size="8" name="HELVETICA">
 
@@ -78,8 +81,8 @@
 			</p:font>
 		</p:paragraph>
 
-		<p:table columns="10" widthPercentage="100" spacingBefore="15"
-			widths="1 1 1 1 1 1 1 1 1 1" >
+		<p:table columns="9" widthPercentage="100" spacingBefore="15"
+			widths="0.6 1.3 2 1.2 1.6 0.7 1 1 0.6">
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="1" />
 			</f:facet>
@@ -87,28 +90,37 @@
 			<p:cell horizontalAlignment="center" grayFill="0.60">
 				<p:paragraph spacingAfter="2">
 					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['infraction.serial']}" />
+						<p:text value="#{messages['revisedEmission.sequential']}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
 			<p:cell horizontalAlignment="center" grayFill="0.60">
 				<p:paragraph spacingAfter="2">
 					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['ucot.agent']}" />
+						<p:text value="#{messages['revisedEmission.identification']}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
 			<p:cell horizontalAlignment="center" grayFill="0.60">
 				<p:paragraph spacingAfter="2">
 					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['infraction.citationdate']}" />
+						<p:text value="#{messages['revisedEmission.completeName']}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
+			
 			<p:cell horizontalAlignment="center" grayFill="0.60">
 				<p:paragraph spacingAfter="2">
 					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['infraction.citationtime']}" />
+						<p:text value="#{messages['revisedEmission.article']}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell horizontalAlignment="center" grayFill="0.60">
+				<p:paragraph spacingAfter="2">
+					<p:font size="8" style="bold" name="HELVETICA">
+						<p:text value="#{messages['revisedEmission.infractionNumber']}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
@@ -116,7 +128,7 @@
 			<p:cell horizontalAlignment="center" grayFill="0.60">
 				<p:paragraph spacingAfter="2">
 					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['infraction.identification']}" />
+						<p:text value="#{messages['revisedEmission.gimNumber']}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
@@ -124,7 +136,7 @@
 			<p:cell horizontalAlignment="center" grayFill="0.60">
 				<p:paragraph spacingAfter="2">
 					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['infraction.plate']}" />
+						<p:text value="#{messages['revisedEmission.vehiclePlate']}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
@@ -132,7 +144,7 @@
 			<p:cell horizontalAlignment="center" grayFill="0.60">
 				<p:paragraph spacingAfter="2">
 					<p:font size="8" style="bold" name="HELVETICA">
-						<p:text value="#{messages['infraction.article']}" />
+						<p:text value="#{messages['revisedEmission.infractionDate']}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
@@ -140,97 +152,68 @@
 			<p:cell horizontalAlignment="center" grayFill="0.60"> 
 		        <p:paragraph spacingAfter="2"> 
 		          <p:font size="8" style="bold" name="HELVETICA"> 
-		            <p:text value="#{messages['infraction.numeral']}" /> 
-		          </p:font> 
-		        </p:paragraph> 
-		      </p:cell>
-		      
-		      <p:cell horizontalAlignment="center" grayFill="0.60"> 
-		        <p:paragraph spacingAfter="2"> 
-		          <p:font size="8" style="bold" name="HELVETICA"> 
-		            <p:text value="#{messages['infraction.nullified']}" /> 
-		          </p:font> 
-		        </p:paragraph> 
-		      </p:cell>
-		      
-		      <p:cell horizontalAlignment="center" grayFill="0.60"> 
-		        <p:paragraph spacingAfter="2"> 
-		          <p:font size="8" style="bold" name="HELVETICA"> 
-		            <p:text value="#{messages['infraction.inconsistent']}" /> 
+		            <p:text value="#{messages['revisedEmission.value']}" /> 
 		          </p:font> 
 		        </p:paragraph> 
 		      </p:cell>
 
-			<ui:repeat value="#{infractionsHome.infracts}" var="_infractions">
+			<ui:repeat value="#{emissionOrderHome.revisedEmissions}" var="_emissionOrder">
 
-				<p:cell horizontalAlignment="center">
+				<p:cell horizontalAlignment="right">
 					<p:paragraph>
-						<p:text value="#{_infractions.serial}" />
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{_infractions.bulletin.agent.resident.identificationNumber}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{_infractions.citationDate}" >
-							<f:convertDateTime pattern="dd/MM/yyyy" />
-						</p:text>
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="#{_infractions.citationTime}" >
-							<f:convertDateTime type="time" />
-						</p:text>
+						<p:text value="#{emissionOrderHome.revisedEmissions.indexOf(_emissionOrder) + 1}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="#{_infractions.identification}" />
+						<p:text value="#{_emissionOrder.identificationNumber}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="left">
+					<p:paragraph>
+						<p:text value="#{_emissionOrder.name}" />
 					</p:paragraph>
 				</p:cell>
 				
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="#{_infractions.licensePlate}">
-						</p:text>
+						<p:text value="#{_emissionOrder.article}" />
 					</p:paragraph>
 				</p:cell>
 				
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="#{_infractions.article}">
+						<p:text value="#{_emissionOrder.infractionNumber}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{_emissionOrder.gimNumber}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{_emissionOrder.vehiclePlate}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{_emissionOrder.citationDate}" >
+							<f:convertDateTime pattern="#{messages['common.dateTimePattern']}" />
 						</p:text>
 					</p:paragraph>
 				</p:cell>
 				
-				<p:cell horizontalAlignment="center"> 
+				<p:cell horizontalAlignment="right">
 		          <p:paragraph> 
-		            <p:text value="#{_infractions.numeral}"> 
-		            </p:text> 
-		          </p:paragraph> 
+		            <p:text value="#{_emissionOrder.value}" /> 
+		          </p:paragraph>
 		        </p:cell> 
-		        
-		        <p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="No" rendered="#{!_infractions.nullified}" />
-						<p:text value="Si" rendered="#{_infractions.nullified}" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="Si" rendered="#{_infractions.inconsistent}" />
-						<p:text value="No" rendered="#{!_infractions.inconsistent}" />
-					</p:paragraph>
-				</p:cell>
 
 			</ui:repeat>
 

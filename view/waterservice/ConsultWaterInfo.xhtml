@@ -1,0 +1,43 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<h:form id="obligationsHistoryReport" styleClass="edit">
+		
+			<rich:tabPanel id="infoWaterPanel"
+					tabClass="tabTitle"
+					switchType="ajax" selectedTab="routesTab">
+					<rich:tab id="routesTab"
+						label="#{messages['waterservice.missingResident']}" ajaxSingle="true">
+						<ui:include src="fragment/ResidentsInRoutePanel.xhtml" />					
+					</rich:tab>
+					
+					<rich:tab id="waterMeterTab"
+						label="#{messages['waterservice.waterMeterDisabled']}"
+						ajaxSingle="true" >		
+						<ui:include src="fragment/WaterMeterDisabledPanel.xhtml" />			
+					</rich:tab>
+
+					<rich:tab id="historyTab"
+						label="#{messages['waterservice.serviceHistory']}" ajaxSingle="true">
+						<ui:include src="fragment/WaterServiceHistoryPanel.xhtml" />
+					</rich:tab>
+			</rich:tabPanel>
+
+			<h:panelGrid id="buttonsPanel" columns="1">
+				<s:button id="back" value="#{messages['common.back']}"
+					propagation="end" view="/home.xhtml" />
+			</h:panelGrid>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

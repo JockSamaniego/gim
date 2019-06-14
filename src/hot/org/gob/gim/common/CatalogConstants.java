@@ -32,4 +32,7 @@ public class CatalogConstants {
 	 public static final String CATALOG_TYPES_STATUS = "TYPES_STATUS";
 	 
 	 public static final String CATALOG_TYPES_DOMAIN_TRANSFER = "TYPES_DOMAIN_TRANSFER";
+	 
+	 public static final String CATALOG_TYPES_BANK_ACCOUNT = "TYPES_BANK_ACCOUNT";
+	 
 }

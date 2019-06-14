@@ -98,7 +98,7 @@ public class EmissionOrder {
 	@JoinColumn(name="emissionOrder_id")
 	private List<MunicipalBond> municipalBonds;
 	
-	@OneToOne(mappedBy="emissionOrder", fetch = FetchType.EAGER)
+	@OneToOne(mappedBy="emissionOrder", fetch = FetchType.LAZY)
 	private RevisionEmissionOrderFM revisionFM;
 	
 	public EmissionOrder(){
