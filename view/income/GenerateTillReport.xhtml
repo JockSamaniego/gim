@@ -79,6 +79,14 @@
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
 						<h:outputText
 							value="#{messages['tillPermission']} (#{empty tillPermissionHome.tillPermissionsDetails ? 0 : tillPermissionHome.tillPermissionsDetails.size()})" />
+							
+							<a:commandButton id="confirmCloseAllBTN"
+								reRender="confirmPanelAll" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('confirmPanelAll',{width:350, height:250})"
+								value="#{messages['till.cloginAllTills']}"
+								rendered="#{tillPermissionHome.tillPermissionsDetails.size() > 0 and tillPermissionHome.openTill}"
+								focus="observation" />
 					</h:panelGrid>
 				</f:facet>
 
@@ -407,6 +415,35 @@
 			</h:form>
 		</rich:modalPanel>
 		
+		<!-- CIERRE TODAS LAS CAJAS -->
+		<rich:modalPanel id="confirmPanelAll" width="350" height="250">
+			<f:facet name="header">#{messages['till.messageAllTillsClose']}</f:facet>
+			<h:form id="confirmCloseTills">
+				<h:panelGrid columns="1" width="100%">
+					#{messages['till.warningMessage']}
+				</h:panelGrid>
+				<h:panelGrid>
+					<s:decorate id="conceptFieldAll" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['tillPermission.observation']}:</ui:define>
+						<h:inputTextarea id="observationAll" cols="40" rows="6"
+							value="#{tillPermissionHome.observationAll}" required="true" />
+					</s:decorate>
+
+					<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="closingBtn" action="#{tillPermissionHome.updateAllTills()}"
+								value="#{messages['income.forcedClosingTill']}"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelAll\');' : ''}" />
+
+							<a:commandButton id="cancelBtn" ajaxSingle="true"
+								value="#{messages['common.cancel']}"
+								oncomplete="Richfaces.hideModalPanel('confirmPanelAll');"
+								bypassUpdates="true" />
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
 	</ui:define>
 
 </ui:composition>

@@ -5,7 +5,7 @@
       no-conversation-view-id="/WorkdayList.xhtml"
       login-required="true">
 
-   <begin-conversation join="true" flush-mode="MANUAL"/>
+   <begin-conversation join="true" flush-mode="MANUAL"/> 
    
    <action execute="#{tillPermissionHome.loadDefaultDates()}"/>
    
@@ -27,6 +27,13 @@
 		<rule if-outcome="sentToPrint">
 			<redirect view-id="/income/report/ClosingTillReportByPaymentType.xhtml"/>
 		</rule>
+	</navigation>
+
+	<navigation from-action="#{tillPermissionHome.updateAllTills()}">
+		<rule if-outcome="updated">
+			<end-conversation before-redirect="true" />
+			<redirect view-id="/income/GenerateTillReport.xhtml"/>		
+		</rule>		
 	</navigation>
    
 
