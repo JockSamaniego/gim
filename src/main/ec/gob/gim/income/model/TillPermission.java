@@ -71,7 +71,13 @@ import ec.gob.gim.common.model.Person;
 						"t.workday.id = :workdayId and (t.openingTime is not null and t.closingTime is null) "),
 		@NamedQuery(name="TillPermission.findNumberOpenTillsByDate", 
 				query="select count(t.id) from TillPermission t where "+
-						"cast(t.openingTime as date) = :date AND t.closingTime is null")}
+						"cast(t.openingTime as date) = :date AND t.closingTime is null"),
+		@NamedQuery(name="TillPermission.closeTills", 
+				query="update TillPermission till SET "
+						+ "till.closingTime = :closingTime,"
+						+ "till.observation = :observation "
+						+ " WHERE "+
+						"till.id in (:list) AND till.closingTime is null ")}
 )
 public class TillPermission implements Comparable<TillPermission>{
 	

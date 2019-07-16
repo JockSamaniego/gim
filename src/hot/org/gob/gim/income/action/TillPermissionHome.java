@@ -11,7 +11,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import org.drools.base.accumulators.SumAccumulateFunction;
 import org.gob.gim.common.DateUtils;
@@ -109,6 +113,10 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 
 	private List<Deposit> ReversedDeposits = new ArrayList<Deposit>();
 
+	//macartuche @tag cierreCajas 2019-07-03 12:23
+	private String observationAll="";
+	private Boolean openTill = Boolean.FALSE;
+	
 	public void changeTillPermission(TillPermission t) {
 		tillPermission = t;
 	}
@@ -124,6 +132,45 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		tillPermission.setObservation(message);
 		setInstance(tillPermission);
 		return update();
+	}
+
+    @In
+    EntityManager entityManager;
+	//macartuchef @tag cierreCaja 2019-07-03 12:49	
+	//@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public String updateAllTills() {
+		String message = Interpolator.instance().interpolate(
+				"#{messages['tillPermission.forcedClosingTill']}",
+				userSession.getPerson().getName(),
+				this.observationAll);
+		message = message.replace("{0}", userSession.getPerson().getName());
+		message = message.replace("{1}", this.observationAll);
+		
+		List<Long> idTillPermissions = new ArrayList<Long>();
+		for(TillPermissionDetail tillDetail: this.tillPermissionsDetails) {
+			idTillPermissions.add(tillDetail.getTillPermission().getId());
+		}
+		
+		try {
+			
+			String queryUpdate="update TillPermission SET "
+					+ "closingTime = :closingTime,"
+					+ "observation = :observation "
+					+ " WHERE id in (:list) AND closingTime is null ";
+			
+			Query q = entityManager.createNativeQuery(queryUpdate);
+			q.setParameter("closingTime", new Date());
+			q.setParameter("observation", message);
+			q.setParameter("list", idTillPermissions);
+			
+			int total = q.executeUpdate();
+			System.out.println("El total es: "+total);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		 
+ 		
+		return "updated";
 	}
 
 	public String updateOpeningTillPermission() {
@@ -226,6 +273,10 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	 * Generar reporte por cajeros entre fechas
 	 */
 	public void generateCashiersTillReport() {
+		//macartuchef @tag cierreCajas
+		this.observationAll = "";
+		this.openTill = Boolean.FALSE;
+		
 		// getEntityManager().clear();
 		tillPermissionsDetails = null;
 		Query query = null;
@@ -461,6 +512,13 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 			//System.out.println("-------------------------- "+t.getWorkday().getDate()+" ------------- "+t.getPerson().getId());
 			
 			TillPermissionDetail td = createTillPermissionDetail(t);
+			
+			//macartuchef @tag cierreCajas 2019-07-05 12:01
+			//solo para determinar si se presenta el boton de cerrar todas las cajas
+			if (td.isOpened()) {
+				openTill = Boolean.TRUE;
+				System.out.println("======>"+t.getId());
+			}
 			
 			//init primer arreglo
 			Long totalServedLong = Long.parseLong("0");
@@ -2040,4 +2098,20 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 			summaryFinal = listDTO.get(0);
 	}
 
+	//macartuchef @tag cierreCaja 2019-07-03 12:24
+	public String getObservationAll() {
+		return observationAll;
+	}
+
+	public void setObservationAll(String observationAll) {
+		this.observationAll = observationAll;
+	}
+
+	public Boolean getOpenTill() {
+		return openTill;
+	}
+
+	public void setOpenTill(Boolean openTill) {
+		this.openTill = openTill;
+	}
 }
