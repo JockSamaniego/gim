@@ -156,7 +156,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 			String queryUpdate="update TillPermission SET "
 					+ "closingTime = :closingTime,"
 					+ "observation = :observation "
-					+ " WHERE id in (:list) AND closingTime is null ";
+					+ " WHERE id in (:list) AND closingTime is null and openingtime is not null";
 			
 			Query q = entityManager.createNativeQuery(queryUpdate);
 			q.setParameter("closingTime", new Date());
