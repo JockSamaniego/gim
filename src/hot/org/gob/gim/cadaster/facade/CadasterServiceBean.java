@@ -450,7 +450,7 @@ public class CadasterServiceBean implements CadasterService {
 				.findTaxpayerRecord(entry.getId());
 
 		for (UnbuiltLot ubl : unbuiltLots) {
-
+			
 			Date creationDate = now;
 			Date emissionDate = now;
 
@@ -1234,9 +1234,9 @@ public class CadasterServiceBean implements CadasterService {
 				.findParameter("TERRITORIAL_DIVISION_CODE_PROVINCE");
 		TerritorialDivision province = findProvince(code);
 		TerritorialDivision canton = findTerritorialDivision(
-				pro.getCadastralCode(), 2, 5, province);
+				pro.getCadastralCode(), 2, 4, province);
 		TerritorialDivision parish = findTerritorialDivision(
-				pro.getCadastralCode(), 5, 9, canton);
+				pro.getCadastralCode(), 4, 6, canton);
 		return parish.getName();
 	}
 
