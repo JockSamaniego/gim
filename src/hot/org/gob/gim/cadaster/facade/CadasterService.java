@@ -12,6 +12,7 @@ import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
 import ec.gob.gim.cadaster.model.WorkDealFraction;
 import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
+import ec.gob.gim.cadaster.model.dto.CadastralCertificateDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.revenue.model.EmissionOrder;
@@ -57,4 +58,12 @@ public interface CadasterService {
 	//Jock Samaniego
 	//actualizar deleted predios rusticos 23/09/2016
 		public void updateRusticProperty(Property property);
+		
+	/*
+	 * Rene Ortega
+	 * 2019-06-10
+	 * metodo que devuelve la informacion para la cedula catastral
+	 * 
+	 */
+	CadastralCertificateDTO getCadastralCertificateData(Long property_id);
 }

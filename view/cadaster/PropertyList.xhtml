@@ -287,6 +287,9 @@
 								<f:param name="propertyId" value="#{_property.id}" />
 								<f:param name="readOnly" value="#{true}" />
 							</s:button>
+							
+							<h:commandLink action="#{propertyHome.printCadastralCertificate(_property.id)}"
+								value="Cédula Catastral" target="_blank" rendered="#{_property.propertyType.id == 1}"/>
 						</rich:column>
 					</rich:dataTable>
 				</div>

@@ -1,5 +1,6 @@
 package org.gob.gim.cadaster.action;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
@@ -15,13 +16,15 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.gob.gim.appraisal.facade.AppraisalService;
 import org.gob.gim.cadaster.facade.CadasterService;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
-import org.gob.gim.income.facade.IncomeService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -40,6 +43,7 @@ import ec.gob.gim.cadaster.model.BlockLimit;
 import ec.gob.gim.cadaster.model.Boundary;
 import ec.gob.gim.cadaster.model.Building;
 import ec.gob.gim.cadaster.model.BuildingMaterialValue;
+import ec.gob.gim.cadaster.model.CompassPoint;
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.FenceMaterial;
 import ec.gob.gim.cadaster.model.LandUse;
@@ -52,6 +56,9 @@ import ec.gob.gim.cadaster.model.PropertyType;
 import ec.gob.gim.cadaster.model.StreetMaterial;
 import ec.gob.gim.cadaster.model.StructureMaterial;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
+import ec.gob.gim.cadaster.model.dto.BoundaryDTO;
+import ec.gob.gim.cadaster.model.dto.BuildingDTO;
+import ec.gob.gim.cadaster.model.dto.CadastralCertificateDTO;
 import ec.gob.gim.cadaster.model.dto.DomainHistoryDTO;
 import ec.gob.gim.cadaster.model.dto.PropertyHistoryDTO;
 import ec.gob.gim.common.model.Attachment;
@@ -63,6 +70,7 @@ import ec.gob.gim.common.model.LegalEntity;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.waterservice.model.WaterSupply;
+import java.util.Arrays;
 
 @Name("propertyHome")
 public class PropertyHome extends EntityHome<Property> {
@@ -171,6 +179,10 @@ public class PropertyHome extends EntityHome<Property> {
 	// constructorrrr...................
 	private Property property;
 
+	private CadasterService cadasterService;
+
+	private CadastralCertificateDTO _dataCadastralCerfificate;
+	
 	public Property getProperty() {
 		return property;
 	}
@@ -192,7 +204,8 @@ public class PropertyHome extends EntityHome<Property> {
 		return listPropertyHistory;
 	}
 
-	public void setListPropertyHistory(List<PropertyHistoryDTO> listPropertyHistory) {
+	public void setListPropertyHistory(
+			List<PropertyHistoryDTO> listPropertyHistory) {
 		this.listPropertyHistory = listPropertyHistory;
 	}
 
@@ -208,7 +221,8 @@ public class PropertyHome extends EntityHome<Property> {
 		return selectedPropertyViewHistory;
 	}
 
-	public void setSelectedPropertyViewHistory(Property selectedPropertyViewHistory) {
+	public void setSelectedPropertyViewHistory(
+			Property selectedPropertyViewHistory) {
 		this.selectedPropertyViewHistory = selectedPropertyViewHistory;
 	}
 
@@ -224,10 +238,11 @@ public class PropertyHome extends EntityHome<Property> {
 		return propertySelectedCadastralCode;
 	}
 
-	public void setPropertySelectedCadastralCode(String propertySelectedCadastralCode) {
+	public void setPropertySelectedCadastralCode(
+			String propertySelectedCadastralCode) {
 		this.propertySelectedCadastralCode = propertySelectedCadastralCode;
 	}
-
+	
 	public void load() {
 		if (isIdDefined()) {
 			wire();
@@ -241,8 +256,10 @@ public class PropertyHome extends EntityHome<Property> {
 	 */
 	@SuppressWarnings("unchecked")
 	private boolean existsCadastralCode() {
-		List<Property> list = getPersistenceContext().createNamedQuery("Property.findByCadastralCode")
-				.setParameter("criteria", this.getInstance().getCadastralCode()).getResultList();
+		List<Property> list = getPersistenceContext()
+				.createNamedQuery("Property.findByCadastralCode")
+				.setParameter("criteria", this.getInstance().getCadastralCode())
+				.getResultList();
 		if (list != null && list.size() > 0) {
 			if (this.getInstance().getId() == null || list.size() > 1
 					|| this.getInstance().getId() != list.get(0).getId()) {
@@ -255,8 +272,9 @@ public class PropertyHome extends EntityHome<Property> {
 
 	@SuppressWarnings("unused")
 	private PropertyType findPropertyType(Long id) {
-		List<?> list = getPersistenceContext().createNamedQuery("PropertyType.findById").setParameter("id", id)
-				.getResultList();
+		List<?> list = getPersistenceContext()
+				.createNamedQuery("PropertyType.findById")
+				.setParameter("id", id).getResultList();
 		if (list != null && list.size() > 0) {
 			return (PropertyType) list.get(0);
 		}
@@ -287,12 +305,16 @@ public class PropertyHome extends EntityHome<Property> {
 	public String save() {
 		// TODO Auto-generated method stub
 		if (systemParameterService == null)
-			systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SYSTEM_PARAMETER_SERVICE_NAME);
 
 		if (existsCadastralCode()) {
-			String message = Interpolator.instance().interpolate("#{messages['property.existsCadastralCode']}",
+			String message = Interpolator.instance().interpolate(
+					"#{messages['property.existsCadastralCode']}",
 					new Object[0]);
-			facesMessages.addToControl("", org.jboss.seam.international.StatusMessage.Severity.ERROR, message);
+			facesMessages.addToControl("",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
+					message);
 			return "failed";
 		}
 
@@ -300,9 +322,14 @@ public class PropertyHome extends EntityHome<Property> {
 			if (editObservation != null)
 				editObservation = editObservation.trim();
 			if ((editObservation == null) || (editObservation.length() < 50)) {
-				String message = Interpolator.instance().interpolate("#{messages['property.changeHistoryError']}",
+				String message = Interpolator.instance().interpolate(
+						"#{messages['property.changeHistoryError']}",
 						new Object[0]);
-				facesMessages.addToControl("", org.jboss.seam.international.StatusMessage.Severity.ERROR, message);
+				facesMessages
+						.addToControl(
+								"",
+								org.jboss.seam.international.StatusMessage.Severity.ERROR,
+								message);
 				return "failed";
 			}
 		}
@@ -315,16 +342,23 @@ public class PropertyHome extends EntityHome<Property> {
 		}
 
 		if (isUrban) {
-			/*if (!isValidPreviousCadastralCode()) {
-				String message = Interpolator.instance()
-						.interpolate("#{messages['property.errorPreviousCadastralCode']}", new Object[0]);
-				facesMessages.addToControl("", org.jboss.seam.international.StatusMessage.Severity.ERROR, message);
-				return "failed";
-			}*/
+			/*
+			 * if (!isValidPreviousCadastralCode()) { String message =
+			 * Interpolator.instance()
+			 * .interpolate("#{messages['property.errorPreviousCadastralCode']}"
+			 * , new Object[0]); facesMessages.addToControl("",
+			 * org.jboss.seam.international.StatusMessage.Severity.ERROR,
+			 * message); return "failed"; }
+			 */
 			if (!isValidAliquotForProperty()) {
-				String message = Interpolator.instance().interpolate("#{messages['property.errorPropertyAliquots']}",
+				String message = Interpolator.instance().interpolate(
+						"#{messages['property.errorPropertyAliquots']}",
 						new Object[0]);
-				facesMessages.addToControl("", org.jboss.seam.international.StatusMessage.Severity.ERROR, message);
+				facesMessages
+						.addToControl(
+								"",
+								org.jboss.seam.international.StatusMessage.Severity.ERROR,
+								message);
 				return "failed";
 			}
 		}
@@ -368,11 +402,13 @@ public class PropertyHome extends EntityHome<Property> {
 				// appraisal.setValueBySquareMeter(this.instance.getCurrentDomain().getValueBySquareMeter());
 				// appraisal.setDomain(this.instance.getCurrentDomain());
 				// }
-				this.getInstance().setPropertyType((PropertyType) systemParameterService.materialize(PropertyType.class,
-						"PROPERTY_TYPE_ID_URBAN"));
+				this.getInstance().setPropertyType(
+						(PropertyType) systemParameterService.materialize(
+								PropertyType.class, "PROPERTY_TYPE_ID_URBAN"));
 			} else {
-				this.getInstance().setPropertyType((PropertyType) systemParameterService.materialize(PropertyType.class,
-						"PROPERTY_TYPE_ID_RUSTIC"));
+				this.getInstance().setPropertyType(
+						(PropertyType) systemParameterService.materialize(
+								PropertyType.class, "PROPERTY_TYPE_ID_RUSTIC"));
 			}
 
 			return super.persist();
@@ -392,9 +428,14 @@ public class PropertyHome extends EntityHome<Property> {
 			if (editObservation != null)
 				editObservation = editObservation.trim();
 			if ((editObservation == null) || (editObservation.length() < 50)) {
-				String message = Interpolator.instance().interpolate("#{messages['property.changeHistoryError']}",
+				String message = Interpolator.instance().interpolate(
+						"#{messages['property.changeHistoryError']}",
 						new Object[0]);
-				facesMessages.addToControl("", org.jboss.seam.international.StatusMessage.Severity.ERROR, message);
+				facesMessages
+						.addToControl(
+								"",
+								org.jboss.seam.international.StatusMessage.Severity.ERROR,
+								message);
 				return "failed";
 			}
 		}
@@ -404,9 +445,10 @@ public class PropertyHome extends EntityHome<Property> {
 		return super.update();
 	}
 
-	private List<CheckingRecord> findCheckingRecords(Date start, Date end, CheckingRecordType ct) {
-		Query query = getPersistenceContext()
-				.createNamedQuery("Property.findCheckingRecordsByChekingRecordTypeAndDates");
+	private List<CheckingRecord> findCheckingRecords(Date start, Date end,
+			CheckingRecordType ct) {
+		Query query = getPersistenceContext().createNamedQuery(
+				"Property.findCheckingRecordsByChekingRecordTypeAndDates");
 		query.setParameter("checkingRecordType", ct);
 		query.setParameter("startDate", start);
 		query.setParameter("endDate", end);
@@ -415,10 +457,13 @@ public class PropertyHome extends EntityHome<Property> {
 
 	public void findChekingRecords() {
 		if (checkingRecordType == null) {
-			checkingRecords = findCheckingRecords(startDate, endDate, CheckingRecordType.REGISTERED);
-			checkingRecords.addAll(findCheckingRecords(startDate, endDate, CheckingRecordType.CHECKED));
+			checkingRecords = findCheckingRecords(startDate, endDate,
+					CheckingRecordType.REGISTERED);
+			checkingRecords.addAll(findCheckingRecords(startDate, endDate,
+					CheckingRecordType.CHECKED));
 		} else {
-			checkingRecords = findCheckingRecords(startDate, endDate, checkingRecordType);
+			checkingRecords = findCheckingRecords(startDate, endDate,
+					checkingRecordType);
 		}
 	}
 
@@ -451,11 +496,14 @@ public class PropertyHome extends EntityHome<Property> {
 	public BigDecimal calculateValueTransaction() {
 		if (this.getInstance().getCurrentDomain() != null) {
 			if (this.getInstance().getCurrentDomain().getValueTransaction() == null)
-				this.getInstance().getCurrentDomain().setValueTransaction(new BigDecimal(0));
+				this.getInstance().getCurrentDomain()
+						.setValueTransaction(new BigDecimal(0));
 			if (this.getInstance().getCurrentDomain().getCommercialAppraisal() == null)
-				this.getInstance().getCurrentDomain().setCommercialAppraisal(new BigDecimal(0));
-			return major(this.getInstance().getCurrentDomain().getValueTransaction(),
-					this.getInstance().getCurrentDomain().getCommercialAppraisal());
+				this.getInstance().getCurrentDomain()
+						.setCommercialAppraisal(new BigDecimal(0));
+			return major(this.getInstance().getCurrentDomain()
+					.getValueTransaction(), this.getInstance()
+					.getCurrentDomain().getCommercialAppraisal());
 		}
 
 		return new BigDecimal(0);
@@ -467,9 +515,17 @@ public class PropertyHome extends EntityHome<Property> {
 	 */
 	public void calculateLotAppraisal() {
 		if (this.getInstance().getArea() != null
-				&& this.getInstance().getCurrentDomain().getValueBySquareMeter() != null) {
-			this.getInstance().getCurrentDomain().setLotAppraisal(this.getInstance().getArea()
-					.multiply(this.getInstance().getCurrentDomain().getValueBySquareMeter()));
+				&& this.getInstance().getCurrentDomain()
+						.getValueBySquareMeter() != null) {
+			this.getInstance()
+					.getCurrentDomain()
+					.setLotAppraisal(
+							this.getInstance()
+									.getArea()
+									.multiply(
+											this.getInstance()
+													.getCurrentDomain()
+													.getValueBySquareMeter()));
 		}
 	}
 
@@ -478,31 +534,45 @@ public class PropertyHome extends EntityHome<Property> {
 	 */
 	public void calculateBuildingAppraisal() {
 		if (this.getInstance().getBuildings().get(0).getArea() != null
-				&& this.getInstance().getBuildings().get(0).getStructureMaterial() != null) {
-			BigDecimal appraisal = findValueBySquareMeterByStructureMaterialAndFiscalPeriod(
-					this.getInstance().getBuildings().get(0).getStructureMaterial());
+				&& this.getInstance().getBuildings().get(0)
+						.getStructureMaterial() != null) {
+			BigDecimal appraisal = findValueBySquareMeterByStructureMaterialAndFiscalPeriod(this
+					.getInstance().getBuildings().get(0).getStructureMaterial());
 			if (appraisal == null) {
-				this.getInstance().getCurrentDomain().setBuildingAppraisal(new BigDecimal(0));
-				String message = Interpolator.instance()
-						.interpolate("#{messages['buildingMaterialValue.noValueInFiscalPeriod']}", new Object[0]);
-				facesMessages.addToControl("structureMaterial",
-						org.jboss.seam.international.StatusMessage.Severity.INFO, message);
+				this.getInstance().getCurrentDomain()
+						.setBuildingAppraisal(new BigDecimal(0));
+				String message = Interpolator
+						.instance()
+						.interpolate(
+								"#{messages['buildingMaterialValue.noValueInFiscalPeriod']}",
+								new Object[0]);
+				facesMessages
+						.addToControl(
+								"structureMaterial",
+								org.jboss.seam.international.StatusMessage.Severity.INFO,
+								message);
 				return;
 			}
-			this.getInstance().getCurrentDomain()
-					.setBuildingAppraisal(this.getInstance().getBuildings().get(0).getArea().multiply(appraisal));
+			this.getInstance()
+					.getCurrentDomain()
+					.setBuildingAppraisal(
+							this.getInstance().getBuildings().get(0).getArea()
+									.multiply(appraisal));
 		}
 		calculateCommercialAppraisal();
 	}
 
-	private BigDecimal findValueBySquareMeterByStructureMaterialAndFiscalPeriod(StructureMaterial s) {
-		Query query = getPersistenceContext()
-				.createNamedQuery("BuildingMaterialValue.findByStructureMaterialAndFiscalPeriod");
+	private BigDecimal findValueBySquareMeterByStructureMaterialAndFiscalPeriod(
+			StructureMaterial s) {
+		Query query = getPersistenceContext().createNamedQuery(
+				"BuildingMaterialValue.findByStructureMaterialAndFiscalPeriod");
 		query.setParameter("structureMaterial", s);
-		query.setParameter("fiscalPeriodId", userSession.getFiscalPeriod().getId());
+		query.setParameter("fiscalPeriodId", userSession.getFiscalPeriod()
+				.getId());
 		List<?> result = query.getResultList();
 		if (result != null && result.size() > 0)
-			return ((BuildingMaterialValue) result.get(0)).getValueBySquareMeter();
+			return ((BuildingMaterialValue) result.get(0))
+					.getValueBySquareMeter();
 		return null;
 	}
 
@@ -516,8 +586,10 @@ public class PropertyHome extends EntityHome<Property> {
 		Redirect r = Redirect.instance();
 		r.setViewId("/cadaster/ChangeOwnerProperty.xhtml");
 		if (domainHome.getInstance().getResident() == null) {
-			String message = Interpolator.instance().interpolate("#{messages['resident.required']}", new Object[0]);
-			facesMessages.addToControl("residentChooser", org.jboss.seam.international.StatusMessage.Severity.ERROR,
+			String message = Interpolator.instance().interpolate(
+					"#{messages['resident.required']}", new Object[0]);
+			facesMessages.addToControl("residentChooser",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					message);
 			r.execute();
 			return "failed";
@@ -527,14 +599,16 @@ public class PropertyHome extends EntityHome<Property> {
 			this.getInstance().setBlock(null);
 
 		this.getInstance().setUrban(isUrban);
-		//rarmijos 2015-11-23
+		// rarmijos 2015-11-23
 		this.getInstance().setNeedConfirmChangeOwner(Boolean.TRUE);
-		
+
 		domainHome.getInstance().setCreationDate(new Date());
 		domainHome.getInstance().setCreationTime(new Date());
 		domainHome.getInstance().setUserRegister(userSession.getUser());
-		domainHome.getInstance().setLotAreaTransfer(this.calculateAliquotLotArea());
-		domainHome.getInstance().setBuildingAreaTransfer(this.calculateAliquotConstructionArea());
+		domainHome.getInstance().setLotAreaTransfer(
+				this.calculateAliquotLotArea());
+		domainHome.getInstance().setBuildingAreaTransfer(
+				this.calculateAliquotConstructionArea());
 		// if
 		// (domainHome.getInstance().getPurchaseType().getName().trim().equalsIgnoreCase("REMATE"))
 		// {
@@ -543,7 +617,8 @@ public class PropertyHome extends EntityHome<Property> {
 		// domainHome.getInstance().setValueForCalculate(major(domainHome.getInstance().getValueTransaction(),domainHome.getInstance().getCommercialAppraisal()));
 		// }
 		if (getInstance().getCurrentDomain().getValueTransaction() == null)
-			getInstance().getCurrentDomain().setValueTransaction(new BigDecimal(0));
+			getInstance().getCurrentDomain().setValueTransaction(
+					new BigDecimal(0));
 
 		// CadasterService cadasterService =
 		// ServiceLocator.getInstance().findResource(CADASTER_SERVICE_NAME);
@@ -662,14 +737,16 @@ public class PropertyHome extends EntityHome<Property> {
 	 *            es el padre del territorialDivision que se va a obtener
 	 * @return devuelve un TerritorialDivision
 	 */
-	private TerritorialDivision findTerritorialDivision(int x, int y, TerritorialDivision td) {
+	private TerritorialDivision findTerritorialDivision(int x, int y,
+			TerritorialDivision td) {
 
 		if (this.getInstance().getCadastralCode().length() < y)
 			return null;
 
 		String code = this.getInstance().getCadastralCode().substring(x, y);
 
-		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByCodeAndParent");
+		Query query = getPersistenceContext().createNamedQuery(
+				"TerritorialDivision.findByCodeAndParent");
 		query.setParameter("code", code);
 		query.setParameter("parent", td);
 		List<?> result = query.getResultList();
@@ -691,7 +768,8 @@ public class PropertyHome extends EntityHome<Property> {
 			return;
 
 		if (parish == null)
-			parish = findTerritorialDivision(4, 6, territorialDivisionHome.findDefaultCanton());
+			parish = findTerritorialDivision(4, 6,
+					territorialDivisionHome.findDefaultCanton());
 
 		if (zone == null)
 			zone = findTerritorialDivision(6, 8, parish);
@@ -707,7 +785,8 @@ public class PropertyHome extends EntityHome<Property> {
 
 	private void rusticLoadValues() {
 		if (parish == null)
-			parish = findTerritorialDivision(5, 9, territorialDivisionHome.findDefaultCanton());
+			parish = findTerritorialDivision(5, 9,
+					territorialDivisionHome.findDefaultCanton());
 
 	}
 
@@ -739,8 +818,10 @@ public class PropertyHome extends EntityHome<Property> {
 	 * @param building
 	 */
 	private BigDecimal calculateTotalArea(Building building) {
-		if (building != null && building.getArea() != null && building.getFloorsNumber() != null)
-			return building.getArea().multiply(BigDecimal.valueOf(building.getFloorsNumber()));
+		if (building != null && building.getArea() != null
+				&& building.getFloorsNumber() != null)
+			return building.getArea().multiply(
+					BigDecimal.valueOf(building.getFloorsNumber()));
 		return new BigDecimal(0);
 	}
 
@@ -753,7 +834,9 @@ public class PropertyHome extends EntityHome<Property> {
 		if (this.getInstance().getLotAliquot() == null)
 			return new BigDecimal(0);
 
-		return getInstance().getArea().multiply(this.getInstance().getLotAliquot()).divide(new BigDecimal(100));
+		return getInstance().getArea()
+				.multiply(this.getInstance().getLotAliquot())
+				.divide(new BigDecimal(100));
 	}
 
 	/**
@@ -768,7 +851,8 @@ public class PropertyHome extends EntityHome<Property> {
 		if (this.getInstance().getCurrentDomain().getTotalAreaConstruction() == null)
 			calculateTotalAreaConstruction();
 		return this.getInstance().getCurrentDomain().getTotalAreaConstruction()
-				.multiply(this.getInstance().getBuildingAliquot()).divide(new BigDecimal(100));
+				.multiply(this.getInstance().getBuildingAliquot())
+				.divide(new BigDecimal(100));
 	}
 
 	/**
@@ -794,12 +878,20 @@ public class PropertyHome extends EntityHome<Property> {
 	 * Calcula el avalúo comercial de la propiedad
 	 */
 	public void calculateCommercialAppraisal() {
-		if (this.getInstance() != null && this.getInstance().getCurrentDomain().getBuildingAppraisal() != null
+		if (this.getInstance() != null
+				&& this.getInstance().getCurrentDomain().getBuildingAppraisal() != null
 				&& this.getInstance().getCurrentDomain().getLotAppraisal() != null) {
-			this.getInstance().getCurrentDomain().setCommercialAppraisal(this.getInstance().getCurrentDomain()
-					.getBuildingAppraisal().add(this.getInstance().getCurrentDomain().getLotAppraisal()));
+			this.getInstance()
+					.getCurrentDomain()
+					.setCommercialAppraisal(
+							this.getInstance()
+									.getCurrentDomain()
+									.getBuildingAppraisal()
+									.add(this.getInstance().getCurrentDomain()
+											.getLotAppraisal()));
 		} else {
-			this.getInstance().getCurrentDomain().setCommercialAppraisal(new BigDecimal(0));
+			this.getInstance().getCurrentDomain()
+					.setCommercialAppraisal(new BigDecimal(0));
 		}
 	}
 
@@ -812,8 +904,10 @@ public class PropertyHome extends EntityHome<Property> {
 		if (domain == null) {
 			return BigDecimal.ZERO;
 		}
-		if (domain != null && domain.getBuildingAppraisal() != null && domain.getLotAppraisal() != null) {
-			domain.setCommercialAppraisal(domain.getBuildingAppraisal().add(domain.getLotAppraisal()));
+		if (domain != null && domain.getBuildingAppraisal() != null
+				&& domain.getLotAppraisal() != null) {
+			domain.setCommercialAppraisal(domain.getBuildingAppraisal().add(
+					domain.getLotAppraisal()));
 		} else {
 			domain.setCommercialAppraisal(new BigDecimal(0));
 		}
@@ -826,9 +920,14 @@ public class PropertyHome extends EntityHome<Property> {
 	public void populateCadastralCodeAndLimits() {
 		populateCadastralCode();
 		populateLimits();
-		this.getInstance().getCurrentDomain()
-				.setValueBySquareMeter(this.getInstance().getBlock().getValueBySquareMeter());
-		this.getInstance().getLocation().setNeighborhood(this.getInstance().getBlock().getNeighborhood());
+		this.getInstance()
+				.getCurrentDomain()
+				.setValueBySquareMeter(
+						this.getInstance().getBlock().getValueBySquareMeter());
+		this.getInstance()
+				.getLocation()
+				.setNeighborhood(
+						this.getInstance().getBlock().getNeighborhood());
 	}
 
 	/**
@@ -842,17 +941,21 @@ public class PropertyHome extends EntityHome<Property> {
 		// logger.info("populateCadastralCode() parishe #0, zone #1", parish,
 		// zone);
 
-//		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "0000"); //antigua clave
-		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "00"); //nueva clave catastral
+		// cadastralCodeBuffer.append(parish != null ? parish.getCode() :
+		// "0000"); //antigua clave
+		cadastralCodeBuffer.append(parish != null ? parish.getCode() : "00"); // nueva
+																				// clave
+																				// catastral
 		cadastralCodeBuffer.append(zone != null ? zone.getCode() : "00");
 		cadastralCodeBuffer.append(sector != null ? sector.getCode() : "00");
-		cadastralCodeBuffer
-				.append(this.getInstance().getBlock() != null && this.getInstance().getBlock().getId() != null
-						? this.getInstance().getBlock().getCode() : "000");
+		cadastralCodeBuffer.append(this.getInstance().getBlock() != null
+				&& this.getInstance().getBlock().getId() != null ? this
+				.getInstance().getBlock().getCode() : "000");
 		cadastralCodeBuffer.append(getInstance().getFormattedNumber());
 		cadastralCodeBuffer.append(getInstance().getFormattedBuildingNumber());
 		cadastralCodeBuffer.append(getInstance().getFormattedFloorNumber());
-		cadastralCodeBuffer.append(getInstance().getFormattedHousingUnitNumber());
+		cadastralCodeBuffer.append(getInstance()
+				.getFormattedHousingUnitNumber());
 		getInstance().setCadastralCode(cadastralCodeBuffer.toString());
 
 		// getInstance().setPreviousCadastralCode(cadastralCodeBuffer.toString());
@@ -878,7 +981,8 @@ public class PropertyHome extends EntityHome<Property> {
 	 * @param property
 	 *            Propiedad
 	 */
-	private void createPropertyLandUse(List<PropertyLandUse> list, Property property) {
+	private void createPropertyLandUse(List<PropertyLandUse> list,
+			Property property) {
 		if (list == null || list.size() == 0)
 			return;
 
@@ -984,13 +1088,15 @@ public class PropertyHome extends EntityHome<Property> {
 		p.setWaterMetersNumber(this.getInstance().getWaterMetersNumber());
 		p.setCadastralCode(this.getInstance().getCadastralCode());
 		p.setPhoto(this.getInstance().getPhoto());
-		p.setPreviousCadastralCode(this.getInstance().getPreviousCadastralCode());
+		p.setPreviousCadastralCode(this.getInstance()
+				.getPreviousCadastralCode());
 		p.setDuplicate(true);
 		this.setInstance(p);
 	}
 
 	public void wire() {
-		//System.out.println("--Ingreso a wire PropertyHome isfirsttime" + isFirstTime);
+		// System.out.println("--Ingreso a wire PropertyHome isfirsttime" +
+		// isFirstTime);
 
 		getDefinedInstance();
 
@@ -1026,9 +1132,11 @@ public class PropertyHome extends EntityHome<Property> {
 			getInstance().setCurrentDomain(currentDomain);
 		}
 		if (this.getInstance().getCurrentDomain().getResident() != null) {
-			identificationNumber = getInstance().getCurrentDomain().getResident().getIdentificationNumber();
+			identificationNumber = getInstance().getCurrentDomain()
+					.getResident().getIdentificationNumber();
 		}
-		limits = getInstance().getBlock() != null ? getInstance().getBlock().getLimits() : new ArrayList<BlockLimit>();
+		limits = getInstance().getBlock() != null ? getInstance().getBlock()
+				.getLimits() : new ArrayList<BlockLimit>();
 
 		blockLimit = getInstance().getLocation().getMainBlockLimit();
 
@@ -1050,7 +1158,8 @@ public class PropertyHome extends EntityHome<Property> {
 		calculateTotalAreaConstruction();
 
 		anioAppraisal = GregorianCalendar.getInstance().get(Calendar.YEAR);
-		//System.out.println(">>>>>>>>>>>>>>>>> anioAppraisal: " + anioAppraisal);
+		// System.out.println(">>>>>>>>>>>>>>>>> anioAppraisal: " +
+		// anioAppraisal);
 		if (appraisalPeriod == null)
 			appraisalPeriod = findActiveAppraisalPeriod();
 
@@ -1081,7 +1190,8 @@ public class PropertyHome extends EntityHome<Property> {
 			getInstance().setCurrentDomain(currentDomain);
 		}
 		if (this.getInstance().getCurrentDomain().getResident() != null) {
-			identificationNumber = getInstance().getCurrentDomain().getResident().getIdentificationNumber();
+			identificationNumber = getInstance().getCurrentDomain()
+					.getResident().getIdentificationNumber();
 		}
 
 		if (this.getInstance().getCadastralCode() == null)
@@ -1128,7 +1238,8 @@ public class PropertyHome extends EntityHome<Property> {
 		}
 		for (int i = 0; i < descOrderDates.size(); i++) {
 			for (int j = 0; j < domains.size(); j++) {
-				if (descOrderDates.get(i).equals(domains.get(j).getDate()) && !orderDomains.contains(domains.get(j))) {
+				if (descOrderDates.get(i).equals(domains.get(j).getDate())
+						&& !orderDomains.contains(domains.get(j))) {
 					orderDomains.add(domains.get(j));
 				}
 			}
@@ -1162,7 +1273,8 @@ public class PropertyHome extends EntityHome<Property> {
 		ArrayList<Domain> domains = new ArrayList<Domain>();
 		for (int i = 0; i < getInstance().getDomains().size(); i++) {
 			if (getInstance().getDomains().get(i).getChangeOwnerConfirmed() != null
-					&& getInstance().getDomains().get(i).getChangeOwnerConfirmed())
+					&& getInstance().getDomains().get(i)
+							.getChangeOwnerConfirmed())
 				domains.add(getInstance().getDomains().get(i));
 		}
 		return orderByDate(domains);
@@ -1182,7 +1294,8 @@ public class PropertyHome extends EntityHome<Property> {
 			calculateTotalAreaConstruction();
 			isFirstCalculate = false;
 		}
-		if (this.getInstance() != null && this.getInstance().getBuildings().size() > 1) {
+		if (this.getInstance() != null
+				&& this.getInstance().getBuildings().size() > 1) {
 			List<Integer> numbers = new ArrayList<Integer>();
 			List<Building> buildings = new ArrayList<Building>();
 			for (Building b : getInstance().getBuildings()) {
@@ -1199,15 +1312,18 @@ public class PropertyHome extends EntityHome<Property> {
 			return buildings;
 		}
 
-		return getInstance() == null ? null : new ArrayList<Building>(getInstance().getBuildings());
+		return getInstance() == null ? null : new ArrayList<Building>(
+				getInstance().getBuildings());
 	}
 
 	public List<PropertyLandUse> getPropertyLandUses() {
-		return getInstance() == null ? null : new ArrayList<PropertyLandUse>(getInstance().getPropertyLandUses());
+		return getInstance() == null ? null : new ArrayList<PropertyLandUse>(
+				getInstance().getPropertyLandUses());
 	}
 
 	public List<WaterSupply> getWaterSupplies() {
-		return getInstance() == null ? null : new ArrayList<WaterSupply>(getInstance().getWaterSupplies());
+		return getInstance() == null ? null : new ArrayList<WaterSupply>(
+				getInstance().getWaterSupplies());
 	}
 
 	/**
@@ -1217,7 +1333,8 @@ public class PropertyHome extends EntityHome<Property> {
 	public void searchResidentByCriteria() {
 		logger.info("SEARCH RESIDENT BY CRITERIA " + this.criteria);
 		if (this.criteria != null && !this.criteria.isEmpty()) {
-			Query query = getEntityManager().createNamedQuery("Resident.findByCriteria");
+			Query query = getEntityManager().createNamedQuery(
+					"Resident.findByCriteria");
 			query.setParameter("criteria", this.criteria);
 			setResidents(query.getResultList());
 		}
@@ -1228,7 +1345,8 @@ public class PropertyHome extends EntityHome<Property> {
 	 */
 	public void searchResident() {
 		logger.info("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
-		Query query = getEntityManager().createNamedQuery("Resident.findByIdentificationNumber");
+		Query query = getEntityManager().createNamedQuery(
+				"Resident.findByIdentificationNumber");
 		query.setParameter("identificationNumber", this.identificationNumber);
 		try {
 			Resident resident = (Resident) query.getSingleResult();
@@ -1254,7 +1372,8 @@ public class PropertyHome extends EntityHome<Property> {
 	 */
 	public void residentSelectedListener(ActionEvent event) {
 		UIComponent component = event.getComponent();
-		Resident resident = (Resident) component.getAttributes().get("resident");
+		Resident resident = (Resident) component.getAttributes()
+				.get("resident");
 		this.getInstance().getCurrentDomain().setResident(resident);
 		this.setIdentificationNumber(resident.getIdentificationNumber());
 	}
@@ -1269,9 +1388,10 @@ public class PropertyHome extends EntityHome<Property> {
 
 	@SuppressWarnings("unchecked")
 	private List<TerritorialDivision> findTerritorialDivisions(Long parentId) {
-		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParent");
+		Query query = getPersistenceContext().createNamedQuery(
+				"TerritorialDivision.findByParent");
 		query.setParameter("parentId", parentId);
-		List<TerritorialDivision> td = query.getResultList(); 
+		List<TerritorialDivision> td = query.getResultList();
 		return td;
 	}
 
@@ -1290,20 +1410,22 @@ public class PropertyHome extends EntityHome<Property> {
 	 */
 
 	public List<TerritorialDivision> findParishes(Long defaultCantonId) {
-		//return findTerritorialDivisions(defaultCantonId);
-		//@tag cambioClave
+		// return findTerritorialDivisions(defaultCantonId);
+		// @tag cambioClave
 		return findTerritorialDivisionsNew(defaultCantonId);
 	}
-	
+
 	/**
 	 * macartuche
+	 * 
 	 * @tag cambioClave
 	 * @param parentId
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	private List<TerritorialDivision> findTerritorialDivisionsNew(Long parentId) {
-		Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParentNew");
+		Query query = getPersistenceContext().createNamedQuery(
+				"TerritorialDivision.findByParentNew");
 		query.setParameter("parentId", parentId);
 		query.setParameter("classifierGeo", Boolean.TRUE);
 		return query.getResultList();
@@ -1402,7 +1524,8 @@ public class PropertyHome extends EntityHome<Property> {
 		// logger.info("========= Ingreso a populateBlocks(), con sector: #0",
 		// sector != null ? sector.getId() : sector);
 		if (sector != null && sector.getId() != null) {
-			Query query = getEntityManager().createNamedQuery("Block.findBySector");
+			Query query = getEntityManager().createNamedQuery(
+					"Block.findBySector");
 			query.setParameter("sectorId", sector.getId());
 			setBlocks((List<Block>) query.getResultList());
 		} else {
@@ -1418,10 +1541,11 @@ public class PropertyHome extends EntityHome<Property> {
 	 * @return List<BlockLimit>
 	 */
 	public List<BlockLimit> populateLimits() {
-		 logger.info("========= Ingreso a populateLimits(), con instance");
+		logger.info("========= Ingreso a populateLimits(), con instance");
 		// block: #0",
 		// this.getInstance().getBlock().getId());
-		if (this.getInstance().getBlock() != null && this.getInstance().getBlock().getId() != null) {
+		if (this.getInstance().getBlock() != null
+				&& this.getInstance().getBlock().getId() != null) {
 			limits = this.getInstance().getBlock().getLimits();
 		} else {
 			limits = new ArrayList<BlockLimit>();
@@ -1439,7 +1563,8 @@ public class PropertyHome extends EntityHome<Property> {
 	}
 
 	public void setOwnerCurrentDomain(Resident owner) {
-		logger.info("=====> Ingreso a fijar propietario #0", owner.getIdentificationNumber());
+		logger.info("=====> Ingreso a fijar propietario #0",
+				owner.getIdentificationNumber());
 		this.owner = owner;
 		owner.add(this.getInstance().getCurrentDomain());
 
@@ -1455,7 +1580,8 @@ public class PropertyHome extends EntityHome<Property> {
 	@SuppressWarnings("unchecked")
 	public List<Neighborhood> findNeighborhoods(Object suggest) {
 		String pref = (String) suggest;
-		Query query = this.getEntityManager().createNamedQuery("Neighborhood.findByName");
+		Query query = this.getEntityManager().createNamedQuery(
+				"Neighborhood.findByName");
 		query.setParameter("name", pref);
 		return (List<Neighborhood>) query.getResultList();
 	}
@@ -1472,15 +1598,18 @@ public class PropertyHome extends EntityHome<Property> {
 		String message;
 
 		if (getInstance().getCurrentDomain().getResident() instanceof Person) {
-			message = Interpolator.instance().interpolate("#{messages['common.Natural']}", new Object[0]);
+			message = Interpolator.instance().interpolate(
+					"#{messages['common.Natural']}", new Object[0]);
 		} else {
-			LegalEntity legalEntity = (LegalEntity) getInstance().getCurrentDomain().getResident();
+			LegalEntity legalEntity = (LegalEntity) getInstance()
+					.getCurrentDomain().getResident();
 
 			if (legalEntity.getLegalEntityType() == null)
 				return "";
 
-			message = Interpolator.instance()
-					.interpolate("#{messages[" + legalEntity.getLegalEntityType().name() + "]}", new Object[0]);
+			message = Interpolator.instance().interpolate(
+					"#{messages[" + legalEntity.getLegalEntityType().name()
+							+ "]}", new Object[0]);
 		}
 		return message;
 	}
@@ -1507,7 +1636,8 @@ public class PropertyHome extends EntityHome<Property> {
 	@SuppressWarnings("unchecked")
 	private List<TerritorialDivision> showCantons(Domain d) {
 		if (d.getNotarysProvince() != null) {
-			Query query = getPersistenceContext().createNamedQuery("TerritorialDivision.findByParent");
+			Query query = getPersistenceContext().createNamedQuery(
+					"TerritorialDivision.findByParent");
 			query.setParameter("parentId", d.getNotarysProvince().getId());
 			return query.getResultList();
 		} else {
@@ -1526,9 +1656,12 @@ public class PropertyHome extends EntityHome<Property> {
 	 * @param appraisal
 	 */
 	public void calculateCommercialAppraisal(Appraisal appraisal) {
-		appraisal.setCommercialAppraisal(appraisal.getLot().add(appraisal.getBuilding()));
-		this.getInstance().getCurrentDomain().setLotAppraisal(appraisal.getLot());
-		this.getInstance().getCurrentDomain().setBuildingAppraisal(appraisal.getBuilding());
+		appraisal.setCommercialAppraisal(appraisal.getLot().add(
+				appraisal.getBuilding()));
+		this.getInstance().getCurrentDomain()
+				.setLotAppraisal(appraisal.getLot());
+		this.getInstance().getCurrentDomain()
+				.setBuildingAppraisal(appraisal.getBuilding());
 		calculateCommercialAppraisal();
 	}
 
@@ -1554,7 +1687,8 @@ public class PropertyHome extends EntityHome<Property> {
 	@SuppressWarnings("unchecked")
 	public List<LandUse> findLandUse(Object suggest) {
 		String pref = (String) suggest;
-		Query query = this.getEntityManager().createNamedQuery("LandUse.findByName");
+		Query query = this.getEntityManager().createNamedQuery(
+				"LandUse.findByName");
 		query.setParameter("name", pref);
 		return (List<LandUse>) query.getResultList();
 	}
@@ -1627,23 +1761,23 @@ public class PropertyHome extends EntityHome<Property> {
 						res = d;
 				}
 
-				if (res.getId() != property.getCurrentDomain().getId() && res.getChangeOwnerConfirmed() == null) {
-					System.out.println("=>TRUE"+property.getId());
+				if (res.getId() != property.getCurrentDomain().getId()
+						&& res.getChangeOwnerConfirmed() == null) {
+					System.out.println("=>TRUE" + property.getId());
 					property.setNeedConfirmChangeOwner(true);
-//					super.getEntityManager().persist(property);
+					// super.getEntityManager().persist(property);
 				} else {
 
-					System.out.println("=>FALSE"+property.getId());
+					System.out.println("=>FALSE" + property.getId());
 					property.setNeedConfirmChangeOwner(false);
-//					super.getEntityManager().persist(property);
-					
+					// super.getEntityManager().persist(property);
 
 				}
 				super.update();
-				
+
 			}
 		}
-		
+
 		return property.getNeedConfirmChangeOwner();
 
 		// return property.getNeedConfirmChangeOwner();
@@ -1665,18 +1799,23 @@ public class PropertyHome extends EntityHome<Property> {
 		Collections.sort(ids);
 		for (Long id : ids) {
 			for (Domain d : property.getDomains()) {
-				if (d.getId().equals(id) && (d.getChangeOwnerConfirmed() == null || d.getChangeOwnerConfirmed())) {
+				if (d.getId().equals(id)
+						&& (d.getChangeOwnerConfirmed() == null || d
+								.getChangeOwnerConfirmed())) {
 					aux = d;
 					break;
 				}
 			}
 		}
 
-		this.setParish(getInstance().getBlock().getSector().getParent().getParent());
+		this.setParish(getInstance().getBlock().getSector().getParent()
+				.getParent());
 
 		domainHome.setInstance(aux);
-		domainHome.getInstance().setValueForCalculate(domainHome.calculateValueTransaction());
-		getInstance().getCurrentDomain().setValueForCalculate(calculateValueTransaction());
+		domainHome.getInstance().setValueForCalculate(
+				domainHome.calculateValueTransaction());
+		getInstance().getCurrentDomain().setValueForCalculate(
+				calculateValueTransaction());
 		return "/cadaster/report/ChangeOwnerReport.xhtml";
 	}
 
@@ -1716,7 +1855,8 @@ public class PropertyHome extends EntityHome<Property> {
 		List<Long> ids = new ArrayList<Long>();
 
 		for (Domain dom : this.getInstance().getDomains()) {
-			if (dom.getChangeOwnerConfirmed() != null && dom.getChangeOwnerConfirmed()) {
+			if (dom.getChangeOwnerConfirmed() != null
+					&& dom.getChangeOwnerConfirmed()) {
 				ids.add(dom.getId());
 			}
 		}
@@ -1747,11 +1887,14 @@ public class PropertyHome extends EntityHome<Property> {
 		if (!haveChangeOwnerProperty(d.getId()) && anterior == null)
 			return "/cadaster/HistoryProperty.xhtml";
 
-		this.setParish(getInstance().getBlock().getSector().getParent().getParent());
+		this.setParish(getInstance().getBlock().getSector().getParent()
+				.getParent());
 		domainHome.setInstance(d);
-		domainHome.getInstance().setValueForCalculate(domainHome.calculateValueTransaction());
+		domainHome.getInstance().setValueForCalculate(
+				domainHome.calculateValueTransaction());
 		getInstance().setCurrentDomain(anterior);
-		getInstance().getCurrentDomain().setValueForCalculate(calculateValueTransaction());
+		getInstance().getCurrentDomain().setValueForCalculate(
+				calculateValueTransaction());
 		return "/cadaster/report/ChangeOwnerReport.xhtml";
 	}
 
@@ -1787,14 +1930,18 @@ public class PropertyHome extends EntityHome<Property> {
 		Calendar c = Calendar.getInstance();
 		if (this.building.getBuildingYear() > (c.getTime().getYear() + 1900)
 				|| this.building.getBuildingYear() < 1900) {
-			String message = Interpolator.instance().interpolate("#{messages['building.incorrectBuildingYear']}",
+			String message = Interpolator.instance().interpolate(
+					"#{messages['building.incorrectBuildingYear']}",
 					new Object[0]);
-			facesMessages.addToControl("", org.jboss.seam.international.StatusMessage.Severity.ERROR, message);
+			facesMessages.addToControl("",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
+					message);
 			return;
 		}
 		this.getInstance().add(this.building);
-		logger.info("===> Building #0 Add, size list: #1 ", this.building.getNumber(),
-				this.getInstance().getBuildings().size());
+		logger.info("===> Building #0 Add, size list: #1 ",
+				this.building.getNumber(), this.getInstance().getBuildings()
+						.size());
 		calculateTotalAreaConstruction();
 	}
 
@@ -1804,15 +1951,20 @@ public class PropertyHome extends EntityHome<Property> {
 	public void updateCadastralCode() {
 		populateCadastralCode();
 		if (systemParameterService == null)
-			systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
-		BigInteger newCadastralCode = findMaxCadastralCode(this.getInstance().getCadastralCode().substring(0, 9),
-				((Long) systemParameterService.findParameter("PROPERTY_TYPE_ID_RUSTIC")));
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SYSTEM_PARAMETER_SERVICE_NAME);
+		BigInteger newCadastralCode = findMaxCadastralCode(this.getInstance()
+				.getCadastralCode().substring(0, 9),
+				((Long) systemParameterService
+						.findParameter("PROPERTY_TYPE_ID_RUSTIC")));
 		if (newCadastralCode.compareTo(BigInteger.ZERO) == 0) {
-			newCadastralCode = new BigInteger(this.getInstance().getCadastralCode());
+			newCadastralCode = new BigInteger(this.getInstance()
+					.getCadastralCode());
 		}
 		newCadastralCode = newCadastralCode.add(BigInteger.ONE);
 		this.getInstance().setCadastralCode(newCadastralCode.toString());
-		this.getInstance().setPreviousCadastralCode(newCadastralCode.toString().substring(5));
+		this.getInstance().setPreviousCadastralCode(
+				newCadastralCode.toString().substring(5));
 	}
 
 	/**
@@ -1823,12 +1975,15 @@ public class PropertyHome extends EntityHome<Property> {
 	 * @param Long
 	 *            propertyTypeId tipo de propiead 'urbana' o 'rústica'
 	 */
-	private BigInteger findMaxCadastralCode(String cadastralCode, Long propertyTypeId) {
-		List<?> list = getPersistenceContext().createNamedQuery("Property.findMaxCadastralCodeByParish")
-				.setParameter("cadastralCode", cadastralCode).setParameter("propertyTypeId", propertyTypeId)
-				.getResultList();
+	private BigInteger findMaxCadastralCode(String cadastralCode,
+			Long propertyTypeId) {
+		List<?> list = getPersistenceContext()
+				.createNamedQuery("Property.findMaxCadastralCodeByParish")
+				.setParameter("cadastralCode", cadastralCode)
+				.setParameter("propertyTypeId", propertyTypeId).getResultList();
 
-		if (list != null && list.size() > 0 && list.get(0) != null && list.get(0).toString().length() > 0) {
+		if (list != null && list.size() > 0 && list.get(0) != null
+				&& list.get(0).toString().length() > 0) {
 			return new BigInteger(list.get(0).toString());
 		}
 		return BigInteger.ZERO;
@@ -1844,8 +1999,10 @@ public class PropertyHome extends EntityHome<Property> {
 
 	private Charge getCharge(String systemParameter) {
 		if (systemParameterService == null)
-			systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
-		Charge charge = systemParameterService.materialize(Charge.class, systemParameter);
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SYSTEM_PARAMETER_SERVICE_NAME);
+		Charge charge = systemParameterService.materialize(Charge.class,
+				systemParameter);
 		return charge;
 	}
 
@@ -1867,6 +2024,7 @@ public class PropertyHome extends EntityHome<Property> {
 					procuratorDelegate = d;
 			}
 		}
+		
 	}
 
 	public String ComprobarValores() {
@@ -1878,7 +2036,8 @@ public class PropertyHome extends EntityHome<Property> {
 			double parcial1 = Double.parseDouble(areaParTer);
 			double total1 = this.instance.getArea().doubleValue();
 			if (parcial1 > total1) {
-				mensaje = "*área parcial de terreno incorrecta! " + String.valueOf(parcial1) + " es mayor que "
+				mensaje = "*área parcial de terreno incorrecta! "
+						+ String.valueOf(parcial1) + " es mayor que "
 						+ String.valueOf(total1);
 			} else {
 				mensaje = "*valor de área parcial de terreno correcto";
@@ -1887,9 +2046,11 @@ public class PropertyHome extends EntityHome<Property> {
 			}
 		} else if (areaParTer == "" && areaParCon != "") {
 			double parcial2 = Double.parseDouble(areaParCon);
-			double total2 = this.instance.getCurrentDomain().getTotalAreaConstruction().doubleValue();
+			double total2 = this.instance.getCurrentDomain()
+					.getTotalAreaConstruction().doubleValue();
 			if (parcial2 > total2) {
-				mensaje = "*área parcial de constucción incorrecta! " + String.valueOf(parcial2) + " es mayor que "
+				mensaje = "*área parcial de constucción incorrecta! "
+						+ String.valueOf(parcial2) + " es mayor que "
 						+ String.valueOf(total2);
 			} else {
 				mensaje = "*valor de área parcial de construcción correcto";
@@ -1900,15 +2061,20 @@ public class PropertyHome extends EntityHome<Property> {
 			double parcial1 = Double.parseDouble(areaParTer);
 			double total1 = this.instance.getArea().doubleValue();
 			double parcial2 = Double.parseDouble(areaParCon);
-			double total2 = this.instance.getCurrentDomain().getTotalAreaConstruction().doubleValue();
+			double total2 = this.instance.getCurrentDomain()
+					.getTotalAreaConstruction().doubleValue();
 			if (parcial1 > total1 && parcial2 > total2) {
-				mensaje = "*datos incorrectos! " + String.valueOf(parcial1) + " es mayor que " + String.valueOf(total1)
-						+ " y " + String.valueOf(parcial2) + " es mayor que " + String.valueOf(total2);
+				mensaje = "*datos incorrectos! " + String.valueOf(parcial1)
+						+ " es mayor que " + String.valueOf(total1) + " y "
+						+ String.valueOf(parcial2) + " es mayor que "
+						+ String.valueOf(total2);
 			} else if (parcial1 > total1 && parcial2 <= total2) {
-				mensaje = "*área parcial de terreno incorrecta! " + String.valueOf(parcial1) + " es mayor que "
+				mensaje = "*área parcial de terreno incorrecta! "
+						+ String.valueOf(parcial1) + " es mayor que "
 						+ String.valueOf(total1);
 			} else if (parcial1 <= total1 && parcial2 > total2) {
-				mensaje = "*área parcial de constucción incorrecta! " + String.valueOf(parcial2) + " es mayor que "
+				mensaje = "*área parcial de constucción incorrecta! "
+						+ String.valueOf(parcial2) + " es mayor que "
 						+ String.valueOf(total2);
 			} else if (parcial1 <= total1 && parcial2 <= total2) {
 				mensaje = "*valores parciales correctos";
@@ -2327,23 +2493,31 @@ public class PropertyHome extends EntityHome<Property> {
 
 	public void calculateUrbanAppraisalOnlyProperty(Property property) {
 		anioAppraisal = GregorianCalendar.getInstance().get(Calendar.YEAR);
-		System.out.println(">>>>>>>>>>>>>>>>> anioAppraisal calculateUrbanAppraisalOnlyProperty: " + anioAppraisal);
+		System.out
+				.println(">>>>>>>>>>>>>>>>> anioAppraisal calculateUrbanAppraisalOnlyProperty: "
+						+ anioAppraisal);
 		List<Property> properties = new ArrayList<Property>();
 		properties.add(property);
-		AppraisalService appraisalService = ServiceLocator.getInstance().findResource(APPRAISAL_SERVICE_NAME);
-		properties = appraisalService.calculateUrbanAppraisal(appraisalPeriod, anioAppraisal, properties, false);
+		AppraisalService appraisalService = ServiceLocator.getInstance()
+				.findResource(APPRAISAL_SERVICE_NAME);
+		properties = appraisalService.calculateUrbanAppraisal(appraisalPeriod,
+				anioAppraisal, properties, false);
 		Appraisal lastAppraisal = findLastAppraisal(property);
 		if (appraisal == null)
 			appraisal = new Appraisal();
 		appraisal.setLot(this.instance.getCurrentDomain().getLotAppraisal());
-		appraisal.setBuilding(this.instance.getCurrentDomain().getBuildingAppraisal());
-		appraisal.setCommercialAppraisal(this.instance.getCurrentDomain().getCommercialAppraisal());
-		appraisal.setValueBySquareMeter(this.instance.getCurrentDomain().getValueBySquareMeter());
+		appraisal.setBuilding(this.instance.getCurrentDomain()
+				.getBuildingAppraisal());
+		appraisal.setCommercialAppraisal(this.instance.getCurrentDomain()
+				.getCommercialAppraisal());
+		appraisal.setValueBySquareMeter(this.instance.getCurrentDomain()
+				.getValueBySquareMeter());
 		if (lastAppraisal == null)
 			this.instance.add(appraisal);
 		else {
 			if ((lastAppraisal.getLot().compareTo(appraisal.getLot()) != 0)
-					|| (lastAppraisal.getBuilding().compareTo(appraisal.getBuilding()) != 0)) {
+					|| (lastAppraisal.getBuilding().compareTo(
+							appraisal.getBuilding()) != 0)) {
 				this.instance.add(appraisal);
 			}
 		}
@@ -2356,7 +2530,8 @@ public class PropertyHome extends EntityHome<Property> {
 			idProperty = property.getId();
 		String strQuery = "SELECT * FROM appraisal where id = (select max(id) from appraisal where property_id="
 				+ idProperty + ")";
-		Query query = this.getEntityManager().createNativeQuery(strQuery, ec.gob.gim.cadaster.model.Appraisal.class);
+		Query query = this.getEntityManager().createNativeQuery(strQuery,
+				ec.gob.gim.cadaster.model.Appraisal.class);
 		if (idProperty == 0)
 			return null;
 		else {
@@ -2369,15 +2544,16 @@ public class PropertyHome extends EntityHome<Property> {
 	}
 
 	private AppraisalPeriod findActiveAppraisalPeriod() {
-		Query query = this.getEntityManager().createNamedQuery("AppraisalPeriod.findUniqueActiveAndNotForTest");
+		Query query = this.getEntityManager().createNamedQuery(
+				"AppraisalPeriod.findUniqueActiveAndNotForTest");
 		return (AppraisalPeriod) query.getSingleResult();
 	}
 
 	private boolean isValidAliquotForProperty() {
 		BigDecimal bgdCien = new BigDecimal(100);
 		BigDecimal bgdCero = BigDecimal.ZERO;
-		String horizontalPropertyCode = this.instance.getCadastralCode().substring(18,
-				this.instance.getCadastralCode().length());
+		String horizontalPropertyCode = this.instance.getCadastralCode()
+				.substring(18, this.instance.getCadastralCode().length());
 		if ((this.instance.getBuildingAliquot().compareTo(bgdCien) > 0)
 				|| (this.instance.getLotAliquot().compareTo(bgdCien) > 0)) {
 			return false;
@@ -2386,7 +2562,8 @@ public class PropertyHome extends EntityHome<Property> {
 			if (this.instance.getLotAliquot().compareTo(bgdCero) == 0) {
 				return false;
 			}
-			if (this.instance.getCurrentDomain().getTotalAreaConstruction().compareTo(bgdCero) == 0) {
+			if (this.instance.getCurrentDomain().getTotalAreaConstruction()
+					.compareTo(bgdCero) == 0) {
 				if ((this.instance.getLotAliquot().compareTo(bgdCero) == 0)
 						|| (this.instance.getLotAliquot().compareTo(bgdCien) == 0)) {
 					return false;
@@ -2410,13 +2587,16 @@ public class PropertyHome extends EntityHome<Property> {
 	}
 
 	private boolean isValidPreviousCadastralCode() {
-		this.instance.setPreviousCadastralCode(this.instance.getPreviousCadastralCode().trim());
+		this.instance.setPreviousCadastralCode(this.instance
+				.getPreviousCadastralCode().trim());
 		if ((this.instance.getPreviousCadastralCode().length() < lengthPreviousCadastralCode)
 				|| (this.instance.getPreviousCadastralCode().length() > 19))
 			return false;
 		if (isManaged()) {
-			Query query = this.getEntityManager().createNamedQuery("Property.countPreviousCadastralCodeAndId");
-			query.setParameter("previousCadastralCode", this.instance.getPreviousCadastralCode());
+			Query query = this.getEntityManager().createNamedQuery(
+					"Property.countPreviousCadastralCodeAndId");
+			query.setParameter("previousCadastralCode",
+					this.instance.getPreviousCadastralCode());
 			if (isIdDefined())
 				query.setParameter("propertyId", this.instance.getId());
 			else
@@ -2427,8 +2607,10 @@ public class PropertyHome extends EntityHome<Property> {
 			else
 				return true;
 		} else {
-			Query query = this.getEntityManager().createNamedQuery("Property.countPreviousCadastralCode");
-			query.setParameter("previousCadastralCode", this.instance.getPreviousCadastralCode());
+			Query query = this.getEntityManager().createNamedQuery(
+					"Property.countPreviousCadastralCode");
+			query.setParameter("previousCadastralCode",
+					this.instance.getPreviousCadastralCode());
 			Long count = (Long) query.getSingleResult();
 			if (count >= 1)
 				return false;
@@ -2441,14 +2623,16 @@ public class PropertyHome extends EntityHome<Property> {
 		return checkingRecordsForProperty;
 	}
 
-	public void setCheckingRecordsForProperty(List<CheckingRecord> checkingRecordsForProperty) {
+	public void setCheckingRecordsForProperty(
+			List<CheckingRecord> checkingRecordsForProperty) {
 		this.checkingRecordsForProperty = checkingRecordsForProperty;
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<CheckingRecord> findCheckingRecordsForProperty() {
 		if (isManaged()) {
-			Query query = this.getEntityManager().createNamedQuery("CheckingRecord.findByProperty");
+			Query query = this.getEntityManager().createNamedQuery(
+					"CheckingRecord.findByProperty");
 			query.setParameter("property", this.instance);
 			// if (isIdDefined())
 			// query.setParameter("propertyId", this.instance.getId());
@@ -2463,54 +2647,72 @@ public class PropertyHome extends EntityHome<Property> {
 	public void prepareViewHistory() {
 
 		if (propertySelectedId != null) {
-			this.selectedPropertyViewHistory = getEntityManager().find(Property.class, propertySelectedId);
+			this.selectedPropertyViewHistory = getEntityManager().find(
+					Property.class, propertySelectedId);
 			this.listPropertyHistory.clear();
 			this.listDomainHistory.clear();
-			//this.propertySelectedCadastralCode = selectedPropertyViewHistory.getPreviousCadastralCode();
+			// this.propertySelectedCadastralCode =
+			// selectedPropertyViewHistory.getPreviousCadastralCode();
 
 			/* PROPIEDAD */
-			String qryProperty = "select rev.timestamp," + "rev.username," + "pro.CADASTRALCODE," + "pro.area,"
-					+ "pro.front," + "pro.frontslength," + "pro.observations," + "pro.side "
-					+ "from gimprod.revision rev " + "inner join gimaudit.property_aud pro on rev.id=pro.rev "
+			String qryProperty = "select rev.timestamp," + "rev.username,"
+					+ "pro.CADASTRALCODE," + "pro.area," + "pro.front,"
+					+ "pro.frontslength," + "pro.observations," + "pro.side "
+					+ "from gimprod.revision rev "
+					+ "inner join gimaudit.property_aud pro on rev.id=pro.rev "
 					+ "where pro.id = ? " + "order by rev.timestamp desc";
 
-			Query queryProperty = this.getEntityManager().createNativeQuery(qryProperty);
+			Query queryProperty = this.getEntityManager().createNativeQuery(
+					qryProperty);
 
-			//queryProperty.setParameter(1, this.propertySelectedCadastralCode);
+			// queryProperty.setParameter(1,
+			// this.propertySelectedCadastralCode);
 			queryProperty.setParameter(1, propertySelectedId);
 			List<Object[]> resultProperties = queryProperty.getResultList();
 
 			/* DOMINIOS */
-			String qryDomains = "select  rev.timestamp," + "rev.username," + "dom.buildingappraisal,"
-					+ "dom.commercialappraisal," + "dom.lotappraisal," + "dom.observations,"
-					+ "dom.totalareaconstruction," + "dom.valuebysquaremeter," + "res.identificationnumber,"
-					+ "res.name " + "from gimprod.revision rev "
+			String qryDomains = "select  rev.timestamp,"
+					+ "rev.username,"
+					+ "dom.buildingappraisal,"
+					+ "dom.commercialappraisal,"
+					+ "dom.lotappraisal,"
+					+ "dom.observations,"
+					+ "dom.totalareaconstruction,"
+					+ "dom.valuebysquaremeter,"
+					+ "res.identificationnumber,"
+					+ "res.name "
+					+ "from gimprod.revision rev "
 					+ "inner join gimaudit.domain_aud dom on rev.id= dom.rev "
-					+ "inner join gimprod.resident res on dom.resident_id=res.id " + "where dom.currentproperty_id= ? "
+					+ "inner join gimprod.resident res on dom.resident_id=res.id "
+					+ "where dom.currentproperty_id= ? "
 					+ "order by rev.timestamp desc;";
 
-			Query queryDomains = this.getEntityManager().createNativeQuery(qryDomains);
+			Query queryDomains = this.getEntityManager().createNativeQuery(
+					qryDomains);
 
 			queryDomains.setParameter(1, propertySelectedId);
 			List<Object[]> resultDomains = queryDomains.getResultList();
 
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+			SimpleDateFormat sdf = new SimpleDateFormat(
+					"yyyy-MM-dd HH:mm:ss.SSS");
 
 			for (Object[] row : resultProperties) {
 				PropertyHistoryDTO reg = new PropertyHistoryDTO();
 				try {
 					reg.setDate(sdf.parse(row[0].toString()));
 					reg.setUsername(row[1].toString());
-					reg.setCadastralCode(row[2] == null ? "" : row[2].toString());
-					reg.setArea(
-							row[3] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[3].toString())));
-					reg.setFront(
-							row[4] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[4].toString())));
-					reg.setFrontsLength(
-							row[5] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[5].toString())));
+					reg.setCadastralCode(row[2] == null ? "" : row[2]
+							.toString());
+					reg.setArea(row[3] == null ? BigDecimal.ZERO : BigDecimal
+							.valueOf(Double.valueOf(row[3].toString())));
+					reg.setFront(row[4] == null ? BigDecimal.ZERO : BigDecimal
+							.valueOf(Double.valueOf(row[4].toString())));
+					reg.setFrontsLength(row[5] == null ? BigDecimal.ZERO
+							: BigDecimal.valueOf(Double.valueOf(row[5]
+									.toString())));
 					reg.setObservations(row[6] == null ? "" : row[6].toString());
-					reg.setSide(
-							row[7] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[7].toString())));
+					reg.setSide(row[7] == null ? BigDecimal.ZERO : BigDecimal
+							.valueOf(Double.valueOf(row[7].toString())));
 
 					listPropertyHistory.add(reg);
 				} catch (ParseException e) {
@@ -2525,18 +2727,24 @@ public class PropertyHome extends EntityHome<Property> {
 				try {
 					reg.setDate(sdf.parse(row[0].toString()));
 					reg.setUsername(row[1].toString());
-					reg.setBuildingAppraisal(
-							row[2] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[2].toString())));
-					reg.setCommercialAppraisal(
-							row[3] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[3].toString())));
-					reg.setLotAppraisal(
-							row[4] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[4].toString())));
+					reg.setBuildingAppraisal(row[2] == null ? BigDecimal.ZERO
+							: BigDecimal.valueOf(Double.valueOf(row[2]
+									.toString())));
+					reg.setCommercialAppraisal(row[3] == null ? BigDecimal.ZERO
+							: BigDecimal.valueOf(Double.valueOf(row[3]
+									.toString())));
+					reg.setLotAppraisal(row[4] == null ? BigDecimal.ZERO
+							: BigDecimal.valueOf(Double.valueOf(row[4]
+									.toString())));
 					reg.setObservations(row[5] == null ? "" : row[5].toString());
-					reg.setTotalAreaConstruction(
-							row[6] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[6].toString())));
-					reg.setValueBySquareMeter(
-							row[7] == null ? BigDecimal.ZERO : BigDecimal.valueOf(Double.valueOf(row[7].toString())));
-					reg.setIdentificationnumber(row[8] == null ? "" : row[8].toString());
+					reg.setTotalAreaConstruction(row[6] == null ? BigDecimal.ZERO
+							: BigDecimal.valueOf(Double.valueOf(row[6]
+									.toString())));
+					reg.setValueBySquareMeter(row[7] == null ? BigDecimal.ZERO
+							: BigDecimal.valueOf(Double.valueOf(row[7]
+									.toString())));
+					reg.setIdentificationnumber(row[8] == null ? "" : row[8]
+							.toString());
 					reg.setName(row[9] == null ? "" : row[9].toString());
 
 					listDomainHistory.add(reg);
@@ -2547,14 +2755,13 @@ public class PropertyHome extends EntityHome<Property> {
 			}
 		}
 	}
-	
-	/*Manuel U.
-	 * No cargar por defecto imagenes de predios
-	 * 18-12-2015
-	 * */
-	
-	private boolean statusImage =true;
-	
+
+	/*
+	 * Manuel U. No cargar por defecto imagenes de predios 18-12-2015
+	 */
+
+	private boolean statusImage = true;
+
 	public boolean isStatusImage() {
 		return statusImage;
 	}
@@ -2563,35 +2770,159 @@ public class PropertyHome extends EntityHome<Property> {
 		this.statusImage = statusImage;
 	}
 
-	public void uploadImage(){
-		this.statusImage = false;	
-		System.out.println("uploadImage--->statusImageValor: "+statusImage);
+	public void uploadImage() {
+		this.statusImage = false;
+		System.out.println("uploadImage--->statusImageValor: " + statusImage);
 	}
-	
-	//Jock Samaniego
-	//23-09-2016
-	//Para activar predios rústicos deshabilitados
-	
-	public void activeRusticProperty(Property property){		
-		try{			
-			if(property.getPropertyType().getId() == 2){
+
+	public CadastralCertificateDTO get_dataCadastralCerfificate() {
+		return _dataCadastralCerfificate;
+	}
+
+	public void set_dataCadastralCerfificate(
+			CadastralCertificateDTO _dataCadastralCerfificate) {
+		this._dataCadastralCerfificate = _dataCadastralCerfificate;
+	}
+
+	// Jock Samaniego
+	// 23-09-2016
+	// Para activar predios rústicos deshabilitados
+
+	public void activeRusticProperty(Property property) {
+		try {
+			if (property.getPropertyType().getId() == 2) {
 				property.setDeleted(Boolean.FALSE);
-				CadasterService cadasterService = ServiceLocator.getInstance().findResource(CadasterService.LOCAL_NAME);
+				CadasterService cadasterService = ServiceLocator.getInstance()
+						.findResource(CadasterService.LOCAL_NAME);
 				cadasterService.updateRusticProperty(property);
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			System.out.println("error: no se completó la activación!!");
 		}
 	}
-	
+
 	public Boolean hasRole(String roleKey) {
-        if (systemParameterService == null) {
-            systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
-        }
-        String role = systemParameterService.findParameter(roleKey);
-        if (role != null) {
-            return userSession.getUser().hasRole(role);
-        }
-        return false;
-    }
+		if (systemParameterService == null) {
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SYSTEM_PARAMETER_SERVICE_NAME);
+		}
+		String role = systemParameterService.findParameter(roleKey);
+		if (role != null) {
+			return userSession.getUser().hasRole(role);
+		}
+		return false;
+	}
+
+	public String printCadastralCertificate(Long propertyId) {
+
+		if (cadasterService == null) {
+			cadasterService = ServiceLocator.getInstance().findResource(
+					cadasterService.LOCAL_NAME);
+		}
+
+		this._dataCadastralCerfificate = this.cadasterService
+				.getCadastralCertificateData(propertyId);
+		
+		System.out.println(this._dataCadastralCerfificate.getFoto());
+		System.out.println(this._dataCadastralCerfificate.getFoto().length);
+
+		return "/cadaster/report/CadastralCertificatePDF.xhtml";
+	}
+
+	public BoundaryDTO getBoundaryDTO(CompassPoint type) {
+		try {
+			switch (type) {
+			case NORTH: {
+				if (this._dataCadastralCerfificate.getLindero_norte() != null) {
+
+					BoundaryDTO _boundary = new ObjectMapper().readValue(
+							this._dataCadastralCerfificate.getLindero_norte(),
+							BoundaryDTO.class);
+					return _boundary;
+
+				}
+				break;
+			}
+			case SOUTH: {
+
+				if (this._dataCadastralCerfificate.getLindero_sur() != null) {
+
+					BoundaryDTO _boundary = new ObjectMapper().readValue(
+							this._dataCadastralCerfificate.getLindero_sur(),
+							BoundaryDTO.class);
+					return _boundary;
+
+				}
+				break;
+			}
+			case EAST: {
+
+				if (this._dataCadastralCerfificate.getLindero_este() != null) {
+
+					BoundaryDTO _boundary = new ObjectMapper().readValue(
+							this._dataCadastralCerfificate.getLindero_este(),
+							BoundaryDTO.class);
+					return _boundary;
+
+				}
+				break;
+			}
+			case WEST: {
+
+				if (this._dataCadastralCerfificate.getLindero_oeste() != null) {
+
+					BoundaryDTO _boundary = new ObjectMapper().readValue(
+							this._dataCadastralCerfificate.getLindero_oeste(),
+							BoundaryDTO.class);
+					return _boundary;
+
+				}
+				break;
+			}
+			default:
+				break;
+			}
+
+			return new BoundaryDTO();
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+			return new BoundaryDTO();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+			return new BoundaryDTO();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new BoundaryDTO();
+		}
+	}
+
+	public List<BuildingDTO> getBuildingsDTO() {
+		try {
+
+			if (this._dataCadastralCerfificate.getConstrucciones() != null) {
+
+				List<BuildingDTO> _construcciones = Arrays
+						.asList(new ObjectMapper().readValue(
+								this._dataCadastralCerfificate
+										.getConstrucciones(),
+								BuildingDTO[].class));
+
+				return _construcciones;
+
+			}
+
+			return new ArrayList<BuildingDTO>();
+
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+			return new ArrayList<BuildingDTO>();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+			return new ArrayList<BuildingDTO>();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ArrayList<BuildingDTO>();
+		}
+	}
+		
 }
