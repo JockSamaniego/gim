@@ -226,11 +226,12 @@ public class PaymentPlatform {
 	 *            String
 	 * @return List<EMoneyPayment>
 	 */
-	@WebMethod
+	//rfam 2019-09-24
+	/*@WebMethod
 	public List<EMoneyPayment> findPaidsForEmoney(ServiceRequest request, String debtId, BigDecimal amount, Date date,
 			String idAgent) {
 		return service.findPaidsForEmoney(request, debtId, amount, date, idAgent);
-	}
+	}*/
 
 	/**
 	 * @author macartuche
@@ -240,10 +241,11 @@ public class PaymentPlatform {
 	 * @param user
 	 *            User
 	 */
-	@WebMethod
+	//rfam 2019-09-24
+	/*@WebMethod
 	public void reverse(ServiceRequest request, List<Long> depositsToReverse) {
 		service.reverse(request, depositsToReverse);
-	}
+	}*/
 
 	/**
 	 * @author macartuche
@@ -254,10 +256,11 @@ public class PaymentPlatform {
 	 *            List<Long>
 	 * @return
 	 */
-	@WebMethod
+	//rfam 2019-09-24
+	/*@WebMethod
 	public List<Long> findDepositsIdsForReverse(ServiceRequest request, List<Long> municipalBondsIds) {
 		return service.findDepositsIdsForReverse(request, municipalBondsIds);
-	}
+	}*/
 
 	/**
 	 * @author macartuche
@@ -269,11 +272,12 @@ public class PaymentPlatform {
 	 * @param idAgent String
 	 * @return String
 	 */
-	@WebMethod
+	//rfam 2019-09-24
+	/*@WebMethod
 	public String saveEmoneyPayment(ServiceRequest request, Payout payout, String debtId, boolean isPaid, String idAgent) {
 		String data = service.saveEmoneyPayment(request, payout, debtId, isPaid, idAgent);
 		return data;
-	}
+	}*/
 
 	
 	/**
@@ -282,10 +286,11 @@ public class PaymentPlatform {
 	 * Metodo auxiliar para el servicio web de emoney
 	 * @param paid EMoneyPayment
 	 */
-	@WebMethod
+	//rfam 2019-09-24
+	/*@WebMethod
 	public void updateEMoneyPayment(ServiceRequest request, EMoneyPayment paid) {
 		service.updateEMoneyPayment(request, paid);
-	}
+	}*/
 	
 	/**
 	 * @author macartuche
@@ -293,10 +298,11 @@ public class PaymentPlatform {
 	 * Metodo auxiliar para el servicio web de emoney
 	 * @param request ServiceRequest
 	 */
-	@WebMethod
+	//rfam 2019-09-24
+	/*@WebMethod
 	public boolean hasRolEmoney(ServiceRequest request) {
 		return service.hasRolEmoney(request);
-	}
+	}*/
 
 	
 	//by Jock Samaniego...
@@ -354,7 +360,8 @@ public class PaymentPlatform {
 	 * By: René Ortega
 	 * 2017-04-18
 	 */
-	@WebMethod
+	//rfam 2019-09-24
+	/*@WebMethod
 	public TransactionData reversePayment (ServiceRequest request,
 			Payout payout){
 		// System.out.println("Llega al metodo de reverso");
@@ -366,7 +373,7 @@ public class PaymentPlatform {
 	@WebMethod
 	public TransactionData  queryPayment(ServiceRequest request, String transactionId){
 		return this.service.queryPayment(request, transactionId);
-	}
+	}*/
 	
 	
 	/**
