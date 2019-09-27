@@ -43,27 +43,38 @@
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,"
 						cellpadding="0" cellspacing="0">
-						<h:outputText value="#{messages['reprint.voucher']}" styleClass="formTitle" />
+						<h:outputText value="#{messages['reprint.voucher']}"
+							styleClass="formTitle" />
 						<s:button id="newPaymentBtn" action="cancel"
 							value="#{messages['reprint.new']}"
 							disabled="#{paymentHome.resident == null}" />
 					</h:panelGrid>
 				</f:facet>
-				<h:panelGrid columns="3" width="100%"
-					columnClasses="topAligned, topAligned right">
 
-					<h:panelGrid columns="2">
-						<h:outputText value="#{messages['user']}:" style="font-weight:bold" />
-						<h:selectOneMenu id="user" value="#{paymentHome.person}">
+				<s:decorate id="dateField" template="../layout/edit.xhtml">
+					<ui:define name="label">Fecha:</ui:define>
+					<rich:calendar value="#{paymentHome.reprintDate}"
+						enableManualInput="false"
+						datePattern="#{messages['common.datePattern']}"
+						disabled="#{!paymentHome.secretaryIncome}">
+						<a:support event="onchanged" ajaxSingle="true"/>
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate id="userField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['user']}</ui:define>
+					<h:selectOneMenu id="user" value="#{paymentHome.person}">
 							<s:selectItems value="#{paymentHome.findCashiers()}"
-									var="_person" label="#{_person}"
-									noSelectionLabel="#{messages['common.chooseOption']}" />
+								var="_person" label="#{_person}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
 							<s:convertEntity />
 							<a:support event="onchange" ajaxSingle="true" />
 						</h:selectOneMenu>
-					</h:panelGrid>
-					<h:outputText value=""></h:outputText>
-					<h:outputText value=""></h:outputText>
+				</s:decorate>
+
+				
+				<h:panelGrid columns="2" width="100%"
+					columnClasses="topAligned, topAligned right">
 
 					<a:outputPanel id="paymentTotalPanel">
 
@@ -83,19 +94,19 @@
 
 					<a:outputPanel id="totalsPanel" ajaxRendered="true">
 						<h:panelGrid columnClasses="topAligned right" width="100%">
-<!-- 							<h:outputText id="totalValueField" -->
-<!-- 								value="#{paymentHome.instance.value}" size="10" -->
-<!-- 								style="font-size:110px; font-weight:bold;" styleClass="right" -->
-<!-- 								maxlength="12"> -->
-<!-- 								<f:convertNumber -->
-<!-- 									maxFractionDigits="#{messages['common.maxFractionDigits']}" -->
-<!-- 									minFractionDigits="#{messages['common.minFractionDigits']}" /> -->
-<!-- 							</h:outputText> -->
+							<!-- 							<h:outputText id="totalValueField" -->
+							<!-- 								value="#{paymentHome.instance.value}" size="10" -->
+							<!-- 								style="font-size:110px; font-weight:bold;" styleClass="right" -->
+							<!-- 								maxlength="12"> -->
+							<!-- 								<f:convertNumber -->
+							<!-- 									maxFractionDigits="#{messages['common.maxFractionDigits']}" -->
+							<!-- 									minFractionDigits="#{messages['common.minFractionDigits']}" /> -->
+							<!-- 							</h:outputText> -->
 							<h:panelGrid columns="2" style="float:right;">
-								 <a:commandButton id="registerPaymentBtn"
+								<a:commandButton id="registerPaymentBtn"
 									action="#{paymentHome.rePrint}" ajaxSingle="true"
-									eventsQueue="gimEventsQueue" value="#{messages['reprint.print']}"
-									reRender="pdfPrinted"
+									eventsQueue="gimEventsQueue"
+									value="#{messages['reprint.print']}" reRender="pdfPrinted"
 									oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.showModalPanel(\'pdfPrinted\');' : ''}"
 									disabled="#{paymentHome.printBtn}" />
 							</h:panelGrid>

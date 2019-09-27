@@ -8,10 +8,9 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
-	
- 
-	<rich:dataTable value="#{paymentHome.items}"
-		var="_entryItem"
+
+
+	<rich:dataTable value="#{paymentHome.items}" var="_entryItem"
 		rendered="#{not empty paymentHome.items}"
 		rowClasses="rvgRowOne,rvgRowTwo" id="municipalBondsTable"
 		columnClasses="tableCellFont" style="margin-top:5px;">
@@ -49,26 +48,24 @@
 				</rich:column>
 			</rich:columnGroup>
 		</f:facet>
- 
 
-
-
-
-		<rich:columnGroup styleClass="#{paymentHome.isInPaymentAgreement2(_entryItem.municipalBond) ? 'paymentAgreementTitle' : 'entryTitle'}">
+		<rich:columnGroup
+			styleClass="#{paymentHome.isInPaymentAgreement2(_entryItem.municipalBond) ? 'paymentAgreementTitle' : 'entryTitle'}">
 
 			<rich:column>
-				<h:selectBooleanCheckbox value="#{_entryItem.isSelected}" disabled="#{!_entryItem.enableCheckBox}">
+				<h:selectBooleanCheckbox value="#{_entryItem.isSelected}"
+					disabled="#{!_entryItem.enableCheckBox}">
 					<a:support event="onchange" eventsQueue="gimQueue"
-						action="#{paymentHome.calculatePaidTotal2()}"
-						ajaxSingle="true"
+						action="#{paymentHome.calculatePaidTotal2()}" ajaxSingle="true"
 						reRender="municipalBondsPanel, totalsPanel" />
 				</h:selectBooleanCheckbox>
 			</rich:column>
 
 			<rich:column styleClass="left" colspan="3">
-				<h:outputText styleClass="tableTitle" value="#{_entryItem.municipalBond.entry.name}">
+				<h:outputText styleClass="tableTitle"
+					value="#{_entryItem.municipalBond.entry.name}">
 				</h:outputText>
-			</rich:column> 
+			</rich:column>
 
 			<rich:column styleClass="right">
 				<h:outputText styleClass="tableTitle" value="-">
@@ -76,56 +73,44 @@
 			</rich:column>
 
 			<rich:column styleClass="right">
-				<h:outputText styleClass="tableTitle"
-					value="-">
+				<h:outputText styleClass="tableTitle" value="-">
 				</h:outputText>
 			</rich:column>
 			<rich:column styleClass="right">
-				<h:outputText styleClass="tableTitle"
-					value="-"> 
+				<h:outputText styleClass="tableTitle" value="-">
 				</h:outputText>
 			</rich:column>
 			<rich:column styleClass="right">
-				<h:outputText styleClass="tableTitle"
-					value="-"> 
+				<h:outputText styleClass="tableTitle" value="-">
 				</h:outputText>
 			</rich:column>
 			<rich:column styleClass="right">
-				<h:outputText styleClass="tableTitle"
-					value="-">
+				<h:outputText styleClass="tableTitle" value="-">
 				</h:outputText>
 			</rich:column>
 			<rich:column styleClass="right">
-				<h:outputText styleClass="tableTitle"
-					value="-">
+				<h:outputText styleClass="tableTitle" value="-">
 				</h:outputText>
 			</rich:column>
 		</rich:columnGroup>
-		<!-- jjjjjjjjjjjjjjjjjjjjjjjjjjjj -->
-
-
-
-
 
 		<rich:subTable value="#{_entryItem.municipalBondItems}"
 			var="_groupingItem">
 			<rich:columnGroup styleClass="groupingTitle">
 				<rich:column>
-					<h:selectBooleanCheckbox value="#{_groupingItem.isSelected}" disabled="#{!_groupingItem.enableCheckBox}">
+					<h:selectBooleanCheckbox value="#{_groupingItem.isSelected}"
+						disabled="#{!_groupingItem.enableCheckBox}">
 						<a:support event="onchange" eventsQueue="gimQueue"
-							action="#{paymentHome.calculatePaidTotal2()}"
-							ajaxSingle="true"
+							action="#{paymentHome.calculatePaidTotal2()}" ajaxSingle="true"
 							reRender="municipalBondsPanel, totalsPanel" />
 					</h:selectBooleanCheckbox>
 				</rich:column>
-
 
 				<rich:column styleClass="left groupingTitle" colspan="3">
 					<h:outputText
 						value="#{_groupingItem.municipalBond.groupingCode} - #{empty _groupingItem.municipalBond.adjunct ? _groupingItem.municipalBond.address : _groupingItem.municipalBond.adjunct}" />
 				</rich:column>
 
-				<!-- kkkkkkkkkkkkkkkkkkkkkkkkkkkk -->
 				<rich:column styleClass="right">
 					<h:outputText styleClass="tableTitle"
 						value="#{_groupingItem.municipalBond.value}">
@@ -176,8 +161,6 @@
 					</h:outputText>
 				</rich:column>
 			</rich:columnGroup>
-			<!-- kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk -->
-
 
 			<rich:subTable value="#{_groupingItem.municipalBondItems}"
 				var="_municipalBondItem">
@@ -185,10 +168,10 @@
 				<rich:column width="1%" styleClass="center">
 					<f:facet name="header">
 					</f:facet>
-					<h:selectBooleanCheckbox value="#{_municipalBondItem.isSelected}" disabled="#{!_municipalBondItem.enableCheckBox}">
+					<h:selectBooleanCheckbox value="#{_municipalBondItem.isSelected}"
+						disabled="#{!_municipalBondItem.enableCheckBox}">
 						<a:support event="onchange" eventsQueue="gimQueue"
-							action="#{paymentHome.calculatePaidTotal2()}"
-							ajaxSingle="true"
+							action="#{paymentHome.calculatePaidTotal2()}" ajaxSingle="true"
 							reRender="municipalBondsPanel, totalsPanel" />
 					</h:selectBooleanCheckbox>
 				</rich:column>
@@ -220,10 +203,11 @@
 								value="#-{_municipalBondItem.municipalBond.groupingCode}" />
 						</rich:column -->
 
-				<rich:column >
+				<rich:column>
 					<f:facet name="header">#{messages['municipalBond.observation']}</f:facet>
-					<h:outputText value="#{_municipalBondItem.serviceDate} / #{_municipalBondItem.municipalBond.description}" 
-						styleClass="#{_municipalBondItem.municipalBond.municipalBondStatus.id == paymentHome.compensationStatusId ? 'blueFont' : ''}"/>
+					<h:outputText
+						value="#{_municipalBondItem.serviceDate} / #{_municipalBondItem.municipalBond.description}"
+						styleClass="#{_municipalBondItem.municipalBond.municipalBondStatus.id == paymentHome.compensationStatusId ? 'blueFont' : ''}" />
 				</rich:column>
 
 				<rich:column width="8%" styleClass="right">
@@ -272,10 +256,11 @@
 							minFractionDigits="#{messages['common.minFractionDigits']}" />
 					</h:outputText>
 				</rich:column>
-				
+
 				<rich:column width="8%" styleClass="right">
 					<f:facet name="header">#{messages['municipalBond.taxesTotal']}</f:facet>
-					<h:outputText value="#{_municipalBondItem.municipalBond.taxesTotal}"
+					<h:outputText
+						value="#{_municipalBondItem.municipalBond.taxesTotal}"
 						styleClass="#{_municipalBondItem.municipalBond.municipalBondStatus.id == paymentHome.compensationStatusId ? 'blueFont' : ''}">
 						<f:convertNumber
 							maxFractionDigits="#{messages['common.maxFractionDigits']}"

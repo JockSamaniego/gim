@@ -41,6 +41,7 @@ import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
 import ec.gob.gim.cadaster.model.WorkDealFraction;
 import ec.gob.gim.cadaster.model.dto.AppraisalsPropertyDTO;
+import ec.gob.gim.cadaster.model.dto.CadastralCertificateDTO;
 import ec.gob.gim.cadaster.model.dto.ExemptionDTO;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
@@ -1363,6 +1364,31 @@ public class CadasterServiceBean implements CadasterService {
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public CadastralCertificateDTO getCadastralCertificateData(Long property_id) {
+
+		try {
+
+			Query query = entityManager
+					.createNativeQuery("select * from reports.sp_reporte_cadastral_certificate(?1)");
+			query.setParameter(1, property_id);
+
+			List<CadastralCertificateDTO> retorno = NativeQueryResultsMapper.map(
+					query.getResultList(), CadastralCertificateDTO.class);
+			
+			if(retorno.size()>0) {
+				return retorno.get(0);
+			}else {
+				return null;
+			}
+			
+		} catch (Exception e) {
+			System.out.println(e);
+			return null;
+		}
+		
 	}
 		
 }

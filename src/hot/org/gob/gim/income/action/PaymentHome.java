@@ -182,6 +182,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	private String paymentInstanceName;
 
 	private String paymentRestrictionValue;
+	
+	private Date reprintDate = new Date();
 
 	@In(scope = ScopeType.SESSION, value = "userSession")
 	UserSession userSession;
@@ -220,6 +222,14 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 	public boolean isWired() {
 		return true;
+	}
+	
+	public Date getReprintDate() {
+		return reprintDate;
+	}
+
+	public void setReprintDate(Date reprintDate) {
+		this.reprintDate = reprintDate;
 	}
 
 	/**
@@ -359,6 +369,18 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		return false;
 	}
 
+	public boolean isSecretaryIncome() {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		systemParameterService.initialize();
+		String cashierRoleName = systemParameterService.findParameter("ROLE_NAME_SECRETARY_INCOME");
+		User user = userSession.getUser();
+		if (user.hasRole(cashierRoleName)) {
+			return true;
+		}
+		return false;
+	}
+		
 	public void tillIsActive() {
 		if (isCashier()) {
 			TillPermission tp = findTillPermission();
@@ -494,22 +516,14 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	@SuppressWarnings("unchecked")
 	private void findPaymentsBonds() {
 
-		Calendar time = Calendar.getInstance();
-		time.setTime(new Date());
-		time.set(Calendar.HOUR_OF_DAY, 0);
-		time.set(Calendar.MINUTE, 0);
-		time.set(Calendar.SECOND, 0);
-
 		try {
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-			// System.out.println("TIME " + time.getTime());
-
 			Query q1 = getEntityManager().createQuery("Select m from MunicipalBond m " + "JOIN m.deposits d "
 					+ "JOIN d.payment p "
-					+ "where m.resident.id=:resident_id and d.date >= :currentDate and p.cashier =:cashier and d.status=:status");
+					+ "where m.resident.id=:resident_id and p.cashier =:cashier and d.status=:status and d.date =:reprintDate");
 			q1.setParameter("resident_id", resident.getId());
-			q1.setParameter("currentDate", formatter.parse(formatter.format(time.getTime())));
+			q1.setParameter("reprintDate", formatter.parse(formatter.format(reprintDate)));
 			q1.setParameter("cashier", person);
 			q1.setParameter("status", FinancialStatus.VALID);
 

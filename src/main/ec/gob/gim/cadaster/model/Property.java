@@ -461,7 +461,13 @@ public class Property {
 	@OrderBy("date desc")
 	private List<Appraisal> appraisals;
 	
+	private String registrationCardNumber;
+	private String urbanizationBlock ;
+	private String urbanizationPropertyNumber;
 	
+	private BigDecimal buildingAreaHorizontalProperty;
+	private BigDecimal lotAreaHorizontalProperty;
+		
 
 	public Property() {
 		this.propertyLandUses = new ArrayList<PropertyLandUse>();
@@ -1236,4 +1242,45 @@ public class Property {
 		this.cadastralCode_old = cadastralCode_old;
 	}
 
+	public String getRegistrationCardNumber() {
+		return registrationCardNumber;
+	}
+
+	public void setRegistrationCardNumber(String registrationCardNumber) {
+		this.registrationCardNumber = registrationCardNumber;
+	}
+
+	public String getUrbanizationBlock() {
+		return urbanizationBlock;
+	}
+
+	public void setUrbanizationBlock(String urbanizationBlock) {
+		this.urbanizationBlock = urbanizationBlock;
+	}
+
+	public String getUrbanizationPropertyNumber() {
+		return urbanizationPropertyNumber;
+	}
+
+	public void setUrbanizationPropertyNumber(String urbanizationPropertyNumber) {
+		this.urbanizationPropertyNumber = urbanizationPropertyNumber;
+	}
+
+	public BigDecimal getBuildingAreaHorizontalProperty() {
+		return buildingAreaHorizontalProperty;
+	}
+
+	public void setBuildingAreaHorizontalProperty(
+			BigDecimal buildingAreaHorizontalProperty) {
+		this.buildingAreaHorizontalProperty = buildingAreaHorizontalProperty;
+	}
+
+	public BigDecimal getLotAreaHorizontalProperty() {
+		return lotAreaHorizontalProperty;
+	}
+
+	public void setLotAreaHorizontalProperty(BigDecimal lotAreaHorizontalProperty) {
+		this.lotAreaHorizontalProperty = lotAreaHorizontalProperty;
+	}
+		
 }
