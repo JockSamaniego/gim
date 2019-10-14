@@ -39,6 +39,16 @@
 					</rich:calendar>
 				</s:decorate>
 
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['contravention.resident']}</ui:define>
+					<h:inputText id="name" value="#{finantialStatement.criteria.textSearch}"/>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['accountCode']}</ui:define>
+					<h:inputText id="name" value="#{finantialStatement.criteria.accountCode}"/>
+				</s:decorate>
+
 				<div style="clear: both" />
 
 			</rich:panel>
@@ -59,20 +69,18 @@
 						for="finantialStatement" maxPages="20" />
 					<rich:spacer height="5" />
 				<rich:dataTable id="finantialStatement"
-					value="#{finantialStatement.overdues}" var="_overdue"
+					value="#{finantialStatement.overdues}" 
+					var="_overdue"
+					rowKeyVar="index"
 					rows="25"
 					rendered="#{finantialStatement.overdues.size() > 0}">
 
 					<f:facet name="header">
 						<h:panelGrid columns="3" columnClasses="headerTitle left, ">
 							<h:outputText
-								value="#{messages['finantialStatement.accountBalance']}" />
+								value="Total de resultados: #{finantialStatement.totalRows}" />
 
-							<s:button view="/accounting/report/OverduePortafolioExcel.xhtml"
-								id="printId" rendered="#{not empty finantialStatement.overdues}"
-								propagation="join" value="#{messages['common.print']}" />
-
-							<s:button view="/accounting/report/OverduePortafolioExcel.xhtml"
+							<s:button view="/accounting/report/OverduePortafolioExcel2.xhtml"
 								id="downloadId" rendered="#{not empty finantialStatement.overdues}"
 								propagation="join" value="#{messages['common.download']}" />
 
@@ -81,27 +89,27 @@
 					</f:facet>
 
 					<rich:column width="5%" styleClass="left">
-						<f:facet name="header">ID</f:facet>
-						<h:outputText value="#{_overdue.id}" />
+						<f:facet name="header">Nro</f:facet>
+						<h:outputText value="#{index + 1}" />
 					</rich:column>
 
 					<rich:column width="12%" styleClass="left">
-						<f:facet name="header">Identificación</f:facet>
+						<f:facet name="header">#{messages['common.identificationNumber']}</f:facet>
 						<h:outputText value="#{_overdue.identification}" />
 					</rich:column>
 
 					<rich:column  width="35%" styleClass="left">
-						<f:facet name="header">Nombres</f:facet>
+						<f:facet name="header">#{messages['common.name']}</f:facet>
 						<h:outputText value="#{_overdue.names}" />
 					</rich:column>
 
 					<rich:column styleClass="left">
-						<f:facet name="header">Correo</f:facet>
+						<f:facet name="header">#{messages['provider.email']}</f:facet>
 						<h:outputText value="#{_overdue.email}" />
 					</rich:column>
 					
 					<rich:column width="10%" styleClass="number">
-						<f:facet name="header">Total</f:facet>
+						<f:facet name="header">#{messages['revenue.total']}</f:facet>
 						$<h:outputText value="#{_overdue.total}">
 							<f:convertNumber maxFractionDigits="2" pattern="#,##,##0.00" />
 						</h:outputText>
@@ -109,7 +117,7 @@
 					 
 
 					<rich:column width="10%" styleClass="center">
-						<f:facet name="header">Acciones</f:facet>
+						<f:facet name="header">#{messages['property.actions']}</f:facet>
 						<a:commandButton id="detailBtn"
 							value="#{messages['finantialStatement.detail']}"
 							action="#{finantialStatement.detailOverdue(_overdue.id)}"

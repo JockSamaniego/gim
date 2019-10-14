@@ -1098,7 +1098,9 @@ public class FinantialServiceBean implements FinantialService{
 		}
 	}
 	
-	private List<Long> getEmittedStatuses(){
+	//para cartera vencida
+	//macartuche 2019-10-09
+	public List<Long> getEmittedStatuses(){
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.PENDING_BOND_STATUS));
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.BLOCKED_BOND_STATUS));

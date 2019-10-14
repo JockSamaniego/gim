@@ -23,6 +23,7 @@ import org.gob.gim.accounting.dto.ReportFilter;
 import org.gob.gim.accounting.dto.ReportType;
 import org.gob.gim.accounting.service.FinantialService;
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -39,6 +40,7 @@ import org.jboss.seam.framework.EntityController;
 
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.FiscalPeriod;
+import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.Account;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import static ch.lambdaj.Lambda.*;
@@ -85,6 +87,16 @@ public class FinantialStatement extends EntityController {
 	private AccountItem quotasAccountItem;
 
 	private SystemParameterService systemParameterService;
+	
+	//@tag carteraVencida
+	//@date 2019-10-09
+	//@author macartuche
+	private BigDecimal totalDue;
+	private List<Long> emittedStatus;
+	private Integer totalRows;
+	private List<MunicipalBond> detailBond;
+	private Resident resident;
+	private BigDecimal totalBond;
 
 	@Observer("org.jboss.seam.postCreate.finantialStatement")
 	public void initializeCriteria() {
@@ -333,12 +345,7 @@ public class FinantialStatement extends EntityController {
 		accountItems = new LinkedList<AccountItem>();
 		accountItems.addAll(report.values());
 
-		for ( Map.Entry<String, AccountItem> entry: report.entrySet()) {
-			String key = entry.getKey();
-			AccountItem acc = entry.getValue();
-		    
-		    System.out.println(acc.getAccountName());
-		}
+		 
 		Collections.sort(accountItems);
 		sumTotalCredit();
 		sumTotalDebit();
@@ -640,22 +647,91 @@ public class FinantialStatement extends EntityController {
 		this.totalResolutionOrnato = totalResolutionOrnato;
 	}
 
-	// para el reporte de cartera vencida
+	//@author macartuche
+	//@tag carteraVencida
+	//@date 2019-10-09
 	private List<OverduePortfolio> overdues;
 
-	public void generateOverduePortafolio() {
-		total = BigDecimal.ZERO;
-		Query q = this.getEntityManager().createNamedQuery(
-				"MunicipalBond.overduePortafolio");
-		q.setParameter("date", this.criteria.getEndDate());
-		overdues = q.getResultList();
-		for (OverduePortfolio op : overdues) {
-			total = total.add(op.getTotal());
-		}
-		System.out.println("el tamano es: " + overdues.size() + " ---- "
-				+ this.criteria.getEndDate());
-	}
 
+	  @SuppressWarnings("unchecked")
+	public void generateOverduePortafolio()
+	  {
+	    this.total = BigDecimal.ZERO;
+	    
+	    FinantialService finantialService = (FinantialService)ServiceLocator.getInstance().findResource("/gim/FinantialService/local");
+	    
+	    this.emittedStatus = finantialService.getEmittedStatuses();
+	    String sql = "SELECT res.id, res.identificationnumber, res.name, res.email, "
+	    		+ "sum(paidTotal)    "
+	    		+ "FROM municipalBond mb   "
+	    		+ "join resident res on res.id=mb.resident_id    "
+	    		+ "join entry ent on ent.id = mb.entry_id      "
+	    		+ "WHERE    "
+	    		+ "mb.expirationDate BETWEEN :startDate and :endDate  AND       "
+	    		+ "mb.municipalBondStatus_id in (:status) AND "
+	    		+ "mb.paidTotal > 0 ";
+	    if (!this.criteria.getTextSearch().trim().isEmpty()) {
+	      sql = sql + " AND (res.identificationnumber like :criteria OR lower(res.name) like :criteria) ";
+	    }
+	    if (!this.criteria.getAccountCode().trim().isEmpty()) {
+	      sql = sql + " AND (ent.code like :code or lower(ent.name) like :code) ";
+	    }
+	    sql = sql + "   GROUP BY 1,2,3,4 ";
+	    sql = sql + "   ORDER BY 5 desc";
+	    
+	    Query q = getEntityManager().createNativeQuery(sql);
+	    q.setParameter("startDate", this.criteria.getStartDate());
+	    q.setParameter("endDate", this.criteria.getEndDate());
+	    q.setParameter("status", this.emittedStatus);
+	    if (!this.criteria.getTextSearch().trim().isEmpty()) {
+	      q.setParameter("criteria", "%" + this.criteria.getTextSearch().toLowerCase() + "%");
+	    }
+	    if (!this.criteria.getAccountCode().trim().isEmpty()) {
+	      q.setParameter("code", "%" + this.criteria.getAccountCode().toLowerCase() + "%");
+	    }
+	    this.overdues = NativeQueryResultsMapper.map(q
+	      .getResultList(), OverduePortfolio.class);
+	    
+	    this.totalRows = Integer.valueOf(this.overdues.size());
+	    
+	    String sqlTotal = "SELECT coalesce(sum(paidTotal),0)     FROM municipalBond mb   \tjoin resident res on res.id=mb.resident_id    \tjoin entry ent on ent.id = mb.entry_id      WHERE    \tmb.expirationDate BETWEEN :startDate and :endDate  AND        mb.municipalBondStatus_id in (:status) AND\t\tmb.paidTotal > 0 ";
+	    if (!this.criteria.getTextSearch().trim().isEmpty()) {
+	      sqlTotal = sqlTotal + " AND res.identificationnumber like :criteria ";
+	    }
+	    if (!this.criteria.getAccountCode().trim().isEmpty()) {
+	      sqlTotal = sqlTotal + " AND ent.code like :code ";
+	    }
+	    q = getEntityManager().createNativeQuery(sqlTotal);
+	    q.setParameter("startDate", this.criteria.getStartDate());
+	    q.setParameter("endDate", this.criteria.getEndDate());
+	    q.setParameter("status", this.emittedStatus);
+	    if (!this.criteria.getTextSearch().trim().isEmpty()) {
+	      q.setParameter("criteria", "%" + this.criteria.getTextSearch() + "%");
+	    }
+	    if (!this.criteria.getAccountCode().trim().isEmpty()) {
+	      q.setParameter("code", "%" + this.criteria.getAccountCode() + "%");
+	    }
+	    this.totalDue = ((BigDecimal)q.getSingleResult());
+	  }
+	  
+	  public void detailOverdue(Long residentId)
+	  {
+	    Query q = getEntityManager().createQuery("SELECT mb from MunicipalBond mb WHERE mb.expirationDate between :startDate and :endDate and mb.municipalBondStatus.id in (:status) and mb.resident.id=:resident ORDER BY mb.expirationDate");
+	    
+	    q.setParameter("startDate", this.criteria.getStartDate());
+	    q.setParameter("endDate", this.criteria.getEndDate());
+	    q.setParameter("status", this.emittedStatus);
+	    q.setParameter("resident", residentId);
+	    
+	    this.detailBond = q.getResultList();
+	    this.totalBond = BigDecimal.ZERO;
+	    for (MunicipalBond bond : this.detailBond) {
+	      this.totalBond = this.totalBond.add(bond.getPaidTotal());
+	    }
+	    q = getEntityManager().createQuery("Select r from Resident r where r.id=:id");
+	    q.setParameter("id", residentId);
+	    this.resident = ((Resident)q.getSingleResult());
+	  }
 	public List<OverduePortfolio> getOverdues() {
 		return overdues;
 	}
@@ -680,5 +756,53 @@ public class FinantialStatement extends EntityController {
 		this.quotasAccountSubscription = quotasAccountSubscription;
 	}
 
-	
+	 public BigDecimal getTotalDue()
+	  {
+	    return this.totalDue;
+	  }
+	  
+	  public void setTotalDue(BigDecimal totalDue)
+	  {
+	    this.totalDue = totalDue;
+	  }
+	  
+	  public List<MunicipalBond> getDetailBond()
+	  {
+	    return this.detailBond;
+	  }
+	  
+	  public void setDetailBond(List<MunicipalBond> detailBond)
+	  {
+	    this.detailBond = detailBond;
+	  }
+	  
+	  public Resident getResident()
+	  {
+	    return this.resident;
+	  }
+	  
+	  public void setResident(Resident resident)
+	  {
+	    this.resident = resident;
+	  }
+	  
+	  public BigDecimal getTotalBond()
+	  {
+	    return this.totalBond;
+	  }
+	  
+	  public void setTotalBond(BigDecimal totalBond)
+	  {
+	    this.totalBond = totalBond;
+	  }
+	  
+	  public Integer getTotalRows()
+	  {
+	    return this.totalRows;
+	  }
+	  
+	  public void setTotalRows(Integer totalRows)
+	  {
+	    this.totalRows = totalRows;
+	  }
 }

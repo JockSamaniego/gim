@@ -15,6 +15,6 @@
    <param name="startDate" value="#{finantialStatement.criteria.startDate}"/>
    <param name="endDate" value="#{finantialStatement.criteria.endDate}"/>
    <param name="accountCode" value="#{finantialStatement.criteria.accountCode}"/>   
-   <param name="accountCode" value="#{finantialStatement.criteria.accountCode}"/>
+   <param name="textSearch" value="#{finantialStatement.criteria.textSearch}"/> 
 
 </page>

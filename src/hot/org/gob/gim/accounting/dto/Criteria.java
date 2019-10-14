@@ -10,6 +10,8 @@ public class Criteria {
 	private Date startDate;
 	private Date endDate;
 	
+	private String textSearch;
+	
 	public ReportType getReportType() {
 		return reportType;
 	}
@@ -56,5 +58,14 @@ public class Criteria {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+	public String getTextSearch() {
+		return textSearch;
+	}
+
+	public void setTextSearch(String textSearch) {
+		this.textSearch = textSearch;
 	}	
+	
 }

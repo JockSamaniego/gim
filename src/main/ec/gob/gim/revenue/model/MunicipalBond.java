@@ -922,13 +922,13 @@ import ec.gob.gim.revenue.model.impugnment.Impugnment;
 				+ "  SET mb.resident.id = :residentId "
 				+ "  WHERE mb.id IN (:bondIds) "
 				+ "  AND mb.municipalBondStatus.id=3"),
-		@NamedQuery(name = "MunicipalBond.overduePortafolio", query = "SELECT NEW org.gob.gim.income.view.OverduePortfolio(account.accountCode,account.accountName,sum(item.total)) FROM Item item "
-				+ "JOIN item.entry entry "
-				+ "JOIN entry.account account "
-				+ "where item.municipalBond.id in ("
-				+ "select mb.id from MunicipalBond mb where mb.expirationDate < :date and mb.municipalBondStatus.id in (3)) "
-				+ "GROUP BY account.accountCode,account.accountName "
-				+ "ORDER BY account.accountCode"),
+//		@NamedQuery(name = "MunicipalBond.overduePortafolio", query = "SELECT NEW org.gob.gim.income.view.OverduePortfolio(account.accountCode,account.accountName,sum(item.total)) FROM Item item "
+//				+ "JOIN item.entry entry "
+//				+ "JOIN entry.account account "
+//				+ "where item.municipalBond.id in ("
+//				+ "select mb.id from MunicipalBond mb where mb.expirationDate < :date and mb.municipalBondStatus.id in (3)) "
+//				+ "GROUP BY account.accountCode,account.accountName "
+//				+ "ORDER BY account.accountCode"),
 		@NamedQuery(name = "MunicipalBond.countMunicipalsBondsPendingFormalize", query = "SELECT count(*) "
 				+ "from MunicipalBond mb "
 				+ "join mb.municipalBondStatus mbs "

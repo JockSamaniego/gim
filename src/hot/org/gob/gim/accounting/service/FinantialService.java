@@ -1,5 +1,6 @@
 package org.gob.gim.accounting.service;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Local;
@@ -17,4 +18,9 @@ public interface FinantialService {
 	public Map<String, AccountItem> findBalanceReport(Criteria criteria);
 	public Map<Long, AccountDetail> findDetailReport(Criteria criteria, Long accountId, ReportFilter reportFilter);
 	public Map<String, AccountItem> findDuePortfolioReport(Criteria criteria);
+	
+	//macartuche
+	//@tag CarteraVencida
+	//@date 2019-10-09
+	public List<Long> getEmittedStatuses();
 }
