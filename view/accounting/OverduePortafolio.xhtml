@@ -16,8 +16,8 @@
 			<rich:panel label="#{messages['finantialStatement.searchFilter']}">
 				<f:facet name="header">
 					<h:outputText styleClass="formTitle"
-						value="#{messages['finantialStatement.title']}" />
-				</f:facet>OverduePortafolio
+						value="Cartera Vencida" />
+				</f:facet>
 
 				<s:decorate template="../layout/display.xhtml">
 					<ui:define name="label">#{messages['finantialStatement.startDate']}:</ui:define>
@@ -55,9 +55,12 @@
 
 			<a:outputPanel id="resultsPanel" ajaxRendered="true">
 
+				<rich:datascroller id="paginador" align="right"
+						for="finantialStatement" maxPages="20" />
+					<rich:spacer height="5" />
 				<rich:dataTable id="finantialStatement"
 					value="#{finantialStatement.overdues}" var="_overdue"
-					columnClasses="left tableCellFont, left tableCellFont, right tableCellFont, right tableCellFont, right tableCellFont, center"
+					rows="25"
 					rendered="#{finantialStatement.overdues.size() > 0}">
 
 					<f:facet name="header">
@@ -77,41 +80,73 @@
 
 					</f:facet>
 
-					<rich:column width="15%">
-						<f:facet name="header">#{messages['accountItem.accountNumber']}</f:facet>
-						<h:outputText value="#{_overdue.accountcode}" />
+					<rich:column width="5%" styleClass="left">
+						<f:facet name="header">ID</f:facet>
+						<h:outputText value="#{_overdue.id}" />
 					</rich:column>
-					<rich:column>
-						<f:facet name="header">#{messages['accountItem.accountName']}</f:facet>
-						<h:outputText value="#{_overdue.accountname}" />
+
+					<rich:column width="12%" styleClass="left">
+						<f:facet name="header">Identificación</f:facet>
+						<h:outputText value="#{_overdue.identification}" />
 					</rich:column>
-					<rich:column width="10%">
-						<f:facet name="header">#{messages['accountItem.total']}</f:facet>
-						<h:outputText value="#{_overdue.total}">
+
+					<rich:column  width="35%" styleClass="left">
+						<f:facet name="header">Nombres</f:facet>
+						<h:outputText value="#{_overdue.names}" />
+					</rich:column>
+
+					<rich:column styleClass="left">
+						<f:facet name="header">Correo</f:facet>
+						<h:outputText value="#{_overdue.email}" />
+					</rich:column>
+					
+					<rich:column width="10%" styleClass="number">
+						<f:facet name="header">Total</f:facet>
+						$<h:outputText value="#{_overdue.total}">
 							<f:convertNumber maxFractionDigits="2" pattern="#,##,##0.00" />
 						</h:outputText>
 					</rich:column>
+					 
+
+					<rich:column width="10%" styleClass="center">
+						<f:facet name="header">Acciones</f:facet>
+						<a:commandButton id="detailBtn"
+							value="#{messages['finantialStatement.detail']}"
+							action="#{finantialStatement.detailOverdue(_overdue.id)}"
+							reRender="bondDetailPanel" eventsQueue="gimEventsQueue"
+							ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('bondDetailPanel',{width:1100, height:540})">
+						</a:commandButton>
+					</rich:column>
 
 
-					<f:facet name="footer">
-						<rich:columnGroup columnClasses=",number">
-							<rich:column colspan="2">
+					 <f:facet name="footer">
+						<rich:columnGroup columnClasses="right,number">
+							<rich:column colspan="4">
 								<h:outputText value="#{messages['item.total']}:"
 									styleClass="labelBold" />
 							</rich:column>
 
+							 
 							<rich:column styleClass="number tableCellFont">
-								<h:outputText value="#{finantialStatement.total}">
-									<f:convertNumber maxFractionDigits="2" type="currency"
-										currencySymbol="$" />
+								$<h:outputText value="#{finantialStatement.totalDue}">
+									<f:convertNumber maxFractionDigits="2" pattern="#,##,##0.00" />
 								</h:outputText>
 							</rich:column>
+
+							<rich:column styleClass="number tableCellFont">								
+							</rich:column>
+
 						</rich:columnGroup>
 					</f:facet>
 				</rich:dataTable>
+				<rich:spacer height="5" />				
+				<rich:datascroller id="paginadorPie" align="right"
+						for="finantialStatement" maxPages="20" />
+				 
 			</a:outputPanel>
 		</h:form>
 
-		<ui:include src="fragment/AccountDetailPanel.xhtml" />
+		<ui:include src="fragment/BondDetailPanel.xhtml" />
 	</ui:define>
 </ui:composition>
