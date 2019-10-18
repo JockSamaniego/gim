@@ -2823,9 +2823,6 @@ public class PropertyHome extends EntityHome<Property> {
 		this._dataCadastralCerfificate = this.cadasterService
 				.getCadastralCertificateData(propertyId);
 		
-		System.out.println(this._dataCadastralCerfificate.getFoto());
-		System.out.println(this._dataCadastralCerfificate.getFoto().length);
-
 		return "/cadaster/report/CadastralCertificatePDF.xhtml";
 	}
 

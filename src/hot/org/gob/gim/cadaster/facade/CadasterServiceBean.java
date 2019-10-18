@@ -32,6 +32,7 @@ import org.gob.gim.revenue.facade.RevenueService;
 import org.gob.gim.revenue.service.EntryService;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.gim.revenue.view.EntryValueItem;
+import org.gob.loja.gim.ws.dto.CadastralCertificateDTOWs;
 
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.LocationPropertySinat;
@@ -63,7 +64,7 @@ import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
  */
 @Stateless(name = "CadasterService")
 public class CadasterServiceBean implements CadasterService {
-
+	
 	@PersistenceContext
 	EntityManager entityManager;
 
@@ -1389,6 +1390,30 @@ public class CadasterServiceBean implements CadasterService {
 			return null;
 		}
 		
+	}
+
+	@Override
+	public CadastralCertificateDTOWs getCadastralCertificateDataWs(
+			Long property_id) {
+		try {
+
+			Query query = entityManager
+					.createNativeQuery("select * from reports.sp_reporte_cadastral_certificate(?1)");
+			query.setParameter(1, property_id);
+
+			List<CadastralCertificateDTOWs> retorno = NativeQueryResultsMapper.map(
+					query.getResultList(), CadastralCertificateDTOWs.class);
+			
+			if(retorno.size()>0) {
+				return retorno.get(0);
+			}else {
+				return null;
+			}
+			
+		} catch (Exception e) {
+			System.out.println(e);
+			return null;
+		}
 	}
 		
 }

@@ -74,4 +74,8 @@
   <output ID="/error.xhtml" NAME="output" PATH="/error.xhtml"
    TARGET="#xerror.xhtml" model-entity="SeamPagesDiagramItemOutput"/>
  </item>
+ <item ID="java.lang.UnsupportedOperationException"
+  NAME="exception:java.lang.UnsupportedOperationException"
+  PATH="java.lang.UnsupportedOperationException" SHAPE="344,953,0,0"
+  TYPE="exception" model-entity="SeamPagesDiagramItem"/>
 </diagram>

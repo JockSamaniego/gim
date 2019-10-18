@@ -16,3 +16,6 @@ laguana.jar
 commons-digester.jar
 richfaces-impl.jar
 richfaces-ui.jar
+
+resteasy-jaxrs.jar
+jboss-seam-resteasy.jar

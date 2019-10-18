@@ -48,43 +48,47 @@ public class AuthenticatorBean implements Authenticator {
 
 	@In(create = true)
 	UserSession userSession;
-	
-	@In(scope=ScopeType.APPLICATION)
+
+	@In(scope = ScopeType.APPLICATION)
 	Gim gim;
 
 	@PersistenceContext
 	private EntityManager entityManager;
-	
+
 	@In
 	FacesMessages facesMessages;
 
 	@In(create = true)
 	private PasswordManager passwordManager;
-	
+
 	private String ip;
 
 	public boolean authenticate() {
-		
+
 		return isUserValid();
 	}
 
-	@SuppressWarnings({"unchecked"})
+	@SuppressWarnings({ "unchecked" })
 	private Boolean isUserValid() {
 		String hashPassword = passwordManager.hash(credentials.getPassword());
-		log.info("Authenticating user {0}, {1}", credentials.getUsername(), hashPassword);
-		System.out.println("Authenticating user: "+credentials.getUsername()+" "+hashPassword);
-		Query query = entityManager.createNamedQuery("User.findByUsernameAndPassword");
+		log.info("Authenticating user {0}, {1}", credentials.getUsername(),
+				hashPassword);
+		System.out.println("Authenticating user: " + credentials.getUsername()
+				+ " " + hashPassword);
+		Query query = entityManager
+				.createNamedQuery("User.findByUsernameAndPassword");
 		query.setParameter("name", credentials.getUsername());
 		query.setParameter("password", hashPassword);
 		User user = null;
 		try {
 			user = (User) query.getSingleResult();
-		} catch (Exception e){
-//			e.printStackTrace();
-			facesMessages.addFromResourceBundle("security.userAccountOrPasswordInvalid");
+		} catch (Exception e) {
+			// e.printStackTrace();
+			facesMessages
+					.addFromResourceBundle("security.userAccountOrPasswordInvalid");
 			return false;
 		}
-		
+
 		if (!user.getIsActive()) {
 			facesMessages.addFromResourceBundle("security.accountIsNotActive");
 			return false;
@@ -94,10 +98,12 @@ public class AuthenticatorBean implements Authenticator {
 			return false;
 		}
 
-		log.info("USUARIO OBTENIDO ---> " + user.getName() + " " + user.getPassword());
+		log.info("USUARIO OBTENIDO ---> " + user.getName() + " "
+				+ user.getPassword());
 		Boolean isSuccessfullyRegistered = gim.registerSession(user);
 		if (!isSuccessfullyRegistered) {
-			facesMessages.addFromResourceBundle("security.userIsAlreadyLoggedIn", user.getName());
+			facesMessages.addFromResourceBundle(
+					"security.userIsAlreadyLoggedIn", user.getName());
 			return false;
 		}
 
@@ -107,7 +113,8 @@ public class AuthenticatorBean implements Authenticator {
 		try {
 			person = (Person) query.getSingleResult();
 		} catch (Exception e) {
-			facesMessages.addFromResourceBundle("security.noAccountOwnerAssociated");
+			facesMessages
+					.addFromResourceBundle("security.noAccountOwnerAssociated");
 			return false;
 		}
 
@@ -125,6 +132,7 @@ public class AuthenticatorBean implements Authenticator {
 				identity.addRole(mr.getName());
 			}
 		}
+		
 		findIpRemoteMachine();
 		if (isCashier()) {
 			TillPermission tp = findTillPermission();
@@ -132,56 +140,65 @@ public class AuthenticatorBean implements Authenticator {
 				userSession.setTillPermission(tp);
 			}
 		}
-		
+
 		this.userSession.setNumberMunicipalBondsFormalizing(null);
-		
-		if(isFormalizing()){
-			//TODO implementar busqueda de emisiones pendienets de formalizar menores o iguales a hoy
-			this.userSession.setNumberMunicipalBondsFormalizing(numberMuicipalBondsFormalize());			
+
+		if (isFormalizing()) {
+			// TODO implementar busqueda de emisiones pendienets de formalizar
+			// menores o iguales a hoy
+			this.userSession
+					.setNumberMunicipalBondsFormalizing(numberMuicipalBondsFormalize());
 		}
-		
-		System.out.println("USUARIO CONECTADO: "+user.getName());
+
+		System.out.println("USUARIO CONECTADO: " + user.getName());
 		return true;
 	}
-	
-	public Integer numberMuicipalBondsFormalize(){
-		
-		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);		
-		Long municipallBondStatusFutureId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_ISSUANCE");
-		
-		Query query = entityManager.createNamedQuery("MunicipalBond.countMunicipalsBondsPendingFormalize");
+
+	public Integer numberMuicipalBondsFormalize() {
+
+		SystemParameterService systemParameterService = ServiceLocator
+				.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+		Long municipallBondStatusFutureId = systemParameterService
+				.findParameter("MUNICIPAL_BOND_STATUS_ID_FUTURE_ISSUANCE");
+
+		Query query = entityManager
+				.createNamedQuery("MunicipalBond.countMunicipalsBondsPendingFormalize");
 		query.setParameter("futureStatusId", municipallBondStatusFutureId);
 		query.setParameter("now", new Date(), TemporalType.DATE);
 		Long number = (Long) query.getSingleResult();
-		if(number == 0){
+		if (number == 0) {
 			return null;
-		}else{
+		} else {
 			return number.intValue();
 		}
 	}
 
-	public boolean isCashier(){
-		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);		
-		String cashierRoleName = systemParameterService.findParameter("ROLE_NAME_CASHIER");
-		
-		if(userSession.getUser().hasRole(cashierRoleName)){
+	public boolean isCashier() {
+		SystemParameterService systemParameterService = ServiceLocator
+				.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+		String cashierRoleName = systemParameterService
+				.findParameter("ROLE_NAME_CASHIER");
+
+		if (userSession.getUser().hasRole(cashierRoleName)) {
 			return true;
 		}
-		
+
 		return false;
-    }
-	
-	public boolean isFormalizing(){
-		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);		
-		String formalizingRoleName = systemParameterService.findParameter("ROLE_NAME_FORMALIZING");
-		
-		if(userSession.getUser().hasRole(formalizingRoleName)){
+	}
+
+	public boolean isFormalizing() {
+		SystemParameterService systemParameterService = ServiceLocator
+				.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+		String formalizingRoleName = systemParameterService
+				.findParameter("ROLE_NAME_FORMALIZING");
+
+		if (userSession.getUser().hasRole(formalizingRoleName)) {
 			return true;
 		}
-		
+
 		return false;
-    }
-	
+	}
+
 	@SuppressWarnings("unchecked")
 	public TillPermission findTillPermission() {
 		Date currentDate = new Date();
@@ -191,52 +208,68 @@ public class AuthenticatorBean implements Authenticator {
 		query.setParameter("date", currentDate);
 		List<TillPermission> tillPermissions = query.getResultList();
 		if (tillPermissions != null && tillPermissions.size() > 0) {
-			if(tillPermissions.get(0).isEnabled()){				
-				return tillPermissions.get(0);				
-			}			
-		}	
+			if (tillPermissions.get(0).isEnabled()) {
+				return tillPermissions.get(0);
+			}
+		}
 		return null;
 	}
-	
-	public String findIpRemoteMachine(){
-		ExternalContext context = javax.faces.context.FacesContext.getCurrentInstance().getExternalContext();
-		HttpServletRequest request = (HttpServletRequest)context.getRequest();
-        ip = request.getHeader("X-Forwarded-For");
-        if (isIPAddress(ip)){
-            System.out.println("IP Return:"+ip);
-    		System.out.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: " + ip);
-        	return ip;
-        } else{
-        	ip = request.getRemoteAddr();
-            System.out.println("RemoteAddr:"+ip);
-    		System.out.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: " + ip);
-        	return ip;
-        }
-//		ip = request.getRemoteAddr(); //En algunos casos solamente detecta la IP del Proxy y no la del Equipo Local
-//		System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::: " + ip);
-//		return ip;
+
+	public String findIpRemoteMachine() {
+
+		try {
+			ExternalContext context = javax.faces.context.FacesContext
+					.getCurrentInstance().getExternalContext();
+			HttpServletRequest request = (HttpServletRequest) context
+					.getRequest();
+			ip = request.getHeader("X-Forwarded-For");
+			if (isIPAddress(ip)) {
+				System.out.println("IP Return:" + ip);
+				System.out
+						.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: "
+								+ ip);
+				return ip;
+			} else {
+				ip = request.getRemoteAddr();
+				System.out.println("RemoteAddr:" + ip);
+				System.out
+						.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: "
+								+ ip);
+				return ip;
+			}
+		} catch (Exception e) {
+			//System.out.println(e);
+			ip = "ws REST";
+			return "ws REST";
+		}
+
+		// ip = request.getRemoteAddr(); //En algunos casos solamente detecta la
+		// IP del Proxy y no la del Equipo Local
+		// System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::: "
+		// + ip);
+		// return ip;
 	}
-	
-	private boolean isIPAddress(String ip){
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-        	return false;
-        }
-        Pattern pattern = null;
-        Matcher matcher;
-        
-        String IPADDRESS_PATTERN = 
-    		"^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-    		"([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-    		"([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-    		"([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-     
-        pattern = Pattern.compile(IPADDRESS_PATTERN);
-        matcher = pattern.matcher(ip);
-        return matcher.matches();	    	    
+
+	private boolean isIPAddress(String ip) {
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			return false;
+		}
+		Pattern pattern = null;
+		Matcher matcher;
+
+		String IPADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+
+		pattern = Pattern.compile(IPADDRESS_PATTERN);
+		matcher = pattern.matcher(ip);
+		return matcher.matches();
 	}
-	
-	public boolean isTillAdressCorrect(Till t){		
-		if(t.getAddress().equals(ip)) return true;
+
+	public boolean isTillAdressCorrect(Till t) {
+		if (t.getAddress().equals(ip))
+			return true;
 		return false;
 	}
 

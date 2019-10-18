@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.ejb.Local;
 
+import org.gob.loja.gim.ws.dto.CadastralCertificateDTOWs;
+
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.LocationPropertySinat;
 import ec.gob.gim.cadaster.model.Property;
@@ -66,4 +68,7 @@ public interface CadasterService {
 	 * 
 	 */
 	CadastralCertificateDTO getCadastralCertificateData(Long property_id);
+	
+	CadastralCertificateDTOWs getCadastralCertificateDataWs(Long property_id);
+	
 }

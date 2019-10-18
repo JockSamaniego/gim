@@ -28,3 +28,6 @@ jackson-xc-1.9.11.jar
 joda-time.jar
 
 commons-beanutils.jar
+
+resteasy-jaxrs.jar
+jboss-seam-resteasy.jar

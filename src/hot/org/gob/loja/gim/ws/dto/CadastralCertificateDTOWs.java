@@ -1,19 +1,24 @@
 /**
  * 
  */
-package ec.gob.gim.cadaster.model.dto;
+package org.gob.loja.gim.ws.dto;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.gob.gim.common.NativeQueryResultColumn;
 import org.gob.gim.common.NativeQueryResultEntity;
+
+import ec.gob.gim.cadaster.model.dto.BoundaryDTO;
+import ec.gob.gim.cadaster.model.dto.BuildingDTO;
 
 /**
  * @author rene
  *
  */
 @NativeQueryResultEntity
-public class CadastralCertificateDTO {
+public class CadastralCertificateDTOWs {
 	
 	@NativeQueryResultColumn(index = 0)	
 	private String provincia;
@@ -161,6 +166,16 @@ public class CadastralCertificateDTO {
 	
 	@NativeQueryResultColumn(index = 48)
 	private byte[] croquis;
+	
+	private List<BuildingDTO> construccionesJson = new ArrayList<BuildingDTO>();
+	
+	private BoundaryDTO linderoNorteJson;
+	
+	private BoundaryDTO linderoSurJson;
+	
+	private BoundaryDTO linderoEsteJson;
+	
+	private BoundaryDTO linderoOesteJson;
 	
 	public String getProvincia() {
 		return provincia;
@@ -554,5 +569,89 @@ public class CadastralCertificateDTO {
 	public void setLotaliquot(BigDecimal lotaliquot) {
 		this.lotaliquot = lotaliquot;
 	}
-		
+
+	/**
+	 * @return the construccionesJson
+	 */
+	public List<BuildingDTO> getConstruccionesJson() {
+		return construccionesJson;
+	}
+
+	/**
+	 * @param construccionesJson the construccionesJson to set
+	 */
+	public void setConstruccionesJson(List<BuildingDTO> construccionesJson) {
+		this.construccionesJson = construccionesJson;
+	}
+
+	/**
+	 * @return the linderoNorteJson
+	 */
+	public BoundaryDTO getLinderoNorteJson() {
+		return linderoNorteJson;
+	}
+
+	/**
+	 * @param linderoNorteJson the linderoNorteJson to set
+	 */
+	public void setLinderoNorteJson(BoundaryDTO linderoNorteJson) {
+		this.linderoNorteJson = linderoNorteJson;
+	}
+
+	/**
+	 * @return the linderoSurJson
+	 */
+	public BoundaryDTO getLinderoSurJson() {
+		return linderoSurJson;
+	}
+
+	/**
+	 * @param linderoSurJson the linderoSurJson to set
+	 */
+	public void setLinderoSurJson(BoundaryDTO linderoSurJson) {
+		this.linderoSurJson = linderoSurJson;
+	}
+
+	/**
+	 * @return the linderoEsteJson
+	 */
+	public BoundaryDTO getLinderoEsteJson() {
+		return linderoEsteJson;
+	}
+
+	/**
+	 * @param linderoEsteJson the linderoEsteJson to set
+	 */
+	public void setLinderoEsteJson(BoundaryDTO linderoEsteJson) {
+		this.linderoEsteJson = linderoEsteJson;
+	}
+
+	/**
+	 * @return the linderoOesteJson
+	 */
+	public BoundaryDTO getLinderoOesteJson() {
+		return linderoOesteJson;
+	}
+
+	/**
+	 * @param linderoOesteJson the linderoOesteJson to set
+	 */
+	public void setLinderoOesteJson(BoundaryDTO linderoOesteJson) {
+		this.linderoOesteJson = linderoOesteJson;
+	}
+
+	/**
+	 * @return the croquis
+	 */
+	public byte[] getCroquis() {
+		return croquis;
+	}
+
+	/**
+	 * @param croquis the croquis to set
+	 */
+	public void setCroquis(byte[] croquis) {
+		this.croquis = croquis;
+	}
+	
 }

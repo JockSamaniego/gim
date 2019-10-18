@@ -1,75 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pages xmlns="http://jboss.com/products/seam/pages"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
-       no-conversation-view-id="/home.xhtml"
-       login-view-id="/login.xhtml">
+<pages xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	no-conversation-view-id="/home.xhtml" login-view-id="/login.xhtml">
 
-    <page view-id="*">
-        <navigation>
-            <rule if-outcome="home">
-                <redirect view-id="/home.xhtml"/>
-            </rule>
-        </navigation>
-    </page>
+	<page view-id="*">
+		<navigation>
+			<rule if-outcome="home">
+				<redirect view-id="/home.xhtml" />
+			</rule>
+		</navigation>
+	</page>
 
-    <exception class="org.jboss.seam.framework.EntityNotFoundException">
-        <redirect view-id="/error.xhtml">
-            <message severity="warn">Entidad no encontrada</message>
-        </redirect>
-    </exception>
-    
-    <exception class="javax.persistence.EntityNotFoundException">
-        <redirect view-id="/error.xhtml">
-            <message severity="warn">Entidad no encontrada</message>
-        </redirect>
-    </exception>
-    
-    <exception class="javax.persistence.EntityExistsException">
-        <redirect view-id="/error.xhtml">
-            <message severity="warn">Registro duplicado</message>
-        </redirect>
-    </exception>
-    
-    <exception class="javax.persistence.OptimisticLockException">
-        <end-conversation/>
-        <redirect view-id="/error.xhtml">
-            <message severity="warn">Otro usuario cambió previamente la información, por favor intente su transacción nuevamente</message>
-        </redirect>
-    </exception>
-    
-    <exception class="org.jboss.seam.security.AuthorizationException">
-        <redirect view-id="/error.xhtml">
-            <message severity="error">Autorización inválida: Usted no tiene permiso para acceder al recurso solicitado</message>
-        </redirect>
-    </exception>
-    
-    <exception class="org.jboss.seam.security.NotLoggedInException">
-        <redirect view-id="/login.xhtml">
-            <message severity="warn">#{messages['org.jboss.seam.NotLoggedIn']}</message>
-        </redirect>
-    </exception>
-    
-    <exception class="javax.faces.application.ViewExpiredException">
-        <redirect view-id="/error.xhtml">
-            <message severity="warn">Su sesión ha expirado, intente su transacción nuevamente</message>
-        </redirect>
-    </exception>
-    
-    <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" log-level="trace">
-      <http-error error-code="503" />
-    </exception>
-    
-    <exception class="org.jboss.seam.web.FileUploadException">
-  		<redirect view-id="/error.xhtml">
-    		<message>Ocurrió un error mientras se cargaba el archivo adjunto</message>
-  		</redirect>
+	<exception class="org.jboss.seam.framework.EntityNotFoundException">
+		<redirect view-id="/error.xhtml">
+			<message severity="warn">Entidad no encontrada</message>
+		</redirect>
 	</exception>
-     
-    <exception>
-        <redirect view-id="/error.xhtml">
-            <message severity="error">Error inesperado. Por favor intente su transacción nuevamente</message>
-        </redirect>
-    </exception>
-    
+
+	<exception class="javax.persistence.EntityNotFoundException">
+		<redirect view-id="/error.xhtml">
+			<message severity="warn">Entidad no encontrada</message>
+		</redirect>
+	</exception>
+
+	<exception class="javax.persistence.EntityExistsException">
+		<redirect view-id="/error.xhtml">
+			<message severity="warn">Registro duplicado</message>
+		</redirect>
+	</exception>
+
+	<exception class="javax.persistence.OptimisticLockException">
+		<end-conversation />
+		<redirect view-id="/error.xhtml">
+			<message severity="warn">Otro usuario cambió previamente la información, por favor intente su transacción nuevamente</message>
+		</redirect>
+	</exception>
+
+	<exception class="org.jboss.seam.security.AuthorizationException">
+		<redirect view-id="/error.xhtml">
+			<message severity="error">Autorización inválida: Usted no tiene permiso para acceder al recurso solicitado</message>
+		</redirect>
+	</exception>
+
+	<exception class="org.jboss.seam.security.NotLoggedInException">
+		<redirect view-id="/login.xhtml">
+			<message severity="warn">#{messages['org.jboss.seam.NotLoggedIn']}</message>
+		</redirect>
+	</exception>
+
+	<exception class="javax.faces.application.ViewExpiredException">
+		<redirect view-id="/error.xhtml">
+			<message severity="warn">Su sesión ha expirado, intente su transacción nuevamente</message>
+		</redirect>
+	</exception>
+
+	<exception class="org.jboss.seam.ConcurrentRequestTimeoutException"
+		log-level="trace">
+		<http-error error-code="503" />
+	</exception>
+
+	<exception class="org.jboss.seam.web.FileUploadException">
+		<redirect view-id="/error.xhtml">
+			<message>Ocurrió un error mientras se cargaba el archivo adjunto</message>
+		</redirect>
+	</exception>
+
+	<exception>
+		<redirect view-id="/error.xhtml">
+			<message severity="error">Error inesperado. Por favor intente su transacción nuevamente</message>
+		</redirect>
+	</exception>
+
+	​
+	<exception class="java.lang.UnsupportedOperationException">
+		<http-error error-code="501">
+			<message>The requested operation is not supported</message>
+		</http-error>
+	</exception>
+
 </pages>
