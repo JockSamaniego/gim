@@ -23,7 +23,7 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.core.Interpolator;
 
 import ec.gob.gim.cadaster.model.dto.BuildingDTO;
-import ec.gob.gim.wsrest.CorsInterceptor;
+//import ec.gob.gim.wsrest.CorsInterceptor;
 
 /**
  * @author Rene
@@ -32,7 +32,7 @@ import ec.gob.gim.wsrest.CorsInterceptor;
 @Name("cadasterWS")
 @Path("/cadaster")
 @Transactional
-@Interceptors(CorsInterceptor.class)
+//@Interceptors(CorsInterceptor.class)
 public class CadasterWS {
 	
 	@In(create = true,required = false, value = "restService")
