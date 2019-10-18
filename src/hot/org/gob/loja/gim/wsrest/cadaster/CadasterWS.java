@@ -3,13 +3,9 @@
  */
 package org.gob.loja.gim.wsrest.cadaster;
 
-import java.io.Serializable;
 import java.util.List;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -18,22 +14,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gob.gim.common.ServiceLocator;
-import org.gob.gim.common.exception.NonUniqueIdentificationNumberException;
-import org.gob.gim.common.service.ResidentService;
 import org.gob.loja.gim.ws.dto.CadastralCertificateDTOWs;
 import org.gob.loja.gim.ws.dto.PropertyDTOWs;
-import org.gob.loja.gim.ws.service.PaymentService;
 import org.gob.loja.gim.ws.service.RestService;
-import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.core.Interpolator;
 
 import ec.gob.gim.cadaster.model.dto.BuildingDTO;
-import ec.gob.gim.cadaster.model.dto.CadastralCertificateDTO;
-import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.wsrest.CorsInterceptor;
 
 /**
  * @author Rene
@@ -42,7 +32,7 @@ import ec.gob.gim.common.model.Resident;
 @Name("cadasterWS")
 @Path("/cadaster")
 @Transactional
-//@Scope(ScopeType.STATELESS)
+@Interceptors(CorsInterceptor.class)
 public class CadasterWS {
 	
 	@In(create = true,required = false, value = "restService")
@@ -119,7 +109,9 @@ public class CadasterWS {
 						
 			}
 			
-			return Response.ok(res).build();
+			return Response.ok(res).header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC")
+					.build();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
