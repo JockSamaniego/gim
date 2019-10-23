@@ -1490,7 +1490,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 						MunicipalBondStatus.class,
 						"MUNICIPAL_BOND_STATUS_ID_COMPENSATION");
 				Long statusId = mbs.getId();
-				System.out.println("MBS ID " + statusId);
+				//System.out.println("MBS ID " + statusId);
 				if (municipalBond.getMunicipalBondStatus() != null
 						&& statusId != 0) {
 					if (municipalBond.getMunicipalBondStatus().getId()

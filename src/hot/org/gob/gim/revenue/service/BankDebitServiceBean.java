@@ -1,7 +1,9 @@
 package org.gob.gim.revenue.service;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -210,7 +212,7 @@ public class BankDebitServiceBean implements BankDebitService {
 	@Override
 	public List<Long> getBankDebitResidents() {
 		String sql = "SELECT "
-							+"CAST (res.id AS INTEGER) as id "
+						+"distinct(CAST (res.id AS INTEGER)) as id "
 						+"FROM "
 						+"bankdebit AS ban "
 						+"INNER JOIN watersupply was ON ban.watersupply_id = was.id "
@@ -248,7 +250,7 @@ public class BankDebitServiceBean implements BankDebitService {
 						+"INNER JOIN resident res ON res.id = was.recipeowner_id "
 						+"INNER JOIN itemcatalog itm ON itm.id = ban.accounttype_itm_id "
 						+"WHERE ban.active = true "
-						+"AND mbo.municipalbondstatus_id IN (3,4) "
+						+"AND mbo.municipalbondstatus_id IN (3) "
 						+"GROUP BY res.identificationnumber, "
 									+"res.name, "
 									+"itm.name, "
@@ -261,7 +263,16 @@ public class BankDebitServiceBean implements BankDebitService {
 		List<BankDebitReportDTO> retorno = NativeQueryResultsMapper.map(
 				query.getResultList(), BankDebitReportDTO.class);
 		
-		return retorno;
+		List<BankDebitReportDTO> _retorno = new ArrayList<BankDebitReportDTO> ();
+		
+		for (int i = 0; i < retorno.size(); i++) {
+			BankDebitReportDTO _bdr = retorno.get(i);
+			if(_bdr.getValor().compareTo(BigDecimal.ZERO) == 1){
+				_retorno.add(_bdr);
+			}
+		}
+		
+		return _retorno;
 		
 	}
 
