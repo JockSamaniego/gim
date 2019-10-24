@@ -10,6 +10,7 @@ import org.gob.gim.common.exception.NonUniqueIdentificationNumberException;
 
 import ec.gob.gim.common.model.IdentificationType;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.loja.client.model.UserWS;
 
 @Local
 public interface ResidentService {
@@ -25,7 +26,6 @@ public interface ResidentService {
 	void loadPublicInstitutions();
 	void updatePublicInstitutions();
 	
-	
-	
+	String updateUserIntoEBilling(UserWS user);
 	
 }
