@@ -220,8 +220,75 @@
 					size="50" maxlength="80" disabled="#{disabled}">
 				</h:inputText>
 			</s:decorate>
-
 		</h:panelGrid>
+		 
+		
+		<h:panelGrid columns="2" columnClasses="topAligned">
+			<h:panelGrid columns="2">			
+				<s:decorate id="urbanizationBlockField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">#{messages['property.apple']}:</ui:define>
+					<h:inputText id="neighborhood"
+						value="#{propertyHome.instance.urbanizationBlock}"
+						size="20" maxlength="50">
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="urbanizationPropertyNumberField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">#{messages['property.urbanizationPropertyNumber']}:</ui:define>
+					<h:inputText id="neighborhood"
+						value="#{propertyHome.instance.urbanizationPropertyNumber}"
+						size="20" maxlength="50">
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="buildingAreaHorizontalPropertyField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">#{messages['property.buildingAreaHorizontalProperty']}:</ui:define>
+					<h:inputText id="neighborhood"
+						value="#{propertyHome.instance.buildingAreaHorizontalProperty}" 
+						style="text-align: right"
+						size="15">
+						<f:convertNumber pattern="#0.00" />
+						<a:support event="onblur" ajaxSingle="true" reRender="buildingAreaHorizontalPropertyField"/>
+					</h:inputText>#{messages['domain.BySquareMeters']}
+				</s:decorate>
+				
+				<s:decorate id="lotAreaHorizontalPropertyField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">#{messages['property.buildingAreaHorizontalProperty']}:</ui:define>
+					<h:inputText id="neighborhood"
+						value="#{propertyHome.instance.lotAreaHorizontalProperty}"
+						style="text-align: right" size="15">
+						<f:convertNumber pattern="#0.00" />
+						<a:support event="onblur" ajaxSingle="true" reRender="lotAreaHorizontalPropertyField"/>
+					</h:inputText>#{messages['domain.BySquareMeters']}
+				</s:decorate>
+				
+				<s:decorate id="registrationCardNumberField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">#{messages['property.registrationCardNumber']}:</ui:define>
+					<h:inputText id="neighborhood"
+						value="#{propertyHome.instance.registrationCardNumber}"
+						size="20" maxlength="50">
+	
+					</h:inputText>
+				</s:decorate>
+			</h:panelGrid>
+			
+			<s:decorate id="descriptionHorizontalField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">#{messages['property.descriptionHorizontalProperty']}:</ui:define>
+					 <h:inputTextarea id="descriptionHorizontal" cols="40" rows="5" required="false"                    
+                          value="#{propertyHome.instance.descriptionHorizontalProperty}">
+			    	<f:validateLength maximum="255" />
+			    </h:inputTextarea>
+				</s:decorate>
+		</h:panelGrid>
+		
+		 
+		
 		<div style="clear: both">
 			<span class="required">*</span> #{messages['common.requiredFields']}
 		</div>
