@@ -25,6 +25,12 @@ public class PropertyDTOWs {
 	@NativeQueryResultColumn(index = 3)
 	private String previousCadastralCode;
 	
+	@NativeQueryResultColumn(index = 4)
+	private String neighborhood;
+	
+	@NativeQueryResultColumn(index = 5)
+	private String addressreference;
+	
 	/**
 	 * @return the propertyId
 	 */
@@ -72,6 +78,18 @@ public class PropertyDTOWs {
 	 */
 	public void setPreviousCadastralCode(String previousCadastralCode) {
 		this.previousCadastralCode = previousCadastralCode;
+	}
+	public String getNeighborhood() {
+		return neighborhood;
+	}
+	public void setNeighborhood(String neighborhood) {
+		this.neighborhood = neighborhood;
+	}
+	public String getAddressreference() {
+		return addressreference;
+	}
+	public void setAddressreference(String addressreference) {
+		this.addressreference = addressreference;
 	}
 		
 }
