@@ -62,10 +62,13 @@ public class RestServiceBean implements RestService {
 			String identification) {
 
 		String query1 = "SELECT pro.id, " + "res.name, "
-				+ "pro.cadastralcode, " + "pro.previouscadastralcode "
+				+ "pro.cadastralcode, " + "pro.previouscadastralcode, "
+				+ "nei.name as neighborhood, " + "pro.addressreference "
 				+ "FROM property pro "
 				+ "INNER JOIN domain dom ON dom.currentproperty_id = pro.id "
 				+ "INNER JOIN resident res ON res.id = dom.resident_id "
+				+ "LEFT JOIN location loc ON loc.id = pro.location_id "
+				+ "LEFT JOIN neighborhood nei ON nei.id = loc.neighborhood_id "
 				+ "WHERE pro.propertytype_id = 1 " + "AND pro.deleted = FALSE "
 				+ "AND res.identificationnumber = ?0";
 
