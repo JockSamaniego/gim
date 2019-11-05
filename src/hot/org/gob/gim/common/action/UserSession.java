@@ -114,11 +114,11 @@ public class UserSession extends EntityController{
 	
 	@Observer(value = "org.jboss.seam.security.loginSuccessful")
 	public void postLogin() {
-		logger.info("POST LOGIN");
+		//logger.info("POST LOGIN");
 		HttpSession session = gim.getHttpSession();
 		user.setIpAddress(getIpAddress());
 		session.setAttribute("user", user);
-		logger.info("SESSION User ATTRIBUTE SET");
+		//logger.info("SESSION User ATTRIBUTE SET");
 		saveSessionRecord(SessionRecordType.LOGIN);
 		loadFiscalPeriod();
 		loadRestrictedMenu();
@@ -148,7 +148,7 @@ public class UserSession extends EntityController{
 			setLogoutType(logoutType);
 			gim.unregisterSession(user);
 			Identity.instance().logout();
-			System.out.println("org.jboss.seam.security.loggedOut ----> POST LOGOUT");
+			//System.out.println("org.jboss.seam.security.loggedOut ----> POST LOGOUT");
 			saveSessionRecord(logoutType);
 			permissions.clear();
 			linkPermissions.clear();
@@ -174,14 +174,15 @@ public class UserSession extends EntityController{
 		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
 		HttpServletRequest request = (HttpServletRequest)context.getRequest();
         String ipAddress = request.getHeader("X-Forwarded-For");
-        System.out.println("\n\n\n\n\n<<<IP FOR USER>>>:"+user.getName()+"  :  "+ipAddress);
+        logger.info("<<<IP FOR USER>>>:", user.getName()+"  :  "+ipAddress);
         if (isIPAddress(ipAddress)){
-            System.out.println("IP Return:"+ipAddress);
+            //System.out.println("IP Return:"+ipAddress);
         	return ipAddress;
         } else{
         	ipAddress = request.getRemoteAddr();
-            System.out.println("RemoteAddr:"+ipAddress);
-            System.out.println("\n\n\n\n\n");
+            //System.out.println("RemoteAddr:"+ipAddress);
+        	//logger.info("<<<RemoteAddr>>>:", user.getName()+"  :  "+ipAddress);
+            //System.out.println("\n\n\n\n\n");
         	return ipAddress;
         }
 //        
@@ -267,7 +268,7 @@ public class UserSession extends EntityController{
 		fiscalPeriod = (FiscalPeriod) query.getSingleResult();
 		query = getEntityManager().createNamedQuery("FiscalPeriod.findAll");
 		fiscalPeriods = query.getResultList();*/
-		System.out.println("ya no accesa a la base de datos................para cada usuario 2 menos");
+		//System.out.println("ya no accesa a la base de datos................para cada usuario 2 menos");
 		fiscalPeriod = gim.getFiscalPeriod();
 		fiscalPeriods = gim.getFiscalPeriods();
 	}
@@ -290,7 +291,7 @@ public class UserSession extends EntityController{
 
 	
 	public void notifySecurityViolation(String resourceName) {
-		System.out.print(renderer);
+		//System.out.print(renderer);
 		sendMail(resourceName, renderer);
 	}
 	
@@ -415,21 +416,23 @@ public class UserSession extends EntityController{
 	
 	@Observer("org.jboss.seam.preDestroyContext.SESSION")
 	public void preSessionDestroy() {
-		System.out.println("\n\n\n\n\n\nLISTENER preSessionDestroy "+this);
+		//System.out.println("\n\n\n\n\n\nLISTENER preSessionDestroy "+this);
 		try{
 			UserSession userSession = (UserSession) this;
 			if (userSession != null){
-				System.out.println("LISTENER VALUE UNBOUND ");
+				//System.out.println("LISTENER VALUE UNBOUND ");
 				
 				if(SessionRecordType.TIMEOUT_LOGOUT.equals(userSession.getLogoutType())){
-					System.out.println("IS TIMEOUT LOGOUT");
+					//System.out.println("IS TIMEOUT LOGOUT");
+					logger.info("IS TIMEOUT LOGOUT>>>>> ", userSession.getUser().getName());
 					userSession.logout(SessionRecordType.TIMEOUT_LOGOUT);
 					//userSession.setLogoutType(SessionRecordType.TIMEOUT_LOGOUT);
 					//((UserSession)this).postLogout();
 				}
 			}
 		} catch (NullPointerException e){
-			System.out.println("LISTENER VALUE UNBOUND NullPointerException");
+			logger.error("LISTENER VALUE UNBOUND NullPointerException ", e.toString());
+			//System.out.println("LISTENER VALUE UNBOUND NullPointerException");
 		}
 	}
 			

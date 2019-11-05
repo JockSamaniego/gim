@@ -1,22 +1,15 @@
 package org.gob.gim.appraisal.action;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.sql.CallableStatement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.Query;
 
 import org.gob.gim.appraisal.facade.AppraisalService;
-import org.gob.gim.cadaster.action.PropertyHome;
-import org.gob.gim.cadaster.action.PropertyList;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.exception.InvoiceNumberOutOfRangeException;
 import org.jboss.seam.annotations.Factory;
@@ -27,15 +20,8 @@ import org.jboss.seam.framework.EntityHome;
 
 import ec.gob.gim.appraisal.model.AppraisalPeriod;
 import ec.gob.gim.appraisal.model.AppraisalRossHeidecke;
-import ec.gob.gim.appraisal.model.AppraisalTotalExternal;
-import ec.gob.gim.appraisal.model.AppraisalTotalRoof;
-import ec.gob.gim.appraisal.model.AppraisalTotalStructure;
-import ec.gob.gim.appraisal.model.AppraisalTotalWall;
 import ec.gob.gim.cadaster.model.Block;
-import ec.gob.gim.cadaster.model.Building;
-import ec.gob.gim.cadaster.model.PreservationState;
 import ec.gob.gim.cadaster.model.Property;
-import ec.gob.gim.cadaster.model.Sewerage;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
 
 @Name("appraisalBlockHome")
@@ -536,7 +522,7 @@ public class AppraisalBlockHome extends EntityHome<Block> {
 		String cadastralCodePartial = populateCadastralCodeSearch();
 		properties = findPropertyByCadastralCode(cadastralCodePartial);
 		for (Property pro : properties) {
-			System.out.println(";;;;;;;;;;;;;;;;;;;; changeValuebySquareMeter Clave Catastral: "+pro.getCadastralCode());
+			//System.out.println(";;;;;;;;;;;;;;;;;;;; changeValuebySquareMeter Clave Catastral: "+pro.getCadastralCode());
 			if (isTemporalValues())
 				pro.getCurrentDomain().setValueBySquareMeterTmp(valueBySquareMeter);
 			else{
@@ -841,14 +827,14 @@ public class AppraisalBlockHome extends EntityHome<Block> {
 		
 	@Override
 	public String persist() {
-		System.out.println("PERSIST INICIO");
+		//System.out.println("PERSIST INICIO");
 		AppraisalService appraisalService = ServiceLocator.getInstance().findResource(APPRAISAL_SERVICE_NAME);
 		try{
 			if (lotValues)
 				appraisalService.saveValueBySquareMeter(properties, this.temporalValues);
 			else
 				appraisalService.saveAppraisals(properties, this.temporalValues);
-			System.out.println("PERSISTED");
+			//System.out.println("PERSISTED");
 			return "persisted";
 		} catch(InvoiceNumberOutOfRangeException e){
 			addFacesMessageFromResourceBundle(e.getClass().getSimpleName(), e.getInvoiceNumber());
@@ -972,12 +958,12 @@ public class AppraisalBlockHome extends EntityHome<Block> {
 		query.setParameter("paramCadastralKey", cadastralKey);	
 		numberResults=query.getResultList().size();
 		if(numberResults != 0){
-			System.out.println("data Sinat ok");			
+			//System.out.println("data Sinat ok");			
 			Query querySp = getEntityManager().createNativeQuery("SELECT * from sp_sinat_synchronization_gim(?)")
 			//Query querySp = getEntityManager().createNativeQuery("SELECT * from sp_sinatsynchronizationgimtestlocal(?)")
 			.setParameter(1, cadastralKey);	
 			resultSp = (String) querySp.getSingleResult();
-			System.out.println("numberSpResultValor: "+resultSp);
+			//System.out.println("numberSpResultValor: "+resultSp);
 			
 			if(resultSp.equals("INSERT")){
 				facesMessages.addFromResourceBundle("appraisal.cadasterRegisteredToGim", cadastralKey);
@@ -993,7 +979,7 @@ public class AppraisalBlockHome extends EntityHome<Block> {
 			}
 		}
 		else{
-			System.out.println("no data en Sinat");
+			//System.out.println("no data en Sinat");
 			facesMessages.addFromResourceBundle("appraisal.noFoundCadasterCode", cadastralKey);
 			//addFacesMessageFromResourceBundle("appraisal.noFoundCadasterCode", cadastralKey);
 		}		

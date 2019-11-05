@@ -1678,7 +1678,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	      FutureEmissionBalance futureEmissionBalance = ServiceLocator.getInstance().findResource(FutureEmissionBalance.LOCAL_NAME);   
 	      futureList = new ArrayList(); 
 	      futureList = futureEmissionBalance.generateFutureEmissionBalance(futureStartDate, futureEndDate); 
-	      System.out.println("------- " + futureList.size()); 
+	      //System.out.println("------- " + futureList.size()); 
 	      return "/income/report/FutureEmissionBalanceReport.xhtml";
 	    }
 	    
@@ -1796,19 +1796,25 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				updateVehicle.setParameter("json", json);
 				updateVehicle.setParameter("orderNumber", confirmationNumberCRTV);
 				int updateCount = updateVehicle.executeUpdate();
-				System.out.println("NUMERO DE ORDEN " + confirmationNumberCRTV);
+				
+				logger.info("NUMERO DE ORDEN CRTV: {0}, cod_tran: {1}, mensaje; {2}, secuencia: {3}, rows updates: {4}", 
+						confirmationNumberCRTV, response.getCod_transaccion(), response.getCodigo_error(), response.getMensaje(),
+						response.getSecuencia_recibo(), updateCount);
+				/*System.out.println(" " + );
 				System.out.println(response.getCod_transaccion());
 				System.out.println(response.getCodigo_error());
 				System.out.println(response.getMensaje());
 				System.out.println(response.getSecuencia_recibo());
-				System.out.println("Rows Updated vehicle " + updateCount);	
+				System.out.println("Rows Updated vehicle " + updateCount);*/
 			}else {
-				System.out.println("No hay valor pagado " + valor);
+				//System.out.println("No hay valor pagado " + valor);
+				logger.info("No hay valor pagado NUMERO DE ORDEN:", confirmationNumberCRTV);
 			}			
 
 		} catch (RemoteException e) {
-			System.out.println("ERROR NUMERO DE ORDEN " + confirmationNumberCRTV);
-			e.printStackTrace();
+			/*System.out.println("ERROR NUMERO DE ORDEN " + confirmationNumberCRTV);
+			e.printStackTrace();*/
+			logger.info("ERROR NUMERO DE ORDEN: {0}, error: {1}", confirmationNumberCRTV, e.toString());
 		}
 	}
 

@@ -401,14 +401,12 @@ public class CadasterServiceBean implements CadasterService {
 
 	private Adjunct createAdjunct(Entry entry) {
 		try {
-			System.out.println("CREATE ADJUNCT ----> "
-					+ entry.getAdjunctClassName());
+			//System.out.println("CREATE ADJUNCT ----> "					+ entry.getAdjunctClassName());
 			if (entry.getAdjunctClassName() != null
 					&& !entry.getAdjunctClassName().trim().isEmpty()) {
 				Class<?> klass = Class.forName(entry.getAdjunctClassName());
 				Adjunct adjunct = (Adjunct) klass.newInstance();
-				System.out.println("ADJUNCT CREATED ----> "
-						+ adjunct.getClass().getSimpleName());
+				//System.out.println("ADJUNCT CREATED ----> "						+ adjunct.getClass().getSimpleName());
 				return adjunct;
 			}
 		} catch (ClassNotFoundException e) {
@@ -578,8 +576,7 @@ public class CadasterServiceBean implements CadasterService {
 							new BigDecimal(15));
 
 		for (Property pro : properties) {
-			System.out.println("===========>> contribuyente: "
-					+ pro.getCurrentDomain().getResident().getName());
+			//System.out.println("===========>> contribuyente: "					+ pro.getCurrentDomain().getResident().getName());
 			if ((pro.getCurrentDomain() != null)
 					&& (pro.getCurrentDomain().getResident().getName()
 							.toUpperCase().indexOf(desconocido) == -1)
@@ -735,17 +732,15 @@ public class CadasterServiceBean implements CadasterService {
 			BigDecimal base = ex.getFiscalPeriod()//500 salarios basicos
 					.getBasicSalaryUnifiedForRevenue()
 					.multiply(ex.getFiscalPeriod().getSalariesNumber());
-			System.out.println("<<<RR>>> base: " + base);
-			System.out.println("<<<RR>>> patrimonio: " + ex.getPatrimony());
+			//System.out.println("<<<RR>>> base: " + base);
+			//System.out.println("<<<RR>>> patrimonio: " + ex.getPatrimony());
 			base = base.multiply(ex.getExemptionPercentage().divide(cienBD));
-			System.out
-					.println("<<<RR>>> base aplicando porcentaje de exencion: "
-							+ base);
+			//System.out.println("<<<RR>>> base aplicando porcentaje de exencion: "+ base);
 			BigDecimal discount = BigDecimal.ZERO;
 			if (ex.getPatrimony().compareTo(BigDecimal.ZERO) == 1)
 				discount = base.multiply(cienBD).divide(ex.getPatrimony(),
 						RoundingMode.HALF_UP);
-			System.out.println("<<<RR>>> discount: " + discount);
+			//System.out.println("<<<RR>>> discount: " + discount);
 			if (discount.compareTo(cienBD) > 0)
 				ex.setDiscountPercentage(cienBD);
 			else
@@ -816,19 +811,17 @@ public class CadasterServiceBean implements CadasterService {
 				.findExemptionsByFiscalPeriod(fiscalPeriodId, fromDate,
 						untilDate); //cambiado
 
-		System.out.println("Total exoneraciones: " + exemptions.size());
+		//System.out.println("Total exoneraciones: " + exemptions.size());
 		List<Long> residentsIds = new ArrayList<Long>();
 		BigDecimal appraisalForProperties;
 		List<MunicipalBond> bonds = new ArrayList<MunicipalBond>();
 		int count = 0;
 		int countTotal = exemptions.size();
 		for (Exemption ex : exemptions) {
-			System.out.println("\n\n\n\n=======> resident in exemption: "
-					+ ex.getResident().getName());
-			System.out.println("======>>Exemption ID: " + ex.getId());
+			//System.out.println("\n\n\n\n=======> resident in exemption: "+ ex.getResident().getName());
+			//System.out.println("======>>Exemption ID: " + ex.getId());
 			count++;
-			System.out.println("======>>Exemption nro: " + count + " de "
-					+ countTotal);
+			//System.out.println("======>>Exemption nro: " + count + " de "+ countTotal);
 			appraisalForProperties = BigDecimal.ZERO;
 			
 			ExemptionDTO valuesExemption; 
@@ -876,7 +869,7 @@ public class CadasterServiceBean implements CadasterService {
 					fiscalPeriodId, residentsIds, entriesIds, pendingStatus);//todo
 			for (MunicipalBond mb : bonds) { //TODO
 
-				System.out.println("Clave catastral "+mb.getGroupingCode());
+				//System.out.println("Clave catastral "+mb.getGroupingCode());
 				PropertyAppraisal propertyAppraisal = (PropertyAppraisal) mb
 						.getAdjunct();
 				BigDecimal exemptionValue = BigDecimal.ZERO;
@@ -928,9 +921,7 @@ public class CadasterServiceBean implements CadasterService {
 //							if (exemptionForProperty.getProperty()
 //									.getCadastralCode()
 //									.indexOf(mb.getGroupingCode()) != -1) {
-							System.out.println("comparación: ÏdPropiedad: "+ 
-										exemptionForProperty.getProperty().getId()+" ID BOND: "+
-									propertyAppraisal.getProperty().getId().intValue());
+							//System.out.println("comparación: ÏdPropiedad: "+exemptionForProperty.getProperty().getId()+" ID BOND: "+ propertyAppraisal.getProperty().getId().intValue());
 							if(exemptionForProperty.getProperty().getId().intValue() == 
 									propertyAppraisal.getProperty().getId().intValue()){			 
 								if (exemptionForProperty.getProperty()

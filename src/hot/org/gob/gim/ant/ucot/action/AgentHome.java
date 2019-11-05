@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.common.action.ResidentHome;
@@ -16,7 +15,6 @@ import org.jboss.seam.framework.EntityHome;
 
 import ec.gob.gim.ant.ucot.model.Agent;
 import ec.gob.gim.common.model.Resident;
-import ec.gob.gim.complementvoucher.model.Provider;
 
 @Name("agentHome")
 @Scope(ScopeType.CONVERSATION)
@@ -85,7 +83,7 @@ public class AgentHome extends EntityHome<Agent> {
 	
 	@SuppressWarnings("unchecked")
 	public void searchResidentByCriteria() {
-		System.out.println("SEARCH RESIDENT BY CRITERIA " + this.criteria);
+		//System.out.println("SEARCH RESIDENT BY CRITERIA " + this.criteria);
 		if (this.criteria != null && !this.criteria.isEmpty()) {
 			Query query = getEntityManager().createNamedQuery("Resident.findByCriteria");
 			query.setParameter("criteria", this.criteria);
@@ -94,7 +92,7 @@ public class AgentHome extends EntityHome<Agent> {
 	}
 	
 	public void searchResident() {
-		System.out.println("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
+		//System.out.println("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
 		Query query = getEntityManager().createNamedQuery("Resident.findByIdentificationNumber");
 		query.setParameter("identificationNumber", this.identificationNumber);
 		try {

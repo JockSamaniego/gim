@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
@@ -21,7 +19,6 @@ import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.Util;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
-import org.gob.gim.income.facade.IncomeService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -30,9 +27,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
-import org.jboss.seam.web.Session;
 
-import ec.gob.gim.ant.ucot.model.CoipDTO;
 import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.coercive.model.NotificationPayedDTO;
 import ec.gob.gim.coercive.model.NotificationPayedDetailDTO;

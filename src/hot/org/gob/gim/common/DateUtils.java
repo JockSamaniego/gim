@@ -64,8 +64,8 @@ public class DateUtils {
 			try {
 				taxpayerRecord = (TaxpayerRecord) query.getSingleResult();
 			} catch (Exception e) {
-				System.out.println("WARNING: There is no or there is more than one active taxpayer record for entry "
-						+ Long.parseLong("76") + " selecting default issuer");
+				//System.out.println("WARNING: There is no or there is more than one active taxpayer record for entry "
+					//	+ Long.parseLong("76") + " selecting default issuer");
 			}
 
 			if (taxpayerRecord == null) {
@@ -74,7 +74,7 @@ public class DateUtils {
 			//return taxpayerRecord;
 			
 			//TaxpayerRecord institution = municipalBondService.findTaxpayerRecord(Long.parseLong("76"));
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> "+taxpayerRecord.getName());
+			//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> "+taxpayerRecord.getName());
 			return 2;
 		}
 		

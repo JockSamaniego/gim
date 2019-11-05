@@ -7,7 +7,6 @@ import java.util.List;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 
 import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.action.UserSession;
@@ -202,7 +201,7 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 			getEntityManager().flush();
 		}
 		
-		System.out.println("----------------------------------");
+		//System.out.println("----------------------------------");
 		//insertar valores nuevos
 		for (MunicipalbondAux municipalbondAux : auxList) {
 			System.out.println(municipalbondAux.getId()+" | "+municipalbondAux.getBalance()+" | "+

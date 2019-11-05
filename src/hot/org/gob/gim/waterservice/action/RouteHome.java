@@ -223,9 +223,9 @@ public class RouteHome extends EntityHome<Route> {
 				years.add(iActual);
 				iActual--;
 			}
-		} else {
+		} /*else {
 			System.out.println("es nulo no entiendo pos? " + startYear);
-		}
+		}*/
 
 		return years;
 	}
@@ -813,7 +813,7 @@ public class RouteHome extends EntityHome<Route> {
 				if (conNew.getPreviousReading() > conNew.getCurrentReading()) {
 
 					int verificacion = checkLowerConsumption(waterMeterDigitsNumber, conNew);
-					System.out.println(":::::::::::::==========>>>> la verificacion es "+ verificacion);
+					//System.out.println(":::::::::::::==========>>>> la verificacion es "+ verificacion);
 					if (verificacion > 0) {
 						conNew.setDifferenceInReading(verificacion + conNew.getCurrentReading());
 						conNew.setAmount(new BigDecimal(conNew.getDifferenceInReading()));

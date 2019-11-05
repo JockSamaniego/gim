@@ -21,7 +21,6 @@ import org.jboss.seam.framework.EntityController;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.revenue.model.bankDebit.BankDebit;
 import ec.gob.gim.revenue.model.bankDebit.criteria.BankDebitSearchCriteria;
-import ec.gob.gim.revenue.model.bankDebit.dto.BankDebitDTO;
 import ec.gob.gim.revenue.model.bankDebit.dto.BankDebitReportDTO;
 import ec.gob.gim.waterservice.model.WaterSupply;
 
@@ -262,7 +261,7 @@ public class BankDebitHome extends EntityController {
 		this.typeAccount = null;
 		this.accountNumber = null;
 		this.accountHolder = null;
-		System.out.println("llega al preparaRegisterDebit");
+		//System.out.println("llega al preparaRegisterDebit");
 
 	}
 	
@@ -273,7 +272,7 @@ public class BankDebitHome extends EntityController {
 			dataReporte = new ArrayList<BankDebitReportDTO>();
 			List<Long> residentIds = this.bankDebitService.getBankDebitResidents();
 			Boolean result = this.paymentService.calculateDebts(residentIds);
-			System.out.println(result);
+			//System.out.println(result);
 			
 			//Generar el reporte
 			
@@ -282,7 +281,7 @@ public class BankDebitHome extends EntityController {
 			return "/revenue/bankDebits/BankDebitReportPDF.xhtml";
 			
 		} catch (Exception e) {
-			System.out.println("Error al calcular los valores pendientes a pagar");
+			//System.out.println("Error al calcular los valores pendientes a pagar");
 			e.printStackTrace();
 			return "";
 		}
@@ -318,7 +317,7 @@ public class BankDebitHome extends EntityController {
 	}
 
 	public void searchWaterService() {
-		System.out.println("Llega al searchWaterService");
+		//System.out.println("Llega al searchWaterService");
 		if (this.serviceNumber != null) {
 			WaterSupply ws = this.bankDebitService
 					.findWaterSupplyByServiceNumber(this.serviceNumber);

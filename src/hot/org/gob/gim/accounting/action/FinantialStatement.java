@@ -320,7 +320,7 @@ public class FinantialStatement extends EntityController {
 	}
 
 	public void buildReport() {
-		System.out.println("BUILDING FINANTIAL STATEMENT   Type : "
+		/*System.out.println("BUILDING FINANTIAL STATEMENT   Type : "
 				+ criteria.getReportType());
 		System.out.println("BUILDING FINANTIAL STATEMENT   From : "
 				+ criteria.getStartDate());
@@ -329,7 +329,7 @@ public class FinantialStatement extends EntityController {
 		System.out.println("BUILDING FINANTIAL STATEMENT Period : "
 				+ criteria.getFiscalPeriodId());
 		System.out.println("BUILDING FINANTIAL STATEMENT Account: "
-				+ criteria.getAccountCode());
+				+ criteria.getAccountCode());*/
 
 		quotasAccountItem = null;
 		Map<String, AccountItem> report;
@@ -417,10 +417,10 @@ public class FinantialStatement extends EntityController {
 
 	public void buildDetailedReport(Criteria criteria, Long accountId,
 			String accountName, ReportFilter reportFilter) {
-		System.out.println("LOADING DETAIL FOR ");
+		/*System.out.println("LOADING DETAIL FOR ");
 		System.out.println("Account code      " + accountCode);
 		System.out.println("Account startDate " + criteria.getStartDate());
-		System.out.println("Account endDate   " + criteria.getEndDate());
+		System.out.println("Account endDate   " + criteria.getEndDate());*/
 		FinantialService finantialService = ServiceLocator.getInstance()
 				.findResource(FinantialService.LOCAL_NAME);
 		Map<Long, AccountDetail> report = finantialService.findDetailReport(
@@ -436,7 +436,7 @@ public class FinantialStatement extends EntityController {
 
 	@Observer("org.jboss.seam.postDestroy.finantialStatement")
 	public void destroyComponent() {
-		System.out.println("COMPONENT DESTROYED");
+		//System.out.println("COMPONENT DESTROYED");
 	}
 
 	@Factory("reportTypes")

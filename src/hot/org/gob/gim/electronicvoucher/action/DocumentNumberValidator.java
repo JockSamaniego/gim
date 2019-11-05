@@ -5,15 +5,16 @@
  */
 package org.gob.gim.electronicvoucher.action;
 
-import ec.gob.gim.complementvoucher.model.ElectronicVoucher;
 import java.io.Serializable;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
-import org.jboss.seam.Component;
+
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.faces.Validator;
 import org.jboss.seam.annotations.intercept.BypassInterceptors;
@@ -21,7 +22,8 @@ import org.jboss.seam.core.Interpolator;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.log.Logging;
-import java.util.regex.Matcher;
+
+import ec.gob.gim.complementvoucher.model.ElectronicVoucher;
 
 /**
  *
@@ -71,11 +73,11 @@ public class DocumentNumberValidator extends EntityHome<ElectronicVoucher> imple
          
         log.info("validating....!");
         getInstance();
-        System.out.println("true>>>>> this.instance.getId()");
+        //System.out.println("true>>>>> this.instance.getId()");
         this.instance.setDocumentNumber("000-000-123456789");
 
         if (!voucher.equals(this.instance.getDocumentNumber())) {
-            System.out.println("true>>>>> voucher");
+            //System.out.println("true>>>>> voucher");
             //regex = "^[0-9]{3}-[0-9]{3}-[0-9]{9}$", message = "Debe usar el formato xxx-xxx-xxxxxxxxx")
             Pattern pattern = Pattern.compile(Interpolator.instance().interpolate("#{messages['electronicVoucher.bildPatterError']}", new Object[0]));
             boolean found = false;
@@ -90,12 +92,12 @@ public class DocumentNumberValidator extends EntityHome<ElectronicVoucher> imple
                 found = true;
             }
             if (found) {
-                System.out.println("true>>>>> found");
+                //System.out.println("true>>>>> found");
                 ((UIInput) component).setValid(true);
             } else {
                 ((UIInput) component).setValid(false);
 //            FacesMessage message = new FacesMessage();
-                System.out.println("error");
+                //System.out.println("error");
                 message = Interpolator.instance().interpolate("#{messages['electronicVoucher.bildPatterErrorMsg']}", new Object[0]);
                 throw new ValidatorException(new FacesMessage(message));
             }
@@ -103,7 +105,7 @@ public class DocumentNumberValidator extends EntityHome<ElectronicVoucher> imple
         } else {
             ((UIInput) component).setValid(false);
 //            FacesMessage message = new FacesMessage();
-            System.out.println("error");
+            //System.out.println("error");
             message = Interpolator.instance().interpolate("#{messages['electronicVoucher.bildError']}", new Object[0]);
             throw new ValidatorException(new FacesMessage(message));
         }

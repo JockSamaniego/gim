@@ -164,7 +164,7 @@ public class NotificationList extends EntityQuery<Notification> {
 		} 
 
 		for (Long id : Util.splitArrayString(selectedItems)) {
-			System.out.println("entra aquissssssssssssssss");
+			//System.out.println("entra aquissssssssssssssss");
 			paymentHome = new PaymentHome();
 			paymentHome.setId(null);
 

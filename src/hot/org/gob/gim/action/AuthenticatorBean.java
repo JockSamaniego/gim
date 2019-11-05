@@ -71,10 +71,8 @@ public class AuthenticatorBean implements Authenticator {
 	@SuppressWarnings({ "unchecked" })
 	private Boolean isUserValid() {
 		String hashPassword = passwordManager.hash(credentials.getPassword());
-		log.info("Authenticating user {0}, {1}", credentials.getUsername(),
-				hashPassword);
-		System.out.println("Authenticating user: " + credentials.getUsername()
-				+ " " + hashPassword);
+		log.info("Authenticating user {0}, {1}", credentials.getUsername(), hashPassword);
+		//System.out.println("Authenticating user: " + credentials.getUsername() + " " + hashPassword);
 		Query query = entityManager
 				.createNamedQuery("User.findByUsernameAndPassword");
 		query.setParameter("name", credentials.getUsername());
@@ -150,7 +148,7 @@ public class AuthenticatorBean implements Authenticator {
 					.setNumberMunicipalBondsFormalizing(numberMuicipalBondsFormalize());
 		}
 
-		System.out.println("USUARIO CONECTADO: " + user.getName());
+		//System.out.println("USUARIO CONECTADO: " + user.getName());
 		return true;
 	}
 
@@ -225,16 +223,12 @@ public class AuthenticatorBean implements Authenticator {
 			ip = request.getHeader("X-Forwarded-For");
 			if (isIPAddress(ip)) {
 				System.out.println("IP Return:" + ip);
-				System.out
-						.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: "
-								+ ip);
+				//System.out.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: " + ip);
 				return ip;
 			} else {
 				ip = request.getRemoteAddr();
 				System.out.println("RemoteAddr:" + ip);
-				System.out
-						.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: "
-								+ ip);
+				//System.out.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: " + ip);
 				return ip;
 			}
 		} catch (Exception e) {

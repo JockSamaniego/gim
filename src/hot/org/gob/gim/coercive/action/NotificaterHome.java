@@ -194,7 +194,7 @@ public class NotificaterHome extends EntityHome<Notification> {
 		}
 		totalNotificationGenerated = BigDecimal.valueOf(numberNotification);
 
-		System.out.println("entrada2");
+		//System.out.println("entrada2");
 	}
 
 	private void getNumberOfCreatedNotifcations(Date startDate, Date endDate) {
@@ -220,7 +220,7 @@ public class NotificaterHome extends EntityHome<Notification> {
 			ex.printStackTrace();
 		}
 
-		System.out.println("entrada2");
+		//System.out.println("entrada2");
 	}
 
 	private Long getNumberOfDaysToPayAfterNotification() {
@@ -528,7 +528,7 @@ public class NotificaterHome extends EntityHome<Notification> {
 
 			List<Entry> entries = new ArrayList<Entry>();
 
-			System.out.println("--------------------------- mb");
+			//System.out.println("--------------------------- mb");
 
 			for (MunicipalBond mb : municipalBonds) {
 				// System.out.println("el mb: "+mb.getNumber());

@@ -217,8 +217,7 @@ public class MarketHome extends EntityHome<Market> {
 	}
 
 	public void enviarNameProducType(String cc) {
-		System.out.println("::::::::::::::::::::::::: " + cc
-				+ productType.getName());
+		//System.out.println("::::::::::::::::::::::::: " + cc				+ productType.getName());
 		// this.productType.setName(cc);
 	}
 
@@ -733,8 +732,8 @@ public class MarketHome extends EntityHome<Market> {
 		cendDate.set(year, (monthInt - 1), endDayOfMonth);
 		this.startDate = cstartDate.getTime();
 		this.endDate = cendDate.getTime();
-		System.out.println("start "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(startDate.getTime()));
-		System.out.println("end   "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(endDate.getTime()));
+		/*System.out.println("start "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(startDate.getTime()));
+		System.out.println("end   "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(endDate.getTime()));*/
 	}
 	
 	@Factory("marketsActive")
@@ -797,7 +796,7 @@ public class MarketHome extends EntityHome<Market> {
 			//mrv=new MarketReportView(, , d[2].toString(), d[3].toString(), d[4].toString(), d[5].toString(), d[6].toString(), new BigDecimal(d[7].toString()), d[8].toString());
 			marketReportViews.add(mrv);
 		}
-		System.out.println("los dato sonssssssssssssssss "+marketReportViews.size());
+		//System.out.println("los dato sonssssssssssssssss "+marketReportViews.size());
 	}
 	
 	public List<Long> getMunicipalBondStatuses(){

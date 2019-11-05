@@ -316,7 +316,7 @@ public class StandHome extends EntityHome<Stand> {
 			this.update();
 			return preEmitStand();
 		} catch (Exception e) {
-			System.out.println("=====>>>> error 1 " + e);
+			//System.out.println("=====>>>> error 1 " + e);
 			String message = Interpolator.instance().interpolate(
 					"#{messages['property.errorGenerateTax']}", new Object[0]);
 			facesMessages.addToControl("residentChooser",
@@ -327,14 +327,14 @@ public class StandHome extends EntityHome<Stand> {
 	}
 
 	public String preEmitStand() {
-		System.out.println("entra a preemitir");
+		//System.out.println("entra a preemitir");
 		if (getInstance().getCurrentContract().getSubscriber() == null) {
 			String message = Interpolator.instance().interpolate(
 					"#{messages['resident.required']}", new Object[0]);
 			facesMessages.addToControl("residentChooser",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					message);
-			System.out.println("no es nulo el contribuyente");
+			//System.out.println("no es nulo el contribuyente");
 			return "";
 		}
 
@@ -344,7 +344,7 @@ public class StandHome extends EntityHome<Stand> {
 					userSession.getFiscalPeriod(), userSession.getPerson());
 			calculateTotal(emissionOrder);
 		} catch (Exception e) {
-			System.out.println("=====>>>> error 2 " + e);
+			//System.out.println("=====>>>> error 2 " + e);
 			String message = Interpolator.instance().interpolate(
 					"#{messages['property.errorGenerateTax']}", new Object[0]);
 			facesMessages.addToControl("residentChooser",
@@ -355,7 +355,7 @@ public class StandHome extends EntityHome<Stand> {
 		try {
 			marketService.savePreEmissionOrder(emissionOrder);
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			//System.out.println(e.toString());
 			e.printStackTrace();
 		}
 		this.getInstance().setHasPreEmit(false);
@@ -445,21 +445,20 @@ public class StandHome extends EntityHome<Stand> {
 	}
 
 	public EmissionOrder generateEmissionOtherStands(Stand stand, int multiply) {
-		System.out
-				.println("entra a realizar el calculo de: " + stand.getName());
+		//System.out				.println("entra a realizar el calculo de: " + stand.getName());
 		if (stand.getCurrentContract().getSubscriber() == null) {
 			String message = Interpolator.instance().interpolate(
 					"#{messages['resident.required']}", new Object[0]);
 			facesMessages.addToControl("residentChooser",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					message);
-			System.out.println("no es nulo el contribuyente");
+			//System.out.println("no es nulo el contribuyente");
 			return null;
 		}
 		try {
 			BigDecimal value = this.emissionOrder.getAmount().multiply(
 					new BigDecimal(multiply));
-			System.out.println("el valuees::::................. " + value);
+			//System.out.println("el valuees::::................. " + value);
 			EmissionOrder eoLocal = marketService.generatePreEmissionRentStand(
 					stand.getCurrentContract(), stand,
 					userSession.getFiscalPeriod(), userSession.getPerson(),
@@ -469,7 +468,7 @@ public class StandHome extends EntityHome<Stand> {
 		} catch (Exception e) {
 			String message = Interpolator.instance().interpolate(
 					"#{messages['property.errorGenerateTax']}", new Object[0]);
-			System.out.println("error de generate................. " + e);
+			//System.out.println("error de generate................. " + e);
 			facesMessages.addToControl("residentChooser",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					message);
@@ -513,14 +512,14 @@ public class StandHome extends EntityHome<Stand> {
 	public void calculateTotalMarketStandEmissionOrder(Stand stand)
 			throws Exception {
 
-		System.out.println("entra a realizar el calculo de: ");
+		//System.out.println("entra a realizar el calculo de: ");
 		if (stand.getCurrentContract().getSubscriber() == null) {
 			String message = Interpolator.instance().interpolate(
 					"#{messages['resident.required']}", new Object[0]);
 			facesMessages.addToControl("residentChooser",
 					org.jboss.seam.international.StatusMessage.Severity.ERROR,
 					message);
-			System.out.println("no es nulo el contribuyente");
+			//System.out.println("no es nulo el contribuyente");
 			return;
 		}
 		try {
@@ -541,8 +540,7 @@ public class StandHome extends EntityHome<Stand> {
 		try {
 			for (Stand s : preEmitStands) {
 				EmissionOrder eOrderLocal = s.getEmissionOrder();
-				System.out.println("el valor generado es: "
-						+ eOrderLocal.getAmount());
+				//System.out.println("el valor generado es: "						+ eOrderLocal.getAmount());
 				eOrderLocal
 						.getMunicipalBonds()
 						.get(0)
@@ -648,9 +646,9 @@ public class StandHome extends EntityHome<Stand> {
 	}
 	
 	public void calculateStandValue(){
-		System.out.println("1--------------- "+this.getInstance().getIsCalculated());
+		/*System.out.println("1--------------- "+this.getInstance().getIsCalculated());
 		System.out.println("2--------------- "+this.getInstance().getValueSquareMeter());
-		System.out.println("3--------------- "+this.getInstance().getArea());
+		System.out.println("3--------------- "+this.getInstance().getArea());*/
 		if(this.getInstance().getIsCalculated()){
 			if (this.getInstance().getValueSquareMeter() != null) {
 				this.getInstance().setValue(this.getInstance().

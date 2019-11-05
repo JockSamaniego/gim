@@ -23,7 +23,6 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.faces.Redirect;
 import org.jboss.seam.framework.EntityController;
 import org.jboss.seam.log.Log;
-import org.jboss.seam.security.Identity;
 
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.income.model.TaxpayerRecord;

@@ -1,27 +1,5 @@
 package org.gob.gim.cadaster.action;
 
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
-import org.gob.gim.common.action.UserSession;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.framework.EntityHome;
-import org.jboss.seam.log.Log;
-import org.joda.time.DateTime;
-import org.joda.time.Period;
-
-import ec.gob.gim.cadaster.model.CalculatorPlusV;
-import ec.gob.gim.cadaster.model.CapitalGain;
-import ec.gob.gim.cadaster.model.Property;
-import ec.gob.gim.common.model.PassiveRate; 
 
 //@Name("calculatorHome")
 public class CalculatorHome 

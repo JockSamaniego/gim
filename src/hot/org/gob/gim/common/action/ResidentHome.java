@@ -45,9 +45,6 @@ import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Contract;
 import ec.gob.gim.revenue.model.MunicipalBond;
-import ec.gob.loja.client.clients.UserClient;
-import ec.gob.loja.client.model.Message;
-import ec.gob.loja.client.model.UserWS;
 
 @Name("residentHome")
 public class ResidentHome extends EntityHome<Resident> {
@@ -443,7 +440,7 @@ public class ResidentHome extends EntityHome<Resident> {
 	}
 
 	public void createUniqueAccounttUser(String identificationNumber) {
-		System.out.println("--------------------cuenta unica "+identificationNumber);
+		//System.out.println("--------------------cuenta unica "+identificationNumber);
 		Form form = new Form();
 		form.param("identificationNumber", identificationNumber);
 

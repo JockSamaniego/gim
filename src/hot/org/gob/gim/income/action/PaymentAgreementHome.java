@@ -8,32 +8,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
 import org.gob.gim.common.DateUtils;
-import org.gob.gim.common.PasswordManager;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
-import org.gob.gim.common.exception.IdentificationNumberExistsException;
-import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
-import org.gob.gim.common.service.UserService;
 import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
 import org.gob.gim.income.view.MunicipalBondItem;
-import org.gob.loja.gim.ws.exception.AccountIsBlocked;
-import org.gob.loja.gim.ws.exception.AccountIsNotActive;
-import org.gob.loja.gim.ws.exception.InvalidUser;
-import org.gob.loja.gim.ws.exception.UserNotSaved;
-import org.gob.loja.gim.ws.service.GimService;
-import org.gob.loja.gim.ws.service.PaymentService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
@@ -46,13 +33,11 @@ import org.jboss.seam.log.Log;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
-import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.Dividend;
 import ec.gob.gim.income.model.Payment;
 import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
-import ec.gob.gim.security.model.User;
 
 @Name("paymentAgreementHome")
 public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
@@ -746,7 +731,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	
 	
 	public boolean checkAvailable(){
-		System.out.println("=----->"+this.getInstance().getId());
+		//System.out.println("=----->"+this.getInstance().getId());
 		return (this.getInstance().getId()==null)? true : false;
 	}
 

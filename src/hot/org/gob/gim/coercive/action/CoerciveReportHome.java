@@ -18,7 +18,6 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 
-import ec.gob.gim.cadaster.model.dto.ExemptionDTO;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.income.model.Payment;
 import ec.gob.gim.income.model.PaymentAgreement;
@@ -120,7 +119,7 @@ public class CoerciveReportHome extends EntityHome<Route> {
 			this.total = total.add(emb.getSubTotal());
 			this.quantity = quantity + emb.getAccount();
 		}
-		System.out.println("la cantidad es "+expiredObligations.size());
+		//System.out.println("la cantidad es "+expiredObligations.size());
 	}
 
 	public Long getQuantity() {

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -183,8 +182,8 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 	public ResidentWithMunicipalBondOutOfDateList() {
 		setEjbql(EJBQL);		
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
-		System.out.println("EJB:"+EJBQL);
-		System.out.println("REstricciones"+RESTRICTIONS);
+		//System.out.println("EJB:"+EJBQL);
+		//System.out.println("REstricciones"+RESTRICTIONS);
 		setOrder("sum(mb.value) DESC");
 		setGroupBy("resident.id,resident.identificationNumber,resident.name");		
 		setMaxResults(25);
@@ -352,11 +351,11 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 			query.setParameter("municipalBondStatusIds", findMunicipalBondStatusIdsList());		
 			query.setParameter("expirationDate", expirationDate);
 			query.setParameter("value", amount);
-			System.out.println("residentIds:"+ ids);
+			/*System.out.println("residentIds:"+ ids);
 			System.out.println("municipalBondType:"+ MunicipalBondType.CREDIT_ORDER);
 			System.out.println("municipalBondStatusId:"+ municipalBondStatus.getId());
 			System.out.println("expirationDate:"+ expirationDate);
-			System.out.println("value:"+ amount);
+			System.out.println("value:"+ amount);*/
 			municipalBonds = query.getResultList();
 		}
 			
@@ -518,7 +517,7 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 	@SuppressWarnings("unchecked")
 	@Transactional(TransactionPropagationType.NEVER)
 	public void searchResidentByCriteria() {
-		System.out.println("SEARCH RESIDENT BY CRITERIA " + this.criteria);
+		//System.out.println("SEARCH RESIDENT BY CRITERIA " + this.criteria);
 		if (this.criteria != null && !this.criteria.isEmpty()) {
 			Query query = getEntityManager().createNamedQuery("Resident.findByCriteria");
 			query.setParameter("criteria", this.criteria);
@@ -560,7 +559,7 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 			
 		String result = receiptPrintingManager.print(depositList);
 						
-		System.out.println("RESULTADO ----> " + result + " " + receiptPrintingManager);
+		//System.out.println("RESULTADO ----> " + result + " " + receiptPrintingManager);
 		return result;
 	}
 		
@@ -591,7 +590,7 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 			
 		String result = receiptPrintingManager.print(depositToPrint);
 						
-		System.out.println("RESULTADO ----> " + result + " " + receiptPrintingManager);
+		//System.out.println("RESULTADO ----> " + result + " " + receiptPrintingManager);
 		return result;
 	}
 	
@@ -659,7 +658,7 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 
 	@Transactional(TransactionPropagationType.NEVER)
 	public void searchResident() {
-		System.out.println("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
+		//System.out.println("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
 		if(identificationNumber == null || identificationNumber.trim().isEmpty()){
 			resident = null;
 			return;
@@ -668,7 +667,7 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 		query.setParameter("identificationNumber", this.identificationNumber);
 		try {
 			Resident resident = (Resident) query.getSingleResult();
-			System.out.println("RESIDENT CHOOSER ACTION " + resident.getName());
+			//System.out.println("RESIDENT CHOOSER ACTION " + resident.getName());
 			setResident(resident);
 			if (resident.getId() == null) {
 				addFacesMessageFromResourceBundle("resident.notFound");

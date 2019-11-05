@@ -14,7 +14,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -30,7 +29,6 @@ import org.gob.gim.revenue.view.EntryValueItem;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
-import ec.gob.gim.income.model.CompensationReceipt;
 import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
@@ -296,13 +294,13 @@ public class WaterServiceBean implements WaterService {
 				// end Adjunt
 
 				mb.setServiceDate(cServiceDate.getTime());
-				System.out.println("buildEmisionOrder---> "+observation);
+				//System.out.println("buildEmisionOrder---> "+observation);
 				if(observation!=null && !observation.equals("")){
-					System.out.println("buildEmisionOrder--->!null:"+observation);
+					//System.out.println("buildEmisionOrder--->!null:"+observation);
 					mb.setDescription(wsr.toString()+", Número Obligación: "+observation);
 				}
 				else{
-					System.out.println("buildEmisionOrder--->else:"+observation);
+					//System.out.println("buildEmisionOrder--->else:"+observation);
 					mb.setDescription(wsr.toString());
 				}				
 				
@@ -445,9 +443,9 @@ public class WaterServiceBean implements WaterService {
 	public void saveEmissionOrderMerchandising(EmissionOrder emissionOrder,
 			Boolean preEmit, RoutePreviewEmission rpe, List<Long> waterSupplyIds) {
 		if (preEmit) {
-			System.out
+			/*System.out
 					.println("el tamanio total es>>>>>>>>>>>>>>>>>>>>>>>>>>>< "
-							+ emissionOrder.getMunicipalBonds().size());
+							+ emissionOrder.getMunicipalBonds().size());*/
 			entityManager.persist(emissionOrder);
 			entityManager.persist(rpe);
 			updateToEmittedStatus(waterSupplyIds);

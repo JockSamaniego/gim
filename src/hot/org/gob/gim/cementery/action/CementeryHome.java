@@ -249,7 +249,7 @@ public class CementeryHome extends EntityHome<Cementery> implements
 	}
 	
 	public void print(){
-		System.out.println("=======estado de la unidad"+this.unit.getId());
+		//System.out.println("=======estado de la unidad"+this.unit.getId());
 	}
 	
 }

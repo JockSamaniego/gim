@@ -26,7 +26,6 @@ import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.waterservice.model.Consumption;
 import ec.gob.gim.waterservice.model.ConsumptionState;
-import ec.gob.gim.waterservice.model.MonthType;
 import ec.gob.gim.waterservice.model.RoutePreviewEmission;
 import ec.gob.gim.waterservice.model.WaterMeterStatus;
 import ec.gob.gim.waterservice.model.WaterSupply;
@@ -226,10 +225,10 @@ public class ConsumptionHome extends EntityHome<Consumption> {
 			for (MunicipalBond mbnew : eo.getMunicipalBonds()) {
 				for (WrongWaterEmission wwe : wrongWaterEmissions) {
 					if(wwe.getMunicipalBondGroupingcode().equals(mbnew.getGroupingCode())){
-						System.out.println("contri ant:.................. "+wwe.getResidentName());
+						/*System.out.println("contri ant:.................. "+wwe.getResidentName());
 						System.out.println("contri act:.................. "+mbnew.getResident().getName());
 						System.out.println("el total ant:.................. "+wwe.getMunicipalBondPaidtotal());
-						System.out.println("el total act:.................. "+mbnew.getPaidTotal());
+						System.out.println("el total act:.................. "+mbnew.getPaidTotal());*/
 						wwe.setOkMunicipalBond(mbnew);
 					}
 				}
@@ -240,7 +239,7 @@ public class ConsumptionHome extends EntityHome<Consumption> {
 	}
 	
 	public void processChange(){
-		System.out.println("inicia el cambiossssssssssssssssssssssssssssssssssss");
+		//System.out.println("inicia el cambiossssssssssssssssssssssssssssssssssss");
 		Query q;
 		for (WrongWaterEmission wwe : wrongWaterEmissions) {
 			q = this.getEntityManager().createNamedQuery("MunicipalBond.findById");
@@ -269,13 +268,13 @@ public class ConsumptionHome extends EntityHome<Consumption> {
 			this.getEntityManager().flush();*/
 		}
 		//this.update();
-		System.out.println(":::::::eeeeeeeeeeeeeeeeeeeeeeeee:::::::::::::");
+		//System.out.println(":::::::eeeeeeeeeeeeeeeeeeeeeeeee:::::::::::::");
 	}
 	
 	//@Transactional
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void processChangeOne(WrongWaterEmission wwe){
-		System.out.println("inicia el cambiossssssssssssssssssssssssssssssssssss");		
+		//System.out.println("inicia el cambiossssssssssssssssssssssssssssssssssss");		
 		
 		Query q = this.getEntityManager().createNamedQuery("MunicipalBond.findById");
 		q.setParameter("municipalBondId", wwe.getMunicipalBondId());
@@ -283,7 +282,7 @@ public class ConsumptionHome extends EntityHome<Consumption> {
 		for (Item itemBad : mb.getItems()) {
 			for (Item itemOk : wwe.getOkMunicipalBond().getItems()) {
 				if (itemBad.getEntry().getId().equals(itemOk.getEntry().getId())) {
-					System.out.println("entra al for grande    ...... "+itemBad.getEntry().getId());
+					//System.out.println("entra al for grande    ...... "+itemBad.getEntry().getId());
 					String jpqlUpdate = "update Item item set value = :value, total=:total where item.id = :itemId";
 					int updatedEntities = entityManager.createQuery( jpqlUpdate )
 					                            .setParameter( "value", itemOk.getValue() )
@@ -331,7 +330,7 @@ public class ConsumptionHome extends EntityHome<Consumption> {
 		 */
 		
 		//this.update();
-		System.out.println(":::::::eeeeeeeeeeeeeeeeeeeeeeeee::::::::::::: "+updatedEntities);
+		//System.out.println(":::::::eeeeeeeeeeeeeeeeeeeeeeeee::::::::::::: "+updatedEntities);
 	}
 	
 

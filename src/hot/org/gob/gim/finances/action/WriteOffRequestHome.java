@@ -679,7 +679,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 	public void addBonds() {
 
-		System.out.println("Llega al add bonds");
+		//System.out.println("Llega al add bonds");
 
 		this.instance.setMadeBy(this.userSession.getPerson());
 
@@ -754,7 +754,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 	@Transactional
 	public String save() {
 
-		System.out.println("Llega al save");
+		//System.out.println("Llega al save");
 		boolean _exist_details_actives = Boolean.FALSE;
 
 		for (WriteOffDetail w : this.instance.getDetails()) {
@@ -1010,7 +1010,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 		this.detailsTableNew = new ArrayList<DetailTableAuxDTO>();
 		this.instance = this.getEntityManager().find(WriteOffRequest.class,
 				writeOffRequest_id);
-		System.out.println("entidad:" + this.instance);
+		//System.out.println("entidad:" + this.instance);
 		this.identificationNumber = this.instance.getResident()
 				.getIdentificationNumber();
 

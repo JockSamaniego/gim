@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -18,18 +17,14 @@ import org.gob.gim.common.action.Gim;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.action.EmissionOrderHome;
-import org.gob.gim.revenue.action.SolvencyReportHome;
-import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Interpolator;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
 import ec.gob.gim.cementery.model.Death;
-import ec.gob.gim.cementery.model.Unit;
 import ec.gob.gim.cementery.model.UnitStatus;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -92,7 +87,7 @@ public class DeathHome extends EntityHome<Death> implements Serializable {
 		getInstance();
 		if (isFirstTime){
 			if (unitDeathHome.isIdDefined()){
-				System.out.println("================Ingresa a unitDeathHome en wire");
+				//System.out.println("================Ingresa a unitDeathHome en wire");
 				if (unitDeathHome.getInstance().getCurrentDeath() == null){
 					this.setRegistered(false);
 					this.setDeceasedCriteria(null);
@@ -192,12 +187,12 @@ public class DeathHome extends EntityHome<Death> implements Serializable {
 	public String persist() {
 		addCurrentContract();
 		if (unitDeathHome.isIdDefined()){
-			System.out.println("ingresa a unitdeath is iddefined");
+			//System.out.println("ingresa a unitdeath is iddefined");
 			this.getInstance().setUnit(unitDeathHome.getInstance());
 			unitDeathHome.getInstance().setDeath(instance);
 			unitDeathHome.getInstance().setUnitStatus(UnitStatus.RENTED);
 		} else {
-			System.out.println("==================unitDeathHome es null");
+			//System.out.println("==================unitDeathHome es null");
 			this.instance.setUnit(null);
 			unitDeathHome.setInstance(null);
 		}
@@ -266,7 +261,7 @@ public class DeathHome extends EntityHome<Death> implements Serializable {
 	}
 
 	public void addCurrentContract(){
-		System.out.println("ingresa a addcontract");
+		//System.out.println("ingresa a addcontract");
 
 		if (deceasedResident != null) this.getInstance().setDeathName(deceasedResident.getName());
 		
@@ -275,7 +270,7 @@ public class DeathHome extends EntityHome<Death> implements Serializable {
 		this.instance.setCurrent(true);
 		this.instance.setRenovationNumber(0);
 		if (unitDeathHome.isIdDefined()) this.instance.setCementery(unitDeathHome.getInstance().getSection().getCementery());
-		System.out.println("sale de addcontract");
+		//System.out.println("sale de addcontract");
 			
 	}
 	

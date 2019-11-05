@@ -100,8 +100,7 @@ public class LocalFeatureHome extends EntityHome<LocalFeature> {
 		if (businessCatalog != null && year > 2000) {
 			// buscar los items ya generados
 			List<Long> localAlreadyGenerated = findItemsAlreadyGenerated();
-			System.out.println("buscar los items ya generados "
-					+ localAlreadyGenerated.size());
+			//System.out.println("buscar los items ya generados "					+ localAlreadyGenerated.size());
 			// buscar los locales q aun no han sido generados
 			List<Local> missingLocals;
 			if (localAlreadyGenerated.size() > 0) {
@@ -212,7 +211,7 @@ public class LocalFeatureHome extends EntityHome<LocalFeature> {
 					tle.setHasPreEmit(true);
 					tle.setYear(year);
 					
-					System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> >>>>>>>>ZZZZZZ entra a guardar");
+					//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> >>>>>>>>ZZZZZZ entra a guardar");
 					touristLicenseService.saveEmissionOrder(eo, tle, true);
 					String message = Interpolator.instance().interpolate(
 							"Licencia de turismo: "
@@ -231,7 +230,7 @@ public class LocalFeatureHome extends EntityHome<LocalFeature> {
 				facesMessages.addToControl("residentChooser",
 						org.jboss.seam.international.StatusMessage.Severity.ERROR,
 						message);
-				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "+message);
+				//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "+message);
 				return null;
 			}
 			return null;

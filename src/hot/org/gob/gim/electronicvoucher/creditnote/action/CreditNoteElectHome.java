@@ -20,10 +20,6 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.framework.EntityHome;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
-//import org.joda.time.Days;
-
 
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -39,6 +35,7 @@ import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.StatusElectronicReceipt;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
+//import org.joda.time.Days;
 
 @Name("creditNoteElectHome")
 @Scope(ScopeType.CONVERSATION)
@@ -121,7 +118,7 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 
 	public void setCancelVoucher(ElectronicVoucher cancelVoucher) {
 		cancelVoucher.setElectronicStatus(StatusElectronicReceipt.CANCEL.name());
-		System.out.println("=>"+cancelVoucher.getSequentialNumber());
+		//System.out.println("=>"+cancelVoucher.getSequentialNumber());
 		this.cancelVoucher = cancelVoucher;
 	}
 
@@ -187,7 +184,7 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 
 	/**** METHODS *****/
 	public String  cancelVoucher() {
-		System.out.println("============>"+this.cancelVoucher.getAccessCode());
+		//System.out.println("============>"+this.cancelVoucher.getAccessCode());
 		getEntityManager().merge(this.cancelVoucher);
 		getEntityManager().flush();
 		return "/electronicvoucher/creditNote/CreditNoteList.xhtml";
@@ -242,8 +239,8 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	public void putField(){  
 		
 		this.instance.getFields().add(this.field);
-		System.out.println("**=>"+this.field.getValue());
-		System.out.println("**=>"+this.field.getLabel());
+		//System.out.println("**=>"+this.field.getValue());
+		//System.out.println("**=>"+this.field.getLabel());
 	}
 	
 	/**
@@ -326,7 +323,7 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 		this.instance.setTotalTaxes(taxesTotal);
 		this.instance.setTotal(total);
 		this.instance.setTotalPaid(totalPaid);
-		System.out.println("==========>"+total);
+		//System.out.println("==========>"+total);
 
 	}
 
@@ -400,7 +397,7 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 					.getComplementVoucher().getInstitutionService();
 			this.sequenceName = "seq_elec_" + institution.getId() + "_"
 					+ this.typeEmissionPoint.getId();
-			System.out.println("SEQ CRE: " + this.sequenceName);
+			//System.out.println("SEQ CRE: " + this.sequenceName);
 			IncomeService incomeService = ServiceLocator.getInstance()
 					.findResource(IncomeService.LOCAL_NAME);
 			incomeService.createSequenceComplementVoucher(this.sequenceName);
@@ -421,7 +418,7 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	public void addVoucher(MunicipalBond municipalBond) {
 		// buscar los datos si es una factura u otro tipo de comprobante
 
-		System.out.println("=>" + municipalBond.getReceipt());
+		//System.out.println("=>" + municipalBond.getReceipt());
 		if (municipalBond.getReceipt() == null) {
 			// error
 			System.out.println("ERROR");
@@ -479,7 +476,7 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 			this.sequentialNumber = complement.getInstitutionNumber() + "-"
 					+ complement.getEmisionPointNumber() + "-" + format;
 
-			System.out.println("SECUENCIAL====>" + this.sequentialNumber);
+			//System.out.println("SECUENCIAL====>" + this.sequentialNumber);
 
 			this.instance.setSequentialNumber(this.sequentialNumber);
 			// actualizar el valor actual del contador del voucher

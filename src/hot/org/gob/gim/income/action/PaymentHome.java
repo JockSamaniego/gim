@@ -13,7 +13,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -32,8 +31,6 @@ import javax.persistence.Query;
 import javax.servlet.ServletContext;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
-import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -60,12 +57,7 @@ import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.log.Log;
- 
 
-import SMTATM.WsPagoSolicitudExecute;
-import SMTATM.WsPagoSolicitudExecuteResponse;
-import SMTATM.WsPagoSolicitudSoapPortProxy;
-import ec.gob.gim.ant.ucot.model.CoipDTO;
 import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.FiscalPeriod;
@@ -83,14 +75,11 @@ import ec.gob.gim.income.model.PaymentRestriction;
 import ec.gob.gim.income.model.PaymentType;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.TillPermission;
-import ec.gob.gim.income.model.dto.ParameterFutureEmissionDTO;
 import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.FinancialInstitutionType;
-import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.PaymentTypeSRI;
-import ec.gob.gim.revenue.model.DTO.CRTV_ORDER;
 import ec.gob.gim.revenue.model.impugnment.Impugnment;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.gim.security.model.User;
@@ -283,7 +272,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	public void search() {
-		logger.info("RESIDENT identificationNumber " + this.identificationNumber);
+		//logger.info("RESIDENT identificationNumber " + this.identificationNumber);
 		if (this.identificationNumber == null || this.identificationNumber.length() == 0) {
 			addFacesMessageFromResourceBundle("resident.enterValidIdentifier");
 			return;
@@ -319,7 +308,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 	public void searchVoucher() {
 
-		logger.info("RESIDENT identificationNumber " + this.identificationNumber);
+		//logger.info("RESIDENT identificationNumber " + this.identificationNumber);
 		if (this.identificationNumber == null || this.identificationNumber.length() == 0) {
 			addFacesMessageFromResourceBundle("resident.enterValidIdentifier");
 			return;
@@ -437,7 +426,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	private void findPendingBonds() throws Exception {
-		logger.info("FIND PENDING BONDS " + resident.getName());
+		//logger.info("FIND PENDING BONDS " + resident.getName());
 		loadLists();
 		//macartuche
 		loadListsSRI();
@@ -602,7 +591,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		query.setParameter("residentId", residentId);
 		query.setParameter("isActive", Boolean.TRUE);
 
-		logger.info("PARAMETERS -----> residentId " + residentId);
+		//logger.info("PARAMETERS -----> residentId " + residentId);
 		List<PaymentAgreement> pas = query.getResultList();
 
 		return pas;
@@ -624,12 +613,12 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				clearDeposits();
 				hasConflict = Boolean.FALSE;
 				municipalBonds = findAgreementMunicipalBonds();
-				System.out.println("Total de bonds " + municipalBonds.size());
+				//System.out.println("Total de bonds " + municipalBonds.size());
 				IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 				incomeService.calculatePayment(municipalBonds, new Date(), true, true);
-				logger.info("CALCULATE 2");
+				//logger.info("CALCULATE 2");
 				resetPaymentTotals();
-				logger.info("CALCULATE 3");
+				//logger.info("CALCULATE 3");
 
 				// obtener el tipo de acuerdo de pago
 				// 2016-07-19T12:56
@@ -653,12 +642,12 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				clearDeposits();
 				//hasConflict = Boolean.FALSE;
 				municipalBondSubscriptionsItems = findSubscriptionMunicipalBonds();
-				System.out.println("Total de bonds subscription ----------------> " + municipalBondSubscriptionsItems.size());
+				//System.out.println("Total de bonds subscription ----------------> " + municipalBondSubscriptionsItems.size());
 				IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 				incomeService.calculatePayment(municipalBondSubscriptionsItems, new Date(), true, true);
-				logger.info("CALCULATE 2");
+				//logger.info("CALCULATE 2");
 				resetPaymentTotals();
-				logger.info("CALCULATE 3");
+				//logger.info("CALCULATE 3");
 
 				// obtener el tipo de acuerdo de pago
 				// 2016-07-19T12:56
@@ -686,11 +675,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			query.setParameter("municipalBondStatusId", inAgreementMunicipalBondStatusId);
 			query.setParameter("paymentAgreementId", paymentAgreement.getId());
 			List<MunicipalBond> results = query.getResultList();
-			for (MunicipalBond municipalBond : results) {
+			/*for (MunicipalBond municipalBond : results) {
 				for (Deposit deposit : municipalBond.getDeposits()) {
 					System.out.println("ID ====>" + deposit.getDate());
 				}
-			}
+			}*/
 			return results;
 		}
 		return null;
@@ -708,11 +697,11 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			query.setParameter("residentId", resident.getId());
 			//query.setParameter("paymentAgreementId", paymentAgreement.getId());
 			List<MunicipalBond> results = query.getResultList();
-			for (MunicipalBond municipalBond : results) {
+			/*for (MunicipalBond municipalBond : results) {
 				for (Deposit deposit : municipalBond.getDeposits()) {
 					System.out.println("ID ====>" + deposit.getDate());
 				}
-			}
+			}*/
 			return results;
 		//}
 		//return null;
@@ -988,7 +977,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	public void calculatePaidTotal2() {
-		System.out.println("INICIA CALCULO DE calculatePaidTotal2");
+		//System.out.println("INICIA CALCULO DE calculatePaidTotal2");
 		BigDecimal paidTotal = BigDecimal.ZERO;
 
 		if (items != null) {
@@ -1010,7 +999,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		// }
 		// }
 
-		System.out.println("PAIDTOTAL " + paidTotal);
+		//System.out.println("PAIDTOTAL " + paidTotal);
 		if (paidTotal.compareTo(BigDecimal.ZERO) == 1) {
 			printBtn = false;
 		}
@@ -1020,7 +1009,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	public void searchByCriteria() {
-		logger.info("SEARCH BY CRITERIA " + this.criteria);
+		//logger.info("SEARCH BY CRITERIA " + this.criteria);
 		if (this.criteria != null && !this.criteria.isEmpty()) {
 			Query query = getEntityManager().createNamedQuery("Resident.findByCriteria");
 			query.setParameter("criteria", this.criteria);
@@ -1529,8 +1518,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		List<MunicipalBond> retornoList = new ArrayList<MunicipalBond>();
 		for (MunicipalBond mbDB : bondsBD) {
 			for (MunicipalBond mbCalc : bondsCalculate) {
-				System.out.println("mbDB "+mbDB.getId());
-				System.out.println("mbCalc "+mbCalc.getId());
+				/*System.out.println("mbDB "+mbDB.getId());
+				System.out.println("mbCalc "+mbCalc.getId());*/
 				if(mbDB.getId().equals(mbCalc.getId())) {
 					mbDB.setDiscount(mbCalc.getDiscount());
 					retornoList.add(mbDB);
@@ -1714,9 +1703,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			}
 		}
 
-		for (Deposit deposit : deps) {
+		/*for (Deposit deposit : deps) {
 			System.out.println("ID ===>" + deposit.getId());
-		}
+		}*/
 		return deps;
 	}
 
@@ -2114,13 +2103,13 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				deactivatePaymentAgreement = Boolean.TRUE;
 			}
 
-			System.out.println("**********************************REMAINING: " + remaining);
+			/*System.out.println("**********************************REMAINING: " + remaining);
 			System.out.println("Capital: " + deposit.getCapital());
 			System.out.println("interes: " + deposit.getInterest());
 			System.out.println("impuestos: " + deposit.getPaidTaxes());
 			System.out.println("recargos: " + deposit.getSurcharge());
 			System.out.println("Descuento: " + deposit.getDiscount());
-			System.out.println("Balance: " + deposit.getBalance());
+			System.out.println("Balance: " + deposit.getBalance());*/
 
 			deposit.setValue(deposit.getCapital().add(deposit.getInterest()).add(deposit.getPaidTaxes())
 					.add(deposit.getSurcharge()).subtract(deposit.getDiscount()));
@@ -2313,13 +2302,13 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				deactivateSubscription = Boolean.TRUE;
 			}
 
-			System.out.println("**********************************REMAINING: " + remaining);
+			/*System.out.println("**********************************REMAINING: " + remaining);
 			System.out.println("Capital: " + deposit.getCapital());
 			System.out.println("interes: " + deposit.getInterest());
 			System.out.println("impuestos: " + deposit.getPaidTaxes());
 			System.out.println("recargos: " + deposit.getSurcharge());
 			System.out.println("Descuento: " + deposit.getDiscount());
-			System.out.println("Balance: " + deposit.getBalance());
+			System.out.println("Balance: " + deposit.getBalance());*/
 
 			deposit.setValue(deposit.getCapital().add(deposit.getInterest()).add(deposit.getPaidTaxes())
 					.add(deposit.getSurcharge()).subtract(deposit.getDiscount()));
@@ -2588,7 +2577,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	
 	public List<PaymentTypeSRI> getSRICodes(PaymentType paymentType) {
 		
-		System.out.println("Tipo de pago: "+paymentType.name());
+		//System.out.println("Tipo de pago: "+paymentType.name());
 		
 		
 		if (paymentType == PaymentType.CHECK) {

@@ -231,7 +231,7 @@ public class SpecialEmissionOrderHome extends EntityHome<EmissionOrder> {
 	public String emitEmissionOrder(List<EmissionOrder> orders) {
 		for(EmissionOrder eo :orders){
 			if(eo.getIsSelected()){
-				System.out.println("------------------------- ok "+eo.getId());
+				//System.out.println("------------------------- ok "+eo.getId());
 			}
 		}
 		return null;
@@ -439,7 +439,7 @@ public class SpecialEmissionOrderHome extends EntityHome<EmissionOrder> {
 		
 		if(!isUrbanProperty && rusticPropertyCode != null){
 			//cadastralCodeBuffer.append("00000");
-			System.out.println("--*-*-*-*-*-*-*:"+getRusticPropertyNumberFormat().format(Long.parseLong(rusticPropertyCode)));
+			//System.out.println("--*-*-*-*-*-*-*:"+getRusticPropertyNumberFormat().format(Long.parseLong(rusticPropertyCode)));
 			return cadastralCodeBuffer.append(getRusticPropertyNumberFormat().format(Long.parseLong(rusticPropertyCode))).toString();
 		}
 
@@ -595,12 +595,12 @@ public class SpecialEmissionOrderHome extends EntityHome<EmissionOrder> {
 		try {
 			BigDecimal minimumAppraisal = BigDecimal.ZERO;
 			minimumAppraisal = fiscalPeriod.getBasicSalary().multiply(new BigDecimal(25));
-			System.out.println("****************************");
+			//System.out.println("****************************");
 			/******************************ATENCION REVISAR CON TODOS ANTES DE SUBIR **************************/
 			List<UnbuiltLot> unbuildLots = findByFiscalPeriodAndMinAppraisal(fiscalPeriod.getId(),minimumAppraisal);
 			//removeUnbuilLotMinimumAppraisalAndIsEmited(unbuildLots, fiscalPeriod);
 			/******************************ATENCION REVISAR CON TODOS ANTES DE SUBIR **************************/
-			System.out.println("Total solares modificando llamada a remover: "+unbuildLots.size());
+			//System.out.println("Total solares modificando llamada a remover: "+unbuildLots.size());
 			createEmissionOrder(unbuildLots);
 			 
 //			createEmissionOrder(findByFiscalPeriod(fiscalPeriod.getId()));
@@ -639,7 +639,7 @@ public class SpecialEmissionOrderHome extends EntityHome<EmissionOrder> {
 		for (UnbuiltLot unbuiltLotRemove : listRemove) {
 			unbuildLots.remove(unbuiltLotRemove);
 		}
-		System.out.println("<<<<<R>>>>>removeUnbuilLotMinimumAppraisal EXIT");
+		//System.out.println("<<<<<R>>>>>removeUnbuilLotMinimumAppraisal EXIT");
 	}
 	
 	private void loadUnbuiltLotEntry(){
@@ -1023,7 +1023,7 @@ public class SpecialEmissionOrderHome extends EntityHome<EmissionOrder> {
 		if(identificationNumber!=null && !identificationNumber.equals("")){
 			q.setParameter("identificationNumber", identificationNumber);
 		}
-		System.out.println("------------------- "+identificationNumber+"    -  "+residentName+"    "+q.getResultList().size());
+		//System.out.println("------------------- "+identificationNumber+"    -  "+residentName+"    "+q.getResultList().size());
 		emissionOrders = q.getResultList();
 	}
 
@@ -1063,13 +1063,13 @@ public class SpecialEmissionOrderHome extends EntityHome<EmissionOrder> {
 			for (int i = 0; i < emissionOrders.size(); i++) {
 				if (emissionOrders.get(i).getIsSelected() == true) {
 					emitEmissionOrder(emissionOrders.get(i));
-					System.out.println("--------------------------orden de emision " + (count + 1) + " terminada");
+					//System.out.println("--------------------------orden de emision " + (count + 1) + " terminada");
 					count++;
 				}
 			}
 			
 		}
-		System.out.println("---------------------------------"+count);
+		//System.out.println("---------------------------------"+count);
 		loadPending();
 		return "updated";
 	}
@@ -1080,13 +1080,12 @@ public class SpecialEmissionOrderHome extends EntityHome<EmissionOrder> {
 			for (int i = 0; i < emissionOrders.size(); i++) {
 				if (emissionOrders.get(i).getIsSelected() == true) {
 					rejectEmissionOrder(emissionOrders.get(i));
-					System.out
-							.println("---------------------------------orden de emision " + (count + 1) + " rechazada");
+					//System.out							.println("---------------------------------orden de emision " + (count + 1) + " rechazada");
 					count++;
 				}
 			}
 		}
-		System.out.println("---------------------------------"+count);
+		//System.out.println("---------------------------------"+count);
 		loadPending();
 		return "updated";
 	}

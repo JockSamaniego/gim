@@ -175,7 +175,7 @@ public class MunicipalBondsViewerHome extends EntityController{
 	}
 
 	public void loadInfractionNotification(String ANTnotification){
-		System.out.println("======ANTnotification===> "+ANTnotification);
+		//System.out.println("======ANTnotification===> "+ANTnotification);
 		this.URLnotification = ANTnotification;
 	}
 	

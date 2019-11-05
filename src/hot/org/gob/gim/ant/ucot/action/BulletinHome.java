@@ -16,13 +16,17 @@ import org.jboss.seam.framework.EntityHome;
 
 import ec.gob.gim.ant.ucot.model.Agent;
 import ec.gob.gim.ant.ucot.model.Bulletin;
+import ec.gob.gim.ant.ucot.model.InfractionDTO;
 import ec.gob.gim.ant.ucot.model.Infractions;
 import ec.gob.gim.common.model.ItemCatalog;
-import ec.gob.gim.ant.ucot.model.InfractionDTO;
 
 @Name("bulletinHome")
 public class BulletinHome extends EntityHome<Bulletin> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private List<ItemCatalog> typesBulletin;
 	private ItemCatalogService itemCatalogService;
 

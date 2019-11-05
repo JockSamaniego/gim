@@ -48,7 +48,7 @@ public class TaxpayerRecordHome extends EntityHome<TaxpayerRecord> {
 		if(!isTaxpayerInformationValid()){
 			return null;
 		}
-		System.out.println("IS DEFAULT "+this.getInstance().getIsDefault());
+		//System.out.println("IS DEFAULT "+this.getInstance().getIsDefault());
 		if(this.getInstance().getIsDefault()){ 
 			disableDefaultTaxpayerRecord();
 		}

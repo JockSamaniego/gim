@@ -7,15 +7,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
-import org.gob.gim.commercial.action.BusinessHome;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
-import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
 import org.gob.gim.revenue.view.DeferredMunicipalBondItem;
@@ -39,7 +36,6 @@ import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
-import ec.gob.gim.revenue.model.MunicipalBondStatus;
 
 @Name("deferredMunicipalBond")
 @Scope(ScopeType.CONVERSATION)
@@ -300,7 +296,7 @@ public class DeferredMunicipalBondAction extends EntityController{
 	
 	public void previewEmitAction(){	
 		
-		System.out.println("...................... el valor es: "+futureIssuance);
+		//System.out.println("...................... el valor es: "+futureIssuance);
 		futureIssuance = Boolean.FALSE;
 		/*if(futureIssuance){
 			deferredFutureEmission();
@@ -311,7 +307,7 @@ public class DeferredMunicipalBondAction extends EntityController{
 	
 	public void previewFutureEmitAction(){	
 		
-		System.out.println("...................... el valor es: "+futureIssuance);
+		//System.out.println("...................... el valor es: "+futureIssuance);
 		futureIssuance = Boolean.TRUE;
 		//if(futureIssuance){
 			deferredFutureEmission();
@@ -395,9 +391,9 @@ public class DeferredMunicipalBondAction extends EntityController{
 					municipalBond.setBondAddress(dmbi.getBondAddress());
 					if (entry.getAdjunctClassName() != null && entry.getAdjunctClassName().trim().length() > 0) {
 						Adjunct adjunct = null;
-						System.out.println("revisando -----> " + entry.getAdjunctClassName());
+						//System.out.println("revisando -----> " + entry.getAdjunctClassName());
 						if (adjunctHome.getInstance() != null) {
-							System.out.println("EMITIENDO -----> " + entry.getAdjunctClassName());
+							//System.out.println("EMITIENDO -----> " + entry.getAdjunctClassName());
 							adjunct = adjunctHome.getInstance();
 							municipalBond.setGroupingCode(adjunct.getCode());
 						}
@@ -485,9 +481,9 @@ public class DeferredMunicipalBondAction extends EntityController{
 					municipalBond.setBondAddress(dmbi.getBondAddress());
 					if (entry.getAdjunctClassName() != null && entry.getAdjunctClassName().trim().length() > 0) {
 						Adjunct adjunct = null;
-						System.out.println("revisando -----> " + entry.getAdjunctClassName());
+						//System.out.println("revisando -----> " + entry.getAdjunctClassName());
 						if (adjunctHome.getInstance() != null) {
-							System.out.println("EMITIENDO -----> " + entry.getAdjunctClassName());
+							//System.out.println("EMITIENDO -----> " + entry.getAdjunctClassName());
 							adjunct = adjunctHome.getInstance();
 							municipalBond.setGroupingCode(adjunct.getCode());
 						}
@@ -539,7 +535,7 @@ public class DeferredMunicipalBondAction extends EntityController{
 	
 	public String emit(){
 		logger.info("Saving MunicipalBond... #0", deferredMunicipalBondList.getMunicipalBonds().size());
-		System.out.println("...................... el vvvvvvvvvvalor es: "+futureIssuance);
+		//System.out.println("...................... el vvvvvvvvvvalor es: "+futureIssuance);
 		try{
 			RevenueService revenueService = ServiceLocator.getInstance().findResource("/gim/RevenueService/local");
 			if(futureIssuance){
@@ -744,11 +740,11 @@ public class DeferredMunicipalBondAction extends EntityController{
 	
 	private Adjunct createAdjunct(Entry entry) {
 		try {
-			System.out.println("CREATE ADJUNCT ----> " + entry.getAdjunctClassName());
+			//System.out.println("CREATE ADJUNCT ----> " + entry.getAdjunctClassName());
 			if (entry.getAdjunctClassName() != null && !entry.getAdjunctClassName().trim().isEmpty()) {
 				Class<?> klass = Class.forName(entry.getAdjunctClassName());
 				Adjunct adjunct = (Adjunct) klass.newInstance();
-				System.out.println("ADJUNCT CREATED ----> "	+ adjunct.getClass().getSimpleName());
+				//System.out.println("ADJUNCT CREATED ----> "	+ adjunct.getClass().getSimpleName());
 				this.adjunctUri = ADJUNCT_PREFIX + adjunct.getClass().getSimpleName() + ADJUNCT_SUFIX;
 				return adjunct;
 			}

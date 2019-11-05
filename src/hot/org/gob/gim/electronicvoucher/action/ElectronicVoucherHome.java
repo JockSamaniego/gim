@@ -254,7 +254,7 @@ public class ElectronicVoucherHome extends EntityHome<ElectronicVoucher>implemen
 				Query q = em.createNamedQuery("ComplementVoucherType.findByCode");
 				q.setParameter("code", code);
 				List<ComplementVoucherType> types = q.getResultList();
-				System.out.println("==========================>"+code+" "+types.size());
+				//System.out.println("==========================>"+code+" "+types.size());
 				if(!types.isEmpty()){
 					this.complementVoucherType = types.get(0);
 				} 
@@ -364,7 +364,7 @@ public class ElectronicVoucherHome extends EntityHome<ElectronicVoucher>implemen
 			this.typeEmissionPoint = typesByEmissionPoint.get(0);
 			verifySequenceExist();
 		} else {
-			System.out.println("La empresa no tienen el tipo de comprobante relacionado");
+			//System.out.println("La empresa no tienen el tipo de comprobante relacionado");
 			return;
 		}
 	}
@@ -374,7 +374,7 @@ public class ElectronicVoucherHome extends EntityHome<ElectronicVoucher>implemen
 			// sequence_name = seq_elec_institutionId_typeemissionPointID;
 			InstitutionService institution = this.typeEmissionPoint.getComplementVoucher().getInstitutionService();
 			this.sequenceName = "seq_elec_" + institution.getId() + "_" + this.typeEmissionPoint.getId();
-			System.out.println("SEQ CRE: " + this.sequenceName);
+			//System.out.println("SEQ CRE: " + this.sequenceName);
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			incomeService.createSequenceComplementVoucher(this.sequenceName);
 		}
@@ -419,7 +419,7 @@ public class ElectronicVoucherHome extends EntityHome<ElectronicVoucher>implemen
 
 		long diff = voucherDate.getTime() - documentDate.getTime();
 		double days = diff / (1000 * 60 * 60 * 24);
-		System.out.println("DIAS: " + days);
+		//System.out.println("DIAS: " + days);
 	}
 
 	private void init() {
@@ -601,7 +601,7 @@ public class ElectronicVoucherHome extends EntityHome<ElectronicVoucher>implemen
 		}
 		total = total.setScale(2, RoundingMode.HALF_UP);
 		this.getInstance().setTotal(total);
-		System.out.println("TOTAL=>: " + total);
+		//System.out.println("TOTAL=>: " + total);
 	}
 
 	public void calculateDetail() {
@@ -624,7 +624,7 @@ public class ElectronicVoucherHome extends EntityHome<ElectronicVoucher>implemen
 	 */
 	public void calculateDetail(ElectronicVoucherDetail det) {
 
-		System.out.println("========>");
+		//System.out.println("========>");
 		if (det.getTaxableBase() != null && det.getRetentionPercent() != null) {
 			BigDecimal base = det.getTaxableBase();
 			BigDecimal percent = det.getRetentionPercent();
@@ -633,7 +633,7 @@ public class ElectronicVoucherHome extends EntityHome<ElectronicVoucher>implemen
 				BigDecimal subPercent = percent.divide(new BigDecimal(100));
 				BigDecimal total = base.multiply(subPercent);
 				det.setTaxesTotal(total);
-				System.out.println("========>" + total);
+				//System.out.println("========>" + total);
 				calculateTotal();
 			}
 		}
@@ -664,7 +664,7 @@ public class ElectronicVoucherHome extends EntityHome<ElectronicVoucher>implemen
 
 	public void setDetail(ElectronicVoucherDetail detail) {
 
-		System.out.println("Setter=>" + detail.getRetentionTax().name());
+		//System.out.println("Setter=>" + detail.getRetentionTax().name());
 		this.detail = detail;
 	}
 
