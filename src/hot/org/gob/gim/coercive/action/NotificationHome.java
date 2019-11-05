@@ -16,6 +16,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.gob.gim.coercive.view.ResidentItem;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.Util;
 import org.gob.gim.common.action.UserSession;
@@ -31,9 +32,14 @@ import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.web.Session;
 
+import ec.gob.gim.ant.ucot.model.CoipDTO;
 import ec.gob.gim.coercive.model.Notification;
+import ec.gob.gim.coercive.model.NotificationPayedDTO;
+import ec.gob.gim.coercive.model.NotificationPayedDetailDTO;
 import ec.gob.gim.coercive.model.NotificationTask;
 import ec.gob.gim.coercive.model.NotificationTaskType;
+import ec.gob.gim.common.model.Charge;
+import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.SystemParameter;
 import ec.gob.gim.revenue.model.Entry;
@@ -129,6 +135,7 @@ public class NotificationHome extends EntityHome<Notification> {
 		Calendar ca = Calendar.getInstance();
 		startDate = ca.getTime();
 		endDate = ca.getTime();
+		loadCharge();
 	}
 
 	public void setNotificationId(Long id) {
@@ -192,6 +199,7 @@ public class NotificationHome extends EntityHome<Notification> {
 		return (BigDecimal) query.getSingleResult();
 
 	}
+	
 
 	private BigDecimal getTotalBondsPaidTotals(Date startDate, Date endDate) {
 		if (systemParameterService == null)
@@ -1017,5 +1025,131 @@ public class NotificationHome extends EntityHome<Notification> {
 		public void setImpugnmentsTotal(List<Impugnment> impugnmentsTotal) {
 			this.impugnmentsTotal = impugnmentsTotal;
 		}
+		
+		//para reporte detallado de coactivas
+		//Jock Samaniego M
+		//29-10-2019
+		
+		private List<NotificationPayedDTO> payeds;
+		private BigDecimal totalPayed;
+		private Date startDatePayed;
+		private Date endDatePayed;
+		
+		public List<NotificationPayedDTO> getPayeds() {
+			return payeds;
+		}
 
+		public BigDecimal getTotalPayed() {
+			return totalPayed;
+		}
+
+		public Date getStartDatePayed() {
+			return startDatePayed;
+		}
+
+		public void setStartDatePayed(Date startDatePayed) {
+			this.startDatePayed = startDatePayed;
+		}
+
+		public Date getEndDatePayed() {
+			return endDatePayed;
+		}
+
+		public void setEndDatePayed(Date endDatePayed) {
+			this.endDatePayed = endDatePayed;
+		}
+
+		public void getTotalNotificationsPayed(){
+			totalPayed = BigDecimal.ZERO;
+			payeds = new ArrayList();
+			String query = "SELECT count(mb.id), ent.name, sum(mb.paidtotal), ent.id from gimprod.municipalbond mb "
+							+ "LEFT JOIN gimprod.notification nt on nt.id = mb.notification_id "
+							+ "LEFT JOIN gimprod.entry ent On ent.id = mb.entry_id "
+							+ "WHERE mb.liquidationdate BETWEEN :startDate and :endDate "
+							+ "and mb.notification_id is not NULL "
+							+ "and mb.municipalbondstatus_id in (6,11) "
+							+ "GROUP BY ent.name, ent.id "
+							+ "ORDER BY ent.name ASC ";
+		
+			Query q = this.getEntityManager().createNativeQuery(query);
+			q.setParameter("startDate", startDatePayed);
+			q.setParameter("endDate", endDatePayed);
+			payeds = NativeQueryResultsMapper.map(q.getResultList(), NotificationPayedDTO.class);
+			for(NotificationPayedDTO np : payeds){
+				totalPayed = totalPayed.add(np.getTotal());
+			}
+		}
+		
+		private NotificationPayedDTO entrySelected;
+		private List<NotificationPayedDetailDTO> payedsDetail;
+		
+		public NotificationPayedDTO getEntrySelected() {
+			return entrySelected;
+		}
+
+		public List<NotificationPayedDetailDTO> getPayedsDetail() {
+			return payedsDetail;
+		}
+
+		public List<NotificationPayedDetailDTO> generateNotificationPayedDetail(NotificationPayedDTO _entry){
+			entrySelected = _entry;
+			List <NotificationPayedDetailDTO> details = new ArrayList<NotificationPayedDetailDTO>();
+			String query = "SELECT mb.number, res.identificationnumber, res.name, nt.id, mb.emisiondate, mb.expirationdate, nt.creationtimestamp, mb.liquidationdate, mb.paidtotal "
+							+ "from gimprod.municipalbond mb "
+							+ "LEFT JOIN gimprod.resident res on res.id = mb.resident_id "
+							+ "LEFT JOIN gimprod.notification nt on nt.id = mb.notification_id "
+							+ "WHERE mb.entry_id =:entryId "
+							+ "and mb.notification_id is not NULL "
+							+ "and mb.liquidationdate BETWEEN :startDate and :endDate "
+							+ "and mb.municipalbondstatus_id in (6,11) "
+							+ "ORDER BY res.name, mb.liquidationdate ";
+			
+			Query q = this.getEntityManager().createNativeQuery(query);
+			q.setParameter("entryId", entrySelected.getEntryId());
+			q.setParameter("startDate", startDatePayed);
+			q.setParameter("endDate", endDatePayed);
+			details = NativeQueryResultsMapper.map(q.getResultList(), NotificationPayedDetailDTO.class);
+			return details;
+		} 
+		
+		public void findNotificationPayedDetail(NotificationPayedDTO _entry){
+			payedsDetail = new ArrayList<NotificationPayedDetailDTO>();
+			payedsDetail = generateNotificationPayedDetail(_entry);
+		}
+		
+		public String generateTotalNotificationsReport(){			
+			return "/coercive/report/PayedNotificationTotalReport.xhtml";
+		}
+		
+		
+		private Charge coerciveCharge;
+		private Delegate coerciveDelegate;
+
+		public Charge getCoerciveCharge() {
+			return coerciveCharge;
+		}
+
+		public Delegate getCoerciveDelegate() {
+			return coerciveDelegate;
+		}
+		
+		
+		public void loadCharge() {
+			coerciveCharge = getCharge("DELEGATE_ID_COERCIVE");
+			if (coerciveCharge != null) {
+				for (Delegate d : coerciveCharge.getDelegates()) {
+					if (d.getIsActive())
+						coerciveDelegate = d;
+				}
+			}
+		}
+		
+		private Charge getCharge(String systemParameter) {
+			if (systemParameterService == null)
+				systemParameterService = ServiceLocator.getInstance().findResource(
+						SYSTEM_PARAMETER_SERVICE_NAME);
+			Charge charge = systemParameterService.materialize(Charge.class,
+					systemParameter);
+			return charge;
+		}
 }
