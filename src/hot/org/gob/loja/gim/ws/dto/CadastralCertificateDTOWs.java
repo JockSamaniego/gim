@@ -19,164 +19,167 @@ import ec.gob.gim.cadaster.model.dto.BuildingDTO;
  */
 @NativeQueryResultEntity
 public class CadastralCertificateDTOWs {
-	
-	@NativeQueryResultColumn(index = 0)	
+
+	@NativeQueryResultColumn(index = 0)
 	private String provincia;
-	
+
 	@NativeQueryResultColumn(index = 1)
 	private String canton;
-	
+
 	@NativeQueryResultColumn(index = 2)
 	private String parroquia_code;
-	
+
 	@NativeQueryResultColumn(index = 3)
 	private String zona;
-	
+
 	@NativeQueryResultColumn(index = 4)
 	private String sector;
-	
+
 	@NativeQueryResultColumn(index = 5)
 	private String manzana;
-	
+
 	@NativeQueryResultColumn(index = 6)
 	private String lote;
-	
+
 	@NativeQueryResultColumn(index = 7)
 	private String bloque;
-	
+
 	@NativeQueryResultColumn(index = 8)
 	private String piso;
-	
+
 	@NativeQueryResultColumn(index = 9)
 	private String unidad;
-	
+
 	@NativeQueryResultColumn(index = 10)
 	private String ficha_registral;
-	
+
 	@NativeQueryResultColumn(index = 11)
 	private String nombres;
-	
+
 	@NativeQueryResultColumn(index = 12)
 	private String apellidos;
-	
+
 	@NativeQueryResultColumn(index = 13)
 	private String cedula;
-	
+
 	@NativeQueryResultColumn(index = 14)
 	private String ubicacion;
-	
+
 	@NativeQueryResultColumn(index = 15)
 	private String parroquia;
-	
+
 	@NativeQueryResultColumn(index = 16)
 	private String barrio;
-	
+
 	@NativeQueryResultColumn(index = 17)
 	private String urbanizacion;
-	
+
 	@NativeQueryResultColumn(index = 18)
 	private String subdivision;
-	
+
 	@NativeQueryResultColumn(index = 19)
 	private String unificacion;
-	
+
 	@NativeQueryResultColumn(index = 20)
 	private String lindero_norte;
-	
+
 	@NativeQueryResultColumn(index = 21)
 	private String lindero_sur;
-	
+
 	@NativeQueryResultColumn(index = 22)
 	private String lindero_este;
-	
+
 	@NativeQueryResultColumn(index = 23)
 	private String lindero_oeste;
-	
+
 	@NativeQueryResultColumn(index = 24)
 	private BigDecimal area_total_terreno;
-	
+
 	@NativeQueryResultColumn(index = 25)
 	private BigDecimal area_total_construccion;
 
 	@NativeQueryResultColumn(index = 26)
 	private String lot_position;
-	
+
 	@NativeQueryResultColumn(index = 27)
 	private String construcciones;
-	
+
 	@NativeQueryResultColumn(index = 28)
 	private String topografia_terreno;
-	
+
 	@NativeQueryResultColumn(index = 29)
 	private Boolean water_service;
-	
+
 	@NativeQueryResultColumn(index = 30)
 	private String alcantarillado;
-	
+
 	@NativeQueryResultColumn(index = 31)
 	private Boolean luz_electrica;
-	
+
 	@NativeQueryResultColumn(index = 32)
 	private Boolean telefonia;
-	
+
 	@NativeQueryResultColumn(index = 33)
 	private String material_via;
-	
+
 	@NativeQueryResultColumn(index = 34)
 	private BigDecimal avaluo_terreno;
-	
+
 	@NativeQueryResultColumn(index = 35)
 	private BigDecimal avaluo_construccion;
-	
+
 	@NativeQueryResultColumn(index = 36)
 	private BigDecimal avaluo_comercial;
-	
+
 	@NativeQueryResultColumn(index = 37)
 	private byte[] foto;
-	
+
 	@NativeQueryResultColumn(index = 38)
 	private String numero_casa;
-	
+
 	@NativeQueryResultColumn(index = 39)
 	private BigDecimal valuebysquaremeter;
-	
+
 	@NativeQueryResultColumn(index = 40)
 	private String observations;
-	
+
 	@NativeQueryResultColumn(index = 41)
-	private String urbanization_block ;
-	
+	private String urbanization_block;
+
 	@NativeQueryResultColumn(index = 42)
 	private String urbanization_property_number;
-	
+
 	@NativeQueryResultColumn(index = 43)
 	private BigDecimal building_area_horizontal_property;
-	
+
 	@NativeQueryResultColumn(index = 44)
 	private BigDecimal lot_area_horizontal_property;
-	
+
 	@NativeQueryResultColumn(index = 45)
 	private String address_reference;
-	
+
 	@NativeQueryResultColumn(index = 46)
 	private BigDecimal buildingaliquot;
-	
+
 	@NativeQueryResultColumn(index = 47)
 	private BigDecimal lotaliquot;
-	
+
 	@NativeQueryResultColumn(index = 48)
 	private byte[] croquis;
-	
+
+	@NativeQueryResultColumn(index = 49)
+	private String descriptionHorizontalProperty;
+
 	private List<BuildingDTO> construccionesJson = new ArrayList<BuildingDTO>();
-	
+
 	private BoundaryDTO linderoNorteJson;
-	
+
 	private BoundaryDTO linderoSurJson;
-	
+
 	private BoundaryDTO linderoEsteJson;
-	
+
 	private BoundaryDTO linderoOesteJson;
-	
+
 	public String getProvincia() {
 		return provincia;
 	}
@@ -517,7 +520,8 @@ public class CadastralCertificateDTOWs {
 		return urbanization_property_number;
 	}
 
-	public void setUrbanization_property_number(String urbanization_property_number) {
+	public void setUrbanization_property_number(
+			String urbanization_property_number) {
 		this.urbanization_property_number = urbanization_property_number;
 	}
 
@@ -546,9 +550,9 @@ public class CadastralCertificateDTOWs {
 	public void setAddress_reference(String address_reference) {
 		this.address_reference = address_reference;
 	}
-	
-	public boolean tieneFoto(){
-		if(this.foto.length == 1) {
+
+	public boolean tieneFoto() {
+		if (this.foto.length == 1) {
 			return false;
 		}
 		return true;
@@ -578,7 +582,8 @@ public class CadastralCertificateDTOWs {
 	}
 
 	/**
-	 * @param construccionesJson the construccionesJson to set
+	 * @param construccionesJson
+	 *            the construccionesJson to set
 	 */
 	public void setConstruccionesJson(List<BuildingDTO> construccionesJson) {
 		this.construccionesJson = construccionesJson;
@@ -592,7 +597,8 @@ public class CadastralCertificateDTOWs {
 	}
 
 	/**
-	 * @param linderoNorteJson the linderoNorteJson to set
+	 * @param linderoNorteJson
+	 *            the linderoNorteJson to set
 	 */
 	public void setLinderoNorteJson(BoundaryDTO linderoNorteJson) {
 		this.linderoNorteJson = linderoNorteJson;
@@ -606,7 +612,8 @@ public class CadastralCertificateDTOWs {
 	}
 
 	/**
-	 * @param linderoSurJson the linderoSurJson to set
+	 * @param linderoSurJson
+	 *            the linderoSurJson to set
 	 */
 	public void setLinderoSurJson(BoundaryDTO linderoSurJson) {
 		this.linderoSurJson = linderoSurJson;
@@ -620,7 +627,8 @@ public class CadastralCertificateDTOWs {
 	}
 
 	/**
-	 * @param linderoEsteJson the linderoEsteJson to set
+	 * @param linderoEsteJson
+	 *            the linderoEsteJson to set
 	 */
 	public void setLinderoEsteJson(BoundaryDTO linderoEsteJson) {
 		this.linderoEsteJson = linderoEsteJson;
@@ -634,7 +642,8 @@ public class CadastralCertificateDTOWs {
 	}
 
 	/**
-	 * @param linderoOesteJson the linderoOesteJson to set
+	 * @param linderoOesteJson
+	 *            the linderoOesteJson to set
 	 */
 	public void setLinderoOesteJson(BoundaryDTO linderoOesteJson) {
 		this.linderoOesteJson = linderoOesteJson;
@@ -648,10 +657,19 @@ public class CadastralCertificateDTOWs {
 	}
 
 	/**
-	 * @param croquis the croquis to set
+	 * @param croquis
+	 *            the croquis to set
 	 */
 	public void setCroquis(byte[] croquis) {
 		this.croquis = croquis;
 	}
-	
+
+	public String getDescriptionHorizontalProperty() {
+		return descriptionHorizontalProperty;
+	}
+
+	public void setDescriptionHorizontalProperty(
+			String descriptionHorizontalProperty) {
+		this.descriptionHorizontalProperty = descriptionHorizontalProperty;
+	}
 }

@@ -162,6 +162,9 @@ public class CadastralCertificateDTO {
 	@NativeQueryResultColumn(index = 48)
 	private byte[] croquis;
 	
+	@NativeQueryResultColumn(index = 49)
+	private String descriptionHorizontalProperty;
+	
 	public String getProvincia() {
 		return provincia;
 	}
@@ -554,5 +557,24 @@ public class CadastralCertificateDTO {
 	public void setLotaliquot(BigDecimal lotaliquot) {
 		this.lotaliquot = lotaliquot;
 	}
+
+	public byte[] getCroquis() {
+		return croquis;
+	}
+
+	public void setCroquis(byte[] croquis) {
+		this.croquis = croquis;
+	}
+
+	public String getDescriptionHorizontalProperty() {
+		return descriptionHorizontalProperty;
+	}
+
+	public void setDescriptionHorizontalProperty(
+			String descriptionHorizontalProperty) {
+		this.descriptionHorizontalProperty = descriptionHorizontalProperty;
+	}
+	
+	
 		
 }

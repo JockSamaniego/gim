@@ -1064,6 +1064,32 @@
 
 	</p:table>
 	
+	<p:table columns="1" widthPercentage="100" headerRows="0" widths="1"
+		spacingBefore="10" horizontalAlignment="left">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+
+		<p:font size="8">
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="4" verticalAlignment="middle" grayFill=".75">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="DESCRIPCIÓN PROPIEDAD HORIZONTAL" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+			
+			<p:cell borderWidth="1" minimumHeight="100">
+				<p:paragraph  alignment="justify">
+					<p:text value="#{propertyHome._dataCadastralCerfificate.descriptionHorizontalProperty}"/>
+				</p:paragraph>
+			</p:cell>
+
+		</p:font>
+	</p:table>
+	
 	<p:table columns="4" widthPercentage="100" headerRows="0" widths="1 1 1 1"
 		spacingBefore="10" horizontalAlignment="left">
 		<f:facet name="defaultCell">
