@@ -228,10 +228,12 @@ public class ResidentHome extends EntityHome<Resident> {
             }
             //rfam 2018-08-08 creacion de cuenta unica
             if(this.getInstance().getGenerateUniqueAccountt()) {
-            	createUniqueAccounttUser(this.getInstance().getIdentificationNumber());	
+            	//createUniqueAccounttUser(this.getInstance().getIdentificationNumber());	
             }
             
-            try {
+            /*
+             * comentado 2019-11-05 rfam hasta hacer los cambios en el consumo de sw rest de facturas
+             * try {
                 UserWS userws = new UserWS();
                 if (residentType.equalsIgnoreCase("Person")) {
 
@@ -271,7 +273,7 @@ public class ResidentHome extends EntityHome<Resident> {
                 //System.out.println("save sri >>> error >>>>> " + e.getStackTrace().toString());
                 e.printStackTrace();
                 getFacesMessages().addFromResourceBundle(FacesMessage.SEVERITY_ERROR, "noUpdate.mail.sri");
-            }
+            }*/
         } catch (Exception e) {
             e.printStackTrace();
             addFacesMessageFromResourceBundle(e.getClass().getSimpleName());
