@@ -14,17 +14,17 @@
 		<ui:debug id="debug" />
 		<h:panelGrid columns="10">
 
-			<s:decorate template="../../layout/vertical-edit.xhtml" >
+			<s:decorate template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{territorialDivisionTypes.get(0).name}:</ui:define>
 				<h:inputText value="#{defaultProvince.name}" readonly="true" />
 			</s:decorate>
 
-			<s:decorate template="../../layout/vertical-edit.xhtml" >
+			<s:decorate template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{territorialDivisionTypes.get(1).name}:</ui:define>
 				<h:inputText value="#{defaultCanton.name}" readonly="true" />
 			</s:decorate>
 
-			<s:decorate id="parisheField" 
+			<s:decorate id="parisheField"
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{territorialDivisionTypes.get(2).name}:</ui:define>
 				<h:selectOneMenu id="parishe" value="#{propertyHome.parish}"
@@ -40,7 +40,7 @@
 				</h:selectOneMenu>
 			</s:decorate>
 
-			<s:decorate id="zoneField" 
+			<s:decorate id="zoneField"
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{territorialDivisionTypes.get(3).name}:</ui:define>
 				<h:selectOneMenu id="zone" value="#{propertyHome.zone}"
@@ -84,19 +84,19 @@
 						action="#{propertyHome.populateCadastralCodeAndLimits()}" />
 				</h:selectOneMenu>
 			</s:decorate>
-			
-			
+
+
 
 			<s:decorate id="propertyNumberField"
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{messages['property']}:</ui:define>
 				<a:region>
-				<h:inputText id="propertyNumber" required="true"
-					value="#{propertyHome.instance.number}" size="3" maxlength="3">
-					<a:support event="onblur" ajaxSingle="true"
-						reRender="propertyNumberField, cadastralCodePanel"
-						action="#{propertyHome.populateCadastralCode()}" />
-				</h:inputText>
+					<h:inputText id="propertyNumber" required="true"
+						value="#{propertyHome.instance.number}" size="3" maxlength="3">
+						<a:support event="onblur" ajaxSingle="true"
+							reRender="propertyNumberField, cadastralCodePanel"
+							action="#{propertyHome.populateCadastralCode()}" />
+					</h:inputText>
 				</a:region>
 			</s:decorate>
 
@@ -104,14 +104,14 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{messages['property.building']}:</ui:define>
 				<a:region>
-				<h:inputText id="buildingNumber" required="true"
-					value="#{propertyHome.instance.buildingNumber}" size="3"
-					maxlength="3" >
-					<a:support event="onblur" ajaxSingle="true"
-						reRender="buildingNumberField, cadastralCodePanel"
-						action="#{propertyHome.populateCadastralCode()}" />
+					<h:inputText id="buildingNumber" required="true"
+						value="#{propertyHome.instance.buildingNumber}" size="3"
+						maxlength="3">
+						<a:support event="onblur" ajaxSingle="true"
+							reRender="buildingNumberField, cadastralCodePanel"
+							action="#{propertyHome.populateCadastralCode()}" />
 
-				</h:inputText>
+					</h:inputText>
 				</a:region>
 			</s:decorate>
 
@@ -119,14 +119,14 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{messages['property.floor']}:</ui:define>
 				<a:region>
-				<h:inputText id="floorNumber" required="true" 
-					value="#{propertyHome.instance.floorNumber}" size="2" maxlength="2"
-					>
-					<a:support event="onblur" ajaxSingle="true"
-						reRender="floorNumberField, cadastralCodePanel"
-						action="#{propertyHome.populateCadastralCode()}" />
+					<h:inputText id="floorNumber" required="true"
+						value="#{propertyHome.instance.floorNumber}" size="2"
+						maxlength="2">
+						<a:support event="onblur" ajaxSingle="true"
+							reRender="floorNumberField, cadastralCodePanel"
+							action="#{propertyHome.populateCadastralCode()}" />
 
-				</h:inputText>
+					</h:inputText>
 				</a:region>
 			</s:decorate>
 
@@ -134,19 +134,19 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{messages['property.unity']}:</ui:define>
 				<a:region>
-				<h:inputText id="housingUnitNumber" required="true"
-					value="#{propertyHome.instance.housingUnitNumber}" size="3"
-					maxlength="3" >
-					<a:support event="onblur" ajaxSingle="true"
-						reRender="housingUnitNumberField, cadastralCodePanel"
-						action="#{propertyHome.populateCadastralCode()}" />
+					<h:inputText id="housingUnitNumber" required="true"
+						value="#{propertyHome.instance.housingUnitNumber}" size="3"
+						maxlength="3">
+						<a:support event="onblur" ajaxSingle="true"
+							reRender="housingUnitNumberField, cadastralCodePanel"
+							action="#{propertyHome.populateCadastralCode()}" />
 
-				</h:inputText>
+					</h:inputText>
 				</a:region>
 			</s:decorate>
 		</h:panelGrid>
 
-		<h:panelGrid id="cadastralCodePanel" columns="3" >
+		<h:panelGrid id="cadastralCodePanel" columns="3">
 
 			<s:decorate id="cadastralCodeField"
 				template="../../layout/vertical-edit.xhtml">
@@ -163,21 +163,19 @@
 				<ui:define name="label">#{messages['property.previousCadastralCode']}:</ui:define>
 				<h:inputText id="previousCadastralCode"
 					value="#{propertyHome.instance.previousCadastralCode}" size="30"
-					maxlength="30" styleClass="cadasterCodeLabel"
-					disabled="false">
+					maxlength="30" styleClass="cadasterCodeLabel" disabled="false">
 				</h:inputText>
 			</s:decorate>
-			
+
 			<s:decorate id="territorialCodeField"
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{messages['property.territorialCode']}:</ui:define>
 				<h:inputText id="territorialCode"
-					value="#{propertyHome.instance.cadastralCode_old}" 
-					size="30" maxlength="30"
-					styleClass="cadasterCodeLabel" disabled="true">
+					value="#{propertyHome.instance.cadastralCode_old}" size="30"
+					maxlength="30" styleClass="cadasterCodeLabel" disabled="true">
 				</h:inputText>
 			</s:decorate>
-			
+
 		</h:panelGrid>
 
 		<h:panelGrid columns="4">
@@ -188,7 +186,8 @@
 					value="#{propertyHome.instance.location.mainBlockLimit}"
 					required="true" disabled="#{disabled}">
 					<s:selectItems value="#{propertyHome.populateLimits()}"
-						var="blockLimit" label="#{blockLimit.street.name} #{blockLimit.street.place == null ? '' :  ' - '} #{blockLimit.street.place == null ? '' :  blockLimit.street.place}"
+						var="blockLimit"
+						label="#{blockLimit.street.name} #{blockLimit.street.place == null ? '' :  ' - '} #{blockLimit.street.place == null ? '' :  blockLimit.street.place}"
 						noSelectionLabel="#{messages['common.chooseOption']}" />
 					<s:convertEntity />
 				</h:selectOneMenu>
@@ -199,8 +198,8 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{messages['property.houseNumber']}:</ui:define>
 				<h:inputText id="houseNumber"
-					value="#{propertyHome.instance.location.houseNumber}" maxlength="15"
-					disabled="#{disabled}"/>
+					value="#{propertyHome.instance.location.houseNumber}"
+					maxlength="15" disabled="#{disabled}" />
 			</s:decorate>
 
 			<s:decorate id="neighborhoodField"
@@ -216,24 +215,24 @@
 				template="../../layout/vertical-edit.xhtml">
 				<ui:define name="label">#{messages['property.addressReference']}:</ui:define>
 				<h:inputText id="addressReference"
-					value="#{propertyHome.instance.addressReference}"
-					size="50" maxlength="80" disabled="#{disabled}">
+					value="#{propertyHome.instance.addressReference}" size="50"
+					maxlength="80" disabled="#{disabled}">
 				</h:inputText>
 			</s:decorate>
 		</h:panelGrid>
-		 
-		
+
+
 		<h:panelGrid columns="2" columnClasses="topAligned">
-			<h:panelGrid columns="2">			
+			<h:panelGrid columns="2">
 				<s:decorate id="urbanizationBlockField"
 					template="../../layout/vertical-edit.xhtml">
 					<ui:define name="label">#{messages['property.apple']}:</ui:define>
 					<h:inputText id="neighborhood"
-						value="#{propertyHome.instance.urbanizationBlock}"
-						size="20" maxlength="50">
+						value="#{propertyHome.instance.urbanizationBlock}" size="20"
+						maxlength="50">
 					</h:inputText>
 				</s:decorate>
-				
+
 				<s:decorate id="urbanizationPropertyNumberField"
 					template="../../layout/vertical-edit.xhtml">
 					<ui:define name="label">#{messages['property.urbanizationPropertyNumber']}:</ui:define>
@@ -242,53 +241,55 @@
 						size="20" maxlength="50">
 					</h:inputText>
 				</s:decorate>
-				
+
 				<s:decorate id="buildingAreaHorizontalPropertyField"
 					template="../../layout/vertical-edit.xhtml">
 					<ui:define name="label">#{messages['property.buildingAreaHorizontalProperty']}:</ui:define>
 					<h:inputText id="neighborhood"
-						value="#{propertyHome.instance.buildingAreaHorizontalProperty}" 
-						style="text-align: right"
-						size="15">
+						value="#{propertyHome.instance.buildingAreaHorizontalProperty}"
+						style="text-align: right" size="15">
 						<f:convertNumber pattern="#0.00" />
-						<a:support event="onblur" ajaxSingle="true" reRender="buildingAreaHorizontalPropertyField"/>
+						<a:support event="onblur" ajaxSingle="true"
+							reRender="buildingAreaHorizontalPropertyField" />
 					</h:inputText>#{messages['domain.BySquareMeters']}
 				</s:decorate>
-				
+
 				<s:decorate id="lotAreaHorizontalPropertyField"
 					template="../../layout/vertical-edit.xhtml">
-					<ui:define name="label">#{messages['property.buildingAreaHorizontalProperty']}:</ui:define>
+					<ui:define name="label">#{messages['property.lotAreaHorizontalProperty']}:</ui:define>
 					<h:inputText id="neighborhood"
 						value="#{propertyHome.instance.lotAreaHorizontalProperty}"
 						style="text-align: right" size="15">
 						<f:convertNumber pattern="#0.00" />
-						<a:support event="onblur" ajaxSingle="true" reRender="lotAreaHorizontalPropertyField"/>
+						<a:support event="onblur" ajaxSingle="true"
+							reRender="lotAreaHorizontalPropertyField" />
 					</h:inputText>#{messages['domain.BySquareMeters']}
 				</s:decorate>
-				
+
 				<s:decorate id="registrationCardNumberField"
 					template="../../layout/vertical-edit.xhtml">
 					<ui:define name="label">#{messages['property.registrationCardNumber']}:</ui:define>
 					<h:inputText id="neighborhood"
-						value="#{propertyHome.instance.registrationCardNumber}"
-						size="20" maxlength="50">
-	
+						value="#{propertyHome.instance.registrationCardNumber}" size="20"
+						maxlength="50">
+
 					</h:inputText>
 				</s:decorate>
 			</h:panelGrid>
-			
+
 			<s:decorate id="descriptionHorizontalField"
-					template="../../layout/vertical-edit.xhtml">
-					<ui:define name="label">#{messages['property.descriptionHorizontalProperty']}:</ui:define>
-					 <h:inputTextarea id="descriptionHorizontal" cols="40" rows="5" required="false"                    
-                          value="#{propertyHome.instance.descriptionHorizontalProperty}">
-			    	<f:validateLength maximum="255" />
-			    </h:inputTextarea>
-				</s:decorate>
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.descriptionHorizontalProperty']}:</ui:define>
+				<h:inputTextarea id="descriptionHorizontal" cols="40" rows="5"
+					required="false"
+					value="#{propertyHome.instance.descriptionHorizontalProperty}">
+					<f:validateLength maximum="255" />
+				</h:inputTextarea>
+			</s:decorate>
 		</h:panelGrid>
-		
-		 
-		
+
+
+
 		<div style="clear: both">
 			<span class="required">*</span> #{messages['common.requiredFields']}
 		</div>
