@@ -32,7 +32,6 @@ import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Exemption;
 import ec.gob.gim.revenue.model.ExemptionForProperty;
 import ec.gob.gim.revenue.model.ExemptionType;
-import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.DTO.PropertyDTO;
 
 @Name("exemptionHome")
@@ -127,7 +126,7 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	}
 
 	public void reCalculateValues() {
-		System.out.println("<<<RR>>reCalculateValues");
+		//System.out.println("<<<RR>>reCalculateValues");
 		existExemption();
 		this.getInstance().setPropertiesAppraisal(
 				calculateTotalPropertiesAppraisal());
@@ -555,7 +554,7 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	}
 
 	public void addProperties() {
-		System.out.println(this.propertiesForSelection);
+		//System.out.println(this.propertiesForSelection);
 
 		for (PropertyDTO propertyDTO : propertiesForSelection) {
 
@@ -595,8 +594,7 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	}
 
 	public void removeExemptionForProperty(ExemptionForProperty property) {
-		System.out.println("ID propiedad a remover:"
-				+ property.getProperty().getCadastralCode());
+		//System.out.println("ID propiedad a remover:"				+ property.getProperty().getCadastralCode());
 		if (property.getTreatmentType() == null) {
 			this.propertiesInExemptionNormal.remove(property);
 		} else if (property.getTreatmentType().getId()
@@ -709,7 +707,7 @@ public class ExemptionHome extends EntityHome<Exemption> {
 	}
 
 	public void changeSelectedProperty(PropertyDTO property, boolean selected) {
-		System.out.println(property);
+		//System.out.println(property);
 		for (PropertyDTO propertyDto : propertiesForSelection) {
 			if (propertyDto.getProperty_id() == property.getProperty_id()) {
 				propertyDto.setSelected(!selected);

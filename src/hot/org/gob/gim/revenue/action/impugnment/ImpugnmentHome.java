@@ -13,7 +13,6 @@ import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.service.ImpugnmentService;
 import org.gob.gim.revenue.service.ItemCatalogService;
-import org.gob.loja.gim.ws.dto.EmisionDetail;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -446,7 +445,7 @@ public class ImpugnmentHome extends EntityController {
 		this.criteria.setIdentificationNumber(identificationNumberCriteria);
 		this.criteria.setState(itemCatalogService.findById(stateCriteriaId));
 
-		System.out.println("ID estado:" + stateCriteriaId);
+		//System.out.println("ID estado:" + stateCriteriaId);
 
 		this.impugnments = this.impugnmentService
 				.findImpugnmentsForCriteria(criteria);

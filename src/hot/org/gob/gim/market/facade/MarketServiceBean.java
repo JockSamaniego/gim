@@ -94,7 +94,7 @@ public class MarketServiceBean implements MarketService {
 				
 				Resident person = s.getCurrentContract().getSubscriber();
 				
-				System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>>>>>>>>>>>>>>>>>>>>><< "+person.getName());
+				//System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>>>>>>>>>>>>>>>>>>>>><< "+person.getName());
 				
 				MunicipalBond mb = revenueService.createMunicipalBond(person, entry, f, entryValueItem, true, s );
 				
@@ -132,7 +132,7 @@ public class MarketServiceBean implements MarketService {
 				mb.calculateValue();
 				//mb.setBondAddress(address);
 				mb.setEmisionPeriod(emisionPeriod);
-				System.out.println("........... el valor es:  " + mb.getValue());
+				//System.out.println("........... el valor es:  " + mb.getValue());
 				emissionOrder.add(mb);
 			}
 		}
@@ -256,13 +256,13 @@ public class MarketServiceBean implements MarketService {
 	
 	private Date createServiceDate(int year, int month){
 		Date today = new Date();		
-		System.out.println("------Fecha actual--------------");
-        System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(today));
+		//System.out.println("------Fecha actual--------------");
+        //System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(today));
 
         Calendar todayC = Calendar.getInstance();
         todayC.setTime(today);
         int todayMonth=todayC.get(Calendar.DAY_OF_MONTH);
-        System.out.println(todayMonth);
+        //System.out.println(todayMonth);
                         
         Calendar serviceDate = Calendar.getInstance();
         serviceDate.setTime(today);
@@ -270,27 +270,25 @@ public class MarketServiceBean implements MarketService {
         serviceDate.set(Calendar.MONTH, month-1);
         serviceDate.set(Calendar.DAY_OF_MONTH, 1);
         int serviceDateMaxDay=serviceDate.getActualMaximum(Calendar.DAY_OF_MONTH);
-        System.out.println("------Fecha sin revision de dias--------------");
+        /*System.out.println("------Fecha sin revision de dias--------------");
         System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(serviceDate.getTime()));
         
-        System.out.println(todayMonth +"    "+serviceDateMaxDay);
+        System.out.println(todayMonth +"    "+serviceDateMaxDay);*/
                 
         if (todayMonth <= serviceDateMaxDay) {
             serviceDate.set(Calendar.DAY_OF_MONTH, todayMonth);
         }else{
             serviceDate.set(Calendar.DAY_OF_MONTH, serviceDateMaxDay);
         }
-        System.out.println("------Fecha final--------------");
-        System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(serviceDate.getTime()));
+        /*System.out.println("------Fecha final--------------");
+        System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(serviceDate.getTime()));*/
 
         return serviceDate.getTime();
 	}
 
 	public void savePreEmissionOrder(EmissionOrder e) {
-		System.out.println("Resident: "
-				+ e.getMunicipalBonds().get(0).getResident().getName());
-		System.out.println("ServiceDate: "
-				+ e.getMunicipalBonds().get(0).getServiceDate());
+		/*System.out.println("Resident: "				+ e.getMunicipalBonds().get(0).getResident().getName());
+		System.out.println("ServiceDate: "				+ e.getMunicipalBonds().get(0).getServiceDate());*/
 		crudService.create(e);
 	}
 	

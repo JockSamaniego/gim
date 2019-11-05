@@ -13,8 +13,11 @@ import javax.faces.event.ActionEvent;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
+import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.dto.BondDownStatus;
+import org.gob.gim.income.view.StatusChangeItem;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
@@ -23,11 +26,6 @@ import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.StatusChange;
-import ec.gob.gim.waterservice.model.Consumption;
-import ec.gob.gim.waterservice.model.ConsumptionControl;
-import org.gob.gim.common.ServiceLocator;
-import org.gob.gim.common.service.SystemParameterService;
-import org.gob.gim.income.view.StatusChangeItem;
 
 @Name("statusChangeHome")
 public class StatusChangeHome extends EntityHome<StatusChange> {
@@ -146,7 +144,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 
         int i = 0;
         for (StatusChangeItem mbi : root.getMunicipalBondItems("g")) {
-            System.out.println("call ->> " + i + "size >>>" + mbi.getChildren().size());
+            //System.out.println("call ->> " + i + "size >>>" + mbi.getChildren().size());
             mbi.calculateTotals(findPendingStatus(), findInAgreementStatus());            
             i++;
 
@@ -354,7 +352,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 
     @SuppressWarnings("unchecked")
     public void loadBondDownStatusByDates() {
-        System.out.println("ingreso a loadBondDownStatusByDates");
+        //System.out.println("ingreso a loadBondDownStatusByDates");
         total = BigDecimal.ZERO;
         bondsDownStatus.clear();
         Query query = this.getEntityManager().createNamedQuery(
@@ -370,7 +368,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 
     @SuppressWarnings("unchecked")
     public void findBondDownStatus() {
-        System.out.println("ingreso a findBondDownStatus");
+        //System.out.println("ingreso a findBondDownStatus");
         total = BigDecimal.ZERO;
         bondsDownStatus.clear();
         Query query = this.getEntityManager().createNamedQuery(
@@ -385,7 +383,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 
     @SuppressWarnings("unchecked")
     public void findBondsDownStatusByResolution(BondDownStatus bondDownStatus) {
-        System.out.println("ingreso a findBondsDownStatusByResolution");
+        //System.out.println("ingreso a findBondsDownStatusByResolution");
         total = BigDecimal.ZERO;
         bonds.clear();
         bondsDownStatusByAccount.clear();
@@ -427,8 +425,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 //			bonds.addAll(query.getResultList());
 //			initialResults += maxResults;
 //		}
-        System.out
-                .println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr excecute query");
+        //System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr excecute query");
         for (MunicipalBond row : bonds) {
             // total =
             // total.add(row.getValue()).add(row.getTaxesTotal()).subtract(row.getDiscount());
@@ -985,7 +982,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
         if (sc.getChangeResident().equals(Boolean.TRUE)) {
             return "#FE642E";
         } else {
-            System.out.println("retorn with");
+            //System.out.println("retorn with");
             return "#fFfFfF";
         }
     }
@@ -994,11 +991,11 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
         int mbToChange = 0;
 
         List<Long> mbIds = new ArrayList<Long>();
-        System.out.println("statusChangeListGroup size >> " + statusChangeListGroup.size());
+        //System.out.println("statusChangeListGroup size >> " + statusChangeListGroup.size());
 //        if (statusChangeListGroup.size() > 0) {
         if (statusChangeLst.size() > 0) {
             for (StatusChange sc : statusChangeLst) {
-                System.out.println("sc getChangeResident >> " + sc.getChangeResident());
+                //System.out.println("sc getChangeResident >> " + sc.getChangeResident());
                 if (sc.getChangeResident()) {
                     mbIds.add(sc.getMunicipalBond().getId());
                     mbToChange++;
@@ -1022,7 +1019,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 
             return null;
         }
-        System.out.println("la canitdad es ......... " + mbToChange);
+        //System.out.println("la canitdad es ......... " + mbToChange);
         if (mbToChange > 0 && currentResident != null) {
             changeResdient(mbIds);
             insertStatusChange();
@@ -1045,7 +1042,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
         sentence = "update gimprod.municipalbond set resident_id = " + currentResident.getId() + " where id in (" + ids + ")";
         q = entityManager.createNativeQuery(sentence);
         value = q.executeUpdate();
-        System.out.println(">>>>>>>>> " + sentence + " " + value);
+        //System.out.println(">>>>>>>>> " + sentence + " " + value);
         entityManager.flush();
     }
 

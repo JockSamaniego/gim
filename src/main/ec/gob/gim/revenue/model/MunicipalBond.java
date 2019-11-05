@@ -37,8 +37,6 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
 
 import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.common.model.FinancialStatus;
@@ -1246,7 +1244,7 @@ public class MunicipalBond implements Serializable {
 			deps.add(d);			
 			paidTotal = paidTotal.add(d.getValue());
 		}
-		System.out.println(deps);
+		//System.out.println(deps);
 		return paidTotal;
 	}
 
@@ -1420,9 +1418,9 @@ public class MunicipalBond implements Serializable {
 		if (!this.items.contains(item)) {
 			this.items.add(item);
 			item.setMunicipalBond(this);
-		} else {
+		}/* else {
 			System.out.println("MunicipalBond: Item was not added");
-		}
+		}*/
 	}
 
 	public void remove(Item item) {
@@ -1542,7 +1540,7 @@ public class MunicipalBond implements Serializable {
 			String adjunctName = entry.getAdjunctClassName();
 			int index = adjunctName.lastIndexOf('.');
 			adjunctName = adjunctName.substring(index + 1);
-			System.out.println("TAKE THE TIME -----> " + adjunctName);
+			//System.out.println("TAKE THE TIME -----> " + adjunctName);
 			return adjunctName;
 		}
 		return "Empty";
@@ -1665,7 +1663,7 @@ public class MunicipalBond implements Serializable {
 	}
 
 	public Boolean getIsCanceled() {
-		System.out.println("BALANCE ---> " + balance);
+		//System.out.println("BALANCE ---> " + balance);
 		return balance != BigDecimal.ZERO;
 	}
 

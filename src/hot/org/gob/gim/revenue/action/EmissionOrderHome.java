@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -33,7 +31,6 @@ import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.cadaster.model.UnbuiltLot;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Resident;
-import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -42,7 +39,6 @@ import ec.gob.gim.revenue.model.MunicipalBondView;
 import ec.gob.gim.revenue.model.RevisionEmissionOrderFM;
 import ec.gob.gim.revenue.model.DTO.RevisedEmissionsUcotDTO;
 import ec.gob.gim.revenue.model.DTO.ReviserUCOTUserDTO;
-import ec.gob.gim.revenue.model.DTO.VehicleUniqueDataDTO;
 import ec.gob.gim.revenue.model.adjunct.ANTReference;
 
 @Name("emissionOrderHome")
@@ -1313,7 +1309,7 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 		Query q = this.getEntityManager().createQuery(query);
 		q.setParameter("adj_id", emissionOrder.getMunicipalBonds().get(0).getAdjunct().getId());
 		ANTReference ant = (ANTReference) q.getSingleResult();	
-		System.out.println("======ANTnotification===> "+ant.getSupportDocumentURL());
+		//System.out.println("======ANTnotification===> "+ant.getSupportDocumentURL());
 		this.URLnotification = ant.getSupportDocumentURL();
 		if(this.orderSelected.getRevisionFM() == null){
 			reviserInfractionProcess();

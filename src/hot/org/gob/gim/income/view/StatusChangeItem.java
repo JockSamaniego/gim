@@ -89,7 +89,7 @@ public class StatusChangeItem {
     }
 
     public void printId (){
-        System.out.println("this id: "+this.toString());
+        //System.out.println("this id: "+this.toString());
     }
     
     public void setIsSelected(Boolean isSelected) {
@@ -98,12 +98,12 @@ public class StatusChangeItem {
         if(statusChange != null){
             statusChange.setChangeResident(isSelected);
         }  
-        System.out.println("elemnt: "+this.toString());
+        //System.out.println("elemnt: "+this.toString());
         if (children.values() != null && children.values().size() > 0) {
 			for (StatusChangeItem mbi : children.values()) {
-                            System.out.println("in: "+mbi.toString());
+                            //System.out.println("in: "+mbi.toString());
 				mbi.setIsSelected(isSelected);
-                                System.out.println("out: "+mbi.toString());
+                                //System.out.println("out: "+mbi.toString());
 			}
 		}
 		else {
@@ -196,7 +196,7 @@ public class StatusChangeItem {
                 }
             } else {
                 if (isSelected) {
-                    System.out.println("TOTAL AGREGADO ----> " + municipalBond.getEntry().getName() + " - " + municipalBond.getValue());
+                    //System.out.println("TOTAL AGREGADO ----> " + municipalBond.getEntry().getName() + " - " + municipalBond.getValue());
                     return municipalBond.getPaidTotal();
                 }
             }
@@ -255,7 +255,7 @@ public class StatusChangeItem {
                 municipalBond.setDiscount(discount);
                 municipalBond.setSurcharge(surcharge);
                 municipalBond.setTaxesTotal(taxesTotal);
-                System.out.println("TOTAL CALCULADO ----> " + municipalBond.getEntry().getName() + " - " + municipalBond.getValue().floatValue());
+                //System.out.println("TOTAL CALCULADO ----> " + municipalBond.getEntry().getName() + " - " + municipalBond.getValue().floatValue());
             }
 
         }

@@ -7,27 +7,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.event.ValueChangeEvent;
 import javax.persistence.Query;
 
-import ec.gob.gim.ant.ucot.model.*;
-import ec.gob.gim.commercial.model.Business;
-import ec.gob.gim.commercial.model.Local;
-import ec.gob.gim.common.model.Address;
-import ec.gob.gim.common.model.ItemCatalog;
-import ec.gob.gim.common.model.Resident;
-
-import org.gob.gim.common.action.ResidentHome;
-import org.gob.gim.common.action.UserSession;
-import org.jboss.seam.ScopeType;
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.UserSession;
 import org.gob.gim.revenue.service.ItemCatalogService;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityHome;
+
+import ec.gob.gim.ant.ucot.model.Bulletin;
+import ec.gob.gim.ant.ucot.model.CoipDTO;
+import ec.gob.gim.ant.ucot.model.InfractionSentences;
+import ec.gob.gim.ant.ucot.model.Infractions;
+import ec.gob.gim.common.model.ItemCatalog;
 
 @Name("infractionsHome")
 public class InfractionsHome extends EntityHome<Infractions> {
@@ -263,7 +259,7 @@ public class InfractionsHome extends EntityHome<Infractions> {
 				articles = q.getResultList();
 			}
 		resetValues();
-		System.out.println("articles size "+articles.size());
+		//System.out.println("articles size "+articles.size());
 		return articles;
 	}
 	
@@ -278,7 +274,7 @@ public class InfractionsHome extends EntityHome<Infractions> {
 			Query q = this.getEntityManager().createNativeQuery(query);
 			numerals = q.getResultList();
 		}
-		System.out.println("numerals size "+numerals.size());
+		//System.out.println("numerals size "+numerals.size());
 		return numerals;
 	}
 	

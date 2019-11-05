@@ -64,7 +64,7 @@ public class PaymentLocalServiceBean implements PaymentLocalService {
 	public Boolean calculateDebts(List<Long> residentIds) {
 
 		try {
-			System.out.println("LLega al calculateDebts");
+			//System.out.println("LLega al calculateDebts");
 
 			for (Long residentId : residentIds) {
 				List<Long> pendingBondIds = hasPendingBonds(residentId);

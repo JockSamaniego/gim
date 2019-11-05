@@ -222,7 +222,7 @@ public class UnitDeathHome extends EntityHome<Unit> implements Serializable {
 				Resident resident = (Resident) query.getSingleResult();
 				this.setResponsableResident(resident);
 				this.setResponsableIdentification(resident.getIdentificationNumber());
-				System.out.println("RESIDENT CHOOSER ACTION " + resident.getName());
+				//System.out.println("RESIDENT CHOOSER ACTION " + resident.getName());
 				if (resident.getId() == null) {
 					addFacesMessageFromResourceBundle("resident.notFound");
 				}
@@ -351,7 +351,8 @@ public class UnitDeathHome extends EntityHome<Unit> implements Serializable {
 				em.persist(death);
 
 			}catch(Exception e){
-				System.out.println("no se puedo realizar la edición");
+				//System.out.println("no se puedo realizar la edición");
+				e.printStackTrace();
 			}
 		}
 }

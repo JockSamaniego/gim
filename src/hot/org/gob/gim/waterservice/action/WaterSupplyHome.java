@@ -1287,9 +1287,9 @@ public void findMunicipalBondByState() {
 		q.setParameter("startDate", starDate);
 		q.setParameter("endDate", endDate);
 		if (q.getSingleResult() != null) {
-			System.out
+			/*System.out
 					.println("entr a foooooooooooooooooooooooooorrrrrrrrrrrrssssssssssssssssss "
-							+ q.getSingleResult());
+							+ q.getSingleResult());*/
 			this.paidTotal = getBigDecimal(q.getSingleResult());
 		}
 		/*

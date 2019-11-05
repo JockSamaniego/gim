@@ -1,39 +1,19 @@
 package org.gob.gim.income.action;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
-import javax.faces.component.UIComponent;
-import javax.faces.event.ActionEvent;
-import javax.persistence.Query;
-
-import org.gob.gim.appraisal.facade.AppraisalService;
 import org.gob.gim.common.ServiceLocator;
-import org.gob.gim.common.action.UserSession;
-import org.gob.gim.exception.InvoiceNumberOutOfRangeException;
-import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.income.facade.ElectronicService;
-import org.gob.gim.income.facade.IncomeService;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
-import ec.gob.gim.common.model.FinancialStatus;
-import ec.gob.gim.common.model.Person;
-import ec.gob.gim.common.model.Resident;
-import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.ReceiptType;
 import ec.gob.gim.income.model.StatusElectronicReceipt;
-import ec.gob.gim.income.model.TillPermission;
 
 @Name("electronicDocumentHome")
 public class ElectronicDocumentHome extends EntityHome<Receipt> {
@@ -85,12 +65,12 @@ public class ElectronicDocumentHome extends EntityHome<Receipt> {
 
 	@Override
 	public String update() {
-		System.out.println("UPDATE START");
+		//System.out.println("UPDATE START");
 		ElectronicService electronicService = ServiceLocator.getInstance().findResource(ElectronicService.LOCAL_NAME);
 		try{
 			org.jboss.seam.transaction.Transaction.instance().setTransactionTimeout(7200);
 			electronicService.authorizedElectronicReceipts(receipts);
-			System.out.println("RECEIPTS UPDATED");
+			//System.out.println("RECEIPTS UPDATED");
 			return "updated";
 		} catch(Exception e){
 			addFacesMessageFromResourceBundle(e.getClass().getSimpleName());
@@ -166,11 +146,11 @@ public class ElectronicDocumentHome extends EntityHome<Receipt> {
 	}
 
 	public void ConsultElectronicReceipts(){
-		System.out.println("START CONSULT");
+		//System.out.println("START CONSULT");
 		ElectronicService electronicService = ServiceLocator.getInstance().findResource(ElectronicService.LOCAL_NAME);
 		try{
 			electronicService.consultElectronicReceipts(receipts);
-			System.out.println("END CONSULT");
+			//System.out.println("END CONSULT");
 		} catch(Exception e){
 			addFacesMessageFromResourceBundle(e.getClass().getSimpleName());
 			e.printStackTrace();

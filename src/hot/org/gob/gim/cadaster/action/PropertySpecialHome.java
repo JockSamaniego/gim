@@ -21,7 +21,6 @@ import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
-import org.gob.gim.income.facade.IncomeService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -993,7 +992,7 @@ public class PropertySpecialHome extends EntityHome<Property> {
 	}
 
 	public void wire() {
-		System.out.println("--Ingreso a wire PropertySpecialHome isfirsttime" + isFirstTime);
+		//System.out.println("--Ingreso a wire PropertySpecialHome isfirsttime" + isFirstTime);
 
 		getDefinedInstance();
 
@@ -1053,7 +1052,7 @@ public class PropertySpecialHome extends EntityHome<Property> {
 		calculateTotalAreaConstruction();
 
 		anioAppraisal = GregorianCalendar.getInstance().get(Calendar.YEAR);
-		System.out.println(">>>>>>>>>>>>>>>>> anioAppraisal: " + anioAppraisal);
+		//System.out.println(">>>>>>>>>>>>>>>>> anioAppraisal: " + anioAppraisal);
 		if (appraisalPeriod == null)
 			appraisalPeriod = findActiveAppraisalPeriod();
 
@@ -1062,7 +1061,7 @@ public class PropertySpecialHome extends EntityHome<Property> {
 		}
 
 		checkingRecordsForProperty = findCheckingRecordsForProperty();
-		System.out.println("--sale de wire" + this.instance);
+		//System.out.println("--sale de wire" + this.instance);
 
 	}
 
@@ -1614,12 +1613,12 @@ public class PropertySpecialHome extends EntityHome<Property> {
 				}
 
 				if (res.getId() != property.getCurrentDomain().getId() && res.getChangeOwnerConfirmed() == null) {
-					System.out.println("=>TRUE"+property.getId());
+					//System.out.println("=>TRUE"+property.getId());
 					property.setNeedConfirmChangeOwner(true);
 //					super.getEntityManager().persist(property);
 				} else {
 
-					System.out.println("=>FALSE"+property.getId());
+					//System.out.println("=>FALSE"+property.getId());
 					property.setNeedConfirmChangeOwner(false);
 //					super.getEntityManager().persist(property);
 					
@@ -2313,7 +2312,7 @@ public class PropertySpecialHome extends EntityHome<Property> {
 
 	public void calculateUrbanAppraisalOnlyProperty(Property property) {
 		anioAppraisal = GregorianCalendar.getInstance().get(Calendar.YEAR);
-		System.out.println(">>>>>>>>>>>>>>>>> anioAppraisal calculateUrbanAppraisalOnlyProperty: " + anioAppraisal);
+		//System.out.println(">>>>>>>>>>>>>>>>> anioAppraisal calculateUrbanAppraisalOnlyProperty: " + anioAppraisal);
 		List<Property> properties = new ArrayList<Property>();
 		properties.add(property);
 		AppraisalService appraisalService = ServiceLocator.getInstance().findResource(APPRAISAL_SERVICE_NAME);
@@ -2550,7 +2549,7 @@ public class PropertySpecialHome extends EntityHome<Property> {
 
 	public void uploadImage(){
 		this.statusImage = false;	
-		System.out.println("uploadImage--->statusImageValor: "+statusImage);
+		//System.out.println("uploadImage--->statusImageValor: "+statusImage);
 	}
 	
 	//Jock Samaniego
@@ -2565,7 +2564,8 @@ public class PropertySpecialHome extends EntityHome<Property> {
 				cadasterService.updateRusticProperty(property);
 			}
 		}catch(Exception e){
-			System.out.println("error: no se completó la activación!!");
+			//System.out.println("error: no se completó la activación!!");
+			e.printStackTrace();
 		}
 	}
 }

@@ -1,39 +1,20 @@
 package org.gob.gim.electronicvoucher.action;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.gob.gim.common.ServiceLocator;
-import org.gob.gim.exception.InvoiceNumberOutOfRangeException;
-import org.gob.gim.income.facade.IncomeService;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
-import ec.gob.gim.common.model.FiscalPeriod;
-import ec.gob.gim.common.model.LegalEntityType;
 import ec.gob.gim.common.model.Person;
-import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.complementvoucher.model.ComplementVoucher;
 import ec.gob.gim.complementvoucher.model.ComplementVoucherType;
-import ec.gob.gim.complementvoucher.model.ElectronicVoucher;
-import ec.gob.gim.complementvoucher.model.ElectronicVoucherDetail;
 import ec.gob.gim.complementvoucher.model.InstitutionService;
-import ec.gob.gim.complementvoucher.model.RetentionCode;
-import ec.gob.gim.complementvoucher.model.RetentionTax;
 import ec.gob.gim.complementvoucher.model.TypeEmissionPoint;
 
 @Name("institutionServiceHome")
@@ -162,7 +143,7 @@ public class InstitutionServiceHome extends EntityHome<InstitutionService>
 
 	public void fijarBranch(){
 		this.branch = (this.branch)? false: true;
-		System.out.println("=>"+this.branch);
+		//System.out.println("=>"+this.branch);
 	}
 
 	public List<ComplementVoucherType> getTypes() {

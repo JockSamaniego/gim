@@ -196,7 +196,7 @@ public abstract class Resident extends Identifiable{
 	private List<Alert> alerts;
 	
 	@OneToMany(mappedBy = "resident", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	//@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Agent> agents;
 
 	public Resident(){

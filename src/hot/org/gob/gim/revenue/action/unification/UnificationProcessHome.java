@@ -261,12 +261,12 @@ public class UnificationProcessHome extends EntityHome<UnificationProcess>
 				tfk.setKcu_column_name(obj[3].toString());
 				tfk.setCcu_table_name(obj[4].toString());
 				relations.add(tfk);
-				System.out.println(obj[2].toString());	
+				//System.out.println(obj[2].toString());	
 			}
 			
 		}
 		isFirsttime = false;
-		System.out.println("------relaciones: " + relations.size());
+		//System.out.println("------relaciones: " + relations.size());
 	}
 
 	public Long getResidentId() {
@@ -291,7 +291,7 @@ public class UnificationProcessHome extends EntityHome<UnificationProcess>
 						table.setResident_id(r1.getId());
 						r1Count.add(table);
 					}
-					System.out.println(table.getTc_table_name()+" con "+q.getSingleResult());
+					//System.out.println(table.getTc_table_name()+" con "+q.getSingleResult());
 				}
 			}	
 		}		
@@ -311,7 +311,7 @@ public class UnificationProcessHome extends EntityHome<UnificationProcess>
 						table.setResident_id(r2.getId());
 						r2Count.add(table);
 					}
-					System.out.println(table.getTc_table_name()+" con "+q.getSingleResult());
+					//System.out.println(table.getTc_table_name()+" con "+q.getSingleResult());
 				}
 			}
 		}
@@ -346,7 +346,7 @@ public class UnificationProcessHome extends EntityHome<UnificationProcess>
 			stringSqlBuilder.append(sentence+"\t").append(table.getCount()+"\n");
 			q = entityManager.createNativeQuery(sentence);
 			value= q.executeUpdate();
-			System.out.println(">>>>>>>>> " + sentence+" "+value);
+			//System.out.println(">>>>>>>>> " + sentence+" "+value);
 			//}
 		}
 		entityManager.flush();
@@ -366,7 +366,7 @@ public class UnificationProcessHome extends EntityHome<UnificationProcess>
 			stringSqlBuilder.append(sentence+"\t").append(table.getCount()+"\n");
 			q = entityManager.createNativeQuery(sentence);
 			value= q.executeUpdate();
-			System.out.println(">>>>>>>>> " + sentence+" "+value);
+			//System.out.println(">>>>>>>>> " + sentence+" "+value);
 		}
 		entityManager.flush();
 		this.getInstance().setUnifiedResdient(r2);
@@ -382,9 +382,10 @@ public class UnificationProcessHome extends EntityHome<UnificationProcess>
 			Query q = entityManager.createNativeQuery("delete from gimprod.resident where id = "+ r2.getId());
 			int value = q.executeUpdate();
 			stringSqlBuilder.append("delete from gimprod.resident where id = "+ r2.getId()).append("\t");
-			System.out.println(">>>>>>>>> borrado id= "+r2.getId()+" con value= "+value);
+			//System.out.println(">>>>>>>>> borrado id= "+r2.getId()+" con value= "+value);
 		}catch(Exception e){
-			System.out.println(">>>>>>>>> borrando... error ");
+			//System.out.println(">>>>>>>>> borrando... error ");
+			e.printStackTrace();
 		}
 	}
 	
@@ -394,9 +395,10 @@ public class UnificationProcessHome extends EntityHome<UnificationProcess>
 			Query q = entityManager.createNativeQuery("delete from gimprod.resident where id = "+ r1.getId());
 			int value = q.executeUpdate();
 			stringSqlBuilder.append("delete from gimprod.resident where id = "+ r1.getId()).append("\t");
-			System.out.println(">>>>>>>>> borrado id= "+r1.getId()+" con value= "+value);
+			//System.out.println(">>>>>>>>> borrado id= "+r1.getId()+" con value= "+value);
 		}catch(Exception e){
-			System.out.println(">>>>>>>>> borrando... error ");
+			//System.out.println(">>>>>>>>> borrando... error ");
+			e.printStackTrace();
 		}
 	}
 	
@@ -458,7 +460,7 @@ public class UnificationProcessHome extends EntityHome<UnificationProcess>
 					//table.setResident_id(r1.getId());
 					r1Count.add(table);
 				}
-				System.out.println(table.getTc_table_name()+" con "+q.getSingleResult());
+				//System.out.println(table.getTc_table_name()+" con "+q.getSingleResult());
 			}	
 		}		
 	}
@@ -471,7 +473,7 @@ public class UnificationProcessHome extends EntityHome<UnificationProcess>
 			stringSqlBuilder.append(sentence+"\t").append(r1Count.get(0).getCount()+"\n");
 			q = entityManager.createNativeQuery(sentence);
 			value= q.executeUpdate();
-			System.out.println(">>>>>>>>> " + sentence+" "+value);
+			//System.out.println(">>>>>>>>> " + sentence+" "+value);
 		entityManager.flush();
 		this.getInstance().setUnifiedResdient(r2);
 		//this.getInstance().setPreviousResidentId(r1.getId());
@@ -497,7 +499,7 @@ public class UnificationProcessHome extends EntityHome<UnificationProcess>
 					//table.setResident_id(r1.getId());
 					r2Count.add(table);
 				}
-				System.out.println(table.getTc_table_name()+" con "+q.getSingleResult());
+				//System.out.println(table.getTc_table_name()+" con "+q.getSingleResult());
 			}	
 		}		
 	}

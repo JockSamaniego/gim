@@ -9,7 +9,7 @@ import ec.gob.gim.audit.model.AuditedField;
 public class AuditedFieldConverter implements Converter {
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
 
-        System.out.println("AuditedFieldConverter value: "+value.toString());
+        //System.out.println("AuditedFieldConverter value: "+value.toString());
         AuditedField field = new AuditedField();
         field.setName(value);
         return field;

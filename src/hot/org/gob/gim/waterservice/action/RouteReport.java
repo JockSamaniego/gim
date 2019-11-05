@@ -207,7 +207,7 @@ public class RouteReport extends EntityHome<Route> {
 			for(Object[] row : list){
 				setTotalOwedByRoute(totalOwedByRoute.add((BigDecimal)row[3]));
 			}
-			System.out.println("el totallllllllllllllllllllllll "+totalOwedByRoute);
+			//System.out.println("el totallllllllllllllllllllllll "+totalOwedByRoute);
 			int sequence=1;
 			for (WaterSupply ws : waterServices) {
 				ws.setNotPayMonths(findMunicipalBondsCounted(list, ws.getServiceNumber().toString(),null));
@@ -341,7 +341,7 @@ public class RouteReport extends EntityHome<Route> {
 		c.set(Calendar.YEAR, year);
 		c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
 		
-		System.out.println("la fehca es..................... "+c.getTime());
+		//System.out.println("la fehca es..................... "+c.getTime());
 		
 		String sentence = "SELECT mb.groupingCode, COUNT(mb), res.id, SUM(mb.value) FROM MunicipalBond mb "
 				+ "LEFT JOIN mb.municipalBondStatus mbs "
@@ -683,11 +683,11 @@ public class RouteReport extends EntityHome<Route> {
 		q.setParameter("waterSupplyCategory", "RESIDENCIAL");
 		q.setParameter("routeIds", routeIds);
 		
-		System.out.println("fechas inicio:::::::::::::::::::::        "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(calendarStart.getTime()));
+		/*System.out.println("fechas inicio:::::::::::::::::::::        "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(calendarStart.getTime()));
 		System.out.println("fechas fin  ::::::::::::::::::::::        "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(calendarEnd.getTime()));
 		System.out.println("el valor es::::::::::::::::::::::: tamaño "+q.getResultList().size());
 		System.out.println("el valor es::::::::::::::::::::::: valor  "+q.getSingleResult());
-		System.out.println("el valor es::::::::::::::::::::::: rutas  "+routeIds.size());
+		System.out.println("el valor es::::::::::::::::::::::: rutas  "+routeIds.size());*/
 		
 	}
 	
@@ -709,8 +709,8 @@ public class RouteReport extends EntityHome<Route> {
 		startDate = cstartDate.getTime();
 		endDate = cendDate.getTime();
 		
-		System.out.println("start "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(startDate.getTime()));
-		System.out.println("end   "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(endDate.getTime()));
+		//System.out.println("start "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(startDate.getTime()));
+		//System.out.println("end   "+new SimpleDateFormat("yyyy-MM-dd EEEE").format(endDate.getTime()));
 	}
 	
 	Query qwe;
@@ -979,7 +979,7 @@ public class RouteReport extends EntityHome<Route> {
 		qq.setParameter("routeIds", routeIds);
 				
 		List<Object[]> footerValues = qq.getResultList();
-		System.out.println("el tamaño de la consulta es::::::::: "+footerValues.size());
+		//System.out.println("el tamaño de la consulta es::::::::: "+footerValues.size());
 		
 		for (WaterSupplyCategory wsc : categories) {
 			for (Object[] ob : footerValues) {
@@ -987,7 +987,7 @@ public class RouteReport extends EntityHome<Route> {
 				String category = ob[1].toString();
 				BigDecimal subTotal=new BigDecimal(ob[2].toString());
 				
-				System.out.println(":::::::::::::datos "+entry_id+"    "+category+"   "+subTotal+" se compara con : "+wsc.getName());
+				//System.out.println(":::::::::::::datos "+entry_id+"    "+category+"   "+subTotal+" se compara con : "+wsc.getName());
 				
 				if(wsc.getName().equals(category)){
 					if(entry_id.equals("43")){
@@ -1082,7 +1082,7 @@ public class RouteReport extends EntityHome<Route> {
 	
 	public List<Object[]> subscribersNumber(WaterSupplyCategory wsc, WaterMeterStatus wms, ConsumptionRange cr, boolean isGoodConsumption) {
 		//amount
-		System.out.println("::::::::::::::::::::::::::: consulta number: "+wsc.getName()+" .... "+wms.getName()+" ..  "+cr.getFrom()+" . . . ."+cr.getTo()+" q es "+isGoodConsumption);
+		//System.out.println("::::::::::::::::::::::::::: consulta number: "+wsc.getName()+" .... "+wms.getName()+" ..  "+cr.getFrom()+" . . . ."+cr.getTo()+" q es "+isGoodConsumption);
 		int monthInt = month.getMonthInt();
 		int yearInt = this.year;
 		//SUM(c.amount)
@@ -1180,7 +1180,7 @@ public class RouteReport extends EntityHome<Route> {
 							List<Object[]> data = subscribersNumber(wsc, wms, cr,true);
 							if (data.size() > 0) {
 								Object[] data_ob = data.get(0);
-								System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
+								//System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
 								if (data_ob[0] != null)
 									consumptionIndicator.setSubscriber_good(Long.parseLong(data_ob[0].toString()));
 								else
@@ -1203,7 +1203,7 @@ public class RouteReport extends EntityHome<Route> {
 							List<Object[]> data = subscribersNumber(wsc, wms, cr, false);
 							if (data.size() > 0) {
 								Object[] data_ob = data.get(0);
-								System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
+								//System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
 								if (data_ob[0] != null)
 									consumptionIndicator.setSubscriber_unmetered(Long.parseLong(data_ob[0].toString()));
 								else
@@ -1227,7 +1227,7 @@ public class RouteReport extends EntityHome<Route> {
 							List<Object[]> data = subscribersNumber(wsc, wms, cr, false);
 							if (data.size() > 0) {
 								Object[] data_ob = data.get(0);
-								System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
+								//System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
 								if (data_ob[0] != null)
 									consumptionIndicator.setSubscriber_damaged(Long.parseLong(data_ob[0].toString()));
 								else
@@ -1260,7 +1260,7 @@ public class RouteReport extends EntityHome<Route> {
 							List<Object[]> data = subscribersNumber(wsc, wms, cr,true);
 							if (data.size() > 0) {
 								Object[] data_ob = data.get(0);
-								System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
+								//System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
 								//consumptionIndicator.setSubscriber_good(Long.parseLong(data_ob[0].toString()));
 								//consumptionIndicator.setConsumption_good(new BigDecimal(data_ob[1].toString()));
 								if (data_ob[0] != null)
@@ -1286,7 +1286,7 @@ public class RouteReport extends EntityHome<Route> {
 							List<Object[]> data = subscribersNumber(wsc, wms, cr,false);
 							if (data.size() > 0) {
 								Object[] data_ob = data.get(0);
-								System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
+								//System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
 								//consumptionIndicator.setSubscriber_good(Long.parseLong(data_ob[0].toString()));
 								//consumptionIndicator.setConsumption_good(new BigDecimal(data_ob[1].toString()));
 								if (data_ob[0] != null)
@@ -1311,7 +1311,7 @@ public class RouteReport extends EntityHome<Route> {
 							List<Object[]> data = subscribersNumber(wsc, wms, cr,false);
 							if (data.size() > 0) {
 								Object[] data_ob = data.get(0);
-								System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
+								//System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
 								//consumptionIndicator.setSubscriber_good(Long.parseLong(data_ob[0].toString()));
 								//consumptionIndicator.setConsumption_good(new BigDecimal(data_ob[1].toString()));
 								if (data_ob[0] != null)

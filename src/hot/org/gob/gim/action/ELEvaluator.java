@@ -9,7 +9,7 @@ import org.jboss.seam.annotations.Name;
 public class ELEvaluator {
 	
 	public void evaluateMethodBinding(String el) {
-		System.out.println("=====> INGRESO a evaluateMethodBinding() con param: " + el);
+		//System.out.println("=====> INGRESO a evaluateMethodBinding() con param: " + el);
 		ValueExpression ve = FacesContext.getCurrentInstance().getApplication().getExpressionFactory()
 			.createValueExpression(FacesContext.getCurrentInstance().getELContext(), "#{" + el + "}", Object.class);
 		ve.getValue(FacesContext.getCurrentInstance().getELContext());

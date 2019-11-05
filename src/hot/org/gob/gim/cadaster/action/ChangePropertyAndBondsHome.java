@@ -1,6 +1,5 @@
 package org.gob.gim.cadaster.action;
 
-import java.awt.print.Paper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -319,7 +318,7 @@ public class ChangePropertyAndBondsHome extends EntityHome<MunicipalBond> {
 	private <T extends Adjunct> T findCurrentAdjunct(){
 		AdjunctHome home = (AdjunctHome) Contexts.getConversationContext().get(AdjunctHome.class);
 		if(home != null){
-			System.out.println("UPDATING PROPERTY CODE ----> Home found!!"+home);
+			//System.out.println("UPDATING PROPERTY CODE ----> Home found!!"+home);
 			T currentAdjunct = (T) home.getInstance();
 			return currentAdjunct;
 		}

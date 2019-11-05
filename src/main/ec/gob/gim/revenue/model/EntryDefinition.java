@@ -252,7 +252,7 @@ public class EntryDefinition {
 	
 	public static void printBytes(byte[] array, String name) {
 	    for (int k = 0; k < array.length; k++) {
-	        System.out.println(name + "[" + k + "] = " );
+	        //System.out.println(name + "[" + k + "] = " );
 	    }
 	}
 	
@@ -264,12 +264,12 @@ public class EntryDefinition {
 		    byte[] defaultBytes = original.getBytes();
 
 		    String roundTrip = new String(utf8Bytes, "UTF8");
-		    System.out.println("defaultBytes = " + defaultBytes);
+		    /*System.out.println("defaultBytes = " + defaultBytes);
 		    System.out.println("utf8 = " + utf8Bytes);
 		    System.out.println("roundTrip = " + roundTrip);
-		    System.out.println();
+		    System.out.println();*/
 		    printBytes(utf8Bytes, "utf8Bytes");
-		    System.out.println();
+		    //System.out.println();
 		    printBytes(defaultBytes, "defaultBytes");
 		} 
 		catch (UnsupportedEncodingException e) {

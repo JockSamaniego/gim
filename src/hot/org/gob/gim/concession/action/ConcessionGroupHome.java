@@ -446,7 +446,7 @@ public class ConcessionGroupHome extends EntityHome<ConcessionGroup> {
 		// joinTransaction();
 		Query q = entityManager.createNativeQuery(sql);
 		q.executeUpdate();
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> jeje\n " + sql);
+		//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> jeje\n " + sql);
 		entityManager.flush();
 		//generateRecords(this.concessionPlaceType);
 	}
@@ -500,7 +500,7 @@ public class ConcessionGroupHome extends EntityHome<ConcessionGroup> {
 	}
 
 	public void cleanForPrint() {
-		System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+		//System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
 	}
 
 	public void generateInformationData() {
@@ -589,11 +589,11 @@ public class ConcessionGroupHome extends EntityHome<ConcessionGroup> {
 				List<Long> itemsAlreadyGenerated = findOldConcessionItemIds(
 						placesIds, year, monthInt);// sacar1
 				// System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sacar1 : "+itemsAlreadyGenerated);
-				logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> los ya generados son "
+				/*logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> los ya generados son "
 						+ itemsAlreadyGenerated.size()
 						+ " xxx "
 						+ yearInt
-						+ " - " + monthInt);
+						+ " - " + monthInt);*/
 				// regreso un mes para comprobar los anteriores en caso de enero
 				// regreso a diciembre del anterior anio
 				monthInt = monthInt - 1;

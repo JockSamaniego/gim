@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.common.ServiceLocator;
@@ -311,7 +310,7 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		query.setParameter("identificationNumber", this.identificationNumber);
 		try {
 			Resident resident = (Resident) query.getSingleResult();
-			System.out.println("RESIDENT CHOOSER ACTION " + resident.getName());
+			//System.out.println("RESIDENT CHOOSER ACTION " + resident.getName());
 			setResident(resident);
 			isReadyForPrint = false;
 			if (resident.getId() == null) {
@@ -329,7 +328,7 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		query.setParameter("identificationNumber", this.applicantIdentificationNumber);
 		try {
 			Resident applicant = (Resident) query.getSingleResult();
-			System.out.println("APPLICANT CHOOSER ACTION " + applicant.getName());
+			//System.out.println("APPLICANT CHOOSER ACTION " + applicant.getName());
 			setApplicant(applicant);
 			isReadyForPrint = false;
 			if (applicant.getId() == null) {

@@ -82,7 +82,7 @@ public class SequenceManagerHome extends EntityHome<SequenceManager> {
 			code = (Integer) q.getSingleResult();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println(".................... ");
+			//System.out.println(".................... ");
 		}
 
 		String sqlSMT = "select smt from SequenceManagerType smt where smt.id = :id";

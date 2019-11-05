@@ -1763,12 +1763,12 @@ public class PropertyHome extends EntityHome<Property> {
 
 				if (res.getId() != property.getCurrentDomain().getId()
 						&& res.getChangeOwnerConfirmed() == null) {
-					System.out.println("=>TRUE" + property.getId());
+					//System.out.println("=>TRUE" + property.getId());
 					property.setNeedConfirmChangeOwner(true);
 					// super.getEntityManager().persist(property);
 				} else {
 
-					System.out.println("=>FALSE" + property.getId());
+					//System.out.println("=>FALSE" + property.getId());
 					property.setNeedConfirmChangeOwner(false);
 					// super.getEntityManager().persist(property);
 
@@ -2772,7 +2772,7 @@ public class PropertyHome extends EntityHome<Property> {
 
 	public void uploadImage() {
 		this.statusImage = false;
-		System.out.println("uploadImage--->statusImageValor: " + statusImage);
+		//System.out.println("uploadImage--->statusImageValor: " + statusImage);
 	}
 
 	public CadastralCertificateDTO get_dataCadastralCerfificate() {
@@ -2797,7 +2797,8 @@ public class PropertyHome extends EntityHome<Property> {
 				cadasterService.updateRusticProperty(property);
 			}
 		} catch (Exception e) {
-			System.out.println("error: no se completó la activación!!");
+			//System.out.println("error: no se completó la activación!!");
+			e.printStackTrace();
 		}
 	}
 

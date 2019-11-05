@@ -336,9 +336,7 @@ public class RevenueServiceBean implements RevenueService {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void update(List<Long> municipalBondIds, Long municipalBondStatusId,
 			Long userId, String explanation) {
-		System.out
-				.println("GZ -----> Update in RevenueServiceBean, changing status to id "
-						+ municipalBondStatusId);
+		//System.out				.println("GZ -----> Update in RevenueServiceBean, changing status to id "						+ municipalBondStatusId);
 		User user = entityManager.getReference(User.class, userId);
 		MunicipalBondStatus status = entityManager.getReference(
 				MunicipalBondStatus.class, municipalBondStatusId);
@@ -581,7 +579,7 @@ public class RevenueServiceBean implements RevenueService {
 						pendingBondStatus, user);
 
 			} else {
-				System.out.println("No puede emitir");
+				//System.out.println("No puede emitir");
 				throw new UserCanNotEmitException();
 			}
 

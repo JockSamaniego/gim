@@ -61,11 +61,11 @@ public class TaxReporter extends EntityController {
 	        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 	        DateFormat df = new SimpleDateFormat("yyyyMMdd_hhmmss");
 	        String dirName = System.getProperty("user.home")+File.separator+df.format(new Date())+"_"+finantialStatus.name();
-	        System.out.println("Output sent to "+dirName);
+	        //System.out.println("Output sent to "+dirName);
 	        new File(dirName).mkdirs();
 	        for(Receipt receipt : receipts){
 	        	String fileName = dirName+File.separator+receipt.toString()+".xml";
-	        	System.out.println("File Saved: "+fileName);
+	        	//System.out.println("File Saved: "+fileName);
 	        	File output = new File(fileName);
 	        	Invoice invoice = XmlAdapter.transform(receipt);
 	        	marshaller.marshal(invoice, output);

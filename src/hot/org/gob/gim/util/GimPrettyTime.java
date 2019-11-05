@@ -148,6 +148,6 @@ public class GimPrettyTime {
 //		      System.out.println("Days = " + days);
 //		      System.out.println("Months = " + months);
 //		      System.out.println("Minutes = " + minutes);
-		      System.out.println(et.format(9465650));
+		      //System.out.println(et.format(9465650));
 		   }
 	}

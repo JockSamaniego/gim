@@ -2,12 +2,14 @@ package org.gob.gim.income.action;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.persistence.Query;
@@ -17,8 +19,6 @@ import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.core.Interpolator;
 import org.jboss.seam.framework.EntityHome;
 
@@ -28,7 +28,6 @@ import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.Money;
 import ec.gob.gim.income.model.MoneyType;
 import ec.gob.gim.income.model.Payment;
-import ec.gob.gim.income.model.PaymentFraction;
 import ec.gob.gim.income.model.PaymentFractionView;
 import ec.gob.gim.income.model.PaymentType;
 import ec.gob.gim.income.model.Till;
@@ -36,8 +35,6 @@ import ec.gob.gim.income.model.TillInstitutionDetail;
 import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.TillPermissionDetail;
 import ec.gob.gim.revenue.model.MunicipalBond;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 //@Name("tillPermissionHomeWs")
 public class TillPermissionHomeWs extends EntityHome<TillPermission> {

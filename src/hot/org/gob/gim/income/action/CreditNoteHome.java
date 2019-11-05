@@ -17,7 +17,6 @@ import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.CreditNoteValueNotValidException;
 import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
-import org.gob.gim.revenue.view.EntryValueItem;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;

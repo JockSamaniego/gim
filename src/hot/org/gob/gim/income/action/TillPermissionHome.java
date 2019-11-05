@@ -11,13 +11,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 
-import org.drools.base.accumulators.SumAccumulateFunction;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
@@ -164,9 +160,10 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 			q.setParameter("list", idTillPermissions);
 			
 			int total = q.executeUpdate();
-			System.out.println("El total es: "+total);
+			//System.out.println("El total es: "+total);
 		}catch(Exception e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 		 
  		
@@ -517,7 +514,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 			//solo para determinar si se presenta el boton de cerrar todas las cajas
 			if (td.isOpened()) {
 				openTill = Boolean.TRUE;
-				System.out.println("======>"+t.getId());
+				//System.out.println("======>"+t.getId());
 			}
 			
 			//init primer arreglo
@@ -1526,7 +1523,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 				+"AND p.cashier_id = " + getInstance().getPerson().getId() +" "
 				+"AND p.status = 'VALID' "
 				+"GROUP BY pf.paymentType ORDER BY pf.paymentType";
-			System.out.println(sql);
+			//System.out.println(sql);
 							
 			Query query = getEntityManager().createNativeQuery(sql);
 			query.setParameter("starDate", date);

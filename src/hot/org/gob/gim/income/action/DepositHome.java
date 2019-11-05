@@ -211,7 +211,7 @@ public class DepositHome extends EntityHome<Deposit> {
 	
 	public String eliminateReverse(){
 		if(deposit != null){
-			System.out.println("REHABILITAR ---> "+deposit.getId());
+			//System.out.println("REHABILITAR ---> "+deposit.getId());
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			incomeService.eliminateReverse(deposit.getId(), userSession.getUser().getResident());
 			return "reverted";

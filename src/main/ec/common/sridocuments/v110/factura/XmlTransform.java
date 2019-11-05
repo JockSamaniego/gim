@@ -39,7 +39,7 @@ public class XmlTransform{
 	public static String CFO="";
 	
 	public static Factura transform(Receipt receipt, String sriEnvironment, Map<Long, Branch> mapBranch){
-		System.out.println("<<<R>>>XML Transform:"+receipt.getReceiptNumber());
+		//System.out.println("<<<R>>>XML Transform:"+receipt.getReceiptNumber());
 		Branch branch = new Branch();
 		for (Branch b : mapBranch.values()) {
 //			System.out.println("Branch: " + b.getId()+ " "+b.getAddress());

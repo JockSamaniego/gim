@@ -144,7 +144,7 @@ public class MunicipalBondItem {
 				}
 			} else {
 				if (isSelected) {
-					System.out.println("TOTAL AGREGADO ----> " + municipalBond.getEntry().getName() + " - " + municipalBond.getValue());
+					//System.out.println("TOTAL AGREGADO ----> " + municipalBond.getEntry().getName() + " - " + municipalBond.getValue());
 					return municipalBond.getPaidTotal();
 				}
 			}

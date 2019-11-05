@@ -174,8 +174,8 @@ public class TouristLicenseServiceBean implements TouristLicenseService {
 		 * return calendar.getTime();
 		 */
 
-		System.out.println("------Fecha actual--------------");
-		System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(today));
+		//System.out.println("------Fecha actual--------------");
+		//System.out.println(new SimpleDateFormat("yyyy MMMM dd").format(today));
 
 		Calendar todayC = Calendar.getInstance();
 		todayC.setTime(today);
@@ -189,9 +189,8 @@ public class TouristLicenseServiceBean implements TouristLicenseService {
 		serviceDate.set(Calendar.DAY_OF_MONTH, 1);
 		int serviceDateMaxDay = serviceDate
 				.getActualMaximum(Calendar.DAY_OF_MONTH);
-		System.out.println("------Fecha sin revision de dias--------------");
-		System.out.println(new SimpleDateFormat("yyyy MMMM dd")
-				.format(serviceDate.getTime()));
+		//System.out.println("------Fecha sin revision de dias--------------");
+		//System.out.println(new SimpleDateFormat("yyyy MMMM dd")				.format(serviceDate.getTime()));
 
 		System.out.println(todayMonth + "    " + serviceDateMaxDay);
 
@@ -200,9 +199,8 @@ public class TouristLicenseServiceBean implements TouristLicenseService {
 		} else {
 			serviceDate.set(Calendar.DAY_OF_MONTH, serviceDateMaxDay);
 		}
-		System.out.println("------Fecha final--------------");
-		System.out.println(new SimpleDateFormat("yyyy MMMM dd")
-				.format(serviceDate.getTime()));
+		//System.out.println("------Fecha final--------------");
+		//System.out.println(new SimpleDateFormat("yyyy MMMM dd")				.format(serviceDate.getTime()));
 
 		return serviceDate.getTime();
 	}
@@ -210,7 +208,7 @@ public class TouristLicenseServiceBean implements TouristLicenseService {
 	@Override
 	public void saveEmissionOrder(EmissionOrder emissionOrder, TouristLicenseEmission tle, Boolean preEmit) {
 		if (preEmit){
-			System.out.println("------Z>>>>>>>>>>>>>>ZZZZZ ya guardando");
+			//System.out.println("------Z>>>>>>>>>>>>>>ZZZZZ ya guardando");
 			entityManager.persist(emissionOrder);
 			entityManager.persist(tle);
 			entityManager.flush();
@@ -229,7 +227,7 @@ public class TouristLicenseServiceBean implements TouristLicenseService {
 		System.out.println(sql);
 		Query q=entityManager.createNativeQuery(sql);
 		q.executeUpdate();
-		System.out.println("termina ahi>>>>>>>>>>>>>>>><<");
+		//System.out.println("termina ahi>>>>>>>>>>>>>>>><<");
 	}
 
 	

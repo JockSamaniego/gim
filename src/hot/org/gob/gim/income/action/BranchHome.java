@@ -181,7 +181,7 @@ public class BranchHome extends EntityHome<Branch> {
 				for(Till till : getInstance().getTills()){
 					IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);						
 					incomeService.createSequence(taxpayerRecordId , receiptType.getId(), till.getBranch().getNumber(), till.getNumber());
-					System.out.println("LXGK-SRI -----> Sequence created ");
+					//System.out.println("LXGK-SRI -----> Sequence created ");
 				}
 			}
 		}

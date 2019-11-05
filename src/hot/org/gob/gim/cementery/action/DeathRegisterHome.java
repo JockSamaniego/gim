@@ -122,11 +122,11 @@ public class DeathRegisterHome extends EntityHome<Death> implements Serializable
 	}
 
 	public void wire() {
-		System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRR ingresa a wire");
+		//System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRR ingresa a wire");
 		if (isFirstTime){
 			isFirstTime = false;
 			getInstance();
-			System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRR ingresa a wire getInstance");
+			//System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRR ingresa a wire getInstance");
 		}
 	}
 
@@ -620,7 +620,7 @@ public class DeathRegisterHome extends EntityHome<Death> implements Serializable
 	}
 
 	public void newDeathRegister(){
-		System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRR newDeathRegister");
+		//System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRR newDeathRegister");
 		this.newContract = true;
 		this.instance = new Death();
 		this.unit.setCurrentDeath(this.getInstance());

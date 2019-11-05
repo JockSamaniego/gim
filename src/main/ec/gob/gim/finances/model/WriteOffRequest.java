@@ -27,7 +27,6 @@ import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.waterservice.model.WaterMeter;
-import ec.gob.gim.waterservice.model.WaterSupply;
 
 @Audited
 @Entity
@@ -223,7 +222,7 @@ public class WriteOffRequest {
 	public String sequenceNumberComplete() {
 		
 		DecimalFormat numFormat = new DecimalFormat("0000");
-		System.out.println("Code format: "+numFormat.format(this.sequenceManager.getCode()));
+		//System.out.println("Code format: "+numFormat.format(this.sequenceManager.getCode()));
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(numFormat.format(this.sequenceManager.getCode()));
 		stringBuilder.append(" - ");

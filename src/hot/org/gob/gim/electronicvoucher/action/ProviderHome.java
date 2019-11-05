@@ -4,7 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+
+import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.core.ResourceBundle;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
@@ -13,10 +17,6 @@ import ec.gob.gim.complementvoucher.model.Provider;
 import ec.gob.loja.client.clients.UserClient;
 import ec.gob.loja.client.model.Message;
 import ec.gob.loja.client.model.UserWS;
-import java.util.logging.Level;
-import javax.faces.application.FacesMessage;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.core.ResourceBundle;
 
 @Name("providerHome")
 public class ProviderHome extends EntityHome<Provider> implements Serializable {
@@ -77,7 +77,7 @@ public class ProviderHome extends EntityHome<Provider> implements Serializable {
             addFacesMessageFromResourceBundle("update.mail.sri");
             //To change body of generated methods, choose Tools | Templates.
         } catch (Exception ex) {
-            System.out.println("persist sri >>> error >>>>> " + ex.getStackTrace().toString());
+            //System.out.println("persist sri >>> error >>>>> " + ex.getStackTrace().toString());
             ex.printStackTrace();
             getFacesMessages().addFromResourceBundle(FacesMessage.SEVERITY_ERROR, "noUpdate.mail.sri");
         }
@@ -109,7 +109,7 @@ public class ProviderHome extends EntityHome<Provider> implements Serializable {
             try {
                 userws.setPhone(instance.getElectronicVoucher().getResident().getCurrentAddress().getPhoneNumber());
             } catch (Exception ex) {
-                System.out.println(" setPhone sri >>> error >>>>> <<<<<<");
+                //System.out.println(" setPhone sri >>> error >>>>> <<<<<<");
                 ex.printStackTrace();
                 userws.setPhone("");
             }
@@ -117,7 +117,7 @@ public class ProviderHome extends EntityHome<Provider> implements Serializable {
             addFacesMessageFromResourceBundle("update.mail.sri");
             //To change body of generated methods, choose Tools | Templates.
         } catch (Exception ex) {
-            System.out.println("update sri >>> error >>>>> " + ex.getStackTrace().toString());
+            //System.out.println("update sri >>> error >>>>> " + ex.getStackTrace().toString());
             ex.printStackTrace();
             getFacesMessages().addFromResourceBundle(FacesMessage.SEVERITY_ERROR, "noUpdate.mail.sri");
         }//To change body of generated methods, choose Tools | Templates.
@@ -131,7 +131,7 @@ public class ProviderHome extends EntityHome<Provider> implements Serializable {
         log.info("UserClient client >>>>> <<<<<<");
         UserWS response;
         response = client.saveUser_XML(input, UserWS.class);
-        System.out.println("Estado >>>>>>>>>> " + response.getState());
+        //System.out.println("Estado >>>>>>>>>> " + response.getState());
 
         if (response.getMessageList() != null) {
             List<Message> mensajes = response.getMessageList();

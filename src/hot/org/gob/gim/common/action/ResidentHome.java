@@ -45,9 +45,6 @@ import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Contract;
 import ec.gob.gim.revenue.model.MunicipalBond;
-import ec.gob.loja.client.clients.UserClient;
-import ec.gob.loja.client.model.Message;
-import ec.gob.loja.client.model.UserWS;
 
 @Name("residentHome")
 public class ResidentHome extends EntityHome<Resident> {
@@ -228,10 +225,12 @@ public class ResidentHome extends EntityHome<Resident> {
             }
             //rfam 2018-08-08 creacion de cuenta unica
             if(this.getInstance().getGenerateUniqueAccountt()) {
-            	createUniqueAccounttUser(this.getInstance().getIdentificationNumber());	
+            	//createUniqueAccounttUser(this.getInstance().getIdentificationNumber());	
             }
             
-            try {
+            /*
+             * comentado 2019-11-05 rfam hasta hacer los cambios en el consumo de sw rest de facturas
+             * try {
                 UserWS userws = new UserWS();
                 if (residentType.equalsIgnoreCase("Person")) {
 
@@ -264,13 +263,14 @@ public class ResidentHome extends EntityHome<Resident> {
                         userws.setPhone("");
                     }
                 }
-                this.sendToService(userws);
+                //this.sendToService(userws);
+                String _result = residentService.updateUserIntoEBilling(userws);
                 addFacesMessageFromResourceBundle("update.mail.sri");
             } catch (Exception e) {
                 //System.out.println("save sri >>> error >>>>> " + e.getStackTrace().toString());
                 e.printStackTrace();
                 getFacesMessages().addFromResourceBundle(FacesMessage.SEVERITY_ERROR, "noUpdate.mail.sri");
-            }
+            }*/
         } catch (Exception e) {
             e.printStackTrace();
             addFacesMessageFromResourceBundle(e.getClass().getSimpleName());
@@ -297,24 +297,6 @@ public class ResidentHome extends EntityHome<Resident> {
         }
     }
 
-    private UserWS sendToService(UserWS input) throws Exception {
-        log.info("BASE_URI_SRI >>>>> " + ResourceBundle.instance().getString("BASE_URI_SRI"));
-        String BASE_URI = ResourceBundle.instance().getString("BASE_URI_SRI");
-        UserClient client = new UserClient(BASE_URI);
-        log.info("UserClient client >>>>> <<<<<<");
-        UserWS response;
-        response = client.saveUser_XML(input, UserWS.class);
-        //System.out.println("Estado >>>>>>>>>> " + response.getState());
-
-        if (response.getMessageList() != null) {
-            List<Message> mensajes = response.getMessageList();
-            /*for (Message mensaje : mensajes) {
-                System.out.println(mensaje.getType() + "\t" + mensaje.getIdentifier() + "\t" + mensaje.getMessage() + "\t" + mensaje.getAdditionalInformation());
-            }*/
-        }
-        return response;
-    }
-
     public boolean isWired() {
         return true;
     }
@@ -323,34 +305,6 @@ public class ResidentHome extends EntityHome<Resident> {
         return isIdDefined() ? getInstance() : null;
     }
 
-    /*
-     public String findLastValueForIdentification(String nid, String initialvalue){
-     Long initial = Long.parseLong(initialvalue);
-     List<String> result = getEntityManager().createNamedQuery("Resident.findIdentificationNumber").setParameter("identificationNumber", nid).getResultList();
-     if (result != null && !result.isEmpty()) {			
-     for(String a: result){
-     Long aux = Long.parseLong(a) + 1;
-     if(aux > initial){
-     initial = aux;
-     }				
-     }			
-     return initial.toString();
-     }else{
-     return null;
-     }
-     }
-     */
-    /*
-     public boolean existLegalEntity = false;
-	
-     public boolean isExistLegalEntity() {
-     return existLegalEntity;
-     }
-
-     public void setExistLegalEntity(boolean existLegalEntity) {
-     this.existLegalEntity = existLegalEntity;
-     }
-     */
     @SuppressWarnings("unchecked")
     public Resident findResident(String nid) {
         List<Resident> result = getEntityManager().createNamedQuery("Resident.findByIdentificationNumber").setParameter("identificationNumber", nid).getResultList();
@@ -486,7 +440,7 @@ public class ResidentHome extends EntityHome<Resident> {
 	}
 
 	public void createUniqueAccounttUser(String identificationNumber) {
-		System.out.println("--------------------cuenta unica "+identificationNumber);
+		//System.out.println("--------------------cuenta unica "+identificationNumber);
 		Form form = new Form();
 		form.param("identificationNumber", identificationNumber);
 

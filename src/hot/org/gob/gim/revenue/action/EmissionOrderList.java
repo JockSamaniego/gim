@@ -115,11 +115,11 @@ public class EmissionOrderList extends EntityQuery<EmissionOrder> {
 		int i =0;
 		for(EmissionOrder eo :this.getResultList()){
 			if(eo.getIsSelected()){
-				System.out.println("------------------------- ok "+eo.getId());
+				//System.out.println("------------------------- ok "+eo.getId());
 			}
 			i++;
 		}
-		System.out.println("------------------------- la cantidad "+i);
+		//System.out.println("------------------------- la cantidad "+i);
 	}
 
 	public List<Long> getPhotoPenalty() {

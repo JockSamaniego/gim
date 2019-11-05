@@ -10,7 +10,6 @@ import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -44,7 +43,6 @@ import org.gob.gim.exception.ReceiptAuthorizationDoesNotExistException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
 import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.income.dto.ApplyDiscountDTO;
-import org.gob.gim.income.dto.BondAuxDTO;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.loja.gim.ws.dto.BondSummary;
@@ -52,11 +50,10 @@ import org.gob.loja.gim.ws.dto.FutureBond;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 
+import SMTATM.WsPagoSolicitudExecuteResponse;
+
 import com.google.common.base.Joiner;
 
-import SMTATM.WsPagoSolicitudExecute;
-import SMTATM.WsPagoSolicitudExecuteResponse;
-import SMTATM.WsPagoSolicitudSoapPortProxy;
 import ec.common.sridocuments.v110.factura.Factura;
 //import ec.common.sridocuments.v110.factura.QueryBilling;
 //import ec.common.sridocuments.v110.factura.ResultSet;
@@ -92,7 +89,6 @@ import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.PaymentTypeSRI;
 import ec.gob.gim.revenue.model.DTO.CRTV_ORDER;
-import ec.gob.gim.revenue.model.adjunct.Vehicle;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.loja.client.clients.ElectronicClient;
 import ec.gob.loja.client.model.DataWS;
@@ -1109,7 +1105,7 @@ public class IncomeServiceBean implements IncomeService {
 			//System.out.println("LXGK-SRI -----> Sequence created ");
 			return;
 		}
-		System.out.println("LXGK-SRI -----> Sequence already exists, skipping creation");
+		//System.out.println("LXGK-SRI -----> Sequence already exists, skipping creation");
 	}
 
 	@SuppressWarnings("unchecked")

@@ -9,7 +9,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import ec.gob.gim.security.model.User;
-import ec.gob.loja.model.Users;
 
 @Stateless(name="UserService")
 public class UserServiceBean implements UserService{
@@ -26,7 +25,7 @@ public class UserServiceBean implements UserService{
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void lockAll(){
 		String rootRoleName = systemParameterService.findParameter("ROLE_NAME_ADMINISTRATOR");
-		System.out.println("ROOT ROLE -----> "+rootRoleName);
+		//System.out.println("ROOT ROLE -----> "+rootRoleName);
 		Query query = em.createNamedQuery("User.lockAll");
 		query.setParameter("rootRoleName", rootRoleName);
 		query.executeUpdate();
@@ -35,7 +34,7 @@ public class UserServiceBean implements UserService{
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void unlockAll(){
 		String rootRoleName = systemParameterService.findParameter("ROLE_NAME_ADMINISTRATOR");
-		System.out.println("ROOT ROLE -----> "+rootRoleName);
+		//System.out.println("ROOT ROLE -----> "+rootRoleName);
 		Query query = em.createNamedQuery("User.unlockAll");
 		query.setParameter("rootRoleName", rootRoleName);
 		query.executeUpdate();

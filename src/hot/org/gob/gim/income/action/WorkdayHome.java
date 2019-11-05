@@ -269,17 +269,17 @@ public class WorkdayHome extends EntityHome<Workday> {
 	@SuppressWarnings("unchecked")
 	@Observer("org.jboss.seam.postCreate.workdayHome")
 	public void checkSettings() {
-		System.out.println("CHECKING SETTINGS FOR SCREEN ...");
+		//System.out.println("CHECKING SETTINGS FOR SCREEN ...");
 		Date date = DateUtils.truncate(new Date());
 		Query query = getPersistenceContext().createNamedQuery(
 				"InterestRate.findActive");
 		query.setParameter("date", date);
 		List<InterestRate> interestRates = query.getResultList();
 		if (interestRates.size() == 0) {
-			System.out.println("INTERES RATE NOT DEFINED");
+			//System.out.println("INTERES RATE NOT DEFINED");
 			needsInterestRateDefined = true;
 		} else {
-			System.out.println("INTERES RATE ARE OK");
+			//System.out.println("INTERES RATE ARE OK");
 			needsInterestRateDefined = false;
 		}
 	}
@@ -3389,7 +3389,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 			// System.out.println("Retono Future:" + retorno);
 			return retorno;
 		} catch (Exception e) {
-			System.out.println(e);
+			//System.out.println(e);
 			return new ArrayList<EntryTotalCollected>();
 		}
 	}
@@ -3648,7 +3648,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 			// System.out.println("Retono Future:" + retorno);
 			return retorno;
 		} catch (Exception e) {
-			System.out.println(e);
+			//System.out.println(e);
 			return new ArrayList<EntryTotalCollected>();
 		}
 
@@ -3675,7 +3675,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 			// System.out.println("Retono Future:" + retorno);
 			return retorno;
 		} catch (Exception e) {
-			System.out.println(e);
+			//System.out.println(e);
 			return new ArrayList<EntryTotalCollected>();
 		}
 	}

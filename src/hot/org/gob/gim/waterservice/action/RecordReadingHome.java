@@ -620,9 +620,7 @@ public class RecordReadingHome extends EntityHome<Route> {
 							conNew);
 
 					
-					System.out
-							.println(":::::::::::::==========>>>> la verificacion es "
-									+ verificacion);
+					//System.out							.println(":::::::::::::==========>>>> la verificacion es "									+ verificacion);
 					if (verificacion > 0) {
 						conNew.setDifferenceInReading(verificacion
 								+ conNew.getCurrentReading());

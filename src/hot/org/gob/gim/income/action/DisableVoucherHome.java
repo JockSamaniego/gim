@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gob.gim.common.ServiceLocator;
@@ -34,7 +32,6 @@ import ec.gob.gim.income.model.StatusElectronicReceipt;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.StatusChange;
-import ec.gob.gim.waterservice.model.ConsumptionState;
 
 @Name("disableVoucherHome")
 public class DisableVoucherHome extends EntityHome<Object> {
@@ -188,7 +185,7 @@ public class DisableVoucherHome extends EntityHome<Object> {
 			wr.close();
 
 			responseCode = conn.getResponseCode();
-			System.out.println("POST " + responseCode);
+			//System.out.println("POST " + responseCode);
 			StringBuffer responseJson = new StringBuffer();
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			while ((inputString = in.readLine()) != null) {

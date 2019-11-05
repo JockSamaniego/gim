@@ -62,8 +62,8 @@ public class AppraisalPeriodHome extends EntityHome<AppraisalPeriod> implements
 
 	public void wire() {
 		getInstance();
-		System.out.println("============> wire periodo actual");
-		System.out.println(this.getInstance().getName());
+		//System.out.println("============> wire periodo actual");
+		//System.out.println(this.getInstance().getName());
 	}
 
 	public boolean isWired() {
@@ -93,7 +93,7 @@ public class AppraisalPeriodHome extends EntityHome<AppraisalPeriod> implements
 	}
 	
 	public void changePeriod(AppraisalPeriod appraisalPeriod) {
-		System.out.println("============> Se instancia el periodo actual");
+		//System.out.println("============> Se instancia el periodo actual");
 		this.setInstance(appraisalPeriod);
 	}
 

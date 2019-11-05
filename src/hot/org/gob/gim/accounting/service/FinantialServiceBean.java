@@ -3,11 +3,9 @@ package org.gob.gim.accounting.service;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -882,7 +880,7 @@ public class FinantialServiceBean implements FinantialService{
 			
 		} else {
 			if(criteria.getReportFilter() == ReportFilter.ALL || criteria.getReportFilter() == ReportFilter.PREVIOUS){
-				System.out.println("CALCULANDO AÑOS PREVIOS");
+				//System.out.println("CALCULANDO AÑOS PREVIOS");
 				if(criteria.getReportType() == ReportType.SUBSCRIPTION){
 					buildReport(criteria, report, ReportType.SUBSCRIPTION, criteria.getStartDate(), criteria.getEndDate(), minimumBondDate, previousYearsEndDate, ReportFilter.PREVIOUS);
 				}
@@ -912,7 +910,7 @@ public class FinantialServiceBean implements FinantialService{
 			}
 			
 			if(criteria.getReportFilter() == ReportFilter.ALL || criteria.getReportFilter() == ReportFilter.CURRENT){
-				System.out.println("CALCULANDO AÑO ACTUAL");
+				//System.out.println("CALCULANDO AÑO ACTUAL");
 				if(criteria.getReportType() == ReportType.SUBSCRIPTION){
 					buildReport(criteria, report, ReportType.SUBSCRIPTION, criteria.getStartDate(), criteria.getEndDate(), fiscalPeriod.getStartDate(), fiscalPeriod.getEndDate(), ReportFilter.CURRENT);
 				}
@@ -937,7 +935,7 @@ public class FinantialServiceBean implements FinantialService{
 			}
 			//if(criteria.getReportFilter() == ReportFilter.ALL || criteria.getReportFilter() == ReportFilter.CURRENT){
 			if(criteria.getReportFilter() == ReportFilter.FUTURE){
-				System.out.println("CALCULANDO AÑOS FUTUROS");
+				//System.out.println("CALCULANDO AÑOS FUTUROS");
 				if(criteria.getReportType() == ReportType.REVENUE || criteria.getReportType() == ReportType.COMBINED){
 					buildReport(criteria, report, ReportType.REVENUE, currentYearsStartDate, currentYearsEndDate, null, null, ReportFilter.FUTURE);
 				}
