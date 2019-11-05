@@ -1,8 +1,6 @@
 package org.loxageek.common.ws;
 
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -18,7 +16,6 @@ import org.gob.loja.gim.ws.dto.FutureStatement;
 import org.gob.loja.gim.ws.dto.Payout;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.Statement;
-import org.gob.loja.gim.ws.dto.TransactionData;
 import org.gob.loja.gim.ws.exception.HasNoObligations;
 import org.gob.loja.gim.ws.exception.InvalidPayout;
 import org.gob.loja.gim.ws.exception.InvalidUser;
@@ -27,8 +24,6 @@ import org.gob.loja.gim.ws.exception.NotOpenTill;
 import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 import org.gob.loja.gim.ws.service.PaymentService;
-
-import ec.gob.gim.income.model.EMoneyPayment;
 
 /**
  * Define los servicios que permiten la consulta de valores adeudados y el
