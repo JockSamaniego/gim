@@ -1,5 +1,6 @@
 package org.gob.gim.income.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.facade.IncomeService;
@@ -40,10 +42,19 @@ public class PaymentLocalServiceBean implements PaymentLocalService {
 	private List<Long> hasPendingBonds(Long taxpayerId) {
 		Long pendingBondStatusId = systemParameterService
 				.findParameter(IncomeServiceBean.PENDING_BOND_STATUS);
-		Query query = em.createNamedQuery("Bond.findIdsByStatusAndResidentId");
+		
+		String  entriesString = systemParameterService
+				.findParameter("ENTRIES_IDS_BANK_DEBITS");
+		
+		List<Long> entriesListLong = new ArrayList<Long>();
+		entriesListLong = GimUtils.convertStringWithCommaToListLong(entriesString);
+		
+		Query query = em.createNamedQuery("Bond.findIdsByStatusResidentIdAndEntries");
 		query.setParameter("residentId", taxpayerId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("pendingBondStatusId", pendingBondStatusId);
+		query.setParameter("entriesIds", entriesListLong);
+		
 		List<Long> ids = query.getResultList();
 		// System.out.println("PENDING BONDS TOTAL ---->" + ids.size());
 		return ids;

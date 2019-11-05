@@ -887,6 +887,15 @@ import ec.gob.gim.revenue.model.impugnment.Impugnment;
 				+ "    mb.resident.id=:residentId AND "
 				+ "    mb.municipalBondType=:municipalBondType AND "
 				+ "    mb.municipalBondStatus.id = :pendingBondStatusId"),
+				
+		@NamedQuery(name = "Bond.findIdsByStatusResidentIdAndEntries", query = "SELECT mb.id  FROM "
+				+ "    MunicipalBond mb "
+				+ "    JOIN mb.entry e "
+				+ "  WHERE "
+				+ "    mb.resident.id=:residentId AND "
+				+ "    mb.municipalBondType=:municipalBondType AND "
+				+ "    mb.municipalBondStatus.id = :pendingBondStatusId AND "
+				+ "    mb.entry.id IN (:entriesIds)"),
 
 		@NamedQuery(name = "Bond.countByStatusAndResidentId", query = "SELECT COUNT(mb)"
 				+ "  FROM "

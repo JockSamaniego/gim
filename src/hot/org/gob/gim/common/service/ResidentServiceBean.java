@@ -3,7 +3,10 @@
  */
 package org.gob.gim.common.service;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,6 +30,7 @@ import ec.gob.gim.common.model.IdentificationType;
 import ec.gob.gim.common.model.LegalEntity;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.loja.client.model.UserWS;
 
 /**
  * @author wilman
@@ -248,6 +252,45 @@ public class ResidentServiceBean implements ResidentService {
 		
 		this.publicInstitutions = new ArrayList<Integer> (Arrays.asList(idsInstitution));
 
+		
+	}
+
+	@Override
+	public String updateUserIntoEBilling(UserWS user) {
+		
+		//select * from sp_update_resident_ebilling('1104262836','Renysh 12','Ortega','renysh_12007', '123456','0991583301');
+		Query query = em				
+				.createNativeQuery("select * from sp_update_resident_ebilling(?1, ?2, ?3, ?4, ?5, ?6)");
+		query.setParameter(1, user.getIdentification());
+		query.setParameter(2, user.getName());
+		query.setParameter(3, user.getSurname());
+		query.setParameter(4, user.getEmail());
+		query.setParameter(5, encodeSha256(user.getIdentification()));
+		query.setParameter(6, user.getPhone());
+		
+		String _result = (String) query.getSingleResult();
+		
+		return _result;
+	}
+	
+	public String encodeSha256(String text){
+		try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			byte[] hash = digest.digest(text.getBytes("UTF-8"));
+			StringBuffer hexString = new StringBuffer();
+			for(int i=0; i< hash.length; i++){
+				String hex = Integer.toHexString(0xff & hash[i]);
+				if(hex.length() == 1 ) hexString.append('0');
+				hexString.append(hex);
+			}
+			return hexString.toString();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			return null;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
 		
 	}
 

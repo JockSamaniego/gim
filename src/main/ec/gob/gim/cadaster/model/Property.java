@@ -468,6 +468,7 @@ public class Property {
 	private BigDecimal buildingAreaHorizontalProperty;
 	private BigDecimal lotAreaHorizontalProperty;
 		
+	private String descriptionHorizontalProperty;
 
 	public Property() {
 		this.propertyLandUses = new ArrayList<PropertyLandUse>();
@@ -1282,5 +1283,13 @@ public class Property {
 	public void setLotAreaHorizontalProperty(BigDecimal lotAreaHorizontalProperty) {
 		this.lotAreaHorizontalProperty = lotAreaHorizontalProperty;
 	}
+
+	public String getDescriptionHorizontalProperty() {
+		return descriptionHorizontalProperty;
+	}
+
+	public void setDescriptionHorizontalProperty(String descriptionHorizontalProperty) {
+		this.descriptionHorizontalProperty = descriptionHorizontalProperty;
+	} 
 		
 }
