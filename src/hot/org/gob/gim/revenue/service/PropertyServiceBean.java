@@ -39,7 +39,7 @@ public class PropertyServiceBean implements PropertyService {
 									"ORDER BY res.name, pro.cadastralcode");
 		query.setParameter(1, idsResidents);
 		query.setParameter(2, idsProperties);
-		System.out.println(query.toString());
+		//System.out.println(query.toString());
 		List<PropertyDTO> retorno = NativeQueryResultsMapper.map(query.getResultList(), PropertyDTO.class);
 		return retorno;
 		

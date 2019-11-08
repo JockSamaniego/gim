@@ -189,7 +189,7 @@ public class CoerciveReportHome extends EntityHome<Route> {
 				+ "order by 2,3";
 		
 		Query q = this.getEntityManager().createNativeQuery(sentence);
-		System.out.println(sentence);
+		//System.out.println(sentence);
 		q.setParameter(0, this.startDate);
 		q.setParameter(1, this.endDate);
 		this.expiredList = NativeQueryResultsMapper.map(q.getResultList(), CoerciveReportDto.class);

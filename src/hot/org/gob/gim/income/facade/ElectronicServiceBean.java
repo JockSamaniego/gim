@@ -151,7 +151,7 @@ public class ElectronicServiceBean implements ElectronicService {
 		i = 0;
 		for (Receipt receipt : receiptsFull) {
 			i++;
-			System.out.println("\n\n<<<R>>> receipt "+ i +" id: "+receipt.getId());
+			//System.out.println("\n\n<<<R>>> receipt "+ i +" id: "+receipt.getId());
 			authorizedElectronicReceipt(receipt);
 		}
 		//System.out.println("\n\n\n\n\n<<<R>>> Hora final: "+GregorianCalendar.getInstance().getTime());

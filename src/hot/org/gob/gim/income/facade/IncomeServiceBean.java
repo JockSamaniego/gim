@@ -422,7 +422,7 @@ public class IncomeServiceBean implements IncomeService {
 			if (deposit.getBalance().compareTo(BigDecimal.ZERO) == 0) {
 				setToNextStatus(municipalBond, PAID_STATUS_ID, tillId, deposit.getDate());
 				//AGREGADO MACARTUCHE
-				System.out.println("Interes aumentado===>"+deposit.getMunicipalBond().getInterest());
+				//System.out.println("Interes aumentado===>"+deposit.getMunicipalBond().getInterest());
 				deposit.setMunicipalBond(municipalBond);
 				
 				
@@ -1273,7 +1273,7 @@ public class IncomeServiceBean implements IncomeService {
 	}
 
 	public void eliminateReverse(Long depositId, Resident userReversed) {
-		System.out.println("REHABILITAR EN SB ---> " + depositId);
+		//System.out.println("REHABILITAR EN SB ---> " + depositId);
 		List<Long> depositIds = new ArrayList<Long>();
 		depositIds.add(depositId);
 		Long PAID_STATUS_ID = systemParameterService.findParameter(PAID_BOND_STATUS);
@@ -1570,8 +1570,8 @@ public class IncomeServiceBean implements IncomeService {
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
 		
-		System.out.println(residentId);
-		System.out.println(statuses);
+		//System.out.println(residentId);
+		//System.out.println(statuses);
 		return query.getResultList();
 	}
 	
