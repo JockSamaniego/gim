@@ -12,7 +12,7 @@
 	<ui:define name="body">
 
 		<h:form id="municipalBondSearch" styleClass="edit">
-			<ui:debug id="debug"/>
+			<ui:debug id="debug" />
 			<h:outputText styleClass="formTitle" value="" />
 			<a:outputPanel id="searcherPanel" ajaxRendered="false">
 				<rich:panel>
@@ -20,7 +20,7 @@
 						<h:outputText value="#{messages['municipalBond.manager']}"
 							styleClass="formTitle" />
 					</f:facet>
-	
+
 					<g:residentChooser resident="#{municipalBondManager.resident}"
 						criteria="#{municipalBondManager.criteria}"
 						bean="#{municipalBondManager}" searchAction="searchResident"
@@ -29,7 +29,7 @@
 						searchByCriteriaAction="searchResidentByCriteria"
 						clearSearchPanelAction="clearSearchResidentPanel"
 						residentChosenListenerName="residentSelectedListener" />
-	
+
 					<g:entryChooser id="entryChooser" label="#{messages['entry']}"
 						criteria="#{municipalBondManager.criteriaEntry}"
 						entry="#{municipalBondManager.entry}"
@@ -39,7 +39,7 @@
 						searchByCriteriaAction="searchEntryByCriteria"
 						clearSearchPanelAction="clearSearchEntryPanel"
 						entryChosenListenerName="entrySelectedListener" />
-	
+
 					<s:decorate id="startDateField" template="../layout/edit.xhtml">
 						<ui:define name="label">#{messages['common.startDate']}:</ui:define>
 						<rich:calendar id="startDate" enableManualInput="false"
@@ -47,7 +47,7 @@
 							datePattern="#{messages['common.datePattern']}">
 						</rich:calendar>
 					</s:decorate>
-	
+
 					<s:decorate id="endDateField" template="../layout/edit.xhtml">
 						<ui:define name="label">#{messages['common.endDate']}:</ui:define>
 						<rich:calendar id="endDate" enableManualInput="false"
@@ -55,7 +55,7 @@
 							datePattern="#{messages['common.datePattern']}">
 						</rich:calendar>
 					</s:decorate>
-	
+
 					<s:decorate id="statusField" template="../layout/edit.xhtml">
 						<ui:define name="label">#{messages['municipalBond.status']}</ui:define>
 						<h:selectOneMenu id="status"
@@ -67,14 +67,15 @@
 						</h:selectOneMenu>
 					</s:decorate>
 
-					<s:decorate id="municipalBondNumber" template="../layout/edit.xhtml">
+					<s:decorate id="municipalBondNumber"
+						template="../layout/edit.xhtml">
 						<ui:define name="label">#{messages['municipalBond.number']}:</ui:define>
 						<h:inputText id="municipalBondNumberId" size="10" maxlength="8"
 							value="#{municipalBondManager.municipalBondNumber}">
 							<a:support event="onblur" ajaxSingle="true" />
 						</h:inputText>
 					</s:decorate>
-	
+
 					<div style="clear: both" />
 				</rich:panel>
 			</a:outputPanel>
@@ -83,19 +84,19 @@
 				<a:commandButton id="search" value="#{messages['common.search']}"
 					action="#{municipalBondManager.findMunicipalBonds()}"
 					reRender="resultsPanel,municipalBondsTable,resultsFuturePanel,printReport" />
-				
-				<s:button id="resetId" value="#{messages['common.reset']}" includePageParams="false" propagation="none" reRender="printReport">
-				</s:button>			
-				<s:button
-					view="/revenue/report/MunicipalBondManagerReport.xhtml"
-					id="printReport"
-					disabled = "#{municipalBonds.rowCount == 0}"
+
+				<s:button id="resetId" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none" reRender="printReport">
+				</s:button>
+				<s:button view="/revenue/report/MunicipalBondManagerReport.xhtml"
+					id="printReport" disabled="#{municipalBonds.rowCount == 0}"
 					value="#{messages['common.print']}" />
 			</div>
-			
+
 			<a:outputPanel id="resultsFuturePanel" ajaxRendered="false">
 				<rich:panel rendered="#{municipalBondManager.isFuture}">
-					<h:outputText value="No se puede anular emisiones futuras" style='font-size: 16px; font-weight: bold; color: red' />
+					<h:outputText value="No se puede anular emisiones futuras"
+						style='font-size: 16px; font-weight: bold; color: red' />
 				</rich:panel>
 			</a:outputPanel>
 
@@ -108,13 +109,14 @@
 
 				<rich:dataTable id="municipalBondsTable" var="_municipalBond"
 					width="100%" value="#{municipalBonds}"
-					columnClasses="center, center, left, left, center, right, center, left"
+					columnClasses="center, center, left, left, center, right, center, left, center"
 					rows="25" rendered="#{municipalBonds.rowCount != 0}">
 					<f:facet name="header">
 						<rich:columnGroup>
 
-							<rich:column colspan="10">
-								<h:panelGrid columns="3" columnClasses="left formTitle,right," width="100%">
+							<rich:column colspan="11">
+								<h:panelGrid columns="3" columnClasses="left formTitle,right,"
+									width="100%">
 									<h:outputText
 										value="#{messages['municipalBond.searchResults']}" />
 
@@ -123,39 +125,39 @@
 										rendered="#{not empty municipalBondManager.municipalBondStatus}" />
 
 									<h:panelGrid columns="4">
-									<a:commandButton id="confirmBlockedAll"
-										value="#{messages['municipalBond.block']}"
-										action="#{municipalBondManager.changeListForBlocked()}"
-										ajaxSingle="true" 
-										oncomplete="Richfaces.showModalPanel('confirmAllBlockedPanel',{width:350, height:250})"
-										rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_BLOCKER') and (municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || municipalBondManager.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
-										focus="observationAllBlocked" />
+										<a:commandButton id="confirmBlockedAll"
+											value="#{messages['municipalBond.block']}"
+											action="#{municipalBondManager.changeListForBlocked()}"
+											ajaxSingle="true"
+											oncomplete="Richfaces.showModalPanel('confirmAllBlockedPanel',{width:350, height:250})"
+											rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_BLOCKER') and (municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || municipalBondManager.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
+											focus="observationAllBlocked" />
 
 
-									<a:commandButton id="enableAllId"
-										rendered="#{municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus)}"
-										action="#{municipalBondManager.updateStatus(municipalBondManager.pendingBondStatus)}"
-										value="#{messages['municipalBond.enable']}"
-										reRender="resultsPanel" />
+										<a:commandButton id="enableAllId"
+											rendered="#{municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus)}"
+											action="#{municipalBondManager.updateStatus(municipalBondManager.pendingBondStatus)}"
+											value="#{messages['municipalBond.enable']}"
+											reRender="resultsPanel" />
 
-									<a:commandButton id="confirmReverseAll"
-										action="#{municipalBondManager.changeListForReverse()}"
-										ajaxSingle="true" 
-										oncomplete="Richfaces.showModalPanel('confirmPanelSelected',{width:350, height:250})"
-										value="#{messages['municipalBond.reverse']}"
-										rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_INVALIDATOR') and (municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || municipalBondManager.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
-										focus="observationSelected" />
+										<a:commandButton id="confirmReverseAll"
+											action="#{municipalBondManager.changeListForReverse()}"
+											ajaxSingle="true"
+											oncomplete="Richfaces.showModalPanel('confirmPanelSelected',{width:350, height:250})"
+											value="#{messages['municipalBond.reverse']}"
+											rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_INVALIDATOR') and (municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || municipalBondManager.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
+											focus="observationSelected" />
 
-									<a:commandButton id="cancelAllId"
-										rendered="false and #{municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || municipalBondManager.municipalBondStatus.equals(municipalBondManager.pendingBondStatus)}"
-										action="#{municipalBondManager.updateStatus(municipalBondManager.canceledBondStatus)}"
-										value="#{messages['municipalBond.nullify']}"
-										reRender="resultsPanel" />
+										<a:commandButton id="cancelAllId"
+											rendered="false and #{municipalBondManager.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || municipalBondManager.municipalBondStatus.equals(municipalBondManager.pendingBondStatus)}"
+											action="#{municipalBondManager.updateStatus(municipalBondManager.canceledBondStatus)}"
+											value="#{messages['municipalBond.nullify']}"
+											reRender="resultsPanel" />
 									</h:panelGrid>
 								</h:panelGrid>
 							</rich:column>
 
-							<rich:column colspan="10" breakBefore="true" styleClass="right">
+							<rich:column colspan="11" breakBefore="true" styleClass="right">
 								<g:dataScroller maxPages="10" for="municipalBondsTable"
 									style="float:right;" />
 							</rich:column>
@@ -171,8 +173,7 @@
 					<rich:column
 						styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
 						<f:facet name="header">
-							<h:selectBooleanCheckbox
-								rendered="false"
+							<h:selectBooleanCheckbox rendered="false"
 								value="#{municipalBondManager.allBondsSelected}">
 								<a:support event="onchange"
 									action="#{municipalBondManager.selectAllBonds()}"
@@ -180,9 +181,9 @@
 							</h:selectBooleanCheckbox>
 						</f:facet>
 						<h:selectBooleanCheckbox value="#{_municipalBond.isSelected}">
-							<a:support event="onchange" ajaxSingle="true" bypassUpdates="true" eventsQueue="gimQueue" 
-								action="#{municipalBondManager.changeSelectedMunicipalBond(_municipalBond, _municipalBond.isSelected)}"
-							/>
+							<a:support event="onchange" ajaxSingle="true"
+								bypassUpdates="true" eventsQueue="gimQueue"
+								action="#{municipalBondManager.changeSelectedMunicipalBond(_municipalBond, _municipalBond.isSelected)}" />
 						</h:selectBooleanCheckbox>
 					</rich:column>
 
@@ -223,8 +224,7 @@
 						<f:facet name="header">
 						#{messages['municipalBond.paidTotal']}
 					</f:facet>
-						<h:outputText
-							value="#{_municipalBond.paidTotal}">
+						<h:outputText value="#{_municipalBond.paidTotal}">
 							<f:convertNumber />
 						</h:outputText>
 					</rich:column>
@@ -250,29 +250,37 @@
 								pattern="#{messages['common.datePattern']}" />
 						</h:outputText>
 					</rich:column>
-					
-					<rich:column 
-			            styleClass="#{municipalBondManager.showWarned(_municipalBond)}"> 
-			            <f:facet name="header"> 
+
+					<rich:column
+						styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
+						<f:facet name="header"> 
 			            #{messages['municipalBond.liquidationDate']} 
-			          </f:facet> 
-			            <h:outputText value="#{_municipalBond.liquidationDate}"> 
-			              <s:convertDateTime type="date" dateStyle="short" 
-			                pattern="#{messages['common.datePattern']}" /> 
-			            </h:outputText> 
-			          </rich:column>
+			          </f:facet>
+						<h:outputText value="#{_municipalBond.liquidationDate}">
+							<s:convertDateTime type="date" dateStyle="short"
+								pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column
+						styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
+						<f:facet name="header">
+						Nro. Impresiones
+					</f:facet>
+						<h:outputText value="#{_municipalBond.printingsNumber}">
+
+						</h:outputText>
+					</rich:column>
 
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet>
 
-						<a:commandButton 
-							id="viewer" 
-							ajaxSingle="true"
+						<a:commandButton id="viewer" ajaxSingle="true"
 							action="#{municipalBondsViewerHome.loadMunicipalBond(_municipalBond.id)}"
 							eventsQueue="gimEventsQueue" reRender="_municipalBondViewer"
 							oncomplete="Richfaces.showModalPanel('_municipalBondViewer',{width:600, height:500})"
 							value="#{messages['common.view']}" />
-							
+
 						<a:commandButton id="rejectId"
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_PREEMISSION') and _municipalBond.municipalBondStatus.equals(municipalBondManager.preEmitBondStatus)}"
 							action="#{municipalBondManager.updateStatus(_municipalBond, municipalBondManager.rejectedBondStatus)}"
@@ -283,8 +291,7 @@
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_BLOCKER') and _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus)}"
 							action="#{municipalBondManager.setForBlocked(_municipalBond)}"
 							value="#{messages['municipalBond.block']}"
-							reRender="confirmBlockedPanel" 
-							ajaxSingle="true"
+							reRender="confirmBlockedPanel" ajaxSingle="true"
 							eventsQueue="gimEventsQueue"
 							oncomplete="Richfaces.showModalPanel('confirmBlockedPanel',{width:350, height:250})"
 							focus="observationBlocked" />
@@ -299,18 +306,15 @@
 						<a:commandButton id="reverseId"
 							action="#{municipalBondManager.setForReverse(_municipalBond)}"
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_INVALIDATOR') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
-							reRender="confirmPanel" 
-							ajaxSingle="true"
+							reRender="confirmPanel" ajaxSingle="true"
 							eventsQueue="gimEventsQueue"
 							oncomplete="Richfaces.showModalPanel('confirmPanel',{width:350, height:250})"
-							value="#{messages['municipalBond.reverse']}"
-							focus="observation" />
+							value="#{messages['municipalBond.reverse']}" focus="observation" />
 
 						<a:commandButton id="rejectReversedId"
 							action="#{municipalBondManager.setForRejectedReversed(_municipalBond)}"
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_REJECT_REVERSED') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.reversedBondStatus))}"
-							reRender="confirmPanel" 
-							ajaxSingle="true"
+							reRender="confirmPanel" ajaxSingle="true"
 							eventsQueue="gimEventsQueue"
 							oncomplete="Richfaces.showModalPanel('confirmPanel',{width:350, height:250})"
 							value="#{messages['municipalBond.rejectReversed']}"
@@ -320,19 +324,19 @@
 							rendered="#{municipalBondManager.isCurrentDay(_municipalBond.emisionDate) and municipalBondManager.hasRole('ROLE_NAME_MANAGER_VOIDER') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
 							action="#{municipalBondManager.putVoidBond(_municipalBond, municipalBondManager.canceledBondStatus)}"
 							value="#{messages['municipalBond.nullify']}"
-							reRender="resultsPanel, resultsFuturePanel" >														  
+							reRender="resultsPanel, resultsFuturePanel">
 						</a:commandButton>
-							
+
 
 						<a:region>
 							<a:commandButton id="reprintId"
 								rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_PRINTER') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel)) and municipalBondManager.showWarned(_municipalBond)!='redFont'}"
 								action="#{municipalBondManager.print(_municipalBond.id)}"
 								value="#{messages['municipalBond.reprint']}"
-								reRender="resultsPanel" >
+								reRender="resultsPanel">
 							</a:commandButton>
 						</a:region>
-							
+
 						<a:region>
 							<!--   and _municipalBond.resident.isEnabledForDeferredPayments -->
 							<a:commandButton id="reprintOriginalId"
@@ -341,29 +345,28 @@
 								value="#{messages['municipalBond.reprintOriginal']}"
 								reRender="resultsPanel" />
 						</a:region>
-						
+
 						<a:region>
 							<a:commandButton id="printCanjeOriginalId"
 								rendered="#{_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel)}"
 								action="#{municipalBondManager.printOriginal(_municipalBond.id)}"
 								value="#{messages['Canje Documento']}" />
 						</a:region>
-						
-							<!--  and municipalBondManager.hasRevenueCertificateRole -->
+
+						<!--  and municipalBondManager.hasRevenueCertificateRole -->
 						<a:commandButton id="certificateId" ajaxSingle="true"
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_REVENUE_CERTIFICATE') and _municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatus)}"
 							action="#{municipalBondManager.printCertificate(_municipalBond.id)}"
-							value="#{messages['municipalBond.certificate']}"/>
-					
+							value="#{messages['municipalBond.certificate']}" />
+
 					</rich:column>
 
 				</rich:dataTable>
 			</a:outputPanel>
-			
+
 		</h:form>
 
-		<g:municipalBondViewer
-			resident="#{municipalBondsViewerHome.resident}"
+		<g:municipalBondViewer resident="#{municipalBondsViewerHome.resident}"
 			municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}"
 			deposits="#{municipalBondsViewerHome.deposits}" />
 
@@ -371,7 +374,8 @@
 			<f:facet name="header">#{messages['municipalBond.confirmReverseSelected']}</f:facet>
 			<h:form id="confirmReverseSelected">
 				<h:panelGrid>
-					<s:decorate id="conceptFieldSelected" template="../layout/edit.xhtml">
+					<s:decorate id="conceptFieldSelected"
+						template="../layout/edit.xhtml">
 						<ui:define name="label">#{messages['municipalBond.observation']}:</ui:define>
 						<h:inputTextarea id="observationSelected" cols="40" rows="6"
 							value="#{municipalBondManager.observation}" required="true" />
@@ -379,10 +383,10 @@
 
 					<h:panelGroup>
 						<div class="actionButtons">
-							<a:commandButton id="closingBtnSelected" 
+							<a:commandButton id="closingBtnSelected"
 								action="#{municipalBondManager.updateReversedSelected(municipalBondManager.reversedBondStatus)}"
 								value="#{messages['municipalBond.reverse']}"
-								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelSelected\');' : ''}" 
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelSelected\');' : ''}"
 								reRender="resultsPanel" />
 
 							<a:commandButton id="cancelBtnSelected" ajaxSingle="true"
@@ -407,7 +411,8 @@
 
 					<h:panelGroup>
 						<div class="actionButtons">
-							<a:commandButton id="closingBtn" reRender="resultsPanel, resultsFuturePanel"
+							<a:commandButton id="closingBtn"
+								reRender="resultsPanel, resultsFuturePanel"
 								action="#{municipalBondManager.updateStatus(municipalBondManager.municipalBond, municipalBondManager.reversedBondStatus)}"
 								value="#{messages['municipalBond.reverse']}"
 								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanel\');' : ''}" />
@@ -426,7 +431,8 @@
 			<f:facet name="header">#{messages['municipalBond.confirmReverseSelected']}</f:facet>
 			<h:form id="confirmAllBlocked">
 				<h:panelGrid>
-					<s:decorate id="conceptAllBlockedField" template="../layout/edit.xhtml">
+					<s:decorate id="conceptAllBlockedField"
+						template="../layout/edit.xhtml">
 						<ui:define name="label">#{messages['municipalBond.observation']}:</ui:define>
 						<h:inputTextarea id="observationAllBlocked" cols="40" rows="6"
 							value="#{municipalBondManager.observation}" required="true" />
@@ -434,7 +440,8 @@
 
 					<h:panelGroup>
 						<div class="actionButtons">
-							<a:commandButton id="closingBtnAllblocked" reRender="resultsPanel"
+							<a:commandButton id="closingBtnAllblocked"
+								reRender="resultsPanel"
 								action="#{municipalBondManager.updateBlockedSelected(municipalBondManager.blockedBondStatus)}"
 								value="#{messages['municipalBond.block']}"
 								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmAllBlockedPanel\');' : ''}" />
@@ -453,7 +460,8 @@
 			<f:facet name="header">#{messages['municipalBond.confirmBlocked']}</f:facet>
 			<h:form id="confirmBlocked">
 				<h:panelGrid>
-					<s:decorate id="conceptBlockedField" template="../layout/edit.xhtml">
+					<s:decorate id="conceptBlockedField"
+						template="../layout/edit.xhtml">
 						<ui:define name="label">#{messages['municipalBond.observation']}:</ui:define>
 						<h:inputTextarea id="observationBlocked" cols="40" rows="6"
 							value="#{municipalBondManager.observation}" required="true" />
