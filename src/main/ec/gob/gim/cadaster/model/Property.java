@@ -469,6 +469,10 @@ public class Property {
 	private BigDecimal lotAreaHorizontalProperty;
 		
 	private String descriptionHorizontalProperty;
+	
+	//macartuche
+	private Long risk;
+	private Long threat;
 
 	public Property() {
 		this.propertyLandUses = new ArrayList<PropertyLandUse>();
@@ -1290,6 +1294,22 @@ public class Property {
 
 	public void setDescriptionHorizontalProperty(String descriptionHorizontalProperty) {
 		this.descriptionHorizontalProperty = descriptionHorizontalProperty;
+	}
+
+	public Long getRisk() {
+		return risk;
+	}
+
+	public void setRisk(Long risk) {
+		this.risk = risk;
+	}
+
+	public Long getThreat() {
+		return threat;
+	}
+
+	public void setThreat(Long threat) {
+		this.threat = threat;
 	} 
-		
+
 }

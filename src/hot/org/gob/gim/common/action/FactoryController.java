@@ -18,6 +18,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.framework.EntityController;
 
+import ec.gob.gim.cadaster.model.AffectationFactor;
 import ec.gob.gim.cadaster.model.CompassPoint;
 import ec.gob.gim.cadaster.model.DispatchReasonType;
 import ec.gob.gim.cadaster.model.ExternalFinishing;
@@ -745,10 +746,25 @@ public class FactoryController  extends EntityController{
 	//emision2020
 	@SuppressWarnings("unchecked")
 	@Factory("risk")
-	public List<FenceMaterial> loadRisk() {
+	public List<AffectationFactor> loadRisk() {
 		Query query = this.getEntityManager().createNamedQuery(
-				"FenceMaterial.findAll");
-		return (List<FenceMaterial>) query.getResultList();
+				"AffectationFactor.findByCategoryAndStatus");
+		query.setParameter("category", "RISK");
+		query.setParameter("status", true);
+		List<AffectationFactor> list = query.getResultList();
+		System.out.println("============>"+list.size());
+		return list;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Factory("threat")
+	public List<AffectationFactor> loadThreat() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"AffectationFactor.findByCategoryAndStatus");
+		query.setParameter("category", "THREAT");
+		query.setParameter("status", true);
+		return (List<AffectationFactor>) query.getResultList();
 	}
 
 }
