@@ -16,6 +16,9 @@ import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.coercive.model.NotificationTaskType;
 import ec.gob.gim.common.model.Resident;
 
+import javax.persistence.Query;
+import javax.sound.midi.Soundbank;
+
 @Name("notificationReport")
 public class NotificationReport extends EntityQuery<Notification> {
 
@@ -47,6 +50,11 @@ public class NotificationReport extends EntityQuery<Notification> {
 	
 	List<Notification> notifications;
 	
+	//macartuche 2019-11-26
+	List<Notification> notificationsNotPayed;
+	List<Notification> notificationsPayed;
+	
+	
 	public List<Notification> getNotifications() {
 		return notifications;
 	}
@@ -63,6 +71,49 @@ public class NotificationReport extends EntityQuery<Notification> {
 		notifications = super.getResultList();
 		return notifications;
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Notification> getBondsNotPayed(Long notificationId){				
+		String strQuery = "select mb from MunicipalBond mb "
+				+ "WHERE mb.notification.id=:id "
+				+ "AND mb.municipalBondStatus.id not in (6,11)";
+				
+		Query q = this.getEntityManager().createQuery(strQuery);		
+		q.setParameter("id", notificationId);
+		List<Notification> notPayed = (List<Notification>)q.getResultList();
+		System.out.println("id "+notificationId);
+		System.out.println("no pagadas "+notPayed.size());
+		return notPayed;			
+	}
+	
+	public boolean hasPendingPayment(Long notificationId) {
+		String strQuery = "select count(mb) from MunicipalBond mb " 
+				+ "WHERE mb.notification.id=:id " 
+				+ "AND mb.municipalBondStatus.id not in (6,11)";
+		Query q = this.getEntityManager().createQuery(strQuery);	
+		q.setParameter("id", notificationId);
+		Long total = (Long) q.getSingleResult();		
+		return (total.intValue() > 0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Notification> getBondsPayed(Long notificationId){
+		String strQuery = "select mb from MunicipalBond mb "
+				+ "WHERE mb.notification.id=:id "
+				+ "AND mb.municipalBondStatus.id in (6,11)";
+		
+		Query q = this.getEntityManager().createQuery(strQuery);
+		q.setParameter("id", notificationId);
+		
+		List<Notification> payed = (List<Notification>)q.getResultList();
+		System.out.println("pagadas");
+		System.out.println(getSelectedItemAsList());
+		System.out.println(payed.size());
+		return payed ;
+	}
+	
+	
 
 	public NotificationReport() {
 		setEjbql(EJBQL);
@@ -108,6 +159,20 @@ public class NotificationReport extends EntityQuery<Notification> {
 		notificationTaskType = systemParameterService.materialize(NotificationTaskType.class, "NOTIFICATION_LEGAL_NOTE");
 		return notificationTaskType;
 	}
-	
 
+	public List<Notification> getNotificationsNotPayed() {
+		return notificationsNotPayed;
+	}
+
+	public void setNotificationsNotPayed(List<Notification> notificationsNotPayed) {
+		this.notificationsNotPayed = notificationsNotPayed;
+	}
+
+	public List<Notification> getNotificationsPayed() {
+		return notificationsPayed;
+	}
+
+	public void setNotificationsPayed(List<Notification> notificationsPayed) {
+		this.notificationsPayed = notificationsPayed;
+	}		
 }

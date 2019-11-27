@@ -493,6 +493,8 @@ import ec.gob.gim.revenue.model.impugnment.Impugnment;
 				+ "mb.municipalBondType=:municipalBondType AND "
 				+ "mb.municipalBondStatus.id in (:municipalBondStatusIds) AND "
 				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
+				
+				+ "and mb.entry.isCollectible=true " //macartuche  
 				+ "ORDER BY mb.entry.id"),
 
 		@NamedQuery(name = "MunicipalBond.findExpiratedByResidentIdAndEntryIdAndAmount", query = "SELECT mb FROM MunicipalBond mb "
@@ -511,6 +513,8 @@ import ec.gob.gim.revenue.model.impugnment.Impugnment;
 				+ "mb.municipalBondType=:municipalBondType AND "
 				+ "mb.municipalBondStatus.id in (:municipalBondStatusIds) AND "
 				+ "mb.expirationDate <= :expirationDate AND mb.notification IS NULL AND mb.value >= :value "
+				
+				+ "and mb.entry.isCollectible=true " //macartuche
 				+ "ORDER BY mb.entry.id"),
 
 		@NamedQuery(name = "MunicipalBond.findByResidentIdAndEntryId", query = "SELECT mb FROM MunicipalBond mb LEFT JOIN FETCH mb.entry "

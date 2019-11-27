@@ -177,11 +177,15 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 			"mb.value >= #{residentWithMunicipalBondOutOfDateList.amount}",				
 			"mb.municipalBondType = #{residentWithMunicipalBondOutOfDateList.municipalBondType}",			
 			"mb.municipalBondStatus in #{residentWithMunicipalBondOutOfDateList.municipalBondStatusList}",
-			"mb.expirationDate <= #{residentWithMunicipalBondOutOfDateList.expirationDate} and mb.notification IS NULL",};
+			"mb.expirationDate <= #{residentWithMunicipalBondOutOfDateList.expirationDate} and mb.notification IS NULL"
+			+ " and entry.isCollectible=true",			
+			};			//macartuche 2019-11-25
 
 	public ResidentWithMunicipalBondOutOfDateList() {
 		setEjbql(EJBQL);		
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
+		
+		System.out.println(getRestrictionExpressionStrings());
 		//System.out.println("EJB:"+EJBQL);
 		//System.out.println("REstricciones"+RESTRICTIONS);
 		setOrder("sum(mb.value) DESC");
