@@ -309,6 +309,38 @@
 
 			</h:panelGrid>
 		</rich:panel>
+		
+		<h:outputText styleClass="separatorTitle"
+			value="#{messages['property.riskThreat']}" />
+
+		<rich:panel >
+			
+			<h:panelGrid rendered="#{propertySpecialHome.showRisk()}">
+				<s:decorate id="riskField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['property.risk']}:</ui:define>
+					<h:selectOneMenu value="#{propertySpecialHome.instance.risk}"
+						id="riskCmb">
+						<s:selectItems value="#{risks}" var="_risk"
+							label="#{_risk.id} - #{_risk.category}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+			</h:panelGrid>
+			
+			<h:panelGrid rendered="#{propertySpecialHome.showThreat()}">
+				<s:decorate id="threatField" template="../../layout/edit.xhtml" >
+					<ui:define name="label">#{messages['property.threat']}:</ui:define>
+					<h:selectOneMenu value="#{propertySpecialHome.instance.threat}"
+						id="threatCmb">
+						<s:selectItems value="#{threat}" var="_threat"
+							label="#{_threat.id} - #{_threat.category}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+			</h:panelGrid>
+		</rich:panel>
 
 		<h:outputText styleClass="separatorTitle"
 			value="#{messages['property.observations']}" />

@@ -169,6 +169,11 @@ public class PropertySpecialHome extends EntityHome<Property> {
 
 	// constructorrrr...................
 	private Property property;
+	
+	//macartuche
+	//2019-11-27
+	private String riskParameter="";
+	private String threatParamter="";
 
 	public Property getProperty() {
 		return property;
@@ -1063,6 +1068,14 @@ public class PropertySpecialHome extends EntityHome<Property> {
 		checkingRecordsForProperty = findCheckingRecordsForProperty();
 		//System.out.println("--sale de wire" + this.instance);
 
+		//macartuche 2019-11-27
+		//parametros para riesgo y amenaza
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SYSTEM_PARAMETER_SERVICE_NAME);
+				
+		this.riskParameter = (String) systemParameterService.findParameter("URBAN_PARISH_CODES");
+		this.threatParamter = (String) systemParameterService.findParameter("URBANPARISH_PARISH_CODES");
 	}
 
 	public void rusticWire() {
@@ -2567,5 +2580,13 @@ public class PropertySpecialHome extends EntityHome<Property> {
 			//System.out.println("error: no se completó la activación!!");
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean showRisk() {		 
+		return (riskParameter.indexOf(parish.getCode())!= -1);
+	}
+	
+	public boolean showThreat() {
+		return (threatParamter.indexOf(parish.getCode())!= -1);
 	}
 }

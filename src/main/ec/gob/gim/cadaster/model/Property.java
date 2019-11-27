@@ -470,9 +470,14 @@ public class Property {
 		
 	private String descriptionHorizontalProperty;
 	
-	//macartuche
-	private Long risk;
-	private Long threat;
+	//macartuche	
+	@ManyToOne
+	@JoinColumn(name = "risk_id")
+	private AffectationFactor risk;
+	
+	@ManyToOne
+	@JoinColumn(name = "threat_id")
+	private AffectationFactor threat;
 
 	public Property() {
 		this.propertyLandUses = new ArrayList<PropertyLandUse>();
@@ -1296,20 +1301,20 @@ public class Property {
 		this.descriptionHorizontalProperty = descriptionHorizontalProperty;
 	}
 
-	public Long getRisk() {
+	public AffectationFactor getRisk() {
 		return risk;
 	}
 
-	public void setRisk(Long risk) {
+	public void setRisk(AffectationFactor risk) {
 		this.risk = risk;
 	}
 
-	public Long getThreat() {
+	public AffectationFactor getThreat() {
 		return threat;
 	}
 
-	public void setThreat(Long threat) {
+	public void setThreat(AffectationFactor threat) {
 		this.threat = threat;
-	} 
-
+	}
+ 
 }

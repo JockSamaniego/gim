@@ -745,11 +745,11 @@ public class FactoryController  extends EntityController{
 	//macartuche
 	//emision2020
 	@SuppressWarnings("unchecked")
-	@Factory("risk")
+	@Factory("risks")
 	public List<AffectationFactor> loadRisk() {
 		Query query = this.getEntityManager().createNamedQuery(
 				"AffectationFactor.findByCategoryAndStatus");
-		query.setParameter("category", "RISK");
+		query.setParameter("code", "RISK");
 		query.setParameter("status", true);
 		List<AffectationFactor> list = query.getResultList();
 		System.out.println("============>"+list.size());
@@ -762,7 +762,7 @@ public class FactoryController  extends EntityController{
 	public List<AffectationFactor> loadThreat() {
 		Query query = this.getEntityManager().createNamedQuery(
 				"AffectationFactor.findByCategoryAndStatus");
-		query.setParameter("category", "THREAT");
+		query.setParameter("code", "THREAT");
 		query.setParameter("status", true);
 		return (List<AffectationFactor>) query.getResultList();
 	}

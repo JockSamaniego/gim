@@ -11,12 +11,16 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
+
 import ec.gob.gim.common.model.ItemCatalog;
 
 @Entity
 @TableGenerator(name = "AffectationFactorGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "AffectationFactor", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = { @NamedQuery(name = "AffectationFactor.findByCategoryAndStatus", 
 			query = "SELECT af FROM AffectationFactor af where af.type.code=:code and af.active=:status") })
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class AffectationFactor {
 
 	@Id
