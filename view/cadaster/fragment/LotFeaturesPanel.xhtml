@@ -88,17 +88,13 @@
 				</h:selectBooleanCheckbox>
 			</s:decorate>
 
-			<s:decorate id="fenceMaterialField"
+			<s:decorate id="riskField"
 				template="../../layout/edit.xhtml">
-				<ui:define name="label">#{messages['property.fenceMaterial']}:</ui:define>
-				<h:selectOneMenu value="#{propertyHome.instance.fenceMaterial}"
-					id="fenceMaterial"
-					disabled="#{not (propertyHome.instance.hasFrontFence or 
-                				propertyHome.instance.hasPerimeterFence)}"
-                	required="#{(propertyHome.instance.hasFrontFence or 
-                				propertyHome.instance.hasPerimeterFence)}">
-					<s:selectItems value="#{fenceMaterials}" var="_fenceMaterial"
-						label="#{_fenceMaterial.id} - #{_fenceMaterial.name}"
+				<ui:define name="label">Riesgo:</ui:define>
+				<h:selectOneMenu value="#{propertyHome.instance.risk}"
+					id="riskCmb">
+					<s:selectItems value="#{risks}" var="_risk"
+						label="#{_risk.id} - #{_risk.name}"
 						noSelectionLabel="#{messages['common.oneSelected']}" />
 					<s:convertEntity />
 				</h:selectOneMenu>

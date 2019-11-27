@@ -740,5 +740,15 @@ public class FactoryController  extends EntityController{
 		query.setParameter("endDateCurrentFiscalP", currentFiscalPeriod.getEndDate());
 		return query.getResultList();
 	}
-	
+
+	//macartuche
+	//emision2020
+	@SuppressWarnings("unchecked")
+	@Factory("risk")
+	public List<FenceMaterial> loadRisk() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"FenceMaterial.findAll");
+		return (List<FenceMaterial>) query.getResultList();
+	}
+
 }
