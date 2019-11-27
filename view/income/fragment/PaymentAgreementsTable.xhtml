@@ -24,7 +24,7 @@
 					<s:convertEntity />
 					<a:support event="onchange" eventsQueue="gimQueue"
 						ajaxSingle="true"
-						reRender="municipalBondsPanel, totalsPanel, msgRemission"
+						reRender="municipalBondsPanel, totalsPanel, msgRemission, dlgBtn"
 						action="#{paymentHome.calculateTotals}" focus="value" />
 				</h:selectOneMenu> -  
 		<h:outputText value=" #{messages[paymentHome.agreementType]}"
@@ -68,7 +68,8 @@
 		<h:panelGroup style="float:right;">
 			<a:commandButton id="dlgBtn" ajaxSingle="true"
 				eventsQueue="gimEventsQueue" value="Cuotas establecidas" 
-				oncomplete="Richfaces.showModalPanel('establishedFractionsPanel',{width:540, height:400})"/>
+				oncomplete="Richfaces.showModalPanel('establishedFractionsPanel',{width:540, height:400})"
+				rendered="#{paymentHome.paymentAgreement != null}"/>
 		</h:panelGroup>
 
 
