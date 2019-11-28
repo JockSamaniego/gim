@@ -97,6 +97,16 @@ public class NotificationReport extends EntityQuery<Notification> {
 		return (total.intValue() > 0);
 	}
 	
+	public boolean hasPayedBonds(Long notificationId) {
+		String strQuery = "select count(mb) from MunicipalBond mb " 
+				+ "WHERE mb.notification.id=:id " 
+				+ "AND mb.municipalBondStatus.id in (6,11)";
+		Query q = this.getEntityManager().createQuery(strQuery);	
+		q.setParameter("id", notificationId);
+		Long total = (Long) q.getSingleResult();		
+		return (total.intValue() > 0);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<Notification> getBondsPayed(Long notificationId){
 		String strQuery = "select mb from MunicipalBond mb "
