@@ -1,4 +1,4 @@
-	package ec.gob.gim.cadaster.model;
+package ec.gob.gim.cadaster.model;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,8 +19,8 @@ import ec.gob.gim.common.model.ItemCatalog;
 @Entity
 @TableGenerator(name = "AffectationFactorGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "AffectationFactor", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = { @NamedQuery(name = "AffectationFactor.findByCategoryAndStatus", 
+			query = "SELECT af FROM AffectationFactor af where af.type.code=:code and af.active=:status") })
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-			query = "SELECT af FROM AffectationFactor af where af.type.code=:category and af.active=:status") })
 public class AffectationFactor {
 
 	@Id
