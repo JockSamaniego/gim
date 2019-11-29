@@ -207,10 +207,10 @@
 
 		<rich:separator lineType="solid" height="2px" />
 
-		<h:panelGrid>
+		<!--  <h:panelGrid>
 			<s:decorate id="garbageCollectionField" template="../../layout/edit.xhtml">
 				<ui:define name="label">#{messages['garbageCollection']}:</ui:define>
-				<h:selectOneMenu value="#{propertySpecialHome.instance.garbageCollection}" required="true"
+				<h:selectOneMenu value="#{propertyHome.instance.garbageCollection}" required="true"
 					id="garbageCollection">
 					<s:selectItems value="#{garbageCollections}" var="_garbageCollection"
 						label="#{_garbageCollection.ordinal()+1} - #{messages[_garbageCollection.name()]}"
@@ -218,17 +218,31 @@
 					<s:convertEnum />
 				</h:selectOneMenu>
 			</s:decorate>
+		</h:panelGrid> -->
+		
+		<h:panelGrid>
+				<s:decorate id="garbageCollectionField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['garbageCollection']}:</ui:define>
+					<h:selectOneMenu value="#{propertyHome.instance.hasGarbageCollection}"
+						id="garbageCollection" required="true">
+						<s:selectItems value="#{garbagecollected}" var="_garbagecollected"
+							label="#{_garbagecollected.id} - #{_garbagecollected.category}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
 		</h:panelGrid>
+		
 
 		<h:outputText styleClass="separatorTitle"
 			value="#{messages['sidewalk']}" />
 
 		<rich:separator lineType="solid" height="2px" />
-
-		<h:panelGrid>
+		
+		<!--  <h:panelGrid>
 			<s:decorate id="sidewalkField" template="../../layout/edit.xhtml">
 				<ui:define name="label">#{messages['sidewalk']}:</ui:define>
-				<h:selectOneMenu value="#{propertySpecialHome.instance.sidewalk}" required="true"
+				<h:selectOneMenu value="#{propertyHome.instance.sidewalk}" required="true"
 					id="sidewalk">
 					<s:selectItems value="#{sidewalks}" var="_sidewalk"
 						label="#{_sidewalk.ordinal()+1} - #{messages[_sidewalk.name()]}"
@@ -236,6 +250,37 @@
 					<s:convertEnum />
 				</h:selectOneMenu>
 			</s:decorate>
+		</h:panelGrid> -->
+		
+		<h:panelGrid>
+				<s:decorate id="sidewalkField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['sidewalk']}:</ui:define>
+					<h:selectOneMenu value="#{propertyHome.instance.hasSidewalk}"
+						id="sidewalk" required="true">
+						<s:selectItems value="#{sidewalk}" var="_sidewalk"
+							label="#{_sidewalk.id} - #{_sidewalk.category}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+		</h:panelGrid>
+		
+		<h:outputText styleClass="separatorTitle"
+			value="#{messages['curb']}" />
+
+		<rich:separator lineType="solid" height="2px" />
+		
+		<h:panelGrid>
+				<s:decorate id="curbField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['curb']}:</ui:define>
+					<h:selectOneMenu value="#{propertyHome.instance.hasCurb}"
+						id="curb" required="true">
+						<s:selectItems value="#{curb}" var="_curb"
+							label="#{_curb.id} - #{_curb.category}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
 		</h:panelGrid>
 
 		<h:outputText styleClass="separatorTitle"
@@ -319,7 +364,7 @@
 				<s:decorate id="riskField" template="../../layout/edit.xhtml">
 					<ui:define name="label">#{messages['property.risk']}:</ui:define>
 					<h:selectOneMenu value="#{propertySpecialHome.instance.risk}"
-						id="riskCmb">
+						id="riskCmb" required="true">
 						<s:selectItems value="#{risks}" var="_risk"
 							label="#{_risk.id} - #{_risk.category}"
 							noSelectionLabel="#{messages['common.oneSelected']}" />
@@ -332,7 +377,7 @@
 				<s:decorate id="threatField" template="../../layout/edit.xhtml" >
 					<ui:define name="label">#{messages['property.threat']}:</ui:define>
 					<h:selectOneMenu value="#{propertySpecialHome.instance.threat}"
-						id="threatCmb">
+						id="threatCmb" required="true">
 						<s:selectItems value="#{threat}" var="_threat"
 							label="#{_threat.id} - #{_threat.category}"
 							noSelectionLabel="#{messages['common.oneSelected']}" />

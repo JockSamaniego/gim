@@ -1316,5 +1316,46 @@ public class Property {
 	public void setThreat(AffectationFactor threat) {
 		this.threat = threat;
 	}
- 
+	
+	//Modificacion para emision predial 2020
+		//Jock Samaniego
+		//27-11-2019
+	
+	@ManyToOne
+	@JoinColumn(name = "sidewalk_id")
+	private AffectationFactor hasSidewalk;
+	
+	@ManyToOne
+	@JoinColumn(name = "curb_id")
+	private AffectationFactor hasCurb;
+	
+	@ManyToOne
+	@JoinColumn(name = "garbagecollection_id")
+	private AffectationFactor hasGarbageCollection;
+
+	public AffectationFactor getHasSidewalk() {
+		return hasSidewalk;
+	}
+
+	public void setHasSidewalk(AffectationFactor hasSidewalk) {
+		this.hasSidewalk = hasSidewalk;
+	}
+
+	public AffectationFactor getHasCurb() {
+		return hasCurb;
+	}
+
+	public void setHasCurb(AffectationFactor hasCurb) {
+		this.hasCurb = hasCurb;
+	}
+
+	public AffectationFactor getHasGarbageCollection() {
+		return hasGarbageCollection;
+	}
+
+	public void setHasGarbageCollection(AffectationFactor hasGarbageCollection) {
+		this.hasGarbageCollection = hasGarbageCollection;
+	}
+		
+		
 }

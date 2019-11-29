@@ -766,5 +766,38 @@ public class FactoryController  extends EntityController{
 		query.setParameter("status", true);
 		return (List<AffectationFactor>) query.getResultList();
 	}
+	
+	//jock samaniego
+	//emision2020
+	
+	@SuppressWarnings("unchecked")
+	@Factory("sidewalk")
+	public List<AffectationFactor> hasSideWalk() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"AffectationFactor.findByCategoryAndStatus");
+		query.setParameter("code", "SIDEWALK");
+		query.setParameter("status", true);
+		return (List<AffectationFactor>) query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Factory("curb")
+	public List<AffectationFactor> hasCurb() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"AffectationFactor.findByCategoryAndStatus");
+		query.setParameter("code", "CURB");
+		query.setParameter("status", true);
+		return (List<AffectationFactor>) query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Factory("garbagecollected")
+	public List<AffectationFactor> hasGarbageCollected() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"AffectationFactor.findByCategoryAndStatus");
+		query.setParameter("code", "GARBAGE_COLLECT");
+		query.setParameter("status", true);
+		return (List<AffectationFactor>) query.getResultList();
+	}
 
 }
