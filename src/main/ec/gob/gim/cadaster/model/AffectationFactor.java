@@ -1,4 +1,4 @@
-	package ec.gob.gim.cadaster.model;
+package ec.gob.gim.cadaster.model;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
