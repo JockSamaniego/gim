@@ -215,7 +215,7 @@ public class EMoneyBean implements EMoney {
 
 	public DebtPaymentNotificationResponse debtPaymentNotification(String debtId, String amount, String transactionId,
 			String utfi, Date queryDate, String id, Date transDate, String idAgent) {
-		System.out.println("==============> METODO debtPaymentNotification");
+		/*System.out.println("==============> METODO debtPaymentNotification");
 		System.out.println("==============> debtId: " + debtId);
 		System.out.println("==============> amount: " + amount);
 		System.out.println("==============> transactionId: " + transactionId);
@@ -223,7 +223,7 @@ public class EMoneyBean implements EMoney {
 		System.out.println("==============> queryDate: " + queryDate);
 		System.out.println("==============> id: " + id);
 		System.out.println("==============> transDate: " + transDate);
-		System.out.println("==============> idAgent: " + idAgent);
+		System.out.println("==============> idAgent: " + idAgent);*/
 
 		DebtPaymentNotificationResponse response = new DebtPaymentNotificationResponse();
 		// valores por defecto

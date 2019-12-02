@@ -752,7 +752,7 @@ public class FactoryController  extends EntityController{
 		query.setParameter("code", "RISK");
 		query.setParameter("status", true);
 		List<AffectationFactor> list = query.getResultList();
-		System.out.println("============>"+list.size());
+		//System.out.println("============>"+list.size());
 		return list;
 	}
 	

@@ -2820,6 +2820,7 @@ public class PropertyHome extends EntityHome<Property> {
 			systemParameterService = ServiceLocator.getInstance().findResource(
 					SYSTEM_PARAMETER_SERVICE_NAME);
 		}
+
 		String role = systemParameterService.findParameter(roleKey);
 		if (role != null) {
 			return userSession.getUser().hasRole(role);

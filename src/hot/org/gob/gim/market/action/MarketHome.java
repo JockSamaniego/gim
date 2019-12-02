@@ -345,8 +345,8 @@ public class MarketHome extends EntityHome<Market> {
 
 	public void addConcession() {
 		if (resident != null) {
-			System.out
-					.println("=============>>>>>>>>>>>>>>>>>>> entra a agregar concession");
+			/*System.out
+					.println("=============>>>>>>>>>>>>>>>>>>> entra a agregar concession");*/
 			this.concession.setResident(resident);
 			this.getInstance().setCurrentConcession(this.concession);
 			this.getInstance().add(this.concession);
