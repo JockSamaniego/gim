@@ -1,5 +1,6 @@
 package org.gob.gim.coercive.action;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.jboss.seam.framework.EntityQuery;
 import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.coercive.model.NotificationTaskType;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.revenue.model.MunicipalBond;
 
 import javax.persistence.Query;
 import javax.sound.midi.Soundbank;
@@ -81,9 +83,7 @@ public class NotificationReport extends EntityQuery<Notification> {
 				
 		Query q = this.getEntityManager().createQuery(strQuery);		
 		q.setParameter("id", notificationId);
-		List<Notification> notPayed = (List<Notification>)q.getResultList();
-		System.out.println("id "+notificationId);
-		System.out.println("no pagadas "+notPayed.size());
+		List<Notification> notPayed = (List<Notification>)q.getResultList(); 
 		return notPayed;			
 	}
 	
@@ -98,6 +98,8 @@ public class NotificationReport extends EntityQuery<Notification> {
 	}
 	
 	public boolean hasPayedBonds(Long notificationId) {
+		
+		
 		String strQuery = "select count(mb) from MunicipalBond mb " 
 				+ "WHERE mb.notification.id=:id " 
 				+ "AND mb.municipalBondStatus.id in (6,11)";
@@ -105,7 +107,39 @@ public class NotificationReport extends EntityQuery<Notification> {
 		q.setParameter("id", notificationId);
 		Long total = (Long) q.getSingleResult();		
 		return (total.intValue() > 0);
+		
+		
+		
 	}
+	
+	private List<MunicipalBond> payedBonds=new ArrayList<MunicipalBond>();
+	private List<MunicipalBond> notPayedBonds=new ArrayList<MunicipalBond>();
+	private boolean isPending= Boolean.FALSE;
+	private boolean payed= Boolean.FALSE;
+	
+	public boolean hasPendingPayment(Notification notification) {
+		isPending= false;
+		payed=false;
+		
+		payedBonds.clear();
+		notPayedBonds.clear();
+		
+		for(MunicipalBond mb: notification.getMunicipalBonds()) {
+			if (mb.getMunicipalBondStatus().getId()==6 || 
+					mb.getMunicipalBondStatus().getId()==11) {
+				payed=true;
+				payedBonds.add(mb);
+			}else {
+				isPending=true;
+				notPayedBonds.add(mb);
+			}			
+		}
+		
+		return isPending;
+ 	
+	}
+	
+
 	
 	@SuppressWarnings("unchecked")
 	public List<Notification> getBondsPayed(Long notificationId){
@@ -184,5 +218,38 @@ public class NotificationReport extends EntityQuery<Notification> {
 
 	public void setNotificationsPayed(List<Notification> notificationsPayed) {
 		this.notificationsPayed = notificationsPayed;
-	}		
+	}
+
+	public List<MunicipalBond> getPayedBonds() {
+		return payedBonds;
+	}
+
+	public void setPayedBonds(List<MunicipalBond> payedBonds) {
+		this.payedBonds = payedBonds;
+	}
+
+	public List<MunicipalBond> getNotPayedBonds() {
+		return notPayedBonds;
+	}
+
+	public void setNotPayedBonds(List<MunicipalBond> notPayedBonds) {
+		this.notPayedBonds = notPayedBonds;
+	}
+
+	public boolean isPending() {
+		return isPending;
+	}
+
+	public void setPending(boolean isPending) {
+		this.isPending = isPending;
+	}
+
+	public boolean isPayed() {
+		return payed;
+	}
+
+	public void setPayed(boolean payed) {
+		this.payed = payed;
+	}
+  
 }
