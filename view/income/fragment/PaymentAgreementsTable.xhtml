@@ -8,54 +8,72 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
-
-	<s:decorate id="paymentAgreementField"
-		template="../../layout/edit.xhtml">
-		<ui:define name="label">#{messages['paymentAgreement.title']}:</ui:define>
-		<h:selectOneMenu id="paymentAgreement"
-			value="#{paymentHome.paymentAgreement}">
-			<s:selectItems value="#{paymentHome.paymentAgreements}"
-				var="paymentAgreement" label="#{paymentAgreement.description}"
-				noSelectionLabel="#{messages['common.choose']}" />
-			<s:convertEntity />
-			<a:support event="onchange" eventsQueue="gimQueue" ajaxSingle="true"
-				reRender="municipalBondsPanel, totalsPanel, msgRemission"
-				action="#{paymentHome.calculateTotals}" focus="value"/>
-		</h:selectOneMenu> -  
-		<h:outputText value=" #{messages[paymentHome.agreementType]}" 
-			style="font-size:13px; font-weight:bold;" ></h:outputText>
-	</s:decorate>
 	
-	<h:outputText value="El contribuyente debe cancelar todo el convenio!" 
-			style="font-size:30px; font-weight:bold; color: red" id="msgRemission" rendered="#{paymentHome.forcedToPayAll}"></h:outputText>
+	<ui:include src="../dialogs/EstablishedFractions.xhtml" />
 
-	<s:decorate id="valueField" template="../../layout/edit.xhtml"  rendered="#{!paymentHome.agreementsBtn}">
-		<ui:define name="label">#{messages['payment.value']}:</ui:define>
-		<h:inputText id="value" value="#{paymentHome.depositTotal}"
-			styleClass="right"
-			style="font-size:16px; font-weight:bold; #{paymentHome.hasConflict ? 'color:red;' : 'color:green'}"
-			disabled="#{paymentHome.paymentAgreement == null}">
-			<f:convertNumber
-				maxFractionDigits="#{messages['common.maxFractionDigits']}"
-				minFractionDigits="#{messages['common.minFractionDigits']}" />
-			<a:support event="onblur" eventsQueue="gimQueue"
-				action="#{paymentHome.generateDeposits}"
-				reRender="totalsPanel, decreaseDepositBtn, increaseDepositBtn, agreementBondsTable" />
-		</h:inputText>
-		<a:commandButton id="decreaseDepositBtn"
-			action="#{paymentHome.decrease}" ajaxSingle="true"
-			eventsQueue="gimEventsQueue"
-			value="#{messages['deposit.decrease']} #{paymentHome.deltaDown}"
-			rendered="#{paymentHome.hasConflict}"
-			reRender="totalsPanel, decreaseDepositBtn, increaseDepositBtn, agreementBondsTable" />
-		<a:commandButton id="increaseDepositBtn"
-			action="#{paymentHome.increase}" ajaxSingle="true"
-			eventsQueue="gimEventsQueue"
-			value="#{messages['deposit.increase']} #{paymentHome.deltaUp}"
-			rendered="#{paymentHome.hasConflict}"
-			reRender="totalsPanel, decreaseDepositBtn, increaseDepositBtn, agreementBondsTable" />
-	</s:decorate>
+	<h:panelGrid columns="2" width="100%">
+		<h:panelGroup>
+			<s:decorate id="paymentAgreementField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['paymentAgreement.title']}:</ui:define>
+				<h:selectOneMenu id="paymentAgreement"
+					value="#{paymentHome.paymentAgreement}">
+					<s:selectItems value="#{paymentHome.paymentAgreements}"
+						var="paymentAgreement" label="#{paymentAgreement.description}"
+						noSelectionLabel="#{messages['common.choose']}" />
+					<s:convertEntity />
+					<a:support event="onchange" eventsQueue="gimQueue"
+						ajaxSingle="true"
+						reRender="municipalBondsPanel, totalsPanel, msgRemission, dlgBtn"
+						action="#{paymentHome.calculateTotals}" focus="value" />
+				</h:selectOneMenu> -  
+		<h:outputText value=" #{messages[paymentHome.agreementType]}"
+					style="font-size:13px; font-weight:bold;"></h:outputText>
+			</s:decorate>
 
+			<h:outputText
+				value="El contribuyente debe cancelar todo el convenio!"
+				style="font-size:30px; font-weight:bold; color: red"
+				id="msgRemission" rendered="#{paymentHome.forcedToPayAll}"></h:outputText>
+
+			<s:decorate id="valueField" template="../../layout/edit.xhtml"
+				rendered="#{!paymentHome.agreementsBtn}">
+				<ui:define name="label">#{messages['payment.value']}:</ui:define>
+				<h:inputText id="value" value="#{paymentHome.depositTotal}"
+					styleClass="right"
+					style="font-size:16px; font-weight:bold; #{paymentHome.hasConflict ? 'color:red;' : 'color:green'}"
+					disabled="#{paymentHome.paymentAgreement == null}">
+					<f:convertNumber
+						maxFractionDigits="#{messages['common.maxFractionDigits']}"
+						minFractionDigits="#{messages['common.minFractionDigits']}" />
+					<a:support event="onblur" eventsQueue="gimQueue"
+						action="#{paymentHome.generateDeposits}"
+						reRender="totalsPanel, decreaseDepositBtn, increaseDepositBtn, agreementBondsTable" />
+				</h:inputText>
+				<a:commandButton id="decreaseDepositBtn"
+					action="#{paymentHome.decrease}" ajaxSingle="true"
+					eventsQueue="gimEventsQueue"
+					value="#{messages['deposit.decrease']} #{paymentHome.deltaDown}"
+					rendered="#{paymentHome.hasConflict}"
+					reRender="totalsPanel, decreaseDepositBtn, increaseDepositBtn, agreementBondsTable" />
+				<a:commandButton id="increaseDepositBtn"
+					action="#{paymentHome.increase}" ajaxSingle="true"
+					eventsQueue="gimEventsQueue"
+					value="#{messages['deposit.increase']} #{paymentHome.deltaUp}"
+					rendered="#{paymentHome.hasConflict}"
+					reRender="totalsPanel, decreaseDepositBtn, increaseDepositBtn, agreementBondsTable" />
+			</s:decorate>
+		</h:panelGroup>
+
+		<h:panelGroup style="float:right;">
+			<a:commandButton id="dlgBtn" ajaxSingle="true"
+				eventsQueue="gimEventsQueue" value="Cuotas establecidas" 
+				oncomplete="Richfaces.showModalPanel('establishedFractionsPanel',{width:540, height:400})"
+				rendered="#{paymentHome.paymentAgreement != null}"/>
+		</h:panelGroup>
+
+
+	</h:panelGrid>
 
 	<rich:dataTable id="agreementBondsTable"
 		value="#{paymentHome.municipalBonds}" var="_municipalBond"
@@ -72,7 +90,8 @@
 			</rich:columnGroup>
 		</f:facet>
 
-		<rich:column styleClass="left entryTitle" rowspan="2" colspan="2" width="40%">
+		<rich:column styleClass="left entryTitle" rowspan="2" colspan="2"
+			width="40%">
 			<h:outputText
 				value="#{_municipalBond.entry.name} - #{_municipalBond.transformedServiceDate}" />
 			<br />
@@ -94,12 +113,12 @@
 			<h:outputText style="font-weight:normal;"
 				value="#{messages['municipalBond.interestsTotal']}" />
 		</rich:column>
-		
+
 		<rich:column styleClass="center entryTitle">
 			<h:outputText style="font-weight:normal;"
 				value="#{messages['municipalBond.surcharges']}" />
 		</rich:column>
-		
+
 		<rich:column styleClass="center entryTitle">
 			<h:outputText style="font-weight:normal;"
 				value="#{messages['municipalBond.discounts']}" />
@@ -115,8 +134,9 @@
 				value="#{messages['municipalBond.paidTotal']}" />
 		</rich:column>
 
-		<rich:column styleClass="right entryTitle" breakBefore="true" width="10%">
-			<h:outputText value="#{_municipalBond.value}" >
+		<rich:column styleClass="right entryTitle" breakBefore="true"
+			width="10%">
+			<h:outputText value="#{_municipalBond.value}">
 				<f:convertNumber
 					maxFractionDigits="#{messages['common.maxFractionDigits']}"
 					minFractionDigits="#{messages['common.minFractionDigits']}" />
@@ -181,7 +201,8 @@
 				<h:outputText value="#{_deposit.number}" />
 			</rich:column>
 			<rich:column
-				styleClass="center #{_deposit.id == null ? 'groupingTitle' : ''}" width="38%">
+				styleClass="center #{_deposit.id == null ? 'groupingTitle' : ''}"
+				width="38%">
 				<f:facet name="header">#{messages['deposit.date']}</f:facet>
 				<h:outputText value="#{_deposit.date}">
 					<f:convertDateTime pattern="yyyy-MM-dd" />
@@ -215,7 +236,7 @@
 						minFractionDigits="#{messages['common.minFractionDigits']}" />
 				</h:outputText>
 			</rich:column>
-			
+
 			<rich:column
 				styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
 				<f:facet name="header">#{messages['deposit.surcharge']}</f:facet>
@@ -235,7 +256,7 @@
 						minFractionDigits="#{messages['common.minFractionDigits']}" />
 				</h:outputText>
 			</rich:column>
-			
+
 			<rich:column
 				styleClass="right #{_deposit.id == null ? 'groupingTitle' : ''}">
 				<f:facet name="header">#{messages['deposit.paidTaxes']}</f:facet>
