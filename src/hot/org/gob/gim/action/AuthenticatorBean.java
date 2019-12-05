@@ -96,8 +96,7 @@ public class AuthenticatorBean implements Authenticator {
 			return false;
 		}
 
-		log.info("USUARIO OBTENIDO ---> " + user.getName() + " "
-				+ user.getPassword());
+		//log.info("USUARIO OBTENIDO ---> " + user.getName() + " "				+ user.getPassword());
 		Boolean isSuccessfullyRegistered = gim.registerSession(user);
 		if (!isSuccessfullyRegistered) {
 			facesMessages.addFromResourceBundle(
@@ -222,12 +221,12 @@ public class AuthenticatorBean implements Authenticator {
 					.getRequest();
 			ip = request.getHeader("X-Forwarded-For");
 			if (isIPAddress(ip)) {
-				System.out.println("IP Return:" + ip);
+				//System.out.println("IP Return:" + ip);
 				//System.out.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: " + ip);
 				return ip;
 			} else {
 				ip = request.getRemoteAddr();
-				System.out.println("RemoteAddr:" + ip);
+				//System.out.println("RemoteAddr:" + ip);
 				//System.out.println("::::::::::::::::::::::::::::::::::::::machine ip found:::::::::::::::::::::::::::::::::::::: " + ip);
 				return ip;
 			}

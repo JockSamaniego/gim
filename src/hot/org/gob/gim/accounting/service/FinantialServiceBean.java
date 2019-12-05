@@ -672,7 +672,7 @@ public class FinantialServiceBean implements FinantialService{
 				statuses = getVoidStatuses();
 			} else {
 				if(reportType == ReportType.QUOTAS_LIQUIDATION){
-					System.out.println(QUOTAS_LIQUIDATION_REPORT);
+					//System.out.println(QUOTAS_LIQUIDATION_REPORT);
 					query = entityManager.createNativeQuery(QUOTAS_LIQUIDATION_REPORT);
 					statuses = getPaidStatuses();
 					query.setParameter("emisionStartDate", emisionStartDate);
@@ -708,7 +708,7 @@ public class FinantialServiceBean implements FinantialService{
 						}else{
 							if(reportType == ReportType.SUBSCRIPTION){
 
-								System.out.println(SUBSCRIPTION_REPORT);
+								//System.out.println(SUBSCRIPTION_REPORT);
 								query = entityManager.createNativeQuery(SUBSCRIPTION_REPORT);
 								statuses = getSubscriptionStatuses();
 								query.setParameter("emisionStartDate", emisionStartDate);

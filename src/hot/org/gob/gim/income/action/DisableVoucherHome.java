@@ -195,13 +195,13 @@ public class DisableVoucherHome extends EntityHome<Object> {
 			Map<String, String> responseServer = new ObjectMapper().readValue(responseJson.toString(), HashMap.class);
 			String status = responseServer.get("respuesta");
 			if (status.equals("ok")) {
-				System.out.println(responseServer.get("modificados"));
+				//System.out.println(responseServer.get("modificados"));
 				String modified = responseServer.get("modificados");
 				message +="REVERSADOS EN GIM: "+contGim+" \n\n";
 				message +="REVERSADOS EN FACTURACIÓN ELECTRÓNICA: "+modified+" \n";
 			}
 			
-			System.out.println(message);
+			//System.out.println(message);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

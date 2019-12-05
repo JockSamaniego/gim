@@ -187,7 +187,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
                 selectAllItemsR(mbi2,o+"-");                
             }
         }
-        System.out.println(o+":"+mbi.toString());
+        //System.out.println(o+":"+mbi.toString());
         mbi.setIsSelectedNoR(allBondsSelected ? Boolean.TRUE : Boolean.FALSE);
     }
 
@@ -401,19 +401,16 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 
     @SuppressWarnings("unchecked")
     public void findBondsDownStatusByDates() {
-        System.out
-                .println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr ingreso a findBondsDownStatusByDates");
+        //System.out                .println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr ingreso a findBondsDownStatusByDates");
         total = BigDecimal.ZERO;
         bonds.clear();
         bondsDownStatusByAccount.clear();
-        System.out
-                .println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr clear bonds");
+        //System.out                .println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr clear bonds");
         Query query = this.getEntityManager().createNamedQuery(
                 "StatusChange.findBondsDownStatusByDates");
         query.setParameter("startDate", startDate);
         query.setParameter("endDate", endDate);
-        System.out
-                .println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr prepare query");
+        //System.out                .println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr prepare query");
         bonds = query.getResultList();
 //		int maxResults = 1000;
 //		int initialResults = -1;
@@ -431,8 +428,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
             // total.add(row.getValue()).add(row.getTaxesTotal()).subtract(row.getDiscount());
             total = total.add(row.getValue()).add(row.getTaxesTotal());
         }
-        System.out
-                .println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr exit procedure");
+        //System.out                .println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr exit procedure");
     }
 
     @SuppressWarnings("unchecked")

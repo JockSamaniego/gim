@@ -1541,7 +1541,7 @@ public class PropertyHome extends EntityHome<Property> {
 	 * @return List<BlockLimit>
 	 */
 	public List<BlockLimit> populateLimits() {
-		logger.info("========= Ingreso a populateLimits(), con instance");
+		//logger.info("========= Ingreso a populateLimits(), con instance");
 		// block: #0",
 		// this.getInstance().getBlock().getId());
 		if (this.getInstance().getBlock() != null
@@ -1563,8 +1563,7 @@ public class PropertyHome extends EntityHome<Property> {
 	}
 
 	public void setOwnerCurrentDomain(Resident owner) {
-		logger.info("=====> Ingreso a fijar propietario #0",
-				owner.getIdentificationNumber());
+		//logger.info("=====> Ingreso a fijar propietario #0",				owner.getIdentificationNumber());
 		this.owner = owner;
 		owner.add(this.getInstance().getCurrentDomain());
 
@@ -1646,7 +1645,7 @@ public class PropertyHome extends EntityHome<Property> {
 	}
 
 	public void addPropertyLandUse() {
-		logger.info("======= INGRESO A AGREGAR PropertyLandUse", this);
+		//logger.info("======= INGRESO A AGREGAR PropertyLandUse", this);
 		getInstance().add(new PropertyLandUse());
 	}
 

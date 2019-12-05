@@ -1424,7 +1424,7 @@ public class PropertySpecialHome extends EntityHome<Property> {
 	}
 
 	public void setOwnerCurrentDomain(Resident owner) {
-		logger.info("=====> Ingreso a fijar propietario #0", owner.getIdentificationNumber());
+		//logger.info("=====> Ingreso a fijar propietario #0", owner.getIdentificationNumber());
 		this.owner = owner;
 		owner.add(this.getInstance().getCurrentDomain());
 

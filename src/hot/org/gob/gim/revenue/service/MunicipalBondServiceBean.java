@@ -1143,8 +1143,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			if (factHandles.size() > 0) {
 				// System.out.println("RULES DEBUG -----> Firing all rules ");
 				int firedRules = session.fireAllRules();
-				 System.out.println("RULES DEBUG -----> Rules applied " +
-				 firedRules);
+				 //System.out.println("RULES DEBUG -----> Rules applied " +				 firedRules);
 			}
 
 			for (FactHandle factHandle : factHandles) {
@@ -1231,9 +1230,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		try {
 			taxpayerRecord = (TaxpayerRecord) query.getSingleResult();
 		} catch (Exception e) {
-			System.out
+			/*System.out
 					.println("WARNING: There is no or there is more than one active taxpayer record for entry "
-							+ entryId + " selecting default issuer");
+							+ entryId + " selecting default issuer");*/
 		}
 
 		if (taxpayerRecord == null) {

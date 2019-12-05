@@ -127,7 +127,7 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 	public void callSP(){
 		if(this.paymentAgreementSelected != null){
 			String query = "SELECT * FROM sp_paymentagreement_lower_percentege( "+this.paymentAgreementSelected.getId()+") ";
-			System.out.println(query);
+			//System.out.println(query);
 			Query q = getEntityManager().createNativeQuery(query);
 //			q.setParameter(0, this.paymentAgreementSelected.getId());
 			
@@ -192,11 +192,11 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 		//actualizar valores existentes en la bd
 
 		for (MunicipalbondAux municipalbondAux : this.bdList) {
-			System.out.println(municipalbondAux.getId()+" | "+municipalbondAux.getBalance()+" | "+
+			/*System.out.println(municipalbondAux.getId()+" | "+municipalbondAux.getBalance()+" | "+
 								municipalbondAux.getCoveritem()+" | "+
 								municipalbondAux.getLiquidationDate()+" | "+ municipalbondAux.getLiquidationTime()+" | "+
 								municipalbondAux.getPayValue()+" | "+municipalbondAux.getDeposit().getId()+" | "+
-								municipalbondAux.getMunicipalbond().getId()+" | "+municipalbondAux.getAnotherItem());
+								municipalbondAux.getMunicipalbond().getId()+" | "+municipalbondAux.getAnotherItem());*/
 			getEntityManager().merge(municipalbondAux);
 			getEntityManager().flush();
 		}
@@ -204,11 +204,11 @@ public class PaymentAgreementProcessHome extends EntityHome<MunicipalbondAux> im
 		//System.out.println("----------------------------------");
 		//insertar valores nuevos
 		for (MunicipalbondAux municipalbondAux : auxList) {
-			System.out.println(municipalbondAux.getId()+" | "+municipalbondAux.getBalance()+" | "+
+			/*System.out.println(municipalbondAux.getId()+" | "+municipalbondAux.getBalance()+" | "+
 					municipalbondAux.getCoveritem()+" | "+
 					municipalbondAux.getLiquidationDate()+" | "+ municipalbondAux.getLiquidationTime()+" | "+
 					municipalbondAux.getPayValue()+" | "+municipalbondAux.getDeposit().getId()+" | "+
-					municipalbondAux.getMunicipalbond().getId()+" | "+municipalbondAux.getAnotherItem());
+					municipalbondAux.getMunicipalbond().getId()+" | "+municipalbondAux.getAnotherItem());*/
 			getEntityManager().persist(municipalbondAux);
 			getEntityManager().flush();
 	 

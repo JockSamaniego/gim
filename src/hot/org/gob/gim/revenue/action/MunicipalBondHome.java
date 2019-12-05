@@ -194,8 +194,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		try {
 			municipalBondService.updateGroupingCode(bondsNumbers, groupingCode);
 		} catch (Exception e) {
-			logger.error(":::::::::::::::::::::::::::::exception:::::::::::::::::::::::: "
-					+ e.getMessage());
+			//logger.error(":::::::::::::::::::::::::::::exception:::::::::::::::::::::::: "					+ e.getMessage());
 			addFacesMessageFromResourceBundle("common.updateError");
 			return "error";
 		}
@@ -225,7 +224,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	}
 
 	public void search() {
-		logger.info("RESIDENT CHOOSER CRITERIA " + this.criteria);
+		//logger.info("RESIDENT CHOOSER CRITERIA " + this.criteria);
 		Query query = getEntityManager().createNamedQuery(
 				"Resident.findByIdentificationNumber");
 		query.setParameter("identificationNumber", this.identificationNumber);
@@ -241,7 +240,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 	@SuppressWarnings("unchecked")
 	public void searchByCriteria() {
-		logger.info("SEARCH BY CRITERIA " + this.criteria);
+		//logger.info("SEARCH BY CRITERIA " + this.criteria);
 		if (this.criteria != null && !this.criteria.isEmpty()) {
 			Query query = getEntityManager().createNamedQuery(
 					"Resident.findByCriteria");
@@ -345,9 +344,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						return;
 					}
 				}
-				logger.info("====> VALOR INGRESADO: #0, con fecha: #1 ",
-						entryValueItem.getMainValue(),
-						entryValueItem.getServiceDate());
+				//logger.info("====> VALOR INGRESADO: #0, con fecha: #1 ",						entryValueItem.getMainValue(),						entryValueItem.getServiceDate());
 				entryValueItem.setExempt(this.getInstance().getExempt());
 				entryValueItem.setInternalTramit(this.getInstance()
 						.getInternalTramit());
@@ -365,8 +362,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						groupingCode = adjunct != null ? adjunct.getCode()
 								: groupingCode;
 					}
-					logger.info("EMITIENDO -----> GroupingCode: "
-							+ groupingCode);
+					//logger.info("EMITIENDO -----> GroupingCode: "							+ groupingCode);
 				}
 				MunicipalBond mb = revenueService.createMunicipalBond(
 						instance.getResident(), entry, fiscalPeriod,
@@ -390,7 +386,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 						e.getMessage());
 			}
 		}
-		logger.info("====> MunicipalBonds Size: #0 ", municipalBonds.size());		
+		//logger.info("====> MunicipalBonds Size: #0 ", municipalBonds.size());		
 	}
 
 	public List<Long> getSelectedBondsIds() {
@@ -429,7 +425,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			setIdentificationNumber(null);
 			setEntryCode(null);
 			Conversation.instance().leave();
-			logger.info("VALORES FIJADOS A NULL");
+			//logger.info("VALORES FIJADOS A NULL");
 			addFacesMessageFromResourceBundle("municipalBond.persited");
 			this.cleanList();
 			persisted = "persisted";
@@ -440,8 +436,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			StatusMessages.instance().add(Severity.ERROR,
 					"ERROR al persitir el(los) titulo(s) de credito(s): #0",
 					e.getMessage());
-			logger.error(
-					"===> ERROR AL PERSISTIR EL TITULO DE CREDITO :( == #0", e);
+			//logger.error(					"===> ERROR AL PERSISTIR EL TITULO DE CREDITO :( == #0", e);
 			e.printStackTrace();
 		}
 		return persisted;
@@ -455,7 +450,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		try {
 			Resident resident = (Resident) query.getSingleResult();
 			findPendingAlerts(resident.getId());
-			logger.info("RESIDENT CHOOSER ACTION " + resident.getName());
+			//logger.info("RESIDENT CHOOSER ACTION " + resident.getName());
 
 			this.getInstance().setResident(resident);
 			cleanList();
@@ -531,7 +526,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			}
 
 			if (entry != null) {
-				logger.info("Entry found... " + entry.getName());
+				//logger.info("Entry found... " + entry.getName());
 				cleanList();
 				this.entry = entry;
 				this.instance.setEntry(entry);
@@ -599,7 +594,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 	@SuppressWarnings("unchecked")
 	public void searchResidentByCriteria() {
-		logger.info("SEARCH RESIDENT BY CRITERIA " + this.criteria);
+		//logger.info("SEARCH RESIDENT BY CRITERIA " + this.criteria);
 		if (this.criteria != null && !this.criteria.isEmpty()) {
 			Query query = getEntityManager().createNamedQuery(
 					"Resident.findByCriteria");
@@ -618,7 +613,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 	@SuppressWarnings("unchecked")
 	public void searchEntryByCriteria() {
-		logger.info("SEARCH Entry BY CRITERIA " + this.criteriaEntry);
+		//logger.info("SEARCH Entry BY CRITERIA " + this.criteriaEntry);
 		if (this.criteriaEntry != null && !this.criteriaEntry.isEmpty()) {
 
 			findEmisorRole();
@@ -726,7 +721,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	public void wire() {
 		if (!isFirstTime)
 			return;
-		logger.info("...... Ingreso al wire");
+		//logger.info("...... Ingreso al wire");
 		if (getInstance().getId() != null || isFromUrbanProperty) {
 			if (getInstance().getResident() != null)
 				setIdentificationNumber(getInstance().getResident()

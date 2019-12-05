@@ -449,18 +449,15 @@ public class AppraisalServiceBean implements AppraisalService {
 
 				totalBuildingAppraisal = totalBuildingAppraisal
 						.add(buildingAppraisal);
-				System.out.println("======= totalBuildingAppraisal : "
-						+ totalBuildingAppraisal);
+				//System.out.println("======= totalBuildingAppraisal : "						+ totalBuildingAppraisal);
 			}
 
 			if ((property.getBuildingAliquot().floatValue() >= 0)
 					&& (property.getBuildingAliquot().floatValue() < 100)) {
 				totalBuildingAppraisal = totalBuildingAppraisal.multiply(
 						property.getBuildingAliquot()).divide(cienBigD);
-				System.out.println("======= Building Aliquot: "
-						+ property.getBuildingAliquot());
-				System.out.println("======= totalBuildingAppraisal Aliquot: "
-						+ totalBuildingAppraisal);
+				//System.out.println("======= Building Aliquot: "						+ property.getBuildingAliquot());
+				//System.out.println("======= totalBuildingAppraisal Aliquot: "						+ totalBuildingAppraisal);
 			}
 
 			totalBuildingAppraisal = totalBuildingAppraisal.setScale(2,
