@@ -183,6 +183,11 @@ public class PropertyHome extends EntityHome<Property> {
 
 	private CadastralCertificateDTO _dataCadastralCerfificate;
 	
+	//macartuche
+	//2019-11-27
+	private String riskParameter="";
+	private String threatParamter="";
+	
 	public Property getProperty() {
 		return property;
 	}
@@ -1170,6 +1175,15 @@ public class PropertyHome extends EntityHome<Property> {
 		checkingRecordsForProperty = findCheckingRecordsForProperty();
 		// System.out.println("--sale de wire" + this.instance);
 
+		//macartuche 2019-11-27
+		//parametros para riesgo y amenaza
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SYSTEM_PARAMETER_SERVICE_NAME);
+		
+		this.riskParameter = (String) systemParameterService.findParameter("URBAN_PARISH_CODES");
+		this.threatParamter = (String) systemParameterService.findParameter("URBANPARISH_PARISH_CODES");
+		
 	}
 
 	public void rusticWire() {
@@ -2806,6 +2820,7 @@ public class PropertyHome extends EntityHome<Property> {
 			systemParameterService = ServiceLocator.getInstance().findResource(
 					SYSTEM_PARAMETER_SERVICE_NAME);
 		}
+
 		String role = systemParameterService.findParameter(roleKey);
 		if (role != null) {
 			return userSession.getUser().hasRole(role);
@@ -2921,5 +2936,12 @@ public class PropertyHome extends EntityHome<Property> {
 			return new ArrayList<BuildingDTO>();
 		}
 	}
-		
+
+	public boolean showRisk() {		 
+		return (riskParameter.indexOf(parish.getCode())!= -1);
+	}
+	
+	public boolean showThreat() {
+		return (threatParamter.indexOf(parish.getCode())!= -1);
+	}
 }

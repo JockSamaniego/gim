@@ -469,6 +469,15 @@ public class Property {
 	private BigDecimal lotAreaHorizontalProperty;
 		
 	private String descriptionHorizontalProperty;
+	
+	//macartuche	
+	@ManyToOne
+	@JoinColumn(name = "risk_id")
+	private AffectationFactor risk;
+	
+	@ManyToOne
+	@JoinColumn(name = "threat_id")
+	private AffectationFactor threat;
 
 	public Property() {
 		this.propertyLandUses = new ArrayList<PropertyLandUse>();
@@ -1290,6 +1299,63 @@ public class Property {
 
 	public void setDescriptionHorizontalProperty(String descriptionHorizontalProperty) {
 		this.descriptionHorizontalProperty = descriptionHorizontalProperty;
-	} 
+	}
+
+	public AffectationFactor getRisk() {
+		return risk;
+	}
+
+	public void setRisk(AffectationFactor risk) {
+		this.risk = risk;
+	}
+
+	public AffectationFactor getThreat() {
+		return threat;
+	}
+
+	public void setThreat(AffectationFactor threat) {
+		this.threat = threat;
+	}
+	
+	//Modificacion para emision predial 2020
+		//Jock Samaniego
+		//27-11-2019
+	
+	@ManyToOne
+	@JoinColumn(name = "sidewalk_id")
+	private AffectationFactor hasSidewalk;
+	
+	@ManyToOne
+	@JoinColumn(name = "curb_id")
+	private AffectationFactor hasCurb;
+	
+	@ManyToOne
+	@JoinColumn(name = "garbagecollection_id")
+	private AffectationFactor hasGarbageCollection;
+
+	public AffectationFactor getHasSidewalk() {
+		return hasSidewalk;
+	}
+
+	public void setHasSidewalk(AffectationFactor hasSidewalk) {
+		this.hasSidewalk = hasSidewalk;
+	}
+
+	public AffectationFactor getHasCurb() {
+		return hasCurb;
+	}
+
+	public void setHasCurb(AffectationFactor hasCurb) {
+		this.hasCurb = hasCurb;
+	}
+
+	public AffectationFactor getHasGarbageCollection() {
+		return hasGarbageCollection;
+	}
+
+	public void setHasGarbageCollection(AffectationFactor hasGarbageCollection) {
+		this.hasGarbageCollection = hasGarbageCollection;
+	}
+		
 		
 }

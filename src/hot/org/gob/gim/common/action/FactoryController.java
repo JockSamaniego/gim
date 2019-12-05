@@ -18,6 +18,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.framework.EntityController;
 
+import ec.gob.gim.cadaster.model.AffectationFactor;
 import ec.gob.gim.cadaster.model.CompassPoint;
 import ec.gob.gim.cadaster.model.DispatchReasonType;
 import ec.gob.gim.cadaster.model.ExternalFinishing;
@@ -740,5 +741,63 @@ public class FactoryController  extends EntityController{
 		query.setParameter("endDateCurrentFiscalP", currentFiscalPeriod.getEndDate());
 		return query.getResultList();
 	}
+
+	//macartuche
+	//emision2020
+	@SuppressWarnings("unchecked")
+	@Factory("risks")
+	public List<AffectationFactor> loadRisk() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"AffectationFactor.findByCategoryAndStatus");
+		query.setParameter("code", "RISK");
+		query.setParameter("status", true);
+		List<AffectationFactor> list = query.getResultList();
+		//System.out.println("============>"+list.size());
+		return list;
+	}
 	
+	
+	@SuppressWarnings("unchecked")
+	@Factory("threat")
+	public List<AffectationFactor> loadThreat() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"AffectationFactor.findByCategoryAndStatus");
+		query.setParameter("code", "THREAT");
+		query.setParameter("status", true);
+		return (List<AffectationFactor>) query.getResultList();
+	}
+	
+	//jock samaniego
+	//emision2020
+	
+	@SuppressWarnings("unchecked")
+	@Factory("sidewalk")
+	public List<AffectationFactor> hasSideWalk() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"AffectationFactor.findByCategoryAndStatus");
+		query.setParameter("code", "SIDEWALK");
+		query.setParameter("status", true);
+		return (List<AffectationFactor>) query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Factory("curb")
+	public List<AffectationFactor> hasCurb() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"AffectationFactor.findByCategoryAndStatus");
+		query.setParameter("code", "CURB");
+		query.setParameter("status", true);
+		return (List<AffectationFactor>) query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Factory("garbagecollected")
+	public List<AffectationFactor> hasGarbageCollected() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"AffectationFactor.findByCategoryAndStatus");
+		query.setParameter("code", "GARBAGE_COLLECT");
+		query.setParameter("status", true);
+		return (List<AffectationFactor>) query.getResultList();
+	}
+
 }

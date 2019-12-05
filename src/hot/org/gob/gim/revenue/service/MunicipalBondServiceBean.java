@@ -1647,9 +1647,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 						+ cr.getInterest());
 				if (cr.getInterest().compareTo(BigDecimal.ZERO) == 1) {
 					municipalBond.setInterest(cr.getInterest());
-					System.out.println("=======================>"
+					/*System.out.println("=======================>"
 							+ receipt.toString() + " interest CR: "
-							+ cr.getInterest());
+							+ cr.getInterest());*/
 				}
 			}
 		}
