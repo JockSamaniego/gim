@@ -184,8 +184,8 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 	public ResidentWithMunicipalBondOutOfDateList() {
 		setEjbql(EJBQL);		
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
-		
-		System.out.println(getRestrictionExpressionStrings());
+
+		//System.out.println(getRestrictionExpressionStrings());
 		//System.out.println("EJB:"+EJBQL);
 		//System.out.println("REstricciones"+RESTRICTIONS);
 		setOrder("sum(mb.value) DESC");
