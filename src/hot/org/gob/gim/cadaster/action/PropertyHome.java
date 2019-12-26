@@ -2938,10 +2938,12 @@ public class PropertyHome extends EntityHome<Property> {
 	}
 
 	public boolean showRisk() {		 
+		if(parish == null) return false; 
 		return (riskParameter.indexOf(parish.getCode())!= -1);
 	}
 	
 	public boolean showThreat() {
+		if(parish == null) return false;
 		return (threatParamter.indexOf(parish.getCode())!= -1);
 	}
 }

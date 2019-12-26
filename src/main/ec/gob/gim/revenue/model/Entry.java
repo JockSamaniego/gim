@@ -164,6 +164,10 @@ public class Entry extends Identifiable{
 
 	private TimeToCalculate timeToCalculate;
 	
+	
+	//macartuche 2019-11-25
+	private Boolean isCollectible;
+	
 	public TimeToCalculate getTimeToCalculate() {
 		return timeToCalculate;
 	}
@@ -700,6 +704,13 @@ public class Entry extends Identifiable{
 	public void setExplanatoryNote(String explanatoryNote) {
 		this.explanatoryNote = explanatoryNote;
 	}
-		
+
+	public Boolean getIsCollectible() {
+		return isCollectible;
+	}
+
+	public void setIsCollectible(Boolean isCollectible) {
+		this.isCollectible = isCollectible;
+	} 
 	
 }// end Entry
