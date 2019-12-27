@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.ejb.Local;
 
+import org.gob.gim.ws.service.EmisionResponse;
 import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
 import org.gob.loja.gim.ws.dto.RealEstate;
@@ -53,7 +54,7 @@ public interface GimService {
 			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
 			AccountIsBlocked;
 	
-	String generateEmissionOrder(String name, String password,
+	EmisionResponse generateEmissionOrder(String name, String password,
 			String identificationNumber, String accountCode, EmisionDetail emisionDetail)
 			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
 			FiscalPeriodNotFound, EmissionOrderNotGenerate,

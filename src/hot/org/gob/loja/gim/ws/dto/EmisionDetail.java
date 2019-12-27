@@ -12,14 +12,13 @@ public class EmisionDetail {
 	/**
 	 * numero generado por empresa
 	 */
-	//private Long antNumber;
-	
+	// private Long antNumber;
+
 	/**
-	 * nuevo numero generad por la empresa
-	 * es alfanumerico rfarmijosm 2017-07-19
+	 * nuevo numero generad por la empresa es alfanumerico rfarmijosm 2017-07-19
 	 */
 	private String contraventionNumber;
-	
+
 	/**
 	 * exceso de velocidad
 	 */
@@ -33,16 +32,16 @@ public class EmisionDetail {
 	 * publico o privado
 	 */
 	private String serviceType;
-	
+
 	/**
 	 * yyyy-MM-dd
 	 */
 	private Date citationDate;
-	
+
+	private Date notificationDate;
+
 	/**
-	 * rfam 2017-07-21
-	 * ML-JRM-2017-404-MY
-	 * 332 TV-UMTTTSV-2017
+	 * rfam 2017-07-21 ML-JRM-2017-404-MY 332 TV-UMTTTSV-2017
 	 */
 	private String supportDocumentURL;
 
@@ -55,14 +54,15 @@ public class EmisionDetail {
 
 	/*
 	 * public EmisionDetail(String numberPlate, String reference, String
-	 * description, String address, BigDecimal amount, BigDecimal total) {
-	 * super(); this.numberPlate = numberPlate; this.reference = reference;
-	 * this.description = description; this.address = address; this.amount =
-	 * amount; this.total = total; }
+	 * description, String address, BigDecimal amount, BigDecimal total) { super();
+	 * this.numberPlate = numberPlate; this.reference = reference; this.description
+	 * = description; this.address = address; this.amount = amount; this.total =
+	 * total; }
 	 */
 
-	public EmisionDetail(String numberPlate, String reference, String description, String address, String contraventionNumber,
-			BigDecimal speeding, BigDecimal amount, BigDecimal total) {
+	public EmisionDetail(String numberPlate, String reference, String description, String address,
+			String contraventionNumber, BigDecimal speeding, BigDecimal amount, BigDecimal total,
+			Date notificationDate) {
 		super();
 		this.numberPlate = numberPlate;
 		this.reference = reference;
@@ -72,6 +72,7 @@ public class EmisionDetail {
 		this.speeding = speeding;
 		this.amount = amount;
 		this.total = total;
+		this.notificationDate = notificationDate;
 	}
 
 	public String getNumberPlate() {
@@ -122,12 +123,10 @@ public class EmisionDetail {
 		this.address = address;
 	}
 
-	/*public Long getAntNumber() {
-		return antNumber;
-	}
-	public void setAntNumber(Long antNumber) {
-		this.antNumber = antNumber;
-	}*/
+	/*
+	 * public Long getAntNumber() { return antNumber; } public void
+	 * setAntNumber(Long antNumber) { this.antNumber = antNumber; }
+	 */
 
 	public BigDecimal getSpeeding() {
 		return speeding;
@@ -176,5 +175,13 @@ public class EmisionDetail {
 	public void setSupportDocumentURL(String supportDocumentURL) {
 		this.supportDocumentURL = supportDocumentURL;
 	}
-	
+
+	public Date getNotificationDate() {
+		return notificationDate;
+	}
+
+	public void setNotificationDate(Date notificationDate) {
+		this.notificationDate = notificationDate;
+	}
+
 }
