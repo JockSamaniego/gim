@@ -23,7 +23,7 @@ import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.Person;
 
-@Audited
+//@Audited
 @Entity
 @TableGenerator(
 	 name="TillPermissionGenerator",
