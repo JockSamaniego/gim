@@ -43,6 +43,7 @@ public class AuthenticatorBean implements Authenticator {
 
 	@In
 	Identity identity;
+	
 	@In
 	Credentials credentials;
 
