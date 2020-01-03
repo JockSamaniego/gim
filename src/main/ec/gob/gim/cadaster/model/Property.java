@@ -41,250 +41,244 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 @Audited
 @Entity
 @TableGenerator(name = "PropertyGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "Property", initialValue = 1, allocationSize = 1)
-@NamedQueries(value = { @NamedQuery(name = "Property.findByCadastralCode", query = "select property from Property property "
-		+ "left join fetch property.currentDomain currentDomain "				
-		+ "left join fetch currentDomain.notarysProvince "		
-		+ "left join fetch currentDomain.notarysCity "
-		+ "left join fetch currentDomain.purchaseType purchaseType "
-		+ "left join fetch property.streetMaterial sm "		
-		+ "left join fetch property.location l "
-		+ "left join fetch l.neighborhood nb "
-		+ "left join fetch nb.place place "
-		+ "left JOIN fetch l.mainBlockLimit bl " 
-		+ "left join fetch bl.sidewalkMaterial swm "
-		+ "left join fetch bl.street street "
-		+ "left join fetch bl.streetMaterial streetMaterial "
-		+ "left join fetch bl.streetType streetType "		
-		+ "left join fetch property.lotPosition lp "
-		+ "left join fetch property.fenceMaterial fm "
-		+ "left join fetch property.block block "
-		+ "left join fetch block.sector sector "
-		+ "left join fetch sector.territorialDivisionType "
-		+ "left join fetch property.propertyType pt "
-		+ "left join fetch pt.entry entry "
-		+ "left join fetch currentDomain.resident resident "		
-		+ "left join fetch resident.currentAddress address "		
-		+ "where property.cadastralCode like concat(:criteria,'%') or property.previousCadastralCode like concat(:criteria,'%') "
-		+ "or lower(resident.name) like lower(concat(:criteria,'%')) "
-		+ "or lower(resident.identificationNumber) like lower(concat(:criteria,'%')) "
-		+ "and property.deleted = false "
-		+ "order by property.cadastralCode"),
-		
+@NamedQueries(value = {
+		@NamedQuery(name = "Property.findByCadastralCode", query = "select property from Property property "
+				+ "left join fetch property.currentDomain currentDomain "
+				+ "left join fetch currentDomain.notarysProvince "
+				+ "left join fetch currentDomain.notarysCity "
+				+ "left join fetch currentDomain.purchaseType purchaseType "
+				+ "left join fetch property.streetMaterial sm "
+				+ "left join fetch property.location l "
+				+ "left join fetch l.neighborhood nb "
+				+ "left join fetch nb.place place "
+				+ "left JOIN fetch l.mainBlockLimit bl "
+				+ "left join fetch bl.sidewalkMaterial swm "
+				+ "left join fetch bl.street street "
+				+ "left join fetch bl.streetMaterial streetMaterial "
+				+ "left join fetch bl.streetType streetType "
+				+ "left join fetch property.lotPosition lp "
+				+ "left join fetch property.fenceMaterial fm "
+				+ "left join fetch property.block block "
+				+ "left join fetch block.sector sector "
+				+ "left join fetch sector.territorialDivisionType "
+				+ "left join fetch property.propertyType pt "
+				+ "left join fetch pt.entry entry "
+				+ "left join fetch currentDomain.resident resident "
+				+ "left join fetch resident.currentAddress address "
+				+ "where property.cadastralCode like concat(:criteria,'%') or property.previousCadastralCode like concat(:criteria,'%') "
+				+ "or lower(resident.name) like lower(concat(:criteria,'%')) "
+				+ "or lower(resident.identificationNumber) like lower(concat(:criteria,'%')) "
+				+ "and property.deleted = false "
+				+ "order by property.cadastralCode"),
+
 		@NamedQuery(name = "Property.findResidentByProperty", query = "select property from Property property "
-				+ "left join fetch property.currentDomain currentDomain "				
-				+ "left join fetch currentDomain.resident resident "				
+				+ "left join fetch property.currentDomain currentDomain "
+				+ "left join fetch currentDomain.resident resident "
 				+ "where  property.cadastralCode = :code"),
-				
-	@NamedQuery(name = "Property.findUrbanByCadastralCode", query = "select property from Property property "
-			+ "left join fetch property.currentDomain currentDomain "				
-			+ "left join fetch currentDomain.notarysProvince "		
-			+ "left join fetch currentDomain.notarysCity "
-			+ "left join fetch currentDomain.purchaseType purchaseType "
-			+ "left join fetch property.streetMaterial sm "		
-			+ "left join fetch property.location l "
-			+ "left join fetch l.neighborhood nb "
-			+ "left join fetch nb.place place "
-			+ "left JOIN fetch l.mainBlockLimit bl " 
-			+ "left join fetch bl.sidewalkMaterial swm "
-			+ "left join fetch bl.street street "
-			+ "left join fetch bl.streetMaterial streetMaterial "
-			+ "left join fetch bl.streetType streetType "		
-			+ "left join fetch property.lotPosition lp "
-			+ "left join fetch property.fenceMaterial fm "
-			+ "left join fetch property.block block "
-			+ "left join fetch block.sector sector "
-			+ "left join fetch sector.territorialDivisionType "
-			+ "left join fetch property.propertyType pt "
-			+ "left join fetch pt.entry entry "
-			+ "left join fetch currentDomain.resident resident "		
-			+ "left join fetch resident.currentAddress address "		
-			+ "where (property.cadastralCode like concat(:criteria,'%') or property.previousCadastralCode like concat(:criteria,'%') "
-			+ "or lower(resident.name) like lower(concat(:criteria,'%')) "
-			+ "or lower(resident.identificationNumber) like lower(concat(:criteria,'%'))) and pt.id = 1 order by property.cadastralCode"),
 
-	@NamedQuery(name = "Property.findUrbanByCadastralCodeAndNotDeleted", query = "select property from Property property "
-			+ "left join fetch property.currentDomain currentDomain "
-			+ "left join fetch currentDomain.notarysProvince "
-			+ "left join fetch currentDomain.notarysCity "
-			+ "left join fetch currentDomain.purchaseType purchaseType "
-			+ "left join fetch property.streetMaterial sm "
-			+ "left join fetch property.location l "
-			+ "left join fetch l.neighborhood nb "
-			+ "left join fetch nb.place place "
-			+ "left JOIN fetch l.mainBlockLimit bl " 
-			+ "left join fetch bl.sidewalkMaterial swm "
-			+ "left join fetch bl.street street "
-			+ "left join fetch bl.streetMaterial streetMaterial "
-			+ "left join fetch bl.streetType streetType "
-			+ "left join fetch property.lotPosition lp "
-			+ "left join fetch property.fenceMaterial fm "
-			+ "left join fetch property.block block "
-			+ "left join fetch block.sector sector "
-			+ "left join fetch sector.territorialDivisionType "
-			+ "left join fetch property.propertyType pt "
-			+ "left join fetch pt.entry entry "
-			+ "left join fetch currentDomain.resident resident "
-			+ "left join fetch resident.currentAddress address "
-			+ "where property.cadastralCode like concat(:criteria,'%') "
-			+ "and pt.id = 1 and property.deleted=false order by property.cadastralCode"),
+		@NamedQuery(name = "Property.findUrbanByCadastralCode", query = "select property from Property property "
+				+ "left join fetch property.currentDomain currentDomain "
+				+ "left join fetch currentDomain.notarysProvince "
+				+ "left join fetch currentDomain.notarysCity "
+				+ "left join fetch currentDomain.purchaseType purchaseType "
+				+ "left join fetch property.streetMaterial sm "
+				+ "left join fetch property.location l "
+				+ "left join fetch l.neighborhood nb "
+				+ "left join fetch nb.place place "
+				+ "left JOIN fetch l.mainBlockLimit bl "
+				+ "left join fetch bl.sidewalkMaterial swm "
+				+ "left join fetch bl.street street "
+				+ "left join fetch bl.streetMaterial streetMaterial "
+				+ "left join fetch bl.streetType streetType "
+				+ "left join fetch property.lotPosition lp "
+				+ "left join fetch property.fenceMaterial fm "
+				+ "left join fetch property.block block "
+				+ "left join fetch block.sector sector "
+				+ "left join fetch sector.territorialDivisionType "
+				+ "left join fetch property.propertyType pt "
+				+ "left join fetch pt.entry entry "
+				+ "left join fetch currentDomain.resident resident "
+				+ "left join fetch resident.currentAddress address "
+				+ "where (property.cadastralCode like concat(:criteria,'%') or property.previousCadastralCode like concat(:criteria,'%') "
+				+ "or lower(resident.name) like lower(concat(:criteria,'%')) "
+				+ "or lower(resident.identificationNumber) like lower(concat(:criteria,'%'))) and pt.id = 1 order by property.cadastralCode"),
 
-	@NamedQuery(name = "Property.findByResidentAndCadastralCode", query = "select property from Property property "
-			+ "left join fetch property.currentDomain currentDomain "				
-			+ "left join fetch currentDomain.notarysProvince "		
-			+ "left join fetch currentDomain.notarysCity "
-			+ "left join fetch currentDomain.purchaseType purchaseType "
-			+ "left join fetch property.streetMaterial sm "		
-			+ "left join fetch property.location l "
-			+ "left join fetch l.neighborhood nb "
-			+ "left join fetch nb.place place "
-			+ "left JOIN fetch l.mainBlockLimit bl " 
-			+ "left join fetch bl.sidewalkMaterial swm "
-			+ "left join fetch bl.street street "
-			+ "left join fetch bl.streetMaterial streetMaterial "
-			+ "left join fetch bl.streetType streetType "		
-			+ "left join fetch property.lotPosition lp "
-			+ "left join fetch property.fenceMaterial fm "
-			+ "left join fetch property.block block "
-			+ "left join fetch block.sector sector "
-			+ "left join fetch sector.territorialDivisionType "
-			+ "left join fetch property.propertyType pt "
-			+ "left join fetch pt.entry entry "
-			+ "left join fetch currentDomain.resident resident "		
-			+ "left join fetch resident.currentAddress address "		
-			+ "where (property.cadastralCode like concat(:cadastralCode,'%') or property.previousCadastralCode like concat(:cadastralCode,'%')) "
-			+ "and resident.id = :residentId"),
-	@NamedQuery(name = "Property.findByCadastralCodeAndType", query = "select property from Property property "
-		+ "left join fetch property.currentDomain currentDomain "				
-		+ "left join fetch currentDomain.notarysProvince "		
-		+ "left join fetch currentDomain.notarysCity "
-		+ "left join fetch currentDomain.purchaseType purchaseType "
-		+ "left join fetch property.streetMaterial sm "		
-		+ "left join fetch property.location l "
-		+ "left join fetch l.neighborhood nb "
-		+ "left join fetch nb.place place "
-		+ "left JOIN fetch l.mainBlockLimit bl " 
-		+ "left join fetch bl.sidewalkMaterial swm "
-		+ "left join fetch bl.street street "
-		+ "left join fetch bl.streetMaterial streetMaterial "
-		+ "left join fetch bl.streetType streetType "		
-		+ "left join fetch property.lotPosition lp "
-		+ "left join fetch property.fenceMaterial fm "
-		+ "left join fetch property.block block "
-		+ "left join fetch block.sector sector "
-		+ "left join fetch sector.territorialDivisionType "
-		+ "left join fetch property.propertyType pt "
-		+ "left join fetch pt.entry entry "
-		+ "left join fetch currentDomain.resident resident "		
-		+ "left join fetch resident.currentAddress address "
-		+ "where property.cadastralCode like concat(:cadastralCode,'%') "
-		+ "and property.deleted = false "
-		+ "and pt.id = :idType ORDER BY property.cadastralCode"),
-		
-		
-	@NamedQuery(name = "Property.findByCadastralCodeAndTypeExceptFromSomeOwnerIds", query = "select property from Property property "
-			+ "left join fetch property.currentDomain currentDomain "				
-//			+ "left join fetch currentDomain.notarysProvince "		
-//			+ "left join fetch currentDomain.notarysCity "
-//			+ "left join fetch currentDomain.purchaseType purchaseType "
-//			+ "left join fetch property.streetMaterial sm "		
-//			+ "left join fetch property.location l "
-//			+ "left join fetch l.neighborhood nb "
-//			+ "left join fetch nb.place place "
-//			+ "left JOIN fetch l.mainBlockLimit bl " 
-//			+ "left join fetch bl.sidewalkMaterial swm "
-//			+ "left join fetch bl.street street "
-//			+ "left join fetch bl.streetMaterial streetMaterial "
-//			+ "left join fetch bl.streetType streetType "		
-//			+ "left join fetch property.lotPosition lp "
-//			+ "left join fetch property.fenceMaterial fm "
-//			+ "left join fetch property.block block "
-//			+ "left join fetch block.sector sector "
-//			+ "left join fetch sector.territorialDivisionType "
-			+ "left join fetch property.propertyType pt "
-			+ "left join fetch pt.entry entry "
-			+ "left join fetch currentDomain.resident resident "		
-//			+ "left join fetch resident.currentAddress address "
-			+ "where property.cadastralCode like concat(:cadastralCode,'%') "
-			+ "and resident.id not in (:ownersIds) "
-			+ "and property.deleted = false "
-			+ "and pt.id = :idType ORDER BY property.cadastralCode"),		
-	
-		
-	@NamedQuery(name = "Property.findCadastralCodeByType", query = "select property.cadastralCode from Property property "					
-			+ "where property.cadastralCode like concat(:cadastralCode,'%') and property.propertyType.id = :idType ORDER BY property.cadastralCode"),
-			
-	@NamedQuery(name = "Property.findCadastralCodeByPartCadastralCode", query = "select property.cadastralCode from Property property "
-			+ "where property.cadastralCode like concat(:criteria,'%') order by property.cadastralCode"),
-			
-	@NamedQuery(name = "Property.findUrbanCadastralCodeByPartCadastralCode", query = "select property.cadastralCode from Property property "
-			+ "where property.cadastralCode like concat(:criteria,'%') and property.propertyType.id = 1 order by property.cadastralCode"),
-			
-	@NamedQuery(name = "Property.findMaxCadastralCodeByParish", query = "select max(property.cadastralCode) from Property property "
-			+ "where property.propertyType.id = :propertyTypeId and property.cadastralCode like concat(:cadastralCode,'%')"),
-			
-	@NamedQuery(name = "Property.findCheckingRecordsByChekingRecordTypeAndDates", query = "select c from Property p join p.checkingRecords c "
-			+ "where c.checkingRecordType = :checkingRecordType AND c.date BETWEEN :startDate AND :endDate"),
-			
-	@NamedQuery(name = "Property.findByResidentId", 
-			    query = "SELECT p FROM Property p " +
-			    		"LEFT JOIN p.location l " +
-			    		"LEFT JOIN l.mainBlockLimit bl " +
-			    		"LEFT JOIN bl.street " +
-			    		"WHERE p.currentDomain.resident.id = :residentId"),
-	@NamedQuery(name = "Property.findByResidentIdForEmission", 
-			    query = "SELECT property FROM Property property " +
-	
-						 "left join fetch property.currentDomain currentDomain "
-						//+ "left join fetch currentDomain.notarysProvince "		
-						//+ "left join fetch currentDomain.notarysCity "
-						//+ "left join fetch currentDomain.purchaseType purchaseType "
-						+ "left join fetch property.streetMaterial sm "		
-						+ "left join fetch property.location l "
-						+ "left join fetch l.neighborhood nb "
-						+ "left join fetch nb.place place "
-						+ "left JOIN fetch l.mainBlockLimit bl " 
-						+ "left join fetch bl.sidewalkMaterial swm "
-						+ "left join fetch bl.street street "
-						+ "left join fetch bl.streetMaterial streetMaterial "
-						+ "left join fetch bl.streetType streetType "		
-						+ "left join fetch property.lotPosition lp "
-						+ "left join fetch property.fenceMaterial fm "
-						+ "left join fetch property.block block "
-						+ "left join fetch block.sector sector "
-						+ "left join fetch sector.territorialDivisionType "
-						+ "left join fetch property.propertyType pt "
-						+ "left join fetch pt.entry entry "
-						+ "left join fetch currentDomain.resident resident "		
-						//+ "left join fetch resident.currentAddress address "
-	
-			    		//"LEFT JOIN p.location l " +
-			    		//"LEFT JOIN l.mainBlockLimit bl " +
-			    		//"LEFT JOIN bl.street " +
-			    		+"WHERE resident.id = :residentId and property.deleted=false"),
-	@NamedQuery(name = "Property.findByResidentIdNotDeleted", 
-			    query = "SELECT p FROM Property p " +
-			    		"LEFT JOIN p.location l " +
-			    		"LEFT JOIN l.mainBlockLimit bl " +
-			    		"LEFT JOIN bl.street " +
-			    		"WHERE p.currentDomain.resident.id = :residentId and p.deleted=false"),
-	@NamedQuery(name = "Property.countPreviousCadastralCode", 
-			    query = "SELECT count(p.id) FROM Property p " +
-			    		"WHERE p.previousCadastralCode = :previousCadastralCode and p.deleted = false"),
-	@NamedQuery(name = "Property.countPreviousCadastralCodeAndId", 
-			    query = "SELECT count(p.id) FROM Property p " +
-			    		"WHERE p.previousCadastralCode = :previousCadastralCode and p.id <> :propertyId and p.deleted = false"),
-	@NamedQuery(name = "RealEstate.findByCadastralCode", 
-		    query = "SELECT NEW org.gob.loja.gim.ws.dto.RealEstate(" +
-		    		"p.id, p.cadastralCode, p.currentDomain.resident.identificationNumber, " +
-		    		"location.houseNumber, mainStreet.name, nb.name, block.id, block.code, block.cadastralCode) " +
-		    		"FROM Property p " +
-		    		"LEFT JOIN p.block block " +
-		    		"LEFT JOIN p.location location " +
-		    		"LEFT JOIN location.mainBlockLimit mainBlockLimit " +
-		    		"LEFT JOIN mainBlockLimit.street mainStreet " +
-		    		"LEFT JOIN location.neighborhood nb " +
-		    		"WHERE p.cadastralCode like :cadastralCode or p.previousCadastralCode like :cadastralCode"),
-    @NamedQuery(name = "RealEstate.findByIdentificationNumber", query = "SELECT NEW org.gob.loja.gim.ws.dto.RealEstate("
+		@NamedQuery(name = "Property.findUrbanByCadastralCodeAndNotDeleted", query = "select property from Property property "
+				+ "left join fetch property.currentDomain currentDomain "
+				+ "left join fetch currentDomain.notarysProvince "
+				+ "left join fetch currentDomain.notarysCity "
+				+ "left join fetch currentDomain.purchaseType purchaseType "
+				+ "left join fetch property.streetMaterial sm "
+				+ "left join fetch property.location l "
+				+ "left join fetch l.neighborhood nb "
+				+ "left join fetch nb.place place "
+				+ "left JOIN fetch l.mainBlockLimit bl "
+				+ "left join fetch bl.sidewalkMaterial swm "
+				+ "left join fetch bl.street street "
+				+ "left join fetch bl.streetMaterial streetMaterial "
+				+ "left join fetch bl.streetType streetType "
+				+ "left join fetch property.lotPosition lp "
+				+ "left join fetch property.fenceMaterial fm "
+				+ "left join fetch property.block block "
+				+ "left join fetch block.sector sector "
+				+ "left join fetch sector.territorialDivisionType "
+				+ "left join fetch property.propertyType pt "
+				+ "left join fetch pt.entry entry "
+				+ "left join fetch currentDomain.resident resident "
+				+ "left join fetch resident.currentAddress address "
+				+ "where property.cadastralCode like concat(:criteria,'%') "
+				+ "and pt.id = 1 and property.deleted=false order by property.cadastralCode"),
+
+		@NamedQuery(name = "Property.findByResidentAndCadastralCode", query = "select property from Property property "
+				+ "left join fetch property.currentDomain currentDomain "
+				+ "left join fetch currentDomain.notarysProvince "
+				+ "left join fetch currentDomain.notarysCity "
+				+ "left join fetch currentDomain.purchaseType purchaseType "
+				+ "left join fetch property.streetMaterial sm "
+				+ "left join fetch property.location l "
+				+ "left join fetch l.neighborhood nb "
+				+ "left join fetch nb.place place "
+				+ "left JOIN fetch l.mainBlockLimit bl "
+				+ "left join fetch bl.sidewalkMaterial swm "
+				+ "left join fetch bl.street street "
+				+ "left join fetch bl.streetMaterial streetMaterial "
+				+ "left join fetch bl.streetType streetType "
+				+ "left join fetch property.lotPosition lp "
+				+ "left join fetch property.fenceMaterial fm "
+				+ "left join fetch property.block block "
+				+ "left join fetch block.sector sector "
+				+ "left join fetch sector.territorialDivisionType "
+				+ "left join fetch property.propertyType pt "
+				+ "left join fetch pt.entry entry "
+				+ "left join fetch currentDomain.resident resident "
+				+ "left join fetch resident.currentAddress address "
+				+ "where (property.cadastralCode like concat(:cadastralCode,'%') or property.previousCadastralCode like concat(:cadastralCode,'%')) "
+				+ "and resident.id = :residentId"),
+		@NamedQuery(name = "Property.findByCadastralCodeAndType", query = "select property from Property property "
+				+ "left join fetch property.currentDomain currentDomain "
+				+ "left join fetch currentDomain.notarysProvince "
+				+ "left join fetch currentDomain.notarysCity "
+				+ "left join fetch currentDomain.purchaseType purchaseType "
+				+ "left join fetch property.streetMaterial sm "
+				+ "left join fetch property.location l "
+				+ "left join fetch l.neighborhood nb "
+				+ "left join fetch nb.place place "
+				+ "left JOIN fetch l.mainBlockLimit bl "
+				+ "left join fetch bl.sidewalkMaterial swm "
+				+ "left join fetch bl.street street "
+				+ "left join fetch bl.streetMaterial streetMaterial "
+				+ "left join fetch bl.streetType streetType "
+				+ "left join fetch property.lotPosition lp "
+				+ "left join fetch property.fenceMaterial fm "
+				+ "left join fetch property.block block "
+				+ "left join fetch block.sector sector "
+				+ "left join fetch sector.territorialDivisionType "
+				+ "left join fetch property.propertyType pt "
+				+ "left join fetch pt.entry entry "
+				+ "left join fetch currentDomain.resident resident "
+				+ "left join fetch resident.currentAddress address "
+				+ "where property.cadastralCode like concat(:cadastralCode,'%') "
+				+ "and property.deleted = false "
+				+ "and pt.id = :idType ORDER BY property.cadastralCode"),
+
+		@NamedQuery(name = "Property.findByCadastralCodeAndTypeExceptFromSomeOwnerIds", query = "select property from Property property "
+				+ "left join fetch property.currentDomain currentDomain "
+				// + "left join fetch currentDomain.notarysProvince "
+				// + "left join fetch currentDomain.notarysCity "
+				// + "left join fetch currentDomain.purchaseType purchaseType "
+				// + "left join fetch property.streetMaterial sm "
+				// + "left join fetch property.location l "
+				// + "left join fetch l.neighborhood nb "
+				// + "left join fetch nb.place place "
+				// + "left JOIN fetch l.mainBlockLimit bl "
+				// + "left join fetch bl.sidewalkMaterial swm "
+				// + "left join fetch bl.street street "
+				// + "left join fetch bl.streetMaterial streetMaterial "
+				// + "left join fetch bl.streetType streetType "
+				// + "left join fetch property.lotPosition lp "
+				// + "left join fetch property.fenceMaterial fm "
+				// + "left join fetch property.block block "
+				// + "left join fetch block.sector sector "
+				// + "left join fetch sector.territorialDivisionType "
+				+ "left join fetch property.propertyType pt "
+				+ "left join fetch pt.entry entry "
+				+ "left join fetch currentDomain.resident resident "
+				// + "left join fetch resident.currentAddress address "
+				+ "where property.cadastralCode like concat(:cadastralCode,'%') "
+				+ "and resident.id not in (:ownersIds) "
+				+ "and property.deleted = false "
+				+ "and pt.id = :idType ORDER BY property.cadastralCode"),
+
+		@NamedQuery(name = "Property.findCadastralCodeByType", query = "select property.cadastralCode from Property property "
+				+ "where property.cadastralCode like concat(:cadastralCode,'%') and property.propertyType.id = :idType ORDER BY property.cadastralCode"),
+
+		@NamedQuery(name = "Property.findCadastralCodeByPartCadastralCode", query = "select property.cadastralCode from Property property "
+				+ "where property.cadastralCode like concat(:criteria,'%') order by property.cadastralCode"),
+
+		@NamedQuery(name = "Property.findUrbanCadastralCodeByPartCadastralCode", query = "select property.cadastralCode from Property property "
+				+ "where property.cadastralCode like concat(:criteria,'%') and property.propertyType.id = 1 order by property.cadastralCode"),
+
+		@NamedQuery(name = "Property.findMaxCadastralCodeByParish", query = "select max(property.cadastralCode) from Property property "
+				+ "where property.propertyType.id = :propertyTypeId and property.cadastralCode like concat(:cadastralCode,'%')"),
+
+		@NamedQuery(name = "Property.findCheckingRecordsByChekingRecordTypeAndDates", query = "select c from Property p join p.checkingRecords c "
+				+ "where c.checkingRecordType = :checkingRecordType AND c.date BETWEEN :startDate AND :endDate"),
+
+		@NamedQuery(name = "Property.findByResidentId", query = "SELECT p FROM Property p "
+				+ "LEFT JOIN p.location l "
+				+ "LEFT JOIN l.mainBlockLimit bl "
+				+ "LEFT JOIN bl.street "
+				+ "WHERE p.currentDomain.resident.id = :residentId"),
+		@NamedQuery(name = "Property.findByResidentIdForEmission", query = "SELECT property FROM Property property "
+				+
+
+				"left join fetch property.currentDomain currentDomain "
+				// + "left join fetch currentDomain.notarysProvince "
+				// + "left join fetch currentDomain.notarysCity "
+				// + "left join fetch currentDomain.purchaseType purchaseType "
+				+ "left join fetch property.streetMaterial sm "
+				+ "left join fetch property.location l "
+				+ "left join fetch l.neighborhood nb "
+				+ "left join fetch nb.place place "
+				+ "left JOIN fetch l.mainBlockLimit bl "
+				+ "left join fetch bl.sidewalkMaterial swm "
+				+ "left join fetch bl.street street "
+				+ "left join fetch bl.streetMaterial streetMaterial "
+				+ "left join fetch bl.streetType streetType "
+				+ "left join fetch property.lotPosition lp "
+				+ "left join fetch property.fenceMaterial fm "
+				+ "left join fetch property.block block "
+				+ "left join fetch block.sector sector "
+				+ "left join fetch sector.territorialDivisionType "
+				+ "left join fetch property.propertyType pt "
+				+ "left join fetch pt.entry entry "
+				+ "left join fetch currentDomain.resident resident "
+				// + "left join fetch resident.currentAddress address "
+
+				// "LEFT JOIN p.location l " +
+				// "LEFT JOIN l.mainBlockLimit bl " +
+				// "LEFT JOIN bl.street " +
+				+ "WHERE resident.id = :residentId and property.deleted=false"),
+		@NamedQuery(name = "Property.findByResidentIdNotDeleted", query = "SELECT p FROM Property p "
+				+ "LEFT JOIN p.location l "
+				+ "LEFT JOIN l.mainBlockLimit bl "
+				+ "LEFT JOIN bl.street "
+				+ "WHERE p.currentDomain.resident.id = :residentId and p.deleted=false"),
+		@NamedQuery(name = "Property.countPreviousCadastralCode", query = "SELECT count(p.id) FROM Property p "
+				+ "WHERE p.previousCadastralCode = :previousCadastralCode and p.deleted = false"),
+		@NamedQuery(name = "Property.countPreviousCadastralCodeAndId", query = "SELECT count(p.id) FROM Property p "
+				+ "WHERE p.previousCadastralCode = :previousCadastralCode and p.id <> :propertyId and p.deleted = false"),
+		@NamedQuery(name = "RealEstate.findByCadastralCode", query = "SELECT NEW org.gob.loja.gim.ws.dto.RealEstate("
+				+ "p.id, p.cadastralCode, p.currentDomain.resident.identificationNumber, "
+				+ "location.houseNumber, mainStreet.name, nb.name, block.id, block.code, block.cadastralCode) "
+				+ "FROM Property p "
+				+ "LEFT JOIN p.block block "
+				+ "LEFT JOIN p.location location "
+				+ "LEFT JOIN location.mainBlockLimit mainBlockLimit "
+				+ "LEFT JOIN mainBlockLimit.street mainStreet "
+				+ "LEFT JOIN location.neighborhood nb "
+				+ "WHERE p.cadastralCode like :cadastralCode or p.previousCadastralCode like :cadastralCode"),
+		@NamedQuery(name = "RealEstate.findByIdentificationNumber", query = "SELECT NEW org.gob.loja.gim.ws.dto.RealEstate("
 				+ "p.id, p.cadastralCode, p.currentDomain.resident.identificationNumber, "
 				+ "location.houseNumber, mainStreet.name, nb.name, block.id, block.code, block.cadastralCode) "
 				+ "FROM Property p "
@@ -294,11 +288,9 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 				+ "LEFT JOIN mainBlockLimit.street mainStreet "
 				+ "LEFT JOIN location.neighborhood nb "
 				+ "WHERE p.currentDomain.resident.identificationNumber = :identificationNumber order by p.cadastralCode"),
-	@NamedQuery(name = "Property.findByResidentsIds", 
-			    query = "SELECT p FROM Property p " +
-			    		"WHERE p.currentDomain.resident.id in (:ids) "+
-			    		"AND p.deleted = FALSE ")
-})
+		@NamedQuery(name = "Property.findByResidentsIds", query = "SELECT p FROM Property p "
+				+ "WHERE p.currentDomain.resident.id in (:ids) "
+				+ "AND p.deleted = FALSE ") })
 public class Property {
 
 	@Id
@@ -318,28 +310,27 @@ public class Property {
 	private Boolean hasTelephoneNetwork;
 	private Boolean hasWaterService;
 	private Boolean deleted;
-	
+
 	private BigDecimal lotAliquot;
 	private String observations;
-	
+
 	@Transient
-	private int totalYearsFromLastChangeOwner; 
-	
+	private int totalYearsFromLastChangeOwner;
+
 	@Transient
 	private boolean isUrban;
-	
 
-	private Boolean needConfirmChangeOwner;	
+	private Boolean needConfirmChangeOwner;
 
 	@Transient
 	private BigDecimal appraisalRelationFactor;
-	
+
 	@Transient
 	private BigDecimal appraisalAreaFactor;
-	
+
 	@Transient
 	private BigDecimal affectationFactorLot;
-	
+
 	@Transient
 	private BigDecimal affectationFactorBuilding;
 
@@ -359,7 +350,7 @@ public class Property {
 	@Column(length = 30)
 	private String previousCadastralCode;
 
-	@Column(length = 30, unique=true)
+	@Column(length = 30, unique = true)
 	private String cadastralCode;
 
 	private BigDecimal side;
@@ -399,8 +390,7 @@ public class Property {
 	@Enumerated(EnumType.STRING)
 	@Column(length = 15)
 	private LotTopography lotTopography;
-	
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(length = 15)
 	private PropertyLocationType propertyLocationType;
@@ -433,15 +423,13 @@ public class Property {
 
 	@OneToOne(mappedBy = "currentProperty")
 	private Domain currentDomain;
-	
-	
 
 	@OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<PropertyLandUse> propertyLandUses;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "property")
-	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)	
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<CheckingRecord> checkingRecords;
 
 	@OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
@@ -460,28 +448,53 @@ public class Property {
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	@OrderBy("date desc")
 	private List<Appraisal> appraisals;
-	
+
 	private String registrationCardNumber;
-	private String urbanizationBlock ;
+	private String urbanizationBlock;
 	private String urbanizationPropertyNumber;
-	
+
 	private BigDecimal buildingAreaHorizontalProperty;
 	private BigDecimal lotAreaHorizontalProperty;
-		
+
 	private String descriptionHorizontalProperty;
-	
-	//macartuche	
+
+	// macartuche
 	@ManyToOne
 	@JoinColumn(name = "risk_id")
 	private AffectationFactor risk;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "threat_id")
 	private AffectationFactor threat;
 
+	// Modificacion para emision predial 2020
+	// Jock Samaniego
+	// 27-11-2019
+
+	@ManyToOne
+	@JoinColumn(name = "sidewalk_id")
+	private AffectationFactor hasSidewalk;
+
+	@ManyToOne
+	@JoinColumn(name = "curb_id")
+	private AffectationFactor hasCurb;
+
+	@ManyToOne
+	@JoinColumn(name = "garbagecollection_id")
+	private AffectationFactor hasGarbageCollection;
+
+	/*
+	 * rortega Calculo de avaluo con nuevos factores de correccion 2019-12-02
+	 */
+	@Transient
+	private BigDecimal appraisalRiskFactor;
+
+	@Transient
+	private BigDecimal appraisalThreatFactor;
+
 	public Property() {
 		this.propertyLandUses = new ArrayList<PropertyLandUse>();
-		this.checkingRecords = new ArrayList<CheckingRecord>();		
+		this.checkingRecords = new ArrayList<CheckingRecord>();
 		this.waterSupplies = new ArrayList<WaterSupply>();
 		this.domains = new ArrayList<Domain>();
 		this.buildings = new ArrayList<Building>();
@@ -493,7 +506,7 @@ public class Property {
 		this.buildingNumber = 0;
 		this.floorNumber = 0;
 		this.housingUnitNumber = 0;
-		
+
 		this.deleted = Boolean.FALSE;
 
 		setBlock(new Block());
@@ -503,8 +516,8 @@ public class Property {
 		setCurrentDomain(currentDomain);
 		updateValueBySquareMeterForDomain();
 		//
-		needConfirmChangeOwner=Boolean.FALSE;
-		
+		needConfirmChangeOwner = Boolean.FALSE;
+
 	}
 
 	public BigDecimal getArea() {
@@ -625,15 +638,14 @@ public class Property {
 		return numberFormat;
 	}
 
-	//macartuche
-	//cambio clave catastral
+	// macartuche
+	// cambio clave catastral
 	public String getFormattedNumber() {
 		return getNumberFormat2().format(number);
 	}
 
 	/**
-	 * @macartuche
-	 * Predio-Lote 3 digitos
+	 * @macartuche Predio-Lote 3 digitos
 	 * @return
 	 */
 	private java.text.NumberFormat getNumberFormat2() {
@@ -641,8 +653,7 @@ public class Property {
 		numberFormat.setMaximumIntegerDigits(3);
 		return numberFormat;
 	}
-	
-	
+
 	public String getFormattedBuildingNumber() {
 		return getNumberFormat2().format(buildingNumber);
 	}
@@ -838,7 +849,7 @@ public class Property {
 		this.waterSupplies = waterSupplies;
 	}
 
-	public Block getBlock() {		
+	public Block getBlock() {
 		return block;
 	}
 
@@ -1030,8 +1041,8 @@ public class Property {
 
 	public void add(CheckingRecord checkingRecord) {
 		if (!this.checkingRecords.contains(checkingRecord)) {
-            checkingRecord.setProperty(this);
-			this.checkingRecords.add(checkingRecord);			
+			checkingRecord.setProperty(this);
+			this.checkingRecords.add(checkingRecord);
 		}
 	}
 
@@ -1080,8 +1091,10 @@ public class Property {
 
 	public void add(Appraisal appraisal) {
 		if (!this.appraisals.contains(appraisal)) {
-			if ((this.getCurrentDomain().getLotAppraisal().compareTo(lastAppraisal.getLot()) != 0) || 
-					(this.getCurrentDomain().getBuildingAppraisal().compareTo(lastAppraisal.getBuilding()) != 0)){
+			if ((this.getCurrentDomain().getLotAppraisal()
+					.compareTo(lastAppraisal.getLot()) != 0)
+					|| (this.getCurrentDomain().getBuildingAppraisal()
+							.compareTo(lastAppraisal.getBuilding()) != 0)) {
 				this.appraisals.add(appraisal);
 				appraisal.setProperty(this);
 			}
@@ -1104,30 +1117,34 @@ public class Property {
 	public int getTotalYearsFromLastChangeOwner() {
 		return totalYearsFromLastChangeOwner;
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		String previousCode;
 		String code;
-		
-		previousCode = previousCadastralCode != null ? previousCadastralCode : "";
+
+		previousCode = previousCadastralCode != null ? previousCadastralCode
+				: "";
 		code = cadastralCode != null ? cadastralCode : "";
-		return code+" - "+previousCode+" - "+getAddress();	
-		
+		return code + " - " + previousCode + " - " + getAddress();
+
 	}
-	
-	public String getAddress(){
+
+	public String getAddress() {
 		String street = "";
 		String number = "";
 		String refAdd = "";
-		if(location != null && location.getMainBlockLimit() != null && location.getMainBlockLimit().getStreet() != null){
+		if (location != null && location.getMainBlockLimit() != null
+				&& location.getMainBlockLimit().getStreet() != null) {
 			Street streetObject = location.getMainBlockLimit().getStreet();
-			street = streetObject.getName() != null ? streetObject.getName() : "";
-			number = location.getHouseNumber() != null ? location.getHouseNumber() : "";
+			street = streetObject.getName() != null ? streetObject.getName()
+					: "";
+			number = location.getHouseNumber() != null ? location
+					.getHouseNumber() : "";
 			refAdd = addressReference != null ? addressReference : "";
 		}
-		return street+" "+number+" "+refAdd;
+		return street + " " + number + " " + refAdd;
 	}
-		
+
 	public Boolean getNeedConfirmChangeOwner() {
 		return needConfirmChangeOwner;
 	}
@@ -1143,7 +1160,7 @@ public class Property {
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
-	
+
 	public Appraisal getLastAppraisal() {
 		return lastAppraisal;
 	}
@@ -1180,7 +1197,8 @@ public class Property {
 		return affectationFactorBuilding;
 	}
 
-	public void setAffectationFactorBuilding(BigDecimal affectationFactorBuilding) {
+	public void setAffectationFactorBuilding(
+			BigDecimal affectationFactorBuilding) {
 		this.affectationFactorBuilding = affectationFactorBuilding;
 	}
 
@@ -1199,20 +1217,24 @@ public class Property {
 	public void setAddressReference(String addressReference) {
 		this.addressReference = addressReference;
 	}
-	
-	
 
 	public BigDecimal getValueBySquareMeterForDomain() {
-		if (this.currentDomain != null){
-			if ((this.currentDomain.getLotAppraisal() != null) && (this.area != null)){
-				if (this.getLotAliquot().compareTo(new BigDecimal(100)) == 0){
-					return this.currentDomain.getLotAppraisal().divide(this.area, 2, RoundingMode.HALF_UP);
+		if (this.currentDomain != null) {
+			if ((this.currentDomain.getLotAppraisal() != null)
+					&& (this.area != null)) {
+				if (this.getLotAliquot().compareTo(new BigDecimal(100)) == 0) {
+					return this.currentDomain.getLotAppraisal().divide(
+							this.area, 2, RoundingMode.HALF_UP);
+				} else {
+					return this.currentDomain
+							.getLotAppraisal()
+							.multiply(new BigDecimal(100))
+							.divide(this.area, 2, RoundingMode.HALF_UP)
+							.divide(this.getLotAliquot(), 2,
+									RoundingMode.HALF_UP);
 				}
-				else{
-					return this.currentDomain.getLotAppraisal().multiply(new BigDecimal(100)).divide(this.area, 2, RoundingMode.HALF_UP).divide(this.getLotAliquot(), 2, RoundingMode.HALF_UP);
-				}
-			}
-			else return BigDecimal.ZERO;
+			} else
+				return BigDecimal.ZERO;
 		}
 
 		return BigDecimal.ZERO;
@@ -1224,10 +1246,13 @@ public class Property {
 	}
 
 	public void updateValueBySquareMeterForDomain() {
-		if (this.currentDomain != null){
-			if ((this.currentDomain.getLotAppraisal() != null) && (this.area != null)){
-				this.valueBySquareMeterForDomain = this.currentDomain.getLotAppraisal().divide(this.area);
-				this.valueBySquareMeterForDomain = this.valueBySquareMeterForDomain.setScale(2, RoundingMode.HALF_UP);
+		if (this.currentDomain != null) {
+			if ((this.currentDomain.getLotAppraisal() != null)
+					&& (this.area != null)) {
+				this.valueBySquareMeterForDomain = this.currentDomain
+						.getLotAppraisal().divide(this.area);
+				this.valueBySquareMeterForDomain = this.valueBySquareMeterForDomain
+						.setScale(2, RoundingMode.HALF_UP);
 			}
 		}
 	}
@@ -1236,10 +1261,11 @@ public class Property {
 		return propertyLocationType;
 	}
 
-	public void setPropertyLocationType(PropertyLocationType propertyLocationType) {
+	public void setPropertyLocationType(
+			PropertyLocationType propertyLocationType) {
 		this.propertyLocationType = propertyLocationType;
 	}
- 
+
 	// para consultas por la clave antigua
 	@Column(name = "cadastralcode_old")
 	private String cadastralCode_old;
@@ -1289,7 +1315,8 @@ public class Property {
 		return lotAreaHorizontalProperty;
 	}
 
-	public void setLotAreaHorizontalProperty(BigDecimal lotAreaHorizontalProperty) {
+	public void setLotAreaHorizontalProperty(
+			BigDecimal lotAreaHorizontalProperty) {
 		this.lotAreaHorizontalProperty = lotAreaHorizontalProperty;
 	}
 
@@ -1297,7 +1324,8 @@ public class Property {
 		return descriptionHorizontalProperty;
 	}
 
-	public void setDescriptionHorizontalProperty(String descriptionHorizontalProperty) {
+	public void setDescriptionHorizontalProperty(
+			String descriptionHorizontalProperty) {
 		this.descriptionHorizontalProperty = descriptionHorizontalProperty;
 	}
 
@@ -1316,22 +1344,6 @@ public class Property {
 	public void setThreat(AffectationFactor threat) {
 		this.threat = threat;
 	}
-	
-	//Modificacion para emision predial 2020
-		//Jock Samaniego
-		//27-11-2019
-	
-	@ManyToOne
-	@JoinColumn(name = "sidewalk_id")
-	private AffectationFactor hasSidewalk;
-	
-	@ManyToOne
-	@JoinColumn(name = "curb_id")
-	private AffectationFactor hasCurb;
-	
-	@ManyToOne
-	@JoinColumn(name = "garbagecollection_id")
-	private AffectationFactor hasGarbageCollection;
 
 	public AffectationFactor getHasSidewalk() {
 		return hasSidewalk;
@@ -1356,6 +1368,21 @@ public class Property {
 	public void setHasGarbageCollection(AffectationFactor hasGarbageCollection) {
 		this.hasGarbageCollection = hasGarbageCollection;
 	}
-		
-		
+
+	public BigDecimal getAppraisalRiskFactor() {
+		return appraisalRiskFactor;
+	}
+
+	public void setAppraisalRiskFactor(BigDecimal appraisalRiskFactor) {
+		this.appraisalRiskFactor = appraisalRiskFactor;
+	}
+
+	public BigDecimal getAppraisalThreatFactor() {
+		return appraisalThreatFactor;
+	}
+
+	public void setAppraisalThreatFactor(BigDecimal appraisalThreatFactor) {
+		this.appraisalThreatFactor = appraisalThreatFactor;
+	}
+
 }

@@ -3,6 +3,7 @@ package org.gob.gim.appraisal.facade;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.gob.gim.common.GimUtils;
+import org.gob.gim.common.NativeQueryResultsMapper;
+import org.gob.gim.common.ServiceLocator;
 //import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.SystemParameterService;
 
@@ -22,12 +26,14 @@ import ec.gob.gim.appraisal.model.AppraisalTotalExternal;
 import ec.gob.gim.appraisal.model.AppraisalTotalRoof;
 import ec.gob.gim.appraisal.model.AppraisalTotalStructure;
 import ec.gob.gim.appraisal.model.AppraisalTotalWall;
+import ec.gob.gim.cadaster.model.AffectationFactor;
 import ec.gob.gim.cadaster.model.Appraisal;
 import ec.gob.gim.cadaster.model.Building;
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.PreservationState;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.Sewerage;
+import ec.gob.gim.cadaster.model.dto.AffectationFactorDTO;
 
 /**
  * @author IML
@@ -36,11 +42,15 @@ import ec.gob.gim.cadaster.model.Sewerage;
 @Stateless(name = "AppraisalService")
 public class AppraisalServiceBean implements AppraisalService {
 
+	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
+
 	@EJB
 	SystemParameterService systemParameterService;
 
 	@PersistenceContext
 	EntityManager entityManager;
+
+	List<AffectationFactorDTO> affectationFactors;
 
 	// @EJB
 	// CrudService crudService;
@@ -84,6 +94,25 @@ public class AppraisalServiceBean implements AppraisalService {
 			mapRossHeidecke.put((long) aRossHeidecke.getYear(), aRossHeidecke);
 		}
 
+	}
+
+	public List<AffectationFactorDTO> getAffectationFactors() {
+		Query query = entityManager
+				.createNativeQuery("select 	aff.id as affectationfactor_id, "
+						+ "aff.category as category, "
+						+ "aaf.coefficient as coefficient, "
+						+ "itm.catalogcode, "
+						+ "itm.code as type "
+						+ "from affectationfactor aff "
+						+ "inner join appraisalaffectationfactor aaf ON aaf.affectationfactor_id = aff.id "
+						+ "inner join appraisalperiod app ON app.id = aaf.appraisalperiod_id "
+						+ "inner join itemcatalog itm ON itm.id = aff.type_itm_id "
+						+ "where 1 = 1 ");
+
+		List<AffectationFactorDTO> retorno = NativeQueryResultsMapper.map(
+				query.getResultList(), AffectationFactorDTO.class);
+
+		return retorno;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -137,14 +166,16 @@ public class AppraisalServiceBean implements AppraisalService {
 					RoundingMode.HALF_UP);
 		}
 		// System.out.println("Property Id:" + proper.getId());
-		// System.out.println("Valor equivalencia1:" + equivalencia.doubleValue());
+		// System.out.println("Valor equivalencia1:" +
+		// equivalencia.doubleValue());
 		equivalencia = equivalencia.add(new BigDecimal(0.001)); // para comparar
 																// solamente los
 																// menores y no
 																// los iguales
-		// System.out.println("Valor equivalencia1:" + equivalencia.doubleValue());
+		// System.out.println("Valor equivalencia1:" +
+		// equivalencia.doubleValue());
 
-		//rfam 2017-12-26
+		// rfam 2017-12-26
 		if (equivalencia.compareTo(new BigDecimal(0.3300)) == 1)
 			return new BigDecimal(1);
 		else if (equivalencia.compareTo(new BigDecimal(0.2500)) == 1)
@@ -163,48 +194,45 @@ public class AppraisalServiceBean implements AppraisalService {
 			return new BigDecimal(0.9475);
 		else
 			return new BigDecimal(0.9400);
-		
-		/*if (equivalencia.compareTo(new BigDecimal(0.2500)) == 1)
-			return new BigDecimal(1);
-		else if (equivalencia.compareTo(new BigDecimal(0.2000)) == 1)
-			return new BigDecimal(0.9925);
-		else if (equivalencia.compareTo(new BigDecimal(0.1667)) == 1)
-			return new BigDecimal(0.9850);
-		else if (equivalencia.compareTo(new BigDecimal(0.1429)) == 1)
-			return new BigDecimal(0.9775);
-		else if (equivalencia.compareTo(new BigDecimal(0.1250)) == 1)
-			return new BigDecimal(0.9700);
-		else if (equivalencia.compareTo(new BigDecimal(0.1111)) == 1)
-			return new BigDecimal(0.9625);
-		else if (equivalencia.compareTo(new BigDecimal(0.1000)) == 1)
-			return new BigDecimal(0.9550);
-		else if (equivalencia.compareTo(new BigDecimal(0.0909)) == 1)
-			return new BigDecimal(0.9475);
-		else
-			return new BigDecimal(0.9400);*/
-		
-//		 if (equivalencia.compareTo(new BigDecimal(0.251)) == 1)
-//		 return new BigDecimal(1);
-//		 else if (equivalencia.compareTo(new BigDecimal(0.201)) == 1)
-//		 return new BigDecimal(0.9925);
-//		 else if (equivalencia.compareTo(new BigDecimal(0.171)) == 1)
-//		 return new BigDecimal(0.9850);
-//		 else if (equivalencia.compareTo(new BigDecimal(0.141)) == 1)
-//		 return new BigDecimal(0.9775);
-//		 else if (equivalencia.compareTo(new BigDecimal(0.131)) == 1)
-//		 return new BigDecimal(0.9700);
-//		 else if (equivalencia.compareTo(new BigDecimal(0.111)) == 1)
-//		 return new BigDecimal(0.9625);
-//		 else if (equivalencia.compareTo(new BigDecimal(0.101)) == 1)
-//		 return new BigDecimal(0.9550);
-//		 else if (equivalencia.compareTo(new BigDecimal(0.091)) == 1)
-//		 return new BigDecimal(0.9475);
-//		 else return new BigDecimal(0.9400);
+
+		/*
+		 * if (equivalencia.compareTo(new BigDecimal(0.2500)) == 1) return new
+		 * BigDecimal(1); else if (equivalencia.compareTo(new
+		 * BigDecimal(0.2000)) == 1) return new BigDecimal(0.9925); else if
+		 * (equivalencia.compareTo(new BigDecimal(0.1667)) == 1) return new
+		 * BigDecimal(0.9850); else if (equivalencia.compareTo(new
+		 * BigDecimal(0.1429)) == 1) return new BigDecimal(0.9775); else if
+		 * (equivalencia.compareTo(new BigDecimal(0.1250)) == 1) return new
+		 * BigDecimal(0.9700); else if (equivalencia.compareTo(new
+		 * BigDecimal(0.1111)) == 1) return new BigDecimal(0.9625); else if
+		 * (equivalencia.compareTo(new BigDecimal(0.1000)) == 1) return new
+		 * BigDecimal(0.9550); else if (equivalencia.compareTo(new
+		 * BigDecimal(0.0909)) == 1) return new BigDecimal(0.9475); else return
+		 * new BigDecimal(0.9400);
+		 */
+
+		// if (equivalencia.compareTo(new BigDecimal(0.251)) == 1)
+		// return new BigDecimal(1);
+		// else if (equivalencia.compareTo(new BigDecimal(0.201)) == 1)
+		// return new BigDecimal(0.9925);
+		// else if (equivalencia.compareTo(new BigDecimal(0.171)) == 1)
+		// return new BigDecimal(0.9850);
+		// else if (equivalencia.compareTo(new BigDecimal(0.141)) == 1)
+		// return new BigDecimal(0.9775);
+		// else if (equivalencia.compareTo(new BigDecimal(0.131)) == 1)
+		// return new BigDecimal(0.9700);
+		// else if (equivalencia.compareTo(new BigDecimal(0.111)) == 1)
+		// return new BigDecimal(0.9625);
+		// else if (equivalencia.compareTo(new BigDecimal(0.101)) == 1)
+		// return new BigDecimal(0.9550);
+		// else if (equivalencia.compareTo(new BigDecimal(0.091)) == 1)
+		// return new BigDecimal(0.9475);
+		// else return new BigDecimal(0.9400);
 	}
 
 	public BigDecimal getAppraisalAreaFactor(Property proper) {
-		
-		//rfam 2017-12-29 ordenanza bieno 2018-2019
+
+		// rfam 2017-12-29 ordenanza bieno 2018-2019
 		if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
 			return new BigDecimal(1);
 		else if (proper.getArea().compareTo(new BigDecimal(251)) == -1)
@@ -219,36 +247,103 @@ public class AppraisalServiceBean implements AppraisalService {
 			return new BigDecimal(0.75);
 		else
 			return new BigDecimal(0.70);
-		
-		/*if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
-			return new BigDecimal(1);
-		else if (proper.getArea().compareTo(new BigDecimal(251)) == -1)
-			return new BigDecimal(0.99);
-		else if (proper.getArea().compareTo(new BigDecimal(501)) == -1)
-			return new BigDecimal(0.98);
-		else if (proper.getArea().compareTo(new BigDecimal(1001)) == -1)
-			return new BigDecimal(0.97);
-		else if (proper.getArea().compareTo(new BigDecimal(2501)) == -1)
-			return new BigDecimal(0.96);
-		else if (proper.getArea().compareTo(new BigDecimal(5001)) == -1)
-			return new BigDecimal(0.95);
-		else
-			return new BigDecimal(0.94);*/
-			
-		/*if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
-			return new BigDecimal(1);
-		else if (proper.getArea().compareTo(new BigDecimal(251)) == -1)
-			return new BigDecimal(1);
-		else if (proper.getArea().compareTo(new BigDecimal(501)) == -1)
-			return new BigDecimal(0.96);
-		else if (proper.getArea().compareTo(new BigDecimal(1001)) == -1)
-			return new BigDecimal(0.90);
-		else if (proper.getArea().compareTo(new BigDecimal(2501)) == -1)
-			return new BigDecimal(0.80);
-		else if (proper.getArea().compareTo(new BigDecimal(5001)) == -1)
-			return new BigDecimal(0.795);
-		else
-			return new BigDecimal(0.60);*/
+
+		/*
+		 * if (proper.getArea().compareTo(new BigDecimal(51)) == -1) return new
+		 * BigDecimal(1); else if (proper.getArea().compareTo(new
+		 * BigDecimal(251)) == -1) return new BigDecimal(0.99); else if
+		 * (proper.getArea().compareTo(new BigDecimal(501)) == -1) return new
+		 * BigDecimal(0.98); else if (proper.getArea().compareTo(new
+		 * BigDecimal(1001)) == -1) return new BigDecimal(0.97); else if
+		 * (proper.getArea().compareTo(new BigDecimal(2501)) == -1) return new
+		 * BigDecimal(0.96); else if (proper.getArea().compareTo(new
+		 * BigDecimal(5001)) == -1) return new BigDecimal(0.95); else return new
+		 * BigDecimal(0.94);
+		 */
+
+		/*
+		 * if (proper.getArea().compareTo(new BigDecimal(51)) == -1) return new
+		 * BigDecimal(1); else if (proper.getArea().compareTo(new
+		 * BigDecimal(251)) == -1) return new BigDecimal(1); else if
+		 * (proper.getArea().compareTo(new BigDecimal(501)) == -1) return new
+		 * BigDecimal(0.96); else if (proper.getArea().compareTo(new
+		 * BigDecimal(1001)) == -1) return new BigDecimal(0.90); else if
+		 * (proper.getArea().compareTo(new BigDecimal(2501)) == -1) return new
+		 * BigDecimal(0.80); else if (proper.getArea().compareTo(new
+		 * BigDecimal(5001)) == -1) return new BigDecimal(0.795); else return
+		 * new BigDecimal(0.60);
+		 */
+	}
+
+	public BigDecimal getAppraisalRiskFactor(Property proper) {
+
+		AffectationFactor risk = proper.getRisk();
+		if(risk == null)
+			return BigDecimal.ONE;
+		for (int i = 0; i < affectationFactors.size(); i++) {
+			AffectationFactorDTO _af = affectationFactors.get(i);
+			if (_af.getAffectationfactor_id().intValue() == risk.getId()
+					.intValue()) {
+				return _af.getCoefficient();
+			}
+		}
+		return BigDecimal.ONE;
+	}
+
+	public BigDecimal getAppraisalThreatFactor(Property proper) {
+		AffectationFactor threat = proper.getThreat();
+		if(threat == null)
+			return BigDecimal.ONE;
+		for (int i = 0; i < affectationFactors.size(); i++) {
+			AffectationFactorDTO _af = affectationFactors.get(i);
+			if (_af.getAffectationfactor_id().intValue() == threat.getId()
+					.intValue()) {
+				return _af.getCoefficient();
+			}
+		}
+		return BigDecimal.ONE;
+	}
+	
+	public BigDecimal getAppraisalSidewalkFactor(Property proper) {
+		AffectationFactor sidewalk = proper.getHasSidewalk();
+		if(sidewalk == null)
+			return BigDecimal.ONE;
+		for (int i = 0; i < affectationFactors.size(); i++) {
+			AffectationFactorDTO _af = affectationFactors.get(i);
+			if (_af.getAffectationfactor_id().intValue() == sidewalk.getId()
+					.intValue()) {
+				return _af.getCoefficient();
+			}
+		}
+		return BigDecimal.ONE;
+	}
+	
+	public BigDecimal getAppraisalCurbFactor(Property proper) {
+		AffectationFactor curb = proper.getHasCurb();
+		if(curb == null)
+			return BigDecimal.ONE;
+		for (int i = 0; i < affectationFactors.size(); i++) {
+			AffectationFactorDTO _af = affectationFactors.get(i);
+			if (_af.getAffectationfactor_id().intValue() == curb.getId()
+					.intValue()) {
+				return _af.getCoefficient();
+			}
+		}
+		return BigDecimal.ONE;
+	}
+	
+	public BigDecimal getAppraisalGarbageCollectionFactor(Property proper) {
+		AffectationFactor garbageCollection = proper.getHasGarbageCollection();
+		if(garbageCollection == null)
+			return BigDecimal.ONE;
+		for (int i = 0; i < affectationFactors.size(); i++) {
+			AffectationFactorDTO _af = affectationFactors.get(i);
+			if (_af.getAffectationfactor_id().intValue() == garbageCollection.getId()
+					.intValue()) {
+				return _af.getCoefficient();
+			}
+		}
+		return BigDecimal.ONE;
 	}
 
 	public List<Property> calculateUrbanAppraisal(
@@ -264,10 +359,37 @@ public class AppraisalServiceBean implements AppraisalService {
 		// BigDecimal ceroBigD = BigDecimal.ZERO;
 
 		getMaps(appraisalPeriod);
+
+		/*
+		 * Consultar factores de correccion bienio 2020-2021
+		 */
+		affectationFactors = getAffectationFactors();
+
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SYSTEM_PARAMETER_SERVICE_NAME);
+		/*
+		 * CODIGOS DE PARROQUIAS URBANAS
+		 */
+		String strListParishesUrbans = systemParameterService
+				.findParameter("URBAN_PARISH_CODES");
+		List<String> parishesUrbansListStrings = new ArrayList<String>();
+		parishesUrbansListStrings = GimUtils
+				.convertStringWithCommaToListString(strListParishesUrbans);
+
+		/*
+		 * CODIGOS DE PARROQUIAS URBANAS PARROQUIALES
+		 */
+		String strListParishesUrbanParishes = systemParameterService
+				.findParameter("URBANPARISH_PARISH_CODES");
+		List<String> parishesUrbanParishesListStrings = new ArrayList<String>();
+		parishesUrbanParishesListStrings = GimUtils
+				.convertStringWithCommaToListString(strListParishesUrbanParishes);
+
 		for (Property property : properties) {
 			// Inicia Calculo de Avaluo de Terreno
-			//System.out.println("======= CadastralCode: "
-				//	+ property.getCadastralCode());
+			// System.out.println("======= CadastralCode: "
+			// + property.getCadastralCode());
 			lotAppraisal = BigDecimal.ZERO;
 			affectationFactorLot = BigDecimal.ZERO;
 			property.setAppraisalRelationFactor(getAppraisalRelationFactor(property));
@@ -314,7 +436,44 @@ public class AppraisalServiceBean implements AppraisalService {
 				affectationFactorLot = affectationFactorLot
 						.multiply(appraisalPeriod.getFactorHasntEnergy());
 
-			// System.out.println("======= affectationFactorLot: "+affectationFactorLot);
+			/*
+			 * Calculo con nuevos factores de correccion bienio 2020-2021
+			 * 2019-12-02 rortega
+			 */
+
+			String _parish = property.getCadastralCode().substring(4, 6);
+
+			if (parishesUrbansListStrings.contains(_parish)) {
+				property.setAppraisalRiskFactor(getAppraisalRiskFactor(property));
+				property.setAppraisalThreatFactor(BigDecimal.ONE);
+			} else if (parishesUrbanParishesListStrings.contains(_parish)) {
+				property.setAppraisalRiskFactor(BigDecimal.ONE);
+				property.setAppraisalThreatFactor(getAppraisalThreatFactor(property));
+			} else {
+				System.out
+						.println("NO SE ENCUENTRA PARROQUIA, POSIBLE CLAVE SIN MIGRACION");
+			}
+
+			// Riesgo
+			affectationFactorLot = affectationFactorLot.multiply(property
+					.getAppraisalRiskFactor());
+
+			// Amenaza
+			affectationFactorLot = affectationFactorLot.multiply(property
+					.getAppraisalThreatFactor());
+			
+			// Acera
+			affectationFactorLot = affectationFactorLot
+					.multiply(getAppraisalSidewalkFactor(property));
+			
+			// Bordillo
+			affectationFactorLot = affectationFactorLot
+					.multiply(getAppraisalCurbFactor(property));
+			
+			// Recoleccion de basura
+			affectationFactorLot = affectationFactorLot
+					.multiply(getAppraisalGarbageCollectionFactor(property));
+
 			affectationFactorLot = affectationFactorLot
 					.round(new MathContext(4));
 			property.setAffectationFactorLot(affectationFactorLot);
@@ -339,10 +498,12 @@ public class AppraisalServiceBean implements AppraisalService {
 				lotAppraisal = lotAppraisal.multiply(property.getLotAliquot())
 						.divide(cienBigD);
 				lotAppraisal = lotAppraisal.setScale(2, RoundingMode.HALF_UP);
-				/*System.out.println("======= Lot Aliquot: "
-						+ property.getLotAliquot());
-				System.out.println("======= totalLotAppraisal Aliquot: "
-						+ lotAppraisal);*/
+				/*
+				 * System.out.println("======= Lot Aliquot: " +
+				 * property.getLotAliquot());
+				 * System.out.println("======= totalLotAppraisal Aliquot: " +
+				 * lotAppraisal);
+				 */
 			}
 
 			if (temporalValues) {
@@ -412,7 +573,7 @@ public class AppraisalServiceBean implements AppraisalService {
 					factorRoss = mapRossHeidecke.get(anioConst).getGoodState();
 				} else if (building.getPreservationState().compareTo(
 						PreservationState.BAD) == 0) {
-		factorRoss = mapRossHeidecke.get(anioConst).getBadState();
+					factorRoss = mapRossHeidecke.get(anioConst).getBadState();
 				} else if (building.getPreservationState().compareTo(
 						PreservationState.REGULAR) == 0) {
 					factorRoss = mapRossHeidecke.get(anioConst)
@@ -449,15 +610,18 @@ public class AppraisalServiceBean implements AppraisalService {
 
 				totalBuildingAppraisal = totalBuildingAppraisal
 						.add(buildingAppraisal);
-				//System.out.println("======= totalBuildingAppraisal : "						+ totalBuildingAppraisal);
+				// System.out.println("======= totalBuildingAppraisal : " +
+				// totalBuildingAppraisal);
 			}
 
 			if ((property.getBuildingAliquot().floatValue() >= 0)
 					&& (property.getBuildingAliquot().floatValue() < 100)) {
 				totalBuildingAppraisal = totalBuildingAppraisal.multiply(
 						property.getBuildingAliquot()).divide(cienBigD);
-				//System.out.println("======= Building Aliquot: "						+ property.getBuildingAliquot());
-				//System.out.println("======= totalBuildingAppraisal Aliquot: "						+ totalBuildingAppraisal);
+				// System.out.println("======= Building Aliquot: " +
+				// property.getBuildingAliquot());
+				// System.out.println("======= totalBuildingAppraisal Aliquot: "
+				// + totalBuildingAppraisal);
 			}
 
 			totalBuildingAppraisal = totalBuildingAppraisal.setScale(2,

@@ -29,6 +29,16 @@ public class GimUtils {
 		return list;
 	}
 	
+	public static List<String> convertStringWithCommaToListString(String string){
+		List<String> list = new ArrayList<String>();
+		List<String> entriesListStr = Arrays.asList(string.split(","));
+		for (int i = 0 ; i < entriesListStr.size() ; i++){
+			String str = entriesListStr.get(i);
+			list.add(str);
+		}
+		return list;
+	}
+	
     /**
      * Genera la clave de acceso para el comprobante en un ambiente normal
      *
