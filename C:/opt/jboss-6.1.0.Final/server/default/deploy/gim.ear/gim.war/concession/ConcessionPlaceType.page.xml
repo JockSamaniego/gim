@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
+
+   <param name="concessionPlaceTypeFrom"/>
+   <param name="concessionPlaceTypeId" value="#{concessionPlaceTypeHome.concessionPlaceTypeId}"/>
+   <param name="entryFrom"/>
+   <param name="entryId" value="#{entryHome.entryId}"/>
+   <param name="accountFrom"/>
+   <param name="accountId" value="#{accountHome.accountId}"/>
+
+   <param name="entryTypeIncomeFrom"/>
+   <param name="entryTypeIncomeId" value="#{entryTypeIncomeHome.entryTypeIncomeId}"/>
+
+   <param name="receiptTypeFrom"/>
+   <param name="receiptTypeId" value="#{receiptTypeHome.receiptTypeId}"/>
+
+   <param name="timePeriodFrom"/>
+   <param name="timePeriodId" value="#{timePeriodHome.timePeriodId}"/>
+
+
+
+
+</page>

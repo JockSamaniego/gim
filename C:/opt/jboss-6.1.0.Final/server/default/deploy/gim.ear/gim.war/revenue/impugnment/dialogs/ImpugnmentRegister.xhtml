@@ -1,0 +1,233 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="impugnmentRegisterPanel">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['revenue.impugnments.impugnment']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkImpugnment" />
+				<rich:componentControl for="impugnmentRegisterPanel"
+					attachTo="hidelinkImpugnment" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="impugnmentForm">
+
+			<rich:messages errorClass="errors" style="color:red" />
+
+			<h:panelGrid width="100%">
+				<h:panelGrid columns="1">
+					<s:decorate id="impugnmentDateField"
+						template="../../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_date_label']}</ui:define>
+
+						<rich:calendar id="impugnmentDate"
+							value="#{impugnmentHome.impugnmentSelected.creationDate}"
+							datePattern="#{messages['common.datePattern']}"
+							required="#{!impugnmentHome.isUserWithRolCoercive()}"
+							disabled="#{impugnmentHome.isUserWithRolCoercive()}">
+							<a:support event="onchanged" ajaxSingle="true" />
+						</rich:calendar>
+					</s:decorate>
+
+					<s:decorate id="numberInfringementField"
+						template="../../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_numberInfringement_label']}</ui:define>
+
+						<h:inputText id="numberInfringement" size="30" maxlength="30"
+							value="#{impugnmentHome.impugnmentSelected.numberInfringement}"
+							required="true" disabled="#{impugnmentHome.isStatusChangeAction}">
+							<a:support event="onblur"
+								reRender="idMunicipalBondField,numberMunicipalBondField,valueMunicipalBondField,identificationResidentField,nameResidentField"
+								ajaxSingle="true"
+								action="#{impugnmentHome.searchMunicipalBond()}" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="numberMunicipalBondField"
+						template="../../../layout/edit.xhtml" for="numberMunicipalBond">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_bond_number_label']}</ui:define>
+
+						<h:inputText id="numberMunicipalBond"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.number}"
+							disabled="#{impugnmentHome.existObligationForInpugnmentNumber or impugnmentHome.isUserWithRolVer()}"
+							size="30">
+							<a:support event="onblur"
+								reRender="idMunicipalBondField,numberMunicipalBondField,valueMunicipalBondField,identificationResidentField,nameResidentField"
+								ajaxSingle="true"
+								action="#{impugnmentHome.searchMunicipalBondByNumber()}" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="idMunicipalBondField"
+						template="../../../layout/edit.xhtml" for="numberMunicipalBond">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_bond_id_label']}</ui:define>
+						<h:outputText id="idMunicipalBond"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.id}">
+						</h:outputText>
+					</s:decorate>
+
+					<s:decorate id="identificationResidentField"
+						template="../../../layout/edit.xhtml" for="identificationResident">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_resident_identification_label']}</ui:define>
+
+						<h:outputText id="identificationResident"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.resident.identificationNumber}">
+						</h:outputText>
+					</s:decorate>
+
+					<s:decorate id="nameResidentField"
+						template="../../../layout/edit.xhtml" for="nameResident">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_resident_name_label']}</ui:define>
+
+						<h:outputText id="nameResident"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.resident.name}">
+						</h:outputText>
+					</s:decorate>
+
+					<s:decorate id="valueMunicipalBondField"
+						template="../../../layout/edit.xhtml" for="valueMunicipalBond">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_bond_value_label']}</ui:define>
+
+						<h:outputText id="valueMunicipalBond"
+							value="#{impugnmentHome.impugnmentSelected.municipalBond.value}">
+						</h:outputText>
+
+					</s:decorate>
+
+
+					<s:decorate id="numberProsecutionField"
+						template="../../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_numberProsecution_label']}</ui:define>
+						<h:inputText id="numberProsecution" size="30" maxlength="30"
+							value="#{impugnmentHome.impugnmentSelected.numberProsecution}"
+							required="#{!impugnmentHome.isUserWithRolCoercive()}"
+							disabled="#{impugnmentHome.isUserWithRolCoercive() or impugnmentHome.isStatusChangeAction}">
+							<a:support ajaxSingle="true" event="onblur"></a:support>
+						</h:inputText>
+
+					</s:decorate>
+
+					<s:decorate id="numberTramitField"
+						template="../../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_numberTramit_label']}</ui:define>
+						<h:inputText id="numberTramit" size="30" maxlength="30"
+							value="#{impugnmentHome.impugnmentSelected.numberTramit}"
+							required="#{impugnmentHome.isUserWithRolCoercive()}"
+							disabled="#{impugnmentHome.isEditAction or impugnmentHome.isStatusChangeAction}">
+							<a:support ajaxSingle="true" event="onblur"></a:support>
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="observationField"
+						template="../../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_observation_label']}</ui:define>
+						<h:inputTextarea id="observation"
+							value="#{impugnmentHome.impugnmentSelected.observation}" rows="5"
+							cols="34" maxlength="255"
+							disabled="#{impugnmentHome.isUserWithRolCoercive()}">
+							<a:support ajaxSingle="true" event="onblur"></a:support>
+						</h:inputTextarea>
+					</s:decorate>
+
+					<s:decorate id="actualStatusField"
+						template="../../../layout/edit.xhtml" for="actualStatus"
+						rendered="#{impugnmentHome.isStatusChangeAction and impugnmentHome.isUserWithRolMatriculacion()}">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_actual_state_label']}</ui:define>
+
+						<h:outputText id="actualStatus"
+							value="#{impugnmentHome.impugnmentSelected.status.name}">
+						</h:outputText>
+					</s:decorate>
+
+					<s:decorate id="statusField" template="../../../layout/edit.xhtml"
+						rendered="#{impugnmentHome.isStatusChangeAction and impugnmentHome.isUserWithRolMatriculacion()}">
+						<ui:define name="label">#{messages['revenue.impugnments.impugnment_state_label']}</ui:define>
+						<h:selectOneMenu id="cmbStatus"
+							value="#{impugnmentHome.stateForImpugnmentFotoMultaEdit}"
+							required="true">
+							<f:selectItem itemLabel="#{messages['common.selectOne']}" itemValue="#{null}"
+								noSelectionOption="true" />
+							<f:selectItems
+								value="#{impugnmentHome.statesImpugnmentFotoMulta}" var="status"
+								itemLabel="#{status.name}" itemValue="#{status}" />
+							<a:support event="onchange" ajaxSingle="true" />
+							<s:convertEntity></s:convertEntity>
+						</h:selectOneMenu>
+
+					</s:decorate>
+
+					<div style="clear: both">
+						<span class="required">*</span>
+						#{messages['common.requiredFields']}
+					</div>
+
+				</h:panelGrid>
+
+				<div class="actionButtons">
+					<a:region>
+						<a:commandButton id="registerDirectButton" ajaxSingle="true"
+							value="#{messages['revenue.impugnments.impugnment_save']}"
+							actionListener="#{impugnmentHome.registerImpugnment()}"
+							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
+							bypassUpdates="true"
+							action="#{emissionOrderHome.loadPending()}"
+							reRender="emissionOrderTable,sc2,txtTotal"
+							rendered="#{impugnmentHome.isCreateAction and !impugnmentHome.isUserWithRolVer() and impugnmentHome.directButton}" />
+							
+						<a:commandButton id="statusChangeDirectButton" ajaxSingle="true"
+							value="#{messages['revenue.impugnments.impugnment_update']}"
+							actionListener="#{impugnmentHome.statusChangeUpdateImpugnment()}"
+							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
+							bypassUpdates="true"
+							action="#{emissionOrderHome.loadPending()}"
+							reRender="emissionOrderTable,sc2,txtTotal"			
+							rendered="#{impugnmentHome.isStatusChangeAction and impugnmentHome.isUserWithRolMatriculacion() and impugnmentHome.directButton}" />
+					
+						<a:commandButton id="registerButton" ajaxSingle="true"
+							value="#{messages['revenue.impugnments.impugnment_save']}"
+							reRender="paginador,impugnmentsTable,lblNumberResults"
+							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
+							bypassUpdates="true"
+							actionListener="#{impugnmentHome.registerImpugnment()}"
+							rendered="#{impugnmentHome.isCreateAction and !impugnmentHome.isUserWithRolVer() and !impugnmentHome.directButton}" />
+
+						<a:commandButton id="updateButton" ajaxSingle="true"
+							value="#{messages['revenue.impugnments.impugnment_update']}"
+							reRender="paginador,impugnmentsTable,lblNumberResults"
+							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
+							bypassUpdates="true"
+							actionListener="#{impugnmentHome.updateImpugnment()}"
+							rendered="#{impugnmentHome.isEditAction and impugnmentHome.isUserWithRolMatriculacion()}" />
+
+						<a:commandButton id="statusChangeButton" ajaxSingle="true"
+							value="#{messages['revenue.impugnments.impugnment_update']}"
+							reRender="paginador,impugnmentsTable,lblNumberResults"
+							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('impugnmentRegisterPanel')}.hide();"
+							bypassUpdates="true"
+							actionListener="#{impugnmentHome.statusChangeUpdateImpugnment()}"
+							rendered="#{impugnmentHome.isStatusChangeAction and impugnmentHome.isUserWithRolMatriculacion() and !impugnmentHome.directButton}" />
+
+						<a:commandButton ajaxSingle="true"
+							value="#{messages['common.cancel']}"
+							oncomplete="Richfaces.hideModalPanel('impugnmentRegisterPanel');"
+							bypassUpdates="true" immediate="true" />
+					</a:region>
+				</div>
+			</h:panelGrid>
+		</h:form>
+	</rich:modalPanel>
+</ui:composition>

@@ -1,0 +1,365 @@
+<p:paragraph xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<p:table columns="4" widthPercentage="100" spacingAfter="10"
+		widths="1 1 8 2">
+
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0.2" borderColor="#000000" />
+		</f:facet>
+
+		<p:cell colspan="4" horizontalAlignment="center" grayFill="0.90">
+			<p:font size="7" style="bold">
+				<p:paragraph alignment="center">#{messages['receipt.detail']}</p:paragraph>
+			</p:font>
+		</p:cell>
+
+		<p:cell horizontalAlignment="center" grayFill="0.90">
+			<p:font size="6" style="bold">
+				<p:paragraph alignment="center">#{messages['item.quantity']}</p:paragraph>
+			</p:font>
+		</p:cell>
+		<p:cell horizontalAlignment="center" grayFill="0.90">
+			<p:font size="6" style="bold">
+				<p:paragraph alignment="center">
+					<p:text value="#{empty _deposit.municipalBond.receipt ? 'Rubro' : 	messages['item.code']}"></p:text>	
+				</p:paragraph>
+			</p:font>
+		</p:cell>
+		<p:cell horizontalAlignment="center" grayFill="0.90">
+			<p:font size="6" style="bold">
+				<p:paragraph alignment="center">
+
+					<p:text value="#{empty _deposit.municipalBond.receipt ? 'Concepto' : 	messages['entry']}"></p:text>					
+				</p:paragraph>
+			</p:font>
+		</p:cell>
+		<p:cell horizontalAlignment="center" grayFill="0.90">
+			<p:font size="6" style="bold">
+				<p:paragraph alignment="center">#{messages['item.value']}</p:paragraph>
+			</p:font>
+		</p:cell>
+
+		<p:font size="6">
+			<ui:repeat var="_item" value="#{_deposit.municipalBond.items}">
+				<p:cell horizontalAlignment="right">
+					<p:paragraph alignment="right">1</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph alignment="right">#{_item.entry.code}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="left">
+					<p:paragraph alignment="left">#{_item.entry.name}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">
+					<p:paragraph alignment="right">
+						<p:text value="#{_item.total}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.maxFractionDigits']}" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+			</ui:repeat>
+		</p:font>
+
+		<p:cell horizontalAlignment="right" colspan="3">
+			<p:font size="6" style="bold">
+				<p:paragraph alignment="left">#{messages['municipalBond.subTotal'].toUpperCase()}</p:paragraph>
+			</p:font>
+		</p:cell>
+		<p:cell horizontalAlignment="right">
+			<p:paragraph>
+				<p:text value="#{_deposit.municipalBond.subTotal}">
+					<f:convertNumber
+						maxFractionDigits="#{messages['common.maxFractionDigits']}"
+						minFractionDigits="#{messages['common.maxFractionDigits']}" />
+				</p:text>
+			</p:paragraph>
+		</p:cell>
+
+		<ui:repeat var="_taxItem" value="#{_deposit.municipalBond.taxItems}">
+			<p:cell horizontalAlignment="right" colspan="3">
+				<p:font size="6" style="bold">
+					<p:paragraph alignment="left">#{messages['municipalBond.taxableTotal'].toUpperCase()} ( #{_taxItem.appliedRate * 100} %)</p:paragraph>
+				</p:font>
+			</p:cell>
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{_deposit.municipalBond.taxableTotal}">
+						<f:convertNumber
+							maxFractionDigits="#{messages['common.maxFractionDigits']}"
+							minFractionDigits="#{messages['common.maxFractionDigits']}" />
+					</p:text>
+				</p:paragraph>
+			</p:cell>
+		</ui:repeat>
+
+		<ui:repeat var="_taxItem" value="#{_deposit.municipalBond.taxItems}">
+			<p:cell horizontalAlignment="right" colspan="3">
+				<p:font size="6" style="bold">
+					<p:paragraph alignment="left">#{_taxItem.tax.name} ( #{_taxItem.appliedRate * 100} %)</p:paragraph>
+				</p:font>
+			</p:cell>
+			<p:cell horizontalAlignment="right">
+				<p:paragraph>
+					<p:text value="#{_taxItem.value}">
+						<f:convertNumber
+							maxFractionDigits="#{messages['common.maxFractionDigits']}"
+							minFractionDigits="#{messages['common.maxFractionDigits']}" />
+					</p:text>
+				</p:paragraph>
+			</p:cell>
+		</ui:repeat>
+
+		<ui:repeat value="#{!receiptPrintingManager.getIsTaxable(_deposit) ? 1 : null}">
+		<p:cell horizontalAlignment="right" colspan="3">
+			<p:font size="6" style="bold">
+				<p:paragraph alignment="left">#{messages['municipalBond.discounts'].toUpperCase()}</p:paragraph>
+			</p:font>
+		</p:cell>
+		<p:cell horizontalAlignment="right">
+			<p:paragraph alignment="right">
+				<p:text value="#{_deposit.municipalBond.discount}">
+					<f:convertNumber
+						maxFractionDigits="#{messages['common.maxFractionDigits']}"
+						minFractionDigits="#{messages['common.maxFractionDigits']}" />
+				</p:text>
+			</p:paragraph>
+		</p:cell>
+		</ui:repeat>
+
+		<p:cell horizontalAlignment="right" colspan="3">
+			<p:font size="6" style="bold">
+				<p:paragraph alignment="left">#{messages['municipalBond.interests'].toUpperCase()}</p:paragraph>
+			</p:font>
+		</p:cell>
+		<p:cell horizontalAlignment="right">
+			<p:paragraph>
+				<p:text value="#{_deposit.municipalBond.interest}">
+					<f:convertNumber
+						maxFractionDigits="#{messages['common.maxFractionDigits']}"
+						minFractionDigits="#{messages['common.maxFractionDigits']}" />
+				</p:text>
+			</p:paragraph>
+		</p:cell>
+
+		<p:cell horizontalAlignment="right" colspan="3">
+			<p:font size="6" style="bold">
+				<p:paragraph alignment="left">#{messages['municipalBond.surcharges'].toUpperCase()}</p:paragraph>
+			</p:font>
+		</p:cell>
+		<p:cell horizontalAlignment="right">
+			<p:paragraph>
+				<p:text value="#{_deposit.municipalBond.surcharge}">
+					<f:convertNumber
+						maxFractionDigits="#{messages['common.maxFractionDigits']}"
+						minFractionDigits="#{messages['common.maxFractionDigits']}" />
+				</p:text>
+			</p:paragraph>
+		</p:cell>
+
+		<p:font size="7" style="bold">
+			<p:cell horizontalAlignment="right" grayFill="0.90" colspan="3">
+				<p:paragraph>#{messages['municipalBond.paidTotal'].toUpperCase()}</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="right" grayFill="0.90">
+				<p:paragraph>
+					<p:text value="#{_deposit.municipalBond.paidTotal}">
+						<f:convertNumber
+							maxFractionDigits="#{messages['common.maxFractionDigits']}"
+							minFractionDigits="#{messages['common.maxFractionDigits']}" />
+					</p:text>
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+	</p:table>
+
+
+	<ui:repeat value="#{_deposit.municipalBond.deposits.size() > 1 ? 1 : null}">
+		<p:table columns="6" widthPercentage="100">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0.2" borderColor="#000000"/>
+			</f:facet>
+	
+			<p:cell colspan="6" horizontalAlignment="center" grayFill="0.90">
+				<p:paragraph><p:font size="8" style="bold">#{messages['deposit.lastDetail']}</p:font></p:paragraph>
+			</p:cell>
+			<p:font size="6" style="bold">
+				<p:cell horizontalAlignment="center" >
+					<p:paragraph>#{messages['deposit.number']}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center" >
+					<p:paragraph>#{messages['deposit.capital']}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center" >
+					<p:paragraph>#{messages['deposit.interest']}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center" >
+					<p:paragraph>#{messages['deposit.surcharge']}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center" >
+					<p:paragraph>#{messages['deposit.discount']}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center" >
+					<p:paragraph>#{messages['deposit.paidTaxes']}</p:paragraph>
+				</p:cell>
+			</p:font>
+			<p:font size="6">
+				<p:cell horizontalAlignment="right" >
+					<p:paragraph>#{_deposit.number}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right" >
+					<p:paragraph>#{_deposit.capital}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right" >
+					<p:paragraph>#{_deposit.interest}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right" >
+					<p:paragraph>#{_deposit.surcharge}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right" >
+					<p:paragraph>#{_deposit.discount}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right" >
+					<p:paragraph>#{_deposit.paidTaxes}</p:paragraph>
+				</p:cell>
+			</p:font>
+			
+			<p:font size="8" style="bold">
+				<p:cell horizontalAlignment="right" colspan="4" grayFill="0.90">
+					<p:paragraph>#{messages['deposit.lastValue']}</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right" colspan="2" grayFill="0.90">
+					<p:paragraph>#{_deposit.value}</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+	</ui:repeat>
+
+	<p:table columns="2" widthPercentage="100" spacingBefore="25" widths="50 50" horizontalAlignment="center" >
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" />
+		</f:facet>	
+	
+		<p:cell horizontalAlignment="left">
+
+
+			<p:table columns="2" widthPercentage="100" widths="50 50" horizontalAlignment="right" >
+					
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0.5" />
+				</f:facet>
+					<p:font size="8">
+						<p:cell horizontalAlignment="left">
+							<p:font size="7">
+								<p:paragraph alignment="center">Administración Tributaria:</p:paragraph>
+							</p:font>
+						</p:cell>
+						
+						<p:cell horizontalAlignment="left">
+							<p:font size="7">
+								<p:paragraph alignment="center">Dirección Financiera</p:paragraph>
+							</p:font>
+						</p:cell>
+			
+						<p:cell horizontalAlignment="left">
+							<p:font size="7">
+								<p:paragraph alignment="left">Departamento que lo emite:</p:paragraph>
+							</p:font>
+						</p:cell>
+						
+						<p:cell horizontalAlignment="left">
+							<p:font size="7">
+								<p:paragraph alignment="center">Jefatura de Rentas</p:paragraph>
+							</p:font>
+						</p:cell>
+					</p:font>
+			</p:table>
+
+
+		</p:cell>
+
+		<p:cell horizontalAlignment="right">
+	
+	
+	
+			<p:table columns="3" widthPercentage="100" widths="12 1 12" horizontalAlignment="right" rendered="#{not receiptPrintingManager.isCertificate}">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+				
+				<p:font size="8">
+					<p:cell horizontalAlignment="center" borderWidthTop="1">
+						<p:paragraph alignment="center">#{messages['receipt.authorizedSignature']}</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="center" >
+						#{' '}
+					</p:cell>
+					<p:cell horizontalAlignment="center" borderWidthTop="1">
+						<p:paragraph alignment="center">#{messages['receipt.clientSignature']}</p:paragraph>
+					</p:cell>
+				</p:font>
+			</p:table>
+	
+	
+	
+		</p:cell>
+
+	</p:table>
+	
+	<p:table columns="2" widthPercentage="100" spacingAfter="5" widths="12 12" >
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" />
+		</f:facet>	
+		<p:cell horizontalAlignment="center" rendered="#{_deposit.municipalBond.metadata!=null}">
+			<p:table columns="2" widthPercentage="100" widths="12 12" horizontalAlignment="right" >
+
+				<p:font size="6">
+					<p:cell horizontalAlignment="center" >
+						<p:paragraph alignment="center">Remisión interes</p:paragraph>
+					</p:cell> 
+					<p:cell horizontalAlignment="center" >
+						<p:paragraph alignment="center">Remisión recargo</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="center" >
+						<p:paragraph alignment="center">$#{_deposit.municipalBond.interestRemission}</p:paragraph>
+					</p:cell> 
+					<p:cell horizontalAlignment="center" >
+						<p:paragraph alignment="center">$#{_deposit.municipalBond.surchargeRemission}</p:paragraph>
+					</p:cell> 
+				</p:font>
+			</p:table>
+		</p:cell>
+		
+		<p:cell horizontalAlignment="justify" rendered="#{_deposit.municipalBond.interestRemission!=0 or _deposit.municipalBond.surchargeRemission!=0}">
+			<p:paragraph>
+				<p:font size="6">Me acojo y acepto los estipulado en las disipaciones generales cuarta para la ley de fomento productivo atracción de inversiones generación de empleo</p:font>
+			</p:paragraph>
+		</p:cell>
+	</p:table>
+	
+	<p:table columns="3" widthPercentage="100" spacingAfter="5" widths="12 1 12" rendered="#{_deposit.municipalBond.entry.explanatoryNote != null}">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" />
+		</f:facet>
+		<p:cell colspan="3" horizontalAlignment="center">
+			<p:paragraph><p:font size="8">#{_deposit.municipalBond.entry.explanatoryNote}</p:font></p:paragraph>
+		</p:cell>
+	</p:table>
+
+	<p:barCode  type="code128" barHeight="25" textSize="10" rendered="#{not receiptPrintingManager.isCertificate and !_deposit.municipalBond.receipt.electronicReceipt}"
+				code="#{_deposit.municipalBond.receipt.authorizationNumber}-#{_deposit.municipalBond.receipt.sequential}" codeType="CODE128_UCC"
+				altText="#{_printing == 0 ? messages['printing.original'] : (_printing == -1 ? messages['printing.copy'] : messages['printing.reprint'])} #{_printing > 0 ? _printing : ''}" xpos="25" ypos="25" />
+
+	<p:barCode  type="code128" barHeight="25" textSize="10" rendered="#{not receiptPrintingManager.isCertificate and _deposit.municipalBond.receipt.electronicReceipt}"
+				code="#{_deposit.municipalBond.receipt.sriAccessKey}" codeType="CODE128_UCC"
+				altText="#{_printing == 0 ? messages[''] : (_printing == -1 ? messages['printing.copy'] : messages['printing.reprint'])} #{_deposit.municipalBond.receipt.sriAccessKey} #{_printing > 0 ? _printing : ''}" xpos="25" ypos="25" />
+
+</p:paragraph>

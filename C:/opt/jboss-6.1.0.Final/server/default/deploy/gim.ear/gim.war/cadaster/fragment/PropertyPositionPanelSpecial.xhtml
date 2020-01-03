@@ -1,0 +1,220 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel rendered="#{propertySpecialHome.urban}">
+		<f:facet name="header">#{messages['property.location']}</f:facet>
+		<ui:debug id="debug" />
+		<h:panelGrid columns="10">
+
+			<s:decorate template="../../layout/vertical-edit.xhtml" >
+				<ui:define name="label">#{territorialDivisionTypes.get(0).name}:</ui:define>
+				<h:inputText value="#{defaultProvince.name}" readonly="true" />
+			</s:decorate>
+
+			<s:decorate template="../../layout/vertical-edit.xhtml" >
+				<ui:define name="label">#{territorialDivisionTypes.get(1).name}:</ui:define>
+				<h:inputText value="#{defaultCanton.name}" readonly="true" />
+			</s:decorate>
+
+			<s:decorate id="parisheField" 
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{territorialDivisionTypes.get(2).name}:</ui:define>
+				<h:selectOneMenu id="parishe" value="#{propertySpecialHome.parish}"
+					required="true" disabled="#{propertySpecialHome.idDefined}">
+					<s:selectItems
+						value="#{propertySpecialHome.findParishes(defaultCanton.id)}"
+						var="parish" label="#{parish.code} - #{parish.name}"
+						noSelectionLabel="#{messages['common.shouldSelected']}" />
+					<s:convertEntity />
+					<a:support event="onchange" ajaxSingle="true"
+						reRender="zone, sector, block, cadastralCodePanel, street, neighborhood, riskTreath"
+						action="#{propertySpecialHome.resetAll()}" />
+				</h:selectOneMenu>
+			</s:decorate>
+
+			<s:decorate id="zoneField" 
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{territorialDivisionTypes.get(3).name}:</ui:define>
+				<h:selectOneMenu id="zone" value="#{propertySpecialHome.zone}"
+					required="true" disabled="#{propertySpecialHome.idDefined}">
+					<s:selectItems value="#{propertySpecialHome.findZones()}" var="zone"
+						label="#{zone.name}"
+						noSelectionLabel="#{messages['common.shouldSelected']}" />
+					<s:convertEntity />
+					<a:support event="onchange" ajaxSingle="true"
+						reRender="sector, block, street, neighborhood"
+						action="#{propertySpecialHome.resetSector()}" />
+				</h:selectOneMenu>
+			</s:decorate>
+
+			<s:decorate id="sectorField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{territorialDivisionTypes.get(4).name}:</ui:define>
+				<h:selectOneMenu id="sector" value="#{propertySpecialHome.sector}"
+					required="true" disabled="#{propertySpecialHome.idDefined}">
+					<s:selectItems value="#{propertySpecialHome.populateSectors()}"
+						var="sector" label="#{sector.name}"
+						noSelectionLabel="#{messages['common.shouldSelected']}" />
+					<s:convertEntity />
+					<a:support event="onchange" ajaxSingle="true"
+						reRender="block, street, neighborhood"
+						action="#{propertySpecialHome.resetBlock()}" />
+				</h:selectOneMenu>
+			</s:decorate>
+
+			<s:decorate id="blockField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['block']}:</ui:define>
+				<h:selectOneMenu id="block" value="#{propertySpecialHome.instance.block}"
+					required="true" disabled="#{propertySpecialHome.idDefined}">
+					<s:selectItems value="#{propertySpecialHome.populateBlocks()}" var="block"
+						label="#{block.code}"
+						noSelectionLabel="#{messages['common.shouldSelected']}" />
+					<s:convertEntity />
+					<a:support event="onchange" ajaxSingle="true"
+						reRender="street, cadastralCodePanel, neighborhood, valueBySquareMeterField"
+						action="#{propertySpecialHome.populateCadastralCodeAndLimits()}" />
+				</h:selectOneMenu>
+			</s:decorate>
+			
+			
+
+			<s:decorate id="propertyNumberField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property']}:</ui:define>
+				<a:region>
+				<h:inputText id="propertyNumber" required="true"
+					value="#{propertySpecialHome.instance.number}" size="3" maxlength="3"
+					disabled="#{propertySpecialHome.idDefined}">
+					<a:support event="onblur" ajaxSingle="true"
+						reRender="propertyNumberField, cadastralCodePanel"
+						action="#{propertySpecialHome.populateCadastralCode()}" />
+				</h:inputText>
+				</a:region>
+			</s:decorate>
+
+			<s:decorate id="buildingNumberField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.building']}:</ui:define>
+				<a:region>
+				<h:inputText id="buildingNumber" required="true"
+					value="#{propertySpecialHome.instance.buildingNumber}" size="3"
+					maxlength="3" disabled="#{propertySpecialHome.idDefined and !propertySpecialHome.instance.duplicate}">
+					<a:support event="onblur" ajaxSingle="true"
+						reRender="buildingNumberField, cadastralCodePanel"
+						action="#{propertySpecialHome.populateCadastralCode()}" />
+
+				</h:inputText>
+				</a:region>
+			</s:decorate>
+
+			<s:decorate id="floorNumberField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.floor']}:</ui:define>
+				<a:region>
+				<h:inputText id="floorNumber" required="true" disabled="#{propertySpecialHome.idDefined and !propertySpecialHome.instance.duplicate}"
+					value="#{propertySpecialHome.instance.floorNumber}" size="2" maxlength="2"
+					>
+					<a:support event="onblur" ajaxSingle="true"
+						reRender="floorNumberField, cadastralCodePanel"
+						action="#{propertySpecialHome.populateCadastralCode()}" />
+
+				</h:inputText>
+				</a:region>
+			</s:decorate>
+
+			<s:decorate id="housingUnitNumberField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.unity']}:</ui:define>
+				<a:region>
+				<h:inputText id="housingUnitNumber" required="true"
+					value="#{propertySpecialHome.instance.housingUnitNumber}" size="3"
+					maxlength="3" disabled="#{propertySpecialHome.idDefined and !propertySpecialHome.instance.duplicate}">
+					<a:support event="onblur" ajaxSingle="true"
+						reRender="housingUnitNumberField, cadastralCodePanel"
+						action="#{propertySpecialHome.populateCadastralCode()}" />
+
+				</h:inputText>
+				</a:region>
+			</s:decorate>
+		</h:panelGrid>
+
+		<h:panelGrid id="cadastralCodePanel" columns="2" >
+
+			<s:decorate id="cadastralCodeField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.cadastralCode']}:</ui:define>
+				<h:inputText id="cadastralCode"
+					value="#{propertySpecialHome.instance.cadastralCode}" disabled="true"
+					required="true" size="30" maxlength="30"
+					styleClass="cadasterCodeLabel">
+				</h:inputText>
+			</s:decorate>
+
+			<s:decorate id="previousCadastralCodeField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.previousCadastralCode']}:</ui:define>
+				<h:inputText id="previousCadastralCode"
+					value="#{propertySpecialHome.instance.previousCadastralCode}" size="30"
+					maxlength="30" styleClass="cadasterCodeLabel"
+					disabled="#{disabled}">
+				</h:inputText>
+			</s:decorate>
+		</h:panelGrid>
+
+		<h:panelGrid columns="4">
+			<s:decorate id="streetField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.street']}:</ui:define>
+				<h:selectOneMenu id="street"
+					value="#{propertySpecialHome.instance.location.mainBlockLimit}"
+					disabled="#{disabled}">
+					<s:selectItems value="#{propertySpecialHome.populateLimits()}"
+						var="blockLimit" label="#{blockLimit.street.name} #{blockLimit.street.place == null ? '' :  ' - '} #{blockLimit.street.place == null ? '' :  blockLimit.street.place}"
+						noSelectionLabel="#{messages['common.chooseOption']}" />
+					<s:convertEntity />
+				</h:selectOneMenu>
+
+			</s:decorate>
+
+			<s:decorate id="houseNumberField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.houseNumber']}:</ui:define>
+				<h:inputText id="houseNumber"
+					value="#{propertySpecialHome.instance.location.houseNumber}" maxlength="15"
+					disabled="#{disabled}"/>
+			</s:decorate>
+
+			<s:decorate id="neighborhoodField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.neighborhood']}:</ui:define>
+				<h:inputText id="neighborhood"
+					value="#{propertySpecialHome.instance.location.neighborhood.code} - #{propertySpecialHome.instance.location.neighborhood.name} #{propertySpecialHome.instance.location.neighborhood.place == null ? '' : ' - '} #{propertySpecialHome.instance.location.neighborhood.place == null ? '' : propertySpecialHome.instance.location.neighborhood.place}"
+					size="50" maxlength="50" disabled="true">
+				</h:inputText>
+			</s:decorate>
+
+			<s:decorate id="addressReferenceField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.addressReference']}:</ui:define>
+				<h:inputText id="addressReference"
+					value="#{propertySpecialHome.instance.addressReference}"
+					size="50" maxlength="80" disabled="#{disabled}">
+				</h:inputText>
+			</s:decorate>
+
+		</h:panelGrid>
+		<div style="clear: both">
+			<span class="required">*</span> #{messages['common.requiredFields']}
+		</div>
+
+	</rich:panel>
+</ui:composition>

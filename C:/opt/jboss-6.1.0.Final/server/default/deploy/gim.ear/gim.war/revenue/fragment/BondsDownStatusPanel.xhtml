@@ -1,0 +1,81 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="bondsDownStatusPanel" width="300" height="180"
+		style="overflow:auto">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Detalle de Bajas"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="bondsDownStatusPanel"
+					attachTo="hidelink" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="definition" styleClass="edit">
+
+			<rich:datascroller id="sc2" for="downBondsTable" maxPages="7"  />
+			
+			<rich:dataTable id="downBondsTable"
+				value="#{municipalBondCondition.bondDownSumary}" var="_mb"
+				rowClasses="rvgRowOne,rvgRowTwo" columnClasses="tableCellFont"
+				style="margin-top:5px;"  rows="10">
+				
+				<rich:column>
+					<f:facet name="header">#{messages['municipalBond.reversedResolution']}</f:facet>
+					<h:outputText value="#{_mb.reversedResolution}" style="font-size: 10px"/>
+				</rich:column>
+
+				<rich:column>
+					<f:facet name="header">#{messages['municipalBond.number']}</f:facet>
+					<h:outputText value="#{_mb.number}" style="font-size: 10px"/>
+				</rich:column>
+
+				<rich:column>
+					<f:facet name="header">#{messages['municipalBond.entry']}</f:facet>
+					<h:outputText value="#{_mb.account}" style="font-size: 10px"/>
+				</rich:column>
+				
+				<rich:column>
+					<f:facet name="header">#{messages['municipalBond.base']}</f:facet>
+					<h:outputText value="#{_mb.value}" style="font-size: 10px">
+						<f:convertNumber pattern="$####.00" />
+					</h:outputText>
+				</rich:column>
+
+				<rich:column>
+					<f:facet name="header">#{messages['municipalBond.emisionDate']}</f:facet>
+					<h:outputText value="#{_mb.emisionDate}" style="font-size: 10px">
+						<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+					</h:outputText>
+				</rich:column>
+
+				<rich:column>
+					<f:facet name="header">#{messages['municipalBond.reversedDate']}</f:facet>
+					<h:outputText value="#{_mb.reversedDate}" style="font-size: 10px">
+						<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+					</h:outputText>
+				</rich:column>
+
+			</rich:dataTable>
+
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

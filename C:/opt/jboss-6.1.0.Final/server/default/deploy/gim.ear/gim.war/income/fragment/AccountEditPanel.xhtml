@@ -1,0 +1,138 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	
+	<rich:modalPanel id="accountEditPanel" width="400" height="400" style="overflow:auto">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText
+					value="#{messages['account']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="accountEditPanel" attachTo="hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+		
+		
+		<a:form id="account" styleClass="edit">
+
+			<rich:panel id="dataPanel">
+				<rich:panel style="height:40px; width:100%; overflow:auto;" id="errorsPanel">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+
+				<s:decorate id="parentField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.parent']}:</ui:define>
+					<h:inputText id="parent" readonly="true"
+						value="#{accountHome.parentAccount.accountName}" size="50">
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="nameField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.accountName']}:</ui:define>
+					<h:inputText id="name" required="true"
+						value="#{accountHome.newAccount.accountName}" size="50" />
+				</s:decorate>
+
+				<s:decorate id="codeField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.accountCode']}:</ui:define>
+					<h:inputText id="code" required="true"
+						value="#{accountHome.newAccount.accountCode}" size="50">						
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="previousYearsCodeField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.previousYearsAccountCode']}:</ui:define>
+					<h:inputText id="previousYearsCode" required="true"
+						value="#{accountHome.newAccount.previousYearsAccountCode}" size="50">
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="futureYearsCodeField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.futureYearsAccountCode']}:</ui:define>
+					<h:inputText id="futureYearsCode" required="true"
+						value="#{accountHome.newAccount.futureYearsAccountCode}" size="50">
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="budgetNameField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.budgetCertificateName']}:</ui:define>
+					<h:inputText id="name" required="true" disabled="#{!accountHome.auxiliar}"
+						value="#{accountHome.newAccount.budgetCertificateName}" size="50" />
+				</s:decorate>
+
+				<s:decorate id="budgetCodeField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.budgetCertificateCode']}:</ui:define>
+					<h:inputText id="budgetCode" required="true" disabled="#{!accountHome.auxiliar}"
+						value="#{accountHome.newAccount.budgetCertificateCode}" size="50">						
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="previousYearsBudgetCertificateCodeField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.previousYearsBudgetCertificateCode']}:</ui:define>
+					<h:inputText id="previousYearsBudgetCode" required="true"
+						value="#{accountHome.newAccount.previousYearsBudgetCertificateCode}" size="50">
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="futureYearsBudgetCertificateCodeField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.futureYearsBudgetCertificateCode']}:</ui:define>
+					<h:inputText id="futureYearsBudgetCode" required="true"
+						value="#{accountHome.newAccount.futureYearsBudgetCertificateCode}" size="50">
+					</h:inputText>
+				</s:decorate>
+				
+				<a:outputPanel>
+					<s:decorate id="summaryField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['account.isShowSummary']}:</ui:define>
+						<h:selectBooleanCheckbox value="#{accountHome.newAccount.isShowSummary}" disabled="#{accountHome.auxiliar}"/>
+					</s:decorate>
+					
+					<s:decorate id="subtotalField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['account.showSubtotal']}:</ui:define>
+						<h:selectBooleanCheckbox value="#{accountHome.newAccount.showSubtotal}" disabled="#{accountHome.auxiliar}"/>
+					</s:decorate>
+	
+					<s:decorate id="auxiliarField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['account.isAuxiliar']}:</ui:define>
+						<h:selectBooleanCheckbox value="#{accountHome.auxiliar}" disabled="#{!accountHome.canChange()}">
+							<a:support event="onchange" ajaxSingle="true" reRender="budgetNameField,budgetCodeField,summaryField,revenueBudgetCodeField,summaryField" />
+						</h:selectBooleanCheckbox>
+					</s:decorate>
+					
+				</a:outputPanel>
+								
+				<div style="clear: both"></div>
+
+			</rich:panel>
+			
+			<rich:panel id="buttons">
+				<div class="actionButtons">
+					<a:commandButton action="#{accountHome.addAccount()}" 
+						value="#{messages['common.save']}" reRender="treePanel,accountsPanel,criteria"
+						oncomplete="#{(facesContext.maximumSeverity == null || facesContext.maximumSeverity == 'INFO 0') ? 'Richfaces.hideModalPanel(\'accountEditPanel\');' : ''}" />
+	
+					<a:commandButton ajaxSingle="true" action="#{accountHome.changeAuxiliarToFalse()}"
+						value="#{messages['common.quit']}"
+						oncomplete="Richfaces.hideModalPanel('accountEditPanel');"
+						bypassUpdates="true" />
+				</div>
+			</rich:panel>
+
+		</a:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

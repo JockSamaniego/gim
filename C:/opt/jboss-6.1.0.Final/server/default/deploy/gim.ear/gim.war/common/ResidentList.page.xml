@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd" login-required="true">
+
+   <param name="firstResult" value="#{residentList.firstResult}"/>
+   <param name="sort" value="#{residentList.orderColumn}"/>
+   <param name="dir" value="#{residentList.orderDirection}"/>
+   <param name="logic" value="#{residentList.restrictionLogicOperator}"/>
+
+   <param name="from"/>
+   <param name="criteria" value="#{residentList.criteria}"/>
+   <param name="residentType" value="#{residentList.residentType}"/>
+   
+   <navigation>
+      <rule if-outcome="persisted">
+         <end-conversation/>
+         <redirect view-id="/common/ResidentList.xhtml"/>
+      </rule>
+      
+      <rule if-outcome="updated">
+         <end-conversation before-redirect="true"/>
+         <redirect view-id="/common/ResidentList.xhtml"/>
+      </rule>
+      
+      <rule if-outcome="failed">         
+         <redirect view-id="/common/ResidentEdit.xhtml"/>
+      </rule>      
+   </navigation>
+
+   <navigation from-action="#{residentHome.remove}">
+      <rule if-outcome="removed">
+         <end-conversation/>
+         <redirect view-id="/common/ResidentList.xhtml"/>
+      </rule>
+   </navigation>
+
+</page>

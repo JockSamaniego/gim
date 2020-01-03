@@ -1,0 +1,226 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="route" styleClass="edit">
+
+			<h:outputText styleClass="formTitle" value="#{messages['Convenios']}" />
+
+			<rich:panel>
+				<f:facet name="header">#{messages['municipalBond.pendingStatusPanel']}</f:facet>
+
+				<h:panelGrid columns="4">
+
+					<s:decorate id="startDateField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['common.from']}:</ui:define>
+						<rich:calendar id="startDate"
+							value="#{coerciveReportHome.startDate}"
+							datePattern="#{messages['common.datePattern']}">
+							<a:support event="onchanged" ajaxSingle="true" />
+						</rich:calendar>
+					</s:decorate>
+					
+					<s:decorate id="toDateField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['common.until']}:</ui:define>
+						<rich:calendar id="toDate"
+							value="#{coerciveReportHome.endDate}"
+							datePattern="#{messages['common.datePattern']}">
+							<a:support event="onchanged" ajaxSingle="true" />
+						</rich:calendar>
+					</s:decorate>
+
+					<a:commandButton id="search" ajaxSingle="true"
+						action="#{coerciveReportHome.listExpired}"
+						value="#{messages['common.search']}"
+						reRender="obligationsList,readingManPanel" />
+					
+					
+					<a:commandButton id="clean" ajaxSingle="true"
+						action="#{coerciveReportHome.clean}"
+						value="#{messages['common.reset']}"
+						reRender="obligationsList,readingManPanel" />
+				</h:panelGrid>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<rich:panel id="readingManPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['paymentagreeement.expired']} (#{coerciveReportHome.expiredList.size()})" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<h:outputText value="No hay datos."
+					rendered="#{empty coerciveReportHome.expiredList}" />
+
+
+				<rich:dataTable id="obligationsList" var="_expired"
+					rendered="#{not empty coerciveReportHome.expiredList}"
+					value="#{coerciveReportHome.expiredList}" rows="20"
+					columnClasses="none,none,none,none,right,right,right"
+					onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+					
+					<rich:column sortBy="#{_expired.paymentAgreementID}">
+						<f:facet name="header">#{messages['common.id']}</f:facet>
+						<h:outputText value="#{_expired.paymentAgreementID}" />
+					</rich:column>
+					<rich:column sortBy="#{_expired.expiration}">
+						<f:facet name="header">#{messages['paymentagreeement.lastPaymentDate']}</f:facet>
+						<h:outputText value="#{_expired.expiration}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column sortBy="#{_expired.identification}">
+						<f:facet name="header">#{messages['common.identificationNumber']}</f:facet>
+						<h:outputText value="#{_expired.identification}" />
+					</rich:column>
+					
+					<rich:column sortBy="#{_expired.names}">
+						<f:facet name="header">#{messages['resident']}</f:facet>
+						<h:outputText value="#{_expired.names}" />
+					</rich:column>
+					
+					<rich:column >
+						<f:facet name="header">#{messages['paymentagreeement.payedValue']}</f:facet>
+						<h:outputText value="#{_expired.payed}">
+						</h:outputText>
+					</rich:column>
+
+					 
+
+					<rich:column >
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+
+						<a:commandButton id="accountDetailBtn"
+							value="#{messages['finantialStatement.detail']}"
+							action="#{coerciveReportHome.selectPaymentAgreement(_expired)}"
+							eventsQueue="gimEventsQueue" ajaxSingle="true"
+							reRender="paymentAgreementList,sc3,paymentAgrrementDetailPanel"
+							oncomplete="Richfaces.showModalPanel('paymentAgrrementDetailPanel')" />
+					</rich:column>
+
+					 
+
+				</rich:dataTable>
+				<rich:datascroller align="center" for="obligationsList"
+					maxPages="20" id="sc2" />
+				<div style="clear: both" />
+			</rich:panel>
+ 
+
+			<rich:modalPanel id="paymentAgrrementDetailPanel" minHeight="270"
+				minWidth="800"  >
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="#{messages['paymentagreeement.detail']}"></h:outputText>
+					</h:panelGroup>
+				</f:facet>
+				<f:facet name="controls">
+					<h:panelGroup>
+						<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+							id="hidepaymentAgrrementDetailPanelLink" />
+						<rich:componentControl for="paymentAgrrementDetailPanel"
+							attachTo="hidepaymentAgrrementDetailPanelLink" operation="hide"
+							event="onclick" />
+					</h:panelGroup>
+				</f:facet>
+
+				<rich:panel  >
+					<h:panelGrid columns="4"  width="100%" >
+						<h:outputText  style="font-weight:bold;"
+							value="#{messages['common.identificationNumber']}" /> 
+						<h:outputText
+							value="#{coerciveReportHome.selected.identification}" />
+						
+						<h:outputText style="font-weight:bold;"
+							value="#{messages['resident.firstName']}:" /> 	
+						<h:outputText
+							value="#{coerciveReportHome.selected.names}" />
+							
+						<h:outputText style="font-weight:bold;"
+							value="#{messages['boundary.description']}:" /> 							
+						<h:outputText
+							value="#{coerciveReportHome.selected.description}">
+						</h:outputText>
+					</h:panelGrid>
+					<div style="clear: both" />
+					
+					<h:panelGrid columns="2" style="width: 100%">
+						<h:panelGrid columns="2" width="100%" >
+							<h:outputText style="font-size:20px; font-weight:bold;"
+								value="#{messages['dividens.totals']}: " /> 
+							<h:outputText style="font-size:20px; "
+								value="#{coerciveReportHome.totalQuotes}" />
+
+							<h:outputText style="font-size:20px; font-weight:bold;"
+								value="#{messages['dividens.payments']}: " /> 
+							<h:outputText style="font-size:20px; "
+								value="#{coerciveReportHome.totalPayedQuotes}" />
+
+							<h:outputText style="font-size:20px; font-weight:bold;"
+								value="#{messages['paymentagreeement.lastPaymentDate']}: " /> 
+							<h:outputText style="font-size:20px; "
+								value="#{coerciveReportHome.selected.expiration}" >
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />		
+							</h:outputText>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2" width="100%" columnClasses="right,right">
+							<h:outputText value="#{messages['dividend.balance']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{coerciveReportHome.balanceForPay}" style="font-size:40px; font-weight:bold;">
+								<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+										
+							<h:outputText value="#{messages['municipalBond.totalCancelled']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{coerciveReportHome.payedValue}" style="font-size:40px; font-weight:bold;">
+								<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+											
+							<h:outputText value="#{messages['VOID']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{coerciveReportHome.canceledValue}" style="font-size:40px; font-weight:bold;">
+								<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>											
+						</h:panelGrid>						
+					</h:panelGrid>
+				</rich:panel>
+
+
+
+				<div class="actionButtons">
+
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.quit']}"
+						oncomplete="Richfaces.hideModalPanel('paymentAgrrementDetailPanel');"
+						bypassUpdates="true" />
+				</div>
+			</rich:modalPanel>
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

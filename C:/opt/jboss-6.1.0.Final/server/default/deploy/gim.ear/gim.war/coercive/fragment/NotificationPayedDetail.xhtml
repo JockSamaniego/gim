@@ -1,0 +1,146 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<ui:debug />
+	<rich:modalPanel 
+		id="notificationPayedDetail"
+		minHeight="540" minWidth="1000"
+		height="540" width="1000">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{notificationHome.entrySelected.name}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidenotificationPayedDetailLink" />
+				<rich:componentControl for="notificationPayedDetail" attachTo="hidenotificationPayedDetailLink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+	
+		<h:form id="notificationPayedDetails" styleClass="edit">
+			<a:region>
+			<rich:panel style="height:460px; padding">
+				
+				<h:outputText value="#{messages['appraisal.item']}: #{notificationHome.entrySelected.name.toUpperCase()}" />
+				
+				<!-- BEGIN TABLE -->
+				<rich:extendedDataTable  height="420px" 
+					id="accountDetailTable" rows="25"
+					var="_accountDetail"
+					value="#{notificationHome.payedsDetail}">
+					<f:facet name="header">
+						<h:outputText value="#{messages['accountDetail.municipalBondDetail']}" />
+					</f:facet>
+					<f:facet name="footer">
+						<rich:columnGroup>
+							<rich:column colspan="8">
+								<h:outputText value="#{messages['total']}:" style="font-weight:bold; font-size:1.5em;"/>
+							</rich:column>
+							<rich:column styleClass="right">
+								<h:outputText id="totalPayed" 
+									value="#{notificationHome.entrySelected.total}"
+									styleClass="right">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+							
+						</rich:columnGroup>
+					</f:facet>
+
+					<rich:column width="10%" styleClass="center">
+						<f:facet name="header">#{messages['municipalBond.number']}</f:facet>
+						<h:outputText value="#{_accountDetail.obligationNumber}" /><br/>
+					</rich:column>
+	
+					<rich:column width="8%" styleClass="center">
+						<f:facet name="header">#{messages['accountDetail.identificationNumber']}</f:facet>
+						<h:outputText value="#{_accountDetail.identificationNumber}"/>
+					</rich:column>
+					
+					<rich:column width="34%" styleClass="left">
+						<f:facet name="header">#{messages['accountDetail.residentName']}</f:facet>
+						<h:outputText value="#{_accountDetail.residentName}" />
+					</rich:column>
+					
+					<rich:column width="8%" styleClass="center">
+						<f:facet name="header">#{messages['notification.number']}</f:facet>
+						<h:outputText value="#{_accountDetail.notificationNumber}" /><br/>
+					</rich:column>
+					
+					<rich:column width="8%" styleClass="center">
+						<f:facet name="header">#{messages['municipalBond.emissionDate']}</f:facet>
+						<h:outputText value="#{_accountDetail.emisionDate}">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column width="8%" styleClass="center">
+						<f:facet name="header">#{messages['accountDetail.expirationDate']}</f:facet>
+						<h:outputText value="#{_accountDetail.expirationDate}">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column width="8%" styleClass="center">
+						<f:facet name="header">#{messages['notification']}</f:facet>
+						<h:outputText value="#{_accountDetail.notificationDate}">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</rich:column>
+	
+					<rich:column width="8%" styleClass="center">
+						<f:facet name="header">#{messages['municipalBond.liquidationDate']}</f:facet>
+						<h:outputText value="#{_accountDetail.liquidationDate}">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</rich:column>
+	
+					<rich:column width="8%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.paidTotal']}</f:facet>
+						<h:outputText value="#{_accountDetail.value}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+											
+				</rich:extendedDataTable>
+				
+				<rich:datascroller id="tableScroller" page="1"
+						renderIfSinglePage="false" align="right" for="accountDetailTable"
+						maxPages="10"/>
+				
+				
+				<!-- END TABLE -->
+				<div style="clear: both" />
+			</rich:panel>
+
+			<div class="actionButtons">
+				
+				<s:button view="/coercive/report/PayedNotificationDetailReport.xhtml" id="printId"
+						rendered="#{notificationHome.payedsDetail.size() > 0}"
+						propagation="join" value="#{messages['common.print']}" />
+								
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('notificationPayedDetail');"
+					bypassUpdates="true" />
+			</div>
+			</a:region>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

@@ -1,0 +1,1008 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	title="#{messages['notifications']}" subject="report" type="pdf"
+	pageSize="A5" margins="15 15 15 15" keywords="mykeyword"
+	creator="loxageek">
+
+	<f:facet name="header">
+		<p:font size="7" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="3" widthPercentage="100" spacingAfter="15"
+						widths="1.5 6 1.5">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:image value="#{gim.institution.logo}" alignment="center"
+								widht="1" height="1"
+								rendered="#{receiptPrintingManager.showShield()}">
+								<s:transformImageSize height="70" maintainRatio="true" />
+							</p:image>
+						</p:cell>
+						<p:cell>
+							<p:font size="8" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+							</p:font>
+
+							<p:font size="7" style="bold">
+								<p:paragraph alignment="center">#{messages['DIRECCION FINANCIERA']}</p:paragraph>
+							</p:font>
+						</p:cell>
+						<p:cell>
+							<p:paragraph alignment="right" spacingAfter="10"
+								rendered="#{receiptPrintingManager.showShield()}">
+								<p:font size="6" name="HELVETICA">
+									<p:text value="#{messages['Loja']}," />
+									<p:text value="#{currentDatetime}">
+										<f:convertDateTime
+											pattern="#{messages['common.dateFullTimePattern']}" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+
+						</p:cell>						
+
+						<p:cell>
+							<p:paragraph alignment="center" spacingAfter="2">
+								<p:html value="#{notificationReport.notificationType.name}"></p:html>
+							</p:paragraph>
+						</p:cell>
+
+
+					</p:table>
+				</p:paragraph>
+			</p:header>
+			<p:font size="6">
+				<p:footer borderWidthBottom="0" borderWidthTop="0.3"
+					alignment="right">
+					<p:paragraph>#{messages['receipt.printingResponsible']}: #{userSession.person.name} (#{userSession.user.name})</p:paragraph>
+				</p:footer>
+			</p:font>
+		</p:font>
+	</f:facet>
+
+	<a4j:repeat id="notification" value="#{notificationReport.resultList}"
+		var="notification">
+		<p:font size="8" name="HELVETICA">
+			<p:paragraph horizontalAlignment="center" alignment="center">
+				<p:table columns="1" widthPercentage="100" spacingAfter="4">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" />
+					</f:facet>
+
+					<p:cell horizontalAlignment="center">
+						<p:paragraph alignment="center">
+							<p:font size="9" style="italic,oblique, bold" name="HELVETICA">
+								<p:text
+									value="#{messages['notification'].toUpperCase()} - #{notificationHome.isOriginal ? messages['printing.original'] : messages['printing.copy']}" />
+							</p:font>
+						</p:paragraph>
+
+						<p:paragraph alignment="center">
+							<p:font size="6" name="HELVETICA">
+								<p:text value="#{messages['Loja']}," />
+								<p:text value="#{currentDatetime}">
+									<f:convertDateTime
+										pattern="#{messages['common.dateFullTimePattern']}" />
+								</p:text>
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+				</p:table>
+			</p:paragraph>
+			<p:paragraph >
+				<p:table columns="1" widthPercentage="100" headerRows="0" widths="1">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" horizontalAlignment="left" />
+					</f:facet>
+					<p:cell colspan="1" horizontalAlignment="center">
+						<p:paragraph alignment="center" spacingAfter="4">
+							<p:font size="10" style="italic,oblique, bold" name="HELVETICA">
+								<p:text value="#{notification.yearNumber}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell></p:cell>
+
+					<p:cell colspan="1" horizontalAlignment="center">
+						<p:paragraph>
+							<p:font size="9" style="bold">
+								<p:text
+									value="#{notification.notified.name}  #{notification.notified.identificationNumber}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+					<p:cell colspan="1">
+						<p:paragraph>
+
+							<p:font size="9" style="bold">
+								<p:text
+									rendered="#{notification.notified.currentAddress.street != null}"
+									value="#{messages['municipalBond.address']}: " />
+							</p:font>
+
+							<p:font size="9">
+								<p:text
+									value="#{notification.notified.currentAddress.street}    " />
+							</p:font>
+						</p:paragraph>
+						<p:paragraph>
+							<p:font size="9" style="bold">
+								<p:text
+									rendered="#{notification.notified.currentAddress.phoneNumber != null}"
+									value="#{messages['resident.phone']}: " />
+							</p:font>
+
+							<p:font size="9">
+								<p:text
+									rendered="#{notification.notified.currentAddress.phoneNumber != null}"
+									value="#{notification.notified.currentAddress.phoneNumber} " />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="9" style="bold">
+								<p:text
+									value="#{notification.entry.code} #{notification.entry.name}    " />
+							</p:font>
+							<p:font size="9" style="plain">
+								<p:text
+									value="#{'['}#{messages['common.sum']} #{messages['common.currency']} #{notification.total}" />
+							</p:font>
+							<p:font size="8" style="italic">
+								<p:text value="(Valor sujeto a intereses y recargos)" />
+							</p:font>
+							<p:font size="9" style="plain">
+								<p:text value="#{']'}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+				</p:table>
+			</p:paragraph>
+			
+			<p:paragraph spacingAfter="10" rendered="#{notificationReport.hasPendingPayment(notification)}">
+				<p:table columns="6" widthPercentage="100" headerRows="0"
+					widths="1.9 0.8 0.8 0.8 0.9 0.8">
+ 
+ 					<p:font size="8" name="HELVETICA" style="bold">
+						<p:cell horizontalAlignment="center" colspan="6">
+							<p:paragraph>
+								<p:text value="OBLIGACIONES PENDIENTES" />
+							</p:paragraph>
+						</p:cell> 					
+					</p:font>
+					
+					<p:font size="8" name="HELVETICA" style="bold">
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['entry']}" />
+							</p:paragraph>
+						</p:cell>
+						 
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="Documento No." />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="Documento Tipo" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['municipalBond.emision']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['municipalBond.expiration']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['municipalBond.value']}" />
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+					<a4j:repeat value="#{notificationReport.notPayedBonds}"
+						var="municipalBond">
+
+						<p:cell colspan="1" horizontalAlignment="left">
+							<p:paragraph alignment="left">
+								<p:font size="8">
+									<p:text value="#{municipalBond.entry.name}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right">
+								<p:font size="8">
+									<p:text value="#{municipalBond.number}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell> 
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right"
+								rendered="#{municipalBond.entry.isTaxable}">
+								<p:font size="8">
+									<p:text value="Factura" />
+								</p:font>
+							</p:paragraph>
+							<p:paragraph alignment="right"
+								rendered="#{!municipalBond.entry.isTaxable}">
+								<p:font size="8">
+									<p:text value="Título de Crédito" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+ 
+						<p:cell colspan="1" horizontalAlignment="center">
+							<p:paragraph alignment="center">
+								<p:font size="8">
+									<p:text value="#{municipalBond.emisionDate}">
+										<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						<p:cell colspan="1" horizontalAlignment="center">
+							<p:paragraph alignment="center">
+								<p:font size="8">
+									<p:text value="#{municipalBond.expirationDate}">
+										<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right">
+								<p:font size="8">
+									<p:text value="#{municipalBond.value}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+					</a4j:repeat>
+				</p:table>
+			</p:paragraph>
+			
+			
+			
+			<p:paragraph spacingAfter="3" rendered="#{notificationReport.payed}">
+				<p:table columns="6" widthPercentage="100" headerRows="0"
+					widths="1.9 0.8 0.8 0.8 0.9 0.8">
+					<p:font size="8" name="HELVETICA" style="bold">
+						<p:cell horizontalAlignment="center" colspan="6">
+							<p:paragraph>
+								<p:text value="OBLIGACIONES PAGADAS" />
+							</p:paragraph>
+						</p:cell> 
+					
+					</p:font>
+					<p:font size="8" name="HELVETICA" style="bold">
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="Cuenta" />
+							</p:paragraph>
+						</p:cell> 
+						
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="Documento No." />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="Documento Tipo" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['municipalBond.emision']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['municipalBond.expiration']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['municipalBond.value']}" />
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+					<a4j:repeat value="#{notificationReport.payedBonds}"
+						var="municipalBond">
+
+						<p:cell colspan="1" horizontalAlignment="left">
+							<p:paragraph alignment="left">
+								<p:font size="8">
+									<p:text value="#{municipalBond.entry.name}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right">
+								<p:font size="8">
+									<p:text value="#{municipalBond.number}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+
+						
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right"
+								rendered="#{municipalBond.entry.isTaxable}">
+								<p:font size="8">
+									<p:text value="Factura" />
+								</p:font>
+							</p:paragraph>
+							<p:paragraph alignment="right"
+								rendered="#{!municipalBond.entry.isTaxable}">
+								<p:font size="8">
+									<p:text value="Título de Crédito" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+
+
+
+						<p:cell colspan="1" horizontalAlignment="center">
+							<p:paragraph alignment="center">
+								<p:font size="8">
+									<p:text value="#{municipalBond.emisionDate}">
+										<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						<p:cell colspan="1" horizontalAlignment="center">
+							<p:paragraph alignment="center">
+								<p:font size="8">
+									<p:text value="#{municipalBond.expirationDate}">
+										<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right">
+								<p:font size="8">
+									<p:text value="#{municipalBond.value}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+					</a4j:repeat>
+				</p:table>
+			</p:paragraph> 
+
+			<p:paragraph spacingAfter="8" spacingBefore="1" alignment="justify"
+				leading="2">
+				<p:table columns="1" widthPercentage="100" headerRows="0" widths="1">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" horizontalAlignment="left" />
+					</f:facet>
+
+					<p:cell colspan="1" horizontalAlignment="justify" leading="10">
+						<p:paragraph alignment="justify" spacingAfter="5" leading="10">
+							<p:font size="6">
+								<p:text value="De conformidad a lo dispuesto en el " />
+							</p:font>
+							<p:font size="7" style="bold">
+								<p:text
+									value="Art. 261, 262, 271 del Código Orgánico Administrativo, " />
+							</p:font>
+							<p:font size="6">
+								<p:text value="en concordancia con el " />
+							</p:font>
+							<p:font size="7" style="bold">
+								<p:text
+									value="Art. 151 del Código Orgánico Tributario, " />
+							</p:font>
+							<p:font size="6">
+								<p:text
+									value="me permito notificar a usted, haciéndole conocer que se han emitido títulos de crédito, por los meses y/o años vencidos, mismos que deben de ser cancelados dentro del término de " />
+							</p:font>
+							<p:font size="8" style="bold">
+								<p:text value="DIEZ DÍAS, " />
+							</p:font>
+							<p:font size="6">
+								<p:text
+									value="en las oficinas de Recaudaciones Municipales, tiempo que se contará a partir del día hábil siguiente a la fecha de la presente notificación; o, presentar las reclamaciones que se considere asistido. De no atender esta notificación, se iniciará la " />
+							</p:font>
+							<p:font size="8" style="bold">
+								<p:text value=" ACCIÓN COACTIVA " />
+							</p:font>
+							<p:font size="6">
+								<p:text value=" correspondiente, con los recargos de Ley." />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+				</p:table>
+			</p:paragraph>
+
+			<p:paragraph alignment="right" spacingBefore="8" leading="0">
+				<p:font size="6">
+					<p:text
+						value="#{messages['Loja,________de__________________Dos mil________ a las__________']}" />
+				</p:font>
+			</p:paragraph>
+
+			<p:paragraph alignment="right" spacingBefore="10" leading="2">
+				<p:table columns="3" widthPercentage="100" headerRows="0"
+					widths="1 1 1">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" horizontalAlignment="left" />
+					</f:facet>
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages[' ']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages[' ']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages[' ']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages['____________________________']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages['____________________________']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages['____________________________']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages['f) DIRECTOR FINANCIERO']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages['f) CONTRIBUYENTE']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages['f) NOTIFICADOR']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+				</p:table>
+
+			</p:paragraph>
+
+		</p:font>
+		<p:newPage
+			rendered="#{notificationReport.notifications.indexOf(notification) != notificationReport.notifications.size() -1 or notificationHome.withCopy}" />
+	</a4j:repeat>
+
+
+
+	<a4j:repeat id="notification"
+		value="#{notificationReport.notifications}"
+		rendered="#{notificationHome.printCopies()}" var="notification">
+		<p:font size="8" name="HELVETICA">
+			<p:paragraph>
+				<p:table columns="3" widthPercentage="100" spacingAfter="4">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" />
+					</f:facet>
+					<p:cell></p:cell>
+					<p:cell>
+						<p:paragraph alignment="center" spacingAfter="2">
+							<p:font size="10" style="italic,oblique, bold" name="HELVETICA">
+								<p:text
+									value="#{messages['notification'].toUpperCase()} - #{notificationHome.isOriginal ? messages['printing.original'] : messages['printing.copy']}" />
+							</p:font>
+						</p:paragraph>
+						<p:paragraph alignment="center">
+							<p:font size="6" name="HELVETICA">
+								<p:text value="#{messages['Loja']}," />
+								<p:text value="#{currentDatetime}">
+									<f:convertDateTime
+										pattern="#{messages['common.dateFullTimePattern']}" />
+								</p:text>
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+					<p:cell></p:cell>
+
+				</p:table>
+			</p:paragraph>
+			<p:paragraph spacingAfter="2">
+				<p:table columns="1" widthPercentage="100" headerRows="0" widths="1">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" horizontalAlignment="left" />
+					</f:facet>
+
+					<p:cell colspan="1" horizontalAlignment="center">
+						<p:paragraph alignment="center" spacingAfter="4">
+							<p:font size="10" style="italic,oblique, bold" name="HELVETICA">
+								<p:text value="#{notification.yearNumber}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell></p:cell>
+
+					<p:cell colspan="1" horizontalAlignment="center">
+						<p:paragraph>
+							<p:font size="9" style="bold">
+								<p:text
+									value="#{notification.notified.name}  #{notification.notified.identificationNumber}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+					<p:cell colspan="1">
+						<p:paragraph>
+
+							<p:font size="9" style="bold">
+								<p:text
+									rendered="#{notification.notified.currentAddress.street != null}"
+									value="#{messages['municipalBond.address']}: " />
+							</p:font>
+
+							<p:font size="9">
+								<p:text
+									value="#{notification.notified.currentAddress.street}    " />
+							</p:font>
+						</p:paragraph>
+						<p:paragraph>
+							<p:font size="9" style="bold">
+								<p:text
+									rendered="#{notification.notified.currentAddress.phoneNumber != null}"
+									value="#{messages['resident.phone']}: " />
+							</p:font>
+
+							<p:font size="9">
+								<p:text
+									rendered="#{notification.notified.currentAddress.phoneNumber != null}"
+									value="#{notification.notified.currentAddress.phoneNumber} " />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="9" style="bold">
+								<p:text
+									value="#{notification.entry.code} #{notification.entry.name}    " />
+							</p:font>
+							<p:font size="9" style="plain">
+								<p:text
+									value="#{'['}#{messages['common.sum']} #{messages['common.currency']} #{notification.total}" />
+							</p:font>
+							<p:font size="8" style="italic">
+								<p:text value="(Valor sujeto a intereses y recargos)" />
+							</p:font>
+							<p:font size="9" style="plain">
+								<p:text value="#{']'}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+				</p:table>
+			</p:paragraph>
+			<p:paragraph spacingAfter="10" rendered="#{notificationReport.hasPendingPayment(notification)}">
+				<p:table columns="6" widthPercentage="100" headerRows="0"
+					widths="1.9 0.8 0.8 0.8 0.9 0.8">
+					
+					
+ 					<p:font size="8" name="HELVETICA" style="bold">
+						<p:cell horizontalAlignment="center" colspan="6">
+							<p:paragraph>
+								<p:text value="OBLIGACIONES PENDIENTES" />
+							</p:paragraph>
+						</p:cell> 					
+					</p:font>
+					
+					<p:font size="8" name="HELVETICA" style="bold">
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['entry']}" />
+							</p:paragraph>
+						</p:cell>
+						 
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="Documento No." />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="Documento Tipo" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['municipalBond.emision']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['municipalBond.expiration']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['municipalBond.value']}" />
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+					<a4j:repeat value="#{notificationReport.notPayedBonds}"
+						var="municipalBond">
+
+						<p:cell colspan="1" horizontalAlignment="left">
+							<p:paragraph alignment="left">
+								<p:font size="8">
+									<p:text value="#{municipalBond.entry.name}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right">
+								<p:font size="8">
+									<p:text value="#{municipalBond.number}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+
+						
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right"
+								rendered="#{municipalBond.entry.isTaxable}">
+								<p:font size="8">
+									<p:text value="Factura" />
+								</p:font>
+							</p:paragraph>
+							<p:paragraph alignment="right"
+								rendered="#{!municipalBond.entry.isTaxable}">
+								<p:font size="8">
+									<p:text value="Título de Crédito" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+
+
+
+						<p:cell colspan="1" horizontalAlignment="center">
+							<p:paragraph alignment="center">
+								<p:font size="8">
+									<p:text value="#{municipalBond.emisionDate}">
+										<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						<p:cell colspan="1" horizontalAlignment="center">
+							<p:paragraph alignment="center">
+								<p:font size="8">
+									<p:text value="#{municipalBond.expirationDate}">
+										<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right">
+								<p:font size="8">
+									<p:text value="#{municipalBond.value}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+					</a4j:repeat>
+				</p:table>
+			</p:paragraph>
+			
+			<p:paragraph spacingAfter="5" rendered="#{notificationReport.payed}">
+				<p:table columns="6" widthPercentage="100" headerRows="0"
+					widths="1.9 0.8 0.8 0.8 0.9 0.8">
+					<p:font size="8" name="HELVETICA" style="bold">
+						<p:cell horizontalAlignment="center" colspan="6">
+							<p:paragraph>
+								<p:text value="OBLIGACIONES PAGADAS" />
+							</p:paragraph>
+						</p:cell> 
+					
+					</p:font>
+					<p:font size="8" name="HELVETICA" style="bold">
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['entry']}" />
+							</p:paragraph>
+						</p:cell> 
+						
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="Documento No." />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="Documento Tipo" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['municipalBond.emision']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['municipalBond.expiration']}" />
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="center">
+							<p:paragraph>
+								<p:text value="#{messages['municipalBond.value']}" />
+							</p:paragraph>
+						</p:cell>
+					</p:font>
+					<a4j:repeat value="#{notificationReport.payedBonds}"
+						var="municipalBond">
+
+						<p:cell colspan="1" horizontalAlignment="left">
+							<p:paragraph alignment="left">
+								<p:font size="8">
+									<p:text value="#{municipalBond.entry.name}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right">
+								<p:font size="8">
+									<p:text value="#{municipalBond.number}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+
+						
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right"
+								rendered="#{municipalBond.entry.isTaxable}">
+								<p:font size="8">
+									<p:text value="Factura" />
+								</p:font>
+							</p:paragraph>
+							<p:paragraph alignment="right"
+								rendered="#{!municipalBond.entry.isTaxable}">
+								<p:font size="8">
+									<p:text value="Título de Crédito" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+
+
+
+						<p:cell colspan="1" horizontalAlignment="center">
+							<p:paragraph alignment="center">
+								<p:font size="8">
+									<p:text value="#{municipalBond.emisionDate}">
+										<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						<p:cell colspan="1" horizontalAlignment="center">
+							<p:paragraph alignment="center">
+								<p:font size="8">
+									<p:text value="#{municipalBond.expirationDate}">
+										<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						<p:cell colspan="1" horizontalAlignment="right">
+							<p:paragraph alignment="right">
+								<p:font size="8">
+									<p:text value="#{municipalBond.value}" />
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+
+					</a4j:repeat>
+				</p:table>
+			</p:paragraph>
+			
+
+			<p:paragraph spacingAfter="8" spacingBefore="1" alignment="justify"
+				leading="2">
+				<p:table columns="1" widthPercentage="100" headerRows="0" widths="1">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" horizontalAlignment="left" />
+					</f:facet>
+
+					<p:cell colspan="1" horizontalAlignment="justify" leading="10">
+						<p:paragraph alignment="justify" spacingAfter="5" leading="10">
+							<p:font size="6">
+								<p:text value="De conformidad a lo dispuesto en el " />
+							</p:font>
+							<p:font size="7" style="bold">
+								<p:text
+									value="Art. 261, 262, 271 del Código Orgánico Administrativo, " />
+							</p:font>
+							<p:font size="6">
+								<p:text value="en concordancia con el " />
+							</p:font>
+							<p:font size="7" style="bold">
+								<p:text
+									value="Art. 151 del Código Orgánico Tributario, " />
+							</p:font>
+							<p:font size="6">
+								<p:text
+									value="me permito notificar a usted, haciéndole conocer que se han emitido títulos de crédito, por los meses y/o años vencidos, mismos que deben de ser cancelados dentro del término de " />
+							</p:font>
+							<p:font size="8" style="bold">
+								<p:text value="DIEZ DÍAS, " />
+							</p:font>
+							<p:font size="6">
+								<p:text
+									value="en las oficinas de Recaudaciones Municipales, tiempo que se contará a partir del día hábil siguiente a la fecha de la presente notificación; o, presentar las reclamaciones que se considere asistido. De no atender esta notificación, se iniciará la " />
+							</p:font>
+							<p:font size="8" style="bold">
+								<p:text value=" ACCIÓN COACTIVA " />
+							</p:font>
+							<p:font size="6">
+								<p:text value=" correspondiente, con los recargos de Ley." />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+				</p:table>
+			</p:paragraph>
+
+			<p:paragraph alignment="right" spacingBefore="8" leading="2">
+				<p:font size="6">
+					<p:text
+						value="#{messages['Loja,________de__________________Dos mil________ a las__________']}" />
+				</p:font>
+			</p:paragraph>
+
+
+			<p:paragraph alignment="right" spacingBefore="30" leading="2">
+				<p:table columns="3" widthPercentage="100" headerRows="0"
+					widths="1 1 1">
+					<f:facet name="defaultCell">
+						<p:cell borderWidth="0" horizontalAlignment="left" />
+					</f:facet>
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages[' ']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages[' ']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages[' ']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages['____________________________']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages['____________________________']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages['____________________________']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages['f) DIRECTOR FINANCIERO']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages['f) CONTRIBUYENTE']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell colspan="1">
+						<p:paragraph>
+							<p:font size="6">
+								<p:text value="#{messages['f) NOTIFICADOR']}" />
+							</p:font>
+						</p:paragraph>
+					</p:cell>
+				</p:table>
+
+			</p:paragraph>
+
+		</p:font>
+		<p:newPage
+			rendered="#{notificationReport.notifications.indexOf(notification) != notificationReport.notifications.size() -1}" />
+	</a4j:repeat>
+	
+</p:document>

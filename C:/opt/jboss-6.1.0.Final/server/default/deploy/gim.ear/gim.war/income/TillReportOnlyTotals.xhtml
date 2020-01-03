@@ -1,0 +1,201 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="report" styleClass="edit">
+
+			<ui:debug id="uiDebug" />
+			<rich:panel>
+
+				<f:facet name="header">
+	            	#{messages['tillReportOnlyTotals'].toUpperCase()}
+    	        </f:facet>
+
+				<s:decorate id="startDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['report.startDate']}:</ui:define>
+					<rich:calendar value="#{tillReportHome.startDate}" required="true"
+						enableManualInput="false"
+						datePattern="#{messages['common.datePattern']}">
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate id="endDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['report.endDate']}:</ui:define>
+					<rich:calendar value="#{tillReportHome.endDate}" required="true"
+						enableManualInput="false"
+						datePattern="#{messages['common.datePattern']}">
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate id="branchField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['branch']}: </ui:define>
+					<h:selectOneMenu id="branch"
+						value="#{tillReportHome.branch}">
+						<s:selectItems value="#{tillReportHome.findBranches()}" var="_branch"
+							noSelectionLabel="#{messages['common.chooseOption']}"
+							label="#{_branch.name}" />
+						<s:convertEntity />
+						<a:support event="onchange" ajaxSingle="true" reRender="tillField" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="tillField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['till']}: </ui:define>
+					<h:selectOneMenu id="till" value="#{tillReportHome.till}">
+						<s:selectItems value="#{tillReportHome.loadTills()}"
+							noSelectionLabel="#{messages['common.chooseOption']}"
+							var="_till" label="#{_till.number}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+				<div class="actionButtons">
+
+					<a:commandButton id="generateReport"
+						reRender="contentPanel, detailPanel2"
+						value="#{messages['income.generateReport']}"
+						action="#{tillReportHome.generateCashiersTillReport()}" />
+
+				</div>
+
+			</rich:panel>
+
+			<rich:panel id="contentPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['tillPermission']} (#{empty tillReportHome.tillPermissionsDetails ? 0 : tillReportHome.tillPermissionsDetails.size()})" />
+					</h:panelGrid>
+				</f:facet>
+
+				<div class="results" id="tillPermissionList">
+
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty tillReportHome.tillPermissionsDetails}" />
+
+
+					<rich:dataTable id="tillsTable" var="_tillPermission"
+						value="#{tillReportHome.tillPermissionsDetails}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty tillReportHome.tillPermissionsDetails}">
+
+						<rich:column sortBy="#{_tillPermission.date}" styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['date']}" />
+							</f:facet>
+							<h:outputText value="#{_tillPermission.date}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column sortBy="#{_tillPermission.tillNumber}"
+							styleClass="left" rendered="#{empty tillReportHome.branch}">
+							<f:facet name="header">
+								<h:outputText value="#{messages['branch']}" />
+							</f:facet>
+							<h:outputText value="#{_tillPermission.branch}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_tillPermission.tillNumber}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['till']}" />
+							</f:facet>
+							<h:outputText value="#{_tillPermission.tillNumber}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_tillPermission.inChargeName}"
+							styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['tillPermission.inCharge']}" />
+							</f:facet>
+							<h:outputText value="#{_tillPermission.inChargeName}" size="12" />
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText
+									value="#{messages['tillPermission.initialBalance']}" />
+							</f:facet>
+							<h:outputText value="#{_tillPermission.initialBalance}">
+								<f:convertNumber pattern="#0.00" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText
+									value="#{messages['tillPermission.compensationBalance']}" />
+							</f:facet>
+							<h:outputText
+								value="#{_tillPermission.totalCompensationCollected}">
+								<f:convertNumber pattern="#0.00" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['workday.cashCollected']}" />
+							</f:facet>
+							<h:outputText value="#{_tillPermission.totalCollected}">
+								<f:convertNumber pattern="#0.00" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['item.total']}" />
+							</f:facet>
+							<h:outputText value="#{_tillPermission.total}">
+								<f:convertNumber pattern="#0.00" />
+							</h:outputText>
+						</rich:column>
+
+						<f:facet name="footer">
+							<rich:columnGroup columnClasses=",number">
+								<rich:column colspan="#{empty tillReportHome.branch ? 7 : 6}">
+									<h:outputText value="#{messages['item.total']}:"
+										styleClass="labelBold" />
+								</rich:column>
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText
+										value="#{tillReportHome.totalTillPermissionDetailCollected()}">
+										<f:convertNumber pattern="$ ####.00" />
+									</h:outputText>
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+
+					</rich:dataTable>
+
+				</div>
+
+			</rich:panel>
+			<rich:panel id="detailPanel2">
+
+				<s:button id="print" value="#{messages['common.summaryPrint']}"
+					rendered="#{not empty tillReportHome.tillPermissionsDetails}"
+					propagation="join" view="/income/report/SimplifiedTillReport.xhtml" />
+
+				<s:button id="back" value="#{messages['common.back']}" propagation="end" view="/home.xhtml" />
+					
+			</rich:panel>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

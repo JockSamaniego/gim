@@ -1,0 +1,102 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel>
+		<f:facet name="header">
+			<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText value="#{messages['resident.generalData']}" />
+	            <h:commandButton id="changeResidentType"
+            		  immediate="true"
+                          value="#{residentHome.instance.class.simpleName.equalsIgnoreCase('Person') ?  messages['common.convertToLegal'] : messages['common.convertToNatural']}"
+                         action="#{residentHome.changeResidentType()}"
+                       rendered="#{residentHome.managed}"/>
+			</h:panelGrid>
+		</f:facet>
+		
+		<s:decorate id="identificationTypeField"
+			template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.identificationType']}:</ui:define>
+			<h:selectOneMenu id="identificationType" value="#{residentHome.instance.identificationType}">
+				<s:selectItems value="#{residentHome.identificationTypes}" var="identificationType" label="#{messages[identificationType.name()]}"/>
+				<s:convertEnum/>
+				<a:support event="onchange" ajaxSingle="true" reRender="contentPanel, identificationNumberField"/>
+			</h:selectOneMenu>
+		</s:decorate>
+
+		<s:decorate id="identificationNumberField"
+			template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.dni']}:</ui:define>
+			<h:inputText 
+				id="identificationNumber" 
+				value="#{residentHome.instance.identificationNumber}"
+				required="true" 
+				size="15" 
+				maxlength="15" 
+				residentId="#{residentHome.instance.id}"
+				identificationType="#{residentHome.instance.identificationType}"
+				disabled="#{residentHome.instance.identificationType.name().equalsIgnoreCase('GENERATED_NUMBER')}">
+ 				<f:validator validatorId="identificationNumberUniquenessValidator"/>
+				<f:validator validatorId="identificationNumberValidator"/>
+				<a:support 
+					event="onblur" 
+					reRender="identificationNumberField" 
+					ajaxSingle="true" />
+			</h:inputText>
+			<a:region rendered="#{residentHome.passport}" >
+				<h:outputLabel value="#{'    '} #{messages['resident.country']}:#{'    '} " />
+	
+				<h:inputText id="countryId" value="#{residentHome.country}"
+					size="30" maxlength="50" required="true">
+				</h:inputText>
+				<rich:suggestionbox id="suggestionId" for="countryId" width="240"
+					var="_country" nothingLabel="#{messages['common.chooseOption']}"
+					suggestionAction="#{residentHome.findCountries}"
+					fetchValue="#{_country}">
+					<a:support event="onselect" ajaxSingle="true"
+						reRender="countrySuggestionField"
+						action="#{residentHome.beforeAutcomplete(_country)}"></a:support>
+					<a:support event="onobjectchange" ajaxSingle="true"								
+						action="#{residentHome.beforeAutcomplete(_country)}"></a:support>
+					<h:column>
+						<h:outputText value="#{_country}" />
+					</h:column>
+				</rich:suggestionbox>						
+			</a:region>
+		</s:decorate>		
+
+		<s:decorate id="emailField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.email']}</ui:define>
+			<h:inputText id="email" size="50"
+				value="#{residentHome.instance.email}">
+				<f:validator validatorId="emailValidator" />
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="isEnabledForDeferredPaymentsField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.isEnabledForDeferredPayments']}</ui:define>
+			<h:selectBooleanCheckbox id="isEnabledForDeferredPayments" value="#{residentHome.instance.isEnabledForDeferredPayments}" /> 
+		</s:decorate>
+
+		<s:decorate id="enabledIndividualPaymentField" template="../../layout/edit.xhtml" >
+			<ui:define name="label">#{messages['resident.enabledIndividualPayment']}</ui:define>
+			<h:selectBooleanCheckbox id="enabledIndividualPayment" value="#{residentHome.instance.enabledIndividualPayment}" disabled="#{!residentHome.hasRole('ROLE_NAME_ENABLED_INDIVIDUAL_PAYMENT')}" /> 
+		</s:decorate>
+		
+		<s:decorate id="uniqueAccounttField" template="../../layout/edit.xhtml" >
+			<ui:define name="label">#{messages['resident.uniqueAccountt']}</ui:define>
+			<h:selectBooleanCheckbox id="uniqueAccountt" value="#{residentHome.instance.generateUniqueAccountt}" /> 
+		</s:decorate>
+
+		<div style="clear: both"><span class="required">*</span>
+		#{messages['common.requiredFields']}</div>
+
+	</rich:panel>
+</ui:composition>

@@ -1,0 +1,78 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="sidewalkMaterial" styleClass="edit">
+
+		<h:outputText styleClass="formTitle" value="#{sidewalkMaterialHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['sidewalkMaterial']}"/>
+		
+        <rich:panel>
+            <s:decorate id="nameField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['sidewalkMaterial.name']}:</ui:define>
+                <h:inputText id="name"
+                       required="true"
+                           size="40"
+                      maxlength="40"
+                          value="#{sidewalkMaterialHome.instance.name}"/>
+            </s:decorate>
+              <s:decorate id="codeField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['sidewalkMaterial.code']}</ui:define>
+                <h:inputText id="code"
+                       required="true"
+                           size="10"
+                      maxlength="10"
+                          value="#{sidewalkMaterialHome.instance.code}"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                #{messages['common.requiredFields']}
+            </div>
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{sidewalkMaterialHome.persist}"
+                       disabled="#{!sidewalkMaterialHome.wired}"
+                       rendered="#{!sidewalkMaterialHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{sidewalkMaterialHome.update}"
+                       rendered="#{sidewalkMaterialHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="#{messages['common.delete']}"
+                         action="#{sidewalkMaterialHome.remove}"
+                      immediate="true"
+                       rendered="#{sidewalkMaterialHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/cadaster/SidewalkMaterialList.xhtml"
+                rendered="#{sidewalkMaterialHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/cadaster/#{empty sidewalkMaterialFrom ? 'SidewalkMaterialList' : sidewalkMaterialFrom}.xhtml"
+                rendered="#{!sidewalkMaterialHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

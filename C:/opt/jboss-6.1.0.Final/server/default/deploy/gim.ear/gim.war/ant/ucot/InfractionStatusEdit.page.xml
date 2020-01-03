@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      no-conversation-view-id="/InfractionSentencesList.xhtml"
+      login-required="true">
+
+   <begin-conversation join="true" flush-mode="MANUAL"/>
+
+   <action execute="#{infractionSentencesHome.prepareToArchived()}"/>
+
+   <param name="infractionSentencesFrom"/>
+   <param name="infractionSentencesId" value="#{infractionSentencesHome.infractionSentencesId}"/>
+   <param name="infractionsFrom"/>
+   <param name="infractionsId" value="#{infractionsHome.infractionsId}"/>
+   <param name="bulletinFrom"/>
+   <param name="bulletinId" value="#{bulletinHome.bulletinId}"/>
+   <param name="agentFrom"/>
+   <param name="agentId" value="#{agentHome.agentId}"/>
+   <param name="residentFrom"/>
+   <param name="residentId" value="#{residentHome.residentId}"/>
+   <param name="addressFrom"/>
+   <param name="addressId" value="#{addressHome.addressId}"/>
+
+   <param name="userFrom"/>
+   <param name="userId" value="#{userHome.userId}"/>
+
+   <param name="itemCatalogFrom"/>
+   <param name="itemCatalogId" value="#{itemCatalogHome.itemCatalogId}"/>
+   <param name="catalogFrom"/>
+   <param name="catalogId" value="#{catalogHome.catalogId}"/>
+
+   <navigation from-action="#{infractionSentencesHome.persist}">
+      <rule if-outcome="persisted">
+         <end-conversation/>
+         <redirect view-id="/ant/ucot/InfractionSentencesList.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{infractionSentencesHome.update}">
+      <rule if-outcome="updated">
+         <end-conversation/>
+         <redirect view-id="/ant/ucot/InfractionSentencesList.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{infractionSentencesHome.remove}">
+      <rule if-outcome="removed">
+         <end-conversation/>
+         <redirect view-id="/ant/ucot/InfractionSentencesList.xhtml"/>
+      </rule>
+   </navigation>
+
+</page>

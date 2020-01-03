@@ -1,0 +1,193 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:a="http://richfaces.org/a4j"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="alertSearch" styleClass="edit">
+    
+	<h:outputText styleClass="formTitle" value="#{messages['alert.manager']}" />    
+
+        <rich:simpleTogglePanel label="#{messages['alert.searchFilter']}" switchType="ajax">
+            <s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['common.resident']}</ui:define>
+                <h:inputText id="name" value="#{alertList.criteriaSearch}"/>
+            </s:decorate>
+
+      </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="#{messages['common.search']}" action="/common/AlertList.xhtml">
+                <f:param name="firstResult" value="0"/>
+            </h:commandButton>
+            <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">
+          	<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText
+					value=" #{messages['alert.searchResults']} (#{empty alertList.resultList ? 0 : (alertList.paginated ? alertList.resultCount : alertList.resultList.size)})" />
+			       <s:button view="/common/AlertEdit.xhtml"
+			                   id="create"
+			          propagation="none"
+			                value="#{messages['common.create']} #{messages['alert']}">
+			           <f:param name="alertId"/>
+			       </s:button>
+			</h:panelGrid>
+        
+        </f:facet>
+    <div class="results" id="alertList">
+
+    <h:outputText value="#{messages['alert.noresults']}"
+               rendered="#{empty alertList.resultList}"/>
+
+    <rich:dataTable id="alertList"
+                var="_alert"
+              value="#{alertList.resultList}"
+           rendered="#{not empty alertList.resultList}">
+		<h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{alertList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['alert.id']}"/>
+                    <ui:param name="propertyPath" value="alert.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_alert.id}"/>
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{alertList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['resident.identificationNumber']}"/>
+                    <ui:param name="propertyPath" value="alert.resident.identificationNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_alert.resident.identificationNumber}"/>
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{alertList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['resident.name']}"/>
+                    <ui:param name="propertyPath" value="alert.resident.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_alert.resident.name}"/>
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{alertList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['alert.openDate']}"/>
+                    <ui:param name="propertyPath" value="alert.openDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_alert.openDate}" >
+				<f:convertDateTime
+					pattern="#{messages['common.dateTimePattern']}" />
+            </h:outputText>
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{alertList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['common.close']}"/>
+                    <ui:param name="propertyPath" value="alert.closeDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_alert.closeDate}">
+				<f:convertDateTime
+					pattern="#{messages['common.dateTimePattern']}" />
+            </h:outputText>
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{alertList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['alertType.isActive']}"/>
+                    <ui:param name="propertyPath" value="alert.isActive"/>
+                </ui:include>
+            </f:facet>
+            <h:selectBooleanCheckbox value="#{_alert.isActive}" disabled="true" />
+        </h:column>
+
+        <rich:column styleClass="action">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            <s:button view="/common/AlertEdit.xhtml"
+                   value="Cerrar Alerta"
+             propagation="none"
+                      id="alertEdit"
+                      action="#{alertHome.setEnabledSave(true)}"
+                rendered="#{_alert.isActive}">
+                <f:param name="alertId"
+                        value="#{_alert.id}"/>
+            </s:button>
+
+            <s:button view="/common/AlertEdit.xhtml"
+                   value="Revisar Alerta"
+             propagation="none"
+                      id="alertView1"
+                      action="#{alertHome.setEnabledSave(false)}"
+                rendered="#{!_alert.isActive}">
+                <f:param name="alertId"
+                        value="#{_alert.id}"/>
+            </s:button>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/common/AlertList.xhtml"
+            rendered="#{actionList.previousExists}"
+               value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/common/AlertList.xhtml"
+            rendered="#{actionList.previousExists}"
+               value="#{messages.left} #{messages['common.previousPage']}"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{actionList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/common/AlertList.xhtml"
+            rendered="#{alertList.nextExists}"
+               value="#{messages['common.nextPage']} #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{alertList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/common/AlertList.xhtml"
+            rendered="#{alertList.nextExists}"
+               value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{alertList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+</ui:define>
+
+</ui:composition>

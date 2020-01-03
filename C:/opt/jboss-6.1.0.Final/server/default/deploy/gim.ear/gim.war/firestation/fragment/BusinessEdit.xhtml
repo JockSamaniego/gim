@@ -1,0 +1,275 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:include src="fragment/LocalEditPanel.xhtml" />
+		<ui:include src="fragment/LocalFeatureEditPanel.xhtml" />
+		<ui:include src="fragment/BusinessCatalogPanel.xhtml" />
+		<ui:include src="fragment/EconomicalActivityPanel.xhtml" />
+
+		<h:form id="business" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{businessHome.managed ? messages['common.edit'] : messages['common.add']} #{messages['commercial.bussines']}" />
+
+			<rich:panel>
+				<f:facet name="header">
+
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+
+						<h:outputText value="#{messages['commercial.business']}" />
+
+						<a:commandButton reRender="localFeature" ajaxSingle="true"
+							eventsQueue="gimEventsQueue"
+							oncomplete="Richfaces.showModalPanel('economicalActivityPanel')"
+							value="#{messages['economicActivity']}" />
+
+						<a:commandButton reRender="localFeature" ajaxSingle="true"
+							eventsQueue="gimEventsQueue"
+							oncomplete="Richfaces.showModalPanel('businessCatalogPanel')"
+							value="#{messages['businessCatalog']}" />
+					</h:panelGrid>
+
+				</f:facet>
+
+				<s:decorate id="businessTypeField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['businessType']}:</ui:define>
+					<h:selectOneMenu id="businessType"
+						value="#{businessHome.instance.businessType}">
+						<s:selectItems value="#{businessTypes}" var="businessType"
+							label="#{businessType.name}" />
+						<s:convertEntity />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="bussinesName" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['commercial.BussinesName']}</ui:define>
+					<h:inputText id="name" size="60" maxlength="60"
+						value="#{businessHome.instance.name}" required="true" style="text-transform: uppercase">
+						<a:support event="onblur" reRender="bussinesName"
+							bypassUpdates="true" ajaxSingle="true" />
+					</h:inputText>
+				</s:decorate>
+
+				<h:panelGrid columns="2" styleClass="center" width="100%">
+
+					<h:panelGrid columns="2" styleClass="center" width="100%"
+						columnClasses="topAligned,topAligned">
+
+						<h:panelGrid columns="1" width="100%">
+							<rich:panel styleClass="left">
+								<f:facet name="header">#{messages['commercial.BussinesOwner']}</f:facet>
+								<g:residentChooser id="ownerChooser"
+									resident="#{businessHome.instance.owner}"
+									criteria="#{businessHome.criteria}" bean="#{businessHome}"
+									label="#{messages['commerce.BusinessOwner']}"
+									searchAction="searchOwner"
+									residentsList="#{businessHome.residents}"
+									identificationNumber="#{businessHome.ownerIdentificationNumber}"
+									searchByCriteriaAction="searchResidentByCriteria"
+									clearSearchPanelAction="clearSearchPanel"
+									residentChosenListenerName="ownerSelectedListener" />
+								<div style="clear: both" />
+							</rich:panel>
+						</h:panelGrid>
+
+						<h:panelGrid columns="1" width="100%">
+							<rich:panel styleClass="left">
+								<f:facet name="header">#{messages['commercial.BussinesManager']}</f:facet>
+								<g:residentChooser id="managerChooser"
+									resident="#{businessHome.instance.manager}"
+									criteria="#{businessHome.criteria}" bean="#{businessHome}"
+									label="#{messages['commerce.BusinessManager']}"
+									searchAction="searchManager"
+									residentsList="#{businessHome.residents}"
+									identificationNumber="#{businessHome.managerIdentificationNumber}"
+									searchByCriteriaAction="searchResidentByCriteria"
+									clearSearchPanelAction="clearSearchPanel"
+									residentChosenListenerName="managerSelectedListener" />
+								<div style="clear: both" />
+							</rich:panel>
+						</h:panelGrid>
+
+					</h:panelGrid>
+
+
+				</h:panelGrid>
+
+				<rich:panel id="localsPanel" style="border:0px">
+
+					<rich:dataTable id="itemsLocales" var="_local"
+						value = "#{businessHome.instance.locales}"
+						columnClasses="number, number" width="100%">
+						<f:facet name="header">
+							<h:panelGrid columns="2" columnClasses="headerTitle,"
+								styleClass="left">
+								<h:outputText value="#{messages['commercial.locals000']}"
+									styleClass="left" />
+
+								<a:commandButton id="createLocal"
+									action="#{businessHome.createLocal()}"
+									reRender="localEditPanel" ajaxSingle="true"
+									eventsQueue="gimEventsQueue"
+									oncomplete="Richfaces.showModalPanel('localEditPanel',{width:600, height:500})"
+									value="#{messages['business.addLocal']}" />
+							</h:panelGrid>
+						</f:facet>
+
+						<h:outputText value="#{messages['items.resultsItemNotFound']}"
+							rendered="#{empty businessHome.instance.locales}" />
+
+						<rich:column rendered="#{not empty businessHome.instance.locales}"
+							styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['local.id']}" />
+							</f:facet>
+							<h:outputText value="#{_local.id}" />
+						</rich:column>
+						<rich:column rendered="#{not empty businessHome.instance.locales}"
+							styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['local.name']}" />
+							</f:facet>
+							<h:outputText value="#{_local.name}" />
+						</rich:column>
+
+						<rich:column rendered="#{not empty businessHome.instance.locales}"
+							styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['local.address']}" />
+							</f:facet>
+							<h:outputText value="#{_local.address.street}" />
+						</rich:column>
+
+						<rich:column styleClass="action" style="align:center;"
+							rendered="#{not empty businessHome.instance.locales}">
+							<f:facet name="header">
+								<h:outputText value="#{messages['local.isActive']}" />
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{_local.isActive}"
+								disabled="true" />
+						</rich:column>
+
+						<rich:column rendered="#{not empty businessHome.instance.locales}"
+							styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['local.phoneNumber']}" />
+							</f:facet>
+							<h:outputText value="#{_local.address.phoneNumber}" />
+						</rich:column>
+
+						<rich:column rendered="#{not empty businessHome.instance.locales}"
+							styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['common.action']}" />
+							</f:facet>
+							<a:commandButton id="editLocal"
+								action="#{businessHome.beforeEditLocal(_local)}"
+								reRender="localEditPanel" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('localEditPanel',{width:600, height:500})"
+								value="#{messages['commercial.editLocal']}" />
+
+							<a:commandButton id="editFeature"
+								action="#{businessHome.selectLocalFeature(_local)}"
+								reRender="localFeature" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('localFeatureEditPanel')"
+								value="#{messages['local.localFeature']}" />
+
+							<a:commandButton id="print"
+								action="#{businessHome.beforeEditLocal(_local)}"
+								onclick="Richfaces.showModalPanel('printConfirmPanel',{width:300, height:150})"
+								value="#{messages['commercial.operatingPermis']}"
+								propagation="join" />
+
+
+						</rich:column>
+					</rich:dataTable>
+
+					<div style="clear: both"></div>
+
+				</rich:panel>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{businessHome.persist}" disabled="#{!businessHome.wired}"
+					rendered="#{!businessHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{businessHome.update}" rendered="#{businessHome.managed}" />
+
+				<h:commandButton id="delete" value="#{messages['common.delete']}"
+					action="#{businessHome.remove}" immediate="true"
+					rendered="#{businessHome.managed and false}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/commercial/BusinessList.xhtml"
+					rendered="#{businessHome.managed}" />
+
+				<s:button id="cancelAdd" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/commercial/#{empty businessFrom ? 'BusinessList' : businessFrom}.xhtml"
+					rendered="#{!businessHome.managed}" />
+
+			</div>
+		</h:form>
+
+		<rich:modalPanel id="printConfirmPanel" width="250" height="150">
+			<f:facet name="header">#{messages['common.printingConfirmation']}</f:facet>
+			<h:form id="printConfirm">
+				<h:panelGrid>
+					<h:panelGrid columns="2">
+						<h:graphicImage value="/img/alert.png" />
+						<h:outputText
+							value="#{messages['commercial.printingOperatingPermis']}?"
+							style="font-size:large;" />
+					</h:panelGrid>
+					<h:panelGroup>
+						<div class="actionButtons">
+							<h:selectOneMenu id="currentFiscalPeriod"
+								value="#{businessHome.fiscalPeriod}">
+								<s:selectItems value="#{fiscalPeriods}" var="fiscalPeriod"
+									label="#{fiscalPeriod.name}" />
+								<s:convertEntity />
+								<a:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
+
+							<s:button style="width:60px" id="printingBtn"
+								view="/commercial/report/OperatingPermisReport.xhtml"
+								value="#{messages['common.print']}" propagation="join">
+								<a:support event="onclick" ajaxSingle="true"
+									oncomplete="Richfaces.hideModalPanel('printConfirmPanel');"
+									reRender="printConfirmPanel"></a:support>
+							</s:button>
+
+							<a:commandButton ajaxSingle="true"
+								value="#{messages['common.quit']}"
+								oncomplete="Richfaces.hideModalPanel('printConfirmPanel');"
+								bypassUpdates="true" />
+
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+
+			</h:form>
+
+		</rich:modalPanel>
+
+
+	</ui:define>
+
+</ui:composition>

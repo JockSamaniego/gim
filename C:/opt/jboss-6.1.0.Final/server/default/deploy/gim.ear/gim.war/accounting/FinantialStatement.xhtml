@@ -1,0 +1,240 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="finantialStatementForm" styleClass="edit">
+
+			<rich:panel label="#{messages['finantialStatement.searchFilter']}">
+				<f:facet name="header">
+					<h:outputText styleClass="formTitle"
+						value="#{messages['finantialStatement.title']}" />
+				</f:facet>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['finantialStatement.reportType']}:</ui:define>
+					<h:selectOneMenu id="reportType"
+						value="#{finantialStatement.criteria.reportType}">
+						<s:selectItems value="#{reportTypes}" var="reportType"
+							label="#{messages[reportType.name()]}" />
+						<s:convertEnum />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['finantialStatement.reportFilter']}:</ui:define>
+					<h:selectOneMenu id="reportFilter"
+						value="#{finantialStatement.criteria.reportFilter}">
+						<s:selectItems value="#{reportFilters}" var="reportFilter"
+							label="#{messages[reportFilter.name()]}" />
+						<s:convertEnum />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['finantialStatement.fiscalPeriod']}:</ui:define>
+					<h:selectOneMenu id="fiscalPeriodId"
+						value="#{finantialStatement.criteria.fiscalPeriodId}">
+						<s:selectItems value="#{periods}" var="fiscalPeriod"
+							label="#{fiscalPeriod.name}" itemValue="#{fiscalPeriod.id}" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['finantialStatement.startDate']}:</ui:define>
+					<rich:calendar id="startDate"
+						value="#{finantialStatement.criteria.startDate}"
+						datePattern="#{messages['common.datePattern']}" inputSize="10">
+						<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['finantialStatement.endDate']}:</ui:define>
+					<rich:calendar id="endDate"
+						value="#{finantialStatement.criteria.endDate}"
+						datePattern="#{messages['common.datePattern']}" inputSize="10">
+						<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['finantialStatement.account']}:</ui:define>
+					<h:inputText id="criteria"
+						value="#{finantialStatement.criteria.accountCode}" />
+				</s:decorate>
+
+				<div style="clear: both" />
+
+			</rich:panel>
+
+			<div class="actionButtons">
+				<a:commandButton id="search" value="#{messages['common.search']}"
+					action="#{finantialStatement.buildReport}"
+					reRender="resultsPanel, finantialStatement" />
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none" />
+				<s:button id="home" view="/home.xhtml"
+					value="#{messages['common.quit']}" propagation="end" />
+			</div>
+
+			<a:outputPanel id="resultsPanel" ajaxRendered="true">
+				<rich:dataTable id="finantialStatement"
+					value="#{finantialStatement.accountItems}" var="_accountItem"
+					columnClasses="left tableCellFont, left tableCellFont, right tableCellFont, right tableCellFont, right tableCellFont, center"
+					rendered="#{finantialStatement.accountItems.size() > 0}">
+
+					<f:facet name="header">
+						<h:panelGrid columns="3" columnClasses="headerTitle left, ">
+							<h:outputText
+								value="#{messages['finantialStatement.accountBalance']}" />
+
+							<s:button
+								view="/accounting/report/FinantialStatementReport.xhtml"
+								id="printId"
+								rendered="#{not empty finantialStatement.accountItems}"
+								action="#{finantialStatement.prePrintAction(false)}"
+								propagation="join" value="#{messages['common.print']}" />
+
+
+							<h:commandButton id="download"
+								action="#{finantialStatement.download()}"
+								rendered="#{finantialStatement.accountItems.size() > 0}"
+								value="#{messages['common.download']}" />
+
+							<a:region>
+								<a:commandButton id="print"
+									action="#{finantialStatement.generateReportByMunicipalBondInPaymentAgreement()}"
+									rendered="#{finantialStatement.accountItems.size() > 0 and finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION'}"
+									value="#{messages['common.printBonds']}">
+								</a:commandButton>
+								<!-- @author macartuche -->
+								<a:commandButton id="printSubscription"
+									action="#{finantialStatement.generateReportBySubscription()}"
+									rendered="#{finantialStatement.accountItems.size() > 0 and finantialStatement.criteria.reportType.name() == 'SUBSCRIPTION'}"
+									value="#{messages['common.printBonds']}">
+								</a:commandButton>
+							</a:region>
+
+						</h:panelGrid>
+
+					</f:facet>
+
+					<rich:column width="15%">
+						<f:facet name="header">#{messages['accountItem.accountNumber']}</f:facet>
+						<h:outputText value="#{_accountItem.accountNumber}" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">#{messages['accountItem.accountName']}</f:facet>
+						<h:outputText value="#{_accountItem.accountName}" />
+					</rich:column>
+					<rich:column width="10%"
+						rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION' and finantialStatement.criteria.reportType.name() != 'SUBSCRIPTION'}">
+						<f:facet name="header">#{messages['accountItem.debit']}</f:facet>
+						<h:outputText value="#{_accountItem.debit}" />
+					</rich:column>
+					<rich:column width="10%"
+						rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION' || finantialStatement.criteria.reportType.name() == 'SUBSCRIPTION' || finantialStatement.criteria.reportType.name() == 'COMBINED'}">
+						<f:facet name="header">#{messages['accountItem.credit']}</f:facet>
+						<h:outputText value="#{_accountItem.credit}" />
+					</rich:column>
+					<rich:column width="10%"
+						rendered="#{finantialStatement.criteria.reportType.name() == 'COMBINED'}">
+						<f:facet name="header">#{messages['accountItem.balance']}</f:facet>
+						<h:outputText value="#{_accountItem.balance}"
+							styleClass="#{_accountItem.balance >= 0 ? '' : 'redFont'}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<a:commandButton id="accountDetailBtn"
+							value="#{messages['finantialStatement.detail']}"
+							rendered="#{finantialStatement.criteria.reportType.name() != 'COMBINED' and not finantialStatement.isQuotasOrInterestAccount(_accountItem.accountId)}"
+							action="#{finantialStatement.buildDetailedReport(finantialStatement.criteria, _accountItem.accountId, _accountItem.accountName, _accountItem.reportFilter)}"
+							reRender="accountDetailPanel" eventsQueue="gimEventsQueue"
+							ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('accountDetailPanel',{width:800, height:540})">
+						</a:commandButton>
+					</rich:column>
+
+					<f:facet name="footer">
+						<rich:columnGroup columnClasses=",number">
+							<rich:column colspan="2">
+								<h:outputText value="#{messages['item.total']}:"
+									styleClass="labelBold" />
+							</rich:column>
+
+							<rich:column styleClass="number tableCellFont"
+								rendered="#{finantialStatement.criteria.reportType.name() != 'INCOME' and finantialStatement.criteria.reportType.name() != 'QUOTAS_LIQUIDATION' and finantialStatement.criteria.reportType.name() != 'SUBSCRIPTION'}">
+								<h:outputText value="#{finantialStatement.totalDebit}">
+									<f:convertNumber pattern="$ ####.00" />
+								</h:outputText>
+							</rich:column>
+
+							<rich:column styleClass="number tableCellFont"
+								rendered="#{finantialStatement.criteria.reportType.name() == 'INCOME' || finantialStatement.criteria.reportType.name() == 'QUOTAS_LIQUIDATION' || finantialStatement.criteria.reportType.name() == 'SUBSCRIPTION' || finantialStatement.criteria.reportType.name() == 'COMBINED'}">
+								<h:outputText value="#{finantialStatement.totalCredit}">
+									<f:convertNumber pattern="$ ####.00" />
+								</h:outputText>
+							</rich:column>
+
+						</rich:columnGroup>
+					</f:facet>
+				</rich:dataTable>
+
+				<br></br>
+				
+				<!-- rich:dataTable id="memoML-DF-2015-1069"
+					value="#{finantialStatement.accountItemsOrnato}"
+					var="_accountItemOrnato"
+					columnClasses="left tableCellFont, left tableCellFont, right tableCellFont"
+					rendered="#{finantialStatement.criteria.reportType.name() == 'BALANCE'}">
+
+					<f:facet name="header">
+						AJUSTE POR DEVOLUCION SEGUN MEMO ML-DF-2015-1069
+					</f:facet>
+
+					<rich:column width="15%">
+						<f:facet name="header">#{messages['accountItem.accountNumber']}</f:facet>
+						<h:outputText value="#{_accountItemOrnato.accountNumber}" />
+					</rich:column>
+
+					<rich:column width="15%">
+						<f:facet name="header">#{messages['accountItem.accountName']}</f:facet>
+						<h:outputText value="#{_accountItemOrnato.accountName}" />
+					</rich:column>
+					<rich:column width="15%">
+						<f:facet name="header">#{messages['accountItem.debit']}</f:facet>
+						<h:outputText value="#{_accountItemOrnato.debit}" />
+					</rich:column>
+					<f:facet name="footer">
+						<rich:columnGroup columnClasses=",number">
+							<rich:column colspan="2">
+								<h:outputText value="#{messages['item.total']}:"
+									styleClass="labelBold" />
+							</rich:column>
+
+							<rich:column styleClass="number tableCellFont">
+								<h:outputText value="#{finantialStatement.totalResolutionOrnato}">
+									<f:convertNumber pattern="$ ####.00" />
+								</h:outputText>
+							</rich:column>
+
+						</rich:columnGroup>
+					</f:facet>
+				</rich:dataTable-->
+			</a:outputPanel>
+		</h:form>
+
+		<ui:include src="fragment/AccountDetailPanel.xhtml" />
+	</ui:define>
+</ui:composition>

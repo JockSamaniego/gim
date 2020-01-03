@@ -1,0 +1,24 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="loadingPanel" autosized="true">
+		<h:graphicImage url="../img/loading.gif"
+			style="border:0px; vertical-align: middle;" />
+		<rich:spacer width="20" />
+		<h:outputText  style="border:0px; vertical-align: middle;font-size:18px;font-weight: bold;" value="#{messages['common.loading']}" />
+	</rich:modalPanel>
+
+	<a:status id="loading" 
+		onstart="Richfaces.showModalPanel('loadingPanel')"
+		onstop="Richfaces.hideModalPanel('loadingPanel')" />
+
+</ui:composition>

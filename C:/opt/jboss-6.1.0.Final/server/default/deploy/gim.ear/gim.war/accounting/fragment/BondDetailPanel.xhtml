@@ -1,0 +1,199 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<ui:debug />
+	<rich:modalPanel 
+		id="bondDetailPanel"
+		minHeight="500" minWidth="800"
+		height="500" width="1200">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{finantialStatement.accountCode}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hideaccountDetailPanelLink" />
+				<rich:componentControl for="bondDetailPanel" attachTo="hideaccountDetailPanelLink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="bondDetails" styleClass="edit">
+			<a:region>
+			<rich:panel>
+
+				<h:panelGrid columns="2">
+					<h:outputText value="#{messages['common.name']}:"  style="font-weight:bold; font-size:10px; color:black"/>
+					<h:outputText value="#{finantialStatement.resident.name}" />	
+
+					<h:outputText value="#{messages['common.identificationNumber']}:" style="font-weight:bold; font-size:10px; color:black" />	
+					<h:outputText value="#{finantialStatement.resident.identificationNumber}" />	
+
+					<h:outputText value="#{messages['provider.email']}:" style="font-weight:bold; font-size:10px; color:black"/>
+					<h:outputText value="#{finantialStatement.resident.email}" />
+				</h:panelGrid>
+				
+
+				
+
+
+				<!-- BEGIN TABLE -->
+				<rich:extendedDataTable 
+					id="bondDetailTable" 
+					var="_bond" rows="10" style="height: 250px !important;"
+					value="#{finantialStatement.detailBond}">
+					<f:facet name="header">
+						<h:outputText value="#{messages['accountDetail.municipalBondDetail']}" />
+					</f:facet>
+					
+
+					<rich:column width="7%" styleClass="left">
+						<f:facet name="header">#{messages['municipalBond.number']}</f:facet>
+						<h:outputText value="#{_bond.number}" />
+					</rich:column>
+
+					<rich:column width="25%" styleClass="left">
+						<f:facet name="header">#{messages['common.description']}</f:facet>
+						<h:outputText value="#{_bond.description}" />
+					</rich:column>
+
+
+					<rich:column width="10%" styleClass="left">
+						<f:facet name="header">#{messages['municipalBond.emisionDate']}</f:facet>
+						<h:outputText value="#{_bond.emisionDate}" >
+							<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+
+
+
+					<rich:column width="10%" styleClass="left">
+						<f:facet name="header">#{messages['exemption.expirationDate']}</f:facet>
+						<h:outputText value="#{_bond.expirationDate}" >
+							<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
+					</rich:column>
+	
+					<rich:column width="8%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.base']}</f:facet>
+						$<h:outputText value="#{_bond.base}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column width="8%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.discounts']}</f:facet>
+						$<h:outputText value="#{_bond.discount}" >
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+					
+					
+					<rich:column width="8%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.interestsTotal']}</f:facet>
+						$<h:outputText value="#{_bond.interest}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column width="8%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.surcharges']}</f:facet>
+						$<h:outputText value="#{_bond.surcharge}" >
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+					
+					
+					<rich:column width="8%" styleClass="right">
+						<f:facet name="header">#{messages['TAX']}</f:facet>
+						$<h:outputText value="#{_bond.taxesTotal}" >
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+					
+					<rich:column width="8%" styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.paidTotal']}</f:facet>
+						$<h:outputText value="#{_bond.paidTotal}" >
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column width="2%" styleClass="right">					
+						<h:outputText value="" >
+						</h:outputText>
+					</rich:column>
+	 
+	 
+					<f:facet name="footer">
+						<rich:columnGroup>
+							<rich:column colspan="9" styleClass="right">
+								<h:outputText value="#{messages['accountDetail.totals']}" style="font-weight:bold; font-size:1.5em;"/>
+							</rich:column>
+							<rich:column styleClass="right">
+								$<h:outputText id="totalBond" 
+									value="#{finantialStatement.totalBond}"
+									styleClass="right">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+							<rich:column width="2%" styleClass="right">					
+								<h:outputText value="" >
+								</h:outputText>
+							</rich:column>						
+						</rich:columnGroup>
+					</f:facet>
+										
+				</rich:extendedDataTable>
+				
+				<rich:datascroller id="tableScroller" page="1"
+						renderIfSinglePage="false" align="right" for="bondDetailTable"
+						maxPages="10"/>
+				
+				
+				<!-- END TABLE -->
+				<div style="clear: both" />
+			</rich:panel>
+
+			<div class="actionButtons">
+				
+				<s:button view="/accounting/report/DetailBondsReportByResident.xhtml" id="printId"
+						rendered="#{not empty finantialStatement.detailBond}"
+						action="#{finantialStatement.prePrintAction(true)}"
+						propagation="join" value="#{messages['common.print']}" />
+								
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('bondDetailPanel');"
+					bypassUpdates="true" />
+			</div>
+			</a:region>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

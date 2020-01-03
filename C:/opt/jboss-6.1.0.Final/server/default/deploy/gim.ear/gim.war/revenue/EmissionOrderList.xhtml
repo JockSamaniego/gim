@@ -1,0 +1,221 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="emissionOrderSearch" styleClass="edit">
+			<rich:messages errorClass="errors"></rich:messages>
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['emissionOrder.list']}" />
+
+			<rich:simpleTogglePanel
+				label="#{messages['emissionOrder.searchFilter']}" switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['resident.identificationNumber']}</ui:define>
+					<h:inputText id="identificationNumber"
+						value="#{emissionOrderList.identificationNumber}">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['resident.name']}</ui:define>
+					<h:inputText id="residentId" value="#{emissionOrderList.resident}">
+					</h:inputText>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['entry']}</ui:define>
+					<h:inputText id="entryId" value="#{emissionOrderList.entry}"
+						size="40" maxlength="40" />
+				</s:decorate>
+
+				<s:decorate id="departmentField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['entry.department']}: </ui:define>
+					<h:selectOneMenu id="departmentId"
+						value="#{emissionOrderList.department}">
+						<s:selectItems value="#{departments}" var="department"
+							label="#{department}"
+							noSelectionLabel="#{messages['common.selectOne']}" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/revenue/EmissionOrderList.xhtml">
+					<f:param name="firstResult" value="0" />
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false">
+					<f:param name="isDispatched" value="#{isDispatched}" />
+				</s:button>
+			</div>
+
+
+			<rich:panel id="emissionOrderPanel">
+				<f:facet name="header">
+
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['emissionOrder.searchResults']} (#{empty emissionOrderList.resultList ? 0 : (emissionOrderList.paginated ? emissionOrderList.resultCount : emissionOrderList.resultList.size)})" />
+						
+													
+					</h:panelGrid>
+
+				</f:facet>
+
+				<div class="results" id="emissionOrderList">
+
+					<rich:dataTable id="emissionOrderTable" var="_emissionOrder"
+						value="#{emissionOrderList.resultList}"
+						rendered="#{not empty emissionOrderList.resultList}">
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{emissionOrderList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['emissionOrder.number']}" />
+									<ui:param name="propertyPath" value="e.id" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_emissionOrder.id}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{emissionOrderList}" />
+									<ui:param name="propertyLabel" value="#{messages['emisor']}" />
+									<ui:param name="propertyPath" value="e.emisor" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_emissionOrder.emisor.name}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{emissionOrderList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['emissionOrder.serviceDate']}" />
+									<ui:param name="propertyPath" value="e.serviceDate" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_emissionOrder.serviceDate}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{emissionOrderList}" />
+									<ui:param name="propertyLabel" value="#{messages['resident']}" />
+									<ui:param name="propertyPath" value="m.resident.name" />
+								</ui:include>
+							</f:facet>
+							<h:outputText
+								value="#{_emissionOrder.municipalBonds.size() == 1 ? _emissionOrder.municipalBonds.get(0).resident.name : ''}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{emissionOrderList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['emissionOrder.description']}" />
+									<ui:param name="propertyPath" value="e.description" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_emissionOrder.description}" />
+						</h:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<s:button view="/revenue/EmissionOrderEdit.xhtml"
+								value="#{messages['common.detail']}" propagation="none"
+								id="municipalBondList"
+								rendered="#{_emissionOrder.municipalBonds.size() > 1}">
+								<f:param name="emissionOrderId" value="#{_emissionOrder.id}" />
+							</s:button>
+
+							<a:commandButton id="viewer" ajaxSingle="true"
+								rendered="#{_emissionOrder.municipalBonds.size() == 1}"
+								action="#{municipalBondsViewerHome.loadMunicipalBond(_emissionOrder.municipalBonds.get(0))}"
+								eventsQueue="gimEventsQueue" reRender="_municipalBondViewer"
+								oncomplete="Richfaces.showModalPanel('_municipalBondViewer',{width:700, height:500})"
+								value="#{messages['common.view']}" />
+
+							<a:commandButton id="emitEmissionOrder"
+								value="#{messages['common.emit']}"
+								rendered="#{_emissionOrder.municipalBonds.size() == 1}"
+								action="#{emissionOrderHome.emitEmissionOrder(_emissionOrder)}" />
+
+
+							<a:commandButton id="rejectEmissionOrder"
+								value="#{messages['municipalBond.reject']}"
+								rendered="#{_emissionOrder.municipalBonds.size() == 1}"
+								action="#{emissionOrderHome.rejectEmissionOrder(_emissionOrder)}" />
+
+						</rich:column>
+					</rich:dataTable>
+
+				</div>
+			</rich:panel>
+
+
+
+			<div class="tableControl">
+
+				<s:link view="/revenue/EmissionOrderList.xhtml"
+					rendered="#{emissionOrderList.previousExists}"
+					value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+					id="firstPage">
+					<f:param name="firstResult" value="0" />
+				</s:link>
+
+				<s:link view="/revenue/EmissionOrderList.xhtml"
+					rendered="#{emissionOrderList.previousExists}"
+					value="#{messages.left} #{messages['common.previousPage']}"
+					id="previousPage">
+					<f:param name="firstResult"
+						value="#{emissionOrderList.previousFirstResult}" />
+				</s:link>
+
+				<s:link view="/revenue/EmissionOrderList.xhtml"
+					rendered="#{emissionOrderList.nextExists}"
+					value="#{messages['common.nextPage']} #{messages.right}"
+					id="nextPage">
+					<f:param name="firstResult"
+						value="#{emissionOrderList.nextFirstResult}" />
+				</s:link>
+
+				<s:link view="/revenue/EmissionOrderList.xhtml"
+					rendered="#{emissionOrderList.nextExists}"
+					value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+					id="lastPage">
+					<f:param name="firstResult"
+						value="#{emissionOrderList.lastFirstResult}" />
+				</s:link>
+
+			</div>
+		</h:form>
+
+		<g:municipalBondViewer resident="#{municipalBondsViewerHome.resident}"
+			municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}" />
+
+	</ui:define>
+
+
+</ui:composition>

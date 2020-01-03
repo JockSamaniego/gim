@@ -1,0 +1,94 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:g="http://gim.gob.ec/jsf"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="agent" styleClass="edit" >
+
+        <rich:panel>
+                <f:facet name="header">#{alertHome.managed ? messages['agent.Edit'] : messages['agent.Create']}</f:facet>
+                  <g:residentChooser resident="#{agentHome.instance.resident}"
+                    disabled="#{agentHome.managed}"
+                    criteria="#{agentHome.criteria}"
+                    bean="#{agentHome}" searchAction="searchResident"
+                    residentsList="#{agentHome.residents}"
+                    identificationNumber="#{agentHome.identificationNumber}"
+                    searchByCriteriaAction="searchResidentByCriteria"
+                    clearSearchPanelAction="clearSearchResidentPanel"
+                    residentChosenListenerName="residentSelectedListener">
+                    <s:convertEntity />
+                  </g:residentChooser>            
+
+            <s:decorate id="agentCodeField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['agent.code']}</ui:define>
+                <h:inputText id="agentCode"
+                       required="true"
+                           size="30"
+                      maxlength="30"
+                          value="#{agentHome.instance.agentCode}"
+                          readonly="#{agentHome.managed}">
+                    <a:support event="onblur" reRender="agentCodeField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+          
+      <s:decorate id="agentActiveField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['agent.isActive']}</ui:define>
+                <h:selectBooleanCheckbox id="agenteIsActive"
+                value="#{agentHome.instance.isActive}" />
+            </s:decorate> 
+
+
+            <div style="clear:both">
+                <span class="required">*</span>
+               campos requeridos
+            </div>
+            
+            <s:decorate id="agentMessageField" template="../../layout/edit.xhtml">
+                <h:outputText value="#{agentHome.message}" rendered="#{agentHome.message != null}" style="color:red"/>
+            </s:decorate> 
+
+            <div style="clear:both">
+            </div>
+            
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{agentHome.saveAgent()}"
+                       disabled="#{!agentHome.wired}"
+                       rendered="#{!agentHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{agentHome.update}"
+                       rendered="#{agentHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="#{messages['common.delete']}"
+                         action="#{agentHome.remove}"
+                      immediate="true"
+                      disabled="true"
+                       rendered="#{agentHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/ant/ucot/AgentList.xhtml"/>
+
+
+        </div>
+    </h:form>
+    </ui:define>
+</ui:composition>

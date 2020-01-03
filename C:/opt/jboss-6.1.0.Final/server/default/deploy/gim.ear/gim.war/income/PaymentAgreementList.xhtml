@@ -1,0 +1,245 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="paymentAgreementSearch" styleClass="edit">
+
+			<rich:simpleTogglePanel
+				label="#{messages['paymentAgreement.searcher']}" switchType="ajax">
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['paymentAgreement.criteria']}</ui:define>
+					<h:inputText id="criteria" value="#{paymentAgreementList.criteria}"
+						size="40" maxlength="40" />
+				</s:decorate>
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/income/PaymentAgreementList.xhtml">
+					<f:param name="firstResult" value="0" />
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+		
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText value="#{messages['paymentAgreement.searchResults']}" />
+					<s:button view="/income/PaymentAgreementEdit.xhtml" id="create"
+						propagation="none" value="#{messages['paymentAgreement.create']}">
+						<f:param name="paymentAgreementId" />
+					</s:button>
+				</h:panelGrid>
+			</f:facet>
+			<div class="results" id="paymentAgreementAgreementList">
+
+				<h:outputText value="The payment search returned no results."
+					rendered="#{empty paymentAgreementList.resultList}" />
+
+				<rich:dataTable id="paymentAgreementAgreementList"
+					var="_paymentAgreement" value="#{paymentAgreementList.resultList}"
+					rendered="#{not empty paymentAgreementList.resultList}">
+					<h:column>
+						<f:facet name="header">
+            	#{messages['paymentAgreement.id']}
+            </f:facet>
+						<h:outputText value="#{_paymentAgreement.id}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+                #{messages['resident.identificationNumber']}
+            </f:facet>
+						<h:outputText
+							value="#{_paymentAgreement.resident.identificationNumber}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+                #{messages['resident.name']}
+            </f:facet>
+						<h:outputText value="#{_paymentAgreement.resident.name}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+            	#{messages['paymentAgreement.description']}
+                </f:facet>
+						<h:outputText value="#{_paymentAgreement.description}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+            				Está Activo?
+               			</f:facet>
+								<h:outputText value="SI" rendered="#{_paymentAgreement.isActive}" />
+								<h:outputText value="NO" rendered="#{!_paymentAgreement.isActive}" />
+					</h:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						
+						<s:button view="/income/PaymentAgreementEdit.xhtml"
+							value="#{messages['common.view']}" propagation="none"
+							id="paymentAgreementEdit" rendered="#{empty from}">
+							<f:param name="paymentAgreementId"
+								value="#{_paymentAgreement.id}" />
+						</s:button>
+						
+						<a:commandButton id="activeBtn" 
+							action="#{paymentAgreementHome.toActivePaymentAgreement()}"
+							value="Activar"
+							oncomplete="#{rich:component('activeInfoPanel')}.show();"
+							includePageParams="false" propagation="join"
+							disabled="#{_paymentAgreement.isActive}"
+							reRender="activeForm"
+							rendered="#{paymentAgreementHome.hasRole('ACTIVE_PAYMENTAGREEMENT') }">
+							<f:param name="paymentAgreementId"
+								value="#{_paymentAgreement.id}" />
+						</a:commandButton>
+						
+						
+						<a:commandButton id="activeRemisionBtn" 							
+							value="#{paymentAgreementHome.isfullPayment(_paymentAgreement.id) ? 'Activar pago compl.' : 'Desactivar pago compl.'}"
+							oncomplete="#{rich:component('activeRemissionPanel')}.show();"
+							includePageParams="false" propagation="join"
+							reRender="activeRemissionPanel, msgRem"
+							disabled="#{!_paymentAgreement.isActive}"
+							rendered="#{paymentAgreementHome.hasRole('ACTIVATE_REMISSION_PAYMENTAGREEMENT') and !_paymentAgreement.applyReferral}">
+							<f:param name="paymentAgreementId"
+								value="#{_paymentAgreement.id}" />							 
+						</a:commandButton>
+
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/income/PaymentAgreementList.xhtml"
+				rendered="#{paymentAgreementList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/income/PaymentAgreementList.xhtml"
+				rendered="#{paymentAgreementList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult"
+					value="#{paymentAgreementList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/income/PaymentAgreementList.xhtml"
+				rendered="#{paymentAgreementList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult"
+					value="#{paymentAgreementList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/income/PaymentAgreementList.xhtml"
+				rendered="#{paymentAgreementList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult"
+					value="#{paymentAgreementList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+		<s:div styleClass="actionButtons" rendered="#{empty from}">
+
+		</s:div>
+	</h:form>
+
+	
+	
+	<rich:modalPanel id="activeInfoPanel" width="600" height="200">
+
+		<f:facet name="header">Activación de Convenio</f:facet>
+
+		<h:form id="activeForm">
+
+			<h:panelGrid>
+
+				<rich:panel>
+
+					<h:panelGrid columns="2">
+
+						<h:graphicImage value="/img/alert.png" style="margin-left: 2em" />
+
+						<h:outputText
+							value="#{paymentAgreementHome.activeMessage}"
+							style="font-size:large; color: red;margin-left: 2em; margin-right: 2em"
+							rendered="#{!paymentAgreementHome.toActive}" />
+
+						<h:outputText
+							value="#{paymentAgreementHome.activeMessage}"
+							style="font-size:large; color: green;margin-left: 2em; margin-right: 2em"
+							rendered="#{paymentAgreementHome.toActive}" />
+					</h:panelGrid>
+					<br />
+					<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="activeButton"
+								value="Aceptar"
+								oncomplete="Richfaces.hideModalPanel('activeInfoPanel')"
+								includePageParams="false" propagation="join"
+								reRender="paymentAgreementAgreementList">
+							</a:commandButton>
+						</div>
+					</h:panelGroup>
+				</rich:panel>
+			</h:panelGrid>
+		</h:form>
+	</rich:modalPanel>
+	
+	
+	<rich:modalPanel id="activeRemissionPanel" width="400" height="200">
+		<f:facet name="header">Activación de Pago Completo - Remisión</f:facet>
+
+		
+		<h:form id="activeRemissionForm">
+			<h:panelGrid>
+				<rich:panel>
+					<h:panelGrid columns="2" >
+						<h:graphicImage value="/img/alert.png" style="margin-left: 2em" />
+						<h:outputText id="msgRem"
+							value="Confirmación de acción"
+							style="font-size:large; color: green; margin-left: 2em; margin-right: 2em" />				
+					</h:panelGrid>
+					<br />
+					
+				</rich:panel>
+				<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="activeRemissionButton"
+								value="Aceptar"
+								action="#{paymentAgreementHome.updatePA()}"
+								oncomplete="Richfaces.hideModalPanel('activeRemissionPanel')"
+								includePageParams="false" propagation="join"
+								reRender="paymentAgreementAgreementList">
+							</a:commandButton>
+						</div>
+					</h:panelGroup>
+			</h:panelGrid>
+		</h:form>
+	</rich:modalPanel>
+</ui:define>
+</ui:composition>

@@ -1,0 +1,169 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="localFeatureEditPanel" width="350" height="480">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['localFeature']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkLF" />
+				<rich:componentControl for="localFeatureEditPanel"
+					attachTo="hidelinkLF" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="localFeature" styleClass="edit">
+
+			<a:region>
+				<rich:panel>
+					<rich:panel style="height:50px; width:100%; overflow:auto;">
+						<rich:messages errorClass="errors" />
+					</rich:panel>
+
+					<h:panelGrid columns="1" width="100%">
+
+						<s:decorate id="businessCatalogField"  rendered="#{!businessHome.businessTourist}"
+							template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">#{messages['businessCatalog']}:</ui:define>
+							<h:selectOneMenu id="businessCatalog"
+								value="#{businessHome.localFeature.businessCatalog}">
+
+								<s:selectItems value="#{businessNamesTourism}" var="businessCatalog"
+									label="#{businessCatalog.name}"
+									noSelectionLabel="Seleccione uno" />
+
+								<s:convertEntity />
+								<a:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
+						</s:decorate>
+						
+						<s:decorate id="businessCatalogField2"  rendered="#{businessHome.businessTourist}"
+							template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">#{messages['businessCatalog']}:</ui:define>
+							<h:selectOneMenu id="businessCatalog2"
+								value="#{businessHome.localFeature.businessCatalog}">
+								<s:selectItems value="#{businessTouristNames}" var="businessName"
+									label="#{businessName.name}"
+									noSelectionLabel="Seleccione uno" />
+								<s:convertEntity />
+								<a:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
+						</s:decorate>
+
+						<s:decorate id="featureCategoryField"
+							template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">#{messages['featureCategory']}:</ui:define>
+							<h:selectOneMenu id="featureCategory"
+								value="#{businessHome.localFeature.featureCategory}">
+								<s:selectItems value="#{featureCategories}"
+									var="featureCategory" label="#{featureCategory.name}"
+									noSelectionLabel="Seleccione uno" />
+								<s:convertEntity />
+								<a:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
+						</s:decorate>
+
+						<s:decorate id="comercialRegisterField"
+							template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">#{messages['localFeature.comercialRegister']}</ui:define>
+							<h:inputText
+								value="#{businessHome.localFeature.comercialRegister}"
+								required="true" size="25" maxlength="20">
+								<a:support event="onblur" ajaxSingle="true" />
+							</h:inputText>
+						</s:decorate>
+
+						<h:panelGrid columns="2">
+
+							<s:decorate id="phoneNumberField"
+								template="../../layout/vertical-edit.xhtml">
+								<ui:define name="label">#{messages['localFeature.person']}</ui:define>
+								<h:inputText value="#{businessHome.localFeature.person}"
+									size="8" styleClass="right">
+									<a:support event="onblur" ajaxSingle="true" />
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="mobilePhoneNumberField"
+								template="../../layout/vertical-edit.xhtml">
+								<ui:define name="label">#{messages['localFeature.personPlaza']}</ui:define>
+								<h:inputText value="#{businessHome.localFeature.personPlaza}"
+									size="8" styleClass="right">
+									<a:support event="onblur" ajaxSingle="true" />
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="openingDateField"
+								template="../../layout/vertical-edit.xhtml">
+								<ui:define name="label">#{messages['localFeature.table']}</ui:define>
+								<h:inputText value="#{businessHome.localFeature._table}"
+									size="8" styleClass="right">
+									<a:support event="onblur" ajaxSingle="true" />
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="closingDateField"
+								template="../../layout/vertical-edit.xhtml">
+								<ui:define name="label">#{messages['localFeature.tablePlaza']}</ui:define>
+								<h:inputText value="#{businessHome.localFeature.tablePlaza}"
+									size="8" styleClass="right">
+									<a:support event="onblur" ajaxSingle="true" />
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="streetField"
+								template="../../layout/vertical-edit.xhtml">
+								<ui:define name="label">#{messages['localFeature.habitation']}</ui:define>
+								<h:inputText value="#{businessHome.localFeature.habitation}"
+									size="8" styleClass="right">
+									<a:support event="onblur" ajaxSingle="true" />
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="isActiveField"
+								template="../../layout/vertical-edit.xhtml">
+								<ui:define name="label">#{messages['localFeature.vehicle']}</ui:define>
+								<h:inputText value="#{businessHome.localFeature.vehicle}"
+									size="8" styleClass="right">
+									<a:support event="onblur" ajaxSingle="true" />
+								</h:inputText>
+							</s:decorate>
+						</h:panelGrid>
+					</h:panelGrid>
+
+					<div style="clear: both">
+						<span class="required">*</span>
+						#{messages['common.requiredFields']}
+					</div>
+
+				</rich:panel>
+
+				<div class="actionButtons">
+					<a:commandButton
+						action="#{businessHome.saveOrUpdateLocalFeature()}"
+						value="#{messages['common.accept']}" reRender="localsPanel"
+						oncomplete="Richfaces.hideModalPanel('localFeatureEditPanel');" />
+
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.quit']}" reRender="localsPanel"
+						oncomplete="Richfaces.hideModalPanel('localFeatureEditPanel');"
+						bypassUpdates="true" />
+
+				</div>
+			</a:region>
+		</h:form>
+
+	</rich:modalPanel>
+</ui:composition>

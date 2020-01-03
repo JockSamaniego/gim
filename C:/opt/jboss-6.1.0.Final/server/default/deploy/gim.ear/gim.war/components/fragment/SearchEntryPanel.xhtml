@@ -1,0 +1,99 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<style>
+.col {
+	width: 100px;
+}
+	</style>
+
+	<rich:modalPanel id="#{id}-searchEntryPanel" width="300" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['entryChooser.searchEntry']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="#{id}-hidelink" />
+				<rich:componentControl for="#{id}-searchEntryPanel" attachTo="#{id}-hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<rich:panel>
+			<h:panelGrid columns="3">
+				<h:outputText value="#{messages['entry.criteria']}:  "
+					style="font-weight:bold" />
+				<h:inputText id="#{id}-criteria" value="#{criteria}" size="35">
+					<a:support event="onblur" reRender="#{id}-entryTable"
+						ajaxSingle="true" focus="#{focus}"/>
+				</h:inputText>
+				<a:commandButton id="#{id}-btSearch" value="#{messages['common.search']}"
+					action="#{bean[searchByCriteriaAction]}"
+					reRender="#{id}-entryTable, #{id}-dataScroller" ajaxSingle="true" />
+			</h:panelGrid>
+
+			<div style="clear: both" />
+		</rich:panel>
+
+
+		<rich:datascroller id="#{id}-dataScroller" align="right" for="#{id}-entryTable"
+			maxPages="3" />
+		<rich:spacer height="5" />
+		<rich:dataTable 
+			id="#{id}-entryTable" 
+			var="_entry"
+			value="#{entriesList}" 
+			rows="7">
+			<f:facet name="header">
+				<h:outputText value="#{messages['entry.entrySearcher']}" />
+			</f:facet>
+			<h:column>
+				<f:facet name="header">#{messages['entry.code']}</f:facet>
+				<h:outputText value="#{_entry.code}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">#{messages['accountCode']}</f:facet>
+				<h:outputText value="#{_entry.account.accountCode}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">#{messages['entry.name']}</f:facet>
+				<h:outputText value="#{_entry.name}" />
+			</h:column>
+			<rich:column styleClass="action">
+				<f:facet name="header">#{messages['common.action']}</f:facet>
+				<a:commandButton 
+					value="#{messages['common.selectItem']}"
+					oncomplete="Richfaces.hideModalPanel('#{id}-searchEntryPanel');"
+					actionListener="#{bean[entryChosenListenerName]}"
+					ajaxSingle="true"
+					entryId="#{_entry.id}" 
+					code="#{_entry.code}"
+					entry="#{_entry}"
+					rendered="#{_entry.isActive}"
+					reRender="#{id}-reasonField, #{id}-entryField, #{id}-nameField 
+						#{not empty reRender ? ',' : ''} #{not empty reRender ? reRender : ''}"/>
+			</rich:column>
+		</rich:dataTable>
+		<div class="actionButtons">
+			<a:commandButton 
+				ajaxSingle="true" 
+				value="#{messages['common.quit']}"
+				oncomplete="Richfaces.hideModalPanel('#{id}-searchEntryPanel');"
+				bypassUpdates="true" />
+
+		</div>
+
+	</rich:modalPanel>
+
+</ui:composition>

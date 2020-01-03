@@ -1,0 +1,100 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="alertListPanel" width="700" height="500">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['alert.pendingAlerts']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkdelList" />
+				<rich:componentControl for="alertListPanel"
+					attachTo="hidelinkdelList" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="alerts" styleClass="edit">
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="#{messages['alert.pendingAlerts']}" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<a:outputPanel styleClass="results" id="alertList">
+					<rich:dataTable id="alertsTable" var="_alert"
+						value="#{paymentHome.bondIsWire ? paymentHome.pendingAlerts : (deferredMunicipalBond.bondIsWire ? deferredMunicipalBond.pendingAlerts : municipalBondHome.pendingAlerts)}"
+						rowClasses="rvgRowOne,rvgRowTwo">
+
+						<rich:column sortBy="#{_alert.openUser.name}" styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['alert.openUser']}" />
+							</f:facet>
+							<h:outputText value="#{_alert.openUser.name}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_alert.department}" styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['alert.openDepartment']}" />
+							</f:facet>
+							<h:outputText value="#{_alert.department}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_alert.openDate}" styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['alert.openDate']}" />
+							</f:facet>
+							<h:outputText value="#{_alert.openDate}">
+								<f:convertDateTime
+									pattern="#{messages['common.dateTimePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_alert.openDetail}" styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['alert.openDetail']}" />
+							</f:facet>
+							<h:inputTextarea value="#{_alert.openDetail}" disabled="true"
+								cols="30" rows="4"></h:inputTextarea>
+						</rich:column>
+
+						<rich:column sortBy="#{_alert.priority}" styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['alert.priority']}" />
+							</f:facet>
+							<h:outputText value="#{messages[_alert.priority.name()]}" />
+						</rich:column>
+
+					</rich:dataTable>
+
+				</a:outputPanel>
+				<div style="clear: both"></div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('alertListPanel');"
+					bypassUpdates="true" />
+			</div>
+
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

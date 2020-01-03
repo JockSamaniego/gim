@@ -1,0 +1,203 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<ui:include src="fragment/MortgageEditPanel.xhtml" />
+		<h:form id="property" styleClass="edit">
+			<h:outputText styleClass="formTitle"
+				value="#{messages['domain.changeOwner']}" />
+
+			<a:outputPanel>
+				<rich:messages errorClass="errors" ajaxRendered="false" />
+			</a:outputPanel>
+
+			<ui:include src="fragment/RusticPropertyPositionPanel.xhtml">
+				<ui:param name="disabled" value="true" />
+			</ui:include>
+
+			<ui:include src="fragment/PropertyPositionPanel.xhtml">
+				<ui:param name="disabled" value="true" />
+			</ui:include>
+
+			<rich:panel>
+				<f:facet name="header">#{messages['domain']}</f:facet>
+				<h:panelGrid columns="2" styleClass="center" width="100%"
+					columnClasses="topAligned,topAligned">
+					<ui:include src="fragment/ChangeOwner.xhtml">
+						<ui:param name="disabled" value="true" />
+					</ui:include>
+
+					<ui:include src="fragment/NewDomainPanel.xhtml">
+					</ui:include>
+				</h:panelGrid>
+			</rich:panel>
+
+			<a:outputPanel>
+				<rich:messages errorClass="errors" ajaxRendered="false" />
+			</a:outputPanel>
+
+			<ui:include src="fragment/ChangeOwnerFeaturesPanel.xhtml">
+			</ui:include>
+
+			<ui:include src="fragment/BoundaryPanel.xhtml">
+			</ui:include>
+
+			<rich:panel rendered="#{!domainHome.managed or propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}" styleClass="left" size="100%">	
+				<f:facet name="header">#{messages['domain.legalRevision']}</f:facet>
+				<g:residentChooser id="legalChooser" disabled="#{propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}" 
+							resident="#{domainHome.instance.personLegalRevision}"
+							criteria="#{domainHome.legalCriteria}" 
+							bean="#{domainHome}"
+							searchAction="searchLegalResident"
+							residentsList="#{domainHome.legalResidents}"
+							identificationNumber="#{domainHome.legalIdentificationNumber}"
+							searchByCriteriaAction="searchLegalResidentByCriteria"
+							clearSearchPanelAction="clearSearchLegalResidentPanel" 	
+							reRender="legalRevisionField"				 
+							residentChosenListenerName="residentLegalSelectedListener"/>
+		
+				<s:decorate id="legalRevisionField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.legalRevision']}:</ui:define>
+					<h:inputText id="legalRevision" size="50" readonly="true" required="true"
+						styleClass="left"
+						value="#{domainHome.instance.legalRevision}">
+					</h:inputText>			
+				</s:decorate>
+				<div style="clear: both"/>						
+			</rich:panel>
+			
+
+			<rich:panel id="mortgagePanel" rendered="false">
+
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="#{messages['domain.mortgage']}" />
+						<a:commandButton id="createMortgage"
+							action="#{domainHome.createMortgage()}"
+							rendered="#{!propertyHome.changedOwnerComplete}"
+							reRender="mortgageEditPanel" ajaxSingle="true"
+							eventsQueue="gimEventsQueue"
+							oncomplete="Richfaces.showModalPanel('mortgageEditPanel',{width:600, height:325})"
+							value="#{messages['domain.addMortgage']}" />
+					</h:panelGrid>
+				</f:facet>
+
+				<h:outputText value="#{messages['domain.notMortgageAssociated']}."
+					rendered="#{empty domainHome.instance.mortgages}" />
+
+				<rich:dataTable value="#{domainHome.instance.mortgages}"
+					var="_mortgage"
+					rendered="#{not empty domainHome.instance.mortgages}"
+					rowClasses="rvgRowOne,rvgRowTwo" id="mortgagesTable">
+					<rich:column styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['mortgage.isActive']}" />
+						</f:facet>
+						<h:selectBooleanCheckbox value="#{_mortgage.isActive}"
+							disabled="true" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText
+								value="#{messages['mortgage.financialInstitution']}" />
+						</f:facet>
+						<h:outputText value="#{_mortgage.financialInstitution.name}" />
+					</rich:column>
+					<rich:column styleClass="right">
+						<f:facet name="header">
+							<h:outputText value="#{messages['mortgage.amount']}" />
+						</f:facet>
+						<h:outputText value="#{_mortgage.amount}" />
+					</rich:column>
+					<rich:column styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['mortgage.startDate']}" />
+						</f:facet>
+						<rich:calendar id="startDateMortgageId" required="true"
+							disabled="#{propertyHome.changedOwnerComplete}" ajaxSingle="true"
+							value="#{_mortgage.startDate}" currentDate="#{currentDate}"
+							datePattern="#{messages['common.datePattern']}" />
+					</rich:column>
+					<rich:column styleClass="center">
+						<f:facet name="header">
+							<h:outputText value="#{messages['mortgage.endDate']}" />
+						</f:facet>
+						<rich:calendar id="endDateMortgageId" required="true"
+							disabled="#{propertyHome.changedOwnerComplete}" ajaxSingle="true"
+							value="#{_mortgage.endDate}" currentDate="#{currentDate}"
+							datePattern="#{messages['common.datePattern']}" />
+					</rich:column>
+					<rich:column rendered="#{!propertyHome.changedOwnerComplete}">
+						<f:facet name="header">
+							<h:outputText value="#{messages['common.action']}" />
+						</f:facet>
+						<a:commandButton id="editMortgage"
+							action="#{domainHome.editMortgage(_mortgage)}"
+							reRender="mortgageEditPanel" ajaxSingle="true"
+							eventsQueue="gimEventsQueue"
+							oncomplete="Richfaces.showModalPanel('mortgageEditPanel',{width:600, height:325})"
+							value="#{messages['common.edit']}" />
+						<a:commandButton id="removeMortgage" rendered="false"
+							action="#{domainHome.removeMortgage(_mortgage)}"
+							reRender="mortgagePanel" ajaxSingle="true"
+							value="#{messages['common.delete']}" />
+					</rich:column>
+				</rich:dataTable>
+
+			</rich:panel>
+
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" reRender="print, back, cancelEdit, save"
+					rendered="#{!propertyHome.changedOwnerComplete and false}"
+					value="#{messages['common.save']}" ajaxSingle="true"
+					action="#{propertyHome.changeOwnerUpdate()}"
+					disabled="#{!propertyHome.wired}" />
+					
+				<a:commandButton id="saveExample" rendered="#{!propertyHome.changedOwnerComplete}" 					
+					eventsQueue="gimEventsQueue" disabled="#{!propertyHome.wired}" 
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.showModalPanel(\'_confirmDialog\',{width:300, height:220});' : ''}" 
+					value="#{messages['common.save']}"
+					reRender="property"/>
+
+				<s:button id="print"
+					disabled="#{!propertyHome.changedOwnerComplete}"
+					value="#{messages['common.print']}" propagation="join"
+					view="/cadaster/report/ChangeOwnerReport.xhtml" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					rendered="#{!propertyHome.changedOwnerComplete}"
+					includePageParams="false" propagation="none"
+					view="#{propertyHome.urban ? '/cadaster/PropertyList.xhtml' : '/cadaster/RusticPropertyList.xhtml'}">
+					<f:param name="isUrban" value="#{isUrban}"></f:param>
+				</s:button>
+
+				<s:button id="back" value="#{messages['common.back']}"
+					rendered="#{propertyHome.changedOwnerComplete}"
+					includePageParams="false" propagation="none"
+					view="#{propertyHome.urban ? '/cadaster/PropertyList.xhtml' : '/cadaster/RusticPropertyList.xhtml'}">
+					<f:param name="isUrban" value="#{isUrban}"></f:param>
+				</s:button>
+
+			</div>
+		</h:form>
+		
+		<g:confirmDialog dialogTitle="#{messages['changeOwnerProperty.AreYouSureChangeOwner']}"
+						 bean="#{propertyHome}"
+						 message="#{messages['changeOwnerProperty.confirmation']}"
+						 reRenderComponents="treePanel"
+						 yesAction="changeOwnerUpdate"/>
+
+	</ui:define>
+
+</ui:composition>

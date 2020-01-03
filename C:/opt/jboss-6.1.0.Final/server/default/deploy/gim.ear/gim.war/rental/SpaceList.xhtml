@@ -1,0 +1,263 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<ui:include src="fragment/SpaceHistoryPanel.xhtml" />
+
+		<h:form id="spaceSearch" styleClass="edit">
+			<ui:debug id="debug" />
+			<rich:simpleTogglePanel label="#{messages['space.searchFilter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['space.address']}</ui:define>
+					<h:inputText id="name" value="#{spaceList.space.address}" />
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['resident']}</ui:define>
+					<h:inputText id="name" value="#{spaceList.residentCriteria}" />
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['space.spaceType']}</ui:define>
+					<h:selectOneMenu id="spaceType" value="#{spaceList.spaceType}">
+						<s:selectItems value="#{spaceTypesNames}" var="type"
+							label="#{type}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['space.spaceStatus']}</ui:define>
+					<h:selectOneMenu id="spaceType" value="#{spaceList.spaceStatus}">
+						<s:selectItems value="#{spaceStatus}" var="type"
+							label="#{messages[type.name()]}"
+							noSelectionLabel="#{messages['common.chooseOption']}" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="expirationDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['common.expirationUntil']}:</ui:define>
+					<rich:calendar id="expirationDate" enableManualInput="true"
+						value="#{spaceList.expirationDate}"
+						datePattern="#{messages['common.datePattern']}">
+					</rich:calendar>
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/rental/SpaceList.xhtml">
+				    <f:param name="firstResult" value="0"/>
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+
+
+			<rich:panel id="spaceListPanelId">
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['space.searchResults']} (#{empty spaceList.resultList ? 0 : (spaceList.paginated ? spaceList.resultCount : spaceList.resultList.size)})" />
+						<s:button view="/rental/SpaceEdit.xhtml" id="create"
+							propagation="none" value="#{messages['common.create']}">
+							<f:param name="spaceId" />
+						</s:button>
+						<s:button id="print" disabled="#{empty spaceList.resultList}"
+							value="#{messages['common.print']}" propagation="join"							
+							view="/rental/report/SpaceListReport.xhtml">
+							<f:param name="expirationDate" value="#{String.valueOf(expirationDate)}"/>
+							<f:param name="address" value="#{address}" />
+							<f:param name="type" value="#{type}" />
+							<f:param name="status" value="#{status}" />
+							<f:param name="residentCriteria" value="#{residentCriteria}" />							
+						</s:button>
+					</h:panelGrid>
+				</f:facet>
+				<div class="results" id="spaceList">
+
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty spaceList.resultList}" />
+
+					<rich:dataTable id="spaceList" var="_space"
+						value="#{spaceList.resultList}"
+						rendered="#{not empty spaceList.resultList}">
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{spaceList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['space.rentUntil']}" />
+									<ui:param name="propertyPath" value="contract.expirationDate" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_space.currentContract.expirationDate}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{spaceList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['space.spaceType']}" />
+									<ui:param name="propertyPath" value="space.spaceType" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{messages[_space.spaceType.name]}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{spaceList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['space.spaceStatus']}" />
+									<ui:param name="propertyPath" value="space.spaceStatus" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{messages[_space.spaceStatus.name()]}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{spaceList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['space.address']}" />
+									<ui:param name="propertyPath" value="space.address" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_space.address}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{spaceList}" />
+									<ui:param name="propertyLabel" value="#{messages['resident']}" />
+									<ui:param name="propertyPath"
+										value="space.currentContract.subscriber.identificationNumber" />
+								</ui:include>
+							</f:facet>
+							<h:outputText
+								value="#{_space.currentContract.subscriber.identificationNumber} #{_space.currentContract == null ? '' : '-'} #{_space.currentContract.subscriber.name}" />
+						</h:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+
+							<s:button view="/rental/SpaceEdit.xhtml"
+								value="#{messages['common.edit']}" propagation="none"
+								id="spaceEdit" rendered="#{_space.contracts.size() == 0}">
+								<f:param name="spaceId" value="#{_space.id}" />
+							</s:button>
+
+							<s:button view="/rental/RentSpace.xhtml"
+								rendered="#{_space.spaceStatus == spaceStatus.get(0) and !_space.hasPreEmit}"
+								value="#{messages['common.rent']}" propagation="none"
+								id="rentSpace">
+								<f:param name="spaceId" value="#{_space.id}" />
+							</s:button>
+
+							<s:button view="/rental/RentSpace.xhtml"
+								rendered="#{_space.spaceStatus == spaceStatus.get(1) and _space.currentContract.expirationDate.before(currentDate) and !_space.hasPreEmit}"
+								value="#{messages['common.renovate']}" propagation="none"
+								id="renovateSpace">
+								<f:param name="spaceId" value="#{_space.id}" />
+								<f:param name="residentId"
+									value="#{_space.currentContract.subscriber.id}" />
+							</s:button>
+
+							<a:commandButton
+								rendered="#{_space.spaceStatus == spaceStatus.get(1) and _space.currentContract.expirationDate.before(currentDate) and !_space.hasPreEmit}"
+								value="#{messages['common.noRenovate']}" propagation="none"
+								action="#{spaceHome.noRenovate(_space)}"
+								reRender="spaceListPanelId" id="noRenovateSpace" />
+
+							<s:button view="/rental/PreEmitRentSpace.xhtml"
+								rendered="#{_space.hasPreEmit}"
+								value="#{messages['common.preEmit']}" propagation="none"
+								id="preEmitRentSpace">
+								<f:param name="spaceId" value="#{_space.id}" />
+								<f:param name="readOnly" value="true" />
+							</s:button>
+
+							<a:commandButton
+								rendered="#{_space.spaceStatus == spaceStatus.get(0) and !_space.hasPreEmit and _space.contracts.size() > 0}"
+								value="#{messages['common.outOfService']}" propagation="none"
+								action="#{spaceHome.outOfService(_space)}"
+								reRender="spaceListPanelId" id="removeSpace" />
+
+							<s:button id="print"
+								rendered="#{_space.spaceStatus == spaceStatus.get(1) and !_space.hasPreEmit}"
+								value="#{messages['common.print']}" propagation="end"
+								view="/rental/report/RentSpaceReport.xhtml">
+								<f:param name="spaceId" value="#{_space.id}"></f:param>
+							</s:button>
+
+							<a:commandButton id="history"
+								rendered="#{_space.contracts.size() > 0}"
+								action="#{spaceHome.changeSpace(_space)}"
+								reRender="spaceHistoryPanel" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('spaceHistoryPanel',{width:600, height:325})"
+								value="#{messages['common.history']}" />
+
+						</rich:column>
+					</rich:dataTable>
+
+				</div>
+			</rich:panel>
+
+			<div class="tableControl">
+
+				<s:link view="/rental/SpaceList.xhtml"
+					rendered="#{spaceList.previousExists}"
+					value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+					id="firstPage">
+					<f:param name="firstResult" value="0" />
+				</s:link>
+
+				<s:link view="/rental/SpaceList.xhtml"
+					rendered="#{spaceList.previousExists}"
+					value="#{messages.left} #{messages['common.previousPage']}"
+					id="previousPage">
+					<f:param name="firstResult"
+						value="#{spaceList.previousFirstResult}" />
+				</s:link>
+
+				<s:link view="/rental/SpaceList.xhtml"
+					rendered="#{spaceList.nextExists}"
+					value="#{messages['common.nextPage']} #{messages.right}"
+					id="nextPage">
+					<f:param name="firstResult" value="#{spaceList.nextFirstResult}" />
+				</s:link>
+
+				<s:link view="/rental/SpaceList.xhtml"
+					rendered="#{spaceList.nextExists}"
+					value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+					id="lastPage">
+					<f:param name="firstResult" value="#{spaceList.lastFirstResult}" />
+				</s:link>
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

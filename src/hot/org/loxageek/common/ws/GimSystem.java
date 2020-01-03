@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.gob.gim.ws.service.EmisionResponse;
 import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
 import org.gob.loja.gim.ws.dto.RealEstate;
@@ -210,13 +211,13 @@ public class GimSystem {
 	 * @throws AccountIsBlocked
 	 */
 	@WebMethod
-	public String generateEmissionOrderANT(String name, String password, String identificationNumber, 
+	public EmisionResponse generateEmissionOrderANT(String name, String password, String identificationNumber, 
 			String accountCode, EmisionDetail emisionDetail) throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound, 
 			EmissionOrderNotGenerate, EmissionOrderNotSave, InvalidUser, AccountIsNotActive, AccountIsBlocked{
-		System.out.println("====> GENERATE EmissionOrder FOR: "+accountCode);
-		String band = gimService.generateEmissionOrder(name, password, identificationNumber, accountCode, emisionDetail);
+		//System.out.println("====> GENERATE EmissionOrder FOR: "+accountCode);
+		EmisionResponse response = gimService.generateEmissionOrder(name, password, identificationNumber, accountCode, emisionDetail);
 		InvalidateSession();
-		return band;
+		return response;
 	}
 	
 	/**

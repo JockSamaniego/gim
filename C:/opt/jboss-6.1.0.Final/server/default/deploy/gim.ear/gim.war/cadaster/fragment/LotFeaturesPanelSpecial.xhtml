@@ -1,0 +1,407 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel>
+		<f:facet name="header">#{messages['lotFeature']}</f:facet>
+		<h:panelGrid columns="6">
+			<s:decorate id="areaField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.lotArea']}:</ui:define>
+				<h:inputText id="area" required="true" styleClass="right" 
+					value="#{propertySpecialHome.instance.area}" size="26">
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+			</s:decorate>
+			<s:decorate id="frontField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.front']}:</ui:define>
+				<h:inputText id="front" required="true" value="#{propertySpecialHome.instance.front}" styleClass="right" 
+					size="26">
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+			</s:decorate>
+
+			<s:decorate id="frontsNumberField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.frontsNumber']}:</ui:define>
+				<h:inputText id="frontsNumber" required="true" styleClass="right" 
+					value="#{propertySpecialHome.instance.frontsNumber}">
+				</h:inputText>
+			</s:decorate>
+
+			<s:decorate id="frontsLengthField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.frontLength']}:</ui:define>
+				<h:inputText id="frontsLength" required="true" styleClass="right" 
+					value="#{propertySpecialHome.instance.frontsLength}" size="26">
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+			</s:decorate>
+			<s:decorate id="sideField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.side']}:</ui:define>
+				<h:inputText id="side" required="true" value="#{propertySpecialHome.instance.side}" styleClass="right" 
+					size="26">
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+			</s:decorate>
+			<s:decorate id="totalAreaConstructionField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.totalAreaConstruction']}:</ui:define>
+				<h:inputText id="side" value="#{propertySpecialHome.instance.currentDomain.totalAreaConstruction}" styleClass="right" disabled="true" 
+					size="15">
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+			</s:decorate>
+		</h:panelGrid>
+
+		<h:outputText styleClass="separatorTitle" value="#{messages['fence']}" />
+
+		<rich:separator lineType="solid" height="2px" />
+
+		<h:panelGrid columns="1">
+			<s:decorate id="hasFrontFenceField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['property.hasFrontFence']}</ui:define>
+				<h:selectBooleanCheckbox id="hasFrontFence"
+					value="#{propertySpecialHome.instance.hasFrontFence}">
+					<a:support event="onchange" ajaxSingle="true"
+						reRender="fenceMaterialField" />
+				</h:selectBooleanCheckbox>
+			</s:decorate>
+
+			<s:decorate id="hasPerimeterFenceField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['property.hasPerimeterFence']}</ui:define>
+				<h:selectBooleanCheckbox id="hasPerimeterFence"
+					value="#{propertySpecialHome.instance.hasPerimeterFence}">
+					<a:support event="onchange" ajaxSingle="true"
+						reRender="fenceMaterialField" />
+				</h:selectBooleanCheckbox>
+			</s:decorate>
+
+			<s:decorate id="fenceMaterialField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['property.fenceMaterial']}:</ui:define>
+				<h:selectOneMenu value="#{propertySpecialHome.instance.fenceMaterial}"
+					id="fenceMaterial"
+					disabled="#{not (propertySpecialHome.instance.hasFrontFence or 
+                				propertySpecialHome.instance.hasPerimeterFence)}"
+                	required="#{(propertySpecialHome.instance.hasFrontFence or 
+                				propertySpecialHome.instance.hasPerimeterFence)}">
+					<s:selectItems value="#{fenceMaterials}" var="_fenceMaterial"
+						label="#{_fenceMaterial.id} - #{_fenceMaterial.name}"
+						noSelectionLabel="#{messages['common.oneSelected']}" />
+					<s:convertEntity />
+				</h:selectOneMenu>
+			</s:decorate>
+		</h:panelGrid>
+
+		<h:outputText styleClass="separatorTitle"
+			value="#{messages['cadaster.waterService']}" />
+
+		<rich:separator lineType="solid" height="2px" />
+
+		<h:panelGrid columns="2">
+			<s:decorate id="hasWaterServiceField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['property.hasWaterService']}</ui:define>
+				<h:selectBooleanCheckbox id="hasWaterService"
+					value="#{propertySpecialHome.instance.hasWaterService}">
+					<a:support event="onchange" ajaxSingle="true"
+						reRender="waterMetersNumberField" />
+				</h:selectBooleanCheckbox>
+			</s:decorate>
+			<s:decorate id="waterMetersNumberField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['property.waterMetersNumber']}:</ui:define>
+				<h:inputText id="waterMetersNumber"
+					disabled="#{!propertySpecialHome.instance.hasWaterService}"
+					required="#{propertySpecialHome.instance.hasWaterService}"
+					value="#{propertySpecialHome.instance.waterMetersNumber}">
+				</h:inputText>
+			</s:decorate>
+		</h:panelGrid>
+
+		<h:outputText styleClass="separatorTitle"
+			value="#{messages['sewerage']}" />
+
+		<rich:separator lineType="solid" height="2px" />
+
+		<h:panelGrid>
+			<s:decorate id="sewerageField" template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['property.sewerage']}:</ui:define>
+				<h:selectOneMenu value="#{propertySpecialHome.instance.sewerage}" required="true"
+					id="sewerage">
+					<s:selectItems value="#{sewerages}" var="_sewerage"
+						label="#{_sewerage.ordinal()+1} - #{messages[_sewerage.name()]}"
+						noSelectionLabel="#{messages['common.oneSelected']}" />
+					<s:convertEnum />
+				</h:selectOneMenu>
+			</s:decorate>
+		</h:panelGrid>
+
+
+		<h:outputText styleClass="separatorTitle"
+			value="#{messages['electricity']}" />
+
+		<rich:separator lineType="solid" height="2px" />
+
+		<h:panelGrid columns="2">
+			<s:decorate id="hasElectricityField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['property.hasElectricity']}</ui:define>
+				<h:selectBooleanCheckbox id="hasElectricity"
+					value="#{propertySpecialHome.instance.hasElectricity}">
+					<a:support event="onchange" ajaxSingle="true"
+						reRender="electricMetersNumberField" />
+				</h:selectBooleanCheckbox>
+			</s:decorate>
+			<s:decorate id="electricMetersNumberField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['property.electricMetersNumber']}:</ui:define>
+				<h:inputText id="electricMetersNumber"
+					disabled="#{!propertySpecialHome.instance.hasElectricity}"
+					required="#{propertySpecialHome.instance.hasElectricity}"
+					value="#{propertySpecialHome.instance.electricMetersNumber}">
+				</h:inputText>
+			</s:decorate>
+		</h:panelGrid>
+
+		<h:outputText styleClass="separatorTitle"
+			value="#{messages['property.telephoneNetwork']}" />
+
+		<rich:separator lineType="solid" height="2px" />
+
+		<h:panelGrid columns="2">
+			<s:decorate id="hasTelephoneNetworkField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['property.hasTelephoneNetwork']}</ui:define>
+				<h:selectBooleanCheckbox id="hasElectricity"
+					value="#{propertySpecialHome.instance.hasTelephoneNetwork}">
+					<a:support event="onchange" ajaxSingle="true"
+						reRender="telephoneLinesNumberField" />
+				</h:selectBooleanCheckbox>
+			</s:decorate>
+			<s:decorate id="telephoneLinesNumberField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['property.telephoneLinesNumber']}:</ui:define>
+				<h:inputText id="telephoneLinesNumber"
+					disabled="#{!propertySpecialHome.instance.hasTelephoneNetwork}"
+					required="#{propertySpecialHome.instance.hasTelephoneNetwork}"
+					value="#{propertySpecialHome.instance.telephoneLinesNumber}">
+				</h:inputText>
+			</s:decorate>
+		</h:panelGrid>
+
+		<h:outputText styleClass="separatorTitle"
+			value="#{messages['garbageCollection']}" />
+
+		<rich:separator lineType="solid" height="2px" />
+
+		<!--  <h:panelGrid>
+			<s:decorate id="garbageCollectionField" template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['garbageCollection']}:</ui:define>
+				<h:selectOneMenu value="#{propertyHome.instance.garbageCollection}" required="true"
+					id="garbageCollection">
+					<s:selectItems value="#{garbageCollections}" var="_garbageCollection"
+						label="#{_garbageCollection.ordinal()+1} - #{messages[_garbageCollection.name()]}"
+						noSelectionLabel="#{messages['common.oneSelected']}" />
+					<s:convertEnum />
+				</h:selectOneMenu>
+			</s:decorate>
+		</h:panelGrid> -->
+		
+		<h:panelGrid>
+				<s:decorate id="garbageCollectionField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['garbageCollection']}:</ui:define>
+					<h:selectOneMenu value="#{propertyHome.instance.hasGarbageCollection}"
+						id="garbageCollection" required="true">
+						<s:selectItems value="#{garbagecollected}" var="_garbagecollected"
+							label="#{_garbagecollected.id} - #{_garbagecollected.category}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+		</h:panelGrid>
+		
+
+		<h:outputText styleClass="separatorTitle"
+			value="#{messages['sidewalk']}" />
+
+		<rich:separator lineType="solid" height="2px" />
+		
+		<!--  <h:panelGrid>
+			<s:decorate id="sidewalkField" template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['sidewalk']}:</ui:define>
+				<h:selectOneMenu value="#{propertyHome.instance.sidewalk}" required="true"
+					id="sidewalk">
+					<s:selectItems value="#{sidewalks}" var="_sidewalk"
+						label="#{_sidewalk.ordinal()+1} - #{messages[_sidewalk.name()]}"
+						noSelectionLabel="#{messages['common.oneSelected']}" />
+					<s:convertEnum />
+				</h:selectOneMenu>
+			</s:decorate>
+		</h:panelGrid> -->
+		
+		<h:panelGrid>
+				<s:decorate id="sidewalkField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['sidewalk']}:</ui:define>
+					<h:selectOneMenu value="#{propertyHome.instance.hasSidewalk}"
+						id="sidewalk" required="true">
+						<s:selectItems value="#{sidewalk}" var="_sidewalk"
+							label="#{_sidewalk.id} - #{_sidewalk.category}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+		</h:panelGrid>
+		
+		<h:outputText styleClass="separatorTitle"
+			value="#{messages['curb']}" />
+
+		<rich:separator lineType="solid" height="2px" />
+		
+		<h:panelGrid>
+				<s:decorate id="curbField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['curb']}:</ui:define>
+					<h:selectOneMenu value="#{propertyHome.instance.hasCurb}"
+						id="curb" required="true">
+						<s:selectItems value="#{curb}" var="_curb"
+							label="#{_curb.id} - #{_curb.category}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+		</h:panelGrid>
+
+		<h:outputText styleClass="separatorTitle"
+			value="#{messages['property.topography']}" />
+
+		<rich:panel>
+
+			<h:panelGrid>
+				<s:decorate id="lotTopographyField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['property.lotTopography']}:</ui:define>
+					<h:selectOneMenu value="#{propertySpecialHome.instance.lotTopography}" required="true"
+						id="lotTopography">
+						<s:selectItems value="#{lotTopographys}" var="_lotTopography"
+							label="#{_lotTopography.ordinal() + 1} - #{messages[_lotTopography.name()]}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEnum />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<h:outputText styleClass="separatorTitle"
+					value="#{messages['cadaster.streetData']}" />
+				<rich:separator lineType="solid" height="2px" />
+
+				<h:panelGrid columns="3">
+					<s:decorate id="streetMaterialField"
+						template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['streetMaterial']}:</ui:define>
+						<h:selectOneMenu value="#{propertySpecialHome.instance.streetMaterial}" required="true"
+							id="streetMaterial">
+							<s:selectItems value="#{streetMaterials}" var="_streetMaterial"
+								label="#{_streetMaterial.code} - #{_streetMaterial.name}"
+								noSelectionLabel="#{messages['common.oneSelected']}" />
+							<s:convertEntity />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="streetWidthField"
+						template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['property.streetWidth']}:</ui:define>
+						<h:inputText id="streetWidth" styleClass="right" required="true"
+							value="#{propertySpecialHome.instance.streetWidth}" size="15">
+							<f:convertNumber pattern="#0.00" />
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate id="sidewalkWidthField"
+						template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['property.sidewalkWidth']}:</ui:define>
+						<h:inputText id="sidewalkWidth" styleClass="right"  required="true"
+							value="#{propertySpecialHome.instance.sidewalkWidth}" size="15">
+							<f:convertNumber pattern="#0.00" />
+						</h:inputText>
+					</s:decorate>
+				</h:panelGrid>
+
+				<h:outputText styleClass="separatorTitle"
+					value="#{messages['cadaster.lotPosition']}" />
+				<rich:separator lineType="solid" height="2px" />
+
+				<s:decorate id="lotPositionField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['lotPosition']}:</ui:define>
+					<h:selectOneMenu value="#{propertySpecialHome.instance.lotPosition}"
+						id="lotPosition" required="true">
+						<s:selectItems value="#{lotPositions}" var="_lotPosition"
+							label="#{_lotPosition.id} - #{_lotPosition.name}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+
+			</h:panelGrid>
+		</rich:panel>
+		
+		<h:outputText styleClass="separatorTitle"
+			value="#{messages['property.riskThreat']}" />
+
+		<rich:panel  id="riskTreath">
+			
+			<h:panelGrid rendered="#{propertySpecialHome.showRisk()}">
+				<s:decorate id="riskField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['property.risk']}:</ui:define>
+					<h:selectOneMenu value="#{propertySpecialHome.instance.risk}"
+						id="riskCmb" required="true">
+						<s:selectItems value="#{risks}" var="_risk"
+							label="#{_risk.id} - #{_risk.category}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+			</h:panelGrid>
+			
+			<h:panelGrid rendered="#{propertySpecialHome.showThreat()}">
+				<s:decorate id="threatField" template="../../layout/edit.xhtml" >
+					<ui:define name="label">#{messages['property.threat']}:</ui:define>
+					<h:selectOneMenu value="#{propertySpecialHome.instance.threat}"
+						id="threatCmb" required="true">
+						<s:selectItems value="#{threat}" var="_threat"
+							label="#{_threat.id} - #{_threat.category}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+			</h:panelGrid>
+		</rich:panel>
+
+		<h:outputText styleClass="separatorTitle"
+			value="#{messages['property.observations']}" />
+		<rich:panel>
+			<h:panelGrid>
+				<s:decorate id="observationsField"
+					template="../../layout/vertical-edit.xhtml">
+					<h:inputTextarea id="observations" cols="80" rows="3"
+						value="#{propertySpecialHome.instance.observations}" />
+				</s:decorate>
+			</h:panelGrid>
+		</rich:panel>
+
+		<div style="clear: both">
+			<span class="required">*</span> #{messages['common.requiredFields']}
+		</div>
+
+	</rich:panel>
+</ui:composition>

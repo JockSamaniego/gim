@@ -1,0 +1,93 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="budgetDetailPanel" width="800" height="600"
+		style="overflow:auto">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Detalle Presupuesto"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkCT" />
+				<rich:componentControl for="budgetDetailPanel" attachTo="hidelinkCT"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="budgetDetailPanelForm">
+
+
+			<rich:dataTable id="municipalBondList" var="_municipalBond"
+				value="#{budgetHome.municipalBondsReport}" width="100%">
+				
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="#{messages['municipalBond.id']}" />
+					</f:facet>
+					<h:outputText value="#{_municipalBond.id}" />
+				</rich:column>
+				
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="#{messages['municipalBond.status']}" />
+					</f:facet>
+					<h:outputText value="#{_municipalBond.municipalBondStatus.name}" />
+				</rich:column>
+				
+				<rich:column style="text-align:right;">
+					<f:facet name="header">
+						<h:outputText value="#{messages['municipalBond.value']}" />
+					</f:facet>
+					<h:outputText value="#{_municipalBond.value}">
+						<f:convertNumber />
+					</h:outputText>
+				</rich:column>
+
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="#{messages['municipalBond.status']}" />
+					</f:facet>
+					<h:outputText value="#{_municipalBond.municipalBondStatus.name}" />
+				</rich:column>
+				
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="#{messages['resident']}" />
+					</f:facet>
+					<h:outputText value="#{_municipalBond.resident.name}" />
+				</rich:column>
+
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="#{messages['municipalBond.emisionDate']}" />
+					</f:facet>
+					<h:outputText value="#{_municipalBond.emisionDate}">
+						<s:convertDateTime type="date" dateStyle="short"
+							pattern="#{messages['common.datePattern']}" />
+					</h:outputText>
+				</rich:column>
+			
+
+			</rich:dataTable>
+
+			<div class="actionButtons">
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('budgetDetailPanel');"
+					bypassUpdates="true" />
+			</div>
+		</h:form>
+	</rich:modalPanel>
+</ui:composition>

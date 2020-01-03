@@ -1,0 +1,148 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="bulletin" styleClass="edit">
+		<ui:include src="fragment/SearchAgentPanel.xhtml" />
+        <rich:panel>
+            <f:facet name="header">#{bulletinHome.managed ? messages['bulletin.Edit'] : messages['bulletin.Create']}</f:facet>
+
+            <s:decorate id="creationDateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['bulletin.creationDate']}</ui:define>
+                <h:inputText id="creationDate"
+                          value="#{bulletinHome.instance.creationDate}"
+                          readonly="true">
+                          <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:inputText>
+            </s:decorate>
+
+
+
+
+            <s:decorate id="creationTimeField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['bulletin.creationTime']}</ui:define>
+                <h:inputText id="creationTime"
+                          value="#{bulletinHome.instance.creationTime}"
+                          readonly="true">
+                          <f:convertDateTime pattern="HH:mm" />
+                </h:inputText>
+            </s:decorate>
+
+             <s:decorate id="startNumberField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['bulletin.startNumber']}</ui:define>
+                <h:inputText id="startNumber"
+                       required="true"
+                       readonly="#{bulletinHome.haveInfractions}"
+                          value="#{bulletinHome.instance.startNumber}">
+                    <a:support event="onblur" reRender="startNumberField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="endNumberField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['bulletin.endNumber']}</ui:define>
+                <h:inputText id="endNumber"
+                       required="true"
+                       readonly="#{bulletinHome.haveInfractions}"
+                          value="#{bulletinHome.instance.endNumber}">
+                    <a:support event="onblur" reRender="endNumberField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+			<s:decorate id="bulletinTypeField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">#{messages['bulletin.type']}:</ui:define>
+				<h:selectOneMenu id="bulletinType" value="#{bulletinHome.instance.type}" required="true">
+					<s:selectItems value="#{bulletinHome.typesBulletin}" var="bulletinType" label="#{bulletinType.name}" itemValue="#{bulletinType}" />
+					<a:support event="onchange" ajaxSingle="true" />
+					<s:convertEntity></s:convertEntity>
+				</h:selectOneMenu>
+			</s:decorate>
+
+      <s:decorate id="agentField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.agent']}</ui:define>
+                <h:inputText id="asingAgent"
+                             required="true"
+                             readonly="true"
+                             value="#{bulletinHome.instance.agent.resident.identificationNumber}"
+                             size="20">
+                    <a:support event="onblur" reRender="agentField" bypassUpdates="true" ajaxSingle="true"/>
+                    <s:convertEntity></s:convertEntity>
+                </h:inputText>
+
+                <a:commandButton id="openSearchPanelBtn"
+                  action="#{agentHome.clearSearchAgentPanel()}"
+                  reRender="searchAgentPanel" ajaxSingle="true"
+                  eventsQueue="gimQueue"
+                  oncomplete="Richfaces.showModalPanel('searchAgentPanel',{width:600, height:500})"
+                  value="Asignar" />
+                    <br /><br />
+                <h:inputText id="asingAgentName"
+                             required="true"
+                             readonly="true"
+                             value="#{bulletinHome.instance.agent.resident.name}"
+                             size="50">
+                    <a:support event="onblur" reRender="agentField" bypassUpdates="true" ajaxSingle="true"/>
+                    <s:convertEntity></s:convertEntity>
+                </h:inputText>
+      </s:decorate>
+
+      <s:decorate id="bulletinDetail" template="../../layout/edit.xhtml">
+              <ui:define name="label">#{messages['alert.openDetail']}</ui:define>
+              <h:inputTextarea id="openDetail"
+                value="#{bulletinHome.instance.detail}" />
+      </s:decorate>
+		
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos
+            </div>
+            
+            <s:decorate id="bulletinMessageField" template="../../layout/edit.xhtml">
+                <h:outputText value="#{bulletinHome.message}" rendered="#{bulletinHome.message != null}" style="color:red"/>
+            </s:decorate> 
+
+            <div style="clear:both">
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{bulletinHome.saveBulletin()}"
+                       disabled="#{!bulletinHome.wired}"
+                       rendered="#{!bulletinHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{bulletinHome.update}"
+                       rendered="#{bulletinHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="#{messages['common.delete']}"
+                         action="#{bulletinHome.remove}"
+                      immediate="true"
+                      disabled="true"
+                       rendered="#{bulletinHome.managed}"/>
+
+            <s:button id="cancel"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/ant/ucot/BulletinList.xhtml"/>
+
+        </div>
+    </h:form>
+</ui:define>
+
+</ui:composition>

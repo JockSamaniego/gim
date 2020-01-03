@@ -1,0 +1,81 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel id="historyChangePanel">
+		<f:facet name="header">
+			<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText
+					value="#{messages['property.historyChange']} (#{empty propertySpecialHome.checkingRecordsForProperty ? 0 : propertySpecialHome.checkingRecordsForProperty.size})" />
+			</h:panelGrid>
+		</f:facet>
+		
+		<a:region>
+		<a:outputPanel styleClass="results" id="historyChangeList">
+			<h:outputText value="#{messages['property.noHistoryChange']}"
+				rendered="#{empty propertySpecialHome.checkingRecordsForProperty}" />
+
+			<rich:dataTable id="checkingRecordsForPropertyTable" var="_checkingRecord"
+				value="#{propertySpecialHome.checkingRecordsForProperty}"
+				rowClasses="rvgRowOne,rvgRowTwo"
+				rendered="#{not empty propertySpecialHome.checkingRecordsForProperty}">
+				<rich:column sortBy="#{_checkingRecord.date}"
+					styleClass="action">
+					<f:facet name="header">
+						<h:outputText value="#{messages['common.date']}" />
+					</f:facet>
+					<h:outputText value="#{_checkingRecord.date}">
+						<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column sortBy="#{_checkingRecord.time}"
+					styleClass="action">
+					<f:facet name="header">
+						<h:outputText value="#{messages['common.time']}" />
+					</f:facet>
+					<h:outputText value="#{_checkingRecord.time}">
+						<f:convertDateTime pattern="#{messages['common.fullTimePattern']}" />
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column sortBy="#{_checkingRecord.checkingRecordType.name()}" styleClass="left">
+					<f:facet name="header">
+						<h:outputText value="#{messages['checkingRecordType']}" />
+					</f:facet>
+					<h:outputText value="#{messages[_checkingRecord.checkingRecordType.name()]}" size="6"
+						styleClass="left">
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column sortBy="#{_checkingRecord.checker.name}" styleClass="left">
+					<f:facet name="header">
+						<h:outputText value="#{messages['user']}" />
+					</f:facet>
+					<h:outputText value="#{_checkingRecord.checker.name}" size="6"
+						styleClass="left">
+					</h:outputText>
+				</rich:column>
+				
+				<rich:column sortBy="#{_checkingRecord.observation}" styleClass="left">
+					<f:facet name="header">
+						<h:outputText value="#{messages['property.observations']}" />
+					</f:facet>
+					<h:outputText value="#{_checkingRecord.observation}" size="12"
+						styleClass="left">
+					</h:outputText>
+				</rich:column>
+			</rich:dataTable>
+
+		</a:outputPanel>
+		</a:region>
+	</rich:panel>
+</ui:composition>

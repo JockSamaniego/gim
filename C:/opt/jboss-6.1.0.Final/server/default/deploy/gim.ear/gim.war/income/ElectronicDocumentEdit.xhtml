@@ -1,0 +1,154 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="receipt" styleClass="edit">
+		<ui:debug id="debug"/>
+			<h:outputText styleClass="formTitle"
+				value="#{messages['electronic.manageDocuments']}" />
+			<rich:panel bodyClass="topAligned">
+				<f:facet name="header">
+					<h:outputText value="#{messages['electronic.searchFilter']}" />
+				</f:facet>
+				<h:panelGrid columns="1">
+					<s:decorate id="beginDateField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['common.startDate']}:</ui:define>
+						<rich:calendar id="startDate" enableManualInput="false"
+							value="#{electronicDocumentHome.beginDate}"
+							datePattern="#{messages['common.datePattern']}">
+						</rich:calendar>
+					</s:decorate>
+	
+					<s:decorate id="endDateField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['common.endDate']}:</ui:define>
+						<rich:calendar id="endDate" enableManualInput="false"
+							value="#{electronicDocumentHome.endDate}"
+							datePattern="#{messages['common.datePattern']}">
+						</rich:calendar>
+					</s:decorate>
+	
+					<s:decorate id="statusField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['electronic.statusElectronicReceipt']}</ui:define>
+						<h:selectOneMenu id="status"
+							value="#{electronicDocumentHome.statusElectronicReceipt}">
+							<s:selectItems value="#{statusElectronicReceipts}" var="status"
+								label="#{messages[status.name()]}"
+								noSelectionLabel="#{messages['common.select']}" />
+							<s:convertEnum />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="limitRecordsField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['common.limitRecords']}:</ui:define>
+						<h:inputText value="#{electronicDocumentHome.limitRecords}" />
+					</s:decorate>
+	
+				</h:panelGrid>
+
+				<div style="clear: both" />
+			</rich:panel>
+			
+	        <div class="actionButtons">
+				<a:commandButton id="search" reRender="receiptsPanel,richReceiptsPanel"
+					value="#{messages['common.search']}" 
+					action="#{electronicDocumentHome.findDocuments()}" />
+				<s:button id="resetId" value="#{messages['common.reset']}" includePageParams="false" propagation="none" />
+			</div>
+			
+			<rich:panel id="richReceiptsPanel">			
+		        <f:facet name="header">
+		          	<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value=" #{messages['electronic.searchResults']} (#{empty electronicDocumentHome.receipts ? 0 : electronicDocumentHome.receipts.size})" />
+							<a:commandButton id="signReceipt"
+								action="#{electronicDocumentHome.AuthorizedElectronicReceipts()}"
+								reRender="receiptsPanel" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								value="#{messages['receipt.sign']}"
+								disabled="#{electronicDocumentHome.receipts.size() == 0}"
+								/>
+							<a:commandButton id="consultSignReceipt"
+								action="#{electronicDocumentHome.ConsultElectronicReceipts()}"
+								reRender="receiptsPanel" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								value="#{messages['receipt.consultSign']}"
+								disabled="#{electronicDocumentHome.receipts.size() == 0}"
+								/>
+					</h:panelGrid>
+		        
+		        </f:facet>
+		    <div class="results">
+		
+		    <h:outputText value="#{messages['electronic.noresults']}"
+		               rendered="#{empty electronicDocumentHome.receipts}"/>
+			</div>		
+			<a:outputPanel id="receiptsPanel" ajaxRendered="false">
+					<rich:dataTable id="receiptList" var="_receipt"
+						value="#{electronicDocumentHome.receipts}"
+						rendered="#{not empty electronicDocumentHome.receipts}"
+						columnClasses="right, right tableCellFont,right tableCellFont, right tableCellFont, center tableCellFont, center tableCellFont, center tableCellFont, right tableCellFont">
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['Id']}" />
+							</f:facet>
+							<h:outputText value="#{_receipt.id}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['receipt.sriAccessKey']}" />
+							</f:facet>
+							<h:outputText value="#{_receipt.sriAccessKey}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['receipt.authorizationNumber']}" />
+							</f:facet>
+							<h:outputText value="#{_receipt.authorizationNumber}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['electronic.authorizationDate']}" />
+							</f:facet>
+							<h:outputText value="#{_receipt.sriAuthorizationDate}" >
+								<f:convertDateTime pattern="#{messages['common.timePattern']}" />
+							</h:outputText>
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['electronic.statusElectronicReceipt']}" />
+							</f:facet>
+							<h:outputText value="#{messages[_receipt.statusElectronicReceipt.name()]}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['receipt.electronicReceipt']}" />
+							</f:facet>
+							<h:selectBooleanCheckbox disabled="true"
+								value="#{_receipt.electronicReceipt}" />
+						</h:column>
+						
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['receipt.documentNumber']}" />
+							</f:facet>
+							<h:outputText value="#{_receipt.receiptNumber}" />
+						</rich:column>
+					</rich:dataTable>
+			</a:outputPanel>
+			</rich:panel>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

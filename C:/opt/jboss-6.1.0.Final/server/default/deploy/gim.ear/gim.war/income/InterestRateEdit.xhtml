@@ -1,0 +1,112 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="taxRate" styleClass="edit">
+    	
+    	<h:outputText styleClass="formTitle" value="#{interestRateHome.managed ? messages['common.edit'] : messages['common.edit']} #{messages['interestRate']}" />
+
+        <rich:panel>
+        	<s:decorate id="beginDateField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['interestRate.beginDate']}:</ui:define>
+                <rich:calendar id="beginDate" disabled="true"
+                          value="#{interestRateHome.instance.beginDate}"
+                          enableManualInput="true" required="true" ajaxSingle="true" 
+                          datePattern="yyyy-MM-dd"/>
+            </s:decorate>
+        	
+            <s:decorate id="endDateField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['interestRate.endDate']}:</ui:define>
+                <rich:calendar id="endDate" disabled="#{interestRateHome.managed}"
+                          value="#{interestRateHome.instance.endDate}"
+                          enableManualInput="true" required="true" ajaxSingle="true"  
+                          datePattern="yyyy-MM-dd" currentDate="#{currentDate}"
+                          reRender="endDateField"/>
+            </s:decorate>
+
+            <s:decorate id="valueField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['interestRate.value']}:</ui:define>
+                <h:inputText id="value"
+                          value="#{interestRateHome.instance.value}"
+                           size="5">
+                    <a:support event="onblur" reRender="rateField, rateMonthsField" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+			<s:decorate id="factorField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['interestRate.factor']}:</ui:define>
+                <h:inputText id="factor"
+                          value="#{interestRateHome.instance.factor}"
+                           size="5">
+                    <a:support event="onblur" reRender="rateField, rateMonthsField" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+            
+            <s:decorate id="rateField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['interestRate.rate']}:</ui:define>
+                <h:outputText id="rate"
+                          value="#{interestRateHome.instance.rate}"
+                           size="5">
+                </h:outputText>
+            </s:decorate>
+            <s:decorate id="rateMonthsField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['interestRate.rateMonths']}:</ui:define>
+                <h:outputText id="rateMonth"
+                          value="#{interestRateHome.instance.monthlyRate}"
+                           size="5">
+                </h:outputText>
+            </s:decorate>
+            
+            <div style="clear:both">
+                <span class="required">*</span>
+                #{messages['common.requiredFields']}
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{interestRateHome.save()}"
+                       disabled="#{!interestRateHome.wired}"
+                       rendered="#{!interestRateHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{interestRateHome.save()}"
+                       rendered="#{interestRateHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="#{messages['common.delete']}"
+                         action="#{interestRateHome.remove}"
+                      immediate="true"
+                       rendered="#{interestRateHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/income/InterestRateList.xhtml"
+                rendered="#{interestRateHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/income/#{empty interestRateFrom ? 'InterestRateList' : interestRateFrom}.xhtml"
+                rendered="#{!interestRateHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

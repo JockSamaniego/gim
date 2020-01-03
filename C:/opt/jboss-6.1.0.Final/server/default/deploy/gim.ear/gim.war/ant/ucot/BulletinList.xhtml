@@ -1,0 +1,215 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="bulletinSearch" styleClass="edit">
+    <ui:include src="fragment/InfractionsDelivered.xhtml" />
+<h:outputText styleClass="formTitle" value="#{messages['ucot.bulletinManager']}" />    
+
+        <rich:simpleTogglePanel label="#{messages['ucot.searchFilter']}" switchType="ajax">
+            <s:decorate template="../../layout/display.xhtml">
+                <ui:define name="label">#{messages['ucot.agent']}:</ui:define>
+                <h:inputText id="name" value="#{bulletinList.criteriaSearch}"/>
+            </s:decorate>
+
+            <s:decorate template="../../layout/display.xhtml">
+                <ui:define name="label">#{messages['infraction.serial']}:</ui:define>
+                <h:inputText id="serial" value="#{bulletinList.serial}"/>
+            </s:decorate>
+
+      </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="#{messages['common.search']}" action="/ant/ucot/BulletinList.xhtml">
+                <f:param name="firstResult" value="0"/>
+            </h:commandButton>
+            <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
+        </div>
+
+    
+
+    <rich:panel>
+        <f:facet name="header">
+          	<h:panelGrid columns="3" columnClasses="headerTitle,">
+				<h:outputText
+					value=" #{messages['bulletin.searchResults']} (#{empty bulletinList.resultList ? 0 : (bulletinList.paginated ? bulletinList.resultCount : bulletinList.resultList.size)})" />
+			       <s:button view="/ant/ucot/BulletinEdit.xhtml"
+			                   id="create"
+			          propagation="none"
+			                value="#{messages['common.create']} #{messages['bulletin']}">
+			           <f:param name="bulletinId"/>
+			       </s:button>
+			       <s:button
+						view="/ant/ucot/report/BulletinsReport.xhtml"
+						id="printReport"
+						disabled = "#{empty bulletinList.resultList}"
+						value="#{messages['common.print']}" />
+			</h:panelGrid>      
+        </f:facet>
+    <div class="results" id="bulletinList">
+
+    <h:outputText value="No se han encotrado resultados"
+               rendered="#{empty bulletinList.resultList}"/>
+
+    <rich:dataTable id="bulletinList"
+                var="_bulletin"
+              value="#{bulletinList.resultList}"
+           rendered="#{not empty bulletinList.resultList}">
+           <rich:column styleClass="action" style="align:right;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['bulletin.startNumber']}"/>
+                    <ui:param name="propertyPath" value="bulletin.startNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.startNumber}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:right;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['bulletin.endNumber']}"/>
+                    <ui:param name="propertyPath" value="bulletin.endNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.endNumber}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['ucot.agent']}"/>
+                    <ui:param name="propertyPath" value="bulletin.agent.resident.identificationNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.agent.resident.identificationNumber}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:left;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['agent.name']}"/>
+                    <ui:param name="propertyPath" value="bulletin.agent.resident.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.agent.resident.name}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['bulletin.creationDate']}"/>
+                    <ui:param name="propertyPath" value="bulletin.creationDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.creationDate}">
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </rich:column>
+        
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['bulletin.type']}"/>
+                    <ui:param name="propertyPath" value="bulletin.type.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.type.name}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:left;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{bulletinList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['ucot.detail']}"/>
+                    <ui:param name="propertyPath" value="bulletin.detail"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_bulletin.detail}"/>
+        </rich:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            <s:button view="/ant/ucot/BulletinEdit.xhtml"
+                   value="#{messages['common.edit']}"
+             propagation="none"
+                      id="bulletinEdit">
+                <f:param name="bulletinId"
+                        value="#{_bulletin.id}"/>
+            </s:button>
+            <s:button view="/ant/ucot/InfractionsEdit.xhtml"
+                   value="#{messages['infraction.Create']}"
+             propagation="none"
+                      id="createInfraction">
+                <f:param name="bulletinId"
+                        value="#{_bulletin.id}"/>
+                <f:param name="infractionsId" />
+            </s:button>
+
+
+             <a:commandButton id="openinfractionsDeliveredBtn"
+                  action="#{bulletinHome.searchInfractionsDelivered(_bulletin.id)}"
+                  reRender="infractionsDelivered" ajaxSingle="true"
+                  eventsQueue="gimQueue"
+                  oncomplete="Richfaces.showModalPanel('infractionsDelivered',{width:600, height:550})"
+                  value="Listado" />
+                  
+              <a:commandButton       
+                            action="#{bulletinHome.printInfractionsDelivered(_bulletin.id)}"
+                            id="printReport" 
+                            value="#{messages['common.print']}" />
+            
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+    </h:form>
+
+    <div class="tableControl">
+
+        <s:link view="/ant/ucot/BulletinList.xhtml"
+            rendered="#{bulletinList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/ant/ucot/BulletinList.xhtml"
+            rendered="#{bulletinList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{bulletinList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/ant/ucot/BulletinList.xhtml"
+            rendered="#{bulletinList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{bulletinList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/ant/ucot/BulletinList.xhtml"
+            rendered="#{bulletinList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{bulletinList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

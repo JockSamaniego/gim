@@ -1,0 +1,142 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="timePeriodSearch" styleClass="edit">
+
+		<h:outputText styleClass="formTitle" value="#{messages['timePeriod.manager']}" />
+    	
+        <rich:simpleTogglePanel>
+			<f:facet name="header">#{messages['timePeriod.searchFilter']}</f:facet>
+            <s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">#{messages['timePeriod.name']}</ui:define>
+                <h:inputText id="name" value="#{timePeriodList.timePeriod.name}" size="20" maxlength="20"/>
+            </s:decorate>
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="#{messages['common.search']}" action="/revenue/TimePeriodList.xhtml">
+                <f:param name="firstResult" value="0"/>
+            </h:commandButton>
+            <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+    	<f:facet name="header">
+        	<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText
+						value="#{messages['timePeriod.searchResults']} (#{empty timePeriodList.resultList ? 0 : (timePeriodList.paginated ? timePeriodList.resultCount : timePeriodList.resultList.size)})"/>
+				<s:div styleClass="actionButtons" rendered="#{empty from}">
+			        <s:button view="/revenue/TimePeriodEdit.xhtml"
+			                    id="create"
+			           propagation="none"
+			                 value="#{messages['common.create']} #{messages['timePeriod']}">
+			            <f:param name="timePeriodId"/>
+			        </s:button>
+			    </s:div>
+			</h:panelGrid>        
+        </f:facet>
+        
+    <div class="results" id="timePeriodList">
+    <h:outputText value="#{messages['common.noResultsReturned']}"
+               rendered="#{empty timePeriodList.resultList}"/>
+
+    <rich:dataTable id="timePeriodList"
+                var="_timePeriod"
+              value="#{timePeriodList.resultList}"
+           rendered="#{not empty timePeriodList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{timePeriodList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['timePeriod.Id']}"/>
+                    <ui:param name="propertyPath" value="timePeriod.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_timePeriod.id}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{timePeriodList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['timePeriod.name']}"/>
+                    <ui:param name="propertyPath" value="timePeriod.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_timePeriod.name}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{timePeriodList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['timePeriod.daysNumber']}"/>
+                    <ui:param name="propertyPath" value="timePeriod.daysNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_timePeriod.daysNumber}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            
+            <s:button view="/revenue/TimePeriodEdit.xhtml"
+                   value="#{messages['common.edit']}"
+             propagation="none"
+                      id="timePeriodEdit"
+                rendered="#{empty from}">
+                <f:param name="timePeriodId"
+                        value="#{_timePeriod.id}"/>
+            </s:button>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/revenue/TimePeriodList.xhtml"
+            rendered="#{timePeriodList.previousExists}"
+               value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/revenue/TimePeriodList.xhtml"
+            rendered="#{timePeriodList.previousExists}"
+               value="#{messages.left} #{messages['common.previousPage']}"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{timePeriodList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/revenue/TimePeriodList.xhtml"
+            rendered="#{timePeriodList.nextExists}"
+               value="#{messages['common.nextPage']} #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{timePeriodList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/revenue/TimePeriodList.xhtml"
+            rendered="#{timePeriodList.nextExists}"
+               value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{timePeriodList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

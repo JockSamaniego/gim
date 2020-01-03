@@ -1,0 +1,102 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:g="http://gim.gob.ec/jsf" >
+
+
+	<rich:modalPanel id="reserveAndExhumationPanel" width="650" height="500">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText
+					value="#{unitDeathHome.instance.unitType.name} #{unitDeathHome.instance.code} - #{messages['cementery.cementery']} #{unitDeathHome.instance.section.cementery.name} #{messages['cementery.section']} #{unitDeathHome.instance.section.name}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkInformationReserve" />
+				<rich:componentControl for="reserveAndExhumationPanel" attachTo="hidelinkInformationReserve"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="ReserveAndExhumationForm" styleClass="edit">
+
+		<a:outputPanel ajaxRendered="true">
+			<s:decorate>
+				<rich:panel id="responsablePanel" >
+					<f:facet name="header">#{messages['unitDeath.responsable']}</f:facet>
+					<g:residentChooser id="residentChooser" 
+						resident="#{unitDeathHome.responsableResident}"
+						residentsList="#{unitDeathHome.residents}"
+						identificationNumber="#{unitDeathHome.responsableIdentification}"
+						criteria="#{unitDeathHome.responsableCriteria}" bean="#{unitDeathHome}"
+						searchAction="searchPersonResponsable"
+						searchByCriteriaAction="searchResponsableByCriteria"
+						clearSearchPanelAction="clearSearchResidentPanel"
+						residentChosenListenerName="responsableSelectedListener"/>
+		
+					<div style="clear: both" />
+				</rich:panel>
+			</s:decorate>
+
+			<s:decorate id="toExhumationField" template="../../layout/edit.xhtml" rendered="#{unitDeathHome.exhumation}" >
+				<ui:define name="label">#{messages['unitDeath.dateForExhumation']}:</ui:define>
+				<rich:calendar id="exhumationCalendar" required="true" enable="#{!unitDeathHome.exhumation and unitDeathHome.forExhumation}"
+					value="#{unitDeathHome.dateToExhumation}"
+					datePattern="#{messages['common.datePattern']}">
+				<a:support event="onchanged" eventsQueue="gimQueue"/>
+				</rich:calendar>
+			</s:decorate>
+
+			<s:decorate id="exhumationField" template="../../layout/edit.xhtml" rendered="#{unitDeathHome.exhumation and !unitDeathHome.forExhumation}">
+				<ui:define name="label">#{messages['unitDeath.dateOfExhumation']}:</ui:define>
+				<rich:calendar id="exhumationCalendar" required="true" enable="#{!unitDeathHome.forExhumation}"
+					value="#{unitDeathHome.dateExhumation}"
+					datePattern="#{messages['common.datePattern']}">
+				<a:support event="onchanged" eventsQueue="gimQueue"/>
+				</rich:calendar>
+			</s:decorate>
+
+			<div style="clear: both">
+				<span class="required">*</span>"#{messages['common.requiredFields']}"
+			</div>
+		</a:outputPanel>
+			<div class="actionButtons">
+
+				<a:commandButton 
+					ajaxSingle="true" 
+					action="#{unitDeathHome.updateForExhumation()}"
+					value="#{messages['common.accept']}"
+					oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('reserveAndExhumationPanel')}.hide();"
+					reRender="resultsDeathPanel,deathForm" 
+					rendered = "#{unitDeathHome.forExhumation}" />
+
+				<a:commandButton 
+					ajaxSingle="true" 
+					action="#{unitDeathHome.updateExhumationAndReserve()}"
+					value="#{messages['common.accept']}"
+					oncomplete="#{rich:component('reserveAndExhumationPanel')}.hide();"
+					reRender="resultsDeathPanel,deathForm" 
+					rendered = "#{!unitDeathHome.forExhumation}"
+					actionListener= "#{cementeryHome.update()}" />
+					
+				<a:commandButton 
+					ajaxSingle="true" 
+					value="#{messages['common.cancel']}"
+					oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('reserveAndExhumationPanel')}.hide();"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

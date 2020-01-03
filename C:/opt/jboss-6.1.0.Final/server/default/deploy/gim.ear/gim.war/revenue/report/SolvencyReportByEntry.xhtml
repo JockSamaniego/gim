@@ -1,0 +1,328 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core" fileName="#{messages['revenue.solvencyCertificate']}.pdf" 
+	title="#{messages['revenue.solvencyCertificate']}" subject="report" type="pdf"
+	size="A5" orientation="portrait" margins="10 40 70 30" keywords="mykeyword">
+
+	<ui:repeat value="#{municipalBondHome.copiesEnumerate}" var="_copy">
+		<p:table columns="2" widthPercentage="100" headerRows="0" spacingBefore="50" widths="0.2 0.8">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" horizontalAlignment="center" />
+			</f:facet>
+			<p:cell colspan="1" borderWidth="0" horizontalAlignment="center">
+				<p:table columns="1" widthPercentage="90" headerRows="0" spacingBefore="10" >
+					<p:cell colspan="1" borderWidth="0" horizontalAlignment="center">
+						
+						<p:font size="9" style="bold">
+							<p:paragraph alignment="center"></p:paragraph>
+						</p:font>
+					</p:cell>
+				</p:table>
+				<p:table columns="1" widthPercentage="90" headerRows="0" spacingBefore="25" >
+					<p:cell colspan="1"  horizontalAlignment="center"  borderWidthTop="1" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" borderColorTop="red">
+						<p:font size="12" style="bold" color="red">
+							<p:paragraph alignment="center">N. #{municipalBondHome.certificateNumberSolvency}</p:paragraph>
+						</p:font>
+					</p:cell>
+				</p:table>
+				<p:table columns="1" widthPercentage="90" headerRows="0" spacingBefore="3" >
+					<p:cell colspan="1"  horizontalAlignment="center"  borderWidthTop="1" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" borderColorTop="red">
+					</p:cell>
+				</p:table>
+				<p:table columns="1" widthPercentage="90" headerRows="0" spacingBefore="15" >
+					<p:cell colspan="1"  horizontalAlignment="center"  borderWidth="0">
+						<p:font size="8" style="bold">
+							<p:paragraph alignment="center">R.U.C. 1160000240001</p:paragraph>
+						</p:font>
+						<p:font size="8" >
+							<p:paragraph alignment="center">Ser. Adm. Art. 568</p:paragraph>
+						</p:font>
+						<p:font size="8" >
+							<p:paragraph alignment="center">Lit. g del COOTAD</p:paragraph>
+						</p:font>
+						<p:font size="8" >
+							<p:paragraph alignment="center">---------------------------------</p:paragraph>
+						</p:font>
+					</p:cell>
+				</p:table>
+							
+			</p:cell>
+			
+			<p:cell colspan="1" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="1" borderWidthRight="0">
+				<p:table columns="1" widthPercentage="90" headerRows="0" spacingBefore="10" >
+					<p:cell colspan="1" borderWidth="0">
+						<p:font size="8" name="HELVETICA">
+							<p:table columns="1" spacingBefore="15" spacingAfter="20"
+								widthPercentage="100" headerRows="0">
+								<p:cell borderWidth="0"/>
+							</p:table>
+							<p:font size="17" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+							</p:font>
+							<p:font size="7" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.address}. #{messages['institution.phone']}: #{gim.institution.phone} -  #{messages['institution.fax']}: #{gim.institution.fax}</p:paragraph>
+							</p:font>
+								<p:table columns="1" spacingBefore="15" spacingAfter="20"
+									widthPercentage="100" headerRows="0">
+									<p:cell borderWidth="0"/>
+								</p:table>		
+							<p:font size="16" style="bold">
+								<p:paragraph alignment="center">#{messages['SOLVENCYCERTIFICATE']}</p:paragraph>
+							</p:font>
+
+							<p:paragraph spacingAfter="15" spacingBefore="20" alignment="justify" verticalAlignment="10" leading="25">
+								<p:font size="14">
+									<p:text
+										value="El contribuyente " />
+								</p:font>
+								
+								<p:font size="15" style="bold">
+									<p:text
+										value=" #{municipalBondHome.residentSolvency.name}" />
+								</p:font>
+								
+								<p:font size="14" >
+									<p:text
+										value=" , con número de identificación: " />
+								</p:font>
+								
+								<p:font size="15" style="bold">
+									<p:text
+										value=" #{municipalBondHome.residentSolvency.identificationNumber}," />
+								</p:font>
+								
+								<p:font size="20" style="bold">
+									<p:text
+										value=" #{empty municipalBondHome.municipalBondsSolvency ? 'NO' : 'SI'}" />
+								</p:font>
+								
+								<p:font size="14">
+									<p:text
+										value=" tiene obligaciones pendientes con la institución #{gim.institution.name.toUpperCase()}, en lo que corresponde a la cuenta" />
+								</p:font>
+								<p:font size="15" style="bold">
+									<p:text
+										value=" #{municipalBondHome.entrySolvency.name.toUpperCase()}." />
+								</p:font>
+								
+								<p:font size="14">
+									<p:text
+										value="#{empty municipalBondHome.codeSolvency ? '' : municipalBondHome.entrySolvency.groupingCodeLabel} #{empty municipalBondHome.codeSolvency ? '' : municipalBondHome.codeSolvency} " />
+								</p:font>
+							</p:paragraph>
+		
+							<p:paragraph spacingAfter="0" spacingBefore="15" alignment="justify" verticalAlignment="10" leading="25">
+									<p:font size="14" style="bold">
+										<p:text
+											value="PARA EL SERVICIO DE: " />
+									</p:font>
+									<p:font size="14">
+										<p:text
+											value="#{municipalBondHome.motivationSolvency}" />
+									</p:font>
+							</p:paragraph>
+		
+							<p:paragraph spacingAfter="0" spacingBefore="15" alignment="justify" verticalAlignment="10" leading="25">
+									<p:font size="14" style="bold">
+										<p:text
+											value="VALIDEZ: " />
+									</p:font>
+									<p:font size="14">
+										<p:text
+											value="Un mes a partir de la presente fecha" />
+									</p:font>
+							</p:paragraph>
+							
+							<p:paragraph spacingAfter="0" spacingBefore="5" alignment="justify" verticalAlignment="10" leading="25">
+									<p:font size="8" style="bold">
+										<p:text
+											value="OBSERVACIONES: " />
+									</p:font>
+									<p:font size="8">
+										<p:text
+											value="#{municipalBondHome.observationsSolvency}" />
+									</p:font>
+							</p:paragraph>
+							
+							<p:paragraph spacingAfter="0" spacingBefore="15" alignment="right" verticalAlignment="10" leading="30">
+								<p:font size="12">
+									<p:text value="#{messages['Loja']}, " />
+									<p:text value="#{currentDatetime}">
+										<f:convertDateTime
+											pattern="#{messages['common.dateFullTimePattern']}" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+						<p:table rendered="#{not empty municipalBondHome.municipalBondsSolvency}"
+							columns="1" spacingBefore="15" spacingAfter="15"
+							widthPercentage="100" headerRows="0">
+							<p:font size="13" style="bold">
+								<f:facet name="defaultCell">
+									<p:cell borderWidth="0" />
+								</f:facet>
+
+								<p:cell horizontalAlignment="center" borderWidth="0">
+									<p:paragraph>
+										<p:text value="#{messages['DETAIL']}" />
+									</p:paragraph>
+								</p:cell>
+							</p:font>
+						</p:table>
+
+						<p:table rendered="#{not empty municipalBondHome.municipalBondsSolvency}"
+							columns="4" spacingBefore="13" spacingAfter="15"
+							widthPercentage="100" headerRows="0" widths="2 1 1 1">
+							<p:font size="10" style="bold">
+								<f:facet name="defaultCell">
+									<p:cell borderWidth="0" />
+								</f:facet>
+
+								<p:cell horizontalAlignment="center">
+									<p:paragraph>
+										<p:text value="#{messages['entry']}" />
+									</p:paragraph>
+								</p:cell>
+
+								<p:cell horizontalAlignment="center">
+									<p:paragraph>
+										<p:text value="#{messages['municipalBond.emissionDate']}" />
+									</p:paragraph>
+								</p:cell>
+
+								<p:cell horizontalAlignment="center">
+									<p:paragraph>
+										<p:text value="#{messages['municipalBond.expirationDate']}" />
+									</p:paragraph>
+								</p:cell>
+
+								<p:cell horizontalAlignment="center">
+									<p:paragraph>
+										<p:text value="#{messages['item.value']}" />
+									</p:paragraph>
+								</p:cell>
+
+							</p:font>
+
+							<ui:repeat value="#{municipalBondHome.municipalBondsSolvency}" var="_var">
+								<p:font size="10" style="normal,italic">
+									<p:cell borderWidth="0" borderWidthBottom="1">
+										<p:paragraph>
+											<p:text value="#{_var.entry.name}" />
+										</p:paragraph>
+									</p:cell>
+
+									<p:cell borderWidth="0" borderWidthBottom="1">
+										<p:paragraph>
+											<p:text value="#{_var.emisionDate}">
+												<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+											</p:text>
+										</p:paragraph>
+									</p:cell>
+
+									<p:cell horizontalAlignment="right" borderWidth="0"
+										borderWidthBottom="1">
+										<p:paragraph>
+											<p:text value="#{_var.expirationDate}">
+												<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+											</p:text>
+										</p:paragraph>
+									</p:cell>
+
+									<p:cell horizontalAlignment="right" borderWidth="0"
+										borderWidthBottom="1">
+										<p:paragraph>
+											<p:text value="#{_var.paidTotal}">
+												<f:convertNumber pattern="#0.00" />
+											</p:text>
+										</p:paragraph>
+									</p:cell>
+
+								</p:font>
+							</ui:repeat>
+
+							<p:font size="12" style="bold">
+								<p:cell borderWidth="0" />
+								<p:cell borderWidth="0" />
+
+								<p:cell horizontalAlignment="center" borderWidth="0"
+									borderWidthBottom="1">
+									<p:paragraph>
+										<p:text value="#{messages['item.total']}" />
+									</p:paragraph>
+								</p:cell>
+
+								<p:cell horizontalAlignment="right" borderWidth="0"
+									borderWidthBottom="1">
+									<p:paragraph>
+										<p:text value="#{municipalBondHome.totalSolvency}">
+											<f:convertNumber pattern="#0.00" />
+										</p:text>
+									</p:paragraph>
+								</p:cell>
+							</p:font>
+						</p:table>
+		
+						<p:table columns="2" widthPercentage="80" headerRows="0" spacingBefore="100" rendered="#{solvencyReportHome.hasRole('ROLE_NAME_EMISOR')}">
+							<f:facet name="defaultCell">
+								<p:cell borderWidth="0" horizontalAlignment="center" />
+							</f:facet>
+							<p:cell colspan="1" borderWidth="0" horizontalAlignment="center">
+								<p:paragraph alignment="center">
+									<p:font size="7" style="bold">
+										<p:text value="____________________________" />
+									</p:font>
+								</p:paragraph>
+								<p:paragraph alignment="center">
+									<p:font size="7" style="bold">
+										<p:text
+											value="#{municipalBondHome.revenueDelegateSolvency.name.toUpperCase()}" />
+									</p:font>
+								</p:paragraph>
+								<p:paragraph alignment="center">
+									<p:font size="7" style="bold">
+										<p:text
+											value="#{municipalBondHome.revenueChargeSolvency.name.toUpperCase()}" />
+									</p:font>
+								</p:paragraph>
+						
+							</p:cell>
+							
+							<p:cell colspan="1" borderWidth="0">
+								<p:paragraph alignment="center">
+									<p:font size="7" style="bold">
+										<p:text value="____________________________" />
+									</p:font>
+								</p:paragraph>
+								<p:paragraph alignment="center">
+									<p:font size="7" style="bold">
+										<p:text value="#{userSession.user.resident.name}" />
+									</p:font>
+								</p:paragraph>
+								<p:paragraph alignment="center">
+									<p:font size="7" style="bold">
+										<p:text value="RESPONSABLE DE DATOS" />
+									</p:font>
+								</p:paragraph>
+						
+							</p:cell>
+							
+						</p:table>
+
+						<p:table columns="1" spacingBefore="20" spacingAfter="20" widthPercentage="100" headerRows="0">
+							<p:cell borderWidth="0"/>
+						</p:table>	
+					</p:font>
+				</p:cell>
+			</p:table>
+		
+		</p:cell>
+			
+	</p:table>
+	</ui:repeat>
+</p:document>

@@ -1,0 +1,219 @@
+<p:document xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	title="Avalúos y Catastros" subject="report" type="pdf"
+	size="A4" margins="40 20 30 20" keywords="appraisal cadaster" author="GADM-Loja"
+	creator="GADM-Loja">
+
+	<f:facet name="header">
+		<p:font size="7" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="2" widthPercentage="100" spacingAfter="15"
+						widths="1 12">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:image height="1" width="1" value="/img/escudo.jpg"
+								alignment="center" />
+						</p:cell>
+						<p:cell>
+							<p:font size="8" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+							</p:font>
+
+							<p:font size="7" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.address}. #{messages['institution.phone']}: #{gim.institution.phone} -  #{messages['institution.fax']}: #{gim.institution.fax}</p:paragraph>
+							</p:font>
+
+							<p:font size="8" style="bold">
+								<p:paragraph alignment="center" rendered="#{empty appraisalBlockHome.properties ? false : true}">
+									#{messages['appraisal.appraisalValuesReport']}
+								</p:paragraph>
+							</p:font>
+							<p:paragraph alignment="right">
+								<p:text value="Procesado: #{currentDatetime}">
+									<f:convertDateTime pattern="#{messages['common.dateFullTimePattern']}" />
+								</p:text>
+							</p:paragraph>
+						</p:cell>
+					</p:table>
+				</p:paragraph>
+			</p:header>
+			<p:footer borderWidthTop="1"
+				borderWidthBottom="0" alignment="center">
+	 			[<p:pageNumber />]
+			</p:footer>
+		</p:font>
+	</f:facet>
+
+
+	<p:font size="9" name="HELVETICA">
+	
+		<p:table rendered="#{empty appraisalBlockHome.properties ? false : true}"
+			columns="8" widthPercentage="100" headerRows="0"
+			widths="3 2.1 1.2 1.3 1.3 1.3 1.5 1.6">
+			<p:font size="6" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['property.cadastralCode']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['property.previousCadastralCode']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" rendered="#{!appraisalBlockHome.temporalValues}">
+					<p:paragraph>
+						<p:text value="#{messages['appraisal.valueSquareMeter']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" rendered="#{appraisalBlockHome.temporalValues}">
+					<p:paragraph>
+						<p:text value="#{messages['appraisal.valueSquareMeterTmp']}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['appraisal.affectationFactorLot']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['appraisal.area']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" rendered="#{!appraisalBlockHome.temporalValues}">
+					<p:paragraph>
+						<p:text value="#{messages['appraisal.lotAppraisal']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" rendered="#{appraisalBlockHome.temporalValues}">
+					<p:paragraph>
+						<p:text value="#{messages['appraisal.lotAppraisalTmp']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" rendered="#{!appraisalBlockHome.temporalValues}">
+					<p:paragraph>
+						<p:text value="#{messages['appraisal.buildingAppraisal']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" rendered="#{appraisalBlockHome.temporalValues}">
+					<p:paragraph>
+						<p:text value="#{messages['appraisal.buildingAppraisalTmp']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" rendered="#{!appraisalBlockHome.temporalValues}">
+					<p:paragraph>
+						<p:text value="#{messages['appraisal.commercialAppraisal']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" rendered="#{appraisalBlockHome.temporalValues}">
+					<p:paragraph>
+						<p:text value="#{messages['appraisal.commercialAppraisalTmp']}" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+			
+			<p:font size="6">
+				<ui:repeat var="_appraisalProperty"
+						value="#{appraisalBlockHome.properties}" >
+					<p:cell>
+						<p:paragraph>
+							<p:text value="#{_appraisalProperty.cadastralCode}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell>
+						<p:paragraph>
+							<p:text value="#{_appraisalProperty.previousCadastralCode}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" rendered="#{!appraisalBlockHome.temporalValues}">
+						<p:paragraph>
+							<p:text value="#{_appraisalProperty.currentDomain.valueBySquareMeter}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" rendered="#{appraisalBlockHome.temporalValues}">
+						<p:paragraph>
+							<p:text value="#{_appraisalProperty.currentDomain.valueBySquareMeterTmp}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_appraisalProperty.affectationFactorLot}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_appraisalProperty.area}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" rendered="#{!appraisalBlockHome.temporalValues}">
+						<p:paragraph>
+							<p:text value="#{_appraisalProperty.currentDomain.lotAppraisal}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" rendered="#{appraisalBlockHome.temporalValues}">
+						<p:paragraph>
+							<p:text value="#{_appraisalProperty.currentDomain.lotAppraisalTmp}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" rendered="#{!appraisalBlockHome.temporalValues}">
+						<p:paragraph>
+							<p:text value="#{_appraisalProperty.currentDomain.buildingAppraisal}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" rendered="#{appraisalBlockHome.temporalValues}">
+						<p:paragraph>
+							<p:text value="#{_appraisalProperty.currentDomain.buildingAppraisalTmp}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" rendered="#{!appraisalBlockHome.temporalValues}">
+						<p:paragraph>
+							<p:text value="#{_appraisalProperty.currentDomain.commercialAppraisal}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" rendered="#{appraisalBlockHome.temporalValues}">
+						<p:paragraph>
+							<p:text value="#{_appraisalProperty.currentDomain.commercialAppraisalTmp}" />
+						</p:paragraph>
+					</p:cell>
+
+				</ui:repeat>
+			</p:font>
+		</p:table>
+	</p:font>
+</p:document>

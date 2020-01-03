@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      login-required="true">
+
+   <param name="firstResult" value="#{agentList.firstResult}"/>
+   <param name="sort" value="#{agentList.orderColumn}"/>
+   <param name="dir" value="#{agentList.orderDirection}"/>
+   <param name="logic" value="#{agentList.restrictionLogicOperator}"/>
+
+   <param name="from"/>
+   <param name="agentCode" value="#{agentList.agent.agentCode}"/>
+   <param name="criteriaSearch" value="#{agentList.criteriaSearch}" />
+
+</page>

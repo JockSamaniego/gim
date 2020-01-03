@@ -1,0 +1,93 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core" xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="#{id}_searchPropertyPanel" width="800"
+		height="500">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="#{messages['budget.PropertySearch']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="#{id}_hidelinkProperty" />
+				<rich:componentControl for="#{id}_searchPropertyPanel"
+					attachTo="#{id}_hidelinkProperty" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:panelGrid width="100%">
+			<h:panelGrid columns="3">
+				<s:decorate id="#{id}_nameField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['budget.propertyCadastralKey']}:</ui:define>
+
+					<h:inputText id="#{id}_propertyCadastralKey" size="30"
+						maxlength="30" value="#{criteria}">
+						<a:support event="onblur" ajaxSingle="true" />
+					</h:inputText>
+
+				</s:decorate>
+
+				<a:commandButton id="#{id}_btSearch"
+					value="#{messages['common.search']}"
+					action="#{bean[searchByCriteriaAction]}" ajaxSingle="true" reRender="#{id}_propertyList"/>
+			</h:panelGrid>
+			<div class="results">
+
+				<rich:dataTable id="#{id}_propertyList" var="_property"
+					value="#{propertyList}" rows="8">
+
+					<f:facet name="footer">
+						<g:dataScroller maxPages="10" for="#{id}_propertyList"
+							style="float:right;" />
+					</f:facet>
+
+					<h:column>
+						<f:facet name="header">#{messages['property.cadastralCode']}</f:facet>
+						<h:outputText value="#{_property.previousCadastralCode}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">#{messages['resident.identificationNumber']}</f:facet>
+						<h:outputText
+							value="#{_property.currentDomain.resident.identificationNumber}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">#{messages['resident.name']}</f:facet>
+						<h:outputText value="#{_property.currentDomain.resident.name}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">#{messages['location']}</f:facet>
+						<h:outputText value="#{_property.location.mainBlockLimit.street.name}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">#{messages['location.houseNumber']}</f:facet>
+						<h:outputText value="#{_property.location.houseNumber}" />
+					</h:column>
+					
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+
+						<a:commandButton value="#{messages['common.select']}"
+							oncomplete="Richfaces.hideModalPanel('#{id}_searchPropertyPanel');"
+							actionListener="#{bean[propertyChosenListenerName]}"
+							ajaxSingle="true" propertyId="#{_property.id}"
+							property="#{_property}"
+							reRender="#{id}_cadastralKeyField, #{id}_identificationNumberField, #{id}_nameResidentField, #{id}_addressCurrentField
+							  #{not empty reRender ? ',' : ''} #{not empty reRender ? reRender : ''}" />
+
+					</rich:column>
+				</rich:dataTable>
+			</div>
+		</h:panelGrid>
+
+	</rich:modalPanel>
+</ui:composition>

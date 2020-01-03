@@ -1,0 +1,326 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="infractionsSearch" styleClass="edit">
+    <h:outputText styleClass="formTitle" value="#{messages['ucot.infractionManager']}" />
+
+        <rich:simpleTogglePanel label="#{messages['ucot.searchFilter']}" switchType="ajax" >
+        <h:panelGrid columns="2" > 
+            <s:decorate id="bulletinField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['bulletin']}:</ui:define>
+                <h:inputText id="bulletinStart"
+                       size="20"
+                          value="#{infractionsList.startSerial}">
+                </h:inputText>
+                <h:outputText id="bulletin"
+                          value="   -   ">
+                </h:outputText>
+                <h:inputText id="bulletinEnd"
+                       size="20"
+                          value="#{infractionsList.endSerial}">
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate template="../../layout/display.xhtml">
+                <ui:define name="label">#{messages['infraction.serial']}:</ui:define>
+                <h:inputText id="serial" value="#{infractionsList.infractions.serial}"/>
+            </s:decorate>
+
+            <s:decorate id="agentField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.agent']}:</ui:define>
+                <h:inputText id="agent"
+                       size="20"
+                          value="#{infractionsList.agent}">
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate template="../../layout/display.xhtml">
+                <ui:define name="label">#{messages['infraction.identification']}:</ui:define>
+                <h:inputText id="identification" value="#{infractionsList.infractions.identification}"/>
+            </s:decorate>
+
+            <s:decorate template="../../layout/display.xhtml">
+                <ui:define name="label">#{messages['infraction.plate']}:</ui:define>
+                <h:inputText id="licensePlate" value="#{infractionsList.infractions.licensePlate}"/>
+            </s:decorate>
+            
+            <s:decorate template="../../layout/display.xhtml">
+                <ui:define name="label">#{messages['infraction.article']}:</ui:define>
+                <h:inputText id="article" value="#{infractionsList.infractions.article}"/>
+            </s:decorate>
+            
+            <s:decorate template="../../layout/display.xhtml">
+                <ui:define name="label">#{messages['infraction.numeral']}:</ui:define>
+                <h:inputText id="numeral" value="#{infractionsList.infractions.numeral}"/>
+            </s:decorate>
+            
+            <s:decorate template="../../layout/display.xhtml">
+                <ui:define name="label">#{messages['infraction.numberPart']}:</ui:define>
+                <h:inputText id="partNumber" value="#{infractionsList.infractions.partNumber}"/>
+            </s:decorate>
+
+            <s:decorate id="citationDateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.From']}(citación):</ui:define>
+                <rich:calendar id="citationDate"
+                          value="#{infractionsList.dateFrom}" datePattern="dd/MM/yyyy" />
+            </s:decorate>
+
+            <s:decorate id="citationDateField2" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.Until']}(citación):</ui:define>
+                <rich:calendar id="citationDate2"
+                          value="#{infractionsList.dateUntil}" datePattern="dd/MM/yyyy" />
+            </s:decorate>
+            
+            <s:decorate id="citationDateField3" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.From']}(registro):</ui:define>
+                <rich:calendar id="citationDate3"
+                          value="#{infractionsList.dateFrom2}" datePattern="dd/MM/yyyy" />
+            </s:decorate>
+
+            <s:decorate id="citationDateField4" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.Until']}(registro):</ui:define>
+                <rich:calendar id="citationDate4"
+                          value="#{infractionsList.dateUntil2}" datePattern="dd/MM/yyyy" />
+            </s:decorate>
+            
+            <s:decorate id="nullifiedField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.nullified']}</ui:define>
+                <h:selectBooleanCheckbox id="nullified"
+                                      value="#{infractionsList.infractions.nullified}">
+                </h:selectBooleanCheckbox>
+            </s:decorate>
+            
+            <s:decorate id="inconsistentField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.inconsistent']}</ui:define>
+                <h:selectBooleanCheckbox id="inconsistent"
+                                      value="#{infractionsList.infractions.inconsistent}">
+                </h:selectBooleanCheckbox>
+            </s:decorate>
+            
+            <s:decorate id="photoFineField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.photoFine']}?</ui:define>
+                <h:selectBooleanCheckbox id="photoFine"
+                                      value="#{infractionsList.infractions.photoFine}">
+                </h:selectBooleanCheckbox>
+            </s:decorate>
+            
+
+        </h:panelGrid>
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="#{messages['common.search']}" reRender="infractionTablePanel,printReport"
+            				 action="#{infractionsHome.setInfractionsInNewArray(infractionsList.resultList)}" />
+            <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel id="infractionTablePanel">
+        <f:facet name="header">
+            <h:panelGrid columns="4" columnClasses="headerTitle,">
+                <h:outputText
+                    value=" #{messages['infractions.searchResults']} (#{empty infractionsList.resultList ? 0 : (infractionsList.paginated ? infractionsList.resultCount : infractionsList.resultList.size)})" />
+                   <s:button view="/ant/ucot/BulletinList.xhtml"
+                               id="create"
+                      propagation="none"
+                            value="#{messages['common.create']} #{messages['infraction']}">
+                       <f:param name="infractionsId" />
+                   </s:button>
+                   <s:button
+						view="/ant/ucot/report/InfractionsReport.xhtml"
+						id="printReport"
+						disabled="#{infractionsHome.infracts == null || infractionsHome.infracts.size() == 0}"
+						value="#{messages['common.print']}" />
+            </h:panelGrid>      
+        </f:facet>
+    <div class="results" id="infractionsList">
+
+    <h:outputText value="No se han encontrado resultados"
+               rendered="#{empty infractionsList.resultList}"/>
+
+    <rich:dataTable id="infractionsList"
+                var="_infractions"
+              value="#{infractionsList.resultList}"
+           rendered="#{not empty infractionsList.resultList}">
+        <rich:column styleClass="action" style="align:right;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionsList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction.serial']}"/>
+                    <ui:param name="propertyPath" value="infractions.serial"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractions.serial}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:left;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionsList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['ucot.agent']}"/>
+                    <ui:param name="propertyPath" value="infractions.bulletin.agent.resident.identificationNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractions.bulletin.agent.resident.identificationNumber}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionsList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction.citationdate']}"/>
+                    <ui:param name="propertyPath" value="infractions.citationDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractions.citationDate}">
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </rich:column>
+         <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionsList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction.citationtime']}"/>
+                    <ui:param name="propertyPath" value="infractions.citationTime"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractions.citationTime}">
+                <s:convertDateTime type="time"/>
+            </h:outputText>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionsList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction.identification']}"/>
+                    <ui:param name="propertyPath" value="infractions.identification"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractions.identification}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionsList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction.plate']}"/>
+                    <ui:param name="propertyPath" value="infractions.licensePlate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractions.licensePlate}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionsList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction.article']}"/>
+                    <ui:param name="propertyPath" value="infractions.article"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractions.article}"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionsList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction.numeral']}"/>
+                    <ui:param name="propertyPath" value="infractions.numeral"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_infractions.numeral}"/>
+        </rich:column>
+         <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionsList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction.nullified']}"/>
+                    <ui:param name="propertyPath" value="infractions.nullified"/>
+                </ui:include>
+            </f:facet>
+            <h:selectBooleanCheckbox value="#{_infractions.nullified}" disabled="true"/>
+        </rich:column>
+        <rich:column styleClass="action" style="align:center;">
+            <f:facet name="header">
+                <ui:include src="../../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{infractionsList}"/>
+                    <ui:param name="propertyLabel" value="#{messages['infraction.inconsistent']}"/>
+                    <ui:param name="propertyPath" value="infractions.inconsistent"/>
+                </ui:include>
+            </f:facet>
+            <h:selectBooleanCheckbox value="#{_infractions.inconsistent}" disabled="true"/>
+        </rich:column>
+       
+        <rich:column styleClass="action">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            <s:button view="/ant/ucot/InfractionsEdit.xhtml"
+                   value="#{messages['common.edit']}"
+                   action="#{infractionsHome.prepareToEdit()}"
+             propagation="none"
+                      id="infractionsEdit">
+                <f:param name="infractionsId"
+                        value="#{_infractions.id}"/>
+            </s:button>
+            <s:button view="/ant/ucot/InfractionSentencesList.xhtml"
+                   value="#{messages['process']}s"
+                   action="#{infractionsHome.isNotPhotoFineFR()}"
+             propagation="none"
+                      id="infractionSentences">
+                <f:param name="infractionsId"
+                        value="#{_infractions.id}"/>
+            </s:button>
+        </rich:column>
+        
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/ant/ucot/InfractionsList.xhtml"
+            rendered="#{infractionsList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage"
+                  action="#{infractionsHome.setInfractionsInNewArray(infractionsList.resultList)}">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/ant/ucot/InfractionsList.xhtml"
+            rendered="#{infractionsList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage"
+                  action="#{infractionsHome.setInfractionsInNewArray(infractionsList.resultList)}">
+            <f:param name="firstResult"
+                    value="#{infractionsList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/ant/ucot/InfractionsList.xhtml"
+            rendered="#{infractionsList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage"
+                  action="#{infractionsHome.setInfractionsInNewArray(infractionsList.resultList)}">
+            <f:param name="firstResult"
+                    value="#{infractionsList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/ant/ucot/InfractionsList.xhtml"
+            rendered="#{infractionsList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage"
+                  action="#{infractionsHome.setInfractionsInNewArray(infractionsList.resultList)}">
+            <f:param name="firstResult"
+                    value="#{infractionsList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

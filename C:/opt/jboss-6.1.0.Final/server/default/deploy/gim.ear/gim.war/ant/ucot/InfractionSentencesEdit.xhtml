@@ -1,0 +1,101 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="infractionSentences" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{infractionSentencesHome.managed ? messages['sentence.Edit'] : messages['sentence.Create']}</f:facet>
+
+            <s:decorate id="registerDateField" template="../../layout/edit.xhtml"
+                  rendered="#{!infractionSentencesHome.processToEdit}">
+                <ui:define name="label">#{messages['infraction.registerDate']}</ui:define>
+                <rich:calendar id="registerDate"
+                          value="#{infractionSentencesHome.registerDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                </rich:calendar>
+            </s:decorate>
+            
+            <s:decorate id="creationDateField" template="../../layout/edit.xhtml"
+                  rendered="#{infractionSentencesHome.processToEdit}">
+                <ui:define name="label">#{messages['infraction.registerDate']}</ui:define>
+                <rich:calendar id="creationDate"
+                          value="#{infractionSentencesHome.instance.creationDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                </rich:calendar>
+            </s:decorate>
+            
+            <s:decorate id="processNumberField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['sentence.numberProcess']}:</ui:define>
+                <h:inputText id="processNumber"
+                           size="20"
+                           required="true"
+                      maxlength="30"
+                          value="#{infractionSentencesHome.instance.processNumber}">
+                </h:inputText>
+            </s:decorate>     
+            
+            <s:decorate id="sentenceTypeField"
+              template="../../layout/edit.xhtml">
+              <ui:define name="label">#{messages['process.type']}:</ui:define>
+              <h:selectOneMenu id="sentenceType" value="#{infractionSentencesHome.instance.type}" required="true">
+                <s:selectItems value="#{infractionSentencesHome.typesSentence}" var="sentenceType" label="#{sentenceType.name}" itemValue="#{sentenceType}" />
+                <a:support event="onchange" ajaxSingle="true" />
+                <s:convertEntity></s:convertEntity>
+              </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate id="descriptionField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['process.adjunts']}</ui:define>
+                <h:inputTextarea id="sentenceDetail" size="40"
+                      value="#{infractionSentencesHome.instance.description}" >
+                </h:inputTextarea>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{infractionSentencesHome.saveInfractionProcess()}"
+                       disabled="#{!infractionSentencesHome.wired}"
+                       rendered="#{!infractionSentencesHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{infractionSentencesHome.update}"
+                       rendered="#{infractionSentencesHome.managed}">
+                 </h:commandButton>
+
+            <h:commandButton id="delete"
+                          value="#{messages['common.delete']}"
+                         action="#{infractionSentencesHome.remove}"
+                      immediate="true"
+                       disabled="true"
+                       rendered="#{infractionSentencesHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/ant/ucot/InfractionSentencesList.xhtml"/>
+
+        </div>
+    </h:form>
+</ui:define>
+
+</ui:composition>

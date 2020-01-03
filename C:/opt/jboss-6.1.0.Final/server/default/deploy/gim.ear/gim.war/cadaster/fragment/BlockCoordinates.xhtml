@@ -1,0 +1,63 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich">
+	<h:panelGrid columns="5" columnClasses="centerAligned;">
+		<h:outputText value=""/>
+		<h:outputText value="A" style="font-weight:bold;"/>
+		<h:outputText value="B" style="font-weight:bold;"/>
+		<h:outputText value="C" style="font-weight:bold;"/>
+		<h:outputText value="D" style="font-weight:bold;"/>
+	
+		<h:outputText value="X" style="font-weight:bold;"/>
+           <h:inputText id="xA"
+                     value="#{blockHome.instance.xA}"
+                      size="8">
+               <f:convertNumber pattern="#0.00"/>
+           </h:inputText>
+           <h:inputText id="xB"
+                     value="#{blockHome.instance.xB}"
+                      size="8">
+               <f:convertNumber pattern="#0.00"/>
+           </h:inputText>
+           <h:inputText id="xC"
+                     value="#{blockHome.instance.xC}"
+                      size="8">
+               <f:convertNumber pattern="#0.00"/>
+           </h:inputText>
+           <h:inputText id="xD"
+                     value="#{blockHome.instance.xD}"
+                      size="8">
+               <f:convertNumber pattern="#0.00"/>
+           </h:inputText>
+           
+           <h:outputText value="Y" style="font-weight:bold;"/>
+           <h:inputText id="yA"
+                     value="#{blockHome.instance.yA}"
+                      size="8">
+               <f:convertNumber pattern="#0.00"/>
+           </h:inputText>
+           <h:inputText id="yB"
+                     value="#{blockHome.instance.yB}"
+                      size="8">
+               <f:convertNumber pattern="#0.00"/>
+           </h:inputText>
+           <h:inputText id="yC"
+                     value="#{blockHome.instance.yC}"
+                      size="8">
+               <f:convertNumber pattern="#0.00"/>
+           </h:inputText>
+           <h:inputText id="yD"
+                     value="#{blockHome.instance.yD}"
+                      size="8">
+               <f:convertNumber pattern="#0.00"/>
+           </h:inputText>
+				
+	</h:panelGrid>
+	
+</ui:composition>

@@ -1,0 +1,591 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml" xmlns:g="http://gim.gob.ec/jsf">
+
+	<ui:define name="body">
+
+		<h:form id="report" styleClass="edit">
+
+			<ui:debug id="uiDebug" />
+			<rich:panel>
+
+				<f:facet name="header">
+            	#{messages['REVENUEREPORT']}
+            </f:facet>
+
+				<s:decorate id="startDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['report.startDate']}:</ui:define>
+					<rich:calendar value="#{workdayHome.startDate}" required="true"
+						enableManualInput="false"
+						datePattern="#{messages['common.datePattern']}">
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate id="endDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['report.endDate']}:</ui:define>
+					<rich:calendar value="#{workdayHome.endDate}" required="true"
+						enableManualInput="false"
+						datePattern="#{messages['common.datePattern']}">
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate id="statusField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['municipalBond.status']}</ui:define>
+					<h:selectOneMenu id="status"
+						value="#{workdayHome.municipalBondStatus}">
+						<s:selectItems value="#{validBondStatus}" var="status"
+							label="#{status}"
+							noSelectionLabel="#{messages['municipalBond.allStatus']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<g:entryChooser id="entryChooser" label="#{messages['entry']}"
+					criteria="#{workdayHome.criteriaEntry}"
+					entry="#{workdayHome.entry}" entryCode="#{workdayHome.entryCode}"
+					bean="#{workdayHome}" searchAction="searchEntry"
+					entriesList="#{workdayHome.entries}"
+					searchByCriteriaAction="searchEntryByCriteria"
+					clearSearchPanelAction="clearSearchEntryPanel"
+					entryChosenListenerName="entrySelectedListener" />
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+				<div class="actionButtons">
+
+					<a:commandButton id="generateReport"
+						reRender="showPanel,detailEmissionPanel,detailPanel2,detailCancelledEmissionPanel, entryCancelledList,detailReversedEmissionPanel, entryReversedList, entryFutureList, entryPrepaidList,entryFormalizeList"
+						value="#{messages['income.generateReport']}"
+						action="#{workdayHome.generateEmissionGlobalReport()}" />
+
+					<a:commandButton id="currentBalance"
+						reRender="showPanel,detailEmissionPanel,detailPanel2,detailCancelledEmissionPanel, entryCancelledList,detailReversedEmissionPanel, entryReversedList, entryFutureList, entryPrepaidList,entryFormalizeList"
+						value="#{messages['revenue.currentBalance']}"
+						action="#{workdayHome.generateCurrentBalanceReport()}" />
+
+				</div>
+
+			</rich:panel>
+
+			<rich:panel id="detailEmissionPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="1" columnClasses="headerTitle,">
+						<h:outputText value="#{messages['revenue.emittedValues']}" />
+						<h:outputText
+							value="#{messages['workday.emisionPart']}: #{workdayHome.instance.charge}"
+							rendered="#{workdayHome.instance.id != null}" />
+					</h:panelGrid>
+				</f:facet>
+
+
+
+				<a:outputPanel styleClass="results" id="entryCollectedList">
+					<h:outputText value="#{messages['common.returnedNoResults']}"
+						rendered="#{empty workdayHome.entryTotalCollecteds}" />
+
+					<rich:dataTable id="entryCollectedTable" var="_entryDetail"
+						value="#{workdayHome.entryTotalCollecteds}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty workdayHome.entryTotalCollecteds}">
+
+						<rich:column sortBy="#{_entryDetail.groupBy}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.groupBy}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.entry}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account.accountName']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.entry}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.value}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['revenue.currentYear']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.value}" size="12"
+								styleClass="right">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.previousYears}"
+							styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['revenue.previousYears']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.previousYears}" size="12"
+								styleClass="right">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.total}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['item.total']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.total}" size="12"
+								styleClass="right">
+							</h:outputText>
+						</rich:column>
+
+
+
+						<f:facet name="footer">
+							<rich:columnGroup columnClasses=",number">
+								<rich:column colspan="2">
+									<h:outputText value="#{messages['item.total']}:"
+										styleClass="labelBold" />
+								</rich:column>
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText value="#{workdayHome.emittedValue}">
+										<f:convertNumber pattern="$ ####.00" />
+									</h:outputText>
+								</rich:column>
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText value="#{workdayHome.previousYearsValue}">
+										<f:convertNumber pattern="$ ####.00" />
+									</h:outputText>
+								</rich:column>
+
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText value="#{workdayHome.sumTotalEmitted()}">
+										<f:convertNumber pattern="$ ####.00" />
+									</h:outputText>
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+
+					</rich:dataTable>
+				</a:outputPanel>
+			</rich:panel>
+
+
+			<a:outputPanel styleClass="results" id="entryFutureList">
+				<rich:panel id="detailFutureEmissionPanel">
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle,">
+							<h:outputText value="#{messages['revenue.futureValues']}" />
+						</h:panelGrid>
+					</f:facet>
+
+					<h:outputText value="#{messages['common.returnedNoResults']}"
+						rendered="#{empty workdayHome.entryTotalFuture}" />
+
+					<rich:dataTable id="entryFutureTable" var="_entryDetail"
+						value="#{workdayHome.entryTotalFuture}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty workdayHome.entryTotalFuture}">
+
+						<rich:column sortBy="#{_entryDetail.parametersFutureEmissionDTO.accountFutureCode}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.parametersFutureEmissionDTO.accountFutureCode}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.parametersFutureEmissionDTO.accountFutureName}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account.accountName']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.parametersFutureEmissionDTO.accountFutureName}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.value}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['revenue.emittedValues']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.value}" size="12"
+								styleClass="right">
+							</h:outputText>
+						</rich:column>
+
+
+						<f:facet name="footer">
+							<rich:columnGroup columnClasses=",number">
+								<rich:column colspan="2">
+									<h:outputText value="#{messages['item.total']}:"
+										styleClass="labelBold" />
+								</rich:column>
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText value="#{workdayHome.totalCashFuture()}">
+										<f:convertNumber pattern="$ ####.00" />
+									</h:outputText>
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+					</rich:dataTable>
+				</rich:panel>
+			</a:outputPanel>
+			
+			
+			<a:outputPanel styleClass="results" id="entryPrepaidList">
+				<rich:panel id="detailPrepaidEmissionPanel">
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle,">
+							<h:outputText value="#{messages['revenue.prepaidValues']}" />
+						</h:panelGrid>
+					</f:facet>
+
+					<h:outputText value="#{messages['common.returnedNoResults']}"
+						rendered="#{empty workdayHome.entryTotalPrepaid}" />
+
+					<rich:dataTable id="entryPrepaidTable" var="_entryDetail"
+						value="#{workdayHome.entryTotalPrepaid}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty workdayHome.entryTotalPrepaid}">
+
+						<rich:column sortBy="#{_entryDetail.parametersFutureEmissionDTO.accountFormalizeCode}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.parametersFutureEmissionDTO.accountFormalizeCode}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.parametersFutureEmissionDTO.accountFormalizeName}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account.accountName']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.parametersFutureEmissionDTO.accountFormalizeName}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.value}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['revenue.emittedValues']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.value}" size="12"
+								styleClass="right">
+							</h:outputText>
+						</rich:column>
+
+
+						<f:facet name="footer">
+							<rich:columnGroup columnClasses=",number">
+								<rich:column colspan="2">
+									<h:outputText value="#{messages['item.total']}:"
+										styleClass="labelBold" />
+								</rich:column>
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText value="#{workdayHome.totalCashPrepaid()}">
+										<f:convertNumber pattern="$ ####.00" />
+									</h:outputText>
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+					</rich:dataTable>
+				</rich:panel>
+			</a:outputPanel>
+			
+			
+			<a:outputPanel styleClass="results" id="entryFormalizeList">
+				<rich:panel id="detailFormalizeEmissionPanel">
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle,">
+							<h:outputText value="Formalizaciones" />
+						</h:panelGrid>
+					</f:facet>
+
+					<h:outputText value="#{messages['common.returnedNoResults']}"
+						rendered="#{empty workdayHome.entryTotalFormalize}" />
+
+					<rich:dataTable id="entryFormalizeTable" var="_entryDetail"
+						value="#{workdayHome.entryTotalFormalize}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty workdayHome.entryTotalFormalize}">
+
+						<rich:column sortBy="#{_entryDetail.parametersFutureEmissionDTO.accountFormalizeCode}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.parametersFutureEmissionDTO.accountFormalizeCode}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.parametersFutureEmissionDTO.accountFormalizeName}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account.accountName']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.parametersFutureEmissionDTO.accountFormalizeName}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.value}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['revenue.emittedValues']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.value}" size="12"
+								styleClass="right">
+							</h:outputText>
+						</rich:column>
+
+
+						<f:facet name="footer">
+							<rich:columnGroup columnClasses=",number">
+								<rich:column colspan="2">
+									<h:outputText value="#{messages['item.total']}:"
+										styleClass="labelBold" />
+								</rich:column>
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText value="#{workdayHome.totalCashFormalize()}">
+										<f:convertNumber pattern="$ ####.00" />
+									</h:outputText>
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+					</rich:dataTable>
+				</rich:panel>
+			</a:outputPanel>
+			
+			<a:outputPanel styleClass="results" id="entryCancelledList">
+				<rich:panel id="detailCancelledEmissionPanel"
+					rendered="#{not empty workdayHome.entryTotalCancelled}">
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle,">
+							<h:outputText value="#{messages['revenue.voidedValues']}" />
+						</h:panelGrid>
+					</f:facet>
+
+					<h:outputText value="#{messages['common.returnedNoResults']}"
+						rendered="#{empty workdayHome.entryTotalCancelled}" />
+
+					<rich:dataTable id="entryCancelledTable" var="_entryDetail"
+						value="#{workdayHome.entryTotalCancelled}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty workdayHome.entryTotalCancelled}">
+
+						<rich:column sortBy="#{_entryDetail.groupBy}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.groupBy}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.entry}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account.accountName']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.entry}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.value}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['revenue.emittedValues']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.value}" size="12"
+								styleClass="right">
+							</h:outputText>
+						</rich:column>
+
+
+						<f:facet name="footer">
+							<rich:columnGroup columnClasses=",number">
+								<rich:column colspan="2">
+									<h:outputText value="#{messages['item.total']}:"
+										styleClass="labelBold" />
+								</rich:column>
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText value="#{workdayHome.totalCashCancelled()}">
+										<f:convertNumber pattern="$ ####.00" />
+									</h:outputText>
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+					</rich:dataTable>
+				</rich:panel>
+			</a:outputPanel>
+
+			<a:outputPanel styleClass="results" id="entryReversedList">
+				<rich:panel id="detailReversedEmissionPanel"
+					rendered="#{not empty workdayHome.entryTotalReversed}">
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle,">
+							<h:outputText value="#{messages['revenue.reversedValues']}" />
+						</h:panelGrid>
+					</f:facet>
+
+					<h:outputText value="#{messages['common.returnedNoResults']}"
+						rendered="#{empty workdayHome.entryTotalReversed}" />
+
+					<rich:dataTable id="entryReversedTable" var="_entryDetail"
+						value="#{workdayHome.entryTotalReversed}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty workdayHome.entryTotalReversed}">
+
+						<rich:column sortBy="#{_entryDetail.groupBy}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.groupBy}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.entry}" styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="#{messages['account.accountName']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.entry}" size="12"
+								styleClass="left">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column sortBy="#{_entryDetail.value}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['revenue.emittedValues']}" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.value}" size="12"
+								styleClass="right">
+							</h:outputText>
+						</rich:column>
+
+
+						<f:facet name="footer">
+							<rich:columnGroup columnClasses=",number">
+								<rich:column colspan="2">
+									<h:outputText value="#{messages['item.total']}:"
+										styleClass="labelBold" />
+								</rich:column>
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText value="#{workdayHome.totalCashReversed()}">
+										<f:convertNumber pattern="$ ####.00" />
+									</h:outputText>
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+					</rich:dataTable>
+				</rich:panel>
+			</a:outputPanel>
+
+
+			<rich:panel id="showPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="#{messages['revenue.emittedResume']}" />
+					</h:panelGrid>
+				</f:facet>
+				<h:outputText value="#{messages['common.returnedNoResults']}"
+					rendered="#{empty workdayHome.accountsForSummary}" />
+
+				<rich:dataTable id="summary2" var="_var"
+					value="#{workdayHome.accountsForSummary}"
+					rowClasses="rvgRowOne,rvgRowTwo"
+					rendered="#{not empty workdayHome.accountsForSummary}">
+
+					<rich:column sortBy="#{_var.account.accountCode}" styleClass="left">
+						<f:facet name="header">
+							<h:outputText value="#{messages['account.accountCode']}" />
+						</f:facet>
+						<h:outputText value="#{_var.account.accountCode}" size="12"
+							styleClass="left">
+						</h:outputText>
+					</rich:column>
+
+					<rich:column sortBy="#{_var.account.accountName}" styleClass="left">
+						<f:facet name="header">
+							<h:outputText value="#{messages['account.accountName']}" />
+						</f:facet>
+						<h:outputText value="#{_var.account.accountName}" size="12"
+							styleClass="left">
+						</h:outputText>
+					</rich:column>
+
+					<rich:column sortBy="#{_var.total}" styleClass="right">
+						<f:facet name="header">
+							<h:outputText value="#{messages['item.total']}" />
+						</f:facet>
+						<h:outputText value="#{_var.total}" size="12" styleClass="left">
+						</h:outputText>
+					</rich:column>
+
+				</rich:dataTable>
+
+
+			</rich:panel>
+
+			<rich:panel id="detailPanel2">
+
+				<a:commandButton id="print"
+					rendered="#{not empty workdayHome.entryTotalCollecteds or not empty workdayHome.entryTotalFuture}"
+					onclick="Richfaces.showModalPanel('printConfirmPanel',{width:250, height:150})"
+					value="#{messages['common.printGlobalReport']}" propagation="join" />
+
+				<s:button view="/revenue/report/RevenueReportByEntry.xhtml"
+					action="#{workdayHome.selectEntries()}" id="printReportId"
+					rendered="#{not empty workdayHome.entryTotalCollecteds or not empty workdayHome.entryTotalFuture}"
+					propagation="join" value="#{messages['common.printReportByEntry']}" />
+
+				<s:button id="back" value="#{messages['common.back']}"
+					propagation="end" view="/home.xhtml" />
+			</rich:panel>
+
+		</h:form>
+
+		<rich:modalPanel id="printConfirmPanel" width="250" height="150">
+			<f:facet name="header">#{messages['common.printingConfirmation']}</f:facet>
+			<h:form id="printConfirm">
+				<h:panelGrid>
+					<h:panelGrid columns="2">
+						<h:graphicImage value="/img/alert.png" />
+						<h:outputText value="#{messages['common.printingWithDetails']}?"
+							style="font-size:large;" />
+					</h:panelGrid>
+					<h:panelGroup>
+						<div class="actionButtons">
+							<s:button style="width:50px" id="printingSuccessBtn"
+								view="/revenue/report/RevenueGlobalReport.xhtml"
+								action="#{workdayHome.printEmisionDetail(true)}"
+								value="#{messages['common.yes']}">
+								<a:support event="onclick" ajaxSingle="true"
+									oncomplete="Richfaces.hideModalPanel('printConfirmPanel');"
+									reRender="printConfirmPanel"></a:support>
+							</s:button>
+
+							<s:button style="width:50px" id="printingBtn"
+								view="/revenue/report/RevenueGlobalReport.xhtml"
+								action="#{workdayHome.printEmisionDetail(false)}"
+								value="#{messages['common.no']}">
+								<a:support event="onclick" ajaxSingle="true"
+									oncomplete="Richfaces.hideModalPanel('printConfirmPanel');"
+									reRender="printConfirmPanel"></a:support>
+							</s:button>
+
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+
+			</h:form>
+
+		</rich:modalPanel>
+
+	</ui:define>
+
+</ui:composition>

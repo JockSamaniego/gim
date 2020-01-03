@@ -1,0 +1,71 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml" >
+
+	<ui:define name="body">
+
+		<ui:include src="fragment/AppraisalItemEditPanel.xhtml" />
+
+		<h:form id="appraisalPeriodForm" styleClass="edit">
+
+			<h:outputText styleClass="formTitle"
+				value="#{appraisalPeriodHome.managed ? messages['common.edit'] : messages['common.add']} #{messages['appraisal.appraisalPeriodTitle']}" />
+
+			<ui:include src="fragment/AppraisalPeriodPanel.xhtml" />
+
+	    	<rich:tabPanel valueChangeListener="#{appraisalPeriodHome.changeTab}" switchType="client" selectedTab="tabStructure">
+	    		<a:support event="onclick" ajaxsingle="true" />
+	    		
+	    		<rich:tab id="tabStructure" label="#{messages['appraisal.Structure']}" switchType="client" >
+	     			<ui:include src="fragment/AppraisalTotalStructurePanel.xhtml"/>		
+	    		</rich:tab>
+	    		
+	    		<rich:tab id="tabWall" label="#{messages['appraisal.Wall']}" switchType="client" >
+	     			<ui:include src="fragment/AppraisalTotalWallPanel.xhtml"/>		
+	    		</rich:tab>
+	    		
+	    		<rich:tab id="tabRoof" label="#{messages['appraisal.Roof']}" switchType="client" >
+	     			<ui:include src="fragment/AppraisalTotalRoofPanel.xhtml"/>		
+	    		</rich:tab>
+	    		
+	    		<rich:tab id="tabExternal" label="#{messages['appraisal.ExternalFinishing']}" switchType="client" >
+	     			<ui:include src="fragment/AppraisalTotalExternalPanel.xhtml"/>
+	    		</rich:tab>
+	    		
+			</rich:tabPanel>
+
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.save']}"
+					action="#{appraisalPeriodHome.persist}"
+					view="/appraisal/AppraisalPeriodList.xhtml"
+					rendered="#{!appraisalPeriodHome.managed}" />
+
+				<h:commandButton id="update" value="#{messages['common.save']}"
+					action="#{appraisalPeriodHome.update}"
+					view="/appraisal/AppraisalPeriodList.xhtml"
+					rendered="#{appraisalPeriodHome.managed}" />
+
+				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
+					propagation="end" view="/appraisal/AppraisalPeriodList.xhtml"
+					rendered="#{appraisalPeriodHome.managed}" />
+
+				<s:button id="cancelAdd" value="#{messages['common.cancel']}"
+					propagation="end"
+					view="/appraisal/#{empty appraisalPeriodFrom ? 'AppraisalPeriodList' : appraisalPeriodFrom}.xhtml"
+					rendered="#{!appraisalPeriodHome.managed}" />
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

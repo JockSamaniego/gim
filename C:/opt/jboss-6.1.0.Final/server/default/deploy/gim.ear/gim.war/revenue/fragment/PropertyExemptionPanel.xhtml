@@ -1,0 +1,161 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core" xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="propertyExemptionPanel" width="800" height="550"
+		style="overflow:auto" moveable="false">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText
+					value="#{messages['exemption.propertyExemptionTitle']}"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkWMAP" />
+				<rich:componentControl for="propertyExemptionPanel"
+					attachTo="hidelinkWMAP" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="propertyExemptionForm" prependId="false">
+
+			<h:panelGrid width="100%">
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+			</h:panelGrid>
+
+			<rich:panel id="richPanelId">
+
+					<rich:dataTable id="propertiesForSelection" var="_property"
+						value="#{exemptionHome.propertiesForSelection}">
+
+						<rich:column>
+							<f:facet name="header">
+								Selección
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{_property.selected}">
+								<a:support event="onchange" ajaxSingle="true"
+									bypassUpdates="true" eventsQueue="gimQueue" 
+									action="#{exemptionHome.changeSelectedProperty(_property, _property.selected)}"
+									reRender="propertiesForSelection"/>
+							</h:selectBooleanCheckbox>
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">Código Territorial</f:facet>
+							<h:outputText value="#{_property.cadastralcode}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">Clave Catastral</f:facet>
+							<h:outputText value="#{_property.previouscadastralcode}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">Propietario</f:facet>
+							<h:outputText value="#{_property.resident_name}" />
+						</rich:column>
+
+						<rich:column
+							rendered="#{exemptionHome.instance.exemptionType.name == 'Por Tercera Edad'}">
+							<f:facet name="header">
+								Tipo Tratamiento
+							</f:facet>
+							<h:selectOneMenu id="cmbtreatmentType"
+								value="#{_property.treatmentType}" disabled="#{!_property.selected}">
+								<s:selectItems value="#{typesExcemptionSpecialTreatment}"
+									var="type" label="#{type.name}"
+									noSelectionLabel="TRATAMIENTO NORMAL" />
+								<s:convertEntity />
+								<a:support event="onchange" ajaxSingle="true"/>
+							</h:selectOneMenu>
+						</rich:column>
+
+						<rich:column
+							rendered="#{exemptionHome.instance.exemptionType.name == 'Por Rebaja Hipotecaria'}">
+							<f:facet name="header">
+								#{messages['exemption.amountCreditYear1']}
+							</f:facet>
+							<h:inputText id="txt1"
+								value="#{_property.amountCreditYear1}"
+								style="text-align: right" required="true" disabled="#{!_property.selected}"/>
+						</rich:column>
+
+						<rich:column
+							rendered="#{exemptionHome.instance.exemptionType.name == 'Por Rebaja Hipotecaria'}">
+							<f:facet name="header">
+								#{messages['exemption.amountCreditYear2']}
+							</f:facet>
+							<h:inputText
+								value="#{_property.amountCreditYear2}"
+								style="text-align: right" required="true" disabled="#{!_property.selected}"/>
+						</rich:column>
+
+						<rich:column
+							rendered="#{exemptionHome.instance.exemptionType.name == 'Por Rebaja Hipotecaria'}">
+							<f:facet name="header">
+								#{messages['exemption.amountCreditYear3']}
+							</f:facet>
+							<h:inputText
+								value="#{_property.amountCreditYear3}"
+								style="text-align: right" required="true" disabled="#{!_property.selected}"/>
+						</rich:column>
+
+						<!-- 
+							@tag descuentoEmprendimiento
+							@author macartuche
+							@date 2016-09-23T09:46
+						 -->
+						<rich:column
+							rendered="#{exemptionHome.instance.exemptionType.name=='Por emprendimiento'}">
+							<f:facet name="header">
+								Válido hasta:
+							</f:facet>
+							<rich:calendar id="untilDate" required="true"
+								value="#{_property.validUntil}"
+								datePattern="#{messages['common.datePattern']}" inputSize="10">
+								<f:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" disabled="#{!_property.selected}"/>
+							</rich:calendar>
+						</rich:column>
+						<!-- 
+							//fin @tag descuentoEmprendimiento
+						 -->
+
+					</rich:dataTable>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+			</rich:panel>
+
+			<a:outputPanel ajaxRendered="false" id="buttonsId">
+
+				<div class="actionButtons">
+
+					<a:commandButton id="ok" value="#{messages['common.save']}"
+						action="#{exemptionHome.addProperties()}"
+						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('propertyExemptionPanel')}.hide();"
+						reRender="propertiesPanel,panelBottom"/>
+
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.cancel']}"
+						oncomplete="Richfaces.hideModalPanel('propertyExemptionPanel');"
+						bypassUpdates="true" />
+
+				</div>
+			</a:outputPanel>
+		</h:form>
+	</rich:modalPanel>
+</ui:composition>

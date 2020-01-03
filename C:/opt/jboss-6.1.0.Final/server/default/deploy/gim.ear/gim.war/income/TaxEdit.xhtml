@@ -1,0 +1,177 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="tax" styleClass="edit">
+
+		<h:outputText styleClass="formTitle" value="#{taxHome.managed ? messages['common.edit'] : messages['common.edit']} #{messages['tax']}" />
+        <rich:panel>
+        	
+            <f:facet name="header">
+            	#{messages['tax.infoData']}
+            </f:facet>
+            
+            <s:decorate id="nameField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['tax.name']}:</ui:define>
+                <h:inputText id="name"
+                           size="50"
+                      maxlength="50"
+                          value="#{taxHome.instance.name}"
+                          required="true">
+                    <a:support event="onblur" reRender="nameField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="descriptionField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['tax.description']}:</ui:define>
+                <h:inputTextarea id="description"
+                               cols="80"
+                               rows="3"
+                              value="#{taxHome.instance.description}"/>
+            </s:decorate>
+            
+            <a:region>
+				<s:decorate id="accountSuggestionField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['account.accountCode']}</ui:define>
+					<h:inputText id="accountId" value="#{taxHome.accountCode}"
+							size="80" required="true">
+					</h:inputText>
+				<rich:suggestionbox id="suggestionId" for="accountId" width="600"
+					var="_account" nothingLabel="#{messages['common.chooseOption']}"
+					suggestionAction="#{taxHome.findAvailableAccounts}"
+					reRender="budgetCertificateField"
+					fetchValue="#{_account.accountCode}">
+					<a:support event="onselect" ajaxSingle="true"
+						reRender="accountSuggestionField, budgetCertificateField"
+						action="#{taxHome.beforeAutcomplete(_account)}"></a:support>
+						<a:support event="onobjectchange" ajaxSingle="true"
+							reRender="budgetCertificateField"
+							action="#{taxHome.beforeAutcomplete(_account)}"></a:support>
+						<h:column>
+							<h:outputText value="#{_account.accountCode} - #{_account.accountName}" />
+							</h:column>
+						</rich:suggestionbox>
+					</s:decorate>
+			</a:region>
+            
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                #{messages['common.requiredFields']}
+            </div>
+
+        </rich:panel>
+        
+        <rich:panel>
+        	<f:facet name="header">
+	    		<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText id="taxRateCount"
+	               		value="#{messages['taxRate']} (#{empty taxHome.taxRates ? 0 : taxHome.taxRates.size})"/>
+					    <s:div styleClass="actionButtons" rendered="#{empty from}">
+					    	<a:commandButton value="#{messages['common.add']} #{messages['taxRate']}"
+					    		action="#{taxHome.addTaxRate}"
+					    		reRender="taxRateCount, taxRateList" ajaxSingle="true"
+					    		immediate="true">
+					    		
+					    	</a:commandButton>
+					    </s:div>
+				</h:panelGrid>        
+	        </f:facet>
+	        
+	        <a:outputPanel styleClass="results" id="taxRateList">
+        	<h:outputText value="#{messages['taxRate.returnedNoResults']}"
+                       rendered="#{empty taxHome.taxRates}"/>
+            <h:messages errorClass="errors" globalOnly="true" />
+        
+        	<rich:dataTable id="taxRateTable"
+                	var="_taxRate"
+              		value="#{taxHome.taxRates}"
+              		rowClasses="rvgRowOne,rvgRowTwo"
+           			rendered="#{not empty taxHome.taxRates}">           		
+           		
+           		<rich:column sortBy="#{_taxRate.startDate}" styleClass="action">
+                    <f:facet name="header">
+                    	<h:outputText value="#{messages['taxRate.startDate']}"/>
+                    </f:facet>
+                    <rich:calendar value="#{_taxRate.startDate}" readonly="#{!taxHome.canEdit(_taxRate)}"
+                    	datePattern="#{messages['common.datePattern']}"
+                    	enableManualInput="true">
+                    </rich:calendar>
+                </rich:column>
+                <rich:column sortBy="#{_taxRate.endDate}" styleClass="action">
+                    <f:facet name="header">
+                    	<h:outputText value="#{messages['taxRate.endDate']}"/>
+                    </f:facet>
+                    <rich:calendar value="#{_taxRate.endDate}" readonly="#{!taxHome.canEdit(_taxRate) and !taxHome.isLastTaxRateManaged(_taxRate)}"
+                    	datePattern="#{messages['common.datePattern']}"
+                    	enableManualInput="true" ajaxSingle="true">
+                    </rich:calendar>
+                </rich:column>
+                <rich:column sortBy="#{_taxRate.rate}" styleClass="action">
+                    <f:facet name="header">
+                    	<h:outputText value="#{messages['taxRate.rate']}"/>
+                    </f:facet>
+                    <h:inputText value="#{_taxRate.rate}" disabled="#{!taxHome.canEdit(_taxRate)}"
+                    	required="true" size="5" maxlength="5">
+                    	<a:support event="onblur" ajaxSingle="true" />
+                    </h:inputText>
+ 				</rich:column>
+         
+                
+ 				<rich:column styleClass="action" rendered="false">
+                    <f:facet name="header">#{messages['common.action']}</f:facet>
+                    <a:commandButton 
+						action="#{taxHome.removeTaxRate(_taxRate)}"
+						id="removeTaxRate"
+						value="#{messages['common.remove']}"
+						immediate="true" reRender="taxRateList"
+						ajaxSingle="true">					
+					</a:commandButton>
+                </rich:column>
+ 				
+           </rich:dataTable>
+        
+        </a:outputPanel>
+        
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{taxHome.persist}"
+                       disabled="#{!taxHome.wired}"
+                       rendered="#{!taxHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{taxHome.update}"
+                       rendered="#{taxHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/income/TaxList.xhtml"
+                rendered="#{taxHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                    view="/income/#{empty taxFrom ? 'TaxList' : taxFrom}.xhtml"
+                rendered="#{!taxHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

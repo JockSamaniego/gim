@@ -1,0 +1,144 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+	<ui:define name="body">
+
+		<f:verbatim>
+			<script type="text/javascript">
+				function registerPayment(hasCompensationBonds) {
+					if (hasCompensationBonds) {
+						Richfaces.showModalPanel('paymentEdit_confirmDialog', {
+							width : 350,
+							height : 160
+						});
+					} else {
+						showFractionsPanel();
+					}
+				}
+
+				function showFractionsPanel() {
+					var confirmDialog = document
+							.getElementById('paymentEdit_confirmDialog');
+					if (confirmDialog) {
+						Richfaces.hideModalPanel('paymentEdit_confirmDialog');
+					}
+					Richfaces.showModalPanel('depositConfirmPanel', {
+						width : 800,
+						height : 540
+					});
+				}
+			</script>
+		</f:verbatim>
+		<h:form id="payment" styleClass="edit">
+			<a:queue></a:queue>
+
+			<rich:panel bodyClass="topAligned">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,"
+						cellpadding="0" cellspacing="0">
+						<h:outputText value="#{messages['reprint.voucher']}"
+							styleClass="formTitle" />
+						<s:button id="newPaymentBtn" action="cancel"
+							value="#{messages['reprint.new']}"
+							disabled="#{paymentHome.resident == null}" />
+					</h:panelGrid>
+				</f:facet>
+
+				<s:decorate id="dateField" template="../layout/edit.xhtml">
+					<ui:define name="label">Fecha:</ui:define>
+					<rich:calendar value="#{paymentHome.reprintDate}"
+						enableManualInput="false"
+						datePattern="#{messages['common.datePattern']}"
+						disabled="#{!paymentHome.secretaryIncome}">
+						<a:support event="onchanged" ajaxSingle="true"/>
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate id="userField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['user']}</ui:define>
+					<h:selectOneMenu id="user" value="#{paymentHome.person}">
+							<s:selectItems value="#{paymentHome.findCashiers()}"
+								var="_person" label="#{_person}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEntity />
+							<a:support event="onchange" ajaxSingle="true" />
+						</h:selectOneMenu>
+				</s:decorate>
+
+				
+				<h:panelGrid columns="2" width="100%"
+					columnClasses="topAligned, topAligned right">
+
+					<a:outputPanel id="paymentTotalPanel">
+
+						<g:residentChooser id="residentChooser"
+							disabled="#{paymentHome.resident != null}"
+							resident="#{paymentHome.resident}"
+							residentsList="#{paymentHome.residents}"
+							identificationNumber="#{paymentHome.identificationNumber}"
+							criteria="#{paymentHome.criteria}" bean="#{paymentHome}"
+							searchByCriteriaAction="searchByCriteria"
+							clearSearchPanelAction="clearSearchPanel"
+							searchAction="searchVoucher"
+							residentChosenListenerName="residentSelectedListener2"
+							reRender="municipalBondsPanel, totalsPanel, newPaymentBtn, messages" />
+					</a:outputPanel>
+
+
+					<a:outputPanel id="totalsPanel" ajaxRendered="true">
+						<h:panelGrid columnClasses="topAligned right" width="100%">
+							<!-- 							<h:outputText id="totalValueField" -->
+							<!-- 								value="#{paymentHome.instance.value}" size="10" -->
+							<!-- 								style="font-size:110px; font-weight:bold;" styleClass="right" -->
+							<!-- 								maxlength="12"> -->
+							<!-- 								<f:convertNumber -->
+							<!-- 									maxFractionDigits="#{messages['common.maxFractionDigits']}" -->
+							<!-- 									minFractionDigits="#{messages['common.minFractionDigits']}" /> -->
+							<!-- 							</h:outputText> -->
+							<h:panelGrid columns="2" style="float:right;">
+								<a:commandButton id="registerPaymentBtn"
+									action="#{paymentHome.rePrint}" ajaxSingle="true"
+									eventsQueue="gimEventsQueue"
+									value="#{messages['reprint.print']}" reRender="pdfPrinted"
+									oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.showModalPanel(\'pdfPrinted\');' : ''}"
+									disabled="#{paymentHome.printBtn}" />
+							</h:panelGrid>
+
+						</h:panelGrid>
+					</a:outputPanel>
+				</h:panelGrid>
+				<div style="clear: both" />
+			</rich:panel>
+
+			<a:outputPanel id="municipalBondsPanel" ajaxRendered="true">
+				<rich:tabPanel id="accountStatusPanel"
+					rendered="#{not empty paymentHome.items}" tabClass="tabTitle"
+					valueChangeListener="#{paymentHome.changeSelectedTab}"
+					switchType="ajax" selectedTab="municipalBondsTab">
+					<rich:tab id="municipalBondsTab" label="Cuentas pagadas"
+						ajaxSingle="true" reRender="totalsPanel, municipalBondsPanel">
+						<ui:include src="fragment/PrintPaymentsTable.xhtml" />
+					</rich:tab>
+				</rich:tabPanel>
+			</a:outputPanel>
+
+		</h:form>
+		<g:confirmDialog id="paymentEdit"
+			dialogTitle="#{messages['payment.thereAreDepositsInCompensation']}"
+			bean="#{paymentHome}"
+			message="#{messages['payment.confirmCompensation']}"
+			reRenderComponents="back" yesAction="clearFractions"
+			oncomplete="showFractionsPanel()" />
+		<ui:include src="fragment/CompensationAccountStatePanel.xhtml" />
+		<ui:include src="fragment/DepositConfirmPanel.xhtml" />
+		<ui:include src="PrintPDFPanel.xhtml" />
+	</ui:define>
+
+</ui:composition>
