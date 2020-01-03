@@ -2506,9 +2506,9 @@ public class PropertyHome extends EntityHome<Property> {
 
 	public void calculateUrbanAppraisalOnlyProperty(Property property) {
 		anioAppraisal = GregorianCalendar.getInstance().get(Calendar.YEAR);
-		System.out
+		/*System.out
 				.println(">>>>>>>>>>>>>>>>> anioAppraisal calculateUrbanAppraisalOnlyProperty: "
-						+ anioAppraisal);
+						+ anioAppraisal);*/
 		List<Property> properties = new ArrayList<Property>();
 		properties.add(property);
 		AppraisalService appraisalService = ServiceLocator.getInstance()
