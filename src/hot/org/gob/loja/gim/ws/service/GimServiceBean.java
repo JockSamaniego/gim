@@ -1,11 +1,13 @@
 package org.gob.loja.gim.ws.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +20,9 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.gob.gim.cadaster.facade.CadasterService;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.NativeQueryResultsMapper;
@@ -27,6 +32,7 @@ import org.gob.gim.common.exception.IdentificationNumberWrongException;
 import org.gob.gim.common.exception.InvalidIdentificationNumberException;
 import org.gob.gim.common.exception.InvalidIdentificationNumberFinishedException;
 import org.gob.gim.common.exception.NonUniqueIdentificationNumberException;
+import org.gob.gim.common.service.LogService;
 import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.common.service.UserService;
@@ -52,6 +58,9 @@ import org.gob.loja.gim.ws.exception.RealEstateNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNonUnique;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNotSaved;
+import org.jboss.seam.annotations.Logger;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.log.Log;
 import org.loxageek.common.ws.ReflectionUtil;
 
 import ec.gob.gim.cadaster.model.Street;
@@ -59,6 +68,7 @@ import ec.gob.gim.cadaster.model.TerritorialDivision;
 import ec.gob.gim.common.model.Address;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.LegalEntity;
+import ec.gob.gim.common.model.Logs;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.EmissionOrder;
@@ -69,10 +79,11 @@ import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.adjunct.ANTReference;
 import ec.gob.gim.security.model.User;
 
-@Stateless(name="GimService")
+@Stateless
 @Interceptors({SecurityInterceptor.class})
+@Name("GimService")
 public class GimServiceBean implements GimService{
-
+	
 	@PersistenceContext
     private EntityManager em;
 	
@@ -91,6 +102,9 @@ public class GimServiceBean implements GimService{
 	//@tag cuentaUnica
 	@EJB
 	UserService userService;
+	
+	@EJB
+	LogService logService;
 	
 	
 	@Override
@@ -532,6 +546,8 @@ public class GimServiceBean implements GimService{
 		EmisionResponse response = new EmisionResponse();
 		response.setStatus("ERROR");
 		
+		User user = findUser(name, password);
+		
 		if (countContraventionsOnAntReference(emisionDetail.getContraventionNumber()).intValue() <= 0) {
 
 			if (countContraventionsOnPhotoFine(emisionDetail.getContraventionNumber()).intValue() <= 0) {
@@ -543,15 +559,17 @@ public class GimServiceBean implements GimService{
 					 * control de la fecha 
 					 */
 					
+					
+					
 					if (emisionDetail.getCitationDate() == null || emisionDetail.getNotificationDate() == null) {
 						response.setMessage("Emisión fallida. Fecha de infracción o fecha de citación falante");
 						return response;
 					}
 					
-					if(!checkInfractionDate(emisionDetail.getNotificationDate())){
+					/*if(!checkInfractionDate(emisionDetail.getNotificationDate())){
 						response.setMessage("Emisión fallida. Fecha de infracción no es correcta con el contrato ML-PSM-2674-2019");
 						return response;
-					}
+					}*/
 					
 					Resident resident = residentService.find(identificationNumber);
 					if (resident == null){
@@ -575,7 +593,6 @@ public class GimServiceBean implements GimService{
 						return response;
 					}
 					
-					User user = findUser(name, password);
 					if (user == null){
 						response.setMessage("Emisión fallida. Usuario Inválido");
 						return response;
@@ -674,12 +691,8 @@ public class GimServiceBean implements GimService{
 				+ "\t=> fecha infraccion: " + emisionDetail.getCitationDate() +" "
 				+ "\t=> cuenta: " + accountCode +" "
 				+ "\t=> valor: " + emisionDetail.getTotal() +" "
-				+ "\t=> cotribuyente: " + identificationNumber;
-		
-		System.out.println(log_detail+"\t"+response.toString());
-		
+				+ "\t=> contribuyente: " + identificationNumber;
 		response.setDetail(log_detail);
-		
 		return response;
 	}
 	
