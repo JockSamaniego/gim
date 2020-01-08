@@ -21,7 +21,7 @@ import org.hibernate.envers.Audited;
  * @version 1.0
  * @created 04-Ago-2011 16:30:25
  */
-@Audited
+//@Audited
 @Entity
  @TableGenerator(
 	 name="BranchGenerator",

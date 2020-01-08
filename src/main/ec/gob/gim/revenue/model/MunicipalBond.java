@@ -1925,6 +1925,17 @@ public class MunicipalBond implements Serializable {
 		this.impugnment = impugnment;
 	}
 	
-	
+	//para controlar reimpresion por canje de pago por medio bancario
+	//Jock Samaniego
+	//07-01-2020
+	private Boolean documentIsRedeemed;
+
+	public Boolean getDocumentIsRedeemed() {
+		return documentIsRedeemed;
+	}
+
+	public void setDocumentIsRedeemed(Boolean documentIsRedeemed) {
+		this.documentIsRedeemed = documentIsRedeemed;
+	}
 
 }// end MunicipalBond

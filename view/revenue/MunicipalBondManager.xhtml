@@ -348,9 +348,12 @@
 
 						<a:region>
 							<a:commandButton id="printCanjeOriginalId"
-								rendered="#{_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel)}"
-								action="#{municipalBondManager.printOriginal(_municipalBond.id)}"
-								value="#{messages['Canje Documento']}" />
+								rendered="#{_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel) and (!_municipalBond.documentIsRedeemed || _municipalBond.documentIsRedeemed == null)}"
+								action="#{municipalBondManager.reprintedForRedeemed(_municipalBond)}"
+								value="#{messages['Canje Documento']}"/>
+								<h:outputText value="Documento Canjeado"
+								rendered="#{_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel) and _municipalBond.documentIsRedeemed}"
+								style='font-size: 10px; font-weight: bold; color: red' />
 						</a:region>
 
 						<!--  and municipalBondManager.hasRevenueCertificateRole -->
