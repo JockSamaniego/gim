@@ -1,5 +1,7 @@
 package org.loxageek.common.ws;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.jws.HandlerChain;
@@ -23,7 +25,7 @@ import org.gob.loja.gim.ws.exception.NotOpenTill;
 import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 import org.gob.loja.gim.ws.service.PaymentService;
-import org.mvel2.util.Make.String;
+//import org.mvel2.util.Make.String;
 
 /**
  * Define los servicios que permiten la consulta de valores adeudados y el
