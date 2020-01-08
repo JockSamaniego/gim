@@ -20,11 +20,11 @@ import javax.persistence.TemporalType;
  */
 
 @Entity
-@TableGenerator(name = "LogGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "Log", initialValue = 1, allocationSize = 1)
+@TableGenerator(name = "LogsGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "Logs", initialValue = 1, allocationSize = 1)
 public class Logs {
 
 	@Id
-	@GeneratedValue(generator = "LogGenerator", strategy = GenerationType.TABLE)
+	@GeneratedValue(generator = "LogsGenerator", strategy = GenerationType.TABLE)
 	private Long id;
 
 	@Temporal(TemporalType.TIMESTAMP)
