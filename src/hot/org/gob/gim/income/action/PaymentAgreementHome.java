@@ -30,6 +30,7 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
+import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -274,6 +275,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	            Person person = (Person) resident;
 	            personIsDead=person.getIsDead();
 	        } 
+			this.findResidentAlertsActive(resident);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -834,6 +836,27 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 
 	public void setMessageRemission(String messageRemission) {
 		this.messageRemission = messageRemission;
+	}
+	
+	//Para controlar la creacion de convenios a contribuyentes con alertas
+	//Jock Samaniego
+	//06-01-2020
+	private Boolean residentHasAlerts = Boolean.FALSE;
+	
+	public Boolean getResidentHasAlerts() {
+		return residentHasAlerts;
+	}
+
+	public void findResidentAlertsActive(Resident resident){
+		List<Alert> alerts = new ArrayList<Alert>();
+		Query query = getEntityManager().createNamedQuery("Alert.findPendingAlertsByResidentIdNum");
+		query.setParameter("residentIdNum", resident.getIdentificationNumber());
+		alerts = query.getResultList();
+		if(alerts.size() > 0){
+			residentHasAlerts = Boolean.TRUE;
+		}else{
+			residentHasAlerts = Boolean.FALSE;
+		}
 	}
 		
 }

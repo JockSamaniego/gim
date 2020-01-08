@@ -267,7 +267,13 @@
 									focus="receivedAmount" 
 									rendered="#{((!paymentHome.enableSubscription and !paymentHome.emissionFuture) || (paymentHome.paymentAgree)) and paymentHome.resident != null}"/>
 											
-							</h:panelGrid >																
+							</h:panelGrid >			
+							<h:outputText  rendered="#{paymentHome.hasUnfulfilledPaymentAgreement}"
+								id="alertPaymentAgreementMessage"	
+								value="#{messages['paymentAgreement.residentUnfulfilled']}"
+								style="font-size:24px; font-weight:bold; color: red"
+								styleClass="right">
+							</h:outputText>													
 						</h:panelGrid>
 					</a:outputPanel>
 				</h:panelGrid>

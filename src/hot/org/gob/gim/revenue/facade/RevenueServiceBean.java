@@ -216,6 +216,16 @@ public class RevenueServiceBean implements RevenueService {
 			municipalBond.setEmisionPeriod(fiscalPeriodService.findCurrent(now)
 					.get(0).getStartDate());
 			municipalBond.setEmitter((Person) user.getResident());
+			
+			//para separar multas del simert
+			//Jock Samaniego
+			//05-01-2020
+			String simertCodes = (String) systemParameterService.findParameter("SEPARATE_SIMERT_BONDS_CODES");
+			if (simertCodes.indexOf(municipalBond.getEntry().getCode())!= -1){
+				String newGroupingCode = "Simert " + municipalBond.getNumber();
+				municipalBond.setGroupingCode(newGroupingCode);
+			}
+			
 
 			if (municipalBond.getId() != null) {
 				municipalBondService.update(municipalBond);
@@ -241,7 +251,7 @@ public class RevenueServiceBean implements RevenueService {
 							user);
 				}
 			}
-
+			
 			return municipalBond;
 
 		} else {

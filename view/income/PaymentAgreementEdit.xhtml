@@ -28,9 +28,9 @@
 							searchByCriteriaAction="searchByCriteria"
 							clearSearchPanelAction="clearSearchPanel" searchAction="search"
 							residentChosenListenerName="residentSelectedListener"
-							reRender="municipalBondsPanel, totalValueField, registerPaymentBtn" />
+							reRender="municipalBondsPanel,valuePanel" />
 					</a:outputPanel>
-					<h:panelGrid columnClasses="topAligned right" width="100%" rendered="#{empty paymentAgreementHome.instance.id}">
+					<h:panelGrid columnClasses="topAligned right" width="100%" rendered="#{empty paymentAgreementHome.instance.id}" id="valuePanel">
 							<!-- ui:define name="label">#-{messages['paymentAgreement.total']}</ui:define-->
 							<h:outputText  rendered="#{empty paymentAgreementHome.instance.id}"
 								id="totalValueField"
@@ -51,7 +51,14 @@
 								oncomplete="Richfaces.showModalPanel('paymentAgreementDetailsPanel',{width:800, height:560})"
 								value="#{messages['paymentAgreement.register']}" 
 								rendered="#{paymentAgreementHome.isSaveButtonDisabled or empty paymentAgreementHome.instance.id}"
-								focus="receivedCashField"/>
+								focus="receivedCashField"
+								disabled="#{paymentAgreementHome.residentHasAlerts}"/>
+							<h:outputText  rendered="#{paymentAgreementHome.residentHasAlerts}"
+								id="alertMessage"	
+								value="#{messages['alert.residentHasPendingAlerts']}"
+								style="font-size:24px; font-weight:bold; color: red"
+								styleClass="right">
+							</h:outputText>
 					</h:panelGrid>
 					
 					<h:panelGrid columns="2" width="100%" columnClasses="right,topAligned,right,topAligned" rendered="#{not empty paymentAgreementHome.instance.id}">

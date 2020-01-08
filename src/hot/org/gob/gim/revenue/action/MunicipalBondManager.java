@@ -8,11 +8,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
+import org.gob.gim.commercial.action.LocalFeatureHome;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -1096,5 +1101,23 @@ public class MunicipalBondManager extends EntityController {
 		this.isVoid = isVoid;
 	}
 	
+	//para controlar re-impresion por canje de documento
+	//Jock Samaniego
+	//07-01-2020
+	
+	public String reprintedForRedeemed(MunicipalBond mb){
+		//Query query = getEntityManager().createNamedQuery("MunicipalBond.findById");
+		//query.setParameter("municipalBondId", mb_id);
+		//MunicipalBond mb = (MunicipalBond) query.getSingleResult();
+		if(mb.getDocumentIsRedeemed() == null || mb.getDocumentIsRedeemed()==Boolean.FALSE){			
+			//mb.setDocumentIsRedeemed(Boolean.TRUE);
+			MunicipalBond municipalBond = getEntityManager().getReference(MunicipalBond.class, mb.getId());
+			municipalBond.setDocumentIsRedeemed(Boolean.TRUE);
+			getEntityManager().merge(municipalBond);
+			getEntityManager().flush();
+			return this.printOriginal(mb.getId());
+		}
+		return null;
+	}
 	
 }

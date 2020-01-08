@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import org.gob.gim.income.facade.IncomeServiceBean;
 import org.gob.gim.income.view.MunicipalBondItem;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.loja.gim.ws.dto.FutureBond;
+import org.jboss.resteasy.util.DateUtil;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -66,6 +68,7 @@ import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.finances.model.DTO.MetadataBondDTO;
 import ec.gob.gim.income.model.CreditNote;
 import ec.gob.gim.income.model.Deposit;
+import ec.gob.gim.income.model.Dividend;
 import ec.gob.gim.income.model.EntryTotalCollected;
 import ec.gob.gim.income.model.Payment;
 import ec.gob.gim.income.model.PaymentAgreement;
@@ -288,7 +291,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			if (paymentRestrictionValue.equals(PaymentRestriction.ALL_EXPIRED.toString())) {
 				selectAllExpiredItems();
 			}
-
+			this.findUnfulfilledPaymentAgreement();
+			
 		} catch (Exception e) {
 			// e.printStackTrace();
 			this.setResident(null);
@@ -3442,4 +3446,67 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	public void setSriTypes(List<PaymentTypeSRI> sriTypes) {
 		this.sriTypes = sriTypes;
 	}		
+	
+	//Para controlar cuando un contribuyente tiene un convenio de pago incumplido
+	//Jock Samaniego
+	//06-01-2020
+	
+	private Boolean hasUnfulfilledPaymentAgreement = Boolean.FALSE;
+
+	public Boolean getHasUnfulfilledPaymentAgreement() {
+		return hasUnfulfilledPaymentAgreement;
+	}
+	
+	public void findUnfulfilledPaymentAgreement(){
+		this.hasUnfulfilledPaymentAgreement = Boolean.FALSE;
+		if (this.inPaymentAgreementBonds != null && this.inPaymentAgreementBonds.size() > 0){
+			Calendar c = Calendar.getInstance();
+			this.paymentAgreements = findPaymentAgreements(resident.getId());
+			if(this.paymentAgreements != null && this.paymentAgreements.size() > 0){
+				for (PaymentAgreement payAgree : this.paymentAgreements){
+					BigDecimal totalDividends = BigDecimal.ZERO;
+					BigDecimal totalSubscriber = BigDecimal.ZERO;
+					BigDecimal totalDividendsValue = BigDecimal.ZERO;
+					for (MunicipalBond mb : payAgree.getMunicipalBonds()){
+						if(mb.getDeposits()!= null && mb.getDeposits().size() > 0){
+							for(Deposit dp : mb.getDeposits()){
+								totalSubscriber = totalSubscriber.add(dp.getValue());
+							}
+						}
+					}				
+					if (payAgree.getDividends().size() > 0) {
+						for (Dividend dvd : payAgree.getDividends()){
+							c.setTime(dvd.getDate());
+							c.add(Calendar.DATE, 1);
+							Date dateDividend = c.getTime();
+							Date currentDate = new Date();
+							if(dateDividend.before(currentDate)){
+								totalDividends = totalDividends.add(dvd.getAmount());
+							}
+							totalDividendsValue = totalDividendsValue.add(dvd.getAmount());
+						}
+					}
+					if (totalSubscriber.compareTo(totalDividends) < 0){
+						this.hasUnfulfilledPaymentAgreement = Boolean.TRUE;
+						break;
+					}else{
+						if(totalSubscriber.compareTo(totalDividendsValue) >= 0){
+							BigDecimal balanceForPay = BigDecimal.ZERO;
+							this.setPaymentAgreement(payAgree);
+							this.calculateTotals();
+							for(MunicipalBond bond: this.getMunicipalBonds()) {
+								balanceForPay = balanceForPay.add(bond.getPaidTotal());
+							}
+							if (balanceForPay.compareTo(BigDecimal.ZERO) > 0) {
+								this.hasUnfulfilledPaymentAgreement = Boolean.TRUE;
+								break;
+							}
+					    }	
+						//control del pago total del convenio
+					}
+				}
+			}	
+		}
+		
+	}
 }
