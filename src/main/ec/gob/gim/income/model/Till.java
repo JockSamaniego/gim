@@ -25,7 +25,7 @@ import ec.gob.gim.common.model.Person;
  * @version 1.0
  * @created 04-Ago-2011 16:30:48
  */
-@Audited
+//@Audited
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"branch_id", "number"})) 
 @TableGenerator(

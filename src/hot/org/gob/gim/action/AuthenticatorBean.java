@@ -79,7 +79,8 @@ public class AuthenticatorBean implements Authenticator {
 		query.setParameter("password", hashPassword);
 		User user = null;
 		try {
-			user = (User) query.getSingleResult();
+			//List<User> list = query.getResultList();
+			user = (User) query.getSingleResult();			
 		} catch (Exception e) {
 			// e.printStackTrace();
 			facesMessages
