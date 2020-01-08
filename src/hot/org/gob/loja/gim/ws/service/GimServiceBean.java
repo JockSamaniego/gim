@@ -559,8 +559,6 @@ public class GimServiceBean implements GimService{
 					 * control de la fecha 
 					 */
 					
-					
-					
 					if (emisionDetail.getCitationDate() == null || emisionDetail.getNotificationDate() == null) {
 						response.setMessage("Emisión fallida. Fecha de infracción o fecha de citación falante");
 						return response;

@@ -195,6 +195,9 @@
         </copy>
         <copy tofile="${jar.dir}/import.sql"
             file="${basedir}/resources/import-${profile}.sql"/>
+    	<copy todir="${jar.dir}/org/loxageek/common/ws" 
+	          file="${basedir}/resources/WEB-INF/handler-chain.xml">
+	    </copy>
     </target>
 
     <target name="war" depends="compile"
