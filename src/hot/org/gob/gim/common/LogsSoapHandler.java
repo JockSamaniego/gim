@@ -35,7 +35,7 @@ public class LogsSoapHandler implements SOAPHandler<SOAPMessageContext> {
 
 	@Override
 	public boolean handleMessage(SOAPMessageContext context) {
-		System.out.println("***handleMessage***");
+		//System.out.println("***handleMessage***");
 
 		logSoapMessage(context);
 
@@ -44,14 +44,24 @@ public class LogsSoapHandler implements SOAPHandler<SOAPMessageContext> {
 
 	@Override
 	public boolean handleFault(SOAPMessageContext context) {
-		System.out.println("***handleFault***");
+		//System.out.println("***handleFault***");
 		logSoapMessage(context);
 		return true;
 	}
 
 	@Override
 	public void close(MessageContext context) {
-		System.out.println("_______________close_____________ ");
+		HttpServletRequest sr = (HttpServletRequest) context
+				.get(MessageContext.SERVLET_REQUEST);
+
+		if (sr != null && sr instanceof HttpServletRequest) {
+			final HttpServletRequest hsr = (HttpServletRequest) sr;
+			HttpSession session = hsr.getSession(false);
+			if (session != null) {
+				session.invalidate();
+				session.setMaxInactiveInterval(1);
+			}
+		}
 	}
 
 	@Override

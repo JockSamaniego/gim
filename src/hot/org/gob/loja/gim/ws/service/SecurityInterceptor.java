@@ -23,7 +23,7 @@ public class SecurityInterceptor {
 	@SuppressWarnings("unchecked")
 	@AroundInvoke
 	public Object verifyAccess(InvocationContext invocationContext) throws Exception{
-		System.out.println("Entering method:  " + invocationContext.getMethod().getName());
+		//System.out.println("Entering method:  " + invocationContext.getMethod().getName());
 		Object[] parameters = invocationContext.getParameters();
 		
 		String userName;
@@ -38,7 +38,7 @@ public class SecurityInterceptor {
 			pwd = (String)parameters[1];
 		}
 
-		System.out.println("User verifyAccess: " + userName);
+		//System.out.println("User verifyAccess: " + userName);
 		String hashPassword = hash(pwd);
 		Query query = entityManager.createNamedQuery("User.findByUsernameAndPassword");
 		query.setParameter("name", userName);

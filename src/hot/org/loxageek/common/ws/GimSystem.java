@@ -75,7 +75,6 @@ public class GimSystem {
 		System.out.println("====> FINDING TAXPAYER FOR: "
 				+ request.getIdentificationNumber());
 		Taxpayer taxpayer = gimService.findTaxpayer(request);
-		InvalidateSession();
 		return taxpayer;
 	}
 
@@ -130,7 +129,6 @@ public class GimSystem {
 		System.out.println("SAVE TAXPAYER FOR: "
 				+ taxpayer.getIdentificationNumber());
 		Boolean ok = gimService.saveTaxpayer(request, taxpayer);
-		InvalidateSession();
 		return ok;
 	}
 
@@ -160,7 +158,6 @@ public class GimSystem {
 		System.out.println("SAVE TAXPAYER FOR: "
 				+ map.get("identificationNumber"));
 		Boolean ok = gimService.saveTaxpayer(name, password, map);
-		InvalidateSession();
 		return ok;
 	}
 
@@ -250,7 +247,6 @@ public class GimSystem {
 		
 		EmisionResponse response = gimService.generateEmissionOrder(name,
 				password, identificationNumber, accountCode, emisionDetail);
-		InvalidateSession();
 		return response;
 	}
 	
@@ -284,7 +280,6 @@ public class GimSystem {
 			AccountIsBlocked {
 		StatementReport sr = gimService.buildReport(request, startDate,
 				endDate, reportType, entryId);
-		InvalidateSession();
 		return sr;
 	}
 
@@ -293,7 +288,6 @@ public class GimSystem {
 			String password) throws InvalidUser, AccountIsNotActive,
 			AccountIsBlocked, UserNotSaved {
 		UserResponse data = gimService.saveUser(request, username, password);
-		InvalidateSession();
 		return data;
 	}
 
@@ -302,7 +296,6 @@ public class GimSystem {
 			String password) throws InvalidUser, AccountIsNotActive,
 			AccountIsBlocked, UserNotSaved {
 		UserResponse data = gimService.login(username, password);
-		InvalidateSession();
 		return data;
 	}
 
@@ -318,29 +311,7 @@ public class GimSystem {
 
 	public List<RealEstate> findProperties(ServiceRequest request) {
 		List<RealEstate> properties = gimService.findProperties(request);
-		InvalidateSession();
 		return properties;
-	}
-
-	/**
-	 * 2016-01-30 Se incrementa este metodo para invalidar cada peticion
-	 * 
-	 * @author rfarmijosm
-	 */
-	private void InvalidateSession() {
-		final MessageContext mc = this.wsContext.getMessageContext();
-		HttpServletRequest sr = (HttpServletRequest) mc
-				.get(MessageContext.SERVLET_REQUEST);
-
-		if (sr != null && sr instanceof HttpServletRequest) {
-			final HttpServletRequest hsr = (HttpServletRequest) sr;
-			HttpSession session = hsr.getSession(false);
-			if (session != null) {
-				System.out.println("Invalidate Session Active GimSystem");
-				session.invalidate();
-				session.setMaxInactiveInterval(1);
-			}
-		}
 	}
 
 	@WebMethod

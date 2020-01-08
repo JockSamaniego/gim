@@ -424,7 +424,7 @@ public class UserSession extends EntityController{
 				
 				if(SessionRecordType.TIMEOUT_LOGOUT.equals(userSession.getLogoutType())){
 					//System.out.println("IS TIMEOUT LOGOUT");
-					logger.info("IS TIMEOUT LOGOUT>>>>> ", userSession.getUser().getName());
+					//logger.info("IS TIMEOUT LOGOUT>>>>> ", userSession.getUser().getName());
 					userSession.logout(SessionRecordType.TIMEOUT_LOGOUT);
 					//userSession.setLogoutType(SessionRecordType.TIMEOUT_LOGOUT);
 					//((UserSession)this).postLogout();
