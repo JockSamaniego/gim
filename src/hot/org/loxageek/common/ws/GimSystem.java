@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.gob.gim.ws.service.EmisionResponse;
 import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
 import org.gob.loja.gim.ws.dto.RealEstate;
@@ -35,136 +37,158 @@ import org.gob.loja.gim.ws.exception.UserNotSaved;
 import org.gob.loja.gim.ws.service.GimService;
 
 /**
- * Define los servicios que permiten la consulta y registro de los contribuyentes en el sistema GIM 
+ * Define los servicios que permiten la consulta y registro de los
+ * contribuyentes en el sistema GIM
  * 
- * @author WilmanChamba 
- * wilman at loxageek dot com
+ * @author WilmanChamba wilman at loxageek dot com
  * 
  */
 
 @WebService
+@HandlerChain(file="handler-chain.xml")
 public class GimSystem {
-	
+
 	@EJB
 	private GimService gimService;
-	
+
 	@Resource
 	WebServiceContext wsContext;
-	
+
 	/**
 	 * Permite consultar los contribuyentes con el numero de identificacion
-	 * identificationNumber a la que se le ha entregado un username y un password
-	 * que se incluyen en el ServiceRequest
+	 * identificationNumber a la que se le ha entregado un username y un
+	 * password que se incluyen en el ServiceRequest
 	 * 
-	 * @param request Detalle del peticionario del servicio
-	 * @return contribuyente solicitado en el request 
+	 * @param request
+	 *            Detalle del peticionario del servicio
+	 * @return contribuyente solicitado en el request
 	 * @throws TaxpayerNotFound
 	 * @throws InvalidUser
 	 * @throws AccountIsNotActive
 	 * @throws AccountIsBlocked
-	 * @throws TaxpayerNonUnique 
+	 * @throws TaxpayerNonUnique
 	 */
 	@WebMethod
-	public Taxpayer findTaxpayer(ServiceRequest request) throws TaxpayerNotFound, InvalidUser, AccountIsNotActive, AccountIsBlocked, TaxpayerNonUnique{
-		System.out.println("====> FINDING TAXPAYER FOR: "+request.getIdentificationNumber());
+	public Taxpayer findTaxpayer(ServiceRequest request)
+			throws TaxpayerNotFound, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked, TaxpayerNonUnique {
+		System.out.println("====> FINDING TAXPAYER FOR: "
+				+ request.getIdentificationNumber());
 		Taxpayer taxpayer = gimService.findTaxpayer(request);
-		InvalidateSession();
 		return taxpayer;
 	}
-	
+
 	/**
 	 * Permite consultar los contribuyentes con el numero de identificacion
-	 * identificationNumber a la que se le ha entregado un username y un password
+	 * identificationNumber a la que se le ha entregado un username y un
+	 * password
 	 * 
-	 * @param name nombre de usuario
+	 * @param name
+	 *            nombre de usuario
 	 * @param password
-	 * @param identificationNumber del contribuyente
-	 * @return Map<String, Object> Key=nameAtributos, Object, el valor de los atributos; 
+	 * @param identificationNumber
+	 *            del contribuyente
+	 * @return Map<String, Object> Key=nameAtributos, Object, el valor de los
+	 *         atributos;
 	 * @throws TaxpayerNotFound
 	 * @throws InvalidUser
 	 * @throws AccountIsNotActive
 	 * @throws AccountIsBlocked
-	 * @throws TaxpayerNonUnique 
+	 * @throws TaxpayerNonUnique
 	 */
 	@WebMethod
 	@XmlJavaTypeAdapter(MapAdapter.class)
-	public Map<String, Object> findTaxpayerAsMap(String name, String password, String identificationNumber) 
-		throws TaxpayerNotFound, InvalidUser, AccountIsNotActive, AccountIsBlocked, TaxpayerNonUnique{
-		System.out.println("====> FINDING TAXPAYER FOR: "+identificationNumber);
+	public Map<String, Object> findTaxpayerAsMap(String name, String password,
+			String identificationNumber) throws TaxpayerNotFound, InvalidUser,
+			AccountIsNotActive, AccountIsBlocked, TaxpayerNonUnique {
+		System.out.println("====> FINDING TAXPAYER FOR: "
+				+ identificationNumber);
 		return gimService.findTaxpayer(name, password, identificationNumber);
 
 	}
-		
+
 	/**
-	 * Permite registrar nuevo o actualizar contribuyente 
-	 * desde la plataforma ppless a la que se le ha entregado un username y un password
-	 * que se incluyen en el ServiceRequest
+	 * Permite registrar nuevo o actualizar contribuyente desde la plataforma
+	 * ppless a la que se le ha entregado un username y un password que se
+	 * incluyen en el ServiceRequest
 	 * 
-	 * @param request Detalle del peticionario del servicio
-	 * @param taxpayer el contribuyente a registrarlo en el GIM
-	 * @return contribuyente solicitado en el request 
+	 * @param request
+	 *            Detalle del peticionario del servicio
+	 * @param taxpayer
+	 *            el contribuyente a registrarlo en el GIM
+	 * @return contribuyente solicitado en el request
 	 * @throws InvalidUser
 	 * @throws AccountIsNotActive
 	 * @throws AccountIsBlocked
-	 * @throws TaxpayerNotSaved 
+	 * @throws TaxpayerNotSaved
 	 */
 	@WebMethod
-	public Boolean saveTaxpayer(ServiceRequest request, Taxpayer taxpayer) 
-		throws InvalidUser, AccountIsNotActive, AccountIsBlocked, TaxpayerNotSaved{
-		System.out.println("SAVE TAXPAYER FOR: "+taxpayer.getIdentificationNumber());
+	public Boolean saveTaxpayer(ServiceRequest request, Taxpayer taxpayer)
+			throws InvalidUser, AccountIsNotActive, AccountIsBlocked,
+			TaxpayerNotSaved {
+		System.out.println("SAVE TAXPAYER FOR: "
+				+ taxpayer.getIdentificationNumber());
 		Boolean ok = gimService.saveTaxpayer(request, taxpayer);
-		InvalidateSession();
 		return ok;
 	}
-	
+
 	/**
-	 * Permite registrar un nuevo contribuyente o actualizarlo desde un Map 
-	 * a través de la plataforma ppless a la que se le ha entregado un username y un password
-	 * que se incluyen en el ServiceRequest
+	 * Permite registrar un nuevo contribuyente o actualizarlo desde un Map a
+	 * través de la plataforma ppless a la que se le ha entregado un username y
+	 * un password que se incluyen en el ServiceRequest
 	 * 
-	 * @param name nombre de usuario
-	 * @param password clave de usuario
-	 * @param Map conjunto de key (nombres de los atributos de un taxPayer) value, los valores a fijar
-	 * @return contribuyente solicitado en el request 
+	 * @param name
+	 *            nombre de usuario
+	 * @param password
+	 *            clave de usuario
+	 * @param Map
+	 *            conjunto de key (nombres de los atributos de un taxPayer)
+	 *            value, los valores a fijar
+	 * @return contribuyente solicitado en el request
 	 * @throws InvalidUser
 	 * @throws AccountIsNotActive
 	 * @throws AccountIsBlocked
-	 * @throws TaxpayerNotSaved 
+	 * @throws TaxpayerNotSaved
 	 */
 	@WebMethod
-	public Boolean saveTaxpayerFromMap(String name, String password, 
-			@XmlJavaTypeAdapter(MapAdapter.class) Map<String, Object> map) 
-		throws InvalidUser, AccountIsNotActive, AccountIsBlocked, TaxpayerNotSaved{
-		System.out.println("SAVE TAXPAYER FOR: "+ map.get("identificationNumber"));
+	public Boolean saveTaxpayerFromMap(String name, String password,
+			@XmlJavaTypeAdapter(MapAdapter.class) Map<String, Object> map)
+			throws InvalidUser, AccountIsNotActive, AccountIsBlocked,
+			TaxpayerNotSaved {
+		System.out.println("SAVE TAXPAYER FOR: "
+				+ map.get("identificationNumber"));
 		Boolean ok = gimService.saveTaxpayer(name, password, map);
-		InvalidateSession();
 		return ok;
 	}
-	
-	
+
 	/**
-	 * Permite consultar el predio con el codigo Catastral al usuario 
-	 * que se le ha entregado un username y un password
+	 * Permite consultar el predio con el codigo Catastral al usuario que se le
+	 * ha entregado un username y un password
 	 * 
-	 * @param name nombre de usuario
+	 * @param name
+	 *            nombre de usuario
 	 * @param password
-	 * @param cadastralCode codigo Catastral del predio
-	 * @return Map<String, Object> Key=nameAtributos, Object, el valor de los atributos; 
-	 * @throws RealEstateNotFound 
+	 * @param cadastralCode
+	 *            codigo Catastral del predio
+	 * @return Map<String, Object> Key=nameAtributos, Object, el valor de los
+	 *         atributos;
+	 * @throws RealEstateNotFound
 	 * @throws TaxpayerNotFound
 	 * @throws InvalidUser
 	 * @throws AccountIsNotActive
 	 * @throws AccountIsBlocked
-	 * @throws TaxpayerNonUnique 
+	 * @throws TaxpayerNonUnique
 	 */
 	@WebMethod
 	@XmlJavaTypeAdapter(MapAdapter.class)
-	public Map<String, Object> findRealEstateAsMap(String name, String password, String cadastralCode) 
-			throws RealEstateNotFound, TaxpayerNotFound, InvalidUser, AccountIsNotActive, AccountIsBlocked, TaxpayerNonUnique{ 
-		System.out.println("====> FINDING REALESTATE FOR: "+cadastralCode);
+	public Map<String, Object> findRealEstateAsMap(String name,
+			String password, String cadastralCode) throws RealEstateNotFound,
+			TaxpayerNotFound, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked, TaxpayerNonUnique {
+		System.out.println("====> FINDING REALESTATE FOR: " + cadastralCode);
 		return gimService.findRealEstate(name, password, cadastralCode);
 	}
-	
+
 	/**
 	 * 
 	 * @param name
@@ -183,16 +207,20 @@ public class GimSystem {
 	 * @throws AccountIsBlocked
 	 */
 	@WebMethod
-	public Boolean generateEmissionOrder(String name, String password, String identificationNumber, 
-			String accountCode, String pplessuser) throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound, 
-			EmissionOrderNotGenerate, EmissionOrderNotSave, InvalidUser, AccountIsNotActive, AccountIsBlocked{
-		System.out.println("====> GENERATE EmissionOrder FOR: "+accountCode);
-		return gimService.generateEmissionOrder(name, password, identificationNumber, accountCode, pplessuser);
+	public Boolean generateEmissionOrder(String name, String password,
+			String identificationNumber, String accountCode, String pplessuser)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		System.out.println("====> GENERATE EmissionOrder FOR: " + accountCode);
+		return gimService.generateEmissionOrder(name, password,
+				identificationNumber, accountCode, pplessuser);
 	}
-	
+
 	/**
-	 * @author rfarmijosm
-	 * Permite al usuario emitir multas en este caso solo es para fotomultas
+	 * @author rfarmijosm Permite al usuario emitir multas en este caso solo es
+	 *         para fotomultas
 	 * @param name
 	 * @param password
 	 * @param identificationNumber
@@ -210,19 +238,23 @@ public class GimSystem {
 	 * @throws AccountIsBlocked
 	 */
 	@WebMethod
-	public String generateEmissionOrderANT(String name, String password, String identificationNumber, 
-			String accountCode, EmisionDetail emisionDetail) throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound, 
-			EmissionOrderNotGenerate, EmissionOrderNotSave, InvalidUser, AccountIsNotActive, AccountIsBlocked{
-		System.out.println("====> GENERATE EmissionOrder FOR: "+accountCode);
-		String band = gimService.generateEmissionOrder(name, password, identificationNumber, accountCode, emisionDetail);
-		InvalidateSession();
-		return band;
+	public EmisionResponse generateEmissionOrderANT(String name,
+			String password, String identificationNumber, String accountCode,
+			EmisionDetail emisionDetail) throws TaxpayerNotFound,
+			TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound,
+			EmissionOrderNotGenerate, EmissionOrderNotSave, InvalidUser,
+			AccountIsNotActive, AccountIsBlocked {
+		
+		EmisionResponse response = gimService.generateEmissionOrder(name,
+				password, identificationNumber, accountCode, emisionDetail);
+		return response;
 	}
 	
 	/**
 	 * 2016-01-30
-	 * @author rfarmijosm
-	 * Metodo que facilita consultar al emisor la obligaiones por estado y fecha
+	 * 
+	 * @author rfarmijosm Metodo que facilita consultar al emisor la obligaiones
+	 *         por estado y fecha
 	 * @param request
 	 * @param startDate
 	 * @param endDate
@@ -240,77 +272,64 @@ public class GimSystem {
 	 * @throws AccountIsBlocked
 	 */
 	@WebMethod
-	public StatementReport buildReport(ServiceRequest request, Date startDate, Date endDate, String reportType, Long entryId) 
-			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound, 
-			EmissionOrderNotGenerate, EmissionOrderNotSave, InvalidUser, AccountIsNotActive, AccountIsBlocked{
-		StatementReport sr = gimService.buildReport(request, startDate, endDate, reportType, entryId);
-		InvalidateSession();
-		return sr; 
+	public StatementReport buildReport(ServiceRequest request, Date startDate,
+			Date endDate, String reportType, Long entryId)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		StatementReport sr = gimService.buildReport(request, startDate,
+				endDate, reportType, entryId);
+		return sr;
 	}
-	
+
 	@WebMethod
-	public UserResponse createUser(ServiceRequest request, String username, String password) 
-	throws InvalidUser, AccountIsNotActive, AccountIsBlocked, UserNotSaved{
-		UserResponse data = gimService.saveUser(request,username, password);
-		InvalidateSession();
-		return data; 
+	public UserResponse createUser(ServiceRequest request, String username,
+			String password) throws InvalidUser, AccountIsNotActive,
+			AccountIsBlocked, UserNotSaved {
+		UserResponse data = gimService.saveUser(request, username, password);
+		return data;
 	}
-	
+
 	@WebMethod
-	public UserResponse login(ServiceRequest request, String username, String password) 
-	throws InvalidUser, AccountIsNotActive, AccountIsBlocked, UserNotSaved{
+	public UserResponse login(ServiceRequest request, String username,
+			String password) throws InvalidUser, AccountIsNotActive,
+			AccountIsBlocked, UserNotSaved {
 		UserResponse data = gimService.login(username, password);
-		InvalidateSession();
-		return data; 
+		return data;
 	}
-	
-	
-//	@WebMethod
-//	public Boolean saveTaxpayer(ServiceRequest request, Taxpayer taxpayer) 
-//		throws InvalidUser, AccountIsNotActive, AccountIsBlocked, TaxpayerNotSaved{
-//		System.out.println("SAVE TAXPAYER FOR: "+taxpayer.getIdentificationNumber());
-//		Boolean ok = gimService.saveTaxpayer(request, taxpayer);
-//		InvalidateSession();
-//		return ok;
-//	}
-	
+
+	// @WebMethod
+	// public Boolean saveTaxpayer(ServiceRequest request, Taxpayer taxpayer)
+	// throws InvalidUser, AccountIsNotActive, AccountIsBlocked,
+	// TaxpayerNotSaved{
+	// System.out.println("SAVE TAXPAYER FOR: "+taxpayer.getIdentificationNumber());
+	// Boolean ok = gimService.saveTaxpayer(request, taxpayer);
+	// InvalidateSession();
+	// return ok;
+	// }
+
 	public List<RealEstate> findProperties(ServiceRequest request) {
 		List<RealEstate> properties = gimService.findProperties(request);
-		InvalidateSession();
 		return properties;
 	}
 
-	/**
-	 * 2016-01-30
-	 * Se incrementa este metodo para invalidar cada peticion
-	 * @author rfarmijosm 
-	 */
-	private void InvalidateSession(){
-		final MessageContext mc = this.wsContext.getMessageContext();
-	    HttpServletRequest sr = (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);
+	@WebMethod
+	public Boolean generateEmissionOrderQuantity(String name, String password,
+			String identificationNumber, String accountCode, String pplessuser,
+			Integer quantity) throws TaxpayerNotFound, TaxpayerNonUnique,
+			EntryNotFound, FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		System.out.println("====> GENERATE EmissionOrder FOR: " + accountCode);
+		return gimService.generateEmissionOrder(name, password,
+				identificationNumber, accountCode, pplessuser, quantity);
+	}
 
-	    if (sr != null && sr instanceof HttpServletRequest) {
-	        final HttpServletRequest hsr = (HttpServletRequest) sr;
-	        HttpSession session = hsr.getSession(false);
-	        if (session != null){
-	        	System.out.println("Invalidate Session Active GimSystem");
-	        	session.invalidate();
-	        	session.setMaxInactiveInterval(1);
-	        }
-	    }
-	}
-	
 	@WebMethod
-	public Boolean generateEmissionOrderQuantity(String name, String password, String identificationNumber, 
-			String accountCode, String pplessuser, Integer quantity) throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound, 
-			EmissionOrderNotGenerate, EmissionOrderNotSave, InvalidUser, AccountIsNotActive, AccountIsBlocked{
-		System.out.println("====> GENERATE EmissionOrder FOR: "+accountCode);
-		return gimService.generateEmissionOrder(name, password, identificationNumber, accountCode, pplessuser, quantity);
-	}
-	
-	
-	@WebMethod
-	public Boolean checkForDebts(ServiceRequest request) throws TaxpayerNotFound, InvalidUser, AccountIsNotActive, AccountIsBlocked, TaxpayerNonUnique{
+	public Boolean checkForDebts(ServiceRequest request)
+			throws TaxpayerNotFound, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked, TaxpayerNonUnique {
 		return gimService.searchDueDebts(request);
 	}
 

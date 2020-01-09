@@ -13,6 +13,6 @@
 		<user-name>rolgimloja</user-name>
       	<password>servergim:AJOL</password>
 <!-- 		<user-name>postgres</user-name> -->
-<!--       	<password>postgres</password> -->
+<!--       	<password>server</password> -->
 	</local-tx-datasource>
 </datasources>

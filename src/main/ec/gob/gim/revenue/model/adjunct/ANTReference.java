@@ -17,7 +17,7 @@ import org.gob.gim.common.DateUtils;
 import ec.gob.gim.revenue.model.Adjunct;
 
 @NamedQueries(value = {
-		@NamedQuery(name = "ANTReference.findFoto-Multa", query = "select antRef.contraventionNumber from ANTReference antRef "				
+		@NamedQuery(name = "ANTReference.findFoto-Multa", query = "select count(antRef.contraventionNumber) from ANTReference antRef "				
 				+ "where lower(antRef.contraventionNumber) = lower(:contraventionNumber)")
 })
 

@@ -30,7 +30,7 @@ import ec.gob.gim.common.model.Resident;
 @Entity
 @TableGenerator(name = "PhotoFineGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "PhotoFine", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
-		@NamedQuery(name = "PhotoFine.findByContraventionNumber", query = "select pf.contraventionNumber from PhotoFine pf "				
+		@NamedQuery(name = "PhotoFine.findByContraventionNumber", query = "select count(pf.contraventionNumber) from PhotoFine pf "				
 				+ "where lower(pf.contraventionNumber) = lower(:contraventionNumber)")
 })
 public class PhotoFine implements Serializable {

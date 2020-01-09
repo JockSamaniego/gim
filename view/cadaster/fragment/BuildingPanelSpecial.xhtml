@@ -14,7 +14,7 @@
 			<h:panelGrid columns="2" columnClasses="headerTitle,">
 				<h:outputText value="#{messages['building.feature']}" />
 				<a:commandButton id="createBuilding"
-					action="#{propertyHome.createBuilding()}"
+					action="#{propertySpecialHome.createBuilding()}"
 					reRender="buildingEditPanel" ajaxSingle="true"
 					eventsQueue="gimEventsQueue"
 					oncomplete="Richfaces.showModalPanel('buildingEditPanel',{width:800, height:475})"
@@ -24,10 +24,10 @@
 
 
 		<h:outputText value="#{messages['property.notBuildingsAssociated']}."
-			rendered="#{empty propertyHome.buildings}" />
+			rendered="#{empty propertySpecialHome.buildings}" />
 
-		<rich:dataTable value="#{propertyHome.buildings}" var="_building"
-			rendered="#{not empty propertyHome.buildings}"
+		<rich:dataTable value="#{propertySpecialHome.buildings}" var="_building"
+			rendered="#{not empty propertySpecialHome.buildings}"
 			rowClasses="rvgRowOne,rvgRowTwo" id="buildingsTable">
 			<rich:column styleClass="right">
 				<f:facet name="header">
@@ -114,14 +114,14 @@
 					<h:outputText value="#{messages['common.action']}" />
 				</f:facet>
 				<a:commandButton id="editBuilding"
-					action="#{propertyHome.editBuilding(_building)}"
+					action="#{propertySpecialHome.editBuilding(_building)}"
 					reRender="buildingEditPanel" ajaxSingle="true"
 					eventsQueue="gimEventsQueue"
 					oncomplete="Richfaces.showModalPanel('buildingEditPanel',{width:800, height:475})"
 					value="#{messages['common.edit']}" />
 					
 				<a:commandButton id="removeBuilding"
-					action="#{propertyHome.removeBuilding(_building)}"
+					action="#{propertySpecialHome.removeBuilding(_building)}"
 					reRender="buildingsPanel" ajaxSingle="true"
 					value="#{messages['common.delete']}" />
 			</rich:column>
