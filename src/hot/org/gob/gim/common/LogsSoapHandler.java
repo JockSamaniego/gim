@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
@@ -83,35 +84,33 @@ public class LogsSoapHandler implements SOAPHandler<SOAPMessageContext> {
 				Map<String, String> payload = new HashMap<String, String>();
 				payload.put("tipo", "RESPONSE");
 				payload.put("body", baos.toString());
+				payload.put("requestId",  context.get("requestId").toString());
 
 				String json = "";
 				try {
 					json = new ObjectMapper().writeValueAsString(payload);
 				} catch (JsonGenerationException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
 				Logs _log = new Logs();
-				// TODO setear valores en objeto log
 				_log.setLogger(this.getClass().getSimpleName());
 				_log.setMessage(json);
 				this.logService.save(_log);
 			} else {
+				
+				final String uuid = UUID.randomUUID().toString();
+				context.put("requestId",uuid);
 
-				// System.out.println("Intercepting inbound message:");
 				HttpServletRequest request = (HttpServletRequest) context
 						.get(SOAPMessageContext.SERVLET_REQUEST);
-
+				
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				soapMsg.writeTo(baos);
-				// System.out.println(baos);
 
 				Map<String, String> payload = new HashMap<String, String>();
 				payload.put("tipo", "REQUEST");
@@ -122,18 +121,16 @@ public class LogsSoapHandler implements SOAPHandler<SOAPMessageContext> {
 				payload.put("requestURI", request.getRequestURI());
 				payload.put("requestURL", request.getRequestURL().toString());
 				payload.put("body", baos.toString());
+				payload.put("requestId", uuid);
 
 				String json = "";
 				try {
 					json = new ObjectMapper().writeValueAsString(payload);
 				} catch (JsonGenerationException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
