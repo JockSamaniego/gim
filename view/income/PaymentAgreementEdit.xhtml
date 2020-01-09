@@ -52,7 +52,7 @@
 								value="#{messages['paymentAgreement.register']}" 
 								rendered="#{paymentAgreementHome.isSaveButtonDisabled or empty paymentAgreementHome.instance.id}"
 								focus="receivedCashField"
-								disabled="#{paymentAgreementHome.residentHasAlerts}"/>
+								disabled="#{paymentAgreementHome.residentHasAlerts || paymentAgreementHome.paymentAgreementTotal eq 0}"/>
 							<h:outputText  rendered="#{paymentAgreementHome.residentHasAlerts}"
 								id="alertMessage"	
 								value="#{messages['alert.residentHasPendingAlerts']}"
@@ -243,7 +243,7 @@
 									action="#{paymentAgreementHome.calculatePaymentAgreementTotal()}"
 									eventsQueue="gimQueue"
 									ajaxSingle="true"
-									reRender="municipalBondsPanel, totalValueField, registerPaymentBtn" />
+									reRender="municipalBondsPanel, valuePanel" />
 							</h:selectBooleanCheckbox>
 						</rich:column>
 						
@@ -315,7 +315,7 @@
 										action="#{paymentAgreementHome.calculatePaymentAgreementTotal()}"
 										eventsQueue="gimQueue"
 										ajaxSingle="true"
-										reRender="municipalBondsPanel, totalValueField, registerPaymentBtn" />
+										reRender="municipalBondsPanel, valuePanel" />
 								</h:selectBooleanCheckbox>
 							</rich:column>
 
