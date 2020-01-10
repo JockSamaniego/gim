@@ -1191,7 +1191,7 @@ public class PropertyHome extends EntityHome<Property> {
 		if (!isFirstTime)
 			return;
 
-		logger.info("--Ingreso a rustic wire", this);
+		//logger.info("--Ingreso a rustic wire", this);
 		getDefinedInstance();
 
 		PropertyType propertyType = propertyTypeHome.getDefinedInstance();
@@ -1345,7 +1345,7 @@ public class PropertyHome extends EntityHome<Property> {
 	 */
 	@SuppressWarnings("unchecked")
 	public void searchResidentByCriteria() {
-		logger.info("SEARCH RESIDENT BY CRITERIA " + this.criteria);
+		//logger.info("SEARCH RESIDENT BY CRITERIA " + this.criteria);
 		if (this.criteria != null && !this.criteria.isEmpty()) {
 			Query query = getEntityManager().createNamedQuery(
 					"Resident.findByCriteria");
@@ -1358,13 +1358,13 @@ public class PropertyHome extends EntityHome<Property> {
 	 * Busca resident por número de identificación
 	 */
 	public void searchResident() {
-		logger.info("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
+		//logger.info("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
 		Query query = getEntityManager().createNamedQuery(
 				"Resident.findByIdentificationNumber");
 		query.setParameter("identificationNumber", this.identificationNumber);
 		try {
 			Resident resident = (Resident) query.getSingleResult();
-			logger.info("RESIDENT CHOOSER ACTION " + resident.getName());
+			//logger.info("RESIDENT CHOOSER ACTION " + resident.getName());
 
 			// resident.add(this.getInstance());
 			this.getInstance().getCurrentDomain().setResident(resident);
@@ -1714,9 +1714,9 @@ public class PropertyHome extends EntityHome<Property> {
 	 */
 	public void photoListener(UploadEvent event) {
 		UploadItem item = event.getUploadItem();
-		logger.info("===> Photo listener executed...  Data: " + item.getData());
+		//logger.info("===> Photo listener executed...  Data: " + item.getData());
 		if (item != null && item.getData() != null) {
-			logger.info(item.getFileName() + ", size: " + item.getFileSize());
+			//logger.info(item.getFileName() + ", size: " + item.getFileSize());
 			if (getInstance().getPhoto() == null) {
 				getInstance().setPhoto(new Attachment());
 			}
@@ -1739,9 +1739,9 @@ public class PropertyHome extends EntityHome<Property> {
 	 */
 	public void sketchListener(UploadEvent event) {
 		UploadItem item = event.getUploadItem();
-		logger.info("===> Sketch listener executed...  Data: " + item.getData());
+		//logger.info("===> Sketch listener executed...  Data: " + item.getData());
 		if (item != null && item.getData() != null) {
-			logger.info(item.getFileName() + ", size: " + item.getFileSize());
+			//logger.info(item.getFileName() + ", size: " + item.getFileSize());
 			if (getInstance().getSketch() == null) {
 				getInstance().setSketch(new Attachment());
 			}
@@ -1952,9 +1952,9 @@ public class PropertyHome extends EntityHome<Property> {
 			return;
 		}
 		this.getInstance().add(this.building);
-		logger.info("===> Building #0 Add, size list: #1 ",
-				this.building.getNumber(), this.getInstance().getBuildings()
-						.size());
+		//logger.info("===> Building #0 Add, size list: #1 ",
+			//	this.building.getNumber(), this.getInstance().getBuildings()
+						//.size());
 		calculateTotalAreaConstruction();
 	}
 
