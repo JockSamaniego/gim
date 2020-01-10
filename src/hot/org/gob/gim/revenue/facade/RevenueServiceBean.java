@@ -217,12 +217,12 @@ public class RevenueServiceBean implements RevenueService {
 					.get(0).getStartDate());
 			municipalBond.setEmitter((Person) user.getResident());
 			
-			//para separar multas del simert
+			//para separar multas del simert u otros rubros
 			//Jock Samaniego
 			//05-01-2020
 			String simertCodes = (String) systemParameterService.findParameter("SEPARATE_SIMERT_BONDS_CODES");
 			if (simertCodes.indexOf(municipalBond.getEntry().getCode())!= -1){
-				String newGroupingCode = "Simert " + municipalBond.getNumber();
+				String newGroupingCode = "Obligación " + municipalBond.getNumber();
 				municipalBond.setGroupingCode(newGroupingCode);
 			}
 			
