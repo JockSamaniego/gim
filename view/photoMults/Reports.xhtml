@@ -1,0 +1,203 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="reportsForm" styleClass="edit" prependId="false">
+			<rich:simpleTogglePanel label="Reportes Foto Multas Administrador"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">Tipo:</ui:define>
+					<h:selectOneMenu id="reportType"
+						value="#{reportsHome.criteria.reportType}">
+						<s:selectItems value="#{reportPhotoMultsTypes}" var="reportType"
+							label="#{reportType.label}" />
+						<s:convertEnum />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">Desde:</ui:define>
+					<rich:calendar id="startDate"
+						value="#{reportsHome.criteria.startDate}"
+						datePattern="#{messages['common.datePattern']}" inputSize="10">
+						<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">Hasta:</ui:define>
+					<rich:calendar id="endDate" value="#{reportsHome.criteria.endDate}"
+						datePattern="#{messages['common.datePattern']}" inputSize="10">
+						<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+					</rich:calendar>
+				</s:decorate>
+
+				<div style="clear: both" />
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<a:commandButton id="search" value="#{messages['common.search']}"
+					action="#{reportsHome.buildReport}"
+					reRender="photoMultsResults,panelHeaderTable,photoMultsList" />
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none" />
+				<s:button id="home" view="/home.xhtml"
+					value="#{messages['common.quit']}" propagation="end" />
+			</div>
+
+			<rich:panel>
+
+				<f:facet name="header">
+
+					<h:panelGrid columns="2" columnClasses="headerTitle"
+						id="panelHeaderTable">
+						<h:outputText value="Resultados (#{photoMults.objectsNumber})" />
+					</h:panelGrid>
+				</f:facet>
+				<div class="results" id="photoMultsResults">
+
+					<rich:dataTable id="photoMultsList" var="_photoMults"
+						value="#{photoMults}" rows="25">
+
+						<f:facet name="header">
+							<rich:columnGroup>
+								<rich:column colspan="15" breakBefore="true" styleClass="right">
+									<g:dataScroller maxPages="10" for="photoMultsList"
+										style="float:right;" />
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+
+						<h:column>
+							<f:facet name="header">
+               				 Número
+            			</f:facet>
+							<h:outputText value="#{_photoMults.number}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 F. #{reportsHome.criteria.reportType.labelDate}
+            			</f:facet>
+							<h:outputText value="#{_photoMults.dateTypeReport}">
+								<f:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 Estado Actual
+            			</f:facet>
+							<h:outputText value="#{_photoMults.status}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 Tipo
+            			</f:facet>
+							<h:outputText value="#{_photoMults.entry}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 Valor
+            			</f:facet>
+							<h:outputText value="#{_photoMults.value}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 Identificación
+            			</f:facet>
+							<h:outputText value="#{_photoMults.identificationNumber}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 Contribuyente
+            			</f:facet>
+							<h:outputText value="#{_photoMults.resident}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 F. Citación
+            			</f:facet>
+							<h:outputText value="#{_photoMults.citationDate}">
+								<f:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 Número contravención
+            			</f:facet>
+							<h:outputText value="#{_photoMults.contraventionNumber}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 Número de placa
+            			</f:facet>
+							<h:outputText value="#{_photoMults.numberPlate}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 N. Infracción Físisca
+            			</f:facet>
+							<h:outputText value="#{_photoMults.physicalInfractionNumber}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 Tipo Servicio
+            			</f:facet>
+							<h:outputText value="#{_photoMults.serviceType}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 Velocidad
+            			</f:facet>
+							<h:outputText value="#{_photoMults.speeding}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 Documento
+            			</f:facet>
+							<h:commandLink value="#{_photoMults.supportDocumentURL}" target="_blank"/>	
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+               				 Tipo Vehículo
+            			</f:facet>
+							<h:outputText value="#{_photoMults.vehicleType}" />
+						</h:column>
+
+					</rich:dataTable>
+
+				</div>
+			</rich:panel>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>
