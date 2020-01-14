@@ -31,7 +31,6 @@ public class PhotoMultsServiceBean implements PhotoMultsService {
 
 		switch (criteria.getReportType()) {
 		case PHOTO_MULTS_EMIT: {
-			System.out.println("Reporte de emision");
 
 			query = entityManager
 					.createNativeQuery("SELECT mb.number, "
@@ -62,7 +61,6 @@ public class PhotoMultsServiceBean implements PhotoMultsService {
 			break;
 		}
 		case PHOTO_MULTS_PRE_EMIT: {
-			System.out.println("Reporte de pre-emision");
 			query = entityManager
 					.createNativeQuery("SELECT mb.number, "
 							+ "mb.creationdate, "
@@ -92,7 +90,6 @@ public class PhotoMultsServiceBean implements PhotoMultsService {
 			break;
 		}
 		case PHOTO_MULTS_LOW: {
-			System.out.println("Reporte de bajas");
 			query = entityManager
 					.createNativeQuery("SELECT mb.number, "
 							+ "mb.reverseddate, "
@@ -122,7 +119,6 @@ public class PhotoMultsServiceBean implements PhotoMultsService {
 			break;
 		}
 		case PHOTO_MULTS_PAID: {
-			System.out.println("Reporte de pagadas");
 			query = entityManager
 					.createNativeQuery("SELECT mb.number, "
 							+ "mb.liquidationdate, "
@@ -153,7 +149,6 @@ public class PhotoMultsServiceBean implements PhotoMultsService {
 			break;
 		}
 		case PHOTO_MULTS_EXTEMPORARY: {
-			System.out.println("Reporte de extemporaneas");
 			query = entityManager
 					.createNativeQuery("SELECT 	mb.number,  "
 							+ "mb.creationdate,  "
@@ -206,8 +201,6 @@ public class PhotoMultsServiceBean implements PhotoMultsService {
 		
 		switch (criteria.getReportType()) {
 		case PHOTO_MULTS_EMIT: {
-			System.out.println("Reporte de emision");
-
 			query = entityManager
 					.createNativeQuery("SELECT COUNT(mb.id) "
 							+ "FROM municipalbond mb "
@@ -221,7 +214,6 @@ public class PhotoMultsServiceBean implements PhotoMultsService {
 			break;
 		}
 		case PHOTO_MULTS_PRE_EMIT: {
-			System.out.println("Reporte de pre-emision");
 			query = entityManager
 					.createNativeQuery("SELECT COUNT(mb.id) "
 							+ "FROM municipalbond mb "
@@ -235,7 +227,6 @@ public class PhotoMultsServiceBean implements PhotoMultsService {
 			break;
 		}
 		case PHOTO_MULTS_LOW: {
-			System.out.println("Reporte de bajas");
 			query = entityManager
 					.createNativeQuery("SELECT COUNT(mb.id) "
 							+ "FROM municipalbond mb "
@@ -249,7 +240,6 @@ public class PhotoMultsServiceBean implements PhotoMultsService {
 			break;
 		}
 		case PHOTO_MULTS_PAID: {
-			System.out.println("Reporte de pagadas");
 			query = entityManager
 					.createNativeQuery("SELECT COUNT(mb.id) "
 							+ "FROM municipalbond mb "
@@ -264,7 +254,6 @@ public class PhotoMultsServiceBean implements PhotoMultsService {
 			break;
 		}
 		case PHOTO_MULTS_EXTEMPORARY: {
-			System.out.println("Reporte de extemporaneas");
 			query = entityManager
 					.createNativeQuery("SELECT COUNT(mb.id) "
 							+ "FROM municipalbond mb  "

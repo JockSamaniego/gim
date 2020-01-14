@@ -56,7 +56,6 @@ public class ReportsHome extends EntityController {
 		getDataModel().setCriteria(this.criteria);
 		getDataModel().setRowCount(getDataModel().getObjectsNumber());
 		
-		System.out.println(this.criteria);
 	}
 	
 	private PhotoMultsDataModel getDataModel() {
