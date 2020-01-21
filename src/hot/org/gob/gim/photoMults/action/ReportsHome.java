@@ -30,6 +30,7 @@ public class ReportsHome extends EntityController {
 	private CriteriaReport criteria = new CriteriaReport();
 
 	public ReportsHome() {
+		this.criteria = new CriteriaReport();
 	}
 
 	public CriteriaReport getCriteria() {
@@ -52,6 +53,8 @@ public class ReportsHome extends EntityController {
 	}
 
 	public void buildReport() {
+		
+		System.out.println(this.criteria);
 		
 		getDataModel().setCriteria(this.criteria);
 		getDataModel().setRowCount(getDataModel().getObjectsNumber());
