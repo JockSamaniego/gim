@@ -1,0 +1,128 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="summaryReportForm" styleClass="edit" prependId="false">
+			<rich:simpleTogglePanel label="Reporte Resumen Foto Multas"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">Desde:</ui:define>
+					<rich:calendar id="startDate"
+						value="#{summaryReportHome.startDate}"
+						datePattern="#{messages['common.datePattern']}" inputSize="10">
+						<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">Hasta:</ui:define>
+					<rich:calendar id="endDate" value="#{summaryReportHome.endDate}"
+						datePattern="#{messages['common.datePattern']}" inputSize="10">
+						<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+					</rich:calendar>
+				</s:decorate>
+
+				<div style="clear: both" />
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<a:commandButton id="search" value="#{messages['common.search']}"
+					action="#{summaryReportHome.buildReport}"
+					reRender="resultsListGrouped,printId,actionButtons" />
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none" />
+				<s:link view="/photoMults/report/SummaryReportPDF.xhtml"
+					id="printId" target="_blank"
+					disabled="#{summaryReportHome.results.size() == 0}"
+					propagation="join" value="#{messages['common.print']}"/>
+			</div>
+
+			<rich:panel>
+
+				<f:facet name="header">
+
+					<h:panelGrid columns="2" columnClasses="headerTitle"
+						id="panelHeaderTable">
+						<h:outputText value="Resultados" />
+					</h:panelGrid>
+				</f:facet>
+				<div class="results">
+
+					<rich:dataTable id="resultsListGrouped" cellpadding="0"
+						cellspacing="0" border="1" var="_year"
+						value="#{summaryReportHome.resultsGrouped}">
+						<rich:column colspan="6" styleClass="entryTitle">
+							<h:outputText value="#{_year.year}" />
+						</rich:column>
+
+						<rich:subTable var="_month" value="#{_year.childrens}"
+							id="subtableSummary"
+							columnClasses="left tableCellFont, center tableCellFont, center tableCellFont, center tableCellFont, center tableCellFont, center tableCellFont">
+
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText class="titleSubtableFm" value="Mes" />
+								</f:facet>
+								<h:outputText value="#{_month.monthName}" />
+							</rich:column>
+
+							<rich:column width="15%">
+								<f:facet name="header">
+									<h:outputText class="titleSubtableFm" value="Emisiones" />
+								</f:facet>
+
+								<h:outputText value="#{_month.emissionNumber}" />
+							</rich:column>
+
+							<rich:column width="15%">
+								<f:facet name="header">
+									<h:outputText class="titleSubtableFm" value="Preemisiones" />
+								</f:facet>
+								<h:outputText value="#{_month.preEmissionNumber}" />
+							</rich:column>
+
+							<rich:column width="15%">
+								<f:facet name="header">
+									<h:outputText class="titleSubtableFm" value="Bajas" />
+								</f:facet>
+								<h:outputText value="#{_month.lowsNumber}" />
+							</rich:column>
+
+							<rich:column width="15%">
+								<f:facet name="header">
+									<h:outputText class="titleSubtableFm" value="Pagos" />
+								</f:facet>
+								<h:outputText value="#{_month.paidsNumber}" />
+							</rich:column>
+
+							<rich:column width="15%">
+								<f:facet name="header">
+									<h:outputText class="titleSubtableFm" value="Extemporaneas" />
+								</f:facet>
+								<h:outputText value="#{_month.extemporaneousNumber}" />
+							</rich:column>
+
+						</rich:subTable>
+
+					</rich:dataTable>
+
+				</div>
+			</rich:panel>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

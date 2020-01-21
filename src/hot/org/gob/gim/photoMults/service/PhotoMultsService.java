@@ -1,11 +1,13 @@
 package org.gob.gim.photoMults.service;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Local;
 
 import org.gob.gim.photoMults.dto.CriteriaReport;
 import org.gob.gim.photoMults.dto.ReportPhotoMultsDTO;
+import org.gob.gim.photoMults.dto.ReportPhotoMultsSummaryDTO;
 
 /**
  *  * @author René Ortega
@@ -21,5 +23,8 @@ public interface PhotoMultsService {
 			Integer numberOfRows);
 	
 	public Long findPhotoMultsNumber(CriteriaReport criteria);
+	
+	public List<ReportPhotoMultsSummaryDTO> reportSummary(Date startDate, Date endDate);
+	
 	
 }
