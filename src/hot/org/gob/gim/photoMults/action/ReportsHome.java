@@ -54,7 +54,7 @@ public class ReportsHome extends EntityController {
 
 	public void buildReport() {
 		
-		System.out.println(this.criteria);
+		//System.out.println(this.criteria);
 		
 		getDataModel().setCriteria(this.criteria);
 		getDataModel().setRowCount(getDataModel().getObjectsNumber());

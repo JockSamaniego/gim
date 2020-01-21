@@ -278,7 +278,8 @@
 		<p:font size="8">
 
 			<p:cell horizontalAlignment="center" borderWidth="1"
-				borderColorTop="#000000" colspan="6" verticalAlignment="middle" grayFill=".75">
+				borderColorTop="#000000" colspan="6" verticalAlignment="middle"
+				grayFill=".75">
 				<p:font style="bold" size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="CONTRIBUYENTE" />
@@ -422,7 +423,8 @@
 			<p:cell horizontalAlignment="left" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10.0">
-					<p:text value="#{propertyHome._dataCadastralCerfificate.urbanization_block}" />
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.urbanization_block}" />
 				</p:paragraph>
 			</p:cell>
 
@@ -438,7 +440,8 @@
 			<p:cell horizontalAlignment="left" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10.0">
-					<p:text value="#{propertyHome._dataCadastralCerfificate.urbanization_property_number}" />
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.urbanization_property_number}" />
 				</p:paragraph>
 			</p:cell>
 
@@ -464,44 +467,48 @@
 
 	</p:table>
 
-	<p:table columns="3" widthPercentage="100" headerRows="0" widths="1 1 1"
-		spacingBefore="10" horizontalAlignment="left">
+	<p:table columns="3" widthPercentage="100" headerRows="0"
+		widths="1 1 1" spacingBefore="10" horizontalAlignment="left">
 		<f:facet name="defaultCell">
 			<p:cell borderWidth="0" horizontalAlignment="left" />
 		</f:facet>
 
-			<p:cell colspan="1">
-			</p:cell>
+		<p:cell colspan="1">
+		</p:cell>
 
 
-			<p:cell horizontalAlignment="left" borderWidth="1"
-				borderColorTop="#000000" colspan="1" verticalAlignment="middle" grayFill=".75">
-				<p:font style="bold" size="8">
-					<p:paragraph spacingAfter="10.0">
-						<p:text value="FOTOGRAFÍA" />
-					</p:paragraph>
-				</p:font>
-			</p:cell>
+		<p:cell horizontalAlignment="left" borderWidth="1"
+			borderColorTop="#000000" colspan="1" verticalAlignment="middle"
+			grayFill=".75">
+			<p:font style="bold" size="8">
+				<p:paragraph spacingAfter="10.0">
+					<p:text value="FOTOGRAFÍA" />
+				</p:paragraph>
+			</p:font>
+		</p:cell>
 
-			<p:cell colspan="1">
-			</p:cell>
+		<p:cell colspan="1">
+		</p:cell>
 
-			<p:cell colspan="1">
-			</p:cell>
-			
-			<p:cell borderWidth="1" colspan="1"  rendered="#{propertyHome._dataCadastralCerfificate.tieneFoto()}">
-				<p:image value="#{propertyHome._dataCadastralCerfificate.foto}" wrap="true">
-                </p:image>
-			</p:cell>
-			
-			<p:cell borderWidth="1" colspan="1" rendered="#{!propertyHome._dataCadastralCerfificate.tieneFoto()}">
-				<p:image value="/img/no-imagen.jpg" alignment="center"
-						widht="1" height="1">
-				</p:image>
-			</p:cell>
+		<p:cell colspan="1">
+		</p:cell>
 
-			<p:cell colspan="1">
-			</p:cell>
+		<p:cell borderWidth="1" colspan="1"
+			rendered="#{propertyHome._dataCadastralCerfificate.tieneFoto()}">
+			<p:image value="#{propertyHome._dataCadastralCerfificate.foto}"
+				wrap="true">
+			</p:image>
+		</p:cell>
+
+		<p:cell borderWidth="1" colspan="1"
+			rendered="#{!propertyHome._dataCadastralCerfificate.tieneFoto()}">
+			<p:image value="/img/no-imagen.jpg" alignment="center" widht="1"
+				height="1">
+			</p:image>
+		</p:cell>
+
+		<p:cell colspan="1">
+		</p:cell>
 
 	</p:table>
 
@@ -550,8 +557,9 @@
 			<p:cell horizontalAlignment="left" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10.0">
-					<p:text
-						value="#{propertyHome.getBoundaryDTO('NORTH').length == '0.0' ? '': propertyHome.getBoundaryDTO('NORTH').length}" />
+					<p:text value="#{propertyHome.getBoundaryDTO('NORTH').length}">
+						<f:convertNumber type="number" pattern="$ ###,###,###,###.##" />
+					</p:text>
 				</p:paragraph>
 			</p:cell>
 
@@ -573,7 +581,7 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10.0">
 					<p:text
-						value="#{propertyHome.getBoundaryDTO('SOUTH').length == '0.0' ? '': propertyHome.getBoundaryDTO('SOUTH').length}" />
+						value="#{propertyHome.getBoundaryDTO('SOUTH').length == '0.0' ? '0.00': propertyHome.getBoundaryDTO('SOUTH').length}" />
 				</p:paragraph>
 			</p:cell>
 
@@ -596,7 +604,7 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10.0">
 					<p:text
-						value="#{propertyHome.getBoundaryDTO('EAST').length == '0.0' ? '': propertyHome.getBoundaryDTO('EAST').length}" />
+						value="#{propertyHome.getBoundaryDTO('EAST').length == '0.0' ? '0.00': propertyHome.getBoundaryDTO('EAST').length}" />
 				</p:paragraph>
 			</p:cell>
 
@@ -618,7 +626,7 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10.0">
 					<p:text
-						value="#{propertyHome.getBoundaryDTO('WEST').length == '0.0' ? '': propertyHome.getBoundaryDTO('WEST').length}" />
+						value="#{propertyHome.getBoundaryDTO('WEST').length == '0.0' ? '0.00': propertyHome.getBoundaryDTO('WEST').length}" />
 				</p:paragraph>
 			</p:cell>
 
@@ -699,8 +707,8 @@
 
 	</p:table>
 
-	<p:table columns="9" widthPercentage="100" headerRows="0" widths="0.7 1.2 1 1 1 1 1 1 1"
-		spacingBefore="10">
+	<p:table columns="9" widthPercentage="100" headerRows="0"
+		widths="0.7 1.2 1 1 1 1 1 1 1" spacingBefore="10">
 		<f:facet name="defaultCell">
 			<p:cell borderWidth="0" horizontalAlignment="left" />
 		</f:facet>
@@ -708,7 +716,8 @@
 		<p:font size="8">
 
 			<p:cell horizontalAlignment="center" borderWidth="1"
-				borderColorTop="#000000" colspan="9" verticalAlignment="middle" grayFill=".75">
+				borderColorTop="#000000" colspan="9" verticalAlignment="middle"
+				grayFill=".75">
 				<p:font style="bold" size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="CONSTRUCCIONES" />
@@ -829,25 +838,25 @@
 
 				<p:cell borderWidth="1" horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="#{messages[_var.wallmaterial]}"/>
+						<p:text value="#{messages[_var.wallmaterial]}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell borderWidth="1" horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="#{messages[_var.roofmaterial]}"/>
+						<p:text value="#{messages[_var.roofmaterial]}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell borderWidth="1" horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="#{messages[_var.externalfinishing]}"/>
+						<p:text value="#{messages[_var.externalfinishing]}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell borderWidth="1" horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="#{messages[_var.preservationstate]}"/>
+						<p:text value="#{messages[_var.preservationstate]}" />
 					</p:paragraph>
 				</p:cell>
 
@@ -887,22 +896,24 @@
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{messages[propertyHome._dataCadastralCerfificate.topografia_terreno]}"/>
+					<p:text
+						value="#{messages[propertyHome._dataCadastralCerfificate.topografia_terreno]}" />
 				</p:paragraph>
 			</p:cell>
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.material_via}"/>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.material_via}" />
 				</p:paragraph>
 			</p:cell>
-			
+
 		</p:font>
 
 	</p:table>
 
-	<p:table columns="4" widthPercentage="100" headerRows="0" widths="1 1 1 1"
-		spacingBefore="10" horizontalAlignment="left">
+	<p:table columns="4" widthPercentage="100" headerRows="0"
+		widths="1 1 1 1" spacingBefore="10" horizontalAlignment="left">
 		<f:facet name="defaultCell">
 			<p:cell borderWidth="0" horizontalAlignment="left" />
 		</f:facet>
@@ -910,7 +921,8 @@
 		<p:font size="8">
 
 			<p:cell horizontalAlignment="center" borderWidth="1"
-				borderColorTop="#000000" colspan="4" verticalAlignment="middle" grayFill=".75">
+				borderColorTop="#000000" colspan="4" verticalAlignment="middle"
+				grayFill=".75">
 				<p:font style="bold" size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="INFRAESTRUCTURA" />
@@ -957,34 +969,38 @@
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.water_service ? 'X': ''}"/>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.water_service ? 'X': ''}" />
 				</p:paragraph>
 			</p:cell>
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.alcantarillado ? 'X': ''}"/>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.alcantarillado ? 'X': ''}" />
 				</p:paragraph>
 			</p:cell>
-			
+
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.luz_electrica ? 'X': ''}"/>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.luz_electrica ? 'X': ''}" />
 				</p:paragraph>
 			</p:cell>
-			
+
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.telefonia ? 'X': ''}"/>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.telefonia ? 'X': ''}" />
 				</p:paragraph>
 			</p:cell>
-			
+
 		</p:font>
 
 	</p:table>
 
-	<p:table columns="4" widthPercentage="100" headerRows="0" widths="1 1 1 1"
-		spacingBefore="10" horizontalAlignment="left">
+	<p:table columns="4" widthPercentage="100" headerRows="0"
+		widths="1 1 1 1" spacingBefore="10" horizontalAlignment="left">
 		<f:facet name="defaultCell">
 			<p:cell borderWidth="0" horizontalAlignment="left" />
 		</f:facet>
@@ -992,14 +1008,15 @@
 		<p:font size="8">
 
 			<p:cell horizontalAlignment="center" borderWidth="1"
-				borderColorTop="#000000" colspan="4" verticalAlignment="middle" grayFill=".75">
+				borderColorTop="#000000" colspan="4" verticalAlignment="middle"
+				grayFill=".75">
 				<p:font style="bold" size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="PREDIO EN RÉGIMEN DE PROPIEDAD HORIZONTAL" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
-			
+
 			<p:cell horizontalAlignment="center" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:font style="bold" size="8">
@@ -1026,7 +1043,7 @@
 					</p:paragraph>
 				</p:font>
 			</p:cell>
-			
+
 			<p:cell horizontalAlignment="center" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:font style="bold" size="8">
@@ -1034,36 +1051,40 @@
 						<p:text value="ALICUOTA DE CONSTRUCCIÓN" />
 					</p:paragraph>
 				</p:font>
-			</p:cell>			
-
-			<p:cell borderWidth="1" horizontalAlignment="center">
-				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.lot_area_horizontal_property}"/>
-				</p:paragraph>
 			</p:cell>
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.lotaliquot} %"/>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.lot_area_horizontal_property}" />
 				</p:paragraph>
 			</p:cell>
-			
+
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.building_area_horizontal_property}"/>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.lotaliquot} %" />
 				</p:paragraph>
 			</p:cell>
-			
+
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.buildingaliquot} %"/>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.building_area_horizontal_property}" />
 				</p:paragraph>
 			</p:cell>
-			
+
+			<p:cell borderWidth="1" horizontalAlignment="center">
+				<p:paragraph>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.buildingaliquot} %" />
+				</p:paragraph>
+			</p:cell>
+
 		</p:font>
 
 	</p:table>
-	
+
 	<p:table columns="1" widthPercentage="100" headerRows="0" widths="1"
 		spacingBefore="10" horizontalAlignment="left">
 		<f:facet name="defaultCell">
@@ -1073,25 +1094,27 @@
 		<p:font size="8">
 
 			<p:cell horizontalAlignment="left" borderWidth="1"
-				borderColorTop="#000000" colspan="4" verticalAlignment="middle" grayFill=".75">
+				borderColorTop="#000000" colspan="4" verticalAlignment="middle"
+				grayFill=".75">
 				<p:font style="bold" size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="DESCRIPCIÓN PROPIEDAD HORIZONTAL" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
-			
+
 			<p:cell borderWidth="1" minimumHeight="100">
-				<p:paragraph  alignment="justify">
-					<p:text value="#{propertyHome._dataCadastralCerfificate.descriptionHorizontalProperty}"/>
+				<p:paragraph alignment="justify">
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.descriptionHorizontalProperty}" />
 				</p:paragraph>
 			</p:cell>
 
 		</p:font>
 	</p:table>
-	
-	<p:table columns="4" widthPercentage="100" headerRows="0" widths="1 1 1 1"
-		spacingBefore="10" horizontalAlignment="left">
+
+	<p:table columns="4" widthPercentage="100" headerRows="0"
+		widths="1 1 1 1" spacingBefore="10" horizontalAlignment="left">
 		<f:facet name="defaultCell">
 			<p:cell borderWidth="0" horizontalAlignment="left" />
 		</f:facet>
@@ -1099,14 +1122,15 @@
 		<p:font size="8">
 
 			<p:cell horizontalAlignment="center" borderWidth="1"
-				borderColorTop="#000000" colspan="4" verticalAlignment="middle" grayFill=".75">
+				borderColorTop="#000000" colspan="4" verticalAlignment="middle"
+				grayFill=".75">
 				<p:font style="bold" size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="AVALÚO PROPIEDAD" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
-			
+
 			<p:cell horizontalAlignment="center" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:font style="bold" size="8">
@@ -1115,7 +1139,7 @@
 					</p:paragraph>
 				</p:font>
 			</p:cell>
-			
+
 
 
 			<p:cell horizontalAlignment="center" borderWidth="1"
@@ -1147,32 +1171,36 @@
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.valuebysquaremeter}"/>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.valuebysquaremeter}" />
 				</p:paragraph>
 			</p:cell>
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.avaluo_terreno}"/>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.avaluo_terreno}" />
 				</p:paragraph>
 			</p:cell>
-			
+
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.avaluo_construccion}"/>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.avaluo_construccion}" />
 				</p:paragraph>
 			</p:cell>
-			
+
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
-					<p:text value="#{propertyHome._dataCadastralCerfificate.avaluo_comercial}"/>
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.avaluo_comercial}" />
 				</p:paragraph>
 			</p:cell>
-			
+
 		</p:font>
 
 	</p:table>
-	
+
 	<p:table columns="1" widthPercentage="100" headerRows="0" widths="1"
 		spacingBefore="10" horizontalAlignment="left">
 		<f:facet name="defaultCell">
@@ -1182,86 +1210,88 @@
 		<p:font size="8">
 
 			<p:cell horizontalAlignment="left" borderWidth="1"
-				borderColorTop="#000000" colspan="4" verticalAlignment="middle" grayFill=".75">
+				borderColorTop="#000000" colspan="4" verticalAlignment="middle"
+				grayFill=".75">
 				<p:font style="bold" size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="OBSERVACIONES" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
-			
+
 			<p:cell borderWidth="1" minimumHeight="100">
-				<p:paragraph  alignment="justify">
-					<p:text value="#{propertyHome._dataCadastralCerfificate.observations}"/>
+				<p:paragraph alignment="justify">
+					<p:text
+						value="#{propertyHome._dataCadastralCerfificate.observations}" />
 				</p:paragraph>
 			</p:cell>
 
 		</p:font>
 	</p:table>
-	
+
 	<p:paragraph spacingAfter="40" spacingBefore="20">
-			<f:facet name="defaultCell">
-				<p:cell borderWidth="0" horizontalAlignment="left" />
-			</f:facet>
-		</p:paragraph>
-		
-		<p:table columns="2" widthPercentage="80" headerRows="0">
-			<f:facet name="defaultCell">
-				<p:cell borderWidth="0" horizontalAlignment="center" />
-			</f:facet>
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+	</p:paragraph>
 
-			<p:cell colspan="1">
-				<p:paragraph>
-					<p:font size="7" style="bold">
-						<p:text value="_____________________________________" />
-					</p:font>
-				</p:paragraph>
-			</p:cell>
-			<p:cell colspan="1">
-				<p:paragraph>
-					<p:font size="7" style="bold">
-						<p:text value="_____________________________________" />
-					</p:font>
-				</p:paragraph>
-			</p:cell>
-			<p:cell colspan="1">
-				<p:paragraph>
-					<p:font size="7" style="bold">
-						<p:text
-							value="#{propertyHome.appraisalDelegate.name.toUpperCase()}" />
-					</p:font>
-				</p:paragraph>
-			</p:cell>
-			<p:cell colspan="1">
-				<p:paragraph>
-					<p:font size="7" style="bold">
-						<p:text value="#{userSession.person.name.toUpperCase()}" />
-					</p:font>
-				</p:paragraph>
-			</p:cell>
+	<p:table columns="2" widthPercentage="80" headerRows="0">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="center" />
+		</f:facet>
 
-			<p:cell colspan="1">
-				<p:paragraph>
-					<p:font size="7" style="bold">
-						<p:text value="#{propertyHome.appraisalCharge.name}" />
-					</p:font>
-				</p:paragraph>
-			</p:cell>
-			
-			<p:cell colspan="1">
-				<p:paragraph>
-					<p:font size="7" style="bold">
-						<p:text value="TÉCNICO RESPONSABLE INFORMACIÓN CATASTRAL" />
-					</p:font>
-				</p:paragraph>
-			</p:cell>
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text value="_____________________________________" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text value="_____________________________________" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text
+						value="#{propertyHome.appraisalDelegate.name.toUpperCase()}" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text value="#{userSession.person.name.toUpperCase()}" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
 
-			<p:cell colspan="1">
-				<p:paragraph>
-					<p:font size="7" style="bold">
-					</p:font>
-				</p:paragraph>
-			</p:cell>
-		</p:table>
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text value="#{propertyHome.appraisalCharge.name}" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text value="TÉCNICO RESPONSABLE INFORMACIÓN CATASTRAL" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+	</p:table>
 
 </p:document>
