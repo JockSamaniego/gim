@@ -558,7 +558,7 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10.0">
 					<p:text value="#{propertyHome.getBoundaryDTO('NORTH').length}">
-						<f:convertNumber type="number" pattern="$ ###,###,###,###.##" />
+						<f:convertNumber groupingUsed="true" minFractionDigits="2" />
 					</p:text>
 				</p:paragraph>
 			</p:cell>
@@ -581,7 +581,9 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10.0">
 					<p:text
-						value="#{propertyHome.getBoundaryDTO('SOUTH').length == '0.0' ? '0.00': propertyHome.getBoundaryDTO('SOUTH').length}" />
+						value="#{propertyHome.getBoundaryDTO('SOUTH').length}">
+							<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+						</p:text>
 				</p:paragraph>
 			</p:cell>
 
@@ -604,7 +606,9 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10.0">
 					<p:text
-						value="#{propertyHome.getBoundaryDTO('EAST').length == '0.0' ? '0.00': propertyHome.getBoundaryDTO('EAST').length}" />
+						value="#{propertyHome.getBoundaryDTO('EAST').length}">
+							<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+						</p:text>
 				</p:paragraph>
 			</p:cell>
 
@@ -626,7 +630,9 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10.0">
 					<p:text
-						value="#{propertyHome.getBoundaryDTO('WEST').length == '0.0' ? '0.00': propertyHome.getBoundaryDTO('WEST').length}" />
+						value="#{propertyHome.getBoundaryDTO('WEST').length}">
+							<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+						</p:text>
 				</p:paragraph>
 			</p:cell>
 
@@ -662,7 +668,9 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10.0">
 					<p:text
-						value="#{propertyHome._dataCadastralCerfificate.area_total_terreno} m²" />
+						value="#{propertyHome._dataCadastralCerfificate.area_total_terreno} m²">
+							<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+						</p:text>
 				</p:paragraph>
 			</p:cell>
 
@@ -1056,28 +1064,36 @@
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
 					<p:text
-						value="#{propertyHome._dataCadastralCerfificate.lot_area_horizontal_property}" />
+						value="#{propertyHome._dataCadastralCerfificate.lot_area_horizontal_property}">
+							<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+						</p:text>
 				</p:paragraph>
 			</p:cell>
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
 					<p:text
-						value="#{propertyHome._dataCadastralCerfificate.lotaliquot} %" />
+						value="#{propertyHome._dataCadastralCerfificate.lotaliquot} %">
+							<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+						</p:text>
 				</p:paragraph>
 			</p:cell>
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
 					<p:text
-						value="#{propertyHome._dataCadastralCerfificate.building_area_horizontal_property}" />
+						value="#{propertyHome._dataCadastralCerfificate.building_area_horizontal_property}">
+							<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+						</p:text>
 				</p:paragraph>
 			</p:cell>
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
 					<p:text
-						value="#{propertyHome._dataCadastralCerfificate.buildingaliquot} %" />
+						value="#{propertyHome._dataCadastralCerfificate.buildingaliquot} %">
+							<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+						</p:text>
 				</p:paragraph>
 			</p:cell>
 
@@ -1172,28 +1188,36 @@
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
 					<p:text
-						value="#{propertyHome._dataCadastralCerfificate.valuebysquaremeter}" />
+						value="#{propertyHome._dataCadastralCerfificate.valuebysquaremeter}">
+							<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+						</p:text>
 				</p:paragraph>
 			</p:cell>
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
 					<p:text
-						value="#{propertyHome._dataCadastralCerfificate.avaluo_terreno}" />
+						value="#{propertyHome._dataCadastralCerfificate.avaluo_terreno}">
+							<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+						</p:text>
 				</p:paragraph>
 			</p:cell>
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
 					<p:text
-						value="#{propertyHome._dataCadastralCerfificate.avaluo_construccion}" />
+						value="#{propertyHome._dataCadastralCerfificate.avaluo_construccion}">
+							<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+						</p:text>
 				</p:paragraph>
 			</p:cell>
 
 			<p:cell borderWidth="1" horizontalAlignment="center">
 				<p:paragraph>
 					<p:text
-						value="#{propertyHome._dataCadastralCerfificate.avaluo_comercial}" />
+						value="#{propertyHome._dataCadastralCerfificate.avaluo_comercial}">
+							<f:convertNumber groupingUsed="true" minFractionDigits="2" />
+						</p:text>
 				</p:paragraph>
 			</p:cell>
 
