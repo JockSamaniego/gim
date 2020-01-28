@@ -8,6 +8,7 @@ import java.util.List;
 import javax.ejb.Local;
 
 import org.gob.loja.gim.ws.dto.CadastralCertificateDTOWs;
+import org.gob.loja.gim.ws.dto.HygieneDTOWs;
 import org.gob.loja.gim.ws.dto.PropertyDTOWs;
 
 import ec.gob.gim.common.model.Resident;
@@ -26,4 +27,6 @@ public interface RestService {
 	public List<PropertyDTOWs> findPropertiesByIdentification(String identification);
 	
 	CadastralCertificateDTOWs getCadastralCertificateData(Long property_id);
+	
+	public List<HygieneDTOWs> findHygieneDataByIdentification(String identification);
 }

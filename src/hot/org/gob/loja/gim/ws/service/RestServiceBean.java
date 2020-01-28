@@ -21,6 +21,7 @@ import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.exception.NonUniqueIdentificationNumberException;
 import org.gob.gim.common.service.ResidentService;
 import org.gob.loja.gim.ws.dto.CadastralCertificateDTOWs;
+import org.gob.loja.gim.ws.dto.HygieneDTOWs;
 import org.gob.loja.gim.ws.dto.PropertyDTOWs;
 import org.jboss.seam.core.Interpolator;
 import org.jboss.seam.core.SeamResourceBundle;
@@ -136,6 +137,56 @@ public class RestServiceBean implements RestService {
 
 		// Setear valores que vienen como json
 		return resp;
+	}
+	
+	@Override
+	public List<HygieneDTOWs> findHygieneDataByIdentification(
+			String identification) {
+		
+
+		String query1 = "(	select 'direccion_dom', re.identificationnumber, re.name, ad.street, ad.phonenumber, ad.mobilenumber "
+						+	"from resident re " 
+						+	"left join address ad on re.currentaddress_id = ad.id "
+						+	"where re.identificationnumber ilike :idNumber "
+						+") union (	"
+						+	"select 'direccion_medi', cast(ws.servicenumber as varchar), ro.name ruta, st.name calle_bd, ws.ncalle calle_digitado, cast(ws.ncasa as varchar) "
+						+	"from watersupply ws "
+						+	"join resident re on ws.serviceowner_id = re.id "
+						+	"join route ro on ws.route_id = ro.id "
+						+	"left join street st on ws.street_id = st.id "
+						+	"where re.identificationnumber ilike :idNumber "
+						+") union ( "
+						+	"select 'direccion_prop', pro.cadastralcode, st.name calle, lo.housenumber, CONCAT(nh.code,CONCAT('-',nh.name)) barrio, pro.addressreference referencia "
+						+	"from property pro "
+						+	"join domain dom on pro.id = dom.currentproperty_id "
+						+	"join resident re on dom.resident_id = re.id "
+						+	"left join location lo on pro.location_id = lo.id "
+						+	"left join blocklimit bl on lo.mainstreet_id = bl.id "
+						+	"left join street st on bl.street_id = st.id "
+						+	"left join neighborhood nh on lo.neighborhood_id = nh.id "
+						+	"where re.identificationnumber ilike :idNumber "
+						+	"and pro.deleted = false "
+						+") union ( "
+						+	"select 'direccion_comer', "
+						+	"CONCAT(extract(year from op.date_emission),CONCAT('-',op.paper_code)) as codigo, bu.name comercio, "
+						+	"replace(replace(op.economic_activity,chr(10), ''),chr(13), '') actividad, "
+						+	"CONCAT(ad.parish,CONCAT('-',ad.street)), CONCAT(ad.phonenumber,CONCAT('-',ad.mobilenumber)) telefonos "
+						+	"from operatinglicense op "
+						+	"inner join local lo on op.local_code = lo.code "
+						+	"left join business bu on lo.business_id = bu.id "
+						+	"join resident re on bu.owner_id = re.id "
+						+	"left join address ad on lo.address_id = ad.id "
+						+	"where "
+						+	"re.identificationnumber ilike :idNumber "
+						+	"order by op.paper_code )"; 
+
+		Query q = em.createNativeQuery(query1);
+		q.setParameter("idNumber", "%"+identification.trim()+"%");
+
+		List<HygieneDTOWs> list = NativeQueryResultsMapper.map(
+				q.getResultList(), HygieneDTOWs.class);
+
+		return list;
 	}
 
 }

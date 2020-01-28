@@ -17,6 +17,7 @@ import org.gob.loja.gim.ws.dto.FutureStatement;
 import org.gob.loja.gim.ws.dto.Payout;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.Statement;
+import org.gob.loja.gim.ws.dto.TransactionData;
 import org.gob.loja.gim.ws.exception.HasNoObligations;
 import org.gob.loja.gim.ws.exception.InvalidPayout;
 import org.gob.loja.gim.ws.exception.InvalidUser;
@@ -358,17 +359,16 @@ public class PaymentPlatform {
 	 * By: René Ortega
 	 * 2017-04-18
 	 */
-	//rfam 2019-09-24
-	/*@WebMethod
+	//rfam 2019-09-24 se quita el metodo
+	//rfam 2020-01-27 autorizado por finanzas, se lo habilita segun memorando ML-DF-2020-075-M
+	@WebMethod
 	public TransactionData reversePayment (ServiceRequest request,
 			Payout payout){
-		// System.out.println("Llega al metodo de reverso");
-		
 		return this.service.reversePaymentBank(request, payout);
 	}
 	
 	
-	@WebMethod
+	/*@WebMethod
 	public TransactionData  queryPayment(ServiceRequest request, String transactionId){
 		return this.service.queryPayment(request, transactionId);
 	}*/

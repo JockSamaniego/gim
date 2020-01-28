@@ -19,7 +19,7 @@ public class NotificationPayedDetailDTO {
 	private String residentName;
 	
 	@NativeQueryResultColumn(index = 3)
-	private int notificationNumber;
+	private String notificationNumber;
 	
 	@NativeQueryResultColumn(index = 4)
 	private Date emisionDate;
@@ -60,11 +60,11 @@ public class NotificationPayedDetailDTO {
 		this.residentName = residentName;
 	}
 
-	public int getNotificationNumber() {
+	public String getNotificationNumber() {
 		return notificationNumber;
 	}
 
-	public void setNotificationNumber(int notificationNumber) {
+	public void setNotificationNumber(String notificationNumber) {
 		this.notificationNumber = notificationNumber;
 	}
 

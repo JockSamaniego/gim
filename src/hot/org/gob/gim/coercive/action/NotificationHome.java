@@ -1089,7 +1089,7 @@ public class NotificationHome extends EntityHome<Notification> {
 		public List<NotificationPayedDetailDTO> generateNotificationPayedDetail(NotificationPayedDTO _entry){
 			entrySelected = _entry;
 			List <NotificationPayedDetailDTO> details = new ArrayList<NotificationPayedDetailDTO>();
-			String query = "SELECT mb.number, res.identificationnumber, res.name, nt.id, mb.emisiondate, mb.expirationdate, nt.creationtimestamp, mb.liquidationdate, mb.paidtotal "
+			String query = "SELECT mb.number, res.identificationnumber, res.name, CONCAT(nt.year,CONCAT('-',nt.number)), mb.emisiondate, mb.expirationdate, nt.creationtimestamp, mb.liquidationdate, mb.paidtotal "
 							+ "from gimprod.municipalbond mb "
 							+ "LEFT JOIN gimprod.resident res on res.id = mb.resident_id "
 							+ "LEFT JOIN gimprod.notification nt on nt.id = mb.notification_id "
