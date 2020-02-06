@@ -45,7 +45,7 @@ public class Taxpayer {
 	 * public Taxpayer(Long id, String identificationNumber, String firstName, String lastName, 
 			String email)
 	 */
-	@Deprecated
+	//@Deprecated 2020-02-03 rfam se habilita, la informacion del contribuyente debe estar actulizada y tambien retornar lo q hay del contribuyente
 	public Taxpayer(Long id, String identificationNumber, String firstName, String lastName, 
 			String email, String street, String phoneNumber) {
 		this();

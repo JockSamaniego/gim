@@ -598,7 +598,9 @@ public class PaymentServiceBean implements PaymentService {
 	private Taxpayer findTaxpayer(String identificationNumber)
 			throws TaxpayerNotFound {
 		Query query = em
-				.createNamedQuery("Taxpayer.findByIdentificationNumber");
+				//.createNamedQuery("Taxpayer.findByIdentificationNumber");
+				//rfam 2020-02-03 se retorna la informacion q exista del contribuyente
+				.createNamedQuery("Taxpayer.findResidentFullByIdentification");
 		query.setParameter("identificationNumber", identificationNumber);
 		try {
 			Taxpayer taxpayer = (Taxpayer) query.getSingleResult();

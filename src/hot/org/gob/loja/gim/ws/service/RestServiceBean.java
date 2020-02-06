@@ -23,8 +23,6 @@ import org.gob.gim.common.service.ResidentService;
 import org.gob.loja.gim.ws.dto.CadastralCertificateDTOWs;
 import org.gob.loja.gim.ws.dto.HygieneDTOWs;
 import org.gob.loja.gim.ws.dto.PropertyDTOWs;
-import org.jboss.seam.core.Interpolator;
-import org.jboss.seam.core.SeamResourceBundle;
 
 import ec.gob.gim.cadaster.model.dto.BoundaryDTO;
 import ec.gob.gim.cadaster.model.dto.BuildingDTO;
@@ -144,19 +142,19 @@ public class RestServiceBean implements RestService {
 			String identification) {
 		
 
-		String query1 = "(	select 'direccion_dom', re.identificationnumber, re.name, ad.street, ad.phonenumber, ad.mobilenumber "
+		String query1 = "(	select 'Dir. Domiciliaria', re.identificationnumber, re.name, ad.street, ad.phonenumber, ad.mobilenumber "
 						+	"from resident re " 
 						+	"left join address ad on re.currentaddress_id = ad.id "
 						+	"where re.identificationnumber ilike :idNumber "
 						+") union (	"
-						+	"select 'direccion_medi', cast(ws.servicenumber as varchar), ro.name ruta, st.name calle_bd, ws.ncalle calle_digitado, cast(ws.ncasa as varchar) "
+						+	"select 'Dir. Medidores', cast(ws.servicenumber as varchar), ro.name ruta, st.name calle_bd, ws.ncalle calle_digitado, cast(ws.ncasa as varchar) "
 						+	"from watersupply ws "
 						+	"join resident re on ws.serviceowner_id = re.id "
 						+	"join route ro on ws.route_id = ro.id "
 						+	"left join street st on ws.street_id = st.id "
 						+	"where re.identificationnumber ilike :idNumber "
 						+") union ( "
-						+	"select 'direccion_prop', pro.cadastralcode, st.name calle, lo.housenumber, CONCAT(nh.code,CONCAT('-',nh.name)) barrio, pro.addressreference referencia "
+						+	"select 'Dir. Propiedades', pro.cadastralcode, st.name calle, CONCAT(nh.code,CONCAT('-',nh.name)) barrio, pro.addressreference referencia, lo.housenumber "
 						+	"from property pro "
 						+	"join domain dom on pro.id = dom.currentproperty_id "
 						+	"join resident re on dom.resident_id = re.id "
@@ -167,7 +165,7 @@ public class RestServiceBean implements RestService {
 						+	"where re.identificationnumber ilike :idNumber "
 						+	"and pro.deleted = false "
 						+") union ( "
-						+	"select 'direccion_comer', "
+						+	"select 'Dir. Comercial', "
 						+	"CONCAT(extract(year from op.date_emission),CONCAT('-',op.paper_code)) as codigo, bu.name comercio, "
 						+	"replace(replace(op.economic_activity,chr(10), ''),chr(13), '') actividad, "
 						+	"CONCAT(ad.parish,CONCAT('-',ad.street)), CONCAT(ad.phonenumber,CONCAT('-',ad.mobilenumber)) telefonos "

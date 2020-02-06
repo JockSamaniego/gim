@@ -99,7 +99,16 @@ import ec.gob.gim.security.model.User;
 					  "FROM Person p " +
 					  "WHERE p.identificationNumber LIKE upper(:identificationNumber)"),
 		@NamedQuery(name = "Resident.findResidentByIds", query = "SELECT "
-				+ "resident FROM Resident resident WHERE resident.id in (:idUsers)")
+				+ "resident FROM Resident resident WHERE resident.id in (:idUsers)"),
+		
+		@NamedQuery(name="Taxpayer.findResidentFullByIdentification", 
+				query="SELECT " +
+				"NEW org.gob.loja.gim.ws.dto.Taxpayer( " +
+				"r.id, r.identificationNumber, r.name, r.name, COALESCE(r.email, 'S/E', r.email), COALESCE(currentAddress.street, 'S/C', currentAddress.street), COALESCE(currentAddress.phoneNumber, 'S/N', currentAddress.phoneNumber) ) " +
+				"FROM Resident r " + 
+				"left join r.currentAddress currentAddress " +
+				"WHERE r.identificationNumber = upper(:identificationNumber) ")
+		
 			  /*@NamedQuery(name="Taxpayer.findLegalEntityFullByIdentification", 
 						query="SELECT " +
 								"NEW org.gob.loja.gim.ws.dto.Taxpayer(" +
