@@ -31,6 +31,7 @@ import org.jboss.seam.log.Log;
 import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.coercive.model.NotificationPayedDTO;
 import ec.gob.gim.coercive.model.NotificationPayedDetailDTO;
+import ec.gob.gim.coercive.model.NotificationPayedExcelDTO;
 import ec.gob.gim.coercive.model.NotificationTask;
 import ec.gob.gim.coercive.model.NotificationTaskType;
 import ec.gob.gim.common.model.Charge;
@@ -1077,6 +1078,7 @@ public class NotificationHome extends EntityHome<Notification> {
 		
 		private NotificationPayedDTO entrySelected;
 		private List<NotificationPayedDetailDTO> payedsDetail;
+		private List<NotificationPayedExcelDTO> payedsDetailtoExcel;
 		
 		public NotificationPayedDTO getEntrySelected() {
 			return entrySelected;
@@ -1086,10 +1088,22 @@ public class NotificationHome extends EntityHome<Notification> {
 			return payedsDetail;
 		}
 
+		public List<NotificationPayedExcelDTO> getPayedsDetailtoExcel() {
+			return payedsDetailtoExcel;
+		}
+
+		public void setPayedsDetailtoExcel(
+				List<NotificationPayedExcelDTO> payedsDetailtoExcel) {
+			this.payedsDetailtoExcel = payedsDetailtoExcel;
+		}
+
+		
 		public List<NotificationPayedDetailDTO> generateNotificationPayedDetail(NotificationPayedDTO _entry){
 			entrySelected = _entry;
 			List <NotificationPayedDetailDTO> details = new ArrayList<NotificationPayedDetailDTO>();
-			String query = "SELECT mb.number, res.identificationnumber, res.name, CONCAT(nt.year,CONCAT('-',nt.number)), mb.emisiondate, mb.expirationdate, nt.creationtimestamp, mb.liquidationdate, mb.paidtotal "
+			
+			//Por favor, cambiar esta consulta en produccion
+			String query = "SELECT mb.number, res.identificationnumber, res.name, mb.emisiondate, mb.expirationdate, nt.creationtimestamp, mb.liquidationdate, mb.paidtotal, CONCAT(nt.year,CONCAT('-',nt.number)) "
 							+ "from gimprod.municipalbond mb "
 							+ "LEFT JOIN gimprod.resident res on res.id = mb.resident_id "
 							+ "LEFT JOIN gimprod.notification nt on nt.id = mb.notification_id "
@@ -1097,7 +1111,7 @@ public class NotificationHome extends EntityHome<Notification> {
 							+ "and mb.notification_id is not NULL "
 							+ "and mb.liquidationdate BETWEEN :startDate and :endDate "
 							+ "and mb.municipalbondstatus_id in (6,11) "
-							+ "ORDER BY res.name, mb.liquidationdate ";
+							+ "ORDER BY res.name, mb.liquidationdate, mb.paidtotal ASC";
 			
 			Query q = this.getEntityManager().createNativeQuery(query);
 			q.setParameter("entryId", entrySelected.getEntryId());
@@ -1146,5 +1160,27 @@ public class NotificationHome extends EntityHome<Notification> {
 			Charge charge = systemParameterService.materialize(Charge.class,
 					systemParameter);
 			return charge;
+		}
+		
+		public String getTotalNotificationsPayedToExcel(){
+			
+			payedsDetailtoExcel = new ArrayList<NotificationPayedExcelDTO>();
+			String query = "SELECT ent.name rubro, mb.number, res.identificationNumber, res.name contribuyente, CONCAT(nt.year,CONCAT('-',nt.number)), mb.emisiondate, mb.expirationdate, nt.creationtimestamp, mb.liquidationdate, mb.paidtotal "
+							+ "from gimprod.municipalbond mb "
+							+ "LEFT JOIN gimprod.resident res on res.id = mb.resident_id "
+							+ "LEFT JOIN gimprod.notification nt on nt.id = mb.notification_id "
+							+ "LEFT JOIN gimprod.entry ent ON ent.id = mb.entry_id "
+							+ "WHERE "
+							+ "mb.notification_id is not NULL "
+							+ "and mb.liquidationdate BETWEEN :startDate and :endDate "
+							+ "and mb.municipalbondstatus_id in (6,11) "
+							+ "ORDER BY ent.name, res.name, mb.liquidationdate, mb.paidtotal ASC";
+			
+			Query q = this.getEntityManager().createNativeQuery(query);
+			q.setParameter("startDate", startDatePayed);
+			q.setParameter("endDate", endDatePayed);
+			payedsDetailtoExcel = NativeQueryResultsMapper.map(q.getResultList(), NotificationPayedExcelDTO.class);
+			
+			return "/coercive/report/PayedNotificationTotalReportExcel.xhtml";
 		}
 }

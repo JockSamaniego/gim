@@ -1,0 +1,74 @@
+<e:workbook xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<e:worksheet value="#{notificationHome.payedsDetailtoExcel}" var="_payed">
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Rubro" />
+			</f:facet>
+			<e:cell value="#{_payed.entryName}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Obligación Nro." />
+			</f:facet>
+			<e:cell value="#{_payed.obligationNumber}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Identificación Contribuyente" />
+			</f:facet>
+			<e:cell value="#{_payed.identificationNumber}" />
+		</e:column>
+				
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Nombre Contribuyente" />
+			</f:facet>
+			<e:cell value="#{_payed.residentName}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Notificación Nro." />
+			</f:facet>
+			<e:cell value="#{_payed.notificationNumber}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Fecha de Emisión" />
+			</f:facet>
+			<e:cell value="#{_payed.emisionDate}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Fecha de Expiración" />
+			</f:facet>
+			<e:cell value="#{_payed.expirationDate}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Fecha de Notificación" />
+			</f:facet>
+			<e:cell value="#{_payed.notificationDate}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Fecha de Pago" />
+			</f:facet>
+			<e:cell value="#{_payed.liquidationDate}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Total Pago" />
+			</f:facet>
+			<e:cell value="#{_payed.value}" />
+		</e:column>
+	</e:worksheet>
+
+</e:workbook>
