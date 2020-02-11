@@ -60,6 +60,12 @@
 								id="printId2"
 								rendered="#{notificationHome.payeds.size() > 0}"
 								propagation="join" value="#{messages['payedNotificationTotalPrint']}" />
+							
+							<s:button
+							    action="#{notificationHome.getTotalNotificationsPayedToExcel()}"
+								id="downloadExcel"
+								rendered="#{notificationHome.payeds.size() > 0}"
+								propagation="join" value="#{messages['payedNotificationTotalDownloadExcel']}" />
 
 						</h:panelGrid>
 

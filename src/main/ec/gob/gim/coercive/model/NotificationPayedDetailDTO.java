@@ -19,23 +19,24 @@ public class NotificationPayedDetailDTO {
 	private String residentName;
 	
 	@NativeQueryResultColumn(index = 3)
-	private String notificationNumber;
-	
-	@NativeQueryResultColumn(index = 4)
 	private Date emisionDate;
 	
-	@NativeQueryResultColumn(index = 5)
+	@NativeQueryResultColumn(index = 4)
 	private Date expirationDate;
 	
-	@NativeQueryResultColumn(index = 6)
+	@NativeQueryResultColumn(index = 5)
 	private Date notificationDate;
 	
-	@NativeQueryResultColumn(index = 7)
+	@NativeQueryResultColumn(index = 6)
 	private Date liquidationDate;
 	
-	@NativeQueryResultColumn(index = 8)
+	@NativeQueryResultColumn(index = 7)
 	private BigDecimal value;
 
+	@NativeQueryResultColumn(index = 8)
+	private String notificationNumber;
+	
+	
 	public int getObligationNumber() {
 		return obligationNumber;
 	}
@@ -58,14 +59,6 @@ public class NotificationPayedDetailDTO {
 
 	public void setResidentName(String residentName) {
 		this.residentName = residentName;
-	}
-
-	public String getNotificationNumber() {
-		return notificationNumber;
-	}
-
-	public void setNotificationNumber(String notificationNumber) {
-		this.notificationNumber = notificationNumber;
 	}
 
 	public Date getEmisionDate() {
@@ -108,5 +101,12 @@ public class NotificationPayedDetailDTO {
 		this.value = value;
 	}
 	
+	public String getNotificationNumber() {
+		return notificationNumber;
+	}
+
+	public void setNotificationNumber(String notificationNumber) {
+		this.notificationNumber = notificationNumber;
+	}
 	
 }
