@@ -120,7 +120,7 @@ public class GimServiceBean implements GimService{
 			//System.out.println("::::::saveTaxpayer: SAVED OK!!");
 			return Boolean.TRUE;
 		}catch(Exception e){
-			System.out.println("------------------------------");
+			//System.out.println("------------------------------");
 			e.printStackTrace();
 			throw new TaxpayerNotSaved();
 			//return Boolean.FALSE;
@@ -135,7 +135,7 @@ public class GimServiceBean implements GimService{
 		Resident resident = getInstanceResident(taxpayer); 
 		try{
 			save(resident);
-			System.out.println("::::::saveTaxpayer: SAVED OK!!");
+			//System.out.println("::::::saveTaxpayer: SAVED OK!!");
 			return Boolean.TRUE;
 		}catch(Exception e){
 			throw new TaxpayerNotSaved();
