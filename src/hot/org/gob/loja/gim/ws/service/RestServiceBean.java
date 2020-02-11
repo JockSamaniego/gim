@@ -23,8 +23,6 @@ import org.gob.gim.common.service.ResidentService;
 import org.gob.loja.gim.ws.dto.CadastralCertificateDTOWs;
 import org.gob.loja.gim.ws.dto.HygieneDTOWs;
 import org.gob.loja.gim.ws.dto.PropertyDTOWs;
-import org.jboss.seam.core.Interpolator;
-import org.jboss.seam.core.SeamResourceBundle;
 
 import ec.gob.gim.cadaster.model.dto.BoundaryDTO;
 import ec.gob.gim.cadaster.model.dto.BuildingDTO;
