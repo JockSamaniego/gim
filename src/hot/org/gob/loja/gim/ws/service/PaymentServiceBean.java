@@ -600,7 +600,7 @@ public class PaymentServiceBean implements PaymentService {
 		Query query = em
 				//.createNamedQuery("Taxpayer.findByIdentificationNumber");
 				//rfam 2020-02-03 se retorna la informacion q exista del contribuyente
-				.createNamedQuery("findResidentFullByIdentification");
+				.createNamedQuery("Taxpayer.findResidentFullByIdentification");
 		query.setParameter("identificationNumber", identificationNumber);
 		try {
 			Taxpayer taxpayer = (Taxpayer) query.getSingleResult();
