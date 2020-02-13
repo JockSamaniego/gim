@@ -306,7 +306,7 @@
 						<a:commandButton id="reverseId"
 							action="#{municipalBondManager.setForReverse(_municipalBond)}"
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_INVALIDATOR') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
-							reRender="confirmPanel" ajaxSingle="true"
+							reRender="confirmPanel,judicialProcessNumberId" ajaxSingle="true"
 							eventsQueue="gimEventsQueue"
 							oncomplete="Richfaces.showModalPanel('confirmPanel',{width:350, height:300})"
 							value="#{messages['municipalBond.reverse']}" focus="observation" />
@@ -413,12 +413,14 @@
 					</s:decorate>
 					
 					<s:decorate id="judicialProcessNumberField"
-						template="../layout/edit.xhtml">
+						template="../layout/edit.xhtml"
+						rendered="#{municipalBondManager.municipalBond.entry.code == '00643' or municipalBondManager.municipalBond.entry.code == '00644' }">
 						<ui:define name="label">#{messages['statusChange.judicialProcessNumber']}:</ui:define>						
 						
 						<h:inputText id="judicialProcessNumberId" size="15" maxlength="8"
 							value="#{municipalBondManager.judicialProcessNumber}"
-							rendered="#{municipalBondManager.municipalBond.entry.code != '00643' or municipalBondManager.municipalBond.entry.code != '00644' }">
+							required="true" 
+							rendered="#{municipalBondManager.municipalBond.entry.code == '00643' or municipalBondManager.municipalBond.entry.code == '00644' }">
 							<a:support event="onblur" ajaxSingle="true" />
 						</h:inputText>
 																	

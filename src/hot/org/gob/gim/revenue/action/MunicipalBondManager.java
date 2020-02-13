@@ -1022,7 +1022,7 @@ public class MunicipalBondManager extends EntityController {
 	public void setForReverse(MunicipalBond mb) {
 		this.municipalBond = mb;
 		observation = "";
-		judicialProcessNumber = "";
+		judicialProcessNumber = null;
 		//System.out.println("Reseteaa observation/////////SetForReverse");
 	}
 
