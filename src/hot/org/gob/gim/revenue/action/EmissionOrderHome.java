@@ -295,7 +295,7 @@ public class EmissionOrderHome extends EntityHome<EmissionOrder> {
 	}
 	
 	private void updateStatus(List<Long> selected, MunicipalBondStatus status) {
-		revenueService.update(selected, status.getId(), userSession.getUser().getId(), null);		
+		revenueService.update(selected, status.getId(), userSession.getUser().getId(), null, null);
 	}	
 	
 	public String sendMunicipalBond(MunicipalBond m){

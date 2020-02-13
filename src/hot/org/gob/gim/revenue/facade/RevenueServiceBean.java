@@ -345,7 +345,7 @@ public class RevenueServiceBean implements RevenueService {
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void update(List<Long> municipalBondIds, Long municipalBondStatusId,
-			Long userId, String explanation) {
+			Long userId, String explanation, String judicialProcessNumber) {
 		//System.out				.println("GZ -----> Update in RevenueServiceBean, changing status to id "						+ municipalBondStatusId);
 		User user = entityManager.getReference(User.class, userId);
 		MunicipalBondStatus status = entityManager.getReference(
@@ -368,8 +368,11 @@ public class RevenueServiceBean implements RevenueService {
 				bond.setReversedTime(now);
 				bond.setReversedResolution(explanation);
 			}
-			saveStatusChangeRecord(explanation, bond, previousStatus, status,
-					user);
+			if (judicialProcessNumber != null) {
+				saveStatusChangeRecord(explanation, judicialProcessNumber,bond, previousStatus, status,	user);
+			}else {
+				saveStatusChangeRecord(explanation, bond, previousStatus, status,user);
+			}
 		}
 
 		/*
@@ -390,6 +393,21 @@ public class RevenueServiceBean implements RevenueService {
 		statusChange.setPreviousBondStatus(previousStatus);
 		statusChange.setMunicipalBondStatus(status);
 		statusChange.setUser(user);
+		entityManager.persist(statusChange);
+	}
+	
+	
+	@SuppressWarnings("unused")
+	private void saveStatusChangeRecord(String explanation, String judicialProcessNumber,MunicipalBond bond,
+			MunicipalBondStatus previousStatus, MunicipalBondStatus status,
+			User user) {
+		StatusChange statusChange = new StatusChange();
+		statusChange.setExplanation(explanation);
+		statusChange.setMunicipalBond(bond);
+		statusChange.setPreviousBondStatus(previousStatus);
+		statusChange.setMunicipalBondStatus(status);
+		statusChange.setUser(user);
+		statusChange.setJudicialProcessNumber(judicialProcessNumber);
 		entityManager.persist(statusChange);
 	}
 

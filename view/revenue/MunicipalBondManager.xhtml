@@ -308,11 +308,11 @@
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_INVALIDATOR') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
 							reRender="confirmPanel" ajaxSingle="true"
 							eventsQueue="gimEventsQueue"
-							oncomplete="Richfaces.showModalPanel('confirmPanel',{width:350, height:250})"
+							oncomplete="Richfaces.showModalPanel('confirmPanel',{width:350, height:300})"
 							value="#{messages['municipalBond.reverse']}" focus="observation" />
 
 						<a:commandButton id="rejectReversedId"
-							action="#{municipalBondManager.setForRejectedReversed(_municipalBond)}"
+							action="#{municipalBondManager.setForRejectedReverse(_municipalBond)}"
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_REJECT_REVERSED') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.reversedBondStatus))}"
 							reRender="confirmPanel" ajaxSingle="true"
 							eventsQueue="gimEventsQueue"
@@ -402,7 +402,7 @@
 			</h:form>
 		</rich:modalPanel>
 
-		<rich:modalPanel id="confirmPanel" width="350" height="350">
+		<rich:modalPanel id="confirmPanel" width="350" height="400">
 			<f:facet name="header">#{messages['municipalBond.confirmReverse']}</f:facet>
 			<h:form id="confirmReverse">
 				<h:panelGrid>
@@ -416,7 +416,7 @@
 						template="../layout/edit.xhtml">
 						<ui:define name="label">#{messages['statusChange.judicialProcessNumber']}:</ui:define>						
 						
-						<h:inputText id="judicialProcessNumberId" size="10" maxlength="8"
+						<h:inputText id="judicialProcessNumberId" size="15" maxlength="8"
 							value="#{municipalBondManager.judicialProcessNumber}"
 							rendered="#{municipalBondManager.municipalBond.entry.code != '00643' or municipalBondManager.municipalBond.entry.code != '00644' }">
 							<a:support event="onblur" ajaxSingle="true" />
