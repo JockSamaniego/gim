@@ -402,7 +402,7 @@
 			</h:form>
 		</rich:modalPanel>
 
-		<rich:modalPanel id="confirmPanel" width="350" height="250">
+		<rich:modalPanel id="confirmPanel" width="350" height="350">
 			<f:facet name="header">#{messages['municipalBond.confirmReverse']}</f:facet>
 			<h:form id="confirmReverse">
 				<h:panelGrid>
@@ -410,6 +410,18 @@
 						<ui:define name="label">#{messages['municipalBond.observation']}:</ui:define>
 						<h:inputTextarea id="observation" cols="40" rows="6"
 							value="#{municipalBondManager.observation}" required="true" />
+					</s:decorate>
+					
+					<s:decorate id="judicialProcessNumberField"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['statusChange.judicialProcessNumber']}:</ui:define>						
+						
+						<h:inputText id="judicialProcessNumberId" size="10" maxlength="8"
+							value="#{municipalBondManager.judicialProcessNumber}"
+							rendered="#{municipalBondManager.municipalBond.entry.code != '00643' or municipalBondManager.municipalBond.entry.code != '00644' }">
+							<a:support event="onblur" ajaxSingle="true" />
+						</h:inputText>
+																	
 					</s:decorate>
 
 					<h:panelGroup>
@@ -469,7 +481,7 @@
 						<h:inputTextarea id="observationBlocked" cols="40" rows="6"
 							value="#{municipalBondManager.observation}" required="true" />
 					</s:decorate>
-
+					
 					<h:panelGroup>
 						<div class="actionButtons">
 							<a:commandButton id="closingBtnBlocked" reRender="resultsPanel"

@@ -200,6 +200,9 @@ public class StatusChange {
 	@Transient
 	private Boolean changeResident;
 	
+	//rfam 2020-02-13 ML-UMTTTSV-L-FM-050-2020
+	private String judicialProcessNumber;
+	
 	public StatusChange() {
 		Date now = new Date();
 		setDate(now);
