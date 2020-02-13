@@ -35,7 +35,8 @@ public interface RevenueService {
 	Entry findEntryById(Long entryId);
 	List<Entry> findEntryByCriteria(String criteria);
 	List<MunicipalBond> findMunicipalBondsForReverseByEmitter(Long residentId, Long emitterId, Date date);
-	void update(List<Long> bondIds, Long municipalBondStatusId, Long userId, String explanation);
+	//void update(List<Long> bondIds, Long municipalBondStatusId, Long userId, String explanation);
+	void update(List<Long> bondIds, Long municipalBondStatusId, Long userId, String explanation, String judicialProcessNumber);
 	//void updateReversedDescriptionAndValue(List<Long> bondIds, String observation);
 			
 	MunicipalBond emit(MunicipalBond municipalBond, User user) throws Exception;

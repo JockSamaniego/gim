@@ -851,7 +851,7 @@ public class MunicipalBondManager extends EntityController {
 	private void updateStatus(List<Long> selected, MunicipalBondStatus status) {
 		//System.out.println("GZ -----> Invoking RevenueService " + status);
 		revenueService.update(selected, status.getId(), userSession.getUser()
-				.getId(), observation);
+				.getId(), observation, judicialProcessNumber);
 		findMunicipalBonds();
 	}
 
@@ -1022,6 +1022,7 @@ public class MunicipalBondManager extends EntityController {
 	public void setForReverse(MunicipalBond mb) {
 		this.municipalBond = mb;
 		observation = "";
+		judicialProcessNumber = "";
 		//System.out.println("Reseteaa observation/////////SetForReverse");
 	}
 
@@ -1075,7 +1076,7 @@ public class MunicipalBondManager extends EntityController {
 				.println("updateReversedSelectedAll -----> observacionManagerValor "
 						+ observacionManager);*/
 		revenueService.update(listForReverseAll, reversedBondStatus.getId(),
-				userSession.getUser().getId(), observacionManager);
+				userSession.getUser().getId(), observacionManager, judicialProcessNumber);
 		return "persisted";
 	}
 	
