@@ -54,16 +54,16 @@ public class NativeQueryResultsMapper {
                 ret.add(t);
             }
         } catch (InstantiationException ie) {
-            System.out.println("Cannot instantiate: " + ie);
+            //System.out.println("Cannot instantiate: " + ie);
             ret.clear();
         } catch (IllegalAccessException iae) {
-            System.out.println("Illegal access: " + iae);
+        	//System.out.println("Illegal access: " + iae);
             ret.clear();
         } catch (InvocationTargetException ite) {
-            System.out.println("Cannot invoke method: " + ite);
+        	//System.out.println("Cannot invoke method: " + ite);
             ret.clear();
         } catch (NoSuchMethodException e) {
-            System.out.println("No such method: " + e);
+        	//System.out.println("No such method: " + e);
             ret.clear();
 		}
         return ret;

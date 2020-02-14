@@ -2826,9 +2826,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				this.getInstance().setValue(receivedAmount);
 				payment.setValue(receivedAmount);
 				
-				System.out.println("received "+receivedAmount);
+				/*System.out.println("received "+receivedAmount);
 				System.out.println("isntance "+this.getInstance().getValue());
-				System.out.println("payment "+payment.getValue());
+				System.out.println("payment "+payment.getValue());*/
 				//
 				
 				for (PaymentFraction fraction : payment.getPaymentFractions()) {

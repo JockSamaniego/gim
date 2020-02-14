@@ -176,7 +176,7 @@ public class StatusChangeItem {
 
     public List<StatusChangeItem> getMunicipalBondItems(String o) {
 //        System.out.println("---------ii--------getMunicipalBondItems--------------");
-        System.out.println(o+": "+children);
+        //System.out.println(o+": "+children);
         List<StatusChangeItem> list = new LinkedList<StatusChangeItem>();
         list.addAll(children.values());
 //        for (StatusChangeItem mbi : children.values()) {
