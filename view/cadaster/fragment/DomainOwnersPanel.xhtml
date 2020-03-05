@@ -1,0 +1,75 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel id="domainOwnersPanel">
+		<f:facet name="header">
+			<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText value="#{messages['property.domainOwners']}" />
+				
+				<a:commandButton id="addOwner"
+					action="#{propertyHome.createDomainOwner()}"
+					reRender="domainOwnerAddPanel" ajaxSingle="true"
+					eventsQueue="gimEventsQueue"
+					oncomplete="Richfaces.showModalPanel('domainOwnerAddPanel',{width:800, height:475})"
+					value="#{messages['property.addBuilding']}" />
+			</h:panelGrid>
+		</f:facet>
+
+		<a:region>
+			<a:outputPanel styleClass="results" id="domainOwnersList">
+				<h:outputText value="#{messages['property.noAppraisals']}"
+					rendered="#{empty propertyHome.instance.appraisals}" />
+
+				<rich:dataTable id="domainOwnersTable" var="_owner"
+					value="#{propertyHome.instance.currentDomain.domainOwners}"
+					rowClasses="rvgRowOne,rvgRowTwo">
+
+					<rich:column sortBy="#{_owner.date}" styleClass="action">
+						<f:facet name="header">
+							<h:outputText value="#{messages['domainOwner.transactionDate']}" />
+						</f:facet>
+						<h:outputText value="#{_owner.transactionDate}">
+							<f:convertDateTime
+								pattern="#{messages['common.dateFullTimePattern']}" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['domainOwnerType']}</f:facet>
+						<h:outputText value="#{messages[_owner.domainOwnerType.name()]}" readonly="true" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['resident.identificationNumber']}</f:facet>
+						<h:outputText value="#{_owner.resident.identificationNumber}"
+							readonly="true" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['resident.name']}</f:facet>
+						<h:outputText value="#{_owner.resident.name}" readonly="true" />
+					</rich:column>
+
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<a:commandButton action="#{propertyHome.remove(_owner)}"
+							id="removeOwner" value="#{messages['common.remove']}"
+							immediate="true" reRender="domainOwnersList" ajaxSingle="true">
+						</a:commandButton>
+					</rich:column>
+
+				</rich:dataTable>
+
+			</a:outputPanel>
+		</a:region>
+	</rich:panel>
+</ui:composition>

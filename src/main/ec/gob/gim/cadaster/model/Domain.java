@@ -217,6 +217,10 @@ public class Domain {
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	@JoinColumn(name = "domain_id")
 	private List<CheckingRecord> checkingRecords;
+	
+	@OneToMany(mappedBy = "domain", cascade = CascadeType.ALL)
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private List<DomainOwner> domainOwners;
 
 	public Domain() {
 		//this.municipalBonds = new ArrayList<MunicipalBond>();
@@ -228,6 +232,7 @@ public class Domain {
 		this.totalAreaConstruction = BigDecimal.ZERO;
 		this.specialContribution = BigDecimal.ZERO;
 		this.newBuildingValue = BigDecimal.ZERO;
+		this.domainOwners = new ArrayList<DomainOwner>();
 		// /
 		// /
 	}
@@ -731,6 +736,26 @@ public class Domain {
 
 	public void setSellName(String sellName) {
 		this.sellName = sellName;
+	}
+
+	public List<DomainOwner> getDomainOwners() {
+		return domainOwners;
+	}
+
+	public void setDomainOwners(List<DomainOwner> domainOwners) {
+		this.domainOwners = domainOwners;
+	}
+	
+	public void add(DomainOwner owner) {
+		if (!this.domainOwners.contains(owner)) {
+			this.domainOwners.add(owner);			
+		}
+	}
+
+	public void remove(DomainOwner owner) {
+		if (this.domainOwners.contains(owner)) {
+			this.domainOwners.remove(owner);			
+		}
 	}
 
 }
