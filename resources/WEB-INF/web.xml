@@ -120,6 +120,10 @@
 		<servlet-name>WorkDayWs</servlet-name>
 		<servlet-class>org.gob.loja.gim.ws.workday.WorkDayWs</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>PaymentPlatformV2</servlet-name>
+		<servlet-class>org.loxageek.common.ws.v2.PaymentPlatformV2</servlet-class>
+	</servlet>
 	
 	<!--servlet> <servlet-name>ServicePayment</servlet-name> <servlet-class>org.gob.loja.gim.ws.sde.ws.ServicePayment</servlet-class> 
 		</servlet -->
@@ -147,6 +151,10 @@
 	<servlet-mapping>
 		<servlet-name>WorkDayWs</servlet-name>
 		<url-pattern>/WorkDayWs</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>PaymentPlatformV2</servlet-name>
+		<url-pattern>/paymentPlatformV2</url-pattern>
 	</servlet-mapping>
 
 	<!-- servlet-mapping> <servlet-name>ServicePayment</servlet-name> <url-pattern>/servicePayment</url-pattern> 

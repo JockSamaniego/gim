@@ -45,6 +45,7 @@ import ec.gob.gim.cadaster.model.Building;
 import ec.gob.gim.cadaster.model.BuildingMaterialValue;
 import ec.gob.gim.cadaster.model.CompassPoint;
 import ec.gob.gim.cadaster.model.Domain;
+import ec.gob.gim.cadaster.model.DomainOwner;
 import ec.gob.gim.cadaster.model.FenceMaterial;
 import ec.gob.gim.cadaster.model.LandUse;
 import ec.gob.gim.cadaster.model.Location;
@@ -187,6 +188,10 @@ public class PropertyHome extends EntityHome<Property> {
 	//2019-11-27
 	private String riskParameter="";
 	private String threatParamter="";
+	
+	//rfam
+	//2020-02-21
+	private DomainOwner domainOwner;
 	
 	public Property getProperty() {
 		return property;
@@ -2946,4 +2951,25 @@ public class PropertyHome extends EntityHome<Property> {
 		if(parish == null) return false;
 		return (threatParamter.indexOf(parish.getCode())!= -1);
 	}
+	
+	public void createDomainOwner() {
+		this.domainOwner = new DomainOwner();
+	}
+	
+	public void addDomainOwner() {
+		this.getInstance().getCurrentDomain().add(this.domainOwner);
+	}
+	
+	public void remove(DomainOwner localOwner) {
+		this.getInstance().getCurrentDomain().remove(localOwner);
+	}
+	
+	public void ownerSelectedListener(ActionEvent event) {
+		UIComponent component = event.getComponent();
+		Resident resident = (Resident) component.getAttributes()
+				.get("resident");
+		this.domainOwner.setResident(resident);
+		this.setIdentificationNumber(resident.getIdentificationNumber());
+	}
+	
 }
