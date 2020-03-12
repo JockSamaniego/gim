@@ -138,7 +138,7 @@ public class ANTReference extends Adjunct {
 			details.add(pair);
 		}
 		
-		if (oldCodeInfringement != null && oldCodeInfringement.equals("0")) {
+		if (oldCodeInfringement != null && !oldCodeInfringement.equals("0")) {
 			pair = new ValuePair("Boleta Nro.", oldCodeInfringement != null ? oldCodeInfringement.toUpperCase() : "-");
 			details.add(pair);
 		}
