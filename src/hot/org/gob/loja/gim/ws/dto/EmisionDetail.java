@@ -36,7 +36,7 @@ public class EmisionDetail {
 	/**
 	 * yyyy-MM-dd
 	 */
-	private Date citationDate;
+	private Date infractionDate;
 
 	private Date notificationDate;
 
@@ -152,13 +152,13 @@ public class EmisionDetail {
 		this.serviceType = serviceType;
 	}
 
-	public Date getCitationDate() {
+	/*public Date getCitationDate() {
 		return citationDate;
 	}
 
 	public void setCitationDate(Date citationDate) {
 		this.citationDate = citationDate;
-	}
+	}*/
 
 	public String getContraventionNumber() {
 		return contraventionNumber;
@@ -182,6 +182,14 @@ public class EmisionDetail {
 
 	public void setNotificationDate(Date notificationDate) {
 		this.notificationDate = notificationDate;
+	}
+
+	public Date getInfractionDate() {
+		return infractionDate;
+	}
+
+	public void setInfractionDate(Date infractionDate) {
+		this.infractionDate = infractionDate;
 	}
 
 }
