@@ -546,8 +546,13 @@ public class GimServiceBean implements GimService{
 					 * control de la fecha 
 					 */
 					
-					if (emisionDetail.getCitationDate() == null || emisionDetail.getNotificationDate() == null) {
-						response.setMessage("Emisión fallida. Fecha de infracción o fecha de citación falante");
+					if (emisionDetail.getNotificationDate() == null) {
+						response.setMessage("Emisión fallida. Fecha de notificación falante");
+						return response;
+					}
+					
+					if (emisionDetail.getInfractionDate() == null) {
+						response.setMessage("Emisión fallida. Fecha de infracción falante");
 						return response;
 					}
 					
@@ -621,7 +626,11 @@ public class GimServiceBean implements GimService{
 					ant.setSpeeding(emisionDetail.getSpeeding());
 					ant.setVehicleType(emisionDetail.getVehicleType());
 					ant.setServiceType(emisionDetail.getServiceType());
-					ant.setCitationDate(emisionDetail.getCitationDate());
+					
+					ant.setInfractionDate(emisionDetail.getInfractionDate());
+					ant.setNotificationDate(emisionDetail.getNotificationDate());
+					ant.setCitationDate(emisionDetail.getInfractionDate());
+					
 					ant.setSupportDocumentURL(emisionDetail.getSupportDocumentURL());
 					mb.setAdjunct(ant);
 					// end Adjunt
@@ -673,7 +682,8 @@ public class GimServiceBean implements GimService{
 				+ "\t=> usuario: " + name +" "
 				+ "\t=> infraccion: " + emisionDetail.getContraventionNumber() +" "
 				+ "\t=> placa: " + emisionDetail.getNumberPlate() +" "
-				+ "\t=> fecha infraccion: " + emisionDetail.getCitationDate() +" "
+				+ "\t=> fecha infraccion: " + emisionDetail.getInfractionDate() +" "
+				+ "\t=> fecha notificacion: " + emisionDetail.getNotificationDate() +" "
 				+ "\t=> cuenta: " + accountCode +" "
 				+ "\t=> valor: " + emisionDetail.getTotal() +" "
 				+ "\t=> contribuyente: " + identificationNumber;
