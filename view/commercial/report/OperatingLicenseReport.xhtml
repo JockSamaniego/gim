@@ -55,7 +55,7 @@
 	</p:paragraph>
 
 	<p:font size="9" name="HELVETICA">
-		<p:paragraph spacingAfter="0" spacingBefore="145"
+		<p:paragraph spacingAfter="0" spacingBefore="73"
 			horizontalAlignment="right">
 			<p:table columns="1" widthPercentage="55" headerRows="0"
 				horizontalAlignment="right">
@@ -101,7 +101,7 @@
 			</p:table>
 		</p:paragraph>
 		
-		<p:paragraph spacingAfter="0" spacingBefore="0" alignment="left">
+		<p:paragraph spacingAfter="0" spacingBefore="1" alignment="left">
 			<p:table columns="4" widthPercentage="100" headerRows="0">
 				<f:facet name="defaultCell">
 					<p:cell borderWidth="0" horizontalAlignment="left" />
@@ -226,39 +226,17 @@
 
 		</p:paragraph>
 
-		<p:paragraph spacingAfter="0" spacingBefore="0"
-			horizontalAlignment="right">
-
-			<p:table columns="1" widthPercentage="100" headerRows="0"
-				horizontalAlignment="right">
-
-				<f:facet name="defaultCell">
-
-					<p:cell borderWidth="0" />
-
-				</f:facet>
-
-				<p:cell colspan="1" fixedHeight="17">
-
-					<p:text value="" />
-
-				</p:cell>
-
-				<p:cell colspan="1" fixedHeight="32">
+		<p:paragraph spacingAfter="0" spacingBefore="30" horizontalAlignment="right">
 
 					<p:font size="12" style="bold">
 
-						<p:text value="#{businessHome.economic_Activity.toUpperCase()}" />
+						<p:text value="#{businessHome.economic_Activity.toUpperCase()} - DOCUMENTO DE USO EXCLUSIVO PARA LA ACTIVIDAD ECONÓMICA FACULTADA." />
 
 					</p:font>
 
-				</p:cell>
-
-			</p:table>
-
 		</p:paragraph>
 
-		<p:paragraph spacingAfter="0" spacingBefore="3"
+		<p:paragraph spacingAfter="0" spacingBefore="7"
 			horizontalAlignment="right">
 
 			<p:table columns="4" widthPercentage="100" headerRows="0"
@@ -280,7 +258,10 @@
 
 					<p:font size="12" style="bold">
 
-						<p:text value="#{businessHome.emissionDate}" />
+						<p:text value="#{businessHome.emissionDate}" >
+							<f:convertDateTime
+								pattern="#{messages['common.datePatternReport']}" />
+						</p:text>
 
 					</p:font>
 
@@ -296,7 +277,10 @@
 
 					<p:font size="12" style="bold">
 
-						<p:text value="#{businessHome.validityDate}" />
+						<p:text value="#{businessHome.validityDate}" >
+							<f:convertDateTime
+								pattern="#{messages['common.datePatternReport']}" />
+						</p:text>
 
 					</p:font>
 
@@ -308,7 +292,7 @@
 
 
 
-		<p:paragraph spacingAfter="0" spacingBefore="52" alignment="center"
+		<p:paragraph spacingAfter="0" spacingBefore="10" alignment="center"
 			verticalAlignment="10" leading="10">
 
 			<p:font size="12" style="bold">
@@ -322,14 +306,14 @@
 
 
 		<p:paragraph spacingAfter="0" spacingBefore="10"
-			horizontalAlignment="left" VerticalAlignment="center">
+			horizontalAlignment="right" VerticalAlignment="right">
 
 			<p:table columns="1" widthPercentage="100" headerRows="0"
-				horizontalAlignment="left" VerticalAlignment="center">
+				horizontalAlignment="right" VerticalAlignment="right">
 
 				<f:facet name="defaultCell">
 
-					<p:cell borderWidth="0" horizontalAlignment="left" />
+					<p:cell borderWidth="0" horizontalAlignment="right" />
 
 				</f:facet>
 
