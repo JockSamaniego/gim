@@ -199,19 +199,8 @@ public class Notification {
 	@Transient
 	public BigDecimal getTotal() {
 		BigDecimal sum = new BigDecimal(0);
-		//listado de status payed
-		//macartuche	
-		ArrayList<Long> status = new ArrayList<Long>();
-		status.add(6L);
-		status.add(11L);
-		
 		for (MunicipalBond mb : this.getMunicipalBonds()) {
-			//macartuche 2019-11-27
-			//solo tomar en consideracion las pendientes/convenio
-			if( !status.contains(mb.getMunicipalBondStatus().getId())) {
 				sum = sum.add(mb.getValue()); 
-			}
-			
 		}
 		return sum;
 	}

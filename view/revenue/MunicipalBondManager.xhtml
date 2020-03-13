@@ -306,13 +306,13 @@
 						<a:commandButton id="reverseId"
 							action="#{municipalBondManager.setForReverse(_municipalBond)}"
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_INVALIDATOR') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.blockedBondStatus) || _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus))}"
-							reRender="confirmPanel" ajaxSingle="true"
+							reRender="confirmPanel,judicialProcessNumberId" ajaxSingle="true"
 							eventsQueue="gimEventsQueue"
-							oncomplete="Richfaces.showModalPanel('confirmPanel',{width:350, height:250})"
+							oncomplete="Richfaces.showModalPanel('confirmPanel',{width:350, height:300})"
 							value="#{messages['municipalBond.reverse']}" focus="observation" />
 
 						<a:commandButton id="rejectReversedId"
-							action="#{municipalBondManager.setForRejectedReversed(_municipalBond)}"
+							action="#{municipalBondManager.setForRejectedReverse(_municipalBond)}"
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_MANAGER_REJECT_REVERSED') and (_municipalBond.municipalBondStatus.equals(municipalBondManager.reversedBondStatus))}"
 							reRender="confirmPanel" ajaxSingle="true"
 							eventsQueue="gimEventsQueue"
@@ -402,7 +402,7 @@
 			</h:form>
 		</rich:modalPanel>
 
-		<rich:modalPanel id="confirmPanel" width="350" height="250">
+		<rich:modalPanel id="confirmPanel" width="350" height="400">
 			<f:facet name="header">#{messages['municipalBond.confirmReverse']}</f:facet>
 			<h:form id="confirmReverse">
 				<h:panelGrid>
@@ -410,6 +410,20 @@
 						<ui:define name="label">#{messages['municipalBond.observation']}:</ui:define>
 						<h:inputTextarea id="observation" cols="40" rows="6"
 							value="#{municipalBondManager.observation}" required="true" />
+					</s:decorate>
+					
+					<s:decorate id="judicialProcessNumberField"
+						template="../layout/edit.xhtml"
+						rendered="#{municipalBondManager.municipalBond.entry.code == '00643' or municipalBondManager.municipalBond.entry.code == '00644' }">
+						<ui:define name="label">#{messages['statusChange.judicialProcessNumber']}:</ui:define>						
+						
+						<h:inputText id="judicialProcessNumberId" size="15" maxlength="8"
+							value="#{municipalBondManager.judicialProcessNumber}"
+							required="true" 
+							rendered="#{municipalBondManager.municipalBond.entry.code == '00643' or municipalBondManager.municipalBond.entry.code == '00644' }">
+							<a:support event="onblur" ajaxSingle="true" />
+						</h:inputText>
+																	
 					</s:decorate>
 
 					<h:panelGroup>
@@ -469,7 +483,7 @@
 						<h:inputTextarea id="observationBlocked" cols="40" rows="6"
 							value="#{municipalBondManager.observation}" required="true" />
 					</s:decorate>
-
+					
 					<h:panelGroup>
 						<div class="actionButtons">
 							<a:commandButton id="closingBtnBlocked" reRender="resultsPanel"

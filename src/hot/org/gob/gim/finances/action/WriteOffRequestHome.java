@@ -734,7 +734,7 @@ public class WriteOffRequestHome extends EntityHome<WriteOffRequest> {
 
 		this.details.add(detail);
 
-		System.out.println(this.details);
+		//System.out.println(this.details);
 
 		this.detailsTableNew = new ArrayList<DetailTableAuxDTO>();
 

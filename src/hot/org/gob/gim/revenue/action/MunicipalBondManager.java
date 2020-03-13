@@ -8,16 +8,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
-import org.gob.gim.commercial.action.LocalFeatureHome;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -121,6 +116,9 @@ public class MunicipalBondManager extends EntityController {
 	private List<Long> otherDatesMunicipalBonds;
 
 	private String observation;
+	
+	//rfam 2020-02-13 ML-UMTTTSV-L-FM-050-2020
+	private String judicialProcessNumber;
 
 	private static final String EJBQL = "SELECT municipalBond "
 			+ "FROM MunicipalBond municipalBond "
@@ -853,7 +851,7 @@ public class MunicipalBondManager extends EntityController {
 	private void updateStatus(List<Long> selected, MunicipalBondStatus status) {
 		//System.out.println("GZ -----> Invoking RevenueService " + status);
 		revenueService.update(selected, status.getId(), userSession.getUser()
-				.getId(), observation);
+				.getId(), observation, judicialProcessNumber);
 		findMunicipalBonds();
 	}
 
@@ -1024,6 +1022,7 @@ public class MunicipalBondManager extends EntityController {
 	public void setForReverse(MunicipalBond mb) {
 		this.municipalBond = mb;
 		observation = "";
+		judicialProcessNumber = null;
 		//System.out.println("Reseteaa observation/////////SetForReverse");
 	}
 
@@ -1077,7 +1076,7 @@ public class MunicipalBondManager extends EntityController {
 				.println("updateReversedSelectedAll -----> observacionManagerValor "
 						+ observacionManager);*/
 		revenueService.update(listForReverseAll, reversedBondStatus.getId(),
-				userSession.getUser().getId(), observacionManager);
+				userSession.getUser().getId(), observacionManager, judicialProcessNumber);
 		return "persisted";
 	}
 	
@@ -1118,6 +1117,14 @@ public class MunicipalBondManager extends EntityController {
 			return this.printOriginal(mb.getId());
 		}
 		return null;
+	}
+
+	public String getJudicialProcessNumber() {
+		return judicialProcessNumber;
+	}
+
+	public void setJudicialProcessNumber(String judicialProcessNumber) {
+		this.judicialProcessNumber = judicialProcessNumber;
 	}
 	
 }

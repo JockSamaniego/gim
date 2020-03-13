@@ -72,6 +72,13 @@ public class ANTReference extends Adjunct {
 	 * UMTTTSV-FV-2018-0086-O
 	 */
 	private String physicalInfractionNumber;
+	
+	
+	/***
+	 * ML-UMTTTSV-FM-2020-093-M
+	 * 2020-02-19
+	 */
+	private String oldCodeInfringement;
 
 	// private String observation;
 
@@ -110,6 +117,11 @@ public class ANTReference extends Adjunct {
 		
 		if (physicalInfractionNumber != null && physicalInfractionNumber.equals("")) {
 			pair = new ValuePair("Boleta Infracción", physicalInfractionNumber != null ? physicalInfractionNumber.toUpperCase() : "-");
+			details.add(pair);
+		}
+		
+		if (oldCodeInfringement != null && !oldCodeInfringement.equals("0")) {
+			pair = new ValuePair("Boleta Nro.", oldCodeInfringement != null ? oldCodeInfringement.toUpperCase() : "-");
 			details.add(pair);
 		}
 		
@@ -186,7 +198,13 @@ public class ANTReference extends Adjunct {
 	public void setPhysicalInfractionNumber(String physicalInfractionNumber) {
 		this.physicalInfractionNumber = physicalInfractionNumber;
 	}
+	public String getOldCodeInfringement() {
+		return oldCodeInfringement;
+	}
 
+	public void setOldCodeInfringement(String oldCodeInfringement) {
+		this.oldCodeInfringement = oldCodeInfringement;
+	}
 	
 	
 }

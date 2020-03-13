@@ -46,7 +46,8 @@ public class EmissionServiceBean implements EmissionService {
 
 			return retorno;
 		} catch (Exception e) {
-			System.out.println(e);
+			//System.out.println(e);
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -71,7 +72,8 @@ public class EmissionServiceBean implements EmissionService {
 
 			return retorno;
 		} catch (Exception e) {
-			System.out.println(e);
+			//System.out.println(e);
+			e.printStackTrace();
 			return null;
 		}
 	}

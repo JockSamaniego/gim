@@ -14,6 +14,7 @@
     <ui:include src="fragment/TipoDeTramite.xhtml">			</ui:include>
 
 	<ui:include src="fragment/BuildingEditPanel.xhtml" />
+	<ui:include src="fragment/DomainOwnerAddPanel.xhtml" />
 
     <h:form id="property" styleClass="edit">    	
     	<rich:messages errorClass="errors"/>
@@ -76,6 +77,10 @@
     	
     		<rich:tab label="#{messages['property.historyChange']}" switchType="client" bypassDisabled="true">   			
 	    		<ui:include src="fragment/HistoryChangePanel.xhtml"/>
+    		</rich:tab>
+    		
+    		<rich:tab label="#{messages['property.domainOwners']}" switchType="client" bypassDisabled="true">   			
+	    		<ui:include src="fragment/DomainOwnersPanel.xhtml"/>
     		</rich:tab>
     	
     	</rich:tabPanel>
