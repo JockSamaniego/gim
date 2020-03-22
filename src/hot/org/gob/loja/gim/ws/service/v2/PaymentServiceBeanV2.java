@@ -221,9 +221,18 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 						Long paidFromExternalBondStatusId = systemParameterService
 								.findParameter(IncomeServiceBean.PAID_FROM_EXTERNAL_CHANNEL_BOND_STATUS);
 						persistChangeStatus(payout.getBondIds(), paidFromExternalBondStatusId);
+						
+						//////buscar los datos para el pago efectuado
+						DepositStatementV2 localInformation = incomeService.findDepositInformation(cashier,
+								payout.getPaymentDate(), payout);
 
 						statement.setMessage("Pago registrado con exito");
 						statement.setCode("ML.RD.7200");
+						statement.setReference(localInformation.getReference());
+						statement.setResidentIdentificaciton(localInformation.getResidentIdentificaciton());
+						statement.setResidentName(localInformation.getResidentName());
+						statement.setTotal(localInformation.getTotal());
+						
 						persisBankingEntityLog(true, statement.toString());
 						return statement;
 					} else {

@@ -47,6 +47,8 @@ import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.loja.gim.ws.dto.BondSummary;
 import org.gob.loja.gim.ws.dto.FutureBond;
+import org.gob.loja.gim.ws.dto.Payout;
+import org.gob.loja.gim.ws.dto.v2.DepositStatementV2;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 
@@ -2147,5 +2149,33 @@ public class IncomeServiceBean implements IncomeService {
 		}
 		
 		//return false;
+	}
+
+	@Override
+	public DepositStatementV2 findDepositInformation(Person cashier, Date paymentDate, Payout payout) {
+		String sql="select coalesce(pay.externaltransactionid, 'review'), re.identificationnumber, re.name, coalesce(pay.value, 0) " + 
+				"from payment pay " + 
+				"join deposit dep on pay.id = dep.payment_id " + 
+				"join municipalbond mb on dep.municipalbond_id = mb.id " + 
+				"join resident re on mb.resident_id = re.id " + 
+				"where pay.cashier_id = :cashierId " + 
+				"and pay.date = :paymentDate " + 
+				"and dep.municipalbond_id in (:bondsIds) " + 
+				"group by 1,2,3,4";
+		Query q = entityManager.createNativeQuery(sql);	 
+		q.setParameter("cashierId", cashier.getId());
+		q.setParameter("paymentDate", paymentDate);
+		q.setParameter("bondsIds", payout.getBondIds());
+		List<Object[]> results = q.getResultList();
+		DepositStatementV2 ds2=new DepositStatementV2();
+		if(!results.isEmpty()){
+			for (Object[] a : results) {
+				ds2.setReference(a[0].toString());
+				ds2.setResidentIdentificaciton(a[1].toString());
+				ds2.setResidentName(a[2].toString());
+				ds2.setTotal( BigDecimal.valueOf(Double.valueOf(a[3].toString())));
+			}
+		}
+		return ds2;
 	}
 }
