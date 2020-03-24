@@ -2153,7 +2153,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	@Override
 	public DepositStatementV2 findDepositInformation(Person cashier, Date paymentDate, Payout payout) {
-		String sql="select coalesce(pay.externaltransactionid, 'review'), re.identificationnumber, re.name, coalesce(pay.value, 0) " + 
+		String sql="select concat('ML-PID-',pay.id) , re.identificationnumber, re.name, coalesce(pay.value, 0) " + 
 				"from payment pay " + 
 				"join deposit dep on pay.id = dep.payment_id " + 
 				"join municipalbond mb on dep.municipalbond_id = mb.id " + 
@@ -2170,6 +2170,7 @@ public class IncomeServiceBean implements IncomeService {
 		DepositStatementV2 ds2=new DepositStatementV2();
 		if(!results.isEmpty()){
 			for (Object[] a : results) {
+				//System.out.println(a[0] + " - "+a[1]+" - "+" - "+a[2]+" - "+a[3]);
 				ds2.setReference(a[0].toString());
 				ds2.setResidentIdentificaciton(a[1].toString());
 				ds2.setResidentName(a[2].toString());
