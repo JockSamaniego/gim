@@ -539,6 +539,7 @@ public class MunicipalBondManager extends EntityController {
 			Long[] printings = { printingsNumber };
 			receiptPrintingManager.setPrintings(printings);
 			receiptPrintingManager.setIsCertificate(isCertificate);
+			receiptPrintingManager.controlReprintsCreditTitles(municipalBond.getPrintingsNumber(), municipalBond.getDocumentIsRedeemed());
 			String result = receiptPrintingManager.print(depositToPrint);
 
 			/*System.out.println("RESULTADO ----> " + result + " "
@@ -569,6 +570,7 @@ public class MunicipalBondManager extends EntityController {
 			receiptPrintingManager.setPrintings(printings);
 
 			receiptPrintingManager.setIsCertificate(Boolean.FALSE);
+			receiptPrintingManager.controlReprintsCreditTitles(municipalBond.getPrintingsNumber(), this.printForRedeemed);
 			String result = receiptPrintingManager.print(depositToPrint);
 			return result;
 		} else {
@@ -1104,7 +1106,10 @@ public class MunicipalBondManager extends EntityController {
 	//Jock Samaniego
 	//07-01-2020
 	
+	private Boolean printForRedeemed = Boolean.FALSE;
+	
 	public String reprintedForRedeemed(MunicipalBond mb){
+		this.printForRedeemed = Boolean.TRUE;
 		//Query query = getEntityManager().createNamedQuery("MunicipalBond.findById");
 		//query.setParameter("municipalBondId", mb_id);
 		//MunicipalBond mb = (MunicipalBond) query.getSingleResult();
@@ -1112,6 +1117,7 @@ public class MunicipalBondManager extends EntityController {
 			//mb.setDocumentIsRedeemed(Boolean.TRUE);
 			MunicipalBond municipalBond = getEntityManager().getReference(MunicipalBond.class, mb.getId());
 			municipalBond.setDocumentIsRedeemed(Boolean.TRUE);
+			municipalBond.setExchangeDate(new Date());
 			getEntityManager().merge(municipalBond);
 			getEntityManager().flush();
 			return this.printOriginal(mb.getId());

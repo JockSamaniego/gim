@@ -143,7 +143,7 @@ public class NotificationReport extends EntityQuery<Notification> {
 	public void depureBonds() {
 		if (this.notifications==null) return;
 		
-		List<Long> permitStates = new ArrayList<>();
+		List<Long> permitStates = new ArrayList<Long>();
 		permitStates.add(pendingStatus);
 		permitStates.add(compensationStatus);
 		permitStates.add(agreementStatus);

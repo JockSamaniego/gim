@@ -351,7 +351,7 @@
 								rendered="#{_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel) and (!_municipalBond.documentIsRedeemed || _municipalBond.documentIsRedeemed == null)}"
 								action="#{municipalBondManager.reprintedForRedeemed(_municipalBond)}"
 								value="#{messages['Canje Documento']}"/>
-								<h:outputText value="Documento Canjeado"
+								<h:outputText value="Canjeado #{_municipalBond.exchangeDate}"
 								rendered="#{_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel) and _municipalBond.documentIsRedeemed}"
 								style='font-size: 10px; font-weight: bold; color: red' />
 						</a:region>

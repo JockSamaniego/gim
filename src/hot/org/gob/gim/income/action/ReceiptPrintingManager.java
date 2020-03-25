@@ -76,6 +76,26 @@ public class ReceiptPrintingManager{
 		return depositsToPrint;
 	}
 	
+	// JockSamaniego
+	// Para control de impresiones de titulos (ORIGINAL-COPIA-CANJE)
+	// 13-03-2020
+	
+	private int copiesNumber = 0;
+	private Boolean isExchange = Boolean.FALSE;
+	
+	public int getCopiesNumber() {
+		return copiesNumber;
+	}
+
+	public Boolean getIsExchange() {
+		return isExchange;
+	}
+	
+	public void controlReprintsCreditTitles(int copiesNumber, Boolean isExchange){
+		this.copiesNumber = copiesNumber;
+		this.isExchange = isExchange;
+	}
+	
 	public String print(Deposit deposit){
 		depositsToPrint.clear();
 		//System.out.println("A IMPRIMIR DEPOSITO "+deposit);

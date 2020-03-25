@@ -353,13 +353,21 @@
 			<p:paragraph><p:font size="8">#{_deposit.municipalBond.entry.explanatoryNote}</p:font></p:paragraph>
 		</p:cell>
 	</p:table>
-
-	<p:barCode  type="code128" barHeight="25" textSize="10" rendered="#{not receiptPrintingManager.isCertificate and !_deposit.municipalBond.receipt.electronicReceipt}"
-				code="#{_deposit.municipalBond.receipt.authorizationNumber}-#{_deposit.municipalBond.receipt.sequential}" codeType="CODE128_UCC"
-				altText="#{_printing == 0 ? messages['printing.original'] : (_printing == -1 ? messages['printing.copy'] : messages['printing.reprint'])} #{_printing > 0 ? _printing : ''}" xpos="25" ypos="25" />
-
-	<p:barCode  type="code128" barHeight="25" textSize="10" rendered="#{not receiptPrintingManager.isCertificate and _deposit.municipalBond.receipt.electronicReceipt}"
-				code="#{_deposit.municipalBond.receipt.sriAccessKey}" codeType="CODE128_UCC"
-				altText="#{_printing == 0 ? messages[''] : (_printing == -1 ? messages['printing.copy'] : messages['printing.reprint'])} #{_deposit.municipalBond.receipt.sriAccessKey} #{_printing > 0 ? _printing : ''}" xpos="25" ypos="25" />
-
+	<p:paragraph rendered="#{receiptPrintingManager.copiesNumber == 0}">
+		<p:barCode  type="code128" barHeight="25" textSize="10" rendered="#{not receiptPrintingManager.isCertificate and !_deposit.municipalBond.receipt.electronicReceipt}"
+					code="#{_deposit.municipalBond.receipt.authorizationNumber}-#{_deposit.municipalBond.receipt.sequential}" codeType="CODE128_UCC"
+					altText="#{_printing == 0 ? messages['printing.original'] : (_printing == -1 ? messages['printing.copy'] : messages['printing.reprint'])} #{_printing > 0 ? _printing : ''}" xpos="25" ypos="25" />
+	
+		<p:barCode  type="code128" barHeight="25" textSize="10" rendered="#{not receiptPrintingManager.isCertificate and _deposit.municipalBond.receipt.electronicReceipt}"
+					code="#{_deposit.municipalBond.receipt.sriAccessKey}" codeType="CODE128_UCC"
+					altText="#{_printing == 0 ? messages[''] : (_printing == -1 ? messages['printing.copy'] : messages['printing.reprint'])} #{_deposit.municipalBond.receipt.sriAccessKey} #{_printing > 0 ? _printing : ''}" xpos="25" ypos="25" />
+	</p:paragraph>
+	
+	<p:paragraph rendered="#{receiptPrintingManager.copiesNumber > 0}">
+		<p:barCode  type="code128" barHeight="25" textSize="10" rendered="#{not receiptPrintingManager.isCertificate and !_deposit.municipalBond.receipt.electronicReceipt}"
+					code="#{_deposit.municipalBond.receipt.authorizationNumber}-#{_deposit.municipalBond.receipt.sequential}" codeType="CODE128_UCC"
+					altText="#{(receiptPrintingManager.isExchange and receiptPrintingManager.copiesNumber == 1) ? messages['printing.exchangeOriginal']  : messages['printing.copy']} 
+					#{(receiptPrintingManager.isExchange and receiptPrintingManager.copiesNumber == 1) ? _deposit.municipalBond.exchangeDate : ''}" xpos="25" ypos="25" />
+	</p:paragraph>
+	
 </p:paragraph>
