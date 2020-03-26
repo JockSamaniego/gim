@@ -14,9 +14,11 @@
 			<p:footer borderWidthBottom="0" borderWidthTop="0.3"
 				alignment="right">
 				<p:paragraph>#{messages['receipt.printingResponsible']}: #{userSession.person.name} (#{userSession.user.name})</p:paragraph>
-				<p:font size="6" style="bold" rendered="#{receiptPrintingManager.copiesNumber > 0 and !_receiptPrintingManager.isExchange}">
-						<p:text value="SECRETARIA" />
-				</p:font>
+				<p:paragraph rendered="#{receiptPrintingManager.copiesNumber > 0 and !receiptPrintingManager.isExchange}">
+					<p:font size="6" style="bold">
+							<p:text value="SECRETARIA" />
+					</p:font>
+				</p:paragraph>
 			</p:footer>
 		</p:font>
 	</f:facet>

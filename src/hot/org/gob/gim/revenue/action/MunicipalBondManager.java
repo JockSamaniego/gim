@@ -539,7 +539,7 @@ public class MunicipalBondManager extends EntityController {
 			Long[] printings = { printingsNumber };
 			receiptPrintingManager.setPrintings(printings);
 			receiptPrintingManager.setIsCertificate(isCertificate);
-			receiptPrintingManager.controlReprintsCreditTitles(municipalBond.getPrintingsNumber(), municipalBond.getDocumentIsRedeemed());
+			receiptPrintingManager.controlReprintsCreditTitles(municipalBond.getPrintingsNumber(), this.printForRedeemed);
 			String result = receiptPrintingManager.print(depositToPrint);
 
 			/*System.out.println("RESULTADO ----> " + result + " "
