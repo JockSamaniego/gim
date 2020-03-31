@@ -303,7 +303,7 @@ public class MunicipalBondManager extends EntityController {
 			Long entryId = entry != null ? entry.getId() : null;
 			Long mbNumber = municipalBondNumber > 0 ? municipalBondNumber : 0;
 			getDataModel().setCriteria(residentId, entryId, startDate, endDate,
-					municipalBondStatusId, mbNumber);
+					municipalBondStatusId, mbNumber, this.bondsWasInAgreement);
 			getDataModel().setRowCount(getDataModel().getObjectsNumber());
 		} else {
 			addFacesMessageFromResourceBundle("municipalBond.invalidCriteriaSet");
@@ -1132,5 +1132,20 @@ public class MunicipalBondManager extends EntityController {
 	public void setJudicialProcessNumber(String judicialProcessNumber) {
 		this.judicialProcessNumber = judicialProcessNumber;
 	}
+	
+	// Para visualizar obligacines que estuvieron en convenio
+	// Jock Samaniego
+	
+	private Boolean bondsWasInAgreement = Boolean.FALSE;
+
+	public Boolean getBondsWasInAgreement() {
+		return bondsWasInAgreement;
+	}
+
+	public void setBondsWasInAgreement(Boolean bondsWasInAgreement) {
+		this.bondsWasInAgreement = bondsWasInAgreement;
+	}
+	
+	
 	
 }

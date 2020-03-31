@@ -100,7 +100,7 @@ public interface MunicipalBondService {
 	public List<MunicipalBond> findMunicipalBonds(Long residentId,
 			Long entryId, Date startDate, Date endDate,
 			Long municipalBondStatusId, Integer firstRow, Integer numberOfRows,
-			Long municipalBondNumber);
+			Long municipalBondNumber, Boolean bondsWasInAgreement);
 
 	public List<MunicipalBond> findMunicipalBonds(Long residentId,
 			Long entryId, Long municipalBondStatusId, Integer firstRow,
@@ -111,7 +111,7 @@ public interface MunicipalBondService {
 
 	public Long findMunicipalBondsNumber(Long residentId, Long entryId,
 			Date startDate, Date endDate, Long municipalBondStatusId,
-			Long municipalBondNumber);
+			Long municipalBondNumber, Boolean bondsWasInAgreement);
 	
 	public Long findMunicipalBondsNumber(Long residentId, Long entryId,
 		   Long municipalBondStatusId);

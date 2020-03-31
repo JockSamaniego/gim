@@ -66,6 +66,13 @@
 							<s:convertEntity />
 						</h:selectOneMenu>
 					</s:decorate>
+					
+					<s:decorate id="wasInAgreementField" template="../layout/edit.xhtml">
+		                <ui:define name="label">#{messages['municipalBond.wasInAgreement']}</ui:define>
+		                <h:selectBooleanCheckbox id="wasInAgreement"
+		                                      value="#{municipalBondManager.bondsWasInAgreement}">
+		                </h:selectBooleanCheckbox>
+		            </s:decorate>
 
 					<s:decorate id="municipalBondNumber"
 						template="../layout/edit.xhtml">

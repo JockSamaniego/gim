@@ -1673,7 +1673,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	public List<MunicipalBond> findMunicipalBonds(Long residentId,
 			Long entryId, Date startDate, Date endDate,
 			Long municipalBondStatusId, Integer firstRow, Integer numberOfRows,
-			Long municipalBondNumber) {
+			Long municipalBondNumber, Boolean bondsWasInAgreement) {
 
 		if (residentId == null && entryId == null && startDate == null
 				&& endDate == null && municipalBondStatusId == null
@@ -1705,6 +1705,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		if (municipalBondStatusId != null) {
 			queryBuilder.append("municipalBond.municipalBondStatus.id = "
 					+ municipalBondStatusId);
+			queryBuilder.append(JOIN_CLAUSE);
+		}
+		
+		if (bondsWasInAgreement) {
+			queryBuilder.append("municipalBond.paymentAgreement is not null ");
 			queryBuilder.append(JOIN_CLAUSE);
 		}
 
@@ -1839,7 +1844,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Long findMunicipalBondsNumber(Long residentId, Long entryId,
 			Date startDate, Date endDate, Long municipalBondStatusId,
-			Long municipalBondNumber) {
+			Long municipalBondNumber, Boolean bondsWasInAgreement) {
 
 		if (residentId == null && entryId == null && startDate == null
 				&& endDate == null && municipalBondStatusId == null
@@ -1872,6 +1877,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		if (municipalBondStatusId != null) {
 			queryBuilder.append("municipalBond.municipalBondStatus.id = "
 					+ municipalBondStatusId);
+			queryBuilder.append(JOIN_CLAUSE);
+		}
+		
+		if (bondsWasInAgreement) {
+			queryBuilder.append("municipalBond.paymentAgreement is not null ");
 			queryBuilder.append(JOIN_CLAUSE);
 		}
 
@@ -1990,5 +2000,4 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		return size;
 
 	}
-
 }
