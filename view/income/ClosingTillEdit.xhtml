@@ -406,6 +406,7 @@
 						rendered="#{tillPermissionHome.readyForPrint or (tillPermissionHome.instance.id != null and tillPermissionHome.hasPreviousClosingTime and tillPermissionHome.instance.closingTime !=null)}"
 						value="#{messages['report.printByPaymentType']}"
 						propagation="join"
+						action="#{tillPermissionHome.getPaymentsWithChecks()}"
 						view="/income/report/ClosingTillReportByPaymentType.xhtml" />
 
 					<s:button id="printByEntryId"

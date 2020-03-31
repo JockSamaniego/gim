@@ -528,6 +528,96 @@
 
 		</p:table>
 
+		<p:table columns="1" widthPercentage="50" headerRows="0" rendered="#{tillPermissionHome.fractionValues.get('CHECK') > 0 and not empty tillPermissionHome.fractionValues.get('CHECK')}">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+			<p:font size="8" style="bold">
+				<p:cell colspan="1" horizontalAlignment="center" borderWidth="0">
+					<p:paragraph>
+						<p:font size="8" style="bold">
+							<p:text value="DETALLE DEL TOTAL RECAUDADO EN CHEQUES" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+
+		<p:table columns="1" widthPercentage="100" headerRows="0" border="0" spacingAfter="20"
+				rendered="#{tillPermissionHome.fractionValues.get('CHECK') > 0 and not empty tillPermissionHome.fractionValues.get('CHECK')}">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" />
+			</f:facet>
+
+			<p:table 
+					columns="4" widthPercentage="85" headerRows="0" border="1" spacingAfter="15" widths="2.5 2 2 1.5">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0.5" />
+				</f:facet>
+				
+				<p:font size="9" style="bold">
+					<p:cell horizontalAlignment="center">
+						<p:paragraph>
+							<p:text value="#{messages['payment.emitter']}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="center">
+						<p:paragraph>
+							<p:text value="#{messages['payment.documentNumber']}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="center">
+						<p:paragraph>
+							<p:text value="#{messages['payment.accountNumber']}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="center">
+						<p:paragraph>
+							<p:text value="#{messages['payment.collectedValue']}" />
+						</p:paragraph>
+					</p:cell>
+				</p:font>
+
+
+				<ui:repeat value="#{tillPermissionHome.paymentsForDetail}" var="_var">
+					<p:cell horizontalAlignment="center">
+						<p:paragraph>
+							<p:text value="#{_var.finantialInstitution}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="center">
+						<p:paragraph>
+							<p:text value="#{_var.documentNumber}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="center">
+						<p:paragraph>
+							<p:text value="#{_var.accountNumber}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{_var.paidAmount}" />
+						</p:paragraph>
+					</p:cell>
+				</ui:repeat>
+				<p:font size="8" style="bold">
+					<p:cell borderWidth="0"/>
+					<p:cell borderWidth="0"/>
+					<p:cell horizontalAlignment="center">
+						<p:paragraph>
+							<p:text value="#{messages['item.total']}" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{tillPermissionHome.totalPaymentsForDetail()}" />
+						</p:paragraph>
+					</p:cell>
+				</p:font>
+			</p:table>
+		</p:table>
+
 		<p:table columns="1" widthPercentage="50" headerRows="0">
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="0" />
@@ -542,6 +632,7 @@
 				</p:cell>
 			</p:font>
 		</p:table>
+		
 		<p:table 
 				columns="4" widthPercentage="75" headerRows="0" border="1" spacingAfter="15" widths="2.5 1 1 1.5">
 			<f:facet name="defaultCell">
