@@ -14,10 +14,11 @@ public class PaymentAgreementList extends EntityQuery<PaymentAgreement> {
 
 	private static final String[] RESTRICTIONS = { "(lower(r.identificationNumber) like lower(concat(#{paymentAgreementList.criteria},'%')) OR lower(r.name) like lower(concat(:el1,'%')))",
 	// "pa.isActive = #{paymentAgreementList.isActive}"
+		"(pa.isNullified != #{paymentAgreementList.isNullified} OR pa.isNullified is null)"
 	};
 
 	private String criteria;
-
+	
 	public PaymentAgreementList() {
 		setEjbql(EJBQL);
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
@@ -29,6 +30,10 @@ public class PaymentAgreementList extends EntityQuery<PaymentAgreement> {
 	}
 
 	public Boolean getIsActive() {
+		return Boolean.TRUE;
+	}
+	
+	public Boolean getIsNullified() {
 		return Boolean.TRUE;
 	}
 

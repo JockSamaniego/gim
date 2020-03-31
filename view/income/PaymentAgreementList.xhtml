@@ -121,6 +121,16 @@
 							<f:param name="paymentAgreementId"
 								value="#{_paymentAgreement.id}" />							 
 						</a:commandButton>
+						
+						<a:commandButton id="nullifiedPABtn" 							
+							value="Anular Convenio"
+							oncomplete="#{rich:component('nullifiedPanel')}.show();"
+							includePageParams="false" propagation="join"
+							reRender="nullifiedPanel, nllfPA"
+							disabled="#{paymentAgreementHome.nullifiedControl(_paymentAgreement)}">
+							<f:param name="paymentAgreementId"
+								value="#{_paymentAgreement.id}" />							 
+						</a:commandButton>
 
 					</rich:column>
 				</rich:dataTable>
@@ -233,6 +243,66 @@
 								value="Aceptar"
 								action="#{paymentAgreementHome.updatePA()}"
 								oncomplete="Richfaces.hideModalPanel('activeRemissionPanel')"
+								includePageParams="false" propagation="join"
+								reRender="paymentAgreementAgreementList">
+							</a:commandButton>
+						</div>
+					</h:panelGroup>
+			</h:panelGrid>
+		</h:form>
+	</rich:modalPanel>
+	
+	<rich:modalPanel id="nullifiedPanel" width="400" height="200">
+		<f:facet name="header">Anulación de Convenio de Pago</f:facet>
+		<h:form id="nullifiedForm">
+			<h:panelGrid>
+				<rich:panel>
+					<h:panelGrid columns="2" >
+						<h:graphicImage value="/img/alert.png" style="margin-left: 2em" />
+						<h:outputText id="nllfPA"
+							value="Está seguro de anular el convenio de pago?"
+							style="font-size:large; color: green; margin-left: 2em; margin-right: 2em" />				
+					</h:panelGrid>
+					<br />
+					
+				</rich:panel>
+				<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="nullifiedButton"
+								value="Aceptar"
+								action="#{paymentAgreementHome.nullifiedPaymentAgreement()}"
+								oncomplete="#{rich:component('nullifiedInformationPanel')}.show()"
+								includePageParams="false" propagation="join"
+								reRender="nullifiedInformationPanel, nllfInformationPA">
+							</a:commandButton>
+							<a:commandButton ajaxSingle="true"
+								value="#{messages['common.quit']}"
+								oncomplete="Richfaces.hideModalPanel('nullifiedPanel');"
+								bypassUpdates="true" />
+						</div>
+					</h:panelGroup>
+			</h:panelGrid>
+		</h:form>
+	</rich:modalPanel>
+	<rich:modalPanel id="nullifiedInformationPanel" width="400" height="200">
+		<f:facet name="header">Información</f:facet>	
+		<h:form id="nullifiedInformationForm">
+			<h:panelGrid>
+				<rich:panel>
+					<h:panelGrid columns="2" >
+						<h:graphicImage value="/img/alert.png" style="margin-left: 2em" />
+						<h:outputText id="nllfInformationPA"
+							value="#{paymentAgreementHome.nullifiedMessage}"
+							style="font-size:large; color: green; margin-left: 2em; margin-right: 2em" />				
+					</h:panelGrid>
+					<br />
+					
+				</rich:panel>
+				<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="nullifiedInformationButton"
+								value="Aceptar"
+								oncomplete="Richfaces.hideModalPanel('nullifiedInformationPanel'), Richfaces.hideModalPanel('nullifiedPanel')"
 								includePageParams="false" propagation="join"
 								reRender="paymentAgreementAgreementList">
 							</a:commandButton>

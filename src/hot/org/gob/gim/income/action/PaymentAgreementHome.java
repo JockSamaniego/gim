@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,10 +35,12 @@ import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.Dividend;
 import ec.gob.gim.income.model.Payment;
 import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 
 @Name("paymentAgreementHome")
@@ -858,5 +861,68 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			residentHasAlerts = Boolean.FALSE;
 		}
 	}
+	
+	// para anular un convenio si el contribuyente no cumple con el primer pago
+	// Jock Samaniego
+	
+	private String nullifiedMessage = "";
+	
+	public String getNullifiedMessage() {
+		return nullifiedMessage;
+	}
+
+	public void setNullifiedMessage(String nullifiedMessage) {
+		this.nullifiedMessage = nullifiedMessage;
+	}
+
+	public Boolean nullifiedControl(PaymentAgreement pa) throws ParseException{
+		if(pa.getIsNullified() != null){
+			if(pa.getIsNullified()){
+				return Boolean.TRUE;
+			}
+		}	
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String currentDateFormat = simpleDateFormat.format(new Date());
+		Date currentDate = simpleDateFormat.parse(currentDateFormat);
+		String paDateFormat = simpleDateFormat.format(pa.getFirstPaymentDate());
+		Date paDate = simpleDateFormat.parse(paDateFormat);
+		if (currentDate.after(paDate) || !pa.getIsActive()){
+			return Boolean.TRUE;
+		}	
+		return Boolean.FALSE;
+	}
+	
 		
+	public void nullifiedPaymentAgreement(){
+		try{
+			this.nullifiedMessage = "El convenio ha sido anulado éxitosamente.";
+			Boolean isAvailableNullified = Boolean.TRUE;
+			Long id = getPaymentAgreementId();
+			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+			PaymentAgreement paBD = getEntityManager().find(PaymentAgreement.class, id);
+			for(MunicipalBond mb : paBD.getMunicipalBonds()){
+				if (mb.getDeposits() != null && mb.getDeposits().size() > 0) {
+					for(Deposit dp : mb.getDeposits()){
+						if(dp.getValue().compareTo(BigDecimal.ZERO) > 0){
+							this.nullifiedMessage = "No se puede anular, el convenio tiene pagos realizados.";
+							isAvailableNullified = Boolean.FALSE;
+						}
+					}
+				}
+			}
+			if(isAvailableNullified){
+				paBD.setIsNullified(Boolean.TRUE);
+				paBD.setNullifiedDate(new Date());
+				paBD.setUserNullified(userSession.getUser().getId());
+				for(MunicipalBond mb : paBD.getMunicipalBonds()){
+					mb.setPaymentAgreement(null);
+					mb.setMunicipalBondStatus(getEntityManager().find(MunicipalBondStatus.class, new Long(3)));
+					getEntityManager().persist(mb);
+				}
+				incomeService.update(paBD); 
+			}			
+		}catch (Exception e){
+			e.printStackTrace();
+		} 
+	}
 }

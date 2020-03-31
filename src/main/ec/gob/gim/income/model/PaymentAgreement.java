@@ -306,4 +306,41 @@ public class PaymentAgreement {
 	public void setUserUpdate(Long userUpdate) {
 		this.userUpdate = userUpdate;
 	}
+	
+	// para anulacion de convenios cuando el contribuyente no cumple con la primera cuota
+	// Jock Samaniego
+	
+	private Boolean isNullified;
+	
+	@Temporal(TemporalType.DATE)
+	private Date nullifiedDate;
+	
+	private Long userNullified;
+
+
+	public Boolean getIsNullified() {
+		return isNullified;
+	}
+
+	public void setIsNullified(Boolean isNullified) {
+		this.isNullified = isNullified;
+	}
+
+	public Date getNullifiedDate() {
+		return nullifiedDate;
+	}
+
+	public void setNullifiedDate(Date nullifiedDate) {
+		this.nullifiedDate = nullifiedDate;
+	}
+
+	public Long getUserNullified() {
+		return userNullified;
+	}
+
+	public void setUserNullified(Long userNullified) {
+		this.userNullified = userNullified;
+	}
+	
+	
 }

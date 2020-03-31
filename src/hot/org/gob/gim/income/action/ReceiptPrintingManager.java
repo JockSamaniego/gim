@@ -100,7 +100,6 @@ public class ReceiptPrintingManager{
 		depositsToPrint.clear();
 		//System.out.println("A IMPRIMIR DEPOSITO "+deposit);
 		depositsToPrint.add(deposit);
-		System.out.println("======== "+this.isExchange);
 		return "sentToPrint";
 	}
 	
