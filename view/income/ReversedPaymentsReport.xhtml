@@ -1,0 +1,133 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="../layout/template.xhtml" login-required="true">
+
+	<ui:define name="body">
+
+		<h:form id="reversedPaymentsSearch" styleClass="edit">
+			<rich:simpleTogglePanel label="#{messages['deposit.GenerateReversedPaymentsReport'].toUpperCase()}" switchType="ajax">
+
+				<s:decorate template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['deposit.startDate']}</ui:define>
+					<rich:calendar id="start" value="#{depositHome.startDateReversed}" required="true" datePattern="#{messages['common.datePattern']}"/>
+				</s:decorate>
+
+				<s:decorate template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['deposit.endDate']}</ui:define>
+					<rich:calendar id="end" value="#{depositHome.endDateReversed}" required="true" datePattern="#{messages['common.datePattern']}"/>
+				</s:decorate>
+				
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<a:commandButton id="search" value="#{messages['common.search']}"
+					action="#{depositHome.findReversedPayments()}"
+					reRender="resultsPanel, reversedPaymentsTable" />
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none" />
+				<s:button id="home" view="/home.xhtml"
+					value="#{messages['common.quit']}" propagation="end" />
+			</div>
+
+			<a:outputPanel id="resultsPanel" ajaxRendered="true">
+				<h:outputText value="#{messages['notificationPayed.noResult']}" 
+							  rendered="#{depositHome.depositsReversed.size() == 0}"/>
+				<rich:dataTable id="reversedPaymentsTable"
+					value="#{depositHome.depositsReversed}" var="_deposit"
+					columnClasses="right tableCellFont, left tableCellFont, right tableCellFont, center"
+					rendered="#{depositHome.depositsReversed.size() > 0}">
+
+					<f:facet name="header">
+						<h:panelGrid columns="4" columnClasses="headerTitle left, ">
+							<h:outputText
+								value="#{messages['deposit.paymentsReversed']}" />
+
+							<s:button
+								view="/income/report/GenerateReversedPaymentsReport.xhtml"
+								id="printId"
+								rendered="#{depositHome.depositsReversed.size() > 0}"
+								propagation="join" value="#{messages['deposit.printReportReversed']}" />
+
+						</h:panelGrid>
+
+					</f:facet>
+
+						<h:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['payment.number']}" />
+							</f:facet>
+							<h:outputText value="#{_deposit.payment.id}" />
+						</h:column>
+						<h:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.number']}" />
+							</f:facet>
+							<h:outputText value="#{_deposit.reversedMunicipalBond.number}" />
+						</h:column>
+						<h:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['municipalBond.concept']}" />
+							</f:facet>
+							<h:outputText value="#{_deposit.reversedMunicipalBond.entry.name}" />
+						</h:column>
+
+						<h:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['deposit.reversedDate']}" />
+							</f:facet>
+							<h:outputText value="#{_deposit.reversedDate}" >
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</h:column>
+						
+						<h:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['deposit.reversedTime']}" />
+							</f:facet>
+							<h:outputText value="#{_deposit.reversedTime}" >
+								<f:convertDateTime pattern="#{messages['common.timePattern']}" />
+							</h:outputText>
+						</h:column>
+
+						<h:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['deposit.type']}" />	
+							</f:facet>
+							<h:outputText
+								value="#{_deposit.balance == 0 ? messages['deposit.totalPayment'] : messages['deposit.dividend']}" />
+						</h:column>
+
+						<h:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['deposit.financialStatus']}" />
+							</f:facet>
+							<h:outputText value="#{messages[_deposit.status.name()]}" />
+						</h:column>
+						
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['deposit.value']}" />
+							</f:facet>
+							<h:outputText value="#{_deposit.value}" />
+						</rich:column>
+						
+						<h:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="#{messages['deposit.reversedCashier']}" />
+							</f:facet>
+							<h:outputText value="#{_deposit.payment.cashier.name}" />
+						</h:column>
+				</rich:dataTable>
+			</a:outputPanel>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

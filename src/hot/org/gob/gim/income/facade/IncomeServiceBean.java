@@ -1166,6 +1166,14 @@ public class IncomeServiceBean implements IncomeService {
 		}
 		return null;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Deposit> findDepositsReverseReport(Date startDate, Date endDate) {
+			Query query = entityManager.createNamedQuery("Deposit.findDepositsReversedBetweenDates");
+			query.setParameter("startDate", startDate);
+			query.setParameter("endDate", endDate);
+			return query.getResultList();
+	}
 
 	public void reverse(List<Long> depositIds, String concept, Resident userReversed)
 			throws ReverseNotAllowedException, ReverseAmongPaymentsIsNotAllowedException {

@@ -141,6 +141,20 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 					" WHERE r.id = :residentId AND p.cashier.id=:cashierId AND"+
 					" d.date = :date" +
 					" ORDER BY d.id"),
+					
+	@NamedQuery(name="Deposit.findDepositsReversedBetweenDates", 
+			query="SELECT distinct d FROM Deposit d " +
+					" LEFT JOIN FETCH d.municipalBond mb" +
+					" LEFT JOIN FETCH d.reversedMunicipalBond rmb" +
+					" LEFT JOIN FETCH rmb.entry e" +
+					" LEFT JOIN FETCH mb.receipt re" +
+					" LEFT JOIN FETCH mb.resident r" +
+					" LEFT JOIN FETCH d.payment p" +
+					" LEFT JOIN FETCH p.cashier c" +
+					" WHERE d.reversedDate is not null"+
+					" AND (d.date between :startDate and :endDate)" +
+					" ORDER BY d.date, d.id ASC"),
+					
 	@NamedQuery(name ="Deposit.findByMunicipalBondId",
 			  query="SELECT d FROM Deposit d " +
 					"left join fetch d.payment p " +

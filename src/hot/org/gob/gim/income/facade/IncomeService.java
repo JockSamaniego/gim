@@ -76,6 +76,7 @@ public interface IncomeService {
 	public void setAsPrinted(List<Long> printedDepositIds);
 	
 	public List<Deposit> findDepositsForReverse(Long residentId, Long cashierId);
+	public List<Deposit> findDepositsReverseReport(Date startDate, Date endDate);
 	public void reverse(List<Long> depositIds, String concept, Resident userReversed) throws ReverseNotAllowedException, ReverseAmongPaymentsIsNotAllowedException;
 	public void eliminateReverse(Long depositId, Resident userReversed);
 	public void createCreditNote(CreditNote creditNote, LegalStatus legalStatus) throws CreditNoteValueNotValidException;
