@@ -299,20 +299,23 @@ public class IncomeServiceBean implements IncomeService {
 		payment.setCashier(cashier);
 		payment.setStatus(FinancialStatus.VALID);
 		payment.setValue(municipalBond.getPaidTotal());
-		payment.setExternalTransactionId(externalTransactionId);
+		payment.setExternalTransactionId(externalTransactionId);				
 
 		Query query = entityManager.createNamedQuery("Till.findById");
 		query.setParameter("tillId", tillId);
 		Till till = (Till) query.getSingleResult();
 		if (till.isTillBank()) {
-			payment.getPaymentFractions().get(0).setPaidAmount(municipalBond.getPaidTotal());
-			payment.getPaymentFractions().get(0).setReceivedAmount(municipalBond.getPaidTotal());
 			
 			//macartuche
 			Query queryType = entityManager.createNamedQuery("PaymentTypeSRI.findByType");
 			queryType.setParameter("type", PaymentType.CASH);
 			PaymentTypeSRI typeSri = (PaymentTypeSRI)queryType.getSingleResult();
-			payment.getPaymentFractions().get(0).setPaymentTypesri(typeSri);			//
+						
+			payment.getPaymentFractions().get(0).setPaidAmount(municipalBond.getPaidTotal());
+			payment.getPaymentFractions().get(0).setReceivedAmount(municipalBond.getPaidTotal());
+			//rfam 2020-03-24
+			payment.getPaymentFractions().get(0).setPaymentType(PaymentType.CASH);
+			payment.getPaymentFractions().get(0).setPaymentTypesri(typeSri);
 			
 		}
 		Deposit deposit = new Deposit();

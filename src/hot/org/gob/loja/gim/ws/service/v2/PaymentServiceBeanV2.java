@@ -321,8 +321,14 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			persisBankingEntityLog(false, statement.toString());
 			return statement;
 		}
-		Query query = this.em.createNativeQuery("SELECT " + "dep.municipalbond_id " + "FROM " + "gimprod.payment pay, "
-				+ "gimprod.deposit dep " + "WHERE " + "dep.payment_id = pay.id AND " + "pay.externaltransactionid = ?1 "
+		Query query = this.em.createNativeQuery("SELECT " 
+				+ "dep.municipalbond_id " 
+				+ "FROM " 
+				+ "gimprod.payment pay, "
+				+ "gimprod.deposit dep " 
+				+ "WHERE " 
+				+ "dep.payment_id = pay.id AND " 
+				+ "pay.externaltransactionid = ?1 "
 				+ "ORDER BY dep.municipalbond_id ASC");
 
 		query.setParameter(1, payout.getTransactionId());

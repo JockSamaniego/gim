@@ -16,8 +16,10 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.gob.gim.ws.service.EmisionResponse;
+import org.gob.gim.ws.service.InfringementEmisionResponse;
 import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
+import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
 import org.gob.loja.gim.ws.dto.RealEstate;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.StatementReport;
@@ -331,6 +333,29 @@ public class GimSystem {
 			throws TaxpayerNotFound, InvalidUser, AccountIsNotActive,
 			AccountIsBlocked, TaxpayerNonUnique {
 		return gimService.searchDueDebts(request);
+	}
+	
+	@WebMethod
+	public InfringementEmisionResponse generateANTEmissionInfringement(String name, String password,
+			String identificationNumber, String accountCode, InfringementEmisionDetail emisionDetail) {
+		try {
+			return gimService.generateANTEmissionInfringement(name, password, identificationNumber, accountCode, emisionDetail);
+		} catch (TaxpayerNotFound | TaxpayerNonUnique | EntryNotFound | FiscalPeriodNotFound | EmissionOrderNotGenerate
+				| EmissionOrderNotSave | InvalidUser | AccountIsNotActive | AccountIsBlocked e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	@WebMethod
+	public InfringementEmisionResponse confirmANTEmissionInfringement(String name, String password,
+			InfringementEmisionDetail emisionDetail) {
+		try {
+			return gimService.confirmANTEmissionInfringement(name, password, emisionDetail);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }
