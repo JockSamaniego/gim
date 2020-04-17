@@ -152,7 +152,7 @@
             destdir="${jar.dir}"
             debug="${javac.debug}"
             deprecation="${javac.deprecation}"
-            nowarn="off">
+            nowarn="on">
             <src path="${src.model.dir}"/>
             <src path="${src.action.dir}"/>
         </javac>

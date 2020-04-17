@@ -340,8 +340,7 @@ public class GimSystem {
 			String identificationNumber, String accountCode, InfringementEmisionDetail emisionDetail) {
 		try {
 			return gimService.generateANTEmissionInfringement(name, password, identificationNumber, accountCode, emisionDetail);
-		} catch (TaxpayerNotFound | TaxpayerNonUnique | EntryNotFound | FiscalPeriodNotFound | EmissionOrderNotGenerate
-				| EmissionOrderNotSave | InvalidUser | AccountIsNotActive | AccountIsBlocked e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
