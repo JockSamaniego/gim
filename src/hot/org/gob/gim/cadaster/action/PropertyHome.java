@@ -3,9 +3,12 @@ package org.gob.gim.cadaster.action;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -15,12 +18,20 @@ import java.util.List;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gob.gim.appraisal.facade.AppraisalService;
 import org.gob.gim.cadaster.facade.CadasterService;
+import org.gob.gim.cadaster.webServiceConsumption.FichaPropietario;
+import org.gob.gim.cadaster.webServiceConsumption.PropertyWs;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
@@ -71,7 +82,7 @@ import ec.gob.gim.common.model.LegalEntity;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.waterservice.model.WaterSupply;
-import java.util.Arrays;
+import sun.misc.BASE64Encoder;
 
 @Name("propertyHome")
 public class PropertyHome extends EntityHome<Property> {
@@ -2971,5 +2982,80 @@ public class PropertyHome extends EntityHome<Property> {
 		this.domainOwner.setResident(resident);
 		this.setIdentificationNumber(resident.getIdentificationNumber());
 	}
+	
+	
+	public void getAllTypes() {
+        //String url = "http://186.47.44.172:8790/api/rpl";
+		String url = "http://186.47.44.172:8790/api/rpl/fichaRegistral?numFicha=1305";
+        URI uri =  null;
+		try {
+			uri = new URI(url);
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        //?=1305";
+        String authString = "mmunicipio" + ":" + "bOKGfLKKwn";
+        String authStringEnc = new BASE64Encoder().encode(authString.getBytes());
+        javax.ws.rs.client.Client client = ClientBuilder.newClient();
+        WebTarget webTarget = client.target(uri);//.path("fichaRegistral").queryParam("numFicha", "1305");
+                /*.queryParam("string", "myString")
+                .queryParam("user", "myUser")
+                .queryParam("key", "myKey").request().post(null, String.class);*/
+        
+        
+        Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON).header("Authorization", "Basic " + authStringEnc);
+
+        Response response = invocationBuilder.get();
+        
+        System.out.println("==============");
+        System.out.println("allow "+response.getAllowedMethods());
+        System.out.println("entity "+response.getEntity());
+        System.out.println("status "+response.getStatus());
+        System.out.println("class "+response.getClass());
+        System.out.println("galle "+response.getCookies());
+        System.out.println("date "+response.getDate());
+        System.out.println("tag "+response.getEntityTag());
+        System.out.println("headers "+response.getHeaders());
+        System.out.println("media "+response.getMediaType());
+        //System.out.println("read Obj "+response.readEntity(Object.class));
+        String output = response.readEntity(String.class);
+        System.out.println("read Str "+output);
+        System.out.println("============== end ");
+        /*try {
+			JSONObject obj = new JSONObject(output);
+			System.out.println("........ "+obj.toString());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+        
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+			JsonNode actualObj = mapper.readTree(output);
+			//actualObj.
+			
+			PropertyWs pro = mapper.readValue(output, PropertyWs.class);
+									
+			//{"tipoPredio":"U","claveCatastral":"110105030105005100000000","claveCatastralAnterior":"","linderos":"NORTE: con terrenos de Eliseo Pacheco en una extensión de 20,81m, en una parte y en otra con 10,05m, cercas de postes de madera y alambre de púas por división;\r\nSUR: con camino peatonal  exclusivo  del motel Eclipse  en una extensión de 28,29m, postes de madera y alambre  de púas por división;\r\nESTE: con vía que conduce de Loja a Cuenca en una extensión de 17,04 en una parte y en otra  en 13,06m;\r\nOESTE: con terrenos de Susana Elizabeth Cuenca  en una extensión de 21,00m, postes de madera y alambre de púas por división.\r\nÁREA TOTAL: 498,99 m2.\r\nÁREA CONSTRUCCIÓN: 128,06 m2.\r\n","numFicha":1305,"urlFoto":null,"nombreParroquia":"CARIGÁN","observacion":"INMUEBLE UBICADO EN EL BARRIO CARIGAN SUR.                                                                                                                                                                                              ","fichaPropietarios":[{"id":18100,"cedRuc":"1101331310","nombre":"HIDALGO MACAS SEGUNDO HECTOR","calidad":null},{"id":18101,"cedRuc":"1101394524","nombre":"TORRES TORRES MARIA GRICELDA","calidad":null},{"id":18102,"cedRuc":"1103804678","nombre":"HIDALGO TORRES JOSE WILFRIDO","calidad":null}]}			
+			
+			System.out.println(actualObj);
+			System.out.println(pro);
+			for (FichaPropietario fp : pro.getFichaPropietarios()) {
+				System.out.println("------------");
+				System.out.println(fp.toString());
+			}
+				
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        //System.out.println(obj);
+
+        //return obj;
+	
+    }
+	
 	
 }
