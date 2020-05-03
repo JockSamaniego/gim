@@ -1,11 +1,7 @@
-/**
- * 
- */
-package org.gob.loja.gim.wsrest.cadaster;
+package org.gob.loja.gim.wsrest.revenue;
 
-import java.util.List;
-
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -13,8 +9,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.ws.service.InfringementEmisionResponse;
 import org.gob.loja.gim.ws.dto.CadastralCertificateDTOWs;
-import org.gob.loja.gim.ws.dto.PropertyDTOWs;
+import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
+import org.gob.loja.gim.ws.service.GimService;
 import org.gob.loja.gim.ws.service.RestService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -22,43 +20,21 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.core.Interpolator;
 
 import ec.gob.gim.cadaster.model.dto.BuildingDTO;
-//import ec.gob.gim.wsrest.CorsInterceptor;
 
-/**
- * @author Rene
- *
- */
-@Name("cadasterWS")
-@Path("/cadaster")
+@Name("eEmissionWS")
+@Path("/emission")
 @Transactional
-//@Interceptors(CorsInterceptor.class)
-public class CadasterWS {
+public class Emission {
 	
 	@In(create = true,required = false, value = "restService")
 	private RestService restService;
 	
-	@GET
-	@Path("/{identification}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPropertiesByIdentification(@PathParam("identification") String identification) {
-		try {
-			if (restService == null) {
-				restService = ServiceLocator.getInstance().findResource(
-						restService.LOCAL_NAME);
-			}
-			 List<PropertyDTOWs> res = this.restService.findPropertiesByIdentification(identification);
-			//Resident res = this.residentService.find(identification);
-			//System.out.println(res);
-			return Response.ok(res).build();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return Response.ok().build();
-		}
-		
-	}
+	//@EJB
+	@In(create = true, required = false, value = "gimService")
+	private GimService gimService;
+
 	
-	@GET
+	@POST
 	@Path("/property/{propertyId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCadastralCertificateProperty(@PathParam("propertyId") Long propertyId) {
@@ -115,8 +91,37 @@ public class CadasterWS {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return Response.ok().build();
-		}
-		
+		}		
 	}
-
+	
+		
+	@POST
+	@Path("/property/{propertyId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public InfringementEmisionResponse generateANTEmissionInfringement(String name, String password,
+			String identificationNumber, String accountCode, InfringementEmisionDetail emisionDetail) {
+		try {
+			return gimService.generateANTEmissionInfringement(name, password, identificationNumber, accountCode, emisionDetail);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	@PUT
+	@Path("/property/{propertyId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public InfringementEmisionResponse confirmANTEmissionInfringement(String name, String password,
+			InfringementEmisionDetail emisionDetail) {
+		try {
+			return gimService.confirmANTEmissionInfringement(name, password, emisionDetail);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	
+	
 }
