@@ -22,13 +22,13 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gob.gim.appraisal.facade.AppraisalService;
 import org.gob.gim.cadaster.facade.CadasterService;
-import org.gob.gim.cadaster.webServiceConsumption.FichaPropietario;
 import org.gob.gim.cadaster.webServiceConsumption.PropertyRegistrationService;
 import org.gob.gim.cadaster.webServiceConsumption.PropertyWs;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
+import org.hibernate.search.bridge.builtin.BigDecimalBridge;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
@@ -195,6 +195,8 @@ public class PropertyHome extends EntityHome<Property> {
 	//rfam
 	//2020-02-21
 	private DomainOwner domainOwner;
+	
+	private PropertyWs propertyWs;
 	
 	public Property getProperty() {
 		return property;
@@ -2975,25 +2977,53 @@ public class PropertyHome extends EntityHome<Property> {
 		this.setIdentificationNumber(resident.getIdentificationNumber());
 	}
 	
-	public void findRegistrationForm(){
+	public void findRegistrationForm() {
+		this.propertyWs = null;
 		if (this.getInstance().getRegistrationCardNumber() != null
 				&& this.getInstance().getRegistrationCardNumber() != "") {
+			boolean isValid = false;
 			try {
-				PropertyRegistrationService propertyRegistrationService = ServiceLocator.getInstance().findResource(PropertyRegistrationService.LOCAL_NAME); 
-				PropertyWs pro = propertyRegistrationService.findByRegistrationForm(this.getInstance().getRegistrationCardNumber());
-				
-				System.out.println(pro.toString());
-				for (FichaPropietario fp : pro.getFichaPropietarios()) {
-					System.out.println("------------");
-					System.out.println(fp.toString());
-				}
+				Double.valueOf(this.getInstance().getRegistrationCardNumber());
+				isValid = true;
 			} catch (Exception e) {
-				e.printStackTrace();
+				facesMessages
+						.addToControl(
+								"",
+								org.jboss.seam.international.StatusMessage.Severity.ERROR,
+								"Número de ficha no válido");
+				isValid = false;
+			}
+
+			if (isValid) {
+				try {
+					PropertyRegistrationService propertyRegistrationService = ServiceLocator
+							.getInstance().findResource(
+									PropertyRegistrationService.LOCAL_NAME);
+					this.propertyWs = propertyRegistrationService
+							.findByRegistrationForm(this.getInstance()
+									.getRegistrationCardNumber());
+				} catch (Exception e) {
+					e.printStackTrace();
+					facesMessages
+							.addToControl(
+									"",
+									org.jboss.seam.international.StatusMessage.Severity.ERROR,
+									"Error en la consulta al servicio web");
+				}
 			}
 		} else {
-
+			facesMessages.addToControl("",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
+					"Campo Nro. ficha registral está vacío");
 		}
-		
+	}
+
+	public PropertyWs getPropertyWs() {
+		return propertyWs;
+	}
+
+	public void setPropertyWs(PropertyWs propertyWs) {
+		this.propertyWs = propertyWs;
 	}
 	
 }
