@@ -28,7 +28,6 @@ import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
-import org.hibernate.search.bridge.builtin.BigDecimalBridge;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;

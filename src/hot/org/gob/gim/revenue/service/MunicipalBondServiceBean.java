@@ -1821,4 +1821,16 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		return size;
 
 	}
+	
+	@Override
+	public MunicipalBond findMunicipalBondByNumber(Long mbNumber) throws Exception {
+		StringBuilder queryBuilder = new StringBuilder(EJBQL);
+		queryBuilder.append("municipalBond.number = " + mbNumber);
+		
+		String stringQuery = queryBuilder.toString();
+
+		Query query = entityManager.createQuery(stringQuery);
+		return (MunicipalBond) query.getResultList().get(0);
+	}
+
 }
