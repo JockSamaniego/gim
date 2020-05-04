@@ -14,6 +14,8 @@ import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.loja.gim.ws.dto.BondSummary;
 import org.gob.loja.gim.ws.dto.FutureBond;
+import org.gob.loja.gim.ws.dto.Payout;
+import org.gob.loja.gim.ws.dto.v2.DepositStatementV2;
 
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
@@ -156,5 +158,12 @@ public interface IncomeService {
 	public void update(PaymentAgreement paymentAgreement); 
 	
 	public boolean verifyApplyDiscount(Long entryId, String groupingCode, Long residentId);
+	
+	/**
+	 * rfam 2020-03-22
+	 * retorna la informacion para  la impresion del detalle en bancos
+	 * @return
+	 */
+	public DepositStatementV2 findDepositInformation(Person cashier, Date paymentDate, Payout payout);
 	
 }

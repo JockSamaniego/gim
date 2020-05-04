@@ -125,4 +125,6 @@ public interface MunicipalBondService {
 	MunicipalBond addChildrenItem(MunicipalBond municipalBond, Date serviceDate,
 			EntryStructureType entryStructureType,
 			boolean isEmission, Boolean internalTramit, BigDecimal value) throws EntryDefinitionNotFoundException;
+	
+	MunicipalBond findMunicipalBondByNumber(Long mbNumber) throws Exception;
 }

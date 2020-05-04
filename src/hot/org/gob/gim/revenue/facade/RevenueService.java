@@ -16,6 +16,7 @@ import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.EntryStructure;
 import ec.gob.gim.revenue.model.EntryStructureType;
 import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.security.model.User;
 
@@ -40,6 +41,10 @@ public interface RevenueService {
 	//void updateReversedDescriptionAndValue(List<Long> bondIds, String observation);
 			
 	MunicipalBond emit(MunicipalBond municipalBond, User user) throws Exception;
+	
+	//rfam 2020-04-09 emitir infraccines con nuevo estado en espera de confirmacion de fecha expiracion  
+	MunicipalBond emit(MunicipalBond municipalBond, User user, MunicipalBondStatus status) throws Exception;
+	
 	void emit(List<MunicipalBond> municipalBonds, User user) throws Exception;
 	void emitFuture(List<MunicipalBond> municipalBonds, User user) throws Exception;
 	//void emit(Long emissionOrderId,Long userId) throws Exception;
@@ -168,5 +173,7 @@ public interface RevenueService {
 	*/
 	
 	//void calculeMunicipalBond(MunicipalBond mb);
+	
+	MunicipalBond update(MunicipalBond municipalBond, MunicipalBondStatus previousStatus, MunicipalBondStatus currentStatus, User user, String explanation) throws Exception;
 	
 }
