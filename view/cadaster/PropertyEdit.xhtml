@@ -155,13 +155,6 @@
 					value="#{messages['common.print']}">
 				</a:commandButton>
 				
-				
-				
-				
-				<a:commandButton action="#{propertyHome.getAllTypes()}"
-					value="Consulta SW">
-				</a:commandButton>
-				
 			</a:region>
 			
 			<s:button view="/cadaster/ChangeOwnerProperty.xhtml" rendered="#{!propertyHome.needConfirmChange() and !readOnly}"
