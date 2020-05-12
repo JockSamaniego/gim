@@ -89,7 +89,7 @@ public class Emission {
 	
 		
 	@POST
-	@Path("/generateInfringement/{propertyId}")
+	@Path("/sgenerateInfringement/{propertyId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public InfringementEmisionResponse generateANTEmissionInfringement(String name, String password,
 			String identificationNumber, String accountCode, InfringementEmisionDetail emisionDetail) {
