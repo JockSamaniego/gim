@@ -2116,7 +2116,8 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	// Jock Samaniego
 	
 	public void getPaymentsWithChecks(){
-		if(this.fractionValues.get("CHECK").compareTo(BigDecimal.ZERO) > 0 && this.fractionValues.get("CHECK") != null){
+		//System.out.println("----------------- "+this.fractionValues.get("CHECK"));
+		if(this.fractionValues.get("CHECK") != null && this.fractionValues.get("CHECK").compareTo(BigDecimal.ZERO) > 0 ){
 			this.detailByPaymentType(PaymentType.CHECK);
 		}
 	}
