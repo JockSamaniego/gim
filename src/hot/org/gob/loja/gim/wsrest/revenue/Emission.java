@@ -3,25 +3,18 @@ package org.gob.loja.gim.wsrest.revenue;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.ws.service.InfringementEmisionResponse;
-import org.gob.loja.gim.ws.dto.CadastralCertificateDTOWs;
 import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
 import org.gob.loja.gim.ws.service.GimService;
 import org.gob.loja.gim.ws.service.RestService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
-import org.jboss.seam.core.Interpolator;
 
-import ec.gob.gim.cadaster.model.dto.BuildingDTO;
-
-@Name("eEmissionWS")
+@Name("EmissionWS")
 @Path("/emission")
 @Transactional
 public class Emission {
@@ -34,7 +27,7 @@ public class Emission {
 	private GimService gimService;
 
 	
-	@POST
+	/*@POST
 	@Path("/property/{propertyId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCadastralCertificateProperty(@PathParam("propertyId") Long propertyId) {
@@ -92,11 +85,11 @@ public class Emission {
 			e.printStackTrace();
 			return Response.ok().build();
 		}		
-	}
+	}*/
 	
 		
 	@POST
-	@Path("/property/{propertyId}")
+	@Path("/generateInfringement/{propertyId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public InfringementEmisionResponse generateANTEmissionInfringement(String name, String password,
 			String identificationNumber, String accountCode, InfringementEmisionDetail emisionDetail) {
@@ -109,7 +102,7 @@ public class Emission {
 	}
 	
 	@PUT
-	@Path("/property/{propertyId}")
+	@Path("/confirmInfringement/{propertyId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public InfringementEmisionResponse confirmANTEmissionInfringement(String name, String password,
 			InfringementEmisionDetail emisionDetail) {
