@@ -1101,7 +1101,7 @@ public class GimServiceBean implements GimService {
 
 		InfringementEmisionResponse response = new InfringementEmisionResponse();
 		response.setStatus("ERROR");
-		response.setInfringementDetail(emisionDetail);
+		//response.setInfringementDetail(emisionDetail);
 		response.setDetail("Contribuyente Identificacion: " + identificationNumber);
 
 		User user = findUser(name, password);
@@ -1111,7 +1111,7 @@ public class GimServiceBean implements GimService {
 			try {
 
 				if (emisionDetail.getInfringementDate() == null) {
-					response.setMessage("Emisión fallida. Fecha de infracción falante");
+					response.setMessage("Emisión fallida. Fecha de infracción faltante");
 					return response;
 				}
 
@@ -1184,11 +1184,11 @@ public class GimServiceBean implements GimService {
 				ant.setCitationNumber(emisionDetail.getCitationNumber());
 				ant.setInfringementDate(emisionDetail.getInfringementDate());
 				ant.setInfringementType(emisionDetail.getInfringementType());
-				ant.setLostPoints(emisionDetail.getLostPoints());
+				//ant.setLostPoints(emisionDetail.getLostPoints());
 				ant.setNumberPlate(emisionDetail.getNumberPlate());
 				ant.setOrigin(emisionDetail.getOrigin());
 				ant.setTransitAgent(findResidentByIdentificationNumber(emisionDetail.getTransitAgentIdentification()));
-				ant.setType(emisionDetail.getType());
+				//ant.setType(emisionDetail.getType());
 				mb.setAdjunct(ant);
 				// end Adjunt
 
@@ -1256,7 +1256,7 @@ public class GimServiceBean implements GimService {
 
 		InfringementEmisionResponse response = new InfringementEmisionResponse();
 		response.setStatus("ERROR");
-		response.setInfringementDetail(emisionDetail);
+		//response.setInfringementDetail(emisionDetail);
 
 		if (emisionDetail.getExpirationDate() == null) {
 			response.setMessage("Emisión fallida. Fecha de expiración falante");

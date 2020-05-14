@@ -1,6 +1,7 @@
 package org.gob.gim.ws.service;
 
 import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
+import org.gob.loja.gim.ws.dto.ant.BondDTO;
 
 public class InfringementEmisionResponse {
 	/**
@@ -14,24 +15,23 @@ public class InfringementEmisionResponse {
 
 	private Long municipalBondId;
 	private Long municipalBondNumber;
+	
+	private BondDTO bond;
 
 	/**
 	 * detalle con la informacion que llego por el servicio web
 	 */
 	private String detail;
-	
-	private InfringementEmisionDetail infringementDetail;
 
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
 		// String s = street != null ? street : "";
-		String s = "\t=> status: " + status + " " + "\t=> message: " + message + " " + "\t=> municipalBondId: "
-				+ municipalBondId != null
-						? municipalBondId.toString()
-						: "-" + "\t=> municipalBondNumber: " + municipalBondNumber != null
-								? municipalBondNumber.toString()
-								: "-" + "\t=> detail: " + detail;
+		String s = "\t=> status: " + status + " " + "\t=> message: " + message
+				+ " " + "\t=> municipalBondId: " + municipalBondId != null ? municipalBondId
+				.toString() : "-" + "\t=> municipalBondNumber: "
+				+ municipalBondNumber != null ? municipalBondNumber.toString()
+				: "-" + "\t=> detail: " + detail;
 		return s;
 	}
 
@@ -75,13 +75,18 @@ public class InfringementEmisionResponse {
 		this.detail = detail;
 	}
 
-	public InfringementEmisionDetail getInfringementDetail() {
-		return infringementDetail;
+	/**
+	 * @return the bond
+	 */
+	public BondDTO getBond() {
+		return bond;
 	}
 
-	public void setInfringementDetail(InfringementEmisionDetail infringementDetail) {
-		this.infringementDetail = infringementDetail;
+	/**
+	 * @param bond the bond to set
+	 */
+	public void setBond(BondDTO bond) {
+		this.bond = bond;
 	}
-	
-	
+
 }

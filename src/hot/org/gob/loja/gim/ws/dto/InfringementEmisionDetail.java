@@ -23,6 +23,9 @@ public class InfringementEmisionDetail {
 	
 	private Long municipalBondNumber;
 	private Date expirationDate;
+	
+	private String infractorIdentification;
+	private String accountCode;
 
 	public String getCitationNumber() {
 		return citationNumber;
@@ -31,7 +34,7 @@ public class InfringementEmisionDetail {
 	public void setCitationNumber(String citationNumber) {
 		this.citationNumber = citationNumber;
 	}
-
+	
 	public String getInfringementType() {
 		return infringementType;
 	}
@@ -152,4 +155,21 @@ public class InfringementEmisionDetail {
 		this.municipalBondNumber = municipalBondNumber;
 	}
 
+	public String getInfractorIdentification() {
+		return infractorIdentification;
+	}
+
+	public void setInfractorIdentification(String infractorIdentification) {
+		this.infractorIdentification = infractorIdentification;
+	}
+	
+	public String getAccountCode() {
+		return accountCode;
+	}
+
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
+	}
+
+		
 }

@@ -1,5 +1,6 @@
 package ec.gob.gim.revenue.model.adjunct;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,9 +29,8 @@ public class InfringementANTReference extends Adjunct {
 	private Date infringementDate;
 	// private String infringementaddress; va al bondAddres
 	private String numberPlate;
-	private Integer lostPoints;
+	private BigDecimal lostPoints;
 	private String origin;
-	private String type;
 
 	@ManyToOne
 	private Resident transitAgent;
@@ -99,11 +99,11 @@ public class InfringementANTReference extends Adjunct {
 		this.numberPlate = numberPlate;
 	}
 
-	public Integer getLostPoints() {
+	public BigDecimal getLostPoints() {
 		return lostPoints;
 	}
 
-	public void setLostPoints(Integer lostPoints) {
+	public void setLostPoints(BigDecimal lostPoints) {
 		this.lostPoints = lostPoints;
 	}
 
@@ -113,14 +113,6 @@ public class InfringementANTReference extends Adjunct {
 
 	public void setOrigin(String origin) {
 		this.origin = origin;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public Resident getTransitAgent() {
