@@ -6,6 +6,7 @@ package org.gob.gim.revenue.service;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.gob.loja.gim.ws.exception.InvalidUser;
 import org.gob.loja.gim.ws.exception.TaxpayerNonUnique;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 
+import ec.gob.gim.common.model.Address;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Gender;
 import ec.gob.gim.common.model.IdentificationType;
@@ -198,6 +200,8 @@ public class EmissionServiceBean implements EmissionService {
 
 					person.setName(params.getInfractor().getName());
 					person.setCountry(params.getInfractor().getCountry());
+					person.setAddresses(new ArrayList<Address>());
+					person.setCurrentAddress(new Address());
 					// Direccion Actual
 					person.getCurrentAddress().setStreet(
 							params.getInfractor().getAddress());
@@ -206,7 +210,7 @@ public class EmissionServiceBean implements EmissionService {
 					person.getCurrentAddress().setPhoneNumber(
 							params.getInfractor().getMobileNumber());
 					person.getCurrentAddress().setCity("Loja");
-					// person.getCurrentAddress().setCountry("Ecuador");
+					person.getCurrentAddress().setCountry(params.getInfractor().getCountry());
 
 					resident = saveResident(person);
 
