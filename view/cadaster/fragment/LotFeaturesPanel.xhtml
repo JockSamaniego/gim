@@ -62,6 +62,22 @@
 				</h:inputText>
 			</s:decorate>
 		</h:panelGrid>
+		
+		<h:panelGrid columns="2">
+			<s:decorate id="cusField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">CUS</ui:define>
+				<h:inputText id="cus" required="false" value="#{propertyHome.instance.cus}" styleClass="right">
+				</h:inputText>
+			</s:decorate>
+			
+			<s:decorate id="cosField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">COS</ui:define>
+				<h:inputText id="cos" required="false" value="#{propertyHome.instance.cos}" styleClass="right">
+				</h:inputText>
+			</s:decorate>
+		</h:panelGrid>
 
 		<h:outputText styleClass="separatorTitle" value="#{messages['fence']}" />
 
