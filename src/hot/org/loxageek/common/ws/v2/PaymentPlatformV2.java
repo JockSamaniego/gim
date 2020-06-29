@@ -34,7 +34,10 @@ import org.gob.loja.gim.ws.service.v2.PaymentServiceV2;
  * @author rfam
  * 
  */
-@WebService
+@WebService(		
+		targetNamespace="http://192.168.1.31:8080/gim/paymentPlatformV2"
+		
+		)
 @HandlerChain(file="handler-chain.xml")
 public class PaymentPlatformV2 {
 	@EJB

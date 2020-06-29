@@ -1,0 +1,136 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="propertyRegistrationInfoPanel" width="500"
+		height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Datos Registro de la Propiedad"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkPR" />
+				<rich:componentControl for="propertyRegistrationInfoPanel"
+					attachTo="hidelinkPR" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="buildingPR" styleClass="edit">
+			<a:region>
+
+				<rich:panel>
+					<rich:panel style="height:50px; width:100%; overflow:auto;">
+						<rich:messages errorClass="errors" />
+					</rich:panel>
+
+					<h:panelGrid columns="4" width="100%">
+
+						<s:decorate template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">Tipo de Predio:</ui:define>
+							<h:inputText value="#{propertyHome.propertyWs.tipoPredio}"
+								readonly="true" size="25"/>
+						</s:decorate>
+
+						<s:decorate template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">Número Ficha:</ui:define>
+							<h:inputText value="#{propertyHome.propertyWs.numFicha}"
+								readonly="true" size="25"/>
+						</s:decorate>
+
+						<s:decorate template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">Clave catastral:</ui:define>
+							<h:inputText value="#{propertyHome.propertyWs.claveCatastral}"
+								readonly="true" size="25"/>
+						</s:decorate>
+
+						<s:decorate template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">Clave anterior:</ui:define>
+							<h:inputText
+								value="#{propertyHome.propertyWs.claveCatastralAnterior}"
+								readonly="true" size="25"/>
+						</s:decorate>
+
+						<s:decorate template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">Parroquia:</ui:define>
+							<h:inputText value="#{propertyHome.propertyWs.nombreParroquia}"
+								readonly="true" size="25"/>
+						</s:decorate>					
+					</h:panelGrid>
+
+					<h:panelGrid columns="4" width="100%">
+						<s:decorate template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">Observación:</ui:define>
+							<h:inputTextarea value="#{propertyHome.propertyWs.observacion}"
+								readonly="true" cols="70"/>
+						</s:decorate>
+					</h:panelGrid>
+
+					<h:panelGrid columns="4" width="100%">
+						<s:decorate template="../../layout/vertical-edit.xhtml">
+							<ui:define name="label">Linderos:</ui:define>
+							<h:inputTextarea value="#{propertyHome.propertyWs.linderos}"
+								readonly="true" cols="70"/>
+						</s:decorate>
+					</h:panelGrid>
+
+				</rich:panel>
+
+				<rich:panel>
+					<f:facet name="header">Propietarios</f:facet>
+					<rich:dataTable
+						value="#{propertyHome.propertyWs.fichaPropietarios}" var="owner">
+						<rich:column>
+							<f:facet name="header">
+								Id
+							</f:facet>
+							<h:outputText value="#{owner.id}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Identificación
+							</f:facet>
+							<h:outputText value="#{owner.cedRuc}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Nombres
+							</f:facet>
+							<h:outputText value="#{owner.nombre}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Calidad
+							</f:facet>
+							<h:outputText value="#{owner.calidad}" />
+						</rich:column>
+					</rich:dataTable>
+				</rich:panel>
+
+			</a:region>
+
+			<div class="actionButtons">
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}" reRender="buildingsPanel"
+					oncomplete="Richfaces.hideModalPanel('propertyRegistrationInfoPanel');"
+					bypassUpdates="true" />
+			</div>
+
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

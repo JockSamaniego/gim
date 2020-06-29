@@ -15,6 +15,8 @@
 
 	<ui:include src="fragment/BuildingEditPanel.xhtml" />
 	<ui:include src="fragment/DomainOwnerAddPanel.xhtml" />
+	
+	<ui:include src="fragment/PropertyResgistrationInfoPanel.xhtml" />	
 
     <h:form id="property" styleClass="edit">    	
     	<rich:messages errorClass="errors"/>
@@ -154,6 +156,7 @@
 					rendered="#{propertyHome.needConfirmChange()}"			
 					value="#{messages['common.print']}">
 				</a:commandButton>
+				
 			</a:region>
 			
 			<s:button view="/cadaster/ChangeOwnerProperty.xhtml" rendered="#{!propertyHome.needConfirmChange() and !readOnly}"

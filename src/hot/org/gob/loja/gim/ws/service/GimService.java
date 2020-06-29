@@ -7,8 +7,10 @@ import java.util.Map;
 import javax.ejb.Local;
 
 import org.gob.gim.ws.service.EmisionResponse;
+import org.gob.gim.ws.service.InfringementEmisionResponse;
 import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
+import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
 import org.gob.loja.gim.ws.dto.RealEstate;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.StatementReport;
@@ -90,5 +92,21 @@ public interface GimService {
 	 * @return
 	 */
 	boolean searchDueDebts(ServiceRequest request);
+	
+	InfringementEmisionResponse generateANTEmissionInfringement(String name, String password,
+			String identificationNumber, String accountCode, InfringementEmisionDetail emisionDetail)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
+	
+	InfringementEmisionResponse confirmANTEmissionInfringement(String name, String password,
+			InfringementEmisionDetail emisionDetail)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked, Exception;
+	
+	
 	
 }
