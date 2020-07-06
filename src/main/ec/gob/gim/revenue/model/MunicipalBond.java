@@ -1929,6 +1929,9 @@ public class MunicipalBond implements Serializable {
 	//Jock Samaniego
 	//07-01-2020
 	private Boolean documentIsRedeemed;
+	
+	@Temporal(TemporalType.DATE)
+	private Date exchangeDate;
 
 	public Boolean getDocumentIsRedeemed() {
 		return documentIsRedeemed;
@@ -1937,5 +1940,15 @@ public class MunicipalBond implements Serializable {
 	public void setDocumentIsRedeemed(Boolean documentIsRedeemed) {
 		this.documentIsRedeemed = documentIsRedeemed;
 	}
+
+	public Date getExchangeDate() {
+		return exchangeDate;
+	}
+
+	public void setExchangeDate(Date exchangeDate) {
+		this.exchangeDate = exchangeDate;
+	}
+	
+	
 
 }// end MunicipalBond

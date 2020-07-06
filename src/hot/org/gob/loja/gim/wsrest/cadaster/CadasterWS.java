@@ -5,7 +5,6 @@ package org.gob.loja.gim.wsrest.cadaster;
 
 import java.util.List;
 
-import javax.interceptor.Interceptors;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;

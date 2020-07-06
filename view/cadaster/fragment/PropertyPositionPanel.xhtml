@@ -275,6 +275,13 @@
 
 					</h:inputText>
 				</s:decorate>
+				<a:region>
+					<a:commandButton action="#{propertyHome.findRegistrationForm()}"
+						value="Consultar Registro Propiedad" reRender="propertyRegistrationInfoPanel"
+						ajaxSingle="true" eventsQueue="gimEventsQueue"
+						oncomplete="Richfaces.showModalPanel('propertyRegistrationInfoPanel',{width:800, height:600})">
+					</a:commandButton>
+				</a:region>
 			</h:panelGrid>
 
 			<s:decorate id="descriptionHorizontalField"

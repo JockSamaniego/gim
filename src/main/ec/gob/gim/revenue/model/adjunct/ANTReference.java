@@ -79,6 +79,18 @@ public class ANTReference extends Adjunct {
 	 * 2020-02-19
 	 */
 	private String oldCodeInfringement;
+	
+	/**
+	 * fecha citacion
+	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date infractionDate;
+	
+	/**
+	 * fecha citacion
+	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date notificationDate;
 
 	// private String observation;
 
@@ -109,7 +121,13 @@ public class ANTReference extends Adjunct {
 		pair = new ValuePair("Servicio", serviceType != null ? serviceType.toUpperCase() : "-");
 		details.add(pair);
 		
-		pair = new ValuePair("Fecha citación", citationDate != null ? DateUtils.formatFullDate(citationDate) : "-");
+		/*pair = new ValuePair("Fecha citación", citationDate != null ? DateUtils.formatFullDate(citationDate) : "-");
+		details.add(pair);*/
+		
+		pair = new ValuePair("Fecha infracción", infractionDate != null ? DateUtils.formatFullDate(infractionDate) : "-");
+		details.add(pair);
+		
+		pair = new ValuePair("Fecha notificación", notificationDate != null ? DateUtils.formatFullDate(notificationDate) : "-");
 		details.add(pair);
 		
 		pair = new ValuePair("Nro. Infracción", contraventionNumber != null ? contraventionNumber.toUpperCase() : "-");
@@ -204,6 +222,22 @@ public class ANTReference extends Adjunct {
 
 	public void setOldCodeInfringement(String oldCodeInfringement) {
 		this.oldCodeInfringement = oldCodeInfringement;
+	}
+
+	public Date getInfractionDate() {
+		return infractionDate;
+	}
+
+	public void setInfractionDate(Date infractionDate) {
+		this.infractionDate = infractionDate;
+	}
+
+	public Date getNotificationDate() {
+		return notificationDate;
+	}
+
+	public void setNotificationDate(Date notificationDate) {
+		this.notificationDate = notificationDate;
 	}
 	
 	

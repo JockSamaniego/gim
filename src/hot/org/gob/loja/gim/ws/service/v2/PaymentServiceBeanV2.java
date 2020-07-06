@@ -221,9 +221,18 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 						Long paidFromExternalBondStatusId = systemParameterService
 								.findParameter(IncomeServiceBean.PAID_FROM_EXTERNAL_CHANNEL_BOND_STATUS);
 						persistChangeStatus(payout.getBondIds(), paidFromExternalBondStatusId);
+						
+						//////buscar los datos para el pago efectuado
+						DepositStatementV2 localInformation = incomeService.findDepositInformation(cashier,
+								payout.getPaymentDate(), payout);
 
 						statement.setMessage("Pago registrado con exito");
 						statement.setCode("ML.RD.7200");
+						statement.setReference(localInformation.getReference());
+						statement.setResidentIdentificaciton(localInformation.getResidentIdentificaciton());
+						statement.setResidentName(localInformation.getResidentName());
+						statement.setTotal(localInformation.getTotal());
+						
 						persisBankingEntityLog(true, statement.toString());
 						return statement;
 					} else {
@@ -312,8 +321,14 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			persisBankingEntityLog(false, statement.toString());
 			return statement;
 		}
-		Query query = this.em.createNativeQuery("SELECT " + "dep.municipalbond_id " + "FROM " + "gimprod.payment pay, "
-				+ "gimprod.deposit dep " + "WHERE " + "dep.payment_id = pay.id AND " + "pay.externaltransactionid = ?1 "
+		Query query = this.em.createNativeQuery("SELECT " 
+				+ "dep.municipalbond_id " 
+				+ "FROM " 
+				+ "gimprod.payment pay, "
+				+ "gimprod.deposit dep " 
+				+ "WHERE " 
+				+ "dep.payment_id = pay.id AND " 
+				+ "pay.externaltransactionid = ?1 "
 				+ "ORDER BY dep.municipalbond_id ASC");
 
 		query.setParameter(1, payout.getTransactionId());

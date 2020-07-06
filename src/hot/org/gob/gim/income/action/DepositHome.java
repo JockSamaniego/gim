@@ -2,14 +2,17 @@ package org.gob.gim.income.action;
 	
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
+import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.facade.IncomeService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -17,6 +20,9 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
+import ec.gob.gim.coercive.model.NotificationPayedExcelDTO;
+import ec.gob.gim.common.model.Charge;
+import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -277,6 +283,81 @@ public class DepositHome extends EntityHome<Deposit> {
 
 	public void setDeposit(Deposit deposit) {
 		this.deposit = deposit;
+	}
+	
+	// Para reporte de pagos reversados
+	// Jock Samaniego
+	
+	private Date startDateReversed;
+	private Date endDateReversed;
+	private List<Deposit> depositsReversed;
+
+	public Date getStartDateReversed() {
+		return startDateReversed;
+	}
+
+	public void setStartDateReversed(Date startDateReversed) {
+		this.startDateReversed = startDateReversed;
+	}
+
+	public Date getEndDateReversed() {
+		return endDateReversed;
+	}
+
+	public void setEndDateReversed(Date endDateReversed) {
+		this.endDateReversed = endDateReversed;
+	}
+	
+	public List<Deposit> getDepositsReversed() {
+		return depositsReversed;
+	}
+
+	public void setDepositsReversed(List<Deposit> depositsReversed) {
+		this.depositsReversed = depositsReversed;
+	}
+
+
+	public void findReversedPayments(){	
+		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+		this.depositsReversed = incomeService.findDepositsReverseReport(this.startDateReversed, this.endDateReversed);
+	}
+	
+	private Charge incomeCharge;
+	private Delegate incomeDelegate;
+	private SystemParameterService systemParameterService;
+	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
+	
+	public Charge getIncomeCharge() {
+		return incomeCharge;
+	}
+
+	public void setIncomeCharge(Charge incomeCharge) {
+		this.incomeCharge = incomeCharge;
+	}
+
+	public Delegate getIncomeDelegate() {
+		return incomeDelegate;
+	}
+
+	public void setIncomeDelegate(Delegate incomeDelegate) {
+		this.incomeDelegate = incomeDelegate;
+	}
+
+	public void loadCharge() {
+		incomeCharge = getCharge("DELEGATE_ID_INCOME");
+		if (incomeCharge != null) {
+			for (Delegate d : incomeCharge.getDelegates()) {
+				if (d.getIsActive())
+					incomeDelegate = d;
+			}
+		}		
+	}
+	
+	public Charge getCharge(String systemParameter) {
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+		Charge charge = systemParameterService.materialize(Charge.class,systemParameter);
+		return charge;
 	}
 	
 }

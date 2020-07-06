@@ -2111,4 +2111,15 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	public void setOpenTill(Boolean openTill) {
 		this.openTill = openTill;
 	}
+	
+	// Para obtener el detalle de cobro de cheques en el cierre de caja
+	// Jock Samaniego
+	
+	public void getPaymentsWithChecks(){
+		if(this.fractionValues.get("CHECK") != null){
+			if(this.fractionValues.get("CHECK").compareTo(BigDecimal.ZERO) > 0 && this.fractionValues.get("CHECK") != null){
+				this.detailByPaymentType(PaymentType.CHECK);
+			}
+		}
+	}
 }

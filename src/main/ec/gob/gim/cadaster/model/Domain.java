@@ -86,6 +86,9 @@ public class Domain {
 	private Date date;
 	
 	@Temporal(TemporalType.DATE)
+	private Date acquisitionDate;
+	
+	@Temporal(TemporalType.DATE)
 	private Date creationDate;
 	
 	@Temporal(TemporalType.TIME)
@@ -188,6 +191,10 @@ public class Domain {
 
 	@OneToOne
 	private Property currentProperty;
+	
+	@ManyToOne
+	@JoinColumn(name = "previousDomain_id")
+	private Domain previousDomain;
 /*
 	@OneToMany(mappedBy = "domain", cascade = CascadeType.ALL)
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
@@ -758,4 +765,22 @@ public class Domain {
 		}
 	}
 
+	public Domain getPreviousDomain() {
+		return previousDomain;
+	}
+
+	public void setPreviousDomain(Domain previousDomain) {
+		this.previousDomain = previousDomain;
+	}
+
+	public Date getAcquisitionDate() {
+		return acquisitionDate;
+	}
+
+	public void setAcquisitionDate(Date acquisitionDate) {
+		this.acquisitionDate = acquisitionDate;
+	}
+	
+	
+	
 }

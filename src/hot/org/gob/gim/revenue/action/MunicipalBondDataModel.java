@@ -46,6 +46,7 @@ public class MunicipalBondDataModel extends PageableDataModel<MunicipalBond, Lon
 	private Long municipalBondNumber;
 	private Boolean future = Boolean.FALSE;
 	private Date now;
+	private Boolean bondsWasInAgreement = Boolean.FALSE;
 	
 	
 	public MunicipalBondDataModel() {
@@ -70,7 +71,7 @@ public class MunicipalBondDataModel extends PageableDataModel<MunicipalBond, Lon
 			return municipalBondService.findMunicipalBonds(residentId, entryId, municipalBondStatusId, firstRow, numberOfRows);
 		}
 		else{
-			return municipalBondService.findMunicipalBonds(residentId, entryId, startDate, endDate, municipalBondStatusId, firstRow, numberOfRows, municipalBondNumber);
+			return municipalBondService.findMunicipalBonds(residentId, entryId, startDate, endDate, municipalBondStatusId, firstRow, numberOfRows, municipalBondNumber, bondsWasInAgreement);
 		}
 	}
 
@@ -99,7 +100,7 @@ public class MunicipalBondDataModel extends PageableDataModel<MunicipalBond, Lon
 			return municipalBondService.findMunicipalBondsNumber(residentId, entryId, municipalBondStatusId).intValue();
 		}
 		else{
-			return municipalBondService.findMunicipalBondsNumber(residentId, entryId, startDate, endDate, municipalBondStatusId, municipalBondNumber).intValue();
+			return municipalBondService.findMunicipalBondsNumber(residentId, entryId, startDate, endDate, municipalBondStatusId, municipalBondNumber, bondsWasInAgreement).intValue();
 		}
 		
 	}
@@ -121,7 +122,7 @@ public class MunicipalBondDataModel extends PageableDataModel<MunicipalBond, Lon
 	}
 	
 
-	public void setCriteria(Long residentId, Long entryId, Date startDate, Date endDate, Long municipalBondStatusId, Long municipalBondNumber){
+	public void setCriteria(Long residentId, Long entryId, Date startDate, Date endDate, Long municipalBondStatusId, Long municipalBondNumber, Boolean bondsWasInAgreement){
 		this.residentId = residentId;
 		this.entryId = entryId;
 		this.startDate = startDate;
@@ -130,6 +131,7 @@ public class MunicipalBondDataModel extends PageableDataModel<MunicipalBond, Lon
 		this.municipalBondNumber = municipalBondNumber;
 		this.future = Boolean.FALSE;
 		this.now = null;
+		this.bondsWasInAgreement = bondsWasInAgreement;
 	}
 	
 	public void setCriteria(Long residentId, Long entryId, Long municipalBondStatusId, Boolean future){

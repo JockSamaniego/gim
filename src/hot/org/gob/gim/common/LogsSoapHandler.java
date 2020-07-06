@@ -142,9 +142,9 @@ public class LogsSoapHandler implements SOAPHandler<SOAPMessageContext> {
 			}
 
 		} catch (SOAPException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 }
