@@ -1,9 +1,11 @@
 package org.gob.gim.income.action;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -556,4 +558,58 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 		}
 
 	}
+	
+	//Para imprimir reporte de la consulta completa
+		//JOck samaniego
+		
+		private List<CreditNote> creditnoteList;
+		private Date dateFrom;
+		private Date dateUntil;
+
+		public List<CreditNote> getCreditnoteList() {
+			return creditnoteList;
+		}
+
+		public void setCreditnoteList(List<CreditNote> creditnoteList) {
+			this.creditnoteList = creditnoteList;
+		}
+				
+		public Date getDateFrom() {
+			return dateFrom;
+		}
+
+		public void setDateFrom(Date dateFrom) {
+			this.dateFrom = dateFrom;
+		}
+
+		public Date getDateUntil() {
+			return dateUntil;
+		}
+
+		public void setDateUntil(Date dateUntil) {
+			this.dateUntil = dateUntil;
+		}
+
+		public void searhCreditNotesByCriteria(String name, String ident, Date from, Date until){
+			creditnoteList = new ArrayList();
+
+			if(from == null){
+				from = new GregorianCalendar(2000, Calendar.JANUARY, 1).getTime();
+			}else{
+				this.dateFrom = from;
+			}
+			if(until == null){
+				until = new Date();		
+			}else{
+				this.dateUntil = until;
+			}
+			
+			
+			Query q = getEntityManager().createNamedQuery("CreditNote.findByResidentOrCreationDate");	
+			q.setParameter("criteriaName", name);
+			q.setParameter("criteriaIdentification", ident);
+			q.setParameter("dateFrom", from);
+			q.setParameter("dateUntil", until);
+			creditnoteList = q.getResultList();
+		}
 }

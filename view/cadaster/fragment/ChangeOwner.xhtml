@@ -65,13 +65,24 @@
 			</s:decorate>
 				
 			<s:decorate id="dateDomainIdField" template="../../layout/edit.xhtml">
-					<ui:define name="label">#{messages['domain.date']}:</ui:define>
+					<ui:define name="label">#{messages['domain.inscriptionDate']}:</ui:define>
 					<rich:calendar id="dateDomainIdNumber" required="true" disabled="#{addMortgage or propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}"
 						ajaxSingle="true"
 						value="#{propertyHome.instance.currentDomain.date}"
 						currentDate="#{currentDate}" immediate="true"
 						datePattern="#{messages['common.datePattern']}">
 						<a:support event="ondateseleted" ajaxSingle="true" reRender="dateDomainIdField"></a:support>
+						</rich:calendar>
+			</s:decorate>
+			
+			<s:decorate id="acquisitionDateDomainField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.acquisitionDate']}:</ui:define>
+					<rich:calendar id="acquisitionDateDomainNumber" required="true" disabled="#{addMortgage or propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}"
+						ajaxSingle="true"
+						value="#{propertyHome.instance.currentDomain.acquisitionDate}"
+						currentDate="#{currentDate}" immediate="true"
+						datePattern="#{messages['common.datePattern']}">
+						<a:support event="ondateseleted" ajaxSingle="true" reRender="acquisitionDateDomainField"></a:support>
 						</rich:calendar>
 			</s:decorate>
 

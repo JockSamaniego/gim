@@ -1,0 +1,641 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="domainTransferComplement" width="1050" height="620" style="overflow:auto">
+
+		<f:facet name="header">
+
+			<h:panelGroup>
+
+				<h:outputText value="Impresión del Documento de Transpaso de Dominio" />
+
+			</h:panelGroup>
+
+		</f:facet>
+
+		<f:facet name="controls">
+
+			<h:panelGroup>
+
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkx" />
+
+				<rich:componentControl for="domainTransferComplement"
+					attachTo="hidelinkx" operation="hide" event="onclick" />
+
+			</h:panelGroup>
+
+		</f:facet>
+
+		<h:form id="formDates">
+
+			<h:panelGrid width="100%" id="tramitex">
+				<rich:panel id="contentPanel">
+
+					<h:outputText value="TRÁMITE No.:"></h:outputText>
+
+					<h:inputText id="input01" size="15" maxlength="15"
+						style="margin-left: 2em" disabled="true"
+						value="#{propertyHome.propertyDocument.currentDomain.tramitNumber}" />
+
+					<h:outputText value="FICHA REGISTRAL:" style="margin-left: 6em"></h:outputText>
+
+					<h:inputText id="input02" size="15" maxlength="15"
+						style="margin-left: 2em" disabled="true"
+						value="#{propertyHome.propertyDocument.registrationCardNumber}" />
+						
+					<h:outputText value="PREDIO:" style="margin-left: 6em"></h:outputText>
+
+					<h:inputText id="input03" size="15" maxlength="15"
+						style="margin-left: 2em"
+						value="#{propertyHome.propertyDocument.currentDomain.property.propertyType.name}" 
+						disabled = "true"/>
+
+					<br />
+					<br />
+
+					<h:outputText value="FECHA:" style="margin-right: 2.5em"></h:outputText>
+					<rich:calendar id="creationDate"
+                          value="#{propertyHome.TDC.creationDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                	</rich:calendar>
+						
+					<h:outputText value="TIPO DE CONTRATO:" style="margin-left: 4em"></h:outputText>
+
+					<h:inputText id="input05" size="54" maxlength="54"
+						style="margin-left: 1em"
+						value="#{propertyHome.propertyDocument.currentDomain.purchaseType.name}"
+						disabled = "true" />
+
+				</rich:panel>
+
+			</h:panelGrid>
+
+
+			<rich:panel id="contentPanelx">
+
+				<f:facet name="header">
+
+					<h:panelGrid columns="1" columnClasses="headerTitle,">
+
+						<h:outputText value="DATOS INFORMATIVOS" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<h:outputText value="Clave catastral anterior:"></h:outputText>
+				
+				<h:inputText id="input06" size="30" maxlength="30"
+					style="margin-left: 2em"
+					value="#{propertyHome.propertyDocument.currentDomain.property.previousCadastralCode}"
+					disabled="true" />
+					
+				<h:outputText value="Clave catastral actual:" style="margin-left: 6em"></h:outputText>
+				
+				<h:inputText id="input07" size="40" maxlength="40"
+					style="margin-left: 2em"
+					value="#{propertyHome.propertyDocument.currentDomain.property.cadastralCode}"
+					disabled="true" />
+					
+				<br />
+				<br />
+				
+				<h:outputText value="VENDEDOR"></h:outputText>
+				<br />
+				<h:outputText value="Principal:" style="margin-left: 1em"></h:outputText>
+				
+				<h:inputText id="input08" size="60" maxlength="60"
+					style="margin-left: 2em"
+					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.resident.name}"
+					disabled="true" />
+					
+				<h:outputText value="CI/RUC/PASP:" style="margin-left: 10em"></h:outputText>
+				
+				<h:inputText id="input09" size="20" maxlength="15"
+					style="margin-left: 2em"
+					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.resident.identificationNumber}"
+					disabled="true" />	
+				<br />
+				<br />
+				<h:inputText id="input10" size="15" maxlength="15"
+					style="margin-left: 1em"
+					value="#{propertyHome.TDC.secondSellerTitle}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>
+				<h:outputText value=":" style="margin-left: 0.5em"></h:outputText>
+				
+				<h:inputText id="input11" size="51" maxlength="51"
+					style="margin-left: 0.5em; text-transform: uppercase"
+					value="#{propertyHome.TDC.secondSellerName}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>
+					
+				<h:outputText value="CI/RUC/PASP:" style="margin-left: 10em"></h:outputText>
+				
+				<h:inputText id="input12" size="20" maxlength="15"
+					style="margin-left: 2em"
+					value="#{propertyHome.TDC.secondSellerIdentification}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>	
+				
+				<br />
+				<br />
+				
+				<h:outputText value="COMPRADOR"></h:outputText>
+				<br />
+				<h:outputText value="Principal:" style="margin-left: 1em"></h:outputText>
+				
+				<h:inputText id="input13" size="60" maxlength="60"
+					style="margin-left: 2em"
+					value="#{propertyHome.propertyDocument.currentDomain.resident.name}"
+					disabled="true" />
+					
+				<h:outputText value="CI/RUC/PASP:" style="margin-left: 10em"></h:outputText>
+				
+				<h:inputText id="input14" size="20" maxlength="15"
+					style="margin-left: 2em"
+					value="#{propertyHome.propertyDocument.currentDomain.resident.identificationNumber}"
+					disabled="true" />	
+				<br />
+				<br />
+				<h:inputText id="input15" size="15" maxlength="15"
+					style="margin-left: 1em"
+					value="#{propertyHome.TDC.secondBuyerTitle}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>
+				<h:outputText value=":" style="margin-left: 0.5em"></h:outputText>
+				
+				<h:inputText id="input16" size="51" maxlength="51"
+					style="margin-left: 0.5em; text-transform: uppercase"
+					value="#{propertyHome.TDC.secondBuyerName}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>
+					
+				<h:outputText value="CI/RUC/PASP:" style="margin-left: 10em"></h:outputText>
+				
+				<h:inputText id="input17" size="20" maxlength="15"
+					style="margin-left: 2em"
+					value="#{propertyHome.TDC.secondBuyerIdentification}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>	
+				
+
+				<div style="clear: both"></div>
+
+			</rich:panel>
+
+			<br />
+
+			<rich:panel id="contentPanely">
+
+				<f:facet name="header">
+
+					<h:panelGrid columns="1" columnClasses="headerTitle,">
+
+						<h:outputText value="DATOS DE LA PROPIEDAD" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<h:outputText value="El propietario ha adquirido su inmueble por:"></h:outputText>
+				<h:inputText id="input18" size="54" maxlength="54"
+					style="margin-left: 6em"
+					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.purchaseType.name}"
+					disabled="true" />
+				<br />
+				<br />
+
+				<h:outputText value="Fecha de adquisición:" style="margin-right: 2em"></h:outputText>
+					<rich:calendar id="adquisitionDate" 
+	                          value="#{propertyHome.propertyDocument.currentDomain.previousDomain.acquisitionDate}" datePattern="dd/MM/yyyy" 
+	                          disabled = "true" ajaxSingle="true" >
+	                          <a:support event="onchanged" ajaxSingle="true" reRender="adquisitionDate"/>
+	                </rich:calendar>
+                <h:outputText value="Notaría/Juzgado:" style="margin-left: 6em"></h:outputText>
+				<h:inputText id="input19" size="20" maxlength="20"
+					style="margin-left: 2em; text-transform: uppercase"
+					value="#{propertyHome.TDC.notary}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>	
+
+				<h:outputText value="Cantón:" style="margin-left: 6em"></h:outputText>
+				<h:inputText id="input20" size="20" maxlength="20"
+					style="margin-left: 2em"
+					value="#{propertyHome.TDC.country}"
+					disabled="true" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>	
+
+				<br />
+				<br />
+
+				<h:outputText value="Fecha de inscripción:" style="margin-right: 2.3em"></h:outputText>
+				<rich:calendar id="inscriptionDate"
+                          value="#{propertyHome.propertyDocument.currentDomain.previousDomain.date}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                </rich:calendar>
+
+                <h:outputText value="Número:" style="margin-left: 6em"></h:outputText>
+				<h:inputText id="input21" size="20" maxlength="20"
+					style="margin-left: 5.5em"
+					value="#{propertyHome.TDC.propertyNumber}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>	
+
+				<h:outputText value="Tipo de predio:" style="margin-left: 2.8em"></h:outputText>
+				<h:inputText id="input22" size="20" maxlength="20"
+					style="margin-left: 1.9em; text-transform: uppercase"
+					value="#{propertyHome.TDC.buildingType}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>	
+
+
+				<div style="clear: both"></div>
+
+			</rich:panel>
+
+			<br />
+
+			<rich:panel id="contentPanelz">
+
+				<f:facet name="header">
+
+					<h:panelGrid columns="1" columnClasses="headerTitle,">
+
+						<h:outputText value="UBICACIÓN Y ÁREAS" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<h:outputText value="Parroquia anterior:"></h:outputText>
+				<h:inputText id="input23" size="20" maxlength="20"
+					style="margin-left: 1em; text-transform: uppercase"
+					value="#{propertyHome.TDC.previousParish}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>	
+
+				<h:outputText value="Parroquia actual:" style="margin-left: 3em"></h:outputText>
+				<h:inputText id="input24" size="20" maxlength="20"
+					style="margin-left: 1em"
+					value="#{propertyHome.propertyDocument.block.sector.parent.parent.name}"
+					disabled="true" />
+
+				<h:outputText value="Barrio o sector:" style="margin-left: 3em"></h:outputText>
+				<h:inputText id="input25" size="36" maxlength="40"
+					style="margin-left: 1em"
+					value="#{propertyHome.propertyDocument.location.neighborhood.name}"
+					disabled="true" />
+
+				<br />
+				<br />
+
+				<h:outputText value="Sitio/urbanización/subdivisión:" ></h:outputText>
+				<h:inputText id="input26" size="110" maxlength="110"
+					style="margin-left: 1em"
+					value="#{propertyHome.propertyDocument.addressReference}"
+					disabled="true" />
+
+
+				<br />
+				<br />
+				
+				<h:outputText value="Manzana:"></h:outputText>
+				<h:inputText id="input27" size="10" maxlength="10"
+					style="margin-left: 1em"
+					value="#{propertyHome.propertyDocument.urbanizationBlock}"
+					disabled="true" />
+
+				<h:outputText value="Lote No.:" style="margin-left: 6em"></h:outputText>
+				<h:inputText id="input28" size="10" maxlength="10"
+					style="margin-left: 1em"
+					value="#{propertyHome.propertyDocument.urbanizationPropertyNumber}"
+					disabled="true" />
+
+				<h:outputText value="Calle:" style="margin-left: 6em"></h:outputText>
+				<h:inputText id="input29" size="30" maxlength="30"
+					style="margin-left: 1em"
+					value="#{propertyHome.propertyDocument.location.mainBlockLimit.street.name}"
+					disabled="true" />	
+
+				<h:outputText value="Número:" style="margin-left: 6em"></h:outputText>
+				<h:inputText id="input30" size="10" maxlength="10"
+					style="margin-left: 1em"
+					value="#{propertyHome.propertyDocument.location.houseNumber}"
+					disabled="true" />
+
+				<br />
+				<br />
+
+				<h:outputText value="Área total del terreno:" ></h:outputText>
+				<h:inputText id="input31" size="30" maxlength="30"
+					style="margin-left: 4em"
+					value="#{propertyHome.propertyDocument.area}"
+					disabled="true" />
+				<h:outputText value="m2" style="margin-left: 0.5em" ></h:outputText>
+
+				<h:outputText value="Área de construcción:" style="margin-left: 9em"></h:outputText>
+				<h:inputText id="input32" size="30" maxlength="30"
+					style="margin-left: 4em"
+					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.totalAreaConstruction}"
+					disabled="true" />
+				<h:outputText value="m2" style="margin-left: 0.5em"></h:outputText>
+				<br />
+				<br />
+
+				<h:outputText value="PROPIEDAD HORIZONTAL" ></h:outputText>
+				<br />
+				<h:outputText value="Alicuota de terreno:" style="margin-left: 1em" ></h:outputText>
+				<h:inputText id="input33" size="30" maxlength="30"
+					style="margin-left: 4em"
+					value="#{propertyHome.propertyDocument.lotAliquot}"
+					disabled="true" >
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+
+				<h:outputText value="Área parcial de terreno:" style="margin-left: 10em" ></h:outputText>
+				<h:inputText id="input34" size="30" maxlength="30"
+					style="margin-left: 4em"
+					value="#{propertyHome.propertyDocument.lotAreaHorizontalProperty}"
+					disabled="true" >
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+				<h:outputText value="m2" style="margin-left: 0.5em" ></h:outputText>
+				<br />
+				<br />
+
+				<h:outputText value="Alicuota de construcción:" style="margin-left: 1em" ></h:outputText>
+				<h:inputText id="input35" size="30" maxlength="30"
+					style="margin-left: 1.7em"
+					value="#{propertyHome.propertyDocument.buildingAliquot}"
+					disabled="true" >
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+
+				<h:outputText value="Área parcial de construcción:" style="margin-left: 10em" ></h:outputText>
+				<h:inputText id="input36" size="30" maxlength="30"
+					style="margin-left: 1.7em"
+					value="#{propertyHome.propertyDocument.buildingAreaHorizontalProperty}"
+					disabled="true" >
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+				<h:outputText value="m2" style="margin-left: 0.5em" ></h:outputText>
+
+				<br />
+				<br />
+
+				<h:outputText value="Descripción del predio en PH:"></h:outputText>
+				<h:inputText id="input37" size="109" maxlength="109"
+					style="margin-left: 0.8em"
+					value="#{propertyHome.propertyDocument.descriptionHorizontalProperty}"
+					disabled="true" />
+
+				<div style="clear: both"></div>
+
+			</rich:panel>
+
+			<br />
+
+			<rich:panel id="contentPanela">
+
+				<f:facet name="header">
+
+					<h:panelGrid columns="1" columnClasses="headerTitle,">
+
+						<h:outputText value="VALORES TRIBUTARIOS" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<h:outputText value="A. Valor de adquisición:"></h:outputText>
+				<h:inputText id="input38" size="25" maxlength="25"
+					style="margin-left: 7em"
+					value="#{propertyHome.TDC.acquisitionValue}"
+					disabled="false" >
+					<a:support event="onblur" reRender="calculateValues"
+							ajaxSingle="true" action="#{propertyHome.calculateDomainValues(propertyHome.TDC.acquisitionValue, propertyHome.TDC.improvementsValues, propertyHome.TDC.CEMValues, propertyHome.TDC.othersValues)}" />
+				</h:inputText>
+
+				<h:outputText value="B. Obras y mejoras incrementadas:" style="margin-left: 8em"></h:outputText>
+				<h:inputText id="input39" size="25" maxlength="25"
+					style="margin-left: 2em"
+					value="#{propertyHome.TDC.improvementsValues}"
+					disabled="false" >
+					<a:support event="onblur" reRender="calculateValues"
+							ajaxSingle="true" action="#{propertyHome.calculateDomainValues(propertyHome.TDC.acquisitionValue, propertyHome.TDC.improvementsValues, propertyHome.TDC.CEMValues, propertyHome.TDC.othersValues)}" />
+				</h:inputText>
+
+				<br />
+				<br />
+
+				<h:outputText value="C. Contribución especial de mejoras:"></h:outputText>
+				<h:inputText id="input40" size="25" maxlength="25"
+					style="margin-left: 1.5em"
+					value="#{propertyHome.TDC.CEMValues}"
+					disabled="false" >
+					<a:support event="onblur" reRender="calculateValues"
+							ajaxSingle="true" action="#{propertyHome.calculateDomainValues(propertyHome.TDC.acquisitionValue, propertyHome.TDC.improvementsValues, propertyHome.TDC.CEMValues, propertyHome.TDC.othersValues)}" />
+				</h:inputText>
+
+				<h:outputText value="D. Otros costos:" style="margin-left: 8em"></h:outputText>
+				<h:inputText id="input41" size="25" maxlength="25"
+					style="margin-left: 10.5em"
+					value="#{propertyHome.TDC.othersValues}"
+					disabled="false" >
+					<a:support event="onblur" reRender="calculateValues"
+							ajaxSingle="true" action="#{propertyHome.calculateDomainValues(propertyHome.TDC.acquisitionValue, propertyHome.TDC.improvementsValues, propertyHome.TDC.CEMValues, propertyHome.TDC.othersValues)}" />
+				</h:inputText>
+
+				<br />
+				<br />
+		
+			<rich:panel id="calculateValues">
+				<h:outputText value="A + B + D:"></h:outputText>
+				<h:inputText id="input42" size="25" maxlength="25"
+					style="margin-left: 11.6em"
+					value="#{propertyHome.ABDValue}"
+					disabled="true" >
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+
+				<h:outputText value="A + C + D:" style="margin-left: 9.3em"></h:outputText>
+				<h:inputText id="input43" size="25" maxlength="25"
+					style="margin-left: 11.5em"
+					value="#{propertyHome.ACDValue}"
+					disabled="true" >
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+			</rich:panel>
+				<br />
+				<br />
+
+				<h:outputText value="Valor contratual (minuta):"></h:outputText>
+				<h:inputText id="input44" size="25" maxlength="25"
+					style="margin-left: 6.5em"
+					value="#{propertyHome.TDC.contractualValue}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>	
+
+				<h:outputText value="Avalúo terreno:" style="margin-left: 8em"></h:outputText>
+				<h:inputText id="input45" size="25" maxlength="25"
+					style="margin-left: 9.8em"
+					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.lotAppraisal}"
+					disabled="true" >
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+
+				<br />
+				<br />
+
+				<h:outputText value="Avalúo construcción:"></h:outputText>
+				<h:inputText id="input46" size="25" maxlength="25"
+					style="margin-left: 8.4em"
+					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.buildingAppraisal}"
+					disabled="true" >
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+
+				<h:outputText value="Avalúo total:" style="margin-left: 8em"></h:outputText>
+				<h:inputText id="input47" size="25" maxlength="25"
+					style="margin-left: 11.1em"
+					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.commercialAppraisal}"
+					disabled="true" >
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
+
+				<br />
+				<br />
+
+				<h:outputText value="Valores proporcionales de venta:"></h:outputText>
+				<h:inputText id="input48" size="25" maxlength="25"
+					style="margin-left: 3.2em"
+					value="#{propertyHome.TDC.proportionalValues}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>	
+
+
+			<div style="clear: both"></div>
+
+			</rich:panel>
+			
+			<br />
+
+			<rich:panel id="contentPaneld">
+
+				<f:facet name="header">
+
+					<h:panelGrid columns="1" columnClasses="headerTitle,">
+
+						<h:outputText value="VALIDEZ DEL DOCUMENTO" />
+
+					</h:panelGrid>
+				</f:facet>
+				<h:outputText value="Válido hasta:" style="margin-right: 2em"></h:outputText>
+			
+					<rich:calendar id="validityDate"
+                          value="#{propertyHome.TDC.validityDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "false" ajaxSingle="true" >
+                          <a:support event="onchanged" ajaxSingle="true" reRender="validityDate" />
+                	</rich:calendar>
+  
+				<div style="clear: both"></div>
+
+			</rich:panel>
+
+			<br />
+
+			<rich:panel id="contentPanelb">
+
+				<f:facet name="header">
+
+					<h:panelGrid columns="1" columnClasses="headerTitle,">
+
+						<h:outputText value="LINDEROS" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<h:outputText value="DESCRIPCIÓN DOCUMENTOS:" style="margin-left: 6em"></h:outputText>
+				<br />
+				<br />
+				<h:inputTextarea id="areaText1" cols="80" rows="5"
+					style="margin-left: 6em"
+					value="#{propertyHome.TDC.documentsDescription}">
+					<f:validateLength maximum="255" />
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputTextarea>
+
+				<div style="clear: both"></div>
+
+			</rich:panel>
+
+
+			<br />
+
+			<rich:panel id="contentPanelc">
+
+				<f:facet name="header">
+
+					<h:panelGrid columns="1" columnClasses="headerTitle,">
+
+						<h:outputText value="OBJETO/OBSERVACIONES" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<h:inputTextarea id="areaText2" cols="80" rows="5"
+					style="margin-left: 6em"
+					value="#{propertyHome.TDC.observations}">
+					<f:validateLength maximum="255" />
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputTextarea>
+
+				<div style="clear: both"></div>
+
+			</rich:panel>
+
+			<br />
+
+			<div class="actionButtons">
+
+				<a:region>
+				
+					<a:commandButton id="printreport1"
+								value="#{messages['common.print']}"
+								oncomplete="Richfaces.hideModalPanel('domainTransferComplement')"
+								includePageParams="false" propagation="join"
+								action="#{propertyHome.saveDomainTransferComplement()}">
+
+					</a:commandButton>
+
+					<a:commandButton id="cancelx" ajaxSingle="true"
+						value="#{messages['common.quit']}"
+						reRender="domainTransferComplement"
+						oncomplete="Richfaces.hideModalPanel('domainTransferComplement');"
+						bypassUpdates="true" />
+				</a:region>
+			</div>
+		</h:form>
+
+	</rich:modalPanel>
+</ui:composition>

@@ -1,0 +1,93 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="../layout/template.xhtml" login-required="true">
+
+	<ui:define name="body">
+
+		<h:form id="domainTransferSearch" styleClass="edit">
+			<rich:simpleTogglePanel label="Reporte de Transferencias de Dominio" switchType="ajax">
+
+				<s:decorate template="../layout/edit.xhtml">
+					<ui:define name="label">Clave Catastral:</ui:define>
+					<h:inputText id="cadastralCode" size="40" value="#{propertyHome.criteriaCadastralCode}" />
+				</s:decorate>
+
+				<s:decorate template="../layout/edit.xhtml">
+					<ui:define name="label">Código del Documento:</ui:define>
+					<h:inputText id="documentCode" size="40" value="#{propertyHome.criteriaDocumentCode}" />
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<a:commandButton id="search" value="#{messages['common.search']}"
+					action="#{propertyHome.searchDomainTransferReport()}"
+					reRender="resultsPanel, payedNotificationsByEntry" />
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none" />
+				<s:button id="home" view="/home.xhtml"
+					value="#{messages['common.quit']}" propagation="end" />
+			</div>
+
+			<a:outputPanel id="resultsPanel" ajaxRendered="true">
+				<h:outputText value="#{messages['notificationPayed.noResult']}" 
+							  rendered="#{propertyHome.dtDTO.size() == 0}"/>
+				<rich:dataTable id="payedNotificationsByEntry"
+					value="#{propertyHome.dtDTO}" var="_transfer"
+					columnClasses="center, center, center, center, center, center, center"
+					rendered="#{propertyHome.dtDTO.size() > 0}">
+
+					<f:facet name="header">
+						<h:panelGrid columns="4" columnClasses="headerTitle left, ">
+							<h:outputText
+								value="Listado de Transferencias" />
+						</h:panelGrid>
+
+					</f:facet>
+
+					<rich:column width="10%">
+						<f:facet name="header">Código de Documento</f:facet>
+						<h:outputText value="#{_transfer.code}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Fecha de Creación</f:facet>
+						<h:outputText value="#{_transfer.date}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Clave Catastral</f:facet>
+						<h:outputText value="#{_transfer.cadastralCode}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Nombre del Vendedor</f:facet>
+						<h:outputText value="#{_transfer.seller}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Nombre del Comprador</f:facet>
+						<h:outputText value="#{_transfer.buyer}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Usuario Creador</f:facet>
+						<h:outputText value="#{_transfer.user}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<a:commandButton id="printDocument"
+								action="#{propertyHome.chargeDomainsFormReport(_transfer.id)}"
+								eventsQueue="gimEventsQueue"
+								value="Ver"
+								propagation="join" />
+					</rich:column>
+				</rich:dataTable>
+			</a:outputPanel>
+		</h:form>
+		<ui:include src="fragment/DomainTransferComplementForm.xhtml" />
+	</ui:define>
+
+</ui:composition>

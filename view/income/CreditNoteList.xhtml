@@ -18,17 +18,38 @@
 			<rich:simpleTogglePanel label="#{messages['creditNote.searchFilter']}"
 				switchType="ajax">
 				<s:decorate template="../layout/display.xhtml">
-					<ui:define name="label">#{messages['creditNote.criteria']}</ui:define>
-					<h:inputText id="criteria" value="#{creditNoteList.criteria}" size="40" maxlength="40"/>
+					<ui:define name="label">#{messages['resident.identificationNumber']}</ui:define>
+					<h:inputText id="criteriaIdentification" value="#{creditNoteList.criteriaIdentification}" size="40" maxlength="40"/>
 				</s:decorate>
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['resident.name']}</ui:define>
+					<h:inputText id="criteriaName" value="#{creditNoteList.criteriaName}" size="40" maxlength="40"/>
+				</s:decorate>
+				
+				<s:decorate id="dateFieldFrom" template="../layout/edit.xhtml">
+	                <ui:define name="label">#{messages['ucot.From']}</ui:define>
+	                <rich:calendar id="dateFrom"
+	                          value="#{creditNoteList.dateFrom}" datePattern="dd/MM/yyyy" />
+	            </s:decorate>
+	
+	            <s:decorate id="dateFieldUntil" template="../layout/edit.xhtml">
+	                <ui:define name="label">#{messages['ucot.Until']}</ui:define>
+	                <rich:calendar id="dateUntil"
+	                          value="#{creditNoteList.dateUntil}" datePattern="dd/MM/yyyy" />
+	            </s:decorate>
 			</rich:simpleTogglePanel>
 
 			<div class="actionButtons">
 				<h:commandButton id="search" value="#{messages['common.search']}"
-					action="/income/CreditNoteList.xhtml">
+					reRender="creditNoteList"
+					action="#{creditNoteHome.searhCreditNotesByCriteria(creditNoteList.criteriaName, creditNoteList.criteriaIdentification, creditNoteList.dateFrom, creditNoteList.dateUntil)}">
 				    <f:param name="firstResult" value="0"/>
 				</h:commandButton>
-				<s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" />
+				<s:button id="reset"	value="#{messages['common.reset']}" includePageParams="false" reRender="printReport" />
+								
+				<s:button view="/income/report/CreditNoteReportPDF.xhtml"
+					id="printReport"	
+					value="#{messages['common.print']}" />
 			</div>
 
 		<rich:panel>

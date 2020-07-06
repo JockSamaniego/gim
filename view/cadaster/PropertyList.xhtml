@@ -11,6 +11,7 @@
 	<ui:define name="body">
 
 		<ui:include src="fragment/PropertySearcher.xhtml" />
+		<ui:include src="fragment/DomainTransferComplementForm.xhtml" />
 
 		<h:form id="propertySearch" styleClass="edit">
 
@@ -203,7 +204,7 @@
 							</h:outputText>
 						</rich:column>
 
-						<rich:column styleClass="action: left">
+						<rich:column styleClass="action: left" width="22%">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
 
 							<a:region>
@@ -290,6 +291,15 @@
 							
 							<h:commandLink action="#{propertyHome.printCadastralCertificate(_property.id)}"
 								value="Cédula Catastral" target="_blank" rendered="#{_property.propertyType.id == 1}"/>
+							<br />
+							<a:commandButton id="printDocument"
+								rendered="#{!propertyHome.needConfirmChangeOwner(_property) and not _property.deleted and _property.currentDomain.previousDomain != null}"
+								action="#{propertyHome.chargeDomainsToPrintDocument(_property.id)}"
+								reRender="domainTransferComplement" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								oncomplete="Richfaces.showModalPanel('domainTransferComplement')"
+								value="Imprimir Último Traspaso"
+								propagation="join" />
 						</rich:column>
 					</rich:dataTable>
 				</div>
