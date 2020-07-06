@@ -491,6 +491,9 @@ public class Property {
 
 	@Transient
 	private BigDecimal appraisalThreatFactor;
+	
+	private Integer cus;
+	private Integer cos;
 
 	public Property() {
 		this.propertyLandUses = new ArrayList<PropertyLandUse>();
@@ -1385,4 +1388,19 @@ public class Property {
 		this.appraisalThreatFactor = appraisalThreatFactor;
 	}
 
+	public Integer getCus() {
+		return cus;
+	}
+
+	public void setCus(Integer cus) {
+		this.cus = cus;
+	}
+
+	public Integer getCos() {
+		return cos;
+	}
+
+	public void setCos(Integer cos) {
+		this.cos = cos;
+	}
 }
