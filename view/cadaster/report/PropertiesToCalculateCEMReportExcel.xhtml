@@ -1,0 +1,138 @@
+<e:workbook xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<e:worksheet value="#{propertyHome.propertiesToCalculateCEM}" var="_property">
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="ID" />
+			</f:facet>
+			<e:cell value="#{_property.property_id}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="CLAVE CATASTRAL" />
+			</f:facet>
+			<e:cell value="#{_property.cadastralCode}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="CLAVE CATASTRAL ANTERIOR" />
+			</f:facet>
+			<e:cell value="#{_property.previousCadastralCode}" />
+		</e:column>
+				
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="IDENTIFICACIÓN DEL PROPIETARIO" />
+			</f:facet>
+			<e:cell value="#{_property.residentIdentification}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="NOMBRE DEL PROPIETARIO" />
+			</f:facet>
+			<e:cell value="#{_property.residentName}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="USO DE LA PROPIEDAD" />
+			</f:facet>
+			<e:cell value="#{_property.propertyUse}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="VALOR M2 DEL TERRENO" />
+			</f:facet>
+			<e:cell value="#{_property.lotValueM2}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="VALOR M2 PREDIAL ACTUAL" />
+			</f:facet>
+			<e:cell value="#{_property.currentPropertyValueM2}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="ÁREA DEL LOTE" />
+			</f:facet>
+			<e:cell value="#{_property.lotArea}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="AVALÚO DE CONSTRUCCIÓN" />
+			</f:facet>
+			<e:cell value="#{_property.buildingAppraisal}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="ALICUOTA DE CONSTRUCCIÓN" />
+			</f:facet>
+			<e:cell value="#{_property.buildingAliquot}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="ÁREA DE CONSTRUCCIÓN" />
+			</f:facet>
+			<e:cell value="#{_property.buildingArea}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="FRENTE" />
+			</f:facet>
+			<e:cell value="#{_property.front}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="LONGITUD DE FRENTES" />
+			</f:facet>
+			<e:cell value="#{_property.frontsLength}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="NÚMERO DE FRENTES" />
+			</f:facet>
+			<e:cell value="#{_property.frontsNumber}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="AVALÚO DEL TERRENO" />
+			</f:facet>
+			<e:cell value="#{_property.lotAppraisal}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="AVALÚO COMERCIAL" />
+			</f:facet>
+			<e:cell value="#{_property.commercialAppraisal}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="CUS" />
+			</f:facet>
+			<e:cell value="#{_property.cus}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="COS" />
+			</f:facet>
+			<e:cell value="#{_property.cos}" />
+		</e:column>
+
+	</e:worksheet>
+
+</e:workbook>

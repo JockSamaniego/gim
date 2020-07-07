@@ -64,6 +64,7 @@ import ec.gob.gim.cadaster.model.dto.BoundaryDTO;
 import ec.gob.gim.cadaster.model.dto.BuildingDTO;
 import ec.gob.gim.cadaster.model.dto.CadastralCertificateDTO;
 import ec.gob.gim.cadaster.model.dto.DomainHistoryDTO;
+import ec.gob.gim.cadaster.model.dto.InformationToCalculateCEMDto;
 import ec.gob.gim.cadaster.model.dto.PropertyHistoryDTO;
 import ec.gob.gim.common.model.Attachment;
 import ec.gob.gim.common.model.Charge;
@@ -3025,4 +3026,175 @@ public class PropertyHome extends EntityHome<Property> {
 		this.propertyWs = propertyWs;
 	}
 	
+	
+	//Jock Samaniego
+	//Para obtener informacion de propiedades para calculo de CEM
+	
+	private String cadastralCodeToCEM;
+	private TerritorialDivision parishToCEM;
+	private TerritorialDivision zoneToCEM;
+	private TerritorialDivision sectorToCEM;
+	private Neighborhood neighborhoodToCEM;
+	private List<InformationToCalculateCEMDto> propertiesToCalculateCEM;
+	private List<TerritorialDivision> zonesToCalculateCEM =  new ArrayList<TerritorialDivision>();
+	private List<TerritorialDivision> sectorsToCalculateCEM = new ArrayList<TerritorialDivision>();
+	private InformationToCalculateCEMDto propertySelectedToCalculateCEM;
+	private String optionToSearchCEM;
+
+
+	public String getCadastralCodeToCEM() {
+		return cadastralCodeToCEM;
+	}
+
+	public void setCadastralCodeToCEM(String cadastralCodeToCEM) {
+		this.cadastralCodeToCEM = cadastralCodeToCEM;
+	}
+
+	public String getOptionToSearchCEM() {
+		return optionToSearchCEM;
+	}
+
+	public void setOptionToSearchCEM(String optionToSearchCEM) {
+		this.optionToSearchCEM = optionToSearchCEM;
+	}
+
+	public List<InformationToCalculateCEMDto> getPropertiesToCalculateCEM() {
+		return propertiesToCalculateCEM;
+	}
+
+	public void setPropertiesToCalculateCEM(
+			List<InformationToCalculateCEMDto> propertiesToCalculateCEM) {
+		this.propertiesToCalculateCEM = propertiesToCalculateCEM;
+	}
+
+	public InformationToCalculateCEMDto getPropertySelectedToCalculateCEM() {
+		return propertySelectedToCalculateCEM;
+	}
+
+	public void setPropertySelectedToCalculateCEM(
+			InformationToCalculateCEMDto propertySelectedToCalculateCEM) {
+		this.propertySelectedToCalculateCEM = propertySelectedToCalculateCEM;
+	}
+	
+	public TerritorialDivision getParishToCEM() {
+		return parishToCEM;
+	}
+
+	public void setParishToCEM(TerritorialDivision parishToCEM) {
+		this.parishToCEM = parishToCEM;
+	}
+
+	public Neighborhood getNeighborhoodToCEM() {
+		return neighborhoodToCEM;
+	}
+
+	public void setNeighborhoodToCEM(Neighborhood neighborhoodToCEM) {
+		this.neighborhoodToCEM = neighborhoodToCEM;
+	}
+
+	public TerritorialDivision getZoneToCEM() {
+		return zoneToCEM;
+	}
+
+	public void setZoneToCEM(TerritorialDivision zoneToCEM) {
+		this.zoneToCEM = zoneToCEM;
+	}
+
+	public TerritorialDivision getSectorToCEM() {
+		return sectorToCEM;
+	}
+
+	public void setSectorToCEM(TerritorialDivision sectorToCEM) {
+		this.sectorToCEM = sectorToCEM;
+	}
+	
+	public List<TerritorialDivision> getZonesToCalculateCEM() {
+		return zonesToCalculateCEM;
+	}
+
+	public void setZonesToCalculateCEM(List<TerritorialDivision> zonesToCalculateCEM) {
+		this.zonesToCalculateCEM = zonesToCalculateCEM;
+	}
+
+	public List<TerritorialDivision> getSectorsToCalculateCEM() {
+		return sectorsToCalculateCEM;
+	}
+
+	public void setSectorsToCalculateCEM(
+			List<TerritorialDivision> sectorsToCalculateCEM) {
+		this.sectorsToCalculateCEM = sectorsToCalculateCEM;
+	}
+
+	public void searchPropertiesInformationToCalculateCEM(){
+		this.propertiesToCalculateCEM = new ArrayList<InformationToCalculateCEMDto>();
+		if(this.optionToSearchCEM.equals("cadastral")){
+			Query query = getEntityManager().createNamedQuery(
+					"Property.findPropertiesByCalculateCEM");
+			query.setParameter("cadastralCode", this.cadastralCodeToCEM);
+			this.propertiesToCalculateCEM = query.getResultList();
+		} else if (this.optionToSearchCEM.equals("parish")){
+			if (this.sectorToCEM != null){
+				Query query = getEntityManager().createNamedQuery(
+						"Property.findPropertiesBySectorCalculateCEM");
+				query.setParameter("sectorId", this.sectorToCEM.getId());
+				this.propertiesToCalculateCEM = query.getResultList();
+			} else if (this.zoneToCEM != null){
+				Query query = getEntityManager().createNamedQuery(
+						"Property.findPropertiesByZoneCalculateCEM");
+				query.setParameter("zoneId", this.zoneToCEM.getId());
+				this.propertiesToCalculateCEM = query.getResultList();
+			} else if (this.parishToCEM != null){
+				Query query = getEntityManager().createNamedQuery(
+						"Property.findPropertiesByParishCalculateCEM");
+				query.setParameter("parishId", this.parishToCEM.getId());
+				this.propertiesToCalculateCEM = query.getResultList();
+			}
+			
+		} else if (this.optionToSearchCEM.equals("neighborhood")){
+			Query query = getEntityManager().createNamedQuery(
+					"Property.findPropertiesByNeighborhoodCalculateCEM");
+			query.setParameter("neighborhoodId", this.neighborhoodToCEM.getId());
+			this.propertiesToCalculateCEM = query.getResultList();
+		}
+			
+	}
+		
+	public String printPropertyInformation(InformationToCalculateCEMDto property){
+		this.propertySelectedToCalculateCEM = property;
+		return "";
+	}
+	
+	public List<Neighborhood> findNeighborhoods(){		
+		Query query = getPersistenceContext().createNamedQuery("Neighborhood.findAll");		
+		return query.getResultList();	
+	}
+	
+	public void resetValuesToCalculateCEM(){
+		cadastralCodeToCEM = "";
+		parishToCEM = null;
+		zoneToCEM = null;
+		sectorToCEM = null;
+		neighborhoodToCEM = null;
+		propertySelectedToCalculateCEM = null;
+		propertiesToCalculateCEM = new ArrayList<InformationToCalculateCEMDto>();
+		zonesToCalculateCEM =  new ArrayList<TerritorialDivision>();
+		sectorsToCalculateCEM = new ArrayList<TerritorialDivision>();
+	}
+	
+	public void searchZonesToCalculateCEM(){
+		if(parishToCEM != null){
+			zonesToCalculateCEM = this.findTerritorialDivisions(parishToCEM.getId());
+		}else{
+			zonesToCalculateCEM = new ArrayList<TerritorialDivision>();
+		}
+		sectorsToCalculateCEM = new ArrayList<TerritorialDivision>();
+	}
+	
+	public void searchSectorsToCalculateCEM(){
+		if(zoneToCEM != null){
+			sectorsToCalculateCEM = this.findTerritorialDivisions(zoneToCEM.getId());
+		}else{
+			sectorsToCalculateCEM = new ArrayList<TerritorialDivision>();
+		}
+	}
 }
