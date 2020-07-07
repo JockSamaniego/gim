@@ -290,7 +290,43 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 				+ "WHERE p.currentDomain.resident.identificationNumber = :identificationNumber order by p.cadastralCode"),
 		@NamedQuery(name = "Property.findByResidentsIds", query = "SELECT p FROM Property p "
 				+ "WHERE p.currentDomain.resident.id in (:ids) "
-				+ "AND p.deleted = FALSE ") })
+				+ "AND p.deleted = FALSE "), 
+		@NamedQuery(name = "Property.findPropertiesByCalculateCEM", query = "SELECT NEW ec.gob.gim.cadaster.model.dto.InformationToCalculateCEMDto(pro.id, pro.cadastralCode, pro.previousCadastralCode, "
+				+ "pro.currentDomain.resident.identificationNumber, pro.currentDomain.resident.name, pro.currentDomain.propertyUse, pro.currentDomain.valueBySquareMeter, pro.currentDomain.lotAppraisal/pro.area, pro.area, "
+				+ "pro.currentDomain.buildingAppraisal, pro.buildingAliquot, pro.currentDomain.totalAreaConstruction, pro.front, pro.frontsLength, pro.frontsNumber, pro.currentDomain.lotAppraisal, pro.currentDomain.commercialAppraisal, pro.cus, pro.cos ) "
+				+ "from Property pro "
+				+ "where pro.cadastralCode like concat(:cadastralCode,'%') "
+				+ "and pro.deleted = false "
+				+ "and pro.propertyType.id = 1 ORDER BY pro.cadastralCode"),
+		@NamedQuery(name = "Property.findPropertiesByParishCalculateCEM", query = "SELECT NEW ec.gob.gim.cadaster.model.dto.InformationToCalculateCEMDto(pro.id, pro.cadastralCode, pro.previousCadastralCode, "
+				+ "pro.currentDomain.resident.identificationNumber, pro.currentDomain.resident.name, pro.currentDomain.propertyUse, pro.currentDomain.valueBySquareMeter, pro.currentDomain.lotAppraisal/pro.area, pro.area, "
+				+ "pro.currentDomain.buildingAppraisal, pro.buildingAliquot, pro.currentDomain.totalAreaConstruction, pro.front, pro.frontsLength, pro.frontsNumber, pro.currentDomain.lotAppraisal, pro.currentDomain.commercialAppraisal, pro.cus, pro.cos ) "
+				+ "from Property pro "
+				+ "where pro.block.sector.parent.parent.id =:parishId "
+				+ "and pro.deleted = false "
+				+ "and pro.propertyType.id = 1 ORDER BY pro.cadastralCode"),
+		@NamedQuery(name = "Property.findPropertiesByZoneCalculateCEM", query = "SELECT NEW ec.gob.gim.cadaster.model.dto.InformationToCalculateCEMDto(pro.id, pro.cadastralCode, pro.previousCadastralCode, "
+				+ "pro.currentDomain.resident.identificationNumber, pro.currentDomain.resident.name, pro.currentDomain.propertyUse, pro.currentDomain.valueBySquareMeter, pro.currentDomain.lotAppraisal/pro.area, pro.area, "
+				+ "pro.currentDomain.buildingAppraisal, pro.buildingAliquot, pro.currentDomain.totalAreaConstruction, pro.front, pro.frontsLength, pro.frontsNumber, pro.currentDomain.lotAppraisal, pro.currentDomain.commercialAppraisal, pro.cus, pro.cos ) "
+				+ "from Property pro "
+				+ "where pro.block.sector.parent.id =:zoneId "
+				+ "and pro.deleted = false "
+				+ "and pro.propertyType.id = 1 ORDER BY pro.cadastralCode"),
+		@NamedQuery(name = "Property.findPropertiesBySectorCalculateCEM", query = "SELECT NEW ec.gob.gim.cadaster.model.dto.InformationToCalculateCEMDto(pro.id, pro.cadastralCode, pro.previousCadastralCode, "
+				+ "pro.currentDomain.resident.identificationNumber, pro.currentDomain.resident.name, pro.currentDomain.propertyUse, pro.currentDomain.valueBySquareMeter, pro.currentDomain.lotAppraisal/pro.area, pro.area, "
+				+ "pro.currentDomain.buildingAppraisal, pro.buildingAliquot, pro.currentDomain.totalAreaConstruction, pro.front, pro.frontsLength, pro.frontsNumber, pro.currentDomain.lotAppraisal, pro.currentDomain.commercialAppraisal, pro.cus, pro.cos ) "
+				+ "from Property pro "
+				+ "where pro.block.sector.id =:sectorId "
+				+ "and pro.deleted = false "
+				+ "and pro.propertyType.id = 1 ORDER BY pro.cadastralCode"),
+		@NamedQuery(name = "Property.findPropertiesByNeighborhoodCalculateCEM", query = "SELECT NEW ec.gob.gim.cadaster.model.dto.InformationToCalculateCEMDto(pro.id, pro.cadastralCode, pro.previousCadastralCode, "
+				+ "pro.currentDomain.resident.identificationNumber, pro.currentDomain.resident.name, pro.currentDomain.propertyUse, pro.currentDomain.valueBySquareMeter, pro.currentDomain.lotAppraisal/pro.area, pro.area, "
+				+ "pro.currentDomain.buildingAppraisal, pro.buildingAliquot, pro.currentDomain.totalAreaConstruction, pro.front, pro.frontsLength, pro.frontsNumber, pro.currentDomain.lotAppraisal, pro.currentDomain.commercialAppraisal, pro.cus, pro.cos ) "
+				+ "from Property pro "
+				+ "where pro.location.neighborhood.id =:neighborhoodId "
+				+ "and pro.deleted = false "
+				+ "and pro.propertyType.id = 1 ORDER BY pro.cadastralCode")})
+
 public class Property {
 
 	@Id

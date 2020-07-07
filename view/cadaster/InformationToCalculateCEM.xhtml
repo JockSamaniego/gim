@@ -1,0 +1,180 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="../layout/template.xhtml" login-required="true">
+
+	<ui:define name="body">
+
+		<h:form id="propertiesInformationSearch" styleClass="edit">
+			<rich:simpleTogglePanel label="Reporte para Cálculo del CEM" switchType="ajax">
+
+				<s:decorate template="../layout/edit.xhtml">
+					<ui:define name="label">Buscar por:</ui:define>
+					<h:selectOneMenu id="searchSelection" value="#{propertyHome.optionToSearchCEM}">
+						<f:selectItem itemValue="nulo" itemLabel="-seleccione uno-" />
+						<f:selectItem itemValue="cadastral" itemLabel="Clave Catastral" />
+		   				<f:selectItem itemValue="parish" itemLabel="Parroquia" />
+		   				<f:selectItem itemValue="neighborhood" itemLabel="Barrio" />
+		   				<a:support event="onchange" ajaxSingle="true"
+										reRender="searchControl" action="#{propertyHome.resetValuesToCalculateCEM()}" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<h:panelGrid id="searchControl">
+					<s:decorate id="cadastralField" template="../layout/edit.xhtml" rendered="#{propertyHome.optionToSearchCEM eq 'cadastral'}">
+						<ui:define name="label">#{messages['property.cadastralCode']}:</ui:define>
+						<h:inputText id="cadastralCode" size="40" value="#{propertyHome.cadastralCodeToCEM}" />
+					</s:decorate>
+
+					<s:decorate id="parishField" rendered="#{propertyHome.optionToSearchCEM eq 'parish'}"
+									template="../layout/edit.xhtml">
+									<ui:define name="label">#{territorialDivisionTypes.get(2).name}:</ui:define>
+								<h:selectOneMenu id="parish"
+									value="#{propertyHome.parishToCEM}">
+									<s:selectItems
+										value="#{emissionOrderHome.findParishes(defaultCanton.id, true)}"
+										var="parish" label="#{parish.code} - #{parish.name}"
+										noSelectionLabel="#{messages['common.shouldSelected']}" />
+									<s:convertEntity />
+									<a:support event="onchange" ajaxSingle="true"
+										reRender="parish, zone, sector" action="#{propertyHome.searchZonesToCalculateCEM()}" />
+								</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="zoneField" rendered="#{propertyHome.optionToSearchCEM eq 'parish'}"
+									template="../layout/edit.xhtml">
+									<ui:define name="label">Zona:</ui:define>
+								<h:selectOneMenu id="zone"
+									value="#{propertyHome.zoneToCEM}">
+									<s:selectItems
+										value="#{propertyHome.zonesToCalculateCEM}"
+										var="zone" label="#{zone.code} - #{zone.name}"
+										noSelectionLabel="#{messages['common.shouldSelected']}" />
+									<s:convertEntity />
+									<a:support event="onchange" ajaxSingle="true"
+										reRender="zone, sector" action="#{propertyHome.searchSectorsToCalculateCEM()}"/>
+								</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="sectorField" rendered="#{propertyHome.optionToSearchCEM eq 'parish'}"
+									template="../layout/edit.xhtml">
+									<ui:define name="label">Sector:</ui:define>
+								<h:selectOneMenu id="sector"
+									value="#{propertyHome.sectorToCEM}">
+									<s:selectItems
+										value="#{propertyHome.sectorsToCalculateCEM}"
+										var="sector" label="#{sector.code} - #{sector.name}"
+										noSelectionLabel="#{messages['common.shouldSelected']}" />
+									<s:convertEntity />
+									<a:support event="onchange" ajaxSingle="true"
+									reRender="sector" />
+								</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="neighborhoodField" rendered="#{propertyHome.optionToSearchCEM eq 'neighborhood'}"
+									template="../layout/edit.xhtml">
+									<ui:define name="label">Barrio:</ui:define>
+								<h:selectOneMenu id="neighborhood"
+									value="#{propertyHome.neighborhoodToCEM}">
+									<s:selectItems
+										value="#{propertyHome.findNeighborhoods()}"
+										var="neighborhood" label="#{neighborhood.name}"
+										noSelectionLabel="#{messages['common.shouldSelected']}" />
+									<s:convertEntity />
+									<a:support event="onchange" ajaxSingle="true"
+										reRender="neighborhoodField" />
+								</h:selectOneMenu>
+					</s:decorate>
+				</h:panelGrid>
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<a:commandButton id="search" value="#{messages['common.search']}"
+					action="#{propertyHome.searchPropertiesInformationToCalculateCEM()}"
+					reRender="resultsPanel, propertiesInfo" />
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none" />
+				<s:button id="home" view="/home.xhtml"
+					value="#{messages['common.quit']}" propagation="end" />
+			</div>
+
+			<a:outputPanel id="resultsPanel" ajaxRendered="true">
+				<h:outputText value="#{messages['property.searchReturnedNoResults']}" 
+							  rendered="#{propertyHome.propertiesToCalculateCEM.size() == 0}"/>
+							  
+			<rich:datascroller id="paginador" align="right"
+						for="propertiesInfo" maxPages="20" />
+						<rich:spacer height="5" />
+				<rich:dataTable id="propertiesInfo"
+					value="#{propertyHome.propertiesToCalculateCEM}" var="_property"
+					columnClasses="center, center, center, center, center, center, center"
+					rendered="#{propertyHome.propertiesToCalculateCEM.size() > 0}"
+					rows="25">
+
+					<f:facet name="header">
+						<h:panelGrid columns="4" columnClasses="headerTitle left,">
+							<h:outputText
+								value="Listado de Propiedades (#{propertyHome.propertiesToCalculateCEM.size()})" />
+								
+							<s:button
+							    view="/cadaster/report/PropertiesToCalculateCEMReportPDF.xhtml"
+								id="downloadPDF"
+								rendered="#{propertyHome.propertiesToCalculateCEM.size() > 0}"
+								propagation="join" value="Descargar Reporte PDF" />
+								
+							<s:button
+							    view="/cadaster/report/PropertiesToCalculateCEMReportExcel.xhtml"
+								id="downloadExcel"
+								rendered="#{propertyHome.propertiesToCalculateCEM.size() > 0}"
+								propagation="join" value="Descargar Reporte EXCEL" />
+						</h:panelGrid>
+
+					</f:facet>
+
+					<rich:column width="5%">
+						<f:facet name="header">Id</f:facet>
+						<h:outputText value="#{_property.property_id}" />
+					</rich:column>
+					<rich:column width="15%">
+						<f:facet name="header">#{messages['property.cadastralCode']}</f:facet>
+						<h:outputText value="#{_property.cadastralCode}" />
+					</rich:column>
+					<rich:column width="15%">
+						<f:facet name="header">#{messages['property.previousCadastralCode']}</f:facet>
+						<h:outputText value="#{_property.previousCadastralCode}" />
+					</rich:column>
+					<rich:column width="15%">
+						<f:facet name="header">Identificación #{messages['domain.owner']}</f:facet>
+						<h:outputText value="#{_property.residentIdentification}" />
+					</rich:column>
+					<rich:column width="20%">
+						<f:facet name="header">Nombre #{messages['domain.owner']}</f:facet>
+						<h:outputText value="#{_property.residentName}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Uso de Propiedad</f:facet>
+						<h:outputText value="#{_property.propertyUse}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">CUS</f:facet>
+						<h:outputText value="#{_property.cus}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">COS</f:facet>
+						<h:outputText value="#{_property.cos}" />
+					</rich:column>
+				</rich:dataTable>
+				<rich:spacer height="5" />				
+				<rich:datascroller id="paginadorPie" align="right"
+						for="propertiesInfo" maxPages="20" />
+			</a:outputPanel>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
