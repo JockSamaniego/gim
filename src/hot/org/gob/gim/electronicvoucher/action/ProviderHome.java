@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.faces.application.FacesMessage;
 
+import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.dto.UserWS;
+import org.gob.gim.common.service.ResidentService;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.core.ResourceBundle;
@@ -14,9 +17,8 @@ import org.jboss.seam.log.Log;
 
 import ec.gob.gim.common.model.IdentificationType;
 import ec.gob.gim.complementvoucher.model.Provider;
-import ec.gob.loja.client.clients.UserClient;
-import ec.gob.loja.client.model.Message;
-import ec.gob.loja.client.model.UserWS;
+import ec.gob.loja.client.clients.UserClient; 
+
 
 @Name("providerHome")
 public class ProviderHome extends EntityHome<Provider> implements Serializable {
@@ -41,7 +43,7 @@ public class ProviderHome extends EntityHome<Provider> implements Serializable {
     }
 
     public void wire() {
-        getInstance();
+        getInstance(); 
     }
 
     public boolean isWired() {
@@ -65,6 +67,7 @@ public class ProviderHome extends EntityHome<Provider> implements Serializable {
 
         String r = super.persist();
         try {
+        	ResidentService residentService = ServiceLocator.getInstance().findResource(ResidentService.LOCAL_NAME);
             UserWS userws = new UserWS();
             userws.setIdentification(instance.getIdentificationNumber());
             userws.setName(instance.getName());
@@ -73,7 +76,8 @@ public class ProviderHome extends EntityHome<Provider> implements Serializable {
             userws.setEmail(instance.getEmail());
             userws.setPassword(instance.getIdentificationNumber());
             userws.setPhone("");
-            this.sendToService(userws);
+           
+            residentService.updateUserIntoEBilling(userws);
             addFacesMessageFromResourceBundle("update.mail.sri");
             //To change body of generated methods, choose Tools | Templates.
         } catch (Exception ex) {
@@ -87,16 +91,7 @@ public class ProviderHome extends EntityHome<Provider> implements Serializable {
     @Override
     public String update() {
         String r = super.update();
-//        try{
-//            System.out.println("instance.getElectronicVoucher()" 
-//                + instance.getElectronicVoucher());
-//            System.out.println("instance.getElectronicVoucher().getResident()." 
-//                + instance.getElectronicVoucher().getResident());
-//            System.out.println("instance.getElectronicVoucher().getResident().getCurrentAddress();" 
-//                + instance.getElectronicVoucher().getResident().getCurrentAddress());
-//            System.out.println("instance.getElectronicVoucher().getResident().getCurrentAddress().getPhoneNumber());" 
-//                + instance.getElectronicVoucher().getResident().getCurrentAddress().getPhoneNumber());
-//        }catch(Exception ex){}
+        ResidentService residentService = ServiceLocator.getInstance().findResource(ResidentService.LOCAL_NAME);
         
         try {
             UserWS userws = new UserWS();
@@ -106,14 +101,9 @@ public class ProviderHome extends EntityHome<Provider> implements Serializable {
             userws.setActive(Boolean.TRUE);
             userws.setEmail(instance.getEmail());
             userws.setPassword(instance.getIdentificationNumber());
-            try {
-                userws.setPhone(instance.getElectronicVoucher().getResident().getCurrentAddress().getPhoneNumber());
-            } catch (Exception ex) {
-                //System.out.println(" setPhone sri >>> error >>>>> <<<<<<");
-                ex.printStackTrace();
-                userws.setPhone("");
-            }
-            this.sendToService(userws);
+            userws.setPhone("");
+             
+            residentService.updateUserIntoEBilling(userws);
             addFacesMessageFromResourceBundle("update.mail.sri");
             //To change body of generated methods, choose Tools | Templates.
         } catch (Exception ex) {
@@ -123,23 +113,4 @@ public class ProviderHome extends EntityHome<Provider> implements Serializable {
         }//To change body of generated methods, choose Tools | Templates.
         return r;
     }
-
-    private UserWS sendToService(UserWS input) throws Exception {
-        log.info("BASE_URI_SRI >>>>> " + ResourceBundle.instance().getString("BASE_URI_SRI"));
-        String BASE_URI = ResourceBundle.instance().getString("BASE_URI_SRI");
-        UserClient client = new UserClient(BASE_URI);
-        log.info("UserClient client >>>>> <<<<<<");
-        UserWS response;
-        response = client.saveUser_XML(input, UserWS.class);
-        //System.out.println("Estado >>>>>>>>>> " + response.getState());
-
-        if (response.getMessageList() != null) {
-            List<Message> mensajes = response.getMessageList();
-            for (Message mensaje : mensajes) {
-                System.out.println(mensaje.getType() + "\t" + mensaje.getIdentifier() + "\t" + mensaje.getMessage() + "\t" + mensaje.getAdditionalInformation());
-            }
-        }
-        return response;
-    }
-
 }

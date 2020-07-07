@@ -1,6 +1,8 @@
 package org.gob.gim.common.action;
 
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -10,6 +12,7 @@ import javax.faces.application.FacesMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Form;
@@ -21,6 +24,7 @@ import org.codehaus.jettison.json.JSONObject;
 //import org.glassfish.jersey.client.ClientConfig;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.dto.HistoryChangeResident;
+import org.gob.gim.common.dto.UserWS;
 import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
 import org.hibernate.validator.InvalidValue;
@@ -196,7 +200,7 @@ public class ResidentHome extends EntityHome<Resident> {
     }
 
     public String save() {
-        String outcome = null;
+        String outcome = null; 
         
         //2018-08-08 rfam para el control de cuenta unica
         if(this.getInstance().getGenerateUniqueAccountt()) {
@@ -228,9 +232,7 @@ public class ResidentHome extends EntityHome<Resident> {
             	//createUniqueAccounttUser(this.getInstance().getIdentificationNumber());	
             }
             
-            /*
-             * comentado 2019-11-05 rfam hasta hacer los cambios en el consumo de sw rest de facturas
-             * try {
+            try {
                 UserWS userws = new UserWS();
                 if (residentType.equalsIgnoreCase("Person")) {
 
@@ -263,19 +265,31 @@ public class ResidentHome extends EntityHome<Resident> {
                         userws.setPhone("");
                     }
                 }
-                //this.sendToService(userws);
-                String _result = residentService.updateUserIntoEBilling(userws);
+                residentService.updateUserIntoEBilling(userws);
                 addFacesMessageFromResourceBundle("update.mail.sri");
             } catch (Exception e) {
                 //System.out.println("save sri >>> error >>>>> " + e.getStackTrace().toString());
                 e.printStackTrace();
                 getFacesMessages().addFromResourceBundle(FacesMessage.SEVERITY_ERROR, "noUpdate.mail.sri");
-            }*/
+            }
         } catch (Exception e) {
             e.printStackTrace();
             addFacesMessageFromResourceBundle(e.getClass().getSimpleName());
         }
         return outcome;
+    }
+    
+    
+    private void sendToService( UserWS userws) throws URISyntaxException {
+    	javax.ws.rs.client.Client client = ClientBuilder.newClient();
+    	URI uri = new URI("http://localhost:8080/electronicInvoice-service/webresources");
+		Response result = client
+		            .target(uri)
+		            .path("/ec.gob.loja.service.user/saveUser/")
+		            .request(MediaType.APPLICATION_JSON)
+		            .post(Entity.entity(userws, MediaType.APPLICATION_JSON));
+		
+		System.out.println(result);
     }
 
     public void load() {

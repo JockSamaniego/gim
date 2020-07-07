@@ -5,6 +5,8 @@ package org.gob.gim.common.service;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -20,7 +22,12 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.gob.gim.common.dto.UserWS;
 import org.gob.gim.common.exception.IdentificationNumberExistsException;
 import org.gob.gim.common.exception.NonUniqueIdentificationNumberException;
 import org.gob.gim.common.exception.ResidentRegisteredAsLegalPersonException;
@@ -29,8 +36,7 @@ import org.gob.gim.common.exception.ResidentRegisteredAsNaturalPersonException;
 import ec.gob.gim.common.model.IdentificationType;
 import ec.gob.gim.common.model.LegalEntity;
 import ec.gob.gim.common.model.Person;
-import ec.gob.gim.common.model.Resident;
-import ec.gob.loja.client.model.UserWS;
+import ec.gob.gim.common.model.Resident; 
 
 /**
  * @author wilman
@@ -44,6 +50,9 @@ public class ResidentServiceBean implements ResidentService {
 
 	@PersistenceContext
 	private EntityManager em;
+	
+	@EJB
+	SystemParameterService systemParameterService;
 
 	public static ArrayList<Integer> publicInstitutions = new ArrayList<Integer>();
 
@@ -278,22 +287,19 @@ public class ResidentServiceBean implements ResidentService {
 	}
 
 	@Override
-	public String updateUserIntoEBilling(UserWS user) {
-
-		// select * from sp_update_resident_ebilling('1104262836','Renysh
-		// 12','Ortega','renysh_12007', '123456','0991583301');
-		Query query = em
-				.createNativeQuery("select * from sp_update_resident_ebilling(?1, ?2, ?3, ?4, ?5, ?6)");
-		query.setParameter(1, user.getIdentification());
-		query.setParameter(2, user.getName());
-		query.setParameter(3, user.getSurname());
-		query.setParameter(4, user.getEmail());
-		query.setParameter(5, encodeSha256(user.getIdentification()));
-		query.setParameter(6, user.getPhone());
-
-		String _result = (String) query.getSingleResult();
-
-		return _result;
+	public void updateUserIntoEBilling(UserWS user) throws Exception {
+		String url  = systemParameterService.findParameter("ELECTRONIC_INVOICE_BASE_URI");
+		javax.ws.rs.client.Client client = ClientBuilder.newClient();
+    	URI uri = new URI(url);
+		Response result = client
+		            .target(uri)
+		            .path("/ec.gob.loja.service.user/saveUser/")
+		            .request(MediaType.APPLICATION_JSON)
+		            .post(Entity.entity(user, MediaType.APPLICATION_JSON));
+		
+		if( result.getStatus() !=200 )
+				throw new Exception("Problemas en servicio de facturacion");
+		
 	}
 
 	public String encodeSha256(String text) {
