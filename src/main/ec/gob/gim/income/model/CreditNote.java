@@ -16,6 +16,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 
@@ -36,7 +38,10 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 	 @NamedQuery(name="CreditNote.findAll", query="SELECT o FROM CreditNote o"),
 	 @NamedQuery(name="CreditNote.findBetweenDates", query="SELECT o FROM CreditNote o WHERE o.date BETWEEN :startDate AND :endDate ORDER BY o.date"),
 	 @NamedQuery(name="CreditNote.findActive", query="SELECT o FROM CreditNote o WHERE o.isActive = true"),
-	 @NamedQuery(name="CreditNote.findActiveByResidentId", query="SELECT distinct o FROM CreditNote o LEFT JOIN FETCH o.paymentFractions f WHERE o.isActive = true AND o.useToPay = true AND o.resident.id = :residentId"),
+	 @NamedQuery(name="CreditNote.findActiveByResidentId", query="SELECT o FROM CreditNote o LEFT JOIN FETCH o.paymentFractions f WHERE o.isActive = true AND o.useToPay = true AND o.resident.id = :residentId"),
+	 @NamedQuery(name="CreditNote.findByResident", query="SELECT distinct o FROM CreditNote o WHERE lower(o.resident.identificationNumber) like lower(concat(:criteriaIdentification,'%')) and lower(o.resident.name) like lower(concat(:criteriaName,'%'))"),
+	 @NamedQuery(name="CreditNote.findByResidentOrCreationDate", query="SELECT distinct o FROM CreditNote o WHERE lower(o.resident.identificationNumber) like lower(concat(:criteriaIdentification,'%')) and lower(o.resident.name) like lower(concat(:criteriaName,'%')) " 
+			 															+"and o.creationDate >= :dateFrom and o.creationDate <= :dateUntil "),
 	 @NamedQuery(name="CreditNote.reactivate", 
 	 			query="UPDATE CreditNote cn " +
 	 				  "SET cn.isActive=true, " +
@@ -79,12 +84,16 @@ public class CreditNote {
 	
 	private Long parentCreditNote_id;
 	
+	@Temporal(TemporalType.TIMESTAMP) 
+	private Date creationDate;
+	
 	
 	public CreditNote() {
 		paymentFractions = new ArrayList<PaymentFraction>();
 		municipalBonds = new ArrayList<MunicipalBond>();
 		isActive = Boolean.TRUE;
 		useToPay = Boolean.TRUE;
+		creationDate = new Date();	
 	}
 	
 	public Long getId() {
@@ -252,5 +261,14 @@ public class CreditNote {
 		this.parentCreditNote_id = parentCreditNote_id;
 	}
 
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+	
+	
 
 }

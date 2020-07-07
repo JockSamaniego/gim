@@ -1,6 +1,11 @@
 package org.gob.gim.income.action;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Query;
 
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityQuery;
@@ -12,14 +17,20 @@ public class CreditNoteList extends EntityQuery<CreditNote> {
 	
 	private static final long serialVersionUID = 1L;
 
-	private String criteria;
+	private String criteriaName;
+	private String criteriaIdentification;
+	private Date dateFrom;
+	private Date dateUntil;
+
 
 	private static final String EJBQL = "SELECT o FROM CreditNote o";
 
 	private static final String[] RESTRICTIONS = {
-			"lower(o.resident.identificationNumber) like lower(concat(#{creditNoteList.criteria},'%'))",
-			"lower(o.resident.name) like lower(concat(#{creditNoteList.criteria},'%'))"};
-
+			"lower(o.resident.identificationNumber) like lower(concat(#{creditNoteList.criteriaIdentification},'%'))",
+			"lower(o.resident.name) like lower(concat(#{creditNoteList.criteriaName},'%'))",
+			"o.creationDate >= #{creditNoteList.dateFrom}",
+			"o.creationDate <= #{creditNoteList.dateUntil}",};
+	
 	public CreditNoteList() {
 		setEjbql(EJBQL);
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
@@ -30,15 +41,39 @@ public class CreditNoteList extends EntityQuery<CreditNote> {
 	
 	@Override
 	public String getRestrictionLogicOperator() {
-		return "or";
+		return "and";
+	}
+	
+	public String getCriteriaName() {
+		return criteriaName;
 	}
 
-	public String getCriteria() {
-		return criteria;
+	public void setCriteriaName(String criteriaName) {
+		this.criteriaName = criteriaName;
 	}
 
-	public void setCriteria(String criteria) {
-		this.criteria = criteria;
+	public String getCriteriaIdentification() {
+		return criteriaIdentification;
+	}
+
+	public void setCriteriaIdentification(String criteriaIdentification) {
+		this.criteriaIdentification = criteriaIdentification;
+	}
+
+	public Date getDateFrom() {
+		return dateFrom;
+	}
+
+	public void setDateFrom(Date dateFrom) {
+		this.dateFrom = dateFrom;
+	}
+
+	public Date getDateUntil() {
+		return dateUntil;
+	}
+
+	public void setDateUntil(Date dateUntil) {
+		this.dateUntil = dateUntil;
 	}
 
 }

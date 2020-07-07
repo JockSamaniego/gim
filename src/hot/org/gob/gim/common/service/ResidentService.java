@@ -28,4 +28,6 @@ public interface ResidentService {
 	
 	String updateUserIntoEBilling(UserWS user);
 	
+	Resident saveResident(Resident resident) throws IdentificationNumberExistsException;
+	
 }

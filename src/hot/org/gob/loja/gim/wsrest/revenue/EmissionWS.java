@@ -1,13 +1,19 @@
 package org.gob.loja.gim.wsrest.revenue;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.UserSession;
+import org.gob.gim.revenue.service.EmissionService;
 import org.gob.gim.ws.service.InfringementEmisionResponse;
 import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
+import org.gob.loja.gim.ws.dto.ant.PreemissionInfractionRequest;
 import org.gob.loja.gim.ws.service.GimService;
 import org.gob.loja.gim.ws.service.RestService;
 import org.jboss.seam.annotations.In;
@@ -17,7 +23,7 @@ import org.jboss.seam.annotations.Transactional;
 @Name("EmissionWS")
 @Path("/emission")
 @Transactional
-public class Emission {
+public class EmissionWS {
 	
 	@In(create = true,required = false, value = "restService")
 	private RestService restService;
@@ -25,6 +31,12 @@ public class Emission {
 	//@EJB
 	@In(create = true, required = false, value = "gimService")
 	private GimService gimService;
+	
+	@In(create = true, required = false, value = "emissionService")
+	private EmissionService emissionService;
+	
+	@In(create = true)
+	UserSession userSession;
 
 	
 	/*@POST
@@ -89,12 +101,22 @@ public class Emission {
 	
 		
 	@POST
-	@Path("/sgenerateInfringement/{propertyId}")
+	@Path("/generateInfringement")
 	@Produces(MediaType.APPLICATION_JSON)
-	public InfringementEmisionResponse generateANTEmissionInfringement(String name, String password,
-			String identificationNumber, String accountCode, InfringementEmisionDetail emisionDetail) {
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response generateANTEmissionInfringement(PreemissionInfractionRequest params) {
 		try {
-			return gimService.generateANTEmissionInfringement(name, password, identificationNumber, accountCode, emisionDetail);
+			System.out.println(params);
+			
+			if (emissionService == null) {
+				emissionService = ServiceLocator.getInstance().findResource(
+						emissionService.LOCAL_NAME);
+			}
+			
+			InfringementEmisionResponse res = emissionService.generateANTEmissionInfringement(userSession.getUser().getName(), params);
+			return Response.ok(res).header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC")
+					.build();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

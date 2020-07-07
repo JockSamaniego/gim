@@ -1,0 +1,1384 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core" title="Transferencia de Dominio"
+	subject="report" type="pdf" size="A4" margins="20 20 30 5">
+
+	<f:facet name="header">
+		<p:font size="9" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="3" widthPercentage="100" spacingAfter="20" spacingBefore="10"
+						widths="1 10 1">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:image value="#{gim.institution.logo}" alignment="center"
+								widht="1" height="1">
+								<s:transformImageSize height="1000" maintainRatio="true" />
+							</p:image>
+						</p:cell>
+						<p:cell>
+							<p:font size="10" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+							</p:font>
+
+							<p:font size="8" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.address}. #{messages['institution.phone']}: #{gim.institution.phone} -  #{messages['institution.fax']}: #{gim.institution.fax}</p:paragraph>
+							</p:font>
+
+						</p:cell>
+						<p:cell>
+						</p:cell>
+					</p:table>
+				</p:paragraph>
+			</p:header>
+			<p:footer borderWidthTop="1" borderColorTop="blue" spacingBefore="0" spacingAfter="0"
+				borderWidthBottom="0" alignment="center">
+				<p:paragraph spacingBefore="0" spacingAfter="0">
+					<p:font size="8" style="bold">
+						<p:paragraph alignment="center">DOCUMENTO VALIDO HASTA::
+							<p:text value="#{propertyHome.TDC.validityDate}">
+									<f:convertDateTime
+									pattern="dd/MM/yyyy" />
+							</p:text>, ÚNICAMENTE PARA EFECTOS TRIBUTARIOS MUNICIPALES.</p:paragraph>
+					</p:font>
+				</p:paragraph>
+	 			
+			</p:footer>
+		</p:font>
+	</f:facet>
+
+	<p:font size="16" style="bold">
+		<p:paragraph alignment="center">JEFATURA DE AVALÚOS Y CATASTROS</p:paragraph>
+	</p:font>
+
+	<p:table columns="6" widthPercentage="100" headerRows="0"
+		widths="0.6 1.5 0.6 1.5 0.5 0.6" spacingBefore="10">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+
+		<p:font size="8">
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="6" verticalAlignment="middle"
+				grayFill=".75">
+				<p:font style="bold" size="10">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="AUTORIZACIÓN MUNICIPAL PARA TRASPASOS DE DOMINIO DE INMUEBLES URBANOS Y RURALES" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+		</p:font>
+	</p:table>
+
+
+	<p:table columns="8" widthPercentage="100" headerRows="0"
+		widths="0.8 1 0.3 1.1 1.3 0.3 1 1"
+		spacingBefore="10">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+
+		<p:font size="8">
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1"
+				borderWidthRight="1" borderWidthLeft="1" borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="TRÁMITE No.:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1"
+				borderWidthRight="1" 	 borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+					<p:font size="8">
+						<p:paragraph spacingAfter="10.0">
+							<p:text value="#{propertyHome.propertyDocument.currentDomain.tramitNumber}" />
+						</p:paragraph>
+					</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthTop="0"
+				borderWidthRight="0" borderWidthBottom="0" borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1"
+				borderWidthRight="1" borderWidthLeft="1" borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="FICHA REGISTRAL:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1"
+				borderWidthRight="1" 	 borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+					<p:font size="8">
+						<p:paragraph spacingAfter="10.0">
+							<p:text value="#{propertyHome.propertyDocument.registrationCardNumber}" />
+						</p:paragraph>
+					</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthTop="0"
+				borderWidthRight="0" borderWidthBottom="0" borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+				</p:paragraph>
+			</p:cell>
+
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1"
+				borderWidthRight="1" borderWidthLeft="1" borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="PREDIO:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1"
+				borderWidthRight="1" 	 borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+					<p:font size="8">
+						<p:paragraph spacingAfter="10.0">
+							<p:text value="#{propertyHome.propertyDocument.currentDomain.property.propertyType.name}" />
+						</p:paragraph>
+					</p:font>
+			</p:cell>
+
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1" borderWidthBottom="1"
+				borderWidthRight="1" borderWidthLeft="1" borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="FECHA:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthRight="1" borderWidthTop="1"
+				borderWidthBottom="1" borderColorTop="#000000"
+				verticalAlignment="middle">
+					<p:font size="8">
+						<p:paragraph>
+							<p:text value="#{propertyHome.TDC.creationDate}" >
+								<f:convertDateTime
+									pattern="dd/MM/yyyy" />
+							</p:text>
+						</p:paragraph>
+					</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthTop="0"
+				borderWidthRight="0" borderWidthBottom="0" borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1" borderWidthBottom="1"
+				borderWidthRight="1" borderWidthLeft="1" borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="TIPO DE CONTRATO:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthRight="1" borderWidthTop="1"
+				borderWidthBottom="1" borderColorTop="#000000"
+				verticalAlignment="middle">
+					<p:font size="8">
+						<p:paragraph>
+							<p:text value="#{propertyHome.propertyDocument.currentDomain.purchaseType.name}" >
+							</p:text>
+						</p:paragraph>
+					</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthTop="0"
+				borderWidthRight="0" borderWidthBottom="0" borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1"
+				borderWidthRight="0" borderWidthBottom="0" borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1"
+				borderWidthRight="0" borderWidthBottom="0" borderColorTop="#000000"
+				colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+				</p:paragraph>
+			</p:cell>
+
+		</p:font>
+
+	</p:table>
+
+	<p:table columns="4" widthPercentage="100" headerRows="0"
+		widths="1.5 1.5 1.5 1.5" spacingBefore="10">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+
+		<p:font size="8">
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="4" verticalAlignment="middle"
+				grayFill=".75">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="DATOS INFORMATIVOS" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Clave catastral anterior:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+					<p:text value="#{propertyHome.propertyDocument.currentDomain.property.previousCadastralCode}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Clave catastral actual:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+					<p:text value="#{propertyHome.propertyDocument.currentDomain.property.cadastralCode}" />
+				</p:paragraph>
+			</p:cell>
+
+		</p:font>
+
+	</p:table>
+
+	<p:table columns="5" widthPercentage="100" headerRows="0"
+		widths="1 1 2 1 1" spacingBefore="0">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+
+		<p:font size="8">
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1"
+				borderWidthRight="1" borderWidthLeft="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="VENDEDOR" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Principal" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+					<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.resident.name}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="CI/RUC/PASP:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+					<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.resident.identificationNumber}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthLeft="1"
+				borderWidthRight="1" borderWidthBottom="1" borderColorTop="#000000"
+				colspan="1" rowspan="1">
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.secondSellerTitle}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+					<p:text value="#{propertyHome.TDC.secondSellerName}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="CI/RUC/PASP:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+					<p:text value="#{propertyHome.TDC.secondSellerIdentification}" />
+				</p:paragraph>
+			</p:cell>
+
+		</p:font>
+
+	</p:table>
+
+	<p:table columns="5" widthPercentage="100" headerRows="0"
+		widths="1 1 2 1 1" spacingBefore="0">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+
+		<p:font size="8">
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1"
+				borderWidthRight="1" borderWidthLeft="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="COMPRADOR" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Principal" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+					<p:text value="#{propertyHome.propertyDocument.currentDomain.resident.name}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="CI/RUC/PASP:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+					<p:text value="#{propertyHome.propertyDocument.currentDomain.resident.identificationNumber}" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthLeft="1"
+				borderWidthRight="1" borderWidthBottom="1" borderColorTop="#000000"
+				colspan="1" rowspan="1">
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.secondBuyerTitle}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+					<p:text value="#{propertyHome.TDC.secondBuyerName}" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="CI/RUC/PASP:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:paragraph spacingAfter="10">
+					<p:text value="#{propertyHome.TDC.secondBuyerIdentification}" />
+				</p:paragraph>
+			</p:cell>
+
+		</p:font>
+
+	</p:table>
+
+
+	<p:table columns="6" widthPercentage="100" headerRows="0"
+		widths="1 1 1 1 1 1" spacingBefore="0">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+
+		<p:font size="8">
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="6" verticalAlignment="middle"
+				grayFill=".75">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="DATOS DE LA PROPIEDAD" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="3" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="El propietario ha adquirido su inmueble por:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="3" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.purchaseType.name}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Fecha de adquisición:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Notaría/Juzgado:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Cantón:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Fecha de inscripción:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Número:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Tipo de predio:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.acquisitionDate}" >
+							<f:convertDateTime
+									pattern="dd/MM/yyyy" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.notary}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.country}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.date}" >
+							<f:convertDateTime
+									pattern="dd/MM/yyyy" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.propertyNumber}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.buildingType}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+		</p:font>
+
+	</p:table>
+
+
+	<p:table columns="10" widthPercentage="100" headerRows="0"
+		widths="1 1 1 1 1 1 1 1 1 1" spacingBefore="0">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+
+		<p:font size="8">
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="10" verticalAlignment="middle"
+				grayFill=".75">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="UBICACIÓN Y ÁREAS" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Parroquia anterior:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="3" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.previousParish}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Barrio o sector:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="3" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.location.neighborhood.name}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Parroquia actual:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="3" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.block.sector.parent.parent.name}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="5" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="5" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Sitio/urbanización/subdivisión:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Manzana:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Lote No.:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Calle:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Número:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="5" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.addressReference}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.urbanizationBlock}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.urbanizationPropertyNumber}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.location.mainBlockLimit.street.name}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.location.houseNumber}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Área total del terreno:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="3" verticalAlignment="middle">
+				<p:font  size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.area}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Área de construcción:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="3" verticalAlignment="middle">
+				<p:font  size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.totalAreaConstruction}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthTop="1" 
+				borderWidthRight="1" borderWidthLeft="1" 
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle" >
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="PROPIEDAD HORIZONTAL" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Alicuota de terreno:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Área parcial de terreno:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Alicuota de construcción:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Área parcial de construcción:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidthLeft="1"
+				borderWidthRight="1" borderWidthBottom="1" borderColorTop="#000000"
+				colspan="2" rowspan="1">
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.lotAliquot}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.lotAreaHorizontalProperty} m²">
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.buildingAliquot}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.buildingAreaHorizontalProperty} m²">
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Descripción del predio en PH:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="8" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.descriptionHorizontalProperty}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+		</p:font>
+
+	</p:table>
+
+	<p:table columns="6" widthPercentage="100" headerRows="0"
+		widths="1 1 1 1 1 1" spacingBefore="0">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+
+		<p:font size="8">
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="6" verticalAlignment="middle"
+				grayFill=".75">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="	VALORES TRIBUTARIOS: (Motivación legal/ ALCABALA: Art.527 al Art.533 COOTAD-UTILIDADES: Art.556 al Art.561 COOTAD)" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="A. Valor de adquisición (escritura)" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="B. Obras y mejoras incrementadas (Art. 24 literal b) Ordenanza Regimen Tributario) - (OBRA NUEVA)" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="C. Contribución especial de mejoras (Para fraccionamienots privados: Permiso Const)" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="D. Otros Costos" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="A + B + D" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="A + C +D" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font  size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.acquisitionValue}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font  size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.improvementsValues}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font  size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.CEMValues}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font  size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.othersValues}">
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font  size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.ABDValue}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font  size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.ACDValue}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="5" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="Valor contractual (minuta):" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.contractualValue}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="5" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="AVALUO CATASTRAL TERRENO ( valores municipales):" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.lotAppraisal}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="5" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="AVALUO CATASTRAL CONSTRUCCION ( valores municipales):" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.buildingAppraisal}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="5" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="AVALUO CATASTRAL TOTAL ( valores municipales):" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.commercialAppraisal}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="5" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="VALORES PROPORCIONALES DE VENTA (para venta de derechos y acciones, hereditarios, copropiedades, gananciales, liquidación de bienes y otros):" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="right" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.proportionalValues}" >
+							<f:convertNumber pattern="#0.00" />
+						</p:text>
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+
+		</p:font>
+
+	</p:table>
+
+	<p:table columns="2" widthPercentage="100" headerRows="0"
+		widths="1 3" spacingBefore="0">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+
+		<p:font size="8">
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle"
+				grayFill=".75">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="LINDEROS:  DESCRIPCIÓN DOCUMENTOS:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle"
+				grayFill=".75">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.documentsDescription}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+
+		</p:font>
+
+	</p:table>
+
+
+	<p:table columns="1" widthPercentage="100" headerRows="0"
+		widths="1" spacingBefore="0">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+
+		<p:font size="8">
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="OBJETO/OBSERVACIONES:" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+			<p:cell horizontalAlignment="left" borderWidth="1"
+				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
+				<p:font style="bold" size="8">
+					<p:paragraph spacingAfter="10.0">
+						<p:text value="#{propertyHome.TDC.observations}" />
+					</p:paragraph>
+				</p:font>
+			</p:cell>
+
+
+		</p:font>
+
+	</p:table>
+
+	<p:paragraph spacingAfter="0" spacingBefore="5">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+	</p:paragraph>
+
+	<p:table columns="2" widthPercentage="80" headerRows="0">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="center" />
+		</f:facet>
+
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text value="Revisado y Autorizado por:" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text value="Visto Bueno:" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+	</p:table>
+
+
+	<p:paragraph spacingAfter="30" spacingBefore="0">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="left" />
+		</f:facet>
+	</p:paragraph>
+
+	<p:table columns="2" widthPercentage="80" headerRows="0">
+		<f:facet name="defaultCell">
+			<p:cell borderWidth="0" horizontalAlignment="center" />
+		</f:facet>
+
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text value="_____________________________________" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text value="_____________________________________" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text value="#{userSession.person.name.toUpperCase()}" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text
+						value="#{propertyHome.appraisalDelegate.name.toUpperCase()}" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+		
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text value="ABOGADO DE AVALUOS Y CATASTROS" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+					<p:text value="#{propertyHome.appraisalCharge.name}" />
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+
+		<p:cell colspan="1">
+			<p:paragraph>
+				<p:font size="7" style="bold">
+				</p:font>
+			</p:paragraph>
+		</p:cell>
+	</p:table>
+
+	
+	<p:paragraph spacingAfter="0" spacingBefore="0"
+			horizontalAlignment="center" VerticalAlignment="center">
+
+			<p:table columns="1" widthPercentage="100" headerRows="0"
+				horizontalAlignment="left" VerticalAlignment="center" spacingAfter="0" spacingBefore="0">
+
+				<p:cell colspan="1" fixedHeight="70">
+
+					<p:font size="5">
+						<p:paragraph spacingBefore="0" spacingAfter="0">
+							OBSERVACIÓN DE CARÁCTER TÉCNICO-JURIDICO:
+							1.- La Jefatura de Avalúos y Catastros del I. Municipio de Loja, no se responsabiliza sobre la veracidad, autenticidad y estado de los documentos presentados, para la certificación por parte de nuestra Jefatura, y que puedan inducir al error o equivocación, así como tampoco el uso doloso o fraudulento que se pueda hacer del documento denominado Autorización Municipal de transferencia de dominio.
+“Se previene a la persona peticionaria, no dar un uso distinto a lo declarado en su requerimiento técnico-jurídico, ya que esto dará lugar a la determinación de responsabilidades, sin perjuicio de las acciones legales que el titular de la información pueda ejercer, de conformidad a lo establecido en la Constitución de la República, Ley del Sistema Nacional de Registro de Datos Públicos, (artículos 2 y 4); y en especial a lo previsto en el Art. 180 del Código Orgánico Integral Penal que dice: “La persona que difunda información de circulación restringida será sancionada con pena privativa de libertad de uno a tres años”.   
+2.- Cualquier enmendadura, alteración o modificación al texto de este documento lo invalida.
+3.- Para que se concrete el presente acto administrativo, (Transferencia de Dominio de bienes Urbanos y Rurales) las partes contratantes es decir vendedores y compradores; deberán cumplir con lo previsto en los artículos 1, 23, 24, 25 del Código Orgánico Tributario en concordancia con los artículos 1764 y 1777 del Código Civil Vigente, (saneamiento de la cosa vendida), y el Art. 537 del Código Orgánico de Organización Territorial, Autonomía y Descentralización COOTAD (para los Notarios y Registro de Propiedad), y los artículos 3, 4 y 5 (caso de Particiones extrajudiciales y judiciales), de la Recopilación Codificada de la Legislación Municipal de Loja, (Régimen Tributario Municipal), para que se perfeccione el presente acto administrativo municipal, enunciado en este informe.
+	
+						</p:paragraph>
+						
+					</p:font>
+
+				</p:cell>
+
+			</p:table>
+
+		</p:paragraph>
+
+</p:document>

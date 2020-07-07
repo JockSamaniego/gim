@@ -3,6 +3,7 @@ package org.gob.gim.cadaster.action;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.codehaus.jackson.JsonParseException;
@@ -25,6 +27,7 @@ import org.gob.gim.cadaster.facade.CadasterService;
 import org.gob.gim.cadaster.webServiceConsumption.PropertyRegistrationService;
 import org.gob.gim.cadaster.webServiceConsumption.PropertyWs;
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -39,6 +42,7 @@ import org.jboss.seam.log.Log;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
+import ec.gob.gim.ant.ucot.model.CoipDTO;
 import ec.gob.gim.appraisal.model.AppraisalPeriod;
 import ec.gob.gim.cadaster.model.Appraisal;
 import ec.gob.gim.cadaster.model.Block;
@@ -60,11 +64,13 @@ import ec.gob.gim.cadaster.model.PropertyType;
 import ec.gob.gim.cadaster.model.StreetMaterial;
 import ec.gob.gim.cadaster.model.StructureMaterial;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
+import ec.gob.gim.cadaster.model.TransferDomainComplement;
 import ec.gob.gim.cadaster.model.dto.BoundaryDTO;
 import ec.gob.gim.cadaster.model.dto.BuildingDTO;
 import ec.gob.gim.cadaster.model.dto.CadastralCertificateDTO;
 import ec.gob.gim.cadaster.model.dto.DomainHistoryDTO;
 import ec.gob.gim.cadaster.model.dto.InformationToCalculateCEMDto;
+import ec.gob.gim.cadaster.model.dto.DomainTransferDTO;
 import ec.gob.gim.cadaster.model.dto.PropertyHistoryDTO;
 import ec.gob.gim.common.model.Attachment;
 import ec.gob.gim.common.model.Charge;
@@ -75,6 +81,8 @@ import ec.gob.gim.common.model.LegalEntity;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.waterservice.model.WaterSupply;
+
+import java.util.Arrays;
 
 @Name("propertyHome")
 public class PropertyHome extends EntityHome<Property> {
@@ -664,8 +672,189 @@ public class PropertyHome extends EntityHome<Property> {
 		domainHome.addCheck(CheckingRecordType.REGISTERED);
 		addCheck(CheckingRecordType.DOMAIN_TRANSFER);
 		changedOwnerComplete = true;
+		domainHome.getInstance().setPreviousDomain(getInstance().getCurrentDomain());
 		r.execute();
 		return super.update();
+	}
+	
+	
+	// para guardar registro de la informacion adicional en un transferencia
+	// Jock Samaniego
+	
+	private TransferDomainComplement TDC;
+	private BigDecimal ABDValue = new BigDecimal(0);	
+	private BigDecimal ACDValue = new BigDecimal(0);
+	private Property propertyDocument;
+	
+	public TransferDomainComplement getTDC() {
+		return TDC;
+	}
+
+	public void setTDC(TransferDomainComplement tDC) {
+		TDC = tDC;
+	}
+	
+	public BigDecimal getABDValue() {
+		return ABDValue;
+	}
+
+	public void setABDValue(BigDecimal aBDValue) {
+		ABDValue = aBDValue;
+	}
+
+	public BigDecimal getACDValue() {
+		return ACDValue;
+	}
+
+	public void setACDValue(BigDecimal aCDValue) {
+		ACDValue = aCDValue;
+	}
+
+	public Property getPropertyDocument() {
+		return propertyDocument;
+	}
+
+	public void setPropertyDocument(Property propertyDocument) {
+		this.propertyDocument = propertyDocument;
+	}
+
+	public void calculateDomainValues(BigDecimal valueA, BigDecimal valueB, BigDecimal valueC, BigDecimal valueD){
+		ABDValue = new BigDecimal(0);
+		ACDValue = new BigDecimal(0);
+		if(valueA != null){
+			ABDValue = ABDValue.add(valueA);
+			ACDValue = ACDValue.add(valueA);
+		}
+		if(valueB != null){
+			ABDValue = ABDValue.add(valueB);
+		}
+		if(valueC != null){
+			ACDValue = ACDValue.add(valueC);
+		}
+		if(valueD != null){
+			ABDValue = ABDValue.add(valueD);
+			ACDValue = ACDValue.add(valueD);
+		}
+	}
+	
+	public void chargeDomainsToPrintDocument(Long property_id){
+		this.propertyDocument = getEntityManager().find(Property.class, property_id);	
+		TDC = new TransferDomainComplement();
+		TransferDomainComplement TDCaux = new TransferDomainComplement();
+		Query query = getEntityManager().createNamedQuery(
+				"DomainComplement.findFinalByDomain");
+		query.setParameter("domain_id", this.propertyDocument.getCurrentDomain().getId());
+		try {
+			TDCaux = (TransferDomainComplement) query.getSingleResult();
+			TDC.setAcquisitionValue(TDCaux.getAcquisitionValue());
+			TDC.setBuildingType(TDCaux.getBuildingType());
+			TDC.setCEMValues(TDCaux.getCEMValues());
+			TDC.setContractualValue(TDCaux.getContractualValue());
+			TDC.setCountry(TDCaux.getCountry());
+			TDC.setDocumentsDescription(TDCaux.getDocumentsDescription());
+			TDC.setImprovementsValues(TDCaux.getImprovementsValues());
+			TDC.setNotary(TDCaux.getNotary());
+			TDC.setObservations(TDCaux.getObservations());
+			TDC.setOthersValues(TDCaux.getOthersValues());
+			TDC.setPreviousParish(TDCaux.getPreviousParish());
+			TDC.setPropertyNumber(TDCaux.getPropertyNumber());
+			TDC.setProportionalValues(TDCaux.getProportionalValues());
+			TDC.setSecondBuyerIdentification(TDCaux.getSecondBuyerIdentification());
+			TDC.setSecondBuyerName(TDCaux.getSecondBuyerName());
+			TDC.setSecondBuyerTitle(TDCaux.getSecondBuyerTitle());
+			TDC.setSecondSellerIdentification(TDCaux.getSecondSellerIdentification());
+			TDC.setSecondSellerName(TDCaux.getSecondSellerName());
+			TDC.setSecondSellerTitle(TDCaux.getSecondSellerTitle());
+			TDC.setValidityDate(TDCaux.getValidityDate());
+			this.calculateDomainValues(TDC.getAcquisitionValue(), TDC.getImprovementsValues(), TDC.getCEMValues(), TDC.getOthersValues());
+		} catch (Exception e) {
+			addFacesMessageFromResourceBundle("no existe información registrada");
+		}
+	}
+	
+	public String chargeDomainsFormReport(Long id){
+		this.TDC = getEntityManager().find(TransferDomainComplement.class, id);
+		Domain currentDomainAux = getEntityManager().find(Domain.class, this.TDC.getDomain().getId());
+		this.propertyDocument = getEntityManager().find(Property.class, currentDomainAux.getProperty().getId());
+		this.propertyDocument.setCurrentDomain(currentDomainAux);
+		return "/cadaster/report/DomainTransferDocumentPDF.xhtml";
+	}
+	
+	public String saveDomainTransferComplement(){
+		EntityManager em = getEntityManager();
+		TDC.setDomain(this.propertyDocument.getCurrentDomain());
+		TDC.setUserDocument(userSession.getPerson().getName());
+		em.persist(TDC);
+		em.flush();
+		Date date = new Date(); 
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");  
+		String strDate = dateFormat.format(date);  
+		TDC.setCodeDocument(strDate+"-"+TDC.getId());
+		em.persist(TDC);
+		em.flush();
+		return "/cadaster/report/DomainTransferDocumentPDF.xhtml";
+	}
+	
+	// para busqueda de domainsTransfer y reportes
+	
+	private String criteriaCadastralCode;
+	private String criteriaDocumentCode;
+	private List<DomainTransferDTO> dtDTO;
+	
+	public String getCriteriaCadastralCode() {
+		return criteriaCadastralCode;
+	}
+
+	public void setCriteriaCadastralCode(String criteriaCadastralCode) {
+		this.criteriaCadastralCode = criteriaCadastralCode;
+	}
+
+	public String getCriteriaDocumentCode() {
+		return criteriaDocumentCode;
+	}
+
+	public void setCriteriaDocumentCode(String criteriaDocumentCode) {
+		this.criteriaDocumentCode = criteriaDocumentCode;
+	}
+	
+	public List<DomainTransferDTO> getDtDTO() {
+		return dtDTO;
+	}
+
+	public void setDtDTO(List<DomainTransferDTO> dtDTO) {
+		this.dtDTO = dtDTO;
+	}
+	
+	public void searchDomainTransferReport(){
+		dtDTO = new ArrayList();
+		if((criteriaCadastralCode != null && criteriaCadastralCode != "") || (criteriaDocumentCode != null && criteriaDocumentCode != "")){
+			String query = "Select tdc.codeDocument, tdc.creationDate, p.cadastralCode, pr.name as name1, cr.name as name2, tdc.userDocument, cd.id as id1, tdc.id as id2 "
+					+ "from TransferDomainComplement tdc "
+					+ "Left Join Domain cd ON tdc.domain_id = cd.id "
+					+ "Left Join Domain pd ON pd.id = cd.previousDomain_id "
+					+ "Left Join Resident pr ON pr.id = pd.resident_id "
+					+ "Left Join Resident cr ON cr.id = cd.resident_id "
+					+ "Left Join Property p ON p.id = cd.property_id "
+					+ "where tdc.isActive = true ";
+			
+				if(criteriaCadastralCode != null && criteriaCadastralCode != ""){
+					query = query + "and p.cadastralCode =:cadastralCode ";
+				}
+				if(criteriaDocumentCode != null && criteriaDocumentCode != ""){
+					query = query + "and tdc.codeDocument =:codeDocument ";
+				}
+				
+				Query q = this.getEntityManager().createNativeQuery(query);
+				
+				if(criteriaCadastralCode != null && criteriaCadastralCode != ""){
+					q.setParameter("cadastralCode", criteriaCadastralCode);	
+				}
+				if(criteriaDocumentCode != null && criteriaDocumentCode != ""){
+					q.setParameter("codeDocument", criteriaDocumentCode);	
+				}
+				query = query + "Order by tdc.creationDate DESC";
+				dtDTO = NativeQueryResultsMapper.map(q.getResultList(), DomainTransferDTO.class);
+		}
 	}
 
 	/**
