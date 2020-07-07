@@ -5,12 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.persistence.Query;
-
-import org.gob.gim.revenue.action.MunicipalBondHome;
-
-import ec.gob.gim.income.model.TaxpayerRecord;
-
 public class DateUtils {
 	public static Date truncate(Date date) {
 		Calendar calendar = DateUtils.getTruncatedInstance(date);
@@ -55,7 +49,7 @@ public class DateUtils {
 	// @EJB
 	// MunicipalBondService municipalBondService;
 
-	MunicipalBondHome mbh = new MunicipalBondHome();
+	/*MunicipalBondHome mbh = new MunicipalBondHome();
 
 	public int finMunicipalbond() {
 		Query query = mbh.getEntityManager().createNamedQuery(
@@ -85,7 +79,7 @@ public class DateUtils {
 				"TaxpayerRecord.findDefaultTaxpayerRecord");
 		TaxpayerRecord institution = (TaxpayerRecord) query.getSingleResult();
 		return institution;
-	}
+	}*/
 
 	public static String format(Date date, String pattern) {
 		try {

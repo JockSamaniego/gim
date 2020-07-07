@@ -21,11 +21,7 @@ import javax.persistence.Query;
 
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.NativeQueryResultsMapper;
-import org.gob.gim.common.exception.IdentificationNumberExistsException;
-import org.gob.gim.common.exception.IdentificationNumberSizeException;
 import org.gob.gim.common.exception.IdentificationNumberWrongException;
-import org.gob.gim.common.exception.InvalidIdentificationNumberException;
-import org.gob.gim.common.exception.InvalidIdentificationNumberFinishedException;
 import org.gob.gim.common.exception.NonUniqueIdentificationNumberException;
 import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;

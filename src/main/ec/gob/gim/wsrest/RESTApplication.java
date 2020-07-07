@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.gob.loja.gim.wsrest.Hygiene.HygieneWS;
 import org.gob.loja.gim.wsrest.cadaster.CadasterWS;
-import org.gob.loja.gim.wsrest.revenue.EmissionWS;
 
 
 
@@ -23,7 +22,7 @@ public class RESTApplication extends javax.ws.rs.core.Application{
 	public RESTApplication () {
 	    singletons.add(new CadasterWS());
 	    singletons.add(new HygieneWS());
-	    singletons.add(new EmissionWS());	    
+	    //singletons.add(new EmissionWS());
 	}
 	
 	@Override
