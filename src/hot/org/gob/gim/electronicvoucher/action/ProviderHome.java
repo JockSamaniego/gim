@@ -11,13 +11,11 @@ import org.gob.gim.common.dto.UserWS;
 import org.gob.gim.common.service.ResidentService;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.core.ResourceBundle;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
 import ec.gob.gim.common.model.IdentificationType;
 import ec.gob.gim.complementvoucher.model.Provider;
-import ec.gob.loja.client.clients.UserClient; 
 
 
 @Name("providerHome")

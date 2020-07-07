@@ -1,8 +1,6 @@
 package org.gob.gim.common.action;
 
 import java.math.BigInteger;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -12,7 +10,6 @@ import javax.faces.application.FacesMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Form;
@@ -277,19 +274,6 @@ public class ResidentHome extends EntityHome<Resident> {
             addFacesMessageFromResourceBundle(e.getClass().getSimpleName());
         }
         return outcome;
-    }
-    
-    
-    private void sendToService( UserWS userws) throws URISyntaxException {
-    	javax.ws.rs.client.Client client = ClientBuilder.newClient();
-    	URI uri = new URI("http://localhost:8080/electronicInvoice-service/webresources");
-		Response result = client
-		            .target(uri)
-		            .path("/ec.gob.loja.service.user/saveUser/")
-		            .request(MediaType.APPLICATION_JSON)
-		            .post(Entity.entity(userws, MediaType.APPLICATION_JSON));
-		
-		System.out.println(result);
     }
 
     public void load() {

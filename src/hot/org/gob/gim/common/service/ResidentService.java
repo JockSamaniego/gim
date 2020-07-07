@@ -1,17 +1,15 @@
 package org.gob.gim.common.service;
 
-import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.ejb.Local;
 
 import org.gob.gim.common.dto.UserWS;
 import org.gob.gim.common.exception.IdentificationNumberExistsException;
-import org.gob.gim.common.exception.InvalidIdentificationNumberException;
 import org.gob.gim.common.exception.NonUniqueIdentificationNumberException;
 
 import ec.gob.gim.common.model.IdentificationType;
-import ec.gob.gim.common.model.Resident; 
+import ec.gob.gim.common.model.Resident;
 
 @Local
 public interface ResidentService {
