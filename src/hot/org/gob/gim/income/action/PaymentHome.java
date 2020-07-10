@@ -1508,6 +1508,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				deposit.setSurcharge(mb.getSurcharge());
 				deposit.setPaidTaxes(mb.getTaxesTotal());
 				//fin agregar surcharge al deposit, produccion no existe
+				// @author Rene 2020-07-09
+				deposit.setDiscount(mb.getDiscount());
+				//fin agregar descuento al deposito, correccion de problema de cuadre de cajas
 				mb.add(deposit);
 				this.getInstance().add(deposit);
 				deps.add(deposit);
