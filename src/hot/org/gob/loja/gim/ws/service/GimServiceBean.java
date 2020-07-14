@@ -640,6 +640,7 @@ public class GimServiceBean implements GimService {
 
 					// start Adjunt
 					ANTReference ant = new ANTReference();
+					ant.setDocumentVisualizationsNumber(0);
 					ant.setNumberPlate(emisionDetail.getNumberPlate());
 					ant.setContraventionNumber(emisionDetail.getContraventionNumber());
 					ant.setSpeeding(emisionDetail.getSpeeding());
