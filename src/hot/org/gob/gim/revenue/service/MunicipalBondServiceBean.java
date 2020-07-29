@@ -666,10 +666,31 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 					isEmission, internalTramit);
 			addChildrenItems(municipalBond, serviceDate, EntryStructureType.SURCHARGE, rulesToApply, itemFacts,
 					isEmission, internalTramit);
+			
+			System.out.println("Bond a procesar ID:" + municipalBond.getId());
+			System.out.println("Bond a procesar NUMERO:" + municipalBond.getNumber());
 
 			// Aplica las reglas
+			System.out.println("antes de aplicar reglas");
 			invokeRules(municipalBond, rulesToApply, itemFacts, facts);
+			System.out.println("despues de aplicar reglas");
+		
+			// llama a metodo de calculo de descuento desde base de datos
 			roundItems(municipalBond);
+			System.out.println("antes calculo descuento BD");
+			BigDecimal _discountBD = this.calculateDiscountFromDB(municipalBond.getId());
+			// municipalBond.setDiscount(_discountBD);
+			System.out.println("despues calculo descuento BD");
+			System.out.println(_discountBD);
+			
+			System.out.println("antes calculo recargo BD");
+			BigDecimal _surchargeBD = this.calculateSurchargeFromDB(municipalBond.getId());
+			System.out.println("despues calculo recargo BD");
+			System.out.println(_surchargeBD);
+			// municipalBond.setSurcharge(_surchargeBD);
+			
+			System.out.println("-------------------***************------------------------");
+			
 			municipalBond.setDiscount(calculateDiscount(municipalBond));
 			municipalBond.setSurcharge(calculateSurcharge(municipalBond));
 			municipalBond.calculateValue();
@@ -691,6 +712,26 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				// mainItem.setTotal(mainItem.getTotal().subtract(municipalBond.getPreviousPayment()));
 			}
 		}
+	}
+	
+	private BigDecimal calculateDiscountFromDB(Long municipalBondId){
+		Query query = entityManager
+				.createNativeQuery("select * from gimprod.sp_discount00056(?1)");
+		query.setParameter(1, municipalBondId);
+		
+		BigDecimal discount = (BigDecimal) query.getSingleResult();
+		
+		return discount;
+	}
+	
+	private BigDecimal calculateSurchargeFromDB(Long municipalBondId){
+		Query query = entityManager
+				.createNativeQuery("select * from gimprod.sp_surcharge00056(?1)");
+		query.setParameter(1, municipalBondId);
+		
+		BigDecimal discount = (BigDecimal) query.getSingleResult();
+		
+		return discount;
 	}
 
 	/*
