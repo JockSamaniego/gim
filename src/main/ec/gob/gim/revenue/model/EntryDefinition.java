@@ -129,6 +129,11 @@ public class EntryDefinition {
 	private Entry entry;
 	
 	private String reason;
+	
+	//rfm 2020-07-29
+	//calculo desde la bd, que sq se ejecuta
+	@Column(length = 80)
+	private String calculationProcedure;
 
 	public EntryDefinition() {
 		this.startDate = java.util.Calendar.getInstance().getTime();
@@ -285,4 +290,13 @@ public class EntryDefinition {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
+
+	public String getCalculationProcedure() {
+		return calculationProcedure;
+	}
+
+	public void setCalculationProcedure(String calculationProcedure) {
+		this.calculationProcedure = calculationProcedure;
+	}
+	
 }// end EntryDefinition
