@@ -40,7 +40,7 @@
 					searchByCriteriaAction="searchResidentByCriteria"
 					clearSearchPanelAction="clearSearchResidentPanel"
 					residentChosenListenerName="residentSelectedListener"
-					reRender="entryChooserPanel,contentPanel, remisionPanel">
+					reRender="entryChooserPanel,contentPanel">
 					<s:convertEntity />
 				</g:residentChooser>
 
@@ -67,7 +67,7 @@
 					
 					<a:commandButton id="search" value="#{messages['common.search']}"
 						action="#{municipalBondCondition.chargeResults()}" 
-						reRender="remisionPanel, txtInterest,txtSurcharged, contentPanel, messages" 
+						reRender="txtInterest,txtSurcharged, contentPanel, messages" 
 						disabled="#{municipalBondCondition.resident == null}">						
 					</a:commandButton>
 					
@@ -80,7 +80,7 @@
 		<h:form>
 			<div class="results">
 				
-				<rich:panel id="remisionPanel">
+				<!-- <rich:panel id="remisionPanel">
 					<f:facet name="header">
 						<h:outputText value="Valores de remisión"
 							styleClass="formTitle right" />
@@ -103,7 +103,7 @@
 							</h:outputText>
 						</div>
 					</div>									
-				</rich:panel>
+				</rich:panel> -->
 				<rich:panel id="contentPanel">
 					<a:outputPanel ajaxRendered="false">		
 				<h:outputText

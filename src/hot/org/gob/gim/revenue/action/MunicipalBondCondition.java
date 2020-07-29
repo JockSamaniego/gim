@@ -92,9 +92,6 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private BigDecimal totalInterestRemision= BigDecimal.ZERO;
 	private BigDecimal totalSurchargeRemision = BigDecimal.ZERO ;
 	
-	
-
-
 	public List<MunicipalBond> getResult() {
 		return result;
 	}
