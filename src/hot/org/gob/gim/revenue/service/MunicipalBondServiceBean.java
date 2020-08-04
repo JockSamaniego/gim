@@ -271,7 +271,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		if (deposit == null) {
 			municipalBond.setBalance(municipalBond.getValue());
 		}
-
+//ffff
 		// municipalBond.setBalance(municipalBond.getBalance().add(municipalBond.getSurcharge()).subtract(municipalBond.getDiscount()));
 		calculateInterest(municipalBond, deposit, paymentDate);// remision
 
@@ -698,6 +698,13 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 					}
 				}
 			}
+			
+			//calculo de interes
+			for (KeyValueCalculateDTO keyValueCalculateDTO : values) {
+				if(0 == keyValueCalculateDTO.getEntry_id().intValue()){
+					municipalBond.setInterest(keyValueCalculateDTO.getValue());
+				}
+			}
 		
 			roundItems(municipalBond);
 			
@@ -735,7 +742,10 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		return retorno;
 	}
 	
-	private BigDecimal calculateDiscountFromDB(Long municipalBondId){
+	/*
+	 * rfam 2020-08-03
+	 * metodos no usados
+	 * private BigDecimal calculateDiscountFromDB(Long municipalBondId){
 		Query query = entityManager
 				.createNativeQuery("select * from gimprod.sp_discount00056(?1)");
 		query.setParameter(1, municipalBondId);
@@ -753,7 +763,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		BigDecimal discount = (BigDecimal) query.getSingleResult();
 		
 		return discount;
-	}
+	}*/
 
 	/*
 	 * public void createItemToMunicipalBond(MunicipalBond municipalBond,
