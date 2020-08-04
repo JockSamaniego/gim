@@ -273,7 +273,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		}
 //ffff
 		// municipalBond.setBalance(municipalBond.getBalance().add(municipalBond.getSurcharge()).subtract(municipalBond.getDiscount()));
-		calculateInterest(municipalBond, deposit, paymentDate);// remision
+		//calculateInterest(municipalBond, deposit, paymentDate);// remision
 
 		roundItems(municipalBond);
 
