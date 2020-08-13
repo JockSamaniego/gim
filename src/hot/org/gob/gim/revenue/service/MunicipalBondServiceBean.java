@@ -43,6 +43,7 @@ import org.drools.io.ResourceFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.rule.FactHandle;
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.FiscalPeriodService;
 import org.gob.gim.common.service.ResidentService;
@@ -50,6 +51,7 @@ import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.action.AgreementType;
 import org.gob.gim.income.service.TaxRateService;
 import org.gob.gim.income.service.TaxService;
+import org.gob.gim.revenue.dto.KeyValueCalculateDTO;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.view.EntryValueItem;
 
@@ -269,9 +271,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		if (deposit == null) {
 			municipalBond.setBalance(municipalBond.getValue());
 		}
-
+//ffff
 		// municipalBond.setBalance(municipalBond.getBalance().add(municipalBond.getSurcharge()).subtract(municipalBond.getDiscount()));
-		calculateInterest(municipalBond, deposit, paymentDate);// remision
+		//calculateInterest(municipalBond, deposit, paymentDate);// remision
 
 		roundItems(municipalBond);
 
@@ -671,25 +673,40 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			System.out.println("Bond a procesar NUMERO:" + municipalBond.getNumber());
 
 			// Aplica las reglas
-			System.out.println("antes de aplicar reglas");
-			invokeRules(municipalBond, rulesToApply, itemFacts, facts);
-			System.out.println("despues de aplicar reglas");
+			// System.out.println("antes de aplicar reglas DROOLS");
+			// invokeRules(municipalBond, rulesToApply, itemFacts, facts);
+			// System.out.println("despues de aplicar reglas DROOLS");
+			System.out.println("antes de aplicar reglas DB");
+			List<KeyValueCalculateDTO> values = calculateDiscountSurchargedFromDB(municipalBond.getId());
+			System.out.println("despues de aplicar reglas DB");
+			System.out.println(values);
+			
+			for (Item itm : municipalBond.getDiscountItems()) {
+				for (KeyValueCalculateDTO keyValueCalculateDTO : values) {
+					if(itm.getEntry().getId().intValue() == keyValueCalculateDTO.getEntry_id().intValue()){
+						itm.setTotal(keyValueCalculateDTO.getValue());
+						break;
+					}
+				}
+			}
+			
+			for (Item itm : municipalBond.getSurchargeItems()) {
+				for (KeyValueCalculateDTO keyValueCalculateDTO : values) {
+					if(itm.getEntry().getId().intValue() == keyValueCalculateDTO.getEntry_id().intValue()){
+						itm.setTotal(keyValueCalculateDTO.getValue());
+						break;
+					}
+				}
+			}
+			
+			//calculo de interes
+			for (KeyValueCalculateDTO keyValueCalculateDTO : values) {
+				if(0 == keyValueCalculateDTO.getEntry_id().intValue()){
+					municipalBond.setInterest(keyValueCalculateDTO.getValue());
+				}
+			}
 		
-			// llama a metodo de calculo de descuento desde base de datos
 			roundItems(municipalBond);
-			System.out.println("antes calculo descuento BD");
-			BigDecimal _discountBD = this.calculateDiscountFromDB(municipalBond.getId());
-			// municipalBond.setDiscount(_discountBD);
-			System.out.println("despues calculo descuento BD");
-			System.out.println(_discountBD);
-			
-			System.out.println("antes calculo recargo BD");
-			BigDecimal _surchargeBD = this.calculateSurchargeFromDB(municipalBond.getId());
-			System.out.println("despues calculo recargo BD");
-			System.out.println(_surchargeBD);
-			// municipalBond.setSurcharge(_surchargeBD);
-			
-			System.out.println("-------------------***************------------------------");
 			
 			municipalBond.setDiscount(calculateDiscount(municipalBond));
 			municipalBond.setSurcharge(calculateSurcharge(municipalBond));
@@ -714,7 +731,21 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		}
 	}
 	
-	private BigDecimal calculateDiscountFromDB(Long municipalBondId){
+	private List<KeyValueCalculateDTO> calculateDiscountSurchargedFromDB(Long bondId){
+		Query query = entityManager
+				.createNativeQuery("select * from gimprod.orquestador_calculo_obligaciones_test2(?1)");
+		query.setParameter(1, bondId);
+		
+		List<KeyValueCalculateDTO> retorno = NativeQueryResultsMapper.map(
+				query.getResultList(), KeyValueCalculateDTO.class);
+		
+		return retorno;
+	}
+	
+	/*
+	 * rfam 2020-08-03
+	 * metodos no usados
+	 * private BigDecimal calculateDiscountFromDB(Long municipalBondId){
 		Query query = entityManager
 				.createNativeQuery("select * from gimprod.sp_discount00056(?1)");
 		query.setParameter(1, municipalBondId);
@@ -732,7 +763,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		BigDecimal discount = (BigDecimal) query.getSingleResult();
 		
 		return discount;
-	}
+	}*/
 
 	/*
 	 * public void createItemToMunicipalBond(MunicipalBond municipalBond,
