@@ -733,7 +733,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	
 	private List<KeyValueCalculateDTO> calculateDiscountSurchargedFromDB(Long bondId){
 		Query query = entityManager
-				.createNativeQuery("select * from gimprod.orquestador_calculo_obligaciones_test2(?1)");
+				.createNativeQuery("select * from gim_sp.orquestador_calculo_obligaciones_test2(?1)");
 		query.setParameter(1, bondId);
 		
 		List<KeyValueCalculateDTO> retorno = NativeQueryResultsMapper.map(
