@@ -547,6 +547,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 				if (resident instanceof LegalEntity)
 					legalEntity = ((LegalEntity) resident);
+				
+				System.out.println(".............................. invokeRules createItemsToMunicipalBond 497");
 
 				invokeRules(mb, rulesToApply, itemFacts, mb.getAdjunct(), legalEntity);
 				roundItems(mb);
@@ -612,6 +614,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			Long entryId = entry.getId();
 			EntryDefinition entryDefinition = this.entryService.findEntryDefinitionCurrentToEntry(entryId, serviceDate);
 			rulesToApply.add(entryDefinition.getRule().getBytes());
+			
+			System.out.println(".............................. invokeRules changeExemptionInMunicipalBond 601");
 
 			invokeRules(municipalBond, rulesToApply, itemFacts, facts);
 			roundItems(municipalBond);
