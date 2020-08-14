@@ -669,17 +669,17 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			addChildrenItems(municipalBond, serviceDate, EntryStructureType.SURCHARGE, rulesToApply, itemFacts,
 					isEmission, internalTramit);
 			
-			System.out.println("Bond a procesar ID:" + municipalBond.getId());
-			System.out.println("Bond a procesar NUMERO:" + municipalBond.getNumber());
+			// System.out.println("Bond a procesar ID:" + municipalBond.getId());
+			// System.out.println("Bond a procesar NUMERO:" + municipalBond.getNumber());
 
 			// Aplica las reglas
 			// System.out.println("antes de aplicar reglas DROOLS");
 			// invokeRules(municipalBond, rulesToApply, itemFacts, facts);
 			// System.out.println("despues de aplicar reglas DROOLS");
-			System.out.println("antes de aplicar reglas DB");
+			// System.out.println("antes de aplicar reglas DB");
 			List<KeyValueCalculateDTO> values = calculateDiscountSurchargedFromDB(municipalBond.getId());
-			System.out.println("despues de aplicar reglas DB");
-			System.out.println(values);
+			// System.out.println("despues de aplicar reglas DB");
+			// System.out.println(values);
 			
 			for (Item itm : municipalBond.getDiscountItems()) {
 				for (KeyValueCalculateDTO keyValueCalculateDTO : values) {
@@ -1558,7 +1558,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			List<CompensationReceipt> list = compensationQuery.getResultList();
 			if (!list.isEmpty()) {
 				CompensationReceipt cr = list.get(0);
-				System.out.println("Interes CompensationReceipt " + cr.getInterest());
+				// System.out.println("Interes CompensationReceipt " + cr.getInterest());
 				if (cr.getInterest().compareTo(BigDecimal.ZERO) == 1) {
 					municipalBond.setInterest(cr.getInterest());
 					/*
