@@ -307,7 +307,7 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:font style="bold" size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="VENDEDOR" />
+						<p:text value="#{propertyHome.TDC.previousOwnerTitle.toUpperCase()}" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
@@ -396,7 +396,7 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:font style="bold" size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="COMPRADOR" />
+						<p:text value="#{propertyHome.TDC.newOwnerTitle.toUpperCase()}" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
@@ -811,7 +811,10 @@
 				borderColorTop="#000000" colspan="3" verticalAlignment="middle">
 				<p:font  size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="#{propertyHome.propertyDocument.area}" />
+						<p:text value="#{propertyHome.propertyDocument.area}">
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
+						</p:text>
+						<p:text value=" m²" rendered="#{propertyHome.propertyDocument.area != null}" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
@@ -829,7 +832,10 @@
 				borderColorTop="#000000" colspan="3" verticalAlignment="middle">
 				<p:font  size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.totalAreaConstruction}" />
+						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.totalAreaConstruction}">
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
+						</p:text>
+						<p:text value=" m²" rendered="#{propertyHome.propertyDocument.currentDomain.previousDomain.totalAreaConstruction != null}" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
@@ -900,9 +906,10 @@
 				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="#{propertyHome.propertyDocument.lotAreaHorizontalProperty} m²">
-							<f:convertNumber pattern="#0.00" />
+						<p:text value="#{propertyHome.propertyDocument.lotAreaHorizontalProperty}">
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
+						<p:text value=" m²" rendered="#{propertyHome.propertyDocument.lotAreaHorizontalProperty != null}" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
@@ -922,9 +929,10 @@
 				borderColorTop="#000000" colspan="2" verticalAlignment="middle">
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="#{propertyHome.propertyDocument.buildingAreaHorizontalProperty} m²">
-							<f:convertNumber pattern="#0.00" />
+						<p:text value="#{propertyHome.propertyDocument.buildingAreaHorizontalProperty}">
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
+						<p:text value=" m²" rendered="#{propertyHome.propertyDocument.buildingAreaHorizontalProperty != null}" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
@@ -1028,7 +1036,7 @@
 				<p:font  size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="#{propertyHome.TDC.acquisitionValue}" >
-							<f:convertNumber pattern="#0.00" />
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
 				</p:font>
@@ -1039,7 +1047,7 @@
 				<p:font  size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="#{propertyHome.TDC.improvementsValues}" >
-							<f:convertNumber pattern="#0.00" />
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
 				</p:font>
@@ -1050,7 +1058,7 @@
 				<p:font  size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="#{propertyHome.TDC.CEMValues}" >
-							<f:convertNumber pattern="#0.00" />
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
 				</p:font>
@@ -1061,7 +1069,7 @@
 				<p:font  size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="#{propertyHome.TDC.othersValues}">
-							<f:convertNumber pattern="#0.00" />
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
 				</p:font>
@@ -1072,7 +1080,7 @@
 				<p:font  size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="#{propertyHome.ABDValue}" >
-							<f:convertNumber pattern="#0.00" />
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
 				</p:font>
@@ -1083,7 +1091,7 @@
 				<p:font  size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="#{propertyHome.ACDValue}" >
-							<f:convertNumber pattern="#0.00" />
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
 				</p:font>
@@ -1103,7 +1111,7 @@
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="#{propertyHome.TDC.contractualValue}" >
-							<f:convertNumber pattern="#0.00" />
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
 				</p:font>
@@ -1123,7 +1131,7 @@
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.lotAppraisal}" >
-							<f:convertNumber pattern="#0.00" />
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
 				</p:font>
@@ -1143,7 +1151,7 @@
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.buildingAppraisal}" >
-							<f:convertNumber pattern="#0.00" />
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
 				</p:font>
@@ -1163,7 +1171,7 @@
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.commercialAppraisal}" >
-							<f:convertNumber pattern="#0.00" />
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
 				</p:font>
@@ -1183,7 +1191,7 @@
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
 						<p:text value="#{propertyHome.TDC.proportionalValues}" >
-							<f:convertNumber pattern="#0.00" />
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
 				</p:font>

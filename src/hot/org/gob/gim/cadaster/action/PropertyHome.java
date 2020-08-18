@@ -766,6 +766,8 @@ public class PropertyHome extends EntityHome<Property> {
 			TDC.setSecondSellerName(TDCaux.getSecondSellerName());
 			TDC.setSecondSellerTitle(TDCaux.getSecondSellerTitle());
 			TDC.setValidityDate(TDCaux.getValidityDate());
+			TDC.setPreviousOwnerTitle(TDCaux.getPreviousOwnerTitle());
+			TDC.setNewOwnerTitle(TDCaux.getNewOwnerTitle());
 			this.calculateDomainValues(TDC.getAcquisitionValue(), TDC.getImprovementsValues(), TDC.getCEMValues(), TDC.getOthersValues());
 		} catch (Exception e) {
 			addFacesMessageFromResourceBundle("no existe información registrada");
@@ -787,6 +789,7 @@ public class PropertyHome extends EntityHome<Property> {
 		em.persist(TDC);
 		em.flush();
 		Date date = new Date(); 
+		TDC.setCreationTime(date);
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");  
 		String strDate = dateFormat.format(date);  
 		TDC.setCodeDocument(strDate+"-"+TDC.getId());
