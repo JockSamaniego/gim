@@ -898,6 +898,7 @@
 						<p:text value="#{propertyHome.propertyDocument.lotAliquot}" >
 							<f:convertNumber pattern="#0.00" />
 						</p:text>
+						<p:text value=" %" rendered="#{propertyHome.propertyDocument.lotAliquot != null}" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
@@ -921,6 +922,7 @@
 						<p:text value="#{propertyHome.propertyDocument.buildingAliquot}" >
 							<f:convertNumber pattern="#0.00" />
 						</p:text>
+						<p:text value=" %" rendered="#{propertyHome.propertyDocument.buildingAliquot != null}" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
