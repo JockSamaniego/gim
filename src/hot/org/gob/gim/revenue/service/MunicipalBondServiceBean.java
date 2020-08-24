@@ -707,6 +707,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			for (KeyValueCalculateDTO keyValueCalculateDTO : values) {
 				if(0 == keyValueCalculateDTO.getEntry_id().intValue()){
 					municipalBond.setInterest(keyValueCalculateDTO.getValue());
+					break;
 				}
 			}
 		
