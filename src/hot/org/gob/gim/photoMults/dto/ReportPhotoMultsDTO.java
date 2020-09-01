@@ -63,6 +63,12 @@ public class ReportPhotoMultsDTO {
 
 	@NativeQueryResultColumn(index = 15)
 	private Date creationDate;
+	
+	@NativeQueryResultColumn(index = 16)
+	private Long adjunctId;
+	
+	@NativeQueryResultColumn(index = 17)
+	private int visualizationsNumber;
 
 	public Long getNumber() {
 		return number;
@@ -191,6 +197,22 @@ public class ReportPhotoMultsDTO {
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
+	
+	public int getVisualizationsNumber() {
+		return visualizationsNumber;
+	}
+
+	public void setVisualizationsNumber(int visualizationsNumber) {
+		this.visualizationsNumber = visualizationsNumber;
+	}
+
+	public Long getAdjunctId() {
+		return adjunctId;
+	}
+
+	public void setAdjunctId(Long adjunctId) {
+		this.adjunctId = adjunctId;
+	}
 
 	@Override
 	public String toString() {
@@ -203,7 +225,7 @@ public class ReportPhotoMultsDTO {
 				+ ", physicalInfractionNumber=" + physicalInfractionNumber
 				+ ", serviceType=" + serviceType + ", speeding=" + speeding
 				+ ", supportDocumentURL=" + supportDocumentURL
-				+ ", vehicleType=" + vehicleType +  ", creationDate=" + creationDate + "]";
+				+ ", vehicleType=" + vehicleType +  ", creationDate=" + creationDate + visualizationsNumber + "]";
 	}
 
 }

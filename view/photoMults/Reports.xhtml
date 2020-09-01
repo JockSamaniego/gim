@@ -92,7 +92,7 @@
 
 						<f:facet name="header">
 							<rich:columnGroup>
-								<rich:column colspan="14" breakBefore="true" styleClass="right">
+								<rich:column colspan="15" breakBefore="true" styleClass="right">
 									<g:dataScroller maxPages="10" for="photoMultsList"
 										style="float:right;" />
 								</rich:column>
@@ -170,7 +170,7 @@
 
 						<h:column>
 							<f:facet name="header">
-               				 N. Infracción Físisca
+               				 N. Infracción Física
             			</f:facet>
 							<h:outputText value="#{_photoMults.physicalInfractionNumber}" />
 						</h:column>
@@ -189,11 +189,21 @@
 							<h:outputText value="#{_photoMults.speeding}" />
 						</h:column>
 
+						<rich:column styleClass="center">
+							<f:facet name="header">
+               				 Visualizaciones
+            				</f:facet>
+							<h:outputText value="0" rendered="#{_photoMults.visualizationsNumber == null}" />
+							<h:outputText value="#{_photoMults.visualizationsNumber}" rendered="#{_photoMults.visualizationsNumber != null}" />
+						</rich:column>
+
 						<h:column>
 							<f:facet name="header">
                				 Documento
-            			</f:facet>
-							<h:outputLink value="#{_photoMults.supportDocumentURL}" target="_blank">#{_photoMults.supportDocumentURL}</h:outputLink>	
+            				</f:facet>
+							<h:outputLink value="#{_photoMults.supportDocumentURL}" ajaxSingle="true" target="_blank" >Visualizar
+								<a:support event="onclick" action="#{municipalBondHome.countDocumentVisualizationsNumber(_photoMults.adjunctId)}" reRender="photoMultsList"></a:support>
+							</h:outputLink>	
 						</h:column>
 
 						<h:column>

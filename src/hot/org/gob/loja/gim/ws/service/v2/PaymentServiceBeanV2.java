@@ -85,7 +85,7 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 		String identificationNumber = request.getIdentificationNumber();
 
 		if (controlAlertResident(identificationNumber)) {
-			statement.setMessage("Contribuyente con alertas");
+			statement.setMessage("Contribuyente con alertas, debe acercarse al Municipio de Loja");
 			statement.setCode("ML.FS.7000");
 			persisBankingEntityLog(false, statement.toString());
 			return statement;
@@ -115,7 +115,7 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer.getId());
 
 			if (inPaymentAgreementBondsNumber > 0) {
-				statement.setMessage("Contribuyente con acuerdo de pago pendiente");
+				statement.setMessage("Contribuyente con acuerdo de pago pendiente, debe acercarse al Municipio de Loja");
 				statement.setCode("ML.FS.7004");
 				persisBankingEntityLog(false, statement.toString());
 				return statement;

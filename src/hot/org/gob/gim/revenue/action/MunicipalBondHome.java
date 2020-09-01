@@ -60,6 +60,7 @@ import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.DTO.CRTV_MunicipalBonds;
+import ec.gob.gim.revenue.model.adjunct.ANTReference;
 import ec.gob.gim.security.model.Role;
 //macartuche
 //antclient
@@ -1829,5 +1830,14 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		this.bondByConfirmationNumber = bondByConfirmationNumber;
 	}
 		
+	// Para control de visualizaciones del documento de foto-multa
+	// Jock Samaniego
+		
+	public void countDocumentVisualizationsNumber(Long adjunctId){
+		ANTReference adjunct = getEntityManager().find(ANTReference.class, adjunctId);
+		adjunct.setDocumentVisualizationsNumber(adjunct.getDocumentVisualizationsNumber() + 1);
+		em.persist(adjunct);
+		em.flush();
+	}
 		
 }

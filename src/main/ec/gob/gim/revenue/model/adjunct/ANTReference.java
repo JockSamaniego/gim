@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -240,5 +241,18 @@ public class ANTReference extends Adjunct {
 		this.notificationDate = notificationDate;
 	}
 	
+	// Para control de visualizaciones del documento de foto-multa
+	// Jock Samaniego
+	
+	@Column(nullable=true)
+	private int documentVisualizationsNumber;
+
+	public int getDocumentVisualizationsNumber() {
+		return documentVisualizationsNumber;
+	}
+
+	public void setDocumentVisualizationsNumber(int documentVisualizationsNumber) {
+		this.documentVisualizationsNumber = documentVisualizationsNumber;
+	}
 	
 }

@@ -33,14 +33,14 @@ import ec.gob.gim.security.model.User;
 		initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
 		@NamedQuery(name = "DomainComplement.findFinalByDomain", query = "SELECT domainComplement from TransferDomainComplement domainComplement WHERE "
-				+ "domainComplement.id = (select max(domainComplement.id) from TransferDomainComplement domainComplement where domainComplement.domain.id = :domain_id)")
+				+ "domainComplement.id = (select max(domainComplement.id) from TransferDomainComplement domainComplement where domainComplement.domain.id = :domain_id and domainComplement.isActive = true)")
 })
 public class TransferDomainComplement {
 	@Id
 	@GeneratedValue(generator = "TransferDomainComplementGenerator", strategy = GenerationType.TABLE)
 	private Long id;
 	
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.DATE) 
 	private Date creationDate;
 	
 	private String secondSellerTitle;
@@ -93,7 +93,14 @@ public class TransferDomainComplement {
 	private Domain domain;
 	
 	private Boolean isActive;
-
+	
+	private String previousOwnerTitle;
+	
+	private String newOwnerTitle;
+	
+	@Temporal(TemporalType.TIME) 
+	private Date creationTime;
+	
 	public TransferDomainComplement() {
 		this.country = "LOJA";
 		this.creationDate = new Date();
@@ -353,6 +360,36 @@ public class TransferDomainComplement {
 
 	public void setDomain(Domain domain) {
 		this.domain = domain;
+	}
+
+
+	public String getPreviousOwnerTitle() {
+		return previousOwnerTitle;
+	}
+
+
+	public void setPreviousOwnerTitle(String previousOwnerTitle) {
+		this.previousOwnerTitle = previousOwnerTitle;
+	}
+
+
+	public String getNewOwnerTitle() {
+		return newOwnerTitle;
+	}
+
+
+	public void setNewOwnerTitle(String newOwnerTitle) {
+		this.newOwnerTitle = newOwnerTitle;
+	}
+
+
+	public Date getCreationTime() {
+		return creationTime;
+	}
+
+
+	public void setCreationTime(Date creationTime) {
+		this.creationTime = creationTime;
 	}
 	
 	
