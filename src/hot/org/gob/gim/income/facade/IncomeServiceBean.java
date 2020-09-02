@@ -43,6 +43,7 @@ import org.gob.gim.exception.ReceiptAuthorizationDoesNotExistException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
 import org.gob.gim.exception.ReverseNotAllowedException;
 import org.gob.gim.income.dto.ApplyDiscountDTO;
+import org.gob.gim.income.dto.BondAuxDTO;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.loja.gim.ws.dto.BondSummary;
@@ -2194,4 +2195,6 @@ public class IncomeServiceBean implements IncomeService {
 		}
 		return ds2;
 	}
+	
+	
 }

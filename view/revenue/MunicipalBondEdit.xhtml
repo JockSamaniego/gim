@@ -83,7 +83,7 @@
 
 					<rich:spacer width="200 px" />
 
-					<rich:panel id="vehiclePanelInformation" rendered="#{municipalBondHome.hasRole('ROLE_EMITTER_CRTV')}">
+					<rich:panel id="vehiclePanelInformation" rendered="#{municipalBondHome.hasRole('ROLE_EMITTER_CRTV') and municipalBondHome.crtvIsActive()}">
 			            <f:facet name="header">
 			                <h:panelGrid columns="1" columnClasses="headerTitle,">
 			                  <h:outputText

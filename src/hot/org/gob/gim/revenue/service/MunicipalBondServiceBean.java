@@ -43,6 +43,7 @@ import org.drools.io.ResourceFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.rule.FactHandle;
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.FiscalPeriodService;
 import org.gob.gim.common.service.ResidentService;
@@ -50,6 +51,7 @@ import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.action.AgreementType;
 import org.gob.gim.income.service.TaxRateService;
 import org.gob.gim.income.service.TaxService;
+
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.view.EntryValueItem;
 
@@ -1832,5 +1834,4 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		Query query = entityManager.createQuery(stringQuery);
 		return (MunicipalBond) query.getResultList().get(0);
 	}
-
 }

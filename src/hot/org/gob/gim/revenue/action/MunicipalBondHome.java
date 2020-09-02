@@ -1679,12 +1679,12 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	    }
 	    
 	    public boolean isInParametersOrder(){
-	    	List<Long> crtv_entries = systemParameterService.findListIds("CRTV_ENTRIES");
-			if(crtv_entries.contains(this.getInstance().getEntry().getId())) {
-				return true;
-			}else {
-				return false;
+	    	if (systemParameterService == null) {
+				systemParameterService = ServiceLocator.getInstance()
+						.findResource(SYSTEM_PARAMETER_SERVICE_NAME);
 			}
+	    	List<Long> crtv_entries = systemParameterService.findListIds("CRTV_ENTRIES");
+	    	return ( !crtv_entries.isEmpty() && crtv_entries.contains(this.getInstance().getEntry().getId()))? true : false;
 	    }
 	    
 	    //Para consultas crtv
@@ -1700,6 +1700,17 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	    	responseCRTV = CallCRTV.findVehicleData(licensePlate);	    	
 	    }
 
+	    
+	    //macartuche 
+	    //revisar si esta activo el parametro CRTV
+	    public boolean crtvIsActive() {
+	    	if (systemParameterService == null) {
+				systemParameterService = ServiceLocator.getInstance()
+						.findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+			}
+	    	Boolean applyCRTV = systemParameterService.findParameter("APPLY_CRTV?");
+	    	return (applyCRTV!= null && applyCRTV) ? true: false;
+	    }
 		public String getLicensePlate() {
 			return licensePlate;
 		}
