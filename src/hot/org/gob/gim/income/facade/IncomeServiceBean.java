@@ -431,57 +431,61 @@ public class IncomeServiceBean implements IncomeService {
 				deposit.setMunicipalBond(municipalBond);
 				
 				
-				//agregado para CRTV
-				//ya que no guarda en la BD hasta luego de poner nuevo pago 
-				//se valida que el deposito este pagado
-				List<Long> crtv_entries = systemParameterService.findListIds("CRTV_ENTRIES");
-				//List<Long> crtv_entries = Arrays.asList(new Long[] {3L, 627L});				
-				if(crtv_entries.contains(deposit.getMunicipalBond().getEntry().getId())) {
-					
-					if (deposit.getMunicipalBond().getAdjunct() != null) {
-						Query q1 = entityManager.createNativeQuery("select v.orderNumber from Vehicle v where v.id = :adjunctid");
+				//incluir parametro para no cobrar con CRTV
+				Boolean applyCRTV = systemParameterService.findParameter("APPLY_CRTV?");
+				if(applyCRTV != null && applyCRTV) {
+					//agregado para CRTV
+					//ya que no guarda en la BD hasta luego de poner nuevo pago 
+					//se valida que el deposito este pagado
+					List<Long> crtv_entries = systemParameterService.findListIds("CRTV_ENTRIES");
+					//List<Long> crtv_entries = Arrays.asList(new Long[] {3L, 627L});				
+					if(crtv_entries.contains(deposit.getMunicipalBond().getEntry().getId())) {
 						
-						q1.setParameter("adjunctid", deposit.getMunicipalBond().getAdjunct().getId());
-						String orderNumber = (String)q1.getSingleResult();
-						
+						if (deposit.getMunicipalBond().getAdjunct() != null) {
+							Query q1 = entityManager.createNativeQuery("select v.orderNumber from Vehicle v where v.id = :adjunctid");
 							
-						Query q = entityManager.createNativeQuery("select * from sp_getSum_from_orders(:adjunctid)");
-						q.setParameter("adjunctid", deposit.getMunicipalBond().getAdjunct().getId());
-						List<CRTV_ORDER> ordersList = NativeQueryResultsMapper.map(q.getResultList(), CRTV_ORDER.class);
+							q1.setParameter("adjunctid", deposit.getMunicipalBond().getAdjunct().getId());
+							String orderNumber = (String)q1.getSingleResult();
 							
-						List<Item> items = deposit.getMunicipalBond().getItems();
-						Item it = items.get(0);
-						double valor = it.getTotal().doubleValue();	
-						String identification = deposit.getMunicipalBond().getResident().getIdentificationNumber();
-						//fecha y hora de solicitud
-						Date date = Calendar.getInstance().getTime();
-						DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
-						String strDate = dateFormat.format(date);  								
-							 
-						//no se ha grabado AUN en la bd el deposito actual
-						if(!ordersList.isEmpty()) { 
-							CRTV_ORDER order = ordersList.get(0);
-							identification = order.getIdentification();
-							valor = valor + order.getSumtotal().doubleValue();
-							orderNumber= order.getOrdernumber();
+								
+							Query q = entityManager.createNativeQuery("select * from sp_getSum_from_orders(:adjunctid)");
+							q.setParameter("adjunctid", deposit.getMunicipalBond().getAdjunct().getId());
+							List<CRTV_ORDER> ordersList = NativeQueryResultsMapper.map(q.getResultList(), CRTV_ORDER.class);
+								
+							List<Item> items = deposit.getMunicipalBond().getItems();
+							Item it = items.get(0);
+							double valor = it.getTotal().doubleValue();	
+							String identification = deposit.getMunicipalBond().getResident().getIdentificationNumber();
+							//fecha y hora de solicitud
+							Date date = Calendar.getInstance().getTime();
+							DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+							String strDate = dateFormat.format(date);  								
+								 
+							//no se ha grabado AUN en la bd el deposito actual
+							if(!ordersList.isEmpty()) { 
+								CRTV_ORDER order = ordersList.get(0);
+								identification = order.getIdentification();
+								valor = valor + order.getSumtotal().doubleValue();
+								orderNumber= order.getOrdernumber();
+							}
+								
+							String tipoIdent = (identification.length()==10)? "CED" : "RUC";
+		
+							//llamar al servicio web
+							WsPagoSolicitudExecuteResponse response = CallCRTV.callNotification(identification, tipoIdent, valor, strDate, 
+									orderNumber, deposit.getMunicipalBond().getNumber());
+							String json = CallCRTV.notificationResultTOJson(response);
+							//guardar la rta del servicio web
+							Query updateVehicle = entityManager.createQuery("Update Vehicle v "
+									+ "set v.notificationWSResult=:json "
+									+ "Where v.orderNumber=:orderNumber");
+							updateVehicle.setParameter("json", json);
+							updateVehicle.setParameter("orderNumber", orderNumber);					
+							int updateCount = updateVehicle.executeUpdate();
 						}
-							
-						String tipoIdent = (identification.length()==10)? "CED" : "RUC";
-	
-						//llamar al servicio web
-						WsPagoSolicitudExecuteResponse response = CallCRTV.callNotification(identification, tipoIdent, valor, strDate, 
-								orderNumber, deposit.getMunicipalBond().getNumber());
-						String json = CallCRTV.notificationResultTOJson(response);
-						//guardar la rta del servicio web
-						Query updateVehicle = entityManager.createQuery("Update Vehicle v "
-								+ "set v.notificationWSResult=:json "
-								+ "Where v.orderNumber=:orderNumber");
-						updateVehicle.setParameter("json", json);
-						updateVehicle.setParameter("orderNumber", orderNumber);					
-						int updateCount = updateVehicle.executeUpdate();
-					}
-					///ni idea el resto
-				}					
+						///ni idea el resto
+					}					
+				}
 			}			
 		}
 		Date rightNow = new Date();
