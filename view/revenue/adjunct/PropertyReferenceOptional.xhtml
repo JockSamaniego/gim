@@ -36,6 +36,22 @@
 			</h:selectOneMenu>
 		</s:decorate>
 		
+		<s:decorate id="categoryField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['category']}:</ui:define>
+			<h:selectOneMenu id="property"
+				value="#{adjunctHome.instance.category}"
+				disabled="#{!adjunctHome.instance.emitWithoutProperty}">
+				<s:selectItems value="#{adjunctAction.findFineOrnamentCategory()}" 
+							   var="category"
+							   label="#{category}"
+							   noSelectionLabel="#{messages['common.choose']}" />
+				<s:convertEntity />
+				<a:support  event="onchange" 
+							action="#{adjunctAction.updateOrnamentCategory()}" 
+							ajaxSingle="true"/>
+			</h:selectOneMenu>
+		</s:decorate>
+		
 	</a:outputPanel>
 
 </ui:composition>
