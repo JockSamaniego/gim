@@ -449,4 +449,25 @@ public class AdjunctAction extends EntityController{
 		PropertyReferenceOptional reference = findCurrentAdjunct();
 		reference.setProperty(null);
 	}
+	
+	public List<ItemCatalog> findFineOrnamentCategory(){
+		return itemCatalogService.findItemsForCatalogCode(
+				CatalogConstants.CATALOG_TYPES_CONSUME_ALCOHOLIC_BEVERAGES);
+	}
+	
+	public void updateOrnamentCategory(){
+		
+		PropertyReferenceOptional reference = findCurrentAdjunct();
+		// ItemCatalog category = 
+		
+		/* if(reference != null){
+			//System.out.println("UPDATING PROPERTY CODE ----> Cadastral code set on code property!!");
+			reference.setCode(reference.getProperty().getCadastralCode());
+			reference.setOwner(reference.getProperty().getCurrentDomain().getResident().getName());
+			if(reference.getProperty().getLocation() != null){
+				reference.setLocation(reference.getProperty().getLocation().getMainBlockLimit().getStreet().getName());
+			}
+		}*/
+	}
+	
 }

@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.revenue.model.Adjunct;
 
 @Entity
@@ -25,6 +26,10 @@ public class PropertyReferenceOptional extends Adjunct{
 	private String location;
 	
 	private Boolean emitWithoutProperty;
+	
+	//rfam ML-JRM-2020-571-M
+	@ManyToOne
+	private ItemCatalog category;
 	
 	public Boolean getEmitWithoutProperty() {
 		return emitWithoutProperty;
@@ -82,6 +87,14 @@ public class PropertyReferenceOptional extends Adjunct{
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+		
+	public ItemCatalog getCategory() {
+		return category;
+	}
+
+	public void setCategory(ItemCatalog category) {
+		this.category = category;
 	}
 
 	@Override

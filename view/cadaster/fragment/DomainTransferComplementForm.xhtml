@@ -109,7 +109,14 @@
 				<br />
 				<br />
 				
-				<h:outputText value="VENDEDOR"></h:outputText>
+				<h:outputText value="Título del propietario anterior (Ejm:VENDEDOR)"></h:outputText>
+				<h:inputText id="previousOwnerTitle" size="20" maxlength="20"
+					style="margin-left: 1em; text-transform: uppercase"
+					value="#{propertyHome.TDC.previousOwnerTitle}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>
+				<br />
 				<br />
 				<h:outputText value="Principal:" style="margin-left: 1em"></h:outputText>
 				
@@ -153,7 +160,14 @@
 				<br />
 				<br />
 				
-				<h:outputText value="COMPRADOR"></h:outputText>
+				<h:outputText value="Título del nuevo propietario (Ejm:COMPRADOR)"></h:outputText>
+				<h:inputText id="newOwnerTitle" size="20" maxlength="20"
+					style="margin-left: 1em; text-transform: uppercase"
+					value="#{propertyHome.TDC.newOwnerTitle}"
+					disabled="false" >
+					<a:support event="onblur" ajaxSingle="true" />
+				</h:inputText>
+				<br />
 				<br />
 				<h:outputText value="Principal:" style="margin-left: 1em"></h:outputText>
 				
@@ -349,14 +363,18 @@
 				<h:inputText id="input31" size="30" maxlength="30"
 					style="margin-left: 4em"
 					value="#{propertyHome.propertyDocument.area}"
-					disabled="true" />
+					disabled="true">
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
 				<h:outputText value="m2" style="margin-left: 0.5em" ></h:outputText>
 
 				<h:outputText value="Área de construcción:" style="margin-left: 9em"></h:outputText>
 				<h:inputText id="input32" size="30" maxlength="30"
 					style="margin-left: 4em"
 					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.totalAreaConstruction}"
-					disabled="true" />
+					disabled="true">
+					<f:convertNumber pattern="#0.00" />
+				</h:inputText>
 				<h:outputText value="m2" style="margin-left: 0.5em"></h:outputText>
 				<br />
 				<br />
@@ -370,8 +388,9 @@
 					disabled="true" >
 					<f:convertNumber pattern="#0.00" />
 				</h:inputText>
+				<h:outputText value="%" style="margin-left: 0.5em" ></h:outputText>
 
-				<h:outputText value="Área parcial de terreno:" style="margin-left: 10em" ></h:outputText>
+				<h:outputText value="Área parcial de terreno:" style="margin-left: 9em" ></h:outputText>
 				<h:inputText id="input34" size="30" maxlength="30"
 					style="margin-left: 4em"
 					value="#{propertyHome.propertyDocument.lotAreaHorizontalProperty}"
@@ -389,8 +408,9 @@
 					disabled="true" >
 					<f:convertNumber pattern="#0.00" />
 				</h:inputText>
+				<h:outputText value="%" style="margin-left: 0.5em" ></h:outputText>
 
-				<h:outputText value="Área parcial de construcción:" style="margin-left: 10em" ></h:outputText>
+				<h:outputText value="Área parcial de construcción:" style="margin-left: 9em" ></h:outputText>
 				<h:inputText id="input36" size="30" maxlength="30"
 					style="margin-left: 1.7em"
 					value="#{propertyHome.propertyDocument.buildingAreaHorizontalProperty}"
@@ -432,6 +452,7 @@
 					disabled="false" >
 					<a:support event="onblur" reRender="calculateValues"
 							ajaxSingle="true" action="#{propertyHome.calculateDomainValues(propertyHome.TDC.acquisitionValue, propertyHome.TDC.improvementsValues, propertyHome.TDC.CEMValues, propertyHome.TDC.othersValues)}" />
+					<f:convertNumber pattern="#0.00" />
 				</h:inputText>
 
 				<h:outputText value="B. Obras y mejoras incrementadas:" style="margin-left: 8em"></h:outputText>
@@ -441,6 +462,7 @@
 					disabled="false" >
 					<a:support event="onblur" reRender="calculateValues"
 							ajaxSingle="true" action="#{propertyHome.calculateDomainValues(propertyHome.TDC.acquisitionValue, propertyHome.TDC.improvementsValues, propertyHome.TDC.CEMValues, propertyHome.TDC.othersValues)}" />
+					<f:convertNumber pattern="#0.00" />
 				</h:inputText>
 
 				<br />
@@ -453,6 +475,7 @@
 					disabled="false" >
 					<a:support event="onblur" reRender="calculateValues"
 							ajaxSingle="true" action="#{propertyHome.calculateDomainValues(propertyHome.TDC.acquisitionValue, propertyHome.TDC.improvementsValues, propertyHome.TDC.CEMValues, propertyHome.TDC.othersValues)}" />
+					<f:convertNumber pattern="#0.00" />
 				</h:inputText>
 
 				<h:outputText value="D. Otros costos:" style="margin-left: 8em"></h:outputText>
@@ -462,6 +485,7 @@
 					disabled="false" >
 					<a:support event="onblur" reRender="calculateValues"
 							ajaxSingle="true" action="#{propertyHome.calculateDomainValues(propertyHome.TDC.acquisitionValue, propertyHome.TDC.improvementsValues, propertyHome.TDC.CEMValues, propertyHome.TDC.othersValues)}" />
+					<f:convertNumber pattern="#0.00" />
 				</h:inputText>
 
 				<br />
@@ -493,6 +517,7 @@
 					value="#{propertyHome.TDC.contractualValue}"
 					disabled="false" >
 					<a:support event="onblur" ajaxSingle="true" />
+					<f:convertNumber pattern="#0.00" />
 				</h:inputText>	
 
 				<h:outputText value="Avalúo terreno:" style="margin-left: 8em"></h:outputText>
@@ -531,6 +556,7 @@
 					value="#{propertyHome.TDC.proportionalValues}"
 					disabled="false" >
 					<a:support event="onblur" ajaxSingle="true" />
+					<f:convertNumber pattern="#0.00" />
 				</h:inputText>	
 
 
