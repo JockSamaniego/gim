@@ -379,6 +379,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			List<byte[]> rulesToApply, List<Item> itemFacts, boolean isEmission, Boolean internalTramit)
 			throws EntryDefinitionNotFoundException {
 		// System.out.println("LXGK -----> "+entryStructureType);
+		// todo
 		List<EntryStructure> entryStructureChildren = this.entryService
 				.findEntryStructureChildrenByType(municipalBond.getEntry().getId(), entryStructureType);
 		// System.out.println("LXGK -----> "+(entryStructureChildren!=null ?
@@ -387,6 +388,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			if (e.getChild().getTimeToCalculate() == null
 					|| (e.getChild().getTimeToCalculate().equals(TimeToCalculate.IN_EMISSION) && isEmission)
 					|| (e.getChild().getTimeToCalculate().equals(TimeToCalculate.IN_PAYMENT) && !isEmission)) {
+				// todo
 				EntryDefinition edchild = this.entryService.findEntryDefinitionCurrentToEntry(e.getChild().getId(),
 						serviceDate);
 				internalTramit = (internalTramit == null) ? false : internalTramit;
@@ -666,6 +668,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				municipalBond.add(mainItem);
 			}
 
+			// todo
 			addChildrenItems(municipalBond, serviceDate, EntryStructureType.NORMAL, rulesToApply, itemFacts, isEmission,
 					internalTramit);
 			addChildrenItems(municipalBond, serviceDate, EntryStructureType.DISCOUNT, rulesToApply, itemFacts,
