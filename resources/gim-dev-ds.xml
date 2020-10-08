@@ -7,11 +7,11 @@
 	<local-tx-datasource>
 		<jndi-name>gimDatasource</jndi-name>
 		<use-java-context>false</use-java-context>
-		<connection-url>jdbc:postgresql://localhost:5435/gim_20201003</connection-url>
+		<connection-url>jdbc:postgresql://localhost:5432/gim_20201003</connection-url>
 <!-- 		<connection-url>jdbc:postgresql://localhost:5432/gimLojaDB_2019_09_11</connection-url> -->
 		<driver-class>org.postgresql.Driver</driver-class>
-		<user-name>rolgimloja</user-name>
-      	<password>servergim:AJOL</password>
+		<user-name>postgres</user-name>
+      	<password>server</password>
 <!-- 		<user-name>postgres</user-name> -->
 <!--       	<password>postgres</password> -->
 	</local-tx-datasource>

@@ -451,8 +451,17 @@ public class AdjunctAction extends EntityController{
 	}
 	
 	public List<ItemCatalog> findFineOrnamentCategory(){
-		return itemCatalogService.findItemsForCatalogCode(
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
+		
+		List<ItemCatalog> items = new ArrayList<ItemCatalog>();
+		
+		items =  itemCatalogService.findItemsForCatalogCode(
 				CatalogConstants.CATALOG_TYPES_CONSUME_ALCOHOLIC_BEVERAGES);
+		
+		return items;
 	}
 	
 	public void updateOrnamentCategory(){

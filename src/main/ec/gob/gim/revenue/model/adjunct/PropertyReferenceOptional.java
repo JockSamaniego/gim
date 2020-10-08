@@ -54,12 +54,20 @@ public class PropertyReferenceOptional extends Adjunct{
 
 	@Override
 	public String toString() {
+		StringBuilder sb = new StringBuilder();
 		if(property == null){
-			return"";
+			sb.append("");
 		}else{
 			if(property.getLocation() == null || this.emitWithoutProperty) return "";
-			return "Dir: " + property.getLocation().getMainBlockLimit().getStreet().getPlace() + " - " + location.trim();
-		}		
+			//return ;
+			sb.append("Dir: " + property.getLocation().getMainBlockLimit().getStreet().getPlace() + " - " + location.trim());
+		}
+		
+		if (category != null) {
+			sb.append(" - ");
+			sb.append(category.getName());
+		}
+		return sb.toString();
 	}
 	
 	public List<ValuePair> getDetails(){
@@ -68,6 +76,11 @@ public class PropertyReferenceOptional extends Adjunct{
 		details.add(pair);
 		if ((location != null) && (location.trim().length() > 0)){
 			pair = new ValuePair("Ubicación", location.trim());
+			details.add(pair);
+		}
+		
+		if (category != null) {
+			pair = new ValuePair("Categoría", category.toString());
 			details.add(pair);
 		}
 		return details;
