@@ -479,4 +479,9 @@ public class AdjunctAction extends EntityController{
 		}*/
 	}
 	
+	public void resetCategoryOptionalValues(){
+		PropertyReferenceOptional reference = findCurrentAdjunct();
+		reference.setCategory(null);
+	}
+	
 }

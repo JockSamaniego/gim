@@ -36,11 +36,22 @@
 			</h:selectOneMenu>
 		</s:decorate>
 		
+		
+		<s:decorate id="categoryOptionalCheckField" template="../../layout/edit.xhtml">
+			<h:outputLabel value="#{messages['municipalBondEdit.emitWithoutCategory']}" />
+			<h:selectBooleanCheckbox id="emitWithoutCategory"
+				value="#{adjunctHome.instance.emitWithoutCategory}">
+				<a:support event="onchange" ajaxSingle="true"
+					action="#{adjunctAction.resetCategoryOptionalValues}"
+					reRender="propertyReferenceOptionalPanel" />
+			</h:selectBooleanCheckbox>	
+		</s:decorate>
+		
 		<s:decorate id="categoryField" template="../../layout/edit.xhtml">
-			<ui:define name="label">#{messages['category']}:</ui:define>
+			<ui:define name="label">#{messages['municipalBondEdit.category']}:</ui:define>
 			<h:selectOneMenu id="property"
 				value="#{adjunctHome.instance.category}"
-				disabled="#{!adjunctHome.instance.emitWithoutProperty}">
+				disabled="#{adjunctHome.instance.emitWithoutCategory}">
 				<s:selectItems value="#{adjunctAction.findFineOrnamentCategory()}" 
 							   var="category"
 							   label="#{category}"
