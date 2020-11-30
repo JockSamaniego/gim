@@ -59,9 +59,20 @@
 
 			<rich:panel id="readingManPanel">
 				<f:facet name="header">
-					<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:panelGrid columns="4" columnClasses="headerTitle left, ">
 						<h:outputText
 							value="#{messages['paymentagreeement.expired']} (#{coerciveReportHome.expiredList.size()})" />
+							
+						<s:button
+								view="/coercive/report/PaymentAgreementReportPDF.xhtml"
+								id="printPDF"
+								disabled="#{coerciveReportHome.expiredList == null or coerciveReportHome.expiredList.size eq 0}"
+								propagation="join" value="#{messages['common.print']} PDF" />
+						<s:button
+							    view="/coercive/report/PaymentAgreementReportExcel.xhtml"
+								id="downloadExcel"
+								disabled="#{coerciveReportHome.expiredList == null or coerciveReportHome.expiredList.size eq 0}"
+								propagation="join" value="#{messages['payedNotificationTotalDownloadExcel']}" />
 
 					</h:panelGrid>
 				</f:facet>

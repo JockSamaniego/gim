@@ -46,7 +46,10 @@ import ec.gob.gim.common.model.Resident;
 
 		 @NamedQuery(name = "Cementery.findById", 
 		 			query = "SELECT cementery FROM Cementery cementery " +
-		 					"where cementery.id = :id") 
+		 					"where cementery.id = :id"),
+		 @NamedQuery(name = "Cementery.findByName", 
+					query = "SELECT cementery FROM Cementery cementery " +
+							"where cementery.name = :name") 
  
 })
 

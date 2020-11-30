@@ -41,8 +41,8 @@
 
 				<h:commandButton id="update" value="#{messages['common.save']}"
 					action="#{deathHome.update}"
-					view="/cementery/CementeryList.xhtml"
-					rendered="#{deathHome.managed}"
+					view="/cementery/UnitDeathList.xhtml"
+					rendered="#{deathHome.managed and unitDeathHome.directExhumation()!='EXHUME'}"
 					reRender="toExhume, exhume" />
 					
 				<a:commandButton id="toExhume"								
@@ -62,12 +62,12 @@
 				</a:commandButton>
 
 				<s:button id="cancelEdit" value="#{messages['common.cancel']}"
-					propagation="end" view="/cementery/CementeryList.xhtml"
+					propagation="end" view="/cementery/UnitDeathList.xhtml"
 					rendered="#{deathHome.managed}" />
 
 				<s:button id="cancelAdd" value="#{messages['common.cancel']}"
 					propagation="end"
-					view="/cementery/CementeryList.xhtml"
+					view="/cementery/UnitDeathList.xhtml"
 					rendered="#{!deathHome.managed}" />
 
 			</div>

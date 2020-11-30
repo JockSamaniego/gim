@@ -1,0 +1,154 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="reportCementeryCollected" styleClass="edit">
+
+			<ui:debug id="uiDebug" />
+			<rich:panel>
+
+				<f:facet name="header">#{messages['cementeryCollected'].toUpperCase()}
+	            </f:facet>
+
+	            <h:panelGrid columns="2" >
+	            	<h:panelGrid columns="1">
+	            		
+	            		<s:decorate id="startDateField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['cementeryCollected.fromDate']}:</ui:define>
+							<rich:calendar value="#{cementeryHome.collectionFromDate}" required="true"
+								enableManualInput="false"
+								datePattern="#{messages['common.datePattern']}">
+							</rich:calendar>
+						</s:decorate>
+
+						<s:decorate id="endDateField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['cementeryCollected.untilDate']}:</ui:define>
+							<rich:calendar value="#{cementeryHome.collectionUntilDate}" required="true"
+								enableManualInput="false"
+								datePattern="#{messages['common.datePattern']}">
+							</rich:calendar>
+						</s:decorate>
+
+
+						<div style="clear: both">
+							<span class="required">*</span>
+							#{messages['common.requiredFields']}
+						</div>
+					</h:panelGrid>
+		    </h:panelGrid>
+
+				<div class="actionButtons">
+
+					<a:commandButton id="generateReport"
+						reRender="contentPanel"
+						value="#{messages['income.generateReport']}"
+						action="#{cementeryHome.findMunicipalBondsByCementeries()}" />
+						
+					<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none" />
+
+					<s:button id="home" view="/home.xhtml"
+					value="#{messages['common.quit']}" propagation="end" />
+				</div>
+
+			</rich:panel>
+
+			<rich:panel id="contentPanel" width="100%">
+				<div class="results" id="cementeryBondsList">
+	
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty cementeryHome.cementeryBonds}" />
+
+					<rich:dataTable id="cementeryBondsTable" var="_bond"
+						value="#{cementeryHome.cementeryBonds}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty cementeryHome.cementeryBonds}">
+						
+						<f:facet name="header">
+						<h:panelGrid columns="3" columnClasses="headerTitle left, ">
+							<h:outputText
+								value="#{messages['cementeryCollected.total']} (#{cementeryHome.cementeryBonds.size})" />
+
+							<s:button
+								view="/cementery/report/CollectionByCementeriesReport.xhtml"
+								id="printId"
+								rendered="#{cementeryHome.cementeryBonds.size() > 0}"
+								propagation="join" value="#{messages['cementeryCollected.printReport']}" />
+							
+							<s:button
+							    view="/cementery/report/CollectionByCementeriesReportExcel.xhtml"
+								id="downloadExcel"
+								rendered="#{cementeryHome.cementeryBonds.size() > 0}"
+								propagation="join" value="#{messages['cementeryCollected.excelDownload']}" />
+
+						</h:panelGrid>
+
+					</f:facet>
+						
+						<rich:column sortBy="#{_bond.number}" styleClass="center">
+							<f:facet name="header">#{messages['cementeryCollected.number']}</f:facet>
+							<h:outputText value="#{_bond.number}"/>
+						</rich:column>
+						
+						<rich:column sortBy="#{_bond.subscriberIdentification}" styleClass="center">
+							<f:facet name="header">#{messages['contract.subscriberIdentification']}</f:facet>
+							<h:outputText value="#{_bond.subscriberIdentification}" />
+						</rich:column>
+						
+						<rich:column sortBy="#{_bond.subscriberName}" styleClass="left">
+							<f:facet name="header">#{messages['unitDeath.responsable']}</f:facet>
+							<h:outputText value="#{_bond.subscriberName}" />
+						</rich:column>
+						
+						<rich:column sortBy="#{_bond.description}" styleClass="left">
+							<f:facet name="header">#{messages['cementeryCollected.description']}</f:facet>
+							<h:outputText value="#{_bond.description}"/>
+						</rich:column>
+						
+						<rich:column sortBy="#{_bond.entry}" styleClass="left">
+							<f:facet name="header">#{messages['cementeryCollected.concept']}</f:facet>
+							<h:outputText value="#{_bond.entry}"/>
+						</rich:column>
+						
+						<rich:column sortBy="#{_bond.value}" styleClass="right">
+							<f:facet name="header">#{messages['cementeryCollected.value']}</f:facet>
+							<h:outputText value="#{_bond.value}" >
+								<f:convertNumber pattern="#0.00" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column sortBy="#{_bond.status}" styleClass="center">
+							<f:facet name="header">#{messages['cementeryCollected.status']}</f:facet>
+							<h:outputText value="#{_bond.status}"/>
+						</rich:column>
+						
+						<rich:column sortBy="#{_bond.liquidationDate}" styleClass="center">
+							<f:facet name="header">#{messages['cementeryCollected.liquidationDate']}</f:facet>
+							<h:outputText value="#{_bond.liquidationDate}" >
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+					</rich:dataTable>
+
+				</div>
+
+			</rich:panel>
+			<h:panelGrid>					
+				<s:button id="back" value="#{messages['common.back']}"
+					propagation="end" view="/home.xhtml" />
+			</h:panelGrid>
+		</h:form>
+		
+	</ui:define>
+
+</ui:composition>

@@ -10,8 +10,10 @@ import javax.faces.event.ActionEvent;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.gob.gim.commercial.action.EconomicActivityHome;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.End;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
@@ -290,10 +292,13 @@ public class UnitDeathHome extends EntityHome<Unit> implements Serializable {
 	public void setForExhumation(boolean forExhumation) {
 		this.forExhumation = forExhumation;
 	}
+	
+	@In(create = true)
+	CementeryHome cementeryHome;
 
 	@End
-	public void updateExhumationAndReserve(){
-		if (this.responsableResident == null) return;
+	public String updateExhumationAndReserve(){
+		if (this.responsableResident == null) return null;
 		if (exhumation && !forExhumation){
 			this.instance.setUnitStatus(UnitStatus.FREE);
 			this.instance.getCurrentDeath().setResponsableExhumation((Person)this.responsableResident);
@@ -309,6 +314,8 @@ public class UnitDeathHome extends EntityHome<Unit> implements Serializable {
 		}
 		getEntityManager().merge(this.instance);
 		clearSearchResidentPanel();
+		cementeryHome.update();
+		return "/cementery/UnitDeathList.xhtml";
 	}
 
 	@End

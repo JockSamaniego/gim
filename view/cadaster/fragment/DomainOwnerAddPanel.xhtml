@@ -34,19 +34,18 @@
 						<rich:messages errorClass="errors" />
 					</rich:panel>
 
-					<a:outputPanel id="buildFinishedPanel" ajaxRendered="true">
+					<a:outputPanel id="domainOwnerPanel" ajaxRendered="true">
 
 						<h:panelGrid columns="1" width="100%">
 
 							<g:residentChooser id="ownerChooser"
-								resident="#{propertyHome.instance.currentDomain.resident}"
-								criteria="#{propertyHome.criteria}" bean="#{propertyHome}"
-								searchAction="searchResident"
-								residentsList="#{propertyHome.residents}"
-								identificationNumber="#{propertyHome.identificationNumber}"
-								searchByCriteriaAction="searchResidentByCriteria"
-								clearSearchPanelAction="clearSearchResidentPanel"
-								disabled="#{propertyHome.managed}"
+								resident="#{propertyHome.domainOwner.resident}"
+								criteria="#{propertyHome.criteriaNewOwner}" bean="#{propertyHome}"
+								searchAction="searchResidentNewOwner"
+								residentsList="#{propertyHome.residentsNewOwner}"
+								identificationNumber="#{propertyHome.identificationNumberNewOwner}"
+								searchByCriteriaAction="searchResidentByCriteriaNewOwner"
+								clearSearchPanelAction="clearSearchResidentPanelNewOwner"
 								residentChosenListenerName="ownerSelectedListener" />
 
 							<s:decorate id="identificationTypeField"

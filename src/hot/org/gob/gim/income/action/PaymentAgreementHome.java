@@ -912,6 +912,7 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			}
 			if(isAvailableNullified){
 				paBD.setIsNullified(Boolean.TRUE);
+				paBD.setIsActive(Boolean.FALSE);
 				paBD.setNullifiedDate(new Date());
 				paBD.setUserNullified(userSession.getUser().getId());
 				for(MunicipalBond mb : paBD.getMunicipalBonds()){

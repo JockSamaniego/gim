@@ -31,6 +31,8 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityQuery;
 import org.jboss.seam.international.StatusMessage.Severity;
 
+import ec.gob.gim.cadaster.model.TransferDomainComplement;
+import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.Resident;
@@ -818,5 +820,18 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 	 * Crea las notificaciones para los items seleccionados
 	 * @throws IOException 
 	 */
+
+	// para impresión directa de titulos de credito desde el listado de notificaciones
+	// Jock Samaniego
+
+
+	public String loadBondsForPrintReport(Long notificationId) {
+		Notification not = getEntityManager().find(Notification.class, notificationId);
+		this.setMunicipalBonds(not.getMunicipalBonds());
+		this.loadPendingBonds();
+		this.printAll();
+		return "/income/report/CreditTitleForNotification.xhtml";
+	}
+	
 
 }

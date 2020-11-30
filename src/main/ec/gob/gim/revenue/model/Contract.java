@@ -62,6 +62,9 @@ public class Contract {
 	@JoinColumn(name="death_id")
 	private Death death;
 	
+	@Temporal(TemporalType.DATE)
+	private Date lastNotificationDate;
+	
 	public Contract() {
 		subscriptionDate = new Date();
 	}
@@ -142,6 +145,14 @@ public class Contract {
 
 	public void setDeath(Death death) {
 		this.death = death;
+	}
+
+	public Date getLastNotificationDate() {
+		return lastNotificationDate;
+	}
+
+	public void setLastNotificationDate(Date lastNotificationDate) {
+		this.lastNotificationDate = lastNotificationDate;
 	}
 			
 }// end Contract

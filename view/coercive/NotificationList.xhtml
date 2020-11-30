@@ -5,6 +5,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	template="../layout/template.xhtml" login-required="true">
 
@@ -64,7 +65,7 @@
 				</s:button>
 			</div>
 
-		</h:form>
+		
 
 		<rich:panel>
 			<f:facet name="header">
@@ -201,12 +202,16 @@
 							id="notificationEdit" rendered="#{empty from}">
 							<f:param name="notificationId" value="#{_notification.id}" />
 						</s:button>
+						<a:commandButton id="printAllBtn" ajaxSingle="true"
+								action="#{residentWithMunicipalBondOutOfDateList.loadBondsForPrintReport(_notification.id)}"
+								value="#{messages['notification.municipalBonds']}" >
+						</a:commandButton>
 					</rich:column>
 				</rich:dataTable>
 
 			</div>
 		</rich:panel>
-
+	</h:form>
 		<div class="tableControl">
 
 			<s:link view="/coercive/NotificationList.xhtml"
@@ -241,6 +246,7 @@
 			</s:link>
 
 		</div>
+		
 	</ui:define>
 
 </ui:composition>

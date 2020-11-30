@@ -1,0 +1,29 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<m:message xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:m="http://jboss.com/products/seam/mail"
+    xmlns:h="http://java.sun.com/jsf/html">
+    <m:from name="GIM System" address="gim.loja@gmail.com" />
+    <m:to name="#{cementeryHome.unitSelected.subscriberName}">#{cementeryHome.unitSelected.subscriberEmail}</m:to>
+    
+    <m:subject>Renovación de Contrato</m:subject>
+    <m:body>
+        <p>
+	        Se solicita de la manera mas comedida realizar los trámites pertinentes
+	        para la renovación del contrato de arrendamiento de lo siguiente:
+        </p>
+        <p>
+        	<b>Cementerio</b>: #{cementeryHome.unitSelected.cementery}<br/>
+        	<b>Unidad</b>: #{cementeryHome.unitSelected.type}<br/>
+        	<b>Difunto</b>: #{cementeryHome.unitSelected.deseased}<br/>
+        	<b>Responsable de Contrato</b>: #{cementeryHome.unitSelected.subscriberName}<br/>
+        	<b>Fecha de expiración</b>: #{cementeryHome.unitSelected.expirationDate}
+        </p>
+        <p>
+        	GIM<br/>
+        	Sistema Gestión de Ingresos Municipales<br/>
+        	MUNICIPIO DE LOJA<br/>
+        	Este es un mensaje informativo, por favor no responda al mismo.
+        </p>
+    </m:body>
+</m:message> 

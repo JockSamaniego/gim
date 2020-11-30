@@ -46,8 +46,8 @@ import ec.gob.gim.common.model.LegalEntityType;
 				 			"order by section.name"), 
 
 		 @NamedQuery(name = "Section.findByCementery", 
-		 			query = "SELECT section FROM Section section " +
-		 					"where section.cementery = :cementery") 
+		 			query = "SELECT section.name FROM Section section " +
+		 					"where section.cementery = :cementery ORDER BY section.name ASC") 
 
 })
 

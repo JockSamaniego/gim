@@ -85,8 +85,7 @@
 					value="#{messages['common.accept']}"
 					oncomplete="#{rich:component('reserveAndExhumationPanel')}.hide();"
 					reRender="resultsDeathPanel,deathForm" 
-					rendered = "#{!unitDeathHome.forExhumation}"
-					actionListener= "#{cementeryHome.update()}" />
+					rendered = "#{!unitDeathHome.forExhumation}"/>
 					
 				<a:commandButton 
 					ajaxSingle="true" 

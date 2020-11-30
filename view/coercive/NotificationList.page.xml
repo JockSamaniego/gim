@@ -14,4 +14,9 @@
    <param name="criteria" value="#{notificationList.criteria}"/>
    <param name="notificationTaskType" value="#{notificationList.notificationTaskType}" converterId="notificationTaskTypeConverter"/>   
 
+	<navigation>
+		<rule if-outcome="sentToPrint">
+			<redirect view-id="/income/report/CreditTitleForNotification.xhtml" />
+		</rule>		
+	</navigation>
 </page>

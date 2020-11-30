@@ -1,11 +1,17 @@
 package org.gob.gim.cementery.action;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Query;
 
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityQuery;
 
+import ec.gob.gim.cementery.model.Cementery;
+import ec.gob.gim.cementery.model.Section;
 import ec.gob.gim.cementery.model.Unit;
 import ec.gob.gim.cementery.model.UnitStatus;
 
@@ -19,15 +25,14 @@ public class UnitDeathList extends EntityQuery<Unit> {
 			+ "left join currentDeath.deceased deceased ";
 	
 	private static final String[] RESTRICTIONS = {
-			"lower(unit.section.cementery.name) like lower(concat(#{unitDeathList.cementeryName},'%'))",
+			"lower(unit.section.name) = lower(#{unitDeathList.sectionName})",
+			"lower(unit.section.cementery.name) like lower(#{unitDeathList.cementeryName})",
 			"unit.currentDeath.dateOfDeath = #{unitDeathList.dateOfDeath}",
 			"unit.unitStatus = #{unitDeathList.unitStatus}",
 			"lower(unit.unitType.name) = lower(#{unitDeathList.unitType})",
-			"lower(unit.section.name) like lower(concat(#{unitDeathList.sectionName},'%'))",
 			"lower(unit.currentDeath.deathName) like lower(concat(#{unitDeathList.deceasedCriteria},'%'))",
 			"lower(unit.currentDeath.currentContract.subscriber.name) like lower(concat(#{unitDeathList.debtorCriteria},'%'))"
 	};
-
 	private String cementeryName;
 	private String sectionName;
 	private String deceasedCriteria;
@@ -41,6 +46,11 @@ public class UnitDeathList extends EntityQuery<Unit> {
 		setEjbql(EJBQL);
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
 		setMaxResults(25);
+	}
+	
+	@Override
+	public String getRestrictionLogicOperator() {
+		return "and";
 	}
 
 	public String getCementeryName() {
@@ -103,6 +113,31 @@ public class UnitDeathList extends EntityQuery<Unit> {
 		return unitType;
 	}
 	
+	// para obtener secciones por cementerio
 	
+	private List<String> sectionsByCementery;
+
+	public List<String> getSectionsByCementery() {
+		return sectionsByCementery;
+	}
+
+	public void setSectionsByCementery(List<String> sectionsByCementery) {
+		this.sectionsByCementery = sectionsByCementery;
+	}
+
+	public List<String> findSectionsByCementery(){
+		sectionsByCementery = new ArrayList();
+		if(this.cementeryName != null && this.cementeryName != ""){
+			Query q2 = getEntityManager().createNamedQuery("Cementery.findByName");
+			q2.setParameter("name", this.cementeryName);
+			Cementery cementery = (Cementery) q2.getSingleResult();
+			if(cementery != null){
+				Query q = getEntityManager().createNamedQuery("Section.findByCementery");
+				q.setParameter("cementery", cementery);
+				sectionsByCementery = q.getResultList();
+			}				
+		}
+		return sectionsByCementery;
+	}
 
 }

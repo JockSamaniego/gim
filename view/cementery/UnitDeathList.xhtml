@@ -19,27 +19,41 @@
 
 			<rich:simpleTogglePanel label="#{messages['death.searchFilter']}"
 				switchType="ajax">
-
-				<s:decorate template="../layout/display.xhtml">
-					<ui:define name="label">#{messages['cementery.cementery']}</ui:define>
-					<h:inputText id="cementery" value="#{unitDeathList.cementeryName}" />
+				
+				<s:decorate id="cementeriesField" template="../layout/display.xhtml" >
+							<ui:define name="label">#{messages['cementery.cementery']}: </ui:define>
+							<h:selectOneMenu id="cementery" value="#{unitDeathList.cementeryName}">
+								<s:selectItems value="#{cementeries}" var="_cementery"
+									itemValue="#{_cementery.name}" noSelectionLabel="#{messages['common.chooseOption']}"
+									label="#{_cementery.name}" />
+								<a:support event="onchange" ajaxSingle="true" reRender="sectionsField" />
+							</h:selectOneMenu>
 				</s:decorate>
-
-				<s:decorate template="../layout/display.xhtml">
-					<ui:define name="label">#{messages['sectionCementery.section']}</ui:define>
-					<h:inputText id="sectionName" value="#{unitDeathList.sectionName}" />
+				
+				<s:decorate id="sectionsField" template="../layout/display.xhtml" >
+							<ui:define name="label">#{messages['sectionCementery.section']}: </ui:define>
+							<h:selectOneMenu id="sectionName" value="#{unitDeathList.sectionName}">
+								<s:selectItems value="#{unitDeathList.findSectionsByCementery()}" var="sectionName"
+									noSelectionLabel="#{messages['common.chooseOption']}"
+									label="#{sectionName}" />
+								<a:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
 				</s:decorate>
 
 				<s:decorate template="../layout/display.xhtml">
 					<ui:define name="label">#{messages['cementery.deceased']}</ui:define>
 					<h:inputText id="deceasedCriteria"
-						value="#{unitDeathList.deceasedCriteria}" />
+						value="#{unitDeathList.deceasedCriteria}" >
+						<a:support event="onblur" ajaxSingle="true" />
+					</h:inputText>
 				</s:decorate>
 
 				<s:decorate template="../layout/display.xhtml">
 					<ui:define name="label">#{messages['cementery.debtor']}</ui:define>
 					<h:inputText id="debtorCriteria"
-						value="#{unitDeathList.debtorCriteria}" />
+						value="#{unitDeathList.debtorCriteria}" >
+						<a:support event="onblur" ajaxSingle="true" />
+					</h:inputText>
 				</s:decorate>
 
 				<s:decorate template="../layout/display.xhtml">
@@ -71,15 +85,15 @@
 			</rich:simpleTogglePanel>
 
 			<div class="actionButtons">
-				<h:commandButton id="search" value="#{messages['common.search']}"
-					action="/cementery/UnitDeathList.xhtml">
+				<a:commandButton id="search" value="#{messages['common.search']}" ajaxSingle="true"
+					reRender="deathSearch">
 					<f:param name="firstResult" value="0" />
-				</h:commandButton>
+				</a:commandButton>
 				<s:button id="reset" value="#{messages['common.reset']}"
 					includePageParams="false" />
 			</div>
 
-		<rich:panel>
+		<rich:panel id="panelResult">
 			<f:facet name="header">
 				<h:panelGrid columns="2" columnClasses="headerTitle,">
 					<h:outputText
@@ -285,11 +299,11 @@
 				</rich:dataTable>
 			</a:outputPanel>
 			</a:region>
-			
-		</rich:panel>
-		</h:form>
+			</rich:panel>
+		
+		
 
-		<div class="tableControl">
+		<div class="tableControl" id="controlButtons">
 
 			<s:link view="/cementery/UnitDeathList.xhtml"
 				rendered="#{unitDeathList.previousExists}"
@@ -321,6 +335,8 @@
 			</s:link>
 
 		</div>
+	</h:form>
+
 
 	</ui:define>
 

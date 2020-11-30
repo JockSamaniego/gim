@@ -1,0 +1,190 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="report" styleClass="edit">
+
+			<ui:debug id="uiDebug" />
+			<rich:panel>
+
+				<f:facet name="header">#{messages['contract.expired'].toUpperCase()}
+	            </f:facet>
+
+	            <h:panelGrid columns="2" >
+	            	<h:panelGrid columns="1">
+
+						<s:decorate id="cementeriesField" template="../layout/edit.xhtml" >
+							<ui:define name="label">#{messages['contract.cementery']}: </ui:define>
+							<h:selectOneMenu id="cementery" value="#{cementeryHome.cementerySelected}" required="true">
+								<s:selectItems value="#{cementeries}" var="_cementery"
+								noSelectionLabel="#{messages['common.chooseOption']}"
+									label="#{_cementery.name}" />
+								<s:convertEntity />
+							</h:selectOneMenu>
+						</s:decorate>
+						
+						<s:decorate id="unitTypesField" template="../layout/edit.xhtml" >
+							<ui:define name="label">#{messages['unit.unitType']}: </ui:define>
+							<h:selectOneMenu id="unitTypes" value="#{cementeryHome.unitTypeSelected}" required="true">
+								<s:selectItems value="#{unitTypes}" var="_unitType"
+								noSelectionLabel="#{messages['common.chooseOption']}"
+									label="#{_unitType.name}" />
+								<s:convertEntity />
+							</h:selectOneMenu>
+						</s:decorate>
+
+						<s:decorate id="endDateField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['contract.UntilDateExpiration']}:</ui:define>
+							<rich:calendar value="#{cementeryHome.expiredUntil}" required="true"
+								enableManualInput="false"
+								datePattern="#{messages['common.datePattern']}">
+							</rich:calendar>
+						</s:decorate>
+
+
+						<div style="clear: both">
+							<span class="required">*</span>
+							#{messages['common.requiredFields']}
+						</div>
+
+					</h:panelGrid>
+
+				<h:panelGrid columns="1" >
+					<rich:panel id="subscriberInformation">
+			            <f:facet name="header">
+			                <h:panelGrid columns="1" columnClasses="headerTitle,">
+			                  <h:outputText
+			                    value="Buscar por Responsable de Contrato" />
+			                </h:panelGrid>      
+			            </f:facet>
+			            <s:decorate id="subscriberField" template="../layout/edit.xhtml" >
+							<ui:define name="label">#{messages['contract.subscriberCriteria']}: </ui:define>
+							<h:inputText id="subscriber" value="#{cementeryHome.subscriberCriteria}">
+							</h:inputText>
+						</s:decorate>
+						<div style="clear: both">
+						</div>
+			        </rich:panel>
+		        </h:panelGrid>
+		    </h:panelGrid>
+
+				<div class="actionButtons">
+
+					<a:commandButton id="generateReport"
+						reRender="contentPanel"
+						value="#{messages['income.generateReport']}"
+						action="#{cementeryHome.findUnitsExpiredContracts()}" />
+
+				</div>
+
+			</rich:panel>
+
+			<rich:panel id="contentPanel" width="100%">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['contract.totalExpired']} (#{cementeryHome.unitsDeathsExpired.size})" />
+					</h:panelGrid>
+				</f:facet>
+
+				<div class="results" id="contractExpiredList">
+	
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty cementeryHome.unitsDeathsExpired}" />
+
+					<rich:dataTable id="unitExpiredTable" var="_unit"
+						value="#{cementeryHome.unitsDeathsExpired}"
+						rowClasses="rvgRowOne,rvgRowTwo"
+						rendered="#{not empty cementeryHome.unitsDeathsExpired}">
+
+						
+						<rich:column sortBy="#{_unit.unitId}" styleClass="center">
+							<f:facet name="header">#{messages['unit.id']}</f:facet>
+							<h:outputText value="#{_unit.unitId}"/>
+						</rich:column>
+						
+						<rich:column sortBy="#{_unit.subscriptionDate}" styleClass="center">
+							<f:facet name="header">#{messages['unitDeath.subscriptionDate']}</f:facet>
+							<h:outputText value="#{_unit.subscriptionDate}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column sortBy="#{_unit.expirationDate}" styleClass="center">
+							<f:facet name="header">#{messages['unitDeath.expirationDate']}</f:facet>
+							<h:outputText value="#{_unit.expirationDate}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column sortBy="#{_unit.cementery}" styleClass="center">
+							<f:facet name="header">#{messages['cementery.cementery']}</f:facet>
+							<h:outputText value="#{_unit.cementery}"/>
+						</rich:column>
+						
+						<rich:column sortBy="#{_unit.type}" styleClass="center">
+							<f:facet name="header">#{messages['unit.unitType']}</f:facet>
+							<h:outputText value="#{_unit.type}"/>
+						</rich:column>
+						
+						<rich:column sortBy="#{_unit.deseased}" styleClass="left">
+							<f:facet name="header">#{messages['cementery.deceased']}</f:facet>
+							<h:outputText value="#{_unit.deseased}"/>
+						</rich:column>
+						
+						<rich:column sortBy="#{_unit.subscriberName}" styleClass="left">
+							<f:facet name="header">#{messages['unitDeath.responsable']}</f:facet>
+							<h:outputText value="#{_unit.subscriberName}"/>
+						</rich:column>
+						
+						<rich:column sortBy="#{_unit.subscriberIdentification}" styleClass="center">
+							<f:facet name="header">#{messages['contract.subscriberIdentification']}</f:facet>
+							<h:outputText value="#{_unit.subscriberIdentification}"/>
+						</rich:column>
+						
+						<rich:column sortBy="#{_unit.subscriberEmail}" styleClass="left">
+							<f:facet name="header">#{messages['contract.subscriberEmail']}</f:facet>
+							<h:outputText value="#{_unit.subscriberEmail}"/>
+						</rich:column>
+						
+						<rich:column sortBy="#{_unit.lastNotification}" styleClass="center">
+							<f:facet name="header">#{messages['contract.lastnotificationDate']}</f:facet>
+							<h:outputText value="#{_unit.lastNotification}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action">
+							<a:commandButton id="sendNotification"
+									ajaxSingle="true"
+									action="#{cementeryHome.sendMailNotification(_unit)}" 
+									disabled="#{_unit.subscriberEmail == null or _unit.subscriberEmail==''}"
+									eventsQueue="gimEventsQueue"
+									value="#{messages['contract.notification']}"
+									reRender="contentPanel" />
+						</rich:column>
+
+					</rich:dataTable>
+
+				</div>
+
+			</rich:panel>
+			<h:panelGrid>					
+				<s:button id="back" value="#{messages['common.back']}"
+					propagation="end" view="/home.xhtml" />
+			</h:panelGrid>
+		</h:form>
+		
+	</ui:define>
+
+</ui:composition>

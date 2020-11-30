@@ -26,14 +26,14 @@
  <navigation from-action="#{deathHome.update}">
   <rule if-outcome="updated">
    <end-conversation/>
-   <redirect view-id="/cementery/CementeryList.xhtml"/>
+   <redirect view-id="/cementery/UnitDeathList.xhtml"/>
   </rule>
  </navigation>
 
  <navigation from-action="#{deathHome.remove}">
   <rule if-outcome="removed">
    <end-conversation/>
-   <redirect view-id="/cementery/CementeryList.xhtml"/>
+   <redirect view-id="/cementery/UnitDeathList.xhtml"/>
   </rule>
  </navigation>
 </page>

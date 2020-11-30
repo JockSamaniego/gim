@@ -204,6 +204,15 @@ public class PropertyHome extends EntityHome<Property> {
 	//2020-02-21
 	private DomainOwner domainOwner;
 	
+	public DomainOwner getDomainOwner() {
+		return domainOwner;
+	}
+
+	public void setDomainOwner(DomainOwner domainOwner) {
+		this.domainOwner = domainOwner;
+	}
+
+
 	private PropertyWs propertyWs;
 	
 	public Property getProperty() {
@@ -3149,26 +3158,6 @@ public class PropertyHome extends EntityHome<Property> {
 		return (threatParamter.indexOf(parish.getCode())!= -1);
 	}
 	
-	public void createDomainOwner() {
-		this.domainOwner = new DomainOwner();
-	}
-	
-	public void addDomainOwner() {
-		this.getInstance().getCurrentDomain().add(this.domainOwner);
-	}
-	
-	public void remove(DomainOwner localOwner) {
-		this.getInstance().getCurrentDomain().remove(localOwner);
-	}
-	
-	public void ownerSelectedListener(ActionEvent event) {
-		UIComponent component = event.getComponent();
-		Resident resident = (Resident) component.getAttributes()
-				.get("resident");
-		this.domainOwner.setResident(resident);
-		this.setIdentificationNumber(resident.getIdentificationNumber());
-	}
-	
 	public void findRegistrationForm() {
 		this.propertyWs = null;
 		if (this.getInstance().getRegistrationCardNumber() != null
@@ -3388,5 +3377,103 @@ public class PropertyHome extends EntityHome<Property> {
 		}else{
 			sectorsToCalculateCEM = new ArrayList<TerritorialDivision>();
 		}
+	}
+	
+	// para co-propietarios
+	// Jock Samaniego
+	
+	private Resident newOwner;
+	private String criteriaNewOwner;
+	private String identificationNumberNewOwner;
+	private List<Resident> residentsNewOwner;
+
+	public Resident getNewOwner() {
+		return newOwner;
+	}
+
+	public void setNewOwner(Resident newOwner) {
+		this.newOwner = newOwner;
+	}
+
+	public String getCriteriaNewOwner() {
+		return criteriaNewOwner;
+	}
+
+	public void setCriteriaNewOwner(String criteriaNewOwner) {
+		this.criteriaNewOwner = criteriaNewOwner;
+	}
+	
+	public String getIdentificationNumberNewOwner() {
+		return identificationNumberNewOwner;
+	}
+
+	public void setIdentificationNumberNewOwner(String identificationNumberNewOwner) {
+		this.identificationNumberNewOwner = identificationNumberNewOwner;
+	}
+
+	public List<Resident> getResidentsNewOwner() {
+		return residentsNewOwner;
+	}
+
+	public void setResidentsNewOwner(List<Resident> residentsNewOwner) {
+		this.residentsNewOwner = residentsNewOwner;
+	}
+
+	
+	public void searchResidentNewOwner() {
+		//logger.info("RESIDENT CHOOSER CRITERIA... " + this.identificationNumber);
+		Query query = getEntityManager().createNamedQuery(
+				"Resident.findByIdentificationNumber");
+		query.setParameter("identificationNumber", this.identificationNumberNewOwner);
+		try {
+			Resident resident = (Resident) query.getSingleResult();
+			//logger.info("RESIDENT CHOOSER ACTION " + resident.getName());
+
+			this.domainOwner.setResident(resident);
+
+			if (resident.getId() == null) {
+				addFacesMessageFromResourceBundle("resident.notFound");
+			}
+
+		} catch (Exception e) {
+			this.getInstance().getCurrentDomain().setResident(null);
+			addFacesMessageFromResourceBundle("resident.notFound");
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void searchResidentByCriteriaNewOwner() {
+		//logger.info("SEARCH RESIDENT BY CRITERIA " + this.criteria);
+		if (this.criteriaNewOwner != null && !this.criteriaNewOwner.isEmpty()) {
+			Query query = getEntityManager().createNamedQuery(
+					"Resident.findByCriteria");
+			query.setParameter("criteria", this.criteriaNewOwner);
+			setResidentsNewOwner(query.getResultList());
+		}
+	}
+	
+	public void clearSearchResidentPanelNewOwner() {
+		this.setCriteriaNewOwner(null);
+		setResidentsNewOwner(null);
+	}
+	
+	public void createDomainOwner() {
+		this.domainOwner = new DomainOwner();
+	}
+	
+	public void addDomainOwner() {
+		this.getInstance().getCurrentDomain().add(this.domainOwner);
+	}
+	
+	public void remove(DomainOwner localOwner) {
+		this.getInstance().getCurrentDomain().remove(localOwner);
+	}
+	
+	public void ownerSelectedListener(ActionEvent event) {
+		UIComponent component = event.getComponent();
+		Resident resident = (Resident) component.getAttributes()
+				.get("resident");
+		this.domainOwner.setResident(resident);
+		this.setIdentificationNumberNewOwner(resident.getIdentificationNumber());
 	}
 }
