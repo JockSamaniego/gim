@@ -926,4 +926,14 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			e.printStackTrace();
 		} 
 	}
+	
+	// Para cargar depositos realizados en la vista de cuotas establecidas
+	// Jock Samaniego
+	
+	public void chargeDepositsByPaymentAgreement(PaymentAgreement payment){
+		if(payment != null){
+			this.setInstance(payment);
+			loadDeposits();
+		}
+	}
 }

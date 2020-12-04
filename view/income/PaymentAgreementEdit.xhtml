@@ -88,7 +88,7 @@
 									minFractionDigits="#{messages['common.minFractionDigits']}" />
 						</h:outputText>	
 						
-						<h:outputText value="#{messages['dividens.payments']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
+						<h:outputText value="#{messages['dividens.deposits']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
 						<h:outputText value="#{paymentAgreementHome.totalPayments}" style="font-size:40px; font-weight:bold;">
 							<f:convertNumber
 									maxFractionDigits="#{messages['common.maxFractionDigits']}"
@@ -535,7 +535,7 @@
 		</h:form>
 		
 		<!-- @tag convenioPago -->
-		<rich:modalPanel id="municipalBondViewer" width="1024" height="350" >
+		<rich:modalPanel id="municipalBondViewer" width="1024" height="350" style="overflow:scroll">
 				<f:facet name="header">
 					<h:panelGroup>
 						<h:outputText value="#{messages['municipalBond.dividendsTotal']}"></h:outputText>

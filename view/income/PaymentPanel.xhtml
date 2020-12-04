@@ -37,7 +37,7 @@
 							searchByCriteriaAction="searchByCriteria"
 							clearSearchPanelAction="clearSearchPanel" searchAction="search"
 							residentChosenListenerName="residentSelectedListener"
-							reRender="municipalBondsPanel, totalsPanel, newPaymentBtn, messages, alertPanel, payment"/>
+							reRender="municipalBondsPanel, messages, alertPanel, payment"/>
 					</a:outputPanel>
 
 					<a:outputPanel id="alertPanel" ajaxRendered="true">
@@ -91,7 +91,7 @@
 					<rich:tab id="paymentAgreementsTab" label="#{messages['payment.paymentAgreements']}" 
 							  rendered="#{not empty paymentHome.inPaymentAgreementBonds}"
 							  ajaxSingle="true"
-							  reRender="totalsPanel, municipalBondsPanel"
+							  reRender="municipalBondsPanel"
 							  focus="paymentAgreement">
 						<ui:include src="fragment/PaymentAgreementsTable.xhtml" />
 					</rich:tab>

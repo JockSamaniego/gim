@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<rich:modalPanel id="establishedFractionsPanel">
+	<rich:modalPanel id="establishedFractionsPanel" height="400" width="550" style="overflow:scroll">
 		<f:facet name="header">
 			<h:panelGroup>
 				<h:outputText
@@ -26,12 +26,11 @@
 			</h:panelGroup>
 		</f:facet>
 
-		<rich:extendedDataTable id="dividends" var="_dividend"
+		<rich:dataTable id="dividends" var="_dividend"
 				value="#{paymentHome.paymentAgreement.dividends}"
-				columnClasses="center, center, right, right"
-				height="350px" width="515px" rowKeyVar="index">
+				columnClasses="center, center, right, right" rowKeyVar="index">
 
-				<rich:column width="50">
+				<rich:column width="10%">
 					<f:facet name="header">
 							Número
 						</f:facet>
@@ -39,7 +38,7 @@
 					
 				</rich:column>
 
-				<rich:column width="150">
+				<rich:column width="30%">
 					<f:facet name="header">
 							#{messages['dividend.date']}
 						</f:facet>
@@ -48,7 +47,7 @@
 					</h:outputText>
 					
 				</rich:column>
-				<rich:column width="150" styleClass="right">
+				<rich:column width="30%" styleClass="right">
 					<f:facet name="header">
 								#{messages['dividend.balance']}
 							</f:facet>
@@ -59,7 +58,7 @@
 							minFractionDigits="#{messages['common.minFractionDigits']}" />
 					</h:inputText>
 				</rich:column>
-				<rich:column width="150" styleClass="right">
+				<rich:column width="30%" styleClass="right">
 					<f:facet name="header">
 								#{messages['dividend.amount']}
 							</f:facet>
@@ -70,7 +69,49 @@
 							minFractionDigits="#{messages['common.minFractionDigits']}" />
 					</h:inputText>
 				</rich:column>
-			</rich:extendedDataTable>
+			</rich:dataTable>
+			<rich:spacer height="20" />
+			<rich:panel id="depositDetail" 
+				rendered="#{paymentAgreementHome.payments!=null}">
+					<f:facet name="header">
+						<h:outputText value="#{messages['paymentagreements.depositspayed']}" />
+					</f:facet>
+					<rich:dataTable id="paymentTable" 
+								value="#{paymentAgreementHome.payments}" var="_payment"
+								rendered="#{paymentAgreementHome.payments.size() > 0}">
+						<rich:column styleClass="right" width="40%">
+							<f:facet name="header">#{messages['auditInspector.date']}</f:facet>
+							<h:outputText value="#{_payment.date}" style="font-size: 12px;">
+								<s:convertDateTime type="date"
+												pattern="#{messages['common.datePattern']}" />		
+							</h:outputText>
+						</rich:column>
+		
+						<rich:column styleClass="right" width="30%">
+							<f:facet name="header">#{messages['auditInspector.time']}</f:facet>
+							<h:outputText value="#{_payment.time}" style="font-size: 12px;">
+								<s:convertDateTime type="date"
+												pattern="#{messages['common.timePattern']}" />		
+							</h:outputText>
+						</rich:column>
+		
+						<rich:column styleClass="right" width="30%">
+							<f:facet name="header">#{messages['common.value']}</f:facet>
+							<h:outputText value="#{_payment.value}" style="font-size: 14px; font-weight: bold">
+								<f:convertNumber maxFractionDigits="#{messages['common.maxFractionDigits']}" minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</rich:column>
+					</rich:dataTable>
+				</rich:panel>
+
+				<div style="clear: both" />
+
+			<div class="actionButtons">								
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('establishedFractionsPanel');"
+					bypassUpdates="true" />
+			</div>
 
 	</rich:modalPanel>
 </ui:composition>
