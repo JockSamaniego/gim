@@ -172,9 +172,10 @@ public class PaymentServiceBean implements PaymentService {
 
 			Taxpayer taxpayer = findTaxpayer(identificationNumber);
 			Date workDayDate;
-			if (request.getUsername().compareTo("dabetancourtc") == 0) {
+			// 2020-08-24 rfam todos los usuarios deben tener asigando una caja
+			/* if (request.getUsername().compareTo("dabetancourtc") == 0) {
 				workDayDate = new GregorianCalendar().getTime();
-			} else
+			} else*/
 				workDayDate = findPaymentDate();
 			Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer.getId());
 
@@ -969,9 +970,9 @@ public class PaymentServiceBean implements PaymentService {
 
 			Taxpayer taxpayer = findTaxpayer(identificationNumber);
 			Date workDayDate;
-			if (request.getUsername().compareTo("dabetancourtc") == 0) {
+			/*if (request.getUsername().compareTo("dabetancourtc") == 0) {
 				workDayDate = new GregorianCalendar().getTime();
-			} else
+			} else*/
 				workDayDate = findPaymentDate();
 			Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer.getId());
 

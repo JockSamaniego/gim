@@ -100,9 +100,9 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			}
 
 			Date workDayDate;
-			if (request.getUsername().compareTo("dabetancourtc") == 0) {
+			/* if (request.getUsername().compareTo("dabetancourtc") == 0) {
 				workDayDate = new GregorianCalendar().getTime();
-			} else
+			} else*/
 				workDayDate = findPaymentDate();
 
 			if (workDayDate == null) {

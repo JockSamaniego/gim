@@ -122,7 +122,7 @@ public class ItemCatalog {
 		this.catalogCode = catalogCode;
 	}
 
-	@Override
+	/*@Override
 	public String toString() {
 		String result = getClass().getSimpleName() + " ";
 		if (id != null) {
@@ -142,10 +142,17 @@ public class ItemCatalog {
 			result += ", catalogCode: " + catalogCode;
 		}
 		return result;
-	}
+	}*/
+	
+	
 
 	public Catalog getCatalog() {
 		return this.catalog;
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 	public void setCatalog(final Catalog catalog) {

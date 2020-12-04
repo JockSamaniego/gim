@@ -35,4 +35,6 @@ public class CatalogConstants {
 	 
 	 public static final String CATALOG_TYPES_BANK_ACCOUNT = "TYPES_BANK_ACCOUNT";
 	 
+	 public static final String CATALOG_TYPES_CONSUME_ALCOHOLIC_BEVERAGES = "TYPE_CONSUME_ALCOHOLIC_BEVERAGES";
+	 
 }
