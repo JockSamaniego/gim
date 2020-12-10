@@ -1,7 +1,7 @@
 package ec.gob.gim.cadaster.model;
 
 import java.util.Date;
-
+import java.math.BigDecimal; 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -51,6 +51,9 @@ public class DomainOwner {
 	
 	@ManyToOne
 	private Domain domain;
+	
+	@Column 
+	  private BigDecimal percentage; 
 	
 	@ManyToOne
 	@JoinColumn(name = "resident_id")
@@ -102,5 +105,13 @@ public class DomainOwner {
 	public void setResident(Resident resident) {
 		this.resident = resident;
 	}	
+	
+	public BigDecimal getPercentage() { 
+	    return percentage; 
+   } 
+ 
+   public void setPercentage(BigDecimal percentage) { 
+     this.percentage = percentage; 
+   }   
 
 }

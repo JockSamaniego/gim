@@ -934,6 +934,59 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		if(payment != null){
 			this.setInstance(payment);
 			loadDeposits();
+			chargeValuesOfPaymentAgreement();
+		}
+	}
+	
+	private int pendingQuotas;
+	private int expiredQuotas;
+	private int paidQuotas;
+
+	public int getPendingQuotas() {
+		return pendingQuotas;
+	}
+
+	public void setPendingQuotas(int pendingQuotas) {
+		this.pendingQuotas = pendingQuotas;
+	}
+
+	public int getExpiredQuotas() {
+		return expiredQuotas;
+	}
+
+	public void setExpiredQuotas(int expiredQuotas) {
+		this.expiredQuotas = expiredQuotas;
+	}
+
+	public int getPaidQuotas() {
+		return paidQuotas;
+	}
+
+	public void setPaidQuotas(int paidQuotas) {
+		this.paidQuotas = paidQuotas;
+	}
+	
+
+	public void chargeValuesOfPaymentAgreement(){
+		BigDecimal totalDeposit = BigDecimal.ZERO;
+		BigDecimal totalQuotasValue = BigDecimal.ZERO;
+		paidQuotas = 0;
+		pendingQuotas = 0;
+		expiredQuotas = 0;
+		for (Payment pay : payments){
+			totalDeposit = totalDeposit.add(pay.getValue());
+		}
+		for (Dividend div : this.instance.getDividends()){
+			totalQuotasValue = totalQuotasValue.add(div.getAmount());
+			if(totalQuotasValue.compareTo(totalDeposit)<=0){
+				paidQuotas++;
+			}else{
+				if(div.getDate().compareTo(new Date()) < 0){
+					expiredQuotas++;
+				}else{
+					pendingQuotas++;
+				}
+			}
 		}
 	}
 }

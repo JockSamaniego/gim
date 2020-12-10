@@ -53,6 +53,7 @@ import ec.gob.gim.cadaster.model.BuildingMaterialValue;
 import ec.gob.gim.cadaster.model.CompassPoint;
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.DomainOwner;
+import ec.gob.gim.cadaster.model.DomainOwnerType;
 import ec.gob.gim.cadaster.model.FenceMaterial;
 import ec.gob.gim.cadaster.model.LandUse;
 import ec.gob.gim.cadaster.model.Location;
@@ -77,6 +78,7 @@ import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.CheckingRecord;
 import ec.gob.gim.common.model.CheckingRecordType;
 import ec.gob.gim.common.model.Delegate;
+import ec.gob.gim.common.model.IdentificationType; 
 import ec.gob.gim.common.model.LegalEntity;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -415,6 +417,8 @@ public class PropertyHome extends EntityHome<Property> {
 			// appraisal.setValueBySquareMeter(this.instance.getCurrentDomain().getValueBySquareMeter());
 			// appraisal.setDomain(this.instance.getCurrentDomain());
 			// }
+			//this.instance.setPhoto(null); 
+		    //this.instance.setSketch(null); 
 			return super.update();
 		} else {
 			this.getInstance().getCurrentDomain().setChangeOwnerConfirmed(true);
@@ -3458,15 +3462,25 @@ public class PropertyHome extends EntityHome<Property> {
 	}
 	
 	public void createDomainOwner() {
+		isNewOwner = Boolean.TRUE;
+		this.identificationNumberNewOwner = ""; 
 		this.domainOwner = new DomainOwner();
+		this.domainOwner.setIsEnabled(Boolean.TRUE);
 	}
 	
+	
 	public void addDomainOwner() {
-		this.getInstance().getCurrentDomain().add(this.domainOwner);
+		isNewOwner = Boolean.FALSE;
+		this.domainOwner.setTransactionDate(new Date()); 
+	    this.getInstance().getCurrentDomain().getDomainOwners().add(this.domainOwner); 
+	    this.domainOwner.setDomain(this.getInstance().getCurrentDomain()); 
+	    this.identificationNumberNewOwner = ""; 
+	    this.domainOwner = null;
 	}
 	
 	public void remove(DomainOwner localOwner) {
 		this.getInstance().getCurrentDomain().remove(localOwner);
+		localOwner.setDomain(null); 
 	}
 	
 	public void ownerSelectedListener(ActionEvent event) {
@@ -3476,4 +3490,57 @@ public class PropertyHome extends EntityHome<Property> {
 		this.domainOwner.setResident(resident);
 		this.setIdentificationNumberNewOwner(resident.getIdentificationNumber());
 	}
+	
+	public List<DomainOwnerType> getDomainOwnerTypes() { 
+        List<DomainOwnerType> domainOwnerType = new ArrayList<DomainOwnerType>(); 
+          domainOwnerType.add(DomainOwnerType.CO_OWNER); 
+          domainOwnerType.add(DomainOwnerType.INHERITOR); 
+        return domainOwnerType; 
+    } 
+   
+	 public void calculateOwnersPercentage(){
+		isValidPercentaje = Boolean.TRUE;
+	    if(this.domainOwner != null){ 
+	      BigDecimal total = new BigDecimal(0); 
+	      for(DomainOwner domOwn : this.instance.getCurrentDomain().getDomainOwners()){ 
+	        if (domOwn.getPercentage() != null){ 
+	          total = total.add(domOwn.getPercentage()); 
+	        } 
+	      } 
+	      if(this.domainOwner.getPercentage() != null){ 
+	        total = total.add(this.domainOwner.getPercentage()); 
+	      } 
+	      if(total.compareTo(new BigDecimal(100)) > 0){ 
+	    	  isValidPercentaje = Boolean.FALSE;
+	      }else{
+	    	  isValidPercentaje = Boolean.TRUE;
+	      }
+	    }  
+	}
+  
+  	private Boolean isNewOwner = Boolean.FALSE;
+  	private Boolean isValidPercentaje = Boolean.TRUE;
+
+	public Boolean getIsNewOwner() {
+		return isNewOwner;
+	}
+	
+	public void setIsNewOwner(Boolean isNewOwner) {
+		this.isNewOwner = isNewOwner;
+	}
+
+	public Boolean getIsValidPercentaje() {
+		return isValidPercentaje;
+	}
+
+	public void setIsValidPercentaje(Boolean isValidPercentaje) {
+		this.isValidPercentaje = isValidPercentaje;
+	}
+	
+	public void cleanNewOwner(){
+		isNewOwner = Boolean.FALSE;
+	    this.identificationNumberNewOwner = ""; 
+	    this.domainOwner = null;
+	}
+  
 }

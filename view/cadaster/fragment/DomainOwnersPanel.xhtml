@@ -8,7 +8,74 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich">
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:g="http://gim.gob.ec/jsf">
+
+			<a:region>
+				<rich:panel id="newOwnerPanel" >
+
+					<rich:panel style="height:50px; width:100%; overflow:auto;" id="messages"> 
+						<rich:messages errorClass="errors" />
+						 <h:outputText value="El porcentaje sumado supera el 100%" style="color: red" readonly="true" rendered="#{!propertyHome.isValidPercentaje}"/> 
+					</rich:panel>
+
+						<h:panelGrid columns="1" width="100%">
+
+							<g:residentChooser
+								resident="#{propertyHome.domainOwner.resident}"
+								criteria="#{propertyHome.criteriaNewOwner}" bean="#{propertyHome}"
+								searchAction="searchResidentNewOwner"
+								residentsList="#{propertyHome.residentsNewOwner}"
+								identificationNumber="#{propertyHome.identificationNumberNewOwner}"
+								searchByCriteriaAction="searchResidentByCriteriaNewOwner"
+								clearSearchPanelAction="clearSearchResidentPanelNewOwner"
+								residentChosenListenerName="ownerSelectedListener" 
+								disabled="#{!propertyHome.isNewOwner}"
+								reRender="percentageField" />
+
+							<s:decorate id="ownerTypeField2"
+								template="../../layout/edit.xhtml">
+								<ui:define name="label">#{messages['domainOwnerType']}:</ui:define>
+								<h:selectOneMenu id="ownerType" disabled="#{!propertyHome.isNewOwner}"
+				                  value="#{propertyHome.domainOwner.domainOwnerType}"> 
+				                  <s:selectItems value="#{propertyHome.domainOwnerTypes}" 
+				                    var="ownerType" 
+				                    label="#{messages[ownerType.name()]}" />
+									<s:convertEnum />
+									<a:support event="onchange" ajaxSingle="true"
+										reRender="ownerType" />
+								</h:selectOneMenu>
+							</s:decorate>
+							
+							<s:decorate id="percentageField" template="../../layout/edit.xhtml"> 
+		                        <ui:define name="label">#{messages['domainOwner.percentage']}</ui:define> 
+		                        <h:inputText id="percentage" disabled="#{!propertyHome.isNewOwner}"
+		                                   size="14" 
+		                                   required="#{propertyHome.domainOwner.resident != null}" 
+		                                  maxlength="10" 
+		                                  value="#{propertyHome.domainOwner.percentage}"> 
+		                                  <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/> 
+		                                  <a:support event="onblur" ajaxSingle="true" 
+		                    						reRender="newOwnerPanel" action="#{propertyHome.calculateOwnersPercentage()}" /> 
+		                        </h:inputText> 
+		                        <h:outputText value="%" readonly="true" /> 
+		                    </s:decorate>
+                </h:panelGrid>
+	            <div class="actionButtons" id="buttons">
+					<a:commandButton action="#{propertyHome.addDomainOwner()}"
+						value="#{messages['common.accept']}" reRender="newOwnerPanel,domainOwnersPanel" 
+	       				disabled="#{!propertyHome.isValidPercentaje}" />
+
+					<a:commandButton action="#{propertyHome.cleanNewOwner()}" ajaxSingle="true"
+						value="#{messages['common.clear']}" reRender="newOwnerPanel" />
+				</div>
+			</rich:panel>
+
+		</a:region>
+
+			
+
+    <div style="clear:both"></div>
 
 	<rich:panel id="domainOwnersPanel">
 		<f:facet name="header">
@@ -17,10 +84,9 @@
 				
 				<a:commandButton id="addOwner"
 					action="#{propertyHome.createDomainOwner()}"
-					reRender="domainOwnerAddPanel" ajaxSingle="true"
+					reRender="newOwnerPanel" ajaxSingle="true"
 					eventsQueue="gimEventsQueue"
-					oncomplete="Richfaces.showModalPanel('domainOwnerAddPanel',{width:800, height:475})"
-					value="#{messages['property.addOwner']}" />
+					value="#{messages['common.add']}" /> 
 			</h:panelGrid>
 		</f:facet>
 
@@ -33,7 +99,7 @@
 					value="#{propertyHome.instance.currentDomain.domainOwners}"
 					rowClasses="rvgRowOne,rvgRowTwo">
 
-					<rich:column sortBy="#{_owner.date}" styleClass="action">
+					<rich:column sortBy="#{_owner.transactionDate}" styleClass="center"> 
 						<f:facet name="header">
 							<h:outputText value="#{messages['domainOwner.transactionDate']}" />
 						</f:facet>
@@ -43,21 +109,28 @@
 						</h:outputText>
 					</rich:column>
 
-					<rich:column>
+					<rich:column styleClass="center">
 						<f:facet name="header">#{messages['domainOwnerType']}</f:facet>
 						<h:outputText value="#{messages[_owner.domainOwnerType.name()]}" readonly="true" />
 					</rich:column>
 
-					<rich:column>
+					<rich:column styleClass="center"> 
 						<f:facet name="header">#{messages['resident.identificationNumber']}</f:facet>
 						<h:outputText value="#{_owner.resident.identificationNumber}"
 							readonly="true" />
 					</rich:column>
 
-					<rich:column>
+					<rich:column styleClass="center">
 						<f:facet name="header">#{messages['resident.name']}</f:facet>
 						<h:outputText value="#{_owner.resident.name}" readonly="true" />
 					</rich:column>
+					
+					 <rich:column styleClass="center"> 
+			            <f:facet name="header">#{messages['domainOwner.percentage']}</f:facet> 
+			            <h:outputText value="#{_owner.percentage}" readonly="true" > 
+			              <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/> 
+			            </h:outputText> 
+			          </rich:column>
 
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet>

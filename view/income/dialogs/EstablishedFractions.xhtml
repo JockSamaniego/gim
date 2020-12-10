@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<rich:modalPanel id="establishedFractionsPanel" height="400" width="550" style="overflow:scroll">
+	<rich:modalPanel id="establishedFractionsPanel" height="450" width="550" style="overflow:scroll">
 		<f:facet name="header">
 			<h:panelGroup>
 				<h:outputText
@@ -25,6 +25,46 @@
 					event="onclick" />
 			</h:panelGroup>
 		</f:facet>
+		
+		<rich:panel id="paymentAgreementDetail" rendered="#{paymentAgreementHome.payments!=null}">
+			<h:panelGrid columns="2" width="100%" columnClasses="topAligned, topAligned right">
+				<h:panelGrid>
+					<s:decorate id="totalQuotasField" template="../../layout/edit.xhtml">
+						<ui:define name="label">Cuotas Totales:</ui:define>
+						<h:outputText id="totalQuotas" value="#{paymentAgreementHome.instance.dividends.size}"
+							styleClass="right"
+							style="font-size:12px; font-weight:bold;">
+						</h:outputText>
+					</s:decorate>
+					<s:decorate id="paidQuotasField" template="../../layout/edit.xhtml">
+						<ui:define name="label">Cuotas Pagadas:</ui:define>
+						<h:outputText id="paidQuotas" value="#{paymentAgreementHome.paidQuotas}"
+							styleClass="right"
+							style="font-size:12px; font-weight:bold;">
+						</h:outputText>
+					</s:decorate>
+				</h:panelGrid>
+				<h:panelGrid>
+					<s:decorate id="pendingQuotasField" template="../../layout/edit.xhtml">
+						<ui:define name="label">Cuotas Pendientes:</ui:define>
+						<h:outputText id="pendingQuotas" value="#{paymentAgreementHome.pendingQuotas}"
+							styleClass="right"
+							style="font-size:12px; font-weight:bold;">
+						</h:outputText>
+					</s:decorate>
+					<s:decorate id="expiredQuotasField" template="../../layout/edit.xhtml">
+						<ui:define name="label">Cuotas Expiradas:</ui:define>
+						<h:outputText id="expiredQuotas" value="#{paymentAgreementHome.expiredQuotas}"
+							styleClass="right"
+							style="font-size:12px; font-weight:bold; color:red">
+						</h:outputText>
+					</s:decorate>
+				</h:panelGrid>
+			</h:panelGrid>
+			<div style="clear: both" />
+		</rich:panel>
+		
+		<rich:spacer height="10" />
 
 		<rich:dataTable id="dividends" var="_dividend"
 				value="#{paymentHome.paymentAgreement.dividends}"
