@@ -107,6 +107,7 @@ public interface GimService {
 			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
 			AccountIsBlocked, Exception;
 	
+	List <BondPrintResponse>  bondsByExternalPayment(ServiceRequest request);
 	
 	
 }
