@@ -1,36 +1,84 @@
 package org.gob.gim.ws.service;
 
-public class BondPrintResponse {
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import org.gob.gim.common.NativeQueryResultColumn;
+
+public class BondPrintReport {
+
+	@NativeQueryResultColumn(index = 0)
 	private Long id;
+	@NativeQueryResultColumn(index = 1)
 	private String identificationnumber;
+	@NativeQueryResultColumn(index = 2)
 	private String name;
+	@NativeQueryResultColumn(index = 3)
 	private Long number;
+	@NativeQueryResultColumn(index = 4)
 	private Date emisiondate;
+	@NativeQueryResultColumn(index = 5)
 	private Date servicedate;
-	private Date liquidationdate;
+	@NativeQueryResultColumn(index = 6)
+	private Date liquidationdate;	
+	@NativeQueryResultColumn(index = 7)
 	private Date liquidationtime;
+	@NativeQueryResultColumn(index = 8)
 	private String description;
+	@NativeQueryResultColumn(index = 9)
 	private String reference;
+	@NativeQueryResultColumn(index = 10)
 	private String address;
+	@NativeQueryResultColumn(index = 11)
 	private BigDecimal lotappraisal;
+	@NativeQueryResultColumn(index = 12)
 	private BigDecimal buildingappraisal;
+	@NativeQueryResultColumn(index = 13)
 	private BigDecimal commercialappraisal;
+	@NativeQueryResultColumn(index = 14)
 	private BigDecimal exemptionvalue;
+	@NativeQueryResultColumn(index = 15)
 	private Date expirationdate;
+	@NativeQueryResultColumn(index = 16)
 	private BigDecimal nontaxabletotal;
+	@NativeQueryResultColumn(index = 17)
 	private BigDecimal discount;
+	@NativeQueryResultColumn(index = 18)
 	private BigDecimal interest;
+	@NativeQueryResultColumn(index = 19)
 	private BigDecimal surcharge;
+	@NativeQueryResultColumn(index = 20)
 	private BigDecimal paidtotal;
+	@NativeQueryResultColumn(index = 21)
 	private String groupingcode;
+	@NativeQueryResultColumn(index = 22)
 	private String street;
+	@NativeQueryResultColumn(index = 23)
 	private Long entryid;
-	private Entry entry;
+	@NativeQueryResultColumn(index = 24)
 	private String territorialCode;
+	@NativeQueryResultColumn(index = 25)
 	private String catastralKey;
+	@NativeQueryResultColumn(index = 26)
 	private String items;
+	@NativeQueryResultColumn(index = 27)
 	private String rubro;
+	@NativeQueryResultColumn(index = 28)
+	private Integer printingsNumber;	
+
+	private List<BondItemPrint> itemList =new ArrayList<BondItemPrint>();
+	
+	private List<BondEntryPrint> itemEntry =new ArrayList<BondEntryPrint>();
+
+	public List<BondEntryPrint> getItemEntry() {
+		return itemEntry;
+	}
+
+	public void setItemEntry(List<BondEntryPrint> itemEntry) {
+		this.itemEntry = itemEntry;
+	}
 
 	public Long getId() {
 		return id;
@@ -224,14 +272,6 @@ public class BondPrintResponse {
 		this.entryid = entryid;
 	}
 
-	public Entry getEntry() {
-		return entry;
-	}
-
-	public void setEntry(Entry entry) {
-		this.entry = entry;
-	}
-
 	public String getTerritorialCode() {
 		return territorialCode;
 	}
@@ -262,6 +302,22 @@ public class BondPrintResponse {
 
 	public void setRubro(String rubro) {
 		this.rubro = rubro;
+	}
+
+	public List<BondItemPrint> getItemList() {
+		return itemList;
+	}
+
+	public void setItemList(List<BondItemPrint> itemList) {
+		this.itemList = itemList;
+	}
+	
+	public Integer getPrintingsNumber() {
+		return printingsNumber;
+	}
+
+	public void setPrintingsNumber(Integer printingsNumber) {
+		this.printingsNumber = printingsNumber;
 	}
 
 }

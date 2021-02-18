@@ -1719,9 +1719,9 @@ public class RouteHome extends EntityHome<Route> {
 		//aqui cambia todo
 		// consulto los id's de consumos ya generados para el mes seleccionado
 		List<Long> consumptionAlreadyGenerated = findConsumptionAlreadyGenerated();
-		logger.info(">>>>>>>>>>>>>>>>>>>>>>los ya generados son "
+		/*logger.info(">>>>>>>>>>>>>>>>>>>>>>los ya generados son "
 				+ consumptionAlreadyGenerated.size() + " xxx " + year
-				+ " - " + month.getMonthInt());
+				+ " - " + month.getMonthInt());*/
 		// regreso un mes para comprobar los anteriores en caso de enero
 		// regreso a diciembre del anterior anio
 		int monthInt = month.getMonthInt() - 1;
@@ -1734,17 +1734,17 @@ public class RouteHome extends EntityHome<Route> {
 		List<Long> missingConsumption;
 		if (consumptionAlreadyGenerated.size() > 0) {
 			missingConsumption = findMissingConsumptions(consumptionAlreadyGenerated, yearInt, monthInt);
-			logger.info(">>>>>>>>> entra a cerooooooo");
+			// logger.info(">>>>>>>>> entra a cerooooooo");
 		}else{
 			missingConsumption = findAllMissingConsumption(yearInt, monthInt);
-			logger.info(">>>>>>>>> entra a elseeeeeee");
+			// logger.info(">>>>>>>>> entra a elseeeeeee");
 		}
 		//genero los consumos faltantes para la lista de missingConsumptions
 		if (missingConsumption.size() > 0) {
-			logger.info(">>>>>>>>>< va a generar "+missingConsumption.size()+ " consumos faltantes");
+			// logger.info(">>>>>>>>>< va a generar "+missingConsumption.size()+ " consumos faltantes");
 			generateNewRecords(findByIds(missingConsumption,yearInt, monthInt));
 		}else{
-			logger.info(">>>>>>>>>< no tiene nada que generarsssssssssss");
+			// logger.info(">>>>>>>>>< no tiene nada que generarsssssssssss");
 		}
 	}
 	
@@ -1845,7 +1845,7 @@ public class RouteHome extends EntityHome<Route> {
 		query.setParameter("isCanceled", Boolean.FALSE);
 		//hacer un check de todos los consumos antes de presentarlos
 		this.consumptions = checkConsumptionList(query.getResultList());
-		logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> entra a load 222.0 jjjj");
+		// logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> entra a load 222.0 jjjj");
 		if (consumptions.size() > 0) newLoad = true;
 	}
 		
