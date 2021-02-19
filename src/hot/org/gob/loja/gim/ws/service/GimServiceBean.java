@@ -18,7 +18,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -43,7 +42,6 @@ import org.gob.gim.ws.service.BondEntryPrint;
 import org.gob.gim.ws.service.BondItemPrint;
 import org.gob.gim.ws.service.BondPrintReport;
 import org.gob.gim.ws.service.BondPrintRequest;
-import org.gob.gim.ws.service.BondPrintResponse;
 import org.gob.gim.ws.service.BondPrintUpdate;
 import org.gob.gim.ws.service.EmisionResponse;
 import org.gob.gim.ws.service.GeneralResponse;
