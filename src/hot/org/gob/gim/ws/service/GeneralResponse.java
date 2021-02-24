@@ -4,14 +4,14 @@ import java.util.List;
 
 public class GeneralResponse {
 
-	private List<BondPrintReport> vouchers;
+	private List<BondPrintReport> bonds;
 
-	public List<BondPrintReport> getVouchers() {
-		return vouchers;
+	public List<BondPrintReport> getBonds() {
+		return bonds;
 	}
 
-	public void setVouchers(List<BondPrintReport> vouchers) {
-		this.vouchers = vouchers;
+	public void setBonds(List<BondPrintReport> bonds) {
+		this.bonds = bonds;
 	}
-	
+
 }

@@ -70,15 +70,16 @@ public class BondPrintReport {
 
 	private List<BondItemPrint> itemList =new ArrayList<BondItemPrint>();
 	
-	private List<BondEntryPrint> itemEntry =new ArrayList<BondEntryPrint>();
+	// private List<BondEntryPrint> itemEntry =new ArrayList<BondEntryPrint>();
+	private BondEntryPrint entry = new BondEntryPrint();
 
-	public List<BondEntryPrint> getItemEntry() {
+	/*public List<BondEntryPrint> getItemEntry() {
 		return itemEntry;
 	}
 
 	public void setItemEntry(List<BondEntryPrint> itemEntry) {
 		this.itemEntry = itemEntry;
-	}
+	}*/
 
 	public Long getId() {
 		return id;
@@ -318,6 +319,14 @@ public class BondPrintReport {
 
 	public void setPrintingsNumber(Integer printingsNumber) {
 		this.printingsNumber = printingsNumber;
+	}
+
+	public BondEntryPrint getEntry() {
+		return entry;
+	}
+
+	public void setEntry(BondEntryPrint entry) {
+		this.entry = entry;
 	}
 
 }

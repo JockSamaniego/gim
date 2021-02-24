@@ -145,7 +145,7 @@ public class GimServiceBean implements GimService {
 			+ "		) as items_bond "
 			+ "	) as items, "
 			+ "	(  "
-			+ "		select CAST(COALESCE(array_to_json(array_agg(row_to_json(rubro_principal))), '[]') AS TEXT) from  "
+			+ "		select cast(to_json(rubro_principal) as text) from "
 			+ "		( "
 			+ "			SELECT id, code, datepattern, name, reason  "
 			+ "			FROM entry  "
@@ -158,7 +158,7 @@ public class GimServiceBean implements GimService {
 			+ "inner join resident re on mb.resident_id = re.id "
 			+ "LEFT OUTER JOIN address addr on re.currentaddress_id = addr.id "
 			+ "where mb.id IN (:municipalBondIds)  "
-			+ "order by mb.entry_id, mb.number ";	
+			+ "order by mb.entry_id, mb.liquidationdate, mb.liquidationtime ";	
 
 	@Override
 	public Taxpayer findTaxpayer(ServiceRequest request)
@@ -1389,7 +1389,7 @@ public class GimServiceBean implements GimService {
 				+ "		) as items_bond "
 				+ "	) as items, "
 				+ "	(  "
-				+ "		select CAST(COALESCE(array_to_json(array_agg(row_to_json(rubro_principal))), '[]') AS TEXT) from  "
+				+ "		select cast(to_json(rubro_principal) as text) from "
 				+ "		( "
 				+ "			SELECT id, code, datepattern, name, reason  "
 				+ "			FROM entry  "
@@ -1404,7 +1404,7 @@ public class GimServiceBean implements GimService {
 				+ "where entry_id in (56,57,61)  "
 				+ "and re.identificationNumber like :identification "
 				+ "and mb.municipalbondstatus_id in (11) "
-				+ "order by mb.entry_id, mb.number ";
+				+ "order by mb.entry_id, mb.liquidationdate, mb.liquidationtime ";
 		Query query = em.createNativeQuery(sql);
 		query.setParameter("identification", request.getIdentificationNumber());
 				
@@ -1416,9 +1416,19 @@ public class GimServiceBean implements GimService {
 						bp.getItems(), new TypeReference<List<BondItemPrint>>() { });
 				bp.setItemList(asList);
 				
-				List<BondEntryPrint> entries = new ObjectMapper().readValue(
-						bp.getRubro(), new TypeReference<List<BondEntryPrint>>() { });
-				bp.setItemEntry(entries);
+				for(BondItemPrint item: asList)  {
+					BondEntryPrint entry = new BondEntryPrint();
+					entry.setCode(item.getCode());
+					entry.setDatepattern(item.getDatepattern());
+					entry.setId(item.getEntry_id());
+					entry.setName(item.getName());
+					entry.setReason(item.getReason());
+					item.setEntry(entry);
+				}
+				
+				BondEntryPrint entries = new ObjectMapper().readValue(
+						bp.getRubro(), BondEntryPrint.class);
+				bp.setEntry(entries);
 				
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
@@ -1433,7 +1443,7 @@ public class GimServiceBean implements GimService {
 		}
 		
 		GeneralResponse response = new GeneralResponse();
-		response.setVouchers(lista);
+		response.setBonds(lista);
 		
 		
 		return response;
@@ -1476,9 +1486,23 @@ public class GimServiceBean implements GimService {
 						bp.getItems(), new TypeReference<List<BondItemPrint>>() { });
 				bp.setItemList(asList);
 				
-				List<BondEntryPrint> entries = new ObjectMapper().readValue(
+				for(BondItemPrint item: asList)  {
+					BondEntryPrint entry = new BondEntryPrint();
+					entry.setCode(item.getCode());
+					entry.setDatepattern(item.getDatepattern());
+					entry.setId(item.getEntry_id());
+					entry.setName(item.getName());
+					entry.setReason(item.getReason());
+					item.setEntry(entry);
+				}
+				
+				/*List<BondEntryPrint> entries = new ObjectMapper().readValue(
 						bp.getRubro(), new TypeReference<List<BondEntryPrint>>() { });
-				bp.setItemEntry(entries);
+				bp.setItemEntry(entries);*/
+				
+				BondEntryPrint entries = new ObjectMapper().readValue(
+						bp.getRubro(), BondEntryPrint.class);
+				bp.setEntry(entries);
 				
 			} catch (JsonParseException e) {
 				e.printStackTrace();
@@ -1490,7 +1514,7 @@ public class GimServiceBean implements GimService {
 		}
 		
 		GeneralResponse response = new GeneralResponse();
-		response.setVouchers(lista);
+		response.setBonds(lista);
 		return response;
 	}
 

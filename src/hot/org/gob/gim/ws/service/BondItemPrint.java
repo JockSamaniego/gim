@@ -17,6 +17,8 @@ public class BondItemPrint {
 	private String name;
 	private String reason;
 	private String datepattern;
+	
+	private BondEntryPrint entry;
 
 	public Long getId() {
 		return id;
@@ -120,6 +122,14 @@ public class BondItemPrint {
 
 	public void setIstaxable(Boolean istaxable) {
 		this.istaxable = istaxable;
+	}
+
+	public BondEntryPrint getEntry() {
+		return entry;
+	}
+
+	public void setEntry(BondEntryPrint entry) {
+		this.entry = entry;
 	}
 	
 }
