@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.ejb.Local;
 
 import org.gob.gim.ws.service.EmisionResponse;
+import org.gob.gim.ws.service.GeneralResponse;
 import org.gob.gim.ws.service.InfringementEmisionResponse;
 import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
@@ -15,6 +16,7 @@ import org.gob.loja.gim.ws.dto.RealEstate;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.StatementReport;
 import org.gob.loja.gim.ws.dto.Taxpayer;
+import org.gob.gim.ws.service.BondPrintRequest;
 import org.gob.loja.gim.ws.exception.AccountIsBlocked;
 import org.gob.loja.gim.ws.exception.AccountIsNotActive;
 import org.gob.loja.gim.ws.exception.EmissionOrderNotGenerate;
@@ -107,6 +109,9 @@ public interface GimService {
 			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
 			AccountIsBlocked, Exception;
 	
+	GeneralResponse bondsByExternalPayment(ServiceRequest request);
 	
+	GeneralResponse updateBondPrinterNumber(ServiceRequest request, BondPrintRequest bonds);
+		
 	
 }
