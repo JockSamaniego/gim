@@ -1,0 +1,110 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="../layout/template.xhtml" login-required="true">
+
+	<ui:define name="body">
+
+		<h:form id="errorsCorrectionSearch" styleClass="edit">
+			<rich:simpleTogglePanel label="#{messages['GenerateErrorsCorrectionReport'].toUpperCase()}" switchType="ajax">
+
+				<s:decorate template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['errorCorrection.startDate']}</ui:define>
+					<rich:calendar id="start" value="#{municipalBondHome.correctionStartDate}" required="true" datePattern="#{messages['common.datePattern']}"/>
+				</s:decorate>
+
+				<s:decorate template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['errorCorrection.endDate']}</ui:define>
+					<rich:calendar id="end" value="#{municipalBondHome.correctionEndDate}" required="true" datePattern="#{messages['common.datePattern']}"/>
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<a:commandButton id="search" value="#{messages['common.search']}"
+					action="#{municipalBondHome.findBondsInErrorsCorrection()}"
+					reRender="resultsPanel, errorsCorrectionTable" />
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none" />
+				<s:button id="home" view="/home.xhtml"
+					value="#{messages['common.quit']}" propagation="end" />
+			</div>
+
+			<a:outputPanel id="resultsPanel" ajaxRendered="true">
+				<h:outputText value="#{messages['errorCorrection.noResult']}" 
+							  rendered="#{municipalBondHome.mbsCorrection.size() == 0}"/>
+				<rich:dataTable id="errorsCorrectionTable"
+					value="#{municipalBondHome.mbsCorrection}" var="_var"
+					columnClasses="center,center,center,left,left,right,center,left,center"
+					rendered="#{municipalBondHome.mbsCorrection.size() > 0}">
+
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle left, ">
+							<h:outputText
+								value="Listado de Obligaciones" />
+
+							<s:button
+								view="/revenue/report/ErrorsCorrectionReportPDF.xhtml"
+								id="printId"
+								rendered="#{municipalBondHome.mbsCorrection.size() > 0}"
+								propagation="join" value="Imprimir" />
+
+						</h:panelGrid>
+
+					</f:facet>
+
+					<rich:column width="8%">
+						<f:facet name="header">Obligación</f:facet>
+						<h:outputText value="#{_var.number}" />
+					</rich:column>
+					<rich:column width="8%">
+						<f:facet name="header">Emisión</f:facet>
+						<h:outputText value="#{_var.emisionDate}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Identificación</f:facet>
+						<h:outputText value="#{_var.residentIdentification}" />
+					</rich:column>
+					<rich:column width="15%">
+						<f:facet name="header">Contribuyente</f:facet>
+						<h:outputText value="#{_var.residentName}" />
+					</rich:column>
+					<rich:column width="15%">
+						<f:facet name="header">Rubro</f:facet>
+						<h:outputText value="#{_var.entryName}" />
+					</rich:column>
+					<rich:column width="8%">
+						<f:facet name="header">Valor</f:facet>
+						<h:outputText value="#{_var.paidTotal}" >
+							<f:convertNumber pattern="#0.00"/>
+						</h:outputText>
+					</rich:column>
+					<rich:column width="8%">
+						<f:facet name="header">Cambio de Estado</f:facet>
+						<h:outputText value="#{_var.changeStatusDate}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</rich:column>
+					<rich:column width="18%">
+						<f:facet name="header">Explicación</f:facet>
+						<h:outputText value="#{_var.changeExplanation}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Usuario</f:facet>
+						<h:outputText value="#{_var.userName}" />
+					</rich:column>
+
+				</rich:dataTable>
+			</a:outputPanel>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
