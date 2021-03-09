@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.gob.gim.common.NativeQueryResultColumn;
 import org.gob.gim.common.NativeQueryResultEntity;
 
+
 @NativeQueryResultEntity
 public class BankDebitReportDTO {
 	
@@ -31,6 +32,9 @@ public class BankDebitReportDTO {
 	
 	@NativeQueryResultColumn(index = 7)
     private BigDecimal valor;
+	
+	@NativeQueryResultColumn(index = 8)
+	private Long residentId;
 
 	public String getIdentificacion() {
 		return identificacion;
@@ -95,4 +99,13 @@ public class BankDebitReportDTO {
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
+
+	public Long getResidentId() {
+		return residentId;
+	}
+
+	public void setResidentId(Long residentId) {
+		this.residentId = residentId;
+	}
+
 }

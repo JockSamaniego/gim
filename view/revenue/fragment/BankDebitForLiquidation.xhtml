@@ -1,0 +1,121 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="bankDebitForLiquidation" width="1070" height="550" style="overflow-y:scroll">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Débitos Bancarios para LIQUIDAR"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="#{id}_hidelink2" />
+				<rich:componentControl for="bankDebitForLiquidation" attachTo="#{id}_hidelink2"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+<h:form id="sectionBankDebit">
+		<rich:panel>
+			<h:panelGrid columns="1" id="panelDebits">
+				<s:decorate id="debit1" template="../../layout/edit.xhtml">
+					<ui:define name="label">Débitos Seleccionados:</ui:define>
+					<h:outputText id="debitSelected" value="#{bankDebitHome.bankDebitForLiquidations.size()}" style="font-weight:bold; font-size:14px; color:red" />
+				</s:decorate>
+			
+			</h:panelGrid>
+			<div style="clear: both" />
+		</rich:panel>
+	
+
+	<rich:panel id="contentPanel" width="100%">
+				<f:facet name="header">
+					<h:panelGrid columns="4" columnClasses="headerTitle,">
+						<h:outputText value="Débitos Encontrados (#{bankDebitHome.previousForLiquidations.size()})" />
+						<a:commandButton id="selectAll" ajaxSingle="true"
+								eventsQueue="gimQueue" value="Seleccionar todo"
+								reRender="panelDebits, contentPanel, confirmLiquidation"
+								actionListener="#{bankDebitHome.selectAll()}" />
+						<a:commandButton id="deselectAll" ajaxSingle="true"
+								eventsQueue="gimQueue" value="Deseleccionar todo"
+								reRender="panelDebits, contentPanel, confirmLiquidation"
+								actionListener="#{bankDebitHome.deselectAll()}" />
+					</h:panelGrid>
+				</f:facet>
+				
+				<a:region>
+				<a:outputPanel styleClass="results" id="unitsPanel">
+					<rich:dataTable height="380px" width="100%" 
+						id="_bankDebitTable"  var="_var"
+						value="#{bankDebitHome.previousForLiquidations}">
+												
+						<rich:column sortBy="#{_var.creationDate}" styleClass="action" style="align:left;" width="120px">
+							<f:facet name="header">Fecha de Creación</f:facet>
+							<h:outputText value="#{_var.creationDate}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>						
+						<rich:column sortBy="#{_var.residentName}" styleClass="action" style="align:left;" width="300px">
+							<f:facet name="header">Contribuyente</f:facet>
+							<h:outputText value="#{_var.residentName}" />
+						</rich:column>
+						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:center;" width="120px">
+							<f:facet name="header">Identificación</f:facet>
+							<h:outputText value="#{_var.residentIdentification}" />
+						</rich:column>
+						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:center;">
+							<f:facet name="header">Servicio</f:facet>
+							<h:outputText value="#{_var.service}" />
+						</rich:column>
+						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:center;">
+							<f:facet name="header">Valor</f:facet>
+							<h:outputText value="#{_var.value}" />
+						</rich:column>
+						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:left;" width="175px">
+							<f:facet name="header">Observación</f:facet>
+							<h:outputText id="debitObservation" value="#{_var.observation}" />
+						</rich:column>
+						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:center;">
+							<f:facet name="header">Seleccionar</f:facet>
+							<h:selectBooleanCheckbox id="debitSelected"
+								value="#{_var.isSelected}" disabled="#{_var.hasProblem}">
+								<a:support event="onchange" reRender="panelDebits, debitSelected, confirmLiquidation, debitObservation"
+									ajaxSingle="true" 
+									action="#{bankDebitHome.selectedCheckBox(_var)}"/>
+							</h:selectBooleanCheckbox>
+						</rich:column>
+					</rich:dataTable>
+				</a:outputPanel>
+				</a:region>
+			</rich:panel>
+
+		<div class="actionButtons">
+			<a:commandButton id="confirmLiquidation"
+								  disabled = "#{bankDebitHome.bankDebitForLiquidations.size() == 0}"
+				                  action="#{bankDebitHome.liquidateDebitsSelected()}"
+				                  reRender="resultInformationPanel" ajaxSingle="true"
+				                  eventsQueue="gimQueue"
+				                  oncomplete="Richfaces.showModalPanel('resultInformationPanel',{width:350, height:250})"
+				                  value="LIQUIDAR!" />
+
+			<a:commandButton 
+				ajaxSingle="true" 
+				value="#{messages['common.quit']}"
+				oncomplete="Richfaces.hideModalPanel('bankDebitForLiquidation');"
+				bypassUpdates="true" />
+
+		</div>
+	</h:form>
+	</rich:modalPanel>
+
+</ui:composition>

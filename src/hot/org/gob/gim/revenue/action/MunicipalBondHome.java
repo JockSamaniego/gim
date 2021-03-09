@@ -60,6 +60,7 @@ import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.DTO.CRTV_MunicipalBonds;
+import ec.gob.gim.revenue.model.DTO.MunicipalBondErrorsCorrectionDTO;
 import ec.gob.gim.revenue.model.adjunct.ANTReference;
 import ec.gob.gim.security.model.Role;
 //macartuche
@@ -1851,4 +1852,104 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		em.flush();
 	}
 		
+	
+	// Reporte de obligaciones en estado de corrección de errores
+	// Jock Samaniego M.
+	
+	private Date correctionStartDate;
+	private Date correctionEndDate;
+	private List<MunicipalBondErrorsCorrectionDTO> mbsCorrection = new ArrayList();
+	
+	
+	
+	public Date getCorrectionStartDate() {
+		return correctionStartDate;
+	}
+
+	public void setCorrectionStartDate(Date correctionStartDate) {
+		this.correctionStartDate = correctionStartDate;
+	}
+
+	public Date getCorrectionEndDate() {
+		return correctionEndDate;
+	}
+
+	public void setCorrectionEndDate(Date correctionEndDate) {
+		this.correctionEndDate = correctionEndDate;
+	}
+	
+	public List<MunicipalBondErrorsCorrectionDTO> getMbsCorrection() {
+		return mbsCorrection;
+	}
+
+	public void setMbsCorrection(
+			List<MunicipalBondErrorsCorrectionDTO> mbsCorrection) {
+		this.mbsCorrection = mbsCorrection;
+	}
+
+	public void findBondsInErrorsCorrection(){
+		
+		mbsCorrection = new ArrayList();
+		
+		String query = "SELECT mb.number as mbNumber,"
+				+ "mb.emisiondate as emission,"
+				+ "res.identificationnumber as resIdentification,"
+				+ "res.name as resName,"
+				+ "ent.name as entry,"
+				+ "mb.paidtotal as total,"
+				+ "stc.date as changeStatus,"
+				+ "stc.explanation as explanation,"
+				+ "usr.name as userName "
+				+ "FROM gimprod.municipalbond mb "
+				+ "LEFT JOIN gimprod.statuschange stc On stc.municipalbond_id = mb.id "
+				+ "LEFT JOIN gimprod._user usr On usr.id = stc.user_id "
+				+ "LEFT JOIN gimprod.resident res On res.id = mb.resident_id "
+				+ "LEFT JOIN gimprod.entry ent On ent.id = mb.entry_id "
+				+ "where mb.municipalbondstatus_id = 15 "
+				+ "and mb.emisiondate BETWEEN :startDate and :endDate "
+				+ "ORDER BY mb.emisiondate,res.name ASC";
+		
+		Query q = this.getEntityManager().createNativeQuery(query);
+		q.setParameter("startDate", correctionStartDate);
+		q.setParameter("endDate", correctionEndDate);
+		mbsCorrection = NativeQueryResultsMapper.map(q.getResultList(), MunicipalBondErrorsCorrectionDTO.class);
+	}
+	
+	
+	private Charge revenueCharge;		
+	private Delegate revenueDelegate;
+	
+	
+	public Charge getRevenueCharge() {
+		return revenueCharge;
+	}
+
+	public void setRevenueCharge(Charge revenueCharge) {
+		this.revenueCharge = revenueCharge;
+	}
+
+	public Delegate getRevenueDelegate() {
+		return revenueDelegate;
+	}
+
+	public void setRevenueDelegate(Delegate revenueDelegate) {
+		this.revenueDelegate = revenueDelegate;
+	}
+	
+	public Charge getCharge(String systemParameter) {
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+		Charge charge = systemParameterService.materialize(Charge.class,systemParameter);
+		return charge;
+	}
+
+	public void loadCharge() {
+		revenueCharge = getCharge("DELEGATE_ID_REVENUE");
+		if (revenueCharge != null) {
+			for (Delegate d : revenueCharge.getDelegates()) {
+				if (d.getIsActive())
+					revenueDelegate = d;
+			}
+		}	
+	}
 }

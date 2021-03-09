@@ -86,6 +86,7 @@ import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.EntryStructureType;
+import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
@@ -2196,5 +2197,71 @@ public class IncomeServiceBean implements IncomeService {
 		return ds2;
 	}
 	
+	private Deposit generateDepositForBankDebit(MunicipalBond municipalBond,
+			Date paymentDate, Person cashier, Long tillId, String externalTransactionId) {
+		Payment payment = new Payment();
+		payment.setDate(paymentDate);
+		payment.setTime(paymentDate);
+		payment.setCashier(cashier);
+		payment.setStatus(FinancialStatus.VALID);
+		payment.setValue(municipalBond.getPaidTotal());
+		payment.setExternalTransactionId(externalTransactionId);				
+
+			Query queryType = entityManager.createNamedQuery("PaymentTypeSRI.findByCode");
+			queryType.setParameter("code", "07");
+			PaymentTypeSRI typeSri = (PaymentTypeSRI)queryType.getSingleResult();
+			
+			Query queryBank = entityManager.createNamedQuery("FinancialInstitution.findById");
+			queryBank.setParameter("id", 23L);
+			FinancialInstitution bank = (FinancialInstitution)queryBank.getSingleResult();
+						
+			payment.getPaymentFractions().get(0).setPaidAmount(municipalBond.getPaidTotal());
+			payment.getPaymentFractions().get(0).setReceivedAmount(municipalBond.getPaidTotal());
+
+			payment.getPaymentFractions().get(0).setPaymentType(PaymentType.TRANSFER);
+			payment.getPaymentFractions().get(0).setPaymentTypesri(typeSri);
+			
+			payment.getPaymentFractions().get(0).setDocumentNumber("CERTIFICACION TESORERIA");
+			payment.getPaymentFractions().get(0).setFinantialInstitution(bank);
+			
+		Deposit deposit = new Deposit();
+		deposit.setBalance(BigDecimal.ZERO);
+		deposit.setCapital(municipalBond.getValue());
+		deposit.setConcept(municipalBond.getEntry().getName());
+		deposit.setDate(paymentDate);
+		deposit.setInterest(municipalBond.getInterest());
+		deposit.setIsPrinted(Boolean.FALSE);
+		deposit.setNumber(1);
+		deposit.setPaidTaxes(municipalBond.getTaxesTotal());
+		deposit.setStatus(FinancialStatus.VALID);
+		deposit.setTime(paymentDate);
+		deposit.setValue(municipalBond.getPaidTotal());
+
+		deposit.setSurcharge(municipalBond.getSurcharge());
+		deposit.setDiscount(municipalBond.getDiscount());
+
+		municipalBond.add(deposit);
+		payment.add(deposit);
+
+		return deposit;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public void saveForBankLiquidation(Date paymentDate, List<Long> municipalBondIds,
+			Person cashier, Long tillId, String externalTransactionId, String paymentMethod) throws Exception {
+		Query query = entityManager
+				.createNamedQuery("MunicipalBond.findSimpleByIds");
+		query.setParameter("municipalBondIds", municipalBondIds);
+		List<MunicipalBond> paidMunicipalBonds = query.getResultList();
+
+		List<Deposit> deposits = new LinkedList<Deposit>();
+		for (MunicipalBond municipalBond : paidMunicipalBonds) {
+			Deposit deposit = generateDepositForBankDebit(municipalBond, paymentDate,
+					cashier, tillId, externalTransactionId);
+			deposits.add(deposit);
+		}
+		save(deposits, null, tillId, paymentMethod);
+	}
 	
 }

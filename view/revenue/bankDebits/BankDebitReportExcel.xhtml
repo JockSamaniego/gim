@@ -1,0 +1,60 @@
+<e:workbook xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<e:worksheet value="#{bankDebitHome.dataReporte}" var="_var">
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Identificacion" />
+			</f:facet>
+			<e:cell value="#{_var.identificacion}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Contribuyente" />
+			</f:facet>
+			<e:cell value="#{_var.contribuyente}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Tipo_cuenta" />
+			</f:facet>
+			<e:cell value="#{_var.tipo_cuenta}" />
+		</e:column>
+				
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Numero_cuenta" />
+			</f:facet>
+			<e:cell value="#{_var.numero_cuenta}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Titular" />
+			</f:facet>
+			<e:cell value="#{_var.titular}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Servicio" />
+			</f:facet>
+			<e:cell value="#{_var.servicio}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Cantidad" />
+			</f:facet>
+			<e:cell value="#{_var.cantidad}" />
+		</e:column>
+		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="Valor" />
+			</f:facet>
+			<e:cell value="#{_var.valor}" />
+		</e:column>
+	</e:worksheet>
+
+</e:workbook>
