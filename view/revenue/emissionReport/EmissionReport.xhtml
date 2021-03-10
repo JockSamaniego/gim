@@ -108,7 +108,7 @@
 						
 						<rich:column sortBy="#{_entryDetail.cantidad_emisiones}" styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="Cantidad Emisiones" />
+								<h:outputText value="Emisiones" />
 							</f:facet>
 							<h:outputText value="#{_entryDetail.cantidad_emisiones}" size="12"
 								styleClass="right">
@@ -128,7 +128,7 @@
 						
 						<rich:column sortBy="#{_entryDetail.cantidad_bajas}" styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="Cantidad Bajas" />
+								<h:outputText value="Bajas" />
 							</f:facet>
 							<h:outputText value="#{_entryDetail.cantidad_bajas}" size="12"
 								styleClass="right">
@@ -141,6 +141,26 @@
 								<h:outputText value="Valor Bajas" />
 							</f:facet>
 							<h:outputText value="#{_entryDetail.valor_bajas}" size="12"
+								styleClass="right">
+								<f:convertNumber type="number" groupingUsed="true" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column sortBy="#{_entryDetail.cantidad_correccion}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Correcciones" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.cantidad_correccion}" size="12"
+								styleClass="right">
+							</h:outputText>
+						</rich:column>
+						
+
+						<rich:column sortBy="#{_entryDetail.valor_correccion}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Valor Correccion" />
+							</f:facet>
+							<h:outputText value="#{_entryDetail.valor_correccion}" size="12"
 								styleClass="right">
 								<f:convertNumber type="number" groupingUsed="true" />
 							</h:outputText>
@@ -180,6 +200,17 @@
 								
 								<rich:column styleClass="number tableCellFont">
 									<h:outputText value="#{emissionReportHome.total_valor_bajas}">
+										<f:convertNumber pattern="$ ####.00" type="number" groupingUsed="true" />
+									</h:outputText>
+								</rich:column>
+								
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText value="#{emissionReportHome.total_correction}">
+									</h:outputText>
+								</rich:column>
+								
+								<rich:column styleClass="number tableCellFont">
+									<h:outputText value="#{emissionReportHome.total_valor_correction}">
 										<f:convertNumber pattern="$ ####.00" type="number" groupingUsed="true" />
 									</h:outputText>
 								</rich:column>

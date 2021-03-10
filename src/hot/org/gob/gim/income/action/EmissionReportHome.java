@@ -670,9 +670,11 @@ public class EmissionReportHome extends EntityController {
 
 		this.total_cant_bajas = new Long(0);
 		this.total_cant_emisiones = new Long(0);
+		this.total_correction = new Long(0);
 		this.total_emision = BigDecimal.ZERO;
 		this.total_valor_bajas = BigDecimal.ZERO;
 		this.total_valor_emision = BigDecimal.ZERO;
+		this.total_valor_correction = BigDecimal.ZERO;
 
 		for (ReportEmissionDTO reportEmissionDTO : allResults) {
 			this.total_cant_bajas = this.total_cant_bajas
@@ -685,6 +687,11 @@ public class EmissionReportHome extends EntityController {
 					.add(reportEmissionDTO.getValor_bajas());
 			this.total_valor_emision = this.total_valor_emision
 					.add(reportEmissionDTO.getValor_emision());
+			
+			this.total_correction = this.total_correction
+					+ reportEmissionDTO.getCantidad_correccion();
+			this.total_valor_correction = this.total_valor_correction
+					.add(reportEmissionDTO.getValor_correccion());
 		}
 
 		this.detailsResults = this.emissionService

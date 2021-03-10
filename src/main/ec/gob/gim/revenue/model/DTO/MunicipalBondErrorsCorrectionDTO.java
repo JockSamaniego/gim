@@ -26,15 +26,18 @@ public class MunicipalBondErrorsCorrectionDTO {
 	private String entryName;
 	
 	@NativeQueryResultColumn(index = 5)
-	private BigDecimal paidTotal;
+	private BigDecimal value;
 	
 	@NativeQueryResultColumn(index = 6)
-	private Date changeStatusDate;
+	private BigDecimal taxesTotal;
 	
 	@NativeQueryResultColumn(index = 7)
-	private String changeExplanation;
+	private Date changeStatusDate;
 	
 	@NativeQueryResultColumn(index = 8)
+	private String changeExplanation;
+	
+	@NativeQueryResultColumn(index = 9)
 	private String userName;
 
 	public int getNumber() {
@@ -77,14 +80,6 @@ public class MunicipalBondErrorsCorrectionDTO {
 		this.entryName = entryName;
 	}
 
-	public BigDecimal getPaidTotal() {
-		return paidTotal;
-	}
-
-	public void setPaidTotal(BigDecimal paidTotal) {
-		this.paidTotal = paidTotal;
-	}
-
 	public Date getChangeStatusDate() {
 		return changeStatusDate;
 	}
@@ -107,6 +102,22 @@ public class MunicipalBondErrorsCorrectionDTO {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;
+	}
+
+	public BigDecimal getTaxesTotal() {
+		return taxesTotal;
+	}
+
+	public void setTaxesTotal(BigDecimal taxesTotal) {
+		this.taxesTotal = taxesTotal;
 	}
 
 }
