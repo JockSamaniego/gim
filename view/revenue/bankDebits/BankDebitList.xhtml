@@ -96,6 +96,7 @@
 				                  action="#{bankDebitHome.checkMunicipalBondDebits()}"
 				                  reRender="bankDebitForLiquidation, _bankDebitTable" ajaxSingle="true"
 				                  eventsQueue="gimQueue"
+				                  disabled="#{(userSession.tillPermission == null) or (userSession.tillPermission != null and userSession.tillPermission.openingTime == null)}"
 				                  oncomplete="Richfaces.showModalPanel('bankDebitForLiquidation',{width:1070, height:550})"
 				                  value="LIQUIDAR!" />
 								

@@ -6,24 +6,22 @@
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
-	title="Reporte de Correccion de Errores" subject="report" type="pdf"
-	pageSize="A4" margins="40 40 20 20" author="loxageek"
-	orientation="portrait" creator="loxageek">
+	title="obligacionesConCorreccionErrores" subject="report" type="pdf"
+	pageSize="A4" margins="25 20 15 20" author="GADM-Loja"
+	orientation="portrait" creator="GADM-Loja">
 
 	<f:facet name="header">
 		<p:font size="9" name="HELVETICA">
 			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
 				<p:paragraph>
 					<p:table columns="2" widthPercentage="100" spacingAfter="15"
-						widths="1 10">
+						widths="1 12">
 						<f:facet name="defaultCell">
 							<p:cell borderWidth="0" />
 						</f:facet>
 						<p:cell>
-							<p:image value="#{gim.institution.logo}" alignment="center"
-								widht="1" height="1">
-								<s:transformImageSize height="70" maintainRatio="true" />
-							</p:image>
+							<p:image height="1" width="1" value="/img/escudo.jpg"
+								alignment="center" />
 						</p:cell>
 						<p:cell>
 							<p:font size="8" style="bold">
@@ -35,9 +33,8 @@
 							</p:font>
 
 							<p:font size="8" style="bold">
-								<p:paragraph alignment="center">REPORTE DE OBLIGACIONES EN ESTADO DE CORRECCIÓN DE ERRORES</p:paragraph>
+								<p:paragraph alignment="center">DETALLE DE OBLIGACIONES EN ESTADO DE CORRECCIÓN DE ERRORES</p:paragraph>
 							</p:font>
-
 						</p:cell>
 					</p:table>
 				</p:paragraph>
@@ -81,11 +78,35 @@
 			<p:cell colspan="1">
 				<p:paragraph>
 					<p:font size="8" style="bold">
-						<p:text value="#{messages['report.startDate']}: " />
+						<p:text value="#{messages['Periodo Fiscal']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{userSession.fiscalPeriod.name}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="Correcciones desde: " />
 					</p:font>
 					<p:font size="8">
 						<p:text value="#{statusChangeHome.correctionStartDate}">
-							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1" >
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="Correcciones hasta: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{statusChangeHome.correctionEndDate}">
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
 						</p:text>
 					</p:font>
 				</p:paragraph>
@@ -94,120 +115,203 @@
 			<p:cell colspan="1">
 				<p:paragraph>
 					<p:font size="8" style="bold">
-						<p:text value="#{messages['report.endDate']}: " />
+						<p:text value="Valor Total de Correcciones: " />
 					</p:font>
 					<p:font size="8">
-						<p:text value="#{statusChangeHome.correctionEndDate}">
-							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
-						</p:text>
+						<p:text value="#{statusChangeHome.totalWithCorrection}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
+
 		</p:table>
 
-		<p:table spacingBefore='10' columns="1" widthPercentage="100"
-			headerRows="0"
-			rendered="#{statusChangeHome.bondsWithCorrectionDTO.size() > 0}"
-			widths="1">
-			<p:font size="8" style="bold">
-				<p:cell colspan="7">
-					<p:paragraph borderWidth="1" >
-						<p:font size="10" style="bold">
-							<p:text value="Listado de Obligaciones:" />
-						</p:font>
-					</p:paragraph>
-				</p:cell>
-			</p:font>
-		</p:table>
 
-		<p:table rendered="#{statusChangeHome.bondsWithCorrectionDTO.size() > 0}"
-			columns="6"
-			widthPercentage="100" headerRows="0"
-			widths="1.5 1.5 4.5 1.5 1.5 1.5">
-			<p:font size="6" style="bold">
+
+
+		<p:table rendered="#{not empty statusChangeHome.bondsWithCorrection}" columns="8"
+			widthPercentage="100" headerRows="0" widths="1 1 1.5 1 2.5 1.2 2.8 1">
+			<p:font size="7" style="bold">
 				<f:facet name="defaultCell">
 					<p:cell borderWidth="0" />
 				</f:facet>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Obligación" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center" >
-					<p:paragraph>
-						<p:text value="Cambio de Estado" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center" >
-					<p:paragraph>
-						<p:text value="Explicación" />
+						<p:text value="#{messages['Nro. Obligacion']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Fecha de Emisión" />
+						<p:text value="Fecha de correccion">
+						</p:text>
 					</p:paragraph>
 				</p:cell>
 				
-				<p:cell horizontalAlignment="center" >
+				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Valor" />
+						<p:text value="Razon de correccion">
+						</p:text>
 					</p:paragraph>
 				</p:cell>
 				
-				<p:cell horizontalAlignment="center" >
+				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Usuario Responsable" />
+						<p:text value="#{messages['Fecha emision']}">
+						</p:text>
 					</p:paragraph>
 				</p:cell>
-			</p:font>
-			<p:font size="6">
-				<ui:repeat value="#{statusChangeHome.bondsWithCorrectionDTO}" var="_var">
-					<p:cell horizontalAlignment="center">
-						<p:paragraph>
-							<p:text
-								value="#{_var.number}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="center">						
-						<p:paragraph>
-							<p:text value="#{_var.changeStatusDate}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="left">						
-						<p:paragraph>
-							<p:text value="#{_var.changeExplanation}" />
-						</p:paragraph>
-					</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['Nombre Cuenta']}" />
+					</p:paragraph>
+				</p:cell>
 
-					<p:cell horizontalAlignment="center">
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['Contribuyente']}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Nombre Contribuyente" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['Valor']}" />
+					</p:paragraph>
+				</p:cell>
+
+			</p:font>
+
+			<p:font size="7"
+				style="normal">
+				<ui:repeat var="_bond" value="#{statusChangeHome.bondsWithCorrection}">
+					<p:cell horizontalAlignment="left">
 						<p:paragraph>
 							<p:text
-								value="#{_var.emisionDate}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="right">						
-						<p:paragraph>
-							<p:text value="#{_var.value.add(_var.taxesTotal)}" />
+								value="#{_bond.number}" />
 						</p:paragraph>
 					</p:cell>
 	
-					<p:cell horizontalAlignment="center">						
+					<p:cell horizontalAlignment="center">
 						<p:paragraph>
-							<p:text value="#{_var.userName}" />
+							<p:text	value="#{_bond.changeStatusDate}">
+								<f:convertDateTime
+									pattern="#{messages['common.datePattern']}" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+	
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text	value="#{_bond.changeExplanation}"/>
+						</p:paragraph>
+					</p:cell>
+	
+					<p:cell horizontalAlignment="center">
+						<p:paragraph>
+							<p:text	value="#{_bond.emisionDate}">
+								<f:convertDateTime
+									pattern="#{messages['common.datePattern']}" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+	
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text
+								value="#{_bond.entryName}" />
+						</p:paragraph>
+					</p:cell>
+	
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text
+								value="#{_bond.residentIdentification}" />
 						</p:paragraph>
 					</p:cell>
 					
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text
+								value="#{_bond.residentName}" />
+						</p:paragraph>
+					</p:cell>
+	
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text
+								value="#{_bond.value.add(_bond.taxesTotal)}" />
+						</p:paragraph>
+					</p:cell>
 				</ui:repeat>
 			</p:font>
+
 		</p:table>
+
+
+
+
+		<p:table rendered="#{not empty statusChangeHome.bondsWithCorrectionAccount}" columns="3"
+			widthPercentage="100" headerRows="0" widths="3 4 1.5">
+			<p:font size="7" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['Cuenta Contable']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['Nombre de Cuenta']}" />
+					</p:paragraph>
+				</p:cell>
+			
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['Valor']}" />
+					</p:paragraph>
+				</p:cell>
+
+			</p:font>
+
+			<p:font size="7"
+				style="normal">
+				<ui:repeat var="_bond" value="#{statusChangeHome.bondsWithCorrectionAccount}">
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text
+								value="#{_bond.account}" />
+						</p:paragraph>
+					</p:cell>
+	
+					<p:cell horizontalAlignment="left">
+						<p:paragraph>
+							<p:text
+								value="#{_bond.accountName}" />
+						</p:paragraph>
+					</p:cell>
+	
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text
+								value="#{_bond.accountTotal}" />
+						</p:paragraph>
+					</p:cell>
+				</ui:repeat>
+			</p:font>
+
+		</p:table>
+		
 		
 		<p:table columns="2" widthPercentage="80" headerRows="0" spacingBefore="100">
 							<f:facet name="defaultCell">
@@ -255,6 +359,8 @@
 							</p:cell>
 							
 						</p:table>
+		
+
 	</p:font>
 	
 </p:document>

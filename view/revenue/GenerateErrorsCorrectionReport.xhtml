@@ -12,23 +12,26 @@
 	<ui:define name="body">
 
 		<h:form id="errorsCorrectionSearch" styleClass="edit">
+		
+			<ui:include src="fragment/BondsWithCorrectionPanel.xhtml" />
+			
 			<rich:simpleTogglePanel label="#{messages['GenerateErrorsCorrectionReport'].toUpperCase()}" switchType="ajax">
 
 				<s:decorate template="../layout/edit.xhtml">
 					<ui:define name="label">#{messages['errorCorrection.startDate']}</ui:define>
-					<rich:calendar id="start" value="#{municipalBondHome.correctionStartDate}" required="true" datePattern="#{messages['common.datePattern']}"/>
+					<rich:calendar id="start" value="#{statusChangeHome.correctionStartDate}" required="true" datePattern="#{messages['common.datePattern']}"/>
 				</s:decorate>
 
 				<s:decorate template="../layout/edit.xhtml">
 					<ui:define name="label">#{messages['errorCorrection.endDate']}</ui:define>
-					<rich:calendar id="end" value="#{municipalBondHome.correctionEndDate}" required="true" datePattern="#{messages['common.datePattern']}"/>
+					<rich:calendar id="end" value="#{statusChangeHome.correctionEndDate}" required="true" datePattern="#{messages['common.datePattern']}"/>
 				</s:decorate>
 
 			</rich:simpleTogglePanel>
 
 			<div class="actionButtons">
 				<a:commandButton id="search" value="#{messages['common.search']}"
-					action="#{municipalBondHome.findBondsInErrorsCorrection()}"
+					action="#{statusChangeHome.findBondsInErrorsCorrection()}"
 					reRender="resultsPanel, errorsCorrectionTable" />
 				<s:button id="reset" value="#{messages['common.reset']}"
 					includePageParams="false" propagation="none" />
@@ -38,66 +41,68 @@
 
 			<a:outputPanel id="resultsPanel" ajaxRendered="true">
 				<h:outputText value="#{messages['errorCorrection.noResult']}" 
-							  rendered="#{municipalBondHome.mbsCorrection.size() == 0}"/>
+							  rendered="#{statusChangeHome.bondsWithCorrectionDTO.size() == 0}"/>
 				<rich:dataTable id="errorsCorrectionTable"
-					value="#{municipalBondHome.mbsCorrection}" var="_var"
-					columnClasses="center,center,center,left,left,right,center,left,center"
-					rendered="#{municipalBondHome.mbsCorrection.size() > 0}">
+					value="#{statusChangeHome.bondsWithCorrectionDTO}" var="_var"
+					columnClasses="center,center,left,center,right,center"
+					rendered="#{statusChangeHome.bondsWithCorrectionDTO.size() > 0}">
 
 					<f:facet name="header">
-						<h:panelGrid columns="2" columnClasses="headerTitle left, ">
+						<h:panelGrid columns="4" columnClasses="headerTitle left, ">
 							<h:outputText
 								value="Listado de Obligaciones" />
 
 							<s:button
 								view="/revenue/report/ErrorsCorrectionReportPDF.xhtml"
 								id="printId"
-								rendered="#{municipalBondHome.mbsCorrection.size() > 0}"
+								rendered="#{statusChangeHome.bondsWithCorrectionDTO.size() > 0}"
 								propagation="join" value="Imprimir" />
+								
+							<a:commandButton id="detailByResident"
+								action="#{statusChangeHome.findBondsInErrorsCorrectionDetail()}"
+								reRender="bondWithCorrectionPanel"
+								oncomplete="Richfaces.showModalPanel('bondWithCorrectionPanel')"
+								value="#{messages['bondDownStatus.detailByResident']}">
+							</a:commandButton>
+	
+							<a:commandButton id="detailByAccount"
+								action="#{statusChangeHome.findBondsInErrorsCorrectionByAccount()}"
+								reRender="bondWithCorrectionPanel"
+								oncomplete="Richfaces.showModalPanel('bondWithCorrectionPanel')"
+								value="#{messages['bondDownStatus.detailByAccount']}">
+							</a:commandButton>
 
 						</h:panelGrid>
 
 					</f:facet>
 
-					<rich:column width="8%">
+					<rich:column width="10%">
 						<f:facet name="header">Obligación</f:facet>
 						<h:outputText value="#{_var.number}" />
 					</rich:column>
-					<rich:column width="8%">
-						<f:facet name="header">Emisión</f:facet>
-						<h:outputText value="#{_var.emisionDate}" >
-							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
-						</h:outputText>
-					</rich:column>
 					<rich:column width="10%">
-						<f:facet name="header">Identificación</f:facet>
-						<h:outputText value="#{_var.residentIdentification}" />
-					</rich:column>
-					<rich:column width="15%">
-						<f:facet name="header">Contribuyente</f:facet>
-						<h:outputText value="#{_var.residentName}" />
-					</rich:column>
-					<rich:column width="15%">
-						<f:facet name="header">Rubro</f:facet>
-						<h:outputText value="#{_var.entryName}" />
-					</rich:column>
-					<rich:column width="8%">
-						<f:facet name="header">Valor</f:facet>
-						<h:outputText value="#{_var.paidTotal}" >
-							<f:convertNumber pattern="#0.00"/>
-						</h:outputText>
-					</rich:column>
-					<rich:column width="8%">
 						<f:facet name="header">Cambio de Estado</f:facet>
 						<h:outputText value="#{_var.changeStatusDate}" >
 							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
 						</h:outputText>
 					</rich:column>
-					<rich:column width="18%">
+					<rich:column width="40%">
 						<f:facet name="header">Explicación</f:facet>
 						<h:outputText value="#{_var.changeExplanation}" />
 					</rich:column>
 					<rich:column width="10%">
+						<f:facet name="header">Fecha de Emisión</f:facet>
+						<h:outputText value="#{_var.emisionDate}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</rich:column>
+					<rich:column width="15%">
+						<f:facet name="header">Valor</f:facet>
+						<h:outputText value="#{_var.value.add(_var.taxesTotal)}" >
+							<f:convertNumber pattern="#0.00"/>
+						</h:outputText>
+					</rich:column>
+					<rich:column width="15%">
 						<f:facet name="header">Usuario</f:facet>
 						<h:outputText value="#{_var.userName}" />
 					</rich:column>

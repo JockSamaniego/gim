@@ -13,6 +13,7 @@ import javax.faces.event.ActionEvent;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -22,10 +23,13 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
 
+import ec.gob.gim.common.model.Charge;
+import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.StatusChange;
+import ec.gob.gim.revenue.model.DTO.MunicipalBondErrorsCorrectionDTO;
 
 @Name("statusChangeHome")
 public class StatusChangeHome extends EntityHome<StatusChange> {
@@ -1072,5 +1076,304 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
         entityManager.flush();
         entityManager.clear();
     }
+    
+    //Para reporte de correccion de errores
+    //Jock Samaniego
+    
+    private List<MunicipalBondErrorsCorrectionDTO> bondsWithCorrectionDTO = new ArrayList<MunicipalBondErrorsCorrectionDTO>();
+    private List<MunicipalBondErrorsCorrectionDTO> bondsWithCorrection = new LinkedList<MunicipalBondErrorsCorrectionDTO>();
+    private List<BondDownStatus> bondsWithCorrectionAccount = new ArrayList<BondDownStatus>();
+    private MunicipalBondStatus correctionBondStatus;
+    private Date correctionStartDate;
+	private Date correctionEndDate;
+	private BigDecimal totalWithCorrection;
+    
+    public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
+
+	public List<MunicipalBondErrorsCorrectionDTO> getBondsWithCorrectionDTO() {
+		return bondsWithCorrectionDTO;
+	}
+
+	public void setBondsWithCorrectionDTO(
+			List<MunicipalBondErrorsCorrectionDTO> bondsWithCorrectionDTO) {
+		this.bondsWithCorrectionDTO = bondsWithCorrectionDTO;
+	}
+
+	public List<MunicipalBondErrorsCorrectionDTO> getBondsWithCorrection() {
+		return bondsWithCorrection;
+	}
+
+	public void setBondsWithCorrection(List<MunicipalBondErrorsCorrectionDTO> bondsWithCorrection) {
+		this.bondsWithCorrection = bondsWithCorrection;
+	}
+
+	public List<BondDownStatus> getBondsWithCorrectionAccount() {
+		return bondsWithCorrectionAccount;
+	}
+
+	public void setBondsWithCorrectionAccount(
+			List<BondDownStatus> bondsWithCorrectionAccount) {
+		this.bondsWithCorrectionAccount = bondsWithCorrectionAccount;
+	}
+
+	public MunicipalBondStatus getCorrectionBondStatus() {
+		return correctionBondStatus;
+	}
+
+	public void setCorrectionBondStatus(MunicipalBondStatus correctionBondStatus) {
+		this.correctionBondStatus = correctionBondStatus;
+	}
+	
+	public Date getCorrectionStartDate() {
+		return correctionStartDate;
+	}
+
+	public void setCorrectionStartDate(Date correctionStartDate) {
+		this.correctionStartDate = correctionStartDate;
+	}
+
+	public Date getCorrectionEndDate() {
+		return correctionEndDate;
+	}
+
+	public void setCorrectionEndDate(Date correctionEndDate) {
+		this.correctionEndDate = correctionEndDate;
+	}
+	
+	public BigDecimal getTotalWithCorrection() {
+		return totalWithCorrection;
+	}
+
+	public void setTotalWithCorrection(BigDecimal totalWithCorrection) {
+		this.totalWithCorrection = totalWithCorrection;
+	}
+	
+	
+
+	public void findBondsInErrorsCorrection(){
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		correctionBondStatus = systemParameterService.materialize(
+				MunicipalBondStatus.class,
+				"MUNICIPAL_BOND_STATUS_ID_ERRORS_CORRECTION");
+		bondsWithCorrectionDTO.clear();
+		bondsWithCorrection.clear();
+		bondsWithCorrectionAccount.clear();
+		totalWithCorrection = BigDecimal.ZERO;
+		
+		String query = "SELECT mb.number as mbNumber,"
+				+ "mb.emisiondate as emission,"
+				+ "res.identificationnumber as resIdentification,"
+				+ "res.name as resName,"
+				+ "ent.name as entry,"
+				+ "mb.value as value,"
+				+ "mb.taxesTotal as taxes,"
+				+ "stc.date as changeStatus,"
+				+ "stc.explanation as explanation,"
+				+ "usr.name as userName "
+				+ "FROM gimprod.municipalbond mb "
+				+ "LEFT JOIN gimprod.statuschange stc On stc.municipalbond_id = mb.id "
+				+ "LEFT JOIN gimprod._user usr On usr.id = stc.user_id "
+				+ "LEFT JOIN gimprod.resident res On res.id = mb.resident_id "
+				+ "LEFT JOIN gimprod.entry ent On ent.id = mb.entry_id "
+				+ "where mb.municipalbondstatus_id = :status "
+				+ "and stc.date BETWEEN :startDate and :endDate "
+				+ "ORDER BY stc.date,mb.emisiondate,res.name ASC";
+		
+		Query q = this.getEntityManager().createNativeQuery(query);
+		q.setParameter("status", correctionBondStatus.getId());
+		q.setParameter("startDate", correctionStartDate);
+		q.setParameter("endDate", correctionEndDate);
+		bondsWithCorrectionDTO = NativeQueryResultsMapper.map(q.getResultList(), MunicipalBondErrorsCorrectionDTO.class);
+	}
+	
+	public void findBondsInErrorsCorrectionDetail(){
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		correctionBondStatus = systemParameterService.materialize(
+				MunicipalBondStatus.class,
+				"MUNICIPAL_BOND_STATUS_ID_ERRORS_CORRECTION");
+		bondsWithCorrectionDTO.clear();
+		bondsWithCorrection.clear();
+		bondsWithCorrectionAccount.clear();
+		totalWithCorrection = BigDecimal.ZERO;
+		
+		String query = "SELECT mb.number as mbNumber,"
+				+ "mb.emisiondate as emission,"
+				+ "res.identificationnumber as resIdentification,"
+				+ "res.name as resName,"
+				+ "ent.name as entry,"
+				+ "mb.value as value,"
+				+ "mb.taxesTotal as taxes,"
+				+ "stc.date as changeStatus,"
+				+ "stc.explanation as explanation,"
+				+ "usr.name as userName "
+				+ "FROM gimprod.municipalbond mb "
+				+ "LEFT JOIN gimprod.statuschange stc On stc.municipalbond_id = mb.id "
+				+ "LEFT JOIN gimprod._user usr On usr.id = stc.user_id "
+				+ "LEFT JOIN gimprod.resident res On res.id = mb.resident_id "
+				+ "LEFT JOIN gimprod.entry ent On ent.id = mb.entry_id "
+				+ "where mb.municipalbondstatus_id = :status "
+				+ "and stc.date BETWEEN :startDate and :endDate "
+				+ "ORDER BY stc.date,mb.emisiondate,res.name ASC";
+		
+		Query q = this.getEntityManager().createNativeQuery(query);
+		q.setParameter("status", correctionBondStatus.getId());
+		q.setParameter("startDate", correctionStartDate);
+		q.setParameter("endDate", correctionEndDate);
+		bondsWithCorrection = NativeQueryResultsMapper.map(q.getResultList(), MunicipalBondErrorsCorrectionDTO.class);
+		for(MunicipalBondErrorsCorrectionDTO mbDTO: bondsWithCorrection){
+			totalWithCorrection = totalWithCorrection.add(mbDTO.getValue()).add(mbDTO.getTaxesTotal());
+		}
+	}
+	
+	public void findBondsInErrorsCorrectionByAccount(){
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		correctionBondStatus = systemParameterService.materialize(
+				MunicipalBondStatus.class,
+				"MUNICIPAL_BOND_STATUS_ID_ERRORS_CORRECTION");
+		bondsWithCorrectionDTO.clear();
+		bondsWithCorrection.clear();
+		bondsWithCorrectionAccount.clear();
+		totalWithCorrection = BigDecimal.ZERO;
+		
+		String sqlNative = "select ac.accountcode, ac.accountname, sum(i.total) from gimprod.StatusChange sc "
+                + "left join gimprod.municipalbond mb "
+                + "on mb.id=sc.municipalbond_id "
+                + "left join gimprod.item i "
+                + "on i.municipalbond_id=sc.municipalbond_id "
+                + "left join gimprod.entry e "
+                + "on e.id = i.entry_id "
+                + "left join gimprod.account ac "
+                + "on ac.id = e.account_id "
+                + "where sc.municipalbondstatus_id ="+ correctionBondStatus.getId() +" "
+                + "and sc.date between '"
+                + dateToStr(correctionStartDate)
+                + "' AND '"
+                + dateToStr(correctionEndDate)
+                + "' "
+                + "and mb.emisionDate >= '"
+                + dateToStr(userSession.getFiscalPeriod().getStartDate())
+                + "' "
+                + "group by ac.accountcode, ac.accountname "
+                + "order by ac.accountCode";
+
+        EntityManager entityManager = getEntityManager();
+        Query query = entityManager.createNativeQuery(sqlNative);
+        List<Object[]> results = query.getResultList();
+
+        for (Object[] row : results) {
+            BondDownStatus parte = new BondDownStatus((String) row[0],
+                    (String) row[1], (BigDecimal) row[2]);
+            bondsWithCorrectionAccount.add(parte);
+            totalWithCorrection = totalWithCorrection.add((BigDecimal) row[2]);
+        }
+        results.clear();
+
+        sqlNative = "select ac.previousyearsaccountcode, ac.accountname, sum(i.total) from gimprod.StatusChange sc "
+                + "left join gimprod.municipalbond mb "
+                + "on mb.id=sc.municipalbond_id "
+                + "left join gimprod.item i "
+                + "on i.municipalbond_id=sc.municipalbond_id "
+                + "left join gimprod.entry e "
+                + "on e.id = i.entry_id "
+                + "left join gimprod.account ac "
+                + "on ac.id = e.account_id "
+                + "where sc.municipalbondstatus_id ="+ correctionBondStatus.getId() +" "
+                + "and sc.date between '"
+                + dateToStr(correctionStartDate)
+                + "' AND '"
+                + dateToStr(correctionEndDate)
+                + "' "
+                + "and mb.emisionDate < '"
+                + dateToStr(userSession.getFiscalPeriod().getStartDate())
+                + "' "
+                + "group by ac.previousyearsaccountcode, ac.accountname "
+                + "order by ac.previousyearsaccountcode";
+
+        query = entityManager.createNativeQuery(sqlNative);
+        results = query.getResultList();
+
+        for (Object[] row : results) {
+            BondDownStatus parte = new BondDownStatus((String) row[0],
+                    (String) row[1], (BigDecimal) row[2]);
+            bondsWithCorrectionAccount.add(parte);
+            totalWithCorrection = totalWithCorrection.add((BigDecimal) row[2]);
+        }
+        results.clear();
+        
+        sqlNative = "select ac.accountcode, ac.accountname, sum(ti.value) from gimprod.StatusChange sc "
+                + "left join gimprod.municipalbond mb "
+                + "on mb.id=sc.municipalbond_id "
+                + "left join gimprod.taxitem ti "
+                + "on ti.municipalbond_id=sc.municipalbond_id "
+                + "left join gimprod.tax t "
+                + "on t.id = ti.tax_id "
+                + "left join gimprod.account ac "
+                + "on ac.id = t.taxaccount_id "
+                + "where sc.municipalbondstatus_id ="+ correctionBondStatus.getId() +" "
+                + "and sc.date between '"
+                + dateToStr(correctionStartDate)
+                + "' AND '"
+                + dateToStr(correctionEndDate)
+                + "' "
+                + "group by ac.accountcode, ac.accountname "
+                + "order by ac.accountCode ";
+
+        entityManager = getEntityManager();
+        query = entityManager.createNativeQuery(sqlNative);
+        results = query.getResultList();
+
+        for (Object[] row : results) {
+            if ((BigDecimal) row[2] != null) {
+                BondDownStatus parte = new BondDownStatus((String) row[0],
+                        (String) row[1], (BigDecimal) row[2]);
+                bondsWithCorrectionAccount.add(parte);
+                totalWithCorrection = totalWithCorrection.add((BigDecimal) row[2]);
+            }
+        }
+
+	}
+	
+	
+	private Charge revenueCharge;		
+	private Delegate revenueDelegate;
+	
+	
+	public Charge getRevenueCharge() {
+		return revenueCharge;
+	}
+
+	public void setRevenueCharge(Charge revenueCharge) {
+		this.revenueCharge = revenueCharge;
+	}
+
+	public Delegate getRevenueDelegate() {
+		return revenueDelegate;
+	}
+
+	public void setRevenueDelegate(Delegate revenueDelegate) {
+		this.revenueDelegate = revenueDelegate;
+	}
+	
+	public Charge getCharge(String systemParameter) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance()
+				.findResource(SystemParameterService.LOCAL_NAME);
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+		Charge charge = systemParameterService.materialize(Charge.class,systemParameter);
+		return charge;
+	}
+
+	public void loadCharge() {
+		revenueCharge = getCharge("DELEGATE_ID_REVENUE");
+		if (revenueCharge != null) {
+			for (Delegate d : revenueCharge.getDelegates()) {
+				if (d.getIsActive())
+					revenueDelegate = d;
+			}
+		}	
+	}
 
 }

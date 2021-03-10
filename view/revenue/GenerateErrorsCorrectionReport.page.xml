@@ -5,9 +5,9 @@
 	
 	<begin-conversation join="true"/>
 	
-	<param name="correctionStartDate" value="#{municipalBondHome.correctionStartDate}" />
-	<param name="correctionEndDate" value="#{municipalBondHome.correctionEndDate}" />
+	<param name="correctionStartDate" value="#{statusChangeHome.correctionStartDate}" />
+	<param name="correctionEndDate" value="#{statusChangeHome.correctionEndDate}" />
 	
-	<action execute="#{municipalBondHome.loadCharge()}"/>
+	<action execute="#{statusChangeHome.loadCharge()}"/>
 
 </page>
