@@ -37,9 +37,15 @@ public class ReportEmissionDTO {
 	private BigDecimal valor_bajas;
 	
 	@NativeQueryResultColumn(index = 7)
-	private BigDecimal total_emision;
+	private Long cantidad_correccion;
 	
 	@NativeQueryResultColumn(index = 8)
+	private BigDecimal valor_correccion;
+	
+	@NativeQueryResultColumn(index = 9)
+	private BigDecimal total_emision;
+	
+	@NativeQueryResultColumn(index = 10)
 	private String tipo;
 
 	public Long getAcount_id() {
@@ -114,13 +120,30 @@ public class ReportEmissionDTO {
 		this.tipo = tipo;
 	}
 
+	public Long getCantidad_correccion() {
+		return cantidad_correccion;
+	}
+
+	public void setCantidad_correccion(Long cantidad_correccion) {
+		this.cantidad_correccion = cantidad_correccion;
+	}
+
+	public BigDecimal getValor_correccion() {
+		return valor_correccion;
+	}
+
+	public void setValor_correccion(BigDecimal valor_correccion) {
+		this.valor_correccion = valor_correccion;
+	}
+
 	@Override
 	public String toString() {
 		return "ReportEmissionDTO [acount_id=" + acount_id + ", account_code="
 				+ account_code + ", account_name=" + account_name
 				+ ", cantidad_emisiones=" + cantidad_emisiones
 				+ ", valor_emision=" + valor_emision + ", cantidad_bajas="
-				+ cantidad_bajas + ", valor_bajas=" + valor_bajas
+				+ cantidad_bajas + ", valor_bajas=" + valor_bajas+ ", cantidad_correccion="
+						+ cantidad_correccion + ", valor_correccion=" + valor_correccion
 				+ ", total_emision=" + total_emision + ", tipo=" + tipo + "]";
 	}
 
