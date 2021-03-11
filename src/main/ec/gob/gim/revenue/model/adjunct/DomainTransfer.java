@@ -15,12 +15,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import org.gob.gim.common.DateUtils;
+import org.hibernate.envers.Audited;
 
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.adjunct.detail.EarlyTransferDiscount;
 
+@Audited
 @Entity
 @DiscriminatorValue("DOM")
 public class DomainTransfer extends Adjunct{

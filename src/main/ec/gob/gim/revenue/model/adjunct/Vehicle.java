@@ -7,10 +7,13 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.envers.Audited;
+
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.adjunct.detail.VehicleMaker;
 import ec.gob.gim.revenue.model.adjunct.detail.VehicleType;
 
+@Audited
 @Entity
 @DiscriminatorValue(value = "VEH")
 public class Vehicle extends Adjunct {
