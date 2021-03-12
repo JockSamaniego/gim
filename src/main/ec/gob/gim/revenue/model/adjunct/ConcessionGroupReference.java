@@ -11,6 +11,7 @@ import ec.gob.gim.consession.model.ConcessionItem;
 import ec.gob.gim.consession.model.ConcessionPlace;
 import ec.gob.gim.revenue.model.Adjunct;
 
+@Audited
 @Entity
 @DiscriminatorValue("CGR")
 public class ConcessionGroupReference extends Adjunct {

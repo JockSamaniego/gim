@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 
 import ec.gob.gim.revenue.model.Adjunct;
 
+@Audited
 @Entity
 @DiscriminatorValue("BUDGR")
 public class BudgetReference extends Adjunct {
