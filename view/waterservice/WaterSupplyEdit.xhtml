@@ -162,7 +162,8 @@
 					template="../layout/edit.xhtml">
 					<ui:define name="label">#{messages['waterSupply.waterSupplyCategory']}:</ui:define>
 					<h:selectOneMenu id="waterSupplyCategoryName" required="true"
-						value="#{waterSupplyHome.instance.waterSupplyCategory}">
+						value="#{waterSupplyHome.instance.waterSupplyCategory}"
+						rendered="#{waterSupplyHome.hasRole('ROLE_UPDATE_WATER_CATEGORY')}">
 						<s:selectItems value="#{waterSupplyCategories}"
 							var="_waterSupplyCategory" label="#{_waterSupplyCategory.name}" />
 						<s:convertEntity />
