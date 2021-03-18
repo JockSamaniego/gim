@@ -25,10 +25,14 @@ public class PreemitAdministrativeServicesRequest {
 	@NotNull(message = "value no puede ser nulo")
 	private BigDecimal value;
 
-	@NotNull(message = "comment no puede ser nulo")
-	@NotEmpty(message = "comment no puede ser vacío")
-	private String comment;
-
+	@NotNull(message = "explanation no puede ser nulo")
+	@NotEmpty(message = "explanation no puede ser vacío")
+	private String explanation;
+	
+	@NotNull(message = "reference no puede ser nulo")
+	@NotEmpty(message = "reference no puede ser vacío")
+	private String reference;
+	
 	public String getEmiterIdentification() {
 		return emiterIdentification;
 	}
@@ -61,12 +65,20 @@ public class PreemitAdministrativeServicesRequest {
 		this.value = value;
 	}
 
-	public String getComment() {
-		return comment;
+	public String getExplanation() {
+		return explanation;
 	}
 
-	public void setComment(String comment) {
-		this.comment = comment;
+	public void setExplanation(String explanation) {
+		this.explanation = explanation;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 
 	@Override
@@ -74,7 +86,8 @@ public class PreemitAdministrativeServicesRequest {
 		return "PreemitAdministrativeServicesRequest [emiterIdentification="
 				+ emiterIdentification + ", residentIdentification="
 				+ residentIdentification + ", accountCode=" + accountCode
-				+ ", value=" + value + ", comment=" + comment + "]";
+				+ ", value=" + value + ", explanation=" + explanation
+				+ ", reference=" + reference + "]";
 	}
 
 }

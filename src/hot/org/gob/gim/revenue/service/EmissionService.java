@@ -12,6 +12,7 @@ import org.gob.gim.ws.service.InfringementEmisionResponse;
 import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
 import org.gob.loja.gim.ws.dto.ant.PreemissionInfractionRequest;
 import org.gob.loja.gim.ws.dto.preemission.PreemissionServiceResponse;
+import org.gob.loja.gim.ws.dto.preemission.PreemitAdministrativeServicesRequest;
 import org.gob.loja.gim.ws.exception.AccountIsBlocked;
 import org.gob.loja.gim.ws.exception.AccountIsNotActive;
 import org.gob.loja.gim.ws.exception.EmissionOrderNotGenerate;
@@ -52,7 +53,7 @@ public interface EmissionService {
 			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
 			AccountIsBlocked, Exception;
 	
-	PreemissionServiceResponse generateEmissionOrderWS(String identificationNumber, String accountCode, User user, BigDecimal value, String comment)
+	PreemissionServiceResponse generateEmissionOrderWS(PreemitAdministrativeServicesRequest detailsEmission, User user)
 			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
 			FiscalPeriodNotFound, EmissionOrderNotGenerate,
 			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,

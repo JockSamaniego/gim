@@ -33,6 +33,7 @@ import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
 import org.gob.loja.gim.ws.dto.ant.BondDTO;
 import org.gob.loja.gim.ws.dto.ant.PreemissionInfractionRequest;
 import org.gob.loja.gim.ws.dto.preemission.PreemissionServiceResponse;
+import org.gob.loja.gim.ws.dto.preemission.PreemitAdministrativeServicesRequest;
 import org.gob.loja.gim.ws.exception.AccountIsBlocked;
 import org.gob.loja.gim.ws.exception.AccountIsNotActive;
 import org.gob.loja.gim.ws.exception.EmissionOrderNotGenerate;
@@ -55,7 +56,6 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.DTO.ReportEmissionDTO;
-import ec.gob.gim.revenue.model.adjunct.ANTReference;
 import ec.gob.gim.revenue.model.adjunct.InfringementANTReference;
 import ec.gob.gim.revenue.model.criteria.ReportEmissionCriteria;
 import ec.gob.gim.security.model.User;
@@ -540,8 +540,7 @@ public class EmissionServiceBean implements EmissionService {
 	}
 
 	@Override
-	public PreemissionServiceResponse generateEmissionOrderWS(String identificationNumber,
-			String accountCode, User user, BigDecimal value, String comment)
+	public PreemissionServiceResponse generateEmissionOrderWS(PreemitAdministrativeServicesRequest detailsEmission, User user)
 			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
 			FiscalPeriodNotFound, EmissionOrderNotGenerate,
 			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
@@ -549,13 +548,13 @@ public class EmissionServiceBean implements EmissionService {
 		try {
 			
 			PreemissionServiceResponse resp = new PreemissionServiceResponse();
-			Resident resident = residentService.find(identificationNumber);
+			Resident resident = residentService.find(detailsEmission.getResidentIdentification());
 			if (resident == null) {
 				resp.setErrorMessage("Preemisión fallida. Contribuyente No Encontrado");
 				return resp;
 			}
 
-			Entry entry = revenueService.findEntryByCode(accountCode);
+			Entry entry = revenueService.findEntryByCode(detailsEmission.getAccountCode());
 			if (entry == null) {
 				resp.setErrorMessage("Preemisión fallida. Rubro No Encontrado");
 				return resp;
@@ -579,7 +578,7 @@ public class EmissionServiceBean implements EmissionService {
 			entryValueItem.setDescription(entry.getName());
 			entryValueItem.setServiceDate(currentDate);
 			entryValueItem.setAmount(BigDecimal.ONE);
-			entryValueItem.setMainValue(value);
+			entryValueItem.setMainValue(detailsEmission.getValue());
 
 			MunicipalBondStatus preEmitBondStatus = systemParameterService
 					.materialize(MunicipalBondStatus.class,
@@ -611,16 +610,16 @@ public class EmissionServiceBean implements EmissionService {
 			mb.setAdjunct(ant);*/
 			// end Adjunt
 
-			mb.setReference(comment);
-			mb.setDescription(comment);
-			// TODO ver de donde se saca
-			// mb.setBondAddress(emisionDetail.getAddress());
+			mb.setReference(detailsEmission.getReference());
+			mb.setDescription(detailsEmission.getExplanation());
+
+			mb.setBondAddress(mb.getAddress());
 			
 			mb.setServiceDate(new Date());
 			mb.setCreationTime(new Date());
-			mb.setGroupingCode(identificationNumber);
+			mb.setGroupingCode(detailsEmission.getResidentIdentification());
 
-			mb.setBase(value);
+			mb.setBase(detailsEmission.getValue());
 
 			mb.setTimePeriod(entry.getTimePeriod());
 			mb.calculateValue();

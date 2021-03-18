@@ -117,10 +117,7 @@ public class PreemissionWS {
 						emissionService.LOCAL_NAME);
 			}
 
-			PreemissionServiceResponse responseService = emissionService.generateEmissionOrderWS(
-					request.getResidentIdentification(),
-					request.getAccountCode(), user, request.getValue(),
-					request.getComment());
+			PreemissionServiceResponse responseService = emissionService.generateEmissionOrderWS(request,user);
 			
 			if(responseService.getError()){
 				resp.setMessage(responseService.getErrorMessage());
