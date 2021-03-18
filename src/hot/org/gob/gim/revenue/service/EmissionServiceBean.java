@@ -32,6 +32,7 @@ import org.gob.gim.ws.service.InfringementEmisionResponse;
 import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
 import org.gob.loja.gim.ws.dto.ant.BondDTO;
 import org.gob.loja.gim.ws.dto.ant.PreemissionInfractionRequest;
+import org.gob.loja.gim.ws.dto.preemission.PreemissionServiceResponse;
 import org.gob.loja.gim.ws.exception.AccountIsBlocked;
 import org.gob.loja.gim.ws.exception.AccountIsNotActive;
 import org.gob.loja.gim.ws.exception.EmissionOrderNotGenerate;
@@ -48,11 +49,13 @@ import ec.gob.gim.common.model.Gender;
 import ec.gob.gim.common.model.IdentificationType;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.DTO.ReportEmissionDTO;
+import ec.gob.gim.revenue.model.adjunct.ANTReference;
 import ec.gob.gim.revenue.model.adjunct.InfringementANTReference;
 import ec.gob.gim.revenue.model.criteria.ReportEmissionCriteria;
 import ec.gob.gim.security.model.User;
@@ -206,7 +209,8 @@ public class EmissionServiceBean implements EmissionService {
 					person.getCurrentAddress().setPhoneNumber(
 							params.getInfractor().getMobileNumber());
 					person.getCurrentAddress().setCity("Loja");
-					person.getCurrentAddress().setCountry(params.getInfractor().getCountry());
+					person.getCurrentAddress().setCountry(
+							params.getInfractor().getCountry());
 
 					resident = saveResident(person);
 
@@ -485,12 +489,12 @@ public class EmissionServiceBean implements EmissionService {
 		}
 
 	}
-	
-	private BondDTO mapMuniciBondToBond(MunicipalBond mb){
+
+	private BondDTO mapMuniciBondToBond(MunicipalBond mb) {
 		final String patternDate = "dd/MM/yyyy";
 		final String patternDateTime = "dd/MM/yyyy' 'HH:mm:ss";
 		final String patternTime = "HH:mm:ss";
-				BondDTO bond = new BondDTO();
+		BondDTO bond = new BondDTO();
 		bond.setAddress(mb.getAddress());
 		bond.setApplyInterest(mb.getApplyInterest());
 		bond.setBalance(mb.getBalance());
@@ -500,19 +504,23 @@ public class EmissionServiceBean implements EmissionService {
 		bond.setCreationTime(DateUtils.format(mb.getCreationTime(), patternTime));
 		bond.setDescription(mb.getDescription());
 		bond.setDiscount(mb.getDiscount());
-		bond.setEmisionDate(DateUtils.format(mb.getEmisionDate(),patternDate));
-		bond.setEmisionPeriod(DateUtils.format(mb.getEmisionPeriod(), patternDate));
+		bond.setEmisionDate(DateUtils.format(mb.getEmisionDate(), patternDate));
+		bond.setEmisionPeriod(DateUtils.format(mb.getEmisionPeriod(),
+				patternDate));
 		bond.setEmisionTime(DateUtils.format(mb.getEmisionTime(), patternTime));
 		bond.setExempt(mb.getExempt());
-		bond.setExpirationDate(DateUtils.format(mb.getExpirationDate(), patternDate));
+		bond.setExpirationDate(DateUtils.format(mb.getExpirationDate(),
+				patternDate));
 		bond.setGroupingCode(mb.getGroupingCode());
 		bond.setId(mb.getId());
 		bond.setInterest(mb.getInterest());
 		bond.setInternalTramit(mb.getInternalTramit());
 		bond.setIsExpirationDateDefined(mb.getIsExpirationDateDefined());
 		bond.setIsNoPasiveSubject(mb.getIsNoPasiveSubject());
-		bond.setLiquidationDate(DateUtils.format(mb.getLiquidationDate(), patternDate));
-		bond.setLiquidationTime(DateUtils.format(mb.getLiquidationTime(), patternTime));
+		bond.setLiquidationDate(DateUtils.format(mb.getLiquidationDate(),
+				patternDate));
+		bond.setLiquidationTime(DateUtils.format(mb.getLiquidationTime(),
+				patternTime));
 		bond.setNonTaxableTotal(mb.getNonTaxableTotal());
 		bond.setNumber(mb.getNumber());
 		bond.setPaidTotal(mb.getPaidTotal());
@@ -527,8 +535,125 @@ public class EmissionServiceBean implements EmissionService {
 		bond.setTaxableTotal(mb.getTaxableTotal());
 		bond.setTaxesTotal(mb.getTaxesTotal());
 		bond.setValue(mb.getValue());
-		
+
 		return bond;
+	}
+
+	@Override
+	public PreemissionServiceResponse generateEmissionOrderWS(String identificationNumber,
+			String accountCode, User user, BigDecimal value, String comment)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		try {
+			
+			PreemissionServiceResponse resp = new PreemissionServiceResponse();
+			Resident resident = residentService.find(identificationNumber);
+			if (resident == null) {
+				resp.setErrorMessage("Preemisión fallida. Contribuyente No Encontrado");
+				return resp;
+			}
+
+			Entry entry = revenueService.findEntryByCode(accountCode);
+			if (entry == null) {
+				resp.setErrorMessage("Preemisión fallida. Rubro No Encontrado");
+				return resp;
+			}
+
+			Date currentDate = java.util.Calendar.getInstance().getTime();
+			List<FiscalPeriod> fiscalPeriods = revenueService
+					.findFiscalPeriodCurrent(currentDate);
+
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+					&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
+
+			if (fiscalPeriodCurrent == null) {
+				resp.setErrorMessage("Preemisión fallida. Periódo Fiscal No Encontrado");
+				return resp;
+			}
+
+			Person emitter = findPersonFromUser(user.getId());
+
+			EntryValueItem entryValueItem = new EntryValueItem();
+			entryValueItem.setDescription(entry.getName());
+			entryValueItem.setServiceDate(currentDate);
+			entryValueItem.setAmount(BigDecimal.ONE);
+			entryValueItem.setMainValue(value);
+
+			MunicipalBondStatus preEmitBondStatus = systemParameterService
+					.materialize(MunicipalBondStatus.class,
+							"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
+
+			MunicipalBond mb = revenueService.createMunicipalBond(resident,
+					entry, fiscalPeriodCurrent, entryValueItem, true);
+			if (mb.getResident().getCurrentAddress() != null) {
+				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+			}
+
+			mb.setEmitter(emitter);
+			mb.setOriginator(emitter);
+
+			// start Adjunt
+			/* ANTReference ant = new ANTReference();
+			ant.setDocumentVisualizationsNumber(0);
+			ant.setNumberPlate(emisionDetail.getNumberPlate());
+			ant.setContraventionNumber(emisionDetail.getContraventionNumber());
+			ant.setSpeeding(emisionDetail.getSpeeding());
+			ant.setVehicleType(emisionDetail.getVehicleType());
+			ant.setServiceType(emisionDetail.getServiceType());
+
+			ant.setInfractionDate(emisionDetail.getInfractionDate());
+			ant.setNotificationDate(emisionDetail.getNotificationDate());
+			ant.setCitationDate(emisionDetail.getInfractionDate());
+
+			ant.setSupportDocumentURL(emisionDetail.getSupportDocumentURL());
+			mb.setAdjunct(ant);*/
+			// end Adjunt
+
+			mb.setReference(comment);
+			mb.setDescription(comment);
+			// TODO ver de donde se saca
+			// mb.setBondAddress(emisionDetail.getAddress());
+			
+			mb.setServiceDate(new Date());
+			mb.setCreationTime(new Date());
+			mb.setGroupingCode(identificationNumber);
+
+			mb.setBase(value);
+
+			mb.setTimePeriod(entry.getTimePeriod());
+			mb.calculateValue();
+			mb.setMunicipalBondStatus(preEmitBondStatus);
+			mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
+			mb.setEmisionPeriod(findEmisionPeriod());
+
+			EmissionOrder eo = createEmisionOrder(emitter,
+					"Emision desde WS - Rubro: " + entry.getCode());
+			eo.add(mb);
+
+			EmissionOrder orderSaved = entityManager.merge(eo);
+			
+			resp.setBondId(orderSaved.getMunicipalBonds().get(0).getId());
+			resp.setEmissionOrderId(orderSaved.getId());
+			resp.setError(Boolean.FALSE);
+
+			return resp;
+		} catch (NonUniqueIdentificationNumberException e) {
+			throw new TaxpayerNonUnique();
+		} catch (EntryDefinitionNotFoundException e) {
+			throw new EmissionOrderNotGenerate();
+		} catch (Exception e) {
+			throw new EmissionOrderNotSave();
+		}
+	}
+
+	private EmissionOrder createEmisionOrder(Person emisor, String description) {
+		EmissionOrder emissionOrder = new EmissionOrder();
+		emissionOrder.setServiceDate(new Date());
+		emissionOrder.setDescription(description);
+		emissionOrder.setEmisor(emisor);
+		return emissionOrder;
 	}
 
 }

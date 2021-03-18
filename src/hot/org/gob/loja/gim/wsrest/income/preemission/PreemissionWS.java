@@ -14,13 +14,17 @@ import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.UserService;
+import org.gob.gim.revenue.service.EmissionService;
 import org.gob.loja.gim.ws.dto.preemission.PreemisionAdministerServicesResponse;
+import org.gob.loja.gim.ws.dto.preemission.PreemissionServiceResponse;
 import org.gob.loja.gim.ws.dto.preemission.PreemitAdministrativeServicesRequest;
+import org.gob.loja.gim.ws.service.GimService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
 
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.security.model.User;
 
 @Name("PreemissionWS")
@@ -30,9 +34,12 @@ public class PreemissionWS {
 
 	@In(create = true, required = false, value = "residentService")
 	private ResidentService residentService;
-	
+
 	@In(create = true, required = false, value = "userService")
 	private UserService userService;
+
+	@In(create = true, required = false, value = "emissionService")
+	private EmissionService emissionService;
 
 	@POST
 	@Path("/administrativeServices")
@@ -42,11 +49,11 @@ public class PreemissionWS {
 			@Valid PreemitAdministrativeServicesRequest request) {
 		try {
 			System.out.println(request);
-			
+
 			PreemisionAdministerServicesResponse resp = new PreemisionAdministerServicesResponse();
 
 			List<String> errorsValidation = GimUtils.validateRequest(request);
-			if(errorsValidation.size()>0){
+			if (errorsValidation.size() > 0) {
 				resp.setMessage("Error en validaciones de request");
 				resp.setErrors(errorsValidation);
 				return Response.ok(resp)
@@ -61,56 +68,72 @@ public class PreemissionWS {
 
 			Resident emitter = residentService.find(request
 					.getEmiterIdentification());
-			
-			if(emitter == null){
+
+			if (emitter == null) {
 				resp.setMessage("No existe usuario con la identificación proporcionada");
 				return Response.ok(resp)
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
+
 			if (userService == null) {
 				userService = ServiceLocator.getInstance().findResource(
 						userService.LOCAL_NAME);
 			}
-			
+
 			User user = userService.getUserByResident(emitter.getId());
-			if(user == null){
+			if (user == null) {
 				resp.setMessage("No existe usuario con la identificación proporcionada");
 				return Response.ok(resp)
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
-			if(!user.getIsActive()){
+
+			if (!user.getIsActive()) {
 				resp.setMessage("Usuario inactivo");
 				return Response.ok(resp)
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
-			if(user.getIsBlocked()){
+
+			if (user.getIsBlocked()) {
 				resp.setMessage("Usuario bloqueado");
 				return Response.ok(resp)
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
-			Boolean hasRol = userService.checkUserRole(user.getId(), "WS_PREEMISOR");
-			if(!hasRol) {
+
+			Boolean hasRol = userService.checkUserRole(user.getId(),
+					"WS_PREEMISOR");
+			if (!hasRol) {
 				resp.setMessage("El usuario no cuenta con el rol necesario para preemitir");
 				return Response.ok(resp)
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
-			
-			// WS_PREEMISOR
 
-			// InfringementEmisionResponse res =
-			// emissionService.generateANTEmissionInfringement(userSession.getUser().getName(),
-			// params);
-			return Response.ok(user.getName())
+			if (emissionService == null) {
+				emissionService = ServiceLocator.getInstance().findResource(
+						emissionService.LOCAL_NAME);
+			}
+
+			PreemissionServiceResponse responseService = emissionService.generateEmissionOrderWS(
+					request.getResidentIdentification(),
+					request.getAccountCode(), user, request.getValue(),
+					request.getComment());
+			
+			if(responseService.getError()){
+				resp.setMessage(responseService.getErrorMessage());
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+			
+			resp.setBondId(responseService.getBondId());
+			resp.setEmissionOrderId(responseService.getEmissionOrderId());
+			resp.setMessage("Preemision exitosa");
+
+			return Response.ok(resp)
 					.header("Access-Control-Allow-Origin", "*")
 					.header("Content-Language", "es-EC").build();
 		} catch (Exception e) {
@@ -118,5 +141,5 @@ public class PreemissionWS {
 			return null;
 		}
 	}
-	
+
 }
