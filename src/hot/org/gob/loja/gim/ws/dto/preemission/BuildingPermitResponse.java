@@ -1,6 +1,6 @@
 package org.gob.loja.gim.ws.dto.preemission;
 
-public class PreemisionAdministerServicesResponse extends GenericResponseWS {
+public class BuildingPermitResponse extends GenericResponseWS {
 	private Long bondId;
 	private Long emissionOrderId;
 
@@ -22,7 +22,7 @@ public class PreemisionAdministerServicesResponse extends GenericResponseWS {
 
 	@Override
 	public String toString() {
-		return "PreemisionAdministerServicesResponse [bondId=" + bondId
+		return "BuildingPermitResponse [bondId=" + bondId
 				+ ", emissionOrderId=" + emissionOrderId + "]";
 	}
 

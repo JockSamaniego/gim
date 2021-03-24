@@ -8,7 +8,7 @@ import org.gob.gim.common.validators.NotEmpty;
 
 ;
 
-public class PreemitAdministrativeServicesRequest {
+public abstract class CommonRequest {
 
 	@NotNull(message = "emiterIdentification no puede ser nulo")
 	@NotEmpty(message = "emiterIdentification no puede ser vacío")
@@ -22,17 +22,18 @@ public class PreemitAdministrativeServicesRequest {
 	@NotEmpty(message = "accountCode no puede ser vacío")
 	private String accountCode;
 
-	@NotNull(message = "value no puede ser nulo")
-	private BigDecimal value;
-
 	@NotNull(message = "explanation no puede ser nulo")
 	@NotEmpty(message = "explanation no puede ser vacío")
 	private String explanation;
-	
+
 	@NotNull(message = "reference no puede ser nulo")
 	@NotEmpty(message = "reference no puede ser vacío")
 	private String reference;
-	
+
+	@NotNull(message = "address no puede ser nulo")
+	@NotEmpty(message = "address no puede ser vacío")
+	private String address;
+
 	public String getEmiterIdentification() {
 		return emiterIdentification;
 	}
@@ -57,14 +58,6 @@ public class PreemitAdministrativeServicesRequest {
 		this.accountCode = accountCode;
 	}
 
-	public BigDecimal getValue() {
-		return value;
-	}
-
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
-
 	public String getExplanation() {
 		return explanation;
 	}
@@ -81,13 +74,21 @@ public class PreemitAdministrativeServicesRequest {
 		this.reference = reference;
 	}
 
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
 	@Override
 	public String toString() {
-		return "PreemitAdministrativeServicesRequest [emiterIdentification="
-				+ emiterIdentification + ", residentIdentification="
-				+ residentIdentification + ", accountCode=" + accountCode
-				+ ", value=" + value + ", explanation=" + explanation
-				+ ", reference=" + reference + "]";
+		return "CommonRequest [emiterIdentification=" + emiterIdentification
+				+ ", residentIdentification=" + residentIdentification
+				+ ", accountCode=" + accountCode + ", explanation="
+				+ explanation + ", reference=" + reference + ", address="
+				+ address + "]";
 	}
 
 }
