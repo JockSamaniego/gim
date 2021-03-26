@@ -39,6 +39,10 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 				query="select ti.tax from TaxItem ti " +
 						"where "+
 						"ti.municipalBond.id = :municipalBondId"),
+		@NamedQuery(name="TaxItem.findTaxItemByMunicipalBondId", 
+					query="select ti from TaxItem ti " +
+								"where "+
+								"ti.municipalBond.id = :municipalBondId")
 		}
 )
  public class TaxItem implements Comparable<TaxItem>{
