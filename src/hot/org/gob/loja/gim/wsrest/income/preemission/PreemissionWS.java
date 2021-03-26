@@ -25,6 +25,7 @@ import org.gob.loja.gim.ws.dto.preemission.PreemissionServiceResponse;
 import org.gob.loja.gim.ws.dto.preemission.RuralPropertyRequest;
 import org.gob.loja.gim.ws.dto.preemission.UnbuiltLotRequest;
 import org.gob.loja.gim.ws.dto.preemission.UrbanPropertyRequest;
+import org.gob.loja.gim.ws.dto.preemission.UtilityRequest;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
@@ -46,7 +47,7 @@ public class PreemissionWS {
 
 	@In(create = true, required = false, value = "emissionService")
 	private EmissionService emissionService;
-	
+
 	@In(create = true, required = false, value = "propertyService")
 	private PropertyService propertyService;
 
@@ -120,12 +121,12 @@ public class PreemissionWS {
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
+
 			if (emissionService == null) {
 				emissionService = ServiceLocator.getInstance().findResource(
 						emissionService.LOCAL_NAME);
 			}
-			
+
 			PreemissionServiceResponse responseService = emissionService
 					.generateEmissionOrderWithoutAdjunctWS(request, user);
 
@@ -144,7 +145,8 @@ public class PreemissionWS {
 					.header("Content-Language", "es-EC").build();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Response.serverError().header("Access-Control-Allow-Origin", "*")
+			return Response.serverError()
+					.header("Access-Control-Allow-Origin", "*")
 					.header("Content-Language", "es-EC").build();
 		}
 	}
@@ -218,27 +220,30 @@ public class PreemissionWS {
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
+
 			if (propertyService == null) {
 				propertyService = ServiceLocator.getInstance().findResource(
 						propertyService.LOCAL_NAME);
 			}
-			
-			Property property = propertyService.findPropertyByCadastralCode(request.getCadastralCode());
-			
+
+			Property property = propertyService
+					.findPropertyByCadastralCode(request.getCadastralCode());
+
 			if (property == null) {
 				resp.setMessage("No existe propiedad con la clave catastral proporcionada");
 				return Response.ok(resp)
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
+
 			if (emissionService == null) {
 				emissionService = ServiceLocator.getInstance().findResource(
 						emissionService.LOCAL_NAME);
 			}
-			
-			PreemissionServiceResponse responseService = emissionService.generateEmissionOrderBuildingPermitWS(request, property, user);
+
+			PreemissionServiceResponse responseService = emissionService
+					.generateEmissionOrderBuildingPermitWS(request, property,
+							user);
 
 			if (responseService.getError()) {
 				resp.setMessage(responseService.getErrorMessage());
@@ -255,11 +260,11 @@ public class PreemissionWS {
 					.header("Content-Language", "es-EC").build();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Response.serverError().header("Access-Control-Allow-Origin", "*")
+			return Response.serverError()
+					.header("Access-Control-Allow-Origin", "*")
 					.header("Content-Language", "es-EC").build();
 		}
 	}
-	
 
 	@POST
 	@Path("/approvalPlans")
@@ -330,27 +335,30 @@ public class PreemissionWS {
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
+
 			if (propertyService == null) {
 				propertyService = ServiceLocator.getInstance().findResource(
 						propertyService.LOCAL_NAME);
 			}
-			
-			Property property = propertyService.findPropertyByCadastralCode(request.getCadastralCode());
-			
+
+			Property property = propertyService
+					.findPropertyByCadastralCode(request.getCadastralCode());
+
 			if (property == null) {
 				resp.setMessage("No existe propiedad con la clave catastral proporcionada");
 				return Response.ok(resp)
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
+
 			if (emissionService == null) {
 				emissionService = ServiceLocator.getInstance().findResource(
 						emissionService.LOCAL_NAME);
 			}
-			
-			PreemissionServiceResponse responseService = emissionService.generateEmissionOrderApprovalPlansWS(request, property, user);
+
+			PreemissionServiceResponse responseService = emissionService
+					.generateEmissionOrderApprovalPlansWS(request, property,
+							user);
 
 			if (responseService.getError()) {
 				resp.setMessage(responseService.getErrorMessage());
@@ -367,11 +375,12 @@ public class PreemissionWS {
 					.header("Content-Language", "es-EC").build();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Response.serverError().header("Access-Control-Allow-Origin", "*")
+			return Response.serverError()
+					.header("Access-Control-Allow-Origin", "*")
 					.header("Content-Language", "es-EC").build();
 		}
 	}
-	
+
 	@POST
 	@Path("/urbanProperty")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -441,27 +450,30 @@ public class PreemissionWS {
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
+
 			if (propertyService == null) {
 				propertyService = ServiceLocator.getInstance().findResource(
 						propertyService.LOCAL_NAME);
 			}
-			
-			Property property = propertyService.findPropertyByCadastralCode(request.getCadastralCode());
-			
+
+			Property property = propertyService
+					.findPropertyByCadastralCode(request.getCadastralCode());
+
 			if (property == null) {
 				resp.setMessage("No existe propiedad con la clave catastral proporcionada");
 				return Response.ok(resp)
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
+
 			if (emissionService == null) {
 				emissionService = ServiceLocator.getInstance().findResource(
 						emissionService.LOCAL_NAME);
 			}
-			
-			PreemissionServiceResponse responseService = emissionService.generateEmissionOrderUrbanPropertyWS(request, property, user);
+
+			PreemissionServiceResponse responseService = emissionService
+					.generateEmissionOrderUrbanPropertyWS(request, property,
+							user);
 
 			if (responseService.getError()) {
 				resp.setMessage(responseService.getErrorMessage());
@@ -478,11 +490,12 @@ public class PreemissionWS {
 					.header("Content-Language", "es-EC").build();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Response.serverError().header("Access-Control-Allow-Origin", "*")
+			return Response.serverError()
+					.header("Access-Control-Allow-Origin", "*")
 					.header("Content-Language", "es-EC").build();
 		}
 	}
-	
+
 	@POST
 	@Path("/ruralProperty")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -552,27 +565,30 @@ public class PreemissionWS {
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
+
 			if (propertyService == null) {
 				propertyService = ServiceLocator.getInstance().findResource(
 						propertyService.LOCAL_NAME);
 			}
-			
-			Property property = propertyService.findPropertyByCadastralCode(request.getCadastralCode());
-			
+
+			Property property = propertyService
+					.findPropertyByCadastralCode(request.getCadastralCode());
+
 			if (property == null) {
 				resp.setMessage("No existe propiedad con la clave catastral proporcionada");
 				return Response.ok(resp)
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
+
 			if (emissionService == null) {
 				emissionService = ServiceLocator.getInstance().findResource(
 						emissionService.LOCAL_NAME);
 			}
-			
-			PreemissionServiceResponse responseService = emissionService.generateEmissionOrderRuralPropertyWS(request, property, user);
+
+			PreemissionServiceResponse responseService = emissionService
+					.generateEmissionOrderRuralPropertyWS(request, property,
+							user);
 
 			if (responseService.getError()) {
 				resp.setMessage(responseService.getErrorMessage());
@@ -589,13 +605,12 @@ public class PreemissionWS {
 					.header("Content-Language", "es-EC").build();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Response.serverError().header("Access-Control-Allow-Origin", "*")
+			return Response.serverError()
+					.header("Access-Control-Allow-Origin", "*")
 					.header("Content-Language", "es-EC").build();
 		}
 	}
-	
-	
-	
+
 	@POST
 	@Path("/unbuiltLot")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -665,27 +680,29 @@ public class PreemissionWS {
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
+
 			if (propertyService == null) {
 				propertyService = ServiceLocator.getInstance().findResource(
 						propertyService.LOCAL_NAME);
 			}
-			
-			Property property = propertyService.findPropertyByCadastralCode(request.getCadastralCode());
-			
+
+			Property property = propertyService
+					.findPropertyByCadastralCode(request.getCadastralCode());
+
 			if (property == null) {
 				resp.setMessage("No existe propiedad con la clave catastral proporcionada");
 				return Response.ok(resp)
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
-			
+
 			if (emissionService == null) {
 				emissionService = ServiceLocator.getInstance().findResource(
 						emissionService.LOCAL_NAME);
 			}
-			
-			PreemissionServiceResponse responseService = emissionService.generateEmissionOrderUnbuiltLotWS(request, property, user);
+
+			PreemissionServiceResponse responseService = emissionService
+					.generateEmissionOrderUnbuiltLotWS(request, property, user);
 
 			if (responseService.getError()) {
 				resp.setMessage(responseService.getErrorMessage());
@@ -702,10 +719,124 @@ public class PreemissionWS {
 					.header("Content-Language", "es-EC").build();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Response.serverError().header("Access-Control-Allow-Origin", "*")
+			return Response.serverError()
+					.header("Access-Control-Allow-Origin", "*")
 					.header("Content-Language", "es-EC").build();
 		}
 	}
-	
+
+	@POST
+	@Path("/utility")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response utility(@Valid UtilityRequest request) {
+		try {
+			System.out.println(request);
+
+			BuildingPermitResponse resp = new BuildingPermitResponse();
+
+			List<String> errorsValidation = GimUtils.validateRequest(request);
+			if (errorsValidation.size() > 0) {
+				resp.setMessage("Error en validaciones de request");
+				resp.setErrors(errorsValidation);
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+
+			if (residentService == null) {
+				residentService = ServiceLocator.getInstance().findResource(
+						residentService.LOCAL_NAME);
+			}
+
+			Resident emitter = residentService.find(request
+					.getEmiterIdentification());
+
+			if (emitter == null) {
+				resp.setMessage("No existe usuario con la identificación proporcionada");
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+
+			if (userService == null) {
+				userService = ServiceLocator.getInstance().findResource(
+						userService.LOCAL_NAME);
+			}
+
+			User user = userService.getUserByResident(emitter.getId());
+			if (user == null) {
+				resp.setMessage("No existe usuario con la identificación proporcionada");
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+
+			if (!user.getIsActive()) {
+				resp.setMessage("Usuario inactivo");
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+
+			if (user.getIsBlocked()) {
+				resp.setMessage("Usuario bloqueado");
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+
+			Boolean hasRol = userService.checkUserRole(user.getId(),
+					"WS_PREEMISOR");
+			if (!hasRol) {
+				resp.setMessage("El usuario no cuenta con el rol necesario para preemitir");
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+
+			if (propertyService == null) {
+				propertyService = ServiceLocator.getInstance().findResource(
+						propertyService.LOCAL_NAME);
+			}
+
+			Property property = propertyService
+					.findPropertyByCadastralCode(request.getCadastralCode());
+
+			if (property == null) {
+				resp.setMessage("No existe propiedad con la clave catastral proporcionada");
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+
+			if (emissionService == null) {
+				emissionService = ServiceLocator.getInstance().findResource(
+						emissionService.LOCAL_NAME);
+			}
+
+			PreemissionServiceResponse responseService = emissionService
+					.generateEmissionOrderUtilityWS(request, property, user);
+
+			if (responseService.getError()) {
+				resp.setMessage(responseService.getErrorMessage());
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+
+			resp.setBondId(responseService.getBondId());
+			resp.setEmissionOrderId(responseService.getEmissionOrderId());
+			resp.setMessage("Preemision exitosa");
+
+			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
+		}
+	}
 
 }

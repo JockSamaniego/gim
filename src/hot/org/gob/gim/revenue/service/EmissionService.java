@@ -17,6 +17,7 @@ import org.gob.loja.gim.ws.dto.preemission.PreemissionServiceResponse;
 import org.gob.loja.gim.ws.dto.preemission.RuralPropertyRequest;
 import org.gob.loja.gim.ws.dto.preemission.UnbuiltLotRequest;
 import org.gob.loja.gim.ws.dto.preemission.UrbanPropertyRequest;
+import org.gob.loja.gim.ws.dto.preemission.UtilityRequest;
 import org.gob.loja.gim.ws.exception.AccountIsBlocked;
 import org.gob.loja.gim.ws.exception.AccountIsNotActive;
 import org.gob.loja.gim.ws.exception.EmissionOrderNotGenerate;
@@ -88,6 +89,12 @@ public interface EmissionService {
 			AccountIsBlocked;
 	
 	PreemissionServiceResponse generateEmissionOrderUnbuiltLotWS(UnbuiltLotRequest detailsEmission, Property property,User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
+	
+	PreemissionServiceResponse generateEmissionOrderUtilityWS(UtilityRequest detailsEmission, Property property,User user)
 			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
 			FiscalPeriodNotFound, EmissionOrderNotGenerate,
 			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
