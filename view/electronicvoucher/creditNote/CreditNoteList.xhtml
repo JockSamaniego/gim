@@ -46,7 +46,7 @@
 
 		<rich:panel>
 			<f:facet name="header">
-				<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:panelGrid id="buttons" columns="3" columnClasses="headerTitle,">
 					<h:outputText
 						value="#{messages['electronicVoucher.searchResults']} (#{empty creditNoteElectList.resultList ? 0 : (creditNoteElectList.paginated ? creditNoteElectList.resultCount : creditNoteElectList.resultList.size)})" />
 					<s:div styleClass="actionButtons" rendered="#{empty from}">
@@ -56,6 +56,11 @@
 							<f:param name="creditNoteId" />
 						</s:button>
 					</s:div>
+					<a:commandButton id="printAll" value="Imprimir Seleccionados"
+							action="#{creditNoteElectHome.prePrintAll()}"
+							disabled="#{creditNoteElectHome.vouchersToPrint.size() == 0}"
+							reRender="electronicVoucherList">
+					</a:commandButton>
 				</h:panelGrid>
 			</f:facet>
 			<div class="results" id="electronicRetentionList1">
@@ -69,6 +74,14 @@
 					rendered="#{not empty creditNoteElectList.resultList}"
 					onRowMouseOver="this.style.backgroundColor='#{messages['rowBackgroundColor']}'"
 					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+					
+					<rich:column styleClass="action" style="align:center;">
+						<f:facet name="header"></f:facet>
+						<h:selectBooleanCheckbox value="#{electronicVoucher.selectToPrint}" disabled="#{electronicVoucher.electronicStatus != 'AUTHORIZED'}" >
+							<a:support event="onchange" ajaxSingle="true" reRender="electronicVoucherList, buttons" 
+								action="#{creditNoteElectHome.checkVoucherToPrint(electronicVoucher)}"/>
+						</h:selectBooleanCheckbox>
+					</rich:column>
  
  					<h:column>
 						<f:facet name="header">
@@ -141,15 +154,16 @@
 
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet> 
-						 <s:button view="/electronicvoucher/creditNote/CreditNoteEdit.xhtml"
-							value="#{messages['common.edit']}" propagation="none"
-							id="electronicVoucherEdit" rendered="#{creditNoteElectHome.isEnabled(electronicVoucher)}">
-							<f:param name="creditNoteId"
-								value="#{electronicVoucher.id}" />
-						</s:button>
+<!-- 						 <s:button view="/electronicvoucher/creditNote/CreditNoteEdit.xhtml" -->
+<!-- 							value="#{messages['common.edit']}" propagation="none" -->
+<!-- 							id="electronicVoucherEdit" rendered="#{creditNoteElectHome.isEnabled(electronicVoucher)}"> -->
+<!-- 							<f:param name="creditNoteId" -->
+<!-- 								value="#{electronicVoucher.id}" /> -->
+<!-- 						</s:button> -->
 						
 						<a:commandButton id="print" value="#{messages['common.print']}"
-							action="#{creditNoteElectHome.prePrint(electronicVoucher.id)}">
+							action="#{creditNoteElectHome.prePrint(electronicVoucher.id)}"
+							disabled="#{electronicVoucher.electronicStatus != 'AUTHORIZED'}">
 						</a:commandButton>
 						
 						<a:commandButton id="cancelVoucher" value="#{messages['electronicVoucher.cancel']}"

@@ -28,7 +28,7 @@ public class CreditNoteElectList extends EntityQuery<ElectronicVoucher> {
 	public CreditNoteElectList() {
 		setEjbql(EJBQL);
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
-		setOrder("electronicvoucher.emissionDate, electronicvoucher.sequentialNumber");
+		setOrder("electronicvoucher.sequentialNumber DESC, electronicvoucher.emissionDate DESC");
 		setMaxResults(25);
 	}
 

@@ -333,7 +333,7 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 	
 	
 	public void createBankDebitsToFutureLiquidation(){
-		joinTransaction();
+		// joinTransaction();
 		try{
 			Person user = userSession.getPerson();
 				String query = "SELECT itsOK FROM gimprod.sp_mbs_from_bank_debits(?,?,?) ";
@@ -344,7 +344,7 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 				
 				@SuppressWarnings("unchecked")
 				Boolean itsOK = (Boolean) q.getSingleResult();
-				getEntityManager().flush();
+				// getEntityManager().flush();
 			findPendingLiquidations();
 		}		
 		catch (Exception e) {

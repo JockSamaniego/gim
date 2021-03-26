@@ -7,22 +7,29 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
+import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.InvoiceNumberOutOfRangeException;
 import org.gob.gim.income.facade.IncomeService;
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.framework.EntityHome;
 
+import ec.gob.gim.common.model.Charge;
+import ec.gob.gim.common.model.Delegate;
+import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.common.model.SystemParameter;
 import ec.gob.gim.complementvoucher.model.AditionalDetail;
 import ec.gob.gim.complementvoucher.model.AditionalField;
 import ec.gob.gim.complementvoucher.model.ComplementVoucher;
@@ -33,12 +40,12 @@ import ec.gob.gim.complementvoucher.model.InstitutionService;
 import ec.gob.gim.complementvoucher.model.TypeEmissionPoint;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.StatusElectronicReceipt;
+import ec.gob.gim.income.model.TaxItem;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 //import org.joda.time.Days;
 
 @Name("creditNoteElectHome")
-@Scope(ScopeType.CONVERSATION)
 public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 		implements Serializable {
 
@@ -46,6 +53,7 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	private Long municipalBondNumber;
 	private Resident resident;
 	private static final String PAID_BOND_STATUS_ID = "MUNICIPAL_BOND_STATUS_ID_PAID";
+	private static final String PAID_BOND_STATUS_ID_EXTERNAL_CHANNEL = "MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL";
 	private InstitutionService institution;
 	private List<ComplementVoucher> complements = new ArrayList<ComplementVoucher>();
 	private ComplementVoucher complementVoucher;
@@ -119,6 +127,7 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	public void setCancelVoucher(ElectronicVoucher cancelVoucher) {
 		cancelVoucher.setElectronicStatus(StatusElectronicReceipt.CANCEL.name());
 		//System.out.println("=>"+cancelVoucher.getSequentialNumber());
+		cancelVoucher.setActive(Boolean.FALSE);
 		this.cancelVoucher = cancelVoucher;
 	}
 
@@ -193,20 +202,24 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	public String addMunicipalBond() {
 
 		if (municipalBondNumber != null) {
-			SystemParameterService systemParameterService = ServiceLocator
-					.getInstance().findResource(
-							SystemParameterService.LOCAL_NAME);
-			Long paidMunicipalBondStatusId = systemParameterService
-					.findParameter(PAID_BOND_STATUS_ID);
-
-			List<Long> municipalBondStatusIds = new ArrayList<Long>();
-			municipalBondStatusIds.add(paidMunicipalBondStatusId);
+//			SystemParameterService systemParameterService = ServiceLocator
+//					.getInstance().findResource(
+//							SystemParameterService.LOCAL_NAME);
+//			Long paidMunicipalBondStatusId = systemParameterService
+//					.findParameter(PAID_BOND_STATUS_ID);
+//			
+//			Long paidExternalChannelMunicipalBondStatusId = systemParameterService
+//					.findParameter(PAID_BOND_STATUS_ID_EXTERNAL_CHANNEL);
+//
+//			List<Long> municipalBondStatusIds = new ArrayList<Long>();
+//			municipalBondStatusIds.add(paidMunicipalBondStatusId);
+//			municipalBondStatusIds.add(paidExternalChannelMunicipalBondStatusId);
 
 			String queryString = "SELECT e from MunicipalBond e "
 					+ "WHERE e.number =:municipalBondNumber and e.municipalBondStatus.id IN (:municipalBondStatusIds) ";
 			Query query = getEntityManager().createQuery(queryString);
 			query.setParameter("municipalBondNumber", municipalBondNumber);
-			query.setParameter("municipalBondStatusIds", municipalBondStatusIds);
+			query.setParameter("municipalBondStatusIds", this.mbStatus);
 			try {
 				MunicipalBond municipalBond = (MunicipalBond) query
 						.getSingleResult();
@@ -222,6 +235,8 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 										.getCreditNote().getId());
 					}
 				}
+				creditNoteControls(this.voucherSelected);
+				this.municipalBondNumber = null;
 			} catch (Exception e) {
 				addFacesMessageFromResourceBundle(
 						"creditNote.municipalBondDoesNotExistAsPaidForResident",
@@ -253,21 +268,28 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	
 	
 	private void addItems(List<Item> items) {
-		getInstance().setItems(new ArrayList<ElectronicItem>());
+		joinTransaction();
+		this.voucherSelected.setItems(new ArrayList<ElectronicItem>());
+		BigDecimal total = BigDecimal.ZERO;
 		for (Item item : items) 
 		{
-		
-			// costo de procesamiento de datos
-			if (item.getEntry().getId() == 444
-					|| item.getEntry().getId() == 448
-					|| item.getEntry().getId() == 543) {
+			
+			// costo de procesamiento de datos, control para devolucion de rubros
+//			if (item.getEntry().getId() == 444
+//					|| item.getEntry().getId() == 448
+//					|| item.getEntry().getId() == 543) {
+//				continue;
+//			}
+			
+			if(this.entries.contains(item.getEntry().getId())){
 				continue;
 			}
+			
 			
 			ElectronicItem eItem = new ElectronicItem();
 			eItem.setAmount(item.getAmount());
 			eItem.setDiscountedBond(item.getDiscountedBond());
-			eItem.setElectronicVoucher(this.instance);
+			eItem.setElectronicVoucher(this.voucherSelected);
 			eItem.setEntry(item.getEntry());
 			eItem.setIsTaxable(item.getIsTaxable());
 			eItem.setItem(item);
@@ -275,8 +297,8 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 			eItem.setOrderNumber(item.getOrderNumber());
 			eItem.setSurchargedBond(item.getSurchargedBond());
 			eItem.setTargetEntry(item.getTargetEntry());
-			eItem.setTotal(BigDecimal.ZERO);
-			eItem.setValue(BigDecimal.ZERO);
+			eItem.setTotal(item.getTotal());
+			eItem.setValue(item.getValue());
 			
 			//por cada item se agrega un detalle adicional
 			eItem.setDetails(new ArrayList<AditionalDetail>());
@@ -285,47 +307,49 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 			detail.setValue(item.getEntry().getCode());
 			detail.setItem(eItem);
 			eItem.getDetails().add(detail);
-			getInstance().getItems().add(eItem);	
-		}
-	}
-
-	public void calculateRow(ElectronicItem item) {
-		if (item.getValue() != null) {
-			BigDecimal value = item.getValue();
-			BigDecimal total = value.multiply(item.getAmount());
-			item.setTotal(total);
-			calculateTotal();
-		}
-	}
-
-	private void calculateTotal() {
-		// guardar los valorse que son imponibles y no
-		BigDecimal total = BigDecimal.ZERO;
-		BigDecimal nonTaxable = BigDecimal.ZERO;
-		BigDecimal taxable = BigDecimal.ZERO;
-		BigDecimal taxesTotal = BigDecimal.ZERO;
-		List<ElectronicItem> items = this.instance.getItems();
-		for (ElectronicItem item : items) {
 			total = total.add(item.getTotal());
-			if (item.getIsTaxable()) {
-				taxable = taxable.add(item.getTotal());
-				BigDecimal tax = item.getTotal().multiply(
-						new BigDecimal("0.12"));
-				taxesTotal = taxesTotal.add(tax);
-			} else {
-				nonTaxable = nonTaxable.add(item.getTotal());
-			}
+			this.voucherSelected.getItems().add(eItem);
 		}
-
-		BigDecimal totalPaid = taxable.add(nonTaxable).add(taxesTotal); 
-		this.instance.setTaxableTotal(taxable);
-		this.instance.setNonTaxableTotal(nonTaxable);
-		this.instance.setTotalTaxes(taxesTotal);
-		this.instance.setTotal(total);
-		this.instance.setTotalPaid(totalPaid);
-		//System.out.println("==========>"+total);
-
+		this.voucherSelected.setTotal(total);
 	}
+
+//	public void calculateRow(ElectronicItem item) {
+//		if (item.getValue() != null) {
+//			BigDecimal value = item.getValue();
+//			BigDecimal total = value.multiply(item.getAmount());
+//			item.setTotal(total);
+//			calculateTotal();
+//		}
+//	}
+
+//	private void calculateTotal() {
+//		// guardar los valorse que son imponibles y no
+//		BigDecimal total = BigDecimal.ZERO;
+//		BigDecimal nonTaxable = BigDecimal.ZERO;
+//		BigDecimal taxable = BigDecimal.ZERO;
+//		BigDecimal taxesTotal = BigDecimal.ZERO;
+//		List<ElectronicItem> items = this.voucherSelected.getItems();
+//		for (ElectronicItem item : items) {
+//			total = total.add(item.getTotal());
+//			if (item.getIsTaxable()) {
+//				taxable = taxable.add(item.getTotal());
+//				BigDecimal tax = item.getTotal().multiply(
+//						new BigDecimal("0.12"));
+//				taxesTotal = taxesTotal.add(tax);
+//			} else {
+//				nonTaxable = nonTaxable.add(item.getTotal());
+//			}
+//		}
+//
+//		BigDecimal totalPaid = taxable.add(nonTaxable).add(taxesTotal); 
+//		this.voucherSelected.setTaxableTotal(taxable);
+//		this.voucherSelected.setNonTaxableTotal(nonTaxable);
+//		this.voucherSelected.setTotalTaxes(taxesTotal);
+//		this.voucherSelected.setTotal(total);
+//		this.voucherSelected.setTotalPaid(totalPaid);
+//		//System.out.println("==========>"+total);
+//
+//	}
 
 	public void searchResident() {
 		Query query = getEntityManager().createNamedQuery(
@@ -423,76 +447,97 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 			// error
 			System.out.println("ERROR");
 		} else {
-			Receipt receipt = municipalBond.getReceipt();
+			 Receipt receipt = municipalBond.getReceipt();
 			// tabla 4 del sri de tipos de comprobantes
-			Integer type = receipt.getReceiptType().getCode();
-			switch (type) {
-			case 1: // factura
-				this.instance.setDocumentType("01");
-				this.instance.setDocumentModify("FACTURA");
-				break;
-			case 2: // nota de credito
-				this.instance.setDocumentType("04");
-				this.instance.setDocumentModify("NOTAS DE CREDITO");
-				break;
-			case 3: // nota de debito
-				this.instance.setDocumentType("05");
-				this.instance.setDocumentModify("NOTAS DE DEBITO");
-				break;
-			case 4: // guia de remision
-				this.instance.setDocumentType("06");
-				this.instance.setDocumentModify("GUÍA DE REMISION");
-				break;
-			case 5: // comprobante de retencion
-				this.instance.setDocumentType("07");
-				this.instance.setDocumentModify("COMPROBANTE DE RETENCION");
-				break;
-			}
+			//Integer type = receipt.getReceiptType().getCode();
 
-			this.instance.setDocumentNumber(receipt.toString());
-			this.instance.setDocumentDate(receipt.getDate());
-			this.instance.setResident(municipalBond.getResident());
+//			switch (type) {
+//			case 1: // factura
+//				this.voucherSelected.setDocumentType("01");
+//				this.voucherSelected.setDocumentModify("FACTURA");
+//				break;
+//			case 2: // nota de credito
+				this.voucherSelected.setDocumentType("04");
+				this.voucherSelected.setDocumentModify("NOTAS DE CREDITO");
+//				break;
+//			case 3: // nota de debito
+//				this.voucherSelected.setDocumentType("05");
+//				this.voucherSelected.setDocumentModify("NOTAS DE DEBITO");
+//				break;
+//			case 4: // guia de remision
+//				this.voucherSelected.setDocumentType("06");
+//				this.voucherSelected.setDocumentModify("GUÍA DE REMISION");
+//				break;
+//			case 5: // comprobante de retencion
+//				this.voucherSelected.setDocumentType("07");
+//				this.voucherSelected.setDocumentModify("COMPROBANTE DE RETENCION");
+//				break;
+//			}
+
+			this.voucherSelected.setDocumentNumber(receipt.toString());
+			this.voucherSelected.setDocumentDate(receipt.getDate());
+			this.voucherSelected.setResident(municipalBond.getResident());
+			this.voucherSelected.setMunicipalBond(municipalBond);
 			addItems(municipalBond.getItems());
+			this.voucherSelected.setTotal(this.voucherSelected.getTotal().add(municipalBond.getInterest().add(municipalBond.getSurcharge())));
+			
+			Query query = getEntityManager().createNamedQuery("TaxItem.findTaxItemByMunicipalBondId");
+			query.setParameter("municipalBondId", municipalBond.getId());
+			try {
+				TaxItem taxItem = (TaxItem) query
+						.getSingleResult();
+
+				if (taxItem != null) {
+					this.voucherSelected.setTotalTaxes(taxItem.getValue());
+					this.voucherSelected.setTaxableTotal(municipalBond.getTaxableTotal());
+					this.voucherSelected.setNonTaxableTotal(municipalBond.getNonTaxableTotal());
+					this.voucherSelected.setTotalPaid(this.voucherSelected.getTotal().add(this.voucherSelected.getTotalTaxes()));
+				}
+			} catch (Exception e) {
+				addFacesMessageFromResourceBundle(
+						"No existe registro de impuestos",
+						municipalBondNumber);
+			}
 		}
 	}
 
-	public String persist() {
-		// validar si el numero de documento es valido
-		if (this.instance.getDocumentNumber().length() > 17) {
-			addFacesMessageFromResourceBundle("electronicVoucher.docNumberFormat");
-			return null;
-		}
-
-		// generar la secuencia
-		IncomeService incomeService = ServiceLocator.getInstance()
-				.findResource(IncomeService.LOCAL_NAME);
-		Long number;
-		try {
-			number = incomeService.generateNextValue(this.sequenceName);
-			String format = formatNumber(number);
-			// generar el numero secuencial
-			ComplementVoucher complement = this.typeEmissionPoint
-					.getComplementVoucher();
-			this.sequentialNumber = complement.getInstitutionNumber() + "-"
-					+ complement.getEmisionPointNumber() + "-" + format;
-
-			//System.out.println("SECUENCIAL====>" + this.sequentialNumber);
-
-			this.instance.setSequentialNumber(this.sequentialNumber);
-			// actualizar el valor actual del contador del voucher
-			// complementario
-
-			this.instance.setTypeEmissionPoint(this.typeEmissionPoint);
-			this.instance.setVoucherNumber(number);
-			this.typeEmissionPoint.setCurrentValue(number); 
-			getEntityManager().merge(this.typeEmissionPoint); 
-			super.persist(); 
-			return "persisted";
-		} catch (InvoiceNumberOutOfRangeException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+//	public String persist() {
+//		// validar si el numero de documento es valido
+//		if (this.instance.getDocumentNumber().length() > 17) {
+//			addFacesMessageFromResourceBundle("electronicVoucher.docNumberFormat");
+//			return null;
+//		}
+//
+//		// generar la secuencia
+//		IncomeService incomeService = ServiceLocator.getInstance()
+//				.findResource(IncomeService.LOCAL_NAME);
+//		Long number;
+//		try {
+//			number = incomeService.generateNextValue(this.sequenceName);
+//			String format = formatNumber(number);
+//			// generar el numero secuencial
+//			ComplementVoucher complement = this.typeEmissionPoint
+//					.getComplementVoucher();
+//			this.sequentialNumber = complement.getInstitutionNumber() + "-"
+//					+ complement.getEmisionPointNumber() + "-" + format;
+//
+//			//System.out.println("SECUENCIAL====>" + this.sequentialNumber);
+//
+//			this.instance.setSequentialNumber(this.sequentialNumber);
+//			// actualizar el valor actual del contador del voucher
+//			// complementario
+//
+//			this.instance.setTypeEmissionPoint(this.typeEmissionPoint);
+//			this.instance.setVoucherNumber(number);
+//			this.typeEmissionPoint.setCurrentValue(number); 
+//			getEntityManager().merge(this.typeEmissionPoint); 
+//			super.persist(); 
+//			return "persisted";
+//		} catch (InvoiceNumberOutOfRangeException e) {
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
 	
 	public String prePrint(Long id) {
 		setCreditNoteId(id);
@@ -538,11 +583,19 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	public Long getCreditNoteId() {
 		return (Long) getId();
 	}
+	
+	private Boolean isFirstTime = Boolean.TRUE;
 
 	public void wire() {
-		getInstance();
-		if (getInstance().getId() == null) {
-			init();
+//		getInstance();
+//		if (getInstance().getId() == null) {
+//			init();
+//		}
+		if(isFirstTime){
+			chargeValues();
+			loadCharge();
+			this.vouchersToPrint = new ArrayList();
+			isFirstTime = Boolean.FALSE;
 		}
 	}
 	
@@ -554,4 +607,296 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	public boolean canCancel(ElectronicVoucher voucher) {
 		return (!voucher.getElectronicStatus().equals("CANCEL")) ? true : false;
 	}
+	
+	// para crear notas de credito electrónicas en bloque
+	// Jock Samaniego M.
+	
+	private List<ElectronicVoucher> creditNotes = new ArrayList();
+	private ElectronicVoucher voucherSelected;
+	private Date emissionDate = new Date();
+	private String emissionReason;
+	private FiscalPeriod fiscalPeriod;
+	private String monthFiscal;
+
+	public List<ElectronicVoucher> getCreditNotes() {
+		return creditNotes;
+	}
+
+	public void setCreditNotes(List<ElectronicVoucher> creditNotes) {
+		this.creditNotes = creditNotes;
+	}
+	
+	public ElectronicVoucher getVoucherSelected() {
+		return voucherSelected;
+	}
+
+	public void setVoucherSelected(ElectronicVoucher voucherSelected) {
+		this.voucherSelected = voucherSelected;
+	}
+
+	public Date getEmissionDate() {
+		return emissionDate;
+	}
+
+	public void setEmissionDate(Date emissionDate) {
+		this.emissionDate = emissionDate;
+	}
+
+	public String getEmissionReason() {
+		return emissionReason;
+	}
+
+	public void setEmissionReason(String emissionReason) {
+		this.emissionReason = emissionReason;
+	}
+
+	public FiscalPeriod getFiscalPeriod() {
+		return fiscalPeriod;
+	}
+
+	public void setFiscalPeriod(FiscalPeriod fiscalPeriod) {
+		this.fiscalPeriod = fiscalPeriod;
+	}
+
+	public String getMonthFiscal() {
+		return monthFiscal;
+	}
+
+	public void setMonthFiscal(String monthFiscal) {
+		this.monthFiscal = monthFiscal;
+	}
+	
+	
+
+	public void addCreditNote(){
+		if(!creditNotes.contains(this.voucherSelected)){
+			creditNotes.add(this.voucherSelected);
+		}
+	}
+	
+	public void removeCreditNote(ElectronicVoucher voucher){
+		if(creditNotes.contains(voucher)){
+			creditNotes.remove(voucher);
+		}
+	}
+	
+	public void createCreditNote(){
+		this.voucherSelected = new ElectronicVoucher();
+		this.voucherSelected.setAccessCode("0000000000000000000000000000000000000000000000000");
+		this.voucherSelected.setAuthorizationCode("0000000000000000000000000000000000000000000000000");
+		Date now = Calendar.getInstance().getTime();
+		this.voucherSelected.setCreationDate(now);
+		this.voucherSelected.setCreationTime(now);
+		this.voucherSelected.setEmissionDate(now);
+		this.voucherSelected.setEmisionTime(now);
+		this.voucherSelected.setTotal(BigDecimal.ZERO);
+		this.voucherSelected.setActive(Boolean.TRUE);
+		// this.voucherSelected.setDocumentNumber("000-000-123456789");
+		Person emitter = userSession.getPerson();
+		this.voucherSelected.setEmitter(emitter);
+		this.voucherSelected.setElectronicStatus(StatusElectronicReceipt.PENDING.name());
+		checkUserCanEmitt();
+		addMunicipalBond();
+	}
+	
+	public void creditNoteControls(ElectronicVoucher voucher){
+		if (voucher.getDocumentNumber().length() > 17) {
+			addFacesMessageFromResourceBundle("electronicVoucher.docNumberFormat");
+		}else{
+			List<ElectronicVoucher>	eVauchers = new ArrayList();
+			Query query = getEntityManager().createNamedQuery("ElectronicVoucher.findCreditNote");
+			query.setParameter("mbNumber", voucher.getMunicipalBond().getNumber());
+			eVauchers = query.getResultList();
+			if(eVauchers.size() > 0){
+				addFacesMessageFromResourceBundle("ya existe una nota de crédito para la obligación");
+			}else{
+				Boolean isContains = Boolean.FALSE;
+				for(ElectronicVoucher ev : creditNotes){
+					if(ev.getMunicipalBond().getNumber() == voucher.getMunicipalBond().getNumber()){
+						isContains = Boolean.TRUE;
+						break;
+					}
+				}
+				if(isContains){
+					addFacesMessageFromResourceBundle("ya agregó la obligación seleccionada");
+				}else{
+					addCreditNote();
+				}
+			}
+		}
+	}
+	
+	public void resetValues(){
+		creditNotes = new ArrayList();
+		voucherSelected = null;
+		emissionDate = new Date();
+		emissionReason = null;
+		fiscalPeriod = null;
+		monthFiscal = null;
+	}
+	
+	public String saveElectronicCreditNotes(){
+		joinTransaction();
+		for(ElectronicVoucher ev : creditNotes){
+			ElectronicVoucher forSave = generateSequence(ev);
+			if(forSave != null){
+				forSave.setReason(this.emissionReason);
+				forSave.setEmissionDate(this.emissionDate);
+				forSave.setFiscalPeriod(fiscalPeriod);
+				forSave.setMonthFiscal(monthFiscal);
+				this.setInstance(forSave);
+				super.persist();
+			}
+		}
+		resetValues();
+		return "persisted";
+	}
+	
+	public ElectronicVoucher generateSequence(ElectronicVoucher voucher){
+		// generar la secuencia
+				IncomeService incomeService = ServiceLocator.getInstance()
+						.findResource(IncomeService.LOCAL_NAME);
+				Long number;
+				try {
+					number = incomeService.generateNextValue(this.sequenceName);
+					String format = formatNumber(number);
+					// generar el numero secuencial
+					ComplementVoucher complement = this.typeEmissionPoint
+							.getComplementVoucher();
+					this.sequentialNumber = complement.getInstitutionNumber() + "-"
+							+ complement.getEmisionPointNumber() + "-" + format;
+
+					//System.out.println("SECUENCIAL====>" + this.sequentialNumber);
+
+					voucher.setSequentialNumber(this.sequentialNumber);
+					// actualizar el valor actual del contador del voucher
+					// complementario
+
+					voucher.setTypeEmissionPoint(this.typeEmissionPoint);
+					voucher.setVoucherNumber(number);
+					this.typeEmissionPoint.setCurrentValue(number); 
+					getEntityManager().merge(this.typeEmissionPoint); 
+					return voucher;
+				} catch (InvoiceNumberOutOfRangeException e) {
+					e.printStackTrace();
+					return null;
+				}
+				
+	}
+	
+	private List<Long> entries;
+	private List<Long> mbStatus;
+	
+	public void chargeValues(){
+		entries = new ArrayList();
+		mbStatus = new ArrayList();
+		Query query = getEntityManager().createNamedQuery("SystemParameter.findByName");
+		query.setParameter("name", "MB_ENTRIES_ELECTRONIC_CREDIT_NOTE");
+		SystemParameter controlEntries = (SystemParameter) query.getSingleResult();
+		String[] entriesStr = controlEntries.getValue().trim().split(",");
+		for(String st : entriesStr){
+			entries.add(Long.parseLong(st));
+		}
+		
+		Query query2 = getEntityManager().createNamedQuery("SystemParameter.findByName");
+		query2.setParameter("name", "MB_STATUS_ELECTRONIC_CREDIT_NOTE");
+		SystemParameter controlStatus = (SystemParameter) query2.getSingleResult();
+		String[] statusStr = controlStatus.getValue().trim().split(",");
+		for(String stt : statusStr){
+			mbStatus.add(Long.parseLong(stt));
+		}
+	}
+	
+	//para impresion
+	
+	private List<ElectronicVoucher> vouchersToPrint = new ArrayList();
+
+	public List<ElectronicVoucher> getVouchersToPrint() {
+		return vouchersToPrint;
+	}
+
+	public void setVouchersToPrint(List<ElectronicVoucher> vouchersToPrint) {
+		this.vouchersToPrint = vouchersToPrint;
+	}
+	
+	
+	public void checkVoucherToPrint(ElectronicVoucher voucher){
+		if(!vouchersToPrint.contains(voucher)){
+			voucher.setSelectToPrint(Boolean.TRUE);
+			vouchersToPrint.add(voucher);
+		}else{
+			voucher.setSelectToPrint(Boolean.FALSE);
+			vouchersToPrint.remove(voucher);
+		}
+	}
+	
+	// charge and delegate
+	
+	private Charge incomeCharge;
+	private Delegate incomeDelegate;
+
+	public Charge getIncomeCharge() {
+		return incomeCharge;
+	}
+
+	public void setIncomeCharge(Charge incomeCharge) {
+		this.incomeCharge = incomeCharge;
+	}
+
+	public Delegate getIncomeDelegate() {
+		return incomeDelegate;
+	}
+
+	public void setIncomeDelegate(Delegate incomeDelegate) {
+		this.incomeDelegate = incomeDelegate;
+	}
+	
+	
+	public void loadCharge() {
+		incomeCharge = getCharge("DELEGATE_ID_INCOME");
+		if (incomeCharge != null) {
+			for (Delegate d : incomeCharge.getDelegates()) {
+				if (d.getIsActive())
+					incomeDelegate = d;
+			}
+		}
+	}
+
+	private Charge getCharge(String systemParameter) {
+		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(
+					SystemParameterService.LOCAL_NAME);
+		Charge charge = systemParameterService.materialize(Charge.class,
+				systemParameter);
+		return charge;
+	}
+	
+	public String prePrintAll() {
+		if(this.vouchersToPrint.size() > 0){
+			return "/electronicvoucher/report/CreditNoteTotalReport.xhtml";
+		}
+		return null;	
+	}
+	
+	// Para crear desde el CreditNoteHome
+	// Jock Samaniego
+	
+	private List<MunicipalBond> mbsForCreditNotes;
+
+	public List<MunicipalBond> getMbsForCreditNotes() {
+		return mbsForCreditNotes;
+	}
+
+	public void setMbsForCreditNotes(List<MunicipalBond> mbsForCreditNotes) {
+		this.mbsForCreditNotes = mbsForCreditNotes;
+	}
+	
+	
+	public void createFromCreditNoteHome(){
+		for(MunicipalBond mb : mbsForCreditNotes){
+			this.setMunicipalBondNumber(mb.getNumber());
+			createCreditNote();
+		}
+		saveElectronicCreditNotes();
+	}
 }
+
