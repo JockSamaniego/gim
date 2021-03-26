@@ -11,10 +11,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.gob.gim.common.DateUtils;
+import org.hibernate.envers.Audited;
 
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.adjunct.detail.VehicleType;
 
+@Audited
 @Entity
 @DiscriminatorValue("VEFIR")
 public class VehicularFineReference extends Adjunct {

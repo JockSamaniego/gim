@@ -6,11 +6,13 @@ import java.util.List;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.hibernate.envers.Audited;
 import org.jboss.seam.core.Interpolator;
 
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.ConcessionType;
 
+@Audited
 @Entity
 @DiscriminatorValue("CONC") 
 public class MiningConcession extends Adjunct{

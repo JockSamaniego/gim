@@ -6,8 +6,11 @@ import java.util.List;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.hibernate.envers.Audited;
+
 import ec.gob.gim.revenue.model.Adjunct;
 
+@Audited
 @Entity
 @DiscriminatorValue("BUDGR")
 public class BudgetReference extends Adjunct {

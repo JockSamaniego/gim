@@ -10,9 +10,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import org.hibernate.envers.Audited;
+
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.revenue.model.Adjunct;
 
+@Audited
 @Entity
 @NamedQueries(value = {
 		@NamedQuery(name = "PropertyAppraisal.findById", 

@@ -9,11 +9,14 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import org.hibernate.envers.Audited;
+
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.waterservice.model.Consumption;
 import ec.gob.gim.waterservice.model.MaintenanceEntryDTO;
 import ec.gob.gim.waterservice.model.Route;
 
+@Audited
 @Entity
 @DiscriminatorValue("WSR")
 public class WaterServiceReference extends Adjunct {

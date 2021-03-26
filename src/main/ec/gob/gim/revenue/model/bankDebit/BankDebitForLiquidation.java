@@ -22,11 +22,12 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.revenue.model.MunicipalBondForBankDebit;
 
-
+@Audited
 @Entity
 @TableGenerator(name = "BankDebitForLiquidationGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "BankDebitForLiquidation", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {

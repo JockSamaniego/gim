@@ -14,6 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.gob.gim.common.DateUtils;
+import org.hibernate.envers.Audited;
 
 import ec.gob.gim.revenue.model.Adjunct;
 
@@ -22,7 +23,7 @@ import ec.gob.gim.revenue.model.Adjunct;
 				+ "where lower(antRef.contraventionNumber) = lower(:contraventionNumber)")
 })
 
-
+@Audited
 @Entity
 @DiscriminatorValue("ANTR")
 public class ANTReference extends Adjunct {

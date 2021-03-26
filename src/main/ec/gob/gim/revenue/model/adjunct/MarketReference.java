@@ -8,10 +8,13 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.envers.Audited;
+
 import ec.gob.gim.market.model.Market;
 import ec.gob.gim.market.model.Stand;
 import ec.gob.gim.revenue.model.Adjunct;
 
+@Audited
 @Entity
 @DiscriminatorValue("MR")
 public class MarketReference extends Adjunct {

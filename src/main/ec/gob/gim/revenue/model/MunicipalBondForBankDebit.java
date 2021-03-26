@@ -3,6 +3,7 @@ package ec.gob.gim.revenue.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,8 +15,12 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
+
+import org.hibernate.envers.Audited;
+
 import ec.gob.gim.revenue.model.bankDebit.BankDebitForLiquidation;
 
+@Audited
 @Entity
 @TableGenerator(name = "MunicipalBondForBankDebitGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "MunicipalBondForBankDebit", initialValue = 1, allocationSize = 1)
 public class MunicipalBondForBankDebit implements Serializable{
