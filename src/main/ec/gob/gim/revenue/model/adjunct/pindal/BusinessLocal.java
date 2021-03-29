@@ -6,9 +6,12 @@ import java.util.List;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.hibernate.envers.Audited;
+
 import ec.gob.gim.revenue.model.adjunct.BusinessLocalReference;
 import ec.gob.gim.revenue.model.adjunct.ValuePair;
 
+@Audited
 @Entity
 @DiscriminatorValue("BL")
 public class BusinessLocal extends BusinessLocalReference{	

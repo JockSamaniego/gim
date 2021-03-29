@@ -60,6 +60,7 @@ import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.DTO.CRTV_MunicipalBonds;
+import ec.gob.gim.revenue.model.DTO.MunicipalBondErrorsCorrectionDTO;
 import ec.gob.gim.revenue.model.adjunct.ANTReference;
 import ec.gob.gim.security.model.Role;
 //macartuche
@@ -1850,5 +1851,4 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		em.persist(adjunct);
 		em.flush();
 	}
-		
 }

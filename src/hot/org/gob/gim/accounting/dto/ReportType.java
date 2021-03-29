@@ -9,6 +9,7 @@ public enum ReportType {
 	COMBINED(new String("GAD")),
 	BALANCE(new String("GAD")),
 	SUBSCRIPTION(new String("GAD")),
+	ERRORS_CORRECTION(new String("GAD")),
 	REVENUE_EMAALEP(new String("EMAALEP")),
 	INCOME_EMAALEP(new String("EMAALEP"));
 	

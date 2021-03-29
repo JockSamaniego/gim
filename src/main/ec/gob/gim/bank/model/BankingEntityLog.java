@@ -1,6 +1,7 @@
 package ec.gob.gim.bank.model;
 
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.envers.Audited;
 
+@Audited
 @Entity
 @TableGenerator(name = "BankingEntityLogGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "BankingEntityLog", initialValue = 1, allocationSize = 1)
 

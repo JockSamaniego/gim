@@ -12,10 +12,12 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 import org.gob.gim.common.DateUtils;
+import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Adjunct;
 
+@Audited
 @NamedQueries(value = {
 		@NamedQuery(name = "InfringementANTReference.countInfringementByCitationNumber", query = "select count(infrig.citationNumber) from InfringementANTReference infrig "
 				+ "where lower(infrig.citationNumber) = lower(:citationNumber)") })

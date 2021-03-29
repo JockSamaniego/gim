@@ -13,18 +13,25 @@ import javax.faces.event.ActionEvent;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.gob.gim.commercial.action.LocalFeatureHome;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.electronicvoucher.creditnote.action.CreditNoteElectHome;
 import org.gob.gim.exception.CreditNoteValueNotValidException;
 import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
+import org.gob.gim.revenue.action.AdjunctHome;
+import org.gob.gim.revenue.action.SolvencyReportHome;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityHome;
 
+import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.complementvoucher.model.ElectronicVoucher;
 import ec.gob.gim.income.model.CreditNote;
 import ec.gob.gim.income.model.EndorseCreditNote;
 import ec.gob.gim.income.model.LegalStatus;
@@ -179,6 +186,9 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		try {
 			incomeService.createCreditNote(this.getInstance(), legalStatus);
+			if(getInstance().getCreditNoteType().getName().equals("notas de credito")){
+				createCreditNotesElect();
+			}
 			return "persisted";
 		} catch (CreditNoteValueNotValidException ex) {
 			addFacesMessageFromResourceBundle(ex.getClass().getSimpleName());
@@ -212,6 +222,11 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 				if (municipalBond != null) {
 					if (municipalBond.getCreditNote() == null) {
 						getInstance().add(municipalBond);
+						if(municipalBond.getReceipt() != null){
+							if(!this.mbsForCreditNoteElect.contains(municipalBond)){
+								this.mbsForCreditNoteElect.add(municipalBond);
+							}
+						}
 					} else {
 						addFacesMessageFromResourceBundle("creditNote.municipalBondIsInOtherCreditNote", municipalBondNumber, municipalBond.getCreditNote().getId());
 					}
@@ -559,8 +574,8 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 
 	}
 	
-	//Para imprimir reporte de la consulta completa
-		//JOck samaniego
+		//Para imprimir reporte de la consulta completa
+		//Jock Samaniego
 		
 		private List<CreditNote> creditnoteList;
 		private Date dateFrom;
@@ -611,5 +626,41 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 			q.setParameter("dateFrom", from);
 			q.setParameter("dateUntil", until);
 			creditnoteList = q.getResultList();
+		}
+		
+		// para crear notas de credito electrónicas desde este Home
+		// Jock Samaniego
+		// 23-03-2021
+		
+		private List<MunicipalBond> mbsForCreditNoteElect = new ArrayList();
+		
+		@In(create = true)
+		CreditNoteElectHome creditNoteElectHome;
+		
+		public void createCreditNotesElect(){
+			creditNoteElectHome.wire();
+			FiscalPeriod fiscalPeriod = null;
+			Query q = getEntityManager().createNamedQuery("FiscalPeriod.findCurrent");
+			q.setParameter("currentDate", getInstance().getDate());
+			try{
+				fiscalPeriod = (FiscalPeriod) q.getSingleResult();
+			}catch (Exception e){
+				fiscalPeriod = null;
+				addFacesMessage("Periodo fiscal no encontrado para la fecha", getInstance().getDate());
+			}
+			creditNoteElectHome.setMbsForCreditNotes(this.mbsForCreditNoteElect);
+			creditNoteElectHome.setEmissionReason(getInstance().getDescription());
+			creditNoteElectHome.setEmissionDate(getInstance().getDate());
+			creditNoteElectHome.setFiscalPeriod(fiscalPeriod);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(getInstance().getDate());
+			String month = String.valueOf(cal.get(Calendar.MONTH) + 1);
+			if(month.length() > 1){
+				creditNoteElectHome.setMonthFiscal(month);
+			}else{
+				creditNoteElectHome.setMonthFiscal("0" + month);
+			}
+			//creditNoteElectHome.chargeValues();
+			creditNoteElectHome.createFromCreditNoteHome();
 		}
 }

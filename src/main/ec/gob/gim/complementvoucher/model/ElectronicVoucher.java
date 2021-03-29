@@ -42,7 +42,8 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 @Audited
 @Entity
 @TableGenerator(name = "ElectronicVoucherGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "ElectronicVoucher", initialValue = 1, allocationSize = 1)
-@NamedQueries(value = { @NamedQuery(name = "ElectronicVoucher.findAll", query = "SELECT ev FROM ElectronicVoucher ev order by ev.creationDate") })
+@NamedQueries(value = { @NamedQuery(name = "ElectronicVoucher.findAll", query = "SELECT ev FROM ElectronicVoucher ev order by ev.creationDate"),
+						@NamedQuery(name = "ElectronicVoucher.findCreditNote", query = "SELECT cn FROM ElectronicVoucher cn where cn.municipalBond.number = :mbNumber and cn.documentType = '04' and cn.active = true ")})
 public class ElectronicVoucher {
 
 	@Id
@@ -159,6 +160,9 @@ public class ElectronicVoucher {
 	
 	@Transient
 	private String documentModify;
+	
+	@Transient
+	private Boolean selectToPrint;
 	
 	public ElectronicVoucher() {
 		details = new ArrayList<ElectronicVoucherDetail>();
@@ -445,6 +449,14 @@ public class ElectronicVoucher {
 
 	public void setTotalPaid(BigDecimal totalPaid) {
 		this.totalPaid = totalPaid;
+	}
+
+	public Boolean getSelectToPrint() {
+		return selectToPrint;
+	}
+
+	public void setSelectToPrint(Boolean selectToPrint) {
+		this.selectToPrint = selectToPrint;
 	}
 
 }// end ComplementVoucher

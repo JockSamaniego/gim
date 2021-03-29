@@ -368,6 +368,15 @@
 							rendered="#{municipalBondManager.hasRole('ROLE_NAME_REVENUE_CERTIFICATE') and _municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatus)}"
 							action="#{municipalBondManager.printCertificate(_municipalBond.id)}"
 							value="#{messages['municipalBond.certificate']}" />
+							
+						<a:commandButton id="correctionButton" ajaxSingle="true"
+							rendered="#{municipalBondManager.hasRole('ROLE_NAME_REVENUE_ERRORSCORRECTION') and _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus) and municipalBondManager.compareDatesToCorrectionStatus(_municipalBond.emisionDate)}"
+							action="#{municipalBondManager.setForErrorsCorrection(_municipalBond)}"
+							value="#{messages['municipalBond.correction']}" 
+							reRender="confirmErrorsCorrectionPanel" 
+							eventsQueue="gimEventsQueue"
+							oncomplete="Richfaces.showModalPanel('confirmErrorsCorrectionPanel',{width:350, height:250})"
+							focus="observationErrorsConfirm" />
 
 					</rich:column>
 
@@ -501,6 +510,34 @@
 							<a:commandButton id="cancelBtnBlocked" ajaxSingle="true"
 								value="#{messages['common.cancel']}"
 								oncomplete="Richfaces.hideModalPanel('confirmBlockedPanel');"
+								bypassUpdates="true" />
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
+		
+		<rich:modalPanel id="confirmErrorsCorrectionPanel" width="350" height="250">
+			<f:facet name="header">#{messages['municipalBond.confirmErrorCorrection']}</f:facet>
+			<h:form id="errorsCorrection">
+				<h:panelGrid>
+					<s:decorate id="errorCorrectionField"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['municipalBond.observationReason']}:</ui:define>
+						<h:inputTextarea id="observationErrorsConfirm" cols="40" rows="6"
+							value="#{municipalBondManager.observation}" required="true" />
+					</s:decorate>
+					
+					<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="closingBtnErrors" reRender="municipalBondsTable"
+								action="#{municipalBondManager.processErrorsCorrectionState(municipalBondManager.municipalBond, municipalBondManager.correctionBondStatus)}"
+								value="#{messages['municipalBond.errorConfirm']}"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmErrorsCorrectionPanel\');' : ''}" />
+
+							<a:commandButton id="cancelBtnErrors" ajaxSingle="true"
+								value="#{messages['common.cancel']}"
+								oncomplete="Richfaces.hideModalPanel('confirmErrorsCorrectionPanel');"
 								bypassUpdates="true" />
 						</div>
 					</h:panelGroup>

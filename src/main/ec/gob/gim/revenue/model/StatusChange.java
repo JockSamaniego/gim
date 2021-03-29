@@ -17,8 +17,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.envers.Audited;
+
 import ec.gob.gim.security.model.User;
 
+@Audited
 @Entity
 @TableGenerator(name = "StatusChangeGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "StatusChange", initialValue = 1, allocationSize = 1)
 

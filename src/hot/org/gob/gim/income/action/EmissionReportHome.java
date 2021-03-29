@@ -74,6 +74,7 @@ public class EmissionReportHome extends EntityController {
 	private MunicipalBondStatus cancelledBondStatus;
 	private MunicipalBondStatus futureBondStatus;
 	private MunicipalBondStatus subscriptionBondStatus;
+	private MunicipalBondStatus correctionStatus;
 
 	private MunicipalBondStatus municipalBondStatus;
 
@@ -106,6 +107,8 @@ public class EmissionReportHome extends EntityController {
 	private List<ReportEmissionDTO> detailsAnuladas = new ArrayList<ReportEmissionDTO>();
 
 	private List<ReportEmissionDTO> detailsReversadas = new ArrayList<ReportEmissionDTO>();
+	
+	private List<ReportEmissionDTO> detailsCorrection = new ArrayList<ReportEmissionDTO>();
 
 	private Long total_cant_emisiones;
 
@@ -142,6 +145,10 @@ public class EmissionReportHome extends EntityController {
 	private Long total_reversadas;
 
 	private BigDecimal total_valor_reversadas;
+	
+	private Long total_correction;
+
+	private BigDecimal total_valor_correction;
 
 	private Boolean renderPrint = Boolean.FALSE;
 
@@ -436,6 +443,30 @@ public class EmissionReportHome extends EntityController {
 		this.charge = charge;
 	}
 
+	public List<ReportEmissionDTO> getDetailsCorrection() {
+		return detailsCorrection;
+	}
+
+	public void setDetailsCorrection(List<ReportEmissionDTO> detailsCorrection) {
+		this.detailsCorrection = detailsCorrection;
+	}
+
+	public Long getTotal_correction() {
+		return total_correction;
+	}
+
+	public void setTotal_correction(Long total_correction) {
+		this.total_correction = total_correction;
+	}
+
+	public BigDecimal getTotal_valor_correction() {
+		return total_valor_correction;
+	}
+
+	public void setTotal_valor_correction(BigDecimal total_valor_correction) {
+		this.total_valor_correction = total_valor_correction;
+	}
+
 	private void findWorkday(Date date) {
 		Query query = getEntityManager().createNamedQuery("Workday.findByDate");
 		query.setParameter("date", date);
@@ -498,6 +529,9 @@ public class EmissionReportHome extends EntityController {
 		subscriptionBondStatus = systemParameterService.materialize(
 				MunicipalBondStatus.class,
 				"MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION");
+		correctionStatus = systemParameterService.materialize(
+				MunicipalBondStatus.class,
+				"MUNICIPAL_BOND_STATUS_ID_ERRORS_CORRECTION");
 	}
 
 	public void loadDates() {
@@ -616,6 +650,7 @@ public class EmissionReportHome extends EntityController {
 			statusIds.add(externalChannelStatus.getId());
 			statusIds.add(blockedMunicipalBondStatus.getId());
 			statusIds.add(subscriptionBondStatus.getId());
+			// statusIds.add(correctionStatus.getId());
 			// statusIds.add(reversedMunicipalBondStatus.getId());
 		}
 
@@ -635,9 +670,11 @@ public class EmissionReportHome extends EntityController {
 
 		this.total_cant_bajas = new Long(0);
 		this.total_cant_emisiones = new Long(0);
+		this.total_correction = new Long(0);
 		this.total_emision = BigDecimal.ZERO;
 		this.total_valor_bajas = BigDecimal.ZERO;
 		this.total_valor_emision = BigDecimal.ZERO;
+		this.total_valor_correction = BigDecimal.ZERO;
 
 		for (ReportEmissionDTO reportEmissionDTO : allResults) {
 			this.total_cant_bajas = this.total_cant_bajas
@@ -650,6 +687,11 @@ public class EmissionReportHome extends EntityController {
 					.add(reportEmissionDTO.getValor_bajas());
 			this.total_valor_emision = this.total_valor_emision
 					.add(reportEmissionDTO.getValor_emision());
+			
+			this.total_correction = this.total_correction
+					+ reportEmissionDTO.getCantidad_correccion();
+			this.total_valor_correction = this.total_valor_correction
+					.add(reportEmissionDTO.getValor_correccion());
 		}
 
 		this.detailsResults = this.emissionService
@@ -663,16 +705,19 @@ public class EmissionReportHome extends EntityController {
 		this.detailsFuturas = new ArrayList<ReportEmissionDTO>();
 		this.detailsAnuladas = new ArrayList<ReportEmissionDTO>();
 		this.detailsReversadas = new ArrayList<ReportEmissionDTO>();
+		this.detailsCorrection = new ArrayList<ReportEmissionDTO>();
 		this.total_formalizaciones_normales = new Long(0);
 		this.total_formalizaciones_pago_anticipado = new Long(0);
 		this.total_futuras = new Long(0);
 		this.total_anuladas = new Long(0);
 		this.total_reversadas = new Long(0);
+		this.total_correction = new Long(0);
 		this.total_valor_formalizaciones_normales = BigDecimal.ZERO;
 		this.total_valor_formalizaciones_pago_anticipado = BigDecimal.ZERO;
 		this.total_valor_futuras = BigDecimal.ZERO;
 		this.total_valor_anuladas = BigDecimal.ZERO;
 		this.total_valor_reversadas = BigDecimal.ZERO;
+		this.total_valor_correction = BigDecimal.ZERO;
 
 		for (ReportEmissionDTO reportEmissionDTO : this.detailsResults) {
 			if (reportEmissionDTO.getTipo().equals("FUTURA")) {
@@ -708,6 +753,12 @@ public class EmissionReportHome extends EntityController {
 						+ reportEmissionDTO.getCantidad_emisiones();
 				this.total_valor_reversadas = this.total_valor_reversadas
 						.add(reportEmissionDTO.getTotal_emision());
+			} else if (reportEmissionDTO.getTipo().equals("CORRECTION")) {
+				this.detailsCorrection.add(reportEmissionDTO);
+				this.total_correction = this.total_correction
+						+ reportEmissionDTO.getCantidad_emisiones();
+				this.total_valor_correction = this.total_valor_correction
+						.add(reportEmissionDTO.getTotal_emision());
 			}
 		}
 
@@ -715,7 +766,8 @@ public class EmissionReportHome extends EntityController {
 				|| this.detailsFormalizacionesNormales.size() > 0
 				|| this.detailsFormalizacionesPagoAnticipado.size() > 0
 				|| this.detailsFuturas.size() > 0
-				|| this.detailsReversadas.size() > 0) {
+				|| this.detailsReversadas.size() > 0
+				|| this.detailsCorrection.size() > 0) {
 			this.renderPrint = Boolean.TRUE;
 		}
 	}

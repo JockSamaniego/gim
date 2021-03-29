@@ -18,10 +18,12 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.envers.Audited;
+
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Resident;
 
-//@Audited
+@Audited
 @Entity
 @TableGenerator(name="SolvencyHistoryGenerator",
 				pkColumnName="name",

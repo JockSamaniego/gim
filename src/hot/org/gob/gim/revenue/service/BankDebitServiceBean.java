@@ -217,7 +217,7 @@ public class BankDebitServiceBean implements BankDebitService {
 						+"bankdebit AS ban "
 						+"INNER JOIN watersupply was ON ban.watersupply_id = was.id "
 						+"INNER JOIN resident AS res ON was.recipeowner_id = res.id "
-						+"WHERE ban.active = true"; 
+						+"WHERE ban.active = true "; 
 		Query query = entityManager.createNativeQuery(sql);
 		List<Integer> resultList = query.getResultList();
 		List<Long> result = new ArrayList<Long>();
@@ -240,7 +240,9 @@ public class BankDebitServiceBean implements BankDebitService {
 									+"ban.accountholder as titular, "
 									+"was.servicenumber servicio, "
 									+"COUNT(distinct mbo.id) as cantidad, "
-									+"SUM(mbo.paidtotal) as valor "
+									+"SUM(mbo.paidtotal) as valor, "
+									+"res.id "
+									
 						+"FROM "
 						+"bankdebit AS ban "
 						+"INNER JOIN watersupply was ON was.id = ban.watersupply_id "
@@ -251,15 +253,14 @@ public class BankDebitServiceBean implements BankDebitService {
 						+"INNER JOIN itemcatalog itm ON itm.id = ban.accounttype_itm_id "
 						+"WHERE ban.active = true "
 						+"AND mbo.municipalbondstatus_id IN (3) "
-						+"GROUP BY res.identificationnumber, "
+						+"GROUP BY res.id, res.identificationnumber, "
 									+"res.name, "
 									+"itm.name, "
 									+"ban.accountnumber, "
 									+"ban.accountholder, "
 									+"was.servicenumber "
-						+"ORDER BY 2, 6 ASC";
+						+"ORDER BY 2, 6 ASC ";
 		Query query = entityManager.createNativeQuery(qryBase);
-		
 		List<BankDebitReportDTO> retorno = NativeQueryResultsMapper.map(
 				query.getResultList(), BankDebitReportDTO.class);
 		

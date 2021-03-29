@@ -62,17 +62,14 @@ public class PaymentLocalServiceBean implements PaymentLocalService {
 
 	@Override
 	public Boolean calculateDebts(List<Long> residentIds) {
-
 		try {
 			//System.out.println("LLega al calculateDebts");
-
 			for (Long residentId : residentIds) {
-				List<Long> pendingBondIds = hasPendingBonds(residentId);
-				if (pendingBondIds.size() > 0) {
-
-					incomeService.calculatePayment(new Date(), pendingBondIds,
-							true, true);
-				}
+					List<Long> pendingBondIds = hasPendingBonds(residentId);
+					if (pendingBondIds.size() > 0) {
+						incomeService.calculatePayment(new Date(), pendingBondIds,
+								true, true);
+					}
 			}
 
 		} catch (EntryDefinitionNotFoundException e) {
@@ -81,5 +78,4 @@ public class PaymentLocalServiceBean implements PaymentLocalService {
 		}
 		return Boolean.TRUE;
 	}
-
 }

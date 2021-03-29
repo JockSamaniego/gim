@@ -281,7 +281,7 @@ public class FactoryController  extends EntityController{
 		 MunicipalBondStatus blockedStatus = systemParameterService.materialize(MunicipalBondStatus.class,"MUNICIPAL_BOND_STATUS_ID_BLOCKED");
 		 MunicipalBondStatus reversedStatus = systemParameterService.materialize(MunicipalBondStatus.class,"MUNICIPAL_BOND_STATUS_ID_REVERSED");
 		 MunicipalBondStatus futureIssuanceBondStatus = systemParameterService.materialize(MunicipalBondStatus.class,"MUNICIPAL_BOND_STATUS_ID_FUTURE_ISSUANCE");
-		 
+		 //MunicipalBondStatus errorsCorrectionBondStatus = systemParameterService.materialize(MunicipalBondStatus.class,"MUNICIPAL_BOND_STATUS_ID_ERRORS_CORRECTION");
 						
 		 list.add(pendingStatus);		 
 		 list.add(paidStatus);
@@ -291,6 +291,7 @@ public class FactoryController  extends EntityController{
 		 list.add(blockedStatus);
 		 list.add(reversedStatus);
 		 list.add(futureIssuanceBondStatus);
+		 //list.add(errorsCorrectionBondStatus);
 		 return list;
 	}
 	

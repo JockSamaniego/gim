@@ -7,9 +7,12 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.envers.Audited;
+
 import ec.gob.gim.commercial.model.TouristLicenseItem;
 import ec.gob.gim.revenue.model.Adjunct;
 
+@Audited
 @Entity
 @DiscriminatorValue("TLR")
 public class TouristLicenseReference extends Adjunct{

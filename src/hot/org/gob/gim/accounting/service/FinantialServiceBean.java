@@ -197,6 +197,22 @@ public class FinantialServiceBean implements FinantialService{
 
 	private final static String VOID_REPORT  = "("+GENERAL_QUERY + ") UNION (" +		      
 				REVENUE_TAXES_QUERY+")";
+	
+	private final static String CORRECTION_REPORT  = "("+GENERAL_QUERY + ") UNION (" +		      
+			REVENUE_TAXES_QUERY+")";
+	
+	private final static String CORRECTION_DETAIL_QUERY =
+			" SELECT mb.number, r.identificationNumber, r.name , sum(total), mb.expirationDate " +
+			"     FROM MunicipalBond mb, item i, entry e, account a, resident r " +
+			"     WHERE i.municipalBond_id=mb.id AND " +
+			"         i.entry_id = e.id AND" +
+			"         e.account_id = a.id AND " +
+			"         a.id = :accountId AND " +
+			"         mb.resident_id = r.id AND " +
+			"         mb.emisionDate between :startDate AND :endDate AND " +
+			"         mb.municipalBondStatus_id in (:statuses) " +
+			"     GROUP BY mb.id, r.id " +
+			"     ORDER BY r.name";
 
 	private final static String DETAIL_QUERY =
 			" SELECT mb.number, r.identificationNumber, r.name , sum(total), mb.expirationDate " +
@@ -667,56 +683,61 @@ public class FinantialServiceBean implements FinantialService{
 			query.setParameter("emisionStartDate", emisionStartDate);
 			query.setParameter("emisionEndDate", emisionEndDate);
 		} else {
-			if(reportType == ReportType.VOID){
-				query = entityManager.createNativeQuery(VOID_REPORT);
-				statuses = getVoidStatuses();
+			if(reportType == ReportType.ERRORS_CORRECTION){
+				query = entityManager.createNativeQuery(CORRECTION_REPORT);
+				statuses = getCorrectionStatuses();
 			} else {
-				if(reportType == ReportType.QUOTAS_LIQUIDATION){
-					//System.out.println(QUOTAS_LIQUIDATION_REPORT);
-					query = entityManager.createNativeQuery(QUOTAS_LIQUIDATION_REPORT);
-					statuses = getPaidStatuses();
-					query.setParameter("emisionStartDate", emisionStartDate);
-					query.setParameter("emisionEndDate", emisionEndDate);
-				}
-				else {
-					if(reportType == ReportType.BALANCE){
-						query = entityManager.createNativeQuery(BALANCE_REPORT);
-						statuses = getBalancesStatuses();
-						query.setParameter("startDate", emisionStartDate);
-						query.setParameter("endDate", emisionEndDate);
-					} else{
-						if(reportType == ReportType.INCOME_EMAALEP){
-							query = entityManager.createNativeQuery(INCOME_REPORT_EMAALEP);
-							statuses = getPaidStatuses();
-							String strListEmaalep = systemParameterService.findParameter(ENTRIES_EMAALEP_LIST);
-							List<Long> entriesListLong = new ArrayList<Long>();
-							entriesListLong = GimUtils.convertStringWithCommaToListLong(strListEmaalep);
-//							List<String> entriesListStr = Arrays.asList(strListEmaalep.split(","));
-//							List<Long> entriesListLong = new ArrayList<Long>();
-//							for (int i = 0 ; i < entriesListStr.size() ; i++){
-//								String str = entriesListStr.get(i);
-//								System.out.println("RRRRRRRRRRRRRRRRRRRR cadena i: "+i+" valor: "+str);
-//								entriesListLong.add(Long.parseLong(str));
-//							}
-//							System.out.println("String: "+entriesListStr);
-//							System.out.println("size: "+entriesListStr.size());
-//							System.out.println("Long: "+entriesListLong);
-//							System.out.println("size: "+entriesListLong.size());
-							query.setParameter("emisionStartDate", emisionStartDate);
-							query.setParameter("emisionEndDate", emisionEndDate);
-							query.setParameter("entriesList", entriesListLong);
-						}else{
-							if(reportType == ReportType.SUBSCRIPTION){
-
-								//System.out.println(SUBSCRIPTION_REPORT);
-								query = entityManager.createNativeQuery(SUBSCRIPTION_REPORT);
-								statuses = getSubscriptionStatuses();
+				if(reportType == ReportType.VOID){
+					query = entityManager.createNativeQuery(VOID_REPORT);
+					statuses = getVoidStatuses();
+				} else {
+					if(reportType == ReportType.QUOTAS_LIQUIDATION){
+						//System.out.println(QUOTAS_LIQUIDATION_REPORT);
+						query = entityManager.createNativeQuery(QUOTAS_LIQUIDATION_REPORT);
+						statuses = getPaidStatuses();
+						query.setParameter("emisionStartDate", emisionStartDate);
+						query.setParameter("emisionEndDate", emisionEndDate);
+					}
+					else {
+						if(reportType == ReportType.BALANCE){
+							query = entityManager.createNativeQuery(BALANCE_REPORT);
+							statuses = getBalancesStatuses();
+							query.setParameter("startDate", emisionStartDate);
+							query.setParameter("endDate", emisionEndDate);
+						} else{
+							if(reportType == ReportType.INCOME_EMAALEP){
+								query = entityManager.createNativeQuery(INCOME_REPORT_EMAALEP);
+								statuses = getPaidStatuses();
+								String strListEmaalep = systemParameterService.findParameter(ENTRIES_EMAALEP_LIST);
+								List<Long> entriesListLong = new ArrayList<Long>();
+								entriesListLong = GimUtils.convertStringWithCommaToListLong(strListEmaalep);
+	//							List<String> entriesListStr = Arrays.asList(strListEmaalep.split(","));
+	//							List<Long> entriesListLong = new ArrayList<Long>();
+	//							for (int i = 0 ; i < entriesListStr.size() ; i++){
+	//								String str = entriesListStr.get(i);
+	//								System.out.println("RRRRRRRRRRRRRRRRRRRR cadena i: "+i+" valor: "+str);
+	//								entriesListLong.add(Long.parseLong(str));
+	//							}
+	//							System.out.println("String: "+entriesListStr);
+	//							System.out.println("size: "+entriesListStr.size());
+	//							System.out.println("Long: "+entriesListLong);
+	//							System.out.println("size: "+entriesListLong.size());
 								query.setParameter("emisionStartDate", emisionStartDate);
 								query.setParameter("emisionEndDate", emisionEndDate);
-							}
-						}						
+								query.setParameter("entriesList", entriesListLong);
+							}else{
+								if(reportType == ReportType.SUBSCRIPTION){
+	
+									//System.out.println(SUBSCRIPTION_REPORT);
+									query = entityManager.createNativeQuery(SUBSCRIPTION_REPORT);
+									statuses = getSubscriptionStatuses();
+									query.setParameter("emisionStartDate", emisionStartDate);
+									query.setParameter("emisionEndDate", emisionEndDate);
+								}
+							}						
+						}
+							
 					}
-						
 				}
 			}
 		}
@@ -793,6 +814,11 @@ public class FinantialServiceBean implements FinantialService{
 							if(reportType == ReportType.SUBSCRIPTION){
 								statuses = getSubscriptionStatuses();
 								sql = SUBSCRIPTION_DETAIL_QUERY;
+							}else{
+								if(reportType == ReportType.ERRORS_CORRECTION){
+									statuses = getCorrectionStatuses();
+									sql = CORRECTION_DETAIL_QUERY;
+								}
 							}
 						}
 					}
@@ -876,6 +902,15 @@ public class FinantialServiceBean implements FinantialService{
 			
 			if(criteria.getReportFilter() == ReportFilter.ALL || criteria.getReportFilter() == ReportFilter.CURRENT){
 				buildReport(criteria, report, ReportType.VOID, currentYearsStartDate, currentYearsEndDate, null, null, ReportFilter.CURRENT);
+			}		
+			
+		} else if (criteria.getReportType() == ReportType.ERRORS_CORRECTION){
+			if(criteria.getReportFilter() == ReportFilter.ALL || criteria.getReportFilter() == ReportFilter.PREVIOUS){
+				buildReport(criteria, report, ReportType.ERRORS_CORRECTION, previousYearsStartDate, previousYearsEndDate, null, null, ReportFilter.PREVIOUS);
+			}
+			
+			if(criteria.getReportFilter() == ReportFilter.ALL || criteria.getReportFilter() == ReportFilter.CURRENT){
+				buildReport(criteria, report, ReportType.ERRORS_CORRECTION, currentYearsStartDate, currentYearsEndDate, null, null, ReportFilter.CURRENT);
 			}			
 			
 		} else {
@@ -1043,6 +1078,15 @@ public class FinantialServiceBean implements FinantialService{
 				report = findDetail(criteria, accountId, ReportType.VOID, report, minimumBondDate, previousYearsEndDate, null, null);
 			}
 		}
+		if(criteria.getReportType() == ReportType.ERRORS_CORRECTION){
+			if(reportFilter == ReportFilter.CURRENT){
+				report = findDetail(criteria, accountId, ReportType.ERRORS_CORRECTION, report, currentYearsStartDate, currentYearsEndDate, null, null);
+			}
+			
+			if(reportFilter == ReportFilter.PREVIOUS){
+				report = findDetail(criteria, accountId, ReportType.ERRORS_CORRECTION, report, minimumBondDate, previousYearsEndDate, null, null);
+			}
+		}
 		if(criteria.getReportType() == ReportType.DUE_PORTFOLIO){
 			if(reportFilter == ReportFilter.CURRENT){
 				report = findDetail(criteria, accountId, ReportType.DUE_PORTFOLIO, report,  currentYearsStartDate, currentYearsEndDate, null, null);
@@ -1134,6 +1178,12 @@ public class FinantialServiceBean implements FinantialService{
 	private List<Long> getVoidStatuses(){
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add((Long)systemParameterService.findParameter(IncomeService.REVERSED_BOND_STATUS));
+		return statuses;
+	}
+	
+	private List<Long> getCorrectionStatuses(){
+		List<Long> statuses = new ArrayList<Long>();
+		statuses.add((Long)systemParameterService.findParameter(IncomeService.CORRECTION_BOND_STATUS));
 		return statuses;
 	}
 	

@@ -131,24 +131,24 @@
 			</p:cell>
 		</p:font>
 
-		<ui:repeat value="#{bankDebitHome.dataReporte}" var="_var">
+		<ui:repeat value="#{bankDebitHome.debitsNotSend}" var="_var">
 			<p:font size="8" style="normal,italic,oblique">
 				<p:cell borderWidth="0" borderWidthBottom="1">
 					<p:paragraph>
-						<p:text value="#{_var.identificacion}" />
+						<p:text value="#{_var.residentIdentification}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell borderWidth="0" borderWidthBottom="1">
 					<p:paragraph>
-						<p:text value="#{_var.contribuyente}" />
+						<p:text value="#{_var.residentName}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center" borderWidth="0"
 					borderWidthBottom="1">
 					<p:paragraph>
-						<p:text value="#{_var.tipo_cuenta}">
+						<p:text value="#{_var.accountType}">
 
 						</p:text>
 					</p:paragraph>
@@ -157,7 +157,7 @@
 				<p:cell horizontalAlignment="center" borderWidth="0"
 					borderWidthBottom="1">
 					<p:paragraph>
-						<p:text value="#{_var.numero_cuenta}">
+						<p:text value="#{_var.accountNumber}">
 
 						</p:text>
 					</p:paragraph>
@@ -166,7 +166,7 @@
 				<p:cell horizontalAlignment="left" borderWidth="0"
 					borderWidthBottom="1">
 					<p:paragraph>
-						<p:text value="#{_var.titular}">
+						<p:text value="#{_var.accountHolder}">
 
 						</p:text>
 					</p:paragraph>
@@ -175,7 +175,7 @@
 				<p:cell horizontalAlignment="right" borderWidth="0"
 					borderWidthBottom="1">
 					<p:paragraph>
-						<p:text value="#{_var.servicio}">
+						<p:text value="#{_var.service}">
 
 						</p:text>
 					</p:paragraph>
@@ -184,7 +184,7 @@
 				<p:cell horizontalAlignment="right" borderWidth="0"
 					borderWidthBottom="1">
 					<p:paragraph>
-						<p:text value="#{_var.cantidad}">
+						<p:text value="#{_var.amount}">
 						</p:text>
 					</p:paragraph>
 				</p:cell>
@@ -192,7 +192,7 @@
 				<p:cell horizontalAlignment="right" borderWidth="0"
 					borderWidthBottom="1">
 					<p:paragraph>
-						<p:text value="#{_var.valor}">
+						<p:text value="#{_var.value}">
 
 						</p:text>
 					</p:paragraph>

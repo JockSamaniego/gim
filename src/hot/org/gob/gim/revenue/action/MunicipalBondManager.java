@@ -1,15 +1,20 @@
 package org.gob.gim.revenue.action;
 
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
@@ -30,6 +35,7 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityController;
 
+import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.Resident;
@@ -96,6 +102,7 @@ public class MunicipalBondManager extends EntityController {
 	private MunicipalBondStatus paidBondStatusExternalChannel;
 	private MunicipalBondStatus inPaymentAgreementBondStatus;
 	private MunicipalBondStatus futureBondStatus;
+	private MunicipalBondStatus correctionBondStatus;
 
 	private List<Entry> entries;
 
@@ -631,6 +638,9 @@ public class MunicipalBondManager extends EntityController {
 		futureBondStatus = systemParameterService.materialize(
 				MunicipalBondStatus.class,
 				"MUNICIPAL_BOND_STATUS_ID_FUTURE_ISSUANCE");
+		correctionBondStatus = systemParameterService.materialize(
+				MunicipalBondStatus.class,
+				"MUNICIPAL_BOND_STATUS_ID_ERRORS_CORRECTION");
 	}
 
 	public boolean isCurrentDay(Date date) {
@@ -1146,6 +1156,36 @@ public class MunicipalBondManager extends EntityController {
 		this.bondsWasInAgreement = bondsWasInAgreement;
 	}
 	
+	// Para poner una obligación en estado de CORRECCION DE ERRORES
+	// Jock Samaniego
 	
+	public void setForErrorsCorrection(MunicipalBond mb) {
+		this.municipalBond = mb;
+		observation = "";
+	}
+	
+	public Boolean compareDatesToCorrectionStatus(Date emisionDate) throws ParseException{
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = dt.parse(dt.format(new Date()));
+		// Date now = new Date();
+		if(date.compareTo(emisionDate)>0){
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
+
+	public MunicipalBondStatus getCorrectionBondStatus() {
+		return correctionBondStatus;
+	}
+
+	public void setCorrectionBondStatus(MunicipalBondStatus correctionBondStatus) {
+		this.correctionBondStatus = correctionBondStatus;
+	}
+	
+	public void processErrorsCorrectionState(MunicipalBond municipalBond,
+			MunicipalBondStatus municipalBondStatus){
+		updateStatus(municipalBond, municipalBondStatus);
+		findMunicipalBonds();
+	}
 	
 }

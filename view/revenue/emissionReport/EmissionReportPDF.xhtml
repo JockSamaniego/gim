@@ -133,10 +133,10 @@
 			
 		</p:table>
 		
-		<p:table rendered="#{not empty emissionReportHome.allResults}" columns="7"
+		<p:table rendered="#{not empty emissionReportHome.allResults}" columns="9"
 			spacingBefore="10" spacingAfter="10" widthPercentage="100"
-			headerRows="0" widths="2.1 3 0.9 1.3 0.8 1.3 1.3">
-			<p:font size="8" style="bold">
+			headerRows="0" widths="2.0 2.8 0.8 1.1 0.7 1.1 0.7 1.1 1.1">
+			<p:font size="7" style="bold">
 				<f:facet name="defaultCell">
 					<p:cell borderWidth="0" />
 				</f:facet>
@@ -155,7 +155,7 @@
 				
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Cantidad Emisiones" />
+						<p:text value="Emisiones" />
 					</p:paragraph>
 				</p:cell>
 				
@@ -168,13 +168,25 @@
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Cantidad Bajas" />
+						<p:text value="Bajas" />
 					</p:paragraph>
 				</p:cell>
 				
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
 						<p:text value="Valor Bajas" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Correcciones" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Valor Correccion" />
 					</p:paragraph>
 				</p:cell>
 				
@@ -233,6 +245,22 @@
 					
 					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
 						<p:paragraph>
+							<p:text value="#{_var.cantidad_correccion}">
+								
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.valor_correccion}">
+								<f:convertNumber  type="number"  pattern="###,###,###,###.##" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
 							<p:text value="#{_var.total_emision}">
 								<f:convertNumber  type="number"  pattern="###,###,###,###.##" />
 							</p:text>
@@ -276,6 +304,21 @@
 				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
 					<p:paragraph>
 						<p:text value="#{emissionReportHome.total_valor_bajas}">
+							<f:convertNumber  type="number"  pattern="$ ###,###,###,###.##" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_correction}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_valor_correction}">
 							<f:convertNumber  type="number"  pattern="$ ###,###,###,###.##" />
 						</p:text>
 					</p:paragraph>
@@ -843,6 +886,115 @@
 
 			</p:font>
 		</p:table>
+
+		<p:table rendered="#{not empty emissionReportHome.detailsCorrection}" columns="1"
+			spacingBefore="15" spacingAfter="5" widthPercentage="100"
+			headerRows="0">
+			<p:font size="14" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center" borderWidth="0" >
+					<p:paragraph>
+						<p:text value="Emisiones en Corrección de Errores" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</p:table>
+		
+
+		<p:table rendered="#{not empty emissionReportHome.detailsCorrection}" columns="4"
+			spacingBefore="10" spacingAfter="10" widthPercentage="100"
+			headerRows="0" widths="2 2 1 1">
+			<p:font size="9" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['account']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['account.accountName']}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Nro. Emisiones" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Valor Emisiones" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+
+			<ui:repeat value="#{emissionReportHome.detailsCorrection}" var="_var">
+				<p:font size="8">
+					<p:cell borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.account_code}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.account_name}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.cantidad_emisiones}">
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+						<p:paragraph>
+							<p:text value="#{_var.total_emision}">
+								<f:convertNumber  type="number"  pattern="###,###,###,###.##" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+				</p:font>
+			</ui:repeat>
+
+			<p:font size="9" style="bold">
+				<p:cell borderWidth="0" />	
+				
+				<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{messages['item.total']}" />
+					</p:paragraph>
+				</p:cell>
+							
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_correction}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{emissionReportHome.total_valor_correction}">
+							<f:convertNumber  type="number"  pattern="$ ###,###,###,###.##" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+			</p:font>
+		</p:table>
 		
 		<p:newPage/>
 		
@@ -894,6 +1046,19 @@
 								<f:convertNumber  type="number"  pattern="###,###,###,###.##" />
 							</p:text>
 						</p:paragraph>
+					</p:cell>	
+					
+					<p:cell >
+						<p:paragraph>
+							<p:text value="Emisiones en corrección de errores" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{emissionReportHome.total_valor_correction}">
+								<f:convertNumber  type="number"  pattern="###,###,###,###.##" />
+							</p:text>
+						</p:paragraph>
 					</p:cell>					
 					
 				</p:font>
@@ -908,7 +1073,7 @@
 				
 				<p:cell horizontalAlignment="right">
 					<p:paragraph>
-						<p:text value="#{emissionReportHome.total_valor_emision + emissionReportHome.total_valor_bajas}">
+						<p:text value="#{emissionReportHome.total_valor_emision + emissionReportHome.total_valor_bajas + emissionReportHome.total_valor_correction}">
 							<f:convertNumber  type="number"  pattern="$ ###,###,###,###.##" />
 						</p:text>
 					</p:paragraph>

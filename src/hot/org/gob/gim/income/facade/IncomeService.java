@@ -45,6 +45,7 @@ public interface IncomeService {
 	
 	public final String REVERSED_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_REVERSED"; 
 	public final String VOID_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_VOID";
+	public final String CORRECTION_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_ERRORS_CORRECTION";
 	
 	public final String FUTURE_BOND_STATUS = "MUNICIPAL_BOND_STATUS_ID_FUTURE";
 	
@@ -165,5 +166,7 @@ public interface IncomeService {
 	 * @return
 	 */
 	public DepositStatementV2 findDepositInformation(Person cashier, Date paymentDate, Payout payout);
+	
+	public void saveForBankLiquidation(Date paymentDate, List<Long> municipalBondIds, Person cashier, Long tillId, String externalTransactionId, String paymentMethod) throws Exception;
 	
 }
