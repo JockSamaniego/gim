@@ -1,6 +1,6 @@
-package org.gob.loja.gim.ws.dto.preemission;
+package org.gob.loja.gim.ws.dto.preemission.response;
 
-public class AccountWithoutAdjunctResponse extends GenericResponseWS {
+public class BuildingPermitResponse extends CommonResponseWS {
 	private Long bondId;
 	private Long emissionOrderId;
 
@@ -22,7 +22,7 @@ public class AccountWithoutAdjunctResponse extends GenericResponseWS {
 
 	@Override
 	public String toString() {
-		return "AccountWithoutAdjunctResponse [bondId=" + bondId
+		return "BuildingPermitResponse [bondId=" + bondId
 				+ ", emissionOrderId=" + emissionOrderId + "]";
 	}
 

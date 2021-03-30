@@ -1,12 +1,8 @@
-package org.gob.loja.gim.ws.dto.preemission;
-
-import java.math.BigDecimal;
+package org.gob.loja.gim.ws.dto.preemission.request;
 
 import javax.validation.constraints.NotNull;
 
 import org.gob.gim.common.validators.NotEmpty;
-
-;
 
 public abstract class CommonRequest {
 

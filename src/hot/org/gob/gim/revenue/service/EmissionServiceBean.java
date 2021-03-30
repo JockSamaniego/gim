@@ -35,14 +35,15 @@ import org.gob.gim.ws.service.InfringementEmisionResponse;
 import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
 import org.gob.loja.gim.ws.dto.ant.BondDTO;
 import org.gob.loja.gim.ws.dto.ant.PreemissionInfractionRequest;
-import org.gob.loja.gim.ws.dto.preemission.AccountWithoutAdjunctRequest;
-import org.gob.loja.gim.ws.dto.preemission.ApprovalPlansRequest;
-import org.gob.loja.gim.ws.dto.preemission.BuildingPermitRequest;
-import org.gob.loja.gim.ws.dto.preemission.PreemissionServiceResponse;
-import org.gob.loja.gim.ws.dto.preemission.RuralPropertyRequest;
-import org.gob.loja.gim.ws.dto.preemission.UnbuiltLotRequest;
-import org.gob.loja.gim.ws.dto.preemission.UrbanPropertyRequest;
-import org.gob.loja.gim.ws.dto.preemission.UtilityRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.AccountWithoutAdjunctRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.AlcabalaRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.ApprovalPlansRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.BuildingPermitRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.RuralPropertyRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.UnbuiltLotRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.UrbanPropertyRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.UtilityRequest;
+import org.gob.loja.gim.ws.dto.preemission.response.PreemissionServiceResponse;
 import org.gob.loja.gim.ws.exception.AccountIsBlocked;
 import org.gob.loja.gim.ws.exception.AccountIsNotActive;
 import org.gob.loja.gim.ws.exception.EmissionOrderNotGenerate;
@@ -72,6 +73,7 @@ import ec.gob.gim.revenue.model.adjunct.DomainTransfer;
 import ec.gob.gim.revenue.model.adjunct.InfringementANTReference;
 import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
 import ec.gob.gim.revenue.model.adjunct.PropertyReference;
+import ec.gob.gim.revenue.model.adjunct.detail.EarlyTransferDiscount;
 import ec.gob.gim.revenue.model.criteria.ReportEmissionCriteria;
 import ec.gob.gim.security.model.User;
 
@@ -1364,34 +1366,37 @@ public class EmissionServiceBean implements EmissionService {
 			// entryValueItem.setServiceDate(date);
 			entryValueItem.setAmount(BigDecimal.ONE);
 			entryValueItem.setMainValue(detailsEmission.getValue());
-			
-			
-			DateFormat format =  new SimpleDateFormat("yyyy-MM-dd");
+
+			DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			// start Adjunt
 
 			DomainTransfer adjunct = new DomainTransfer();
 			adjunct.setAddress(detailsEmission.getPropertyAddress());
 			adjunct.setBuyer(detailsEmission.getBuyer());
-			adjunct.setBuyingDate(format.parse(detailsEmission.getPurchaseDate()));
-			adjunct.setBuyingTransactionValue(detailsEmission.getPurchaseValue());
+			adjunct.setBuyingDate(format.parse(detailsEmission
+					.getPurchaseDate()));
+			adjunct.setBuyingTransactionValue(detailsEmission
+					.getPurchaseValue());
 			adjunct.setCadastralCode(detailsEmission.getCadastralCode());
 			adjunct.setEmitWithoutReport(Boolean.TRUE);
-			if(detailsEmission.getApply50Discount()){
-				adjunct.setHalfDiscountAmount(detailsEmission.getValueDiscount());
+			if (detailsEmission.getApply50Discount()) {
+				adjunct.setHalfDiscountAmount(detailsEmission
+						.getValueDiscount());
 			}
 			adjunct.setImprovementsContribution(detailsEmission.getCemValue());
 			adjunct.setIsHalfDiscount(detailsEmission.getApply50Discount());
 			adjunct.setMortgageDiscount(detailsEmission.getMortgageDiscount());
 			adjunct.setNewBuildingValue(detailsEmission.getNewBuild());
 			adjunct.setNotaryNumber(detailsEmission.getNotaryNumber());
-			adjunct.setPreviousCadastralCode(detailsEmission.getPreviousCadastralCode());
+			adjunct.setPreviousCadastralCode(detailsEmission
+					.getPreviousCadastralCode());
 			adjunct.setSeller(detailsEmission.getSeller());
 			// OJO ver si se permite ingresar otra fecha
 			// adjunct.setTransactionDate(transactionDate);
 			adjunct.setTransactionValue(detailsEmission.getSaleValue());
-			
+
 			// adjunct.set
-			
+
 			MunicipalBondStatus preEmitBondStatus = systemParameterService
 					.materialize(MunicipalBondStatus.class,
 							"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
@@ -1408,6 +1413,155 @@ public class EmissionServiceBean implements EmissionService {
 			// mb.setAdjunct(adjunct);
 
 			// end Adjunt
+
+			mb.setReference(detailsEmission.getReference());
+			mb.setDescription(detailsEmission.getExplanation());
+
+			mb.setBondAddress(detailsEmission.getAddress());
+
+			mb.setServiceDate(new Date());
+			mb.setCreationTime(new Date());
+			mb.setGroupingCode(property.getCadastralCode());
+
+			mb.setBase(detailsEmission.getValue());
+
+			mb.setTimePeriod(entry.getTimePeriod());
+			mb.calculateValue();
+			mb.setMunicipalBondStatus(preEmitBondStatus);
+			mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
+			mb.setEmisionPeriod(findEmisionPeriod());
+
+			EmissionOrder eo = createEmisionOrder(emitter,
+					"Emision desde WS - Rubro: " + entry.getCode());
+			eo.add(mb);
+
+			EmissionOrder orderSaved = entityManager.merge(eo);
+
+			resp.setBondId(orderSaved.getMunicipalBonds().get(0).getId());
+			resp.setEmissionOrderId(orderSaved.getId());
+			resp.setError(Boolean.FALSE);
+
+			return resp;
+		} catch (NonUniqueIdentificationNumberException e) {
+			throw new TaxpayerNonUnique();
+		} catch (EntryDefinitionNotFoundException e) {
+			throw new EmissionOrderNotGenerate();
+		} catch (Exception e) {
+			throw new EmissionOrderNotSave();
+		}
+	}
+
+	@Override
+	public PreemissionServiceResponse generateEmissionOrderAlcabalaWS(
+			AlcabalaRequest detailsEmission, Property property, User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		try {
+
+			PreemissionServiceResponse resp = new PreemissionServiceResponse();
+			Resident resident = residentService.find(detailsEmission
+					.getResidentIdentification());
+			if (resident == null) {
+				resp.setErrorMessage("Preemisión fallida. Contribuyente No Encontrado");
+				return resp;
+			}
+
+			if (property.getCurrentDomain().getResident().getId() != resident
+					.getId()) {
+				resp.setErrorMessage("Preemisión fallida. Propietario del predio no corresponde con contribuyente a preemitir");
+				return resp;
+			}
+
+			Entry entry = revenueService.findEntryByCode(detailsEmission
+					.getAccountCode());
+			if (entry == null) {
+				resp.setErrorMessage("Preemisión fallida. Rubro No Encontrado");
+				return resp;
+			}
+
+			Date currentDate = java.util.Calendar.getInstance().getTime();
+			List<FiscalPeriod> fiscalPeriods = revenueService
+					.findFiscalPeriodCurrent(currentDate);
+
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+					&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
+
+			if (fiscalPeriodCurrent == null) {
+				resp.setErrorMessage("Preemisión fallida. Periódo Fiscal No Encontrado");
+				return resp;
+			}
+
+			Person emitter = findPersonFromUser(user.getId());
+
+			EntryValueItem entryValueItem = new EntryValueItem();
+			entryValueItem.setDescription(entry.getName());
+			// entryValueItem.setServiceDate(date);
+			entryValueItem.setAmount(BigDecimal.ONE);
+			entryValueItem.setMainValue(detailsEmission.getValue());
+
+			// start Adjunt
+
+			DomainTransfer adjunct = new DomainTransfer();
+			adjunct.setAddress(detailsEmission.getPropertyAddress());
+			adjunct.setBuyer(detailsEmission.getBuyer());
+
+			adjunct.setCadastralCode(detailsEmission.getCadastralCode());
+			adjunct.setEmitWithoutReport(Boolean.TRUE);
+			if (detailsEmission.getIsHalfDiscount()) {
+				adjunct.setHalfDiscountAmount(detailsEmission
+						.getHalfDiscountAmount());
+			}
+			adjunct.setIsHalfDiscount(detailsEmission.getIsHalfDiscount());
+			adjunct.setMortgageDiscount(detailsEmission.getMortgageDiscount());
+
+			adjunct.setPreviousCadastralCode(detailsEmission
+					.getPreviousCadastralCode());
+			adjunct.setSeller(detailsEmission.getSeller());
+			// OJO ver si se permite ingresar otra fecha
+			// adjunct.setTransactionDate(transactionDate);
+			adjunct.setTransactionValue(detailsEmission
+					.getAlcabalaTransactionValue());
+
+			// adjunct.setEarlyTransferDiscount();
+
+			EarlyTransferDiscount earlyTransferDiscount = null;
+
+			for (int i = 0; i < EarlyTransferDiscount.values().length; i++) {
+
+				BigDecimal enumPercent = BigDecimal
+						.valueOf(EarlyTransferDiscount.values()[i]
+								.getPercentage());
+				if (enumPercent.compareTo(detailsEmission
+						.getEarlyTransferDiscount()) == 0) {
+					earlyTransferDiscount = EarlyTransferDiscount.values()[i];
+					break;
+				}
+
+			}
+
+			if (earlyTransferDiscount == null) {
+				resp.setErrorMessage("Preemisión fallida. Descuento no existente");
+				return resp;
+			}
+
+			adjunct.setEarlyTransferDiscount(earlyTransferDiscount);
+			
+			// end Adjunt
+
+			MunicipalBondStatus preEmitBondStatus = systemParameterService
+					.materialize(MunicipalBondStatus.class,
+							"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
+
+			MunicipalBond mb = revenueService.createMunicipalBond(resident,
+					entry, fiscalPeriodCurrent, entryValueItem, true, adjunct);
+			if (mb.getResident().getCurrentAddress() != null) {
+				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+			}
+
+			mb.setEmitter(emitter);
+			mb.setOriginator(emitter);
 
 			mb.setReference(detailsEmission.getReference());
 			mb.setDescription(detailsEmission.getExplanation());

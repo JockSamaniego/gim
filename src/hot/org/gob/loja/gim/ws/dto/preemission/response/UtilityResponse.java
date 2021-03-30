@@ -1,6 +1,7 @@
-package org.gob.loja.gim.ws.dto.preemission;
+package org.gob.loja.gim.ws.dto.preemission.response;
 
-public class BuildingPermitResponse extends GenericResponseWS {
+public class UtilityResponse extends CommonResponseWS {
+
 	private Long bondId;
 	private Long emissionOrderId;
 
@@ -22,8 +23,8 @@ public class BuildingPermitResponse extends GenericResponseWS {
 
 	@Override
 	public String toString() {
-		return "BuildingPermitResponse [bondId=" + bondId
-				+ ", emissionOrderId=" + emissionOrderId + "]";
+		return "UtilityResponse [bondId=" + bondId + ", emissionOrderId="
+				+ emissionOrderId + "]";
 	}
 
 }

@@ -10,14 +10,15 @@ import javax.ejb.Local;
 import org.gob.gim.ws.service.InfringementEmisionResponse;
 import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
 import org.gob.loja.gim.ws.dto.ant.PreemissionInfractionRequest;
-import org.gob.loja.gim.ws.dto.preemission.AccountWithoutAdjunctRequest;
-import org.gob.loja.gim.ws.dto.preemission.ApprovalPlansRequest;
-import org.gob.loja.gim.ws.dto.preemission.BuildingPermitRequest;
-import org.gob.loja.gim.ws.dto.preemission.PreemissionServiceResponse;
-import org.gob.loja.gim.ws.dto.preemission.RuralPropertyRequest;
-import org.gob.loja.gim.ws.dto.preemission.UnbuiltLotRequest;
-import org.gob.loja.gim.ws.dto.preemission.UrbanPropertyRequest;
-import org.gob.loja.gim.ws.dto.preemission.UtilityRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.AccountWithoutAdjunctRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.AlcabalaRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.ApprovalPlansRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.BuildingPermitRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.RuralPropertyRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.UnbuiltLotRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.UrbanPropertyRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.UtilityRequest;
+import org.gob.loja.gim.ws.dto.preemission.response.PreemissionServiceResponse;
 import org.gob.loja.gim.ws.exception.AccountIsBlocked;
 import org.gob.loja.gim.ws.exception.AccountIsNotActive;
 import org.gob.loja.gim.ws.exception.EmissionOrderNotGenerate;
@@ -95,6 +96,12 @@ public interface EmissionService {
 			AccountIsBlocked;
 	
 	PreemissionServiceResponse generateEmissionOrderUtilityWS(UtilityRequest detailsEmission, Property property,User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
+	
+	PreemissionServiceResponse generateEmissionOrderAlcabalaWS(AlcabalaRequest detailsEmission, Property property,User user)
 			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
 			FiscalPeriodNotFound, EmissionOrderNotGenerate,
 			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,

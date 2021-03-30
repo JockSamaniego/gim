@@ -1,4 +1,4 @@
-package org.gob.loja.gim.ws.dto.preemission;
+package org.gob.loja.gim.ws.dto.preemission.response;
 
 public class PreemissionServiceResponse {
 	private Boolean error;

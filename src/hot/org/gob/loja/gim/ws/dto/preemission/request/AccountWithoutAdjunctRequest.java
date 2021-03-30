@@ -1,4 +1,4 @@
-package org.gob.loja.gim.ws.dto.preemission;
+package org.gob.loja.gim.ws.dto.preemission.request;
 
 import java.math.BigDecimal;
 
@@ -15,11 +15,6 @@ public class AccountWithoutAdjunctRequest extends CommonRequest {
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
-	}
-
-	@Override
-	public String toString() {
-		return "AccountWithoutAdjunctRequest [value=" + value + "]";
 	}
 
 }

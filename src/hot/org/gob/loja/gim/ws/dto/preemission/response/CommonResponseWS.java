@@ -1,9 +1,9 @@
-package org.gob.loja.gim.ws.dto.preemission;
+package org.gob.loja.gim.ws.dto.preemission.response;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GenericResponseWS {
+public abstract class CommonResponseWS {
 
 	private List<String> errors = new ArrayList<String>();
 	private String message;

@@ -1,4 +1,4 @@
-package org.gob.loja.gim.ws.dto.preemission;
+package org.gob.loja.gim.ws.dto.preemission.request;
 
 import java.math.BigDecimal;
 
@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import org.gob.gim.common.validators.NotEmpty;
 
-public class UnbuiltLotRequest extends CommonRequest {
+public class RuralPropertyRequest extends CommonRequest {
 
 	@NotNull(message = "cadastralCode no puede ser nulo")
 	@NotEmpty(message = "cadastralCode no puede ser vacío")
@@ -44,7 +44,7 @@ public class UnbuiltLotRequest extends CommonRequest {
 
 	@Override
 	public String toString() {
-		return "UnbuiltLotRequest [cadastralCode=" + cadastralCode
+		return "RuralPropertyRequest [cadastralCode=" + cadastralCode
 				+ ", year=" + year + ", value=" + value
 				+ ", getEmiterIdentification()=" + getEmiterIdentification()
 				+ ", getResidentIdentification()="

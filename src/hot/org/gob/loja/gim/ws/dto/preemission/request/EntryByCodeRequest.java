@@ -1,4 +1,4 @@
-package org.gob.loja.gim.ws.dto.preemission;
+package org.gob.loja.gim.ws.dto.preemission.request;
 
 public class EntryByCodeRequest {
 	private String entryCode;
