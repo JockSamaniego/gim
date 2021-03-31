@@ -16,5 +16,6 @@
 	<param name="from" /> 
 	<param name="sequentialNumber" value="#{creditNoteElectList.sequentialNumber}" />
 	<param name="emissionDate" value="#{creditNoteElectList.emissionDate}" />
+	<param name="criteriaIdentification" value="#{creditNoteElectList.criteriaIdentification}" />
 	
 </page>

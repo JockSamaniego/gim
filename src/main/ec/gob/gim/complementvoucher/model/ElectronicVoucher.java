@@ -43,7 +43,19 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 @Entity
 @TableGenerator(name = "ElectronicVoucherGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "ElectronicVoucher", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = { @NamedQuery(name = "ElectronicVoucher.findAll", query = "SELECT ev FROM ElectronicVoucher ev order by ev.creationDate"),
-						@NamedQuery(name = "ElectronicVoucher.findCreditNote", query = "SELECT cn FROM ElectronicVoucher cn where cn.municipalBond.number = :mbNumber and cn.documentType = '04' and cn.active = true ")})
+						@NamedQuery(name = "ElectronicVoucher.findCreditNote", query = "SELECT cn FROM ElectronicVoucher cn where cn.municipalBond.number = :mbNumber and cn.documentType = '04' and cn.active = true "),
+						@NamedQuery(name = "ElectronicVoucher.findCreditNoteElectByResident", query = "SELECT ev FROM ElectronicVoucher ev "
+								+ "LEFT JOIN ev.resident res "
+								+ "LEFT JOIN ev.municipalBond mb "
+								+ "Where res.id = :resId "
+								+ "and mb.id in :mbIds"),
+						@NamedQuery(name = "ElectronicVoucher.findCreditNoteElectByCreditNote", query = "SELECT ev FROM ElectronicVoucher ev "
+								+ "LEFT JOIN ev.resident res "
+								+ "LEFT JOIN ev.municipalBond mb "
+								+ "LEFT JOIN mb.creditNote cn "
+								+ "Where res.id = :resId "
+								+ "and cn.id = :cnId "
+								+ "and mb.id in :mbIds")})
 public class ElectronicVoucher {
 
 	@Id
