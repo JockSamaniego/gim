@@ -89,7 +89,7 @@
 					template="../layout/edit.xhtml">
 					<ui:define name="label">#{messages['creditNote.resolutionNumber']}:</ui:define>
 					<h:inputText id="resolutionNumber"
-						value="#{creditNoteHome.instance.resolutionNumber}" maxlength="15"
+						value="#{creditNoteHome.instance.resolutionNumber}" maxlength="25"
 						required="true" 
 						disabled="#{creditNoteHome.managed}"/>
 				</s:decorate>
@@ -106,11 +106,11 @@
 					<ui:define name="label">#{messages['creditNote.value']}:</ui:define>
 					<h:inputText id="value" value="#{creditNoteHome.instance.value}"
 						required="true" size="15"
-						disabled="#{creditNoteHome.managed}" >
+						disabled="true">
+<!-- 						disabled="#{creditNoteHome.managed}" -->
 						<f:convertNumber
 							maxFractionDigits="#{messages['common.maxFractionDigits']}"
 							minFractionDigits="#{messages['common.minFractionDigits']}" />
-						<a:support event="onchange" action="#{creditNoteHome.instance.setAvailableAmount(creditNoteHome.instance.value)}" reRender="availableAmountField" />
 					</h:inputText>
 				</s:decorate>
 				
@@ -150,7 +150,7 @@
 						<a:commandButton id="addBtn"
 							action="#{creditNoteHome.addMunicipalBond()}"
 							value="#{messages['common.add']}"
-							reRender="municipalBondList, messages"
+							reRender="municipalBondList, messages, valueField, availableAmountField"
 							rendered="#{!creditNoteHome.managed}" 
 							disabled="#{empty creditNoteHome.resident}"
 							ajaxSingle="true"/>
