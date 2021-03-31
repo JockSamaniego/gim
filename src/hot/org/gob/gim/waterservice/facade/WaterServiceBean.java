@@ -191,8 +191,9 @@ public class WaterServiceBean implements WaterService {
 
 		for (Consumption c : consumptions) {
 
-			if (!c.getWaterSupply().getWaterSupplyCategory().getName()
-					.equals("CATEGORÍA 0")) {
+			//if (!c.getWaterSupply().getWaterSupplyCategory().getName().equals("CATEGORÍA 0")) {
+			//rfam 2021-03-29
+			if (!(c.getWaterSupply().getWaterSupplyCategory().getId().intValue() == 8)) {
 
 				if (consumptions.size() == 1) {
 					String service = c.getWaterSupply().getServiceNumber()
