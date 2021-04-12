@@ -12,7 +12,7 @@ public class UrbanPropertyRequest extends CommonRequest {
 	@NotEmpty(message = "cadastralCode no puede ser vacío")
 	private String cadastralCode;
 
-	@NotNull(message = "cadastralCode no puede ser nulo")
+	@NotNull(message = "year no puede ser nulo")
 	private Integer year;
 
 	@NotNull(message = "value no puede ser nulo")
