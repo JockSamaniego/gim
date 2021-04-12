@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.Local;
 
  
+
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.view.EntryValueItem;
 
@@ -128,5 +129,7 @@ public interface MunicipalBondService {
 			boolean isEmission, Boolean internalTramit, BigDecimal value) throws EntryDefinitionNotFoundException;
 	
 	MunicipalBond findMunicipalBondByNumber(Long mbNumber) throws Exception;
+	
+	MunicipalBond findById(Long municipalBondId);
  
 }
