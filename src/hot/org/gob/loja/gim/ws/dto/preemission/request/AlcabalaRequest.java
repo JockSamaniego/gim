@@ -4,9 +4,15 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.NotNull;
 
+import org.gob.gim.common.validators.InList;
 import org.gob.gim.common.validators.NotEmpty;
 
 public class AlcabalaRequest extends CommonRequest {
+
+	@NotNull(message = "accountCode no puede ser nulo")
+	@NotEmpty(message = "accountCode no puede ser vacío")
+	@InList(values = { "00058" }, message = "accountCode no autorizado")
+	private String accountCode;
 
 	@NotNull(message = "cadastralCode no puede ser nulo")
 	@NotEmpty(message = "cadastralCode no puede ser vacío")
@@ -144,15 +150,23 @@ public class AlcabalaRequest extends CommonRequest {
 		this.prepayment = prepayment;
 	}
 
+	public String getAccountCode() {
+		return accountCode;
+	}
+
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
+	}
+
 	@Override
 	public String toString() {
 		return "AlcabalaRequest [cadastralCode=" + cadastralCode
 				+ ", previousCadastralCode=" + previousCadastralCode
 				+ ", propertyAddress=" + propertyAddress + ", seller=" + seller
-				+ ", buyer=" + buyer + ", alcabalaTransactionValue=" + alcabalaTransactionValue
-				+ ", earlyTransferDiscount=" + earlyTransferDiscount
-				+ ", mortgageDiscount=" + mortgageDiscount
-				+ ", isHalfDiscount=" + isHalfDiscount
+				+ ", buyer=" + buyer + ", alcabalaTransactionValue="
+				+ alcabalaTransactionValue + ", earlyTransferDiscount="
+				+ earlyTransferDiscount + ", mortgageDiscount="
+				+ mortgageDiscount + ", isHalfDiscount=" + isHalfDiscount
 				+ ", halfDiscountAmount=" + halfDiscountAmount + ", value="
 				+ value + ", prepayment=" + prepayment
 				+ ", getEmiterIdentification()=" + getEmiterIdentification()

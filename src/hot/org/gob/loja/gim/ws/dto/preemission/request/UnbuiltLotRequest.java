@@ -4,9 +4,15 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.NotNull;
 
+import org.gob.gim.common.validators.InList;
 import org.gob.gim.common.validators.NotEmpty;
 
 public class UnbuiltLotRequest extends CommonRequest {
+
+	@NotNull(message = "accountCode no puede ser nulo")
+	@NotEmpty(message = "accountCode no puede ser vacío")
+	@InList(values = { "00061" }, message = "accountCode no autorizado")
+	private String accountCode;
 
 	@NotNull(message = "cadastralCode no puede ser nulo")
 	@NotEmpty(message = "cadastralCode no puede ser vacío")
@@ -42,12 +48,19 @@ public class UnbuiltLotRequest extends CommonRequest {
 		this.value = value;
 	}
 
+	public String getAccountCode() {
+		return accountCode;
+	}
+
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
+	}
+
 	@Override
 	public String toString() {
-		return "UnbuiltLotRequest [cadastralCode=" + cadastralCode
-				+ ", year=" + year + ", value=" + value
-				+ ", getEmiterIdentification()=" + getEmiterIdentification()
-				+ ", getResidentIdentification()="
+		return "UnbuiltLotRequest [cadastralCode=" + cadastralCode + ", year="
+				+ year + ", value=" + value + ", getEmiterIdentification()="
+				+ getEmiterIdentification() + ", getResidentIdentification()="
 				+ getResidentIdentification() + ", getAccountCode()="
 				+ getAccountCode() + ", getExplanation()=" + getExplanation()
 				+ ", getReference()=" + getReference() + ", getAddress()="

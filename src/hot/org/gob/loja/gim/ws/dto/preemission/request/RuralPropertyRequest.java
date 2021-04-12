@@ -4,9 +4,15 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.NotNull;
 
+import org.gob.gim.common.validators.InList;
 import org.gob.gim.common.validators.NotEmpty;
 
 public class RuralPropertyRequest extends CommonRequest {
+
+	@NotNull(message = "accountCode no puede ser nulo")
+	@NotEmpty(message = "accountCode no puede ser vacío")
+	@InList(values = { "00057" }, message = "accountCode no autorizado")
+	private String accountCode;
 
 	@NotNull(message = "cadastralCode no puede ser nulo")
 	@NotEmpty(message = "cadastralCode no puede ser vacío")
@@ -40,6 +46,14 @@ public class RuralPropertyRequest extends CommonRequest {
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
+	}
+
+	public String getAccountCode() {
+		return accountCode;
+	}
+
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
 	}
 
 	@Override

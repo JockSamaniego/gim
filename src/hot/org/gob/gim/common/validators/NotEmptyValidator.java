@@ -8,7 +8,6 @@ public class NotEmptyValidator implements ConstraintValidator<NotEmpty, String> 
 	@Override
 	public void initialize(NotEmpty arg0) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override

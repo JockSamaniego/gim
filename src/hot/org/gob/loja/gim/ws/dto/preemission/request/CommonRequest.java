@@ -14,10 +14,6 @@ public abstract class CommonRequest {
 	@NotEmpty(message = "residentIdentification no puede ser vacío")
 	private String residentIdentification;
 
-	@NotNull(message = "accountCode no puede ser nulo")
-	@NotEmpty(message = "accountCode no puede ser vacío")
-	private String accountCode;
-
 	@NotNull(message = "explanation no puede ser nulo")
 	@NotEmpty(message = "explanation no puede ser vacío")
 	private String explanation;
@@ -44,14 +40,6 @@ public abstract class CommonRequest {
 
 	public void setResidentIdentification(String residentIdentification) {
 		this.residentIdentification = residentIdentification;
-	}
-
-	public String getAccountCode() {
-		return accountCode;
-	}
-
-	public void setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
 	}
 
 	public String getExplanation() {
@@ -82,9 +70,8 @@ public abstract class CommonRequest {
 	public String toString() {
 		return "CommonRequest [emiterIdentification=" + emiterIdentification
 				+ ", residentIdentification=" + residentIdentification
-				+ ", accountCode=" + accountCode + ", explanation="
-				+ explanation + ", reference=" + reference + ", address="
-				+ address + "]";
+				+ ", explanation=" + explanation + ", reference=" + reference
+				+ ", address=" + address + "]";
 	}
 
 }
