@@ -62,8 +62,9 @@
 					ajaxSingle="true" bypassUpdates="true"
 					reRender="emissionOrderPanel,paginador">
 				</a:commandButton>
-				<s:button id="reset" value="#{messages['common.reset']}">
-				</s:button>
+				<a:commandButton ajaxSingle="true" type="reset"
+					value="#{messages['common.reset']}"
+					bypassUpdates="true" immediate="true" actionListener="#{emissionOrder1Home.resetForm()}"/>
 			</div>
 
 			<rich:panel id="emissionOrderPanel">
@@ -74,13 +75,12 @@
 					</h:panelGrid>
 				</f:facet>
 				<div class="results" id="emissionOrderList">
-
 					<rich:datascroller id="paginador" align="right"
 						for="emissionOrderTable" maxPages="20" />
 					<rich:spacer height="5" />
 					<rich:dataTable id="emissionOrderTable" var="_emissionOrder"
 						value="#{emissionOrder1Home.orders}"
-						rendered="#{not empty emissionOrder1Home.orders}">
+						rendered="#{not empty emissionOrder1Home.orders}" rows="25">
 
 						<h:column>
 							<f:facet name="header">

@@ -34,6 +34,11 @@ import ec.gob.gim.revenue.model.criteria.EmissionOrderSearchCriteria;
 @Scope(ScopeType.CONVERSATION)
 public class EmissionOrder1Home extends EntityController {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
 
 	private EmissionOrderSearchCriteria criteria;
@@ -173,6 +178,12 @@ public class EmissionOrder1Home extends EntityController {
 	private void updateStatus(List<Long> selected, MunicipalBondStatus status) {
 		revenueService.update(selected, status.getId(), userSession.getUser()
 				.getId(), null, null);
+	}
+	
+	public void resetForm(){
+		this.criteria = new EmissionOrderSearchCriteria();
+		this.orders = new ArrayList<EmissionOrderDTO>();
+		
 	}
 
 }
