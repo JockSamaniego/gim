@@ -107,7 +107,18 @@ import ec.gob.gim.security.model.User;
 				"r.id, r.identificationNumber, r.name, r.name, COALESCE(r.email, 'S/E', r.email), COALESCE(currentAddress.street, 'S/C', currentAddress.street), COALESCE(currentAddress.phoneNumber, 'S/N', currentAddress.phoneNumber) ) " +
 				"FROM Resident r " + 
 				"left join r.currentAddress currentAddress " +
-				"WHERE r.identificationNumber = upper(:identificationNumber) ")
+				"WHERE r.identificationNumber = upper(:identificationNumber) "),
+		
+		@NamedQuery(name="Resident.findByCreditNoteElect", 
+				query = "SELECT DISTINCT res From MunicipalBond mb "
+						+ "LEFT JOIN mb.resident res "
+						+ "WHERE mb.id in :mbIds"),
+		
+		@NamedQuery(name="Resident.findByCreditNoteElectAndCreditNote", 
+				query = "SELECT DISTINCT res, cn From MunicipalBond mb "
+						+ "LEFT JOIN mb.resident res "
+						+ "LEFT JOIN mb.creditNote cn "
+						+ "WHERE mb.id in :mbIds ")
 		
 			  /*@NamedQuery(name="Taxpayer.findLegalEntityFullByIdentification", 
 						query="SELECT " +

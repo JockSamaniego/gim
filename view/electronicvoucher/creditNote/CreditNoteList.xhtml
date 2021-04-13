@@ -18,6 +18,11 @@
 
 			<rich:simpleTogglePanel switchType="ajax">
 				<f:facet name="header">#{messages['creditNote.searchFilter']}</f:facet>
+				
+				<s:decorate template="../../layout/display.xhtml">
+					<ui:define name="label">#{messages['resident.identificationNumber']}</ui:define>
+					<h:inputText id="criteriaIdentification" value="#{creditNoteElectList.criteriaIdentification}" />
+				</s:decorate>
  
 				<s:decorate template="../../layout/display.xhtml">
 					<ui:define name="label">#{messages['electronicRetention.sequential']}</ui:define>
@@ -26,7 +31,8 @@
 				</s:decorate>
 				<s:decorate template="../../layout/display.xhtml">
 					<ui:define name="label">#{messages['electronicRetention.date']}</ui:define>
-					<rich:calendar value="#{creditNoteElectList.emissionDate}" >
+					<rich:calendar value="#{creditNoteElectList.emissionDate}" 
+					datePattern="#{messages['common.datePattern']}" >
 						<f:convertDateTime type="date"
 							pattern="#{messages['common.datePattern']}" />
 					</rich:calendar>
@@ -35,18 +41,21 @@
 
 			<div class="actionButtons">
 				<h:commandButton id="search" value="#{messages['common.search']}"
-					action="/electronicvoucher/creditNote/CreditNoteList.xhtml">
+					actionListener="#{creditNoteElectHome.deselectAllCreditNotes()}"
+					action="/electronicvoucher/creditNote/CreditNoteList.xhtml"
+					reRender="selectAll">
 					<f:param name="firstResult" value="0" />
 				</h:commandButton>
 				<s:button id="reset" value="#{messages['common.reset']}"
-					includePageParams="false" />
+					includePageParams="false" 
+					action="#{creditNoteElectHome.deselectAllCreditNotes()}" />
 			</div>
 
 		
 
 		<rich:panel>
 			<f:facet name="header">
-				<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:panelGrid id="buttons" columns="6" columnClasses="headerTitle,">
 					<h:outputText
 						value="#{messages['electronicVoucher.searchResults']} (#{empty creditNoteElectList.resultList ? 0 : (creditNoteElectList.paginated ? creditNoteElectList.resultCount : creditNoteElectList.resultList.size)})" />
 					<s:div styleClass="actionButtons" rendered="#{empty from}">
@@ -56,6 +65,27 @@
 							<f:param name="creditNoteId" />
 						</s:button>
 					</s:div>
+					
+					<a:commandButton id="selectAll" value="Seleccionar Todo"
+							action="#{creditNoteElectList.selectAllCreditNote()}"
+							reRender="electronicVoucherList, buttons">
+					</a:commandButton>
+
+					<a:commandButton id="printAll" value="Imprimir Seleccionados"
+							action="#{creditNoteElectHome.prePrintAll()}"
+							disabled="#{creditNoteElectHome.vouchersToPrint.size() == 0}"
+							reRender="electronicVoucherList">
+					</a:commandButton>
+					<a:commandButton id="printByResident" value="Imprimir por Contribuyente"
+							action="#{creditNoteElectHome.prePrintTotalByResident()}"
+							disabled="#{creditNoteElectHome.vouchersToPrint.size() == 0}"
+							reRender="electronicVoucherList">
+					</a:commandButton>
+					<a:commandButton id="printByCreditNote" value="Imprimir por Nota de Crédito"
+							action="#{creditNoteElectHome.prePrintTotalByCreditNote()}"
+							disabled="#{creditNoteElectHome.vouchersToPrint.size() == 0}"
+							reRender="electronicVoucherList">
+					</a:commandButton>
 				</h:panelGrid>
 			</f:facet>
 			<div class="results" id="electronicRetentionList1">
@@ -69,6 +99,14 @@
 					rendered="#{not empty creditNoteElectList.resultList}"
 					onRowMouseOver="this.style.backgroundColor='#{messages['rowBackgroundColor']}'"
 					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+					
+					<rich:column styleClass="action" style="align:center;">
+						<f:facet name="header"></f:facet>
+						<h:selectBooleanCheckbox value="#{electronicVoucher.selectToPrint}" disabled="#{electronicVoucher.electronicStatus != 'AUTHORIZED'}" >
+							<a:support event="onchange" ajaxSingle="true" reRender="electronicVoucherList, buttons" 
+								action="#{creditNoteElectHome.checkVoucherToPrint(electronicVoucher)}"/>
+						</h:selectBooleanCheckbox>
+					</rich:column>
  
  					<h:column>
 						<f:facet name="header">
@@ -97,6 +135,19 @@
 							</ui:include>
 						</f:facet>
 						<h:outputText value="#{electronicVoucher.sequentialNumber}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{creditNoteElectList}" />
+								<ui:param name="propertyLabel"
+									value="Contribuyente" />
+								<ui:param name="propertyPath"
+									value="electronicVoucher.resident.identificationNumber" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{electronicVoucher.resident.identificationNumber}" />
 					</h:column>
 					
 					<h:column>
@@ -141,15 +192,16 @@
 
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet> 
-						 <s:button view="/electronicvoucher/creditNote/CreditNoteEdit.xhtml"
-							value="#{messages['common.edit']}" propagation="none"
-							id="electronicVoucherEdit" rendered="#{creditNoteElectHome.isEnabled(electronicVoucher)}">
-							<f:param name="creditNoteId"
-								value="#{electronicVoucher.id}" />
-						</s:button>
+<!-- 						 <s:button view="/electronicvoucher/creditNote/CreditNoteEdit.xhtml" -->
+<!-- 							value="#{messages['common.edit']}" propagation="none" -->
+<!-- 							id="electronicVoucherEdit" rendered="#{creditNoteElectHome.isEnabled(electronicVoucher)}"> -->
+<!-- 							<f:param name="creditNoteId" -->
+<!-- 								value="#{electronicVoucher.id}" /> -->
+<!-- 						</s:button> -->
 						
 						<a:commandButton id="print" value="#{messages['common.print']}"
-							action="#{creditNoteElectHome.prePrint(electronicVoucher.id)}">
+							action="#{creditNoteElectHome.prePrint(electronicVoucher.id)}"
+							disabled="#{electronicVoucher.electronicStatus != 'AUTHORIZED'}">
 						</a:commandButton>
 						
 						<a:commandButton id="cancelVoucher" value="#{messages['electronicVoucher.cancel']}"

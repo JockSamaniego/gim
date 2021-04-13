@@ -1785,6 +1785,22 @@ public void findMunicipalBondByState() {
 	public void setWblSelected(WaterBlockLog wblSelected) {
 		this.wblSelected = wblSelected;
 	}
+	
+	/**
+	 * rfam 2021-03-15 controlar por rol el boton actualizar categoria
+	 * @param roleKey
+	 * @return
+	 */
+	public Boolean hasRole(String roleKey) {
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SYSTEM_PARAMETER_SERVICE_NAME);
+		String role = systemParameterService.findParameter(roleKey);
+		if (role != null) {
+			return userSession.getUser().hasRole(role);
+		}
+		return false;
+	}
 		
 	
 }

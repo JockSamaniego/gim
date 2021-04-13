@@ -191,7 +191,7 @@
 
 							<s:button view="/waterservice/WaterSupplyCategory.xhtml"
 								value="#{messages['waterSupply.category']}" propagation="none"
-								rendered="#{empty from}">
+								rendered="#{waterSupplyHome.hasRole('ROLE_UPDATE_WATER_CATEGORY')}">
 								<f:param name="waterSupplyId" value="#{_waterSupply.id}" />
 							</s:button>
 

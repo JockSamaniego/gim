@@ -344,8 +344,10 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 				
 				@SuppressWarnings("unchecked")
 				Boolean itsOK = (Boolean) q.getSingleResult();
-				getEntityManager().flush();
-			findPendingLiquidations();
+				if(itsOK){
+					findPendingLiquidations();
+					//getEntityManager().flush();
+				}
 		}		
 		catch (Exception e) {
 			e.printStackTrace();

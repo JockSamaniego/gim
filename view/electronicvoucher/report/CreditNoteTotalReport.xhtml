@@ -7,15 +7,19 @@
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
-	title="Nota de Credito" subject="report" type="pdf"
+	xmlns:a4j="http://richfaces.org/a4j"
+	title="Notas de Credito" subject="report" type="pdf"
 	size="LETTER" keywords="mykeyword" author="gadml_ra" creator="gadml_ra"
 	orientation="landscape" margins="30 30 30 30">
- 
-	<f:facet name="header">
+
+	
+	<a4j:repeat id="creditNotes"
+		value="#{creditNoteElectHome.vouchersToPrint}" var="_creditNote">
+
 		<p:font size="9" name="ARIAL"  style="bold">
-			<p:header borderWidthTop="0" borderWidthBottom="1" alignment="center">
-				<p:paragraph spacingAfter="20">
-					<p:table columns="8" widthPercentage="100" spacingAfter="5">
+
+				<p:paragraph alignment="center" borderWidthTop="0" borderWidthBottom="0">
+					<p:table columns="8" widthPercentage="100" spacingAfter="0">
 						<f:facet name="defaultCell">
 							<p:cell borderWidth="0" />
 						</f:facet>
@@ -32,28 +36,27 @@
 							</p:paragraph>
 							<p:paragraph alignment="center" spacingAfter="5">
 								<p:font size="12" style="bold">
-									<p:text value="NOTA DE CRÉDITO - Nro.: #{creditNoteElectHome.instance.sequentialNumber}" />	
+									<p:text value="NOTA DE CRÉDITO - Nro.: #{_creditNote.sequentialNumber}" />	
 								</p:font>
 							</p:paragraph>
 						</p:cell>
-						
+
 						<p:cell colspan="8">
 							<p:paragraph alignment="left" spacingAfter="5">
-								<p:text value="Clave de acceso: #{creditNoteElectHome.instance.accessCode}" /> 
+								<p:text value="Clave de acceso: #{_creditNote.accessCode}" /> 
 							</p:paragraph>
 						</p:cell>
 						
-						
 						<p:cell colspan="8">
 							<p:paragraph alignment="left" spacingAfter="5">
-								<p:text value="Nro. autorización SRI: #{creditNoteElectHome.instance.authorizationCode}" /> 
+								<p:text value="Nro. autorización SRI: #{_creditNote.authorizationCode}" /> 
 							</p:paragraph>
 						</p:cell>
 						
 						<p:cell colspan="8">
 							<p:paragraph alignment="left" spacingAfter="5">
 								<p:text value="Fecha de authorización: "/>
-								<p:text value="#{creditNoteElectHome.instance.authorizationDate}">
+								<p:text value="#{_creditNote.authorizationDate}">
 									<f:convertDateTime pattern="#{messages['common.dateFullTimePattern']}" /> 
 								</p:text>
 							</p:paragraph>
@@ -61,19 +64,18 @@
 						
 						<p:cell colspan="8">
 							<p:paragraph alignment="left" spacingAfter="5">
-								<p:text value="#{messages['electronicVoucher.voucherNro']}: #{creditNoteElectHome.instance.documentNumber}" /> 
+								<p:text value="#{messages['electronicVoucher.voucherNro']}: #{_creditNote.documentNumber}" /> 
 							</p:paragraph>
 						</p:cell>
 						 
-						
 						<p:cell colspan="8">
 							<p:paragraph alignment="left" spacingAfter="5">
 								<p:text value="#{messages['electronicVoucher.emissionDate']}: "/>
-								<p:text value="#{creditNoteElectHome.instance.emissionDate}">
+								<p:text value="#{_creditNote.emissionDate}">
 									<f:convertDateTime pattern="#{messages['common.datePattern']}" /> 
 								</p:text>
 								<p:text value="  "/>
-								<p:text value="#{creditNoteElectHome.instance.emisionTime}">
+								<p:text value="#{_creditNote.emisionTime}">
 									<f:convertDateTime pattern="#{messages['common.timePattern']}" /> 
 								</p:text>
 							</p:paragraph>
@@ -81,30 +83,41 @@
 						
 						<p:cell colspan="8">
 							<p:paragraph alignment="left" spacingAfter="5">
-								<p:text value="#{messages['common.resident']}: #{creditNoteElectHome.instance.resident.name}" /> 
+								<p:text value="#{messages['common.resident']}: #{_creditNote.resident.name}" /> 
 							</p:paragraph>
 						</p:cell>
 						
 						<p:cell colspan="8">
 							<p:paragraph alignment="left" spacingAfter="5">
-								<p:text value="#{messages['common.identificationNumber']}: #{creditNoteElectHome.instance.resident.identificationNumber}" /> 
+								<p:text value="#{messages['common.identificationNumber']}: #{_creditNote.resident.identificationNumber}" /> 
 							</p:paragraph>
 						</p:cell>
-						 
-												
+					
 						<p:cell colspan="8">
-							<p:paragraph alignment="left" spacingAfter="5">
-								<p:text value="#{messages['emisor']}: #{creditNoteElectHome.instance.emitter.name}" /> 
+							<p:paragraph alignment="left" spacingAfter="0">
+								<p:text value="#{messages['emisor']}: #{_creditNote.emitter.name}" /> 
 							</p:paragraph>
 						</p:cell>
 					</p:table>
 				</p:paragraph>
-				DETALLE:
-			</p:header>
+				<p:paragraph alignment="center" spacingAfter="0" spacingBefore="0" borderWidthTop="1">
+					<p:table columns="1" widthPercentage="100" headerRows="0" >
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" borderWidthBottom="1"/>
+						</f:facet>
+						<p:cell horizontalAlignment="center">
+							<p:font size="9" name="ARIAL" style="bold">
+								<p:paragraph  borderWidthTop="1">
+									<p:text value="DETALLE:" /> 	
+								</p:paragraph>
+							</p:font>	
+						</p:cell>
+					</p:table>
+				</p:paragraph>									
 		</p:font>
-	</f:facet>
 
-	<p:paragraph spacingAfter="15">
+
+	<p:paragraph spacingAfter="10">
 	</p:paragraph>
 	
 	<p:font size="9" name="Draft" style="NORMAL">
@@ -146,7 +159,7 @@
 			</p:cell>
 
  
-			<ui:repeat value="#{creditNoteElectHome.instance.items}" var="item">
+			<ui:repeat value="#{_creditNote.items}" var="item">
 
 				<p:cell>
 					<p:paragraph>
@@ -190,7 +203,7 @@
 			<p:cell horizontalAlignment="right">
 					<p:paragraph> 
 						<p:font size="11" style="bold">
-							<p:text value="#{creditNoteElectHome.instance.total}" >
+							<p:text value="#{_creditNote.total}" >
 								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
 							</p:text> 
 						</p:font>
@@ -206,7 +219,7 @@
 
 			<p:cell horizontalAlignment="right">
 					<p:paragraph> 
-							<p:text value="#{creditNoteElectHome.instance.municipalBond.discount}" >
+							<p:text value="#{_creditNote.municipalBond.discount}" >
 								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
 							</p:text> 
 					</p:paragraph>
@@ -236,7 +249,7 @@
 
 			<p:cell horizontalAlignment="right">
 					<p:paragraph> 
-							<p:text value="#{creditNoteElectHome.instance.totalTaxes}" >
+							<p:text value="#{_creditNote.totalTaxes}" >
 								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
 							</p:text> 
 					</p:paragraph>
@@ -255,7 +268,7 @@
 			<p:cell horizontalAlignment="right">
 					<p:paragraph> 
 						<p:font size="12" style="bold">
-							<p:text value="#{creditNoteElectHome.instance.totalPaid}" >
+							<p:text value="#{_creditNote.totalPaid}" >
 								<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
 							</p:text> 
 						</p:font>
@@ -326,7 +339,7 @@
 			<p:cell colspan="1">
 				<p:paragraph>
 					<p:font size="7" style="bold">
-						<p:text value="#{creditNoteElectHome.instance.resident.name}" />
+						<p:text value="#{_creditNote.resident.name}" />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
@@ -342,7 +355,7 @@
 			<p:cell colspan="1">
 				<p:paragraph>
 					<p:font size="9" style="bold">
-						<p:text value="#{creditNoteElectHome.instance.resident.identificationNumber}"  />
+						<p:text value="#{_creditNote.resident.identificationNumber}"  />
 					</p:font>
 				</p:paragraph>
 			</p:cell>
@@ -356,5 +369,7 @@
 		</p:table>
 		  
 	</p:font>
+	<p:newPage />
+	</a4j:repeat>
 	
 </p:document>

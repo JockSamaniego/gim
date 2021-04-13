@@ -89,7 +89,8 @@
 				                  reRender="confirmPanelSelected" ajaxSingle="true"
 				                  eventsQueue="gimQueue"
 				                  oncomplete="Richfaces.showModalPanel('confirmPanelSelected',{width:350, height:150})"
-				                  value="Reporte_Excel" />
+				                  value="Reporte_Excel"
+				                  onclick="this.disabled=true;" />
 							
 							<a:commandButton id="openBankDebitForLiquidation"
 								  rendered = "#{bankDebitHome.hasRole('ROLE_NAME_INCOME_BANK_DEBITS') and bankDebitHome.hasPendingLiquidations}"
@@ -98,7 +99,8 @@
 				                  eventsQueue="gimQueue"
 				                  disabled="#{(userSession.tillPermission == null) or (userSession.tillPermission != null and userSession.tillPermission.openingTime == null)}"
 				                  oncomplete="Richfaces.showModalPanel('bankDebitForLiquidation',{width:1070, height:550})"
-				                  value="LIQUIDAR!" />
+				                  value="LIQUIDAR!"
+				                  onclick="this.disabled=true;" />
 								
 						</h:panelGrid>
 
