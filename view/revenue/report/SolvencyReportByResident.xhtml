@@ -115,7 +115,31 @@
 									</p:font>
 									<p:font size="14">
 										<p:text
-											value="#{messages['revenue.solvencyMotivation']}" />
+											value="#{solvencyReportHome.motivation}" />
+									</p:font>
+							</p:paragraph>
+							
+							<p:paragraph spacingAfter="0" spacingBefore="7" alignment="justify" verticalAlignment="10" leading="25"
+							rendered="#{solvencyReportHome.isNewDomain}">
+									<p:font size="14" style="bold">
+										<p:text
+											value="CLAVE CATASTRAL: " />
+									</p:font>
+									<p:font size="14">
+										<p:text
+											value="#{solvencyReportHome.propertySelected.cadastralCode}" />
+									</p:font>
+							</p:paragraph>
+							
+							<p:paragraph spacingAfter="0" spacingBefore="7" alignment="justify" verticalAlignment="10" leading="25"
+							rendered="#{solvencyReportHome.isNewDomain}">
+									<p:font size="14" style="bold">
+										<p:text
+											value="FICHA REGISTRAL: " />
+									</p:font>
+									<p:font size="14">
+										<p:text
+											value="#{solvencyReportHome.propertySelected.registrationCardNumber}" />
 									</p:font>
 							</p:paragraph>
 		

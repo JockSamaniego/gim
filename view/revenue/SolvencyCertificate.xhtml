@@ -46,7 +46,7 @@
 					searchByCriteriaAction="searchResidentByCriteria"
 					clearSearchPanelAction="clearSearchResidentPanel"
 					residentChosenListenerName="residentSelectedListener"
-					reRender="entryChooser-name, entryChooser-entryCode, entryChooser-openSearchPanelBtn,contentPanel,search" />
+					reRender="entryChooser-name, entryChooser-entryCode, entryChooser-openSearchPanelBtn,contentPanel,search, mainPanel3, newDomainPanel, motivationField" />
 				
 				<a:outputPanel id="entryPanel" ajaxRendered="false" rendered="#{solvencyReportHome.solvencyReportType.equals(solvencyReportHome.solvencyReportByEntry)}">
 				<g:entryChooser id="entryChooser" label="#{messages['entry']}"
@@ -94,25 +94,58 @@
 				<div style="clear: both" />
 			</rich:panel>
 
-			<rich:panel id="mainPanel2" columnClasses="topAligned">
-				<f:facet name="header">
-					<h:outputText styleClass="formTitle"  style="font-weight:bold; font-size:15px"
-						value="Datos del Solicitante" />
-				</f:facet>
-				
-				<g:residentChooser id="applicantChooser"
-					resident="#{solvencyReportHome.applicant}"
-					criteria="#{solvencyReportHome.criteria}"
-					bean="#{solvencyReportHome}" searchAction="searchApplicant"
-					residentsList="#{solvencyReportHome.residents}"
-					identificationNumber="#{solvencyReportHome.applicantIdentificationNumber}"
-					searchByCriteriaAction="searchResidentByCriteria"
-					clearSearchPanelAction="clearSearchResidentPanel"
-					residentChosenListenerName="applicantSelectedListener"
-					reRender="entryChooser-name, entryChooser-entryCode, entryChooser-openSearchPanelBtn,contentPanel,search" />
-				<div style="clear: both" />
-			</rich:panel>
-			
+			<h:panelGrid id="newDomainPanel">
+				<rich:panel id="mainPanel2" columnClasses="topAligned">
+					<f:facet name="header">
+						<h:outputText styleClass="formTitle"  style="font-weight:bold; font-size:15px"
+							value="Datos del Solicitante" />
+					</f:facet>
+					
+					<g:residentChooser id="applicantChooser"
+						resident="#{solvencyReportHome.applicant}"
+						criteria="#{solvencyReportHome.criteria}"
+						bean="#{solvencyReportHome}" searchAction="searchApplicant"
+						residentsList="#{solvencyReportHome.residents}"
+						identificationNumber="#{solvencyReportHome.applicantIdentificationNumber}"
+						searchByCriteriaAction="searchResidentByCriteria"
+						clearSearchPanelAction="clearSearchResidentPanel"
+						residentChosenListenerName="applicantSelectedListener"
+						reRender="entryChooser-name, entryChooser-entryCode, entryChooser-openSearchPanelBtn,contentPanel,search" />
+					<div style="clear: both" />
+				</rich:panel>
+
+				<rich:panel id="mainPanel3" columnClasses="topAligned" rendered="#{solvencyReportHome.resident != null}">
+					<f:facet name="header">
+						<h:outputText styleClass="formTitle"  style="font-weight:bold; font-size:15px"
+							value="Traspaso de Dominio" />
+					</f:facet>
+					<s:decorate id="newDomain" template="../layout/edit.xhtml">
+						<ui:define name="label">Es traspaso de dominio?:</ui:define>
+						<h:selectBooleanCheckbox id="isNewDomain"
+                		value="#{solvencyReportHome.isNewDomain}" >
+                			<a:support event="onchange" ajaxSingle="true"
+                			action="#{solvencyReportHome.findCadastralCodeForCertificate()}" 
+                			reRender="mainPanel3, properties, property, motivationField"/>
+						</h:selectBooleanCheckbox>
+					</s:decorate>
+					<s:decorate id="properties" template="../layout/edit.xhtml" rendered="#{solvencyReportHome.isNewDomain}">
+			 				<ui:define name="label">#{messages['cadaster.property']}:</ui:define>
+							<h:selectOneMenu id="property"
+								value="#{solvencyReportHome.propertySelected}"
+								required="#{solvencyReportHome.isNewDomain}">
+								<s:selectItems value="#{solvencyReportHome.propertiesByResident}" 
+											   var="property"
+											   label="#{property}"
+											   noSelectionLabel="#{messages['common.choose']}" />
+								<s:convertEntity />
+								<a:support  event="onchange"  
+											ajaxSingle="true"/>
+							</h:selectOneMenu>
+					</s:decorate>
+
+					<div style="clear: both" />
+				</rich:panel>
+			</h:panelGrid>
 				
 			<div style="clear: both" />
 		</h:panelGrid>

@@ -30,8 +30,16 @@
 						value="#{creditNoteElectList.sequentialNumber}" />
 				</s:decorate>
 				<s:decorate template="../../layout/display.xhtml">
-					<ui:define name="label">#{messages['electronicRetention.date']}</ui:define>
-					<rich:calendar value="#{creditNoteElectList.emissionDate}" 
+					<ui:define name="label">#{messages['electronicRetention.date']} Desde</ui:define>
+					<rich:calendar value="#{creditNoteElectList.emissionDateFrom}" 
+					datePattern="#{messages['common.datePattern']}" >
+						<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+					</rich:calendar>
+				</s:decorate>
+				<s:decorate template="../../layout/display.xhtml">
+					<ui:define name="label">#{messages['electronicRetention.date']} Hasta</ui:define>
+					<rich:calendar value="#{creditNoteElectList.emissionDateUntil}" 
 					datePattern="#{messages['common.datePattern']}" >
 						<f:convertDateTime type="date"
 							pattern="#{messages['common.datePattern']}" />
@@ -55,7 +63,7 @@
 
 		<rich:panel>
 			<f:facet name="header">
-				<h:panelGrid id="buttons" columns="6" columnClasses="headerTitle,">
+				<h:panelGrid id="buttons" columns="7" columnClasses="headerTitle,">
 					<h:outputText
 						value="#{messages['electronicVoucher.searchResults']} (#{empty creditNoteElectList.resultList ? 0 : (creditNoteElectList.paginated ? creditNoteElectList.resultCount : creditNoteElectList.resultList.size)})" />
 					<s:div styleClass="actionButtons" rendered="#{empty from}">
@@ -70,17 +78,24 @@
 							action="#{creditNoteElectList.selectAllCreditNote()}"
 							reRender="electronicVoucherList, buttons">
 					</a:commandButton>
+					
+					<a:commandButton id="printReport" value="Imprimir Reporte"
+							action="#{creditNoteElectHome.prePrintReport()}"
+							disabled="#{creditNoteElectHome.vouchersToPrint.size() == 0}"
+							reRender="electronicVoucherList">
+					</a:commandButton>
 
-					<a:commandButton id="printAll" value="Imprimir Seleccionados"
-							action="#{creditNoteElectHome.prePrintAll()}"
-							disabled="#{creditNoteElectHome.vouchersToPrint.size() == 0}"
-							reRender="electronicVoucherList">
-					</a:commandButton>
-					<a:commandButton id="printByResident" value="Imprimir por Contribuyente"
-							action="#{creditNoteElectHome.prePrintTotalByResident()}"
-							disabled="#{creditNoteElectHome.vouchersToPrint.size() == 0}"
-							reRender="electronicVoucherList">
-					</a:commandButton>
+<!-- 					<a:commandButton id="printAll" value="Imprimir Seleccionados" -->
+<!-- 							action="#{creditNoteElectHome.prePrintAll()}" -->
+<!-- 							disabled="#{creditNoteElectHome.vouchersToPrint.size() == 0}" -->
+<!-- 							reRender="electronicVoucherList"> -->
+<!-- 					</a:commandButton> -->
+<!-- 					<a:commandButton id="printByResident" value="Imprimir por Contribuyente" -->
+<!-- 							action="#{creditNoteElectHome.prePrintTotalByResident()}" -->
+<!-- 							disabled="#{creditNoteElectHome.vouchersToPrint.size() == 0}" -->
+<!-- 							reRender="electronicVoucherList"> -->
+<!-- 					</a:commandButton> -->
+
 					<a:commandButton id="printByCreditNote" value="Imprimir por Nota de Crédito"
 							action="#{creditNoteElectHome.prePrintTotalByCreditNote()}"
 							disabled="#{creditNoteElectHome.vouchersToPrint.size() == 0}"
@@ -240,7 +255,7 @@
 					value="#{creditNoteElectList.nextFirstResult}" />
 			</s:link>
 
-			<s:link view="/electronicvoucher/ElectronicRetentionList.xhtml"
+			<s:link view="/electronicvoucher/creditNote/CreditNoteList.xhtml"
 				rendered="#{creditNoteElectList.nextExists}"
 				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
 				id="lastPage">
