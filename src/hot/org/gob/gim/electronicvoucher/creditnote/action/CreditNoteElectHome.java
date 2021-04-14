@@ -884,6 +884,13 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 		return null;	
 	}
 	
+	public String prePrintReport() {
+		if(this.vouchersToPrint.size() > 0){
+			return "/electronicvoucher/report/CreditNoteReportToAccounting.xhtml";
+		}
+		return null;	
+	}
+	
 	private List<Long> mbIds = new ArrayList();
 	private List<Resident> resByCreditNote = new ArrayList();
 	private List<CreditNoteElectDTO> cneByCreditNote = new ArrayList();
@@ -1004,12 +1011,14 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	
 	
 	public void creditNoteAllSelect(List<BigInteger> ids){
+		totalValueForReport = BigDecimal.ZERO;
 		this.vouchersToPrint = new ArrayList<ElectronicVoucher>();
 		for(BigInteger id : ids){
 			ElectronicVoucher ev = getEntityManager().find(ElectronicVoucher.class, id.longValue());
 			if(ev.getElectronicStatus().equals("AUTHORIZED")){
 				ev.setSelectToPrint(Boolean.TRUE);
 				this.vouchersToPrint.add(ev);
+				totalValueForReport = totalValueForReport.add(ev.getTotalPaid());
 			}
 		}
 	}
@@ -1020,5 +1029,34 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 		}
 		this.vouchersToPrint = new ArrayList<ElectronicVoucher>();
 	}
+	
+	private Date dateReportFrom;
+	private Date dateReportUntil;
+	private BigDecimal totalValueForReport;
+
+	public Date getDateReportFrom() {
+		return dateReportFrom;
+	}
+
+	public void setDateReportFrom(Date dateReportFrom) {
+		this.dateReportFrom = dateReportFrom;
+	}
+
+	public Date getDateReportUntil() {
+		return dateReportUntil;
+	}
+
+	public void setDateReportUntil(Date dateReportUntil) {
+		this.dateReportUntil = dateReportUntil;
+	}
+
+	public BigDecimal getTotalValueForReport() {
+		return totalValueForReport;
+	}
+
+	public void setTotalValueForReport(BigDecimal totalValueForReport) {
+		this.totalValueForReport = totalValueForReport;
+	}
+	
 }
 
