@@ -741,8 +741,11 @@ public class PreemissionWS {
 			System.out.println(request);
 
 			UtilityResponse resp = new UtilityResponse();
+			resp.setMessage("Servicio en implementacion");
+			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
 
-			List<String> errorsValidation = GimUtils.validateRequest(request);
+			/* List<String> errorsValidation = GimUtils.validateRequest(request);
 			if (errorsValidation.size() > 0) {
 				resp.setMessage("Error en validaciones de request");
 				resp.setErrors(errorsValidation);
@@ -837,7 +840,7 @@ public class PreemissionWS {
 			resp.setMessage("Preemision exitosa");
 
 			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
-					.header("Content-Language", "es-EC").build();
+					.header("Content-Language", "es-EC").build();*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.serverError()
@@ -856,8 +859,12 @@ public class PreemissionWS {
 			System.out.println(request);
 
 			AlcabalaResponse resp = new AlcabalaResponse();
+			
+			resp.setMessage("Servicio en implementacion");
+			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
 
-			List<String> errorsValidation = GimUtils.validateRequest(request);
+			/* List<String> errorsValidation = GimUtils.validateRequest(request);
 			if (errorsValidation.size() > 0) {
 				resp.setMessage("Error en validaciones de request");
 				resp.setErrors(errorsValidation);
@@ -952,7 +959,7 @@ public class PreemissionWS {
 			resp.setMessage("Preemision exitosa");
 
 			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
-					.header("Content-Language", "es-EC").build();
+					.header("Content-Language", "es-EC").build();*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.serverError()
