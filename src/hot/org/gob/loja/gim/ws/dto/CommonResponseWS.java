@@ -1,4 +1,4 @@
-package org.gob.loja.gim.ws.dto.preemission.response;
+package org.gob.loja.gim.ws.dto;
 
 import java.util.ArrayList;
 import java.util.List;

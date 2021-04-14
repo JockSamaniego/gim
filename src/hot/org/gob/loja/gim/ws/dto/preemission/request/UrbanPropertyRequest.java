@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import org.gob.gim.common.validators.InList;
 import org.gob.gim.common.validators.NotEmpty;
 
-public class UrbanPropertyRequest extends CommonRequest {
+public class UrbanPropertyRequest extends CommonPreemissionRequest {
 
 	@NotNull(message = "accountCode no puede ser nulo")
 	@NotEmpty(message = "accountCode no puede ser vacío")

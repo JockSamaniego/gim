@@ -1,5 +1,7 @@
 package org.gob.loja.gim.ws.dto.preemission.response;
 
+import org.gob.loja.gim.ws.dto.CommonResponseWS;
+
 public class BuildingPermitResponse extends CommonResponseWS {
 	private Long bondId;
 	private Long emissionOrderId;

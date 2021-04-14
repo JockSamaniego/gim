@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.gob.gim.common.validators.NotEmpty;
 
-public abstract class CommonRequest {
+public abstract class CommonPreemissionRequest {
 
 	@NotNull(message = "emiterIdentification no puede ser nulo")
 	@NotEmpty(message = "emiterIdentification no puede ser vacío")

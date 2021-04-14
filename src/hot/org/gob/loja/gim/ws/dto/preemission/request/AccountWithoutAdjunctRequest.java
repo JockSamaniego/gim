@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import org.gob.gim.common.validators.InList;
 import org.gob.gim.common.validators.NotEmpty;
 
-public class AccountWithoutAdjunctRequest extends CommonRequest {
+public class AccountWithoutAdjunctRequest extends CommonPreemissionRequest {
 
 	@NotNull(message = "value no puede ser nulo")
 	private BigDecimal value;

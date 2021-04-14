@@ -1,5 +1,7 @@
 package org.gob.loja.gim.ws.dto.preemission.response;
 
+import org.gob.loja.gim.ws.dto.CommonResponseWS;
+
 public class AlcabalaResponse extends CommonResponseWS {
 
 	private Long bondId;
