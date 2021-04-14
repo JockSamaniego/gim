@@ -1029,6 +1029,7 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 		totalValueForReport = BigDecimal.ZERO;
 		totalBaseForReport = BigDecimal.ZERO;
 		totalIvaForReport = BigDecimal.ZERO;
+
 		this.vouchersToPrint = new ArrayList<ElectronicVoucher>();
 		for(BigInteger id : ids){
 			ElectronicVoucher ev = getEntityManager().find(ElectronicVoucher.class, id.longValue());
@@ -1036,8 +1037,10 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 				ev.setSelectToPrint(Boolean.TRUE);
 				this.vouchersToPrint.add(ev);
 				totalValueForReport = totalValueForReport.add(ev.getTotalPaid());
+
 				totalBaseForReport = totalBaseForReport.add(ev.getMunicipalBond().getTaxableTotal());
 				totalIvaForReport = totalIvaForReport.add(ev.getMunicipalBond().getTaxItems().get(0).getValue());
+
 			}
 		}
 	}
@@ -1052,8 +1055,10 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	private Date dateReportFrom;
 	private Date dateReportUntil;
 	private BigDecimal totalValueForReport;
+
 	private BigDecimal totalBaseForReport;
 	private BigDecimal totalIvaForReport;
+
 
 	public Date getDateReportFrom() {
 		return dateReportFrom;
