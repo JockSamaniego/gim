@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.EntityManager;
@@ -45,6 +46,9 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 public class CreditNoteHome extends EntityHome<CreditNote> {
 
 	private static final long serialVersionUID = 1L;
+	
+	@EJB
+	private SystemParameterService systemParameterService;
 
 	private static final String PAID_BOND_STATUS_ID = "MUNICIPAL_BOND_STATUS_ID_PAID";
 
@@ -198,6 +202,21 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 			}
 			return "persisted";
 		} catch (CreditNoteValueNotValidException ex) {
+			addFacesMessageFromResourceBundle(ex.getClass().getSimpleName());
+			return null;
+		}
+	}
+	
+	@Override
+	public String update() {
+		try {
+			if(getInstance().getCreditNoteType().getName().equals("notas de credito")){
+				this.mbsForCreditNoteElect = getInstance().getMunicipalBonds();
+				createCreditNotesElect();
+			}
+			super.update();
+			return "updated";
+		} catch (Exception ex) {
 			addFacesMessageFromResourceBundle(ex.getClass().getSimpleName());
 			return null;
 		}
@@ -700,6 +719,8 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 		private Boolean isFirstTime = Boolean.TRUE;
 		
 		public void chargeParameters(){
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SystemParameterService.LOCAL_NAME);
 			entries = new ArrayList();
 			Query query = getEntityManager().createNamedQuery("SystemParameter.findByName");
 			query.setParameter("name", "MB_ENTRIES_ELECTRONIC_CREDIT_NOTE");
@@ -708,5 +729,13 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 			for(String st : entriesStr){
 				entries.add(Long.parseLong(st));
 			}
+		}
+		
+		public Boolean hasRole(String roleKey) {
+			String role = systemParameterService.findParameter(roleKey);
+			if (role != null) {
+				return userSession.getUser().hasRole(role);
+			}
+			return false;
 		}
 }

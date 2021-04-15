@@ -8,7 +8,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	title="Reporte de Notas de Credito" subject="report" type="pdf"
 	pageSize="A4" margins="20 20 20 20" author="loxageek"
-	orientation="portrait" creator="loxageek">
+	orientation="landscape" creator="loxageek">
 
 	<f:facet name="header">
 		<p:font size="9" name="HELVETICA">
@@ -121,9 +121,9 @@
 		</p:table>
 
 		<p:table rendered="#{creditNoteElectHome.vouchersToPrint.size() > 0}"
-			columns="9"
+			columns="11"
 			widthPercentage="100" headerRows="0"
-			widths="0.9 1.5 2 1 2 1 2 0.8 0.8">
+			widths="0.7 1.3 2 0.8 2 1 1.8 0.6 0.6 0.6 0.6">
 			<p:font size="6" style="bold">
 				<f:facet name="defaultCell">
 					<p:cell borderWidth="0" />
@@ -175,6 +175,18 @@
 				<p:cell horizontalAlignment="center" >
 					<p:paragraph>
 						<p:text value="% IVA" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center" >
+					<p:paragraph>
+						<p:text value="Base Imponible" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center" >
+					<p:paragraph>
+						<p:text value="Valor IVA" />
 					</p:paragraph>
 				</p:cell>
 				
@@ -240,6 +252,18 @@
 					
 					<p:cell horizontalAlignment="right">						
 						<p:paragraph>
+							<p:text value="#{_var.municipalBond.taxableTotal}" />
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right">						
+						<p:paragraph>
+							<p:text value="#{_var.municipalBond.taxItems.get(0).value}" />
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right">						
+						<p:paragraph>
 							<p:text value="#{_var.totalPaid}" />
 						</p:paragraph>
 					</p:cell>
@@ -261,13 +285,23 @@
 				</p:cell>
 				<p:cell horizontalAlignment="right">						
 						<p:paragraph>
+							<p:text value="#{creditNoteElectHome.totalBaseForReport}" />
+						</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">						
+						<p:paragraph>
+							<p:text value="#{creditNoteElectHome.totalIvaForReport}" />
+						</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="right">						
+						<p:paragraph>
 							<p:text value="#{creditNoteElectHome.totalValueForReport}" />
 						</p:paragraph>
 				</p:cell>
 			</p:font>
 		</p:table>
 		
-		<p:table columns="2" widthPercentage="80" headerRows="0" spacingBefore="100">
+		<p:table columns="2" widthPercentage="80" headerRows="0" spacingBefore="80">
 							<f:facet name="defaultCell">
 								<p:cell borderWidth="0" horizontalAlignment="center" />
 							</f:facet>						
