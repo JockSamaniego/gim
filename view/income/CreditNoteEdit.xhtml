@@ -45,7 +45,7 @@
 					<h:selectOneMenu id="paymentType"
 						value="#{creditNoteHome.instance.creditNoteType}" 
 						required="true"
-						disabled="#{creditNoteHome.managed}">
+						disabled="#{creditNoteHome.managed and !creditNoteHome.hasRole('ELECTRONIC_CREDIT_NOTE_UPDATE_ROL')}">
 						<s:selectItems value="#{creditNoteTypes}" var="creditNoteType"
 							label="#{creditNoteType.name}" />
 						<s:convertEntity />

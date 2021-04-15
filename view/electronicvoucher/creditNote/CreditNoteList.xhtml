@@ -222,7 +222,8 @@
 						<a:commandButton id="cancelVoucher" value="#{messages['electronicVoucher.cancel']}"
 							action="#{creditNoteElectHome.setCancelVoucher(electronicVoucher)}"
 							rendered="#{creditNoteElectHome.canCancel(electronicVoucher)}"
-							oncomplete="Richfaces.showModalPanel('cancelViewer');" />
+							oncomplete="Richfaces.showModalPanel('cancelViewer');" 
+							disabled="#{electronicVoucher.electronicStatus == 'AUTHORIZED'}"/>
 							
 					</rich:column>
 				</rich:dataTable>
