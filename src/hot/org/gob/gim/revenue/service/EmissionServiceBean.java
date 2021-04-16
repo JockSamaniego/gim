@@ -1002,6 +1002,7 @@ public class EmissionServiceBean implements EmissionService {
 						.getBuildingAppraisal());
 				adjunct.setLotAppraisal(detailsEmission.getLotAppraisal());
 				adjunct.setLotArea(detailsEmission.getLotArea());
+				adjunct.setConstructionArea(detailsEmission.getConstructionArea());
 			} else {
 				adjunct.setChangeAppraisals(Boolean.FALSE);
 				adjunct.setCommercialAppraisal(property.getCurrentDomain()
@@ -1154,6 +1155,7 @@ public class EmissionServiceBean implements EmissionService {
 				adjunct.setLotArea(detailsEmission.getLotArea());
 				adjunct.setImprovementAppraisal(detailsEmission
 						.getImprovementAppraisal());
+				adjunct.setConstructionArea(detailsEmission.getConstructionArea());
 			} else {
 				adjunct.setChangeAppraisals(Boolean.FALSE);
 				adjunct.setCommercialAppraisal(property.getCurrentDomain()
