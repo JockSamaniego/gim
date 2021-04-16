@@ -5,6 +5,7 @@ package org.gob.gim.revenue.service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -982,25 +983,41 @@ public class EmissionServiceBean implements EmissionService {
 			// start Adjunt
 
 			PropertyAppraisal adjunct = new PropertyAppraisal();
-			adjunct.setBuildingAppraisal(property.getCurrentDomain()
-					.getBuildingAppraisal());
 			adjunct.setCadastralCode(property.getCadastralCode());
-			adjunct.setCommercialAppraisal(property.getCurrentDomain()
-					.getCommercialAppraisal());
-			adjunct.setConstructionArea(property.getCurrentDomain()
-					.getTotalAreaConstruction());
-			// adjunct.setEmitWithoutProperty(emitWithoutProperty);
+			adjunct.setEmitWithoutProperty(Boolean.FALSE);
+			adjunct.setPreviousCadastralCode(property
+					.getPreviousCadastralCode());
+
+			adjunct.setRealBuildingAppraisal(BigDecimal.ZERO);
+			adjunct.setRealLotAppraisal(BigDecimal.ZERO);
+
+			BigDecimal taxableBase = BigDecimal.ZERO;
+			if (detailsEmission.getChangeAppraisals()) {
+				adjunct.setChangeAppraisals(Boolean.TRUE);
+				taxableBase = detailsEmission.getLotAppraisal().add(
+						detailsEmission.getBuildingAppraisal());
+				taxableBase = taxableBase.setScale(2, RoundingMode.HALF_UP);
+				adjunct.setCommercialAppraisal(taxableBase);
+				adjunct.setBuildingAppraisal(detailsEmission
+						.getBuildingAppraisal());
+				adjunct.setLotAppraisal(detailsEmission.getLotAppraisal());
+				adjunct.setLotArea(detailsEmission.getLotArea());
+			} else {
+				adjunct.setChangeAppraisals(Boolean.FALSE);
+				adjunct.setCommercialAppraisal(property.getCurrentDomain()
+						.getCommercialAppraisal());
+				adjunct.setBuildingAppraisal(property.getCurrentDomain()
+						.getBuildingAppraisal());
+				adjunct.setLotAppraisal(property.getCurrentDomain()
+						.getLotAppraisal());
+				adjunct.setLotArea(property.getArea());
+			}
+
 			// adjunct.setExemptionValue(exemptionValue);
 			// adjunct.setImprovementAppraisal(improvementAppraisal); siempre
 			// null
-			adjunct.setLotAppraisal(property.getCurrentDomain()
-					.getLotAppraisal());
-			adjunct.setLotArea(property.getArea());
-			adjunct.setPreviousCadastralCode(property
-					.getPreviousCadastralCode());
+
 			adjunct.setProperty(property);
-			// adjunct.setRealBuildingAppraisal(realBuildingAppraisal);
-			// adjunct.setRealLotAppraisal(realLotAppraisal);
 
 			MunicipalBondStatus preEmitBondStatus = systemParameterService
 					.materialize(MunicipalBondStatus.class,
@@ -1015,7 +1032,7 @@ public class EmissionServiceBean implements EmissionService {
 			mb.setEmitter(emitter);
 			mb.setOriginator(emitter);
 
-			// mb.setAdjunct(adjunct);
+			mb.setAdjunct(adjunct);
 
 			// end Adjunt
 
@@ -1115,26 +1132,44 @@ public class EmissionServiceBean implements EmissionService {
 			// start Adjunt
 
 			PropertyAppraisal adjunct = new PropertyAppraisal();
-			adjunct.setBuildingAppraisal(property.getCurrentDomain()
-					.getBuildingAppraisal());
 			adjunct.setCadastralCode(property.getCadastralCode());
-			adjunct.setCommercialAppraisal(property.getCurrentDomain()
-					.getCommercialAppraisal());
-			adjunct.setConstructionArea(property.getCurrentDomain()
-					.getTotalAreaConstruction());
-			// adjunct.setEmitWithoutProperty(emitWithoutProperty);
+			adjunct.setEmitWithoutProperty(Boolean.FALSE);
+			adjunct.setPreviousCadastralCode(property
+					.getPreviousCadastralCode());
+
+			adjunct.setRealBuildingAppraisal(BigDecimal.ZERO);
+			adjunct.setRealLotAppraisal(BigDecimal.ZERO);
+
+			BigDecimal taxableBase = BigDecimal.ZERO;
+			if (detailsEmission.getChangeAppraisals()) {
+				adjunct.setChangeAppraisals(Boolean.TRUE);
+				taxableBase = detailsEmission.getLotAppraisal()
+						.add(detailsEmission.getBuildingAppraisal())
+						.add(detailsEmission.getImprovementAppraisal());
+				taxableBase = taxableBase.setScale(2, RoundingMode.HALF_UP);
+				adjunct.setCommercialAppraisal(taxableBase);
+				adjunct.setBuildingAppraisal(detailsEmission
+						.getBuildingAppraisal());
+				adjunct.setLotAppraisal(detailsEmission.getLotAppraisal());
+				adjunct.setLotArea(detailsEmission.getLotArea());
+				adjunct.setImprovementAppraisal(detailsEmission
+						.getImprovementAppraisal());
+			} else {
+				adjunct.setChangeAppraisals(Boolean.FALSE);
+				adjunct.setCommercialAppraisal(property.getCurrentDomain()
+						.getCommercialAppraisal());
+				adjunct.setBuildingAppraisal(property.getCurrentDomain()
+						.getBuildingAppraisal());
+				adjunct.setLotAppraisal(property.getCurrentDomain()
+						.getLotAppraisal());
+				adjunct.setLotArea(property.getArea());
+			}
+
 			// adjunct.setExemptionValue(exemptionValue);
 			// adjunct.setImprovementAppraisal(improvementAppraisal); siempre
 			// null
-			adjunct.setLotAppraisal(property.getCurrentDomain()
-					.getLotAppraisal());
-			adjunct.setLotArea(property.getArea());
-			adjunct.setPreviousCadastralCode(property
-					.getPreviousCadastralCode());
-			adjunct.setProperty(property);
-			// adjunct.setRealBuildingAppraisal(realBuildingAppraisal);
-			// adjunct.setRealLotAppraisal(realLotAppraisal);
 
+			adjunct.setProperty(property);
 			MunicipalBondStatus preEmitBondStatus = systemParameterService
 					.materialize(MunicipalBondStatus.class,
 							"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
@@ -1148,7 +1183,7 @@ public class EmissionServiceBean implements EmissionService {
 			mb.setEmitter(emitter);
 			mb.setOriginator(emitter);
 
-			// mb.setAdjunct(adjunct);
+			mb.setAdjunct(adjunct);
 
 			// end Adjunt
 
@@ -1276,7 +1311,7 @@ public class EmissionServiceBean implements EmissionService {
 			mb.setEmitter(emitter);
 			mb.setOriginator(emitter);
 
-			// mb.setAdjunct(adjunct);
+			mb.setAdjunct(adjunct);
 
 			// end Adjunt
 
@@ -1410,7 +1445,7 @@ public class EmissionServiceBean implements EmissionService {
 			mb.setEmitter(emitter);
 			mb.setOriginator(emitter);
 
-			// mb.setAdjunct(adjunct);
+			mb.setAdjunct(adjunct);
 
 			// end Adjunt
 
@@ -1547,7 +1582,7 @@ public class EmissionServiceBean implements EmissionService {
 			}
 
 			adjunct.setEarlyTransferDiscount(earlyTransferDiscount);
-			
+
 			// end Adjunt
 
 			MunicipalBondStatus preEmitBondStatus = systemParameterService

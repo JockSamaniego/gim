@@ -16,9 +16,18 @@ import javax.ws.rs.core.Response;
 import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.ws.service.QueriesService;
+import org.gob.loja.gim.ws.dto.queries.EntryDTO;
+import org.gob.loja.gim.ws.dto.queries.LocalDTO;
+import org.gob.loja.gim.ws.dto.queries.OperatingPermitDTO;
 import org.gob.loja.gim.ws.dto.queries.request.BondByIdRequest;
+import org.gob.loja.gim.ws.dto.queries.request.EntryRequest;
+import org.gob.loja.gim.ws.dto.queries.request.LocalsRequest;
+import org.gob.loja.gim.ws.dto.queries.request.OperatingPermitRequest;
 import org.gob.loja.gim.ws.dto.queries.response.BondDTO;
 import org.gob.loja.gim.ws.dto.queries.response.BondResponse;
+import org.gob.loja.gim.ws.dto.queries.response.EntryResponse;
+import org.gob.loja.gim.ws.dto.queries.response.LocalsResponse;
+import org.gob.loja.gim.ws.dto.queries.response.OperatingPermitResponse;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
@@ -63,6 +72,126 @@ public class QueriesWS {
 			resp.setBond(bond);
 
 			resp.setMessage("Consulta exitosa");
+
+			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
+		}
+	}
+
+	@POST
+	@Path("/operatingPermit")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response operatingPermit(@Valid OperatingPermitRequest request) {
+		try {
+			System.out.println(request);
+
+			OperatingPermitResponse resp = new OperatingPermitResponse();
+
+			List<String> errorsValidation = GimUtils.validateRequest(request);
+			if (errorsValidation.size() > 0) {
+				resp.setMessage("Error en validaciones de request");
+				resp.setErrors(errorsValidation);
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+
+			if (queriesService == null) {
+				queriesService = ServiceLocator.getInstance().findResource(
+						queriesService.LOCAL_NAME);
+			}
+			List<OperatingPermitDTO> permits = this.queriesService
+					.findOperatingPermits(request.getIdentification());
+			resp.setPermits(permits);
+
+			resp.setMessage("Consulta exitosa");
+
+			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
+		}
+	}
+
+	@POST
+	@Path("/locals")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response locals(@Valid LocalsRequest request) {
+		try {
+			System.out.println(request);
+
+			LocalsResponse resp = new LocalsResponse();
+
+			List<String> errorsValidation = GimUtils.validateRequest(request);
+			if (errorsValidation.size() > 0) {
+				resp.setMessage("Error en validaciones de request");
+				resp.setErrors(errorsValidation);
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+
+			if (queriesService == null) {
+				queriesService = ServiceLocator.getInstance().findResource(
+						queriesService.LOCAL_NAME);
+			}
+			List<LocalDTO> locals = this.queriesService.findLocals(request
+					.getIdentification());
+			resp.setLocals(locals);
+
+			resp.setMessage("Consulta exitosa");
+
+			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
+		}
+	}
+
+	@POST
+	@Path("/entry")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response entry(@Valid EntryRequest request) {
+		try {
+			System.out.println(request);
+
+			EntryResponse resp = new EntryResponse();
+
+			List<String> errorsValidation = GimUtils.validateRequest(request);
+			if (errorsValidation.size() > 0) {
+				resp.setMessage("Error en validaciones de request");
+				resp.setErrors(errorsValidation);
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+
+			if (queriesService == null) {
+				queriesService = ServiceLocator.getInstance().findResource(
+						queriesService.LOCAL_NAME);
+			}
+			EntryDTO entry = this.queriesService.findEntry(request.getCode());
+			resp.setEntry(entry);
+			if (entry == null) {
+				resp.setMessage("No existe Entry con el codigo "
+						+ request.getCode());
+			} else {
+				resp.setMessage("Consulta exitosa");
+			}
 
 			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
 					.header("Content-Language", "es-EC").build();

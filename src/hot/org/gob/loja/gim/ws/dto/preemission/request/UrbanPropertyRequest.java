@@ -24,6 +24,21 @@ public class UrbanPropertyRequest extends CommonPreemissionRequest {
 	@NotNull(message = "value no puede ser nulo")
 	private BigDecimal value;
 
+	@NotNull(message = "lotAppraisal no puede ser nulo")
+	private BigDecimal lotAppraisal;
+
+	@NotNull(message = "buildingAppraisal no puede ser nulo")
+	private BigDecimal buildingAppraisal;
+
+	@NotNull(message = "changeAppraisals no puede ser nulo")
+	private Boolean changeAppraisals;
+
+	@NotNull(message = "lotArea no puede ser nulo")
+	private BigDecimal lotArea;
+
+	@NotNull(message = "constructionArea no puede ser nulo")
+	private BigDecimal constructionArea;
+
 	public String getCadastralCode() {
 		return cadastralCode;
 	}
@@ -56,16 +71,56 @@ public class UrbanPropertyRequest extends CommonPreemissionRequest {
 		this.accountCode = accountCode;
 	}
 
+	public BigDecimal getLotAppraisal() {
+		return lotAppraisal;
+	}
+
+	public void setLotAppraisal(BigDecimal lotAppraisal) {
+		this.lotAppraisal = lotAppraisal;
+	}
+
+	public BigDecimal getBuildingAppraisal() {
+		return buildingAppraisal;
+	}
+
+	public void setBuildingAppraisal(BigDecimal buildingAppraisal) {
+		this.buildingAppraisal = buildingAppraisal;
+	}
+
+	public Boolean getChangeAppraisals() {
+		return changeAppraisals;
+	}
+
+	public void setChangeAppraisals(Boolean changeAppraisals) {
+		this.changeAppraisals = changeAppraisals;
+	}
+
+
+	public BigDecimal getLotArea() {
+		return lotArea;
+	}
+
+	public void setLotArea(BigDecimal lotArea) {
+		this.lotArea = lotArea;
+	}
+
+	public BigDecimal getConstructionArea() {
+		return constructionArea;
+	}
+
+	public void setConstructionArea(BigDecimal constructionArea) {
+		this.constructionArea = constructionArea;
+	}
+
 	@Override
 	public String toString() {
-		return "UrbanPropertyRequest [cadastralCode=" + cadastralCode
-				+ ", year=" + year + ", value=" + value
-				+ ", getEmiterIdentification()=" + getEmiterIdentification()
-				+ ", getResidentIdentification()="
-				+ getResidentIdentification() + ", getAccountCode()="
-				+ getAccountCode() + ", getExplanation()=" + getExplanation()
-				+ ", getReference()=" + getReference() + ", getAddress()="
-				+ getAddress() + "]";
+		return "UrbanPropertyRequest [accountCode=" + accountCode
+				+ ", cadastralCode=" + cadastralCode + ", year=" + year
+				+ ", value=" + value + ", lotAppraisal=" + lotAppraisal
+				+ ", buildingAppraisal=" + buildingAppraisal
+				+ ", changeAppraisals=" + changeAppraisals
+				+ ", lotArea=" + lotArea + ", constructionArea="
+				+ constructionArea + "]";
 	}
 
 }

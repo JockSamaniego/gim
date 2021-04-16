@@ -105,11 +105,11 @@ public class BondDTO {
 
 	private String emitter;
 
-	private Adjunct adjunct;
+	// private Adjunct adjunct;
 
 	public BondDTO(MunicipalBond municipalBond) {
 		this.address = municipalBond.getAddress();
-		this.adjunct = municipalBond.getAdjunct();
+		// this.adjunct = municipalBond.getAdjunct();
 		this.applyInterest = municipalBond.getApplyInterest();
 		this.balance = municipalBond.getBalance();
 		this.base = municipalBond.getBase();
@@ -491,13 +491,13 @@ public class BondDTO {
 		this.emitter = emitter;
 	}
 
-	public Adjunct getAdjunct() {
+	/*public Adjunct getAdjunct() {
 		return adjunct;
 	}
 
 	public void setAdjunct(Adjunct adjunct) {
 		this.adjunct = adjunct;
-	}
+	}*/
 
 	/**
 	 * @return the items
@@ -590,7 +590,7 @@ public class BondDTO {
 				+ ", surchargeItems=" + surchargeItems + ", entryId=" + entryId
 				+ ", entryName=" + entryName + ", taxItems=" + taxItems
 				+ ", resident=" + resident + ", timePeriod=" + timePeriod
-				+ ", emitter=" + emitter + ", adjunct=" + adjunct + "]";
+				+ ", emitter=" + emitter + "]";
 	}
 
 }
