@@ -73,8 +73,12 @@ public class QueriesWS {
 			BondDTO bond = this.queriesService
 					.findBondById(request.getBondId());
 			resp.setBond(bond);
+			if (bond == null) {
+				resp.setMessage("No existe obligacion con el identificador " + request.getBondId());
+			} else {
 
-			resp.setMessage("Consulta exitosa");
+				resp.setMessage("Consulta exitosa");
+			}
 
 			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
 					.header("Content-Language", "es-EC").build();
@@ -233,7 +237,7 @@ public class QueriesWS {
 					.getIdentification());
 			resp.setTaxpayer(result.getTaxpayer());
 			resp.setBonds(result.getBonds());
-			
+
 			if (resp.getTaxpayer() == null) {
 				resp.setMessage("No existe Contribuyente con la identificacion "
 						+ request.getIdentification());

@@ -64,6 +64,8 @@ public class QueriesServiceBean implements QueriesService {
 
 		MunicipalBond municipalBond = this.municipalBondService
 				.findById(bondId);
+		if (municipalBond == null)
+			return null;
 		BondDTO dto = new BondDTO(municipalBond);
 		return dto;
 	}
