@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.ejb.Local;
 
+import org.gob.loja.gim.ws.dto.queries.DebtsDTO;
 import org.gob.loja.gim.ws.dto.queries.EntryDTO;
 import org.gob.loja.gim.ws.dto.queries.LocalDTO;
 import org.gob.loja.gim.ws.dto.queries.OperatingPermitDTO;
@@ -24,5 +25,6 @@ public interface QueriesService {
 	List<OperatingPermitDTO> findOperatingPermits(String ruc);
 	List<LocalDTO> findLocals(String cedRuc);
 	EntryDTO findEntry(String code);
+	DebtsDTO findDebts(String identification);
 	
 }
