@@ -64,6 +64,8 @@ public class QueriesServiceBean implements QueriesService {
 
 		MunicipalBond municipalBond = this.municipalBondService
 				.findById(bondId);
+		if (municipalBond == null)
+			return null;
 		BondDTO dto = new BondDTO(municipalBond);
 		return dto;
 	}
@@ -76,7 +78,7 @@ public class QueriesServiceBean implements QueriesService {
 				+ "op.date_emission AS fecha_emision, "
 				+ "op.date_validity AS validez_hasta, "
 				+ "op.local_ruc AS ruc_local, "
-				+ "bu.name AS nombre_local, "
+				+ "lo.name AS nombre_local, "
 				+ "op.paper_code AS codigo_formulario, "
 				+ "op.local_code AS codigo_local, "
 				+ "REPLACE(REPLACE(op.economic_activity,chr(10), ''),chr(13), '') AS actividad, "

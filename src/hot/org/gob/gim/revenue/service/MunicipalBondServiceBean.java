@@ -2019,9 +2019,15 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 	@Override
 	public MunicipalBond findById(Long municipalBondId) {
-		Query query = entityManager.createNamedQuery("MunicipalBond.findById");
-		query.setParameter("municipalBondId", municipalBondId);
-		MunicipalBond mb = (MunicipalBond) query.getSingleResult();
-		return mb;
+		try {
+			Query query = entityManager.createNamedQuery("MunicipalBond.findById");
+			query.setParameter("municipalBondId", municipalBondId);
+			System.out.println(query.getSingleResult());
+			MunicipalBond mb = (MunicipalBond) query.getSingleResult();
+			return mb;
+		} catch (javax.persistence.NoResultException e) {
+			return null;
+		}
+		
 	}
 }
