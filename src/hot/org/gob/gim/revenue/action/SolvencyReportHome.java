@@ -20,6 +20,7 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
+import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
@@ -761,5 +762,64 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 			addFacesMessageFromResourceBundle("resident.notFound");
 		}
 	}		
+	
+	// Para agregar ficha registral de propiedad al certificado de solvencia
+	// Jock Samaniego
+	
+	private Boolean isNewDomain = Boolean.FALSE;
+	private List<Property> propertiesByResident = new ArrayList();
+	private Property propertySelected;
+	
+	public Boolean getIsNewDomain() {
+		return isNewDomain;
+	}
+
+	public void setIsNewDomain(Boolean isNewDomain) {
+		this.isNewDomain = isNewDomain;
+	}
+
+	public List<Property> getPropertiesByResident() {
+		return propertiesByResident;
+	}
+
+	public void setPropertiesByResident(List<Property> propertiesByResident) {
+		this.propertiesByResident = propertiesByResident;
+	}
+
+	public Property getPropertySelected() {
+		return propertySelected;
+	}
+
+	public void setPropertySelected(Property propertySelected) {
+		this.propertySelected = propertySelected;
+	}
+	
+
+	public void findCadastralCodeForCertificate(){
+		if(this.resident != null){
+			if(isNewDomain){
+				this.motivation = "Traspaso de Dominio";
+				findPropertiesByResidentId();
+			}else{
+				propertiesByResident = new ArrayList();
+				this.motivation = "Trámites Municipales";
+			}
+		}else{
+			propertiesByResident = new ArrayList();
+			this.motivation = "Trámites Municipales";
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public void findPropertiesByResidentId(){
+		propertiesByResident = new ArrayList();
+		Long residentId = this.resident.getId();
+		if(residentId != null){
+			Query query = getEntityManager().createNamedQuery("Property.findByResidentIdForEmission");
+			query.setParameter("residentId", residentId);
+			propertiesByResident = query.getResultList();
+		}
+	}
 		
 }

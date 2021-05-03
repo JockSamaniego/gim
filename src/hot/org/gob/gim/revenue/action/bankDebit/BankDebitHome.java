@@ -7,22 +7,16 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.persistence.Query;
-import javax.transaction.SystemException;
 
 import org.gob.gim.common.CatalogConstants;
-import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
-import org.gob.gim.income.dto.BondAuxDTO;
 import org.gob.gim.income.facade.IncomeService;
-import org.gob.gim.income.facade.IncomeServiceBean;
 import org.gob.gim.income.service.PaymentLocalService;
 import org.gob.gim.revenue.action.bankDebit.pagination.BankDebitDataModel;
 import org.gob.gim.revenue.service.BankDebitService;
 import org.gob.gim.revenue.service.ItemCatalogService;
-import org.gob.loja.gim.ws.dto.Payout;
-import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.exception.HasNoObligations;
 import org.gob.loja.gim.ws.exception.InvalidPayout;
 import org.gob.loja.gim.ws.exception.InvalidUser;
@@ -36,18 +30,11 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.framework.EntityController;
 import org.jboss.seam.framework.EntityHome;
-import org.springframework.transaction.annotation.Transactional;
 
-import ec.gob.gim.cadaster.model.Appraisal;
-import ec.gob.gim.cadaster.model.Property;
-import ec.gob.gim.cadaster.model.dto.AffectationFactorDTO;
-import ec.gob.gim.commercial.model.Business;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.income.model.PaymentMethod;
-import ec.gob.gim.income.model.Till;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondForBankDebit;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
@@ -56,8 +43,6 @@ import ec.gob.gim.revenue.model.bankDebit.BankDebit;
 import ec.gob.gim.revenue.model.bankDebit.BankDebitForLiquidation;
 import ec.gob.gim.revenue.model.bankDebit.criteria.BankDebitSearchCriteria;
 import ec.gob.gim.revenue.model.bankDebit.dto.BankDebitReportDTO;
-import ec.gob.gim.revenue.model.bankDebit.dto.MunicipalBondForBankDebitDTO;
-import ec.gob.gim.revenue.model.bankDebit.dto.MunicipalBondLiquidationReportDTO;
 import ec.gob.gim.security.model.User;
 import ec.gob.gim.waterservice.model.WaterSupply;
 
@@ -333,7 +318,7 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 	
 	
 	public void createBankDebitsToFutureLiquidation(){
-		// joinTransaction();
+		joinTransaction();
 		try{
 			Person user = userSession.getPerson();
 				String query = "SELECT itsOK FROM gimprod.sp_mbs_from_bank_debits(?,?,?) ";
@@ -344,8 +329,10 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 				
 				@SuppressWarnings("unchecked")
 				Boolean itsOK = (Boolean) q.getSingleResult();
-				// getEntityManager().flush();
-			findPendingLiquidations();
+				if(itsOK){
+					findPendingLiquidations();
+					//getEntityManager().flush();
+				}
 		}		
 		catch (Exception e) {
 			e.printStackTrace();
@@ -460,7 +447,7 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 	List<BankDebitForLiquidation> bankDebitForLiquidations = new ArrayList();
 	List<BankDebitForLiquidation> debitsNotSend = new ArrayList();
 	List<BankDebitForLiquidation> debitsSuccessful = new ArrayList();
-	List<BankDebitForLiquidation> debitsError = new ArrayList();
+	List<BankDebitForLiquidation> debitsTransactionError = new ArrayList();
 
 	public Boolean getHasPendingLiquidations() {
 		return hasPendingLiquidations;
@@ -504,12 +491,13 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 		this.debitsSuccessful = debitsSuccessful;
 	}
 
-	public List<BankDebitForLiquidation> getDebitsError() {
-		return debitsError;
+	public List<BankDebitForLiquidation> getDebitsTransactionError() {
+		return debitsTransactionError;
 	}
 
-	public void setDebitsError(List<BankDebitForLiquidation> debitsError) {
-		this.debitsError = debitsError;
+	public void setDebitsTransactionError(
+			List<BankDebitForLiquidation> debitsTransactionError) {
+		this.debitsTransactionError = debitsTransactionError;
 	}
 
 	public void findPendingLiquidations(){
@@ -524,30 +512,31 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 		}else{
 			hasPendingLiquidations = Boolean.FALSE;
 		}
-		// checkMunicipalBondDebits();
 	}
 	
 	public void selectAll(){
 		bankDebitForLiquidations = new ArrayList();
 		debitsNotSend = new ArrayList();
+		totalDebitsNOSelect = BigDecimal.ZERO;
+		totalDebitsSelect = totalDebitsForLiquidation;
 		for(BankDebitForLiquidation bankDebitForLiquidation :previousForLiquidations){
-			if(!bankDebitForLiquidation.getHasProblem()){
+//			if(!bankDebitForLiquidation.getHasProblem()){
 				bankDebitForLiquidation.setIsSelected(Boolean.TRUE);
 				bankDebitForLiquidations.add(bankDebitForLiquidation);
-				bankDebitForLiquidation.setObservation("débito seleccionado");
-			}else{
-				debitsNotSend.add(bankDebitForLiquidation);
-			}
+				bankDebitForLiquidation.setObservation("DEBITO SELECCIONADO");
+//			}else{
+//				debitsNotSend.add(bankDebitForLiquidation);
+//			}
 		}
 	}
 
 	public void deselectAll(){
 		bankDebitForLiquidations = new ArrayList();
 		debitsNotSend = new ArrayList();
+		totalDebitsSelect = BigDecimal.ZERO;
+		totalDebitsNOSelect = totalDebitsForLiquidation;
 		for(BankDebitForLiquidation bankDebitForLiquidation :previousForLiquidations){
-			if(!bankDebitForLiquidation.getHasProblem()){
-				bankDebitForLiquidation.setObservation("débito No seleccionado");	
-			}
+			bankDebitForLiquidation.setObservation("DEBITO NO SELECCIONADO");	
 			bankDebitForLiquidation.setIsSelected(Boolean.FALSE);	
 			debitsNotSend.add(bankDebitForLiquidation);		
 		}
@@ -558,20 +547,24 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 			bankDebitForLiquidation.setIsSelected(Boolean.FALSE);
 			if(bankDebitForLiquidations.contains(bankDebitForLiquidation)){
 				bankDebitForLiquidations.remove(bankDebitForLiquidation);
+				totalDebitsSelect = totalDebitsSelect.subtract(bankDebitForLiquidation.getValue());
 			}
 			if(!debitsNotSend.contains(bankDebitForLiquidation)){
 				debitsNotSend.add(bankDebitForLiquidation);
+				totalDebitsNOSelect = totalDebitsNOSelect.add(bankDebitForLiquidation.getValue());
 			}
-			bankDebitForLiquidation.setObservation("débito No seleccionado");
+			bankDebitForLiquidation.setObservation("DEBITO NO SELECCIONADO");
 		}else{
 			bankDebitForLiquidation.setIsSelected(Boolean.TRUE);
 			if(!bankDebitForLiquidations.contains(bankDebitForLiquidation)){
 				bankDebitForLiquidations.add(bankDebitForLiquidation);
+				totalDebitsSelect = totalDebitsSelect.add(bankDebitForLiquidation.getValue());
 			}
 			if(debitsNotSend.contains(bankDebitForLiquidation)){
 				debitsNotSend.remove(bankDebitForLiquidation);
+				totalDebitsNOSelect = totalDebitsNOSelect.subtract(bankDebitForLiquidation.getValue());
 			}
-			bankDebitForLiquidation.setObservation("débito seleccionado");
+			bankDebitForLiquidation.setObservation("DEBITO SELECCIONADO");
 		}
 	}
 	
@@ -581,24 +574,42 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 		paidBondStatus = systemParameterService.materialize(
 				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PAID");
 		debitsSuccessful = new ArrayList();
-		debitsError = new ArrayList();
+		debitsTransactionError = new ArrayList();
+		debitsPayedError = new ArrayList();
+		debitsValuesError = new ArrayList();
+		totalDebitsSuccessful = BigDecimal.ZERO;
+		totalDebitsTransactionError = BigDecimal.ZERO;
+		totalDebitsPayedError = BigDecimal.ZERO;
+		totalDebitsValuesError = BigDecimal.ZERO;
 		joinTransaction();
 		Person user = userSession.getPerson();
+		
+		List<Long> residentIds = new ArrayList();			
+		for(BankDebitForLiquidation bdl : bankDebitForLiquidations){
+			residentIds.add(bdl.getResidentId());
+		}
+		try{
+			org.jboss.seam.transaction.Transaction.instance().setTransactionTimeout(1800);
+			Boolean result = this.paymentService.calculateDebts(residentIds);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 		for(BankDebitForLiquidation bankDebitForLiquidation :previousForLiquidations){
-			
 			if(bankDebitForLiquidations.contains(bankDebitForLiquidation)){
-				// System.out.println(bankDebitForLiquidation.getResidentName());
-				bankDebitForLiquidation.setIsLiquidated(Boolean.TRUE);
-				bankDebitForLiquidation.setLiquidationDate(new Date());
-				bankDebitForLiquidation.setLiquidationTime(new Date());
-				bankDebitForLiquidation.setLiquidationResponsible(user);
-				try{
-				registerPaymentForLiquidation(bankDebitForLiquidation);
-				} catch(Exception e) {
-					e.printStackTrace();
+				checkMunicipalBondDebits(bankDebitForLiquidation);
+				if(!bankDebitForLiquidation.getHasProblem()){
+					bankDebitForLiquidation.setIsLiquidated(Boolean.TRUE);
+					bankDebitForLiquidation.setLiquidationDate(new Date());
+					bankDebitForLiquidation.setLiquidationTime(new Date());
+					bankDebitForLiquidation.setLiquidationResponsible(user);
+					try{
+						registerPaymentForLiquidation(bankDebitForLiquidation);
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
-			
 			bankDebitForLiquidation.setIsActive(Boolean.FALSE);
 			getEntityManager().merge(bankDebitForLiquidation);
 			
@@ -607,7 +618,6 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 	}
 	
 	public String viewReportExcel(){
-		//createBankDebitsToFutureLiquidation();
 		return "/revenue/bankDebits/BankDebitReportExcel.xhtml";
 	}
 	
@@ -626,19 +636,21 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 			org.jboss.seam.transaction.Transaction.instance().setTransactionTimeout(1800);
 			incomeService.saveForBankLiquidation(new Date(),
 					bondsIds, bankDebitForLiquidation.getLiquidationResponsible(), tillId, null, PaymentMethod.NORMAL.name());
-			bankDebitForLiquidation.setObservation("débito liquidado");
+			bankDebitForLiquidation.setObservation("DEBITO LIQUIDADO");
 			debitsSuccessful.add(bankDebitForLiquidation);
+			totalDebitsSuccessful = totalDebitsSuccessful.add(bankDebitForLiquidation.getValue());
 			for(Long mbId : bondsIds){
 				MunicipalBond mbStatus = getEntityManager().find(MunicipalBond.class, mbId);
-				saveStatusChangeRecord("Pago de débito bancario en bloque", mbStatus, pendingBondStatus, paidBondStatus, userSession.getUser());
+				saveStatusChangeRecord("Pago de debito bancario en bloque", mbStatus, pendingBondStatus, paidBondStatus, userSession.getUser());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			// System.out.println("========== no pagadoooo");
 			bankDebitForLiquidation.setHasProblem(Boolean.TRUE);
 			bankDebitForLiquidation.setIsLiquidated(Boolean.FALSE);
-			bankDebitForLiquidation.setObservation("Error en la transacción de pago");
-			debitsError.add(bankDebitForLiquidation);
+			bankDebitForLiquidation.setObservation("ERROR EN LA LIQUIDACION");
+			debitsTransactionError.add(bankDebitForLiquidation);
+			totalDebitsTransactionError = totalDebitsTransactionError.add(bankDebitForLiquidation.getValue());
 			throw new InvalidPayout();
 		}
 		getEntityManager().flush();
@@ -652,39 +664,45 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 		return false;
 	}
 	
-	public void checkMunicipalBondDebits() {
-		findPendingLiquidations();
+	public void viewDebitsToLiquidation(){
 		debitsNotSend = new ArrayList();
-		List<Long> residentIds = new ArrayList();			
+		totalDebitsNOSelect = BigDecimal.ZERO;
+		totalDebitsSelect = BigDecimal.ZERO;
+		totalDebitsForLiquidation = BigDecimal.ZERO;
+		findPendingLiquidations();
 		for(BankDebitForLiquidation bdl : previousForLiquidations){
-			residentIds.add(bdl.getResidentId());
+			totalDebitsForLiquidation = totalDebitsForLiquidation.add(bdl.getValue());
+			bdl.setObservation("DEBITO NO SELECCIONADO");	
+			bdl.setIsSelected(Boolean.FALSE);	
+			debitsNotSend.add(bdl);	
 		}
+		bankDebitForLiquidations = new ArrayList();
+		totalDebitsNOSelect = totalDebitsForLiquidation;
+	}
+	
+	public void checkMunicipalBondDebits(BankDebitForLiquidation bankDebitForLiquidation) {
+
 		try {
-			org.jboss.seam.transaction.Transaction.instance().setTransactionTimeout(1800);
-			Boolean result = this.paymentService.calculateDebts(residentIds);
-			for(BankDebitForLiquidation bankDebitForLiquidation :previousForLiquidations){
-				for(MunicipalBondForBankDebit mb : bankDebitForLiquidation.getMbsForBankDebit()){
-					MunicipalBond municipalBond = getEntityManager().find(MunicipalBond.class, mb.getMunicipalBondId());
-					if(checkPendingStatus(municipalBond)){
-						bankDebitForLiquidation.setHasProblem(Boolean.TRUE);
-						bankDebitForLiquidation.setObservation("Obligación no está pendiente de pago");
-						debitsNotSend.add(bankDebitForLiquidation);
-						break;
-					}
-					if(checkComparateValues(municipalBond, mb)){
-						bankDebitForLiquidation.setHasProblem(Boolean.TRUE);
-						bankDebitForLiquidation.setObservation("Los valores no coinciden");
-						debitsNotSend.add(bankDebitForLiquidation);
-						break;
-					}
-					
-				}		
-			}
-			
+			for(MunicipalBondForBankDebit mb : bankDebitForLiquidation.getMbsForBankDebit()){
+				MunicipalBond municipalBond = getEntityManager().find(MunicipalBond.class, mb.getMunicipalBondId());
+				if(checkPendingStatus(municipalBond)){
+					bankDebitForLiquidation.setHasProblem(Boolean.TRUE);
+					bankDebitForLiquidation.setObservation("OBLIGACION PAGADA POR OTRO MEDIO");
+					debitsPayedError.add(bankDebitForLiquidation);
+					totalDebitsPayedError = totalDebitsPayedError.add(bankDebitForLiquidation.getValue());
+					break;
+				}
+				if(checkComparateValues(municipalBond, mb)){
+					bankDebitForLiquidation.setHasProblem(Boolean.TRUE);
+					bankDebitForLiquidation.setObservation("LOS VALORES NO COINCIDEN");
+					debitsValuesError.add(bankDebitForLiquidation);
+					totalDebitsValuesError = totalDebitsValuesError.add(bankDebitForLiquidation.getValue());
+					break;
+				}
+			}		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		deselectAll();
 	}
 	
 	public Boolean checkPendingStatus(MunicipalBond mb){
@@ -711,4 +729,88 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 		statusChange.setUser(user);
 		getEntityManager().persist(statusChange);
 	}
+	
+	private BigDecimal totalDebitsForLiquidation = BigDecimal.ZERO;
+	private BigDecimal totalDebitsSelect = BigDecimal.ZERO;
+	private BigDecimal totalDebitsNOSelect = BigDecimal.ZERO;
+	private BigDecimal totalDebitsPayedError = BigDecimal.ZERO;
+	private BigDecimal totalDebitsValuesError = BigDecimal.ZERO;
+	private BigDecimal totalDebitsTransactionError = BigDecimal.ZERO;
+	private BigDecimal totalDebitsSuccessful = BigDecimal.ZERO;
+	private List<BankDebitForLiquidation> debitsPayedError = new ArrayList();
+	private List<BankDebitForLiquidation> debitsValuesError = new ArrayList();
+
+	public BigDecimal getTotalDebitsSelect() {
+		return totalDebitsSelect;
+	}
+
+	public void setTotalDebitsSelect(BigDecimal totalDebitsSelect) {
+		this.totalDebitsSelect = totalDebitsSelect;
+	}
+
+	public BigDecimal getTotalDebitsNOSelect() {
+		return totalDebitsNOSelect;
+	}
+
+	public void setTotalDebitsNOSelect(BigDecimal totalDebitsNOSelect) {
+		this.totalDebitsNOSelect = totalDebitsNOSelect;
+	}
+
+	public BigDecimal getTotalDebitsForLiquidation() {
+		return totalDebitsForLiquidation;
+	}
+
+	public void setTotalDebitsForLiquidation(BigDecimal totalDebitsForLiquidation) {
+		this.totalDebitsForLiquidation = totalDebitsForLiquidation;
+	}
+
+	public List<BankDebitForLiquidation> getDebitsPayedError() {
+		return debitsPayedError;
+	}
+
+	public void setDebitsPayedError(List<BankDebitForLiquidation> debitsPayedError) {
+		this.debitsPayedError = debitsPayedError;
+	}
+
+	public List<BankDebitForLiquidation> getDebitsValuesError() {
+		return debitsValuesError;
+	}
+
+	public void setDebitsValuesError(List<BankDebitForLiquidation> debitsValuesError) {
+		this.debitsValuesError = debitsValuesError;
+	}
+
+	public BigDecimal getTotalDebitsPayedError() {
+		return totalDebitsPayedError;
+	}
+
+	public void setTotalDebitsPayedError(BigDecimal totalDebitsPayedError) {
+		this.totalDebitsPayedError = totalDebitsPayedError;
+	}
+
+	public BigDecimal getTotalDebitsValuesError() {
+		return totalDebitsValuesError;
+	}
+
+	public void setTotalDebitsValuesError(BigDecimal totalDebitsValuesError) {
+		this.totalDebitsValuesError = totalDebitsValuesError;
+	}
+
+	public BigDecimal getTotalDebitsTransactionError() {
+		return totalDebitsTransactionError;
+	}
+
+	public void setTotalDebitsTransactionError(
+			BigDecimal totalDebitsTransactionError) {
+		this.totalDebitsTransactionError = totalDebitsTransactionError;
+	}
+
+	public BigDecimal getTotalDebitsSuccessful() {
+		return totalDebitsSuccessful;
+	}
+
+	public void setTotalDebitsSuccessful(BigDecimal totalDebitsSuccessful) {
+		this.totalDebitsSuccessful = totalDebitsSuccessful;
+	}
+	
 }

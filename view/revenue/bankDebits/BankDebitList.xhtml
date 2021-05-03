@@ -89,16 +89,18 @@
 				                  reRender="confirmPanelSelected" ajaxSingle="true"
 				                  eventsQueue="gimQueue"
 				                  oncomplete="Richfaces.showModalPanel('confirmPanelSelected',{width:350, height:150})"
-				                  value="Reporte_Excel" />
+				                  value="Reporte_Excel"
+				                  onclick="this.disabled=true;" />
 							
 							<a:commandButton id="openBankDebitForLiquidation"
 								  rendered = "#{bankDebitHome.hasRole('ROLE_NAME_INCOME_BANK_DEBITS') and bankDebitHome.hasPendingLiquidations}"
-				                  action="#{bankDebitHome.checkMunicipalBondDebits()}"
+				                  action="#{bankDebitHome.viewDebitsToLiquidation()}"
 				                  reRender="bankDebitForLiquidation, _bankDebitTable" ajaxSingle="true"
 				                  eventsQueue="gimQueue"
 				                  disabled="#{(userSession.tillPermission == null) or (userSession.tillPermission != null and userSession.tillPermission.openingTime == null)}"
 				                  oncomplete="Richfaces.showModalPanel('bankDebitForLiquidation',{width:1070, height:550})"
-				                  value="LIQUIDAR!" />
+				                  value="LIQUIDAR!"
+				                  onclick="this.disabled=true;" />
 								
 						</h:panelGrid>
 
@@ -261,7 +263,7 @@
 			</h:form>
 		</rich:modalPanel>
 		
-		<rich:modalPanel id="resultInformationPanel" width="350" height="250">
+		<rich:modalPanel id="resultInformationPanel" width="350" height="450" style="overflow-y:scroll">
 			<f:facet name="header">Resultado de Liquidación de Débitos Bancarios</f:facet>
 			<h:form id="resultInformationForm">
 				<h:panelGrid>
@@ -270,20 +272,28 @@
 					<h:outputText value="#{bankDebitHome.previousForLiquidations.size()}" style="font-weight:bold; font-size:14px; color:black" />
 				</s:decorate>
 				<s:decorate id="notSendDebits" template="../../layout/edit.xhtml">
-					<ui:define name="label">Débitos No Enviados:</ui:define>
+					<ui:define name="label">Débitos NO Enviados a Liquidar:</ui:define>
 					<h:outputText value="#{bankDebitHome.debitsNotSend.size()}" style="font-weight:bold; font-size:14px; color:black" />
 				</s:decorate>
 				<s:decorate id="sendDebits" template="../../layout/edit.xhtml">
-					<ui:define name="label">Débitos Enviados:</ui:define>
+					<ui:define name="label">Débitos Enviados a Liquidar:</ui:define>
 					<h:outputText value="#{bankDebitHome.bankDebitForLiquidations.size()}" style="font-weight:bold; font-size:14px; color:black" />
 				</s:decorate>
 				<s:decorate id="totalDebitsLiquidated" template="../../layout/edit.xhtml">
-					<ui:define name="label">Débitos Liquidados:</ui:define>
+					<ui:define name="label">Débitos Liquidados Correctamente:</ui:define>
 					<h:outputText value="#{bankDebitHome.debitsSuccessful.size()}" style="font-weight:bold; font-size:14px; color:black" />
 				</s:decorate>
+				<s:decorate id="totalDebitsPayedError" template="../../layout/edit.xhtml">
+					<ui:define name="label">Débitos Pagados Previamente:</ui:define>
+					<h:outputText value="#{bankDebitHome.debitsPayedError.size()}" style="font-weight:bold; font-size:14px; color:red" />
+				</s:decorate>
+				<s:decorate id="totalDebitsValuesError" template="../../layout/edit.xhtml">
+					<ui:define name="label">Débitos con Valores Diferentes:</ui:define>
+					<h:outputText value="#{bankDebitHome.debitsValuesError.size()}" style="font-weight:bold; font-size:14px; color:red" />
+				</s:decorate>
 				<s:decorate id="totalDebitsWithError" template="../../layout/edit.xhtml">
-					<ui:define name="label">Débitos con Problemas:</ui:define>
-					<h:outputText value="#{bankDebitHome.debitsError.size()}" style="font-weight:bold; font-size:14px; color:red" />
+					<ui:define name="label">Débitos con Problemas en la Transacción:</ui:define>
+					<h:outputText value="#{bankDebitHome.debitsTransactionError.size()}" style="font-weight:bold; font-size:14px; color:red" />
 				</s:decorate>
 
 					<h:panelGroup>

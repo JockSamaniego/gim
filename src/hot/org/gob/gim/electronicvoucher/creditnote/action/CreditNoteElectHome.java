@@ -1,7 +1,6 @@
-package org.gob.gim.electronicvoucher.creditnote.action;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,19 +10,24 @@ import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.CrudService;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.InvoiceNumberOutOfRangeException;
+import org.gob.gim.income.dto.CreditNoteElectDTO;
 import org.gob.gim.income.facade.IncomeService;
+import org.gob.gim.revenue.action.SolvencyReportHome;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityHome;
 
+import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FiscalPeriod;
@@ -44,6 +48,7 @@ import ec.gob.gim.income.model.TaxItem;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 //import org.joda.time.Days;
+import ec.gob.gim.revenue.model.DTO.CRTV_MunicipalBonds;
 
 @Name("creditNoteElectHome")
 public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
@@ -52,8 +57,8 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	private static final long serialVersionUID = 1L;
 	private Long municipalBondNumber;
 	private Resident resident;
-	private static final String PAID_BOND_STATUS_ID = "MUNICIPAL_BOND_STATUS_ID_PAID";
-	private static final String PAID_BOND_STATUS_ID_EXTERNAL_CHANNEL = "MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL";
+//	private static final String PAID_BOND_STATUS_ID = "MUNICIPAL_BOND_STATUS_ID_PAID";
+//	private static final String PAID_BOND_STATUS_ID_EXTERNAL_CHANNEL = "MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL";
 	private InstitutionService institution;
 	private List<ComplementVoucher> complements = new ArrayList<ComplementVoucher>();
 	private ComplementVoucher complementVoucher;
@@ -819,14 +824,29 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 		this.vouchersToPrint = vouchersToPrint;
 	}
 	
+	@In(create = true)
+	CreditNoteElectList creditNoteElectList;
+	
 	
 	public void checkVoucherToPrint(ElectronicVoucher voucher){
+		dateReportFrom = creditNoteElectList.getEmissionDateFrom();
+		dateReportUntil = creditNoteElectList.getEmissionDateUntil();
+		totalValueForReport = BigDecimal.ZERO;
+		totalBaseForReport = BigDecimal.ZERO;
+		totalIvaForReport = BigDecimal.ZERO;
 		if(!vouchersToPrint.contains(voucher)){
 			voucher.setSelectToPrint(Boolean.TRUE);
 			vouchersToPrint.add(voucher);
 		}else{
 			voucher.setSelectToPrint(Boolean.FALSE);
 			vouchersToPrint.remove(voucher);
+		}
+		for(ElectronicVoucher ev : vouchersToPrint){
+			if(ev.getElectronicStatus().equals("AUTHORIZED")){
+				totalValueForReport = totalValueForReport.add(ev.getTotalPaid());
+				totalBaseForReport = totalBaseForReport.add(ev.getMunicipalBond().getTaxableTotal());
+				totalIvaForReport = totalIvaForReport.add(ev.getMunicipalBond().getTaxItems().get(0).getValue());
+			}
 		}
 	}
 	
@@ -877,6 +897,109 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 		return null;	
 	}
 	
+	public String prePrintReport() {
+		if(this.vouchersToPrint.size() > 0){
+			return "/electronicvoucher/report/CreditNoteReportToAccounting.xhtml";
+		}
+		return null;	
+	}
+	
+	private List<Long> mbIds = new ArrayList();
+	private List<Resident> resByCreditNote = new ArrayList();
+	private List<CreditNoteElectDTO> cneByCreditNote = new ArrayList();
+
+	public List<Resident> getResByCreditNote() {
+		return resByCreditNote;
+	}
+
+	public void setResByCreditNote(List<Resident> resByCreditNote) {
+		this.resByCreditNote = resByCreditNote;
+	}
+
+	public List<CreditNoteElectDTO> getCneByCreditNote() {
+		return cneByCreditNote;
+	}
+
+	public void setCneByCreditNote(List<CreditNoteElectDTO> cneByCreditNote) {
+		this.cneByCreditNote = cneByCreditNote;
+	}
+
+	public String prePrintTotalByResident() {
+		this.resByCreditNote = new ArrayList();
+		// List<BigInteger> resIdAux = new ArrayList();
+		if(this.vouchersToPrint.size() > 0){
+			mbIds = new ArrayList();
+			for(ElectronicVoucher ev : this.vouchersToPrint){
+				mbIds.add(ev.getMunicipalBond().getId());
+			}
+			
+			Query q = getEntityManager().createNamedQuery("Resident.findByCreditNoteElect");
+			q.setParameter("mbIds", mbIds);
+			this.resByCreditNote = q.getResultList();
+
+			return "/electronicvoucher/report/CreditNoteTotalReportByResident.xhtml";
+		}
+		return null;	
+	}
+	
+	
+	public String prePrintTotalByCreditNote() {
+		this.cneByCreditNote = new ArrayList();
+		// List<BigInteger> resIdAux = new ArrayList();
+		if(this.vouchersToPrint.size() > 0){
+			mbIds = new ArrayList();
+			for(ElectronicVoucher ev : this.vouchersToPrint){
+				if(ev.getMunicipalBond().getCreditNote() != null){
+					mbIds.add(ev.getMunicipalBond().getId());
+				}
+			}
+			
+			Query q = getEntityManager().createNamedQuery("Resident.findByCreditNoteElectAndCreditNote");
+			q.setParameter("mbIds", mbIds);
+			this.cneByCreditNote = NativeQueryResultsMapper.map(q.getResultList(), CreditNoteElectDTO.class);
+
+			return "/electronicvoucher/report/CreditNoteTotalReportByCreditNote.xhtml";
+		}
+		return null;	
+	}
+	
+	private List<ElectronicVoucher> evsByResident = new ArrayList();
+	
+	public List<ElectronicVoucher> prePrintByResident(Resident res){
+		evsByResident = new ArrayList<ElectronicVoucher>();
+		Query q = getEntityManager().createNamedQuery("ElectronicVoucher.findCreditNoteElectByResident");
+		q.setParameter("resId", res.getId());
+		q.setParameter("mbIds", mbIds);
+		evsByResident = q.getResultList();
+		return evsByResident;
+	}
+	
+	public List<ElectronicVoucher> prePrintByCreditNote(CreditNoteElectDTO dto){
+		evsByResident = new ArrayList<ElectronicVoucher>();
+		Query q = getEntityManager().createNamedQuery("ElectronicVoucher.findCreditNoteElectByCreditNote");
+		q.setParameter("resId", dto.getResident().getId());
+		q.setParameter("cnId", dto.getCreditNote().getId());
+		q.setParameter("mbIds", mbIds);
+		evsByResident = q.getResultList();
+		return evsByResident;
+	}
+	
+	public BigDecimal sumTotalCreditNote(){
+		BigDecimal total = BigDecimal.ZERO;
+		for(ElectronicVoucher ev : evsByResident){
+			total = total.add(ev.getTotalPaid());
+		}
+		return total;
+	}
+	
+	public String findEmitterCreditNote(){
+		return evsByResident.get(0).getEmitter().getName();
+	}
+	
+	public String findCreditNoteNumber(){
+		return evsByResident.get(0).getMunicipalBond().getCreditNote().getId().toString();
+	}
+	
 	// Para crear desde el CreditNoteHome
 	// Jock Samaniego
 	
@@ -898,5 +1021,76 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 		}
 		saveElectronicCreditNotes();
 	}
-}
+	
+	
+	public void creditNoteAllSelect(List<BigInteger> ids){
+		totalValueForReport = BigDecimal.ZERO;
+		totalBaseForReport = BigDecimal.ZERO;
+		totalIvaForReport = BigDecimal.ZERO;
+		this.vouchersToPrint = new ArrayList<ElectronicVoucher>();
+		for(BigInteger id : ids){
+			ElectronicVoucher ev = getEntityManager().find(ElectronicVoucher.class, id.longValue());
+			if(ev.getElectronicStatus().equals("AUTHORIZED")){
+				ev.setSelectToPrint(Boolean.TRUE);
+				this.vouchersToPrint.add(ev);
+				totalValueForReport = totalValueForReport.add(ev.getTotalPaid());
+				totalBaseForReport = totalBaseForReport.add(ev.getMunicipalBond().getTaxableTotal());
+				totalIvaForReport = totalIvaForReport.add(ev.getMunicipalBond().getTaxItems().get(0).getValue());
+			}
+		}
+	}
+	
+	public void deselectAllCreditNotes(){
+		for(ElectronicVoucher ev : this.vouchersToPrint){
+			ev.setSelectToPrint(Boolean.FALSE);
+		}
+		this.vouchersToPrint = new ArrayList<ElectronicVoucher>();
+	}
+	
+	private Date dateReportFrom;
+	private Date dateReportUntil;
+	private BigDecimal totalValueForReport;
+	private BigDecimal totalBaseForReport;
+	private BigDecimal totalIvaForReport;
 
+	public Date getDateReportFrom() {
+		return dateReportFrom;
+	}
+
+	public void setDateReportFrom(Date dateReportFrom) {
+		this.dateReportFrom = dateReportFrom;
+	}
+
+	public Date getDateReportUntil() {
+		return dateReportUntil;
+	}
+
+	public void setDateReportUntil(Date dateReportUntil) {
+		this.dateReportUntil = dateReportUntil;
+	}
+
+	public BigDecimal getTotalValueForReport() {
+		return totalValueForReport;
+	}
+
+	public void setTotalValueForReport(BigDecimal totalValueForReport) {
+		this.totalValueForReport = totalValueForReport;
+	}
+
+	public BigDecimal getTotalBaseForReport() {
+		return totalBaseForReport;
+	}
+
+	public void setTotalBaseForReport(BigDecimal totalBaseForReport) {
+		this.totalBaseForReport = totalBaseForReport;
+	}
+
+	public BigDecimal getTotalIvaForReport() {
+		return totalIvaForReport;
+	}
+
+	public void setTotalIvaForReport(BigDecimal totalIvaForReport) {
+		this.totalIvaForReport = totalIvaForReport;
+	}
+	
+}

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.EntityManager;
@@ -31,17 +32,23 @@ import org.jboss.seam.framework.EntityHome;
 
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.common.model.SystemParameter;
 import ec.gob.gim.complementvoucher.model.ElectronicVoucher;
 import ec.gob.gim.income.model.CreditNote;
 import ec.gob.gim.income.model.EndorseCreditNote;
 import ec.gob.gim.income.model.LegalStatus;
+import ec.gob.gim.income.model.TaxItem;
 import ec.gob.gim.income.model.dto.CreditNoteDTO;
+import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
 
 @Name("creditNoteHome")
 public class CreditNoteHome extends EntityHome<CreditNote> {
 
 	private static final long serialVersionUID = 1L;
+	
+	@EJB
+	private SystemParameterService systemParameterService;
 
 	private static final String PAID_BOND_STATUS_ID = "MUNICIPAL_BOND_STATUS_ID_PAID";
 
@@ -96,6 +103,10 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 			/*System.out.println("============> "+identificationNumber);
 			System.out.println("============> "+resident.getIdentificationNumber());
 			System.out.println("============> "+getInstance().getId());*/
+		}
+		if(isFirstTime){
+			chargeParameters();
+			isFirstTime = Boolean.FALSE;
 		}
 	}
 
@@ -195,6 +206,21 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 			return null;
 		}
 	}
+	
+	@Override
+	public String update() {
+		try {
+			if(getInstance().getCreditNoteType().getName().equals("notas de credito")){
+				this.mbsForCreditNoteElect = getInstance().getMunicipalBonds();
+				createCreditNotesElect();
+			}
+			super.update();
+			return "updated";
+		} catch (Exception ex) {
+			addFacesMessageFromResourceBundle(ex.getClass().getSimpleName());
+			return null;
+		}
+	}
 
 	public String remove(MunicipalBond municipalBond) {
 		this.getInstance().remove(municipalBond);
@@ -222,6 +248,7 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 				if (municipalBond != null) {
 					if (municipalBond.getCreditNote() == null) {
 						getInstance().add(municipalBond);
+						calculateTotalValue();
 						if(municipalBond.getReceipt() != null){
 							if(!this.mbsForCreditNoteElect.contains(municipalBond)){
 								this.mbsForCreditNoteElect.add(municipalBond);
@@ -649,7 +676,7 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 				addFacesMessage("Periodo fiscal no encontrado para la fecha", getInstance().getDate());
 			}
 			creditNoteElectHome.setMbsForCreditNotes(this.mbsForCreditNoteElect);
-			creditNoteElectHome.setEmissionReason(getInstance().getDescription());
+			creditNoteElectHome.setEmissionReason(getInstance().getDescription().trim());
 			creditNoteElectHome.setEmissionDate(getInstance().getDate());
 			creditNoteElectHome.setFiscalPeriod(fiscalPeriod);
 			Calendar cal = Calendar.getInstance();
@@ -662,5 +689,53 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 			}
 			//creditNoteElectHome.chargeValues();
 			creditNoteElectHome.createFromCreditNoteHome();
+		}
+		
+		public void calculateTotalValue(){
+			BigDecimal total = BigDecimal.ZERO;
+			for(MunicipalBond mb : getInstance().getMunicipalBonds()){
+				for(Item item : mb.getItems()){
+					if(!this.entries.contains(item.getEntry().getId())){
+						total = total.add(item.getTotal());
+					}
+				}
+				total = total.add(mb.getInterest().add(mb.getSurcharge()));
+				Query query = getEntityManager().createNamedQuery("TaxItem.findTaxItemByMunicipalBondId");
+				query.setParameter("municipalBondId", mb.getId());
+				try {
+					TaxItem taxItem = (TaxItem) query.getSingleResult();
+					if (taxItem != null) {
+						total = total.add(taxItem.getValue());
+					}
+				} catch (Exception e) {
+					addFacesMessageFromResourceBundle("No existe registro de impuestos", municipalBondNumber);
+				}
+			}
+			getInstance().setValue(total);
+			getInstance().setAvailableAmount(total);
+		}
+		
+		private List<Long> entries;
+		private Boolean isFirstTime = Boolean.TRUE;
+		
+		public void chargeParameters(){
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SystemParameterService.LOCAL_NAME);
+			entries = new ArrayList();
+			Query query = getEntityManager().createNamedQuery("SystemParameter.findByName");
+			query.setParameter("name", "MB_ENTRIES_ELECTRONIC_CREDIT_NOTE");
+			SystemParameter controlEntries = (SystemParameter) query.getSingleResult();
+			String[] entriesStr = controlEntries.getValue().trim().split(",");
+			for(String st : entriesStr){
+				entries.add(Long.parseLong(st));
+			}
+		}
+		
+		public Boolean hasRole(String roleKey) {
+			String role = systemParameterService.findParameter(roleKey);
+			if (role != null) {
+				return userSession.getUser().hasRole(role);
+			}
+			return false;
 		}
 }
