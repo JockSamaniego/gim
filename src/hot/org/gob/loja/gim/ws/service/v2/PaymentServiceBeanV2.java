@@ -17,6 +17,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.NotActiveWorkdayException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
@@ -35,6 +36,7 @@ import org.gob.loja.gim.ws.dto.v2.DepositStatementV2;
 import org.gob.loja.gim.ws.dto.v2.ReverseStatementV2;
 import org.gob.loja.gim.ws.dto.v2.StatementV2;
 import org.gob.loja.gim.ws.exception.NotOpenTill;
+import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.service.Messages;
 import org.gob.loja.gim.ws.service.SecurityInterceptor;
 
@@ -83,6 +85,14 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 		serverLog.setBankUsername(request.getUsername());
 
 		String identificationNumber = request.getIdentificationNumber();
+		
+		// rfam 2021-05-03 ML-JC-2021-009-DI
+		if(avoidPaymentEntry(identificationNumber)) {
+			statement.setMessage("Costas procesales, debe acercarse al Municipio de Loja");
+			statement.setCode("ML.FS.7006");
+			persisBankingEntityLog(false, statement.toString());
+			return statement;
+		}
 
 		if (controlAlertResident(identificationNumber)) {
 			statement.setMessage("Contribuyente con alertas, debe acercarse al Municipio de Loja");
@@ -591,6 +601,30 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 		query.setParameter("name", username);
 		User user = (User) query.getSingleResult();
 		return user;
+	}
+	
+	private Boolean avoidPaymentEntry(String identificationNumber) {
+		
+		String entries = systemParameterService.findParameter("AVOID_PAYMENT_ENTRIES");
+		List<Long> entryList = GimUtils.convertStringWithCommaToListLong(entries);
+
+		Query query = em.createNativeQuery("select count(*) "
+				+ "from municipalbond m2 "
+				+ "join resident r2 on m2.resident_id = r2.id "
+				+ "where r2.identificationnumber = :identificacionNumber "
+				+ "and m2.entry_id in (:entries) "
+				+ "and m2.municipalbondstatus_id in (3,4,5,7,13,14) ");
+		query.setParameter("identificacionNumber", identificationNumber);
+		query.setParameter("entries", entryList);
+		int amount = ((BigInteger) query.getSingleResult()).intValue();
+		
+		System.out.println("amount................ "+amount);
+
+		if (amount == 0) {
+			return false;
+		} else {
+			return true;
+		}	
 	}
 
 }

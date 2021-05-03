@@ -21,6 +21,7 @@ import javax.persistence.TemporalType;
 
 import org.gob.gim.banks.action.BankHome;
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.NotActiveWorkdayException;
 import org.gob.gim.exception.ReverseAmongPaymentsIsNotAllowedException;
@@ -160,6 +161,14 @@ public class PaymentServiceBean implements PaymentService {
 		serverLog.setBankUsername(request.getUsername());
 		// System.out.println("rfarmijosm "+request.getIdentificationNumber()+"\t"+request.getUsername());
 		String identificationNumber = request.getIdentificationNumber();
+		
+		// rfam 2021-05-03 ML-JC-2021-009-DI
+		if(avoidPaymentEntry(identificationNumber)) {
+			serverLog.setMethodCompleted(false);
+			serverLog.setCodeError("PayoutNotAllowed - costa procesal");
+			em.persist(serverLog);
+			throw new PayoutNotAllowed();
+		}
 		
 		//rfarmijosm 2017-02-06 se copia el codigo de jock de otro branch, impedir pagos con alerta por ws
 		//Boolean AlertPending = ;
@@ -1007,6 +1016,30 @@ public class PaymentServiceBean implements PaymentService {
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("pendingBondStatusId", futureBondStatusId);
 		return query.getResultList();
+	}
+	
+	private Boolean avoidPaymentEntry(String identificationNumber) {
+		
+		String entries = systemParameterService.findParameter("AVOID_PAYMENT_ENTRIES");
+		List<Long> entryList = GimUtils.convertStringWithCommaToListLong(entries);
+
+		Query query = em.createNativeQuery("select count(*) "
+				+ "from municipalbond m2 "
+				+ "join resident r2 on m2.resident_id = r2.id "
+				+ "where r2.identificationnumber = :identificacionNumber "
+				+ "and m2.entry_id in (:entries) "
+				+ "and m2.municipalbondstatus_id in (3,4,5,7,13,14) ");
+		query.setParameter("identificacionNumber", identificationNumber);
+		query.setParameter("entries", entryList);
+		int amount = ((BigInteger) query.getSingleResult()).intValue();
+		
+		System.out.println("amount................ "+amount);
+
+		if (amount == 0) {
+			return false;
+		} else {
+			return true;
+		}	
 	}
 	
 }
