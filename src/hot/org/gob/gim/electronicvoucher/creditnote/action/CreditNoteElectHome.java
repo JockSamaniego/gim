@@ -59,8 +59,8 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	private static final long serialVersionUID = 1L;
 	private Long municipalBondNumber;
 	private Resident resident;
-	private static final String PAID_BOND_STATUS_ID = "MUNICIPAL_BOND_STATUS_ID_PAID";
-	private static final String PAID_BOND_STATUS_ID_EXTERNAL_CHANNEL = "MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL";
+//	private static final String PAID_BOND_STATUS_ID = "MUNICIPAL_BOND_STATUS_ID_PAID";
+//	private static final String PAID_BOND_STATUS_ID_EXTERNAL_CHANNEL = "MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL";
 	private InstitutionService institution;
 	private List<ComplementVoucher> complements = new ArrayList<ComplementVoucher>();
 	private ComplementVoucher complementVoucher;
@@ -826,14 +826,29 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 		this.vouchersToPrint = vouchersToPrint;
 	}
 	
+	@In(create = true)
+	CreditNoteElectList creditNoteElectList;
+	
 	
 	public void checkVoucherToPrint(ElectronicVoucher voucher){
+		dateReportFrom = creditNoteElectList.getEmissionDateFrom();
+		dateReportUntil = creditNoteElectList.getEmissionDateUntil();
+		totalValueForReport = BigDecimal.ZERO;
+		totalBaseForReport = BigDecimal.ZERO;
+		totalIvaForReport = BigDecimal.ZERO;
 		if(!vouchersToPrint.contains(voucher)){
 			voucher.setSelectToPrint(Boolean.TRUE);
 			vouchersToPrint.add(voucher);
 		}else{
 			voucher.setSelectToPrint(Boolean.FALSE);
 			vouchersToPrint.remove(voucher);
+		}
+		for(ElectronicVoucher ev : vouchersToPrint){
+			if(ev.getElectronicStatus().equals("AUTHORIZED")){
+				totalValueForReport = totalValueForReport.add(ev.getTotalPaid());
+				totalBaseForReport = totalBaseForReport.add(ev.getMunicipalBond().getTaxableTotal());
+				totalIvaForReport = totalIvaForReport.add(ev.getMunicipalBond().getTaxItems().get(0).getValue());
+			}
 		}
 	}
 	
@@ -880,6 +895,13 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	public String prePrintAll() {
 		if(this.vouchersToPrint.size() > 0){
 			return "/electronicvoucher/report/CreditNoteTotalReport.xhtml";
+		}
+		return null;	
+	}
+	
+	public String prePrintReport() {
+		if(this.vouchersToPrint.size() > 0){
+			return "/electronicvoucher/report/CreditNoteReportToAccounting.xhtml";
 		}
 		return null;	
 	}
@@ -1004,12 +1026,18 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	
 	
 	public void creditNoteAllSelect(List<BigInteger> ids){
+		totalValueForReport = BigDecimal.ZERO;
+		totalBaseForReport = BigDecimal.ZERO;
+		totalIvaForReport = BigDecimal.ZERO;
 		this.vouchersToPrint = new ArrayList<ElectronicVoucher>();
 		for(BigInteger id : ids){
 			ElectronicVoucher ev = getEntityManager().find(ElectronicVoucher.class, id.longValue());
 			if(ev.getElectronicStatus().equals("AUTHORIZED")){
 				ev.setSelectToPrint(Boolean.TRUE);
 				this.vouchersToPrint.add(ev);
+				totalValueForReport = totalValueForReport.add(ev.getTotalPaid());
+				totalBaseForReport = totalBaseForReport.add(ev.getMunicipalBond().getTaxableTotal());
+				totalIvaForReport = totalIvaForReport.add(ev.getMunicipalBond().getTaxItems().get(0).getValue());
 			}
 		}
 	}
@@ -1020,5 +1048,51 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 		}
 		this.vouchersToPrint = new ArrayList<ElectronicVoucher>();
 	}
-}
+	
+	private Date dateReportFrom;
+	private Date dateReportUntil;
+	private BigDecimal totalValueForReport;
+	private BigDecimal totalBaseForReport;
+	private BigDecimal totalIvaForReport;
 
+	public Date getDateReportFrom() {
+		return dateReportFrom;
+	}
+
+	public void setDateReportFrom(Date dateReportFrom) {
+		this.dateReportFrom = dateReportFrom;
+	}
+
+	public Date getDateReportUntil() {
+		return dateReportUntil;
+	}
+
+	public void setDateReportUntil(Date dateReportUntil) {
+		this.dateReportUntil = dateReportUntil;
+	}
+
+	public BigDecimal getTotalValueForReport() {
+		return totalValueForReport;
+	}
+
+	public void setTotalValueForReport(BigDecimal totalValueForReport) {
+		this.totalValueForReport = totalValueForReport;
+	}
+
+	public BigDecimal getTotalBaseForReport() {
+		return totalBaseForReport;
+	}
+
+	public void setTotalBaseForReport(BigDecimal totalBaseForReport) {
+		this.totalBaseForReport = totalBaseForReport;
+	}
+
+	public BigDecimal getTotalIvaForReport() {
+		return totalIvaForReport;
+	}
+
+	public void setTotalIvaForReport(BigDecimal totalIvaForReport) {
+		this.totalIvaForReport = totalIvaForReport;
+	}
+	
+}

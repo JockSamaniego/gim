@@ -35,7 +35,7 @@
 							</p:font>
 
 							<p:font size="8" style="bold">
-								<p:paragraph alignment="center">REPORTE DE LIQUIDACIÓN DE DÉBITOS BANCARIOS</p:paragraph>
+								<p:paragraph alignment="center">REPORTE DE LIQUIDACIÓN DE DÉBITOS BANCARIOS EN BLOQUE</p:paragraph>
 							</p:font>
 						</p:cell>
 					</p:table>
@@ -75,20 +75,36 @@
 	<p:font size="9" name="HELVETICA">
 		<p:paragraph alignment="left" spacingAfter="0">
 			<p:font size="8" name="HELVETICA" style="bold">
-				<p:text value="DÉBITOS CON ERROR EN PROCESO DE LIQUIDACIÓN" />
+				<p:text value="DEBITOS CON ERROR EN LA TRANSACCION:" />
+			</p:font>
+		</p:paragraph>
+		<p:paragraph alignment="left" spacingBefore="5">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="TOTAL: " />
+			</p:font>
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="#{bankDebitHome.debitsTransactionError.size()}" />
+			</p:font>
+		</p:paragraph>
+		<p:paragraph alignment="left" spacingAfter="5">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="VALOR: " />
+			</p:font>
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="#{bankDebitHome.totalDebitsTransactionError}" />
 			</p:font>
 		</p:paragraph>
 	</p:font>
 
 	<p:font size="8" name="HELVETICA">
-		<p:paragraph alignment="left" spacingBefore="5"  spacingAfter="10" rendered="#{empty bankDebitHome.debitsError ? true : false}">
+		<p:paragraph alignment="left" spacingBefore="5"  spacingAfter="10" rendered="#{empty bankDebitHome.debitsTransactionError ? true : false}">
 			<p:font size="8" name="HELVETICA" style="bold">
-				<p:text value="No existen débitos con errores" />
+				<p:text value="No existen débitos con errores en la transacción" />
 			</p:font>
 		</p:paragraph>
 	</p:font>
 
-	<p:table columns="9" spacingBefore="5" spacingAfter="10" rendered="#{empty bankDebitHome.debitsError ? false : true}"
+	<p:table columns="9" spacingBefore="5" spacingAfter="10" rendered="#{empty bankDebitHome.debitsTransactionError ? false : true}"
 		widthPercentage="100" headerRows="0"
 		widths="0.8 1.8 0.8 1.0 1.8 0.8 0.5 0.7 1.8">
 		<p:font size="8" style="bold">
@@ -152,7 +168,7 @@
 			</p:cell>
 		</p:font>
 
-		<ui:repeat value="#{bankDebitHome.debitsError}" var="_var">
+		<ui:repeat value="#{bankDebitHome.debitsTransactionError}" var="_var">
 			<p:font size="8" style="normal,italic,oblique">
 				<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
 					<p:paragraph>
@@ -230,20 +246,568 @@
 		</ui:repeat>
 
 	</p:table>
+	
+	
+	
+	<p:font size="9" name="HELVETICA">
+		<p:paragraph alignment="left" spacingAfter="0">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="DEBITOS PAGADOS PREVIAMENTE POR OTRO MEDIO:" />
+			</p:font>
+		</p:paragraph>
+	</p:font>
+	
+	<p:paragraph alignment="left" spacingBefore="5">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="TOTAL: " />
+			</p:font>
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="#{bankDebitHome.debitsPayedError.size()}" />
+			</p:font>
+		</p:paragraph>
+		<p:paragraph alignment="left" spacingAfter="5">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="VALOR: " />
+			</p:font>
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="#{bankDebitHome.totalDebitsPayedError}" />
+			</p:font>
+		</p:paragraph>
+
+	<p:font size="8" name="HELVETICA">
+		<p:paragraph alignment="left" spacingBefore="5"  spacingAfter="10" rendered="#{empty bankDebitHome.debitsPayedError ? true : false}">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="No existen débitos pagados previamente por otro medio" />
+			</p:font>
+		</p:paragraph>
+	</p:font>
+
+	<p:table columns="9" spacingBefore="5" spacingAfter="10" rendered="#{empty bankDebitHome.debitsPayedError ? false : true}"
+		widthPercentage="100" headerRows="0"
+		widths="0.8 1.8 0.8 1.0 1.8 0.8 0.5 0.7 1.8">
+		<p:font size="8" style="bold">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" >
+				</p:cell>
+			</f:facet>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Identificación" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Contribuyente" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Tipo Cuenta" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Cuenta" />
+				</p:paragraph>
+			</p:cell>
+
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Titular" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Servicio" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Cantidad" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Valor" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Observación" />
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+
+		<ui:repeat value="#{bankDebitHome.debitsPayedError}" var="_var">
+			<p:font size="8" style="normal,italic,oblique">
+				<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.residentIdentification}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.residentName}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.accountType}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.accountNumber}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.accountHolder}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.service}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.amount}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.value}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.observation}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</ui:repeat>
+
+	</p:table>
+	
+	
+	<p:font size="9" name="HELVETICA">
+		<p:paragraph alignment="left" spacingAfter="0">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="DEBITOS CON VALORES QUE NO COINCIDEN:" />
+			</p:font>
+		</p:paragraph>
+	</p:font>
+	
+	<p:paragraph alignment="left" spacingBefore="5">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="TOTAL: " />
+			</p:font>
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="#{bankDebitHome.debitsValuesError.size()}" />
+			</p:font>
+		</p:paragraph>
+		<p:paragraph alignment="left" spacingAfter="5">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="VALOR: " />
+			</p:font>
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="#{bankDebitHome.totalDebitsValuesError}" />
+			</p:font>
+		</p:paragraph>
+
+	<p:font size="8" name="HELVETICA">
+		<p:paragraph alignment="left" spacingBefore="5"  spacingAfter="10" rendered="#{empty bankDebitHome.debitsValuesError ? true : false}">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="No existen débitos con valores que no coinciden" />
+			</p:font>
+		</p:paragraph>
+	</p:font>
+
+	<p:table columns="9" spacingBefore="5" spacingAfter="10" rendered="#{empty bankDebitHome.debitsValuesError ? false : true}"
+		widthPercentage="100" headerRows="0"
+		widths="0.8 1.8 0.8 1.0 1.8 0.8 0.5 0.7 1.8">
+		<p:font size="8" style="bold">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" >
+				</p:cell>
+			</f:facet>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Identificación" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Contribuyente" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Tipo Cuenta" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Cuenta" />
+				</p:paragraph>
+			</p:cell>
+
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Titular" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Servicio" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Cantidad" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Valor" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Observación" />
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+
+		<ui:repeat value="#{bankDebitHome.debitsValuesError}" var="_var">
+			<p:font size="8" style="normal,italic,oblique">
+				<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.residentIdentification}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.residentName}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.accountType}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.accountNumber}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.accountHolder}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.service}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.amount}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.value}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.observation}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</ui:repeat>
+
+	</p:table>
+	
+	
+	<p:font size="9" name="HELVETICA">
+		<p:paragraph alignment="left" spacingAfter="0">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="DÉBITOS LIQUIDADOS EXITOSAMENTE:" />
+			</p:font>
+		</p:paragraph>
+	</p:font>
+	
+	<p:paragraph alignment="left" spacingBefore="5">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="TOTAL: " />
+			</p:font>
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="#{bankDebitHome.debitsSuccessful.size()}" />
+			</p:font>
+		</p:paragraph>
+		<p:paragraph alignment="left" spacingAfter="5">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="VALOR: " />
+			</p:font>
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="#{bankDebitHome.totalDebitsSuccessful}" />
+			</p:font>
+		</p:paragraph>
+
+	<p:font size="8" name="HELVETICA">
+		<p:paragraph alignment="left" spacingBefore="5"  spacingAfter="10" rendered="#{empty bankDebitHome.debitsSuccessful ? true : false}">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="No existen débitos liquidados exitosamente" />
+			</p:font>
+		</p:paragraph>
+	</p:font>
+
+	<p:table columns="9" spacingBefore="5" spacingAfter="10" rendered="#{empty bankDebitHome.debitsSuccessful ? false : true}"
+		widthPercentage="100" headerRows="0"
+		widths="0.8 1.8 0.8 1.0 1.8 0.8 0.5 0.7 1.8">
+		<p:font size="8" style="bold">
+			<f:facet name="defaultCell">
+				<p:cell borderWidth="0" >
+				</p:cell>
+			</f:facet>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Identificación" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Contribuyente" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Tipo Cuenta" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Cuenta" />
+				</p:paragraph>
+			</p:cell>
+
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Titular" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Servicio" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Cantidad" />
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Valor" />
+				</p:paragraph>
+			</p:cell>
+			<p:cell horizontalAlignment="center">
+				<p:paragraph>
+					<p:text value="Observación" />
+				</p:paragraph>
+			</p:cell>
+		</p:font>
+
+		<ui:repeat value="#{bankDebitHome.debitsSuccessful}" var="_var">
+			<p:font size="8" style="normal,italic,oblique">
+				<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.residentIdentification}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left" borderWidth="0" borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.residentName}" />
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.accountType}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.accountNumber}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="left" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.accountHolder}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.service}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.amount}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.value}">
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="center" borderWidth="0"
+					borderWidthBottom="1">
+					<p:paragraph>
+						<p:text value="#{_var.observation}">
+
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+			</p:font>
+		</ui:repeat>
+	</p:table>
 
 
 	<p:font size="9" name="HELVETICA">
 		<p:paragraph alignment="left" spacingAfter="0">
 			<p:font size="8" name="HELVETICA" style="bold">
-				<p:text value="DÉBITOS NO SELECCIONADOS PARA LIQUIDACIÓN" />
+				<p:text value="DÉBITOS NO SELECCIONADOS PARA LIQUIDACIÓN:" />
 			</p:font>
 		</p:paragraph>
 	</p:font>
+	
+	<p:paragraph alignment="left" spacingBefore="5">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="TOTAL: " />
+			</p:font>
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="#{bankDebitHome.debitsNotSend.size()}" />
+			</p:font>
+		</p:paragraph>
+		<p:paragraph alignment="left" spacingAfter="5">
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="VALOR: " />
+			</p:font>
+			<p:font size="8" name="HELVETICA" style="bold">
+				<p:text value="#{bankDebitHome.totalDebitsNOSelect}" />
+			</p:font>
+		</p:paragraph>
 
 	<p:font size="8" name="HELVETICA">
 		<p:paragraph alignment="left" spacingBefore="5"  spacingAfter="10" rendered="#{empty bankDebitHome.debitsNotSend ? true : false}">
 			<p:font size="8" name="HELVETICA" style="bold">
-				<p:text value="No existen débitos no seleccionados" />
+				<p:text value="No existen débitos no seleccionados para liquidación" />
 			</p:font>
 		</p:paragraph>
 	</p:font>
@@ -390,162 +954,117 @@
 		</ui:repeat>
 
 	</p:table>
+	
+	
+	<p:table columns="2"
+			spacingBefore="20" widthPercentage="50"
+			headerRows="0" widths="2 1">
+			<p:font size="9" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
 
-	<p:font size="9" name="HELVETICA">
-		<p:paragraph alignment="left" spacingAfter="0">
-			<p:font size="8" name="HELVETICA" style="bold">
-				<p:text value="DÉBITOS LIQUIDADOS EXITOSAMENTE" />
-			</p:font>
-		</p:paragraph>
-	</p:font>
-
-	<p:font size="8" name="HELVETICA">
-		<p:paragraph alignment="left" spacingBefore="5"  spacingAfter="10" rendered="#{empty bankDebitHome.debitsSuccessful ? true : false}">
-			<p:font size="8" name="HELVETICA" style="bold">
-				<p:text value="No existen débitos liquidados" />
-			</p:font>
-		</p:paragraph>
-	</p:font>
-
-	<p:table columns="9" spacingBefore="5" spacingAfter="10" rendered="#{empty bankDebitHome.debitsSuccessful ? false : true}"
-		widthPercentage="100" headerRows="0"
-		widths="0.8 1.8 0.8 1.0 1.8 0.8 0.5 0.7 1.8">
-		<p:font size="8" style="bold">
-			<f:facet name="defaultCell">
-				<p:cell borderWidth="0" >
-				</p:cell>
-			</f:facet>
-
-			<p:cell horizontalAlignment="center">
-				<p:paragraph>
-					<p:text value="Identificación" />
-				</p:paragraph>
-			</p:cell>
-
-			<p:cell horizontalAlignment="center">
-				<p:paragraph>
-					<p:text value="Contribuyente" />
-				</p:paragraph>
-			</p:cell>
-
-			<p:cell horizontalAlignment="center">
-				<p:paragraph>
-					<p:text value="Tipo Cuenta" />
-				</p:paragraph>
-			</p:cell>
-
-			<p:cell horizontalAlignment="center">
-				<p:paragraph>
-					<p:text value="Cuenta" />
-				</p:paragraph>
-			</p:cell>
-
-
-			<p:cell horizontalAlignment="center">
-				<p:paragraph>
-					<p:text value="Titular" />
-				</p:paragraph>
-			</p:cell>
-
-			<p:cell horizontalAlignment="center">
-				<p:paragraph>
-					<p:text value="Servicio" />
-				</p:paragraph>
-			</p:cell>
-
-			<p:cell horizontalAlignment="center">
-				<p:paragraph>
-					<p:text value="Cantidad" />
-				</p:paragraph>
-			</p:cell>
-
-			<p:cell horizontalAlignment="center">
-				<p:paragraph>
-					<p:text value="Valor" />
-				</p:paragraph>
-			</p:cell>
-			<p:cell horizontalAlignment="center">
-				<p:paragraph>
-					<p:text value="Observación" />
-				</p:paragraph>
-			</p:cell>
-		</p:font>
-
-		<ui:repeat value="#{bankDebitHome.debitsSuccessful}" var="_var">
-			<p:font size="8" style="normal,italic,oblique">
-				<p:cell horizontalAlignment="center" borderWidth="0" borderWidthBottom="1">
+				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="#{_var.residentIdentification}" />
+						<p:text value="RESUMEN DE LIQUIDACIÓN" />
 					</p:paragraph>
 				</p:cell>
 
-				<p:cell horizontalAlignment="left" borderWidth="0" borderWidthBottom="1">
+				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="#{_var.residentName}" />
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="center" borderWidth="0"
-					borderWidthBottom="1">
-					<p:paragraph>
-						<p:text value="#{_var.accountType}">
-
-						</p:text>
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="center" borderWidth="0"
-					borderWidthBottom="1">
-					<p:paragraph>
-						<p:text value="#{_var.accountNumber}">
-
-						</p:text>
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="left" borderWidth="0"
-					borderWidthBottom="1">
-					<p:paragraph>
-						<p:text value="#{_var.accountHolder}">
-
-						</p:text>
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center" borderWidth="0"
-					borderWidthBottom="1">
-					<p:paragraph>
-						<p:text value="#{_var.service}">
-
-						</p:text>
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="center" borderWidth="0"
-					borderWidthBottom="1">
-					<p:paragraph>
-						<p:text value="#{_var.amount}">
-						</p:text>
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center" borderWidth="0"
-					borderWidthBottom="1">
-					<p:paragraph>
-						<p:text value="#{_var.value}">
-						</p:text>
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center" borderWidth="0"
-					borderWidthBottom="1">
-					<p:paragraph>
-						<p:text value="#{_var.observation}">
-
-						</p:text>
+						<p:text value="#{messages['item.total']}" />
 					</p:paragraph>
 				</p:cell>
 			</p:font>
-		</ui:repeat>
-	</p:table>
+
+			<ui:repeat value="2">
+				<p:font size="8">
+							
+					<p:cell>
+						<p:paragraph>
+							<p:text value="Error en transacción" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell  horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{bankDebitHome.totalDebitsTransactionError}">
+								<f:convertNumber  type="number"  pattern="###,###,###,###.##" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell >
+						<p:paragraph>
+							<p:text value="Pagadas previamente" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{bankDebitHome.totalDebitsPayedError}">
+								<f:convertNumber  type="number"  pattern="###,###,###,###.##" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>	
+					
+					<p:cell >
+						<p:paragraph>
+							<p:text value="Valores no coinciden" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{bankDebitHome.totalDebitsValuesError}">
+								<f:convertNumber  type="number"  pattern="###,###,###,###.##" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>	
+					
+					<p:cell >
+						<p:paragraph>
+							<p:text value="Liquidados correctamente" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{bankDebitHome.totalDebitsSuccessful}">
+								<f:convertNumber  type="number"  pattern="###,###,###,###.##" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell >
+						<p:paragraph>
+							<p:text value="No seleccionados" />
+						</p:paragraph>
+					</p:cell>
+					<p:cell horizontalAlignment="right">
+						<p:paragraph>
+							<p:text value="#{bankDebitHome.totalDebitsNOSelect}">
+								<f:convertNumber  type="number"  pattern="###,###,###,###.##" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>					
+					
+				</p:font>
+			</ui:repeat>
+
+			<p:font size="9" style="bold">
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['item.total']}" />
+					</p:paragraph>
+				</p:cell>
+				
+				<p:cell horizontalAlignment="right">
+					<p:paragraph>
+						<p:text value="#{bankDebitHome.totalDebitsForLiquidation}">
+							<f:convertNumber  type="number"  pattern="$ ###,###,###,###.##" />
+						</p:text>
+					</p:paragraph>
+				</p:cell>
+
+			</p:font>
+		</p:table>
+
+	
 </p:document>

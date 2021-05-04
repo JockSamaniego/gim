@@ -22,14 +22,16 @@ public class CreditNoteElectList extends EntityQuery<ElectronicVoucher> {
 			+ "where electronicvoucher.typeEmissionPoint.complementVoucherType.code = #{creditNoteElectList.typeVoucher}";
 	private static final String[] RESTRICTIONS = { 
 			"electronicvoucher.sequentialNumber like concat(#{creditNoteElectList.sequentialNumber},'%')",
-			"electronicvoucher.emissionDate >=   #{creditNoteElectList.emissionDate}",
+			"electronicvoucher.emissionDate >=   #{creditNoteElectList.emissionDateFrom}",
+			"electronicvoucher.emissionDate <=   #{creditNoteElectList.emissionDateUntil}",
 			"electronicvoucher.typeEmissionPoint.complementVoucherType.code = #{creditNoteElectList.typeVoucher}",
 			"electronicvoucher.resident.identificationNumber like concat(#{creditNoteElectList.criteriaIdentification},'%')"}; //notas de credito
 
 	
 	private String criteriaIdentification;
 	private String sequentialNumber;
-	private Date emissionDate; 
+	private Date emissionDateFrom; 
+	private Date emissionDateUntil; 
 	private String typeVoucher ="04";
 	
 
@@ -48,12 +50,20 @@ public class CreditNoteElectList extends EntityQuery<ElectronicVoucher> {
 		this.sequentialNumber = sequentialNumber;
 	}
 
-	public Date getEmissionDate() {
-		return emissionDate;
+	public Date getEmissionDateFrom() {
+		return emissionDateFrom;
 	}
 
-	public void setEmissionDate(Date emissionDate) {
-		this.emissionDate = emissionDate;
+	public void setEmissionDateFrom(Date emissionDateFrom) {
+		this.emissionDateFrom = emissionDateFrom;
+	}
+
+	public Date getEmissionDateUntil() {
+		return emissionDateUntil;
+	}
+
+	public void setEmissionDateUntil(Date emissionDateUntil) {
+		this.emissionDateUntil = emissionDateUntil;
 	}
 
 	public String getTypeVoucher() {
@@ -85,14 +95,17 @@ public class CreditNoteElectList extends EntityQuery<ElectronicVoucher> {
 		if(sequentialNumber != null){
 			query = query + " and electronicvoucher.sequentialNumber like concat(:sequentialNumber,'%') ";
 		}
-		if(emissionDate != null){
-			query = query + " and electronicvoucher.emissionDate >= :emissionDate ";
+		if(emissionDateFrom != null){
+			query = query + " and electronicvoucher.emissionDate >= :emissionDateFrom ";
+		}
+		if(emissionDateUntil != null){
+			query = query + " and electronicvoucher.emissionDate <= :emissionDateUntil ";
 		}
 		if(criteriaIdentification != null){
 			query = query + " and res.identificationNumber like concat(:criteriaIdentification,'%') ";
 		}
 		
-		query = query + " ORDER BY electronicvoucher.sequentialNumber, electronicvoucher.emissionDate DESC ";
+		query = query + " ORDER BY electronicvoucher.sequentialNumber, electronicvoucher.emissionDate ASC ";
 		
 		Query q = getEntityManager().createNativeQuery(query);
 		q.setParameter("typeVoucher", typeVoucher);
@@ -100,8 +113,11 @@ public class CreditNoteElectList extends EntityQuery<ElectronicVoucher> {
 		if(sequentialNumber != null){
 			q.setParameter("sequentialNumber", sequentialNumber);
 		}
-		if(emissionDate != null){
-			q.setParameter("emissionDate", emissionDate);
+		if(emissionDateFrom != null){
+			q.setParameter("emissionDateFrom", emissionDateFrom);
+		}
+		if(emissionDateUntil != null){
+			q.setParameter("emissionDateUntil", emissionDateUntil);
 		}
 		if(criteriaIdentification != null){
 			q.setParameter("criteriaIdentification", criteriaIdentification);
@@ -110,6 +126,8 @@ public class CreditNoteElectList extends EntityQuery<ElectronicVoucher> {
 		List<BigInteger> evs = q.getResultList();
 		CreditNoteElectHome creditNoteElectHome = (CreditNoteElectHome) Contexts.getConversationContext().get(CreditNoteElectHome.class);
 		creditNoteElectHome.creditNoteAllSelect(evs);
+		creditNoteElectHome.setDateReportFrom(emissionDateFrom);
+		creditNoteElectHome.setDateReportUntil(emissionDateUntil);
 		
 	}
 	
