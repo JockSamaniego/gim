@@ -207,6 +207,7 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 
 					if (totalToPay != null && totalToPay.compareTo(payout.getAmount()) == 0) {
 						try {
+							// TODO: aqui el control del pago de bonds mas viejos primero por rubro....
 							incomeService.save(payout.getPaymentDate(), payout.getBondIds(), cashier, tillId,
 									payout.getTransactionId(), PaymentMethod.NORMAL.name());
 						} catch (Exception e) {
