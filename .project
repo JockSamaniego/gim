@@ -38,4 +38,15 @@
 		<nature>org.jboss.tools.seam.core.seamnature</nature>
 		<nature>com.jaspersoft.studio.babel.editor.rbeNature</nature>
 	</natures>
+	<filteredResources>
+		<filter>
+			<id>1620767685527</id>
+			<name></name>
+			<type>30</type>
+			<matcher>
+				<id>org.eclipse.core.resources.regexFilterMatcher</id>
+				<arguments>node_modules|.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
+			</matcher>
+		</filter>
+	</filteredResources>
 </projectDescription>

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import org.gob.loja.gim.ws.dto.*;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -15,6 +16,7 @@ import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.service.SystemParameterService;
@@ -47,6 +49,7 @@ import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.security.model.User;
+import com.google.common.base.Joiner;
 
 @Stateless(name = "PaymentServiceV2")
 @Interceptors(SecurityInterceptor.class)
@@ -100,10 +103,11 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			}
 
 			Date workDayDate;
-			/* if (request.getUsername().compareTo("dabetancourtc") == 0) {
-				workDayDate = new GregorianCalendar().getTime();
-			} else*/
-				workDayDate = findPaymentDate();
+			/*
+			 * if (request.getUsername().compareTo("dabetancourtc") == 0) { workDayDate =
+			 * new GregorianCalendar().getTime(); } else
+			 */
+			workDayDate = findPaymentDate();
 
 			if (workDayDate == null) {
 				statement.setMessage("Jornada de trabajo no activa");
@@ -115,7 +119,8 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			Long inPaymentAgreementBondsNumber = findInPaymentAgreementBondsNumber(taxpayer.getId());
 
 			if (inPaymentAgreementBondsNumber > 0) {
-				statement.setMessage("Contribuyente con acuerdo de pago pendiente, debe acercarse al Municipio de Loja");
+				statement
+						.setMessage("Contribuyente con acuerdo de pago pendiente, debe acercarse al Municipio de Loja");
 				statement.setCode("ML.FS.7004");
 				persisBankingEntityLog(false, statement.toString());
 				return statement;
@@ -208,6 +213,34 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 					if (totalToPay != null && totalToPay.compareTo(payout.getAmount()) == 0) {
 						try {
 							// TODO: aqui el control del pago de bonds mas viejos primero por rubro....
+
+							Joiner joiner = Joiner.on(",");
+							String list = joiner.join(payout.getBondIds());
+
+							Query query = em.createNativeQuery("select * from checkPaymentSequence(?1)");
+							query.setParameter(1, list);
+
+							String jsonData = (String) query.getSingleResult();
+
+							CheckPaidDTO checkData = new ObjectMapper().readValue(jsonData, CheckPaidDTO.class);
+
+							System.out.println(checkData);
+
+							for (int i = 0; i < checkData.getRequest().size(); i++) {
+								CheckPaidBondDTO req = checkData.getRequest().get(i);
+								for (int j = 0; j < checkData.getDebts().size(); j++) {
+									CheckPaidDebtDTO debt = checkData.getDebts().get(j);
+									if (req.getEntry().intValue() == debt.getEntry().intValue()) {
+										for (int k = 0; k < debt.getPendings().size(); k++) {
+											CheckPaidBondDTO bond = debt.getPendings().get(k);
+											if(bond.getId().intValue() == req.getId().intValue()){
+												System.out.println(bond.getId() + "Se encuentra en el array index " +k);
+											}
+										}
+									}
+								}
+							}
+
 							incomeService.save(payout.getPaymentDate(), payout.getBondIds(), cashier, tillId,
 									payout.getTransactionId(), PaymentMethod.NORMAL.name());
 						} catch (Exception e) {
@@ -222,8 +255,8 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 						Long paidFromExternalBondStatusId = systemParameterService
 								.findParameter(IncomeServiceBean.PAID_FROM_EXTERNAL_CHANNEL_BOND_STATUS);
 						persistChangeStatus(payout.getBondIds(), paidFromExternalBondStatusId);
-						
-						//////buscar los datos para el pago efectuado
+
+						////// buscar los datos para el pago efectuado
 						DepositStatementV2 localInformation = incomeService.findDepositInformation(cashier,
 								payout.getPaymentDate(), payout);
 
@@ -233,7 +266,7 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 						statement.setResidentIdentificaciton(localInformation.getResidentIdentificaciton());
 						statement.setResidentName(localInformation.getResidentName());
 						statement.setTotal(localInformation.getTotal());
-						
+
 						persisBankingEntityLog(true, statement.toString());
 						return statement;
 					} else {
@@ -322,14 +355,8 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			persisBankingEntityLog(false, statement.toString());
 			return statement;
 		}
-		Query query = this.em.createNativeQuery("SELECT " 
-				+ "dep.municipalbond_id " 
-				+ "FROM " 
-				+ "gimprod.payment pay, "
-				+ "gimprod.deposit dep " 
-				+ "WHERE " 
-				+ "dep.payment_id = pay.id AND " 
-				+ "pay.externaltransactionid = ?1 "
+		Query query = this.em.createNativeQuery("SELECT " + "dep.municipalbond_id " + "FROM " + "gimprod.payment pay, "
+				+ "gimprod.deposit dep " + "WHERE " + "dep.payment_id = pay.id AND " + "pay.externaltransactionid = ?1 "
 				+ "ORDER BY dep.municipalbond_id ASC");
 
 		query.setParameter(1, payout.getTransactionId());
