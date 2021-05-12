@@ -23,8 +23,7 @@ public class CheckPaidBondDTO {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -38,8 +37,7 @@ public class CheckPaidBondDTO {
 	}
 
 	/**
-	 * @param creation
-	 *            the creation to set
+	 * @param creation the creation to set
 	 */
 	public void setCreation(Date creation) {
 		this.creation = creation;
@@ -53,11 +51,15 @@ public class CheckPaidBondDTO {
 	}
 
 	/**
-	 * @param entry
-	 *            the entry to set
+	 * @param entry the entry to set
 	 */
 	public void setEntry(Long entry) {
 		this.entry = entry;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "CheckPaidBondDTO [id=" + id + ", creation=" + creation + ", entry=" + entry + "]";
+	}
+
 }

@@ -42,10 +42,10 @@ public class CheckPaidDTO {
 	public void setRequest(List<CheckPaidByEntryDTO> request) {
 		this.request = request;
 	}
-	
-	
-	
-	
-	
+
+	@Override
+	public String toString() {
+		return "CheckPaidDTO [request=" + request + ", debts=" + debts + "]";
+	}
 	
 }
