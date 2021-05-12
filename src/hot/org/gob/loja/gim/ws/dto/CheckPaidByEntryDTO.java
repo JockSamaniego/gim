@@ -10,10 +10,10 @@ import java.util.ArrayList;
  * @author hack
  *
  */
-public class CheckPaidDebtDTO {
+public class CheckPaidByEntryDTO {
 
 	private Long entry;
-	private List<CheckPaidBondDTO> pendings = new ArrayList<CheckPaidBondDTO>();
+	private List<CheckPaidBondDTO> bonds = new ArrayList<CheckPaidBondDTO>();
 
 	/**
 	 * @return the entry
@@ -31,18 +31,16 @@ public class CheckPaidDebtDTO {
 	}
 
 	/**
-	 * @return the pendings
+	 * @return the bonds
 	 */
-	public List<CheckPaidBondDTO> getPendings() {
-		return pendings;
+	public List<CheckPaidBondDTO> getBonds() {
+		return bonds;
 	}
 
 	/**
-	 * @param pendings
-	 *            the pendings to set
+	 * @param bonds the bonds to set
 	 */
-	public void setPendings(List<CheckPaidBondDTO> pendings) {
-		this.pendings = pendings;
+	public void setBonds(List<CheckPaidBondDTO> bonds) {
+		this.bonds = bonds;
 	}
-
 }

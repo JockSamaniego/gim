@@ -227,16 +227,11 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 							System.out.println(checkData);
 
 							for (int i = 0; i < checkData.getRequest().size(); i++) {
-								CheckPaidBondDTO req = checkData.getRequest().get(i);
+								CheckPaidByEntryDTO req = checkData.getRequest().get(i);
 								for (int j = 0; j < checkData.getDebts().size(); j++) {
-									CheckPaidDebtDTO debt = checkData.getDebts().get(j);
+									CheckPaidByEntryDTO debt = checkData.getDebts().get(j);
 									if (req.getEntry().intValue() == debt.getEntry().intValue()) {
-										for (int k = 0; k < debt.getPendings().size(); k++) {
-											CheckPaidBondDTO bond = debt.getPendings().get(k);
-											if(bond.getId().intValue() == req.getId().intValue()){
-												System.out.println(bond.getId() + "Se encuentra en el array index " +k);
-											}
-										}
+										
 									}
 								}
 							}

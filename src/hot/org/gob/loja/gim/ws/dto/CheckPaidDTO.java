@@ -11,28 +11,13 @@ import java.util.ArrayList;
  */
 public class CheckPaidDTO {
 
-	private List<CheckPaidBondDTO> request = new ArrayList<CheckPaidBondDTO>();
-	private List<CheckPaidDebtDTO> debts = new ArrayList<CheckPaidDebtDTO>();
-
-	/**
-	 * @return the request
-	 */
-	public List<CheckPaidBondDTO> getRequest() {
-		return request;
-	}
-
-	/**
-	 * @param request
-	 *            the request to set
-	 */
-	public void setRequest(List<CheckPaidBondDTO> request) {
-		this.request = request;
-	}
-
+	private List<CheckPaidByEntryDTO> request = new ArrayList<CheckPaidByEntryDTO>();
+	private List<CheckPaidByEntryDTO> debts = new ArrayList<CheckPaidByEntryDTO>();
+		
 	/**
 	 * @return the debts
 	 */
-	public List<CheckPaidDebtDTO> getDebts() {
+	public List<CheckPaidByEntryDTO> getDebts() {
 		return debts;
 	}
 
@@ -40,9 +25,27 @@ public class CheckPaidDTO {
 	 * @param debts
 	 *            the debts to set
 	 */
-	public void setDebts(List<CheckPaidDebtDTO> debts) {
+	public void setDebts(List<CheckPaidByEntryDTO> debts) {
 		this.debts = debts;
 	}
+
+	/**
+	 * @return the request
+	 */
+	public List<CheckPaidByEntryDTO> getRequest() {
+		return request;
+	}
+
+	/**
+	 * @param request the request to set
+	 */
+	public void setRequest(List<CheckPaidByEntryDTO> request) {
+		this.request = request;
+	}
+	
+	
+	
+	
 	
 	
 }
