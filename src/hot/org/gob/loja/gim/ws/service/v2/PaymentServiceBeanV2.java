@@ -347,17 +347,17 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			}
 
 		} catch (JsonParseException e) {
-			statement.setMessage("JsonParseException");
+			statement.setMessage("JsonParseException: "+ e.getMessage());
 			statement.setCode("ML.RD.7010");
 			persisBankingEntityLog(false, statement.toString());
 			return statement;
 		} catch (JsonMappingException e) {
-			statement.setMessage("JsonMappingException");
+			statement.setMessage("JsonMappingException: "+ e.getMessage());
 			statement.setCode("ML.RD.7011");
 			persisBankingEntityLog(false, statement.toString());
 			return statement;
 		} catch (IOException e) {
-			statement.setMessage("IOException");
+			statement.setMessage("IOException: "+ e.getMessage());
 			statement.setCode("ML.RD.7012");
 			persisBankingEntityLog(false, statement.toString());
 			return statement;
