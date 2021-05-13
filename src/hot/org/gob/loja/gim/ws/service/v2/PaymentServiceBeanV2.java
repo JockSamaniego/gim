@@ -1,13 +1,15 @@
 package org.gob.loja.gim.ws.service.v2;
 
+import java.io.IOException;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
+
 import org.gob.loja.gim.ws.dto.*;
 
 import javax.ejb.EJB;
@@ -16,8 +18,11 @@ import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import org.codehaus.jackson.map.ObjectMapper;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.NotActiveWorkdayException;
@@ -43,12 +48,12 @@ import org.gob.loja.gim.ws.service.SecurityInterceptor;
 import ec.gob.gim.bank.model.BankingEntityLog;
 import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Person;
-import ec.gob.gim.income.model.PaymentMethod;
 import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.security.model.User;
+
 import com.google.common.base.Joiner;
 
 @Stateless(name = "PaymentServiceV2")
@@ -196,8 +201,82 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			// throw new NotOpenTill();
 		} else {
 			Date payoutDate = DateUtils.truncate(payout.getPaymentDate());
+			
+			try {
+				Joiner joiner = Joiner.on(",");
+				String list = joiner.join(payout.getBondIds());
 
-			if (workDayDate.compareTo(payoutDate) == 0) {
+				Query query = em.createNativeQuery("select * from checkPaymentSequence(?1)");
+				query.setParameter(1, list);
+
+				String jsonData = (String) query.getSingleResult();
+				
+				System.out.println(jsonData);
+				
+
+				CheckPaidDTO checkData;
+				checkData = new ObjectMapper().readValue(jsonData, CheckPaidDTO.class);
+				System.out.println(checkData);
+
+				for (int i = 0; i < checkData.getRequest().size(); i++) {
+					CheckPaidByEntryDTO req = checkData.getRequest().get(i);
+					for (int j = 0; j < checkData.getDebts().size(); j++) {
+						CheckPaidByEntryDTO debt = checkData.getDebts().get(j);
+						if (req.getEntry().intValue() == debt.getEntry().intValue() && req.getGroup().equals(debt.getGroup()) ) {
+							System.out.println("req Min Date: "+req.getMindate());
+							System.out.println("req Max Date: "+req.getMaxdate());
+							System.out.println("debt Min Date: "+debt.getMindate());
+							
+							if(req.getMindate().compareTo(req.getMaxdate()) != 0 || req.getMindate().compareTo(debt.getMindate()) != 0){
+								int auxCountReq = 0;
+								int auxCountDebts = 0;
+								for (int k = 0; k < req.getBonds().size(); k++) {
+									CheckPaidBondDTO bondReq = req.getBonds().get(k);
+									if(bondReq.getEmisiondate().compareTo(req.getMaxdate()) < 0){
+										auxCountReq ++;
+									}
+								}
+								
+								for (int k = 0; k < debt.getBonds().size(); k++) {
+									CheckPaidBondDTO bondDebt = debt.getBonds().get(k);
+									if(bondDebt.getEmisiondate().compareTo(req.getMaxdate()) < 0){
+										auxCountDebts ++;
+									}
+								}
+								if(auxCountReq != auxCountDebts){
+									statement.setMessage("No se puede realizar el pago, existen obligaciones que deben ser canceladas previamente");
+									statement.setCode("ML.RD.7009");
+									persisBankingEntityLog(false, statement.toString());
+									return statement;
+								}
+							}
+							
+						}
+						
+					}
+				}
+				
+				statement.setMessage("si se puede realizar el pago");
+				statement.setCode("ML.RD.7009");
+				persisBankingEntityLog(false, statement.toString());
+				return statement;
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+
+			
+
+			/*if (workDayDate.compareTo(payoutDate) == 0) {
 				if (BigDecimal.ZERO.compareTo(payout.getAmount()) < 0) {
 
 					Taxpayer taxpayer = findTaxpayer(request.getIdentificationNumber());
@@ -212,37 +291,6 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 
 					if (totalToPay != null && totalToPay.compareTo(payout.getAmount()) == 0) {
 						try {
-							// TODO: aqui el control del pago de bonds mas viejos primero por rubro....
-
-							Joiner joiner = Joiner.on(",");
-							String list = joiner.join(payout.getBondIds());
-
-							Query query = em.createNativeQuery("select * from checkPaymentSequence(?1)");
-							query.setParameter(1, list);
-
-							String jsonData = (String) query.getSingleResult();
-
-							CheckPaidDTO checkData = new ObjectMapper().readValue(jsonData, CheckPaidDTO.class);
-
-							System.out.println(checkData);
-
-							for (int i = 0; i < checkData.getRequest().size(); i++) {
-								CheckPaidByEntryDTO req = checkData.getRequest().get(i);
-								for (int j = 0; j < checkData.getDebts().size(); j++) {
-									CheckPaidByEntryDTO debt = checkData.getDebts().get(j);
-									if (req.getEntry().intValue() == debt.getEntry().intValue()) {
-										System.out.println("req: "+req.getMindate());
-										System.out.println("debt: "+debt.getMindate());
-										if(req.getMindate().after(debt.getMindate())){
-											statement.setMessage("No s epuede realizar el pago, existen obligaciones que deben ser canceladas previamente");
-											statement.setCode("ML.RD.7009");
-											persisBankingEntityLog(false, statement.toString());
-											return statement;
-										}
-									}
-								}
-							}
-
 							incomeService.save(payout.getPaymentDate(), payout.getBondIds(), cashier, tillId,
 									payout.getTransactionId(), PaymentMethod.NORMAL.name());
 						} catch (Exception e) {
@@ -289,7 +337,7 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 				persisBankingEntityLog(false, statement.toString());
 				return statement;
 				// throw new NotActiveWorkday();
-			}
+			}*/
 		}
 	}
 

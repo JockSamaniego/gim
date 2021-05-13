@@ -12,7 +12,7 @@ import java.util.Date;
 public class CheckPaidBondDTO {
 
 	private Long id;
-	private Date creation;
+	private Date emisiondate;
 	private Long entry;
 
 	/**
@@ -30,17 +30,17 @@ public class CheckPaidBondDTO {
 	}
 
 	/**
-	 * @return the creation
+	 * @return the emisiondate
 	 */
-	public Date getCreation() {
-		return creation;
+	public Date getEmisiondate() {
+		return emisiondate;
 	}
 
 	/**
-	 * @param creation the creation to set
+	 * @param emisiondate the emisiondate to set
 	 */
-	public void setCreation(Date creation) {
-		this.creation = creation;
+	public void setEmisiondate(Date emisiondate) {
+		this.emisiondate = emisiondate;
 	}
 
 	/**
@@ -57,9 +57,13 @@ public class CheckPaidBondDTO {
 		this.entry = entry;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "CheckPaidBondDTO [id=" + id + ", creation=" + creation + ", entry=" + entry + "]";
+		return "CheckPaidBondDTO [id=" + id + ", emisiondate=" + emisiondate
+				+ ", entry=" + entry + "]";
 	}
 
 }
