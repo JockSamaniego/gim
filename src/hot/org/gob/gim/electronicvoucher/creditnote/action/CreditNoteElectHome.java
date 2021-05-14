@@ -1,5 +1,3 @@
-package org.gob.gim.electronicvoucher.creditnote.action;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -1096,4 +1094,3 @@ public class CreditNoteElectHome extends EntityHome<ElectronicVoucher>
 	}
 	
 }
-
