@@ -1180,7 +1180,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		this.observationsSolvency = observationsSolvency;
 	}
 
-	public String buildDirectMunicipalBonds() {
+	public String buildDirectMunicipalBonds() throws ParseException {
 		SolvencyReportHome SRHome = (SolvencyReportHome) Contexts.getConversationContext().get(SolvencyReportHome.class);
 		String result=SRHome.generateSolvencyCertificate();	
 		buttonGenerateSolvency=SRHome.isButtonGenerate();

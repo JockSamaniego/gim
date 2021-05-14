@@ -1,12 +1,16 @@
 package org.gob.gim.revenue.action;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.gob.gim.common.ServiceLocator;
@@ -25,6 +29,7 @@ import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.income.model.TaxItem;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.EntryType;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -162,7 +167,7 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		this.criteria = criteria;
 	}
 	
-	public String generateSolvencyCertificate(){
+	public String generateSolvencyCertificate() throws ParseException{
 	
 		if(resident == null){
 			addFacesMessageFromResourceBundle("resident.empty");
@@ -200,7 +205,17 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		municipalBonds = findPendingBonds();				
 		isReadyForPrint = true;
 		
-		if(municipalBonds.size() > 0) return null;
+		if(!isNewDomain){
+			if(municipalBonds.size() > 0){
+				return null;
+			}
+		}else{
+			Boolean checkBonds = checkBondsForNewDomain(municipalBonds);
+			if(!checkBonds){
+				return null;
+			}
+		}
+			
 		certificateCounter();
 		
 		String finalIdentificationNumber;
@@ -769,6 +784,7 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 	private Boolean isNewDomain = Boolean.FALSE;
 	private List<Property> propertiesByResident = new ArrayList();
 	private Property propertySelected;
+	private List<MunicipalBond> mbsForSolvencyReport = new ArrayList();
 	
 	public Boolean getIsNewDomain() {
 		return isNewDomain;
@@ -793,8 +809,17 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 	public void setPropertySelected(Property propertySelected) {
 		this.propertySelected = propertySelected;
 	}
-	
 
+	public List<MunicipalBond> getMbsForSolvencyReport() {
+		return mbsForSolvencyReport;
+	}
+
+	public void setMbsForSolvencyReport(List<MunicipalBond> mbsForSolvencyReport) {
+		this.mbsForSolvencyReport = mbsForSolvencyReport;
+	}
+
+	
+	
 	public void findCadastralCodeForCertificate(){
 		if(this.resident != null){
 			if(isNewDomain){
@@ -822,4 +847,74 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		}
 	}
 		
+	//Jock Samaniego
+	//Para controlar los bonds en certificados para traspaso de dominio
+	
+	public Boolean checkBondsForNewDomain(List<MunicipalBond> bonds) throws ParseException{
+		List<BigInteger> mbsId = new ArrayList<BigInteger>();
+		mbsForSolvencyReport = new ArrayList();
+		String q = "SELECT mb.id FROM gimprod.municipalbond mb "
+				+ "LEFT JOIN gimprod.propertyappraisal app on app.id = mb.adjunct_id "
+				+ "WHERE app.property_id = :propertyId "
+				+ "and mb.municipalbondstatus_id in (3,4)";
+		Query query = getEntityManager().createNativeQuery(q);
+		query.setParameter("propertyId", propertySelected.getId());
+		mbsId = query.getResultList();
+		
+		for(BigInteger mbId : mbsId){
+			MunicipalBond mb = getEntityManager().find(MunicipalBond.class, mbId.longValue());
+			mb.setPaidTotal(mb.getValue().add(mb.getInterest().add(mb.getSurcharge())));
+			mb.setPaidTotal(mb.getPaidTotal().subtract(mb.getDiscount()));
+			Query query2 = getEntityManager().createNamedQuery("TaxItem.findTaxItemByMunicipalBondId");
+			query2.setParameter("municipalBondId", mb.getId());
+			try {
+				TaxItem taxItem = (TaxItem) query2
+						.getSingleResult();
+
+				if (taxItem != null) {
+					mb.setPaidTotal(mb.getPaidTotal().add(taxItem.getValue()));
+				}
+			} catch (Exception e) {
+				addFacesMessageFromResourceBundle(
+						"No existe registro de impuestos",
+						mb);
+			}
+			mbsForSolvencyReport.add(mb);
+		}
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date today = dateFormat.parse(dateFormat.format(new Date()));
+			
+		for(MunicipalBond mb : bonds){
+			Date expirationDate = dateFormat.parse(dateFormat.format(mb.getExpirationDate()));
+			int days = (int) ((expirationDate.getTime() - today.getTime())/86400000);
+			if(days <= 30){
+				if(!mbsForSolvencyReport.contains(mb)){
+					mb.setPaidTotal(mb.getValue().add(mb.getInterest().add(mb.getSurcharge())));
+					mb.setPaidTotal(mb.getPaidTotal().subtract(mb.getDiscount()));
+					Query query3 = getEntityManager().createNamedQuery("TaxItem.findTaxItemByMunicipalBondId");
+					query3.setParameter("municipalBondId", mb.getId());
+					try {
+						TaxItem taxItem = (TaxItem) query3
+								.getSingleResult();
+
+						if (taxItem != null) {
+							mb.setPaidTotal(mb.getPaidTotal().add(taxItem.getValue()));
+						}
+					} catch (Exception e) {
+						addFacesMessageFromResourceBundle(
+								"No existe registro de impuestos",
+								mb);
+					}
+					mbsForSolvencyReport.add(mb);
+				}
+			}
+		}
+		
+		if(mbsForSolvencyReport.size() > 0){
+			return Boolean.FALSE;
+		}
+		
+		return Boolean.TRUE;
+	}
 }
