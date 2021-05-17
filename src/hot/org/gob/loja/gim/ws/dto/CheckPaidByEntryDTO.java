@@ -15,6 +15,8 @@ public class CheckPaidByEntryDTO {
 
 	private Long entry;
 	private Date mindate;
+	private Date maxdate;
+	private String group;
 	private List<CheckPaidBondDTO> bonds = new ArrayList<CheckPaidBondDTO>();
 
 	/**
@@ -53,10 +55,43 @@ public class CheckPaidByEntryDTO {
 	public void setMindate(Date mindate) {
 		this.mindate = mindate;
 	}
+	
+	/**
+	 * @return the maxdate
+	 */
+	public Date getMaxdate() {
+		return maxdate;
+	}
 
+	/**
+	 * @param maxdate the maxdate to set
+	 */
+	public void setMaxdate(Date maxdate) {
+		this.maxdate = maxdate;
+	}
+	
+	/**
+	 * @return the group
+	 */
+	public String getGroup() {
+		return group;
+	}
+
+	/**
+	 * @param group the group to set
+	 */
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "CheckPaidByEntryDTO [entry=" + entry + ", mindate=" + mindate + ", bonds=" + bonds + "]";
+		return "CheckPaidByEntryDTO [entry=" + entry + ", mindate=" + mindate
+				+ ", maxdate=" + maxdate + ", group=" + group + ", bonds="
+				+ bonds + "]";
 	}
-		
+
 }
