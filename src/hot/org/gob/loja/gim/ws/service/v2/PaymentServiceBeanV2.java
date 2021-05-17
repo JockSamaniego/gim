@@ -221,6 +221,13 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 				CheckPaidDTO checkData;
 				checkData = new ObjectMapper().readValue(jsonData,
 						CheckPaidDTO.class);
+				if (checkData.getRequest() == null) {
+					statement
+							.setMessage("Obligacion no se encuentra en estado pendiente de pago");
+					statement.setCode("ML.RD.7014");
+					persisBankingEntityLog(false, statement.toString());
+					return statement;
+				}
 				for (int i = 0; i < checkData.getRequest().size(); i++) {
 					CheckPaidByEntryDTO req = checkData.getRequest().get(i);
 					for (int j = 0; j < checkData.getDebts().size(); j++) {
@@ -347,17 +354,17 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			}
 
 		} catch (JsonParseException e) {
-			statement.setMessage("JsonParseException: "+ e.getMessage());
+			statement.setMessage("JsonParseException: " + e.getMessage());
 			statement.setCode("ML.RD.7010");
 			persisBankingEntityLog(false, statement.toString());
 			return statement;
 		} catch (JsonMappingException e) {
-			statement.setMessage("JsonMappingException: "+ e.getMessage());
+			statement.setMessage("JsonMappingException: " + e.getMessage());
 			statement.setCode("ML.RD.7011");
 			persisBankingEntityLog(false, statement.toString());
 			return statement;
 		} catch (IOException e) {
-			statement.setMessage("IOException: "+ e.getMessage());
+			statement.setMessage("IOException: " + e.getMessage());
 			statement.setCode("ML.RD.7012");
 			persisBankingEntityLog(false, statement.toString());
 			return statement;
