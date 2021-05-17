@@ -234,7 +234,7 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 										System.out.println("req: "+req.getMindate());
 										System.out.println("debt: "+debt.getMindate());
 										if(req.getMindate().after(debt.getMindate())){
-											statement.setMessage("No s epuede realizar el pago, existen obligaciones que deben ser canceladas previamente");
+											statement.setMessage("No se puede realizar el pago, existen obligaciones que deben ser canceladas previamente");
 											statement.setCode("ML.RD.7009");
 											persisBankingEntityLog(false, statement.toString());
 											return statement;
