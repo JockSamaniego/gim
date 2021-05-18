@@ -959,7 +959,7 @@ import ec.gob.gim.revenue.model.impugnment.Impugnment;
 				+ "mb.municipalBondType=:municipalBondType AND "
 				+ "mb.municipalBondStatus.id = :pendingBondStatusId "
 				+ "group by e.name, mb.groupingCode "
-				+ "order by e.name, mb.groupingCode ")
+				+ "order by e.name, mb.groupingCode ")			
 })
 //
 public class MunicipalBond implements Serializable {
