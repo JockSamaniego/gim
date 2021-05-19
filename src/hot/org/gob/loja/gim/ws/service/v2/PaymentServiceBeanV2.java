@@ -761,7 +761,7 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 		query.setParameter("entries", entryList);
 		int amount = ((BigInteger) query.getSingleResult()).intValue();
 		
-		System.out.println("amount................ "+amount);
+		// System.out.println("amount................ "+amount);
 
 		if (amount == 0) {
 			return false;
