@@ -86,9 +86,9 @@
 				
 				<s:decorate id="observation" template="../layout/edit.xhtml">
 					<ui:define name="label">#{messages['solvencyHistory.observation']}:</ui:define>
-					<h:inputText id="obs" size="70" maxlength="100"
+					<h:inputTextarea id="sentenceDetail" size="60"
 						value="#{solvencyReportHome.observation}" >
-					</h:inputText>
+					</h:inputTextarea>
 				</s:decorate>
 
 				<div style="clear: both" />
@@ -182,6 +182,67 @@
 						value="Detalle: #{solvencyReportHome.alerts.get(0).openDetail}" />
 				</a:outputPanel>
 			</rich:panel>
+			
+			<a:outputPanel id="bondsPanel" ajaxRendered="true">
+				<rich:dataTable id="bondsTable"
+					value="#{solvencyReportHome.mbsForSolvencyReport}" var="_var"
+					columnClasses="center,center,center,center,left,center,left,right"
+					rendered="#{solvencyReportHome.mbsForSolvencyReport.size() > 0}">
+
+					<f:facet name="header">
+						<h:panelGrid columns="2" columnClasses="headerTitle left, ">
+							<h:outputText
+								value="Listado de Obligaciones Pendientes de Pago" />
+
+							<s:button
+								view="/revenue/report/PendingBondsForSolvencyReportPDF.xhtml"
+								id="printId"
+								rendered="#{solvencyReportHome.mbsForSolvencyReport.size() > 0}"
+								propagation="join" value="Imprimir" />
+
+						</h:panelGrid>
+					</f:facet>
+
+					<rich:column width="10%">
+						<f:facet name="header">Obligación</f:facet>
+						<h:outputText value="#{_var.number}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Emision</f:facet>
+						<h:outputText value="#{_var.emisionDate}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Vencimiento</f:facet>
+						<h:outputText value="#{_var.expirationDate}" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:outputText>
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Estado</f:facet>
+						<h:outputText value="#{_var.municipalBondStatus.name}" />
+					</rich:column>
+					<rich:column width="15%">
+						<f:facet name="header">Rubro</f:facet>
+						<h:outputText value="#{_var.entry.name}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Cedula/RUC</f:facet>
+						<h:outputText value="#{_var.resident.identificationNumber}" />
+					</rich:column>
+					<rich:column width="25%">
+						<f:facet name="header">Contribuyente</f:facet>
+						<h:outputText value="#{_var.resident.name}" />
+					</rich:column>
+					<rich:column width="10%">
+						<f:facet name="header">Valor Aproximado</f:facet>
+						<h:outputText value="#{_var.value.add(_var.taxesTotal)}" >
+							<f:convertNumber pattern="#0.00"/>
+						</h:outputText>
+					</rich:column>
+				</rich:dataTable>
+			</a:outputPanel>
 
 		</h:form>
 

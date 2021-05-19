@@ -8,7 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core" fileName="#{messages['revenue.solvencyCertificate']}.pdf" 
 	title="#{messages['revenue.solvencyCertificate']}" subject="report" type="pdf"
-	size="A5" orientation="portrait" margins="10 40 70 30" keywords="mykeyword">
+	size="A5" orientation="portrait" margins="10 40 40 20" keywords="mykeyword">
 
 	<ui:repeat value="#{municipalBondHome.copiesEnumerate}" var="_copy">
 		<p:table columns="2" widthPercentage="100" headerRows="0" spacingBefore="50" widths="0.2 0.8">
@@ -55,10 +55,10 @@
 			</p:cell>
 			
 			<p:cell colspan="1" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="1" borderWidthRight="0">
-				<p:table columns="1" widthPercentage="90" headerRows="0" spacingBefore="10" >
+				<p:table columns="1" widthPercentage="90" headerRows="0" spacingBefore="0" >
 					<p:cell colspan="1" borderWidth="0">
 						<p:font size="8" name="HELVETICA">
-							<p:table columns="1" spacingBefore="15" spacingAfter="20"
+							<p:table columns="1" spacingBefore="0" spacingAfter="20"
 								widthPercentage="100" headerRows="0">
 								<p:cell borderWidth="0"/>
 							</p:table>
@@ -139,7 +139,7 @@
 									</p:font>
 							</p:paragraph>
 							
-							<p:paragraph spacingAfter="0" spacingBefore="5" alignment="justify" verticalAlignment="10" leading="25">
+							<p:paragraph spacingAfter="0" spacingBefore="5" alignment="justify" verticalAlignment="10" leading="10">
 									<p:font size="8" style="bold">
 										<p:text
 											value="OBSERVACIONES: " />
