@@ -325,7 +325,19 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 				+ "from Property pro "
 				+ "where pro.location.neighborhood.id =:neighborhoodId "
 				+ "and pro.deleted = false "
-				+ "and pro.propertyType.id = 1 ORDER BY pro.cadastralCode")})
+				+ "and pro.propertyType.id = 1 ORDER BY pro.cadastralCode"),
+		
+		@NamedQuery(name = "Property.findByCadastralCode1", query = "select property from Property property "
+				+ "left join fetch property.currentDomain currentDomain "
+				+ "left join fetch property.location l "
+				+ "left JOIN fetch l.mainBlockLimit bl "
+				+ "left join fetch bl.street street "
+				+ "left join fetch property.propertyType pt "
+				+ "left join fetch currentDomain.resident resident "
+				+ "where property.cadastralCode = :cadastralCode "
+				+ "and property.deleted = false"),
+				
+})
 
 public class Property {
 

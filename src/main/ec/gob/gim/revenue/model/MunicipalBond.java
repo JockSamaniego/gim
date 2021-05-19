@@ -959,7 +959,26 @@ import ec.gob.gim.revenue.model.impugnment.Impugnment;
 				+ "mb.municipalBondType=:municipalBondType AND "
 				+ "mb.municipalBondStatus.id = :pendingBondStatusId "
 				+ "group by e.name, mb.groupingCode "
-				+ "order by e.name, mb.groupingCode ")			
+				+ "order by e.name, mb.groupingCode "),
+				
+		@NamedQuery(name = "Bond.findIdsByStatusesAndResidentId", query = "SELECT mb.id  FROM "
+				+ "    MunicipalBond mb "
+				+ "    JOIN mb.entry e "
+				+ "  WHERE "
+				+ "    mb.resident.id=:residentId AND "
+				+ "    mb.municipalBondType=:municipalBondType AND "
+				+ "    mb.municipalBondStatus.id IN (:statusIds)"),
+				
+		@NamedQuery(name = "Bond.findByListIds", query = "SELECT NEW org.gob.loja.gim.ws.dto.BondWS("
+				+ "    mb.id, mb.number, e.name, mb.groupingCode, mb.paidTotal, mb.serviceDate, mb.expirationDate, "
+				//+ "  mb.interest, mb.surcharge, mb.taxesTotal, mb.discount, mb.metadata )"
+				+ "  mb.interest, mb.surcharge, mb.taxesTotal, mb.discount, mbs.name )"
+				+ "  FROM "
+				+ "    MunicipalBond mb "
+				+ "    JOIN mb.entry e "
+				+ "    JOIN mb.municipalBondStatus mbs "
+				+ "  WHERE "
+				+ "    mb.id IN (:ids)"),
 })
 //
 public class MunicipalBond implements Serializable {
