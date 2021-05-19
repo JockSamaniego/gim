@@ -2170,7 +2170,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	@Override
 	public DepositStatementV2 findDepositInformation(Person cashier, Date paymentDate, Payout payout) {
-		String sql="select concat('ML-PID-',pay.id) , re.identificationnumber, re.name, coalesce(pay.value, 0) " + 
+		String sql="select concat('ML-PID-',pay.externaltransactionid) , re.identificationnumber, re.name, sum(pay.value) " + 
 				"from payment pay " + 
 				"join deposit dep on pay.id = dep.payment_id " + 
 				"join municipalbond mb on dep.municipalbond_id = mb.id " + 
@@ -2178,7 +2178,7 @@ public class IncomeServiceBean implements IncomeService {
 				"where pay.cashier_id = :cashierId " + 
 				"and pay.date = :paymentDate " + 
 				"and dep.municipalbond_id in (:bondsIds) " + 
-				"group by 1,2,3,4";
+				"group by 1,2,3";
 		Query q = entityManager.createNativeQuery(sql);	 
 		q.setParameter("cashierId", cashier.getId());
 		q.setParameter("paymentDate", paymentDate);
