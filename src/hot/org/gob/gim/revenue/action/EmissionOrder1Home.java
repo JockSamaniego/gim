@@ -110,9 +110,9 @@ public class EmissionOrder1Home extends EntityController {
 	 */
 
 	public void searchOrders() {
-		System.out.println(this.criteria);
+		// System.out.println(this.criteria);
 		this.orders = this.emissionOrderService.searchOrders(criteria);
-		System.out.println(this.orders);
+		// System.out.println(this.orders);
 	}
 
 	public MunicipalBond loadFirstBond(String bondsIds) {

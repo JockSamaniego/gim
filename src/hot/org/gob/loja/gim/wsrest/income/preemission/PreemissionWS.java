@@ -65,7 +65,7 @@ public class PreemissionWS {
 	public Response accountWithoutAdjunct(
 			@Valid AccountWithoutAdjunctRequest request) {
 		try {
-			System.out.println(request);
+			// System.out.println(request);
 
 			AccountWithoutAdjunctResponse resp = new AccountWithoutAdjunctResponse();
 
@@ -164,7 +164,7 @@ public class PreemissionWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response buildingPermit(@Valid BuildingPermitRequest request) {
 		try {
-			System.out.println(request);
+			// System.out.println(request);
 
 			BuildingPermitResponse resp = new BuildingPermitResponse();
 
@@ -279,7 +279,7 @@ public class PreemissionWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response approvalPlans(@Valid ApprovalPlansRequest request) {
 		try {
-			System.out.println(request);
+			// System.out.println(request);
 
 			ApprovalPlansResponse resp = new ApprovalPlansResponse();
 
@@ -394,7 +394,7 @@ public class PreemissionWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response urbanProperty(@Valid UrbanPropertyRequest request) {
 		try {
-			System.out.println(request);
+			// System.out.println(request);
 
 			UrbanPropertyResponse resp = new UrbanPropertyResponse();
 
@@ -509,7 +509,7 @@ public class PreemissionWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response ruralProperty(@Valid RuralPropertyRequest request) {
 		try {
-			System.out.println(request);
+			// System.out.println(request);
 
 			RuralPropertyResponse resp = new RuralPropertyResponse();
 
@@ -624,7 +624,7 @@ public class PreemissionWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response unbuiltLot(@Valid UnbuiltLotRequest request) {
 		try {
-			System.out.println(request);
+			// System.out.println(request);
 
 			UnbuiltLotResponse resp = new UnbuiltLotResponse();
 
@@ -738,7 +738,7 @@ public class PreemissionWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response utility(@Valid UtilityRequest request) {
 		try {
-			System.out.println(request);
+			// System.out.println(request);
 
 			UtilityResponse resp = new UtilityResponse();
 			
@@ -853,7 +853,7 @@ public class PreemissionWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response utility(@Valid AlcabalaRequest request) {
 		try {
-			System.out.println(request);
+			// System.out.println(request);
 
 			AlcabalaResponse resp = new AlcabalaResponse();
 			

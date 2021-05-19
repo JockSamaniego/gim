@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.ws.service.QueriesService;
 import org.gob.loja.gim.ws.dto.queries.DebtsDTO;
 import org.gob.loja.gim.ws.dto.queries.EntryDTO;
@@ -52,10 +53,9 @@ public class QueriesWS {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response bondById(@Valid BondByIdRequest request) {
+		BondResponse resp = new BondResponse();
 		try {
-			System.out.println(request);
-
-			BondResponse resp = new BondResponse();
+			// System.out.println(request);
 
 			List<String> errorsValidation = GimUtils.validateRequest(request);
 			if (errorsValidation.size() > 0) {
@@ -74,12 +74,17 @@ public class QueriesWS {
 					.findBondById(request.getBondId());
 			resp.setBond(bond);
 			if (bond == null) {
-				resp.setMessage("No existe obligacion con el identificador " + request.getBondId());
+				resp.setMessage("No existe obligacion con el identificador "
+						+ request.getBondId());
 			} else {
 
 				resp.setMessage("Consulta exitosa");
 			}
 
+			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
+		} catch (EntryDefinitionNotFoundException e) {
+			resp.setMessage("No existe definicion de la cuenta de la obligacion");
 			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
 					.header("Content-Language", "es-EC").build();
 		} catch (Exception e) {
@@ -96,7 +101,7 @@ public class QueriesWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response operatingPermit(@Valid OperatingPermitRequest request) {
 		try {
-			System.out.println(request);
+			// System.out.println(request);
 
 			OperatingPermitResponse resp = new OperatingPermitResponse();
 
@@ -135,7 +140,7 @@ public class QueriesWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response locals(@Valid LocalsRequest request) {
 		try {
-			System.out.println(request);
+			// System.out.println(request);
 
 			LocalsResponse resp = new LocalsResponse();
 
@@ -174,7 +179,7 @@ public class QueriesWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response entry(@Valid EntryRequest request) {
 		try {
-			System.out.println(request);
+			// System.out.println(request);
 
 			EntryResponse resp = new EntryResponse();
 
@@ -216,7 +221,7 @@ public class QueriesWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response debts(@Valid DebtsRequest request) {
 		try {
-			System.out.println(request);
+			// System.out.println(request);
 
 			DebtsResponse resp = new DebtsResponse();
 

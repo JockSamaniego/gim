@@ -60,14 +60,21 @@ public class QueriesServiceBean implements QueriesService {
 	public final String ACCOUNT_CODE_FOR_DISCOUNT = "ACCOUNT_CODE_FOR_DISCOUNT";
 
 	@Override
-	public BondDTO findBondById(Long bondId) {
+	public BondDTO findBondById(Long bondId)
+			throws EntryDefinitionNotFoundException {
 
+		List<Long> ids = new ArrayList<Long>();
+		ids.add(bondId);
+
+		// se envia a correr las reglas para el bond
+		incomeService.calculatePayment(new Date(), ids, true, true);
 		MunicipalBond municipalBond = this.municipalBondService
 				.findById(bondId);
 		if (municipalBond == null)
 			return null;
 		BondDTO dto = new BondDTO(municipalBond);
 		return dto;
+
 	}
 
 	@Override
