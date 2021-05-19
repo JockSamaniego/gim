@@ -41,7 +41,6 @@ import org.gob.loja.gim.ws.dto.v2.DepositStatementV2;
 import org.gob.loja.gim.ws.dto.v2.ReverseStatementV2;
 import org.gob.loja.gim.ws.dto.v2.StatementV2;
 import org.gob.loja.gim.ws.exception.NotOpenTill;
-import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.service.Messages;
 import org.gob.loja.gim.ws.service.SecurityInterceptor;
 
