@@ -1,5 +1,6 @@
 package org.gob.loja.gim.ws.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.gob.gim.banks.action.BankHome;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.GimUtils;
@@ -31,6 +35,9 @@ import org.gob.gim.income.facade.IncomeServiceBean;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.loja.gim.ws.dto.Bond;
 import org.gob.loja.gim.ws.dto.BondDetail;
+import org.gob.loja.gim.ws.dto.CheckPaidBondDTO;
+import org.gob.loja.gim.ws.dto.CheckPaidByEntryDTO;
+import org.gob.loja.gim.ws.dto.CheckPaidDTO;
 import org.gob.loja.gim.ws.dto.ClosingStatement;
 import org.gob.loja.gim.ws.dto.FutureBond;
 import org.gob.loja.gim.ws.dto.FutureStatement;
@@ -47,6 +54,8 @@ import org.gob.loja.gim.ws.exception.NotActiveWorkday;
 import org.gob.loja.gim.ws.exception.NotOpenTill;
 import org.gob.loja.gim.ws.exception.PayoutNotAllowed;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
+
+import com.google.common.base.Joiner;
 
 import ec.gob.gim.bank.model.BankingEntityLog;
 import ec.gob.gim.cadaster.model.Property;
@@ -228,88 +237,163 @@ public class PaymentServiceBean implements PaymentService {
 	public Boolean registerDeposit(ServiceRequest request, Payout payout)
 			throws InvalidPayout, PayoutNotAllowed, TaxpayerNotFound,
 			InvalidUser, NotActiveWorkday, NotOpenTill, HasNoObligations {
-		// Statement statement = findStatement(request);
 		
-		//bHome = (BankHome) Contexts.getConversationContext().get(BankHome.class);
-		serverLog = new BankingEntityLog();
-		serverLog.setDateTransaction(new Date());
-		serverLog.setTransactionId(payout.getTransactionId());
-		serverLog.setMethodUsed("registerDeposit");
-		serverLog.setBankUsername(request.getUsername());
-		
-		//System.out.println("start PPPPPPPPPPPPPPP");
-		//System.out.println(request.getIdentificationNumber()+"\t"+payout.getAmount()+"\t"+payout.getPaymentDate()+"\t"+payout.getBondIds());
-		//System.out.println("end o PPPPPPPPPPPPPPP");
-
-		Person cashier = findCashier(request.getUsername());
-
-		Till till = findTill(cashier.getId());
-		Long tillId = till.getId();
-		Date workDayDate = findPaymentDate();
 		try {
-			TillPermission tillPermission = findTillPermission(cashier.getId(),
-					workDayDate);
-			if (tillPermission == null
-					|| tillPermission.getOpeningTime() == null){
+			serverLog = new BankingEntityLog();
+			serverLog.setDateTransaction(new Date());
+			serverLog.setTransactionId(payout.getTransactionId());
+			serverLog.setMethodUsed("registerDeposit");
+			serverLog.setBankUsername(request.getUsername());
+
+			Person cashier = findCashier(request.getUsername());
+
+			Till till = findTill(cashier.getId());
+			Long tillId = till.getId();
+			Date workDayDate = findPaymentDate();
+			try {
+				TillPermission tillPermission = findTillPermission(
+						cashier.getId(), workDayDate);
+				if (tillPermission == null
+						|| tillPermission.getOpeningTime() == null) {
+					serverLog.setMethodCompleted(false);
+					serverLog.setCodeError("NotOpenTill");
+					em.persist(serverLog);
+					throw new NotOpenTill();
+				}
+			} catch (NotOpenTill e) {
+				e.printStackTrace();
 				serverLog.setMethodCompleted(false);
 				serverLog.setCodeError("NotOpenTill");
 				em.persist(serverLog);
 				throw new NotOpenTill();
 			}
-		} catch (NotOpenTill e) {
-			e.printStackTrace();
-			serverLog.setMethodCompleted(false);
-			serverLog.setCodeError("NotOpenTill");
-			em.persist(serverLog);
-			throw new NotOpenTill();
-		}
 
-		// System.out.println("\n\n\n<<R>> TIME WebService: "+payout.getPaymentDate()+"\n\n\n");
-		//
-		Date payoutDate = DateUtils.truncate(payout.getPaymentDate());
+			Date payoutDate = DateUtils.truncate(payout.getPaymentDate());
 
-		if (workDayDate.compareTo(payoutDate) == 0) {
-			if (BigDecimal.ZERO.compareTo(payout.getAmount()) < 0) {
-				// Taxpayer taxpayer = statement.getTaxpayer();
-				Taxpayer taxpayer = findTaxpayer(request
-						.getIdentificationNumber());
-				BigDecimal totalToPay = findAmountToPay(taxpayer.getId(),
-						payout.getBondIds());
-				//System.out.println("TOTAL TO PAY FOR SELECTED BONDS ----> "
-						//+ totalToPay);
-				if (totalToPay != null
-						&& totalToPay.compareTo(payout.getAmount()) == 0) {
-					try {
-						incomeService.save(payout.getPaymentDate(),
-								payout.getBondIds(), cashier, tillId, payout.getTransactionId(), PaymentMethod.NORMAL.name());
-					} catch (Exception e) {
-						e.printStackTrace();
-						serverLog.setMethodCompleted(false);
-						serverLog.setCodeError("InvalidPayout");
-						em.persist(serverLog);
-						throw new InvalidPayout();
+			Joiner joiner = Joiner.on(",");
+			String list = joiner.join(payout.getBondIds());
+
+			Query query = em
+					.createNativeQuery("select * from checkPaymentSequence(?1)");
+			query.setParameter(1, list);
+
+			String jsonData = (String) query.getSingleResult();
+
+			CheckPaidDTO checkData;
+
+			checkData = new ObjectMapper().readValue(jsonData,
+					CheckPaidDTO.class);
+
+			if (checkData.getRequest() == null) {
+				serverLog.setMethodCompleted(false);
+				serverLog
+						.setCodeError("InvalidPayout - Obligacion no se encuentra en estado pendiente de pago");
+				em.persist(serverLog);
+				throw new InvalidPayout();
+			}
+			for (int i = 0; i < checkData.getRequest().size(); i++) {
+				CheckPaidByEntryDTO req = checkData.getRequest().get(i);
+				for (int j = 0; j < checkData.getDebts().size(); j++) {
+					CheckPaidByEntryDTO debt = checkData.getDebts().get(j);
+					if (req.getEntry().intValue() == debt.getEntry().intValue()
+							&& req.getGroup().equals(debt.getGroup())) {
+
+						if (req.getMindate().compareTo(req.getMaxdate()) != 0
+								|| req.getMindate()
+										.compareTo(debt.getMindate()) != 0) {
+							int auxCountReq = 0;
+							int auxCountDebts = 0;
+							for (int k = 0; k < req.getBonds().size(); k++) {
+								CheckPaidBondDTO bondReq = req.getBonds()
+										.get(k);
+								if (bondReq.getEmisiondate().compareTo(
+										req.getMaxdate()) < 0) {
+									auxCountReq++;
+								}
+							}
+
+							for (int k = 0; k < debt.getBonds().size(); k++) {
+								CheckPaidBondDTO bondDebt = debt.getBonds()
+										.get(k);
+								if (bondDebt.getEmisiondate().compareTo(
+										req.getMaxdate()) < 0) {
+									auxCountDebts++;
+								}
+							}
+							if (auxCountReq != auxCountDebts) {
+								serverLog.setMethodCompleted(false);
+								serverLog
+										.setCodeError("InvalidPayout - No se puede realizar el pago, existen obligaciones que deben ser canceladas previamente");
+								em.persist(serverLog);
+								throw new InvalidPayout();
+							}
+						}
+
 					}
-					em.flush();
-					Long paidFromExternalBondStatusId = systemParameterService
-							.findParameter(IncomeServiceBean.PAID_FROM_EXTERNAL_CHANNEL_BOND_STATUS);
-					persistChangeStatus(payout.getBondIds(),
-							paidFromExternalBondStatusId);
-					serverLog.setMethodCompleted(true);
-					serverLog.setCodeError(null);
-					em.persist(serverLog);
-					return true;
+
 				}
 			}
-		} else {
+
+			if (workDayDate.compareTo(payoutDate) == 0) {
+				if (BigDecimal.ZERO.compareTo(payout.getAmount()) < 0) {
+					// Taxpayer taxpayer = statement.getTaxpayer();
+					Taxpayer taxpayer = findTaxpayer(request
+							.getIdentificationNumber());
+					BigDecimal totalToPay = findAmountToPay(taxpayer.getId(),
+							payout.getBondIds());
+					// System.out.println("TOTAL TO PAY FOR SELECTED BONDS ----> "
+					// + totalToPay);
+					if (totalToPay != null
+							&& totalToPay.compareTo(payout.getAmount()) == 0) {
+						try {
+							incomeService.save(payout.getPaymentDate(),
+									payout.getBondIds(), cashier, tillId,
+									payout.getTransactionId(),
+									PaymentMethod.NORMAL.name());
+						} catch (Exception e) {
+							e.printStackTrace();
+							serverLog.setMethodCompleted(false);
+							serverLog.setCodeError("InvalidPayout");
+							em.persist(serverLog);
+							throw new InvalidPayout();
+						}
+						em.flush();
+						Long paidFromExternalBondStatusId = systemParameterService
+								.findParameter(IncomeServiceBean.PAID_FROM_EXTERNAL_CHANNEL_BOND_STATUS);
+						persistChangeStatus(payout.getBondIds(),
+								paidFromExternalBondStatusId);
+						serverLog.setMethodCompleted(true);
+						serverLog.setCodeError(null);
+						em.persist(serverLog);
+						return true;
+					}
+				}
+			} else {
+				serverLog.setMethodCompleted(false);
+				serverLog.setCodeError("NotActiveWorkday");
+				em.persist(serverLog);
+				throw new NotActiveWorkday();
+			}
 			serverLog.setMethodCompleted(false);
-			serverLog.setCodeError("NotActiveWorkday");
+			serverLog.setCodeError("InvalidPayout");
 			em.persist(serverLog);
-			throw new NotActiveWorkday();
+			throw new InvalidPayout();
+		} catch (JsonMappingException e) {
+			serverLog.setMethodCompleted(false);
+			serverLog.setCodeError("InvalidPayout " + e.toString());
+			em.persist(serverLog);
+			throw new InvalidPayout();
+		} catch (IOException e) {
+			serverLog.setMethodCompleted(false);
+			serverLog.setCodeError("InvalidPayout " + e.toString());
+			em.persist(serverLog);
+			throw new InvalidPayout();
+		} catch (Exception e) {
+			serverLog.setMethodCompleted(false);
+			serverLog.setCodeError("InvalidPayout " + e.toString());
+			em.persist(serverLog);
+			throw new InvalidPayout();
 		}
-		serverLog.setMethodCompleted(false);
-		serverLog.setCodeError("InvalidPayout");
-		em.persist(serverLog);
-		throw new InvalidPayout();
 	}
 
 	public ClosingStatement findDeposits(ServiceRequest request,
