@@ -15,4 +15,8 @@ public interface UserService {
 	 * @return
 	 */
 	public User save(User user);
+	
+	public Boolean checkUserRole(Long userId, String parameterRolName);
+	
+	public User getUserByResident(Long residentId);
 }

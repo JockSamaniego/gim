@@ -5,10 +5,13 @@ package org.gob.gim.revenue.service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -19,6 +22,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.gob.gim.cadaster.facade.CadasterService;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.exception.IdentificationNumberWrongException;
@@ -32,6 +36,15 @@ import org.gob.gim.ws.service.InfringementEmisionResponse;
 import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
 import org.gob.loja.gim.ws.dto.ant.BondDTO;
 import org.gob.loja.gim.ws.dto.ant.PreemissionInfractionRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.AccountWithoutAdjunctRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.AlcabalaRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.ApprovalPlansRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.BuildingPermitRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.RuralPropertyRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.UnbuiltLotRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.UrbanPropertyRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.UtilityRequest;
+import org.gob.loja.gim.ws.dto.preemission.response.PreemissionServiceResponse;
 import org.gob.loja.gim.ws.exception.AccountIsBlocked;
 import org.gob.loja.gim.ws.exception.AccountIsNotActive;
 import org.gob.loja.gim.ws.exception.EmissionOrderNotGenerate;
@@ -42,18 +55,26 @@ import org.gob.loja.gim.ws.exception.InvalidUser;
 import org.gob.loja.gim.ws.exception.TaxpayerNonUnique;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 
+import ec.gob.gim.cadaster.model.LocationPropertySinat;
+import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.PropertyLocationType;
 import ec.gob.gim.common.model.Address;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Gender;
 import ec.gob.gim.common.model.IdentificationType;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.DTO.ReportEmissionDTO;
+import ec.gob.gim.revenue.model.adjunct.DomainTransfer;
 import ec.gob.gim.revenue.model.adjunct.InfringementANTReference;
+import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
+import ec.gob.gim.revenue.model.adjunct.PropertyReference;
+import ec.gob.gim.revenue.model.adjunct.detail.EarlyTransferDiscount;
 import ec.gob.gim.revenue.model.criteria.ReportEmissionCriteria;
 import ec.gob.gim.security.model.User;
 
@@ -78,6 +99,9 @@ public class EmissionServiceBean implements EmissionService {
 
 	@EJB
 	ResidentService residentService;
+
+	@EJB
+	CadasterService cadasterService;
 
 	@Override
 	public List<ReportEmissionDTO> findEmissionReport(
@@ -206,7 +230,8 @@ public class EmissionServiceBean implements EmissionService {
 					person.getCurrentAddress().setPhoneNumber(
 							params.getInfractor().getMobileNumber());
 					person.getCurrentAddress().setCity("Loja");
-					person.getCurrentAddress().setCountry(params.getInfractor().getCountry());
+					person.getCurrentAddress().setCountry(
+							params.getInfractor().getCountry());
 
 					resident = saveResident(person);
 
@@ -279,7 +304,7 @@ public class EmissionServiceBean implements EmissionService {
 				mb.setEmitter(emitter);
 				mb.setOriginator(emitter);
 
-				// start Adjunt
+				// start Adjunct
 				InfringementANTReference ant = new InfringementANTReference();
 				ant.setCitationNumber(params.getInfraction()
 						.getCitationNumber());
@@ -292,7 +317,7 @@ public class EmissionServiceBean implements EmissionService {
 				ant.setTransitAgent(findResidentByIdentificationNumber(params
 						.getInfraction().getIdentificationAgent()));
 				mb.setAdjunct(ant);
-				// end Adjunt
+				// end Adjunct
 
 				mb.setReference(params.getInfraction().getLiteralDescription());
 				mb.setDescription(params.getInfraction().getObservation());
@@ -485,12 +510,12 @@ public class EmissionServiceBean implements EmissionService {
 		}
 
 	}
-	
-	private BondDTO mapMuniciBondToBond(MunicipalBond mb){
+
+	private BondDTO mapMuniciBondToBond(MunicipalBond mb) {
 		final String patternDate = "dd/MM/yyyy";
 		final String patternDateTime = "dd/MM/yyyy' 'HH:mm:ss";
 		final String patternTime = "HH:mm:ss";
-				BondDTO bond = new BondDTO();
+		BondDTO bond = new BondDTO();
 		bond.setAddress(mb.getAddress());
 		bond.setApplyInterest(mb.getApplyInterest());
 		bond.setBalance(mb.getBalance());
@@ -500,19 +525,23 @@ public class EmissionServiceBean implements EmissionService {
 		bond.setCreationTime(DateUtils.format(mb.getCreationTime(), patternTime));
 		bond.setDescription(mb.getDescription());
 		bond.setDiscount(mb.getDiscount());
-		bond.setEmisionDate(DateUtils.format(mb.getEmisionDate(),patternDate));
-		bond.setEmisionPeriod(DateUtils.format(mb.getEmisionPeriod(), patternDate));
+		bond.setEmisionDate(DateUtils.format(mb.getEmisionDate(), patternDate));
+		bond.setEmisionPeriod(DateUtils.format(mb.getEmisionPeriod(),
+				patternDate));
 		bond.setEmisionTime(DateUtils.format(mb.getEmisionTime(), patternTime));
 		bond.setExempt(mb.getExempt());
-		bond.setExpirationDate(DateUtils.format(mb.getExpirationDate(), patternDate));
+		bond.setExpirationDate(DateUtils.format(mb.getExpirationDate(),
+				patternDate));
 		bond.setGroupingCode(mb.getGroupingCode());
 		bond.setId(mb.getId());
 		bond.setInterest(mb.getInterest());
 		bond.setInternalTramit(mb.getInternalTramit());
 		bond.setIsExpirationDateDefined(mb.getIsExpirationDateDefined());
 		bond.setIsNoPasiveSubject(mb.getIsNoPasiveSubject());
-		bond.setLiquidationDate(DateUtils.format(mb.getLiquidationDate(), patternDate));
-		bond.setLiquidationTime(DateUtils.format(mb.getLiquidationTime(), patternTime));
+		bond.setLiquidationDate(DateUtils.format(mb.getLiquidationDate(),
+				patternDate));
+		bond.setLiquidationTime(DateUtils.format(mb.getLiquidationTime(),
+				patternTime));
 		bond.setNonTaxableTotal(mb.getNonTaxableTotal());
 		bond.setNumber(mb.getNumber());
 		bond.setPaidTotal(mb.getPaidTotal());
@@ -527,8 +556,1132 @@ public class EmissionServiceBean implements EmissionService {
 		bond.setTaxableTotal(mb.getTaxableTotal());
 		bond.setTaxesTotal(mb.getTaxesTotal());
 		bond.setValue(mb.getValue());
-		
+
 		return bond;
 	}
 
+	@Override
+	public PreemissionServiceResponse generateEmissionOrderWithoutAdjunctWS(
+			AccountWithoutAdjunctRequest detailsEmission, User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		try {
+
+			PreemissionServiceResponse resp = new PreemissionServiceResponse();
+			Resident resident = residentService.find(detailsEmission
+					.getResidentIdentification());
+			if (resident == null) {
+				resp.setErrorMessage("Preemisión fallida. Contribuyente No Encontrado");
+				return resp;
+			}
+
+			Entry entry = revenueService.findEntryByCode(detailsEmission
+					.getAccountCode());
+			if (entry == null) {
+				resp.setErrorMessage("Preemisión fallida. Rubro No Encontrado");
+				return resp;
+			}
+
+			Date currentDate = java.util.Calendar.getInstance().getTime();
+			List<FiscalPeriod> fiscalPeriods = revenueService
+					.findFiscalPeriodCurrent(currentDate);
+
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+					&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
+
+			if (fiscalPeriodCurrent == null) {
+				resp.setErrorMessage("Preemisión fallida. Periódo Fiscal No Encontrado");
+				return resp;
+			}
+
+			Person emitter = findPersonFromUser(user.getId());
+
+			EntryValueItem entryValueItem = new EntryValueItem();
+			entryValueItem.setDescription(entry.getName());
+			entryValueItem.setServiceDate(currentDate);
+			entryValueItem.setAmount(BigDecimal.ONE);
+			entryValueItem.setMainValue(detailsEmission.getValue());
+
+			MunicipalBondStatus preEmitBondStatus = systemParameterService
+					.materialize(MunicipalBondStatus.class,
+							"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
+
+			MunicipalBond mb = revenueService.createMunicipalBond(resident,
+					entry, fiscalPeriodCurrent, entryValueItem, true);
+			if (mb.getResident().getCurrentAddress() != null) {
+				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+			}
+
+			mb.setEmitter(emitter);
+			mb.setOriginator(emitter);
+
+			// start Adjunct
+			/*
+			 * ANTReference ant = new ANTReference();
+			 * ant.setDocumentVisualizationsNumber(0);
+			 * ant.setNumberPlate(emisionDetail.getNumberPlate());
+			 * ant.setContraventionNumber
+			 * (emisionDetail.getContraventionNumber());
+			 * ant.setSpeeding(emisionDetail.getSpeeding());
+			 * ant.setVehicleType(emisionDetail.getVehicleType());
+			 * ant.setServiceType(emisionDetail.getServiceType());
+			 * 
+			 * ant.setInfractionDate(emisionDetail.getInfractionDate());
+			 * ant.setNotificationDate(emisionDetail.getNotificationDate());
+			 * ant.setCitationDate(emisionDetail.getInfractionDate());
+			 * 
+			 * ant.setSupportDocumentURL(emisionDetail.getSupportDocumentURL());
+			 * mb.setAdjunct(ant);
+			 */
+			// end Adjunct
+
+			mb.setReference(detailsEmission.getReference());
+			mb.setDescription(detailsEmission.getExplanation());
+
+			mb.setBondAddress(detailsEmission.getAddress());
+
+			mb.setServiceDate(new Date());
+			mb.setCreationTime(new Date());
+			mb.setGroupingCode(detailsEmission.getResidentIdentification());
+
+			mb.setBase(detailsEmission.getValue());
+
+			mb.setTimePeriod(entry.getTimePeriod());
+			mb.calculateValue();
+			mb.setMunicipalBondStatus(preEmitBondStatus);
+			mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
+			mb.setEmisionPeriod(findEmisionPeriod());
+
+			EmissionOrder eo = createEmisionOrder(emitter,
+					"Emision desde WS - Rubro: " + entry.getCode());
+			eo.add(mb);
+
+			EmissionOrder orderSaved = entityManager.merge(eo);
+
+			resp.setBondId(orderSaved.getMunicipalBonds().get(0).getId());
+			resp.setEmissionOrderId(orderSaved.getId());
+			resp.setError(Boolean.FALSE);
+
+			return resp;
+		} catch (NonUniqueIdentificationNumberException e) {
+			throw new TaxpayerNonUnique();
+		} catch (EntryDefinitionNotFoundException e) {
+			throw new EmissionOrderNotGenerate();
+		} catch (Exception e) {
+			throw new EmissionOrderNotSave();
+		}
+	}
+
+	private EmissionOrder createEmisionOrder(Person emisor, String description) {
+		EmissionOrder emissionOrder = new EmissionOrder();
+		emissionOrder.setServiceDate(new Date());
+		emissionOrder.setDescription(description);
+		emissionOrder.setEmisor(emisor);
+		return emissionOrder;
+	}
+
+	@Override
+	public PreemissionServiceResponse generateEmissionOrderBuildingPermitWS(
+			BuildingPermitRequest detailsEmission, Property property, User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		try {
+
+			PreemissionServiceResponse resp = new PreemissionServiceResponse();
+			Resident resident = residentService.find(detailsEmission
+					.getResidentIdentification());
+			if (resident == null) {
+				resp.setErrorMessage("Preemisión fallida. Contribuyente No Encontrado");
+				return resp;
+			}
+
+			if (property.getCurrentDomain().getResident().getId() != resident
+					.getId()) {
+				resp.setErrorMessage("Preemisión fallida. Propietario del predio no corresponde con contribuyente a preemitir");
+				return resp;
+			}
+
+			Entry entry = revenueService.findEntryByCode(detailsEmission
+					.getAccountCode());
+			if (entry == null) {
+				resp.setErrorMessage("Preemisión fallida. Rubro No Encontrado");
+				return resp;
+			}
+
+			Date currentDate = java.util.Calendar.getInstance().getTime();
+			List<FiscalPeriod> fiscalPeriods = revenueService
+					.findFiscalPeriodCurrent(currentDate);
+
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+					&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
+
+			if (fiscalPeriodCurrent == null) {
+				resp.setErrorMessage("Preemisión fallida. Periódo Fiscal No Encontrado");
+				return resp;
+			}
+
+			Person emitter = findPersonFromUser(user.getId());
+
+			EntryValueItem entryValueItem = new EntryValueItem();
+			entryValueItem.setDescription(entry.getName());
+			entryValueItem.setServiceDate(currentDate);
+			entryValueItem.setAmount(BigDecimal.ONE);
+			entryValueItem.setMainValue(detailsEmission.getValue());
+
+			// start Adjunct
+
+			String location = null;
+			if (property.getPropertyType().getId().equals(1L)) {
+				location = property.getLocation().getMainBlockLimit()
+						.getStreet().getName();
+			} else if (property.getPropertyType().getId().equals(2L)) {
+				if (property.getPropertyLocationType() == PropertyLocationType.SINAT) {
+					LocationPropertySinat lps = cadasterService
+							.findLocationPropertySinat(property.getId());
+					location = lps.getParishName() + " " + lps.getSectorName();
+				}
+			}
+			PropertyReference adjunct = new PropertyReference();
+			adjunct.setProperty(property);
+			adjunct.setLocation(location);
+			adjunct.setOwner(resident.getName());
+			adjunct.setCode(property.getCadastralCode());
+
+			// end Adjunct
+
+			MunicipalBondStatus preEmitBondStatus = systemParameterService
+					.materialize(MunicipalBondStatus.class,
+							"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
+
+			MunicipalBond mb = revenueService.createMunicipalBond(resident,
+					entry, fiscalPeriodCurrent, entryValueItem, true, adjunct);
+			if (mb.getResident().getCurrentAddress() != null) {
+				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+			}
+
+			mb.setEmitter(emitter);
+			mb.setOriginator(emitter);
+
+			mb.setReference(detailsEmission.getReference());
+			mb.setDescription(detailsEmission.getExplanation());
+
+			mb.setBondAddress(detailsEmission.getAddress());
+
+			mb.setServiceDate(new Date());
+			mb.setCreationTime(new Date());
+			mb.setGroupingCode(property.getPreviousCadastralCode() + " - "
+					+ property.getCadastralCode());
+
+			mb.setBase(detailsEmission.getValue());
+
+			mb.setTimePeriod(entry.getTimePeriod());
+			mb.calculateValue();
+			mb.setMunicipalBondStatus(preEmitBondStatus);
+			mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
+			mb.setEmisionPeriod(findEmisionPeriod());
+			mb.setAdjunct(adjunct);
+
+			EmissionOrder eo = createEmisionOrder(emitter,
+					"Emision desde WS - Rubro: " + entry.getCode());
+			eo.add(mb);
+
+			EmissionOrder orderSaved = entityManager.merge(eo);
+
+			resp.setBondId(orderSaved.getMunicipalBonds().get(0).getId());
+			resp.setEmissionOrderId(orderSaved.getId());
+			resp.setError(Boolean.FALSE);
+
+			return resp;
+		} catch (NonUniqueIdentificationNumberException e) {
+			throw new TaxpayerNonUnique();
+		} catch (EntryDefinitionNotFoundException e) {
+			throw new EmissionOrderNotGenerate();
+		} catch (Exception e) {
+			throw new EmissionOrderNotSave();
+		}
+	}
+
+	@Override
+	public PreemissionServiceResponse generateEmissionOrderApprovalPlansWS(
+			ApprovalPlansRequest detailsEmission, Property property, User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		try {
+
+			PreemissionServiceResponse resp = new PreemissionServiceResponse();
+			Resident resident = residentService.find(detailsEmission
+					.getResidentIdentification());
+			if (resident == null) {
+				resp.setErrorMessage("Preemisión fallida. Contribuyente No Encontrado");
+				return resp;
+			}
+
+			if (property.getCurrentDomain().getResident().getId() != resident
+					.getId()) {
+				resp.setErrorMessage("Preemisión fallida. Propietario del predio no corresponde con contribuyente a preemitir");
+				return resp;
+			}
+
+			Entry entry = revenueService.findEntryByCode(detailsEmission
+					.getAccountCode());
+			if (entry == null) {
+				resp.setErrorMessage("Preemisión fallida. Rubro No Encontrado");
+				return resp;
+			}
+
+			Date currentDate = java.util.Calendar.getInstance().getTime();
+			List<FiscalPeriod> fiscalPeriods = revenueService
+					.findFiscalPeriodCurrent(currentDate);
+
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+					&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
+
+			if (fiscalPeriodCurrent == null) {
+				resp.setErrorMessage("Preemisión fallida. Periódo Fiscal No Encontrado");
+				return resp;
+			}
+
+			Person emitter = findPersonFromUser(user.getId());
+
+			EntryValueItem entryValueItem = new EntryValueItem();
+			entryValueItem.setDescription(entry.getName());
+			entryValueItem.setServiceDate(currentDate);
+			entryValueItem.setAmount(BigDecimal.ONE);
+			entryValueItem.setMainValue(detailsEmission.getValue());
+
+			// start Adjunct
+
+			String location = null;
+			if (property.getPropertyType().getId().equals(1L)) {
+				location = property.getLocation().getMainBlockLimit()
+						.getStreet().getName();
+			} else if (property.getPropertyType().getId().equals(2L)) {
+				if (property.getPropertyLocationType() == PropertyLocationType.SINAT) {
+					LocationPropertySinat lps = cadasterService
+							.findLocationPropertySinat(property.getId());
+					location = lps.getParishName() + " " + lps.getSectorName();
+				}
+			}
+			PropertyReference adjunct = new PropertyReference();
+			adjunct.setProperty(property);
+			adjunct.setLocation(location);
+			adjunct.setOwner(resident.getName());
+			adjunct.setCode(property.getCadastralCode());
+
+			// end Adjunct
+
+			MunicipalBondStatus preEmitBondStatus = systemParameterService
+					.materialize(MunicipalBondStatus.class,
+							"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
+
+			MunicipalBond mb = revenueService.createMunicipalBond(resident,
+					entry, fiscalPeriodCurrent, entryValueItem, true, adjunct);
+			if (mb.getResident().getCurrentAddress() != null) {
+				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+			}
+
+			mb.setEmitter(emitter);
+			mb.setOriginator(emitter);
+
+			mb.setReference(detailsEmission.getReference());
+			mb.setDescription(detailsEmission.getExplanation());
+
+			mb.setBondAddress(detailsEmission.getAddress());
+
+			mb.setServiceDate(new Date());
+			mb.setCreationTime(new Date());
+			mb.setGroupingCode(property.getPreviousCadastralCode() + " - "
+					+ property.getCadastralCode());
+
+			mb.setBase(detailsEmission.getValue());
+
+			mb.setTimePeriod(entry.getTimePeriod());
+			mb.calculateValue();
+			mb.setMunicipalBondStatus(preEmitBondStatus);
+			mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
+			mb.setEmisionPeriod(findEmisionPeriod());
+
+			mb.setAdjunct(adjunct);
+
+			EmissionOrder eo = createEmisionOrder(emitter,
+					"Emision desde WS - Rubro: " + entry.getCode());
+			eo.add(mb);
+
+			EmissionOrder orderSaved = entityManager.merge(eo);
+
+			resp.setBondId(orderSaved.getMunicipalBonds().get(0).getId());
+			resp.setEmissionOrderId(orderSaved.getId());
+			resp.setError(Boolean.FALSE);
+
+			return resp;
+		} catch (NonUniqueIdentificationNumberException e) {
+			throw new TaxpayerNonUnique();
+		} catch (EntryDefinitionNotFoundException e) {
+			throw new EmissionOrderNotGenerate();
+		} catch (Exception e) {
+			throw new EmissionOrderNotSave();
+		}
+	}
+
+	@Override
+	public PreemissionServiceResponse generateEmissionOrderUrbanPropertyWS(
+			UrbanPropertyRequest detailsEmission, Property property, User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		try {
+
+			PreemissionServiceResponse resp = new PreemissionServiceResponse();
+			Resident resident = residentService.find(detailsEmission
+					.getResidentIdentification());
+			if (resident == null) {
+				resp.setErrorMessage("Preemisión fallida. Contribuyente No Encontrado");
+				return resp;
+			}
+
+			if (property.getCurrentDomain().getResident().getId() != resident
+					.getId()) {
+				resp.setErrorMessage("Preemisión fallida. Propietario del predio no corresponde con contribuyente a preemitir");
+				return resp;
+			}
+
+			if (!property.getPropertyType().getId().equals(1L)) {
+				resp.setErrorMessage("Preemisión fallida. Propiedad no es urbana");
+				return resp;
+			}
+
+			Entry entry = revenueService.findEntryByCode(detailsEmission
+					.getAccountCode());
+			if (entry == null) {
+				resp.setErrorMessage("Preemisión fallida. Rubro No Encontrado");
+				return resp;
+			}
+
+			Date date = new GregorianCalendar(detailsEmission.getYear(),
+					Calendar.JANUARY, 01).getTime();
+			List<FiscalPeriod> fiscalPeriods = revenueService
+					.findFiscalPeriodCurrent(date);
+
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+					&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
+
+			if (fiscalPeriodCurrent == null) {
+				resp.setErrorMessage("Preemisión fallida. Periódo Fiscal No Encontrado");
+				return resp;
+			}
+
+			Person emitter = findPersonFromUser(user.getId());
+
+			EntryValueItem entryValueItem = new EntryValueItem();
+			entryValueItem.setDescription(entry.getName());
+			entryValueItem.setServiceDate(date);
+			entryValueItem.setAmount(BigDecimal.ONE);
+			entryValueItem.setMainValue(detailsEmission.getValue());
+
+			// start Adjunct
+
+			PropertyAppraisal adjunct = new PropertyAppraisal();
+			adjunct.setCadastralCode(property.getCadastralCode());
+			adjunct.setEmitWithoutProperty(Boolean.FALSE);
+			adjunct.setPreviousCadastralCode(property
+					.getPreviousCadastralCode());
+
+			adjunct.setRealBuildingAppraisal(BigDecimal.ZERO);
+			adjunct.setRealLotAppraisal(BigDecimal.ZERO);
+
+			BigDecimal taxableBase = BigDecimal.ZERO;
+			if (detailsEmission.getChangeAppraisals()) {
+				adjunct.setChangeAppraisals(Boolean.TRUE);
+				taxableBase = detailsEmission.getLotAppraisal().add(
+						detailsEmission.getBuildingAppraisal());
+				taxableBase = taxableBase.setScale(2, RoundingMode.HALF_UP);
+				adjunct.setCommercialAppraisal(taxableBase);
+				adjunct.setBuildingAppraisal(detailsEmission
+						.getBuildingAppraisal());
+				adjunct.setLotAppraisal(detailsEmission.getLotAppraisal());
+				adjunct.setLotArea(detailsEmission.getLotArea());
+				adjunct.setConstructionArea(detailsEmission
+						.getConstructionArea());
+				adjunct.setRealLotAppraisal(property.getCurrentDomain()
+						.getLotAppraisal());
+				adjunct.setRealBuildingAppraisal(property.getCurrentDomain()
+						.getBuildingAppraisal());
+			} else {
+				adjunct.setChangeAppraisals(Boolean.FALSE);
+				adjunct.setCommercialAppraisal(property.getCurrentDomain()
+						.getCommercialAppraisal());
+				adjunct.setBuildingAppraisal(property.getCurrentDomain()
+						.getBuildingAppraisal());
+				adjunct.setLotAppraisal(property.getCurrentDomain()
+						.getLotAppraisal());
+				adjunct.setLotArea(property.getArea());
+			}
+
+			// adjunct.setExemptionValue(exemptionValue);
+			// adjunct.setImprovementAppraisal(improvementAppraisal); siempre
+			// null
+
+			adjunct.setProperty(property);
+
+			MunicipalBondStatus preEmitBondStatus = systemParameterService
+					.materialize(MunicipalBondStatus.class,
+							"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
+
+			MunicipalBond mb = revenueService.createMunicipalBond(resident,
+					entry, fiscalPeriodCurrent, entryValueItem, true, adjunct);
+			if (mb.getResident().getCurrentAddress() != null) {
+				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+			}
+
+			mb.setEmitter(emitter);
+			mb.setOriginator(emitter);
+
+			mb.setAdjunct(adjunct);
+
+			// end Adjunct
+
+			mb.setReference(detailsEmission.getReference());
+			mb.setDescription(detailsEmission.getExplanation());
+
+			mb.setBondAddress(detailsEmission.getAddress());
+
+			mb.setServiceDate(date);
+			mb.setCreationTime(new Date());
+			mb.setGroupingCode(property.getPreviousCadastralCode() + " - "
+					+ property.getCadastralCode());
+
+			mb.setBase(detailsEmission.getValue());
+
+			mb.setTimePeriod(entry.getTimePeriod());
+			mb.calculateValue();
+			mb.setMunicipalBondStatus(preEmitBondStatus);
+			mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
+			mb.setEmisionPeriod(findEmisionPeriod());
+
+			EmissionOrder eo = createEmisionOrder(emitter,
+					"Emision desde WS - Rubro: " + entry.getCode());
+			eo.add(mb);
+
+			EmissionOrder orderSaved = entityManager.merge(eo);
+
+			resp.setBondId(orderSaved.getMunicipalBonds().get(0).getId());
+			resp.setEmissionOrderId(orderSaved.getId());
+			resp.setError(Boolean.FALSE);
+
+			return resp;
+		} catch (NonUniqueIdentificationNumberException e) {
+			throw new TaxpayerNonUnique();
+		} catch (EntryDefinitionNotFoundException e) {
+			throw new EmissionOrderNotGenerate();
+		} catch (Exception e) {
+			throw new EmissionOrderNotSave();
+		}
+	}
+
+	@Override
+	public PreemissionServiceResponse generateEmissionOrderRuralPropertyWS(
+			RuralPropertyRequest detailsEmission, Property property, User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		try {
+
+			PreemissionServiceResponse resp = new PreemissionServiceResponse();
+			Resident resident = residentService.find(detailsEmission
+					.getResidentIdentification());
+			if (resident == null) {
+				resp.setErrorMessage("Preemisión fallida. Contribuyente No Encontrado");
+				return resp;
+			}
+
+			if (property.getCurrentDomain().getResident().getId() != resident
+					.getId()) {
+				resp.setErrorMessage("Preemisión fallida. Propietario del predio no corresponde con contribuyente a preemitir");
+				return resp;
+			}
+
+			if (!property.getPropertyType().getId().equals(2L)) {
+				resp.setErrorMessage("Preemisión fallida. Propiedad no es rustica");
+				return resp;
+			}
+
+			Entry entry = revenueService.findEntryByCode(detailsEmission
+					.getAccountCode());
+			if (entry == null) {
+				resp.setErrorMessage("Preemisión fallida. Rubro No Encontrado");
+				return resp;
+			}
+
+			Date date = new GregorianCalendar(detailsEmission.getYear(),
+					Calendar.JANUARY, 01).getTime();
+			List<FiscalPeriod> fiscalPeriods = revenueService
+					.findFiscalPeriodCurrent(date);
+
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+					&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
+
+			if (fiscalPeriodCurrent == null) {
+				resp.setErrorMessage("Preemisión fallida. Periódo Fiscal No Encontrado");
+				return resp;
+			}
+
+			Person emitter = findPersonFromUser(user.getId());
+
+			EntryValueItem entryValueItem = new EntryValueItem();
+			entryValueItem.setDescription(entry.getName());
+			entryValueItem.setServiceDate(date);
+			entryValueItem.setAmount(BigDecimal.ONE);
+			entryValueItem.setMainValue(detailsEmission.getValue());
+
+			// start Adjunct
+
+			PropertyAppraisal adjunct = new PropertyAppraisal();
+			adjunct.setCadastralCode(property.getCadastralCode());
+			adjunct.setEmitWithoutProperty(Boolean.FALSE);
+			adjunct.setPreviousCadastralCode(property
+					.getPreviousCadastralCode());
+
+			adjunct.setRealBuildingAppraisal(BigDecimal.ZERO);
+			adjunct.setRealLotAppraisal(BigDecimal.ZERO);
+			adjunct.setProperty(property);
+
+			BigDecimal taxableBase = BigDecimal.ZERO;
+			if (detailsEmission.getChangeAppraisals()) {
+				adjunct.setChangeAppraisals(Boolean.TRUE);
+				taxableBase = detailsEmission.getLotAppraisal()
+						.add(detailsEmission.getBuildingAppraisal())
+						.add(detailsEmission.getImprovementAppraisal());
+				taxableBase = taxableBase.setScale(2, RoundingMode.HALF_UP);
+				adjunct.setCommercialAppraisal(taxableBase);
+				adjunct.setBuildingAppraisal(detailsEmission
+						.getBuildingAppraisal());
+				adjunct.setLotAppraisal(detailsEmission.getLotAppraisal());
+				adjunct.setLotArea(detailsEmission.getLotArea());
+				adjunct.setImprovementAppraisal(detailsEmission
+						.getImprovementAppraisal());
+				adjunct.setConstructionArea(detailsEmission
+						.getConstructionArea());
+				adjunct.setRealLotAppraisal(property.getCurrentDomain()
+						.getLotAppraisal());
+				adjunct.setRealBuildingAppraisal(property.getCurrentDomain()
+						.getBuildingAppraisal());
+			} else {
+				adjunct.setChangeAppraisals(Boolean.FALSE);
+				adjunct.setCommercialAppraisal(property.getCurrentDomain()
+						.getCommercialAppraisal());
+				adjunct.setBuildingAppraisal(property.getCurrentDomain()
+						.getBuildingAppraisal());
+				adjunct.setLotAppraisal(property.getCurrentDomain()
+						.getLotAppraisal());
+				adjunct.setLotArea(property.getArea());
+			}
+
+			// adjunct.setExemptionValue(exemptionValue);
+			// adjunct.setImprovementAppraisal(improvementAppraisal); siempre
+			// null
+
+			adjunct.setProperty(property);
+			MunicipalBondStatus preEmitBondStatus = systemParameterService
+					.materialize(MunicipalBondStatus.class,
+							"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
+
+			MunicipalBond mb = revenueService.createMunicipalBond(resident,
+					entry, fiscalPeriodCurrent, entryValueItem, true, adjunct);
+			if (mb.getResident().getCurrentAddress() != null) {
+				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+			}
+
+			mb.setEmitter(emitter);
+			mb.setOriginator(emitter);
+
+			mb.setAdjunct(adjunct);
+
+			// end Adjunct
+
+			mb.setReference(detailsEmission.getReference());
+			mb.setDescription(detailsEmission.getExplanation());
+
+			mb.setBondAddress(detailsEmission.getAddress());
+
+			mb.setServiceDate(date);
+			mb.setCreationTime(new Date());
+			mb.setGroupingCode(property.getPreviousCadastralCode() + " - "
+					+ property.getCadastralCode());
+
+			mb.setBase(detailsEmission.getValue());
+
+			mb.setTimePeriod(entry.getTimePeriod());
+			mb.calculateValue();
+			mb.setMunicipalBondStatus(preEmitBondStatus);
+			mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
+			mb.setEmisionPeriod(findEmisionPeriod());
+
+			EmissionOrder eo = createEmisionOrder(emitter,
+					"Emision desde WS - Rubro: " + entry.getCode());
+			eo.add(mb);
+
+			EmissionOrder orderSaved = entityManager.merge(eo);
+
+			resp.setBondId(orderSaved.getMunicipalBonds().get(0).getId());
+			resp.setEmissionOrderId(orderSaved.getId());
+			resp.setError(Boolean.FALSE);
+
+			return resp;
+		} catch (NonUniqueIdentificationNumberException e) {
+			throw new TaxpayerNonUnique();
+		} catch (EntryDefinitionNotFoundException e) {
+			throw new EmissionOrderNotGenerate();
+		} catch (Exception e) {
+			throw new EmissionOrderNotSave();
+		}
+	}
+
+	@Override
+	public PreemissionServiceResponse generateEmissionOrderUnbuiltLotWS(
+			UnbuiltLotRequest detailsEmission, Property property, User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		try {
+
+			PreemissionServiceResponse resp = new PreemissionServiceResponse();
+			Resident resident = residentService.find(detailsEmission
+					.getResidentIdentification());
+			if (resident == null) {
+				resp.setErrorMessage("Preemisión fallida. Contribuyente No Encontrado");
+				return resp;
+			}
+
+			if (property.getCurrentDomain().getResident().getId() != resident
+					.getId()) {
+				resp.setErrorMessage("Preemisión fallida. Propietario del predio no corresponde con contribuyente a preemitir");
+				return resp;
+			}
+
+			Entry entry = revenueService.findEntryByCode(detailsEmission
+					.getAccountCode());
+			if (entry == null) {
+				resp.setErrorMessage("Preemisión fallida. Rubro No Encontrado");
+				return resp;
+			}
+
+			Date date = new GregorianCalendar(detailsEmission.getYear(),
+					Calendar.JANUARY, 01).getTime();
+			List<FiscalPeriod> fiscalPeriods = revenueService
+					.findFiscalPeriodCurrent(date);
+
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+					&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
+
+			if (fiscalPeriodCurrent == null) {
+				resp.setErrorMessage("Preemisión fallida. Periódo Fiscal No Encontrado");
+				return resp;
+			}
+
+			Person emitter = findPersonFromUser(user.getId());
+
+			EntryValueItem entryValueItem = new EntryValueItem();
+			entryValueItem.setDescription(entry.getName());
+			entryValueItem.setServiceDate(date);
+			entryValueItem.setAmount(BigDecimal.ONE);
+			entryValueItem.setMainValue(detailsEmission.getValue());
+
+			// start Adjunct
+
+			PropertyAppraisal adjunct = new PropertyAppraisal();
+			adjunct.setCadastralCode(property.getCadastralCode());
+			adjunct.setEmitWithoutProperty(Boolean.FALSE);
+			adjunct.setPreviousCadastralCode(property
+					.getPreviousCadastralCode());
+
+			adjunct.setRealBuildingAppraisal(BigDecimal.ZERO);
+			adjunct.setRealLotAppraisal(BigDecimal.ZERO);
+
+			BigDecimal taxableBase = BigDecimal.ZERO;
+			if (detailsEmission.getChangeAppraisals()) {
+				adjunct.setChangeAppraisals(Boolean.TRUE);
+				taxableBase = detailsEmission.getLotAppraisal().add(
+						detailsEmission.getBuildingAppraisal());
+
+				taxableBase = taxableBase.setScale(2, RoundingMode.HALF_UP);
+				adjunct.setCommercialAppraisal(taxableBase);
+				adjunct.setBuildingAppraisal(detailsEmission
+						.getBuildingAppraisal());
+				adjunct.setLotAppraisal(detailsEmission.getLotAppraisal());
+				adjunct.setLotArea(detailsEmission.getLotArea());
+
+				adjunct.setConstructionArea(detailsEmission
+						.getConstructionArea());
+				adjunct.setRealLotAppraisal(property.getCurrentDomain()
+						.getLotAppraisal());
+				adjunct.setRealBuildingAppraisal(property.getCurrentDomain()
+						.getBuildingAppraisal());
+			} else {
+				adjunct.setChangeAppraisals(Boolean.FALSE);
+				adjunct.setCommercialAppraisal(property.getCurrentDomain()
+						.getCommercialAppraisal());
+				adjunct.setBuildingAppraisal(property.getCurrentDomain()
+						.getBuildingAppraisal());
+				adjunct.setLotAppraisal(property.getCurrentDomain()
+						.getLotAppraisal());
+				adjunct.setLotArea(property.getArea());
+			}
+
+			// adjunct.setExemptionValue(exemptionValue);
+			// adjunct.setImprovementAppraisal(improvementAppraisal); siempre
+			// null
+
+			adjunct.setProperty(property);
+			MunicipalBondStatus preEmitBondStatus = systemParameterService
+					.materialize(MunicipalBondStatus.class,
+							"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
+
+			MunicipalBond mb = revenueService.createMunicipalBond(resident,
+					entry, fiscalPeriodCurrent, entryValueItem, true, adjunct);
+			if (mb.getResident().getCurrentAddress() != null) {
+				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+			}
+
+			mb.setEmitter(emitter);
+			mb.setOriginator(emitter);
+
+			mb.setAdjunct(adjunct);
+
+			// end Adjunct
+
+			mb.setReference(detailsEmission.getReference());
+			mb.setDescription(detailsEmission.getExplanation());
+
+			mb.setBondAddress(detailsEmission.getAddress());
+
+			mb.setServiceDate(date);
+			mb.setCreationTime(new Date());
+			mb.setGroupingCode(property.getPreviousCadastralCode() + " - "
+					+ property.getCadastralCode());
+
+			mb.setBase(detailsEmission.getValue());
+
+			mb.setTimePeriod(entry.getTimePeriod());
+			mb.calculateValue();
+			mb.setMunicipalBondStatus(preEmitBondStatus);
+			mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
+			mb.setEmisionPeriod(findEmisionPeriod());
+
+			EmissionOrder eo = createEmisionOrder(emitter,
+					"Emision desde WS - Rubro: " + entry.getCode());
+			eo.add(mb);
+
+			EmissionOrder orderSaved = entityManager.merge(eo);
+
+			resp.setBondId(orderSaved.getMunicipalBonds().get(0).getId());
+			resp.setEmissionOrderId(orderSaved.getId());
+			resp.setError(Boolean.FALSE);
+
+			return resp;
+		} catch (NonUniqueIdentificationNumberException e) {
+			throw new TaxpayerNonUnique();
+		} catch (EntryDefinitionNotFoundException e) {
+			throw new EmissionOrderNotGenerate();
+		} catch (Exception e) {
+			throw new EmissionOrderNotSave();
+		}
+	}
+
+	@Override
+	public PreemissionServiceResponse generateEmissionOrderUtilityWS(
+			UtilityRequest detailsEmission, Property property, User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		try {
+
+			PreemissionServiceResponse resp = new PreemissionServiceResponse();
+			Resident resident = residentService.find(detailsEmission
+					.getResidentIdentification());
+			if (resident == null) {
+				resp.setErrorMessage("Preemisión fallida. Contribuyente No Encontrado");
+				return resp;
+			}
+
+			/*
+			 * if (property.getCurrentDomain().getResident().getId() != resident
+			 * .getId()) { resp.setErrorMessage(
+			 * "Preemisión fallida. Propietario del predio no corresponde con contribuyente a preemitir"
+			 * ); return resp; }
+			 */
+
+			Entry entry = revenueService.findEntryByCode(detailsEmission
+					.getAccountCode());
+			if (entry == null) {
+				resp.setErrorMessage("Preemisión fallida. Rubro No Encontrado");
+				return resp;
+			}
+
+			Date currentDate = java.util.Calendar.getInstance().getTime();
+			List<FiscalPeriod> fiscalPeriods = revenueService
+					.findFiscalPeriodCurrent(currentDate);
+
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+					&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
+
+			if (fiscalPeriodCurrent == null) {
+				resp.setErrorMessage("Preemisión fallida. Periódo Fiscal No Encontrado");
+				return resp;
+			}
+
+			Person emitter = findPersonFromUser(user.getId());
+
+			EntryValueItem entryValueItem = new EntryValueItem();
+			entryValueItem.setDescription(entry.getName());
+			// entryValueItem.setServiceDate(date);
+			entryValueItem.setAmount(BigDecimal.ONE);
+			entryValueItem.setMainValue(detailsEmission.getValue());
+
+			DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			// start Adjunct
+
+			DomainTransfer adjunct = new DomainTransfer();
+			adjunct.setAddress(detailsEmission.getPropertyAddress());
+			adjunct.setBuyer(detailsEmission.getBuyer());
+			adjunct.setBuyingDate(format.parse(detailsEmission
+					.getPurchaseDate()));
+			adjunct.setBuyingTransactionValue(detailsEmission
+					.getPurchaseValue());
+			adjunct.setCadastralCode(detailsEmission.getCadastralCode());
+			adjunct.setEmitWithoutReport(Boolean.TRUE);
+			if (detailsEmission.getApply50Discount()) {
+				adjunct.setHalfDiscountAmount(detailsEmission
+						.getValueDiscount());
+			}
+			adjunct.setImprovementsContribution(detailsEmission.getCemValue());
+			adjunct.setIsHalfDiscount(detailsEmission.getApply50Discount());
+			adjunct.setMortgageDiscount(detailsEmission.getMortgageDiscount());
+			adjunct.setNewBuildingValue(detailsEmission.getNewBuild());
+			adjunct.setNotaryNumber(detailsEmission.getNotaryNumber());
+			adjunct.setPreviousCadastralCode(detailsEmission
+					.getPreviousCadastralCode());
+			adjunct.setSeller(detailsEmission.getSeller());
+			// OJO ver si se permite ingresar otra fecha
+			// adjunct.setTransactionDate(transactionDate);
+			adjunct.setTransactionValue(detailsEmission.getSaleValue());
+
+			// adjunct.set
+
+			MunicipalBondStatus preEmitBondStatus = systemParameterService
+					.materialize(MunicipalBondStatus.class,
+							"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
+
+			MunicipalBond mb = revenueService.createMunicipalBond(resident,
+					entry, fiscalPeriodCurrent, entryValueItem, true, adjunct);
+			if (mb.getResident().getCurrentAddress() != null) {
+				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+			}
+
+			mb.setEmitter(emitter);
+			mb.setOriginator(emitter);
+
+			mb.setAdjunct(adjunct);
+
+			// end Adjunct
+
+			mb.setReference(detailsEmission.getReference());
+			mb.setDescription(detailsEmission.getExplanation());
+
+			mb.setBondAddress(detailsEmission.getAddress());
+
+			mb.setServiceDate(new Date());
+			mb.setCreationTime(new Date());
+			mb.setGroupingCode(property.getPreviousCadastralCode() + " - "
+					+ property.getCadastralCode());
+
+			mb.setBase(detailsEmission.getValue());
+
+			mb.setTimePeriod(entry.getTimePeriod());
+			mb.calculateValue();
+			mb.setMunicipalBondStatus(preEmitBondStatus);
+			mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
+			mb.setEmisionPeriod(findEmisionPeriod());
+
+			EmissionOrder eo = createEmisionOrder(emitter,
+					"Emision desde WS - Rubro: " + entry.getCode());
+			eo.add(mb);
+
+			EmissionOrder orderSaved = entityManager.merge(eo);
+
+			resp.setBondId(orderSaved.getMunicipalBonds().get(0).getId());
+			resp.setEmissionOrderId(orderSaved.getId());
+			resp.setError(Boolean.FALSE);
+
+			return resp;
+		} catch (NonUniqueIdentificationNumberException e) {
+			throw new TaxpayerNonUnique();
+		} catch (EntryDefinitionNotFoundException e) {
+			throw new EmissionOrderNotGenerate();
+		} catch (Exception e) {
+			throw new EmissionOrderNotSave();
+		}
+	}
+
+	@Override
+	public PreemissionServiceResponse generateEmissionOrderAlcabalaWS(
+			AlcabalaRequest detailsEmission, Property property, User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
+		try {
+
+			PreemissionServiceResponse resp = new PreemissionServiceResponse();
+			Resident resident = residentService.find(detailsEmission
+					.getResidentIdentification());
+			if (resident == null) {
+				resp.setErrorMessage("Preemisión fallida. Contribuyente No Encontrado");
+				return resp;
+			}
+
+			/*
+			 * if (property.getCurrentDomain().getResident().getId() != resident
+			 * .getId()) { resp.setErrorMessage(
+			 * "Preemisión fallida. Propietario del predio no corresponde con contribuyente a preemitir"
+			 * ); return resp; }
+			 */
+
+			Entry entry = revenueService.findEntryByCode(detailsEmission
+					.getAccountCode());
+			if (entry == null) {
+				resp.setErrorMessage("Preemisión fallida. Rubro No Encontrado");
+				return resp;
+			}
+
+			Date currentDate = java.util.Calendar.getInstance().getTime();
+			List<FiscalPeriod> fiscalPeriods = revenueService
+					.findFiscalPeriodCurrent(currentDate);
+
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+					&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
+
+			if (fiscalPeriodCurrent == null) {
+				resp.setErrorMessage("Preemisión fallida. Periódo Fiscal No Encontrado");
+				return resp;
+			}
+
+			Person emitter = findPersonFromUser(user.getId());
+
+			EntryValueItem entryValueItem = new EntryValueItem();
+			entryValueItem.setDescription(entry.getName());
+			// entryValueItem.setServiceDate(date);
+			entryValueItem.setAmount(BigDecimal.ONE);
+			entryValueItem.setMainValue(detailsEmission.getValue());
+
+			// start Adjunct
+
+			DomainTransfer adjunct = new DomainTransfer();
+			adjunct.setAddress(detailsEmission.getPropertyAddress());
+			adjunct.setBuyer(detailsEmission.getBuyer());
+
+			adjunct.setCadastralCode(detailsEmission.getCadastralCode());
+			adjunct.setEmitWithoutReport(Boolean.TRUE);
+			if (detailsEmission.getIsHalfDiscount()) {
+				adjunct.setHalfDiscountAmount(detailsEmission
+						.getHalfDiscountAmount());
+			}
+			adjunct.setIsHalfDiscount(detailsEmission.getIsHalfDiscount());
+			adjunct.setMortgageDiscount(detailsEmission.getMortgageDiscount());
+
+			adjunct.setPreviousCadastralCode(detailsEmission
+					.getPreviousCadastralCode());
+			adjunct.setSeller(detailsEmission.getSeller());
+			// OJO ver si se permite ingresar otra fecha
+			// adjunct.setTransactionDate(transactionDate);
+			adjunct.setTransactionValue(detailsEmission
+					.getAlcabalaTransactionValue());
+
+			// adjunct.setEarlyTransferDiscount();
+
+			EarlyTransferDiscount earlyTransferDiscount = null;
+
+			for (int i = 0; i < EarlyTransferDiscount.values().length; i++) {
+
+				BigDecimal enumPercent = BigDecimal
+						.valueOf(EarlyTransferDiscount.values()[i]
+								.getPercentage());
+				if (enumPercent.compareTo(detailsEmission
+						.getEarlyTransferDiscount()) == 0) {
+					earlyTransferDiscount = EarlyTransferDiscount.values()[i];
+					break;
+				}
+
+			}
+
+			if (earlyTransferDiscount == null) {
+				resp.setErrorMessage("Preemisión fallida. Descuento no existente");
+				return resp;
+			}
+
+			adjunct.setEarlyTransferDiscount(earlyTransferDiscount);
+
+			// end Adjunct
+
+			MunicipalBondStatus preEmitBondStatus = systemParameterService
+					.materialize(MunicipalBondStatus.class,
+							"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
+
+			MunicipalBond mb = revenueService.createMunicipalBond(resident,
+					entry, fiscalPeriodCurrent, entryValueItem, true, adjunct);
+			if (mb.getResident().getCurrentAddress() != null) {
+				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+			}
+
+			mb.setEmitter(emitter);
+			mb.setOriginator(emitter);
+			
+			mb.setAdjunct(adjunct);
+
+			mb.setReference(detailsEmission.getReference());
+			mb.setDescription(detailsEmission.getExplanation());
+
+			mb.setBondAddress(detailsEmission.getAddress());
+
+			mb.setServiceDate(new Date());
+			mb.setCreationTime(new Date());
+			mb.setGroupingCode(property.getPreviousCadastralCode() + " - "
+					+ property.getCadastralCode());
+
+			mb.setBase(detailsEmission.getValue());
+
+			mb.setTimePeriod(entry.getTimePeriod());
+			mb.calculateValue();
+			mb.setMunicipalBondStatus(preEmitBondStatus);
+			mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
+			mb.setEmisionPeriod(findEmisionPeriod());
+
+			EmissionOrder eo = createEmisionOrder(emitter,
+					"Emision desde WS - Rubro: " + entry.getCode());
+			eo.add(mb);
+
+			EmissionOrder orderSaved = entityManager.merge(eo);
+
+			resp.setBondId(orderSaved.getMunicipalBonds().get(0).getId());
+			resp.setEmissionOrderId(orderSaved.getId());
+			resp.setError(Boolean.FALSE);
+
+			return resp;
+		} catch (NonUniqueIdentificationNumberException e) {
+			throw new TaxpayerNonUnique();
+		} catch (EntryDefinitionNotFoundException e) {
+			throw new EmissionOrderNotGenerate();
+		} catch (Exception e) {
+			throw new EmissionOrderNotSave();
+		}
+	}
 }
