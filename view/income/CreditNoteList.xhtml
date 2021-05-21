@@ -162,6 +162,16 @@
 							action="#{creditNoteHome.endorseCreditNote(_creditNote)}"
 							rendered="#{_creditNote.isActive}">							
 						</a:commandButton>
+						
+						<a:commandButton value="Anular"
+							id="creditNoteDisabled" ajaxSingle="true"
+							action="#{creditNoteHome.prepareToDisabled(_creditNote)}"
+							rendered="#{_creditNote.isActive and creditNoteHome.hasRole('ELECTRONIC_CREDIT_NOTE_UPDATE_ROL')}"
+							disabled="#{_creditNote.availableAmount != _creditNote.value}"
+							reRender="confirmPanelSelected"
+							eventsQueue="gimQueue"
+							oncomplete="Richfaces.showModalPanel('confirmPanelSelected',{width:350, height:300})">							
+						</a:commandButton>
 									
 					</rich:column>
 				</rich:dataTable>
@@ -197,6 +207,50 @@
 			</s:link>
 
 		</div>
+		
+		<rich:modalPanel id="confirmPanelSelected" width="350" height="300">
+			<f:facet name="header">Anulación de Nota de Credito</f:facet>
+			<h:form id="confirmPanelForm">
+				<h:panelGrid>
+					<s:decorate id="numberFieldSelected"
+						template="../layout/display.xhtml">
+						<ui:define name="label">Nota de Crédito:</ui:define>
+						<h:outputText id="creditNoteId"
+							value="#{creditNoteHome.selectedToDisabled.id}"/>
+					</s:decorate>
+					
+					<s:decorate id="valueFieldSelected"
+						template="../layout/display.xhtml">
+						<ui:define name="label">Valor:</ui:define>
+						<h:outputText id="creditNoteValue"
+							value="#{creditNoteHome.selectedToDisabled.value}"/>
+					</s:decorate>
+				
+					<s:decorate id="conceptFieldSelected"
+						template="../layout/display.xhtml">
+						<ui:define name="label">Razón:</ui:define>
+						<h:inputTextarea id="detail" cols="40" rows="6"
+							value="#{creditNoteHome.reasonToDisabled}" required="true" >
+							<a:support event="onblur" reRender="conceptFieldSelected"></a:support>
+						</h:inputTextarea>
+					</s:decorate>
+
+					<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="disabledButton"
+								action="#{creditNoteHome.disabledCreditNote()}"
+								value="Anular" ajaxSingle="true"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelSelected\');' : ''}"
+								reRender="confirmPanelSelected, creditNoteList" />
+							<a:commandButton id="exitButton"
+								value="Salir" ajaxSingle="true"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelSelected\');' : ''}"
+								reRender="confirmPanelSelected, creditNoteList" />
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
 
 	</ui:define>
 

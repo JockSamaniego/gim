@@ -106,19 +106,18 @@
 					<ui:define name="label">#{messages['creditNote.value']}:</ui:define>
 					<h:inputText id="value" value="#{creditNoteHome.instance.value}"
 						required="true" size="15"
-						disabled="true">
-<!-- 						disabled="#{creditNoteHome.managed}" -->
+						disabled="#{creditNoteHome.managed}" >
 						<f:convertNumber
 							maxFractionDigits="#{messages['common.maxFractionDigits']}"
 							minFractionDigits="#{messages['common.minFractionDigits']}" />
+						<a:support event="onblur" action="#{creditNoteHome.setAvailableAmount()}" ajaxSingle="true" reRender="availableAmountField"></a:support>
 					</h:inputText>
 				</s:decorate>
 				
 				<s:decorate id="availableAmountField" template="../layout/edit.xhtml">
 					<ui:define name="label">#{messages['creditNote.availableAmount']}:</ui:define>
 					<h:inputText id="availableAmount" value="#{creditNoteHome.instance.availableAmount}"
-						size="15"
-						disabled="true">
+						size="15" disabled="true">
 						<f:convertNumber
 							maxFractionDigits="#{messages['common.maxFractionDigits']}"
 							minFractionDigits="#{messages['common.minFractionDigits']}" />

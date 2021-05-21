@@ -5,6 +5,8 @@
 	
 	<begin-conversation join="true"/>
 	
+	<action execute="#{creditNoteHome.chargeValues()}"/>
+	
    <param name="firstResult" value="#{creditNoteList.firstResult}"/>
    <param name="sort" value="#{creditNoteList.orderColumn}"/>
    <param name="dir" value="#{creditNoteList.orderDirection}"/>
