@@ -163,12 +163,12 @@ public class PaymentServiceBean implements PaymentService {
 		String identificationNumber = request.getIdentificationNumber();
 		
 		// rfam 2021-05-03 ML-JC-2021-009-DI
-		if(avoidPaymentEntry(identificationNumber)) {
-			serverLog.setMethodCompleted(false);
-			serverLog.setCodeError("PayoutNotAllowed - costa procesal");
-			em.persist(serverLog);
-			throw new PayoutNotAllowed();
-		}
+//		if(avoidPaymentEntry(identificationNumber)) {
+//			serverLog.setMethodCompleted(false);
+//			serverLog.setCodeError("PayoutNotAllowed - costa procesal");
+//			em.persist(serverLog);
+//			throw new PayoutNotAllowed();
+//		}
 		
 		//rfarmijosm 2017-02-06 se copia el codigo de jock de otro branch, impedir pagos con alerta por ws
 		//Boolean AlertPending = ;
@@ -470,12 +470,15 @@ public class PaymentServiceBean implements PaymentService {
 
 	@SuppressWarnings("unchecked")
 	private List<Bond> findPendingBonds(Long taxpayerId) {
+		String entries = systemParameterService.findParameter("AVOID_PAYMENT_ENTRIES");
+		List<Long> entryList = GimUtils.convertStringWithCommaToListLong(entries);
 		Long pendingBondStatusId = systemParameterService
 				.findParameter(IncomeServiceBean.PENDING_BOND_STATUS);
-		Query query = em.createNamedQuery("Bond.findByStatusAndResidentId");
+		Query query = em.createNamedQuery("Bond.findByStatusAndResidentIdForWS");
 		query.setParameter("residentId", taxpayerId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("pendingBondStatusId", pendingBondStatusId);
+		query.setParameter("entries", entryList);
 		List<Bond> bonds = query.getResultList();
 		// System.out.println("RECORRIENDO RESULTADOS");
 		/*for (Bond bond : bonds) {

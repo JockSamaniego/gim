@@ -93,12 +93,12 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 		String identificationNumber = request.getIdentificationNumber();
 		
 		// rfam 2021-05-03 ML-JC-2021-009-DI
-		if(avoidPaymentEntry(identificationNumber)) {
-			statement.setMessage("Costas procesales, debe acercarse al Municipio de Loja");
-			statement.setCode("ML.FS.7006");
-			persisBankingEntityLog(false, statement.toString());
-			return statement;
-		}
+//		if(avoidPaymentEntry(identificationNumber)) {
+//			statement.setMessage("Costas procesales, debe acercarse al Municipio de Loja");
+//			statement.setCode("ML.FS.7006");
+//			persisBankingEntityLog(false, statement.toString());
+//			return statement;
+//		}
 
 		if (controlAlertResident(identificationNumber)) {
 			statement
@@ -583,12 +583,15 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 	}
 
 	private List<Bond> findPendingBonds(Long taxpayerId) {
+		String entries = systemParameterService.findParameter("AVOID_PAYMENT_ENTRIES");
+		List<Long> entryList = GimUtils.convertStringWithCommaToListLong(entries);
 		Long pendingBondStatusId = systemParameterService
 				.findParameter(IncomeServiceBean.PENDING_BOND_STATUS);
-		Query query = em.createNamedQuery("Bond.findByStatusAndResidentId");
+		Query query = em.createNamedQuery("Bond.findByStatusAndResidentIdForWS");
 		query.setParameter("residentId", taxpayerId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("pendingBondStatusId", pendingBondStatusId);
+		query.setParameter("entries", entryList);
 		List<Bond> bonds = query.getResultList();
 
 		return bonds;

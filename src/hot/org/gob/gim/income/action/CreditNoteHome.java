@@ -733,6 +733,7 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 		}
 		
 		public Boolean hasRole(String roleKey) {
+			systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
 			String role = systemParameterService.findParameter(roleKey);
 			if (role != null) {
 				return userSession.getUser().hasRole(role);
@@ -745,18 +746,16 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 		}
 		
 		public void disabledCreditNote(){
-			this.selectedToDisabled.setIsActive(Boolean.FALSE);
-			this.selectedToDisabled.setDescription(this.reasonToDisabled);
-			for(MunicipalBond mb : this.selectedToDisabled.getMunicipalBonds()){
-				mb.setCreditNote(null);
+			if(this.selectedToDisabled.getAvailableAmount().compareTo(this.selectedToDisabled.getValue()) == 0){
+				this.selectedToDisabled.setIsActive(Boolean.FALSE);
+				this.selectedToDisabled.setDescription(this.reasonToDisabled);
+				for(MunicipalBond mb : this.selectedToDisabled.getMunicipalBonds()){
+					mb.setCreditNote(null);
+				}
+				super.update();
 			}
-			super.update();
 		}
-		
-		public void chargeValues(){
-			systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
-		}
-		
+				
 		public void prepareToDisabled(CreditNote _creditNote){
 			this.selectedToDisabled = _creditNote;
 		}

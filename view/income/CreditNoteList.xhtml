@@ -166,7 +166,7 @@
 						<a:commandButton value="Anular"
 							id="creditNoteDisabled" ajaxSingle="true"
 							action="#{creditNoteHome.prepareToDisabled(_creditNote)}"
-							rendered="#{_creditNote.isActive and creditNoteHome.hasRole('ELECTRONIC_CREDIT_NOTE_UPDATE_ROL')}"
+							rendered="#{_creditNote.isActive and creditNoteHome.hasRole('ELECTRONIC_CREDIT_NOTE_DISABLED_ROL')}"
 							disabled="#{_creditNote.availableAmount != _creditNote.value}"
 							reRender="confirmPanelSelected"
 							eventsQueue="gimQueue"
