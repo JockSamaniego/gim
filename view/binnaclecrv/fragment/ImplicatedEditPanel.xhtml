@@ -1,0 +1,153 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich">
+
+    <rich:modalPanel id="implicatedEditPanel" width="800" height="600">
+        <f:facet name="header">
+            <h:panelGroup>
+                <h:outputText value="#{binnacleCRVHome.implicated.id != null ? messages['common.edit'] : messages['common.create']} #{messages['implicated']}"></h:outputText>
+            </h:panelGroup>
+        </f:facet>
+        <f:facet name="controls">
+            <h:panelGroup>
+                <h:graphicImage value="/img/error.gif" style="cursor:pointer"
+                    id="hidelinkImplicatedPanel" />
+                <rich:componentControl for="implicatedEditPanel" attachTo="hidelinkImplicatedPanel"
+                    operation="hide" event="onclick" />
+            </h:panelGroup>
+        </f:facet>
+
+        <h:form id="implicatedItem" styleClass="edit">
+                <rich:panel style="height:35px; width:100%; overflow:auto;">
+                    <rich:messages id="messagesImplicated" errorClass="errors" />
+                </rich:panel>
+
+                <h:panelGrid columns="2" width="100%">
+                    <s:decorate id="identificationFieldImplicated" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['implicated.identification']}</ui:define>
+                        <h:inputText id="identificationImplicated" required="true" maxlength="20" ajaxSingle="true"
+                            value="#{binnacleCRVHome.implicated.identification}" >
+                            <a:support event="onblur" reRender="identificationFieldImplicated"
+                                ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:inputText>
+                        <a:commandButton id="searchImplicated" 
+                            action="#{binnacleCRVHome.searchImplicated()}"
+                            reRender="implicatedItem, messages" ajaxSingle="true"
+                            eventsQueue="gimEventsQueue" 
+                            value="#{messages['common.search']}" />
+                    </s:decorate>
+                
+                    <s:decorate id="licensePlateFieldImplicated" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['implicated.licensePlate']}</ui:define>
+                        <h:inputText id="licensePlateImplicated" required="true" maxlength="20" ajaxSingle="true"
+                            value="#{binnacleCRVHome.implicated.licensePlate}" >
+                            <a:support event="onblur" reRender="licensePlateFieldImplicated"
+                                ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:inputText>
+                        <a:commandButton id="searchVehicleImplicated" 
+                            action="#{binnacleCRVHome.searchVehicleImplicated()}"
+                            reRender="implicatedItem, messages" ajaxSingle="true"
+                            eventsQueue="gimEventsQueue" 
+                            value="#{messages['common.search']}" />
+                    </s:decorate>
+                
+                </h:panelGrid>
+                <h:panelGrid columns="3" width="100%">
+                    <s:decorate id="itemIdentificationField" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['implicated.identification']}:</ui:define>
+                        <h:inputText id="itemIdentification" required="true"  
+                            value="#{binnacleCRVHome.implicated.identification}" />
+                    </s:decorate>
+
+                    <s:decorate id="itemNameField" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['implicated.name']}:</ui:define>
+                        <h:inputText id="itemName" required="true" 
+                            value="#{binnacleCRVHome.implicated.name}" />
+                    </s:decorate>
+
+                    <s:decorate id="itemLicenseTypeField" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['implicated.licenseType']}:</ui:define>
+                        <h:inputText id="itemLicenseType" required="true"  
+                            value="#{binnacleCRVHome.implicated.licenseType}" />
+                    </s:decorate>
+
+                    <s:decorate id="itemOrigenField" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['implicated.origen']}:</ui:define>
+                        <h:inputText id="itemOrigen" required="true"  
+                            value="#{binnacleCRVHome.implicated.origen}" />
+                    </s:decorate>
+
+                    <s:decorate id="itemAgeField" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['implicated.age']}:</ui:define>
+                        <h:inputText id="itemAge" required="true"  
+                            value="#{binnacleCRVHome.implicated.age}" />
+                    </s:decorate>
+
+                    <s:decorate id="itemAlcoholicInfluenceField" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['implicated.alcoholicInfluence']}:</ui:define>
+                        <h:selectBooleanCheckbox value="#{binnacleCRVHome.implicated.alcoholicInfluence}" />
+                    </s:decorate>
+
+                    <s:decorate id="itemPersonArrestedField" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['implicated.personArrested']}:</ui:define>
+                        <h:selectBooleanCheckbox value="#{binnacleCRVHome.implicated.personArrested}" />
+                    </s:decorate>
+
+                    <s:decorate id="itemResumeField" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['implicated.resumeVehicle']}:</ui:define>
+                        <h:inputText id="itemResume" required="true"  
+                            value="#{binnacleCRVHome.implicated.resumeVehicle}" />
+                    </s:decorate>
+
+                    <s:decorate id="itemVehicleArrestedField" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['implicated.vehicleArrested']}:</ui:define>
+                        <h:selectBooleanCheckbox value="#{binnacleCRVHome.implicated.vehicleArrested}" />
+                    </s:decorate>
+
+                </h:panelGrid>
+                
+                <h:panelGrid width="100%" >
+                    <s:decorate id="itemFreeInterviewField" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['implicated.freeInterview']}:</ui:define>
+                        <h:inputTextarea id="itemFreeInterview" required="true" rows="5" cols="100"
+                            value="#{binnacleCRVHome.implicated.freeInterview}" />
+                    </s:decorate>
+                </h:panelGrid>
+
+<!--             <h:panelGrid width="100%" rendered="#{binnacleCRVHome.hasJudicialDocument}">
+                <s:decorate id="textEditorImplicated" template="../../layout/vertical-edit.xhtml">
+                    <ui:define name="label">#{messages['implicated.freeInterview']}:</ui:define>
+                    <rich:editor id="editorImplicated" autoResize="true" width="650" height="200" required="true" 
+                        toolbar="full" value="#{binnacleCRVHome.implicated.freeInterview}" 
+                        style="margin-center: 1em; ">
+                    </rich:editor>
+                </s:decorate>
+            </h:panelGrid>
+ -->
+            <div class="actionButtons">
+                <a:commandButton 
+                    action="#{binnacleCRVHome.addImplicatedAccidentPart()}"
+                    value="#{messages['common.accept']}" 
+                    reRender="vehicleImplicatedsAPPanel, messagesImplicated"
+                    oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'implicatedEditPanel\');' : ''}" />
+
+                <a:commandButton 
+                    ajaxSingle="true" 
+                    value="#{messages['common.quit']}"
+                    reRender="vehicleImplicatedsAPPanel"
+                    oncomplete="Richfaces.hideModalPanel('implicatedEditPanel');"
+                    bypassUpdates="true" />
+            </div>
+            
+        </h:form>
+
+    </rich:modalPanel>
+
+</ui:composition>

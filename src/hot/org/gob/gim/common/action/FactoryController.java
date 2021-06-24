@@ -18,6 +18,13 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.framework.EntityController;
 
+import ec.gob.gim.binnaclecrv.model.AdmissionMean;
+import ec.gob.gim.binnaclecrv.model.AdmissionType;
+import ec.gob.gim.binnaclecrv.model.BinnacleCRVCrane;
+import ec.gob.gim.binnaclecrv.model.DocumentTypeBinnacleCRV;
+import ec.gob.gim.binnaclecrv.model.RoadBinnacleCRV;
+import ec.gob.gim.binnaclecrv.model.SemaphoreBinnacleCRV;
+import ec.gob.gim.binnaclecrv.model.SkyBinnacleCRV;
 import ec.gob.gim.cadaster.model.AffectationFactor;
 import ec.gob.gim.cadaster.model.CompassPoint;
 import ec.gob.gim.cadaster.model.DispatchReasonType;
@@ -801,4 +808,48 @@ public class FactoryController  extends EntityController{
 		return (List<AffectationFactor>) query.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Factory("admissionTypes")
+	public List<AdmissionType> admissionTypes() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"AdmissionType.findAllActive");
+		return (List<AdmissionType>) query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Factory("admissionMeans")
+	public List<AdmissionMean> admissionMeans() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"AdmissionMean.findAllActive");
+		return (List<AdmissionMean>) query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Factory("binnacleCRVCranes")
+	public List<BinnacleCRVCrane> binnacleCRVCranes() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"BinnacleCRVCrane.findAllActive");
+		return (List<BinnacleCRVCrane>) query.getResultList();
+	}
+
+	@Factory("documentTypesBinnacleCRV")
+	public List<DocumentTypeBinnacleCRV> loadDocumentTypesBinnacleCRV() {
+		return Arrays.asList(DocumentTypeBinnacleCRV.values());
+	}
+	
+	@Factory("skiesBinnacleCRV")
+	public List<SkyBinnacleCRV> loadSkiesBinnacleCRV() {
+		return Arrays.asList(SkyBinnacleCRV.values());
+	}
+	
+	@Factory("semaphoresBinnacleCRV")
+	public List<SemaphoreBinnacleCRV> loadSemophoresBinnacleCRV() {
+		return Arrays.asList(SemaphoreBinnacleCRV.values());
+	}
+	
+	@Factory("roadsBinnacleCRV")
+	public List<RoadBinnacleCRV> loadRoadsBinnacleCRV() {
+		return Arrays.asList(RoadBinnacleCRV.values());
+	}
+	
 }

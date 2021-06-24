@@ -1,0 +1,210 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:rich="http://richfaces.org/rich">
+
+    <f:facet name="header">#{messages['binnacleCRV.admissionTab']}</f:facet>
+
+    <rich:panel>
+        <f:facet name="header">#{messages['binnacleCRV.generalData']}</f:facet>
+        
+        <s:decorate id="admissionDateField" template="../../layout/edit.xhtml">
+             <ui:define name="label">#{messages['binnacleCRV.admissionDate']}:</ui:define>
+             <rich:calendar id="admissionDate" 
+                  value="#{binnacleCRVHome.instance.admissionDate}"
+                  enableManualInput="false" required="true" ajaxSingle="true" 
+                  datePattern="yyyy-MM-dd"/>
+        </s:decorate>
+        
+        <s:decorate>
+            <h:outputLabel
+                value="Motivo de Ingreso:"
+                style="font-size: 16px; font-weight:bold;" />
+        </s:decorate>
+
+        <h:panelGrid columns="3">
+            <s:decorate id="motiveArticleField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.motiveArticle']}</ui:define>
+                <h:inputText id="motiveArticle" required="true" maxlength="20"
+                    value="#{binnacleCRVHome.instance.motiveArticle}" />
+            </s:decorate>
+
+            <s:decorate id="motiveNumberField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.motiveNumber']}</ui:define>
+                <h:inputText id="motiveNumber" required="true" maxlength="20"
+                    value="#{binnacleCRVHome.instance.motiveNumber}" />
+            </s:decorate>
+
+            <s:decorate id="motiveLiteralField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.motiveLiteral']}</ui:define>
+                <h:inputText id="motiveLiteral" required="true" maxlength="20" 
+                    value="#{binnacleCRVHome.instance.motiveLiteral}" />
+            </s:decorate>
+
+            <s:decorate id="motiveResolutionField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.motiveResolution']}</ui:define>
+                <h:inputText id="motiveResolution" maxlength="30" 
+                    value="#{binnacleCRVHome.instance.motiveResolution}" />
+            </s:decorate>
+
+            <s:decorate id="motiveAuthorityField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.motiveAuthority']}</ui:define>
+                <h:inputText id="motiveAuthority" maxlength="100" 
+                    value="#{binnacleCRVHome.instance.motiveAuthority}" />
+            </s:decorate>
+
+            <s:decorate id="motiveOfficeField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.motiveOffice']}</ui:define>
+                <h:inputText id="motiveOffice" maxlength="30" 
+                    value="#{binnacleCRVHome.instance.motiveOffice}" />
+            </s:decorate>
+
+        </h:panelGrid>
+
+        <h:panelGrid columns="4">
+            <s:decorate id="serialNumberField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.serialNumber']}</ui:define>
+                <h:inputText id="serialNumber" required="true" maxlength="10" 
+                    value="#{binnacleCRVHome.instance.serialNumber}" />
+            </s:decorate>
+
+            <s:decorate id="licensePlateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.licensePlate']}</ui:define>
+                <h:inputText id="licensePlate" required="true" maxlength="20" ajaxSingle="true"
+                    value="#{binnacleCRVHome.instance.licensePlate}" 
+                    readonly="#{!binnacleCRVHome.canEditLicensePlate}" >
+                    <a:support event="onblur" reRender="licensePlateField"
+                         ajaxSingle="true" eventsQueue="gimQueue" />
+                </h:inputText>
+                <a:commandButton id="searchVehicle" 
+                    action="#{binnacleCRVHome.searchVehicle()}"
+                    reRender="binnacleCRVEditForm, messages" ajaxSingle="true"
+                    eventsQueue="gimEventsQueue" 
+                    value="#{messages['common.search']}" />
+            </s:decorate>
+
+            <s:decorate id="admissionResponsableIdentificationField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.admissionResponsableIdentification']}</ui:define>
+                <h:inputText id="admissionResponsableIdentification" required="true" maxlength="15"
+                    value="#{binnacleCRVHome.instance.admissionResponsableIdentification}" />
+            </s:decorate>
+
+            <s:decorate id="admissionResponsableNameField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.admissionResponsableName']}</ui:define>
+                <h:inputText id="admissionResponsableName" required="true" maxlength="80" 
+                    value="#{binnacleCRVHome.instance.admissionResponsableName}" />
+            </s:decorate>
+
+        </h:panelGrid>
+
+        <h:panelGrid columns="2">
+            <s:decorate template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['admissionType']}</ui:define>
+                <h:selectOneMenu id="admissionType" 
+                    value="#{binnacleCRVHome.instance.admissionType}" required="true">
+                    <ui:debug id="debugExternal"/>
+                    <s:selectItems value="#{admissionTypes}" var="_admissionType"
+                        label="#{_admissionType.name}" 
+                        noSelectionLabel="Seleccione una opción" />
+                    <s:convertEntity />
+                    <a:support event="onchange" ajaxSingle="true"
+                        reRender="admissionCategory" />
+                </h:selectOneMenu>
+            </s:decorate>
+            
+            <s:decorate id="admissionCategoryField"
+                template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['admissionCategory']}</ui:define>
+                <h:selectOneMenu id="admissionCategory" required="true"
+                    value="#{binnacleCRVHome.instance.admissionCategory}">
+                    <s:selectItems value="#{binnacleCRVHome.findAdmissionCategories()}"
+                        var="admissionCategory" label="#{admissionCategory.name}"
+                        noSelectionLabel="#{messages['common.shouldSelected']}" />
+                    <s:convertEntity />
+                    <a:support event="onchange" ajaxSingle="true" />
+                </h:selectOneMenu>
+            </s:decorate>
+
+        </h:panelGrid>
+
+        <h:panelGrid columns="3" width="100%">
+            <s:decorate template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['admissionMean']}</ui:define>
+                <h:selectOneMenu id="admissionMean" 
+                    value="#{binnacleCRVHome.instance.admissionMean}" required="true">
+                    <ui:debug id="debugExternal"/>
+                    <s:selectItems value="#{admissionMeans}" var="_admissionMean"
+                        label="#{_admissionMean.name}" 
+                        noSelectionLabel="Seleccione una opción" />
+                    <s:convertEntity />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.binnacleCRVCrane']}</ui:define>
+                <h:selectOneMenu id="binnacleCRVCrane" 
+                    value="#{binnacleCRVHome.instance.binnacleCRVCrane}" required="true">
+                    <ui:debug id="debugExternal"/>
+                    <s:selectItems value="#{binnacleCRVCranes}" var="_binnacleCRVCrane"
+                        label="#{_binnacleCRVCrane.name}" 
+                        noSelectionLabel="Seleccione una opción" />
+                    <s:convertEntity />
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate id="transferInfoField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.transferInfo']}</ui:define>
+                <h:inputText id="transferInfo" required="true" maxlength="100"
+                    value="#{binnacleCRVHome.instance.transferInfo}" />
+            </s:decorate>
+
+        </h:panelGrid>
+        <div style="clear: both">
+            <span class="required">*</span>
+            #{messages['common.requiredFields']}
+        </div>
+
+    </rich:panel>
+
+    <ui:include src="VehicleInformationCRV.xhtml" />
+
+    <ui:include src="VehicleInventoryPanel.xhtml" />
+
+    <ui:include src="VehicleItemsPanel.xhtml" />
+
+    <ui:include src="VehicleImagesPanel.xhtml" />
+
+    <ui:include src="AdmissionObservationsPanel.xhtml" />
+
+    <div></div>
+        
+    <div class="actionButtons">
+
+        <h:commandButton id="save" value="#{messages['common.save']}"
+            action="#{binnacleCRVHome.persist}" disabled="#{!binnacleCRVHome.wired}"
+            rendered="#{!binnacleCRVHome.managed}" />
+
+        <h:commandButton id="update" value="#{messages['common.save']}"
+            action="#{binnacleCRVHome.update}" rendered="#{binnacleCRVHome.managed}" />
+
+        <h:commandButton id="delete" value="#{messages['common.delete']}"
+            action="#{binnacleCRVHome.remove}" immediate="true"
+            rendered="#{binnacleCRVHome.managed}" />
+
+        <s:button id="cancelEdit" value="#{messages['common.cancel']}"
+            propagation="end" view="/binnaclecrv/BinnacleCRVList.xhtml"
+            rendered="#{binnacleCRVHome.managed}" />
+
+        <s:button id="cancelAdd" value="#{messages['common.cancel']}"
+            propagation="end"
+            view="/binnaclecrv/#{empty binnacleCRVFrom ? 'BinnacleCRVList' : binnacleCRVFrom}.xhtml"
+            rendered="#{!binnacleCRVHome.managed}" />
+
+    </div>
+</ui:composition>

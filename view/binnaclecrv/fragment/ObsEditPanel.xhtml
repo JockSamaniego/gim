@@ -1,0 +1,65 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich">
+
+    <rich:modalPanel id="obsEditPanel" width="430" height="265">
+        <f:facet name="header">
+            <h:panelGroup>
+                <h:outputText value="#{binnacleCRVHome.obsBinnacleCRV.id != null ? messages['common.edit'] : messages['common.create']} #{messages['binnacleCRV.obs.observation']}"></h:outputText>
+            </h:panelGroup>
+        </f:facet>
+        <f:facet name="controls">
+            <h:panelGroup>
+                <h:graphicImage value="/img/error.gif" style="cursor:pointer"
+                    id="hidelinkObs" />
+                <rich:componentControl for="obsEditPanel" attachTo="hidelinkObs"
+                    operation="hide" event="onclick" />
+            </h:panelGroup>
+        </f:facet>
+
+        <h:form id="obsBinnacleCRV" styleClass="edit">
+            <rich:panel>
+                <rich:panel style="height:30px; width:100%; overflow:auto;">
+                    <rich:messages errorClass="errors" />
+                </rich:panel>
+
+                <h:panelGrid columns="1" width="100%">
+                    <s:decorate id="obsObsField" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['binnacleCRV.obs.observation']}:</ui:define>
+                        <h:inputTextarea id="obsObs" cols="50" rows="5" required="true"
+                            value="#{binnacleCRVHome.obsBinnacleCRV.obs}" >
+                            <f:validateLength maximum="255" />
+                        </h:inputTextarea>
+                    </s:decorate>
+
+                </h:panelGrid>
+                
+            </rich:panel>
+
+            <div class="actionButtons">
+                <a:commandButton 
+                    action="#{binnacleCRVHome.addObs()}"
+                    value="#{messages['common.accept']}" 
+                    reRender="admissionObservationsPanel"
+                    oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'obsEditPanel\');' : ''}" />
+
+                <a:commandButton 
+                    ajaxSingle="true" 
+                    value="#{messages['common.quit']}"
+                    reRender="vehicleItemsPanel"
+                    oncomplete="Richfaces.hideModalPanel('obsEditPanel');"
+                    bypassUpdates="true" />
+            </div>
+            
+        </h:form>
+
+    </rich:modalPanel>
+
+</ui:composition>

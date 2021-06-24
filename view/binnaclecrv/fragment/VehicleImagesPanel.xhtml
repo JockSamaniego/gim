@@ -1,0 +1,83 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:rich="http://richfaces.org/rich">
+
+		<rich:panel id="vehicleImagesPanel">
+			<f:facet name="header">#{messages['binnacleCRV.photographicEvidence']}</f:facet>
+
+			<h:panelGrid id="panelId" columns="2" columnClasses="topAligned">
+				<h:panelGrid id="image1PanelId" columns="1">
+					<s:decorate id="image1Field" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['binnacleCRV.photographicEvidence']}:</ui:define>
+						<rich:fileUpload fileUploadListener="#{binnacleCRVHome.image1Listener}"
+							maxFilesQuantity="1" id="uploadImage1" immediateUpload="true"
+							acceptedTypes="jpg, gif, png, jpeg"
+							uploadControlLabel="#{messages['binnacleCRV.photoEvidence']}"
+							addControlLabel="#{messages['common.uploadFile']}"
+							progressLabel="#{messages['common.uploading']}"
+							doneLabel="#{messages['common.done']}"
+							clearAllControlLabel="#{messages['common.clearAll']}"
+							clearControlLabel="#{messages['common.clear']}"
+							stopControlLabel="#{messages['common.stop']}" ajaxSingle="true"
+							listHeight="75px">
+							<f:facet name="label">
+								<h:outputText value="{_KB}KB desde {MB}MB uploaded --- {mm}:{ss}" />
+							</f:facet>
+							<a:support event="onuploadcomplete" reRender="image1PanelId" />
+							<a:support event="onclear" reRender="image1, uploadImage1"
+								action="#{binnacleCRVHome.clearImage1()}" />
+						</rich:fileUpload>
+
+					</s:decorate>
+					<s:decorate id="imageFieldDecorate" template="../../layout/display.xhtml">
+					<s:graphicImage id="image1"
+						rendered="#{not empty binnacleCRVHome.instance.getPhotographicEvidences().get(0).photo}"
+						value="#{binnacleCRVHome.instance.getPhotographicEvidences().get(0).photo}" width="75%" />
+					</s:decorate>
+				</h:panelGrid>
+
+				<h:panelGrid id="image2PanelId" columns="1">
+					<s:decorate id="image2Field" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['binnacleCRV.photographicEvidence']}:</ui:define>
+						<rich:fileUpload fileUploadListener="#{binnacleCRVHome.image2Listener}"
+							maxFilesQuantity="1" id="uploadImage2" immediateUpload="true"
+							acceptedTypes="jpg, gif, png, jpeg"
+							uploadControlLabel="#{messages['binnacleCRV.photoEvidence']}"
+							addControlLabel="#{messages['common.uploadFile']}"
+							progressLabel="#{messages['common.uploading']}"
+							doneLabel="#{messages['common.done']}"
+							clearAllControlLabel="#{messages['common.clearAll']}"
+							clearControlLabel="#{messages['common.clear']}"
+							stopControlLabel="#{messages['common.stop']}" ajaxSingle="true"
+							listHeight="75px">
+							<f:facet name="label">
+								<h:outputText value="{_KB}KB desde {MB}MB uploaded --- {mm}:{ss}" />
+							</f:facet>
+							<a:support event="onuploadcomplete" reRender="image2PanelId" />
+							<a:support event="onclear" reRender="image2, uploadImage1"
+								action="#{binnacleCRVHome.clearImage1()}" />
+						</rich:fileUpload>
+
+					</s:decorate>
+					<s:decorate id="image2FieldDecorate" template="../../layout/display.xhtml">
+					<s:graphicImage id="image2"
+						rendered="#{not empty binnacleCRVHome.instance.getPhotographicEvidences().get(1).photo}"
+						value="#{binnacleCRVHome.instance.getPhotographicEvidences().get(1).photo}" width="75%" />
+					</s:decorate>
+				</h:panelGrid>
+			</h:panelGrid>
+
+		<div style="clear: both">
+			<span class="required">*</span> #{messages['common.requiredFields']}
+		</div>
+
+	</rich:panel>
+
+</ui:composition>

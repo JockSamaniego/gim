@@ -1,0 +1,76 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:rich="http://richfaces.org/rich">
+
+    <rich:panel id="vehicleItemsPanel">
+        <f:facet name="header">
+            <h:panelGrid columns="2" columnClasses="headerTitle">
+                <h:outputText value="#{messages['binnacleCRV.vehicleItems']}" />
+                <a:commandButton id="createItem"
+                    action="#{binnacleCRVHome.createVehicleItem()}"
+                    reRender="itemEditPanel" ajaxSingle="true"
+                    eventsQueue="gimEventsQueue"
+                    oncomplete="Richfaces.showModalPanel('itemEditPanel')"
+                    value="#{messages['binnacleCRV.addVehicleItem']}" />
+            </h:panelGrid>
+        </f:facet>
+        
+        <div class="results" id="vehicleItemsList">
+
+            <h:outputText value="#{messages['binnacleCRV.vehicleItems.ResultsNotFound']}"
+                rendered="#{empty binnacleCRVHome.instance.vehicleItems}" />
+
+            <rich:dataTable id="vehicleItemsTable" var="_vehicleItem"
+                value="#{binnacleCRVHome.instance.vehicleItems}"
+                rendered="#{not empty binnacleCRVHome.instance.vehicleItems}"
+                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['binnacleCRV.vehicleItem.amount']}" />
+                    </f:facet>
+                    <h:outputText value="#{_vehicleItem.amount}" />
+                </rich:column>
+                
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['binnacleCRV.vehicleItem.name']}" />
+                    </f:facet>
+                    <h:outputText value="#{_vehicleItem.name}" />
+                </rich:column>
+                
+	            <rich:column>
+	                <f:facet name="header">
+	                    <h:outputText value="#{messages['common.action']}" />
+	                </f:facet>
+	                <a:commandButton id="editItem"
+	                    action="#{binnacleCRVHome.editVehicleItem(_vehicleItem)}"
+	                    reRender="itemEditPanel" ajaxSingle="true"
+	                    eventsQueue="gimEventsQueue"
+	                    oncomplete="Richfaces.showModalPanel('itemEditPanel')"
+	                    value="#{messages['common.edit']}" />
+	                    
+	                <a:commandButton id="removeItem"
+	                    action="#{binnacleCRVHome.removeVehicleItem(_vehicleItem)}"
+	                    reRender="vehicleItemsPanel" ajaxSingle="true"
+	                    value="#{messages['common.delete']}" />
+	            </rich:column>
+            </rich:dataTable>
+
+        </div>
+        
+        
+        <div style="clear: both">
+            <span class="required"></span>
+        </div>
+    </rich:panel>
+
+</ui:composition>

@@ -1,0 +1,51 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel id="vehicleInventoryPanel" enabled="#{!binnacleCRVHome.idDefined}">
+   		<f:facet name="header">
+            <h:panelGrid columns="3" columnClasses="headerTitle">
+                <h:outputText value="#{messages['binnacleCRV.vehicleInventory']}" />
+                
+                <a:commandButton id="addAll"
+                    action="#{binnacleCRVHome.addAllInventory()}"
+                    reRender="vehicleInventoryPanel" ajaxSingle="true"
+                    eventsQueue="gimEventsQueue"
+                    value="#{messages['binnacleCRV.vehicleInventory.addAll']}" />
+                
+                <a:commandButton id="clearAll"
+                    action="#{binnacleCRVHome.clearAllInventory()}"
+                    reRender="vehicleInventoryPanel" ajaxSingle="true"
+                    eventsQueue="gimEventsQueue"
+                    value="#{messages['binnacleCRV.vehicleInventory.clearAll']}" />
+                
+            </h:panelGrid>
+        </f:facet>
+        
+		<h:panelGrid columns="3" width="100%">
+			<c:forEach items="#{binnacleCRVHome.instance.getVehicleInventories()}" var="_inventory">
+				<s:decorate>
+					<h:panelGrid columns="3" >
+				    	<h:selectBooleanCheckbox value="#{_inventory.value}" />
+						<h:outputLabel value="#{_inventory.name}" />
+				        <h:inputText maxlength="2" size="2" rendered="#{_inventory.amountVisible}"
+				            value="#{_inventory.amount}">
+				        </h:inputText>
+			        </h:panelGrid>
+		        </s:decorate>
+			</c:forEach>
+		</h:panelGrid>
+		
+		<div style="clear: both">
+			<span class="required"></span>
+		</div>
+	</rich:panel>
+
+</ui:composition>

@@ -1,0 +1,69 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich">
+
+    <rich:modalPanel id="searchVehicleDataPanel" width="400" height="220">
+        <f:facet name="header">
+            <h:panelGroup>
+                <h:outputText value="Buscar Vehículo"></h:outputText>
+            </h:panelGroup>
+        </f:facet>
+        <f:facet name="controls">
+            <h:panelGroup>
+                <h:graphicImage value="/img/error.gif" style="cursor:pointer"
+                    id="hidelink2" />
+                <rich:componentControl for="searchVehicleDataPanel" attachTo="hidelink2"
+                    operation="hide" event="onclick" />
+            </h:panelGroup>
+        </f:facet>
+
+        <h:form id="searchVehicleItem" styleClass="edit">
+            <rich:panel>
+                <rich:panel style="height:30px; width:100%; overflow:auto;">
+                    <rich:messages errorClass="errors" />
+                </rich:panel>
+
+                <h:panelGrid columns="1" width="100%">
+                    <s:decorate id="criteriaSearchField" template="../../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['binnacleCRV.criteriaSearch']}:</ui:define>
+                        <h:inputText id="criteriaSearch" required="true" 
+                            value="#{binnacleCRVHome.criteriaSearch}" />
+                    </s:decorate>
+
+                </h:panelGrid>
+                
+                <rich:dataTable
+                        value="#{binnacleCRVList.resultList}" var="_itemResult"
+                        rendered="#{not empty binnacleCRVList.resultList}"
+                        onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                        onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['binnacleCRV.licensePlate']}" />
+                            </f:facet>
+                            <h:outputText value="#{_itemResult.licensePlate}" />
+                        </h:column>
+                        
+                </rich:dataTable>
+            </rich:panel>
+
+            <div class="actionButtons">
+                <a:commandButton 
+                    ajaxSingle="true" 
+                    value="#{messages['common.quit']}"
+                    reRender="vehicleItemsPanel"
+                    oncomplete="Richfaces.hideModalPanel('searchVehicleDataPanel');"
+                    bypassUpdates="true" />
+            </div>
+        </h:form>
+    </rich:modalPanel>
+</ui:composition>

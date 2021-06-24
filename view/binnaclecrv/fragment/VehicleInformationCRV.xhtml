@@ -1,0 +1,112 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel enabled="false">
+		<f:facet name="header">#{messages['binnacleCRV.generalInformation']}</f:facet>
+		
+		<h:panelGrid columns="3" width="100%">
+		    <s:decorate template="../../layout/edit.xhtml">
+		        <ui:define name="label">#{messages['binnacleCRV.licensePlate']}:</ui:define>
+		        <h:inputText maxlength="15" readonly="true"
+		            value="#{binnacleCRVHome.instance.licensePlate}" required="true"
+		            style="font-size: 16px; font-weight:bold;">
+		        </h:inputText>
+		    </s:decorate>
+	
+		    <s:decorate template="../../layout/edit.xhtml">
+		        <ui:define name="label">#{messages['binnacleCRV.ownerIdentification']}:</ui:define>
+		        <h:inputText readonly="true"
+		            value="#{binnacleCRVHome.instance.ownerIdentification}"
+		            style="font-size: 16px; font-weight:bold;" width="100%">
+		        </h:inputText>
+		    </s:decorate>
+	
+		    <s:decorate template="../../layout/edit.xhtml">
+		        <ui:define name="label">#{messages['binnacleCRV.ownerName']}:</ui:define>
+		        <h:inputText readonly="true"
+		            value="#{binnacleCRVHome.instance.ownerName}" width="100%"
+		            style="font-size: 16px; font-weight:bold;width:100%;">
+		        </h:inputText>
+		    </s:decorate>
+		</h:panelGrid>
+		
+		<h:panelGrid columns="5">
+            <s:decorate template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.ownerAddress']}:</ui:define>
+                <h:inputText readonly="true"
+                    value="#{binnacleCRVHome.instance.ownerAddress}" >
+                </h:inputText>
+            </s:decorate>
+    
+            <s:decorate template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.ownerEmail']}:</ui:define>
+                <h:inputText readonly="true"
+                    value="#{binnacleCRVHome.instance.ownerEmail}" >
+                </h:inputText>
+            </s:decorate>
+    
+            <s:decorate template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.motor']}:</ui:define>
+                <h:inputText readonly="true"
+                    value="#{binnacleCRVHome.instance.motor}" >
+                </h:inputText>
+            </s:decorate>
+    
+		    <s:decorate template="../../layout/edit.xhtml">
+		        <ui:define name="label">#{messages['binnacleCRV.chassis']}:</ui:define>
+		        <h:inputText readonly="true"
+		            value="#{binnacleCRVHome.instance.chassis}" >
+		        </h:inputText>
+		    </s:decorate>
+	
+		    <s:decorate template="../../layout/edit.xhtml">
+		        <ui:define name="label">#{messages['binnacleCRV.model']}:</ui:define>
+		        <h:inputText readonly="true"
+		            value="#{binnacleCRVHome.instance.model}" >
+		        </h:inputText>
+		    </s:decorate>
+	
+		    <s:decorate template="../../layout/edit.xhtml">
+		        <ui:define name="label">#{messages['binnacleCRV.service']}:</ui:define>
+		        <h:inputText readonly="true"
+		            value="#{binnacleCRVHome.instance.service}" >
+		        </h:inputText>
+		    </s:decorate>
+	
+		    <s:decorate template="../../layout/edit.xhtml">
+		        <ui:define name="label">#{messages['binnacleCRV.tonnage']}:</ui:define>
+		        <h:inputText readonly="true"
+		            value="#{binnacleCRVHome.instance.tonnage}" >
+		        </h:inputText>
+		    </s:decorate>
+	
+		    <s:decorate template="../../layout/edit.xhtml">
+		        <ui:define name="label">#{messages['binnacleCRV.type']}:</ui:define>
+		        <h:inputText readonly="true"
+		            value="#{binnacleCRVHome.instance.type}" >
+		        </h:inputText>
+		    </s:decorate>
+	
+		    <s:decorate template="../../layout/edit.xhtml">
+		        <ui:define name="label">#{messages['binnacleCRV.year']}:</ui:define>
+		        <h:inputText readonly="true"
+		            value="#{binnacleCRVHome.instance.year}" >
+		        </h:inputText>
+		    </s:decorate>
+	
+		</h:panelGrid>
+		
+		<div style="clear: both">
+			<span class="required"></span>
+		</div>
+	</rich:panel>
+
+</ui:composition>

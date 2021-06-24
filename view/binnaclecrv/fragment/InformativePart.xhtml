@@ -1,0 +1,95 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:rich="http://richfaces.org/rich">
+
+    <h:panelGrid id="informativePartPanel" width="100%" >
+        <h:panelGrid width="100%" rendered="#{binnacleCRVHome.instance.documentTypeBinnacleCRV.name().equalsIgnoreCase('INFORMATIVE_PART')}">
+            <f:facet name="header">#{messages['informativePart.titlePanel']}</f:facet>
+            <h:panelGrid columns="2" width="100%" >
+                <s:decorate template="../../layout/edit.xhtml" >
+                    <ui:define name="label">#{messages['informativePart.agentName']}:</ui:define>
+                    <h:inputText maxlength="100" required="true"
+                        value="#{binnacleCRVHome.informativePart.agentName}" >
+                    </h:inputText>
+                </s:decorate>
+    
+                <s:decorate template="../../layout/edit.xhtml" >
+                    <ui:define name="label">#{messages['informativePart.code']}:</ui:define>
+                    <h:inputText maxlength="20" required="true"
+                        value="#{binnacleCRVHome.informativePart.code}" >
+                    </h:inputText>
+                </s:decorate>
+
+                <s:decorate template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['informativePart.partDate']}:</ui:define>
+                    <rich:calendar id="partDate" 
+                        value="#{binnacleCRVHome.informativePart.partDate}"
+                        enableManualInput="false" required="true" ajaxSingle="true" 
+                        datePattern="yyyy-MM-dd" locale="es/ES"/>
+                </s:decorate>
+
+                <s:decorate id="partTimeField" template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['informativePart.partTime']}:</ui:define>
+                    <h:inputText value="#{binnacleCRVHome.partTimeString}" required="true" >
+                        <a:support event="onblur" action="#{binnacleCRVHome.validateInformativePartTime()}" 
+                            ajaxSingle="true" reRender="partTimeField"/>
+                    </h:inputText>
+                </s:decorate>
+
+                <s:decorate template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['informativePart.retentionDate']}:</ui:define>
+                    <rich:calendar id="retentionDate" 
+                        value="#{binnacleCRVHome.informativePart.retentionDate}"
+                        enableManualInput="false" required="true" ajaxSingle="true" 
+                        datePattern="yyyy-MM-dd" locale="es/ES"/>
+                </s:decorate>
+
+                <s:decorate id="retentionTimeField" template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['informativePart.retentionTime']}:</ui:define>
+                    <h:inputText value="#{binnacleCRVHome.retentionTimeString}" required="true" >
+                        <a:support event="onblur" action="#{binnacleCRVHome.validateInformativeRetentionTime()}" 
+                            ajaxSingle="true" reRender="retentionTimeField"/>
+                    </h:inputText>
+                </s:decorate>
+
+                <s:decorate id="causeField" template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['informativePart.cause']}:</ui:define>
+                    <h:inputText value="#{binnacleCRVHome.informativePart.cause}" required="true" 
+                        maxlength="100">
+                    </h:inputText>
+                </s:decorate>
+
+                <s:decorate id="placeField" template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['informativePart.place']}:</ui:define>
+                    <h:inputText value="#{binnacleCRVHome.informativePart.place}" required="true" 
+                        maxlength="100">
+                    </h:inputText>
+                </s:decorate>
+            </h:panelGrid>
+
+            <h:panelGrid width="100%" rendered="#{binnacleCRVHome.hasJudicialDocument}">
+                <s:decorate id="textEditor" template="../../layout/vertical-edit.xhtml">
+                    <ui:define name="label">#{messages['informativePart.circumstances']}:</ui:define>
+                    <rich:editor id="editor" autoResize="true" width="800" height="600" 
+                        toolbar="full" value="#{binnacleCRVHome.informativePart.circumstances}" 
+                        style="margin-center: 1em; ">
+                    <a:support event="change" render="panel" status="panelUpdateStatus" />
+                    </rich:editor>
+                </s:decorate>
+            </h:panelGrid>
+
+        <div style="clear: both">
+            <span class="required">*</span>
+            #{messages['common.requiredFields']}
+        </div>
+
+        </h:panelGrid>
+    </h:panelGrid>
+</ui:composition>

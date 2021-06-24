@@ -1,0 +1,37 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <ui:include src="fragment/ObsEditPanel.xhtml" />
+        <ui:include src="fragment/ItemEditPanel.xhtml" />
+        <ui:include src="fragment/SearchVehicleDataPanel.xhtml" />
+        <ui:include src="fragment/ImplicatedEditPanel.xhtml" />
+
+        <h:form id="binnacleCRVEditForm" styleClass="edit">
+            <h:outputText styleClass="formTitle"
+                value="#{binnacleCRVHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['binnacleCRV.nameTitle']}" />
+
+        <rich:tabPanel switchType="client" bypassDisabled="true">
+            <rich:tab id="admissionTab" label="#{messages['binnacleCRV.admissionTab']}" switchType="client" bypassDisabled="true">
+                <ui:include src="fragment/AdmissionTab.xhtml"/>
+            </rich:tab>
+            
+            <rich:tab id="judicialTab" label="#{messages['binnacleCRV.judicialTab']}" switchType="client" bypassDisabled="true">
+                <ui:include src="fragment/JudicialTab.xhtml"/>
+            </rich:tab>
+            
+        </rich:tabPanel>
+        
+        </h:form>
+    </ui:define>
+
+</ui:composition>

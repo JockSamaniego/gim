@@ -1,0 +1,94 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:rich="http://richfaces.org/rich">
+
+    <rich:panel id="admissionObservationsPanel">
+        <f:facet name="header">
+            <h:panelGrid columns="2" columnClasses="headerTitle">
+                <h:outputText value="#{messages['binnacleCRV.obsBinnacleCRVs']}" />
+                <a:commandButton id="createAdmisionObs"
+                    action="#{binnacleCRVHome.createObs(1)}"
+                    reRender="obsEditPanel" ajaxSingle="true"
+                    eventsQueue="gimEventsQueue"
+                    oncomplete="Richfaces.showModalPanel('obsEditPanel')"
+                    value="#{messages['binnacleCRV.addObsBinnacleCRV']}" />
+            </h:panelGrid>
+        </f:facet>
+        
+        <div class="results" id="admissionObsList">
+
+            <h:outputText value="#{messages['binnacleCRV.obs.ResultsNotFound']}"
+                rendered="#{empty binnacleCRVHome.instance.getObsBinnacleCRVs()}" />
+
+            <rich:dataTable id="admissionObsTable" var="_obs"
+                value="#{binnacleCRVHome.instance.getObsBinnacleCRVs()}"
+                rendered="#{not empty binnacleCRVHome.instance.getObsBinnacleCRVs()}"
+                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['binnacleCRV.obs.obsDate']}" />
+                    </f:facet>
+                    <h:outputText value="#{_obs.obsDate}" >
+                        <f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+                    </h:outputText>
+                </rich:column>
+                
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['binnacleCRV.obs.obsTime']}" />
+                    </f:facet>
+                    <h:outputText value="#{_obs.obsTime}" >
+                        <f:convertDateTime pattern="#{messages['common.timePattern']}"/>
+                    </h:outputText>
+                </rich:column>
+                
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['binnacleCRV.obs.obs']}" />
+                    </f:facet>
+                    <h:outputText value="#{_obs.obs}" />
+                </rich:column>
+                
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['binnacleCRV.obs.user']}" />
+                    </f:facet>
+                    <h:outputText value="#{_obs.getUser().getName()}" />
+                </rich:column>
+                
+                <!-- <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['common.action']}" />
+                    </f:facet>
+                    <a:commandButton id="editItem"
+                        action="#{binnacleCRVHome.editObs(_obs)}"
+                        reRender="obsEditPanel" ajaxSingle="true"
+                        eventsQueue="gimEventsQueue"
+                        oncomplete="Richfaces.showModalPanel('obsEditPanel')"
+                        value="#{messages['common.edit']}" />
+                        
+                    <a:commandButton id="removeItem"
+                        action="#{binnacleCRVHome.removeobs(_obs)}"
+                        reRender="admissionObservationsPanel" ajaxSingle="true"
+                        value="#{messages['common.delete']}" />
+                </rich:column> -->
+            </rich:dataTable>
+
+        </div>
+        
+        
+        <div style="clear: both">
+            <span class="required"></span>
+        </div>
+    </rich:panel>
+
+</ui:composition>

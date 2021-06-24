@@ -1,0 +1,73 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:rich="http://richfaces.org/rich">
+
+    <f:facet name="header">#{messages['binnacleCRV.judicialTab']}</f:facet>
+
+    <ui:include src="VehicleInformationCRV.xhtml" />
+    
+    <rich:panel id="judicialTabPanel">
+        <f:facet name="header">Información del Parte Judicial</f:facet>
+        
+        <s:decorate template="../../layout/edit.xhtml" >
+            <ui:define name="label">#{messages['documentTypesBinnacleCRV']}</ui:define>
+            <h:selectOneMenu id="documentTypeBinnacleCRV" disabled="#{binnacleCRVHome.instance.hasJudicialDocument}"
+                value="#{binnacleCRVHome.instance.documentTypeBinnacleCRV}" >
+                <ui:debug id="debugExternal"/>
+                <s:selectItems value="#{documentTypesBinnacleCRV}" var="_documentTypeBinnacleCRV"
+                    label="#{messages[_documentTypeBinnacleCRV.name()]}" 
+                    noSelectionLabel="Seleccione una opción" />
+                <s:convertEnum />
+                <a:support event="onchange" ajaxSingle="true" />
+            </h:selectOneMenu>
+            
+            <a:commandButton id="chargeDocument" 
+                disabled="#{binnacleCRVHome.instance.hasJudicialDocument}"
+                action="#{binnacleCRVHome.generateDocumentPart()}"
+                reRender="judicialTabPanel, informativePartPanel, accidentPartPanel, documentTypeBinnacleCRV, chargeDocument" 
+                ajaxSingle="true"
+                eventsQueue="gimEventsQueue" 
+                value="#{messages['common.load']}" />
+        </s:decorate>
+        <div style="clear: both">
+            <span class="required"></span>
+        </div>
+    </rich:panel>
+
+    <ui:include src="InformativePart.xhtml" />
+
+    <ui:include src="AccidentPart.xhtml" />
+
+    <div></div>
+        
+    <div class="actionButtons">
+
+        <h:commandButton value="#{messages['common.save']}"
+            action="#{binnacleCRVHome.persist}" disabled="#{!binnacleCRVHome.wired}"
+            rendered="#{!binnacleCRVHome.managed}" />
+
+        <h:commandButton value="#{messages['common.save']}"
+            action="#{binnacleCRVHome.update}" rendered="#{binnacleCRVHome.managed}" />
+
+        <h:commandButton value="#{messages['common.delete']}"
+            action="#{binnacleCRVHome.remove}" immediate="true"
+            rendered="#{binnacleCRVHome.managed}" />
+
+        <s:button value="#{messages['common.cancel']}"
+            propagation="end" view="/binnaclecrv/BinnacleCRVList.xhtml"
+            rendered="#{binnacleCRVHome.managed}" />
+
+        <s:button value="#{messages['common.cancel']}"
+            propagation="end"
+            view="/binnaclecrv/#{empty binnacleCRVFrom ? 'BinnacleCRVList' : binnacleCRVFrom}.xhtml"
+            rendered="#{!binnacleCRVHome.managed}" />
+
+    </div>
+</ui:composition>
