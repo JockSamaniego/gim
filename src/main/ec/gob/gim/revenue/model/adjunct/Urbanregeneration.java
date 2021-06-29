@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.envers.Audited;
 
+import com.sun.istack.Nullable;
+
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.cadaster.model.Property;
@@ -29,9 +31,15 @@ public class Urbanregeneration extends Adjunct{
 	private Property property;
 	
 	private String cadastralCode;
-	private String previousCadastralCode;	
+	private String previousCadastralCode;					
 	private Integer paymentsNumber;
 	
+	//para emision x BD se pondran en nulo los booleanos
+	@Nullable
+	private Boolean emitWithoutProperty = Boolean.FALSE;
+	
+	@Nullable
+	private Boolean changeAppraisals = Boolean.FALSE;
 	
 	
 	public BigDecimal getCommercialAppraisal() {
@@ -139,4 +147,29 @@ public class Urbanregeneration extends Adjunct{
 
 		return details;
 	}
+
+	public Boolean getEmitWithoutProperty() {
+		return emitWithoutProperty;
+	}
+
+	public void setEmitWithoutProperty(Boolean emitWithoutProperty) {
+		this.emitWithoutProperty = emitWithoutProperty;
+	}
+	
+	public Boolean getChangeAppraisals() {
+		return changeAppraisals;
+	}
+
+	public void setChangeAppraisals(Boolean changeAppraisals) {
+		this.changeAppraisals = changeAppraisals;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Clave catastral anterior: "+previousCadastralCode;
+	}
+	
+	
+	
 }
