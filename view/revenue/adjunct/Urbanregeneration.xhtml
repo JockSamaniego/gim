@@ -1,0 +1,83 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<a:outputPanel id="urbanRegenerationPanel">
+
+		<h:panelGrid columns="4">
+			<h:selectBooleanCheckbox id="emitWithoutProperty"
+				value="#{adjunctHome.instance.emitWithoutProperty}">
+				<a:support event="onchange" ajaxSingle="true" action="#{adjunctAction.resetPropertyForUG}" reRender="urbanRegenerationPanel" />
+			</h:selectBooleanCheckbox>
+			<h:outputLabel value="#{messages['municipalBondEdit.emitWithoutProperty']}" />
+
+			<h:selectBooleanCheckbox id="changeAppraisals"
+				value="#{adjunctHome.instance.changeAppraisals}">
+				<a:support event="onchange" ajaxSingle="true"
+					action="#{adjunctAction.resetPropertyValuesOfUrbanRegeneration()}"
+					reRender="urbanRegenerationPanel" />
+			</h:selectBooleanCheckbox>
+			<h:outputLabel value="#{messages['municipalBondEdit.changeAppraisals']}" />
+		</h:panelGrid>
+
+
+		<h:panelGrid columns="2">
+			<h:outputLabel value="#{messages['cadaster.property']}:#{'   '}" />
+			<h:selectOneMenu id="property"
+				value="#{adjunctHome.instance.property}"
+				disabled="#{adjunctHome.instance.emitWithoutProperty}">
+				<s:selectItems value="#{adjunctAction.findPropertiesByResidentId()}"
+					var="property" label="#{property}"
+					noSelectionLabel="#{messages['common.choose']}" />
+				<s:convertEntity />
+				<a:support event="onchange"
+					action="#{adjunctAction.updateUrbanRegeneration()}"
+					ajaxSingle="true"
+					reRender="urbanRegenerationPanel,dataAppraisalPanel,fieldsPanel" />
+			</h:selectOneMenu>
+		</h:panelGrid>
+
+		<h:panelGrid columns="7" id="dataAppraisalPanel">
+			<s:decorate id="cadastralCodeField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.cadastralCode']}:</ui:define>
+				<h:inputText id="cadastralCode"
+					value="#{adjunctHome.instance.cadastralCode}"
+					readonly="#{!adjunctHome.instance.emitWithoutProperty}">
+					<a:support event="onchange"
+						action="#{adjunctHome.instance.setCode(adjunctHome.instance.cadastralCode)}" />
+				</h:inputText>
+			</s:decorate>
+
+			<s:decorate id="previousCadastralCodeField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['property.previousCadastralCode']}:</ui:define>
+				<h:inputText id="previouscadastralCode"
+					value="#{adjunctHome.instance.previousCadastralCode}"
+					readonly="#{!adjunctHome.instance.emitWithoutProperty}" />
+			</s:decorate>
+  
+			<s:decorate id="commercialAppraisalField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">#{messages['domain.commercialAppraisal']}</ui:define>
+				<h:inputText id="commercialAppraisal" styleClass="right"
+					value="#{adjunctHome.instance.commercialAppraisal}" size="10"
+					readonly="#{!adjunctHome.instance.emitWithoutProperty}" />
+			</s:decorate>
+ 
+			<s:decorate id="areaValueField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">Area</ui:define>
+				<h:inputText id="areaValue" styleClass="right"
+					value="#{adjunctHome.instance.lotArea}" size="10" />
+			</s:decorate>
+ 
+		</h:panelGrid>
+	</a:outputPanel>
+</ui:composition>
