@@ -513,9 +513,8 @@ public class AdjunctAction extends EntityController{
 	public void resetPropertyValuesOfUrbanRegeneration(){
 		Urbanregeneration urbanregeneration = findCurrentAdjunct();
 		
-		if (urbanregeneration.getChangeAppraisals()){
-			System.out.println("propiedad clave anterior: "+urbanregeneration.getPreviousCadastralCode());
-			urbanregeneration.setProperty(null); 
+		if (urbanregeneration.getChangeAppraisals()){			
+			//urbanregeneration.setProperty(null); 
 			//urbanregeneration.setCadastralCode("");
 			//urbanregeneration.setCode("");
 			//urbanregeneration.setPreviousCadastralCode("");  

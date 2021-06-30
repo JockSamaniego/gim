@@ -128,20 +128,34 @@ public class Urbanregeneration extends Adjunct{
 	@Override
 	public List<ValuePair> getDetails() {
 		List<ValuePair> details = new LinkedList<ValuePair>();
+
 		
-		ValuePair pair = new ValuePair("Identificacion", resident.getIdentificationNumber());
-		details.add(pair);
 		
-		pair = new ValuePair("Clave catastral", cadastralCode);
-		details.add(pair);
+		ValuePair pair = new ValuePair("Clave catastral", cadastralCode); 
+		details.add(pair);		
+
+		if(resident!= null) {
+			pair = new ValuePair("Identificacion", resident.getIdentificationNumber());
+			details.add(pair);
+		}
+		
+				
 		pair = new ValuePair("Clave catastral anterior: ", previousCadastralCode);
 		details.add(pair);
-		pair = new ValuePair("Numero cuotas", paymentsNumber.toString());
-		details.add(pair);
+		
+		if(paymentsNumber != null) {
+			pair = new ValuePair("Numero cuotas", paymentsNumber.toString());
+			details.add(pair);
+		}
+		
 		pair = new ValuePair("Avalúo comercial", commercialAppraisal.toString());		
 		details.add(pair);
-		pair = new ValuePair("Frente", front.toString());		
-		details.add(pair);
+		
+		if(front!=null) {
+			pair = new ValuePair("Frente", front.toString());		
+			details.add(pair);
+		}
+		
 		pair = new ValuePair("Area", lotArea.toString());		
 		details.add(pair);
 

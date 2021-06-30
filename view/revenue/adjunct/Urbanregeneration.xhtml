@@ -21,7 +21,7 @@
 				value="#{adjunctHome.instance.changeAppraisals}">
 				<a:support event="onchange" ajaxSingle="true"
 					action="#{adjunctAction.resetPropertyValuesOfUrbanRegeneration()}"
-					reRender="urbanRegenerationPanel" />
+					reRender="urbanRegenerationPanel, commercialAppraisalField" />
 			</h:selectBooleanCheckbox>
 			<h:outputLabel value="#{messages['municipalBondEdit.changeAppraisals']}" />
 		</h:panelGrid>
@@ -68,7 +68,7 @@
 				<ui:define name="label">#{messages['domain.commercialAppraisal']}</ui:define>
 				<h:inputText id="commercialAppraisal" styleClass="right"
 					value="#{adjunctHome.instance.commercialAppraisal}" size="10"
-					readonly="#{!adjunctHome.instance.emitWithoutProperty}" />
+					readonly="#{!(adjunctHome.instance.emitWithoutProperty  or adjunctHome.instance.changeAppraisals)}" />
 			</s:decorate>
  
 			<s:decorate id="areaValueField"
@@ -78,6 +78,19 @@
 					value="#{adjunctHome.instance.lotArea}" size="10" />
 			</s:decorate>
  
+ 			<s:decorate id="sinpropiedadValueField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">sinpropiedad</ui:define>
+				<h:inputText id="areaValue" styleClass="right"
+					value="#{adjunctHome.instance.emitWithoutProperty}" size="10" />
+			</s:decorate>
+			
+			<s:decorate id="cambiaravaluoValueField"
+				template="../../layout/vertical-edit.xhtml">
+				<ui:define name="label">cambiar</ui:define>
+				<h:inputText id="areaValue" styleClass="right"
+					value="#{adjunctHome.instance.changeAppraisals}" size="10" />
+			</s:decorate>
 		</h:panelGrid>
 	</a:outputPanel>
 </ui:composition>
