@@ -12,6 +12,7 @@ import org.hibernate.envers.Audited;
 
 import com.sun.istack.Nullable;
 
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.cadaster.model.Property;
@@ -33,6 +34,12 @@ public class Urbanregeneration extends Adjunct{
 	private String cadastralCode;
 	private String previousCadastralCode;					
 	private Integer paymentsNumber;
+	
+	@ManyToOne
+	private ItemCatalog type;
+	
+	private String auxJson;
+	
 	
 	//para emision x BD se pondran en nulo los booleanos
 	@Nullable
@@ -123,6 +130,24 @@ public class Urbanregeneration extends Adjunct{
 	public void setPreviousCadastralCode(String previousCadastralCode) {
 		this.previousCadastralCode = previousCadastralCode;
 	}
+	
+	public ItemCatalog getType() {
+		return type;
+	}
+
+
+	public void setType(ItemCatalog type) {
+		this.type = type;
+	}
+
+	public String getAuxJson() {
+		return auxJson;
+	}
+
+
+	public void setAuxJson(String auxJson) {
+		this.auxJson = auxJson;
+	}
 
 
 	@Override
@@ -159,7 +184,7 @@ public class Urbanregeneration extends Adjunct{
 		pair = new ValuePair("Area", lotArea.toString());		
 		details.add(pair);
 
-		return details;
+		return details;	
 	}
 
 	public Boolean getEmitWithoutProperty() {
