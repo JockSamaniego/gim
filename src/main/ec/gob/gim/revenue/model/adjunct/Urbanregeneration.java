@@ -12,6 +12,7 @@ import org.hibernate.envers.Audited;
 
 import com.sun.istack.Nullable;
 
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.cadaster.model.Property;
@@ -33,6 +34,12 @@ public class Urbanregeneration extends Adjunct{
 	private String cadastralCode;
 	private String previousCadastralCode;					
 	private Integer paymentsNumber;
+	
+	@ManyToOne
+	private ItemCatalog type;
+	
+	private String auxJson;
+	
 	
 	//para emision x BD se pondran en nulo los booleanos
 	@Nullable
@@ -123,29 +130,61 @@ public class Urbanregeneration extends Adjunct{
 	public void setPreviousCadastralCode(String previousCadastralCode) {
 		this.previousCadastralCode = previousCadastralCode;
 	}
+	
+	public ItemCatalog getType() {
+		return type;
+	}
+
+
+	public void setType(ItemCatalog type) {
+		this.type = type;
+	}
+
+	public String getAuxJson() {
+		return auxJson;
+	}
+
+
+	public void setAuxJson(String auxJson) {
+		this.auxJson = auxJson;
+	}
 
 
 	@Override
 	public List<ValuePair> getDetails() {
 		List<ValuePair> details = new LinkedList<ValuePair>();
+
 		
-		ValuePair pair = new ValuePair("Identificacion", resident.getIdentificationNumber());
-		details.add(pair);
 		
-		pair = new ValuePair("Clave catastral", cadastralCode);
-		details.add(pair);
+		ValuePair pair = new ValuePair("Clave catastral", cadastralCode); 
+		details.add(pair);		
+
+		if(resident!= null) {
+			pair = new ValuePair("Identificacion", resident.getIdentificationNumber());
+			details.add(pair);
+		}
+		
+				
 		pair = new ValuePair("Clave catastral anterior: ", previousCadastralCode);
 		details.add(pair);
-		pair = new ValuePair("Numero cuotas", paymentsNumber.toString());
-		details.add(pair);
+		
+		if(paymentsNumber != null) {
+			pair = new ValuePair("Numero cuotas", paymentsNumber.toString());
+			details.add(pair);
+		}
+		
 		pair = new ValuePair("Avalúo comercial", commercialAppraisal.toString());		
 		details.add(pair);
-		pair = new ValuePair("Frente", front.toString());		
-		details.add(pair);
+		
+		if(front!=null) {
+			pair = new ValuePair("Frente", front.toString());		
+			details.add(pair);
+		}
+		
 		pair = new ValuePair("Area", lotArea.toString());		
 		details.add(pair);
 
-		return details;
+		return details;	
 	}
 
 	public Boolean getEmitWithoutProperty() {
