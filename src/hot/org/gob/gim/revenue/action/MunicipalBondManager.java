@@ -135,6 +135,8 @@ public class MunicipalBondManager extends EntityController {
 			+ "LEFT JOIN FETCH municipalBond.receipt receipt " + " WHERE ";
 
 	private static String JOIN_CLAUSE = " AND ";
+	
+	private static String ORDER_CLAUSE = " ORDER BY municipalBond.groupingcode, municipalBond.number  ";
 
 	List<MunicipalBond> municipalBondsFormalizing;
 
@@ -366,8 +368,9 @@ public class MunicipalBondManager extends EntityController {
 			queryBuilder.append(":now>= municipalBond.emisionDate ");
 		}
 
-		queryBuilder
-				.append(" ORDER BY municipalBond.entry, municipalBond.id desc");
+		// queryBuilder
+				//.append(" ORDER BY municipalBond.entry, municipalBond.id desc");
+		queryBuilder.append(ORDER_CLAUSE);
 
 		/*System.out
 				.println("QUERY GENERADO findMunicipalBondsFomalizing----> \n\n\n"

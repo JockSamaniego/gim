@@ -110,6 +110,14 @@
 					<rich:column
 						styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
 						<f:facet name="header">
+						#{messages['municipalBond.groupingcode']}
+					</f:facet>
+						<h:outputText value="#{_municipalBond.groupingcode}" />
+					</rich:column>
+					
+					<rich:column
+						styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
+						<f:facet name="header">
 						#{messages['municipalBond.number']}
 					</f:facet>
 						<h:outputText value="#{_municipalBond.number}" />
