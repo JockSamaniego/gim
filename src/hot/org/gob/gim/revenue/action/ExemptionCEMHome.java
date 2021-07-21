@@ -30,13 +30,14 @@ import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Exemption;
+import ec.gob.gim.revenue.model.ExemptionCem;
 import ec.gob.gim.revenue.model.ExemptionForProperty;
 import ec.gob.gim.revenue.model.ExemptionType;
 import ec.gob.gim.revenue.model.DTO.PropertyDTO;
 
-@Name("discountCEMHome")
+@Name("exemptioncemHome")
 @Scope(ScopeType.CONVERSATION)
-public class DiscountCEMHome extends EntityHome<Exemption> {
+public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
 
 	/**
 	 * 
@@ -125,6 +126,7 @@ public class DiscountCEMHome extends EntityHome<Exemption> {
 						CatalogConstants.ITEM_CATALOG_TYPE_EXCLUDE_TREATMENT_EXCEMPTION);
 	}
 
+	/*
 	public void reCalculateValues() {
 		//System.out.println("<<<RR>>reCalculateValues");
 		existExemption();
@@ -218,12 +220,13 @@ public class DiscountCEMHome extends EntityHome<Exemption> {
 					message);
 			return "failed";
 		}
-
+*/
 		/*
 		 * René Ortega 2016-08-08
 		 */
 		// TODO agregar propiedades de listas auxiliares
 
+	/*
 		for (ExemptionForProperty property : this.propertiesInExemptionNormal) {
 			if (!hasPropertyInExemption(property))
 				this.instance.getPropertiesInExemption().add(property);
@@ -616,7 +619,8 @@ public class DiscountCEMHome extends EntityHome<Exemption> {
 				.setPropertiesAppraisalSpecialTreatment(totalTreatmentSpecial);
 
 	}
-
+*/
+	/*
 	public void createExemptionForProperty() {
 		// TODO obtener propiedades de contibuyente y conyuge si es el caso
 		List<Long> idsResidentsForQuery = new ArrayList<Long>();
@@ -629,11 +633,7 @@ public class DiscountCEMHome extends EntityHome<Exemption> {
 			idsResidentsForQuery.add(this.instance.getPartner().getId());
 		}
 
-		/*
-		 * Query query = getEntityManager().createNamedQuery(
-		 * "Property.findByResidentsIds"); query.setParameter("ids",
-		 * idsForQuery); this.propertiesForSelection = query.getResultList();
-		 */
+		 
 		
 		for (ExemptionForProperty efp : propertiesInExemptionNormal) {
 			idsPropertiesForQuery.add(efp.getProperty().getId());
@@ -715,5 +715,5 @@ public class DiscountCEMHome extends EntityHome<Exemption> {
 			}
 		}
 	}
-
+*/
 }

@@ -7,12 +7,11 @@
 
    <begin-conversation join="true" flush-mode="MANUAL"/>
 
-   <action execute="#{exemptioncemHome.wire}"/>
+   <action execute="#{exemptionHome.wire}"/>
 
    <param name="exemptionFrom"/>
-   <param name="exemptionId" value="#{exemptioncemHome.exemptionId}"/>
+   <param name="exemptionId" value="#{exemptionHome.exemptionId}"/>
    
-   <!-- 
    <navigation from-action="#{exemptionHome.save()}">
       <rule if-outcome="persisted">
          <end-conversation/>
@@ -33,5 +32,5 @@
          <redirect view-id="/revenue/ExemptionList.xhtml"/>
       </rule>
    </navigation>
- -->
+
 </page>
