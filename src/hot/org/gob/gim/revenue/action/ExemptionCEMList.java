@@ -20,7 +20,7 @@ public class ExemptionCEMList extends EntityQuery<ExemptionCem> {
 	private static final String EJBQL = "select exemptioncem from ExemptionCem exemptioncem "
 			+ "left join fetch exemptioncem.resident ";
 
-	private static final String[] RESTRICTIONS = {"exemptioncem.type = #{exemptioncemList.exemptionType}",
+	private static final String[] RESTRICTIONS = {"exemptioncem.type = #{exemptioncemList.type}",
 		"lower(exemptioncem.resident.identificationNumber) like lower(concat('%',#{exemptioncemList.resident},'%')) or lower(exemptioncem.resident.name) like lower(concat('%',:el2,'%'))"};
 
 	private ExemptionCem exemption= new ExemptionCem();
@@ -28,7 +28,7 @@ public class ExemptionCEMList extends EntityQuery<ExemptionCem> {
 
 	@Out(scope=ScopeType.SESSION, required=false)
 	@In(scope=ScopeType.SESSION, required=false)
-	private ItemCatalog exemptionType;
+	private ItemCatalog type;
 	
 	public ExemptionCem getExemption() {
 		return exemption;
@@ -49,12 +49,13 @@ public class ExemptionCEMList extends EntityQuery<ExemptionCem> {
 		this.resident = resident;
 	}
 
-	public ItemCatalog getExemptionType() {
-		return exemptionType;
+ 
+	public ItemCatalog getType() {
+		return type;
 	}
 
-	public void setExemptionType(ItemCatalog exemptionType) {
-		this.exemptionType = exemptionType;
+	public void setType(ItemCatalog type) {
+		this.type = type;
 	}
 
 	public void setExemption(ExemptionCem exemption) {

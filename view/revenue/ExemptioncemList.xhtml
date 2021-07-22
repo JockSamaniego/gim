@@ -22,8 +22,8 @@
 
 				<s:decorate template="../layout/display.xhtml">
 					<ui:define name="label">#{messages['exemption.type']}</ui:define>
-					<h:selectOneMenu id="exemptionType"
-						value="#{exemptioncemList.exemptionType}">
+					<h:selectOneMenu id="exemptionTypeCEM"
+						value="#{exemptioncemList.type}">
 						<s:selectItems value="#{exemptionCEMTypes}" var="exemptionType"
 							label="#{exemptionType.name}"
 							noSelectionLabel="#{messages['common.chooseOption']}" />
@@ -66,7 +66,7 @@
 			<div class="results" id="list">
 
 				<h:outputText value="#{messages['common.noResultsReturned']}"
-					rendered="#{empty exemptioncem.resultList}" />
+					rendered="#{empty exemptioncemList.resultList}" />
 
 				<rich:dataTable id="tableList" var="_exemption"
 					value="#{exemptioncemList.resultList}"
@@ -82,6 +82,20 @@
 						</f:facet>
 						<h:outputText value="#{_exemption.id}" />
 					</h:column>
+					
+					<h:column >
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{exemptioncemList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['property.cadastralCode']}" />
+								<ui:param name="propertyPath" value="exemption.property" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_exemption.property.cadastralCode}" />
+					</h:column>
+					
+					
 					<h:column>
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">
@@ -104,34 +118,46 @@
 						<h:outputText value="#{_exemption.resident.name}" />
 					</h:column>
 					 									
-					<h:column>
+					<h:column alignment="right">
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">
 								<ui:param name="entityList" value="#{exemptioncemList}" />
 								<ui:param name="propertyLabel"
-									value="#{messages['exemption.type']}" />
-								<ui:param name="propertyPath" value="exemption.exemptionType" />
+									value="#{messages['exemption.exemptionCreationDate']}" />
+								<ui:param name="propertyPath" value="exemption.creationDate" />
 							</ui:include>
 						</f:facet>
-						<h:outputText value="#{_exemption.exemptionType.name}" />
+						<h:outputText value="#{_exemption.creationDate}" >							
+							<f:convertDateTime pattern="#{messages['common.dateFullTimePattern']}" />
+						</h:outputText>
 					</h:column>
 					
-					<rich:column styleClass="right">
-						<f:facet name="header">#{messages['exemption.patrimony']}</f:facet>
-						<h:outputText value="#{_exemption.patrimony}" />
-					</rich:column>
-					<h:column style="text-align: center;">
+											
+					<h:column alignment="right">
 						<f:facet name="header">
 							<ui:include src="../layout/sort.xhtml">
 								<ui:param name="entityList" value="#{exemptioncemList}" />
 								<ui:param name="propertyLabel"
-									value="#{messages['exemption.active']}" />
-								<ui:param name="propertyPath" value="exemption.active" />
+									value="#{messages['exemption.exemptionType']}" />
+								<ui:param name="propertyPath" value="exemption.type" />
 							</ui:include>
 						</f:facet>
-						<h:selectBooleanCheckbox value="#{_exemption.active}"
-							disabled="true" />
+						<h:outputText value="#{_exemption.type.name}" />
 					</h:column>
+					
+					<h:column alignment="right">
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{exemptioncemList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['infraction.percentaje']}" />
+								<ui:param name="propertyPath" value="exemption.discountPercentage" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_exemption.discountPercentage}" />
+					</h:column>
+										
+					
 					
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet>

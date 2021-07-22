@@ -6,13 +6,13 @@
 
 	<action execute="#{exemptioncemHome.init()}" />
 
-	<param name="firstResult" value="#{exemptionCEMList.firstResult}" />
+	<param name="firstResult" value="#{exemptioncemList.firstResult}" />
 	<param name="sort" value="#{exemptioncemList.orderColumn}" />
 	<param name="dir" value="#{exemptioncemList.orderDirection}" />
 	<param name="logic" value="#{exemptioncemList.restrictionLogicOperator}" />
 
 	<param name="from" />
-	<param name="exemptionType" value="#{exemptioncemList.exemptionType}"
+	<param name="exemptionType" value="#{exemptioncemList.type}"
 		converterId="#{org.jboss.seam.ui.EntityConverter}" />
 	<param name="resident" value="#{exemptioncemList.resident}" /> 
 </page>

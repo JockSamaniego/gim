@@ -86,6 +86,7 @@ import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.EntryStructureType;
+import ec.gob.gim.revenue.model.ExemptionCem;
 import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -2262,6 +2263,34 @@ public class IncomeServiceBean implements IncomeService {
 			deposits.add(deposit);
 		}
 		save(deposits, null, tillId, paymentMethod);
+	}
+	
+	
+	
+	//macartuche
+	//2021-07-22 08:04
+	//Exoneraciones para tercera edad y discapacidad
+	@SuppressWarnings("unchecked")
+	@Override
+	public BigDecimal checkHasDiscountCEM(String itemCode, String catalogCode, Long resident) {
+		BigDecimal percentage = BigDecimal.ZERO;
+		
+		Query query = entityManager.createQuery("SELECT exemption from ExemptionCem exemption "
+												+ "WHERE exemption.type.code=:itemCode and "
+												+ "exemption.type.catalogCode=:catalogoCode and "
+												+ "exemption.resident.id=:residentid");
+		query.setParameter("residentid", resident);
+		query.setParameter("itemCode", itemCode);
+		query.setParameter("catalogoCode", catalogCode);
+		
+		List<ExemptionCem> exemptions = query.getResultList();
+		if(!exemptions.isEmpty()) {
+			ExemptionCem exemption = exemptions.get(0);			
+			if(exemption.getDiscountPercentage()!=null) {
+				percentage = exemption.getDiscountPercentage();
+			}
+		}
+		return percentage;
 	}
 	
 }

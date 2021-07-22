@@ -169,4 +169,9 @@ public interface IncomeService {
 	
 	public void saveForBankLiquidation(Date paymentDate, List<Long> municipalBondIds, Person cashier, Long tillId, String externalTransactionId, String paymentMethod) throws Exception;
 	
+	//macartuche
+	//2021-07-22 08:04
+	//Exoneraciones para tercera edad y discapacidad
+	public BigDecimal checkHasDiscountCEM(String itemCode, String catalogCode, Long resident);
+	
 }

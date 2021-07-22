@@ -805,7 +805,7 @@ public class FactoryController  extends EntityController{
 	//descuentos CEM tercera edad y discapacidad
 	@SuppressWarnings("unchecked")
 	@Factory("exemptionCEMTypes")
-	public List<ItemCatalog> loadExemptionCEMTypes() {
+	public List<ItemCatalog> loadCEMExemptionTypes() {
 		if (itemCatalogService == null) {
 			itemCatalogService = ServiceLocator.getInstance().findResource(
 					ItemCatalogService.LOCAL_NAME);
