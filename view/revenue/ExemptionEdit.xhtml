@@ -41,24 +41,68 @@
 						</rich:panel>
 					</h:panelGrid>
 
-					 
+					<h:panelGrid columns="1" width="100%">
+						<rich:panel styleClass="left">
+							<f:facet name="header">#{messages['exemption.partner']}</f:facet>
+							<g:residentChooser id="partnerChooser"
+								resident="#{exemptionHome.instance.partner}"
+								criteria="#{exemptionHome.criteria}" bean="#{exemptionHome}"
+								label="#{messages['partner']}" searchAction="searchPartner"
+								residentsList="#{exemptionHome.residents}"
+								identificationNumber="#{exemptionHome.partnerIdentificationNumber}"
+								searchByCriteriaAction="searchResidentByCriteria"
+								clearSearchPanelAction="clearSearchResidentPanel"
+								residentChosenListenerName="partnerSelectedListener"
+								reRender="richPanelId, partnerChooser_residentField, buttonsId" />
+							<div style="clear: both" />
+						</rich:panel>
+					</h:panelGrid>
+
 				</h:panelGrid>
 
-				 
+				<h:panelGrid columns="2" width="100%"
+					columnClasses="topAligned, topAligned right">
+					<s:decorate id="exemptionTypeField"
+						template="../layout/display.xhtml">
+						<ui:define name="label">#{messages['exemption.type']}</ui:define>
+						<h:selectOneMenu id="exemptionTypeId" required="true"
+							value="#{exemptionHome.instance.exemptionType}">
+							<s:selectItems value="#{exemptionTypes}" required="true"
+								var="exemptionType" label="#{exemptionType.name}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEntity />
+							<a:support event="onchange" ajaxSingle="true"
+								action="#{exemptionHome.onChangeExemptionType()}"
+								reRender="propertiesPanel,exemptionPercentage, panelBottom" />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<s:decorate id="typeField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['fiscalPeriod.title']}</ui:define>
+						<h:selectOneMenu id="fiscalPeriodId" required="true"
+							value="#{exemptionHome.instance.fiscalPeriod}">
+							<s:selectItems value="#{futuresFiscalPeriods}" required="true"
+								var="fiscalPeriod" label="#{fiscalPeriod.name}"
+								noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEntity />
+							<a:support event="onchange" ajaxSingle="true"
+								action="#{exemptionHome.instance.propertiesInExemption.clear()}"
+								reRender="propertiesPanel" />
+						</h:selectOneMenu>
+					</s:decorate>
+					<div style="clear: both" />
+				</h:panelGrid>
 
 				<rich:panel id="propertiesPanel" styleClass="left">
 					<f:facet name="header">
-						<h:panelGrid columns="3" columnClasses="headerTitle,">
-							<ui:define name="label">Clave catastral</ui:define>
-							<h:inputText id="name" 
-									value="#{exemptioncemHome.instance.cadastraCode}"
-									required="true">								 
-							</h:inputText>
-							
+						<h:panelGrid columns="2" columnClasses="headerTitle,">
+							<h:outputText
+								value="#{messages['exemption.propertiesExemption']}" />
 							<a:commandButton id="createExemptionForProperty"
-								action="#{exemptioncemHome.searchProperty()}"
-								reRender="propertyExemptionPanel" ajaxSingle="true"								
-								value="Buscar propiedad" />
+								action="#{exemptionHome.createExemptionForProperty()}"
+								reRender="propertyExemptionPanel" ajaxSingle="true"
+								oncomplete="Richfaces.showModalPanel('propertyExemptionPanel')"
+								value="#{messages['exemption.addPropertyExemption']}" />
 						</h:panelGrid>
 					</f:facet>
 
