@@ -28,6 +28,7 @@ import ec.gob.gim.income.model.PaymentFraction;
 import ec.gob.gim.income.model.Receipt;
 import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.income.model.Workday;
+import ec.gob.gim.revenue.model.ExemptionCem;
 import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.security.model.MunicipalbondAux;
 
@@ -173,5 +174,7 @@ public interface IncomeService {
 	//2021-07-22 08:04
 	//Exoneraciones para tercera edad y discapacidad
 	public BigDecimal checkHasDiscountCEM(String itemCode, String catalogCode, Long resident);
+	//para anular exempcion cem
+	void updateExemption(ExemptionCem exemptionBD);
 	
 }

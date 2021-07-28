@@ -6,6 +6,7 @@ import java.util.List;
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.gob.gim.revenue.service.PropertyService;
 import org.jboss.seam.ScopeType;
@@ -21,6 +22,7 @@ import org.jboss.seam.log.Log;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.revenue.model.ExemptionCem;
 import ec.gob.gim.revenue.model.ExemptionForProperty;
 import ec.gob.gim.revenue.model.ExemptionType;
@@ -34,7 +36,7 @@ public class ExemptionCEMHome extends EntityController {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private ExemptionCem exemption;
 
 	private String cadastraCode;
@@ -461,7 +463,7 @@ public class ExemptionCEMHome extends EntityController {
 	 * this.exemptionForProperty = new ExemptionForProperty();
 	 * clearSearchPropertyPanel(); }
 	 */
-	 
+
 	/*
 	 * 
 	 * public void prepareEditExcemption(Exemption excemption) {
@@ -496,43 +498,53 @@ public class ExemptionCEMHome extends EntityController {
 	 * property.getProperty_id()) { propertyDto.setSelected(!selected); break; } } }
 	 */
 
-	public void removeExemptionForProperty(ExemptionForProperty property) { 
-		
-		
-  
+	public void removeExemptionForProperty(ExemptionForProperty property) {
+
 	}
 
-
- 
 	public void onChangeExemptionType() {
 
-		//this.instance.getPropertiesInExemption().clear();
+		// this.instance.getPropertiesInExemption().clear();
 
 		this.exemption.setReference(this.exemption.getType().getName());
 		/*
-		 * NO aplica ....dejar hasta pruebas sino delete
-		if (this.instance.getType().getId()
-				.equals(exemptionSpecial.getId())) {
-			this.isExemptionEspecial = Boolean.TRUE;
-		} else {
-			this.isExemptionEspecial = Boolean.FALSE;
-		}*/
+		 * NO aplica ....dejar hasta pruebas sino delete if
+		 * (this.instance.getType().getId() .equals(exemptionSpecial.getId())) {
+		 * this.isExemptionEspecial = Boolean.TRUE; } else { this.isExemptionEspecial =
+		 * Boolean.FALSE; }
+		 */
 
 	}
-	
-	//buscar la propiedad y ponerla en la tabla
+
+	// buscar la propiedad y ponerla en la tabla
 	public void searchProperty() {
-		//agregarla al list
-		
-		//asocial al campo property
+		// agregarla al list
+
+		// asocial al campo property
 	}
-	
-	
+
 	public void removeProperty() {
-		//quitar del list
-		
-		//null campo property
+		// quitar del list
+
+		// null campo property
 		this.property = null;
+	}
+
+	public void wire() {
+		 
+	}
+
+	public void nullifiedExemption(Long id) {
+		try {
+			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+			ExemptionCem exemptionBD = getEntityManager().find(ExemptionCem.class, id);
+			if (exemptionBD != null) {
+				exemptionBD.setActive(Boolean.FALSE);
+				incomeService.updateExemption(exemptionBD);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Property getProperty() {
@@ -550,7 +562,7 @@ public class ExemptionCEMHome extends EntityController {
 	public void setPropertylist(List<Property> propertylist) {
 		this.propertylist = propertylist;
 	}
-	
+
 	public String getCadastraCode() {
 		return cadastraCode;
 	}
@@ -566,6 +578,14 @@ public class ExemptionCEMHome extends EntityController {
 	public void setExemption(ExemptionCem exemption) {
 		this.exemption = exemption;
 	}
-	
+
+	public String getCriteria() {
+		return criteria;
+	}
+
+	public void setCriteria(String criteria) {
+		this.criteria = criteria;
+	}
+
 	
 }

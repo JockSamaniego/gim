@@ -51,7 +51,7 @@
 
 		</h:form>
 
-		<rich:panel>
+		<rich:panel id="dataExemption">
 			<f:facet name="header">
 				<h:panelGrid columns="3" columnClasses="headerTitle,">
 					<h:outputText
@@ -163,11 +163,23 @@
 						<f:facet name="header">#{messages['common.action']}</f:facet>
 						<s:button view="/revenue/ExemptioncemEdit.xhtml"
 							value="#{messages['common.edit']}" propagation="none"
-							id="exemptionEdit" rendered="#{empty from}"
+							rendered="#{_exemption.active}"
+							id="exemptionEdit"  
 							actionListener="#{exemptioncemHome.prepareEditExcemption(exemption)}">
 							<f:param name="exemptionId" value="#{_exemption.id}" />
 						</s:button>
+						
+						<s:button view="/revenue/ExemptioncemEdit.xhtml"
+							value="#{messages['common.deactivate']}" propagation="none"
+							rendered="#{_exemption.active}"
+							id="exemptionCancel"  
+							oncomplete="#{rich:component('nullifiedPanel')}.show();"
+							actionListener="#{exemptioncemHome.nullifiedExemption(exemption.id)}">
+							<f:param name="exemptionId" value="#{_exemption.id}" />
+						</s:button>
 					</rich:column>
+					
+				 
 				</rich:dataTable>
 
 			</div>
@@ -207,6 +219,39 @@
 		</div>
 
 
+<!-- ANULAR EXONERACION -->
+<rich:modalPanel id="nullifiedPanel" width="400" height="200">
+		<f:facet name="header">#{messages['exemptioncem.deactivate.title']}</f:facet>
+		<h:form id="nullifiedForm">
+			<h:panelGrid>
+				<rich:panel>
+					<h:panelGrid columns="2" >
+						<h:graphicImage value="/img/alert.png" style="margin-left: 2em" />
+						<h:outputText id="nllfPA"
+							value="#{messages['exemptinocem.deactivate.message']}"
+							style="font-size:large; color: green; margin-left: 2em; margin-right: 2em" />				
+					</h:panelGrid>
+					<br />
+					
+				</rich:panel>
+				<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="nullifiedButton"
+								value="Aceptar"
+								action="#{exemptioncemHome.nullifiedExemption()}"
+								oncomplete="#{rich:component('nullifiedInformationPanel')}.show()"
+								includePageParams="false" propagation="join"
+								reRender="dataExemption">
+							</a:commandButton>
+							<a:commandButton ajaxSingle="true"
+								value="#{messages['common.quit']}"
+								oncomplete="Richfaces.hideModalPanel('nullifiedPanel');"
+								bypassUpdates="true" />
+						</div>
+					</h:panelGroup>
+			</h:panelGrid>
+		</h:form>
+	</rich:modalPanel>
 	</ui:define>
 
 </ui:composition>
