@@ -169,14 +169,13 @@
 							</s:button>
 
 
-							<s:button id="nullifiedPABtn"
+							<a:commandButton id="nullifiedPABtn"
 								value="#{messages['common.deactivate']}"
 								oncomplete="#{rich:component('nullifiedPanel')}.show();"
 								includePageParams="false" reRender="nullifiedPanel"			
-								propagation="join"					
-								actionListener="#{exemptioncemHome.setListInstance(_exemption)}">
+								propagation="join">
 								<f:param name="exemptionId" value="#{_exemption.id}" />
-							</s:button>
+							</a:commandButton>
 						</rich:column>
 
 
