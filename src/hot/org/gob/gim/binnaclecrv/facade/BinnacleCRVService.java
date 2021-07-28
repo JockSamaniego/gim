@@ -20,4 +20,5 @@ public interface BinnacleCRVService {
 	
 	List<VehicleInventoryBase> findVehicleInventoryBase() throws Exception;
 	List<AdmissionCategory> findAdmissionCategories(AdmissionType admissionType);
+	
 }

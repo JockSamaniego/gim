@@ -14,13 +14,13 @@
             <h:panelGrid columns="3" columnClasses="headerTitle">
                 <h:outputText value="#{messages['binnacleCRV.vehicleInventory']}" />
                 
-                <a:commandButton id="addAll"
+                <a:commandButton id="addAll" disabled="#{!binnacleCRVHome.hasRoleCRV}"
                     action="#{binnacleCRVHome.addAllInventory()}"
                     reRender="vehicleInventoryPanel" ajaxSingle="true"
                     eventsQueue="gimEventsQueue"
                     value="#{messages['binnacleCRV.vehicleInventory.addAll']}" />
                 
-                <a:commandButton id="clearAll"
+                <a:commandButton id="clearAll" disabled="#{!binnacleCRVHome.hasRoleCRV}"
                     action="#{binnacleCRVHome.clearAllInventory()}"
                     reRender="vehicleInventoryPanel" ajaxSingle="true"
                     eventsQueue="gimEventsQueue"
@@ -33,10 +33,10 @@
 			<c:forEach items="#{binnacleCRVHome.instance.getVehicleInventories()}" var="_inventory">
 				<s:decorate>
 					<h:panelGrid columns="3" >
-				    	<h:selectBooleanCheckbox value="#{_inventory.value}" />
+				    	<h:selectBooleanCheckbox value="#{_inventory.value}" disabled="#{!binnacleCRVHome.hasRoleCRV}"/>
 						<h:outputLabel value="#{_inventory.name}" />
 				        <h:inputText maxlength="2" size="2" rendered="#{_inventory.amountVisible}"
-				            value="#{_inventory.amount}">
+				            value="#{_inventory.amount}" readonly="#{!binnacleCRVHome.hasRoleCRV}">
 				        </h:inputText>
 			        </h:panelGrid>
 		        </s:decorate>

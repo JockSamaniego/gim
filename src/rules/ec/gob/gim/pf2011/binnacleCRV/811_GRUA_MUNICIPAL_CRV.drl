@@ -1,0 +1,114 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.binnacleCRV
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.revenue.model.Item;
+import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import org.gob.gim.common.DateUtils;
+import java.math.BigDecimal;
+
+dialect "java"
+#BigDecimal moto = new BigDecimal("0");
+#BigDecimal liviano = new BigDecimal("15");
+#BigDecimal pesado = new BigDecimal("25");
+#BigDecimal extraPesado = new BigDecimal("30");
+
+rule "Grua - moto"
+    no-loop false
+    salience 10
+    when
+        $itemBase : Item(entry.code == "00811");
+        $mb : MunicipalBond();
+        $binnacleCRVReference : BinnacleCRVReference(type == "MOTO");
+        eval($binnacleCRVReference.getEmitWithoutBinnacle()==false);
+        eval($binnacleCRVReference.getHasCraneService()==true);
+    then
+        BigDecimal service = new BigDecimal(0.00); //Valor del servicio por moto
+        BigDecimal km = new BigDecimal(3.00); //Valor por Km en vehiculo moto
+        $itemBase.setAmount(new BigDecimal(1));
+        $itemBase.setValue(service.add(km.multiply($binnacleCRVReference.getKm()).setScale(2,BigDecimal.ROUND_HALF_UP)));
+        $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+        $mb.setBase($itemBase.getTotal());
+        System.out.println("..................................GRUA MOTO: " + $itemBase.getTotal());
+end
+
+######
+
+rule "Grua - liviano"
+    no-loop false
+    salience 20
+    when
+        $itemBase : Item(entry.code == "00811");
+        $mb : MunicipalBond();
+        $binnacleCRVReference : BinnacleCRVReference(type == "LIV");
+        eval($binnacleCRVReference.getEmitWithoutBinnacle()==false);
+        eval($binnacleCRVReference.getHasCraneService()==true);
+    then
+        BigDecimal service = new BigDecimal(15.00); //Valor del servicio por vehiculo liviano
+        BigDecimal km = new BigDecimal(3.00); //Valor por Km en vehiculo liviano
+        $itemBase.setAmount(new BigDecimal(1));
+        $itemBase.setValue(service.add(km.multiply($binnacleCRVReference.getKm()).setScale(2,BigDecimal.ROUND_HALF_UP)));
+        $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+        $mb.setBase($itemBase.getTotal());
+        System.out.println("..................................GRUA LIVIANO: " + $itemBase.getTotal());
+end
+
+######
+
+rule "Grua - pesado"
+    no-loop false
+    salience 30
+    when
+        $itemBase : Item(entry.code == "00811");
+        $mb : MunicipalBond();
+        $binnacleCRVReference : BinnacleCRVReference(type == "PES");
+        eval($binnacleCRVReference.getEmitWithoutBinnacle()==false);
+        eval($binnacleCRVReference.getHasCraneService()==true);
+        eval($binnacleCRVReference.getTonnage() <= 8.0);
+    then
+        BigDecimal service = new BigDecimal(25.00); //Valor del servicio por vehiculo pesado
+        BigDecimal km = new BigDecimal(3.00); //Valor por Km en vehiculo pesado
+        $itemBase.setAmount(new BigDecimal(1));
+        $itemBase.setValue(service.add(km.multiply($binnacleCRVReference.getKm()).setScale(2,BigDecimal.ROUND_HALF_UP)));
+        $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+        $mb.setBase($itemBase.getTotal());
+        System.out.println("..................................GRUA PESADO: " + $itemBase.getTotal());
+end
+
+######
+
+rule "Grua - extra pesado"
+    no-loop false
+    salience 40
+    when
+        $itemBase : Item(entry.code == "00811");
+        $mb : MunicipalBond();
+        $binnacleCRVReference : BinnacleCRVReference(type == "PES");
+        eval($binnacleCRVReference.getEmitWithoutBinnacle()==false);
+        eval($binnacleCRVReference.getHasCraneService()==true);
+        eval($binnacleCRVReference.getTonnage() > 8.0);
+    then
+        BigDecimal service = new BigDecimal(30.00); //Valor del servicio por vehiculo extra pesado
+        BigDecimal km = new BigDecimal(3.00); //Valor por Km en vehiculo extra pesado
+        $itemBase.setAmount(new BigDecimal(1));
+        $itemBase.setValue(service.add(km.multiply($binnacleCRVReference.getKm()).setScale(2,BigDecimal.ROUND_HALF_UP)));
+        $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+        $mb.setBase($itemBase.getTotal());
+        System.out.println("..................................GRUA EXTRA PESADO: " + $itemBase.getTotal());
+end
+
+######
+
+rule "Grua - EMISION POR VENTANILLA"
+        no-loop false
+        salience 50
+        when
+            $itemBase : Item(entry.code == "00811");
+            $mb : MunicipalBond();
+        then
+            #$itemBase.setValue($mb.getValue());
+            $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+            System.out.println("..................................GRUA EMISION POR VENTANILLA: " + $itemBase.getTotal());
+end

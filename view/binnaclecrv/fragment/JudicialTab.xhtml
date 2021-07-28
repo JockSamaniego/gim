@@ -16,7 +16,7 @@
     <rich:panel id="judicialTabPanel">
         <f:facet name="header">Información del Parte Judicial</f:facet>
         
-        <s:decorate template="../../layout/edit.xhtml" >
+        <s:decorate template="../../layout/edit.xhtml" rendered="#{binnacleCRVHome.hasRoleUCOT}">
             <ui:define name="label">#{messages['documentTypesBinnacleCRV']}</ui:define>
             <h:selectOneMenu id="documentTypeBinnacleCRV" disabled="#{binnacleCRVHome.instance.hasJudicialDocument}"
                 value="#{binnacleCRVHome.instance.documentTypeBinnacleCRV}" >
@@ -31,7 +31,7 @@
             <a:commandButton id="chargeDocument" 
                 disabled="#{binnacleCRVHome.instance.hasJudicialDocument}"
                 action="#{binnacleCRVHome.generateDocumentPart()}"
-                reRender="judicialTabPanel, informativePartPanel, accidentPartPanel, documentTypeBinnacleCRV, chargeDocument" 
+                reRender="judicialTabPanel, informativePartPanel, accidentPartPanel, ballotPartPanel, documentTypeBinnacleCRV, chargeDocument" 
                 ajaxSingle="true"
                 eventsQueue="gimEventsQueue" 
                 value="#{messages['common.load']}" />
@@ -45,6 +45,8 @@
 
     <ui:include src="AccidentPart.xhtml" />
 
+    <ui:include src="BallotPart.xhtml" />
+
     <div></div>
         
     <div class="actionButtons">
@@ -54,11 +56,11 @@
             rendered="#{!binnacleCRVHome.managed}" />
 
         <h:commandButton value="#{messages['common.save']}"
-            action="#{binnacleCRVHome.update}" rendered="#{binnacleCRVHome.managed}" />
+            action="#{binnacleCRVHome.update}" rendered="#{binnacleCRVHome.managed and binnacleCRVHome.hasRoleUCOT}" />
 
         <h:commandButton value="#{messages['common.delete']}"
             action="#{binnacleCRVHome.remove}" immediate="true"
-            rendered="#{binnacleCRVHome.managed}" />
+            rendered="#{binnacleCRVHome.managed and false}" />
 
         <s:button value="#{messages['common.cancel']}"
             propagation="end" view="/binnaclecrv/BinnacleCRVList.xhtml"

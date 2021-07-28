@@ -1,6 +1,7 @@
 package ec.gob.gim.binnaclecrv.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,18 +15,21 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
-import ec.gob.gim.security.model.User;
+import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
 
 /**
  * Bitácora Digital: información general de la Bitácora Digital del Centro de Retención Vehicular.
@@ -42,6 +46,21 @@ import ec.gob.gim.security.model.User;
 	valueColumnName = "value", 
 	pkColumnValue = "BinnacleCRV", 
 	initialValue = 1, allocationSize = 1)
+
+@NamedQueries(value = {
+	@NamedQuery(name = "BinnacleCRV.findGarajePendingsByIdentificationNumber", 
+		query = "SELECT distinct b FROM BinnacleCRV b " +
+			"join b.arrivalHistoryBinnacleCRVs a " +
+			"WHERE b.ownerIdentification = :ownerIdentification " +
+			"and a.exitDate = null "),
+	@NamedQuery(name = "BinnacleCRV.findCranePendingsByIdentificationNumber", 
+	query = "SELECT distinct b FROM BinnacleCRV b " +
+		"join b.arrivalHistoryBinnacleCRVs a " +
+		"WHERE b.ownerIdentification = :ownerIdentification " +
+		"and a.hasCraneService = true " +
+		"and a.exitDateCrane = null ")
+	})
+
 
 public class BinnacleCRV implements Serializable {
 
@@ -94,6 +113,7 @@ public class BinnacleCRV implements Serializable {
 	private String color; //Color
 	@Column(length = 30)
 	private String service; //Servicio
+	private BigDecimal km; //kms recorridos por la grúa municipal
 	@Column(columnDefinition = "TEXT")
 	private String transferInfo; //Datos de Traslado
 	@Column(length = 15)
@@ -116,6 +136,8 @@ public class BinnacleCRV implements Serializable {
 	@Column(length=20)
 	private DocumentTypeBinnacleCRV documentTypeBinnacleCRV;// Tipo de documento para el Parte
 	private boolean hasJudicialDocument; //Tiene generado el documento judicial
+	@Version
+	private Long version;
     
 	@OneToOne
 	@JoinColumn(name = "admissionType_id")
@@ -145,8 +167,17 @@ public class BinnacleCRV implements Serializable {
 
 	@OneToMany(mappedBy = "binnacleCRV", cascade = CascadeType.ALL)
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	@OrderBy(value = "id DESC")
+	private List<ArrivalHistoryBinnacleCRV> arrivalHistoryBinnacleCRVs; //Historial de ingresos del Vehículo al CRV
+
+	@OneToMany(mappedBy = "binnacleCRV", cascade = CascadeType.ALL)
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<PhotographicEvidence> photographicEvidences; //Imagenes que evidencien el estado del vehículo
 															  //se permitirá el ingreso de dos imagenes
+
+	@OneToMany(mappedBy = "binnacleCRV", cascade = CascadeType.ALL)
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private List<BinnacleCRVReference> binnacleCRVReferences; //son los adjuntas del municipalmunicipalBond
 
 	@OneToOne
 	@JoinColumn(name = "informativePart_id")
@@ -158,20 +189,26 @@ public class BinnacleCRV implements Serializable {
 	@Cascade(value = org.hibernate.annotations.CascadeType.ALL)
 	private AccidentPart accidentPart; //Parte de Accidente por la retención vehicular
 	
+	@OneToOne
+	@JoinColumn(name = "ballotPart_id")
+	@Cascade(value = org.hibernate.annotations.CascadeType.ALL)
+	private BallotPart ballotPart; //Parte de Boleta por la retención vehicular Personal o Vehicular
 
-	@ManyToOne
-	private User user;
-
+	@Transient
+	private ArrivalHistoryBinnacleCRV lastArrivalHistoryBinnacleCRV;
+	
 	public BinnacleCRV() {
 		vehicleInventories = new ArrayList<VehicleInventory>();
 		vehicleItems = new ArrayList<VehicleItem>();
 		obsBinnacleCRVs = new ArrayList<ObsBinnacleCRV>();
+		arrivalHistoryBinnacleCRVs = new ArrayList<ArrivalHistoryBinnacleCRV>();
 		photographicEvidences = new ArrayList<PhotographicEvidence>();
 		PhotographicEvidence evidence = new PhotographicEvidence();
 		photographicEvidences.add(evidence);
 		evidence = new PhotographicEvidence();
 		photographicEvidences.add(evidence);
 		hasJudicialDocument = false;
+		km = BigDecimal.ZERO;
 	}
 
 	/**
@@ -484,6 +521,20 @@ public class BinnacleCRV implements Serializable {
 	}
 
 	/**
+	 * @return the km
+	 */
+	public BigDecimal getKm() {
+		return km;
+	}
+
+	/**
+	 * @param km the km to set
+	 */
+	public void setKm(BigDecimal km) {
+		this.km = km;
+	}
+
+	/**
 	 * @return the service
 	 */
 	public String getService() {
@@ -734,6 +785,21 @@ public class BinnacleCRV implements Serializable {
 	}
 
 	/**
+	 * @return the arrivalHistoryBinnacleCRVs
+	 */
+	public List<ArrivalHistoryBinnacleCRV> getArrivalHistoryBinnacleCRVs() {
+		return arrivalHistoryBinnacleCRVs;
+	}
+
+	/**
+	 * @param arrivalHistoryBinnacleCRVs the arrivalHistoryBinnacleCRVs to set
+	 */
+	public void setArrivalHistoryBinnacleCRVs(
+			List<ArrivalHistoryBinnacleCRV> arrivalHistoryBinnacleCRVs) {
+		this.arrivalHistoryBinnacleCRVs = arrivalHistoryBinnacleCRVs;
+	}
+
+	/**
 	 * @return the photographicEvidences
 	 */
 	public List<PhotographicEvidence> getPhotographicEvidences() {
@@ -745,6 +811,21 @@ public class BinnacleCRV implements Serializable {
 	 */
 	public void setPhotographicEvidences(List<PhotographicEvidence> photographicEvidences) {
 		this.photographicEvidences = photographicEvidences;
+	}
+
+	/**
+	 * @return the binnacleCRVReferences
+	 */
+	public List<BinnacleCRVReference> getBinnacleCRVReferences() {
+		return binnacleCRVReferences;
+	}
+
+	/**
+	 * @param binnacleCRVReferences the binnacleCRVReferences to set
+	 */
+	public void setBinnacleCRVReferences(
+			List<BinnacleCRVReference> binnacleCRVReferences) {
+		this.binnacleCRVReferences = binnacleCRVReferences;
 	}
 
 	/**
@@ -805,17 +886,25 @@ public class BinnacleCRV implements Serializable {
 	}
 
 	/**
-	 * @return the user
+	 * @return the ballotPart
 	 */
-	public User getUser() {
-		return user;
+	public BallotPart getBallotPart() {
+		return ballotPart;
 	}
 
 	/**
-	 * @param user the user to set
+	 * @param ballotPart the ballotPart to set
 	 */
-	public void setUser(User user) {
-		this.user = user;
+	public void setBallotPart(BallotPart ballotPart) {
+		this.ballotPart = ballotPart;
+	}
+
+	/**
+	 * @return the lastArrivalHistoryBinnacleCRV
+	 */
+	public ArrivalHistoryBinnacleCRV getLastArrivalHistoryBinnacleCRV() {
+		lastArrivalHistoryBinnacleCRV = arrivalHistoryBinnacleCRVs.get(0);
+		return lastArrivalHistoryBinnacleCRV;
 	}
 
 	public void add(VehicleInventory vehicleInventory) {
@@ -857,6 +946,20 @@ public class BinnacleCRV implements Serializable {
 		if (obsBinnacleCRVs.contains(obsBinnacleCRV)) {
 			obsBinnacleCRVs.remove(obsBinnacleCRV);
 			obsBinnacleCRV.setBinnacleCRV(null);
+		}
+	}
+	
+	public void add(ArrivalHistoryBinnacleCRV arrivalHistoryBinnacleCRV) {
+		if (!arrivalHistoryBinnacleCRVs.contains(arrivalHistoryBinnacleCRV)) {
+			arrivalHistoryBinnacleCRVs.add(arrivalHistoryBinnacleCRV);
+			arrivalHistoryBinnacleCRV.setBinnacleCRV(this);
+		}
+	}
+	
+	public void remove(ArrivalHistoryBinnacleCRV arrivalHistoryBinnacleCRV) {
+		if (arrivalHistoryBinnacleCRVs.contains(arrivalHistoryBinnacleCRV)) {
+			arrivalHistoryBinnacleCRVs.remove(arrivalHistoryBinnacleCRV);
+			arrivalHistoryBinnacleCRV.setBinnacleCRV(null);
 		}
 	}
 	
@@ -910,7 +1013,6 @@ public class BinnacleCRV implements Serializable {
 		result = prime * result + ((tonnage == null) ? 0 : tonnage.hashCode());
 		result = prime * result + ((transferInfo == null) ? 0 : transferInfo.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		result = prime * result + ((vehicleInventories == null) ? 0 : vehicleInventories.hashCode());
 		result = prime * result + ((vehicleItems == null) ? 0 : vehicleItems.hashCode());
 		result = prime * result + ((year == null) ? 0 : year.hashCode());
@@ -1058,11 +1160,6 @@ public class BinnacleCRV implements Serializable {
 			if (other.type != null)
 				return false;
 		} else if (!type.equals(other.type))
-			return false;
-		if (user == null) {
-			if (other.user != null)
-				return false;
-		} else if (!user.equals(other.user))
 			return false;
 		if (vehicleInventories == null) {
 			if (other.vehicleInventories != null)

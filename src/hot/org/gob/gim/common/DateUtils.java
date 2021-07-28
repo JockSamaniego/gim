@@ -91,4 +91,10 @@ public class DateUtils {
 
 	}
 
+	public static int daysBetweenDates(Date majorDate, Date minorDate) {
+		long ms = majorDate.getTime() - minorDate.getTime();
+		long days = ms / (1000 * 60 * 60 * 24);
+		return (int) days;
+	}
+
 }

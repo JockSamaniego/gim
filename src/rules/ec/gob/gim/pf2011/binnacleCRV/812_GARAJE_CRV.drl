@@ -1,0 +1,110 @@
+#created on: Nov 12, 2011
+package gim.src.rules.ec.gob.gim.pf2011.binnacleCRV
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.revenue.model.Item;
+import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import org.gob.gim.common.DateUtils;
+import java.math.BigDecimal;
+
+dialect "java"
+#BigDecimal moto = new BigDecimal("1");
+#BigDecimal liviano = new BigDecimal("3");
+#BigDecimal pesado = new BigDecimal("5");
+#BigDecimal extraPesado = new BigDecimal("7.00");
+
+rule "Garaje - moto"
+    no-loop true
+    salience 10
+    when
+        $itemBase : Item(entry.code == "00812");
+        $mb : MunicipalBond();
+        $binnacleCRVReference : BinnacleCRVReference(type == "MOTO");
+        eval($binnacleCRVReference.getEmitWithoutBinnacle()==false);
+    then
+        BigDecimal value = new BigDecimal(1.00); //Valor por día en vehiculo moto
+		int days = DateUtils.daysBetweenDates($binnacleCRVReference.getExitDate(), $binnacleCRVReference.getArrivalDate()) + 1;
+        $itemBase.setAmount(new BigDecimal(days));
+        $itemBase.setValue(value);
+        $itemBase.setTotal($itemBase.getAmount().multiply($itemBase.getValue()).setScale(2,BigDecimal.ROUND_HALF_UP));
+        $mb.setBase($itemBase.getTotal());
+        System.out.println("..................................GARAJE MOTO: " + $itemBase.getTotal());
+end
+
+######
+
+rule "Garaje - liviano"
+    no-loop true
+    salience 20
+    when
+        $itemBase : Item(entry.code == "00812");
+        $mb : MunicipalBond();
+        $binnacleCRVReference : BinnacleCRVReference(type == "LIV");
+        eval($binnacleCRVReference.getEmitWithoutBinnacle()==false);
+    then
+        BigDecimal value = new BigDecimal(3.00); //Valor por día en vehiculo liviano
+		int days = DateUtils.daysBetweenDates($binnacleCRVReference.getExitDate(), $binnacleCRVReference.getArrivalDate()) + 1;
+        $itemBase.setAmount(new BigDecimal(days));
+        $itemBase.setValue(value);
+        $itemBase.setTotal($itemBase.getAmount().multiply($itemBase.getValue()).setScale(2,BigDecimal.ROUND_HALF_UP));
+        $mb.setBase($itemBase.getTotal());
+        System.out.println("..................................GARAJE LIVIANO: " + $itemBase.getTotal());
+end
+
+######
+
+rule "Garaje - pesado"
+    no-loop true
+    salience 30
+    when
+        $itemBase : Item(entry.code == "00812");
+        $mb : MunicipalBond();
+        $binnacleCRVReference : BinnacleCRVReference(type == "PES");
+        eval($binnacleCRVReference.getEmitWithoutBinnacle()==false);
+        eval($binnacleCRVReference.getTonnage() <= 8.0);
+    then
+        BigDecimal value = new BigDecimal(5.00); //Valor por día en vehiculo pesado
+		int days = DateUtils.daysBetweenDates($binnacleCRVReference.getExitDate(), $binnacleCRVReference.getArrivalDate()) + 1;
+        $itemBase.setAmount(new BigDecimal(days));
+        $itemBase.setValue(value);
+        $itemBase.setTotal($itemBase.getAmount().multiply($itemBase.getValue()).setScale(2,BigDecimal.ROUND_HALF_UP));
+        $mb.setBase($itemBase.getTotal());
+        System.out.println("..................................GARAJE PESADO: " + $itemBase.getTotal());
+end
+
+######
+
+rule "Garaje - extra pesado"
+    no-loop true
+    salience 40
+    when
+        $itemBase : Item(entry.code == "00812");
+        $mb : MunicipalBond();
+        $binnacleCRVReference : BinnacleCRVReference(type == "PES");
+        eval($binnacleCRVReference.getEmitWithoutBinnacle()==false);
+        eval($binnacleCRVReference.getTonnage() > 8.0);
+    then
+        BigDecimal value = new BigDecimal(7.00); //Valor por día en vehiculo pesado con tonelaje mayor a 8ton (extra pesado)
+		int days = DateUtils.daysBetweenDates($binnacleCRVReference.getExitDate(), $binnacleCRVReference.getArrivalDate()) + 1;
+        $itemBase.setAmount(new BigDecimal(days));
+        $itemBase.setValue(value);
+        $itemBase.setTotal($itemBase.getAmount().multiply($itemBase.getValue()).setScale(2,BigDecimal.ROUND_HALF_UP));
+        $mb.setBase($itemBase.getTotal());
+        System.out.println("..................................GARAJE EXTRA PESADO: " + $itemBase.getTotal());
+end
+
+######
+
+rule "Garaje - EMISION POR VENTANILLA"
+        no-loop true
+        salience 50
+        when
+            $itemBase : Item(entry.code == "00812");
+            $mb : MunicipalBond();
+        then
+            #$itemBase.setValue($mb.getValue());
+            $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
+            System.out.println("..................................GARAJE EMISION POR VENTANILLA: " + $itemBase.getTotal());
+end

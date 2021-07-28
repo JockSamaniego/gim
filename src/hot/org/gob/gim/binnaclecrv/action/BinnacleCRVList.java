@@ -24,6 +24,8 @@ public class BinnacleCRVList extends EntityQuery<BinnacleCRV> {
 
 	private static final String[] RESTRICTIONS = {"lower(binnacleCRV.licensePlate) like lower(concat(#{binnacleCRVList.name},'%'))",
 			"lower(binnacleCRV.serialNumber) = lower(concat(#{binnacleCRVList.name}))",
+			"lower(binnacleCRV.chassis) = lower(concat(#{binnacleCRVList.name}))",
+			"lower(binnacleCRV.motor) = lower(concat(#{binnacleCRVList.name}))",
 			"lower(binnacleCRV.admissionResponsableIdentification) like lower(concat('%', #{binnacleCRVList.name},'%'))",
 			"lower(binnacleCRV.admissionResponsableName) like lower(concat('%', #{binnacleCRVList.name},'%'))"};
 

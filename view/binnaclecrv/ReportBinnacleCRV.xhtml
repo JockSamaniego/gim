@@ -1,0 +1,192 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <h:form id="reportBinnacleCRVForm" >
+            <h:outputText styleClass="formTitle"
+                value="Reporte de Vehículos en Centro de Retención Vehicular" />
+
+            <rich:panel enabled="false">
+                <f:facet name="header">Datos de consulta</f:facet>
+                <h:panelGrid width="100%">
+                    <s:decorate id="startDateField" template="../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['reportBinnacleCRV.startDate']}:</ui:define>
+                    <rich:calendar id="startDate" 
+                        value="#{reportBinnacleCRVHome.startDate}"
+                        enableManualInput="false" required="true" 
+                        datePattern="#{messages['common.datePattern']}">
+                        <a:support event="ondateselected" reRender="results" bypassUpdates="true" 
+                        ajaxSingle="true" action="#{reportBinnacleCRVHome.clearList()}"></a:support>
+                    </rich:calendar>
+                    </s:decorate>
+
+                    <s:decorate id="endDateField" template="../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['reportBinnacleCRV.endDate']}:</ui:define>
+                    <rich:calendar id="endDate" 
+                        value="#{reportBinnacleCRVHome.endDate}"
+                        enableManualInput="false" required="true" ajaxSingle="true"
+                        datePattern="yyyy-MM-dd">
+                        <a:support event="ondateselected" reRender="results" bypassUpdates="true" 
+                        ajaxSingle="true" action="#{reportBinnacleCRVHome.clearList()}"></a:support>
+                    </rich:calendar>
+                    </s:decorate>
+
+                    <s:decorate template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['reportBinnacleCRV.vehicle']}</ui:define>
+                        <h:selectOneMenu id="vehicle" 
+                            value="#{reportBinnacleCRVHome.vehicle}" required="true">
+                            <s:selectItems value="#{reportBinnacleCRVHome.listVehicles}" var="_obj"
+                                label="#{_obj}" />
+                            <a:support event="onblur" reRender="results" bypassUpdates="true" 
+                            ajaxSingle="false" action="#{reportBinnacleCRVHome.clearList()}"></a:support>
+                        </h:selectOneMenu>
+                    </s:decorate>
+                </h:panelGrid>
+
+                <a:commandButton id="generateReport"
+                    reRender="results, messages"
+                    value="#{messages['reportBinnacleCRV.generateReport']}"
+                    action="#{reportBinnacleCRVHome.generateReportVehicles()}" />
+
+                <s:button id="cancel" value="Limpiar"
+                    action="#{reportBinnacleCRVHome.initialData}"
+                    includePageParams="false" 
+                    reRender="reportBinnacleCRVForm, results, dataTable, messages"/>
+
+            </rich:panel>
+
+            <rich:panel styleClass="results" id="results">
+            
+                <f:facet name="header">
+                    <h:panelGrid columns="3" columnClasses="headerTitle,">
+                        <h:outputText
+                            value="#{messages['common.searchResults']} (#{empty reportBinnacleCRVHome.list ? 0 : (reportBinnacleCRVHome.list.size)})" />                        
+                        <s:button id="print" disabled="#{empty reportBinnacleCRVHome.list}"
+                            value="#{messages['common.print']}" propagation="join"                          
+                            view="/binnaclecrv/report/VehiclesBinnacleCRVReport.xhtml">                                                        
+                        </s:button>
+                    </h:panelGrid>
+                </f:facet>
+                <div class="results" id="checkList">
+                <h:outputText value="#{messages['common.returnedNoResults']}"
+                    rendered="#{empty reportBinnacleCRVHome.list}" />
+
+                <rich:dataTable id="dataTable" var="_obj"
+                    value="#{reportBinnacleCRVHome.list}"
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                    rendered="#{not empty reportBinnacleCRVHome.list}">
+                    
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['binnacleCRV.serialNumber']}" />
+                        </f:facet>
+                        <h:outputText value="#{_obj.serialNumber}" />
+                    </rich:column>
+
+                     <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['binnacleCRV.admissionDate']}" />
+                        </f:facet>
+                        <h:outputText value="#{_obj.lastArrivalHistoryBinnacleCRV.arrivalDate}">
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                        </h:outputText>
+                    </rich:column>
+                    
+                     <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['arrivalHistory.exitDate']}" />
+                        </f:facet>
+                        <h:outputText value="#{_obj.lastArrivalHistoryBinnacleCRV.exitDate}">
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                        </h:outputText>
+                    </rich:column>
+                    
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['binnacleCRV.licensePlate']}" />
+                        </f:facet>
+                        <h:outputText value="#{_obj.licensePlate}" />
+                    </rich:column>
+                    
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['binnacleCRV.model']}" />
+                        </f:facet>
+                        <h:outputText value="#{_obj.model}" />
+                    </rich:column>
+                    
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['binnacleCRV.ownerIdentification']}" />
+                        </f:facet>
+                        <h:outputText value="#{_obj.ownerIdentification}" />
+                    </rich:column>
+                    
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['binnacleCRV.ownerName']}" />
+                        </f:facet>
+                        <h:outputText value="#{_obj.ownerName}" />
+                    </rich:column>
+                    
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['binnacleCRV.chassis']}" />
+                        </f:facet>
+                        <h:outputText value="#{_obj.chassis}" />
+                    </rich:column>
+                    
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['binnacleCRV.motor']}" />
+                        </f:facet>
+                        <h:outputText value="#{_obj.motor}" />
+                    </rich:column>
+                    
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['binnacleCRV.type']}" />
+                        </f:facet>
+                        <h:outputText value="#{_obj.type}" />
+                    </rich:column>
+                    
+                    <rich:column styleClass="right">
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['binnacleCRV.tonnage']}" />
+                        </f:facet>
+                        <h:outputText value="#{_obj.tonnage}">
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>
+                    </rich:column>
+                    
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['binnacleCRV.admissionCategory']}" />
+                        </f:facet>
+                        <h:outputText value="#{_obj.admissionCategory.name}" />
+                    </rich:column>
+                    
+                    <rich:column styleClass="right">
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['reportBinnacleCRV.days']}" />
+                        </f:facet>
+                        <h:outputText value="#{reportBinnacleCRVHome.calculateDays(_obj)}" />
+                    </rich:column>
+                    
+                </rich:dataTable>
+                </div>
+            </rich:panel>
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>

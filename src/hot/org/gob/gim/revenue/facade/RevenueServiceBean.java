@@ -43,6 +43,7 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.StatusChange;
+import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
 import ec.gob.gim.security.model.User;
 
 /**
@@ -217,8 +218,18 @@ public class RevenueServiceBean implements RevenueService {
 					 * System.out.println("EMITIENDO CON ADJUNTO " + municipalBond.getAdjunct() +
 					 * " CODIGO ADJUNTO " + municipalBond.getAdjunct().getCode());
 					 */
+					Adjunct adjunct = null;
+					adjunct = municipalBond.getAdjunct();
+					//Ronald Paladines Celi
+					//Módulo de Bitácora Digital CRV 
+					if ((adjunct != null) && (adjunct.getClass() == BinnacleCRVReference.class)){
+						BinnacleCRVReference binnacleCRVReference = (BinnacleCRVReference) municipalBond.getAdjunct();
+						if (!binnacleCRVReference.getEmitWithoutBinnacle()){
+							binnacleCRVReference.setBond(municipalBond);
+						}
+					} 
 					if (municipalBond.getAdjunct().getId() != null) {
-						Adjunct adjunct = entityManager.merge(municipalBond.getAdjunct());
+						adjunct = entityManager.merge(municipalBond.getAdjunct());
 						municipalBond.setAdjunct(adjunct);
 						municipalBond.setGroupingCode(adjunct.getCode());
 					}
@@ -281,7 +292,7 @@ public class RevenueServiceBean implements RevenueService {
 	}
 
 	private Long findNextMunicipalBondValue() {
-		Query query = entityManager.createNativeQuery("SELECT nextval('municipalBondNumber')");
+		Query query = entityManager.createNativeQuery("SELECT nextval('gimprod.municipalBondNumber')");
 		return ((BigInteger) query.getResultList().get(0)).longValue();
 	}
 

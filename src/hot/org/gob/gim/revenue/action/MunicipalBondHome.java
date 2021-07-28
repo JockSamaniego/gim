@@ -1851,4 +1851,18 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		em.persist(adjunct);
 		em.flush();
 	}
+
+	/**
+	 * @return the userSession
+	 */
+	public UserSession getUserSession() {
+		return userSession;
+	}
+
+	/**
+	 * @param userSession the userSession to set
+	 */
+	public void setUserSession(UserSession userSession) {
+		this.userSession = userSession;
+	}
 }

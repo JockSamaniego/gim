@@ -1,0 +1,83 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <h:form id="binnacleCRVEditForm" >
+            <h:outputText styleClass="formTitle"
+                value="Salida de Vehículo del Centro de Retención Vehicular" />
+
+            <ui:include src="fragment/VehicleInformationCRV.xhtml" />
+            <rich:panel enabled="false">
+                <f:facet name="header">Registro de Salida del Vehículo</f:facet>
+                <h:panelGrid columns="2" width="100%">
+                    <s:decorate id="exitDateField" template="../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['arrivalHistory.exitDate']}:</ui:define>
+                    <rich:calendar id="exitDate" readonly="true"
+                        value="#{binnacleCRVHome.arrivalHistoryBinnacleCRV.exitDate}"
+                        enableManualInput="false" required="true" ajaxSingle="true"
+                        datePattern="yyyy-MM-dd"/>
+                    </s:decorate>
+                        <div></div>
+
+        
+                    <h:panelGrid>
+                        <f:facet name="header">Valores por Servicio de Garaje</f:facet>
+            
+                    <s:decorate template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['arrivalHistory.exitTypeBinnacleCRV']}:</ui:define>
+                        <h:inputText id="exitDetail" required="true" readonly="true"
+                            value="#{binnacleCRVHome.arrivalHistoryBinnacleCRV.exitTypeBinnacleCRV}" />
+                    </s:decorate>
+
+                    <s:decorate template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['arrivalHistory.exitDetail']}:</ui:define>
+                        <h:inputText id="exitDetail" required="true" 
+                            value="#{binnacleCRVHome.arrivalHistoryBinnacleCRV.exitDetail}" />
+                    </s:decorate>
+
+                    <s:decorate template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['arrivalHistory.exitObs']}:</ui:define>
+                        <h:inputTextarea id="exitObs" required="true" cols="60" rows="4"
+                            value="#{binnacleCRVHome.arrivalHistoryBinnacleCRV.exitObs}" />
+                    </s:decorate>
+                    </h:panelGrid>
+
+                    <h:panelGrid>
+                        <f:facet name="header">Valores por Servicio de Grúa</f:facet>
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['arrivalHistory.hasCraneService']}:</ui:define>
+                            <h:selectBooleanCheckbox value="#{binnacleCRVHome.arrivalHistoryBinnacleCRV.hasCraneService}" 
+                                disabled="true"/>
+                        </s:decorate>
+
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['arrivalHistory.km']}:</ui:define>
+                            <h:inputText id="arrivalKm" required="true" style="text-align: right" 
+                                value="#{binnacleCRVHome.arrivalHistoryBinnacleCRV.km}" readonly="true"/>
+                        </s:decorate>
+                    </h:panelGrid>
+                </h:panelGrid>
+
+                <h:commandButton id="update" value="#{messages['common.save']}"
+                    propagation="end" reRender="binnacleCRVList" rendered="#{binnacleCRVHome.canSaveExitVehicle}"
+                    action="#{binnacleCRVHome.updateExitArrival}" />
+
+                <s:button id="cancelEdit" value="#{messages['common.cancel']}"
+                    action="#{binnacleCRVHome.clearArrival()}" reRender="binnacleCRVList"
+                    includePageParams="false" propagation="end" 
+                    view="/binnaclecrv/BinnacleCRVList.xhtml" />
+
+            </rich:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

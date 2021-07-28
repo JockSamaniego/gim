@@ -13,7 +13,7 @@ import javax.persistence.TableGenerator;
 import org.hibernate.envers.Audited;
 
 /**
- * Bitácora Digital:
+ * Bitácora Digital: datos del vehículo y persona implicada
  * 
  * @author Ronald Paladines C
  * @version 1.0
@@ -61,6 +61,9 @@ public class Implicated implements Serializable {
     
     @ManyToOne
     AccidentPart accidentPart;
+
+    @ManyToOne
+    BallotPart ballotPart;
 
 	public Implicated() {
         
@@ -274,6 +277,20 @@ public class Implicated implements Serializable {
 	 */
 	public void setAccidentPart(AccidentPart accidentPart) {
 		this.accidentPart = accidentPart;
+	}
+
+	/**
+	 * @return the ballotPart
+	 */
+	public BallotPart getBallotPart() {
+		return ballotPart;
+	}
+
+	/**
+	 * @param ballotPart the ballotPart to set
+	 */
+	public void setBallotPart(BallotPart ballotPart) {
+		this.ballotPart = ballotPart;
 	}
 
 	/* (non-Javadoc)

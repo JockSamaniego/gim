@@ -13,7 +13,7 @@
         <f:facet name="header">
             <h:panelGrid columns="2" columnClasses="headerTitle">
                 <h:outputText value="#{messages['binnacleCRV.vehicleItems']}" />
-                <a:commandButton id="createItem"
+                <a:commandButton id="createItem" disabled="#{!binnacleCRVHome.hasRoleCRV}"
                     action="#{binnacleCRVHome.createVehicleItem()}"
                     reRender="itemEditPanel" ajaxSingle="true"
                     eventsQueue="gimEventsQueue"
@@ -44,7 +44,7 @@
                     <f:facet name="header">
                         <h:outputText value="#{messages['binnacleCRV.vehicleItem.name']}" />
                     </f:facet>
-                    <h:outputText value="#{_vehicleItem.name}" />
+                    <h:outputText value="#{_vehicleItem.name}" styleClass="rigth"/>
                 </rich:column>
                 
 	            <rich:column>
@@ -52,6 +52,7 @@
 	                    <h:outputText value="#{messages['common.action']}" />
 	                </f:facet>
 	                <a:commandButton id="editItem"
+	                    disabled="#{!binnacleCRVHome.hasRoleCRV}"
 	                    action="#{binnacleCRVHome.editVehicleItem(_vehicleItem)}"
 	                    reRender="itemEditPanel" ajaxSingle="true"
 	                    eventsQueue="gimEventsQueue"
@@ -59,6 +60,7 @@
 	                    value="#{messages['common.edit']}" />
 	                    
 	                <a:commandButton id="removeItem"
+	                    disabled="#{!binnacleCRVHome.hasRoleCRV}"
 	                    action="#{binnacleCRVHome.removeVehicleItem(_vehicleItem)}"
 	                    reRender="vehicleItemsPanel" ajaxSingle="true"
 	                    value="#{messages['common.delete']}" />

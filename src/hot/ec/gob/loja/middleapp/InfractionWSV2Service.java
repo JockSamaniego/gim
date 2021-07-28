@@ -33,7 +33,6 @@ public class InfractionWSV2Service
             URL baseUrl;
             baseUrl = ec.gob.loja.middleapp.InfractionWSV2Service.class.getResource(".");
             url = new URL(baseUrl, "http://10.200.12.106:8084/middleApp-1.0-SNAPSHOT/InfractionWSV2?wsdl");
-            System.out.println("----------BASE URL");
             URL clone_url = new URL(url.toString());
             HttpURLConnection clone_urlconnection = (HttpURLConnection) clone_url.openConnection();
             // TimeOut settings
@@ -44,8 +43,6 @@ public class InfractionWSV2Service
             logger.warning("Failed to create URL for the wsdl Location: 'http://10.200.12.106:8084/middleApp-1.0-SNAPSHOT/InfractionWSV2?wsdl', retrying as a local file");
             logger.warning(e.getMessage());
         } catch (IOException e) {
-			// TODO Auto-generated catch block
-            System.out.println("----------ERROR BASE URL");
 			e.printStackTrace();
 		}
         INFRACTIONWSV2SERVICE_WSDL_LOCATION = url;
@@ -57,7 +54,6 @@ public class InfractionWSV2Service
 
     public InfractionWSV2Service() {
         super(INFRACTIONWSV2SERVICE_WSDL_LOCATION, new QName("http://middleapp.loja.gob.ec/", "InfractionWSV2Service"));
-        System.out.println("----------URL WEBSERVICE: " + INFRACTIONWSV2SERVICE_WSDL_LOCATION);
     }
 
     /**

@@ -1,0 +1,53 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <h:form id="binnacleCRVCraneEditForm" >
+            <h:outputText styleClass="formTitle"
+                value="#{binnacleCRVCraneHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['binnacleCRVCrane.nameTitle']}" />
+
+            <rich:panel enabled="false">
+                <f:facet name="header">Datos de grúa</f:facet>
+                <h:panelGrid >
+                    <s:decorate template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['binnacleCRVCrane.name']}:</ui:define>
+                        <h:inputText id="arrivalKm" required="true" style="text-align: left" 
+                            value="#{binnacleCRVCraneHome.instance.name}" />
+                    </s:decorate>
+
+                    <s:decorate template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['binnacleCRVCrane.active']}:</ui:define>
+                        <h:selectBooleanCheckbox value="#{binnacleCRVCraneHome.instance.active}" />
+                    </s:decorate>
+
+                    <s:decorate template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['binnacleCRVCrane.generateTaxes']}:</ui:define>
+                        <h:selectBooleanCheckbox value="#{binnacleCRVCraneHome.instance.generateTaxes}" />
+                    </s:decorate>
+
+                </h:panelGrid>
+                <h:commandButton id="save" value="#{messages['common.save']}"
+                    action="#{binnacleCRVCraneHome.persist}" disabled="#{!binnacleCRVCraneHome.wired}"
+                    rendered="#{!binnacleCRVCraneHome.managed}" />
+
+                <h:commandButton id="update" value="#{messages['common.save']}"
+                    propagation="end" reRender="binnacleCRVCraneList"
+                    action="#{binnacleCRVCraneHome.update}" rendered="#{binnacleCRVCraneHome.managed}" />
+
+                <s:button id="cancelEdit" value="#{messages['common.cancel']}"
+                    propagation="end" view="/binnaclecrv/BinnacleCRVCraneList.xhtml" />
+
+            </rich:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

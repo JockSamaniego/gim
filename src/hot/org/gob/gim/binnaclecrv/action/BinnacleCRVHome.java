@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJB;
+import javax.persistence.Query;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.MessageContext;
@@ -18,10 +19,12 @@ import javax.xml.ws.handler.MessageContext;
 import org.gob.gim.binnaclecrv.facade.BinnacleCRVService;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
+import org.gob.gim.common.service.SystemParameterService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
@@ -34,8 +37,11 @@ import ec.gob.ant.DatosLicencia;
 import ec.gob.ant.EntradaPersona;
 import ec.gob.gim.binnaclecrv.model.AccidentPart;
 import ec.gob.gim.binnaclecrv.model.AdmissionCategory;
+import ec.gob.gim.binnaclecrv.model.ArrivalHistoryBinnacleCRV;
+import ec.gob.gim.binnaclecrv.model.BallotPart;
 import ec.gob.gim.binnaclecrv.model.BinnacleCRV;
 import ec.gob.gim.binnaclecrv.model.DocumentTypeBinnacleCRV;
+import ec.gob.gim.binnaclecrv.model.ExitTypeBinnacleCRV;
 import ec.gob.gim.binnaclecrv.model.Implicated;
 import ec.gob.gim.binnaclecrv.model.InformativePart;
 import ec.gob.gim.binnaclecrv.model.ObsBinnacleCRV;
@@ -44,6 +50,8 @@ import ec.gob.gim.binnaclecrv.model.PhotographicEvidence;
 import ec.gob.gim.binnaclecrv.model.VehicleInventory;
 import ec.gob.gim.binnaclecrv.model.VehicleInventoryBase;
 import ec.gob.gim.binnaclecrv.model.VehicleItem;
+import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
 import ec.gob.loja.middleapp.InfractionWSV2;
 import ec.gob.loja.middleapp.InfractionWSV2Service;
 import ec.gob.loja.middleapp.ResponseDatosLicencia;
@@ -70,6 +78,8 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 
 	private boolean isFirstTime = true;
 	
+	private SystemParameterService systemParameterService;
+
 	private String licenseCriteria;
 	private String criteria;
 	private String criteriaSearch;
@@ -79,9 +89,11 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	private ObsBinnacleCRV obsBinnacleCRV = new ObsBinnacleCRV();
 	private InformativePart informativePart = new InformativePart();
 	private AccidentPart accidentPart = new AccidentPart();
+	private BallotPart ballotPart = new BallotPart();
 	private boolean hasJudicialDocument = false;
 	private String partTimeString = "";
 	private String retentionTimeString = "";
+	private String detentionTimeString = "";
 	private String accidentTimeString = "";
 	private String notificationTimeString = "";
 	private String arrivalTimeString = "";
@@ -89,6 +101,15 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
     
 	private Implicated implicated = new Implicated();
 
+	private Resident resident = null;
+
+	ArrivalHistoryBinnacleCRV arrivalHistoryBinnacleCRV;
+	
+	private boolean canSaveExitVehicle;
+
+	private boolean hasRoleUCOT;
+	private boolean hasRoleCRV;
+	
 	public void setBinnacleCRVId(Long id) {
 		setId(id);
 	}
@@ -154,6 +175,20 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 
 	/**
+	 * @return the ballotPart
+	 */
+	public BallotPart getBallotPart() {
+		return ballotPart;
+	}
+
+	/**
+	 * @param ballotPart the ballotPart to set
+	 */
+	public void setBallotPart(BallotPart ballotPart) {
+		this.ballotPart = ballotPart;
+	}
+
+	/**
 	 * @return the implicated
 	 */
 	public Implicated getImplicated() {
@@ -165,6 +200,35 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	 */
 	public void setImplicated(Implicated implicated) {
 		this.implicated = implicated;
+	}
+
+	/**
+	 * @return the resident
+	 */
+	public Resident getResident() {
+		return resident;
+	}
+
+	/**
+	 * @param resident the resident to set
+	 */
+	public void setResident(Resident resident) {
+		this.resident = resident;
+	}
+
+	/**
+	 * @return the arrivalHistoryBinnacleCRV
+	 */
+	public ArrivalHistoryBinnacleCRV getArrivalHistoryBinnacleCRV() {
+		return arrivalHistoryBinnacleCRV;
+	}
+
+	/**
+	 * @param arrivalHistoryBinnacleCRV the arrivalHistoryBinnacleCRV to set
+	 */
+	public void setArrivalHistoryBinnacleCRV(
+			ArrivalHistoryBinnacleCRV arrivalHistoryBinnacleCRV) {
+		this.arrivalHistoryBinnacleCRV = arrivalHistoryBinnacleCRV;
 	}
 
 	/**
@@ -207,11 +271,31 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		if (isIdDefined()) {
 			wire();
 		}
+		findRoleCRV();
+		findRoleUCOT();
 	}
 
 	public void wire() {
 		if (!isFirstTime)
 			return;
+		findRoleCRV();
+		findRoleUCOT();
+		isFirstTime = false;
+	}
+
+	public void wireArrival() {
+		if (!isFirstTime)
+			return;
+		findRoleCRV();
+		findRoleUCOT();
+		isFirstTime = false;
+	}
+
+	public void wireExit() {
+		if (!isFirstTime)
+			return;
+		findRoleCRV();
+		findRoleUCOT();
 		isFirstTime = false;
 	}
 
@@ -296,6 +380,20 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 
 	/**
+	 * @return the detentionTimeString
+	 */
+	public String getDetentionTimeString() {
+		return detentionTimeString;
+	}
+
+	/**
+	 * @param detentionTimeString the detentionTimeString to set
+	 */
+	public void setDetentionTimeString(String detentionTimeString) {
+		this.detentionTimeString = detentionTimeString;
+	}
+
+	/**
 	 * @return the accidentTimeString
 	 */
 	public String getAccidentTimeString() {
@@ -364,6 +462,48 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		return messageLicense;
 	}
 
+	/**
+	 * @return the canSaveExitVehicle
+	 */
+	public boolean isCanSaveExitVehicle() {
+		return canSaveExitVehicle;
+	}
+
+	/**
+	 * @param canSaveExitVehicle the canSaveExitVehicle to set
+	 */
+	public void setCanSaveExitVehicle(boolean canSaveExitVehicle) {
+		this.canSaveExitVehicle = canSaveExitVehicle;
+	}
+
+	/**
+	 * @return the hasRoleUCOT
+	 */
+	public boolean isHasRoleUCOT() {
+		return hasRoleUCOT;
+	}
+
+	/**
+	 * @param hasRoleUCOT the hasRoleUCOT to set
+	 */
+	public void setHasRoleUCOT(boolean hasRoleUCOT) {
+		this.hasRoleUCOT = hasRoleUCOT;
+	}
+
+	/**
+	 * @return the hasRoleCRV
+	 */
+	public boolean getHasRoleCRV() {
+		return hasRoleCRV;
+	}
+
+	/**
+	 * @param hasRoleCRV the hasRoleCRV to set
+	 */
+	public void setHasRoleCRV(boolean hasRoleCRV) {
+		this.hasRoleCRV = hasRoleCRV;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.jboss.seam.framework.EntityHome#persist()
 	 */
@@ -376,12 +516,22 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 			for (PhotographicEvidence pe : instance.getPhotographicEvidences()) {
 				pe.setBinnacleCRV(instance);
 			}
+			ArrivalHistoryBinnacleCRV arrivalHistoryBinnacleCRV = new ArrivalHistoryBinnacleCRV();
+			arrivalHistoryBinnacleCRV.setAdmissionType(instance.getAdmissionType());
+			arrivalHistoryBinnacleCRV.setArrivalDate(instance.getAdmissionDate());
+			arrivalHistoryBinnacleCRV.setHasCraneService(instance.getBinnacleCRVCrane().getGenerateTaxes());
+			arrivalHistoryBinnacleCRV.setUserArrival(userSession.getUser());
+			arrivalHistoryBinnacleCRV.setKm(instance.getKm());
+			arrivalHistoryBinnacleCRV.setBinnacleCRV(instance);
+			instance.add(arrivalHistoryBinnacleCRV);
 		}
 		if (hasJudicialDocument) {
 			if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.INFORMATIVE_PART){
 				instance.setInformativePart(informativePart);
 			} else if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.ACCIDENT_PART){
 				instance.setAccidentPart(accidentPart);
+			} else if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.JUDICIAL_PART){
+				instance.setBallotPart(ballotPart);
 			}
 
 		}
@@ -423,6 +573,7 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		canEditLicensePlate = true;
 		informativePart = null;
 		accidentPart = null;
+		ballotPart = null;
 		hasJudicialDocument = false;
 	}
 	
@@ -433,6 +584,7 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 				informativePart = new InformativePart();
 				partTimeString = "";
 				retentionTimeString = "";
+				detentionTimeString = "";
 				accidentTimeString = "";
 				notificationTimeString = "";
 				arrivalTimeString = "";
@@ -440,6 +592,15 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 				accidentPart = new AccidentPart();
 				partTimeString = "";
 				retentionTimeString = "";
+				detentionTimeString = "";
+				accidentTimeString = "";
+				notificationTimeString = "";
+				arrivalTimeString = "";
+			} else if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.JUDICIAL_PART){
+				ballotPart = new BallotPart();
+				partTimeString = "";
+				retentionTimeString = "";
+				detentionTimeString = "";
 				accidentTimeString = "";
 				notificationTimeString = "";
 				arrivalTimeString = "";
@@ -458,6 +619,12 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 				accidentTimeString = accidentPart.getAccidentTime().toString();
 				notificationTimeString = accidentPart.getNotificationTime().toString();
 				arrivalTimeString = accidentPart.getArrivalTime().toString();
+			} else if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.JUDICIAL_PART){
+				ballotPart = instance.getBallotPart();
+				partTimeString = ballotPart.getPartTime().toString();
+				retentionTimeString = ballotPart.getRetentionTime().toString();
+				detentionTimeString = ballotPart.getDetentionTime().toString();
+				notificationTimeString = ballotPart.getNotificationTime().toString();
 			}
 		}
 		hasJudicialDocument = instance.isHasJudicialDocument();
@@ -497,6 +664,15 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 			accidentPart.remove(implicated);
 	}
 
+	public void addImplicatedBallotPart() {
+		ballotPart.add(implicated);
+	}
+	
+	public void removeImplicatedBallotPart(Implicated implicated) {
+		if (implicated != null)
+			ballotPart.remove(implicated);
+	}
+
 	public void createObs(int tipo) {
 		this.obsBinnacleCRV = new ObsBinnacleCRV();
 		obsBinnacleCRV.setUser(userSession.getUser());
@@ -504,8 +680,10 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		obsBinnacleCRV.setObsTime(GregorianCalendar.getInstance().getTime());
 		if (tipo == 1){ //Ingreso o Admission
 			obsBinnacleCRV.setObsTypeBinnacleCRV(ObsTypeBinnacleCRV.ADMISSION);
-		} else {
+		} else if (tipo == 2){ //Salida
 			obsBinnacleCRV.setObsTypeBinnacleCRV(ObsTypeBinnacleCRV.DELIVERY);
+		} else if (tipo == 3){ //Parte por Accidente
+			obsBinnacleCRV.setObsTypeBinnacleCRV(ObsTypeBinnacleCRV.ACCIDENT_PART);
 		}
 	}
 	
@@ -523,19 +701,16 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 
 	public InfractionWSV2 getInfractionWSV2Instance() {
-//        System.out.println("---Properties1:" + System.getProperties());
-//        System.setProperty("com.sun.xml.internal.ws.connect.timeout", "10000");
-//        System.setProperty("com.sun.xml.ws.connect.timeout", "10000");
-//        System.setProperty("com.sun.xml.internal.ws.request.timeout", "5000");
-//        System.setProperty("javax.xml.ws.client.receiveTimeout", "5000");
-//        System.out.println("---Properties2:" + System.getProperties());
+		if (systemParameterService == null) systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
 		InfractionWSV2Service service = new InfractionWSV2Service();
 		InfractionWSV2 infractionWSV2 = service.getInfractionWSV2Port();
 		Map<String, List<String>> headers = new HashMap<String, List<String>>();
-//        headers.put("username", Collections.singletonList("rgpaladinesc1"));
-//        headers.put("password", Collections.singletonList("7I8w:NJA34"));
-        headers.put("username", Collections.singletonList("rgpaladinesc"));
-        headers.put("password", Collections.singletonList("w3fjdi$$*89ML"));
+		String usernameANT = systemParameterService.findParameter(SystemParameterService.USER_NAME_ANT_SERVICE);
+		String passwordANT = systemParameterService.findParameter(SystemParameterService.PASSWORD_ANT_SERVICE);
+//        headers.put("username", Collections.singletonList("rgpaladinesc"));
+//        headers.put("password", Collections.singletonList("w3fjdi$$*89ML"));
+        headers.put("username", Collections.singletonList(usernameANT));
+        headers.put("password", Collections.singletonList(passwordANT));
         Map<String, Object> req_ctx = ((BindingProvider)infractionWSV2).getRequestContext();
         req_ctx.put(BindingProviderProperties.REQUEST_TIMEOUT, 5000);
         req_ctx.put(BindingProviderProperties.CONNECT_TIMEOUT, 10000);
@@ -549,11 +724,6 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		try{
 			InfractionWSV2 infractionWSV2 = getInfractionWSV2Instance();
 			ResponseVehiculo responseVehiculo = infractionWSV2.consultarVehiculo(this.instance.getLicensePlate());
-//			System.out.println("---responseVehicle---"+responseVehiculo);
-//			System.out.println("---responseVehicle message---"+responseVehiculo.getMessage());
-//			System.out.println("---responseVehicle vehicle----"+responseVehiculo.getVehicle());
-//			System.out.println("---responseVehicle code: "+responseVehiculo.getCode());
-//			System.out.println("---responseVehicle codeError: "+responseVehiculo.getVehicle().getResultado().getCodError());
 			if (responseVehiculo.getCode() == 200){
 				instance.setOwnerName(responseVehiculo.getVehicle().getPropietario());
 				instance.setOwnerIdentification(responseVehiculo.getVehicle().getDocPropietario());
@@ -570,6 +740,8 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 				if (responseVehiculo.getVehicle().getTonelaje() != null) 
 					responseVehiculo.getVehicle().setTonelaje(responseVehiculo.getVehicle().getTonelaje().replaceAll(",", "."));
 				instance.setTonnage(responseVehiculo.getVehicle().getTonelaje() == null ? 0 : Double.parseDouble("0"+responseVehiculo.getVehicle().getTonelaje()));
+				if (responseVehiculo.getVehicle().getClaseVehiculo().equalsIgnoreCase("G") == true)
+					instance.setType("MOTO");
 				if (responseVehiculo.getVehicle().getResultado().getCodError().compareToIgnoreCase("0") != 0) {
 					instance.setLicensePlate("");
 					facesMessages.add(responseVehiculo.getVehicle().getResultado().getMensaje());
@@ -594,7 +766,6 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 	
 	public ResponseVehiculo searchResponseVehicle(String licensePlate) {
-//		if (!canEditLicensePlate) return null;
 		try{
 			InfractionWSV2 infractionWSV2 = getInfractionWSV2Instance();
 			ResponseVehiculo responseVehiculo = infractionWSV2.consultarVehiculo(licensePlate);
@@ -617,34 +788,25 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		
 	}
 	
-	public ResponseDatosLicencia searchLicenseAccidentPart() {
-//		if (!canEditLicensePlate) return null;
+	public ResponseDatosLicencia searchLicenseAccidentPart(String identification) {
 		try{
 			InfractionWSV2 infractionWSV2 = getInfractionWSV2Instance();
 			
 			EntradaPersona datos = new EntradaPersona();
 			datos.setIdIdentificacion("CED");
-			datos.setIdentificacion(implicated.getIdentification());
+			datos.setIdentificacion(identification);
 			ResponseDatosLicencia responseLicense = infractionWSV2.consultarLicencia(datos);
-//			System.out.println("---responseVehicle---"+responseVehiculo);
-//			System.out.println("---responseVehicle message---"+responseVehiculo.getMessage());
-//			System.out.println("---responseVehicle vehicle----"+responseVehiculo.getVehicle());
-//			System.out.println("---responseVehicle code: "+responseVehiculo.getCode());
-//			System.out.println("---responseVehicle codeError: "+responseVehiculo.getVehicle().getResultado().getCodError());
 			if (responseLicense.getCode() == 200){
 				return responseLicense;
 			} else {
-				implicated.setIdentification("");
 				facesMessages.add(responseLicense.getMessage());
 				return null;
 			}
 		} catch (WebServiceException e){
 			e.printStackTrace();
-			implicated.setIdentification("");
 			facesMessages.add("Error de conexión al Servicio de Datos de ANT. Comuníquese con el Administrador del Sistema");
 			return null;
 		} catch (Exception e){
-			implicated.setIdentification("");
 			facesMessages.add("Error desconocido. Comuníquese con el Administrador del Sistema");
 			e.printStackTrace();
 			return null;
@@ -676,12 +838,13 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 	
 	public void image2Listener(UploadEvent event) {
+		int tamanio = 1048576;
 		PhotographicEvidence evidence = getInstance().getPhotographicEvidences().get(1);
 		UploadItem item = event.getUploadItem();		
 		if (item != null && item.getData() != null) {
 			logger.info(item.getFileName() + ", size: " + item.getFileSize());
-			if (item.getFileSize() > 1048576){
-				facesMessages.add("La imagen ingresada es demasiado grande.");
+			if (item.getFileSize() > tamanio){
+				facesMessages.add("La imagen ingresada es demasiado grande. Máximo permitido " + tamanio + " bytes.");
 				item = null;
 			} else {
 				if (item.getFileName().length() > 80)
@@ -723,24 +886,25 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		hasJudicialDocument = true;
 		instance.setHasJudicialDocument(true);
 		if (instance.getDocumentTypeBinnacleCRV().name().equalsIgnoreCase(DocumentTypeBinnacleCRV.INFORMATIVE_PART.name())){
-			System.out.println("--------cambia a informative part");
 			informativePart = new InformativePart();
 			instance.setInformativePart(informativePart);
 		} else if (instance.getDocumentTypeBinnacleCRV().name().equalsIgnoreCase(DocumentTypeBinnacleCRV.ACCIDENT_PART.name())){
-			System.out.println("--------cambia a accident part");
 			accidentPart = new AccidentPart();
 			instance.setAccidentPart(accidentPart);
 		} else if (instance.getDocumentTypeBinnacleCRV().name().equalsIgnoreCase(DocumentTypeBinnacleCRV.ADMINISTRATIVE_PART.name())){
 			instance.setHasJudicialDocument(false);
 		} else if (instance.getDocumentTypeBinnacleCRV().name().equalsIgnoreCase(DocumentTypeBinnacleCRV.JUDICIAL_PART.name())){
-			instance.setHasJudicialDocument(false);
+			instance.setHasJudicialDocument(true);
+			ballotPart = new BallotPart();
+			instance.setBallotPart(ballotPart);
 		} else {
 			instance.setHasJudicialDocument(false);
 		}
 	}
 	
 	public void validateInformativePartTime(){
-		if (partTimeString  == null) return;
+		if (partTimeString == null) return;
+		if (partTimeString == "") return;
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		try {
 			Date date = sdf.parse(partTimeString);
@@ -753,7 +917,8 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 	
 	public void validateInformativeRetentionTime(){
-		if (retentionTimeString  == null) return;
+		if (retentionTimeString == null) return;
+		if (retentionTimeString == "") return;
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		try {
 			Date date = sdf.parse(retentionTimeString);
@@ -766,7 +931,8 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 	
 	public void validateAccidentRetentionTime(){
-		if (retentionTimeString  == null) return;
+		if (retentionTimeString == null) return;
+		if (retentionTimeString == "") return;
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		try {
 			Date date = sdf.parse(retentionTimeString);
@@ -779,7 +945,8 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 	
 	public void validateAccidentPartTime(){
-		if (partTimeString  == null) return;
+		if (partTimeString == null) return;
+		if (partTimeString == "") return;
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		try {
 			Date date = sdf.parse(partTimeString);
@@ -792,7 +959,8 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 	
 	public void validateAccidentTime(){
-		if (accidentTimeString  == null) return;
+		if (accidentTimeString == null) return;
+		if (accidentTimeString == "") return;
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		try {
 			Date date = sdf.parse(accidentTimeString);
@@ -805,7 +973,8 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 	
 	public void validateNotificationPartTime(){
-		if (notificationTimeString  == null) return;
+		if (notificationTimeString == null) return;
+		if (notificationTimeString == "") return;
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		try {
 			Date date = sdf.parse(notificationTimeString);
@@ -818,7 +987,8 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 	
 	public void validateArrivalPartTime(){
-		if (arrivalTimeString  == null) return;
+		if (arrivalTimeString == null) return;
+		if (arrivalTimeString == "") return;
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		try {
 			Date date = sdf.parse(arrivalTimeString);
@@ -830,16 +1000,75 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		}
 	}
 	
+	public void validateBallotRetentionTime(){
+		if (retentionTimeString == null) return;
+		if (retentionTimeString == "") return;
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		try {
+			Date date = sdf.parse(retentionTimeString);
+			ballotPart.setRetentionTime(date);
+			retentionTimeString = sdf.format(date);
+		} catch (ParseException e) {
+			retentionTimeString = "";
+			e.printStackTrace();
+		}
+	}
+	
+	public void validateBallotDetentionTime(){
+		if (detentionTimeString == null) return;
+		if (detentionTimeString == "") return;
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		try {
+			Date date = sdf.parse(detentionTimeString);
+			ballotPart.setDetentionTime(date);
+			detentionTimeString = sdf.format(date);
+		} catch (ParseException e) {
+			detentionTimeString = "";
+			e.printStackTrace();
+		}
+	}
+	
+	public void validateBallotPartTime(){
+		if (partTimeString == null) return;
+		if (partTimeString == "") return;
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		try {
+			Date date = sdf.parse(partTimeString);
+			ballotPart.setPartTime(date);
+			partTimeString = sdf.format(date);
+		} catch (ParseException e) {
+			partTimeString = "";
+			e.printStackTrace();
+		}
+	}
+	
+	public void validateBallotNotificationTime(){
+		if (notificationTimeString == null) return;
+		if (notificationTimeString == "") return;
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		try {
+			Date date = sdf.parse(notificationTimeString);
+			ballotPart.setNotificationTime(date);
+			notificationTimeString = sdf.format(date);
+		} catch (ParseException e) {
+			notificationTimeString = "";
+			e.printStackTrace();
+		}
+	}
+	
 	public void searchImplicated(){
-		ResponseDatosLicencia responseLicense = searchLicenseAccidentPart();
-		if (responseLicense == null) return;
+		ResponseDatosLicencia responseLicense = searchLicenseAccidentPart(implicated.getIdentification());
+		if (responseLicense == null) {
+			implicated.setIdentification("");
+			return;
+		}
 		if (responseLicense.getLicenseData().getResultado().getExito().compareToIgnoreCase("N") == 0) {
 			implicated.setIdentification("");
 			facesMessages.add(responseLicense.getLicenseData().getResultado().getMensaje());
 		} else {
 			datosLicencia = responseLicense.getLicenseData();
 			fillImplicated(datosLicencia);
-			facesMessages.add("Licencia válida: " + datosLicencia.getNombreCompleto());
+			facesMessages.add("Persona encontrada: " + datosLicencia.getNombreCompleto());
 			canEditLicensePlate = false;
 		}
 	}
@@ -874,6 +1103,134 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 				+ responseVehicle.getVehicle().getColor() + " / " 
 				+ responseVehicle.getVehicle().getPlacaActual();
 		implicated.setResumeVehicle(resume);
+	}
+	
+	public boolean canVehicleExit(BinnacleCRV binnacleCRV){
+		if (binnacleCRV.getLastArrivalHistoryBinnacleCRV().getExitDate() == null)
+			return true;
+		return false;
+	}
+	
+	public boolean canVehicleReArrival(BinnacleCRV binnacleCRV){
+		if (binnacleCRV.getLastArrivalHistoryBinnacleCRV().getExitTypeBinnacleCRV() == null) return false; 
+		if (binnacleCRV.getLastArrivalHistoryBinnacleCRV().getExitTypeBinnacleCRV().equals(ExitTypeBinnacleCRV.PROVISIONAL))
+			return true;
+		return false;
+	}
+	
+	public void captureBinnacleCRV(){
+		if (getInstance().getLastArrivalHistoryBinnacleCRV().getExitDate() != null)
+		    arrivalHistoryBinnacleCRV = new ArrivalHistoryBinnacleCRV();
+		else
+			arrivalHistoryBinnacleCRV = getInstance().getLastArrivalHistoryBinnacleCRV();
+	}
+
+	@Override
+	@Transactional
+	public String update() {
+		return super.update();
+	}
+	
+	public String updateReArrival() {
+		ArrivalHistoryBinnacleCRV lastArrival = instance.getLastArrivalHistoryBinnacleCRV();
+		if (lastArrival.getExitDate().after(arrivalHistoryBinnacleCRV.getArrivalDate())){
+			facesMessages.add("La fecha de reingreso no puede ser menor a " + lastArrival.getExitDate());
+			return null;
+		}
+		arrivalHistoryBinnacleCRV.setUserArrival(userSession.getUser());
+		arrivalHistoryBinnacleCRV.setBinnacleCRV(instance);
+		instance.add(arrivalHistoryBinnacleCRV);
+		return this.update();
+	}
+	
+	public String updateExitArrival() {
+		Date today = new GregorianCalendar().getTime();
+		if (arrivalHistoryBinnacleCRV.getExitDate().after(today)){
+			facesMessages.add("La fecha de salida no puede ser posterior a " + today);
+			return null;
+		}
+		arrivalHistoryBinnacleCRV.setUserExit(userSession.getUser());
+		return this.update();
+	}
+	
+	public void reviewResident(){
+		Query query = getEntityManager().createNamedQuery("Resident.findByIdentificationNumber");
+		query.setParameter("identificationNumber", getInstance().getOwnerIdentification());
+		try {
+			resident = (Resident) query.getSingleResult();
+		} catch (Exception e) {
+			resident = null;
+			facesMessages.add("Es necesario ingresar los datos del contribuyente propietario del vehículo para poder continuar.");
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private BinnacleCRVReference findBinnacleCRVReference(ArrivalHistoryBinnacleCRV arrivalHistoryBinnacleCRV, Long entryId){
+		Query query = getEntityManager().createNamedQuery("BinnacleCRVReference.findByArrivalAndEntryId");
+		query.setParameter("arrivalHistoryBinnacleCRV", arrivalHistoryBinnacleCRV);
+		query.setParameter("entryId", entryId);
+		List<BinnacleCRVReference> list = query.getResultList();
+		if (list.size() > 0){
+			BinnacleCRVReference binnacleCRVReference = list.get(0);
+			query = null;
+			return binnacleCRVReference;
+		}
+		return null;
+	}
+	
+	public void reviewExitVehicle(){
+		canSaveExitVehicle = true;
+		boolean isEmmitedGaraje = false;
+		boolean isEmmitedCrane = true;
+		ArrivalHistoryBinnacleCRV arrival = getInstance().getLastArrivalHistoryBinnacleCRV();
+		if (systemParameterService == null) systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+		Long entryGarajeId = systemParameterService.findParameter(SystemParameterService.ENTRY_ID_GARAJE_SERVICE_UMTTT);
+		BinnacleCRVReference binnacleCRVReference = findBinnacleCRVReference(arrival, entryGarajeId);
+		if (binnacleCRVReference == null){
+			facesMessages.add("Es necesario emitir y/o cancelar los títulos por el Servicio de Garaje.");
+		} else{
+			arrival.setExitDate(binnacleCRVReference.getExitDate());
+			if (!arrival.isHasCraneService()) arrival.setExitDateCrane(binnacleCRVReference.getExitDate());
+			arrival.setExitTypeBinnacleCRV(binnacleCRVReference.getExitTypeBinnacleCRV());
+			arrival.setBondGaraje(binnacleCRVReference.getBond());
+			isEmmitedGaraje = true;
+		}
+		if (arrival.isHasCraneService()) {
+			Long entryCraneId = systemParameterService.findParameter(SystemParameterService.ENTRY_ID_GRUA_SERVICE_UMTTT);
+			binnacleCRVReference = findBinnacleCRVReference(arrival, entryCraneId);
+			if (binnacleCRVReference == null){
+				facesMessages.add("Es necesario emitir y/o cancelar los títulos por el Servicio de Grúa.");
+				isEmmitedCrane = false;
+			} else {
+				arrival.setExitDateCrane(binnacleCRVReference.getExitDate());
+				arrival.setBondCrane(binnacleCRVReference.getBond());
+			}
+		}
+		if ((!isEmmitedGaraje) || (!isEmmitedGaraje))
+			canSaveExitVehicle = false;
+			
+		this.arrivalHistoryBinnacleCRV = arrival;
+	}
+	
+	public void clearArrival(){
+		this.arrivalHistoryBinnacleCRV = null;
+	}
+	
+	public Boolean hasRole(String roleKey) {
+		if (systemParameterService == null) systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+		String role = systemParameterService.findParameter(roleKey);
+		if (role != null) {
+			return userSession.getUser().hasRole(role);
+		}
+		return false;
+	}
+	
+	public void findRoleUCOT(){
+		hasRoleUCOT = hasRole(SystemParameterService.ROLE_NAME_UCOT_SYSTEM);
+	}
+	
+	public void findRoleCRV(){
+		hasRoleCRV = hasRole(SystemParameterService.ROLE_NAME_CRV_SYSTEM);
 	}
 	
 }

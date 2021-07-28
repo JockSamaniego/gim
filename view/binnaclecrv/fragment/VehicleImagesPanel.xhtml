@@ -17,6 +17,7 @@
 					<s:decorate id="image1Field" template="../../layout/edit.xhtml">
 						<ui:define name="label">#{messages['binnacleCRV.photographicEvidence']}:</ui:define>
 						<rich:fileUpload fileUploadListener="#{binnacleCRVHome.image1Listener}"
+						    disabled="#{!binnacleCRVHome.hasRoleCRV}"
 							maxFilesQuantity="1" id="uploadImage1" immediateUpload="true"
 							acceptedTypes="jpg, gif, png, jpeg"
 							uploadControlLabel="#{messages['binnacleCRV.photoEvidence']}"
@@ -47,6 +48,7 @@
 					<s:decorate id="image2Field" template="../../layout/edit.xhtml">
 						<ui:define name="label">#{messages['binnacleCRV.photographicEvidence']}:</ui:define>
 						<rich:fileUpload fileUploadListener="#{binnacleCRVHome.image2Listener}"
+						    disabled="#{!binnacleCRVHome.hasRoleCRV}"
 							maxFilesQuantity="1" id="uploadImage2" immediateUpload="true"
 							acceptedTypes="jpg, gif, png, jpeg"
 							uploadControlLabel="#{messages['binnacleCRV.photoEvidence']}"

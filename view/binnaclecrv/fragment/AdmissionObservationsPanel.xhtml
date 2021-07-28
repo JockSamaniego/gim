@@ -13,7 +13,7 @@
         <f:facet name="header">
             <h:panelGrid columns="2" columnClasses="headerTitle">
                 <h:outputText value="#{messages['binnacleCRV.obsBinnacleCRVs']}" />
-                <a:commandButton id="createAdmisionObs"
+                <a:commandButton id="createAdmisionObs" disabled="#{!binnacleCRVHome.hasRoleCRV}"
                     action="#{binnacleCRVHome.createObs(1)}"
                     reRender="obsEditPanel" ajaxSingle="true"
                     eventsQueue="gimEventsQueue"

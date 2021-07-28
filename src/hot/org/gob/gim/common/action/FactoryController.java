@@ -20,8 +20,10 @@ import org.jboss.seam.framework.EntityController;
 
 import ec.gob.gim.binnaclecrv.model.AdmissionMean;
 import ec.gob.gim.binnaclecrv.model.AdmissionType;
+import ec.gob.gim.binnaclecrv.model.BallotType;
 import ec.gob.gim.binnaclecrv.model.BinnacleCRVCrane;
 import ec.gob.gim.binnaclecrv.model.DocumentTypeBinnacleCRV;
+import ec.gob.gim.binnaclecrv.model.ExitTypeBinnacleCRV;
 import ec.gob.gim.binnaclecrv.model.RoadBinnacleCRV;
 import ec.gob.gim.binnaclecrv.model.SemaphoreBinnacleCRV;
 import ec.gob.gim.binnaclecrv.model.SkyBinnacleCRV;
@@ -850,6 +852,16 @@ public class FactoryController  extends EntityController{
 	@Factory("roadsBinnacleCRV")
 	public List<RoadBinnacleCRV> loadRoadsBinnacleCRV() {
 		return Arrays.asList(RoadBinnacleCRV.values());
+	}
+	
+	@Factory("ballotTypes")
+	public List<BallotType> loadBallotTypes() {
+		return Arrays.asList(BallotType.values());
+	}
+	
+	@Factory("exitTypesBinnacleCRV")
+	public List<ExitTypeBinnacleCRV> loadExitTypeBinnacleCRVs() {
+		return Arrays.asList(ExitTypeBinnacleCRV.values());
 	}
 	
 }

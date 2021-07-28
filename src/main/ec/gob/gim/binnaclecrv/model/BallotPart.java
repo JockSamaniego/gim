@@ -22,79 +22,68 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
 /**
- * Bitácora Digital: datos del Parte por Accidente.
+ * Bitácora Digital: datos de la Boleta.
  * 
  * @author Ronald Paladines C
  * @version 1.0
- * @created 08-Jun-2021
+ * @created 25-Jun-2021
  */
 @Audited
 @Entity
-@TableGenerator(name = "AccidentPartGenerator", 
+@TableGenerator(name = "BallotPartGenerator", 
     table = "IdentityGenerator", 
     pkColumnName = "name", 
     valueColumnName = "value", 
-    pkColumnValue = "AccidentPart", 
+    pkColumnValue = "BallotPart", 
     initialValue = 1, allocationSize = 1)
 
-public class AccidentPart implements Serializable {
+public class BallotPart implements Serializable {
 
-    private static final long serialVersionUID = 3342067669514478439L;
+	private static final long serialVersionUID = -6857566110454087705L;
 
-    @Id
-    @GeneratedValue(generator = "AccidentPartGenerator", strategy = GenerationType.TABLE)
+	@Id
+    @GeneratedValue(generator = "BallotPartGenerator", strategy = GenerationType.TABLE)
     private Long id; 
     
-    private String partNumber; // Número de Parte
-    private String agentName; // Nombre de Agente
-    private String code; // Código
-    private String tipology; // Tipología
-    private String place; // Lugar
-    private String referencePoint; // Punto de referencia
-    private String latitude; // Latitud
-    private String longitude; // Longitud
-	@Temporal(TemporalType.DATE)
-    private Date accidentDate; // Fecha del Accidente
-	@Temporal(TemporalType.TIME)
-    private Date accidentTime; // Hora del Accidente
-	@Temporal(TemporalType.DATE)
-    private Date partDate; // Fecha del Parte
-	@Temporal(TemporalType.TIME)
-    private Date partTime; // Hora del Parte
-	@Temporal(TemporalType.DATE)
-    private Date notificationDate; // Fecha del Aviso
-	@Temporal(TemporalType.TIME)
-    private Date notificationTime; // Hora del Aviso
-	@Temporal(TemporalType.TIME)
-    private Date arrivalTime; // Hora de Llegada a la Escena
-	@Temporal(TemporalType.DATE)
-    private Date detentionDate; // Fecha de Detención
-	@Temporal(TemporalType.TIME)
-    private Date detentionTime; // Hora de Detención
     @Enumerated(EnumType.STRING)
-    @Column(length=15)
-    private RoadBinnacleCRV road; // Calzada
-    @Enumerated(EnumType.STRING)
-    @Column(length=15)
-    private SemaphoreBinnacleCRV semaphores; // Semáforos
-    @Enumerated(EnumType.STRING)
-    @Column(length=15)
-    private SkyBinnacleCRV sky; // Cielo
-    private String prevention; //Prevención
-    private String detachment; //Destacamento
-    private String reference; //Observa/Redacta por Referencia de
+    @Column(length=20)
+    private BallotType ballotType; // Tipo de Boleta
+	@Column(length = 20)
+	private String partNumber; // Número de Parte
+	private String tipology; // Tipología
+	private String place; // Lugar
+	private String prevention; // Prevención
+	private String detachment; // Destacamento
+	@Temporal(TemporalType.DATE)
+	private Date notificationDate; // Fecha de Citación
+	@Temporal(TemporalType.TIME)
+	private Date notificationTime; // Hora de Citación
+	@Temporal(TemporalType.DATE)
+	private Date detentionDate; // Fecha de Detención
+	@Temporal(TemporalType.TIME)
+	private Date detentionTime; // Hora de Detención
+	@Temporal(TemporalType.DATE)
+	private Date retentionDate; // Fecha de Retención
+	@Temporal(TemporalType.TIME)
+	private Date retentionTime; // Hora de Retención
+	@Temporal(TemporalType.DATE)
+	private Date partDate; // Fecha del Parte
+	@Temporal(TemporalType.TIME)
+	private Date partTime; // Hora del Parte
+	private String agentName; // Agente Grado-Codigo-Nombres-CI
+	private String code; // Código
 	@Column(columnDefinition = "TEXT")
-    private String circumstances; // Circunstancias
+	private String circumstances; // Circunstancias
 	@Column(columnDefinition = "TEXT")
-    private String obs; // Observaciones
+	private String obs; // Observaciones
 	@Column(columnDefinition = "TEXT")
-    private String documents; // Documentos
-    
-    @OneToMany(mappedBy = "accidentPart", cascade = CascadeType.ALL)
+	private String documents; // Documentos
+
+    @OneToMany(mappedBy = "ballotPart", cascade = CascadeType.ALL)
     @Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<Implicated> implicateds; //Implicados en un accidente
+    private List<Implicated> implicateds; //Implicados en la boleta inscrita
     
-    public AccidentPart() {
+    public BallotPart() {
     	implicateds = new ArrayList<Implicated>();
     }
 
@@ -113,6 +102,20 @@ public class AccidentPart implements Serializable {
 	}
 
 	/**
+	 * @return the ballotType
+	 */
+	public BallotType getBallotType() {
+		return ballotType;
+	}
+
+	/**
+	 * @param ballotType the ballotType to set
+	 */
+	public void setBallotType(BallotType ballotType) {
+		this.ballotType = ballotType;
+	}
+
+	/**
 	 * @return the partNumber
 	 */
 	public String getPartNumber() {
@@ -124,34 +127,6 @@ public class AccidentPart implements Serializable {
 	 */
 	public void setPartNumber(String partNumber) {
 		this.partNumber = partNumber;
-	}
-
-	/**
-	 * @return the agentName
-	 */
-	public String getAgentName() {
-		return agentName;
-	}
-
-	/**
-	 * @param agentName the agentName to set
-	 */
-	public void setAgentName(String agentName) {
-		this.agentName = agentName;
-	}
-
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
-	}
-
-	/**
-	 * @param code the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
 	}
 
 	/**
@@ -183,101 +158,31 @@ public class AccidentPart implements Serializable {
 	}
 
 	/**
-	 * @return the referencePoint
+	 * @return the prevention
 	 */
-	public String getReferencePoint() {
-		return referencePoint;
+	public String getPrevention() {
+		return prevention;
 	}
 
 	/**
-	 * @param referencePoint the referencePoint to set
+	 * @param prevention the prevention to set
 	 */
-	public void setReferencePoint(String referencePoint) {
-		this.referencePoint = referencePoint;
+	public void setPrevention(String prevention) {
+		this.prevention = prevention;
 	}
 
 	/**
-	 * @return the latitude
+	 * @return the detachment
 	 */
-	public String getLatitude() {
-		return latitude;
+	public String getDetachment() {
+		return detachment;
 	}
 
 	/**
-	 * @param latitude the latitude to set
+	 * @param detachment the detachment to set
 	 */
-	public void setLatitude(String latitude) {
-		this.latitude = latitude;
-	}
-
-	/**
-	 * @return the longitude
-	 */
-	public String getLongitude() {
-		return longitude;
-	}
-
-	/**
-	 * @param longitude the longitude to set
-	 */
-	public void setLongitude(String longitude) {
-		this.longitude = longitude;
-	}
-
-	/**
-	 * @return the accidentDate
-	 */
-	public Date getAccidentDate() {
-		return accidentDate;
-	}
-
-	/**
-	 * @param accidentDate the accidentDate to set
-	 */
-	public void setAccidentDate(Date accidentDate) {
-		this.accidentDate = accidentDate;
-	}
-
-	/**
-	 * @return the accidentTime
-	 */
-	public Date getAccidentTime() {
-		return accidentTime;
-	}
-
-	/**
-	 * @param accidentTime the accidentTime to set
-	 */
-	public void setAccidentTime(Date accidentTime) {
-		this.accidentTime = accidentTime;
-	}
-
-	/**
-	 * @return the partDate
-	 */
-	public Date getPartDate() {
-		return partDate;
-	}
-
-	/**
-	 * @param partDate the partDate to set
-	 */
-	public void setPartDate(Date partDate) {
-		this.partDate = partDate;
-	}
-
-	/**
-	 * @return the partTime
-	 */
-	public Date getPartTime() {
-		return partTime;
-	}
-
-	/**
-	 * @param partTime the partTime to set
-	 */
-	public void setPartTime(Date partTime) {
-		this.partTime = partTime;
+	public void setDetachment(String detachment) {
+		this.detachment = detachment;
 	}
 
 	/**
@@ -309,20 +214,6 @@ public class AccidentPart implements Serializable {
 	}
 
 	/**
-	 * @return the arrivalTime
-	 */
-	public Date getArrivalTime() {
-		return arrivalTime;
-	}
-
-	/**
-	 * @param arrivalTime the arrivalTime to set
-	 */
-	public void setArrivalTime(Date arrivalTime) {
-		this.arrivalTime = arrivalTime;
-	}
-
-	/**
 	 * @return the detentionDate
 	 */
 	public Date getDetentionDate() {
@@ -351,87 +242,87 @@ public class AccidentPart implements Serializable {
 	}
 
 	/**
-	 * @return the road
+	 * @return the retentionDate
 	 */
-	public RoadBinnacleCRV getRoad() {
-		return road;
+	public Date getRetentionDate() {
+		return retentionDate;
 	}
 
 	/**
-	 * @param road the road to set
+	 * @param retentionDate the retentionDate to set
 	 */
-	public void setRoad(RoadBinnacleCRV road) {
-		this.road = road;
+	public void setRetentionDate(Date retentionDate) {
+		this.retentionDate = retentionDate;
 	}
 
 	/**
-	 * @return the semaphores
+	 * @return the retentionTime
 	 */
-	public SemaphoreBinnacleCRV getSemaphores() {
-		return semaphores;
+	public Date getRetentionTime() {
+		return retentionTime;
 	}
 
 	/**
-	 * @param semaphores the semaphores to set
+	 * @param retentionTime the retentionTime to set
 	 */
-	public void setSemaphores(SemaphoreBinnacleCRV semaphores) {
-		this.semaphores = semaphores;
+	public void setRetentionTime(Date retentionTime) {
+		this.retentionTime = retentionTime;
 	}
 
 	/**
-	 * @return the sky
+	 * @return the partDate
 	 */
-	public SkyBinnacleCRV getSky() {
-		return sky;
+	public Date getPartDate() {
+		return partDate;
 	}
 
 	/**
-	 * @param sky the sky to set
+	 * @param partDate the partDate to set
 	 */
-	public void setSky(SkyBinnacleCRV sky) {
-		this.sky = sky;
+	public void setPartDate(Date partDate) {
+		this.partDate = partDate;
 	}
 
 	/**
-	 * @return the prevention
+	 * @return the partTime
 	 */
-	public String getPrevention() {
-		return prevention;
+	public Date getPartTime() {
+		return partTime;
 	}
 
 	/**
-	 * @param prevention the prevention to set
+	 * @param partTime the partTime to set
 	 */
-	public void setPrevention(String prevention) {
-		this.prevention = prevention;
+	public void setPartTime(Date partTime) {
+		this.partTime = partTime;
 	}
 
 	/**
-	 * @return the detachment
+	 * @return the agentName
 	 */
-	public String getDetachment() {
-		return detachment;
+	public String getAgentName() {
+		return agentName;
 	}
 
 	/**
-	 * @param detachment the detachment to set
+	 * @param agentName the agentName to set
 	 */
-	public void setDetachment(String detachment) {
-		this.detachment = detachment;
+	public void setAgentName(String agentName) {
+		this.agentName = agentName;
 	}
 
 	/**
-	 * @return the reference
+	 * @return the code
 	 */
-	public String getReference() {
-		return reference;
+	public String getCode() {
+		return code;
 	}
 
 	/**
-	 * @param reference the reference to set
+	 * @param code the code to set
 	 */
-	public void setReference(String reference) {
-		this.reference = reference;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	/**
@@ -493,14 +384,14 @@ public class AccidentPart implements Serializable {
 	public void add(Implicated implicated) {
 		if (!implicateds.contains(implicated)) {
 			implicateds.add(implicated);
-			implicated.setAccidentPart(this);
+			implicated.setBallotPart(this);
 		}
 	}
 	
 	public void remove(Implicated implicated) {
 		if (implicateds.contains(implicated)) {
 			implicateds.remove(implicated);
-			implicated.setAccidentPart(null);
+			implicated.setBallotPart(null);
 		}
 	}
 	
@@ -512,14 +403,14 @@ public class AccidentPart implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((accidentDate == null) ? 0 : accidentDate.hashCode());
-		result = prime * result
-				+ ((accidentTime == null) ? 0 : accidentTime.hashCode());
-		result = prime * result
 				+ ((agentName == null) ? 0 : agentName.hashCode());
+		result = prime * result
+				+ ((ballotType == null) ? 0 : ballotType.hashCode());
 		result = prime * result
 				+ ((circumstances == null) ? 0 : circumstances.hashCode());
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result
+				+ ((detachment == null) ? 0 : detachment.hashCode());
 		result = prime * result
 				+ ((detentionDate == null) ? 0 : detentionDate.hashCode());
 		result = prime * result
@@ -527,10 +418,6 @@ public class AccidentPart implements Serializable {
 		result = prime * result
 				+ ((documents == null) ? 0 : documents.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((latitude == null) ? 0 : latitude.hashCode());
-		result = prime * result
-				+ ((longitude == null) ? 0 : longitude.hashCode());
 		result = prime
 				* result
 				+ ((notificationDate == null) ? 0 : notificationDate.hashCode());
@@ -546,11 +433,11 @@ public class AccidentPart implements Serializable {
 				+ ((partTime == null) ? 0 : partTime.hashCode());
 		result = prime * result + ((place == null) ? 0 : place.hashCode());
 		result = prime * result
-				+ ((referencePoint == null) ? 0 : referencePoint.hashCode());
-		result = prime * result + ((road == null) ? 0 : road.hashCode());
+				+ ((prevention == null) ? 0 : prevention.hashCode());
 		result = prime * result
-				+ ((semaphores == null) ? 0 : semaphores.hashCode());
-		result = prime * result + ((sky == null) ? 0 : sky.hashCode());
+				+ ((retentionDate == null) ? 0 : retentionDate.hashCode());
+		result = prime * result
+				+ ((retentionTime == null) ? 0 : retentionTime.hashCode());
 		result = prime * result
 				+ ((tipology == null) ? 0 : tipology.hashCode());
 		return result;
@@ -567,21 +454,13 @@ public class AccidentPart implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AccidentPart other = (AccidentPart) obj;
-		if (accidentDate == null) {
-			if (other.accidentDate != null)
-				return false;
-		} else if (!accidentDate.equals(other.accidentDate))
-			return false;
-		if (accidentTime == null) {
-			if (other.accidentTime != null)
-				return false;
-		} else if (!accidentTime.equals(other.accidentTime))
-			return false;
+		BallotPart other = (BallotPart) obj;
 		if (agentName == null) {
 			if (other.agentName != null)
 				return false;
 		} else if (!agentName.equals(other.agentName))
+			return false;
+		if (ballotType != other.ballotType)
 			return false;
 		if (circumstances == null) {
 			if (other.circumstances != null)
@@ -592,6 +471,11 @@ public class AccidentPart implements Serializable {
 			if (other.code != null)
 				return false;
 		} else if (!code.equals(other.code))
+			return false;
+		if (detachment == null) {
+			if (other.detachment != null)
+				return false;
+		} else if (!detachment.equals(other.detachment))
 			return false;
 		if (detentionDate == null) {
 			if (other.detentionDate != null)
@@ -612,16 +496,6 @@ public class AccidentPart implements Serializable {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
-			return false;
-		if (latitude == null) {
-			if (other.latitude != null)
-				return false;
-		} else if (!latitude.equals(other.latitude))
-			return false;
-		if (longitude == null) {
-			if (other.longitude != null)
-				return false;
-		} else if (!longitude.equals(other.longitude))
 			return false;
 		if (notificationDate == null) {
 			if (other.notificationDate != null)
@@ -658,25 +532,20 @@ public class AccidentPart implements Serializable {
 				return false;
 		} else if (!place.equals(other.place))
 			return false;
-		if (referencePoint == null) {
-			if (other.referencePoint != null)
+		if (prevention == null) {
+			if (other.prevention != null)
 				return false;
-		} else if (!referencePoint.equals(other.referencePoint))
+		} else if (!prevention.equals(other.prevention))
 			return false;
-		if (road == null) {
-			if (other.road != null)
+		if (retentionDate == null) {
+			if (other.retentionDate != null)
 				return false;
-		} else if (!road.equals(other.road))
+		} else if (!retentionDate.equals(other.retentionDate))
 			return false;
-		if (semaphores == null) {
-			if (other.semaphores != null)
+		if (retentionTime == null) {
+			if (other.retentionTime != null)
 				return false;
-		} else if (!semaphores.equals(other.semaphores))
-			return false;
-		if (sky == null) {
-			if (other.sky != null)
-				return false;
-		} else if (!sky.equals(other.sky))
+		} else if (!retentionTime.equals(other.retentionTime))
 			return false;
 		if (tipology == null) {
 			if (other.tipology != null)
@@ -691,19 +560,17 @@ public class AccidentPart implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "AccidentPart [id=" + id + ", partNumber=" + partNumber
-				+ ", agentName=" + agentName + ", code=" + code + ", tipology="
-				+ tipology + ", place=" + place + ", referencePoint="
-				+ referencePoint + ", latitude=" + latitude + ", longitude="
-				+ longitude + ", accidentDate=" + accidentDate
-				+ ", accidentTime=" + accidentTime + ", partDate=" + partDate
-				+ ", partTime=" + partTime + ", notificationDate="
+		return "BallotPart [id=" + id + ", ballotType=" + ballotType
+				+ ", partNumber=" + partNumber + ", tipology=" + tipology
+				+ ", place=" + place + ", prevention=" + prevention
+				+ ", detachment=" + detachment + ", notificationDate="
 				+ notificationDate + ", notificationTime=" + notificationTime
 				+ ", detentionDate=" + detentionDate + ", detentionTime="
-				+ detentionTime + ", road=" + road + ", semaphores="
-				+ semaphores + ", sky=" + sky + ", circumstances="
-				+ circumstances + ", obs=" + obs + ", documents=" + documents
-				+ "]";
+				+ detentionTime + ", retentionDate=" + retentionDate
+				+ ", retentionTime=" + retentionTime + ", partDate=" + partDate
+				+ ", partTime=" + partTime + ", agentName=" + agentName
+				+ ", code=" + code + ", circumstances=" + circumstances
+				+ ", obs=" + obs + ", documents=" + documents + "]";
 	}
-    
+
 }

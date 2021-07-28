@@ -1,0 +1,177 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    xmlns:rich="http://richfaces.org/rich">
+
+    <h:panelGrid id="ballotPartPanel" width="100%" >
+        <h:panelGrid width="100%" rendered="#{binnacleCRVHome.instance.documentTypeBinnacleCRV.name().equalsIgnoreCase('JUDICIAL_PART')}">
+            <f:facet name="header">#{messages['ballotPart.titlePanel']}</f:facet>
+            <h:panelGrid columns="2" width="100%" >
+                <s:decorate template="../../layout/edit.xhtml" >
+                    <ui:define name="label">#{messages['ballotPart.partNumber']}:</ui:define>
+                    <h:inputText maxlength="20" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.ballotPart.partNumber}" >
+                    </h:inputText>
+                </s:decorate>
+                
+                <s:decorate template="../../layout/edit.xhtml" >
+                    <ui:define name="label">#{messages['ballotPart.agentName']}:</ui:define>
+                    <h:inputText maxlength="200" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.ballotPart.agentName}" >
+                    </h:inputText>
+                </s:decorate>
+    
+                <s:decorate template="../../layout/edit.xhtml" >
+                    <ui:define name="label">#{messages['ballotPart.code']}:</ui:define>
+                    <h:inputText maxlength="20" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.ballotPart.code}" >
+                    </h:inputText>
+                </s:decorate>
+                
+                <s:decorate template="../../layout/edit.xhtml" >
+                    <ui:define name="label">#{messages['ballotPart.tipology']}:</ui:define>
+                    <h:inputText maxlength="200" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.ballotPart.tipology}" >
+                    </h:inputText>
+                </s:decorate>
+                
+                <s:decorate template="../../layout/edit.xhtml" >
+                    <ui:define name="label">#{messages['ballotPart.place']}:</ui:define>
+                    <h:inputText maxlength="200" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.ballotPart.place}" >
+                    </h:inputText>
+                </s:decorate>
+                
+            </h:panelGrid>
+            
+            <h:panelGrid columns="4" width="100%" >
+                <s:decorate template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['ballotPart.notificationDate']}:</ui:define>
+                    <rich:calendar id="notificationDate" disabled="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.ballotPart.notificationDate}"
+                        enableManualInput="false" required="true" ajaxSingle="true" 
+                        datePattern="yyyy-MM-dd" locale="es/ES"/>
+                </s:decorate>
+
+                <s:decorate id="ballotnotificationTimeField" template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['ballotPart.notificationTime']}:</ui:define>
+                    <h:inputText value="#{binnacleCRVHome.notificationTimeString}" required="true" 
+                        readonly="#{!binnacleCRVHome.hasRoleUCOT}" pt:placeholder="HH:mm:ss" >
+                        <a:support event="onblur" action="#{binnacleCRVHome.validateBallotNotificationTime()}" 
+                            ajaxSingle="true" reRender="ballotnotificationTimeField"/>
+                    </h:inputText>
+                </s:decorate>
+                
+                <s:decorate template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['ballotPart.detentionDate']}:</ui:define>
+                    <rich:calendar id="detentionDate" disabled="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.ballotPart.detentionDate}"
+                        enableManualInput="false" required="true" ajaxSingle="true" 
+                        datePattern="yyyy-MM-dd" locale="es/ES"/>
+                </s:decorate>
+
+                <s:decorate id="ballotdetentionTimeField" template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['ballotPart.detentionTime']}:</ui:define>
+                    <h:inputText value="#{binnacleCRVHome.detentionTimeString}" required="true" 
+                        readonly="#{!binnacleCRVHome.hasRoleUCOT}" pt:placeholder="HH:mm:ss" >
+                        <a:support event="onblur" action="#{binnacleCRVHome.validateBallotDetentionTime()}" 
+                            ajaxSingle="true" reRender="ballotdetentionTimeField"/>
+                    </h:inputText>
+                </s:decorate>
+                
+                <s:decorate template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['ballotPart.retentionDate']}:</ui:define>
+                    <rich:calendar id="retentionDate" disabled="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.ballotPart.retentionDate}"
+                        enableManualInput="false" required="true" ajaxSingle="true" 
+                        datePattern="yyyy-MM-dd" locale="es/ES"/>
+                </s:decorate>
+
+                <s:decorate id="ballotretentionTimeField" template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['ballotPart.retentionTime']}:</ui:define>
+                    <h:inputText value="#{binnacleCRVHome.retentionTimeString}" required="true" 
+                        readonly="#{!binnacleCRVHome.hasRoleUCOT}" pt:placeholder="HH:mm:ss" >
+                        <a:support event="onblur" action="#{binnacleCRVHome.validateBallotRetentionTime()}" 
+                            ajaxSingle="true" reRender="ballotretentionTimeField"/>
+                    </h:inputText>
+                </s:decorate>
+                
+                <s:decorate template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['ballotPart.partDate']}:</ui:define>
+                    <rich:calendar id="partDate" disabled="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.ballotPart.partDate}"
+                        enableManualInput="false" required="true" ajaxSingle="true" 
+                        datePattern="yyyy-MM-dd" locale="es/ES"/>
+                </s:decorate>
+
+                <s:decorate id="ballotpartTimeField" template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['ballotPart.partTime']}:</ui:define>
+                    <h:inputText value="#{binnacleCRVHome.partTimeString}" required="true" 
+                        readonly="#{!binnacleCRVHome.hasRoleUCOT}" pt:placeholder="HH:mm:ss" >
+                        <a:support event="onblur" action="#{binnacleCRVHome.validateBallotPartTime()}" 
+                            ajaxSingle="true" reRender="ballotpartTimeField"/>
+                    </h:inputText>
+                </s:decorate>
+                
+            </h:panelGrid>
+                
+            <h:panelGrid columns="3" width="100%" >
+                <s:decorate template="../../layout/edit.xhtml" >
+                    <ui:define name="label">#{messages['ballotPart.prevention']}:</ui:define>
+                    <h:inputText maxlength="200" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.ballotPart.prevention}" >
+                    </h:inputText>
+                </s:decorate>
+                
+                <s:decorate template="../../layout/edit.xhtml" >
+                    <ui:define name="label">#{messages['ballotPart.detachment']}:</ui:define>
+                    <h:inputText maxlength="200" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.ballotPart.detachment}" >
+                    </h:inputText>
+                </s:decorate>
+                
+            </h:panelGrid>
+            
+            <!-- <ui:include src="VehicleImplicatedsAccidentPart.xhtml" /> -->
+            
+            <h:panelGrid width="100%" rendered="#{binnacleCRVHome.hasJudicialDocument}">
+                <s:decorate id="textEditorBallotPart" template="../../layout/vertical-edit.xhtml">
+                    <ui:define name="label">#{messages['ballotPart.circumstances']}:</ui:define>
+                    <rich:editor id="editorBallotPart" autoResize="true" width="800" height="600" 
+                        toolbar="full" value="#{binnacleCRVHome.ballotPart.circumstances}" 
+                        style="margin-center: 1em;" required="true"
+                        readonly="#{!binnacleCRVHome.hasRoleUCOT}">
+                    <a:support event="change" render="panel" status="panelUpdateStatus" />
+                    </rich:editor>
+                </s:decorate>
+            </h:panelGrid>
+            
+            <h:panelGrid>
+                <s:decorate id="textObsBallotPart" template="../../layout/vertical-edit.xhtml">
+                    <ui:define name="label">#{messages['ballotPart.obs']}:</ui:define>
+                    <h:inputTextarea value="#{binnacleCRVHome.ballotPart.obs}" required="true" 
+                        rows="5" cols="100" readonly="#{!binnacleCRVHome.hasRoleUCOT}"/>
+                </s:decorate>
+            </h:panelGrid>
+            
+            <h:panelGrid>
+                <s:decorate id="textDocumentsBallotPart" template="../../layout/vertical-edit.xhtml">
+                    <ui:define name="label">#{messages['ballotPart.documents']}:</ui:define>
+                    <h:inputTextarea value="#{binnacleCRVHome.ballotPart.documents}" required="true" 
+                        rows="5" cols="100" readonly="#{!binnacleCRVHome.hasRoleUCOT}"/>
+                </s:decorate>
+            </h:panelGrid>
+            
+            <div style="clear: both">
+                <span class="required">*</span>
+            #{messages['common.requiredFields']}
+        </div>
+        </h:panelGrid>
+    </h:panelGrid>
+</ui:composition>

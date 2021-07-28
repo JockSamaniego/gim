@@ -14,7 +14,8 @@ import javax.persistence.TableGenerator;
 import org.hibernate.envers.Audited;
 
 /**
- * Bitácora Digital: datos de la Grúa que transporta el vehículo retenido, si es municipal se debe realizar la preemisión de un título de crédito por los valores generados
+ * Bitácora Digital: datos de la Grúa que transporta el vehículo retenido, 
+ * si es municipal se debe realizar la preemisión de un título de crédito por los valores generados
  * 
  * @author Ronald Paladines C
  * @version 1.0

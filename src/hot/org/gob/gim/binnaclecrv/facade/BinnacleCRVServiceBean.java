@@ -18,7 +18,7 @@ public class BinnacleCRVServiceBean implements BinnacleCRVService{
 	
 	@EJB
 	CrudService crudService;
-
+	
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public List<VehicleInventoryBase> findVehicleInventoryBase() throws Exception {

@@ -15,56 +15,56 @@
             <h:panelGrid columns="2" width="100%" >
                 <s:decorate template="../../layout/edit.xhtml" >
                     <ui:define name="label">#{messages['accidentPart.partNumber']}:</ui:define>
-                    <h:inputText maxlength="20" required="true"
+                    <h:inputText maxlength="20" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
                         value="#{binnacleCRVHome.accidentPart.partNumber}" >
                     </h:inputText>
                 </s:decorate>
                 
                 <s:decorate template="../../layout/edit.xhtml" >
                     <ui:define name="label">#{messages['accidentPart.agentName']}:</ui:define>
-                    <h:inputText maxlength="100" required="true"
+                    <h:inputText maxlength="200" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
                         value="#{binnacleCRVHome.accidentPart.agentName}" >
                     </h:inputText>
                 </s:decorate>
     
                 <s:decorate template="../../layout/edit.xhtml" >
                     <ui:define name="label">#{messages['accidentPart.code']}:</ui:define>
-                    <h:inputText maxlength="20" required="true"
+                    <h:inputText maxlength="20" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
                         value="#{binnacleCRVHome.accidentPart.code}" >
                     </h:inputText>
                 </s:decorate>
                 
                 <s:decorate template="../../layout/edit.xhtml" >
                     <ui:define name="label">#{messages['accidentPart.tipology']}:</ui:define>
-                    <h:inputText maxlength="20" required="true"
+                    <h:inputText maxlength="200" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
                         value="#{binnacleCRVHome.accidentPart.tipology}" >
                     </h:inputText>
                 </s:decorate>
                 
                 <s:decorate template="../../layout/edit.xhtml" >
                     <ui:define name="label">#{messages['accidentPart.place']}:</ui:define>
-                    <h:inputText maxlength="20" required="true"
+                    <h:inputText maxlength="200" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
                         value="#{binnacleCRVHome.accidentPart.place}" >
                     </h:inputText>
                 </s:decorate>
                 
                 <s:decorate template="../../layout/edit.xhtml" >
                     <ui:define name="label">#{messages['accidentPart.referencePoint']}:</ui:define>
-                    <h:inputText maxlength="20" required="true"
+                    <h:inputText maxlength="200" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
                         value="#{binnacleCRVHome.accidentPart.referencePoint}" >
                     </h:inputText>
                 </s:decorate>
                 
                 <s:decorate template="../../layout/edit.xhtml" >
                     <ui:define name="label">#{messages['accidentPart.latitude']}:</ui:define>
-                    <h:inputText maxlength="20" required="true"
+                    <h:inputText maxlength="20" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
                         value="#{binnacleCRVHome.accidentPart.latitude}" >
                     </h:inputText>
                 </s:decorate>
                 
                 <s:decorate template="../../layout/edit.xhtml" >
                     <ui:define name="label">#{messages['accidentPart.longitude']}:</ui:define>
-                    <h:inputText maxlength="20" required="true"
+                    <h:inputText maxlength="20" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
                         value="#{binnacleCRVHome.accidentPart.longitude}" >
                     </h:inputText>
                 </s:decorate>
@@ -74,7 +74,7 @@
             <h:panelGrid columns="4" width="100%" >
                 <s:decorate template="../../layout/edit.xhtml">
                     <ui:define name="label">#{messages['accidentPart.accidentDate']}:</ui:define>
-                    <rich:calendar id="accidentDate" 
+                    <rich:calendar id="accidentDate" disabled="#{!binnacleCRVHome.hasRoleUCOT}"
                         value="#{binnacleCRVHome.accidentPart.accidentDate}"
                         enableManualInput="false" required="true" ajaxSingle="true" 
                         datePattern="yyyy-MM-dd" locale="es/ES"/>
@@ -82,7 +82,8 @@
 
                 <s:decorate id="accidentTimeField" template="../../layout/edit.xhtml">
                     <ui:define name="label">#{messages['accidentPart.accidentTime']}:</ui:define>
-                    <h:inputText value="#{binnacleCRVHome.accidentTimeString}" required="true" pt:placeholder="HH:mm:ss" >
+                    <h:inputText value="#{binnacleCRVHome.accidentTimeString}" required="true" 
+                        readonly="#{!binnacleCRVHome.hasRoleUCOT}" pt:placeholder="HH:mm:ss" >
                         <a:support event="onblur" action="#{binnacleCRVHome.validateAccidentTime()}" 
                             ajaxSingle="true" reRender="accidentTimeField"/>
                     </h:inputText>
@@ -90,7 +91,7 @@
                 
                 <s:decorate template="../../layout/edit.xhtml">
                     <ui:define name="label">#{messages['accidentPart.partDate']}:</ui:define>
-                    <rich:calendar id="accidentPartDate" 
+                    <rich:calendar id="accidentPartDate" disabled="#{!binnacleCRVHome.hasRoleUCOT}"
                         value="#{binnacleCRVHome.accidentPart.partDate}"
                         enableManualInput="false" required="true" ajaxSingle="true" 
                         datePattern="yyyy-MM-dd" locale="es/ES"/>
@@ -98,7 +99,8 @@
 
                 <s:decorate id="accidentPartTimeField" template="../../layout/edit.xhtml">
                     <ui:define name="label">#{messages['accidentPart.partTime']}:</ui:define>
-                    <h:inputText value="#{binnacleCRVHome.partTimeString}" required="true" >
+                    <h:inputText value="#{binnacleCRVHome.partTimeString}" required="true" 
+                        readonly="#{!binnacleCRVHome.hasRoleUCOT}">
                         <a:support event="onblur" action="#{binnacleCRVHome.validateAccidentPartTime()}" 
                             ajaxSingle="true" reRender="accidentPartTimeField"/>
                     </h:inputText>
@@ -106,7 +108,8 @@
                 
                 <s:decorate id="notificationTimeField" template="../../layout/edit.xhtml">
                     <ui:define name="label">#{messages['accidentPart.notificationTime']}:</ui:define>
-                    <h:inputText value="#{binnacleCRVHome.notificationTimeString}" required="true" >
+                    <h:inputText value="#{binnacleCRVHome.notificationTimeString}" required="true" 
+                        readonly="#{!binnacleCRVHome.hasRoleUCOT}">
                         <a:support event="onblur" action="#{binnacleCRVHome.validateNotificationPartTime()}" 
                             ajaxSingle="true" reRender="notificationTimeField"/>
                     </h:inputText>
@@ -114,7 +117,8 @@
                 
                 <s:decorate id="arrivalTimeField" template="../../layout/edit.xhtml">
                     <ui:define name="label">#{messages['accidentPart.arrivalTime']}:</ui:define>
-                    <h:inputText value="#{binnacleCRVHome.arrivalTimeString}" required="true" >
+                    <h:inputText value="#{binnacleCRVHome.arrivalTimeString}" required="true" 
+                        readonly="#{!binnacleCRVHome.hasRoleUCOT}">
                         <a:support event="onblur" action="#{binnacleCRVHome.validateArrivalPartTime()}" 
                             ajaxSingle="true" reRender="arrivalTimeField"/>
                     </h:inputText>
@@ -122,7 +126,7 @@
                 
                 <s:decorate template="../../layout/edit.xhtml">
                     <ui:define name="label">#{messages['accidentPart.detentionDate']}:</ui:define>
-                    <rich:calendar id="detentionDate" 
+                    <rich:calendar id="detentionDate" disabled="#{!binnacleCRVHome.hasRoleUCOT}"
                         value="#{binnacleCRVHome.accidentPart.detentionDate}"
                         enableManualInput="false" required="true" ajaxSingle="true" 
                         datePattern="yyyy-MM-dd" locale="es/ES"/>
@@ -130,9 +134,67 @@
 
                 <s:decorate id="detentionTimeField" template="../../layout/edit.xhtml">
                     <ui:define name="label">#{messages['accidentPart.detentionTime']}:</ui:define>
-                    <h:inputText value="#{binnacleCRVHome.retentionTimeString}" required="true" >
+                    <h:inputText value="#{binnacleCRVHome.retentionTimeString}" required="true" 
+                        readonly="#{!binnacleCRVHome.hasRoleUCOT}">
                         <a:support event="onblur" action="#{binnacleCRVHome.validateAccidentRetentionTime()}" 
                             ajaxSingle="true" reRender="detentionTimeField"/>
+                    </h:inputText>
+                </s:decorate>
+                
+            </h:panelGrid>
+                
+            <h:panelGrid columns="3" width="100%" >
+                <s:decorate template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['accidentPart.road']}</ui:define>
+                    <h:selectOneMenu id="road" disabled="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.accidentPart.road}" required="true">
+                        <s:selectItems value="#{roadsBinnacleCRV}" var="_road"
+                            label="#{_road.name()}" 
+                            noSelectionLabel="Seleccione una opción" />
+                        <s:convertEnum />
+                    </h:selectOneMenu>
+                </s:decorate>
+
+                <s:decorate template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['accidentPart.semaphores']}</ui:define>
+                    <h:selectOneMenu id="semaphores" disabled="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.accidentPart.semaphores}" required="true">
+                        <s:selectItems value="#{semaphoresBinnacleCRV}" var="_semaphores"
+                            label="#{_semaphores.name()}" 
+                            noSelectionLabel="Seleccione una opción" />
+                        <s:convertEnum />
+                    </h:selectOneMenu>
+                </s:decorate>
+
+                <s:decorate template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['accidentPart.sky']}</ui:define>
+                    <h:selectOneMenu id="sky" disabled="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.accidentPart.sky}" required="true">
+                        <s:selectItems value="#{skiesBinnacleCRV}" var="_sky"
+                            label="#{_sky.name()}" 
+                            noSelectionLabel="Seleccione una opción" />
+                        <s:convertEnum/>
+                    </h:selectOneMenu>
+                </s:decorate>
+
+                <s:decorate template="../../layout/edit.xhtml" >
+                    <ui:define name="label">#{messages['accidentPart.prevention']}:</ui:define>
+                    <h:inputText maxlength="200" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.accidentPart.prevention}" >
+                    </h:inputText>
+                </s:decorate>
+                
+                <s:decorate template="../../layout/edit.xhtml" >
+                    <ui:define name="label">#{messages['accidentPart.detachment']}:</ui:define>
+                    <h:inputText maxlength="200" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.accidentPart.detachment}" >
+                    </h:inputText>
+                </s:decorate>
+                
+                <s:decorate template="../../layout/edit.xhtml" >
+                    <ui:define name="label">#{messages['accidentPart.reference']}:</ui:define>
+                    <h:inputText maxlength="200" required="true" readonly="#{!binnacleCRVHome.hasRoleUCOT}"
+                        value="#{binnacleCRVHome.accidentPart.reference}" >
                     </h:inputText>
                 </s:decorate>
                 
@@ -145,9 +207,26 @@
                     <ui:define name="label">#{messages['accidentPart.circumstances']}:</ui:define>
                     <rich:editor id="editorAccPart" autoResize="true" width="800" height="600" 
                         toolbar="full" value="#{binnacleCRVHome.accidentPart.circumstances}" 
-                        style="margin-center: 1em; ">
+                        style="margin-center: 1em;" required="true"
+                        readonly="#{!binnacleCRVHome.hasRoleUCOT}">
                     <a:support event="change" render="panel" status="panelUpdateStatus" />
                     </rich:editor>
+                </s:decorate>
+            </h:panelGrid>
+            
+            <h:panelGrid>
+                <s:decorate id="textObsAccPart" template="../../layout/vertical-edit.xhtml">
+                    <ui:define name="label">#{messages['accidentPart.obs']}:</ui:define>
+                    <h:inputTextarea value="#{binnacleCRVHome.accidentPart.obs}" required="true" 
+                        rows="5" cols="100" readonly="#{!binnacleCRVHome.hasRoleUCOT}"/>
+                </s:decorate>
+            </h:panelGrid>
+            
+            <h:panelGrid>
+                <s:decorate id="textDocumentsAccPart" template="../../layout/vertical-edit.xhtml">
+                    <ui:define name="label">#{messages['accidentPart.documents']}:</ui:define>
+                    <h:inputTextarea value="#{binnacleCRVHome.accidentPart.documents}" required="true" 
+                        rows="5" cols="100" readonly="#{!binnacleCRVHome.hasRoleUCOT}"/>
                 </s:decorate>
             </h:panelGrid>
             

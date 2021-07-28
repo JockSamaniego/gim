@@ -13,7 +13,7 @@
 	<ui:define name="body">
 
 		<h1>#{messages['binnacleCRV.title']}</h1>
-		<h:form id="businessSearch" styleClass="edit">
+		<h:form id="binnacleCRVSearch" styleClass="edit">
 			<rich:simpleTogglePanel label="#{messages['binnacleCRV.Filter']}"
 				switchType="ajax">
 
@@ -40,10 +40,10 @@
 						<h:outputText
 							value="#{messages['binnacleCRV.Results']}(#{empty binnacleCRVList.resultList ? 0 : (binnacleCRVList.paginated ? binnacleCRVList.resultCount : binnacleCRVList.resultList.size)})" />
 						<h:panelGroup>
-							<s:div styleClass="actionButtons" rendered="#{empty from}">
+							<s:div styleClass="actionButtons" >
 								<s:button view="/binnaclecrv/BinnacleCRVEdit.xhtml" id="create"
 								    action="#{binnacleCRVHome.createBinnacleCRV()}"
-									propagation="none"
+									propagation="none" rendered="#{binnacleCRVHome.hasRole('ROLE_NAME_CRV_SYSTEM')}"
 									value="#{messages['common.create']} #{messages['binnacleCRV.create']}" >
 									<f:param name="binnacleCRVId" />
 								</s:button>
@@ -72,45 +72,93 @@
 							</f:facet>
 							<h:outputText value="#{_binnacleCRV.serialNumber}" />
 						</h:column>
-											
-						<h:column>
-							<f:facet name="header">
-								<ui:include src="../layout/sort.xhtml">
-									<ui:param name="entityList" value="#{binnacleCRVList}" />
-									<ui:param name="propertyLabel" value="#{messages['binnacleCRV.licensePlate']}" />
-									<ui:param name="propertyPath" value="binnacleCRV.licensePlate" />
-								</ui:include>
-							</f:facet>
-							<h:outputText value="#{_binnacleCRV.licensePlate}" />
-						</h:column>
 						
-						<h:column>
-							<f:facet name="header">
-								<ui:include src="../layout/sort.xhtml">
-									<ui:param name="entityList" value="#{binnacleCRVList}" />
-									<ui:param name="propertyLabel"
-										value="#{messages['binnacleCRV.admissionResponsableName']}" />
-									<ui:param name="propertyPath" value="binnacleCRV.admissionResponsableName" />
-								</ui:include>
-							</f:facet>
-							<h:outputText value="#{_binnacleCRV.admissionResponsableName}" />
-						</h:column>
-	
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="propertyLabel" value="#{messages['arrivalHistory.arrivalDate']}" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_binnacleCRV.getLastArrivalHistoryBinnacleCRV().arrivalDate}">
+                                <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                            </h:outputText>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{binnacleCRVList}" />
+                                    <ui:param name="propertyLabel" value="#{messages['binnacleCRV.licensePlate']}" />
+                                    <ui:param name="propertyPath" value="binnacleCRV.licensePlate" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_binnacleCRV.licensePlate}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{binnacleCRVList}" />
+                                    <ui:param name="propertyLabel"
+                                        value="#{messages['binnacleCRV.ownerIdentification']}" />
+                                    <ui:param name="propertyPath" value="binnacleCRV.ownerIdentification" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_binnacleCRV.ownerIdentification}" />
+                        </h:column>
+    
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{binnacleCRVList}" />
+                                    <ui:param name="propertyLabel"
+                                        value="#{messages['binnacleCRV.ownerName']}" />
+                                    <ui:param name="propertyPath" value="binnacleCRV.ownerName" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_binnacleCRV.ownerName}" />
+                        </h:column>
+    
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{binnacleCRVList}" />
+                                    <ui:param name="propertyLabel"
+                                        value="#{messages['binnacleCRV.admissionResponsableName']}" />
+                                    <ui:param name="propertyPath" value="binnacleCRV.admissionResponsableName" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_binnacleCRV.admissionResponsableName}" />
+                        </h:column>
+    
 						<rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
 							<s:link view="/#{empty from ? 'BinnacleCRV' : from}.xhtml"
 								value="#{empty from ? 'View' : 'Select'}"
 								propagation="#{empty from ? 'none' : 'default'}"
-								id="businessViewId" rendered="false">
+								id="binnacleCRVViewId" rendered="false">
 								<f:param name="binnacleCRVId" value="#{_binnacleCRV.id}" />
 							</s:link>
-				            #{' '}
-				            <s:button view="/binnaclecrv/BinnacleCRVEdit.xhtml"
+                            #{' '}
+                            <s:button view="/binnaclecrv/BinnacleCRVEdit.xhtml"
                                 action="#{binnacleCRVHome.editBinnacleCRV()}"
-								value="#{messages['common.edit']}" propagation="none"
-								id="businessEdit" rendered="#{empty from}">
-								<f:param name="binnacleCRVId" value="#{_binnacleCRV.id}" />
-							</s:button>
+                                value="#{messages['common.edit']}" propagation="none"
+                                id="binnacleCRVEdit" rendered="#{empty from}">
+                                <f:param name="binnacleCRVId" value="#{_binnacleCRV.id}" />
+                            </s:button>
+                            #{' '}
+                            <s:button view="/binnaclecrv/ArrivalBinnacleCRVEdit.xhtml"
+                                action="#{binnacleCRVHome.captureBinnacleCRV()}"
+                                value="#{messages['binnacleCRV.registerReArrival']}" propagation="none"
+                                id="binnacleCRVReArrival" rendered="#{binnacleCRVHome.canVehicleReArrival(_binnacleCRV) and binnacleCRVHome.hasRole('ROLE_NAME_CRV_SYSTEM')}">
+                                <f:param name="binnacleCRVId" value="#{_binnacleCRV.id}" />
+                            </s:button>
+                            #{' '}
+                            <s:button view="/binnaclecrv/ExitBinnacleCRVEdit.xhtml"
+                                value="#{messages['binnacleCRV.registerExit']}" propagation="none"
+                                id="binnacleCRVExitVehicle" rendered="#{binnacleCRVHome.canVehicleExit(_binnacleCRV) and binnacleCRVHome.hasRole('ROLE_NAME_CRV_SYSTEM')}">
+                                <f:param name="binnacleCRVId" value="#{_binnacleCRV.id}" />
+                            </s:button>
 						</rich:column>
 					</rich:dataTable>
 	

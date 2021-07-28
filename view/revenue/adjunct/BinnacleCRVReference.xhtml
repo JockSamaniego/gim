@@ -1,0 +1,64 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<a:outputPanel id="binnacleCRVReferencePanel">
+
+ 		<h:panelGrid columns="2">
+			<h:selectBooleanCheckbox id="emitWithoutBinnacle" 
+				value="#{adjunctHome.instance.emitWithoutBinnacle}">
+				<a:support event="onchange" ajaxSingle="true"
+					action="#{adjunctAction.resetBinnacleValues}"
+					reRender="binnacleCRVReferencePanel" />
+			</h:selectBooleanCheckbox>
+			<h:outputLabel
+				value="#{messages['binnacleCRVReference.emitWithoutBinnacle']}" />
+
+			<h:outputLabel value="#{messages['binnacleCRVReference.binnacleCRV']}:#{'   '}" />
+			<h:selectOneMenu required="true"
+				value="#{adjunctHome.instance.binnacleCRV}"
+				disabled="#{adjunctHome.instance.emitWithoutBinnacle}">
+				<s:selectItems value="#{adjunctAction.findBinnaclesByIdentificationNumber()}" 
+							   var="_binnacle"
+							   label="#{_binnacle.lastArrivalHistoryBinnacleCRV.arrivalDate} - #{_binnacle.licensePlate} - #{_binnacle.model}"
+							   noSelectionLabel="#{messages['common.choose']}" />
+				<s:convertEntity />
+				<a:support  event="onchange" 
+						action="#{adjunctAction.updateBinnacleCRVReference()}" 
+						ajaxSingle="true"
+						reRender="binnacleCRVReferencePanel,dataBinnacleCRVPanel,fieldsPanel"/>
+			</h:selectOneMenu>
+
+            <h:outputLabel value="#{messages['arrivalHistory.exitTypeBinnacleCRV']}:#{'   '}" />
+            <h:selectOneMenu  
+                value="#{adjunctHome.instance.exitTypeBinnacleCRV}" required="true"
+                disabled="#{adjunctHome.instance.emitWithoutBinnacle}">
+                <s:selectItems value="#{exitTypesBinnacleCRV}" var="_exitType"
+                    label="#{_exitType.name()}" 
+                    noSelectionLabel="Seleccione una opción" />
+                <s:convertEnum />
+            </h:selectOneMenu>
+
+            <h:selectBooleanCheckbox disabled="true" 
+                value="#{adjunctHome.instance.hasCraneService}">
+            </h:selectBooleanCheckbox>
+            <h:outputLabel
+                value="#{messages['arrivalHistory.hasCraneService']}" />
+
+            <h:outputLabel value="#{messages['binnacleCRV.km']}:" />
+            <h:inputText value="#{adjunctHome.instance.km}" readonly="true" style="text-align: right"/>
+		</h:panelGrid>
+		
+		<h:panelGrid columns="7" id="dataBinnacleCRVPanel">
+
+		</h:panelGrid>
+		
+	</a:outputPanel>
+
+</ui:composition>

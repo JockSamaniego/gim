@@ -14,12 +14,16 @@ import org.gob.gim.commercial.action.BusinessHome;
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.revenue.action.MunicipalBondHome;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityController;
 
+import ec.gob.gim.binnaclecrv.model.ArrivalHistoryBinnacleCRV;
+import ec.gob.gim.binnaclecrv.model.BinnacleCRV;
 import ec.gob.gim.cadaster.model.Building;
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.Property;
@@ -29,6 +33,7 @@ import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.CurrencyDevaluation;
 import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
 import ec.gob.gim.revenue.model.adjunct.BusinessLocalReference;
 import ec.gob.gim.revenue.model.adjunct.DomainTransfer;
 import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
@@ -40,7 +45,10 @@ import ec.gob.gim.revenue.model.adjunct.detail.VehicleType;
 @Name("adjunctAction")
 public class AdjunctAction extends EntityController{
 	private static final long serialVersionUID = 1L;
-	
+	private int recursive = 1;
+	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
+	private SystemParameterService systemParameterService;
+
 	@SuppressWarnings("unchecked")
 	public void loadPendingDomainTransfers(){
 		DomainTransfer domainTransfer = findCurrentAdjunct();
@@ -345,6 +353,21 @@ public class AdjunctAction extends EntityController{
 		return residentId;
 	}
 	
+	private String findSelectedResidentIdentificationNumber(){
+		System.out.println("----findSelectedResidentIdentificationNumber");
+//		String identificationNumber = "";
+		MunicipalBond municipalBond = findMunicipalBond();
+		if (municipalBond.getResident() == null) return "";
+		return municipalBond.getResident().getIdentificationNumber();
+//		MunicipalBondHome home = (MunicipalBondHome) Contexts.getConversationContext().get(MunicipalBondHome.class);
+//		if(home != null){
+//			if(home.getInstance() != null && home.getInstance().getResident() != null){
+//				identificationNumber = home.getInstance().getResident().getIdentificationNumber();
+//			}
+//		}
+//		return identificationNumber;
+	}
+	
 	private MunicipalBondHome findMunicipalBondHome(){
 		MunicipalBondHome home = (MunicipalBondHome) Contexts.getConversationContext().get(MunicipalBondHome.class);
 		return home;
@@ -484,4 +507,88 @@ public class AdjunctAction extends EntityController{
 		reference.setCategory(null);
 	}
 	
+	//Ronald Paladines
+	//Módulo de Bitácora Digital CRV
+	//2021-07-01
+	@SuppressWarnings("unchecked")
+	public List<BinnacleCRV> findBinnaclesByIdentificationNumber(){
+		MunicipalBond municipalBond = findMunicipalBond();
+		if(municipalBond.getResident() != null){
+			if (systemParameterService == null) systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+			Long entryGarajeId = systemParameterService.findParameter(SystemParameterService.ENTRY_ID_GARAJE_SERVICE_UMTTT);
+			if (municipalBond.getEntry().getId().compareTo(entryGarajeId) == 0){
+				Query query = getEntityManager().createNamedQuery("BinnacleCRV.findGarajePendingsByIdentificationNumber");
+				query.setParameter("ownerIdentification", municipalBond.getResident().getIdentificationNumber());
+//				query.setParameter("entryId", entryGarajeId);
+				return query.getResultList();
+			}
+			Long entryCraneId = systemParameterService.findParameter(SystemParameterService.ENTRY_ID_GRUA_SERVICE_UMTTT);
+			if (municipalBond.getEntry().getId().compareTo(entryCraneId) == 0){
+				Query query = getEntityManager().createNamedQuery("BinnacleCRV.findCranePendingsByIdentificationNumber");
+				query.setParameter("ownerIdentification", municipalBond.getResident().getIdentificationNumber());
+//				query.setParameter("entryId", entryCraneId);
+				return query.getResultList();
+			}
+		}
+		return new ArrayList<BinnacleCRV>();
+	}
+	
+	public void resetBinnacleCRVValues(){
+		BinnacleCRVReference binnacleCRVReference = findCurrentAdjunct();
+		binnacleCRVReference.setBinnacleCRV(null);
+	}
+
+	public void resetBinnacleCRVValuesOfChange(){
+		BinnacleCRVReference binnacleCRVReference = findCurrentAdjunct();
+		binnacleCRVReference.setBinnacleCRV(null);
+		binnacleCRVReference.setArrivalHistoryBinnacleCRV(null);
+		binnacleCRVReference.setType("");
+		binnacleCRVReference.setTonnage(new Double(0.0));
+		binnacleCRVReference.setArrivalDate(null);
+		binnacleCRVReference.setExitDate(null);
+		binnacleCRVReference.setExitTypeBinnacleCRV(null);
+		binnacleCRVReference.setKm(BigDecimal.ZERO);
+		binnacleCRVReference.setHasCraneService(false);
+	}
+	
+	public void updateBinnacleCRVReference(){
+		if (systemParameterService == null) systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+		BinnacleCRVReference binnacleCRVReference = findCurrentAdjunct();
+		if(binnacleCRVReference != null){
+			MunicipalBond municipalBond = findMunicipalBond();
+			BinnacleCRV binnacleCRV = binnacleCRVReference.getBinnacleCRV();
+			ArrivalHistoryBinnacleCRV lastArrival = binnacleCRV.getLastArrivalHistoryBinnacleCRV();
+			binnacleCRVReference.setCode(binnacleCRV.getLicensePlate());
+			binnacleCRVReference.setType(binnacleCRV.getType());
+			binnacleCRVReference.setTonnage(binnacleCRV.getTonnage());
+			binnacleCRVReference.setArrivalDate(lastArrival.getArrivalDate());
+			binnacleCRVReference.setExitDate(new GregorianCalendar().getTime());
+			binnacleCRVReference.setKm(lastArrival.getKm());
+			binnacleCRVReference.setHasCraneService(lastArrival.isHasCraneService());
+			binnacleCRVReference.setBinnacleCRV(binnacleCRV);
+			binnacleCRVReference.setArrivalHistoryBinnacleCRV(lastArrival);
+//			binnacleCRVReference.setBond(municipalBond);
+			Long entryGarajeId = systemParameterService.findParameter(SystemParameterService.ENTRY_ID_GARAJE_SERVICE_UMTTT);
+			Long entryCraneId = systemParameterService.findParameter(SystemParameterService.ENTRY_ID_GRUA_SERVICE_UMTTT);
+			if (municipalBond.getEntry().getId().compareTo(entryGarajeId) == 0){
+				binnacleCRVReference.setEntryId(entryGarajeId);
+			} else if (municipalBond.getEntry().getId().compareTo(entryCraneId) == 0){
+				binnacleCRVReference.setEntryId(entryCraneId);
+			}
+		}
+	}
+	
+	public void resetBinnacleValues(){
+		BinnacleCRVReference binnacleCRVReference = findCurrentAdjunct();
+		binnacleCRVReference.setBinnacleCRV(null);
+		binnacleCRVReference.setArrivalHistoryBinnacleCRV(null);
+		binnacleCRVReference.setType("");
+		binnacleCRVReference.setTonnage(new Double(0.0));
+		binnacleCRVReference.setArrivalDate(null);
+		binnacleCRVReference.setExitDate(null);
+		binnacleCRVReference.setExitTypeBinnacleCRV(null);
+		binnacleCRVReference.setKm(BigDecimal.ZERO);
+		binnacleCRVReference.setHasCraneService(false);
+	}
+
 }

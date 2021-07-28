@@ -1,0 +1,73 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:rich="http://richfaces.org/rich">
+
+    <f:facet name="header">#{messages['binnacleCRV.historyTab']}</f:facet>
+
+    <rich:panel id="historyTabPanel">
+        <f:facet name="header">Historial del Vehículo en CRV</f:facet>
+        
+        <div class="results">
+
+            <rich:dataTable id="historiesTable" var="_history"
+                value="#{binnacleCRVHome.instance.arrivalHistoryBinnacleCRVs}"
+                rendered="#{not empty binnacleCRVHome.instance.arrivalHistoryBinnacleCRVs}"
+                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['arrivalHistory.arrivalDate']}" />
+                    </f:facet>
+                    <h:outputText value="#{_history.arrivalDate}" />
+                </rich:column>
+                
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['arrivalHistory.arrivalDetail']}" />
+                    </f:facet>
+                    <h:outputText value="#{_history.arrivalDetail}" />
+                </rich:column>
+                
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['arrivalHistory.arrivalObs']}" />
+                    </f:facet>
+                    <h:outputText value="#{_history.arrivalObs}" />
+                </rich:column>
+                
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['arrivalHistory.exitDate']}" />
+                    </f:facet>
+                    <h:outputText value="#{_history.exitDate}" />
+                </rich:column>
+                
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['arrivalHistory.exitDetail']}" />
+                    </f:facet>
+                    <h:outputText value="#{_history.exitDetail}" />
+                </rich:column>
+                
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{messages['arrivalHistory.exitObs']}" />
+                    </f:facet>
+                    <h:outputText value="#{_history.exitObs}" />
+                </rich:column>
+                
+            </rich:dataTable>
+
+        </div>
+        
+    </rich:panel>
+
+</ui:composition>

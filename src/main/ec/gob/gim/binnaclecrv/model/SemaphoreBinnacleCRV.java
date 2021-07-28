@@ -8,6 +8,6 @@ package ec.gob.gim.binnaclecrv.model;
  * @created 08-Jun-2021
  */
 public enum SemaphoreBinnacleCRV {
-	ENCENDIDOS, //Seca
-	APAGADOS    //Mojada
+	ENCENDIDOS, //Encendidos
+	APAGADOS    //Apagados
 }
