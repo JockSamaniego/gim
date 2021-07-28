@@ -60,59 +60,33 @@
 					</s:decorate>
 					<div style="clear: both" />
 				</h:panelGrid>
-				
-				<h:panelGrid  columns="3">
-				<s:decorate id="exemptionTypeField"
-						template="../layout/display.xhtml">
-						<ui:define name="label">Clave catastral</ui:define>
-						<h:inputText id="name" 
-								value="#{exemptioncemHome.instance.cadastraCode}"
-								required="true">								 
-						</h:inputText>
-						
-						<a:commandButton id="createExemptionForProperty"
-								action="#{exemptioncemHome.createExemptionForProperty()}"
-								reRender="propertyExemptionPanel" ajaxSingle="true"
-								oncomplete="Richfaces.showModalPanel('propertyExemptionPanel')"
-								value="#{messages['exemption.addPropertyExemption']}" />
-					</s:decorate>
-					
-					
-					
-					<s:decorate id="commercialName" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['exemption.commercialValues']}</ui:define>
-							<h:inputText id="name" size="15" style="text-align: right"
-								value="#{exemptioncemHome.instance.commercialValues}"
-								required="true">
-								<f:convertNumber pattern="#0.00" />
-								<a:support event="onblur" ajaxSingle="true"
-									reRender="patrimonyName,commercialName"
-									action="#{exemptioncemHome.instance.calculatePatrimony()}" />
-							</h:inputText>
-						</s:decorate>
-				</h:panelGrid>
+				 
 
 				<rich:panel id="propertiesPanel" styleClass="left">
 					<f:facet name="header">
-						<h:panelGrid columns="2" columnClasses="headerTitle,">
-							<h:outputText
-								value="#{messages['exemption.propertiesExemption']}" />
+						<h:panelGrid columns="3" columnClasses="headerTitle,">
+							<ui:define name="label">Clave catastral</ui:define>
+							<h:inputText id="name" 
+									value="#{exemptioncemHome.instance.cadastraCode}"
+									required="true">								 
+							</h:inputText>
+							
 							<a:commandButton id="createExemptionForProperty"
-								action="#{exemptioncemHome.createExemptionForProperty()}"
-								reRender="propertyExemptionPanel" ajaxSingle="true"
-								oncomplete="Richfaces.showModalPanel('propertyExemptionPanel')"
-								value="#{messages['exemption.addPropertyExemption']}" />
+									action="#{exemptioncemHome.createExemptionForProperty()}"
+									reRender="propertyExemptionPanel" ajaxSingle="true"
+									oncomplete="Richfaces.showModalPanel('propertyExemptionPanel')"
+									value="#{messages['exemption.addPropertyExemption']}" />
 						</h:panelGrid>
 					</f:facet>
 
 
 					<rich:panel>
 						<f:facet name="header">
-							Propiedades Tratamiento Normal
+							Propiedad
 						</f:facet>
 						<rich:dataTable id="exemptionNormalPropertyTable"
 							var="_exemptionProperty"
-							value="#{exemptioncemHome.propertiesInExemptionNormal}">
+							value="#{exemptioncemHome.propertylist}">
 							<rich:column>
 								<f:facet name="header">#{messages['exemption.cadastralCode']}</f:facet>
 								<h:outputText
@@ -124,17 +98,7 @@
 								<h:outputText
 									value="#{_exemptionProperty.property.previousCadastralCode}" />
 							</rich:column>
-
-							<rich:column style="text-align:right;"
-								rendered="#{exemptioncemHome.instance.exemptionType.name == 'Exencion Especial' or exemptioncemHome.instance.exemptionType.name == 'Por emprendimiento'}">
-								<f:facet name="header">#{messages['exemption.percentage']}</f:facet>
-								<h:inputText value="#{_exemptionProperty.discountPercentage}"
-									required="true" style="text-align:right;">
-									<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
-									<a:support event="onblur" ajaxSingle="true" />
-								</h:inputText>
-							</rich:column>
-
+						 
 							<rich:column>
 								<f:facet name="header">#{messages['exemption.nameHistoryResident']}</f:facet>
 								<h:outputText value="#{_exemptionProperty.nameHistoryResident}" />
