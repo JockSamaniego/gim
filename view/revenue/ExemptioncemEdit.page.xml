@@ -7,7 +7,7 @@
 
    <begin-conversation join="true" flush-mode="MANUAL"/>
 
-   <action execute="#{exemptioncemHome.wire}"/>
+   <action execute="#{exemptioncemHome.init}"/>
 
    <param name="exemptionFrom"/>
    <param name="exemptionId" value="#{exemptionHome.exemptionId}"/>
@@ -17,19 +17,12 @@
          <end-conversation/>
          <redirect view-id="/revenue/ExemptioncemList.xhtml"/>
       </rule>
-      <rule if-outcome="updated">
-         <end-conversation/>
-         <redirect view-id="/revenue/ExemptioncemList.xhtml"/>
-      </rule>
-      <rule if-outcome="failed">         
-         <redirect view-id="/revenue/ExemptioncemEdit.xhtml"/>
-      </rule>
    </navigation>
 
-   <navigation from-action="#{exemptioncemHome.remove}">
+   <navigation from-action="#{exemptionHome.remove}">
       <rule if-outcome="removed">
          <end-conversation/>
-         <redirect view-id="/revenue/ExemptioncemList.xhtml"/>
+         <redirect view-id="/revenue/ExemptionList.xhtml"/>
       </rule>
    </navigation>
 

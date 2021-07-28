@@ -73,6 +73,8 @@ public class ExemptionCem {
 	public ExemptionCem() {
 		super();
 		this.discountPercentage =BigDecimal.ZERO;
+		this.active = Boolean.TRUE;
+		this.creationDate = new Date();
 	}
 
 	/**
