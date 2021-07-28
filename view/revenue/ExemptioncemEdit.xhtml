@@ -90,8 +90,7 @@
 
 			<a:outputPanel ajaxRendered="false" id="buttonsId">
 				<div class="actionButtons">
-					<h:commandButton id="save" value="#{messages['common.save']}" action="#{exemptioncemHome.save()}"
-						rendered="#{!exemptionHome.managed}" />
+					<h:commandButton id="save" value="#{messages['common.save']}" action="#{exemptioncemHome.save()}"/>
 					<s:button id="cancel" value="#{messages['common.cancel']}" propagation="end"
 						view="/revenue/ExemptioncemList.xhtml" />
 				</div>
