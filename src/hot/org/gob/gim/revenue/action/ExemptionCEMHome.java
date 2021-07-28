@@ -48,6 +48,8 @@ public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
 	private String criteria;
 	private String identificationNumber;
 	private String partnerIdentificationNumber;
+	
+	private String cadastraCode;
 
 	private ExemptionForProperty exemptionForProperty;
 
@@ -125,6 +127,11 @@ public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
 						CatalogConstants.CATALOG_TYPES_TREATMENT_EXCEMPTION,
 						CatalogConstants.ITEM_CATALOG_TYPE_EXCLUDE_TREATMENT_EXCEMPTION);
 	}
+	
+	public void prepareEditExcemption(ExemptionCem excemption) {
+
+	}
+
 
 	/*
 	public void reCalculateValues() {
@@ -649,22 +656,23 @@ public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
 		this.exemptionForProperty = new ExemptionForProperty();
 		clearSearchPropertyPanel();
 	}
-
+*/
 	public void onChangeExemptionType() {
 
-		this.instance.getPropertiesInExemption().clear();
+		//this.instance.getPropertiesInExemption().clear();
 
-		this.instance.setReference(this.instance.getExemptionType()
-				.getReference());
-
-		if (this.instance.getExemptionType().getId()
+		this.instance.setReference(this.instance.getType().getName());
+		/*
+		 * NO aplica ....dejar hasta pruebas sino delete
+		if (this.instance.getType().getId()
 				.equals(exemptionSpecial.getId())) {
 			this.isExemptionEspecial = Boolean.TRUE;
 		} else {
 			this.isExemptionEspecial = Boolean.FALSE;
-		}
+		}*/
 
 	}
+	/*
 
 	public void prepareEditExcemption(Exemption excemption) {
 
@@ -716,4 +724,12 @@ public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
 		}
 	}
 */
+
+	public String getCadastraCode() {
+		return cadastraCode;
+	}
+
+	public void setCadastraCode(String cadastraCode) {
+		this.cadastraCode = cadastraCode;
+	}		
 }

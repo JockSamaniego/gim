@@ -161,10 +161,10 @@
 					
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet>
-						<s:button view="/revenue/ExemptionEdit.xhtml"
+						<s:button view="/revenue/ExemptioncemEdit.xhtml"
 							value="#{messages['common.edit']}" propagation="none"
 							id="exemptionEdit" rendered="#{empty from}"
-							actionListener="#{exemptionHome.prepareEditExcemption(exemption)}">
+							actionListener="#{exemptioncemHome.prepareEditExcemption(exemption)}">
 							<f:param name="exemptionId" value="#{_exemption.id}" />
 						</s:button>
 					</rich:column>
