@@ -79,7 +79,6 @@
 						</h:panelGrid>
 					</f:facet>
 
-
 					<rich:panel>
 						<f:facet name="header">
 							Propiedad
@@ -134,7 +133,7 @@
 							<rich:column>
 								<f:facet name="header"></f:facet>
 								<a:commandButton ajaxSingle="true" value="Remover"
-									actionListener="#{exemptioncemHome.removeExemptionForProperty(_exemptionProperty)}"
+									actionListener="#{exemptioncemHome.removeProperty(_exemptionProperty)}"
 									reRender="exemptionNormalPropertyTable" />
 							</rich:column>
 
@@ -142,129 +141,24 @@
 					</rich:panel>
 
 
-					<rich:panel id="panelSpecialTreatment"
-						style="margin-top:5px !important"
-						rendered="#{exemptioncemHome.renderTableTreatmentSpecial()}">
-						<f:facet name="header">
-							Propiedades Tratamiento Especial
-
-						</f:facet>
-						<rich:dataTable id="exemptionSpecialPropertyTable"
-							var="_exemptionProperty"
-							value="#{exemptioncemHome.propertiesInExemptionSpecial}">
-							<rich:column>
-								<f:facet name="header">#{messages['exemption.cadastralCode']}</f:facet>
-								<h:outputText
-									value="#{_exemptionProperty.property.cadastralCode}" />
-							</rich:column>
-
-							<rich:column>
-								<f:facet name="header">#{messages['exemption.territorialCode']}</f:facet>
-								<h:outputText
-									value="#{_exemptionProperty.property.previousCadastralCode}" />
-							</rich:column>
-
-							<rich:column style="text-align:right;">
-								<f:facet name="header">#{messages['exemption.percentage']}</f:facet>
-								<h:inputText value="#{_exemptionProperty.discountPercentage}"
-									required="true" style="text-align:right;">
-									<f:convertNumber maxFractionDigits="2" groupingUsed="false" />
-									<a:support event="onblur" ajaxSingle="true" />
-								</h:inputText>
-							</rich:column>
-
-							<rich:column>
-								<f:facet name="header">#{messages['exemption.nameHistoryResident']}</f:facet>
-								<h:outputText value="#{_exemptionProperty.nameHistoryResident}" />
-							</rich:column>
-
-							<rich:column>
-								<f:facet name="header">#{messages['exemption.commercialAppraisal']}</f:facet>
-								<h:outputText
-									value="#{_exemptionProperty.property.currentDomain.commercialAppraisal}" />
-							</rich:column>
-
-							<rich:column styleClass="right">
-								<f:facet name="header">#{messages['exemption.amountCreditYear1']}</f:facet>
-								<h:outputText value="#{_exemptionProperty.amountCreditYear1}" />
-							</rich:column>
-
-							<rich:column styleClass="right">
-								<f:facet name="header">#{messages['exemption.amountCreditYear2']}</f:facet>
-								<h:outputText value="#{_exemptionProperty.amountCreditYear2}" />
-							</rich:column>
-
-							<rich:column styleClass="right">
-								<f:facet name="header">#{messages['exemption.amountCreditYear3']}</f:facet>
-								<h:outputText value="#{_exemptionProperty.amountCreditYear3}" />
-							</rich:column>
-							
-							<rich:column styleClass="right">
-								<f:facet name="header">Estado</f:facet>
-								<h:outputText
-									value="#{_exemptionProperty.property.deleted ? messages['property.deleted'].toUpperCase() : messages['property.valid'].toUpperCase()}" />
-							</rich:column>
-
-							<rich:column>
-								<f:facet name="header"></f:facet>
-								<a:commandButton ajaxSingle="true" value="Remover"
-									actionListener="#{exemptioncemHome.removeExemptionForProperty(_exemptionProperty)}"
-									reRender="exemptionSpecialPropertyTable,propertiesSpecialTreatment" />
-							</rich:column>
-
-						</rich:dataTable>
-					</rich:panel>
 				</rich:panel>
 
 				<h:panelGrid columns="2" width="100%"
 					columnClasses="topAligned, topAligned right" id="panelBottom">
 
 					<h:panelGroup>
-						<s:decorate id="propertiesName" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['exemption.propertiesAppraisal']}</ui:define>
-							<h:inputText id="properties" size="15" readonly="true"
-								style="text-align: right"
-								value="#{exemptioncemHome.instance.propertiesAppraisal}"
-								required="true">
-								<f:convertNumber pattern="#0.00" />
-								<a:support event="onblur" ajaxSingle="true"
-									reRender="patrimonyName,propertiesName"
-									action="#{exemptioncemHome.instance.calculatePatrimony()}" />
-							</h:inputText>
-						</s:decorate>
-
-						<s:decorate id="propertiesSpecialTreatment"
-							template="../layout/edit.xhtml"
-							rendered="#{exemptioncemHome.renderTableTreatmentSpecial()}">
-							<ui:define name="label">#{messages['exemption.propertiesAppraisalSpecialTreatment']}</ui:define>
-							<h:inputText id="propertiesSpecialTreatment" size="15"
-								readonly="true" style="text-align: right"
-								value="#{exemptioncemHome.instance.propertiesAppraisalSpecialTreatment}"
-								required="true">
-								<f:convertNumber pattern="#0.00" />
-							</h:inputText>
-						</s:decorate>
-
-						<s:decorate id="personalName" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['exemption.personalAssets']}</ui:define>
-							<h:inputText id="name" size="15" style="text-align: right"
-								value="#{exemptioncemHome.instance.personalAssets}" required="true">
-								<f:convertNumber pattern="#0.00" />
-								<a:support event="onblur" ajaxSingle="true"
-									reRender="patrimonyName,personalName"
-									action="#{exemptioncemHome.instance.calculatePatrimony()}" />
-							</h:inputText>
-						</s:decorate>
+						 
 						<s:decorate id="exemptionPercentage"
 							template="../layout/edit.xhtml"
 							rendered="#{!exemptioncemHome.isExemptionEspecial}">
 							<ui:define name="label">#{messages['exemption.percentage']}</ui:define>
 							<h:inputText id="name" size="15" required="true"
 								style="text-align: right"
-								value="#{exemptioncemHome.instance.exemptionPercentage}">
+								value="#{exemptioncemHome.instance.discountPercentage}">
 								<f:convertNumber pattern="#0.00" />
 							</h:inputText>%
 						</s:decorate>
+						
 						<s:decorate id="ceationDateName" template="../layout/edit.xhtml">
 							<ui:define name="label">#{messages['exemption.creationDate']}</ui:define>
 							<h:inputText id="creationDate" size="15" readonly="true"
@@ -280,50 +174,7 @@
 
 					</h:panelGroup>
 
-					<h:panelGroup>
-						<s:decorate id="vehiclesName" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['exemption.vehiclesAppraisal']}</ui:define>
-							<h:inputText id="vehicles" size="15" style="text-align: right"
-								value="#{exemptioncemHome.instance.vehiclesAppraisal}"
-								required="true">
-								<f:convertNumber pattern="#0.00" />
-								<a:support event="onblur" ajaxSingle="true"
-									reRender="patrimonyName,vehiclesName"
-									action="#{exemptioncemHome.instance.calculatePatrimony()}" />
-							</h:inputText>
-						</s:decorate>
-						<s:decorate id="commercialName" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['exemption.commercialValues']}</ui:define>
-							<h:inputText id="name" size="15" style="text-align: right"
-								value="#{exemptioncemHome.instance.commercialValues}"
-								required="true">
-								<f:convertNumber pattern="#0.00" />
-								<a:support event="onblur" ajaxSingle="true"
-									reRender="patrimonyName,commercialName"
-									action="#{exemptioncemHome.instance.calculatePatrimony()}" />
-							</h:inputText>
-						</s:decorate>
-						<s:decorate id="patrimonyName" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['exemption.patrimony']}</ui:define>
-							<h:inputText id="name" size="15" readonly="true"
-								style="text-align: right"
-								value="#{exemptioncemHome.instance.patrimony}">
-								<f:convertNumber pattern="#0.00" />
-							</h:inputText>
-						</s:decorate>
-						<s:decorate id="exemptionActive" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['exemption.active']}</ui:define>
-							<h:selectBooleanCheckbox value="#{exemptioncemHome.instance.active}" />
-						</s:decorate>
-
-						<s:decorate id="referenceField" template="../layout/edit.xhtml">
-							<ui:define name="label">#{messages['exemption.reference']}:</ui:define>
-							<h:inputTextarea id="reference" cols="40" rows="4"
-								required="true" value="#{exemptioncemHome.instance.reference}" />
-						</s:decorate>
-
-					</h:panelGroup>
-
+					 
 				</h:panelGrid>
 				<div style="clear: both">
 					<span class="required">*</span>

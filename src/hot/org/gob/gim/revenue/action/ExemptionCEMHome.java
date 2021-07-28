@@ -461,19 +461,7 @@ public class ExemptionCEMHome extends EntityController {
 	 * this.exemptionForProperty = new ExemptionForProperty();
 	 * clearSearchPropertyPanel(); }
 	 */
-	public void onChangeExemptionType() {
-
-		// this.instance.getPropertiesInExemption().clear();
-
-		this.instance.setReference(this.instance.getType().getName());
-		/*
-		 * NO aplica ....dejar hasta pruebas sino delete if
-		 * (this.instance.getType().getId() .equals(exemptionSpecial.getId())) {
-		 * this.isExemptionEspecial = Boolean.TRUE; } else { this.isExemptionEspecial =
-		 * Boolean.FALSE; }
-		 */
-
-	}
+	 
 	/*
 	 * 
 	 * public void prepareEditExcemption(Exemption excemption) {
@@ -509,29 +497,13 @@ public class ExemptionCEMHome extends EntityController {
 	 */
 
 	public void removeExemptionForProperty(ExemptionForProperty property) { 
-		if (property.getTreatmentType() == null) {
-			this.propertiesInExemptionNormal.remove(property);
-		} else if (property.getTreatmentType().getId().equals(typeTreatmentExcemptionSpecial.getId())) {
-			this.propertiesInExemptionSpecial.remove(property);
-		}
-
-		BigDecimal totalTreatmentSpecial = BigDecimal.ZERO;
-		for (ExemptionForProperty exemptionForProperty : propertiesInExemptionSpecial) {
-			totalTreatmentSpecial = totalTreatmentSpecial
-					.add(exemptionForProperty.getProperty().getCurrentDomain().getCommercialAppraisal());
-		}
-
-		// rfam 2017-12-26
-		deletedPropertiesInExemption.add(property);
-
-		this.instance.setPropertiesAppraisalSpecialTreatment(totalTreatmentSpecial);
-
+		
+		
+  
 	}
 
-	public String getCadastraCode() {
-		return cadastraCode;
-	}
-*/
+
+ 
 	public void onChangeExemptionType() {
 
 		//this.instance.getPropertiesInExemption().clear();
@@ -546,8 +518,21 @@ public class ExemptionCEMHome extends EntityController {
 			this.isExemptionEspecial = Boolean.FALSE;
 		}*/
 
-	public void setCadastraCode(String cadastraCode) {
-		this.cadastraCode = cadastraCode;
+	}
+	
+	//buscar la propiedad y ponerla en la tabla
+	public void searchProperty() {
+		//agregarla al list
+		
+		//asocial al campo property
+	}
+	
+	
+	public void removeProperty() {
+		//quitar del list
+		
+		//null campo property
+		this.property = null;
 	}
 
 	public Property getProperty() {
@@ -564,6 +549,10 @@ public class ExemptionCEMHome extends EntityController {
 
 	public void setPropertylist(List<Property> propertylist) {
 		this.propertylist = propertylist;
+	}
+	
+	public String getCadastraCode() {
+		return cadastraCode;
 	}
 
 	public void setCadastraCode(String cadastraCode) {
