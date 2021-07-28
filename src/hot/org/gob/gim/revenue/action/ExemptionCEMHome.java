@@ -1,15 +1,7 @@
 package org.gob.gim.revenue.action;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
-
-import javax.faces.component.UIComponent;
-import javax.faces.event.ActionEvent;
-import javax.persistence.Query;
 
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
@@ -21,15 +13,14 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.core.Interpolator;
 import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.framework.EntityController;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
-import ec.gob.gim.revenue.model.Exemption;
 import ec.gob.gim.revenue.model.ExemptionCem;
 import ec.gob.gim.revenue.model.ExemptionForProperty;
 import ec.gob.gim.revenue.model.ExemptionType;
@@ -37,12 +28,14 @@ import ec.gob.gim.revenue.model.DTO.PropertyDTO;
 
 @Name("exemptioncemHome")
 @Scope(ScopeType.CONVERSATION)
-public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
+public class ExemptionCEMHome extends EntityController {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private ExemptionCem exemption;
 
 	private String cadastraCode;
 	private Property property;
@@ -52,8 +45,6 @@ public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
 	private String criteria;
 	private String identificationNumber;
 	private String partnerIdentificationNumber;
-
-	private ExemptionForProperty exemptionForProperty;
 
 	private List<Property> properties;
 
@@ -540,6 +531,20 @@ public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
 	public String getCadastraCode() {
 		return cadastraCode;
 	}
+*/
+	public void onChangeExemptionType() {
+
+		//this.instance.getPropertiesInExemption().clear();
+
+		this.exemption.setReference(this.exemption.getType().getName());
+		/*
+		 * NO aplica ....dejar hasta pruebas sino delete
+		if (this.instance.getType().getId()
+				.equals(exemptionSpecial.getId())) {
+			this.isExemptionEspecial = Boolean.TRUE;
+		} else {
+			this.isExemptionEspecial = Boolean.FALSE;
+		}*/
 
 	public void setCadastraCode(String cadastraCode) {
 		this.cadastraCode = cadastraCode;
@@ -560,4 +565,18 @@ public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
 	public void setPropertylist(List<Property> propertylist) {
 		this.propertylist = propertylist;
 	}
+
+	public void setCadastraCode(String cadastraCode) {
+		this.cadastraCode = cadastraCode;
+	}
+
+	public ExemptionCem getExemption() {
+		return exemption;
+	}
+
+	public void setExemption(ExemptionCem exemption) {
+		this.exemption = exemption;
+	}
+	
+	
 }
