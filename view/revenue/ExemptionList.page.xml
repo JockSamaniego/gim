@@ -10,12 +10,14 @@
 	<param name="dir" value="#{exemptionList.orderDirection}" />
 	<param name="logic" value="#{exemptionList.restrictionLogicOperator}" />
 
-	<param name="from" /> 
-	<param name="exemptionType" value="#{exemptioncemList.type}"
+	<param name="from" />
+	<param name="fiscalPeriod" value="#{exemptionList.fiscalPeriod}"
+		converterId="org.jboss.seam.ui.EntityConverter" />
+	<param name="exemptionType" value="#{exemptionList.exemptionType}"
 		converterId="#{org.jboss.seam.ui.EntityConverter}" />
-	<param name="resident" value="#{exemptioncemList.resident}" />
+	<param name="resident" value="#{exemptionList.resident}" />
+	<param name="partner" value="#{exemptionList.partner}" />
 
-   <param name="exemptionId" value="#{exemptioncemHome.id}"/>
 
 
 </page>

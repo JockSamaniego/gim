@@ -25,6 +25,7 @@ import org.jboss.seam.log.Log;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.revenue.model.ExemptionCem;
 
 @Name("exemptioncemHome")
@@ -68,7 +69,8 @@ public class ExemptionCEMHome extends EntityController {
 	private ExemptiomCemService exemptiomCemService;
 	
 	private Long id; //anular y edit
-
+	private ExemptionCem listInstance;
+	
 	@Logger
 	Log logger;
 
@@ -201,11 +203,12 @@ public class ExemptionCEMHome extends EntityController {
 	
 	public void nullifiedExemption() {
 		try {
-			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
-			ExemptionCem exemptionBD = getEntityManager().find(ExemptionCem.class, id);
-			if (exemptionBD != null) {
-				exemptionBD.setActive(Boolean.FALSE);
-				incomeService.updateExemption(exemptionBD);
+			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME); 
+			ExemptionCem exemptioncem = getEntityManager().find(ExemptionCem.class, this.id);
+			System.out.println("==>"+this.listInstance);
+			if (exemptioncem != null) {
+				exemptioncem.setActive(Boolean.FALSE);
+				incomeService.updateExemption(exemptioncem);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -358,4 +361,19 @@ public class ExemptionCEMHome extends EntityController {
 		this.explanation = explanation;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public ExemptionCem getListInstance() {
+		return listInstance;
+	}
+
+	public void setListInstance(ExemptionCem listInstance) {
+		this.listInstance = listInstance;
+	}			
 }

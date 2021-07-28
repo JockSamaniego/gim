@@ -15,4 +15,7 @@
 	<param name="exemptionType" value="#{exemptioncemList.type}"
 		converterId="#{org.jboss.seam.ui.EntityConverter}" />
 	<param name="resident" value="#{exemptioncemList.resident}" /> 
+
+	
+   <param name="exemptionId" value="#{exemptioncemHome.id}"/>
 </page>
