@@ -21,7 +21,7 @@
 							<g:residentChooser id="ownerChooser" required="true" resident="#{exemptioncemHome.resident}"
 								criteria="#{exemptioncemHome.criteria}" bean="#{exemptioncemHome}"
 								label="#{messages['resident']}" searchAction="searchResident"
-								residentsList="#{exemptionHome.residents}"
+								residentsList="#{exemptioncemHome.residents}"
 								identificationNumber="#{exemptioncemHome.identificationNumber}"
 								searchByCriteriaAction="searchResidentByCriteria"
 								clearSearchPanelAction="clearSearchResidentPanel"
@@ -90,8 +90,7 @@
 
 			<a:outputPanel ajaxRendered="false" id="buttonsId">
 				<div class="actionButtons">
-					<h:commandButton id="save" value="#{messages['common.save']}" action="#{exemptioncemHome.save()}"
-						rendered="#{!exemptionHome.managed}" />
+					<h:commandButton id="save" value="#{messages['common.save']}" action="#{exemptioncemHome.save()}"/>
 					<s:button id="cancel" value="#{messages['common.cancel']}" propagation="end"
 						view="/revenue/ExemptioncemList.xhtml" />
 				</div>
