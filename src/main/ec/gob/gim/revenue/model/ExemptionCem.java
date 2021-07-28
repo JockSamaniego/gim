@@ -62,6 +62,8 @@ public class ExemptionCem {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate;
 	
+	private Boolean active;
+	
 	@Version
 	private Long version = 0L;
 	
@@ -186,16 +188,22 @@ public class ExemptionCem {
 		this.creationDate = creationDate;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
 	@Override
 	public String toString() {
 		return "ExemptionCem [id=" + id + ", resident=" + resident
 				+ ", reference=" + reference + ", explanation=" + explanation
 				+ ", property=" + property + ", discountPercentage="
 				+ discountPercentage + ", type=" + type + ", creationDate="
-				+ creationDate + ", version=" + version + "]";
+				+ creationDate + ", active=" + active + ", version=" + version
+				+ "]";
 	}
 	
 }
