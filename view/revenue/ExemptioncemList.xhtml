@@ -9,9 +9,7 @@
 	xmlns:a="http://richfaces.org/a4j" template="../layout/template.xhtml">
 
 	<ui:define name="body">
-
 		<h:form id="exemptionSearch" styleClass="edit">
-
 			<ui:debug id="uidebug" />
 
 			<h:outputText styleClass="formTitle"
@@ -49,7 +47,7 @@
 					includePageParams="false" />
 			</div>
 
-		</h:form>
+
 
 		<rich:panel id="dataExemption">
 			<f:facet name="header">
@@ -168,15 +166,15 @@
 							actionListener="#{exemptioncemHome.prepareEditExcemption(exemption)}">
 							<f:param name="exemptionId" value="#{_exemption.id}" />
 						</s:button>
+						 
 						
-						<s:button view="/revenue/ExemptioncemEdit.xhtml"
-							value="#{messages['common.deactivate']}" propagation="none"
-							rendered="#{_exemption.active}"
-							id="exemptionCancel"  
+						<a:commandButton id="nullifiedPABtn" 							
+							value="#{messages['common.deactivate']}"
 							oncomplete="#{rich:component('nullifiedPanel')}.show();"
-							actionListener="#{exemptioncemHome.nullifiedExemption(exemption.id)}">
-							<f:param name="exemptionId" value="#{_exemption.id}" />
-						</s:button>
+							includePageParams="false" propagation="join"
+							reRender="nullifiedPanel">
+							<f:param name="exemptionId" value="#{_exemption.id}" />						 
+						</a:commandButton>
 					</rich:column>
 					
 				 
@@ -184,7 +182,8 @@
 
 			</div>
 		</rich:panel>
-
+		</h:form>
+		
 		<div class="tableControl">
 
 			<s:link view="/revenue/ExemptioncemList.xhtml"

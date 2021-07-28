@@ -9,6 +9,7 @@ import javax.persistence.Query;
 
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.revenue.service.ExemptiomCemService;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.gob.gim.revenue.service.PropertyService;
@@ -65,6 +66,8 @@ public class ExemptionCEMHome extends EntityController {
 	private PropertyService propertyService;
 
 	private ExemptiomCemService exemptiomCemService;
+	
+	private Long id; //anular y edit
 
 	@Logger
 	Log logger;
@@ -195,6 +198,20 @@ public class ExemptionCEMHome extends EntityController {
 
 	}
 
+	
+	public void nullifiedExemption() {
+		try {
+			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+			ExemptionCem exemptionBD = getEntityManager().find(ExemptionCem.class, id);
+			if (exemptionBD != null) {
+				exemptionBD.setActive(Boolean.FALSE);
+				incomeService.updateExemption(exemptionBD);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public Property getProperty() {
 		return property;
 	}
