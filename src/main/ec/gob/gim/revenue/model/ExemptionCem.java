@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
@@ -67,6 +68,9 @@ public class ExemptionCem {
 	@Version
 	private Long version = 0L;
 	
+	
+	@Transient
+	private String estado;
 	/**
 	 * 
 	 */
@@ -196,6 +200,16 @@ public class ExemptionCem {
 
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+	
+	
+
+	public String getEstado() {
+		return active? "SI" : "NO";
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
 	}
 
 	@Override

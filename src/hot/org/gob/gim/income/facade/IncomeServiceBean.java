@@ -2293,11 +2293,5 @@ public class IncomeServiceBean implements IncomeService {
 		}
 		return percentage;
 	}
-
-	@Override
-	public void updateExemption(ExemptionCem exemptionBD) { 
-		entityManager.merge(exemptionBD);
-		entityManager.flush();
-	}
-	
+ 
 }

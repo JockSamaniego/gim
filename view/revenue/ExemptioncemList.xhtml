@@ -13,7 +13,7 @@
 			<ui:debug id="uidebug" />
 
 			<h:outputText styleClass="formTitle"
-				value="#{messages['exemption.manager']}" />
+				value="#{messages['exemption.managerCEM']}" />
 
 			<rich:simpleTogglePanel label="#{messages['exemption.searchFilter']}"
 				switchType="ajax">
@@ -35,6 +35,16 @@
 					<h:inputText id="resident" value="#{exemptioncemList.resident}"
 						size="50" maxlength="50" />
 				</s:decorate>
+				
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['common.from']}</ui:define>
+					<rich:calendar id="startDate"
+						value="#{exemptioncemList.from}"
+						datePattern="#{messages['common.datePattern']}" inputSize="10">
+						<f:convertDateTime type="date"
+							pattern="#{messages['common.datePattern']}" />
+					</rich:calendar>
+				</s:decorate>								
 
 			</rich:simpleTogglePanel>
 
@@ -158,6 +168,19 @@
 						</h:column>
 
 
+						<h:column alignment="right">
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{exemptioncemList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['delegate.isActive']}" />
+									<ui:param name="propertyPath"
+										value="exemption.estado" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_exemption.estado}" />
+						</h:column>
+
 
 						<rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
@@ -172,7 +195,8 @@
 							<a:commandButton id="nullifiedPABtn"
 								value="#{messages['common.deactivate']}"
 								oncomplete="#{rich:component('nullifiedPanel')}.show();"
-								includePageParams="false" reRender="nullifiedPanel"			
+								includePageParams="false" reRender="nullifiedPanel"		
+								rendered="#{_exemption.active}"	
 								propagation="join">
 								<f:param name="exemptionId" value="#{_exemption.id}" />
 							</a:commandButton>

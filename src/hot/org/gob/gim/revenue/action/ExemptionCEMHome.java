@@ -202,13 +202,12 @@ public class ExemptionCEMHome extends EntityController {
 
 	
 	public void nullifiedExemption() {
-		try {
-			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME); 
+		try {			
 			ExemptionCem exemptioncem = getEntityManager().find(ExemptionCem.class, this.id);
-			System.out.println("==>"+this.listInstance);
 			if (exemptioncem != null) {
 				exemptioncem.setActive(Boolean.FALSE);
-				incomeService.updateExemption(exemptioncem);
+				getEntityManager().merge(exemptioncem);
+				getEntityManager().flush(); 
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
