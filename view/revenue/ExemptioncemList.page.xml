@@ -24,5 +24,6 @@
          <redirect view-id="/revenue/ExemptioncemEdit.xhtml"/>
       </rule>
    </navigation>
-	
+
+   <param name="exemptionId" value="#{exemptioncemHome.id}"/>
 </page>

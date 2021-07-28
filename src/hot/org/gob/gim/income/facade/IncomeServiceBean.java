@@ -2278,7 +2278,8 @@ public class IncomeServiceBean implements IncomeService {
 		Query query = entityManager.createQuery("SELECT exemption from ExemptionCem exemption "
 												+ "WHERE exemption.type.code=:itemCode and "
 												+ "exemption.type.catalogCode=:catalogoCode and "
-												+ "exemption.resident.id=:residentid");
+												+ "exemption.resident.id=:residentid and "
+												+ "exemption.active=true ");
 		query.setParameter("residentid", resident);
 		query.setParameter("itemCode", itemCode);
 		query.setParameter("catalogoCode", catalogCode);
@@ -2291,6 +2292,12 @@ public class IncomeServiceBean implements IncomeService {
 			}
 		}
 		return percentage;
+	}
+
+	@Override
+	public void updateExemption(ExemptionCem exemptionBD) { 
+		entityManager.merge(exemptionBD);
+		entityManager.flush();
 	}
 	
 }

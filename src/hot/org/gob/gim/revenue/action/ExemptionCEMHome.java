@@ -12,6 +12,7 @@ import javax.persistence.Query;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.revenue.service.ExemptiomCemService;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.gob.gim.revenue.service.PropertyService;
@@ -27,6 +28,7 @@ import org.jboss.seam.log.Log;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.income.model.PaymentAgreement;
 import ec.gob.gim.revenue.model.ExemptionCem;
 
 @Name("exemptioncemHome")
@@ -71,10 +73,11 @@ public class ExemptionCEMHome extends EntityController {
 	
 	private Boolean isEdit = false;
 	
-	private Long id;
-	
 	private ResidentService residentService;
 
+	private Long id; //anular y edit
+	private ExemptionCem listInstance;
+	
 	@Logger
 	Log logger;
 
@@ -245,6 +248,21 @@ public class ExemptionCEMHome extends EntityController {
 		return "edit";
 	}
 
+	
+	public void nullifiedExemption() {
+		try {
+			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME); 
+			ExemptionCem exemptioncem = getEntityManager().find(ExemptionCem.class, this.id);
+			System.out.println("==>"+this.listInstance);
+			if (exemptioncem != null) {
+				exemptioncem.setActive(Boolean.FALSE);
+				incomeService.updateExemption(exemptioncem);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public Property getProperty() {
 		return property;
 	}
@@ -405,4 +423,19 @@ public class ExemptionCEMHome extends EntityController {
 		this.isEdit = isEdit;
 	}
 	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public ExemptionCem getListInstance() {
+		return listInstance;
+	}
+
+	public void setListInstance(ExemptionCem listInstance) {
+		this.listInstance = listInstance;
+	}			
 }
