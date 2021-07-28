@@ -1,15 +1,7 @@
 package org.gob.gim.revenue.action;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
-
-import javax.faces.component.UIComponent;
-import javax.faces.event.ActionEvent;
-import javax.persistence.Query;
 
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
@@ -21,15 +13,14 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.core.Interpolator;
 import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.framework.EntityController;
 import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
-import ec.gob.gim.revenue.model.Exemption;
 import ec.gob.gim.revenue.model.ExemptionCem;
 import ec.gob.gim.revenue.model.ExemptionForProperty;
 import ec.gob.gim.revenue.model.ExemptionType;
@@ -37,12 +28,14 @@ import ec.gob.gim.revenue.model.DTO.PropertyDTO;
 
 @Name("exemptioncemHome")
 @Scope(ScopeType.CONVERSATION)
-public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
+public class ExemptionCEMHome extends EntityController {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private ExemptionCem exemption;
 
 	private Resident resident;
 	private String criteria;
@@ -50,8 +43,6 @@ public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
 	private String partnerIdentificationNumber;
 	
 	private String cadastraCode;
-
-	private ExemptionForProperty exemptionForProperty;
 
 	private List<Property> properties;
 	private Property property;
@@ -661,7 +652,7 @@ public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
 
 		//this.instance.getPropertiesInExemption().clear();
 
-		this.instance.setReference(this.instance.getType().getName());
+		this.exemption.setReference(this.exemption.getType().getName());
 		/*
 		 * NO aplica ....dejar hasta pruebas sino delete
 		if (this.instance.getType().getId()
@@ -731,5 +722,15 @@ public class ExemptionCEMHome extends EntityHome<ExemptionCem> {
 
 	public void setCadastraCode(String cadastraCode) {
 		this.cadastraCode = cadastraCode;
-	}		
+	}
+
+	public ExemptionCem getExemption() {
+		return exemption;
+	}
+
+	public void setExemption(ExemptionCem exemption) {
+		this.exemption = exemption;
+	}
+	
+	
 }
