@@ -1,12 +1,9 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" template="../layout/template.xhtml">
+<!DOCTYPE composition
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich" xmlns:a="http://richfaces.org/a4j"
+	template="../layout/template.xhtml">
 
 	<ui:define name="body">
 
@@ -14,18 +11,14 @@
 
 			<ui:debug id="uidebug" />
 
-			<h:outputText styleClass="formTitle"
-				value="#{messages['exemption.manager']}" />
+			<h:outputText styleClass="formTitle" value="#{messages['exemption.manager']}" />
 
-			<rich:simpleTogglePanel label="#{messages['exemption.searchFilter']}"
-				switchType="ajax">
+			<rich:simpleTogglePanel label="#{messages['exemption.searchFilter']}" switchType="ajax">
 
 				<s:decorate template="../layout/display.xhtml">
 					<ui:define name="label">#{messages['exemption.type']}</ui:define>
-					<h:selectOneMenu id="exemptionTypeCEM"
-						value="#{exemptioncemList.type}">
-						<s:selectItems value="#{exemptionCEMTypes}" var="exemptionType"
-							label="#{exemptionType.name}"
+					<h:selectOneMenu id="exemptionTypeCEM" value="#{exemptioncemList.type}">
+						<s:selectItems value="#{exemptionCEMTypes}" var="exemptionType" label="#{exemptionType.name}"
 							noSelectionLabel="#{messages['common.chooseOption']}" />
 						<s:convertEntity />
 						<a:support event="onchange" ajaxSingle="true" />
@@ -34,10 +27,9 @@
 
 				<s:decorate template="../layout/display.xhtml">
 					<ui:define name="label">#{messages['common.resident']}</ui:define>
-					<h:inputText id="resident" value="#{exemptioncemList.resident}"
-						size="50" maxlength="50" />
+					<h:inputText id="resident" value="#{exemptioncemList.resident}" size="50" maxlength="50" />
 				</s:decorate>
-								
+
 			</rich:simpleTogglePanel>
 
 			<div class="actionButtons">
@@ -45,168 +37,147 @@
 					action="/revenue/ExemptioncemList.xhtml">
 					<f:param name="firstResult" value="0" />
 				</h:commandButton>
-				<s:button id="reset" value="#{messages['common.reset']}"
-					includePageParams="false" />
+				<s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" />
 			</div>
 
-		</h:form>
 
-		<rich:panel>
-			<f:facet name="header">
-				<h:panelGrid columns="3" columnClasses="headerTitle,">
-					<h:outputText
-						value="#{messages['exemption.searchResults']} (#{empty exemptioncem.resultList ? 0 : (exemptioncem.paginated ? exemptioncem.resultCount : exemptioncem.resultList.size)})" />
-					<s:button view="/revenue/ExemptioncemEdit.xhtml" id="create"
-						propagation="none" value="#{messages['common.create']}">
-						<f:param name="exemptionId" />
-					</s:button>
-				</h:panelGrid>
-			</f:facet>
 
-			<div class="results" id="list">
-
-				<h:outputText value="#{messages['common.noResultsReturned']}"
-					rendered="#{empty exemptioncemList.resultList}" />
-
-				<rich:dataTable id="tableList" var="_exemption"
-					value="#{exemptioncemList.resultList}"
-					rendered="#{not empty exemptioncemList.resultList}">
-					<h:column>
-						<f:facet name="header">
-							<ui:include src="../layout/sort.xhtml">
-								<ui:param name="entityList" value="#{exemptioncemList}" />
-								<ui:param name="propertyLabel"
-									value="#{messages['exemption.id']}" />
-								<ui:param name="propertyPath" value="exemption.id" />
-							</ui:include>
-						</f:facet>
-						<h:outputText value="#{_exemption.id}" />
-					</h:column>
-					
-					<h:column >
-						<f:facet name="header">
-							<ui:include src="../layout/sort.xhtml">
-								<ui:param name="entityList" value="#{exemptioncemList}" />
-								<ui:param name="propertyLabel"
-									value="#{messages['property.cadastralCode']}" />
-								<ui:param name="propertyPath" value="exemption.property" />
-							</ui:include>
-						</f:facet>
-						<h:outputText value="#{_exemption.property.cadastralCode}" />
-					</h:column>
-					
-					
-					<h:column>
-						<f:facet name="header">
-							<ui:include src="../layout/sort.xhtml">
-								<ui:param name="entityList" value="#{exemptioncemList}" />
-								<ui:param name="propertyLabel"
-									value="#{messages['resident.dni']}" />
-								<ui:param name="propertyPath" value="exemption.resident" />
-							</ui:include>
-						</f:facet>
-						<h:outputText value="#{_exemption.resident.identificationNumber}" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">
-							<ui:include src="../layout/sort.xhtml">
-								<ui:param name="entityList" value="#{exemptioncemList}" />
-								<ui:param name="propertyLabel" value="#{messages['resident']}" />
-								<ui:param name="propertyPath" value="exemption.resident" />
-							</ui:include>
-						</f:facet>
-						<h:outputText value="#{_exemption.resident.name}" />
-					</h:column>
-					 									
-					<h:column alignment="right">
-						<f:facet name="header">
-							<ui:include src="../layout/sort.xhtml">
-								<ui:param name="entityList" value="#{exemptioncemList}" />
-								<ui:param name="propertyLabel"
-									value="#{messages['exemption.exemptionCreationDate']}" />
-								<ui:param name="propertyPath" value="exemption.creationDate" />
-							</ui:include>
-						</f:facet>
-						<h:outputText value="#{_exemption.creationDate}" >							
-							<f:convertDateTime pattern="#{messages['common.dateFullTimePattern']}" />
-						</h:outputText>
-					</h:column>
-					
-											
-					<h:column alignment="right">
-						<f:facet name="header">
-							<ui:include src="../layout/sort.xhtml">
-								<ui:param name="entityList" value="#{exemptioncemList}" />
-								<ui:param name="propertyLabel"
-									value="#{messages['exemption.exemptionType']}" />
-								<ui:param name="propertyPath" value="exemption.type" />
-							</ui:include>
-						</f:facet>
-						<h:outputText value="#{_exemption.type.name}" />
-					</h:column>
-					
-					<h:column alignment="right">
-						<f:facet name="header">
-							<ui:include src="../layout/sort.xhtml">
-								<ui:param name="entityList" value="#{exemptioncemList}" />
-								<ui:param name="propertyLabel"
-									value="#{messages['infraction.percentaje']}" />
-								<ui:param name="propertyPath" value="exemption.discountPercentage" />
-							</ui:include>
-						</f:facet>
-						<h:outputText value="#{_exemption.discountPercentage}" />
-					</h:column>
-										
-					
-					
-					<rich:column styleClass="action">
-						<f:facet name="header">#{messages['common.action']}</f:facet>
-						<s:button view="/revenue/ExemptioncemEdit.xhtml"
-							value="#{messages['common.edit']}" propagation="none"
-							id="exemptionEdit" rendered="#{empty from}"
-							actionListener="#{exemptioncemHome.prepareEditExcemption(exemption)}">
-							<f:param name="exemptionId" value="#{_exemption.id}" />
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['exemption.searchResults']} (#{empty exemptioncem.resultList ? 0 : (exemptioncem.paginated ? exemptioncem.resultCount : exemptioncem.resultList.size)})" />
+						<s:button view="/revenue/ExemptioncemEdit.xhtml" id="create" propagation="none"
+							value="#{messages['common.create']}">
+							<f:param name="exemptionId" />
 						</s:button>
-					</rich:column>
-				</rich:dataTable>
+					</h:panelGrid>
+				</f:facet>
+
+				<div class="results" id="list">
+
+					<h:outputText value="#{messages['common.noResultsReturned']}"
+						rendered="#{empty exemptioncemList.resultList}" />
+
+					<rich:dataTable id="tableList" var="_exemption" value="#{exemptioncemList.resultList}"
+						rendered="#{not empty exemptioncemList.resultList}">
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{exemptioncemList}" />
+									<ui:param name="propertyLabel" value="#{messages['exemption.id']}" />
+									<ui:param name="propertyPath" value="_exemption.id" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_exemption.id}" />
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{exemptioncemList}" />
+									<ui:param name="propertyLabel" value="#{messages['property.cadastralCode']}" />
+									<ui:param name="propertyPath" value="_exemption.property" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_exemption.property.cadastralCode}" />
+						</h:column>
+
+
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{exemptioncemList}" />
+									<ui:param name="propertyLabel" value="#{messages['resident.dni']}" />
+									<ui:param name="propertyPath" value="_exemption.resident" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_exemption.resident.identificationNumber}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{exemptioncemList}" />
+									<ui:param name="propertyLabel" value="#{messages['resident']}" />
+									<ui:param name="propertyPath" value="_exemption.resident" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_exemption.resident.name}" />
+						</h:column>
+
+						<h:column alignment="right">
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{exemptioncemList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['exemption.exemptionCreationDate']}" />
+									<ui:param name="propertyPath" value="_exemption.creationDate" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_exemption.creationDate}">
+								<f:convertDateTime pattern="#{messages['common.dateFullTimePattern']}" />
+							</h:outputText>
+						</h:column>
+
+
+						<h:column alignment="right">
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{exemptioncemList}" />
+									<ui:param name="propertyLabel" value="#{messages['exemption.exemptionType']}" />
+									<ui:param name="propertyPath" value="exemption.type" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_exemption.type.name}" />
+						</h:column>
+
+						<h:column alignment="right">
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{exemptioncemList}" />
+									<ui:param name="propertyLabel" value="#{messages['infraction.percentaje']}" />
+									<ui:param name="propertyPath" value="exemption.discountPercentage" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_exemption.discountPercentage}" />
+						</h:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<a:commandButton value="#{messages['common.edit']}"
+								actionListener="#{exemptioncemHome.prepareEditExcemption}" ajaxSingle="true"
+								eventsQueue="gimQueue">
+								<f:param name="exemptionId" value="#{_exemption.id}" />
+							</a:commandButton>
+						</rich:column>
+					</rich:dataTable>
+
+				</div>
+			</rich:panel>
+
+			<div class="tableControl">
+
+				<s:link view="/revenue/ExemptioncemList.xhtml" rendered="#{exemptioncem.previousExists}"
+					value="#{messages.left}#{messages.left} #{messages['common.firstPage']}" id="firstPage">
+					<f:param name="firstResult" value="0" />
+				</s:link>
+
+				<s:link view="/revenue/ExemptioncemList.xhtml" rendered="#{exemptioncem.previousExists}"
+					value="#{messages.left} #{messages['common.previousPage']}" id="previousPage">
+					<f:param name="firstResult" value="#{exemptioncem.previousFirstResult}" />
+				</s:link>
+
+				<s:link view="/revenue/ExemptioncemList.xhtml" rendered="#{exemptioncem.nextExists}"
+					value="#{messages['common.nextPage']} #{messages.right}" id="nextPage">
+					<f:param name="firstResult" value="#{exemptioncem.nextFirstResult}" />
+				</s:link>
+
+				<s:link view="/revenue/ExemptioncemList.xhtml" rendered="#{exemptioncem.nextExists}"
+					value="#{messages['common.lastPage']} #{messages.right}#{messages.right}" id="lastPage">
+					<f:param name="firstResult" value="#{exemptioncem.lastFirstResult}" />
+				</s:link>
 
 			</div>
-		</rich:panel>
-
-		<div class="tableControl">
-
-			<s:link view="/revenue/ExemptioncemList.xhtml"
-				rendered="#{exemptioncem.previousExists}"
-				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
-				id="firstPage">
-				<f:param name="firstResult" value="0" />
-			</s:link>
-
-			<s:link view="/revenue/ExemptioncemList.xhtml"
-				rendered="#{exemptioncem.previousExists}"
-				value="#{messages.left} #{messages['common.previousPage']}"
-				id="previousPage">
-				<f:param name="firstResult"
-					value="#{exemptioncem.previousFirstResult}" />
-			</s:link>
-
-			<s:link view="/revenue/ExemptioncemList.xhtml"
-				rendered="#{exemptioncem.nextExists}"
-				value="#{messages['common.nextPage']} #{messages.right}"
-				id="nextPage">
-				<f:param name="firstResult" value="#{exemptioncem.nextFirstResult}" />
-			</s:link>
-
-			<s:link view="/revenue/ExemptioncemList.xhtml"
-				rendered="#{exemptioncem.nextExists}"
-				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
-				id="lastPage">
-				<f:param name="firstResult" value="#{exemptioncem.lastFirstResult}" />
-			</s:link>
-
-		</div>
-
-
+		</h:form>
 	</ui:define>
-
 </ui:composition>

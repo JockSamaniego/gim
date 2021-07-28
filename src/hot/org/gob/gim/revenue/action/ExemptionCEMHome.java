@@ -2,12 +2,15 @@ package org.gob.gim.revenue.action;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.service.ExemptiomCemService;
 import org.gob.gim.revenue.service.ItemCatalogService;
@@ -65,12 +68,27 @@ public class ExemptionCEMHome extends EntityController {
 	private PropertyService propertyService;
 
 	private ExemptiomCemService exemptiomCemService;
+	
+	private Boolean isEdit = false;
+	
+	private Long id;
+	
+	private ResidentService residentService;
 
 	@Logger
 	Log logger;
 
 	@In
 	FacesMessages facesMessages;
+	
+	public void setExemptionId(Long id) {
+		System.out.println(id);
+		this.id = id;
+	}
+
+	public Long getExemptionId() {
+		return this.id;
+	}
 
 	public void init() {
 		if (systemParameterService == null) {
@@ -91,6 +109,11 @@ public class ExemptionCEMHome extends EntityController {
 		if (exemptiomCemService == null) {
 			exemptiomCemService = ServiceLocator.getInstance().findResource(
 					ExemptiomCemService.LOCAL_NAME);
+		}
+		
+		if (residentService == null) {
+			residentService = ServiceLocator.getInstance().findResource(
+					ResidentService.LOCAL_NAME);
 		}
 
 	}
@@ -193,6 +216,33 @@ public class ExemptionCEMHome extends EntityController {
 		}
 		return null;
 
+	}
+	
+	public String prepareEditExcemption(){
+		
+		FacesContext fc = FacesContext.getCurrentInstance();
+		
+		Map<String,String> params = fc.getExternalContext().getRequestParameterMap();
+	
+		if (exemptiomCemService == null) {
+			exemptiomCemService = ServiceLocator.getInstance().findResource(
+					ExemptiomCemService.LOCAL_NAME);
+		}
+		this.isEdit = Boolean.TRUE;
+		ExemptionCem exemption = this.exemptiomCemService.findById(Long.valueOf(params.get("exemptionId")));
+		this.property = exemption.getProperty();
+		this.percentValue = exemption.getDiscountPercentage();
+		this.explanation = exemption.getExplanation();
+		this.reference = exemption.getReference();
+		if (residentService == null) {
+			residentService = ServiceLocator.getInstance().findResource(
+					ResidentService.LOCAL_NAME);
+		}
+		this.resident = this.residentService.find(exemption.getResident().getId());
+		this.type = exemption.getType();
+		this.criteria = this.resident.getIdentificationNumber();
+		this.identificationNumber = this.resident.getIdentificationNumber();
+		return "edit";
 	}
 
 	public Property getProperty() {
@@ -341,4 +391,18 @@ public class ExemptionCEMHome extends EntityController {
 		this.explanation = explanation;
 	}
 
+	/**
+	 * @return the isEdit
+	 */
+	public Boolean getIsEdit() {
+		return isEdit;
+	}
+
+	/**
+	 * @param isEdit the isEdit to set
+	 */
+	public void setIsEdit(Boolean isEdit) {
+		this.isEdit = isEdit;
+	}
+	
 }

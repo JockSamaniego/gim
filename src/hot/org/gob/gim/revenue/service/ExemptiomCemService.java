@@ -16,5 +16,6 @@ public interface ExemptiomCemService {
 	public String LOCAL_NAME = "/gim/ExemptiomCemService/local";
 	
 	public ExemptionCem save(ExemptionCem exemptionCem);
+	public ExemptionCem findById(Long id);
 	
 }
