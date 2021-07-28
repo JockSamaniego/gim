@@ -1,29 +1,22 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" template="../layout/template.xhtml">
+<!DOCTYPE composition
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich" xmlns:a="http://richfaces.org/a4j"
+	template="../layout/template.xhtml">
 
 	<ui:define name="body">
 		<h:form id="exemptionSearch" styleClass="edit">
 			<ui:debug id="uidebug" />
 
-			<h:outputText styleClass="formTitle"
-				value="#{messages['exemption.managerCEM']}" />
+			<h:outputText styleClass="formTitle" value="#{messages['exemption.manager']}" />
 
-			<rich:simpleTogglePanel label="#{messages['exemption.searchFilter']}"
-				switchType="ajax">
+			<rich:simpleTogglePanel label="#{messages['exemption.searchFilter']}" switchType="ajax">
 
 				<s:decorate template="../layout/display.xhtml">
 					<ui:define name="label">#{messages['exemption.type']}</ui:define>
-					<h:selectOneMenu id="exemptionTypeCEM"
-						value="#{exemptioncemList.type}">
-						<s:selectItems value="#{exemptionCEMTypes}" var="exemptionType"
-							label="#{exemptionType.name}"
+					<h:selectOneMenu id="exemptionTypeCEM" value="#{exemptioncemList.type}">
+						<s:selectItems value="#{exemptionCEMTypes}" var="exemptionType" label="#{exemptionType.name}"
 							noSelectionLabel="#{messages['common.chooseOption']}" />
 						<s:convertEntity />
 						<a:support event="onchange" ajaxSingle="true" />
@@ -32,8 +25,7 @@
 
 				<s:decorate template="../layout/display.xhtml">
 					<ui:define name="label">#{messages['common.resident']}</ui:define>
-					<h:inputText id="resident" value="#{exemptioncemList.resident}"
-						size="50" maxlength="50" />
+					<h:inputText id="resident" value="#{exemptioncemList.resident}" size="50" maxlength="50" />
 				</s:decorate>
 				
 				<s:decorate template="../layout/display.xhtml">
@@ -53,8 +45,7 @@
 					action="/revenue/ExemptioncemList.xhtml">
 					<f:param name="firstResult" value="0" />
 				</h:commandButton>
-				<s:button id="reset" value="#{messages['common.reset']}"
-					includePageParams="false" />
+				<s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" />
 			</div>
 
 
@@ -165,31 +156,15 @@
 								</ui:include>
 							</f:facet>
 							<h:outputText value="#{_exemption.discountPercentage}" />
-						</h:column>
-
-
-						<h:column alignment="right">
-							<f:facet name="header">
-								<ui:include src="../layout/sort.xhtml">
-									<ui:param name="entityList" value="#{exemptioncemList}" />
-									<ui:param name="propertyLabel"
-										value="#{messages['delegate.isActive']}" />
-									<ui:param name="propertyPath"
-										value="exemption.estado" />
-								</ui:include>
-							</f:facet>
-							<h:outputText value="#{_exemption.estado}" />
-						</h:column>
-
+						</h:column>						
 
 						<rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
-							<s:button view="/revenue/ExemptioncemEdit.xhtml"
-								value="#{messages['common.edit']}" propagation="none"
-								rendered="#{_exemption.active}" id="exemptionEdit"
-								actionListener="#{exemptioncemHome.prepareEditExcemption(_exemption)}">
+							<a:commandButton value="#{messages['common.edit']}"
+								actionListener="#{exemptioncemHome.prepareEditExcemption}" ajaxSingle="true"
+								eventsQueue="gimQueue">
 								<f:param name="exemptionId" value="#{_exemption.id}" />
-							</s:button>
+							</a:commandButton>
 
 
 							<a:commandButton id="nullifiedPABtn"
@@ -242,6 +217,10 @@
 
 		</div>
 
+				<s:link view="/revenue/ExemptioncemList.xhtml" rendered="#{exemptioncem.nextExists}"
+					value="#{messages['common.nextPage']} #{messages.right}" id="nextPage">
+					<f:param name="firstResult" value="#{exemptioncem.nextFirstResult}" />
+				</s:link>
 
 		<!-- ANULAR EXONERACION -->
 		<rich:modalPanel id="nullifiedPanel" width="400" height="200">
@@ -278,4 +257,7 @@
 		</rich:modalPanel>
 	</ui:define>
 
+			</div>
+		</h:form>
+	</ui:define>
 </ui:composition>

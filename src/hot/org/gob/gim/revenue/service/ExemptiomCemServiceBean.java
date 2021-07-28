@@ -17,8 +17,8 @@ import ec.gob.gim.revenue.model.ExemptionCem;
  *
  */
 @Stateless(name = "ExemptiomCemService")
-public class ExemptiomCemServiceBean implements ExemptiomCemService{
-	
+public class ExemptiomCemServiceBean implements ExemptiomCemService {
+
 	@PersistenceContext
 	EntityManager entityManager;
 
@@ -28,6 +28,11 @@ public class ExemptiomCemServiceBean implements ExemptiomCemService{
 	@Override
 	public ExemptionCem save(ExemptionCem exemptionCem) {
 		return crudService.create(exemptionCem);
+	}
+
+	@Override
+	public ExemptionCem findById(Long id) {
+		return crudService.find(ExemptionCem.class, id);
 	}
 
 }
