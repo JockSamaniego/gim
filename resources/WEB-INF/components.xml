@@ -46,6 +46,7 @@
 			<value>iml_appraisal</value>
 			<value>iml_market</value>
 			<value>iml_electronicSRI</value>
+			<value>iml_binnaclecrv</value>
 		</core:bundle-names>
 	</core:resource-loader>
 
