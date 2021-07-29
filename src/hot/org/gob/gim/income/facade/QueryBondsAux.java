@@ -1,5 +1,7 @@
 package org.gob.gim.income.facade;
 
+import java.math.BigDecimal;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -23,4 +25,8 @@ public class QueryBondsAux {
 	}
 
 	
+	public static BigDecimal getPercentageDiscount(String itemcode, String catalogcode, Long residentid){
+		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
+		return incomeService.checkHasDiscountCEM(itemcode, catalogcode, residentid);
+	}
 }
