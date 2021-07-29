@@ -605,7 +605,7 @@ public class MunicipalBondManager extends EntityController {
 
 	public void selectAllBonds() {
 		
-		System.out.println("---selectAllBonds()-------------------------- "+this.allBondsSelected);
+		findMunicipalBondsFutureEmission();
 		
 		/* for (MunicipalBond bond : getDataModel().getMunicipalBonds()) {
 			bond.setIsSelected(getAllBondsSelected());
