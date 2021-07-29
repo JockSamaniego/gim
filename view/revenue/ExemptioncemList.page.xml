@@ -18,4 +18,12 @@
 
 	
    <param name="exemptionId" value="#{exemptioncemHome.id}"/>
+   
+   <navigation from-action="#{exemptioncemHome.prepareEditExcemption()}">
+	<rule if-outcome="edit">
+	   <end-conversation/>
+	   <redirect view-id="/revenue/ExemptioncemEdit.xhtml"/>
+	</rule>
+ </navigation>
+   
 </page>
