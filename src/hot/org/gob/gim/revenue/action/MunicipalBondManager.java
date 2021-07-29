@@ -136,7 +136,7 @@ public class MunicipalBondManager extends EntityController {
 
 	private static String JOIN_CLAUSE = " AND ";
 	
-	private static String ORDER_CLAUSE = " ORDER BY municipalBond.groupingcode, municipalBond.number  ";
+	private static String ORDER_CLAUSE = " ORDER BY municipalBond.groupingCode, municipalBond.number  ";
 
 	List<MunicipalBond> municipalBondsFormalizing;
 
@@ -604,9 +604,14 @@ public class MunicipalBondManager extends EntityController {
 	}
 
 	public void selectAllBonds() {
+		
 		for (MunicipalBond bond : getDataModel().getMunicipalBonds()) {
 			bond.setIsSelected(getAllBondsSelected());
 		}
+		
+		/* for (MunicipalBond bond : getDataModel().getMunicipalBonds()) {
+			System.out.println("----------------------------- "+bond.getIsSelected());
+		}*/
 	}
 
 	public Boolean getAllBondsSelected() {
