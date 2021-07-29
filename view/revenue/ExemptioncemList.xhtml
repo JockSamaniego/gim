@@ -186,6 +186,7 @@
 							<f:facet name="header">#{messages['common.action']}</f:facet>
 							<a:commandButton value="#{messages['common.edit']}"
 								action="#{exemptioncemHome.prepareEditExcemption()}"
+								rendered="#{_exemption.active}"
 								ajaxSingle="true" eventsQueue="gimQueue">
 								<f:param name="exemptionId" value="#{_exemption.id}" />
 							</a:commandButton>
@@ -199,8 +200,6 @@
 								<f:param name="exemptionId" value="#{_exemption.id}" />
 							</a:commandButton>
 						</rich:column>
-
-
 					</rich:dataTable>
 
 				</div>

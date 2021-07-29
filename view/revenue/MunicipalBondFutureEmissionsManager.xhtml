@@ -56,6 +56,14 @@
 			</div>
 
 			<a:outputPanel id="resultsPanel" ajaxRendered="false">
+			
+			<h:selectBooleanCheckbox rendered="true"
+								value="#{municipalBondManager.allBondsSelected}">
+								<a:support event="onchange" ajaxSingle="true"
+									bypassUpdates="true" eventsQueue="gimQueue"
+									action="#{municipalBondManager.selectAllBonds()}"
+									reRender="municipalBondsTable,che_singular,resultsPanel,municipalBondSearchFutureEmissions:municipalBondsTable" />
+							</h:selectBooleanCheckbox>
 
 				<rich:panel rendered="#{municipalBonds.rowCount == 0}">
 					<h:outputText value="#{messages['common.noResultsReturned']}"
@@ -93,18 +101,12 @@
 					<rich:column
 						styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
 						<f:facet name="header">
-							<h:selectBooleanCheckbox rendered="true"
-								value="#{municipalBondManager.allBondsSelected}">
-								<a:support event="onchange" ajaxSingle="true"
-									bypassUpdates="true" eventsQueue="gimQueue"
-									action="#{municipalBondManager.selectAllBonds()}"
-									reRender="municipalBondsTable,che_singular,resultsPanel,municipalBondSearchFutureEmissions" />
-							</h:selectBooleanCheckbox>
 						</f:facet>
 						<h:selectBooleanCheckbox value="#{_municipalBond.isSelected}" id="che_singular">
 							<a:support event="onchange" ajaxSingle="true"
 								bypassUpdates="true" eventsQueue="gimQueue"
 								action="#{municipalBondManager.changeSelectedMunicipalBond(_municipalBond, _municipalBond.isSelected)}" />
+								
 						</h:selectBooleanCheckbox>
 					</rich:column>
 
@@ -200,7 +202,7 @@
 						action="#{municipalBondManager.emitFutureSelected()}"
 						value="Emitir"
 						oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelSelected\');' : ''}"
-						reRender="resultsPanel" />
+						reRender="resultsPanel,municipalBondsTable" />
 
 					<a:commandButton id="cancelBtnSelected" ajaxSingle="true"
 						value="#{messages['common.cancel']}"
@@ -233,7 +235,7 @@
 								action="#{municipalBondManager.updateReversedSelected(municipalBondManager.reversedBondStatus)}"
 								value="#{messages['municipalBond.reverse']}"
 								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelSelected\');' : ''}"
-								reRender="resultsPanel" />
+								reRender="resultsPanel,municipalBondsTable" />
 
 							<a:commandButton id="cancelBtnSelected" ajaxSingle="true"
 								value="#{messages['common.cancel']}"

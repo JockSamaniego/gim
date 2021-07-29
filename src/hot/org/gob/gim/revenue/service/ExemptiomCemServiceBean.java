@@ -27,7 +27,7 @@ public class ExemptiomCemServiceBean implements ExemptiomCemService {
 
 	@Override
 	public ExemptionCem save(ExemptionCem exemptionCem) {
-		return crudService.create(exemptionCem);
+		return crudService.update(exemptionCem);
 	}
 
 	@Override

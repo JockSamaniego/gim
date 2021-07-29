@@ -312,7 +312,7 @@ public class MunicipalBondManager extends EntityController {
 			Long entryId = entry != null ? entry.getId() : null;
 			Long mbNumber = municipalBondNumber > 0 ? municipalBondNumber : 0;
 			getDataModel().setCriteria(residentId, entryId, startDate, endDate,
-					municipalBondStatusId, mbNumber, this.bondsWasInAgreement);
+					municipalBondStatusId, mbNumber, this.bondsWasInAgreement, this.allBondsSelected);
 			getDataModel().setRowCount(getDataModel().getObjectsNumber());
 		} else {
 			addFacesMessageFromResourceBundle("municipalBond.invalidCriteriaSet");
@@ -334,7 +334,7 @@ public class MunicipalBondManager extends EntityController {
 					+ municipalBondStatusId);*/
 
 			getDataModel().setCriteria(residentId, entryId,
-					municipalBondStatusId, true);
+					municipalBondStatusId, true, this.allBondsSelected);
 			getDataModel().setRowCount(getDataModel().getObjectsNumber());
 		} else {
 			addFacesMessageFromResourceBundle("municipalBond.invalidCriteriaSet");
@@ -605,9 +605,11 @@ public class MunicipalBondManager extends EntityController {
 
 	public void selectAllBonds() {
 		
-		for (MunicipalBond bond : getDataModel().getMunicipalBonds()) {
+		System.out.println("---selectAllBonds()-------------------------- "+this.allBondsSelected);
+		
+		/* for (MunicipalBond bond : getDataModel().getMunicipalBonds()) {
 			bond.setIsSelected(getAllBondsSelected());
-		}
+		}*/
 		
 		/* for (MunicipalBond bond : getDataModel().getMunicipalBonds()) {
 			System.out.println("----------------------------- "+bond.getIsSelected());
@@ -827,6 +829,8 @@ public class MunicipalBondManager extends EntityController {
 					.changeFutureToPendign(listadoSeleccionadas,
 							userSession.getUser(), userSession.getPerson(),
 							explanation);
+			// rfam 2021-07-29 no funciona
+			// this.findMunicipalBondsFutureEmission();
 		} catch (Exception e) {
 			System.out.println(e.getStackTrace());
 		}
@@ -1097,6 +1101,7 @@ public class MunicipalBondManager extends EntityController {
 						+ observacionManager);*/
 		revenueService.update(listForReverseAll, reversedBondStatus.getId(),
 				userSession.getUser().getId(), observacionManager, judicialProcessNumber);
+		// this.findMunicipalBondsFutureEmission();
 		return "persisted";
 	}
 	

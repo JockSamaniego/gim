@@ -119,11 +119,11 @@ public class ExemptionCEMHome extends EntityController {
 		}
 		
 		//macartuche
-		if(getId()!=null) {
+		/* if(getId()!=null) {
 			this.exemption = getEntityManager().find(ExemptionCem.class, this.id);
 		}else {
 			this.exemption = new ExemptionCem();
-		}
+		}*/
 
 	}
 
@@ -210,16 +210,22 @@ public class ExemptionCEMHome extends EntityController {
 		 * System.out.println("Referencia:"+this.reference);
 		 * System.out.println("Explicacion:"+this.explanation);
 		 */
-
-		ExemptionCem exemption = new ExemptionCem();
+		ExemptionCem exemption;
+		
+		if(this.isEdit){
+			exemption = this.exemptiomCemService.findById(this.id);	
+		}else{
+			exemption = new ExemptionCem();	
+		}
 		exemption.setDiscountPercentage(this.percentValue);
 		exemption.setExplanation(this.explanation);
 		exemption.setProperty(this.property);
 		exemption.setReference(this.reference);
 		exemption.setResident(this.resident);
 		exemption.setType(this.type);
-
-		ExemptionCem result = exemptiomCemService.save(exemption);
+			
+		ExemptionCem result= exemptiomCemService.save(exemption);
+			 
 		if (result != null) {
 			return "persisted";
 		}
@@ -238,7 +244,8 @@ public class ExemptionCEMHome extends EntityController {
 					ExemptiomCemService.LOCAL_NAME);
 		}
 		this.isEdit = Boolean.TRUE;
-		ExemptionCem exemption = this.exemptiomCemService.findById(Long.valueOf(params.get("exemptionId")));
+		this.id = Long.valueOf(params.get("exemptionId"));
+		ExemptionCem exemption = this.exemptiomCemService.findById(this.id);
 		this.property = exemption.getProperty();
 		this.percentValue = exemption.getDiscountPercentage();
 		this.explanation = exemption.getExplanation();
