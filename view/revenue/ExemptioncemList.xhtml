@@ -169,11 +169,10 @@
 						<rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
 							<a:commandButton value="#{messages['common.edit']}"
-								actionListener="#{exemptioncemHome.prepareEditExcemption}"
+								action="#{exemptioncemHome.prepareEditExcemption()}"
 								ajaxSingle="true" eventsQueue="gimQueue">
 								<f:param name="exemptionId" value="#{_exemption.id}" />
 							</a:commandButton>
-
 
 							<a:commandButton id="nullifiedPABtn"
 								value="#{messages['common.deactivate']}"
