@@ -75,8 +75,7 @@ public class ExemptionCEMHome extends EntityController {
 	
 	private ResidentService residentService;
 
-	private Long id; //anular y edit
-	private ExemptionCem listInstance;
+	private Long id; //anular y edit 
 	
 	@Logger
 	Log logger;
@@ -117,6 +116,13 @@ public class ExemptionCEMHome extends EntityController {
 		if (residentService == null) {
 			residentService = ServiceLocator.getInstance().findResource(
 					ResidentService.LOCAL_NAME);
+		}
+		
+		//macartuche
+		if(getId()!=null) {
+			this.exemption = getEntityManager().find(ExemptionCem.class, this.id);
+		}else {
+			this.exemption = new ExemptionCem();
 		}
 
 	}
@@ -429,12 +435,5 @@ public class ExemptionCEMHome extends EntityController {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	public ExemptionCem getListInstance() {
-		return listInstance;
-	}
-
-	public void setListInstance(ExemptionCem listInstance) {
-		this.listInstance = listInstance;
-	}			
+ 		
 }

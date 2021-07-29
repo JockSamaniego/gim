@@ -35,15 +35,16 @@
 					<h:inputText id="resident" value="#{exemptioncemList.resident}"
 						size="50" maxlength="50" />
 				</s:decorate>
-
+				
 				<s:decorate template="../layout/display.xhtml">
 					<ui:define name="label">#{messages['common.from']}</ui:define>
-					<rich:calendar id="startDate" value="#{exemptioncemList.from}"
+					<rich:calendar id="startDate"
+						value="#{exemptioncemList.from}"
 						datePattern="#{messages['common.datePattern']}" inputSize="10">
 						<f:convertDateTime type="date"
 							pattern="#{messages['common.datePattern']}" />
 					</rich:calendar>
-				</s:decorate>
+				</s:decorate>								
 
 			</rich:simpleTogglePanel>
 
@@ -166,20 +167,39 @@
 							<h:outputText value="#{_exemption.discountPercentage}" />
 						</h:column>
 
+
+						<h:column alignment="right">
+							<f:facet name="header">
+								<ui:include src="../layout/sort.xhtml">
+									<ui:param name="entityList" value="#{exemptioncemList}" />
+									<ui:param name="propertyLabel"
+										value="#{messages['delegate.isActive']}" />
+									<ui:param name="propertyPath"
+										value="exemption.estado" />
+								</ui:include>
+							</f:facet>
+							<h:outputText value="#{_exemption.estado}" />
+						</h:column>
+
+
 						<rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
-							<a:commandButton value="#{messages['common.edit']}"
-								actionListener="#{exemptioncemHome.prepareEditExcemption}"
-								ajaxSingle="true" eventsQueue="gimQueue">
+							<s:button view="/revenue/ExemptioncemEdit.xhtml"
+								value="#{messages['common.edit']}"
+								propagation="join"
+								includePageParams="false"
+								rendered="#{_exemption.active}" id="exemptionEdit"
+								actionListener="#{exemptioncemHome.prepareEditExcemption(_exemption)}">
 								<f:param name="exemptionId" value="#{_exemption.id}" />
-							</a:commandButton>
+							</s:button>
 
 
 							<a:commandButton id="nullifiedPABtn"
 								value="#{messages['common.deactivate']}"
 								oncomplete="#{rich:component('nullifiedPanel')}.show();"
-								includePageParams="false" reRender="nullifiedPanel"
-								rendered="#{_exemption.active}" propagation="join">
+								includePageParams="false" reRender="nullifiedPanel"		
+								rendered="#{_exemption.active}"	
+								propagation="join">
 								<f:param name="exemptionId" value="#{_exemption.id}" />
 							</a:commandButton>
 						</rich:column>
@@ -212,19 +232,18 @@
 				rendered="#{exemptioncemList.nextExists}"
 				value="#{messages['common.nextPage']} #{messages.right}"
 				id="nextPage">
-				<f:param name="firstResult"
-					value="#{exemptioncemList.nextFirstResult}" />
+				<f:param name="firstResult" value="#{exemptioncemList.nextFirstResult}" />
 			</s:link>
 
 			<s:link view="/revenue/ExemptioncemList.xhtml"
 				rendered="#{exemptioncemList.nextExists}"
 				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
 				id="lastPage">
-				<f:param name="firstResult"
-					value="#{exemptioncemList.lastFirstResult}" />
+				<f:param name="firstResult" value="#{exemptioncemList.lastFirstResult}" />
 			</s:link>
 
 		</div>
+
 
 		<!-- ANULAR EXONERACION -->
 		<rich:modalPanel id="nullifiedPanel" width="400" height="200">
@@ -260,4 +279,5 @@
 			</h:form>
 		</rich:modalPanel>
 	</ui:define>
+
 </ui:composition>
