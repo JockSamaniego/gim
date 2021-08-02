@@ -1,0 +1,24 @@
+#created on: Jul 20, 2021
+package ec.gob.gim.rules.pf2011
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Item;
+import ec.gob.gim.common.model.Person;
+
+import java.math.BigDecimal;
+
+#list any import classes here.
+
+dialect "java"
+
+rule "Descuento por tercera edad CEM"
+	no-loop true
+	salience 0
+	when		
+		$itemDiscount : Item(entry.code == "00826");
+		$mb : MunicipalBond();
+		eval(((Person)$mb.getResident()).getAge().get("YEAR")>= 65);		
+	then				
+		// System.out.println("Ejecutando regla Descuento a las personas de la tercera edad CEM... " + ((Person)$mb.getResident()).getAgeToString());
+		// System.out.println(((Person)$mb.getResident()).getAge().get("YEAR")>= 65);
+		$itemDiscount.setTotal($mb.getItems().get(0).getTotal().multiply(new java.math.BigDecimal(0.50)));
+end

@@ -6,8 +6,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich" 
-	xmlns:g="http://gim.gob.ec/jsf"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
 	template="../layout/template.xhtml">
 
 	<ui:define name="body">
@@ -18,174 +17,179 @@
 			<a:queue requestDelay="10" ignoreDupResponses="true" />
 
 			<rich:simpleTogglePanel rendered="#{userSession.user.callTicket}">
-					<f:facet name="header">
-						<h:panelGrid columns="2" columnClasses="headerTitle,"
-							cellpadding="0" cellspacing="0">
-							<h:outputText value="#{messages['turnero.title']}" styleClass="formTitle" />
-						</h:panelGrid>
-					</f:facet>
-					 <h:panelGrid id="checkIFrame" heigth="300">
-					 	 <!-- iframe frameborder="0" align="left"
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,"
+						cellpadding="0" cellspacing="0">
+						<h:outputText value="#{messages['turnero.title']}"
+							styleClass="formTitle" />
+					</h:panelGrid>
+				</f:facet>
+				<h:panelGrid id="checkIFrame" heigth="300">
+					<!-- iframe frameborder="0" align="left"
 				             src="http://192.168.1.28/novosga_gim/public/modules/sga.atendimento/index"
 				             name="PdfPnl" id="PdfPnl" scrolling="auto" width="1280" 
 				             height="240" marginheight="5" marginwidth="10">
 				         </iframe -->
-					 </h:panelGrid>
+				</h:panelGrid>
 			</rich:simpleTogglePanel>
-			<div style="clear:both; height:20px" />
-			
+			<div style="clear: both; height: 20px" />
+
 			<rich:panel>
 				<f:facet name="header">
 					<h:outputText styleClass="formTitle"
 						value="#{messages['revenue.emissionMunicipalBond']}" />
 				</f:facet>
-				
-			<h:panelGrid styleClass="full" id="panelEmitBonds" columns="3"  >
-					<h:panelGrid columns="2" width="100%"
-							columnClasses="topAligned, topAligned right">
-							
-						<a:outputPanel id="searchPanel">
-						<g:residentChooser id="residentChooser"
-							resident="#{municipalBondHome.instance.resident}"
-							criteria="#{municipalBondHome.criteria}"
-							bean="#{municipalBondHome}" searchAction="searchResident"
-							residentsList="#{municipalBondHome.residents}"
-							identificationNumber="#{municipalBondHome.identificationNumber}"
-							searchByCriteriaAction="searchResidentByCriteria"
-							clearSearchPanelAction="clearSearchResidentPanel"
-							residentChosenListenerName="residentSelectedListener"
-							reRender="entryChooser-reason,entryChooser-name, _itemsTable, entryChooser-entryCode, entryChooser-openSearchPanelBtn, detailsTable, emitPanel, alertPanel" />
 
-						<g:entryChooser id="entryChooser" label="#{messages['entry']}"
-							reasonLabel="#{messages['entry.reason']}" showReason="true"
-							criteria="#{municipalBondHome.criteriaEntry}"
-							entry="#{municipalBondHome.entry}"
-							entryCode="#{municipalBondHome.entryCode}"
-							disabled="#{municipalBondHome.instance.resident == null}"
-							bean="#{municipalBondHome}" searchAction="searchEntry"
-							entriesList="#{municipalBondHome.entries}"
-							searchByCriteriaAction="searchEntryByCriteria"
-							clearSearchPanelAction="clearSearchEntryPanel"
-							entryChosenListenerName="entrySelectedListener"
-							reRender="fieldsPanel, adjunctPanel,messages, _itemsTable, serviceDateShortPanel, municipalBondEditTitle,emitPanel" />
+				<h:panelGrid styleClass="full" id="panelEmitBonds" columns="3">
+					<h:panelGrid columns="2" width="100%"
+						columnClasses="topAligned, topAligned right">
+
+						<a:outputPanel id="searchPanel">
+							<g:residentChooser id="residentChooser"
+								resident="#{municipalBondHome.instance.resident}"
+								criteria="#{municipalBondHome.criteria}"
+								bean="#{municipalBondHome}" searchAction="searchResident"
+								residentsList="#{municipalBondHome.residents}"
+								identificationNumber="#{municipalBondHome.identificationNumber}"
+								searchByCriteriaAction="searchResidentByCriteria"
+								clearSearchPanelAction="clearSearchResidentPanel"
+								residentChosenListenerName="residentSelectedListener"
+								reRender="entryChooser-reason,entryChooser-name, _itemsTable, entryChooser-entryCode, entryChooser-openSearchPanelBtn, detailsTable, emitPanel, alertPanel" />
+
+							<g:entryChooser id="entryChooser" label="#{messages['entry']}"
+								reasonLabel="#{messages['entry.reason']}" showReason="true"
+								criteria="#{municipalBondHome.criteriaEntry}"
+								entry="#{municipalBondHome.entry}"
+								entryCode="#{municipalBondHome.entryCode}"
+								disabled="#{municipalBondHome.instance.resident == null}"
+								bean="#{municipalBondHome}" searchAction="searchEntry"
+								entriesList="#{municipalBondHome.entries}"
+								searchByCriteriaAction="searchEntryByCriteria"
+								clearSearchPanelAction="clearSearchEntryPanel"
+								entryChosenListenerName="entrySelectedListener"
+								reRender="fieldsPanel, adjunctPanel,messages, _itemsTable, serviceDateShortPanel, municipalBondEditTitle,emitPanel" />
 						</a:outputPanel>
-						
+
 						<a:outputPanel id="alertPanel" ajaxRendered="true">
-								<a:commandLink id="alertField"
-									value="#{municipalBondHome.blocketMessage}"
-									rendered="#{municipalBondHome.pendingAlerts.size()==0 ? false : true}"
-									style="font-size:40px; font-weight:bold;color:#{municipalBondHome.colorMessage}" styleClass="center"
-									reRender="alertListPanel"
-									oncomplete="Richfaces.showModalPanel('alertListPanel')">
-								</a:commandLink>
+							<a:commandLink id="alertField"
+								value="#{municipalBondHome.blocketMessage}"
+								rendered="#{municipalBondHome.pendingAlerts.size()==0 ? false : true}"
+								style="font-size:40px; font-weight:bold;color:#{municipalBondHome.colorMessage}"
+								styleClass="center" reRender="alertListPanel"
+								oncomplete="Richfaces.showModalPanel('alertListPanel')">
+							</a:commandLink>
 						</a:outputPanel>
 					</h:panelGrid>
 
 					<rich:spacer width="200 px" />
 
-					<rich:panel id="vehiclePanelInformation" rendered="#{municipalBondHome.hasRole('ROLE_EMITTER_CRTV') and municipalBondHome.crtvIsActive()}">
-			            <f:facet name="header">
-			                <h:panelGrid columns="1" columnClasses="headerTitle,">
-			                  <h:outputText
-			                    value="#{messages['crtv.infoPanel']}" />
-			                </h:panelGrid>      
-			            </f:facet>
-			            <h:panelGrid styleClass="full" id="searchVehicleData" columns="3"  >         
-				            <s:decorate id="vehiclePlateField" template="../layout/edit.xhtml">
-				                <ui:define name="label">#{messages['vehicle.plate']}:</ui:define>
-				                <h:inputText id="vehiclePlate"
-				                          value="#{municipalBondHome.licensePlate}"
-				                          style="text-transform: uppercase">
-				                          <a:support event="onblur" eventsQueue="gimQueue" reRender="searchVehicleData" />
-				                </h:inputText>
-				            </s:decorate>
-				            <a:commandButton value="#{messages['crtv.search']}"  id="searchBtn"						
-												propagation="join"
-												action="#{municipalBondHome.findCrtvVehicleData()}"
-												style="float:right"
-												reRender="vehiclePanelInformation" ajaxSingle="true" 
-												disabled="#{municipalBondHome.licensePlate == null || municipalBondHome.licensePlate == '' || municipalBondHome.responseCRTV != null}"/>
-												
+					<rich:panel id="vehiclePanelInformation"
+						rendered="#{municipalBondHome.hasRole('ROLE_EMITTER_CRTV') and municipalBondHome.crtvIsActive()}">
+						<f:facet name="header">
+							<h:panelGrid columns="1" columnClasses="headerTitle,">
+								<h:outputText value="#{messages['crtv.infoPanel']}" />
+							</h:panelGrid>
+						</f:facet>
+						<h:panelGrid styleClass="full" id="searchVehicleData" columns="3">
+							<s:decorate id="vehiclePlateField"
+								template="../layout/edit.xhtml">
+								<ui:define name="label">#{messages['vehicle.plate']}:</ui:define>
+								<h:inputText id="vehiclePlate"
+									value="#{municipalBondHome.licensePlate}"
+									style="text-transform: uppercase">
+									<a:support event="onblur" eventsQueue="gimQueue"
+										reRender="searchVehicleData" />
+								</h:inputText>
+							</s:decorate>
+							<a:commandButton value="#{messages['crtv.search']}"
+								id="searchBtn" propagation="join"
+								action="#{municipalBondHome.findCrtvVehicleData()}"
+								style="float:right" reRender="vehiclePanelInformation"
+								ajaxSingle="true"
+								disabled="#{municipalBondHome.licensePlate == null || municipalBondHome.licensePlate == '' || municipalBondHome.responseCRTV != null}" />
+
 							<a:commandButton id="reset" value="#{messages['common.reset']}"
-											action="#{municipalBondHome.cleanCrtvVehicleData()}"
-											reRender="vehiclePanelInformation"/>			            
-				        </h:panelGrid>
-				        <rich:spacer height="10 px" />
-				        <s:decorate id="ownerNameField" template="../layout/edit.xhtml">
-				                <ui:define name="label">#{messages['crtv.ownerName']}:</ui:define>
-				                <h:inputText id="ownerName"
-				                          value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.propietario : ''}"
-				                          readonly="true"
-				                          size="40">
-				                </h:inputText>
-				        </s:decorate>
-				        <s:decorate id="ownerIdentificationField" template="../layout/edit.xhtml">
-				                <ui:define name="label">#{messages['crtv.ownerIdentification']}:</ui:define>
-				                <h:inputText id="ownerIdentification"
-				                          value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.identificacion : ''}"
-				                          readonly="true">
-				                </h:inputText>
-				        </s:decorate>
-				        <s:decorate id="documentField" template="../layout/edit.xhtml">
-				                <ui:define name="label">#{messages['crtv.document']}:</ui:define>
-				                <h:inputText id="document"
-				                          value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.documento : ''}"
-				                          readonly="true">
-				                </h:inputText>
-				        </s:decorate>
-				        <s:decorate id="plateField" template="../layout/edit.xhtml">
-				                <ui:define name="label">#{messages['vehicle.plate']}:</ui:define>
-				                <h:inputText id="plate"
-				                          value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.placa1 : ''}"
-				                          readonly="true">
-				                </h:inputText>
-				        </s:decorate>
-				        <s:decorate id="totalValueField" template="../layout/edit.xhtml">
-				                <ui:define name="label">#{messages['crtv.totalValue']}:</ui:define>
-				                <h:inputText id="totalValue"
-				                          value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.valor_total : ''}"
-				                          readonly="true">
-				                </h:inputText>
-				        </s:decorate>
-				        <s:decorate id="paidOrderCodeField" template="../layout/edit.xhtml">
-				                <ui:define name="label">#{messages['crtv.paidOrderCode']}:</ui:define>
-				                <h:inputText id="paidOrderCode"
-				                          value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.ordenespagocodigo : ''}"
-				                          readonly="true">
-				                </h:inputText>
-				        </s:decorate>
-				        <div style="clear: both" />
-				        <rich:spacer height="20 px" />
-				        <h:outputText value="--------- #{messages['crtv.itemsPaidOrder']} ----------" 
-				        				style="font-weight:bold; font-size:10px; color:red"/>
-						<ui:repeat value="#{municipalBondHome.responseCRTV.sdttarifaordenpago}" var="_item" >
-							<s:decorate id="paidOrderCodeField" template="../layout/edit.xhtml">
-				                <ui:define name="label">#{_item.tarifaRevisionCabeceraDescripcion}:</ui:define>
-				                <h:inputText id="paidOrderCode"
-				                          value="#{_item.tarifaRevisionDetalleValor}"
-				                          readonly="true">
-				                </h:inputText>
-				        	</s:decorate>
+								action="#{municipalBondHome.cleanCrtvVehicleData()}"
+								reRender="vehiclePanelInformation" />
+						</h:panelGrid>
+						<rich:spacer height="10 px" />
+						<s:decorate id="ownerNameField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['crtv.ownerName']}:</ui:define>
+							<h:inputText id="ownerName"
+								value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.propietario : ''}"
+								readonly="true" size="40">
+							</h:inputText>
+						</s:decorate>
+						<s:decorate id="ownerIdentificationField"
+							template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['crtv.ownerIdentification']}:</ui:define>
+							<h:inputText id="ownerIdentification"
+								value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.identificacion : ''}"
+								readonly="true">
+							</h:inputText>
+						</s:decorate>
+						<s:decorate id="documentField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['crtv.document']}:</ui:define>
+							<h:inputText id="document"
+								value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.documento : ''}"
+								readonly="true">
+							</h:inputText>
+						</s:decorate>
+						<s:decorate id="plateField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['vehicle.plate']}:</ui:define>
+							<h:inputText id="plate"
+								value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.placa1 : ''}"
+								readonly="true">
+							</h:inputText>
+						</s:decorate>
+						<s:decorate id="totalValueField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['crtv.totalValue']}:</ui:define>
+							<h:inputText id="totalValue"
+								value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.valor_total : ''}"
+								readonly="true">
+							</h:inputText>
+						</s:decorate>
+						<s:decorate id="paidOrderCodeField"
+							template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['crtv.paidOrderCode']}:</ui:define>
+							<h:inputText id="paidOrderCode"
+								value="#{municipalBondHome.responseCRTV != null ? municipalBondHome.responseCRTV.ordenespagocodigo : ''}"
+								readonly="true">
+							</h:inputText>
+						</s:decorate>
+						<div style="clear: both" />
+						<rich:spacer height="20 px" />
+						<h:outputText
+							value="--------- #{messages['crtv.itemsPaidOrder']} ----------"
+							style="font-weight:bold; font-size:10px; color:red" />
+						<ui:repeat
+							value="#{municipalBondHome.responseCRTV.sdttarifaordenpago}"
+							var="_item">
+							<s:decorate id="paidOrderCodeField"
+								template="../layout/edit.xhtml">
+								<ui:define name="label">#{_item.tarifaRevisionCabeceraDescripcion}:</ui:define>
+								<h:inputText id="paidOrderCode"
+									value="#{_item.tarifaRevisionDetalleValor}" readonly="true">
+								</h:inputText>
+							</s:decorate>
 						</ui:repeat>
-			            <div style="clear: both" />
-			        </rich:panel>
+						<div style="clear: both" />
+					</rich:panel>
 				</h:panelGrid>
 				<div style="clear: both" />
-			
+
 			</rich:panel>
 
 			<a:region>
 
-				
-
-
-				<h:panelGrid  id="emitPanel" columns="1" width="100%" rendered="#{!municipalBondHome.isBlocketToEmit}">
+				<h:panelGrid id="emitPanel" columns="1" width="100%"
+					rendered="#{!municipalBondHome.isBlocketToEmit}">
 					<rich:panel style="width:100%" id="detailsTable">
 						<f:facet name="header">
-										<h:panelGrid columns="1" width="100%"
-											columnClasses="left headerTitle,">
-											<h:outputText value="#{messages['municipalBond.detail']}" />
-											<!--  <a:commandButton value="Activar locales"  id="active"
+							<h:panelGrid columns="1" width="100%"
+								columnClasses="left headerTitle,">
+								<h:outputText value="#{messages['municipalBond.detail']}" />
+								<!--  <a:commandButton value="Activar locales"  id="active"
 											    disabled="#{municipalBondHome.instance.resident == null}"
 												propagation="join"
 												action="#{localFeatureHome.viewTableLocals()}"
@@ -199,11 +203,11 @@
 												action="#{businessHome.navegation('municipal')}">
 												<f:param name="businessId" />
 											</s:button> -->
-										</h:panelGrid>
-						 </f:facet>
+							</h:panelGrid>
+						</f:facet>
 
 						<a:outputPanel id="serviceDateShortPanel" ajaxRendered="false">
-							  <h:panelGrid
+							<h:panelGrid
 								rendered="#{municipalBondHome.entry.id != null and municipalBondHome.entry.hasMultipleEmission == false and not empty municipalBondHome.entryValueItems}">
 								<g:serviceDatePanel id="serviceDateShort"
 									renderedWithLabel="#{true}"
@@ -215,22 +219,19 @@
 							</h:panelGrid>
 							<div style="clear: both" />
 						</a:outputPanel>
-					
+
 						<a:outputPanel id="adjunctPanel" ajaxRendered="false"
 							style="width:100%">
 							<f:facet name="header">#{municipalBondHome.adjunctURI}</f:facet>
 							<a:include viewId="#{municipalBondHome.adjunctURI}" />
 							<div style="clear: both" />
 						</a:outputPanel>
-						
-						
-						
-						
 
 						<a:outputPanel id="fieldsPanel" ajaxRendered="false">
 							<h:panelGrid columns="4">
 								<s:decorate id="exemptField" template="../layout/edit.xhtml"
-									rendered="#{municipalBondHome.entry.id != null}" style="margin-right:30px;">
+									rendered="#{municipalBondHome.entry.id != null}"
+									style="margin-right:30px;">
 									<ui:define name="label">#{messages['municipalBond.exempt']}: </ui:define>
 									<h:selectBooleanCheckbox id="exempt"
 										value="#{municipalBondHome.instance.exempt}">
@@ -240,17 +241,19 @@
 
 								<s:decorate id="isNoPasiveSubjectField"
 									template="../layout/edit.xhtml"
-									rendered="#{municipalBondHome.entry.id != null}" style="margin-right:30px;">
+									rendered="#{municipalBondHome.entry.id != null}"
+									style="margin-right:30px;">
 									<ui:define name="label">#{messages['municipalBond.isNoPasiveSubject']}: </ui:define>
 									<h:selectBooleanCheckbox id="exempt"
 										value="#{municipalBondHome.instance.isNoPasiveSubject}">
 										<a:support event="onchange" ajaxSingle="true" />
 									</h:selectBooleanCheckbox>
 								</s:decorate>
-								
+
 								<s:decorate id="internalTramitField"
 									template="../layout/edit.xhtml"
-									rendered="#{municipalBondHome.entry.id != null}" style="margin-right:30px;">
+									rendered="#{municipalBondHome.entry.id != null}"
+									style="margin-right:30px;">
 									<ui:define name="label">#{messages['municipalBond.internalTramit']}: </ui:define>
 									<h:selectBooleanCheckbox id="internalTramit"
 										value="#{municipalBondHome.instance.internalTramit}">
@@ -258,55 +261,65 @@
 									</h:selectBooleanCheckbox>
 								</s:decorate>
 							</h:panelGrid>
-							
+
 							<h:panelGrid rendered="#{municipalBondHome.entry.id != null}">
-								<s:decorate id="bondAddressField" template="../layout/edit.xhtml">
+								<s:decorate id="bondAddressField"
+									template="../layout/edit.xhtml">
 									<ui:define name="label">#{messages['municipalBond.address']}: </ui:define>
-									<h:inputTextarea id="bondAddress" rendered="#{municipalBondHome.entry.id != null}"
-										value="#{municipalBondHome.instance.bondAddress}"
-										cols="45" rows="2">
-										
+									<h:inputTextarea id="bondAddress"
+										rendered="#{municipalBondHome.entry.id != null}"
+										value="#{municipalBondHome.instance.bondAddress}" cols="45"
+										rows="2">
+
 									</h:inputTextarea>
 								</s:decorate>
-								
+
 							</h:panelGrid>
 
-							<h:panelGrid rendered="#{municipalBondHome.entry.id != null}" columns="3">
-								<s:decorate id="settleTitle"
-									template="../layout/edit.xhtml"
-									rendered="#{municipalBondHome.entry.id == '8' or municipalBondHome.entry.id == '2'}" style="margin-right:30px;">
-	
+							<h:panelGrid rendered="#{municipalBondHome.entry.id != null}"
+								columns="3">
+								<s:decorate id="settleTitle" template="../layout/edit.xhtml"
+									rendered="#{municipalBondHome.entry.id == '8' or municipalBondHome.entry.id == '2'}"
+									style="margin-right:30px;">
+
 									<ui:define name="label">Liquidar Actividad</ui:define>
 								</s:decorate>
 
-								<s:decorate id="settleActivity1"
-									template="../layout/edit.xhtml"
-									rendered="#{municipalBondHome.entry.id == '8'}" style="margin-right:30px;">
+								<s:decorate id="settleActivity1" template="../layout/edit.xhtml"
+									rendered="#{municipalBondHome.entry.id == '8'}"
+									style="margin-right:30px;">
 									<ui:define name="label">#{messages['local.isActive']}?: </ui:define>
-									<h:selectBooleanCheckbox id="settleCheck"	value="#{businessHome.activeLocal}" >
-										<a:support event="onchange" ajaxSingle="true" action="#{municipalBondHome.finishedActivity1(businessHome.activeLocal)}" reRender="tableEntryValueItems,settleMessage" />
+									<h:selectBooleanCheckbox id="settleCheck"
+										value="#{businessHome.activeLocal}">
+										<a:support event="onchange" ajaxSingle="true"
+											action="#{municipalBondHome.finishedActivity1(businessHome.activeLocal)}"
+											reRender="tableEntryValueItems,settleMessage" />
 									</h:selectBooleanCheckbox>
 								</s:decorate>
-								<s:decorate id="settleActivity2"
-									template="../layout/edit.xhtml"
-									rendered="#{municipalBondHome.entry.id == '2'}" style="margin-right:30px;">
+								<s:decorate id="settleActivity2" template="../layout/edit.xhtml"
+									rendered="#{municipalBondHome.entry.id == '2'}"
+									style="margin-right:30px;">
 									<ui:define name="label">#{messages['local.isActive']}?: </ui:define>
-									<h:selectBooleanCheckbox id="settleCheck2"	value="#{businessHome.activeLocal}" >
-										<a:support event="onchange" ajaxSingle="true" action="#{municipalBondHome.finishedActivity2(businessHome.activeLocal)}" reRender="tableEntryValueItems,settleMessage" />
+									<h:selectBooleanCheckbox id="settleCheck2"
+										value="#{businessHome.activeLocal}">
+										<a:support event="onchange" ajaxSingle="true"
+											action="#{municipalBondHome.finishedActivity2(businessHome.activeLocal)}"
+											reRender="tableEntryValueItems,settleMessage" />
 									</h:selectBooleanCheckbox>
 								</s:decorate>
-								
-								<s:decorate id="settleMessage"
-									template="../layout/edit.xhtml"
-									rendered="#{municipalBondHome.entry.id == '8' or municipalBondHome.entry.id == '2'}" style="margin-right:30px;">
-									<h:outputText value="#{municipalBondHome.getMessage()} " style="font-weight:bold; font-size:10px; color:red" />
+
+								<s:decorate id="settleMessage" template="../layout/edit.xhtml"
+									rendered="#{municipalBondHome.entry.id == '8' or municipalBondHome.entry.id == '2'}"
+									style="margin-right:30px;">
+									<h:outputText value="#{municipalBondHome.getMessage()} "
+										style="font-weight:bold; font-size:10px; color:red" />
 								</s:decorate>
-								
+
 							</h:panelGrid>
 
 
-								
-							<h:panelGrid 
+
+							<h:panelGrid
 								rendered="#{municipalBondHome.entry.id != null and municipalBondHome.entry.hasMultipleEmission == false and not empty municipalBondHome.entryValueItems}">
 
 								<s:decorate id="enabledExpirationDateField"
@@ -327,123 +340,109 @@
 									<rich:calendar id="expirationDate"
 										value="#{municipalBondHome.entryValueItems.get(0).expirationDate}"
 										disabled="#{!municipalBondHome.entryValueItems.get(0).isExpirationDateEditable}"
-										enableManualInput="true" 
+										enableManualInput="true"
 										datePattern="#{messages['common.datePattern']}"
-										ajaxSingle="true" eventsQueue="gimQueue"
-										inputSize="10">
-										<a:support event="onchanged" ajaxSingle="true" eventsQueue="gimQueue"></a:support>								
+										ajaxSingle="true" eventsQueue="gimQueue" inputSize="10">
+										<a:support event="onchanged" ajaxSingle="true"
+											eventsQueue="gimQueue"></a:support>
 									</rich:calendar>
-								</s:decorate>	
-								
-							
-
-							
-
-							<h:panelGrid id="panelValues"  columns="1">
-
-								<s:decorate id="itemFieldEditableValue"
-									rendered="#{municipalBondHome.instance.entry.isValueEditable and municipalBondHome.entry.id != '654'}"
-									template="../layout/edit.xhtml">
-									<ui:define name="label">#{not empty municipalBondHome.entry.amountLabel? municipalBondHome.entry.amountLabel : messages['municipalBond.taxableTotal']}: </ui:define>
-									<h:inputText id="itemEditable"
-										value="#{municipalBondHome.entryValueItems.get(0).mainValue}"
-										styleClass="right tableCellFont">
-										<a:support event="onblur" eventsQueue="gimQueue" />
-									</h:inputText>
 								</s:decorate>
 
-								<s:decorate id="itemFieldEditableAmount"
-									rendered="#{municipalBondHome.instance.entry.isAmountEditable}"
-									template="../layout/edit.xhtml">
-									<ui:define name="label" rendered="#{!adjunctHome.instance.details.get(1).valueBoolean}" >#{not empty municipalBondHome.entry.amountLabel? municipalBondHome.entry.amountLabel : messages['item.amount']}: </ui:define>
-									<ui:define name="label" rendered="#{adjunctHome.instance.details.get(1).valueBoolean}" >#{messages['item.amount']}: </ui:define>
-									<h:inputText id="itemEditableAmount"
-										value="#{municipalBondHome.entryValueItems.get(0).amount}"
-										styleClass="right tableCellFont"
-										style="font-weight: bold;">
-										<a:support event="onblur" eventsQueue="gimQueue" />
-									</h:inputText>
-								</s:decorate>						
-								
-								<s:decorate id="previousPaymentField"
-									template="../layout/edit.xhtml"
-									rendered="#{municipalBondHome.instance.entry.isPreviousPaymentFieldEnabled}">
-									<ui:define name="label">#{messages['municipalBond.previousPayment']}: </ui:define>
-									<h:inputText id="itemEditable"
-										value="#{municipalBondHome.entryValueItems.get(0).previousPayment}"
-										styleClass="right tableCellFont">
-										<a:support event="onblur" eventsQueue="gimQueue" />
-									</h:inputText>
-								</s:decorate>								
+								<h:panelGrid id="panelValues" columns="1">
 
-								<s:decorate id="descriptionField"
-									template="../layout/edit.xhtml">
-									<ui:define name="label">#{messages['municipalBond.description']}: </ui:define>
-									<h:inputTextarea id="description"
-										value="#{municipalBondHome.entryValueItems.get(0).description}"
-										cols="45" rows="2">
-										
-									</h:inputTextarea>
-								</s:decorate>
-								<s:decorate id="referenceField" template="../layout/edit.xhtml">
-									<ui:define name="label">#{messages['municipalBond.reference']}: </ui:define>
-									<h:inputTextarea id="reference"
-										value="#{municipalBondHome.entryValueItems.get(0).reference}"
-										cols="45" rows="2">
-										
-									</h:inputTextarea>
-								</s:decorate>	
+									<s:decorate id="itemFieldEditableValue"
+										rendered="#{municipalBondHome.instance.entry.isValueEditable and municipalBondHome.entry.id != '654'}"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{not empty municipalBondHome.entry.amountLabel? municipalBondHome.entry.amountLabel : messages['municipalBond.taxableTotal']}: </ui:define>
+										<h:inputText id="itemEditable"
+											value="#{municipalBondHome.entryValueItems.get(0).mainValue}"
+											styleClass="right tableCellFont">
+											<a:support event="onblur" eventsQueue="gimQueue" />
+										</h:inputText>
+									</s:decorate>
 
-							</h:panelGrid>							
+									<s:decorate id="itemFieldEditableAmount"
+										rendered="#{municipalBondHome.instance.entry.isAmountEditable}"
+										template="../layout/edit.xhtml">
+										<ui:define name="label"
+											rendered="#{!adjunctHome.instance.details.get(1).valueBoolean}">#{not empty municipalBondHome.entry.amountLabel? municipalBondHome.entry.amountLabel : messages['item.amount']}: </ui:define>
+										<ui:define name="label"
+											rendered="#{adjunctHome.instance.details.get(1).valueBoolean}">#{messages['item.amount']}: </ui:define>
+										<h:inputText id="itemEditableAmount"
+											value="#{municipalBondHome.entryValueItems.get(0).amount}"
+											styleClass="right tableCellFont" style="font-weight: bold;">
+											<a:support event="onblur" eventsQueue="gimQueue" />
+										</h:inputText>
+									</s:decorate>
+
+									<s:decorate id="previousPaymentField"
+										template="../layout/edit.xhtml"
+										rendered="#{municipalBondHome.instance.entry.isPreviousPaymentFieldEnabled}">
+										<ui:define name="label">#{messages['municipalBond.previousPayment']}: </ui:define>
+										<h:inputText id="itemEditable"
+											value="#{municipalBondHome.entryValueItems.get(0).previousPayment}"
+											styleClass="right tableCellFont">
+											<a:support event="onblur" eventsQueue="gimQueue" />
+										</h:inputText>
+									</s:decorate>
+
+									<s:decorate id="descriptionField"
+										template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['municipalBond.description']}: </ui:define>
+										<h:inputTextarea id="description"
+											value="#{municipalBondHome.entryValueItems.get(0).description}"
+											cols="45" rows="2">
+
+										</h:inputTextarea>
+									</s:decorate>
+									<s:decorate id="referenceField" template="../layout/edit.xhtml">
+										<ui:define name="label">#{messages['municipalBond.reference']}: </ui:define>
+										<h:inputTextarea id="reference"
+											value="#{municipalBondHome.entryValueItems.get(0).reference}"
+											cols="45" rows="2">
+
+										</h:inputTextarea>
+									</s:decorate>
+
+								</h:panelGrid>
 
 								<div style="clear: both" />
 							</h:panelGrid>
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
 
 							<h:panelGrid
 								rendered="#{municipalBondHome.entry.id != null and municipalBondHome.entry.hasMultipleEmission == true}"
 								width="100%">
 
-								<s:decorate id="FireRatesNamesField" template="../layout/edit.xhtml" 
-								rendered="#{municipalBondHome.entry.id == '654'}" >
+								<s:decorate id="FireRatesNamesField"
+									template="../layout/edit.xhtml"
+									rendered="#{municipalBondHome.entry.id == '654'}">
 									<ui:define name="label">Denominativos:</ui:define>
 									<h:selectOneMenu id="FireRatesNames"
 										value="#{municipalBondHome.fireRateName}" required="true">
 										<s:selectItems value="#{fireRatesNames}" var="fireRatesName"
-											label="#{fireRatesName.name}" 
-											noSelectionLabel="Seleccione uno" />	
-											<s:convertEntity />								
-										<a:support event="onchange" ajaxSingle="true" action="#{municipalBondHome.findFireRates()}" reRender="fireRateField,mainValue,calculateMainValue" />
+											label="#{fireRatesName.name}"
+											noSelectionLabel="Seleccione uno" />
+										<s:convertEntity />
+										<a:support event="onchange" ajaxSingle="true"
+											action="#{municipalBondHome.findFireRates()}"
+											reRender="fireRateField,mainValue,calculateMainValue" />
 									</h:selectOneMenu>
 								</s:decorate>
 
-								<s:decorate id="fireRateField" template="../layout/edit.xhtml" 
-								rendered="#{municipalBondHome.entry.id == '654'}" >
+								<s:decorate id="fireRateField" template="../layout/edit.xhtml"
+									rendered="#{municipalBondHome.entry.id == '654'}">
 									<ui:define name="label">Tipo de Actividad:</ui:define>
-									<h:selectOneMenu id="fireRate" 
-												value="#{municipalBondHome.fireRate}" required="true">
-												<s:selectItems value="#{municipalBondHome.fireRates}" var="fireRate"
-													label="#{fireRate.activity}"
-													noSelectionLabel="Seleccione uno" />
-												<s:convertEntity />
-												<a:support event="onchange" ajaxSingle="true"  action="#{municipalBondHome.findFireRateAndAmount()}" reRender="mainValue,calculateMainValue" />
+									<h:selectOneMenu id="fireRate"
+										value="#{municipalBondHome.fireRate}" required="true">
+										<s:selectItems value="#{municipalBondHome.fireRates}"
+											var="fireRate" label="#{fireRate.activity}"
+											noSelectionLabel="Seleccione uno" />
+										<s:convertEntity />
+										<a:support event="onchange" ajaxSingle="true"
+											action="#{municipalBondHome.findFireRateAndAmount()}"
+											reRender="mainValue,calculateMainValue" />
 									</h:selectOneMenu>
-									
+
 								</s:decorate>
 
 								<s:decorate id="mainValue"
@@ -452,8 +451,7 @@
 									<ui:define name="label">Valor por Actividad:</ui:define>
 									<h:inputText id="itemEditableValue"
 										value="#{municipalBondHome.entryValueItems.get(0).mainValue}"
-										disabled="true"
-										styleClass="right tableCellFont">
+										disabled="true" styleClass="right tableCellFont">
 										<a:support event="onblur" eventsQueue="gimQueue" />
 									</h:inputText>
 								</s:decorate>
@@ -465,7 +463,9 @@
 										value="#{municipalBondHome.amountRate}"
 										disabled="#{municipalBondHome.variableAmount}"
 										styleClass="right tableCellFont">
-										<a:support event="onblur" eventsQueue="gimQueue" reRender="mainValue"  action="#{municipalBondHome.calculateAmountRate(municipalBondHome.amountRate)}" />
+										<a:support event="onblur" eventsQueue="gimQueue"
+											reRender="mainValue"
+											action="#{municipalBondHome.calculateAmountRate(municipalBondHome.amountRate)}" />
 									</h:inputText>
 								</s:decorate>
 
@@ -560,20 +560,21 @@
 										<h:panelGroup>
 											<h:selectBooleanCheckbox
 												value="#{_entryValueItem.isExpirationDateEditable}">
-												<a:support event="onchange" ajaxSingle="true" action="#{municipalBondHome.changeToEmptyDate(_entryValueItem)}"
+												<a:support event="onchange" ajaxSingle="true"
+													action="#{municipalBondHome.changeToEmptyDate(_entryValueItem)}"
 													reRender="expirationDateId" />
 											</h:selectBooleanCheckbox>
-											
+
 											<rich:calendar id="expirationDateId"
 												value="#{_entryValueItem.expirationDate}"
 												disabled="#{!_entryValueItem.isExpirationDateEditable}"
 												enableManualInput="true"
 												datePattern="#{messages['common.datePattern']}"
-												ajaxSingle="true"
-												inputSize="6">
-												<a:support event="onchanged" ajaxSingle="true" eventsQueue="gimQueue"></a:support>
-											</rich:calendar>			
-																		
+												ajaxSingle="true" inputSize="6">
+												<a:support event="onchanged" ajaxSingle="true"
+													eventsQueue="gimQueue"></a:support>
+											</rich:calendar>
+
 										</h:panelGroup>
 									</rich:column>
 
@@ -595,8 +596,7 @@
 
 							<s:decorate id="updateButtonField"
 								rendered="#{municipalBondHome.entry.id != null}">
-								<a:commandButton 
-									reRender="_itemsTable, save, messages"
+								<a:commandButton reRender="_itemsTable, save, messages"
 									action="#{municipalBondHome.buildMunicipalBonds()}"
 									value="#{messages['municipalBond.calculate']}" />
 							</s:decorate>
@@ -613,8 +613,8 @@
 				</h:panelGrid>
 
 			</a:region>
-			
-			
+
+
 
 			<g:municipalBondItemsTable
 				municipalBondItemsForView="#{municipalBondHome.municipalBonds}" />
@@ -628,13 +628,13 @@
 				<h:commandButton id="save2" value="#{messages['common.emit']}"
 					action="#{municipalBondHome.persist}"
 					disabled="#{(empty municipalBondHome.municipalBonds and !municipalBondHome.isEmissionValid()) or municipalBondHome.entry.id == null }"
-					rendered="#{!municipalBondHome.managed and municipalBondHome.entry.id == '8'}" 
+					rendered="#{!municipalBondHome.managed and municipalBondHome.entry.id == '8'}"
 					actionListener="#{businessHome.settle()}" />
-					
+
 				<h:commandButton id="save3" value="#{messages['common.emit']}"
 					action="#{municipalBondHome.persist}"
 					disabled="#{(empty municipalBondHome.municipalBonds and !municipalBondHome.isEmissionValid()) or municipalBondHome.entry.id == null }"
-					rendered="#{!municipalBondHome.managed and municipalBondHome.entry.id == '2'}" 
+					rendered="#{!municipalBondHome.managed and municipalBondHome.entry.id == '2'}"
 					actionListener="#{businessHome.settle2()}" />
 
 				<h:commandButton id="cancelAdd" value="#{messages['common.cancel']}"
@@ -643,8 +643,7 @@
 
 				<s:button id="backEmissionOrderEdit"
 					value="#{messages['common.back']}" propagation="end"
-					bypassDisabled="true"
-					view="/revenue/#{municipalBondFrom}.xhtml"
+					bypassDisabled="true" view="/revenue/#{municipalBondFrom}.xhtml"
 					rendered="#{municipalBondHome.managed and emissionOrderId != null}">
 					<f:param name="emissionOrderId" value="#{emissionOrderId}" />
 				</s:button>

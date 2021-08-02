@@ -47,8 +47,17 @@ public class MunicipalBondDataModel extends PageableDataModel<MunicipalBond, Lon
 	private Boolean future = Boolean.FALSE;
 	private Date now;
 	private Boolean bondsWasInAgreement = Boolean.FALSE;
+	private Boolean isSelected = Boolean.FALSE;
 	
 	
+	public Boolean getIsSelected() {
+		return isSelected;
+	}
+
+	public void setIsSelected(Boolean isSelected) {
+		this.isSelected = isSelected;
+	}
+
 	public MunicipalBondDataModel() {
 		initializeService();
 	}
@@ -68,7 +77,13 @@ public class MunicipalBondDataModel extends PageableDataModel<MunicipalBond, Lon
 	public List<MunicipalBond> findObjects(int firstRow, int numberOfRows,
 			String sortField, boolean descending) {
 		if(future){
-			return municipalBondService.findMunicipalBonds(residentId, entryId, municipalBondStatusId, firstRow, numberOfRows);
+			List<MunicipalBond> bonds = municipalBondService.findMunicipalBonds(residentId, entryId, municipalBondStatusId, firstRow, numberOfRows);
+			if(this.isSelected){
+				for(MunicipalBond mb : bonds){
+					mb.setIsSelected(true);
+				}
+			}
+			return bonds;
 		}
 		else{
 			return municipalBondService.findMunicipalBonds(residentId, entryId, startDate, endDate, municipalBondStatusId, firstRow, numberOfRows, municipalBondNumber, bondsWasInAgreement);
@@ -122,7 +137,7 @@ public class MunicipalBondDataModel extends PageableDataModel<MunicipalBond, Lon
 	}
 	
 
-	public void setCriteria(Long residentId, Long entryId, Date startDate, Date endDate, Long municipalBondStatusId, Long municipalBondNumber, Boolean bondsWasInAgreement){
+	public void setCriteria(Long residentId, Long entryId, Date startDate, Date endDate, Long municipalBondStatusId, Long municipalBondNumber, Boolean bondsWasInAgreement, Boolean isSelected){
 		this.residentId = residentId;
 		this.entryId = entryId;
 		this.startDate = startDate;
@@ -132,9 +147,11 @@ public class MunicipalBondDataModel extends PageableDataModel<MunicipalBond, Lon
 		this.future = Boolean.FALSE;
 		this.now = null;
 		this.bondsWasInAgreement = bondsWasInAgreement;
+		this.isSelected = isSelected;
+		// System.out.println("MunicipalBondDataModel.......... "+this.isSelected);
 	}
 	
-	public void setCriteria(Long residentId, Long entryId, Long municipalBondStatusId, Boolean future){
+	public void setCriteria(Long residentId, Long entryId, Long municipalBondStatusId, Boolean future, Boolean isSelected){
 		this.residentId = residentId;
 		this.entryId = entryId;
 		this.startDate = null;
@@ -143,6 +160,9 @@ public class MunicipalBondDataModel extends PageableDataModel<MunicipalBond, Lon
 		this.municipalBondNumber = null;
 		this.future = future;
 		this.now = null;
+		
+		this.isSelected = isSelected;
+		// System.out.println("MunicipalBondDataModel  2 constr.......... "+this.isSelected);
 	}
 	
 	public List<MunicipalBond> getMunicipalBonds(){
