@@ -19,7 +19,8 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.1
  * 
  */
-@WebServiceClient(name = "InfractionWSV2Service", targetNamespace = "http://middleapp.loja.gob.ec/", wsdlLocation = "http://10.200.12.106:8084/middleApp-1.0-SNAPSHOT/InfractionWSV2?wsdl")
+//@WebServiceClient(name = "InfractionWSV2Service", targetNamespace = "http://middleapp.loja.gob.ec/", wsdlLocation = "http://190.214.31.163:8084/middleApp-1.0-SNAPSHOT/InfractionWSV2?wsdl")
+@WebServiceClient(name = "InfractionWSV2Service", targetNamespace = "http://middleapp.loja.gob.ec/", wsdlLocation = "file:/opt/wsdl/InfractionWSV2.wsdl")
 public class InfractionWSV2Service
     extends Service
 {
@@ -32,13 +33,14 @@ public class InfractionWSV2Service
         try {
             URL baseUrl;
             baseUrl = ec.gob.loja.middleapp.InfractionWSV2Service.class.getResource(".");
-            url = new URL(baseUrl, "http://10.200.12.106:8084/middleApp-1.0-SNAPSHOT/InfractionWSV2?wsdl");
-            URL clone_url = new URL(url.toString());
-            HttpURLConnection clone_urlconnection = (HttpURLConnection) clone_url.openConnection();
-            // TimeOut settings
-            clone_urlconnection.setConnectTimeout(10000);
-            clone_urlconnection.setReadTimeout(10000);
-            url = clone_urlconnection.getURL();
+//            url = new URL(baseUrl, "http://10.200.12.106:8084/middleApp-1.0-SNAPSHOT/InfractionWSV2?wsdl");
+            url = new URL(baseUrl, "file:/opt/wsdl/InfractionWSV2.wsdl");
+//            URL clone_url = new URL(url.toString());
+//            HttpURLConnection clone_urlconnection = (HttpURLConnection) clone_url.openConnection();
+//            // TimeOut settings
+//            clone_urlconnection.setConnectTimeout(10000);
+//            clone_urlconnection.setReadTimeout(10000);
+//            url = clone_urlconnection.getURL();
         } catch (MalformedURLException e) {
             logger.warning("Failed to create URL for the wsdl Location: 'http://10.200.12.106:8084/middleApp-1.0-SNAPSHOT/InfractionWSV2?wsdl', retrying as a local file");
             logger.warning(e.getMessage());
