@@ -6,6 +6,8 @@ import javax.ejb.Local;
 
 import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.DTO.EmissionOrderDTO;
+import ec.gob.gim.revenue.model.criteria.EmissionOrderSearchCriteria;
 import ec.gob.gim.security.model.User;
 
 @Local
@@ -23,5 +25,8 @@ public interface EmissionOrderService{
 	
 	EmissionOrder update(EmissionOrder emissionOrder) throws Exception;
 	
+	EmissionOrder findById(Long id);
+	
+	List<EmissionOrderDTO> searchOrders(EmissionOrderSearchCriteria criteria);
 	
 }

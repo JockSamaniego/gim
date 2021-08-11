@@ -51,7 +51,6 @@ import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.action.AgreementType;
 import org.gob.gim.income.service.TaxRateService;
 import org.gob.gim.income.service.TaxService;
-
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.view.EntryValueItem;
 
@@ -123,14 +122,15 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	// No realizar el calculo de interes para instituciones publicas
 	public static final String COLLECT_INTEREST_PUBLIC_COMPANY = "INTEREST_PUBLIC_COMPANY_EQ_CERO";
 
-	private static final String COUNT_EJBQL = "SELECT count(municipalBond) " + "FROM MunicipalBond municipalBond "
-			+ " WHERE ";
+	private static final String COUNT_EJBQL = "SELECT count(municipalBond) "
+			+ "FROM MunicipalBond municipalBond " + " WHERE ";
 
-	private static final String EJBQL = "SELECT municipalBond " + "FROM MunicipalBond municipalBond "
+	private static final String EJBQL = "SELECT municipalBond "
+			+ "FROM MunicipalBond municipalBond "
 			+ "LEFT JOIN FETCH municipalBond.resident resident "
 			+ "LEFT JOIN FETCH municipalBond.municipalBondStatus municipalBondStatus "
-			+ "LEFT JOIN FETCH municipalBond.entry entry " + "LEFT JOIN FETCH municipalBond.receipt receipt "
-			+ " WHERE ";
+			+ "LEFT JOIN FETCH municipalBond.entry entry "
+			+ "LEFT JOIN FETCH municipalBond.receipt receipt " + " WHERE ";
 
 	private static String JOIN_CLAUSE = " AND ";
 
@@ -146,23 +146,26 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public List<MunicipalBond> findPendingsByGroupingCode(String groupingCode) {
 		Map<String, Object> parameters = new LinkedHashMap<String, Object>();
-		Long PENDING_STATUS_ID = systemParameterService.findParameter(PENDING_BOND_STATUS);
+		Long PENDING_STATUS_ID = systemParameterService
+				.findParameter(PENDING_BOND_STATUS);
 		parameters.put("groupingCode", groupingCode);
 		parameters.put("statusId", PENDING_STATUS_ID);
-		List<MunicipalBond> list = crudService.findWithNamedQuery("MunicipalBond.findByStatusIdAndGroupingCode",
-				parameters);
+		List<MunicipalBond> list = crudService.findWithNamedQuery(
+				"MunicipalBond.findByStatusIdAndGroupingCode", parameters);
 		return list;
 	}
 
-	public MunicipalBond findByResidentIdAndEntryIdAndServiceDateAndGroupingCode(Long residentId, Long entryId,
-			Date serviceDate, String groupingCode) {
+	public MunicipalBond findByResidentIdAndEntryIdAndServiceDateAndGroupingCode(
+			Long residentId, Long entryId, Date serviceDate, String groupingCode) {
 		Map<String, Object> parameters = new LinkedHashMap<String, Object>();
 		parameters.put("residentId", residentId);
 		parameters.put("entryId", entryId);
 		parameters.put("serviceDate", serviceDate);
 		parameters.put("groupingCode", groupingCode);
-		List<?> list = crudService.findWithNamedQuery(
-				"MunicipalBond.findByResidentIdAndEntryIdAndServiceDateAndGroupingCode", parameters);
+		List<?> list = crudService
+				.findWithNamedQuery(
+						"MunicipalBond.findByResidentIdAndEntryIdAndServiceDateAndGroupingCode",
+						parameters);
 		if (list != null && list.size() > 0)
 			return (MunicipalBond) list.get(0);
 		return null;
@@ -175,9 +178,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		return now.getTime();
 	}
 
-	public MunicipalBond createInstance(Resident resident, FiscalPeriod fiscalPeriod, Entry entry, BigDecimal base,
-			Date creationDate, Date emissionDate, Date serviceDate, Date expirationDate, String reference,
-			String description, TaxpayerRecord institution) {
+	public MunicipalBond createInstance(Resident resident,
+			FiscalPeriod fiscalPeriod, Entry entry, BigDecimal base,
+			Date creationDate, Date emissionDate, Date serviceDate,
+			Date expirationDate, String reference, String description,
+			TaxpayerRecord institution) {
 
 		if (institution == null)
 			institution = findTaxpayerRecord(entry.getId());
@@ -204,8 +209,10 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		return municipalBond;
 	}
 
-	public MunicipalBond createMunicipalBond(Resident resident, FiscalPeriod fiscalPeriod, Entry entry,
-			EntryValueItem entryValueItem, boolean isEmission, boolean applyDiscounts, Object... facts)
+	public MunicipalBond createMunicipalBond(Resident resident,
+			FiscalPeriod fiscalPeriod, Entry entry,
+			EntryValueItem entryValueItem, boolean isEmission,
+			boolean applyDiscounts, Object... facts)
 			throws EntryDefinitionNotFoundException {
 
 		Date now = Calendar.getInstance().getTime();
@@ -219,49 +226,59 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		Date expirationDate = null;
 		boolean aux = false;
 		if (entryValueItem.getExpirationDate() == null) {
-			expirationDate = calculateExpirationDate(serviceDate, entry.getTimePeriod().getDaysNumber());
+			expirationDate = calculateExpirationDate(serviceDate, entry
+					.getTimePeriod().getDaysNumber());
 		} else {
 			aux = true;
 			expirationDate = entryValueItem.getExpirationDate();
 		}
 
-		MunicipalBond municipalBond = createInstance(resident, fiscalPeriod, entry, base, creationDate, emissionDate,
-				serviceDate, expirationDate, reference, description, null);
+		MunicipalBond municipalBond = createInstance(resident, fiscalPeriod,
+				entry, base, creationDate, emissionDate, serviceDate,
+				expirationDate, reference, description, null);
 
 		municipalBond.setIsExpirationDateDefined(aux);
 		municipalBond.setExempt(entryValueItem.isExempt());
 		municipalBond.setInternalTramit(entryValueItem.getInternalTramit());
 		municipalBond.setPreviousPayment(entryValueItem.getPreviousPayment());
 		municipalBond.setIsNoPasiveSubject(entryValueItem.isNoPasiveSubject());
-		municipalBond.setPreviousPayment(
-				entryValueItem.getPreviousPayment() != null ? entryValueItem.getPreviousPayment() : BigDecimal.ZERO);
-		createItemsToMunicipalBond(municipalBond, entryValueItem, true, isEmission, facts);
+		municipalBond
+				.setPreviousPayment(entryValueItem.getPreviousPayment() != null ? entryValueItem
+						.getPreviousPayment() : BigDecimal.ZERO);
+		createItemsToMunicipalBond(municipalBond, entryValueItem, true,
+				isEmission, facts);
 		if (aux)
 			municipalBond.setExpirationDate(expirationDate);
-		calculatePayment(municipalBond, now, null, true, isEmission, applyDiscounts, null, facts);
+		calculatePayment(municipalBond, now, null, true, isEmission,
+				applyDiscounts, null, facts);
 		return municipalBond;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	// 1 desde vista cajer@
-	public void calculatePayment(MunicipalBond municipalBond, Date paymentDate, Deposit deposit, boolean isNew,
-			boolean isEmission, boolean applyDiscounts, List<TaxRate> taxRatesActives, Object... facts)
-			throws EntryDefinitionNotFoundException {
+	public void calculatePayment(MunicipalBond municipalBond, Date paymentDate,
+			Deposit deposit, boolean isNew, boolean isEmission,
+			boolean applyDiscounts, List<TaxRate> taxRatesActives,
+			Object... facts) throws EntryDefinitionNotFoundException {
 
 		// System.out.println("<<<R>>>calculatePayment: \n\n\n\n\n");
 		this.metadataDto = new MetadataBondDTO();
-//		Map<String, Object>cases = compareCases(municipalBond.getExpirationDate(),municipalBond.getSurcharge(), paymentDate, municipalBond, completePayment);
-//		BigDecimal newSurharged	 = (BigDecimal)cases.get("nuevoValor");
-//		municipalBond.setSurcharge(newSurharged);
+		// Map<String, Object>cases =
+		// compareCases(municipalBond.getExpirationDate(),municipalBond.getSurcharge(),
+		// paymentDate, municipalBond, completePayment);
+		// BigDecimal newSurharged = (BigDecimal)cases.get("nuevoValor");
+		// municipalBond.setSurcharge(newSurharged);
 
 		if (!isNew) {
 			EntryValueItem entryValueItem = new EntryValueItem();
 			entryValueItem.setMainValue(municipalBond.getBase());
 			entryValueItem.setServiceDate(municipalBond.getServiceDate());
-			entryValueItem.setAmount(municipalBond.getItems().get(0).getAmount());
+			entryValueItem.setAmount(municipalBond.getItems().get(0)
+					.getAmount());
 			entryValueItem.setInternalTramit(municipalBond.getInternalTramit());
-			createItemsToMunicipalBond(municipalBond, entryValueItem, isNew, isEmission, facts);
+			createItemsToMunicipalBond(municipalBond, entryValueItem, isNew,
+					isEmission, facts);
 		}
 		createTaxItems(municipalBond, paymentDate, taxRatesActives);
 		municipalBond.calculateValue();
@@ -278,21 +295,25 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		roundItems(municipalBond);
 
 		// TODO-REMISION
-//		Map<String, Object> cases = compareCases(municipalBond.getExpirationDate(),municipalBond.getSurcharge(), paymentDate, municipalBond);
-//		BigDecimal newSurharged	 = (BigDecimal)cases.get("nuevoValor");
-//		municipalBond.setSurcharge(newSurharged);
+		// Map<String, Object> cases =
+		// compareCases(municipalBond.getExpirationDate(),municipalBond.getSurcharge(),
+		// paymentDate, municipalBond);
+		// BigDecimal newSurharged = (BigDecimal)cases.get("nuevoValor");
+		// municipalBond.setSurcharge(newSurharged);
 		// todo armar JSON y setear
 
 		String json = "";
 
 		try {
-			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			ObjectWriter ow = new ObjectMapper().writer()
+					.withDefaultPrettyPrinter();
 			json = ow.writeValueAsString(this.metadataDto);
 
 			// fijar los datos para la impresion, valores transient
 			// macartuche 2018-10-25
 			municipalBond.setInterestRemission(this.metadataDto.getInterest());
-			municipalBond.setSurchargeRemission(this.metadataDto.getSurcharge());
+			municipalBond
+					.setSurchargeRemission(this.metadataDto.getSurcharge());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -320,26 +341,32 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		municipalBond.setPaidTotal(paidTotal);
 	}
 
-	private List<AuxCreateItem> findByStructuresType(MunicipalBond mb, Date serviceDate,
-			EntryStructureType entryStructureType, List<byte[]> rulesToApply, boolean isEmission)
+	private List<AuxCreateItem> findByStructuresType(MunicipalBond mb,
+			Date serviceDate, EntryStructureType entryStructureType,
+			List<byte[]> rulesToApply, boolean isEmission)
 			throws EntryDefinitionNotFoundException {
 
 		List<AuxCreateItem> list = new ArrayList<AuxCreateItem>();
 
 		List<EntryStructure> entryStructureChildren = this.entryService
-				.findEntryStructureChildrenByType(mb.getEntry().getId(), entryStructureType);
+				.findEntryStructureChildrenByType(mb.getEntry().getId(),
+						entryStructureType);
 
 		for (EntryStructure e : entryStructureChildren) {
 			if (e.getChild().getTimeToCalculate() == null
-					|| (e.getChild().getTimeToCalculate().equals(TimeToCalculate.IN_EMISSION) && isEmission)
-					|| (e.getChild().getTimeToCalculate().equals(TimeToCalculate.IN_PAYMENT) && !isEmission)) {
+					|| (e.getChild().getTimeToCalculate()
+							.equals(TimeToCalculate.IN_EMISSION) && isEmission)
+					|| (e.getChild().getTimeToCalculate()
+							.equals(TimeToCalculate.IN_PAYMENT) && !isEmission)) {
 				AuxCreateItem aux = new AuxCreateItem();
 				aux.setEntryStructure(e);
-				EntryDefinition edchild = this.entryService.findEntryDefinitionCurrentToEntry(e.getChild().getId(),
-						serviceDate);
+				EntryDefinition edchild = this.entryService
+						.findEntryDefinitionCurrentToEntry(
+								e.getChild().getId(), serviceDate);
 				aux.setCurrentEntryDefinition(edchild);
 				aux.setEntryStructureType(entryStructureType);
-				if (edchild != null && edchild.getEntryDefinitionType() == EntryDefinitionType.RULE) {
+				if (edchild != null
+						&& edchild.getEntryDefinitionType() == EntryDefinitionType.RULE) {
 					rulesToApply.add(edchild.getRule().getBytes());
 				}
 				list.add(aux);
@@ -348,25 +375,30 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		return list;
 	}
 
-	private void addOnlyChildrenItems(MunicipalBond mb, Date serviceDate, List<AuxCreateItem> aux, List<Item> itemFacts,
-			boolean isEmission, Boolean internalTramit) throws EntryDefinitionNotFoundException {
+	private void addOnlyChildrenItems(MunicipalBond mb, Date serviceDate,
+			List<AuxCreateItem> aux, List<Item> itemFacts, boolean isEmission,
+			Boolean internalTramit) throws EntryDefinitionNotFoundException {
 
 		for (AuxCreateItem ac : aux) {
 			if (ac.getEntryStructure().getChild().getTimeToCalculate() == null
-					|| (ac.getEntryStructure().getChild().getTimeToCalculate().equals(TimeToCalculate.IN_EMISSION)
-							&& isEmission)
-					|| (ac.getEntryStructure().getChild().getTimeToCalculate().equals(TimeToCalculate.IN_PAYMENT)
-							&& !isEmission)) {
+					|| (ac.getEntryStructure().getChild().getTimeToCalculate()
+							.equals(TimeToCalculate.IN_EMISSION) && isEmission)
+					|| (ac.getEntryStructure().getChild().getTimeToCalculate()
+							.equals(TimeToCalculate.IN_PAYMENT) && !isEmission)) {
 
 				EntryDefinition edchild = ac.getCurrentEntryDefinition();
-				internalTramit = (internalTramit == null) ? false : internalTramit;
-				Boolean emitOnInternal = (edchild.getEntry().getEmitOnInternal() == null ? false
-						: edchild.getEntry().getEmitOnInternal());
+				internalTramit = (internalTramit == null) ? false
+						: internalTramit;
+				Boolean emitOnInternal = (edchild.getEntry()
+						.getEmitOnInternal() == null ? false : edchild
+						.getEntry().getEmitOnInternal());
 
 				if (!internalTramit || (internalTramit && emitOnInternal)) {
 					Item saved = containItem(mb, edchild.getEntry());
-					saved = buildItem(edchild, new EntryValueItem(), ac.getEntryStructure().getChild().getIsTaxable(),
-							ac.getEntryStructure().getTargetEntry(), null, itemFacts, saved, false);
+					saved = buildItem(edchild, new EntryValueItem(), ac
+							.getEntryStructure().getChild().getIsTaxable(), ac
+							.getEntryStructure().getTargetEntry(), null,
+							itemFacts, saved, false);
 					saved.setEntry(edchild.getEntry());
 					addItem(mb, saved, ac.getEntryStructureType());
 					// System.out.println("LXGK -----> ITEM ADDED");
@@ -375,32 +407,41 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		}
 	}
 
-	private void addChildrenItems(MunicipalBond municipalBond, Date serviceDate, EntryStructureType entryStructureType,
-			List<byte[]> rulesToApply, List<Item> itemFacts, boolean isEmission, Boolean internalTramit)
+	private void addChildrenItems(MunicipalBond municipalBond,
+			Date serviceDate, EntryStructureType entryStructureType,
+			List<byte[]> rulesToApply, List<Item> itemFacts,
+			boolean isEmission, Boolean internalTramit)
 			throws EntryDefinitionNotFoundException {
 		// System.out.println("LXGK -----> "+entryStructureType);
 		List<EntryStructure> entryStructureChildren = this.entryService
-				.findEntryStructureChildrenByType(municipalBond.getEntry().getId(), entryStructureType);
+				.findEntryStructureChildrenByType(municipalBond.getEntry()
+						.getId(), entryStructureType);
 		// System.out.println("LXGK -----> "+(entryStructureChildren!=null ?
 		// entryStructureChildren.size() : "Null"));
 		for (EntryStructure e : entryStructureChildren) {
 			if (e.getChild().getTimeToCalculate() == null
-					|| (e.getChild().getTimeToCalculate().equals(TimeToCalculate.IN_EMISSION) && isEmission)
-					|| (e.getChild().getTimeToCalculate().equals(TimeToCalculate.IN_PAYMENT) && !isEmission)) {
-				EntryDefinition edchild = this.entryService.findEntryDefinitionCurrentToEntry(e.getChild().getId(),
-						serviceDate);
-				internalTramit = (internalTramit == null) ? false : internalTramit;
-				Boolean emitOnInternal = (edchild.getEntry().getEmitOnInternal() == null ? false
-						: edchild.getEntry().getEmitOnInternal());
+					|| (e.getChild().getTimeToCalculate()
+							.equals(TimeToCalculate.IN_EMISSION) && isEmission)
+					|| (e.getChild().getTimeToCalculate()
+							.equals(TimeToCalculate.IN_PAYMENT) && !isEmission)) {
+				EntryDefinition edchild = this.entryService
+						.findEntryDefinitionCurrentToEntry(
+								e.getChild().getId(), serviceDate);
+				internalTramit = (internalTramit == null) ? false
+						: internalTramit;
+				Boolean emitOnInternal = (edchild.getEntry()
+						.getEmitOnInternal() == null ? false : edchild
+						.getEntry().getEmitOnInternal());
 				if (!internalTramit || (internalTramit && emitOnInternal)) {
 					Item saved = containItem(municipalBond, edchild.getEntry());
-					saved = buildItem(edchild, new EntryValueItem(), e.getChild().getIsTaxable(), e.getTargetEntry(),
+					saved = buildItem(edchild, new EntryValueItem(), e
+							.getChild().getIsTaxable(), e.getTargetEntry(),
 							rulesToApply, itemFacts, saved, true);
 
 					// TODO-REMISION
-//					if(saved.getSurchargedBond()!=null) {
-//						saved.setTotal(municipalBond.getSurcharge());
-//					}
+					// if(saved.getSurchargedBond()!=null) {
+					// saved.setTotal(municipalBond.getSurcharge());
+					// }
 					saved.setEntry(edchild.getEntry());
 					addItem(municipalBond, saved, entryStructureType);
 					// System.out.println("LXGK -----> ITEM ADDED");
@@ -409,32 +450,41 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		}
 	}
 
-	public MunicipalBond addChildrenItem(MunicipalBond municipalBond, Date serviceDate,
-			EntryStructureType entryStructureType, boolean isEmission, Boolean internalTramit, BigDecimal value)
+	public MunicipalBond addChildrenItem(MunicipalBond municipalBond,
+			Date serviceDate, EntryStructureType entryStructureType,
+			boolean isEmission, Boolean internalTramit, BigDecimal value)
 			throws EntryDefinitionNotFoundException {
 		// System.out.println("LXGK -----> "+entryStructureType);
 		List<EntryStructure> entryStructureChildren = this.entryService
-				.findEntryStructureChildrenByType(municipalBond.getEntry().getId(), entryStructureType);
+				.findEntryStructureChildrenByType(municipalBond.getEntry()
+						.getId(), entryStructureType);
 		// System.out.println("LXGK -----> "+(entryStructureChildren!=null ?
 		// entryStructureChildren.size() : "Null"));
 		for (EntryStructure e : entryStructureChildren) {
 			if (e.getChild().getTimeToCalculate() == null
-					|| (e.getChild().getTimeToCalculate().equals(TimeToCalculate.IN_EMISSION) && isEmission)
-					|| (e.getChild().getTimeToCalculate().equals(TimeToCalculate.IN_PAYMENT) && !isEmission)) {
-				EntryDefinition edchild = this.entryService.findEntryDefinitionCurrentToEntry(e.getChild().getId(),
-						serviceDate);
-				internalTramit = (internalTramit == null) ? false : internalTramit;
-				Boolean emitOnInternal = (edchild.getEntry().getEmitOnInternal() == null ? false
-						: edchild.getEntry().getEmitOnInternal());
+					|| (e.getChild().getTimeToCalculate()
+							.equals(TimeToCalculate.IN_EMISSION) && isEmission)
+					|| (e.getChild().getTimeToCalculate()
+							.equals(TimeToCalculate.IN_PAYMENT) && !isEmission)) {
+				EntryDefinition edchild = this.entryService
+						.findEntryDefinitionCurrentToEntry(
+								e.getChild().getId(), serviceDate);
+				internalTramit = (internalTramit == null) ? false
+						: internalTramit;
+				Boolean emitOnInternal = (edchild.getEntry()
+						.getEmitOnInternal() == null ? false : edchild
+						.getEntry().getEmitOnInternal());
 				if (!internalTramit || (internalTramit && emitOnInternal)) {
 					Item saved = containItem(municipalBond, edchild.getEntry());
 
 					/*
-					 * EntryDefinition entryDefinition, EntryValueItem entryValueItem, Boolean
-					 * isTaxable, Entry targetEntry, List<Item> itemFacts, Item item
+					 * EntryDefinition entryDefinition, EntryValueItem
+					 * entryValueItem, Boolean isTaxable, Entry targetEntry,
+					 * List<Item> itemFacts, Item item
 					 */
 
-					saved = buildItemWithoutExecutingRules(edchild, new EntryValueItem(), e.getChild().getIsTaxable(),
+					saved = buildItemWithoutExecutingRules(edchild,
+							new EntryValueItem(), e.getChild().getIsTaxable(),
 							e.getTargetEntry(), saved, value, municipalBond);
 					saved.setEntry(edchild.getEntry());
 					addItem(municipalBond, saved, entryStructureType);
@@ -446,7 +496,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		return municipalBond;
 	}
 
-	private void addItem(MunicipalBond municipalBond, Item item, EntryStructureType entryStructureType) {
+	private void addItem(MunicipalBond municipalBond, Item item,
+			EntryStructureType entryStructureType) {
 		// System.out.println("MunicipalBondService: Added item of type
 		// "+entryStructureType.name());
 		if (entryStructureType == EntryStructureType.NORMAL) {
@@ -494,8 +545,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		return null;
 	}
 
-	public void createItemsToMunicipalBond(List<MunicipalBond> bonds, BigDecimal amount, boolean isNew,
-			boolean isEmission, boolean internalTramit) throws EntryDefinitionNotFoundException {
+	public void createItemsToMunicipalBond(List<MunicipalBond> bonds,
+			BigDecimal amount, boolean isNew, boolean isEmission,
+			boolean internalTramit) throws EntryDefinitionNotFoundException {
 
 		if (bonds == null || bonds.size() == 0)
 			return;
@@ -506,19 +558,24 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 			Entry entry = municipalBond.getEntry();
 			Long entryId = entry.getId();
-			EntryDefinition entryDefinition = this.entryService.findEntryDefinitionCurrentToEntry(entryId,
-					municipalBond.getServiceDate());
+			EntryDefinition entryDefinition = this.entryService
+					.findEntryDefinitionCurrentToEntry(entryId,
+							municipalBond.getServiceDate());
 
 			loadRuleMainItem(entryDefinition, rulesToApply);
 
-			List<AuxCreateItem> normal = findByStructuresType(municipalBond, municipalBond.getServiceDate(),
-					EntryStructureType.NORMAL, rulesToApply, isEmission);
-			List<AuxCreateItem> discount = findByStructuresType(municipalBond, municipalBond.getServiceDate(),
+			List<AuxCreateItem> normal = findByStructuresType(municipalBond,
+					municipalBond.getServiceDate(), EntryStructureType.NORMAL,
+					rulesToApply, isEmission);
+			List<AuxCreateItem> discount = findByStructuresType(municipalBond,
+					municipalBond.getServiceDate(),
 					EntryStructureType.DISCOUNT, rulesToApply, isEmission);
-			List<AuxCreateItem> surcharge = findByStructuresType(municipalBond, municipalBond.getServiceDate(),
+			List<AuxCreateItem> surcharge = findByStructuresType(municipalBond,
+					municipalBond.getServiceDate(),
 					EntryStructureType.SURCHARGE, rulesToApply, isEmission);
 
-			List<TaxRate> activeTaxRates = findActiveTaxRates(municipalBond, now);
+			List<TaxRate> activeTaxRates = findActiveTaxRates(municipalBond,
+					now);
 
 			List<MunicipalBond> bondsWithValueZero = new ArrayList<MunicipalBond>();
 
@@ -530,16 +587,20 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 					EntryValueItem entryValueItem = new EntryValueItem();
 					entryValueItem.setAmount(amount);
 					entryValueItem.setMainValue(mb.getBase());
-					Item mainItem = buildItem(entryDefinition, entryValueItem, entry.getIsTaxable(), null, rulesToApply,
+					Item mainItem = buildItem(entryDefinition, entryValueItem,
+							entry.getIsTaxable(), null, rulesToApply,
 							itemFacts, null, false);
 					mainItem.setEntry(entry);
 					mainItem.setOrderNumber(1);
 					mb.add(mainItem);
 				}
 
-				addOnlyChildrenItems(mb, mb.getServiceDate(), normal, itemFacts, isEmission, internalTramit);
-				addOnlyChildrenItems(mb, mb.getServiceDate(), discount, itemFacts, isEmission, internalTramit);
-				addOnlyChildrenItems(mb, mb.getServiceDate(), surcharge, itemFacts, isEmission, internalTramit);
+				addOnlyChildrenItems(mb, mb.getServiceDate(), normal,
+						itemFacts, isEmission, internalTramit);
+				addOnlyChildrenItems(mb, mb.getServiceDate(), discount,
+						itemFacts, isEmission, internalTramit);
+				addOnlyChildrenItems(mb, mb.getServiceDate(), surcharge,
+						itemFacts, isEmission, internalTramit);
 
 				LegalEntity legalEntity = null;
 
@@ -548,20 +609,24 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				if (resident instanceof LegalEntity)
 					legalEntity = ((LegalEntity) resident);
 
-				invokeRules(mb, rulesToApply, itemFacts, mb.getAdjunct(), legalEntity);
+				invokeRules(mb, rulesToApply, itemFacts, mb.getAdjunct(),
+						legalEntity);
 				roundItems(mb);
 				mb.setDiscount(calculateDiscount(mb));
 				mb.setSurcharge(calculateSurcharge(mb));
 				mb.calculateValue();
-				if (isNew && mb.getPreviousPayment() != null
+				if (isNew
+						&& mb.getPreviousPayment() != null
 						&& mb.getPreviousPayment().compareTo(BigDecimal.ZERO) > 0) {
 					BigDecimal cienBd = new BigDecimal(100);
 					for (Item i : mb.getItems()) {
 						BigDecimal percent = new BigDecimal(0.0);
-						percent = i.getTotal().multiply(cienBd).divide(mb.getValue(), RoundingMode.HALF_EVEN);
+						percent = i.getTotal().multiply(cienBd)
+								.divide(mb.getValue(), RoundingMode.HALF_EVEN);
 						BigDecimal difference = new BigDecimal(0.0);
-						difference = mb.getPreviousPayment().multiply(percent).divide(cienBd).setScale(2,
-								RoundingMode.HALF_EVEN);
+						difference = mb.getPreviousPayment().multiply(percent)
+								.divide(cienBd)
+								.setScale(2, RoundingMode.HALF_EVEN);
 						if (difference.compareTo(i.getTotal()) <= 0) {
 							i.setTotal(i.getTotal().subtract(difference));
 						}
@@ -571,7 +636,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 					// mainItem.setTotal(mainItem.getTotal().subtract(mb.getPreviousPayment()));
 				}
 
-				calculatePayment(mb, now, null, true, isEmission, true, activeTaxRates, itemFacts);
+				calculatePayment(mb, now, null, true, isEmission, true,
+						activeTaxRates, itemFacts);
 
 				if (mb.getPaidTotal().compareTo(BigDecimal.ZERO) < 1) {
 					bondsWithValueZero.add(mb);
@@ -588,16 +654,19 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Exemption> findExemptionsByFiscalPeriod(Long fiscalPeriodId, Date fromDate, Date untilDate) {
-		Query query = entityManager.createNamedQuery("Exemption.findByFiscalPeriodAndActiveAndDate");
+	public List<Exemption> findExemptionsByFiscalPeriod(Long fiscalPeriodId,
+			Date fromDate, Date untilDate) {
+		Query query = entityManager
+				.createNamedQuery("Exemption.findByFiscalPeriodAndActiveAndDate");
 		query.setParameter("fiscalPeriodId", fiscalPeriodId);
 		query.setParameter("start", fromDate);
 		query.setParameter("end", untilDate);
 		return query.getResultList();
 	}
 
-	public void changeExemptionInMunicipalBond(MunicipalBond municipalBond, boolean isNew, boolean isEmission,
-			Object... facts) throws EntryDefinitionNotFoundException {
+	public void changeExemptionInMunicipalBond(MunicipalBond municipalBond,
+			boolean isNew, boolean isEmission, Object... facts)
+			throws EntryDefinitionNotFoundException {
 		if (municipalBond.getEntry() != null) {
 
 			List<byte[]> rulesToApply = new ArrayList<byte[]>();
@@ -610,14 +679,16 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			// Crea item principal
 			Entry entry = municipalBond.getEntry();
 			Long entryId = entry.getId();
-			EntryDefinition entryDefinition = this.entryService.findEntryDefinitionCurrentToEntry(entryId, serviceDate);
+			EntryDefinition entryDefinition = this.entryService
+					.findEntryDefinitionCurrentToEntry(entryId, serviceDate);
 			rulesToApply.add(entryDefinition.getRule().getBytes());
 
 			invokeRules(municipalBond, rulesToApply, itemFacts, facts);
 			roundItems(municipalBond);
 			municipalBond.setDiscount(calculateDiscount(municipalBond));
 			municipalBond.setSurcharge(calculateSurcharge(municipalBond));
-			calculatePayment(municipalBond, municipalBond.getEmisionDate(), null, false, isEmission, true, null, facts);
+			calculatePayment(municipalBond, municipalBond.getEmisionDate(),
+					null, false, isEmission, true, null, facts);
 
 			// if(isNew && municipalBond.getPreviousPayment() != null &&
 			// municipalBond.getPreviousPayment().compareTo(BigDecimal.ZERO) > 0
@@ -638,8 +709,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		}
 	}
 
-	public void createItemsToMunicipalBond(MunicipalBond municipalBond, EntryValueItem entryValueItem, boolean isNew,
-			boolean isEmission, Object... facts) throws EntryDefinitionNotFoundException {
+	public void createItemsToMunicipalBond(MunicipalBond municipalBond,
+			EntryValueItem entryValueItem, boolean isNew, boolean isEmission,
+			Object... facts) throws EntryDefinitionNotFoundException {
 		if (municipalBond.getEntry() != null) {
 
 			Date serviceDate = entryValueItem.getServiceDate();
@@ -651,22 +723,27 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			// Crea item principal
 			Entry entry = municipalBond.getEntry();
 			Long entryId = entry.getId();
-			EntryDefinition entryDefinition = this.entryService.findEntryDefinitionCurrentToEntry(entryId, serviceDate);
+			EntryDefinition entryDefinition = this.entryService
+					.findEntryDefinitionCurrentToEntry(entryId, serviceDate);
 			municipalBond.setApplyInterest(entryDefinition.getApplyInterest());
 
 			if (isNew) {
-				Item mainItem = buildItem(entryDefinition, entryValueItem, entry.getIsTaxable(), null, rulesToApply,
-						itemFacts, null, true);
+				Item mainItem = buildItem(entryDefinition, entryValueItem,
+						entry.getIsTaxable(), null, rulesToApply, itemFacts,
+						null, true);
 				mainItem.setEntry(entry);
 				mainItem.setOrderNumber(1);
 				municipalBond.add(mainItem);
 			}
 
-			addChildrenItems(municipalBond, serviceDate, EntryStructureType.NORMAL, rulesToApply, itemFacts, isEmission,
-					internalTramit);
-			addChildrenItems(municipalBond, serviceDate, EntryStructureType.DISCOUNT, rulesToApply, itemFacts,
+			addChildrenItems(municipalBond, serviceDate,
+					EntryStructureType.NORMAL, rulesToApply, itemFacts,
 					isEmission, internalTramit);
-			addChildrenItems(municipalBond, serviceDate, EntryStructureType.SURCHARGE, rulesToApply, itemFacts,
+			addChildrenItems(municipalBond, serviceDate,
+					EntryStructureType.DISCOUNT, rulesToApply, itemFacts,
+					isEmission, internalTramit);
+			addChildrenItems(municipalBond, serviceDate,
+					EntryStructureType.SURCHARGE, rulesToApply, itemFacts,
 					isEmission, internalTramit);
 
 			// Aplica las reglas
@@ -675,15 +752,22 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			municipalBond.setDiscount(calculateDiscount(municipalBond));
 			municipalBond.setSurcharge(calculateSurcharge(municipalBond));
 			municipalBond.calculateValue();
-			if (isNew && municipalBond.getPreviousPayment() != null
-					&& municipalBond.getPreviousPayment().compareTo(BigDecimal.ZERO) > 0) {
+			if (isNew
+					&& municipalBond.getPreviousPayment() != null
+					&& municipalBond.getPreviousPayment().compareTo(
+							BigDecimal.ZERO) > 0) {
 				BigDecimal cienBd = new BigDecimal(100);
 				for (Item i : municipalBond.getItems()) {
 					BigDecimal percent = new BigDecimal(0.0);
-					percent = i.getTotal().multiply(cienBd).divide(municipalBond.getValue(), RoundingMode.HALF_EVEN);
+					percent = i
+							.getTotal()
+							.multiply(cienBd)
+							.divide(municipalBond.getValue(),
+									RoundingMode.HALF_EVEN);
 					BigDecimal difference = new BigDecimal(0.0);
-					difference = municipalBond.getPreviousPayment().multiply(percent).divide(cienBd).setScale(2,
-							RoundingMode.HALF_EVEN);
+					difference = municipalBond.getPreviousPayment()
+							.multiply(percent).divide(cienBd)
+							.setScale(2, RoundingMode.HALF_EVEN);
 					if (difference.compareTo(i.getTotal()) <= 0) {
 						i.setTotal(i.getTotal().subtract(difference));
 					}
@@ -697,18 +781,19 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 	/*
 	 * public void createItemToMunicipalBond(MunicipalBond municipalBond,
-	 * EntryValueItem entryValueItem, boolean isNew, boolean isEmission, Object...
-	 * facts) throws EntryDefinitionNotFoundException { if (municipalBond.getEntry()
-	 * != null) {
+	 * EntryValueItem entryValueItem, boolean isNew, boolean isEmission,
+	 * Object... facts) throws EntryDefinitionNotFoundException { if
+	 * (municipalBond.getEntry() != null) {
 	 * 
-	 * Date serviceDate = entryValueItem.getServiceDate(); Boolean internalTramit =
-	 * entryValueItem.getInternalTramit();
+	 * Date serviceDate = entryValueItem.getServiceDate(); Boolean
+	 * internalTramit = entryValueItem.getInternalTramit();
 	 * 
 	 * List<Item> itemFacts = new ArrayList<Item>();
 	 * 
-	 * // Crea item principal Entry entry = municipalBond.getEntry(); Long entryId =
-	 * entry.getId(); EntryDefinition entryDefinition =
-	 * this.entryService.findEntryDefinitionCurrentToEntry(entryId, serviceDate);
+	 * // Crea item principal Entry entry = municipalBond.getEntry(); Long
+	 * entryId = entry.getId(); EntryDefinition entryDefinition =
+	 * this.entryService.findEntryDefinitionCurrentToEntry(entryId,
+	 * serviceDate);
 	 * municipalBond.setApplyInterest(entryDefinition.getApplyInterest());
 	 * 
 	 * if (isNew) { Item mainItem = buildItem(entryDefinition, entryValueItem,
@@ -716,8 +801,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	 * mainItem.setEntry(entry); mainItem.setOrderNumber(1);
 	 * municipalBond.add(mainItem); }
 	 * 
-	 * addChildrenItems(municipalBond, serviceDate, EntryStructureType.SURCHARGE,
-	 * rulesToApply, itemFacts, isEmission, internalTramit);
+	 * addChildrenItems(municipalBond, serviceDate,
+	 * EntryStructureType.SURCHARGE, rulesToApply, itemFacts, isEmission,
+	 * internalTramit);
 	 * 
 	 * // Aplica las reglas invokeRules(municipalBond, rulesToApply, itemFacts,
 	 * facts); roundItems(municipalBond);
@@ -727,13 +813,14 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	 * municipalBond.getPreviousPayment() != null &&
 	 * municipalBond.getPreviousPayment().compareTo(BigDecimal.ZERO) > 0) {
 	 * BigDecimal cienBd = new BigDecimal(100); for (Item i :
-	 * municipalBond.getItems()) { BigDecimal percent = new BigDecimal(0.0); percent
-	 * = i.getTotal().multiply(cienBd).divide(municipalBond.getValue(),
+	 * municipalBond.getItems()) { BigDecimal percent = new BigDecimal(0.0);
+	 * percent = i.getTotal().multiply(cienBd).divide(municipalBond.getValue(),
 	 * RoundingMode.HALF_EVEN); BigDecimal difference = new BigDecimal(0.0);
 	 * difference =
 	 * municipalBond.getPreviousPayment().multiply(percent).divide(cienBd
-	 * ).setScale(2, RoundingMode.HALF_EVEN); if (difference.compareTo(i.getTotal())
-	 * <= 0) { i.setTotal(i.getTotal().subtract(difference)); } }
+	 * ).setScale(2, RoundingMode.HALF_EVEN); if
+	 * (difference.compareTo(i.getTotal()) <= 0) {
+	 * i.setTotal(i.getTotal().subtract(difference)); } }
 	 * 
 	 * // Item mainItem = municipalBond.getItems().get(0); //
 	 * mainItem.setTotal(mainItem
@@ -746,8 +833,10 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		}
 	}
 
-	private void loadRuleMainItem(EntryDefinition entryDefinition, List<byte[]> rulesToApply) {
-		if (entryDefinition != null && entryDefinition.getEntryDefinitionType() == EntryDefinitionType.RULE) {
+	private void loadRuleMainItem(EntryDefinition entryDefinition,
+			List<byte[]> rulesToApply) {
+		if (entryDefinition != null
+				&& entryDefinition.getEntryDefinitionType() == EntryDefinitionType.RULE) {
 			rulesToApply.add(entryDefinition.getRule().getBytes());
 		}
 	}
@@ -762,13 +851,16 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	 * @param targetEntry
 	 * @return
 	 */
-	private Item buildItem(EntryDefinition entryDefinition, EntryValueItem entryValueItem, Boolean isTaxable,
-			Entry targetEntry, List<byte[]> rulesToApply, List<Item> itemFacts, Item item, boolean addRules) {
+	private Item buildItem(EntryDefinition entryDefinition,
+			EntryValueItem entryValueItem, Boolean isTaxable,
+			Entry targetEntry, List<byte[]> rulesToApply, List<Item> itemFacts,
+			Item item, boolean addRules) {
 		Entry entry = entryDefinition.getEntry();
 		BigDecimal amount = entryValueItem.getAmount();
 		BigDecimal value = entryValueItem.getMainValue();
 		if (entryValueItem.getResetValue()) {
-			if (entry.getIsValueEditable() != null && entry.getIsValueEditable()) {
+			if (entry.getIsValueEditable() != null
+					&& entry.getIsValueEditable()) {
 				amount = BigDecimal.ONE;
 			} else {
 				if (entry.getIsAmountEditable()) {
@@ -802,7 +894,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				item.setIsTaxable(isTaxable);
 			}
 
-			if (entryDefinition != null && entryDefinition.getEntryDefinitionType() == EntryDefinitionType.RULE) {
+			if (entryDefinition != null
+					&& entryDefinition.getEntryDefinitionType() == EntryDefinitionType.RULE) {
 				if (addRules)
 					rulesToApply.add(entryDefinition.getRule().getBytes());
 				itemFacts.add(item);
@@ -811,7 +904,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			} else {
 				BigDecimal entryDefinitionValue = entryDefinition.getValue();
 				BigDecimal factor = new BigDecimal(entryDefinition.getFactor());
-				BigDecimal calculatedValue = value.multiply(entryDefinitionValue).divide(factor);
+				BigDecimal calculatedValue = value.multiply(
+						entryDefinitionValue).divide(factor);
 				BigDecimal total = amount.multiply(calculatedValue);
 				item.setTotal(total.setScale(2, RoundingMode.HALF_UP));
 				item.setValue(calculatedValue.setScale(2, RoundingMode.HALF_UP));
@@ -833,20 +927,25 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				item.setIsTaxable(isTaxable);
 			}
 
-			item.setTotal(entryValueItem.getMainValue().setScale(2, RoundingMode.HALF_UP));
-			item.setValue(entryValueItem.getMainValue().setScale(2, RoundingMode.HALF_UP));
+			item.setTotal(entryValueItem.getMainValue().setScale(2,
+					RoundingMode.HALF_UP));
+			item.setValue(entryValueItem.getMainValue().setScale(2,
+					RoundingMode.HALF_UP));
 		}
 
 		return item;
 	}
 
-	private Item buildItemWithoutExecutingRules(EntryDefinition entryDefinition, EntryValueItem entryValueItem,
-			Boolean isTaxable, Entry targetEntry, Item item, BigDecimal _value, MunicipalBond municipalBond) {
+	private Item buildItemWithoutExecutingRules(
+			EntryDefinition entryDefinition, EntryValueItem entryValueItem,
+			Boolean isTaxable, Entry targetEntry, Item item, BigDecimal _value,
+			MunicipalBond municipalBond) {
 		Entry entry = entryDefinition.getEntry();
 		BigDecimal amount = entryValueItem.getAmount();
 		BigDecimal value = _value;
 		if (entryValueItem.getResetValue()) {
-			if (entry.getIsValueEditable() != null && entry.getIsValueEditable()) {
+			if (entry.getIsValueEditable() != null
+					&& entry.getIsValueEditable()) {
 				amount = BigDecimal.ONE;
 			} else {
 				if (entry.getIsAmountEditable()) {
@@ -933,7 +1032,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		return item;
 	}
 
-	private void addFact(Object object, org.drools.runtime.StatefulKnowledgeSession session) {
+	private void addFact(Object object,
+			org.drools.runtime.StatefulKnowledgeSession session) {
 		FactHandle factHandle = session.getFactHandle(object);
 		if (factHandle == null) {
 			// if(object !=
@@ -949,13 +1049,15 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	}
 
 	public void updateGroupingCode(List<Long> bondsNumbers, String groupingCode) {
-		Query q = entityManager.createNamedQuery("MunicipalBond.setGroupingCodeByBondNumber");
+		Query q = entityManager
+				.createNamedQuery("MunicipalBond.setGroupingCodeByBondNumber");
 		q.setParameter("groupingCode", groupingCode);
 		q.setParameter("bondsNumbers", bondsNumbers);
 		q.executeUpdate();
 	}
 
-	private void invokeRules(MunicipalBond municipalBond, List<byte[]> rulesToApply, List<Item> itemFacts,
+	private void invokeRules(MunicipalBond municipalBond,
+			List<byte[]> rulesToApply, List<Item> itemFacts,
 			Object... externalFacts) {
 		// System.out.println("RULES DEBUG -----> INVOKE RULES STARTS");
 
@@ -963,11 +1065,13 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		// System.out.println("RULES DEBUG -----> KnowledgeBase
 		// "+knowledgeBase);
 
-		StatefulKnowledgeSession session = knowledgeBase.newStatefulKnowledgeSession();
+		StatefulKnowledgeSession session = knowledgeBase
+				.newStatefulKnowledgeSession();
 		// System.out.println("RULES DEBUG -----> Session "+session);
 		// KnowledgeRuntimeLoggerFactory.newConsoleLogger(session);
 
-		KnowledgeBuilder knowledgeBuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+		KnowledgeBuilder knowledgeBuilder = KnowledgeBuilderFactory
+				.newKnowledgeBuilder();
 		// System.out.println("RULES DEBUG -----> KnowledgeBuilder
 		// "+knowledgeBuilder);
 
@@ -990,10 +1094,13 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				}
 
 				InputStream is = new ByteArrayInputStream(bos.toByteArray());
-				knowledgeBuilder.add(ResourceFactory.newInputStreamResource(is), ResourceType.DRL);
+				knowledgeBuilder.add(
+						ResourceFactory.newInputStreamResource(is),
+						ResourceType.DRL);
 				if (knowledgeBuilder.hasErrors()) {
 					// System.out.println("RULES DEBUG -----> WARNING: Added Rule has errors");
-					KnowledgeBuilderErrors errors = knowledgeBuilder.getErrors();
+					KnowledgeBuilderErrors errors = knowledgeBuilder
+							.getErrors();
 					Iterator<KnowledgeBuilderError> it = errors.iterator();
 					while (it.hasNext()) {
 						KnowledgeBuilderError error = it.next();
@@ -1005,7 +1112,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			// System.out.println("RULES DEBUG -----> rulesToApply
 			// "+rulesToApply+
 			// " size "+ rulesToApply.size());
-			knowledgeBase.addKnowledgePackages(knowledgeBuilder.getKnowledgePackages());
+			knowledgeBase.addKnowledgePackages(knowledgeBuilder
+					.getKnowledgePackages());
 
 			// Se recolecta todos los hechos
 			List<Object> facts = new ArrayList<Object>();
@@ -1029,7 +1137,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			if (factHandles.size() > 0) {
 				// System.out.println("RULES DEBUG -----> Firing all rules ");
 				int firedRules = session.fireAllRules();
-				// System.out.println("RULES DEBUG -----> Rules applied " + firedRules);
+				// System.out.println("RULES DEBUG -----> Rules applied " +
+				// firedRules);
 			}
 
 			for (FactHandle factHandle : factHandles) {
@@ -1053,17 +1162,19 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		BigDecimal exoneratedSurcharge = BigDecimal.ZERO;
 		for (Item i : municipalBond.getSurchargeItems()) {
 			/*
-			 * System.out.println("item: " + i); System.out.println("item total: " +
-			 * i.getTotal()); System.out.println("item total: " +
+			 * System.out.println("item: " + i);
+			 * System.out.println("item total: " + i.getTotal());
+			 * System.out.println("item total: " +
 			 * i.getEntry().getCompleteName());
 			 */
 			// TODO-REMISION
 			BigDecimal total = i.getTotal().setScale(2, RoundingMode.HALF_UP);
-			Map<String, Object> cases = compareCases(municipalBond.getExpirationDate(), total, new Date(),
+			Map<String, Object> cases = compareCases(
+					municipalBond.getExpirationDate(), total, new Date(),
 					municipalBond);
 			BigDecimal newSurharged = (BigDecimal) cases.get("nuevoValor");
 			BigDecimal exonerated = (BigDecimal) cases.get("totalExonerado");
-//			i.setTotal(i.getTotal().setScale(2, RoundingMode.HALF_UP));
+			// i.setTotal(i.getTotal().setScale(2, RoundingMode.HALF_UP));
 
 			i.setTotal(newSurharged.setScale(2, RoundingMode.HALF_UP));
 			BigDecimal aux = i.getTotal();
@@ -1086,13 +1197,15 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	}
 
 	@Override
-	public PropertyAppraisal update(PropertyAppraisal propertyAppraisalAdjunct) throws Exception {
+	public PropertyAppraisal update(PropertyAppraisal propertyAppraisalAdjunct)
+			throws Exception {
 		return crudService.update(propertyAppraisalAdjunct);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MunicipalBond> findByResidentIdAndTypeAndStatus(Long residentId, MunicipalBondType municipalBondType,
+	public List<MunicipalBond> findByResidentIdAndTypeAndStatus(
+			Long residentId, MunicipalBondType municipalBondType,
 			Long... municipalBondStatusIds) {
 
 		List<Long> statuses = Arrays.asList(municipalBondStatusIds);
@@ -1102,19 +1215,21 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		parameters.put("municipalBondType", municipalBondType);
 		parameters.put("municipalBondStatusIds", statuses);
 
-		return crudService.findWithNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus", parameters);
+		return crudService.findWithNamedQuery(
+				"MunicipalBond.findByResidentIdAndTypeAndStatus", parameters);
 	}
 
 	public TaxpayerRecord findTaxpayerRecord(Long entryId) {
-		Query query = entityManager.createNamedQuery("Issuer.findActiveTaxpayerRecordByEntryId");
+		Query query = entityManager
+				.createNamedQuery("Issuer.findActiveTaxpayerRecordByEntryId");
 		query.setParameter("entryId", entryId);
 		TaxpayerRecord taxpayerRecord = null;
 		try {
 			taxpayerRecord = (TaxpayerRecord) query.getSingleResult();
 		} catch (Exception e) {
 			/*
-			 * System.out
-			 * .println("WARNING: There is no or there is more than one active taxpayer record for entry "
+			 * System.out .println(
+			 * "WARNING: There is no or there is more than one active taxpayer record for entry "
 			 * + entryId + " selecting default issuer");
 			 */
 		}
@@ -1126,23 +1241,28 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	}
 
 	public TaxpayerRecord findDefaultInstitution() {
-		Query query = entityManager.createNamedQuery("TaxpayerRecord.findDefaultTaxpayerRecord");
+		Query query = entityManager
+				.createNamedQuery("TaxpayerRecord.findDefaultTaxpayerRecord");
 		TaxpayerRecord institution = (TaxpayerRecord) query.getSingleResult();
 		return institution;
 	}
 
-	private List<TaxRate> findActiveTaxRates(MunicipalBond municipalBond, Date paymentDate) {
-		List<Tax> taxes = taxService.findByEntryId(municipalBond.getEntry().getId());
+	private List<TaxRate> findActiveTaxRates(MunicipalBond municipalBond,
+			Date paymentDate) {
+		List<Tax> taxes = taxService.findByEntryId(municipalBond.getEntry()
+				.getId());
 		List<TaxRate> taxRatesActives = new ArrayList<TaxRate>();
 
 		for (Tax tax : taxes) {
-			taxRatesActives.addAll(taxRateService.findActiveByTaxIdAndPaymentDate(tax.getId(), paymentDate));
+			taxRatesActives.addAll(taxRateService
+					.findActiveByTaxIdAndPaymentDate(tax.getId(), paymentDate));
 		}
 
 		return taxRatesActives;
 	}
 
-	private void createTaxItems(MunicipalBond municipalBond, Date paymentDate, List<TaxRate> taxRatesActives) {
+	private void createTaxItems(MunicipalBond municipalBond, Date paymentDate,
+			List<TaxRate> taxRatesActives) {
 
 		// System.out.println(":)============== municipalBond.getItems() ==>" +
 		// municipalBond.getItems().size() + " subtotal antes: " +
@@ -1152,7 +1272,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		// iva 14% a iva12%
 		if (taxRatesActives == null) {
 			if (municipalBond.getId() == null)
-				taxes = taxService.findByEntryId(municipalBond.getEntry().getId());
+				taxes = taxService.findByEntryId(municipalBond.getEntry()
+						.getId());
 			else
 				taxes = taxService.findByMunicipalBondId(municipalBond.getId());
 		}
@@ -1161,7 +1282,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		// " subtotal: " + municipalBond.getTaxableTotal());
 		if (taxRatesActives == null) {
 			for (Tax tax : taxes) {
-				taxRatesActives = taxRateService.findActiveByTaxIdAndPaymentDate(tax.getId(), paymentDate);
+				taxRatesActives = taxRateService
+						.findActiveByTaxIdAndPaymentDate(tax.getId(),
+								paymentDate);
 				addTaxItems(municipalBond, taxRatesActives);
 			}
 		} else {
@@ -1172,13 +1295,16 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 	}
 
-	private void addTaxItems(MunicipalBond municipalBond, List<TaxRate> taxRatesActives) {
+	private void addTaxItems(MunicipalBond municipalBond,
+			List<TaxRate> taxRatesActives) {
 		for (TaxRate taxRate : taxRatesActives) {
 			TaxItem taxItem = getTaxItem(municipalBond, taxRate.getTax());
 			taxItem.setAppliedRate(taxRate.getRate());
 			taxItem.setAppliedTaxRate(taxRate);
-			taxItem.setValue(municipalBond.getTaxableTotal().multiply(taxRate.getRate()));
-			taxItem.setValue(taxItem.getValue().setScale(2, RoundingMode.HALF_UP));
+			taxItem.setValue(municipalBond.getTaxableTotal().multiply(
+					taxRate.getRate()));
+			taxItem.setValue(taxItem.getValue().setScale(2,
+					RoundingMode.HALF_UP));
 			taxItem.setTax(taxRate.getTax());
 			municipalBond.add(taxItem);
 		}
@@ -1193,14 +1319,16 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		return new TaxItem();
 	}
 
-	private List<Date> findDatesForPaidInterest(Date paymentDate, Date expirationDate) {
+	private List<Date> findDatesForPaidInterest(Date paymentDate,
+			Date expirationDate) {
 		// System.out.println("INTERESTS -----> Calculating INTEREST DATES");
 		Date truncatedPaymentDate = DateUtils.truncate(paymentDate);
 		List<Date> dates = new ArrayList<Date>();
 		if (truncatedPaymentDate.after(expirationDate)) {
 			Calendar temp = DateUtils.getTruncatedInstance(expirationDate);
 			temp.set(Calendar.DAY_OF_MONTH, 1);
-			while (truncatedPaymentDate.after(temp.getTime()) || truncatedPaymentDate.equals(temp.getTime())) {
+			while (truncatedPaymentDate.after(temp.getTime())
+					|| truncatedPaymentDate.equals(temp.getTime())) {
 				// System.out.println("INTERESTS -----> ADDED DATE
 				// "+temp.getTime());
 				dates.add(temp.getTime());
@@ -1209,15 +1337,17 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		}
 		// System.out.println("INTERESTS -----> Calculating for "+dates.size());
 		/*
-		 * Integer indexDelete = null; Date deleteDate= null; if (!dates.isEmpty()) {
-		 * Calendar cal = Calendar.getInstance(); cal.setTime(expirationDate); int
-		 * maxDayExpirationDate = cal.get(Calendar.DAY_OF_MONTH); int monthExpiration =
+		 * Integer indexDelete = null; Date deleteDate= null; if
+		 * (!dates.isEmpty()) { Calendar cal = Calendar.getInstance();
+		 * cal.setTime(expirationDate); int maxDayExpirationDate =
+		 * cal.get(Calendar.DAY_OF_MONTH); int monthExpiration =
 		 * cal.get(Calendar.MONTH); for (int i = 0; i < dates.size(); i++) {
 		 * 
 		 * Calendar aux = Calendar.getInstance(); aux.setTime(dates.get(i)); int
-		 * maxDayDate = aux.getActualMaximum(Calendar.DAY_OF_MONTH); int monthDate =
-		 * cal.get(Calendar.MONTH); if(maxDayDate == maxDayExpirationDate && monthDate
-		 * == monthExpiration){ indexDelete = i; deleteDate = dates.get(i); break; }
+		 * maxDayDate = aux.getActualMaximum(Calendar.DAY_OF_MONTH); int
+		 * monthDate = cal.get(Calendar.MONTH); if(maxDayDate ==
+		 * maxDayExpirationDate && monthDate == monthExpiration){ indexDelete =
+		 * i; deleteDate = dates.get(i); break; }
 		 * 
 		 * } }
 		 * 
@@ -1230,22 +1360,28 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	private List<InterestRate> findInterestRateByExpirationDate(Date endDate) {
 		Map<String, Date> parameters = new HashMap<String, Date>();
 		parameters.put("endDate", endDate);
-		return crudService.findWithNamedQuery("InterestRate.findByEndDateGreaterThan", parameters);
+		return crudService.findWithNamedQuery(
+				"InterestRate.findByEndDateGreaterThan", parameters);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void calculateInterest(MunicipalBond municipalBond, Deposit lastDeposit, Date paymentDate) {
+	private void calculateInterest(MunicipalBond municipalBond,
+			Deposit lastDeposit, Date paymentDate) {
 		// System.out.println("INTERESTS -----> BEGINS=============>>>>>>>>>>>>>1234");
 		BigDecimal interest = BigDecimal.ZERO;
-		BigDecimal balance = municipalBond.getBalance().subtract(municipalBond.getDiscount());
+		BigDecimal balance = municipalBond.getBalance().subtract(
+				municipalBond.getDiscount());
 
 		// System.out.println("INTERESTS -----> Apply interest?
 		// "+municipalBond.getApplyInterest());
-		if (municipalBond.getApplyInterest() != null && municipalBond.getApplyInterest()) {
+		if (municipalBond.getApplyInterest() != null
+				&& municipalBond.getApplyInterest()) {
 
-			Date expirationDate = DateUtils.truncate(municipalBond.getExpirationDate());
+			Date expirationDate = DateUtils.truncate(municipalBond
+					.getExpirationDate());
 
-			if (lastDeposit != null && lastDeposit.getDate().after(expirationDate)) {
+			if (lastDeposit != null
+					&& lastDeposit.getDate().after(expirationDate)) {
 				expirationDate = DateUtils.truncate(lastDeposit.getDate());
 			}
 
@@ -1254,7 +1390,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			if (municipalBond.getMunicipalBondStatus() != null) {
 				// poner condicion de si tiene convenio de pago
 				if (municipalBond.getPaymentAgreement() != null
-						|| municipalBond.getMunicipalBondStatus().getId().intValue() == 14) {
+						|| municipalBond.getMunicipalBondStatus().getId()
+								.intValue() == 14) {
 					// @author macartuche
 					// @date 2016-06-20T16:600:00
 					// @tag recaudacionCoactivas
@@ -1271,20 +1408,24 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 						int lastIndex = datalist.size() - 1;
 						MunicipalbondAux aux = datalist.get(lastIndex);
 						if (aux.getCoveritem() != null && !aux.getCoveritem()) {
-							expirationDate = DateUtils.truncate(municipalBond.getExpirationDate());
+							expirationDate = DateUtils.truncate(municipalBond
+									.getExpirationDate());
 							// verficar si ha habido pagos de todo
-							Query queryNewInterest = entityManager.createQuery(
-									"Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id and "
+							Query queryNewInterest = entityManager
+									.createQuery("Select ma from MunicipalbondAux ma where ma.municipalbond.id =:id and "
 											+ "ma.status=:status and ma.type=:type and ma.coveritem=:coveritem order by ma.liquidationDate desc ");
-							queryNewInterest.setParameter("id", municipalBond.getId());
+							queryNewInterest.setParameter("id",
+									municipalBond.getId());
 							queryNewInterest.setParameter("status", "VALID");
 							queryNewInterest.setParameter("type", "I");
 							queryNewInterest.setParameter("coveritem", true);
 
-							List<MunicipalbondAux> oldInterest = queryNewInterest.getResultList();
+							List<MunicipalbondAux> oldInterest = queryNewInterest
+									.getResultList();
 							if (!oldInterest.isEmpty()) {
 								MunicipalbondAux bondAux = oldInterest.get(0);
-								expirationDate = DateUtils.truncate(bondAux.getLiquidationDate());
+								expirationDate = DateUtils.truncate(bondAux
+										.getLiquidationDate());
 							}
 
 						}
@@ -1305,23 +1446,30 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			// System.out.println("INTERESTS -----> Payment date?
 			// "+expirationDate);
 
-			List<Date> datesForApplyInterest = findDatesForPaidInterest(paymentDate, expirationDate);
+			List<Date> datesForApplyInterest = findDatesForPaidInterest(
+					paymentDate, expirationDate);
 
 			if (expirationDate.before(paymentDate)) {
 				List<InterestRate> interestRateList = findInterestRateByExpirationDate(expirationDate);
 				// System.out.println("INTERESTS -----> TABLE");
 				for (InterestRate ir : interestRateList) {
-					BigDecimal appliedRate = ir.getValue().divide(new BigDecimal(12), new MathContext(10))
-							.divide(new BigDecimal(ir.getFactor()), new MathContext(12));
+					BigDecimal appliedRate = ir
+							.getValue()
+							.divide(new BigDecimal(12), new MathContext(10))
+							.divide(new BigDecimal(ir.getFactor()),
+									new MathContext(12));
 
 					for (Date d : datesForApplyInterest) {
 
-						if ((ir.getEndDate().after(d) && ir.getBeginDate().before(d)) || ir.getEndDate().equals(d)
+						if ((ir.getEndDate().after(d) && ir.getBeginDate()
+								.before(d))
+								|| ir.getEndDate().equals(d)
 								|| ir.getBeginDate().equals(d)) {
 							// System.out.println("INTERESTS -----> RATE FOR
 							// "+ir.getBeginDate()+" AND "+ir.getEndDate()+" IS
 							// "+appliedRate+" CHECKING DATE "+d);
-							BigDecimal interestValue = balance.multiply(appliedRate);
+							BigDecimal interestValue = balance
+									.multiply(appliedRate);
 							interest = interest.add(interestValue);
 							// System.out.println("Added "+interest);
 						}
@@ -1333,12 +1481,15 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 				// System.out.println("Status=============>>>>>>>>>>>>>
 				// "+municipalBond.getMunicipalBondStatus().getId());
 				// verificar si la obligacion tiene compensacion
-				MunicipalBondStatus mbs = systemParameterService.materialize(MunicipalBondStatus.class,
+				MunicipalBondStatus mbs = systemParameterService.materialize(
+						MunicipalBondStatus.class,
 						"MUNICIPAL_BOND_STATUS_ID_COMPENSATION");
 				Long statusId = mbs.getId();
 				// System.out.println("MBS ID " + statusId);
-				if (municipalBond.getMunicipalBondStatus() != null && statusId != 0) {
-					if (municipalBond.getMunicipalBondStatus().getId().longValue() == statusId.longValue()) {
+				if (municipalBond.getMunicipalBondStatus() != null
+						&& statusId != 0) {
+					if (municipalBond.getMunicipalBondStatus().getId()
+							.longValue() == statusId.longValue()) {
 						// macartuche
 						// verificar si ya se ha registrado la factura
 						// electronica
@@ -1356,10 +1507,12 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			}
 
 			// para casos de remision interes
-			Map<String, Object> cases = compareCases(expirationDate, interest, paymentDate, municipalBond);
+			Map<String, Object> cases = compareCases(expirationDate, interest,
+					paymentDate, municipalBond);
 			BigDecimal newInterest = (BigDecimal) cases.get("nuevoValor");
 
-			this.metadataDto.setInterest((BigDecimal) cases.get("totalExonerado"));
+			this.metadataDto.setInterest((BigDecimal) cases
+					.get("totalExonerado"));
 			interest = newInterest;
 		}
 
@@ -1380,10 +1533,10 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	 * 
 	 * @param expirationDate
 	 */
-	private Map<String, Object> compareCases(Date expirationDate, BigDecimal value, Date paymentDate,
-			MunicipalBond mb) {
+	private Map<String, Object> compareCases(Date expirationDate,
+			BigDecimal value, Date paymentDate, MunicipalBond mb) {
 
-//		System.out.println("NUMBER "+mb.getNumber());
+		// System.out.println("NUMBER "+mb.getNumber());
 		String case1StringRemission = "2018-04-02";
 		// dentro de 90 dias reduccion del 100%
 		String case1StringMaxPayment = "2018-12-29";
@@ -1395,7 +1548,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			expirationDate = mb.getExpirationDate();
 		}
 
-		// respuesta por defecto en caso que no se exogenere el interes o recargo
+		// respuesta por defecto en caso que no se exogenere el interes o
+		// recargo
 		Map<String, Object> responseDefault = new HashMap<String, Object>();
 		responseDefault.put("case", "0");
 		responseDefault.put("porcentajeExonerado", "0%");
@@ -1440,13 +1594,15 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		if (mb.getPaymentAgreement() != null) {
 			Object[] objects = getPaymentAgreementData(mb);
 			// aqui consultar de acuerdo al convenio
-			// si no es pago completo no se exonera interes/recargo, se devuelve valor
+			// si no es pago completo no se exonera interes/recargo, se devuelve
+			// valor
 			// calculado
 			Boolean isFullPayment = (Boolean) objects[1];
 			Boolean applyRemission = (Boolean) objects[2];
 
 			String type = (String) objects[3];
-			if (type.equals(AgreementType.REGULAR.name()) || type.equals(AgreementType.COERCIVEJUDGEMENT.name())) {
+			if (type.equals(AgreementType.REGULAR.name())
+					|| type.equals(AgreementType.COERCIVEJUDGEMENT.name())) {
 				if (!isFullPayment) {
 					response = responseDefault;
 				}
@@ -1462,9 +1618,10 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 	private Object[] getPaymentAgreementData(MunicipalBond mb) {
 		String query = "Select pa.id, pa.isfullpayment, applyreferral, agreementtype "
-				+ "from paymentagreement pa join municipalbond mb on mb.paymentagreement_id = pa.id " + "where mb.id="
-				+ mb.getId();
-		Object[] data = (Object[]) entityManager.createNativeQuery(query).getSingleResult();
+				+ "from paymentagreement pa join municipalbond mb on mb.paymentagreement_id = pa.id "
+				+ "where mb.id=" + mb.getId();
+		Object[] data = (Object[]) entityManager.createNativeQuery(query)
+				.getSingleResult();
 		return data;
 	}
 
@@ -1488,12 +1645,14 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			List<CompensationReceipt> list = compensationQuery.getResultList();
 			if (!list.isEmpty()) {
 				CompensationReceipt cr = list.get(0);
-				System.out.println("Interes CompensationReceipt " + cr.getInterest());
+				System.out.println("Interes CompensationReceipt "
+						+ cr.getInterest());
 				if (cr.getInterest().compareTo(BigDecimal.ZERO) == 1) {
 					municipalBond.setInterest(cr.getInterest());
 					/*
-					 * System.out.println("=======================>" + receipt.toString() +
-					 * " interest CR: " + cr.getInterest());
+					 * System.out.println("=======================>" +
+					 * receipt.toString() + " interest CR: " +
+					 * cr.getInterest());
 					 */
 				}
 			}
@@ -1501,14 +1660,15 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	}
 
 	/*
-	 * private BigDecimal calculateInterestForInterestRateOutDate(List<InterestRate>
-	 * interestRateList, Date paymentDate, BigDecimal balance, BigDecimal interest){
-	 * if (!interestRateList.isEmpty() && interestRateList.size() > 0){ InterestRate
-	 * interestRateLast = interestRateList.get(interestRateList.size()-1); Calendar
-	 * dateLast = Calendar.getInstance();
-	 * dateLast.setTime(interestRateLast.getEndDate()); while
-	 * (dateLast.before(paymentDate)){ java.math.BigDecimal interestValue =
-	 * balance.multiply(interestRateLast.getMonthlyRate()); interest =
+	 * private BigDecimal
+	 * calculateInterestForInterestRateOutDate(List<InterestRate>
+	 * interestRateList, Date paymentDate, BigDecimal balance, BigDecimal
+	 * interest){ if (!interestRateList.isEmpty() && interestRateList.size() >
+	 * 0){ InterestRate interestRateLast =
+	 * interestRateList.get(interestRateList.size()-1); Calendar dateLast =
+	 * Calendar.getInstance(); dateLast.setTime(interestRateLast.getEndDate());
+	 * while (dateLast.before(paymentDate)){ java.math.BigDecimal interestValue
+	 * = balance.multiply(interestRateLast.getMonthlyRate()); interest =
 	 * interest.add(interestValue); } } return interest; }
 	 */
 
@@ -1534,7 +1694,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 		if (startDate != null && endDate != null) {
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-			queryBuilder.append("emisionDate >= '" + df.format(startDate) + "'");
+			queryBuilder
+					.append("emisionDate >= '" + df.format(startDate) + "'");
 			queryBuilder.append(JOIN_CLAUSE);
 			queryBuilder.append("emisionDate <= '" + df.format(endDate) + "'");
 			queryBuilder.append(JOIN_CLAUSE);
@@ -1546,17 +1707,19 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		}
 
 		if (municipalBondStatusId != null) {
-			queryBuilder.append("municipalBond.municipalBondStatus.id = " + municipalBondStatusId);
+			queryBuilder.append("municipalBond.municipalBondStatus.id = "
+					+ municipalBondStatusId);
 			queryBuilder.append(JOIN_CLAUSE);
 		}
-		
+
 		if (bondsWasInAgreement) {
 			queryBuilder.append("municipalBond.paymentAgreement is not null ");
 			queryBuilder.append(JOIN_CLAUSE);
 		}
 
 		if (municipalBondNumber > 0) {
-			queryBuilder.append("municipalBond.number = " + municipalBondNumber);
+			queryBuilder
+					.append("municipalBond.number = " + municipalBondNumber);
 			queryBuilder.append(JOIN_CLAUSE);
 		}
 
@@ -1564,7 +1727,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 		queryBuilder = queryBuilder.delete(start, queryBuilder.length());
 
-		queryBuilder.append(" ORDER BY municipalBond.entry, municipalBond.id desc");
+		queryBuilder
+				.append(" ORDER BY municipalBond.entry, municipalBond.id desc");
 
 		// System.out.println("QUERY GENERADO findMunicipalBonds---->
 		// \n\n\n"+queryBuilder.toString());
@@ -1584,10 +1748,12 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public List<MunicipalBond> findMunicipalBonds(Long residentId, Long entryId, Long municipalBondStatusId,
-			Integer firstRow, Integer numberOfRows) {
+	public List<MunicipalBond> findMunicipalBonds(Long residentId,
+			Long entryId, Long municipalBondStatusId, Integer firstRow,
+			Integer numberOfRows) {
 
-		if (residentId == null && entryId == null && municipalBondStatusId == null) {
+		if (residentId == null && entryId == null
+				&& municipalBondStatusId == null) {
 			return new ArrayList<MunicipalBond>();
 		}
 
@@ -1604,7 +1770,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		}
 
 		if (municipalBondStatusId != null) {
-			queryBuilder.append("municipalBond.municipalBondStatus.id = " + municipalBondStatusId);
+			queryBuilder.append("municipalBond.municipalBondStatus.id = "
+					+ municipalBondStatusId);
 			queryBuilder.append(JOIN_CLAUSE);
 		}
 
@@ -1612,7 +1779,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 		queryBuilder = queryBuilder.delete(start, queryBuilder.length());
 
-		queryBuilder.append(" ORDER BY municipalBond.entry, municipalBond.id desc");
+		queryBuilder
+				.append(" ORDER BY municipalBond.entry, municipalBond.id desc");
 
 		// System.out.println("QUERY GENERADO findMunicipalBonds---->
 		// \n\n\n"+queryBuilder.toString());
@@ -1632,13 +1800,15 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public List<MunicipalBond> findMunicipalBondsFormalizer(Long municipalBondStatusId, Date now, Integer firstRow,
+	public List<MunicipalBond> findMunicipalBondsFormalizer(
+			Long municipalBondStatusId, Date now, Integer firstRow,
 			Integer numberOfRows) {
 		// TODO imolementar aqui logica buscar emisiones formalizar
 		StringBuilder queryBuilder = new StringBuilder(EJBQL);
 
 		if (municipalBondStatusId != null) {
-			queryBuilder.append("municipalBond.municipalBondStatus.id = " + municipalBondStatusId);
+			queryBuilder.append("municipalBond.municipalBondStatus.id = "
+					+ municipalBondStatusId);
 			queryBuilder.append(JOIN_CLAUSE);
 		}
 
@@ -1655,7 +1825,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 		queryBuilder = queryBuilder.delete(start, queryBuilder.length());
 
-		queryBuilder.append(" ORDER BY municipalBond.entry, municipalBond.id desc");
+		queryBuilder
+				.append(" ORDER BY municipalBond.entry, municipalBond.id desc");
 
 		// System.out.println("QUERY GENERADO findMunicipalBonds---->
 		// \n\n\n"+queryBuilder.toString());
@@ -1679,8 +1850,9 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 			Date startDate, Date endDate, Long municipalBondStatusId,
 			Long municipalBondNumber, Boolean bondsWasInAgreement) {
 
-		if (residentId == null && entryId == null && startDate == null && endDate == null
-				&& municipalBondStatusId == null && municipalBondNumber == 0) {
+		if (residentId == null && entryId == null && startDate == null
+				&& endDate == null && municipalBondStatusId == null
+				&& municipalBondNumber == 0) {
 			return 0L;
 		}
 
@@ -1693,9 +1865,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 		if (startDate != null && endDate != null) {
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-			queryBuilder.append("municipalBond.emisionDate >= '" + df.format(startDate) + "'");
+			queryBuilder.append("municipalBond.emisionDate >= '"
+					+ df.format(startDate) + "'");
 			queryBuilder.append(JOIN_CLAUSE);
-			queryBuilder.append("municipalBond.emisionDate <= '" + df.format(endDate) + "'");
+			queryBuilder.append("municipalBond.emisionDate <= '"
+					+ df.format(endDate) + "'");
 			queryBuilder.append(JOIN_CLAUSE);
 		}
 
@@ -1705,17 +1879,19 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		}
 
 		if (municipalBondStatusId != null) {
-			queryBuilder.append("municipalBond.municipalBondStatus.id = " + municipalBondStatusId);
+			queryBuilder.append("municipalBond.municipalBondStatus.id = "
+					+ municipalBondStatusId);
 			queryBuilder.append(JOIN_CLAUSE);
 		}
-		
+
 		if (bondsWasInAgreement) {
 			queryBuilder.append("municipalBond.paymentAgreement is not null ");
 			queryBuilder.append(JOIN_CLAUSE);
 		}
 
 		if (municipalBondNumber > 0) {
-			queryBuilder.append("municipalBond.number = " + municipalBondNumber);
+			queryBuilder
+					.append("municipalBond.number = " + municipalBondNumber);
 			queryBuilder.append(JOIN_CLAUSE);
 		}
 
@@ -1739,9 +1915,11 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Long findMunicipalBondsNumber(Long residentId, Long entryId, Long municipalBondStatusId) {
+	public Long findMunicipalBondsNumber(Long residentId, Long entryId,
+			Long municipalBondStatusId) {
 
-		if (residentId == null && entryId == null && municipalBondStatusId == null) {
+		if (residentId == null && entryId == null
+				&& municipalBondStatusId == null) {
 			return 0L;
 		}
 
@@ -1758,7 +1936,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		}
 
 		if (municipalBondStatusId != null) {
-			queryBuilder.append("municipalBond.municipalBondStatus.id = " + municipalBondStatusId);
+			queryBuilder.append("municipalBond.municipalBondStatus.id = "
+					+ municipalBondStatusId);
 			queryBuilder.append(JOIN_CLAUSE);
 		}
 
@@ -1781,14 +1960,16 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Long findMunicipalBondsNumberFormalizer(Long municipalBondStatusId, Date now) {
+	public Long findMunicipalBondsNumberFormalizer(Long municipalBondStatusId,
+			Date now) {
 		// TODO implementar aqui logica sacer numero de obligacione spor
 		// formalizar
 
 		StringBuilder queryBuilder = new StringBuilder(COUNT_EJBQL);
 
 		if (municipalBondStatusId != null) {
-			queryBuilder.append("municipalBond.municipalBondStatus.id = " + municipalBondStatusId);
+			queryBuilder.append("municipalBond.municipalBondStatus.id = "
+					+ municipalBondStatusId);
 			queryBuilder.append(JOIN_CLAUSE);
 		}
 
@@ -1817,21 +1998,36 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 
 		/*
 		 * System.out.println(
-		 * "numero de obligaciones normalizar que devuelve el model: " + size.getClass()
-		 * + " CURRENT SIZE = " + size);
+		 * "numero de obligaciones normalizar que devuelve el model: " +
+		 * size.getClass() + " CURRENT SIZE = " + size);
 		 */
 		return size;
 
 	}
-	
+
 	@Override
-	public MunicipalBond findMunicipalBondByNumber(Long mbNumber) throws Exception {
+	public MunicipalBond findMunicipalBondByNumber(Long mbNumber)
+			throws Exception {
 		StringBuilder queryBuilder = new StringBuilder(EJBQL);
 		queryBuilder.append("municipalBond.number = " + mbNumber);
-		
+
 		String stringQuery = queryBuilder.toString();
 
 		Query query = entityManager.createQuery(stringQuery);
 		return (MunicipalBond) query.getResultList().get(0);
+	}
+
+	@Override
+	public MunicipalBond findById(Long municipalBondId) {
+		try {
+			Query query = entityManager.createNamedQuery("MunicipalBond.findById");
+			query.setParameter("municipalBondId", municipalBondId);
+			System.out.println(query.getSingleResult());
+			MunicipalBond mb = (MunicipalBond) query.getSingleResult();
+			return mb;
+		} catch (javax.persistence.NoResultException e) {
+			return null;
+		}
+		
 	}
 }

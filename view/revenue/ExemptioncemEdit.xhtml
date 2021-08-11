@@ -1,0 +1,102 @@
+<!DOCTYPE composition
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:a="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich"
+	xmlns:g="http://gim.gob.ec/jsf" template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<h:form id="exemption" styleClass="edit">
+			<ui:debug id="debug" />
+
+			<h:outputText styleClass="formTitle" value="#{exemptioncemHome.isEdit ? 'Editar' : 'Agregar' }  Exoneracion CEM" />
+
+			<rich:panel id="richPanelId">
+
+				<h:panelGrid columns="2" styleClass="center" width="100%" columnClasses="topAligned,topAligned">
+
+					<h:panelGrid columns="1" width="100%">
+						<rich:panel styleClass="left">
+							<f:facet name="header">#{messages['resident']}</f:facet>
+							<g:residentChooser id="ownerChooser" required="true" resident="#{exemptioncemHome.resident}"
+								criteria="#{exemptioncemHome.criteria}" bean="#{exemptioncemHome}"
+								label="#{messages['resident']}" searchAction="searchResident"
+								residentsList="#{exemptioncemHome.residents}"
+								identificationNumber="#{exemptioncemHome.identificationNumber}"
+								searchByCriteriaAction="searchResidentByCriteria"
+								clearSearchPanelAction="clearSearchResidentPanel"
+								residentChosenListenerName="residentSelectedListener" reRender="richPanelId" />
+							<div style="clear: both" />
+						</rich:panel>
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" width="100%">
+						<rich:panel styleClass="left">
+							<f:facet name="header">#{messages['property']}</f:facet>
+							<g:propertyChooser id="propertyChooser" property="#{exemptioncemHome.property}"
+								criteria="#{exemptioncemHome.criteriaProperty}" bean="#{exemptioncemHome}"
+								searchAction="searchPropertyByCriteria" propertyList="#{exemptioncemHome.properties}"
+								searchByCriteriaAction="searchPropertyByCriteria"
+								clearSearchPanelAction="clearSearchPropertyPanel"
+								propertyChosenListenerName="propertySelectedListener" />
+							<div style="clear: both" />
+
+						</rich:panel>
+					</h:panelGrid>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="1" width="100%" columnClasses="topAligned, topAligned right" id="panelBottom">
+
+					<s:decorate template="../layout/display.xhtml">
+						<ui:define name="label">#{messages['exemption.type']}</ui:define>
+						<h:selectOneMenu id="exemptionTypeCEM" value="#{exemptioncemHome.type}">
+							<s:selectItems value="#{exemptionCEMTypes}" var="exemptionType"
+								label="#{exemptionType.name}" noSelectionLabel="#{messages['common.chooseOption']}" />
+							<s:convertEntity />
+							<a:support event="onchange" ajaxSingle="true" />
+						</h:selectOneMenu>
+					</s:decorate>
+
+					<h:panelGroup>
+						<s:decorate id="percent" template="../layout/edit.xhtml">
+							<ui:define name="label">Porcentaje Exonerar</ui:define>
+							<h:inputText id="percent" size="15" style="text-align: right"
+								value="#{exemptioncemHome.percentValue}" required="true">
+								<f:convertNumber pattern="#0.00" />
+							</h:inputText>
+						</s:decorate>
+					</h:panelGroup>
+
+					<s:decorate id="referenceField" template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['exemption.reference']}:</ui:define>
+						<h:inputTextarea id="reference" cols="40" rows="4" required="true"
+							value="#{exemptioncemHome.reference}" />
+					</s:decorate>
+
+					<s:decorate id="explanationField" template="../layout/edit.xhtml">
+						<ui:define name="label">Explicación:</ui:define>
+						<h:inputTextarea id="explanation" cols="40" rows="4" required="true"
+							value="#{exemptioncemHome.explanation}" />
+					</s:decorate>
+
+				</h:panelGrid>
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+			</rich:panel>
+
+			<a:outputPanel ajaxRendered="false" id="buttonsId">
+				<div class="actionButtons">
+					<h:commandButton id="save" value="#{messages['common.save']}" action="#{exemptioncemHome.save()}"/>
+					<s:button id="cancel" value="#{messages['common.cancel']}" propagation="end"
+						view="/revenue/ExemptioncemList.xhtml" />
+				</div>
+			</a:outputPanel>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

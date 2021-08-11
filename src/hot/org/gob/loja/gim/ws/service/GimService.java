@@ -1,5 +1,6 @@
 package org.gob.loja.gim.ws.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,9 @@ import org.gob.loja.gim.ws.exception.RealEstateNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNonUnique;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 import org.gob.loja.gim.ws.exception.TaxpayerNotSaved;
+
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.security.model.User;
 
 @Local
 public interface GimService {
@@ -113,5 +117,4 @@ public interface GimService {
 	
 	GeneralResponse updateBondPrinterNumber(ServiceRequest request, BondPrintRequest bonds);
 		
-	
 }

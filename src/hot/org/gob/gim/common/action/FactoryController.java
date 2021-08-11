@@ -864,4 +864,18 @@ public class FactoryController  extends EntityController{
 		return Arrays.asList(ExitTypeBinnacleCRV.values());
 	}
 	
+	//macartuche 2021-07-021 10:50am
+	//descuentos CEM tercera edad y discapacidad
+	@SuppressWarnings("unchecked")
+	@Factory("exemptionCEMTypes")
+	public List<ItemCatalog> loadCEMExemptionTypes() {
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
+		
+		//Query query = this.getEntityManager().createNamedQuery("Cementery.findAll");
+		return (List<ItemCatalog>) itemCatalogService
+				.findItemsForCatalogCode(CatalogConstants.CATALOG_TYPES_EXEMPTION_CEM);
+	}
 }

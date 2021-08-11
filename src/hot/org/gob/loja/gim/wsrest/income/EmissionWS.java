@@ -1,4 +1,6 @@
-package org.gob.loja.gim.wsrest.revenue;
+package org.gob.loja.gim.wsrest.income;
+
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -11,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.revenue.service.EmissionService;
+import org.gob.gim.revenue.service.EntryService;
 import org.gob.gim.ws.service.InfringementEmisionResponse;
 import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
 import org.gob.loja.gim.ws.dto.ant.PreemissionInfractionRequest;
@@ -19,6 +22,9 @@ import org.gob.loja.gim.ws.service.RestService;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
+
+import ec.gob.gim.revenue.model.EntryStructure;
+import ec.gob.gim.revenue.model.EntryStructureType;
 
 @Name("EmissionWS")
 @Path("/emission")
@@ -34,6 +40,9 @@ public class EmissionWS {
 	
 	@In(create = true, required = false, value = "emissionService")
 	private EmissionService emissionService;
+	
+	@In(create = true, required = false, value = "entryService")
+	private EntryService entryService;
 	
 	@In(create = true)
 	UserSession userSession;
@@ -136,7 +145,53 @@ public class EmissionWS {
 		}
 	}
 	
+	/*@POST
+	@Path("/entryByCode")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response getEntryStructureByCode(EntryByCodeRequest request) {
+		try {
+			System.out.println(request);
+			
+			if (entryService == null) {
+				entryService = ServiceLocator.getInstance().findResource(
+						entryService.LOCAL_NAME);
+			}
+			
+			// InfringementEmisionResponse res = emissionService.generateANTEmissionInfringement(userSession.getUser().getName(), params);
+			List<EntryStructure> structure = entryService.findEntryStructureChildrenByType(55L, EntryStructureType.NORMAL);
+			return Response.ok(structure).header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC")
+					.build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
+	@POST
+	@Path("/emitAdministrativeServices")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response emitAdministrativeServices(EntryByCodeRequest request) {
+		try {
+			System.out.println(request);
+			
+			if (entryService == null) {
+				entryService = ServiceLocator.getInstance().findResource(
+						entryService.LOCAL_NAME);
+			}
+			
+			// InfringementEmisionResponse res = emissionService.generateANTEmissionInfringement(userSession.getUser().getName(), params);
+			List<EntryStructure> structure = entryService.findEntryStructureChildrenByType(55L, EntryStructureType.NORMAL);
+			return Response.ok(structure).header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC")
+					.build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}*/
 	
 	
 }

@@ -37,7 +37,7 @@ public class PropertyReference extends Adjunct{
 	@Override
 	public String toString() {
 		if(location == null) return "";
-		return "Dir: " + property.getLocation().getMainBlockLimit().getStreet().getPlace() + " - " + location.trim();
+		return "Dir: " + location.trim();
 	}
 	
 	public List<ValuePair> getDetails(){

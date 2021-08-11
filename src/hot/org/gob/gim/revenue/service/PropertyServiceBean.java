@@ -49,4 +49,17 @@ public class PropertyServiceBean implements PropertyService {
 	public Property findPropertyById(Long id) {
 		return this.entityManager.find(Property.class, id);
 	}
+
+	@Override
+	public Property findPropertyByCadastralCode(String cadastralCode) {
+		List<Property> list = entityManager
+				.createNamedQuery("Property.findByCadastralCode1")
+				.setParameter("cadastralCode", cadastralCode)
+				.getResultList();
+		if (list != null && list.size() > 0) {
+			return list.get(0);
+		}
+		
+		return null;
+	}
 }

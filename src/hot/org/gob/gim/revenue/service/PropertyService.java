@@ -21,4 +21,6 @@ public interface PropertyService {
 	
 	public Property findPropertyById(Long id);
 	
+	public Property findPropertyByCadastralCode(String cadastralCode);
+	
 }

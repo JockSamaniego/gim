@@ -39,6 +39,7 @@ import ec.gob.gim.revenue.model.adjunct.DomainTransfer;
 import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
 import ec.gob.gim.revenue.model.adjunct.PropertyReference;
 import ec.gob.gim.revenue.model.adjunct.PropertyReferenceOptional;
+import ec.gob.gim.revenue.model.adjunct.Urbanregeneration;
 import ec.gob.gim.revenue.model.adjunct.detail.EarlyTransferDiscount;
 import ec.gob.gim.revenue.model.adjunct.detail.VehicleType;
 
@@ -591,4 +592,48 @@ public class AdjunctAction extends EntityController{
 		binnacleCRVReference.setHasCraneService(false);
 	}
 
+	
+	//2021-06-29
+	//macartuche
+	public void updateUrbanRegeneration(){
+		Urbanregeneration urbanregeneration = findCurrentAdjunct();
+		if(urbanregeneration != null){
+			Property property = urbanregeneration.getProperty();
+			Domain currentDomain = property.getCurrentDomain();
+			
+			urbanregeneration.setCadastralCode(property.getCadastralCode());
+			urbanregeneration.setPreviousCadastralCode(property.getPreviousCadastralCode());    
+			urbanregeneration.setCommercialAppraisal(currentDomain.getCommercialAppraisal()); 			
+			urbanregeneration.setLotArea(property.getArea()); 			
+			
+			//changePropertyTaxableBase(); ============> se llamaba a este metodo antes
+			
+			
+			//propertyAppraisal.setCode(propertyAppraisal.getPreviousCadastralCode()+" - "+propertyAppraisal.getCadastralCode());
+			//property.getBuildings()
+			//rfam 2017-12-15 aprobacion de ordenanza
+			//propertyAppraisal.setLotArea(BigDecimal.ONE);
+			//propertyAppraisal.setConstructionArea(BigDecimal.ONE);
+		}
+	}
+	
+	public void resetPropertyValuesOfUrbanRegeneration(){
+		Urbanregeneration urbanregeneration = findCurrentAdjunct();
+		
+		if (urbanregeneration.getChangeAppraisals()){			
+			//urbanregeneration.setProperty(null); 
+			//urbanregeneration.setCadastralCode("");
+			//urbanregeneration.setCode("");
+			//urbanregeneration.setPreviousCadastralCode("");  
+			urbanregeneration.setCommercialAppraisal(BigDecimal.ZERO); 
+			urbanregeneration.setLotArea(BigDecimal.ZERO);
+			//changePropertyTaxableBase();
+		}
+	}
+	
+	//resettear la propiedad  para Urban regeneration
+	public void resetPropertyForUG(){
+		Urbanregeneration urbanregeneration = findCurrentAdjunct();
+		urbanregeneration.setProperty(null);
+	}
 }
