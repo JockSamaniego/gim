@@ -1,0 +1,55 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:rich="http://richfaces.org/rich">
+
+    <rich:panel id="AdmissionResponsablePanel">
+        <f:facet name="header">#{messages['binnacleCRV.admissionResponsable']}</f:facet>
+        
+        <h:panelGrid columns="2" columnClasses="topAligned">
+            <h:panelGrid columns="1">
+                <s:decorate id="admissionAgentIdentificationField" template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['binnacleCRV.admissionAgentIdentification']}</ui:define>
+                    <h:inputText id="admissionAgentIdentification" required="true" maxlength="15" 
+                        value="#{binnacleCRVHome.instance.admissionAgentIdentification}" 
+                        readonly="#{!binnacleCRVHome.hasRoleCRV}"/>
+                </s:decorate>
+
+                <s:decorate id="admissionAgentNamesField" template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['binnacleCRV.admissionAgentNames']}</ui:define>
+                    <h:inputText id="admissionAgentNames" required="true" maxlength="80" 
+                        value="#{binnacleCRVHome.instance.admissionAgentNames}" 
+                        readonly="#{!binnacleCRVHome.hasRoleCRV}"/>
+                </s:decorate>
+
+            </h:panelGrid>
+
+            <h:panelGrid columns="1">
+                <s:decorate id="admissionResponsableIdentificationField" template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['binnacleCRV.admissionResponsableIdentification']}</ui:define>
+                    <h:inputText id="admissionResponsableIdentification" required="true" maxlength="15" 
+                        value="#{binnacleCRVHome.instance.admissionResponsableIdentification}" 
+                        readonly="#{!binnacleCRVHome.hasRoleCRV}"/>
+                </s:decorate>
+
+                <s:decorate id="admissionResponsableNameField" template="../../layout/edit.xhtml">
+                    <ui:define name="label">#{messages['binnacleCRV.admissionResponsableName']}</ui:define>
+                    <h:inputText id="admissionResponsableName" required="true" maxlength="80" 
+                        value="#{binnacleCRVHome.instance.admissionResponsableName}" 
+                        readonly="#{!binnacleCRVHome.hasRoleCRV}"/>
+                </s:decorate>
+
+            </h:panelGrid>
+        </h:panelGrid>
+        <div style="clear: both">
+            <span class="required"></span>
+        </div>
+    </rich:panel>
+
+</ui:composition>

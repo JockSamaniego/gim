@@ -92,6 +92,7 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	private BallotPart ballotPart = new BallotPart();
 	private boolean hasJudicialDocument = false;
 	private String partTimeString = "";
+	private String admissionTimeString = "";
 	private String retentionTimeString = "";
 	private String detentionTimeString = "";
 	private String accidentTimeString = "";
@@ -366,6 +367,20 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 
 	/**
+	 * @return the admissionTimeString
+	 */
+	public String getAdmissionTimeString() {
+		return admissionTimeString;
+	}
+
+	/**
+	 * @param admissionTimeString the admissionTimeString to set
+	 */
+	public void setAdmissionTimeString(String admissionTimeString) {
+		this.admissionTimeString = admissionTimeString;
+	}
+
+	/**
 	 * @return the retentionTimeString
 	 */
 	public String getRetentionTimeString() {
@@ -528,6 +543,8 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		if (hasJudicialDocument) {
 			if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.INFORMATIVE_PART){
 				instance.setInformativePart(informativePart);
+			} else if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.ADMINISTRATIVE_PART){
+				instance.setInformativePart(informativePart);
 			} else if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.ACCIDENT_PART){
 				instance.setAccidentPart(accidentPart);
 			} else if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.JUDICIAL_PART){
@@ -575,12 +592,21 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		accidentPart = null;
 		ballotPart = null;
 		hasJudicialDocument = false;
+		admissionTimeString = "";
 	}
 	
 	public void editBinnacleCRV() {
 		canEditLicensePlate = false;
 		if (!getInstance().isHasJudicialDocument()){
 			if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.INFORMATIVE_PART){
+				informativePart = new InformativePart();
+				partTimeString = "";
+				retentionTimeString = "";
+				detentionTimeString = "";
+				accidentTimeString = "";
+				notificationTimeString = "";
+				arrivalTimeString = "";
+			} else if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.ADMINISTRATIVE_PART){
 				informativePart = new InformativePart();
 				partTimeString = "";
 				retentionTimeString = "";
@@ -608,7 +634,13 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 			
 		}
 		else {
+			if (instance.getAdmissionTime() != null)
+				admissionTimeString = instance.getAdmissionTime().toString();
 			if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.INFORMATIVE_PART){
+				informativePart = instance.getInformativePart();
+				partTimeString = informativePart.getPartTime().toString();
+				retentionTimeString = informativePart.getRetentionTime().toString();
+			} else if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.ADMINISTRATIVE_PART){
 				informativePart = instance.getInformativePart();
 				partTimeString = informativePart.getPartTime().toString();
 				retentionTimeString = informativePart.getRetentionTime().toString();
@@ -902,6 +934,20 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		}
 	}
 	
+	public void validateAdmissionTime(){
+		if (admissionTimeString == null) return;
+		if (admissionTimeString == "") return;
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		try {
+			Date date = sdf.parse(admissionTimeString);
+			instance.setAdmissionTime(date);
+			admissionTimeString = sdf.format(date);
+		} catch (ParseException e) {
+			admissionTimeString = "";
+			e.printStackTrace();
+		}
+	}
+	
 	public void validateInformativePartTime(){
 		if (partTimeString == null) return;
 		if (partTimeString == "") return;
@@ -1135,6 +1181,11 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		ArrivalHistoryBinnacleCRV lastArrival = instance.getLastArrivalHistoryBinnacleCRV();
 		if (lastArrival.getExitDate().after(arrivalHistoryBinnacleCRV.getArrivalDate())){
 			facesMessages.add("La fecha de reingreso no puede ser menor a " + lastArrival.getExitDate());
+			return null;
+		}
+		Date today = new GregorianCalendar().getTime();
+		if (today.before(arrivalHistoryBinnacleCRV.getArrivalDate())){
+			facesMessages.add("La fecha de reingreso no puede ser mayor a " + today);
 			return null;
 		}
 		arrivalHistoryBinnacleCRV.setUserArrival(userSession.getUser());

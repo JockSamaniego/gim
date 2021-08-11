@@ -7,6 +7,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:a="http://richfaces.org/a4j"
     xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
     xmlns:rich="http://richfaces.org/rich">
 
     <f:facet name="header">#{messages['binnacleCRV.admissionTab']}</f:facet>
@@ -37,23 +38,20 @@
                     readonly="#{!binnacleCRVHome.hasRoleCRV}"/>
             </s:decorate>
 
-            <s:decorate id="admissionResponsableIdentificationField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['binnacleCRV.admissionResponsableIdentification']}</ui:define>
-                <h:inputText id="admissionResponsableIdentification" required="true" maxlength="15"
-                    value="#{binnacleCRVHome.instance.admissionResponsableIdentification}" 
+            <s:decorate id="admissionDriverIdentificationField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.admissionDriverIdentification']}</ui:define>
+                <h:inputText id="admissionDriverIdentification" required="true" maxlength="15"
+                    value="#{binnacleCRVHome.instance.admissionDriverIdentification}" 
                     readonly="#{!binnacleCRVHome.hasRoleCRV}"/>
             </s:decorate>
 
-            <s:decorate id="admissionResponsableNameField" template="../../layout/edit.xhtml">
-                <ui:define name="label">#{messages['binnacleCRV.admissionResponsableName']}</ui:define>
-                <h:inputText id="admissionResponsableName" required="true" maxlength="80" 
-                    value="#{binnacleCRVHome.instance.admissionResponsableName}" 
+            <s:decorate id="admissionDriverNamesField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.admissionDriverNames']}</ui:define>
+                <h:inputText id="admissionDriverNames" required="true" maxlength="80" 
+                    value="#{binnacleCRVHome.instance.admissionDriverNames}" 
                     readonly="#{!binnacleCRVHome.hasRoleCRV}"/>
             </s:decorate>
 
-        </h:panelGrid>
-
-        <h:panelGrid columns="3">
             <s:decorate id="admissionDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['binnacleCRV.admissionDate']}:</ui:define>
                 <rich:calendar id="admissionDate" disabled="#{binnacleCRVHome.managed}"
@@ -62,6 +60,15 @@
                     datePattern="yyyy-MM-dd"/>
             </s:decorate>
 
+            <s:decorate id="admissionTimeField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.admissionTime']}:</ui:define>
+                <h:inputText value="#{binnacleCRVHome.admissionTimeString}" required="true" 
+                    readonly="#{!binnacleCRVHome.hasRoleCRV}" pt:placeholder="HH:mm:ss" >
+                    <a:support event="onblur" action="#{binnacleCRVHome.validateAdmissionTime()}" 
+                        ajaxSingle="true" reRender="admissionTimeField"/>
+                </h:inputText>
+            </s:decorate>
+            
             <s:decorate template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['admissionType']}</ui:define>
                 <h:selectOneMenu id="admissionType" disabled="#{!binnacleCRVHome.hasRoleCRV}"
@@ -190,6 +197,8 @@
     <ui:include src="VehicleImagesPanel.xhtml" />
 
     <ui:include src="AdmissionObservationsPanel.xhtml" />
+
+    <ui:include src="AdmissionResponsablesPanel.xhtml" />
 
     <div></div>
         

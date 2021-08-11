@@ -33,6 +33,7 @@ public class InfractionWSV2Service
         try {
             URL baseUrl;
             baseUrl = ec.gob.loja.middleapp.InfractionWSV2Service.class.getResource(".");
+//            url = new URL(baseUrl, "http://10.200.12.106:8084/middleApp-1.0-SNAPSHOT/InfractionWSV2?wsdl");
             url = new URL(baseUrl, "file:/opt/wsdl/InfractionWSV2.wsdl");
 //            URL clone_url = new URL(url.toString());
 //            HttpURLConnection clone_urlconnection = (HttpURLConnection) clone_url.openConnection();

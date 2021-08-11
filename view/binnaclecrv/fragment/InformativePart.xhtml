@@ -10,7 +10,7 @@
     xmlns:rich="http://richfaces.org/rich">
 
     <h:panelGrid id="informativePartPanel" width="100%" >
-        <h:panelGrid width="100%" rendered="#{binnacleCRVHome.instance.documentTypeBinnacleCRV.name().equalsIgnoreCase('INFORMATIVE_PART')}">
+        <h:panelGrid width="100%" rendered="#{binnacleCRVHome.instance.documentTypeBinnacleCRV.name().equalsIgnoreCase('INFORMATIVE_PART') || binnacleCRVHome.instance.documentTypeBinnacleCRV.name().equalsIgnoreCase('ADMINISTRATIVE_PART')}">
             <f:facet name="header">#{messages['informativePart.titlePanel']}</f:facet>
             <h:panelGrid columns="2" width="100%" >
                 <s:decorate template="../../layout/edit.xhtml" >

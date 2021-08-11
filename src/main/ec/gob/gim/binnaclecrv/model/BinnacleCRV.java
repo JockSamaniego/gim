@@ -79,9 +79,11 @@ public class BinnacleCRV implements Serializable {
 	@Column(length = 100)
 	private String ownerAddress; //Direccion del Propietario
 	@Column(length = 100)
-	private String ownerEmail; //Cédula del Propietario
+	private String ownerEmail; //Email del Propietario
 	@Temporal(TemporalType.DATE)
 	private Date admissionDate; //Fecha de Ingreso
+	@Temporal(TemporalType.TIME)
+	private Date admissionTime; //Hora de Ingreso
 	@Column(length = 20)
 	private String motiveArticle; //Artículo que motiva el ingreso
 	@Column(length = 20)
@@ -116,6 +118,10 @@ public class BinnacleCRV implements Serializable {
 	private BigDecimal km; //kms recorridos por la grúa municipal
 	@Column(columnDefinition = "TEXT")
 	private String transferInfo; //Datos de Traslado
+	@Column(length = 15)
+	private String admissionDriverIdentification; //Cédula del conductor
+	@Column(length = 80)
+	private String admissionDriverNames; //Nombres del conductor
 	@Column(length = 15)
 	private String admissionAgentIdentification; //Cédula del Agente de Ingreso
 	@Column(length = 80)
@@ -308,6 +314,20 @@ public class BinnacleCRV implements Serializable {
 	 */
 	public void setAdmissionDate(Date admissionDate) {
 		this.admissionDate = admissionDate;
+	}
+
+	/**
+	 * @return the admissionTime
+	 */
+	public Date getAdmissionTime() {
+		return admissionTime;
+	}
+
+	/**
+	 * @param admissionTime the admissionTime to set
+	 */
+	public void setAdmissionTime(Date admissionTime) {
+		this.admissionTime = admissionTime;
 	}
 
 	/**
@@ -560,6 +580,35 @@ public class BinnacleCRV implements Serializable {
 	 */
 	public void setTransferInfo(String transferInfo) {
 		this.transferInfo = transferInfo;
+	}
+
+	/**
+	 * @return the admissionDriverIdentification
+	 */
+	public String getAdmissionDriverIdentification() {
+		return admissionDriverIdentification;
+	}
+
+	/**
+	 * @param admissionDriverIdentification the admissionDriverIdentification to set
+	 */
+	public void setAdmissionDriverIdentification(
+			String admissionDriverIdentification) {
+		this.admissionDriverIdentification = admissionDriverIdentification;
+	}
+
+	/**
+	 * @return the admissionDriverNames
+	 */
+	public String getAdmissionDriverNames() {
+		return admissionDriverNames;
+	}
+
+	/**
+	 * @param admissionDriverNames the admissionDriverNames to set
+	 */
+	public void setAdmissionDriverNames(String admissionDriverNames) {
+		this.admissionDriverNames = admissionDriverNames;
 	}
 
 	/**
