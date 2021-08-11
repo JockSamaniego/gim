@@ -86,7 +86,7 @@ public class MunicipalBondManager extends EntityController {
 
 	protected MunicipalBondType municipalBondType = MunicipalBondType.EMISSION_ORDER;
 
-	private Boolean allBondsSelected;
+	private Boolean allBondsSelected=Boolean.FALSE;
 
 	private MunicipalBond municipalBond;
 
@@ -135,6 +135,8 @@ public class MunicipalBondManager extends EntityController {
 			+ "LEFT JOIN FETCH municipalBond.receipt receipt " + " WHERE ";
 
 	private static String JOIN_CLAUSE = " AND ";
+	
+	private static String ORDER_CLAUSE = " ORDER BY municipalBond.groupingCode, municipalBond.number  ";
 
 	List<MunicipalBond> municipalBondsFormalizing;
 
@@ -310,7 +312,7 @@ public class MunicipalBondManager extends EntityController {
 			Long entryId = entry != null ? entry.getId() : null;
 			Long mbNumber = municipalBondNumber > 0 ? municipalBondNumber : 0;
 			getDataModel().setCriteria(residentId, entryId, startDate, endDate,
-					municipalBondStatusId, mbNumber, this.bondsWasInAgreement);
+					municipalBondStatusId, mbNumber, this.bondsWasInAgreement, this.allBondsSelected);
 			getDataModel().setRowCount(getDataModel().getObjectsNumber());
 		} else {
 			addFacesMessageFromResourceBundle("municipalBond.invalidCriteriaSet");
@@ -332,7 +334,7 @@ public class MunicipalBondManager extends EntityController {
 					+ municipalBondStatusId);*/
 
 			getDataModel().setCriteria(residentId, entryId,
-					municipalBondStatusId, true);
+					municipalBondStatusId, true, this.allBondsSelected);
 			getDataModel().setRowCount(getDataModel().getObjectsNumber());
 		} else {
 			addFacesMessageFromResourceBundle("municipalBond.invalidCriteriaSet");
@@ -366,8 +368,9 @@ public class MunicipalBondManager extends EntityController {
 			queryBuilder.append(":now>= municipalBond.emisionDate ");
 		}
 
-		queryBuilder
-				.append(" ORDER BY municipalBond.entry, municipalBond.id desc");
+		// queryBuilder
+				//.append(" ORDER BY municipalBond.entry, municipalBond.id desc");
+		queryBuilder.append(ORDER_CLAUSE);
 
 		/*System.out
 				.println("QUERY GENERADO findMunicipalBondsFomalizing----> \n\n\n"
@@ -601,9 +604,16 @@ public class MunicipalBondManager extends EntityController {
 	}
 
 	public void selectAllBonds() {
-		for (MunicipalBond bond : getDataModel().getMunicipalBonds()) {
+
+		findMunicipalBondsFutureEmission();
+		
+		/* for (MunicipalBond bond : getDataModel().getMunicipalBonds()) {
 			bond.setIsSelected(getAllBondsSelected());
-		}
+		}*/
+		
+		/* for (MunicipalBond bond : getDataModel().getMunicipalBonds()) {
+			System.out.println("----------------------------- "+bond.getIsSelected());
+		}*/
 	}
 
 	public Boolean getAllBondsSelected() {
@@ -819,6 +829,8 @@ public class MunicipalBondManager extends EntityController {
 					.changeFutureToPendign(listadoSeleccionadas,
 							userSession.getUser(), userSession.getPerson(),
 							explanation);
+			// rfam 2021-07-29 no funciona
+			this.findMunicipalBondsFutureEmission();
 		} catch (Exception e) {
 			System.out.println(e.getStackTrace());
 		}
@@ -1089,6 +1101,7 @@ public class MunicipalBondManager extends EntityController {
 						+ observacionManager);*/
 		revenueService.update(listForReverseAll, reversedBondStatus.getId(),
 				userSession.getUser().getId(), observacionManager, judicialProcessNumber);
+		// this.findMunicipalBondsFutureEmission();
 		return "persisted";
 	}
 	

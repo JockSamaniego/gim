@@ -10,6 +10,15 @@ import javax.ejb.Local;
 import org.gob.gim.ws.service.InfringementEmisionResponse;
 import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
 import org.gob.loja.gim.ws.dto.ant.PreemissionInfractionRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.AccountWithoutAdjunctRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.AlcabalaRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.ApprovalPlansRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.BuildingPermitRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.RuralPropertyRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.UnbuiltLotRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.UrbanPropertyRequest;
+import org.gob.loja.gim.ws.dto.preemission.request.UtilityRequest;
+import org.gob.loja.gim.ws.dto.preemission.response.PreemissionServiceResponse;
 import org.gob.loja.gim.ws.exception.AccountIsBlocked;
 import org.gob.loja.gim.ws.exception.AccountIsNotActive;
 import org.gob.loja.gim.ws.exception.EmissionOrderNotGenerate;
@@ -20,8 +29,10 @@ import org.gob.loja.gim.ws.exception.InvalidUser;
 import org.gob.loja.gim.ws.exception.TaxpayerNonUnique;
 import org.gob.loja.gim.ws.exception.TaxpayerNotFound;
 
+import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.revenue.model.DTO.ReportEmissionDTO;
 import ec.gob.gim.revenue.model.criteria.ReportEmissionCriteria;
+import ec.gob.gim.security.model.User;
 
 /**
  * @author Rene Ortega
@@ -47,5 +58,53 @@ public interface EmissionService {
 			FiscalPeriodNotFound, EmissionOrderNotGenerate,
 			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
 			AccountIsBlocked, Exception;
+	
+	PreemissionServiceResponse generateEmissionOrderWithoutAdjunctWS(AccountWithoutAdjunctRequest detailsEmission, User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
+	
+	PreemissionServiceResponse generateEmissionOrderBuildingPermitWS(BuildingPermitRequest detailsEmission, Property property,User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
+	
+	PreemissionServiceResponse generateEmissionOrderApprovalPlansWS(ApprovalPlansRequest detailsEmission, Property property,User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
+	
+	PreemissionServiceResponse generateEmissionOrderUrbanPropertyWS(UrbanPropertyRequest detailsEmission, Property property,User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
+	
+	PreemissionServiceResponse generateEmissionOrderRuralPropertyWS(RuralPropertyRequest detailsEmission, Property property,User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
+	
+	PreemissionServiceResponse generateEmissionOrderUnbuiltLotWS(UnbuiltLotRequest detailsEmission, Property property,User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
+	
+	PreemissionServiceResponse generateEmissionOrderUtilityWS(UtilityRequest detailsEmission, Property property,User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
+	
+	PreemissionServiceResponse generateEmissionOrderAlcabalaWS(AlcabalaRequest detailsEmission, Property property,User user)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked;
 	
 }

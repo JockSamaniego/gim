@@ -5,6 +5,7 @@ package org.gob.gim.common;
  * author: GADL - Ronald Paladines Celi 
  */
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +14,13 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Set;
+
+import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 public class GimUtils {
 
@@ -156,4 +164,28 @@ public class GimUtils {
         return codigo;
 
     }
+    
+    /**
+	 * Valida objeto con anotaciones sobre atributos
+	 * 
+	 * @author Renpe
+	 * @since 2021-03-18
+	 * @param T object
+	 * @return List<String>
+	 */
+    public static <T> List<String> validateRequest(T object){
+		List<String> errors = new ArrayList<String>();
+		ValidatorFactory factory = Validation
+				.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<T>> violations = validator
+				.validate(object);
+		
+		for (ConstraintViolation<T> violation : violations) {
+		    errors.add(violation.getMessage());
+		}
+		
+		return errors;
+	}
+    
 }

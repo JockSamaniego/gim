@@ -14,6 +14,8 @@ import ec.gob.gim.revenue.model.EntryStructureType;
 
 @Local
 public interface EntryService {
+	
+	public String LOCAL_NAME = "/gim/EntryService/local";
 
 	Entry find(String code);
 	Entry find(Long id);

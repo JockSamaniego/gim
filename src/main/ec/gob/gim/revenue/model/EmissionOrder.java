@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 
@@ -78,6 +79,9 @@ public class EmissionOrder {
 		
 	@Transient
 	private boolean isSelected;
+	
+	@Version
+	private Long version = 0L;
 	
 	public boolean getIsSelected() {
 		return isSelected;

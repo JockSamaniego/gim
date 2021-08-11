@@ -592,7 +592,7 @@ public class EntryHome extends EntityHome<Entry> {
 	}
 	
 	public void wire() {
-		logger.info("...... Ingreso al wire");		
+		// logger.info("...... Ingreso al wire");		
 		//getInstance();
 		
 		if (!isLoaded){

@@ -229,7 +229,7 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 
 	public String addMunicipalBond() {
 		if (municipalBondNumber != null && resident != null) {
-			SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+			
 			Long paidMunicipalBondStatusId = systemParameterService.findParameter(PAID_BOND_STATUS_ID);
 			//rarmijos 2015-12-08
 			// para crear notas de credito por pagos externos
@@ -700,6 +700,7 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 					}
 				}
 				total = total.add(mb.getInterest().add(mb.getSurcharge()));
+				total = total.subtract(mb.getDiscount());
 				Query query = getEntityManager().createNamedQuery("TaxItem.findTaxItemByMunicipalBondId");
 				query.setParameter("municipalBondId", mb.getId());
 				try {
@@ -732,10 +733,50 @@ public class CreditNoteHome extends EntityHome<CreditNote> {
 		}
 		
 		public Boolean hasRole(String roleKey) {
+			systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
 			String role = systemParameterService.findParameter(roleKey);
 			if (role != null) {
 				return userSession.getUser().hasRole(role);
 			}
 			return false;
 		}
+		
+		public void setAvailableAmount(){
+			getInstance().setAvailableAmount(getInstance().getValue());
+		}
+		
+		public void disabledCreditNote(){
+			if(this.selectedToDisabled.getAvailableAmount().compareTo(this.selectedToDisabled.getValue()) == 0){
+				this.selectedToDisabled.setIsActive(Boolean.FALSE);
+				this.selectedToDisabled.setDescription(this.reasonToDisabled);
+				for(MunicipalBond mb : this.selectedToDisabled.getMunicipalBonds()){
+					mb.setCreditNote(null);
+				}
+				super.update();
+			}
+		}
+				
+		public void prepareToDisabled(CreditNote _creditNote){
+			this.selectedToDisabled = _creditNote;
+		}
+		
+		private String reasonToDisabled = "";
+		private CreditNote selectedToDisabled;
+
+		public String getReasonToDisabled() {
+			return reasonToDisabled;
+		}
+
+		public void setReasonToDisabled(String reasonToDisabled) {
+			this.reasonToDisabled = reasonToDisabled;
+		}
+
+		public CreditNote getSelectedToDisabled() {
+			return selectedToDisabled;
+		}
+
+		public void setSelectedToDisabled(CreditNote selectedToDisabled) {
+			this.selectedToDisabled = selectedToDisabled;
+		}
+		
 }

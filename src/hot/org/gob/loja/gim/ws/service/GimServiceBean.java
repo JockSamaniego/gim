@@ -18,6 +18,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -110,8 +111,8 @@ public class GimServiceBean implements GimService {
 
 	@EJB
 	MunicipalBondService municipalBondService;
-	
-	String sqlBondsById ="SELECT  "
+
+	String sqlBondsById = "SELECT  "
 			+ "	mb.id,  "
 			+ "	re.identificationNumber, "
 			+ "	re.name,  "
@@ -141,28 +142,23 @@ public class GimServiceBean implements GimService {
 			+ "			from item it "
 			+ "			inner join entry ent on it.entry_id = ent.id "
 			+ "			where it.municipalbond_id = mb.id  "
-			+ "			order by it.ordernumber "
-			+ "		) as items_bond "
-			+ "	) as items, "
-			+ "	(  "
-			+ "		select cast(to_json(rubro_principal) as text) from "
-			+ "		( "
+			+ "			order by it.ordernumber " + "		) as items_bond "
+			+ "	) as items, " + "	(  "
+			+ "		select cast(to_json(rubro_principal) as text) from " + "		( "
 			+ "			SELECT id, code, datepattern, name, reason  "
-			+ "			FROM entry  "
-			+ "			WHERE id = mb.entry_id  "
-			+ "		) as rubro_principal "
-			+ "	) as rubro, "
-			+ "mb.printingsNumber printingsNumber "
-			+ "FROM municipalbond mb "
+			+ "			FROM entry  " + "			WHERE id = mb.entry_id  "
+			+ "		) as rubro_principal " + "	) as rubro, "
+			+ "mb.printingsNumber printingsNumber " + "FROM municipalbond mb "
 			+ "inner join PropertyAppraisal pa on mb.adjunct_id = pa.id  "
 			+ "inner join resident re on mb.resident_id = re.id "
 			+ "LEFT OUTER JOIN address addr on re.currentaddress_id = addr.id "
 			+ "where mb.id IN (:municipalBondIds)  "
-			+ "order by mb.entry_id, mb.liquidationdate, mb.liquidationtime ";	
+			+ "order by mb.entry_id, mb.liquidationdate, mb.liquidationtime ";
 
 	@Override
 	public Taxpayer findTaxpayer(ServiceRequest request)
-			throws TaxpayerNotFound, TaxpayerNonUnique, InvalidUser, AccountIsNotActive, AccountIsBlocked {
+			throws TaxpayerNotFound, TaxpayerNonUnique, InvalidUser,
+			AccountIsNotActive, AccountIsBlocked {
 		String identificationNumber = request.getIdentificationNumber();
 		Taxpayer taxpayer = findTaxpayer(identificationNumber);
 		// System.out.println("::::::findTaxpayer Found: " + taxpayer != null ?
@@ -171,8 +167,10 @@ public class GimServiceBean implements GimService {
 	}
 
 	@Override
-	public Map<String, Object> findTaxpayer(String name, String password, String identificationNumber)
-			throws TaxpayerNotFound, TaxpayerNonUnique, InvalidUser, AccountIsNotActive, AccountIsBlocked {
+	public Map<String, Object> findTaxpayer(String name, String password,
+			String identificationNumber) throws TaxpayerNotFound,
+			TaxpayerNonUnique, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
 		Taxpayer taxpayer = findTaxpayer(identificationNumber);
 		// System.out.println("::::::findTaxpayer Found: " + taxpayer != null ?
 		// taxpayer.getId() : "NULL");
@@ -181,7 +179,8 @@ public class GimServiceBean implements GimService {
 
 	@Override
 	public Boolean saveTaxpayer(ServiceRequest request, Taxpayer taxpayer)
-			throws InvalidUser, AccountIsNotActive, AccountIsBlocked, TaxpayerNotSaved {
+			throws InvalidUser, AccountIsNotActive, AccountIsBlocked,
+			TaxpayerNotSaved {
 		Resident resident = getInstanceResident(taxpayer);
 		try {
 			save(resident);
@@ -196,10 +195,12 @@ public class GimServiceBean implements GimService {
 	}
 
 	@Override
-	public Boolean saveTaxpayer(String name, String password, Map<String, Object> taxpayerAsMap)
-			throws InvalidUser, AccountIsNotActive, AccountIsBlocked, TaxpayerNotSaved {
+	public Boolean saveTaxpayer(String name, String password,
+			Map<String, Object> taxpayerAsMap) throws InvalidUser,
+			AccountIsNotActive, AccountIsBlocked, TaxpayerNotSaved {
 
-		Taxpayer taxpayer = (Taxpayer) ReflectionUtil.getFromMap(taxpayerAsMap, Taxpayer.class);
+		Taxpayer taxpayer = (Taxpayer) ReflectionUtil.getFromMap(taxpayerAsMap,
+				Taxpayer.class);
 		Resident resident = getInstanceResident(taxpayer);
 		try {
 			save(resident);
@@ -212,14 +213,16 @@ public class GimServiceBean implements GimService {
 	}
 
 	@Override
-	public UserResponse saveUser(ServiceRequest request, String username, String password) {
+	public UserResponse saveUser(ServiceRequest request, String username,
+			String password) {
 		return save(request.getIdentificationNumber(), username, password);
 	}
 
 	// @In(create=true)
 	// PasswordManager passwordManager;
 	@SuppressWarnings("unchecked")
-	public UserResponse save(String identificationNumber, String username, String password) {
+	public UserResponse save(String identificationNumber, String username,
+			String password) {
 
 		UserResponse userResponse = new UserResponse();
 
@@ -244,7 +247,8 @@ public class GimServiceBean implements GimService {
 		q.setParameter("name", username);
 		List<User> userList = q.getResultList();
 		if (!userList.isEmpty()) {
-			userResponse.setMessage("Ya existe un registro con el nombre de usuario");
+			userResponse
+					.setMessage("Ya existe un registro con el nombre de usuario");
 			userResponse.setStatus("error");
 			return userResponse;
 		}
@@ -263,11 +267,13 @@ public class GimServiceBean implements GimService {
 				residentList.get(0).setUser(user);
 				residentService.save(residentList.get(0));
 
-				userResponse.setMessage("Usuario creado con id:" + user.getId());
+				userResponse
+						.setMessage("Usuario creado con id:" + user.getId());
 				userResponse.setStatus("ok");
 			} catch (IdentificationNumberExistsException e) {
 				e.printStackTrace();
-				userResponse.setMessage("No se puede actualizar el resident con el userid");
+				userResponse
+						.setMessage("No se puede actualizar el resident con el userid");
 				userResponse.setStatus("error");
 			}
 
@@ -292,8 +298,10 @@ public class GimServiceBean implements GimService {
 		if (!users.isEmpty()) {
 			User user = users.get(0);
 			try {
-				response.setTaxpayer(findTaxpayer(user.getResident().getIdentificationNumber()));
-				response.setMessage(user.getResident().getIdentificationNumber());
+				response.setTaxpayer(findTaxpayer(user.getResident()
+						.getIdentificationNumber()));
+				response.setMessage(user.getResident()
+						.getIdentificationNumber());
 				response.setStatus("ok");
 				response.setName(user.getResident().getName());
 			} catch (TaxpayerNotFound e) {
@@ -311,26 +319,36 @@ public class GimServiceBean implements GimService {
 	}
 
 	@Override
-	public RealEstate findRealEstate(ServiceRequest request, String cadastralCode) throws RealEstateNotFound,
-			TaxpayerNotFound, TaxpayerNonUnique, InvalidUser, AccountIsNotActive, AccountIsBlocked {
+	public RealEstate findRealEstate(ServiceRequest request,
+			String cadastralCode) throws RealEstateNotFound, TaxpayerNotFound,
+			TaxpayerNonUnique, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
 		RealEstate realEstate = findRealEstate(cadastralCode);
-		System.out.println(":::::: findRealEstate FOUND: " + realEstate != null ? realEstate.getId() : "null");
+		System.out
+				.println(":::::: findRealEstate FOUND: " + realEstate != null ? realEstate
+						.getId() : "null");
 		return realEstate;
 	}
 
 	@Override
-	public Map<String, Object> findRealEstate(String name, String password, String cadastralCode)
-			throws RealEstateNotFound, TaxpayerNotFound, TaxpayerNonUnique, InvalidUser, AccountIsNotActive,
+	public Map<String, Object> findRealEstate(String name, String password,
+			String cadastralCode) throws RealEstateNotFound, TaxpayerNotFound,
+			TaxpayerNonUnique, InvalidUser, AccountIsNotActive,
 			AccountIsBlocked {
 		RealEstate realEstate = findRealEstate(cadastralCode);
-		System.out.println(":::::: findRealEstate FOUND: " + realEstate != null ? realEstate.getId() : "null");
+		System.out
+				.println(":::::: findRealEstate FOUND: " + realEstate != null ? realEstate
+						.getId() : "null");
 		return ReflectionUtil.getAsMap(realEstate);
 	}
 
 	@Override
-	public Boolean generateEmissionOrder(String name, String password, String identificationNumber, String accountCode,
-			String pplessUser) throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound,
-			EmissionOrderNotGenerate, EmissionOrderNotSave, InvalidUser, AccountIsNotActive, AccountIsBlocked {
+	public Boolean generateEmissionOrder(String name, String password,
+			String identificationNumber, String accountCode, String pplessUser)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
 
 		try {
 			Resident resident = residentService.find(identificationNumber);
@@ -344,10 +362,11 @@ public class GimServiceBean implements GimService {
 			}
 
 			Date currentDate = java.util.Calendar.getInstance().getTime();
-			List<FiscalPeriod> fiscalPeriods = revenueService.findFiscalPeriodCurrent(currentDate);
+			List<FiscalPeriod> fiscalPeriods = revenueService
+					.findFiscalPeriodCurrent(currentDate);
 
-			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null && !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0)
-					: null;
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+					&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
 
 			if (fiscalPeriodCurrent == null) {
 				throw new FiscalPeriodNotFound();
@@ -359,8 +378,8 @@ public class GimServiceBean implements GimService {
 			entryValueItem.setAmount(BigDecimal.ONE);
 			// entryValueItem.setMainValue(mainValue)
 
-			MunicipalBond mb = revenueService.createMunicipalBond(resident, entry, fiscalPeriodCurrent, entryValueItem,
-					true);
+			MunicipalBond mb = revenueService.createMunicipalBond(resident,
+					entry, fiscalPeriodCurrent, entryValueItem, true);
 			mb.setGroupingCode(identificationNumber);
 			if (mb.getResident().getCurrentAddress() != null) {
 				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
@@ -374,9 +393,9 @@ public class GimServiceBean implements GimService {
 			mb.setOriginator(emitter);
 			mb.setDescription(name + ": " + pplessUser);
 
-			///
+			// /
 			revenueService.emit(mb, user);
-			///
+			// /
 			System.out.println("=========> MUNICIPAL BOND: ");
 			System.out.println("===> RESIDENT: " + mb.getResident().getName());
 			System.out.println("===> DIRECCION: " + mb.getAddress());
@@ -385,21 +404,28 @@ public class GimServiceBean implements GimService {
 			System.out.println("===> CREATIONDATE: " + mb.getCreationDate());
 			System.out.println("===> EMISSIONDATE: " + mb.getEmisionDate());
 			System.out.println("===> EMITTER: " + mb.getEmitter().getName());
-			System.out.println("===> ORIGINATOR: " + mb.getOriginator().getName());
-			System.out.println("===> EXPIRATIONDATE: " + mb.getExpirationDate());
+			System.out.println("===> ORIGINATOR: "
+					+ mb.getOriginator().getName());
+			System.out
+					.println("===> EXPIRATIONDATE: " + mb.getExpirationDate());
 			System.out.println("===> EMISSIONPERIOD: " + mb.getEmisionPeriod());
-			System.out.println("===> ENTRY: " + mb.getEntry().getName() + " - " + mb.getEntry().getCode());
-			System.out.println("===> FISCALPERIOD: " + mb.getFiscalPeriod().getName());
+			System.out.println("===> ENTRY: " + mb.getEntry().getName() + " - "
+					+ mb.getEntry().getCode());
+			System.out.println("===> FISCALPERIOD: "
+					+ mb.getFiscalPeriod().getName());
 			System.out.println("===> ITEMS: " + mb.getItems().size());
 			System.out.println("===> TOTAL: " + mb.getPaidTotal());
 			System.out.println("===> VALUE: " + mb.getValue());
 			System.out.println("===> NUMBER: " + mb.getNumber());
 			System.out.println("===> MUNICIPALBONDSTATUS: "
-					+ (mb.getMunicipalBondStatus() != null ? mb.getMunicipalBondStatus().getName() : null));
+					+ (mb.getMunicipalBondStatus() != null ? mb
+							.getMunicipalBondStatus().getName() : null));
 			System.out.println("===> MUNICIPALBONDTYPE: "
-					+ (mb.getMunicipalBondType() != null ? mb.getMunicipalBondType() : null));
+					+ (mb.getMunicipalBondType() != null ? mb
+							.getMunicipalBondType() : null));
 			System.out.println("===> MUNICIPALBONDLEGALSTATUS: "
-					+ (mb.getLegalStatus() != null ? mb.getLegalStatus().name() : null));
+					+ (mb.getLegalStatus() != null ? mb.getLegalStatus().name()
+							: null));
 
 			System.out.println("::::::generateEmissionOrder: SAVED OK!!");
 			return Boolean.TRUE;
@@ -413,7 +439,8 @@ public class GimServiceBean implements GimService {
 		// return Boolean.FALSE;
 	}
 
-	private Resident getInstanceResident(Taxpayer taxpayer) throws TaxpayerNotSaved {
+	private Resident getInstanceResident(Taxpayer taxpayer)
+			throws TaxpayerNotSaved {
 		String identificationNumber = taxpayer.getIdentificationNumber();
 		Resident resident = null;
 		if (taxpayer.getId() == null) {
@@ -437,7 +464,8 @@ public class GimServiceBean implements GimService {
 				resident.setCurrentAddress(currentAddress);
 			}
 			resident.getCurrentAddress().setStreet(taxpayer.getStreet());
-			resident.getCurrentAddress().setPhoneNumber(taxpayer.getPhoneNumber());
+			resident.getCurrentAddress().setPhoneNumber(
+					taxpayer.getPhoneNumber());
 
 			if (resident instanceof Person) {
 				((Person) resident).setFirstName(taxpayer.getFirstName());
@@ -451,8 +479,11 @@ public class GimServiceBean implements GimService {
 		return resident;
 	}
 
-	private void save(Resident resident) throws IdentificationNumberSizeException, IdentificationNumberWrongException,
-			InvalidIdentificationNumberException, InvalidIdentificationNumberFinishedException,
+	private void save(Resident resident)
+			throws IdentificationNumberSizeException,
+			IdentificationNumberWrongException,
+			InvalidIdentificationNumberException,
+			InvalidIdentificationNumberFinishedException,
 			IdentificationNumberExistsException {
 		resident.isIdentificationNumberValid(resident.getIdentificationNumber());
 		// IdentificationNumberUtil.validateIdentificationNumber(resident.getIdentificationType(),
@@ -460,15 +491,18 @@ public class GimServiceBean implements GimService {
 		residentService.save(resident);
 	}
 
-	private Taxpayer findTaxpayer(String identificationNumber) throws TaxpayerNotFound, TaxpayerNonUnique {
+	private Taxpayer findTaxpayer(String identificationNumber)
+			throws TaxpayerNotFound, TaxpayerNonUnique {
 		Query query;
 		Taxpayer taxpayer = null;
 		if (identificationNumber.length() > 10) {
 			query = em.createNamedQuery("Taxpayer.findPersonByIdentification");
-			query.setParameter("identificationNumber", identificationNumber.substring(0, 10));
+			query.setParameter("identificationNumber",
+					identificationNumber.substring(0, 10));
 			// taxpayer = (Taxpayer) query.getResultList();
 			if (query.getResultList().size() <= 0) {
-				query = em.createNamedQuery("Taxpayer.findByIdentificationNumber");
+				query = em
+						.createNamedQuery("Taxpayer.findByIdentificationNumber");
 				query.setParameter("identificationNumber", identificationNumber);
 				if (query.getResultList().size() > 0) {
 					taxpayer = (Taxpayer) query.getResultList().get(0);
@@ -479,13 +513,16 @@ public class GimServiceBean implements GimService {
 		} else {
 			query = em.createNamedQuery("Taxpayer.findPersonByIdentification");
 			query.setParameter("identificationNumber", identificationNumber);
-			// query = em.createNamedQuery("Taxpayer.findByIdentificationNumber");//query =
+			// query =
+			// em.createNamedQuery("Taxpayer.findByIdentificationNumber");//query
+			// =
 			// em.createNamedQuery("Taxpayer.findLegalEntityFullByIdentification");
 		}
 		try {
 			taxpayer = (Taxpayer) query.getSingleResult();
 			if (taxpayer != null) {
-				Address currentAddress = findCurrentAddressByTaxpayerId(taxpayer.getId());
+				Address currentAddress = findCurrentAddressByTaxpayerId(taxpayer
+						.getId());
 				if (currentAddress != null) {
 					taxpayer.setStreet(currentAddress.getStreet());
 					taxpayer.setPhoneNumber(currentAddress.getPhoneNumber());
@@ -511,25 +548,31 @@ public class GimServiceBean implements GimService {
 			RealEstate realEstate = (RealEstate) query.getSingleResult();
 			if (realEstate != null) {
 				// Busqueda de datos del propietarios
-				Taxpayer owner = findTaxpayer(realEstate.getIdentificationNumber());
+				Taxpayer owner = findTaxpayer(realEstate
+						.getIdentificationNumber());
 				realEstate.setOwner(owner);
 				// Busqueda de la parroquia a donde perteneces el predio
-				TerritorialDivision defaultCanton = cadasterService.findDefaultCanton();
-				TerritorialDivision parish = cadasterService.findTerritorialDivision(realEstate.getCode(), 5, 9,
-						defaultCanton);
-				realEstate.setNameParish(parish != null ? parish.getName() : null);
+				TerritorialDivision defaultCanton = cadasterService
+						.findDefaultCanton();
+				TerritorialDivision parish = cadasterService
+						.findTerritorialDivision(realEstate.getCode(), 5, 9,
+								defaultCanton);
+				realEstate.setNameParish(parish != null ? parish.getName()
+						: null);
 
 				// Busqueda de las calles de la manzana
 				/*
 				 * query = em.createNamedQuery("BlockLimit.findByBlockId");
-				 * query.setParameter("blockId", realEstate.getIdBlock()); List<BlockLimit>
-				 * blockLimits= (List<BlockLimit>)query.getResultList(); if (blockLimits != null
-				 * && !blockLimits.isEmpty()){ StringBuffer limits = new StringBuffer(); for
-				 * (BlockLimit bl : blockLimits){ limits =
-				 * limits.append(bl.getStreet().getName()); limits = limits.append(", "); }
-				 * limits = limits.deleteCharAt(limits.length()-2);//(limits.length()-2,
-				 * limits.length()); realEstate.setStreetBlockLimits(limits.toString().trim());
-				 * }
+				 * query.setParameter("blockId", realEstate.getIdBlock());
+				 * List<BlockLimit> blockLimits=
+				 * (List<BlockLimit>)query.getResultList(); if (blockLimits !=
+				 * null && !blockLimits.isEmpty()){ StringBuffer limits = new
+				 * StringBuffer(); for (BlockLimit bl : blockLimits){ limits =
+				 * limits.append(bl.getStreet().getName()); limits =
+				 * limits.append(", "); } limits =
+				 * limits.deleteCharAt(limits.length()-2);//(limits.length()-2,
+				 * limits.length());
+				 * realEstate.setStreetBlockLimits(limits.toString().trim()); }
 				 */
 				query = em.createNamedQuery("Street.findByBlockId");
 				query.setParameter("blockId", realEstate.getIdBlock());
@@ -540,7 +583,8 @@ public class GimServiceBean implements GimService {
 						limits = limits.append(bl.getName());
 						limits = limits.append(", ");
 					}
-					limits = limits.deleteCharAt(limits.length() - 2);// (limits.length()-2, limits.length());
+					limits = limits.deleteCharAt(limits.length() - 2);// (limits.length()-2,
+																		// limits.length());
 					realEstate.setStreetBlockLimits(limits.toString().trim());
 				}
 				return realEstate;
@@ -556,7 +600,8 @@ public class GimServiceBean implements GimService {
 	}
 
 	private Address findCurrentAddressByTaxpayerId(Long TaxpayerId) {
-		Query query = em.createNamedQuery("Address.findCurrentAddressByResidentId");
+		Query query = em
+				.createNamedQuery("Address.findCurrentAddressByResidentId");
 		query.setParameter("residentId", TaxpayerId);
 		Address currentAddress = (Address) query.getSingleResult();
 		return currentAddress;
@@ -602,17 +647,20 @@ public class GimServiceBean implements GimService {
 	}
 
 	@Override
-	public EmisionResponse generateEmissionOrder(String name, String password, String identificationNumber,
-			String accountCode, EmisionDetail emisionDetail) {
+	public EmisionResponse generateEmissionOrder(String name, String password,
+			String identificationNumber, String accountCode,
+			EmisionDetail emisionDetail) {
 
 		EmisionResponse response = new EmisionResponse();
 		response.setStatus("ERROR");
 
 		User user = findUser(name, password);
 
-		if (countContraventionsOnAntReference(emisionDetail.getContraventionNumber()).intValue() <= 0) {
+		if (countContraventionsOnAntReference(
+				emisionDetail.getContraventionNumber()).intValue() <= 0) {
 
-			if (countContraventionsOnPhotoFine(emisionDetail.getContraventionNumber()).intValue() <= 0) {
+			if (countContraventionsOnPhotoFine(
+					emisionDetail.getContraventionNumber()).intValue() <= 0) {
 
 				try {
 
@@ -631,12 +679,14 @@ public class GimServiceBean implements GimService {
 					}
 
 					/*
-					 * if(!checkInfractionDate(emisionDetail.getNotificationDate())){ response.
-					 * setMessage("Emisión fallida. Fecha de infracción no es correcta con el contrato ML-PSM-2674-2019"
+					 * if(!checkInfractionDate(emisionDetail.getNotificationDate(
+					 * ))){ response. setMessage(
+					 * "Emisión fallida. Fecha de infracción no es correcta con el contrato ML-PSM-2674-2019"
 					 * ); return response; }
 					 */
 
-					Resident resident = residentService.find(identificationNumber);
+					Resident resident = residentService
+							.find(identificationNumber);
 					if (resident == null) {
 						response.setMessage("Emisión fallida. Contribuyente No Encontrado");
 						return response;
@@ -648,11 +698,13 @@ public class GimServiceBean implements GimService {
 						return response;
 					}
 
-					Date currentDate = java.util.Calendar.getInstance().getTime();
-					List<FiscalPeriod> fiscalPeriods = revenueService.findFiscalPeriodCurrent(currentDate);
+					Date currentDate = java.util.Calendar.getInstance()
+							.getTime();
+					List<FiscalPeriod> fiscalPeriods = revenueService
+							.findFiscalPeriodCurrent(currentDate);
 
-					FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null && !fiscalPeriods.isEmpty()
-							? fiscalPeriods.get(0)
+					FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+							&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0)
 							: null;
 
 					if (fiscalPeriodCurrent == null) {
@@ -686,12 +738,15 @@ public class GimServiceBean implements GimService {
 					entryValueItem.setMainValue(emisionDetail.getTotal());
 
 					MunicipalBondStatus preEmitBondStatus = systemParameterService
-							.materialize(MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PREEMIT");
+							.materialize(MunicipalBondStatus.class,
+									"MUNICIPAL_BOND_STATUS_ID_PREEMIT");
 
-					MunicipalBond mb = revenueService.createMunicipalBond(resident, entry, fiscalPeriodCurrent,
+					MunicipalBond mb = revenueService.createMunicipalBond(
+							resident, entry, fiscalPeriodCurrent,
 							entryValueItem, true);
 					if (mb.getResident().getCurrentAddress() != null) {
-						mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+						mb.setAddress(mb.getResident().getCurrentAddress()
+								.getStreet());
 					}
 
 					mb.setEmitter(emitter);
@@ -701,7 +756,8 @@ public class GimServiceBean implements GimService {
 					ANTReference ant = new ANTReference();
 					ant.setDocumentVisualizationsNumber(0);
 					ant.setNumberPlate(emisionDetail.getNumberPlate());
-					ant.setContraventionNumber(emisionDetail.getContraventionNumber());
+					ant.setContraventionNumber(emisionDetail
+							.getContraventionNumber());
 					ant.setSpeeding(emisionDetail.getSpeeding());
 					ant.setVehicleType(emisionDetail.getVehicleType());
 					ant.setServiceType(emisionDetail.getServiceType());
@@ -710,7 +766,8 @@ public class GimServiceBean implements GimService {
 					ant.setNotificationDate(emisionDetail.getNotificationDate());
 					ant.setCitationDate(emisionDetail.getInfractionDate());
 
-					ant.setSupportDocumentURL(emisionDetail.getSupportDocumentURL());
+					ant.setSupportDocumentURL(emisionDetail
+							.getSupportDocumentURL());
 					mb.setAdjunct(ant);
 					// end Adjunt
 
@@ -730,7 +787,8 @@ public class GimServiceBean implements GimService {
 					mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
 					mb.setEmisionPeriod(findEmisionPeriod());
 
-					EmissionOrder eo = createEmisionOrder(emitter, "Multas ANT - Rubro: " + entry.getCode());
+					EmissionOrder eo = createEmisionOrder(emitter,
+							"Multas ANT - Rubro: " + entry.getCode());
 					eo.add(mb);
 
 					em.persist(eo);
@@ -757,11 +815,15 @@ public class GimServiceBean implements GimService {
 			response.setMessage("Emisión fallida. Ya existe obligacion con la foto multa indicada");
 		}
 
-		String log_detail = "PreEmision FotoMulta " + "\t=> usuario: " + name + " " + "\t=> infraccion: "
-				+ emisionDetail.getContraventionNumber() + " " + "\t=> placa: " + emisionDetail.getNumberPlate() + " "
-				+ "\t=> fecha infraccion: " + emisionDetail.getInfractionDate() + " " + "\t=> fecha notificacion: "
-				+ emisionDetail.getNotificationDate() + " " + "\t=> cuenta: " + accountCode + " " + "\t=> valor: "
-				+ emisionDetail.getTotal() + " " + "\t=> contribuyente: " + identificationNumber;
+		String log_detail = "PreEmision FotoMulta " + "\t=> usuario: " + name
+				+ " " + "\t=> infraccion: "
+				+ emisionDetail.getContraventionNumber() + " " + "\t=> placa: "
+				+ emisionDetail.getNumberPlate() + " "
+				+ "\t=> fecha infraccion: " + emisionDetail.getInfractionDate()
+				+ " " + "\t=> fecha notificacion: "
+				+ emisionDetail.getNotificationDate() + " " + "\t=> cuenta: "
+				+ accountCode + " " + "\t=> valor: " + emisionDetail.getTotal()
+				+ " " + "\t=> contribuyente: " + identificationNumber;
 		response.setDetail(log_detail);
 		return response;
 	}
@@ -774,7 +836,8 @@ public class GimServiceBean implements GimService {
 	 * @return
 	 */
 	private Boolean checkUserRole(Long userId) {
-		Long roleId = systemParameterService.findParameter("FOTO_MULTA_PREEMISOR");
+		Long roleId = systemParameterService
+				.findParameter("FOTO_MULTA_PREEMISOR");
 		String sql = "select count(*) from role__user as ru where ru.users_id = :userId and ru.roles_id = :roleId";
 		Query query = em.createNativeQuery(sql);
 		query.setParameter("userId", userId);
@@ -785,26 +848,29 @@ public class GimServiceBean implements GimService {
 
 	/**
 	 * las fechas current y fecha de infraccion deben ser las mismas al poner al
-	 * final del mes e incrementar los 5 dias ml-df-2019-404-m ml-umtttsv-l-fm-0242
+	 * final del mes e incrementar los 5 dias ml-df-2019-404-m
+	 * ml-umtttsv-l-fm-0242
 	 * 
 	 * @param date
 	 * @return
 	 */
 	private Boolean checkInfractionDate(Date infraction) {
 		/*
-		 * //fecha actual incrementada los 5 dias Calendar currentLastDayOfMonth=
-		 * Calendar.getInstance(); currentLastDayOfMonth.set(Calendar.DAY_OF_MONTH,
+		 * //fecha actual incrementada los 5 dias Calendar
+		 * currentLastDayOfMonth= Calendar.getInstance();
+		 * currentLastDayOfMonth.set(Calendar.DAY_OF_MONTH,
 		 * currentLastDayOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH));
 		 * currentLastDayOfMonth.add(Calendar.DAY_OF_MONTH, 5);
 		 * 
 		 * //fecha de infraccion incrementada en 5 dias Calendar infractionDate=
-		 * Calendar.getInstance(); infractionDate.setTime(DateUtils.truncate(date));
+		 * Calendar.getInstance();
+		 * infractionDate.setTime(DateUtils.truncate(date));
 		 * infractionDate.set(Calendar.DAY_OF_MONTH,
 		 * infractionDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 		 * infractionDate.add(Calendar.DAY_OF_MONTH, 5);
 		 * 
-		 * Date date1 = DateUtils.truncate(infractionDate.getTime()); Date date2 =
-		 * DateUtils.truncate(currentLastDayOfMonth.getTime());
+		 * Date date1 = DateUtils.truncate(infractionDate.getTime()); Date date2
+		 * = DateUtils.truncate(currentLastDayOfMonth.getTime());
 		 * 
 		 * return date1.compareTo(date2) == 0 ? Boolean.TRUE : Boolean.FALSE ;
 		 */
@@ -815,31 +881,41 @@ public class GimServiceBean implements GimService {
 		// con la finalidad de validar sin horas la fecha
 		infractionDate.setTime(DateUtils.truncate(infraction));
 
-		if (infractionDate.get(Calendar.YEAR) == currentLastDayOfMonth.get(Calendar.YEAR)) {
-			if (infractionDate.get(Calendar.MONTH) == currentLastDayOfMonth.get(Calendar.MONTH)) {
-				if (infractionDate.get(Calendar.DAY_OF_MONTH) <= currentLastDayOfMonth.get(Calendar.DAY_OF_MONTH)) {
+		if (infractionDate.get(Calendar.YEAR) == currentLastDayOfMonth
+				.get(Calendar.YEAR)) {
+			if (infractionDate.get(Calendar.MONTH) == currentLastDayOfMonth
+					.get(Calendar.MONTH)) {
+				if (infractionDate.get(Calendar.DAY_OF_MONTH) <= currentLastDayOfMonth
+						.get(Calendar.DAY_OF_MONTH)) {
 					return Boolean.TRUE;
 				}
 				return Boolean.FALSE;
-			} else if (infractionDate.get(Calendar.MONTH) < currentLastDayOfMonth.get(Calendar.MONTH)) {
-				int diferencia = currentLastDayOfMonth.get(Calendar.MONTH) - infractionDate.get(Calendar.MONTH);
+			} else if (infractionDate.get(Calendar.MONTH) < currentLastDayOfMonth
+					.get(Calendar.MONTH)) {
+				int diferencia = currentLastDayOfMonth.get(Calendar.MONTH)
+						- infractionDate.get(Calendar.MONTH);
 				if (diferencia == 1) {
-					System.out.println(currentLastDayOfMonth.get(Calendar.DAY_OF_MONTH));
+					System.out.println(currentLastDayOfMonth
+							.get(Calendar.DAY_OF_MONTH));
 					return currentLastDayOfMonth.get(Calendar.DAY_OF_MONTH) <= 5;
 				} else {
 					return false;
 				}
-			} else if (infractionDate.get(Calendar.MONTH) > currentLastDayOfMonth.get(Calendar.MONTH)) {
+			} else if (infractionDate.get(Calendar.MONTH) > currentLastDayOfMonth
+					.get(Calendar.MONTH)) {
 				return Boolean.FALSE;
 			}
-		} else if (infractionDate.get(Calendar.YEAR) < currentLastDayOfMonth.get(Calendar.YEAR)) {
-			int diferencia = currentLastDayOfMonth.get(Calendar.MONTH) - infractionDate.get(Calendar.MONTH);
+		} else if (infractionDate.get(Calendar.YEAR) < currentLastDayOfMonth
+				.get(Calendar.YEAR)) {
+			int diferencia = currentLastDayOfMonth.get(Calendar.MONTH)
+					- infractionDate.get(Calendar.MONTH);
 			if (diferencia == -11) {
 				return currentLastDayOfMonth.get(Calendar.DAY_OF_MONTH) <= 5;
 			} else {
 				return false;
 			}
-		} else if (infractionDate.get(Calendar.YEAR) > currentLastDayOfMonth.get(Calendar.YEAR)) {
+		} else if (infractionDate.get(Calendar.YEAR) > currentLastDayOfMonth
+				.get(Calendar.YEAR)) {
 			return false;
 		}
 		return true;
@@ -853,7 +929,8 @@ public class GimServiceBean implements GimService {
 	 */
 	private Long countContraventionsOnAntReference(String contraventionNumber) {
 		Query query = em.createNamedQuery("ANTReference.findFoto-Multa");
-		return (Long) query.setParameter("contraventionNumber", contraventionNumber.trim()).getSingleResult();
+		return (Long) query.setParameter("contraventionNumber",
+				contraventionNumber.trim()).getSingleResult();
 	}
 
 	/**
@@ -863,8 +940,10 @@ public class GimServiceBean implements GimService {
 	 * @return
 	 */
 	private Long countContraventionsOnPhotoFine(String contraventionNumber) {
-		Query query = em.createNamedQuery("PhotoFine.findByContraventionNumber");
-		return (Long) query.setParameter("contraventionNumber", contraventionNumber.trim()).getSingleResult();
+		Query query = em
+				.createNamedQuery("PhotoFine.findByContraventionNumber");
+		return (Long) query.setParameter("contraventionNumber",
+				contraventionNumber.trim()).getSingleResult();
 	}
 
 	private Date findEmisionPeriod() {
@@ -890,12 +969,13 @@ public class GimServiceBean implements GimService {
 	 * 
 	 */
 	@Override
-	public StatementReport buildReport(ServiceRequest request, Date startDate, Date endDate, String reportType,
-			Long entryId) throws InvalidUser {
+	public StatementReport buildReport(ServiceRequest request, Date startDate,
+			Date endDate, String reportType, Long entryId) throws InvalidUser {
 		System.out.println("   desde " + startDate + "     hasta " + endDate);
 		// controla q safety solo obtenga los rubros de fotomultas
 		if (request.getUsername().equals("usuario_sesvial")
-				&& (entryId.equals(Long.parseLong("643")) || entryId.equals(Long.parseLong("644")))) {
+				&& (entryId.equals(Long.parseLong("643")) || entryId
+						.equals(Long.parseLong("644")))) {
 			if (reportType.equals("PENDING")) {
 				return findPending(startDate, endDate, reportType, entryId);
 			}
@@ -906,7 +986,8 @@ public class GimServiceBean implements GimService {
 		return null;
 	}
 
-	private StatementReport findPending(Date startDate, Date endDate, String reportType, Long entryId) {
+	private StatementReport findPending(Date startDate, Date endDate,
+			String reportType, Long entryId) {
 
 		List<Long> pendingStatus = new ArrayList<Long>();
 		pendingStatus.add(new Long("3"));
@@ -922,23 +1003,30 @@ public class GimServiceBean implements GimService {
 		 * "    mb.creationDate between :startDate and :endDate ";
 		 * 
 		 * //Long pendingBondStatusId =
-		 * systemParameterService.findParameter(IncomeServiceBean.PENDING_BOND_STATUS);
-		 * Query query = em.createQuery(sqlPending); query.setParameter("entryId",
-		 * entryId); query.setParameter("statusId", pendingStatus);
-		 * query.setParameter("startDate", startDate); query.setParameter("endDate",
-		 * endDate); StatementReport statementReport = new StatementReport();
-		 * statementReport.setStartDate(startDate); statementReport.setEndDate(endDate);
+		 * systemParameterService.findParameter(IncomeServiceBean
+		 * .PENDING_BOND_STATUS); Query query = em.createQuery(sqlPending);
+		 * query.setParameter("entryId", entryId);
+		 * query.setParameter("statusId", pendingStatus);
+		 * query.setParameter("startDate", startDate);
+		 * query.setParameter("endDate", endDate); StatementReport
+		 * statementReport = new StatementReport();
+		 * statementReport.setStartDate(startDate);
+		 * statementReport.setEndDate(endDate);
 		 * statementReport.setBondReports(query.getResultList());
 		 * System.out.println("--------------------------el tamnio es "+query.
 		 * getResultList().size());
 		 */
 
 		String sqlPending = "select mb.id, mb.number, e.name, mb.groupingCode, mb.serviceDate, "
-				+ "mb.base, mb.emisionDate, ant.contraventionnumber, ant.numberplate " + "from municipalbond mb "
+				+ "mb.base, mb.emisionDate, ant.contraventionnumber, ant.numberplate "
+				+ "from municipalbond mb "
 				+ "inner join resident on mb.resident_id=resident.id "
-				+ "inner join ANTReference ant on mb.adjunct_Id=ant.id " + "inner join entry e on mb.entry_id = e.id "
-				+ "where entry_id in (:entryId) " + "and mb.municipalbondstatus_id in (:statusId) "
-				+ "and mb.creationdate between :startDate and :endDate " + "order by mb.serviceDate ";
+				+ "inner join ANTReference ant on mb.adjunct_Id=ant.id "
+				+ "inner join entry e on mb.entry_id = e.id "
+				+ "where entry_id in (:entryId) "
+				+ "and mb.municipalbondstatus_id in (:statusId) "
+				+ "and mb.creationdate between :startDate and :endDate "
+				+ "order by mb.serviceDate ";
 
 		Query query = em.createNativeQuery(sqlPending);
 
@@ -950,13 +1038,16 @@ public class GimServiceBean implements GimService {
 		StatementReport statementReport = new StatementReport();
 		statementReport.setStartDate(startDate);
 		statementReport.setEndDate(endDate);
-		statementReport.setBondReports(NativeQueryResultsMapper.map(query.getResultList(), BondReport.class));
-		System.out.println("--------------------------pendientes " + query.getResultList().size());
+		statementReport.setBondReports(NativeQueryResultsMapper.map(
+				query.getResultList(), BondReport.class));
+		System.out.println("--------------------------pendientes "
+				+ query.getResultList().size());
 
 		return statementReport;
 	}
 
-	private StatementReport findPayed(Date startDate, Date endDate, String reportType, Long entryId) {
+	private StatementReport findPayed(Date startDate, Date endDate,
+			String reportType, Long entryId) {
 		/*
 		 * String sqlPending= "SELECT NEW org.gob.loja.gim.ws.dto.BondReport(" +
 		 * "  mb.id, mb.number, e.name, mb.groupingCode, mb.serviceDate, mb.paidTotal, mb.emisionDate, "
@@ -970,11 +1061,15 @@ public class GimServiceBean implements GimService {
 		paymentStatus.add(new Long("11"));
 
 		String sqlPending = "select mb.id, mb.number, e.name, mb.groupingCode, mb.serviceDate, "
-				+ "mb.base, mb.liquidationDate, ant.contraventionnumber, ant.numberplate " + "from municipalbond mb "
+				+ "mb.base, mb.liquidationDate, ant.contraventionnumber, ant.numberplate "
+				+ "from municipalbond mb "
 				+ "inner join resident on mb.resident_id=resident.id "
-				+ "inner join ANTReference ant on mb.adjunct_Id=ant.id " + "inner join entry e on mb.entry_id = e.id "
-				+ "where entry_id in (:entryId) " + "and mb.municipalbondstatus_id in (:statusId) "
-				+ "and mb.creationdate >= '2016-01-01' " + "and mb.liquidationdate between :startDate and :endDate "
+				+ "inner join ANTReference ant on mb.adjunct_Id=ant.id "
+				+ "inner join entry e on mb.entry_id = e.id "
+				+ "where entry_id in (:entryId) "
+				+ "and mb.municipalbondstatus_id in (:statusId) "
+				+ "and mb.creationdate >= '2016-01-01' "
+				+ "and mb.liquidationdate between :startDate and :endDate "
 				+ "order by mb.serviceDate ";
 
 		Query query = em.createNativeQuery(sqlPending);
@@ -987,8 +1082,10 @@ public class GimServiceBean implements GimService {
 		StatementReport statementReport = new StatementReport();
 		statementReport.setStartDate(startDate);
 		statementReport.setEndDate(endDate);
-		statementReport.setBondReports(NativeQueryResultsMapper.map(query.getResultList(), BondReport.class));
-		System.out.println("--------------------------pagos " + query.getResultList().size());
+		statementReport.setBondReports(NativeQueryResultsMapper.map(
+				query.getResultList(), BondReport.class));
+		System.out.println("--------------------------pagos "
+				+ query.getResultList().size());
 		return statementReport;
 	}
 
@@ -1011,12 +1108,16 @@ public class GimServiceBean implements GimService {
 	private List<RealEstate> listPropertiesByDNI(String identificationNumber)
 			throws RealEstateNotFound, TaxpayerNotFound, TaxpayerNonUnique {
 		try {
-			Query query = em.createNamedQuery("RealEstate.findByIdentificationNumber");
+			Query query = em
+					.createNamedQuery("RealEstate.findByIdentificationNumber");
 			query.setParameter("identificationNumber", identificationNumber);
 			List<RealEstate> aux = query.getResultList();
 			for (RealEstate rs : aux) {
-				TerritorialDivision defaultCanton = cadasterService.findDefaultCanton();
-				TerritorialDivision parish = cadasterService.findTerritorialDivision(rs.getCode(), 5, 9, defaultCanton);
+				TerritorialDivision defaultCanton = cadasterService
+						.findDefaultCanton();
+				TerritorialDivision parish = cadasterService
+						.findTerritorialDivision(rs.getCode(), 5, 9,
+								defaultCanton);
 				rs.setNameParish(parish != null ? parish.getName() : null);
 
 				query = em.createNamedQuery("Street.findByBlockId");
@@ -1028,7 +1129,8 @@ public class GimServiceBean implements GimService {
 						limits = limits.append(bl.getName());
 						limits = limits.append(", ");
 					}
-					limits = limits.deleteCharAt(limits.length() - 2);// (limits.length()-2, limits.length());
+					limits = limits.deleteCharAt(limits.length() - 2);// (limits.length()-2,
+																		// limits.length());
 					rs.setStreetBlockLimits(limits.toString().trim());
 				}
 			}
@@ -1036,10 +1138,11 @@ public class GimServiceBean implements GimService {
 			return aux;
 			// RealEstate realEstate = (RealEstate)query.getSingleResult();
 			/*
-			 * if (realEstate != null){ // Busqueda de datos del propietarios Taxpayer owner
-			 * = findTaxpayer(realEstate.getIdentificationNumber());
-			 * realEstate.setOwner(owner); // Busqueda de la parroquia a donde perteneces el
-			 * predio
+			 * if (realEstate != null){ // Busqueda de datos del propietarios
+			 * Taxpayer owner =
+			 * findTaxpayer(realEstate.getIdentificationNumber());
+			 * realEstate.setOwner(owner); // Busqueda de la parroquia a donde
+			 * perteneces el predio
 			 * 
 			 * return realEstate; }
 			 */
@@ -1054,10 +1157,12 @@ public class GimServiceBean implements GimService {
 	}
 
 	@Override
-	public Boolean generateEmissionOrder(String name, String password, String identificationNumber, String accountCode,
-			String pplessUser, Integer quantity)
-			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound, EmissionOrderNotGenerate,
-			EmissionOrderNotSave, InvalidUser, AccountIsNotActive, AccountIsBlocked {
+	public Boolean generateEmissionOrder(String name, String password,
+			String identificationNumber, String accountCode, String pplessUser,
+			Integer quantity) throws TaxpayerNotFound, TaxpayerNonUnique,
+			EntryNotFound, FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
 
 		try {
 			Resident resident = residentService.find(identificationNumber);
@@ -1071,10 +1176,11 @@ public class GimServiceBean implements GimService {
 			}
 
 			Date currentDate = java.util.Calendar.getInstance().getTime();
-			List<FiscalPeriod> fiscalPeriods = revenueService.findFiscalPeriodCurrent(currentDate);
+			List<FiscalPeriod> fiscalPeriods = revenueService
+					.findFiscalPeriodCurrent(currentDate);
 
-			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null && !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0)
-					: null;
+			FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+					&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0) : null;
 
 			if (fiscalPeriodCurrent == null) {
 				throw new FiscalPeriodNotFound();
@@ -1086,8 +1192,8 @@ public class GimServiceBean implements GimService {
 			entryValueItem.setAmount(new BigDecimal(quantity));
 			// entryValueItem.setMainValue(mainValue)
 
-			MunicipalBond mb = revenueService.createMunicipalBond(resident, entry, fiscalPeriodCurrent, entryValueItem,
-					true);
+			MunicipalBond mb = revenueService.createMunicipalBond(resident,
+					entry, fiscalPeriodCurrent, entryValueItem, true);
 			mb.setGroupingCode(identificationNumber);
 			if (mb.getResident().getCurrentAddress() != null) {
 				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
@@ -1101,9 +1207,9 @@ public class GimServiceBean implements GimService {
 			mb.setOriginator(emitter);
 			mb.setDescription(pplessUser);
 
-			///
+			// /
 			revenueService.emit(mb, user);
-			///
+			// /
 			System.out.println("=========> MUNICIPAL BOND: ");
 			System.out.println("===> RESIDENT: " + mb.getResident().getName());
 			System.out.println("===> DIRECCION: " + mb.getAddress());
@@ -1112,21 +1218,28 @@ public class GimServiceBean implements GimService {
 			System.out.println("===> CREATIONDATE: " + mb.getCreationDate());
 			System.out.println("===> EMISSIONDATE: " + mb.getEmisionDate());
 			System.out.println("===> EMITTER: " + mb.getEmitter().getName());
-			System.out.println("===> ORIGINATOR: " + mb.getOriginator().getName());
-			System.out.println("===> EXPIRATIONDATE: " + mb.getExpirationDate());
+			System.out.println("===> ORIGINATOR: "
+					+ mb.getOriginator().getName());
+			System.out
+					.println("===> EXPIRATIONDATE: " + mb.getExpirationDate());
 			System.out.println("===> EMISSIONPERIOD: " + mb.getEmisionPeriod());
-			System.out.println("===> ENTRY: " + mb.getEntry().getName() + " - " + mb.getEntry().getCode());
-			System.out.println("===> FISCALPERIOD: " + mb.getFiscalPeriod().getName());
+			System.out.println("===> ENTRY: " + mb.getEntry().getName() + " - "
+					+ mb.getEntry().getCode());
+			System.out.println("===> FISCALPERIOD: "
+					+ mb.getFiscalPeriod().getName());
 			System.out.println("===> ITEMS: " + mb.getItems().size());
 			System.out.println("===> TOTAL: " + mb.getPaidTotal());
 			System.out.println("===> VALUE: " + mb.getValue());
 			System.out.println("===> NUMBER: " + mb.getNumber());
 			System.out.println("===> MUNICIPALBONDSTATUS: "
-					+ (mb.getMunicipalBondStatus() != null ? mb.getMunicipalBondStatus().getName() : null));
+					+ (mb.getMunicipalBondStatus() != null ? mb
+							.getMunicipalBondStatus().getName() : null));
 			System.out.println("===> MUNICIPALBONDTYPE: "
-					+ (mb.getMunicipalBondType() != null ? mb.getMunicipalBondType() : null));
+					+ (mb.getMunicipalBondType() != null ? mb
+							.getMunicipalBondType() : null));
 			System.out.println("===> MUNICIPALBONDLEGALSTATUS: "
-					+ (mb.getLegalStatus() != null ? mb.getLegalStatus().name() : null));
+					+ (mb.getLegalStatus() != null ? mb.getLegalStatus().name()
+							: null));
 
 			System.out.println("::::::generateEmissionOrder: SAVED OK!!");
 			return Boolean.TRUE;
@@ -1148,25 +1261,31 @@ public class GimServiceBean implements GimService {
 	 */
 	@Override
 	public boolean searchDueDebts(ServiceRequest request) {
-		Query q = em.createNativeQuery("select hasdebts_ from sp_hasduedebts(:identification)");
+		Query q = em
+				.createNativeQuery("select hasdebts_ from sp_hasduedebts(:identification)");
 		q.setParameter("identification", request.getIdentificationNumber());
 		return (Boolean) q.getSingleResult();
 	}
 
 	@Override
-	public InfringementEmisionResponse generateANTEmissionInfringement(String name, String password,
-			String identificationNumber, String accountCode, InfringementEmisionDetail emisionDetail)
-			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound, FiscalPeriodNotFound, EmissionOrderNotGenerate,
-			EmissionOrderNotSave, InvalidUser, AccountIsNotActive, AccountIsBlocked {
+	public InfringementEmisionResponse generateANTEmissionInfringement(
+			String name, String password, String identificationNumber,
+			String accountCode, InfringementEmisionDetail emisionDetail)
+			throws TaxpayerNotFound, TaxpayerNonUnique, EntryNotFound,
+			FiscalPeriodNotFound, EmissionOrderNotGenerate,
+			EmissionOrderNotSave, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked {
 
 		InfringementEmisionResponse response = new InfringementEmisionResponse();
 		response.setStatus("ERROR");
-		//response.setInfringementDetail(emisionDetail);
-		response.setDetail("Contribuyente Identificacion: " + identificationNumber);
+		// response.setInfringementDetail(emisionDetail);
+		response.setDetail("Contribuyente Identificacion: "
+				+ identificationNumber);
 
 		User user = findUser(name, password);
 
-		if (countANTInfringementOnReference(emisionDetail.getCitationNumber()).intValue() <= 0) {
+		if (countANTInfringementOnReference(emisionDetail.getCitationNumber())
+				.intValue() <= 0) {
 
 			try {
 
@@ -1193,10 +1312,11 @@ public class GimServiceBean implements GimService {
 				}
 
 				Date currentDate = java.util.Calendar.getInstance().getTime();
-				List<FiscalPeriod> fiscalPeriods = revenueService.findFiscalPeriodCurrent(currentDate);
+				List<FiscalPeriod> fiscalPeriods = revenueService
+						.findFiscalPeriodCurrent(currentDate);
 
-				FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null && !fiscalPeriods.isEmpty()
-						? fiscalPeriods.get(0)
+				FiscalPeriod fiscalPeriodCurrent = fiscalPeriods != null
+						&& !fiscalPeriods.isEmpty() ? fiscalPeriods.get(0)
 						: null;
 
 				if (fiscalPeriodCurrent == null) {
@@ -1227,13 +1347,15 @@ public class GimServiceBean implements GimService {
 				entryValueItem.setMainValue(emisionDetail.getValue());
 
 				// infraccion a confirmar resto de datos devueltos por ANT
-				MunicipalBondStatus toConfirmBondStatus = systemParameterService.materialize(MunicipalBondStatus.class,
-						"MUNICIPAL_BOND_STATUS_ID_TO_CONFIRM");
+				MunicipalBondStatus toConfirmBondStatus = systemParameterService
+						.materialize(MunicipalBondStatus.class,
+								"MUNICIPAL_BOND_STATUS_ID_TO_CONFIRM");
 
-				MunicipalBond mb = revenueService.createMunicipalBond(resident, entry, fiscalPeriodCurrent,
-						entryValueItem, true);
+				MunicipalBond mb = revenueService.createMunicipalBond(resident,
+						entry, fiscalPeriodCurrent, entryValueItem, true);
 				if (mb.getResident().getCurrentAddress() != null) {
-					mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+					mb.setAddress(mb.getResident().getCurrentAddress()
+							.getStreet());
 				}
 
 				mb.setEmitter(emitter);
@@ -1244,11 +1366,12 @@ public class GimServiceBean implements GimService {
 				ant.setCitationNumber(emisionDetail.getCitationNumber());
 				ant.setInfringementDate(emisionDetail.getInfringementDate());
 				ant.setInfringementType(emisionDetail.getInfringementType());
-				//ant.setLostPoints(emisionDetail.getLostPoints());
+				// ant.setLostPoints(emisionDetail.getLostPoints());
 				ant.setNumberPlate(emisionDetail.getNumberPlate());
 				ant.setOrigin(emisionDetail.getOrigin());
-				ant.setTransitAgent(findResidentByIdentificationNumber(emisionDetail.getTransitAgentIdentification()));
-				//ant.setType(emisionDetail.getType());
+				ant.setTransitAgent(findResidentByIdentificationNumber(emisionDetail
+						.getTransitAgentIdentification()));
+				// ant.setType(emisionDetail.getType());
 				mb.setAdjunct(ant);
 				// end Adjunt
 
@@ -1268,7 +1391,8 @@ public class GimServiceBean implements GimService {
 				mb.setMunicipalBondType(MunicipalBondType.EMISSION_ORDER);
 				mb.setEmisionPeriod(findEmisionPeriod());
 
-				MunicipalBond createdBond = revenueService.emit(mb, user, toConfirmBondStatus);
+				MunicipalBond createdBond = revenueService.emit(mb, user,
+						toConfirmBondStatus);
 
 				response.setMunicipalBondId(createdBond.getId());
 				response.setMunicipalBondNumber(createdBond.getNumber());
@@ -1294,13 +1418,17 @@ public class GimServiceBean implements GimService {
 	}
 
 	private Long countANTInfringementOnReference(String citationNumber) {
-		Query query = em.createNamedQuery("InfringementANTReference.countInfringementByCitationNumber");
-		return (Long) query.setParameter("citationNumber", citationNumber.trim()).getSingleResult();
+		Query query = em
+				.createNamedQuery("InfringementANTReference.countInfringementByCitationNumber");
+		return (Long) query.setParameter("citationNumber",
+				citationNumber.trim()).getSingleResult();
 	}
 
-	private Resident findResidentByIdentificationNumber(String identificacion) throws InvalidUser {
+	private Resident findResidentByIdentificationNumber(String identificacion)
+			throws InvalidUser {
 		try {
-			Query query = em.createNamedQuery("Resident.findByIdentificationNumber");
+			Query query = em
+					.createNamedQuery("Resident.findByIdentificationNumber");
 			query.setParameter("identificationNumber", identificacion);
 			return (Resident) query.getSingleResult();
 		} catch (NoResultException e) {
@@ -1311,12 +1439,13 @@ public class GimServiceBean implements GimService {
 	}
 
 	@Override
-	public InfringementEmisionResponse confirmANTEmissionInfringement(String name, String password,
+	public InfringementEmisionResponse confirmANTEmissionInfringement(
+			String name, String password,
 			InfringementEmisionDetail emisionDetail) throws Exception {
 
 		InfringementEmisionResponse response = new InfringementEmisionResponse();
 		response.setStatus("ERROR");
-		//response.setInfringementDetail(emisionDetail);
+		// response.setInfringementDetail(emisionDetail);
 
 		if (emisionDetail.getExpirationDate() == null) {
 			response.setMessage("Emisión fallida. Fecha de expiración falante");
@@ -1335,15 +1464,20 @@ public class GimServiceBean implements GimService {
 			return response;
 		}
 
-		MunicipalBondStatus pendingBondStatus = systemParameterService.materialize(MunicipalBondStatus.class,
-				"MUNICIPAL_BOND_STATUS_ID_PENDING");
+		MunicipalBondStatus pendingBondStatus = systemParameterService
+				.materialize(MunicipalBondStatus.class,
+						"MUNICIPAL_BOND_STATUS_ID_PENDING");
 
-		MunicipalBond bond = municipalBondService.findMunicipalBondByNumber(emisionDetail.getMunicipalBondNumber());
+		MunicipalBond bond = municipalBondService
+				.findMunicipalBondByNumber(emisionDetail
+						.getMunicipalBondNumber());
 		MunicipalBondStatus previousBondStatus = bond.getMunicipalBondStatus();
 		bond.setMunicipalBondStatus(pendingBondStatus);
 		bond.setExpirationDate(emisionDetail.getExpirationDate());
-		
-		MunicipalBond updateBond = revenueService.update(bond, previousBondStatus, pendingBondStatus, user, "Confirmacion de infraccion ANT");
+
+		MunicipalBond updateBond = revenueService.update(bond,
+				previousBondStatus, pendingBondStatus, user,
+				"Confirmacion de infraccion ANT");
 
 		response.setMunicipalBondId(updateBond.getId());
 		response.setMunicipalBondNumber(updateBond.getNumber());
@@ -1355,7 +1489,7 @@ public class GimServiceBean implements GimService {
 
 	@Override
 	public GeneralResponse bondsByExternalPayment(ServiceRequest request) {
-		String sql ="SELECT  "
+		String sql = "SELECT  "
 				+ "	mb.id,  "
 				+ "	re.identificationNumber, "
 				+ "	re.name,  "
@@ -1407,16 +1541,19 @@ public class GimServiceBean implements GimService {
 				+ "order by mb.entry_id, mb.liquidationdate, mb.liquidationtime ";
 		Query query = em.createNativeQuery(sql);
 		query.setParameter("identification", request.getIdentificationNumber());
-				
-		List<BondPrintReport> lista = NativeQueryResultsMapper.map(query.getResultList(), BondPrintReport.class);
-		
+
+		List<BondPrintReport> lista = NativeQueryResultsMapper.map(
+				query.getResultList(), BondPrintReport.class);
+
 		for (BondPrintReport bp : lista) {
 			try {
 				List<BondItemPrint> asList = new ObjectMapper().readValue(
-						bp.getItems(), new TypeReference<List<BondItemPrint>>() { });
+						bp.getItems(),
+						new TypeReference<List<BondItemPrint>>() {
+						});
 				bp.setItemList(asList);
-				
-				for(BondItemPrint item: asList)  {
+
+				for (BondItemPrint item : asList) {
 					BondEntryPrint entry = new BondEntryPrint();
 					entry.setCode(item.getCode());
 					entry.setDatepattern(item.getDatepattern());
@@ -1425,11 +1562,11 @@ public class GimServiceBean implements GimService {
 					entry.setReason(item.getReason());
 					item.setEntry(entry);
 				}
-				
+
 				BondEntryPrint entries = new ObjectMapper().readValue(
 						bp.getRubro(), BondEntryPrint.class);
 				bp.setEntry(entries);
-				
+
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1441,52 +1578,56 @@ public class GimServiceBean implements GimService {
 				e.printStackTrace();
 			}
 		}
-		
+
 		GeneralResponse response = new GeneralResponse();
 		response.setBonds(lista);
-		
-		
+
 		return response;
 	}
 
 	@Override
-	public GeneralResponse updateBondPrinterNumber(ServiceRequest request, BondPrintRequest bonds) {
-		
+	public GeneralResponse updateBondPrinterNumber(ServiceRequest request,
+			BondPrintRequest bonds) {
+
 		// en aun array para hacer la consulta de bonds
 		List<Long> bondsId = new ArrayList<Long>();
 		for (BondPrintUpdate bu : bonds.getBonds()) {
 			bondsId.add(bu.getBondId());
 		}
-		
+
 		Query q = em.createNamedQuery("MunicipalBond.findByIds");
 		q.setParameter("municipalBondIds", bondsId);
 		List<MunicipalBond> bondsToUpdate = q.getResultList();
-		
-		String sUpdate= "update MunicipalBond mb set mb.printingsNumber = :printNumber where mb.id = :mbId";
-		//actualiza el bond
+
+		String sUpdate = "update MunicipalBond mb set mb.printingsNumber = :printNumber where mb.id = :mbId";
+		// actualiza el bond
 		Query qUpdate = em.createQuery(sUpdate);
-		for(MunicipalBond mb: bondsToUpdate) {
-			/*mb.setPrintingsNumber(mb.getPrintingsNumber()+1);
-			em.merge(mb);
-			em.pe*/
-			qUpdate.setParameter("printNumber", mb.getPrintingsNumber()+1);
+		for (MunicipalBond mb : bondsToUpdate) {
+			/*
+			 * mb.setPrintingsNumber(mb.getPrintingsNumber()+1); em.merge(mb);
+			 * em.pe
+			 */
+			qUpdate.setParameter("printNumber", mb.getPrintingsNumber() + 1);
 			qUpdate.setParameter("mbId", mb.getId());
 			qUpdate.executeUpdate();
 		}
-		
-		//otra consulta para retornar la actualizacion de los bonds
+
+		// otra consulta para retornar la actualizacion de los bonds
 		Query query = em.createNativeQuery(sqlBondsById);
 		query.setParameter("municipalBondIds", bondsId);
-				
-		List<BondPrintReport> lista = NativeQueryResultsMapper.map(query.getResultList(), BondPrintReport.class);
-		
+
+		List<BondPrintReport> lista = NativeQueryResultsMapper.map(
+				query.getResultList(), BondPrintReport.class);
+
 		for (BondPrintReport bp : lista) {
 			try {
 				List<BondItemPrint> asList = new ObjectMapper().readValue(
-						bp.getItems(), new TypeReference<List<BondItemPrint>>() { });
+						bp.getItems(),
+						new TypeReference<List<BondItemPrint>>() {
+						});
 				bp.setItemList(asList);
-				
-				for(BondItemPrint item: asList)  {
+
+				for (BondItemPrint item : asList) {
 					BondEntryPrint entry = new BondEntryPrint();
 					entry.setCode(item.getCode());
 					entry.setDatepattern(item.getDatepattern());
@@ -1495,15 +1636,17 @@ public class GimServiceBean implements GimService {
 					entry.setReason(item.getReason());
 					item.setEntry(entry);
 				}
-				
-				/*List<BondEntryPrint> entries = new ObjectMapper().readValue(
-						bp.getRubro(), new TypeReference<List<BondEntryPrint>>() { });
-				bp.setItemEntry(entries);*/
-				
+
+				/*
+				 * List<BondEntryPrint> entries = new ObjectMapper().readValue(
+				 * bp.getRubro(), new TypeReference<List<BondEntryPrint>>() {
+				 * }); bp.setItemEntry(entries);
+				 */
+
 				BondEntryPrint entries = new ObjectMapper().readValue(
 						bp.getRubro(), BondEntryPrint.class);
 				bp.setEntry(entries);
-				
+
 			} catch (JsonParseException e) {
 				e.printStackTrace();
 			} catch (JsonMappingException e) {
@@ -1512,7 +1655,7 @@ public class GimServiceBean implements GimService {
 				e.printStackTrace();
 			}
 		}
-		
+
 		GeneralResponse response = new GeneralResponse();
 		response.setBonds(lista);
 		return response;

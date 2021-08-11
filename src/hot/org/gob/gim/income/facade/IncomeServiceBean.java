@@ -86,6 +86,7 @@ import ec.gob.gim.income.model.Till;
 import ec.gob.gim.income.model.Workday;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.EntryStructureType;
+import ec.gob.gim.revenue.model.ExemptionCem;
 import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.Item;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -2170,7 +2171,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	@Override
 	public DepositStatementV2 findDepositInformation(Person cashier, Date paymentDate, Payout payout) {
-		String sql="select concat('ML-PID-',pay.id) , re.identificationnumber, re.name, coalesce(pay.value, 0) " + 
+		String sql="select concat('ML-PID-',pay.externaltransactionid) , re.identificationnumber, re.name, sum(pay.value) " + 
 				"from payment pay " + 
 				"join deposit dep on pay.id = dep.payment_id " + 
 				"join municipalbond mb on dep.municipalbond_id = mb.id " + 
@@ -2178,7 +2179,7 @@ public class IncomeServiceBean implements IncomeService {
 				"where pay.cashier_id = :cashierId " + 
 				"and pay.date = :paymentDate " + 
 				"and dep.municipalbond_id in (:bondsIds) " + 
-				"group by 1,2,3,4";
+				"group by 1,2,3";
 		Query q = entityManager.createNativeQuery(sql);	 
 		q.setParameter("cashierId", cashier.getId());
 		q.setParameter("paymentDate", paymentDate);
@@ -2264,4 +2265,39 @@ public class IncomeServiceBean implements IncomeService {
 		save(deposits, null, tillId, paymentMethod);
 	}
 	
+	
+	
+	//macartuche
+	//2021-07-22 08:04
+	//Exoneraciones para tercera edad y discapacidad
+	@SuppressWarnings("unchecked")
+	@Override
+	public BigDecimal checkHasDiscountCEM(String itemCode, String catalogCode, Long resident) {
+		BigDecimal percentage = BigDecimal.ZERO;
+		
+		if(itemCode=="DISABILITY"){
+			System.out.println("abcdef");
+		}else if(itemCode=="THIRD_AGE"){
+
+			System.out.println("123456");
+		}
+		Query query = entityManager.createQuery("SELECT exemption from ExemptionCem exemption "
+												+ "WHERE exemption.type.code=:itemCode and "
+												+ "exemption.type.catalogCode=:catalogoCode and "
+												+ "exemption.resident.id=:residentid and "
+												+ "exemption.active=true ");
+		query.setParameter("residentid", resident);
+		query.setParameter("itemCode", itemCode);
+		query.setParameter("catalogoCode", catalogCode);
+		
+		List<ExemptionCem> exemptions = query.getResultList();
+		if(!exemptions.isEmpty()) {
+			ExemptionCem exemption = exemptions.get(0);			
+			if(exemption.getDiscountPercentage()!=null) {
+				percentage = exemption.getDiscountPercentage();
+			}
+		}
+		return percentage;
+	}
+ 
 }
