@@ -810,6 +810,7 @@ public class FactoryController  extends EntityController{
 		return (List<AffectationFactor>) query.getResultList();
 	}
 
+
 	@SuppressWarnings("unchecked")
 	@Factory("admissionTypes")
 	public List<AdmissionType> admissionTypes() {
@@ -864,6 +865,7 @@ public class FactoryController  extends EntityController{
 		return Arrays.asList(ExitTypeBinnacleCRV.values());
 	}
 	
+
 	//macartuche 2021-07-021 10:50am
 	//descuentos CEM tercera edad y discapacidad
 	@SuppressWarnings("unchecked")
@@ -878,4 +880,5 @@ public class FactoryController  extends EntityController{
 		return (List<ItemCatalog>) itemCatalogService
 				.findItemsForCatalogCode(CatalogConstants.CATALOG_TYPES_EXEMPTION_CEM);
 	}
+
 }

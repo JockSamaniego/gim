@@ -636,4 +636,5 @@ public class AdjunctAction extends EntityController{
 		Urbanregeneration urbanregeneration = findCurrentAdjunct();
 		urbanregeneration.setProperty(null);
 	}
+
 }
