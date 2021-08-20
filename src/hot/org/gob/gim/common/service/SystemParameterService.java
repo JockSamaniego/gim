@@ -13,6 +13,7 @@ public interface SystemParameterService {
 	public static String ROLE_NAME_CRV_SYSTEM = "ROLE_NAME_CRV_SYSTEM";
 	public static String USER_NAME_ANT_SERVICE = "USER_NAME_ANT_SERVICE";
 	public static String PASSWORD_ANT_SERVICE = "PASSWORD_ANT_SERVICE";
+	public static String PATH_FILES_BINNACLE_CRV = "PATH_FILES_BINNACLE_CRV";
 	public void initialize();
 	public void updateParameters();
 	public <T> T findParameter(String name);

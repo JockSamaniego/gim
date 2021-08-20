@@ -142,6 +142,7 @@ public class BinnacleCRV implements Serializable {
 	@Column(length=20)
 	private DocumentTypeBinnacleCRV documentTypeBinnacleCRV;// Tipo de documento para el Parte
 	private boolean hasJudicialDocument; //Tiene generado el documento judicial
+	private String nameOfJudicialPart; //Nombre del archivo escaneado del Parte Judicial
 	@Version
 	private Long version;
     
@@ -214,6 +215,7 @@ public class BinnacleCRV implements Serializable {
 		evidence = new PhotographicEvidence();
 		photographicEvidences.add(evidence);
 		hasJudicialDocument = false;
+		nameOfJudicialPart = "";
 		km = BigDecimal.ZERO;
 	}
 
@@ -904,6 +906,20 @@ public class BinnacleCRV implements Serializable {
 	 */
 	public void setHasJudicialDocument(boolean hasJudicialDocument) {
 		this.hasJudicialDocument = hasJudicialDocument;
+	}
+
+	/**
+	 * @return the nameOfJudicialPart
+	 */
+	public String getNameOfJudicialPart() {
+		return nameOfJudicialPart;
+	}
+
+	/**
+	 * @param nameOfJudicialPart the nameOfJudicialPart to set
+	 */
+	public void setNameOfJudicialPart(String nameOfJudicialPart) {
+		this.nameOfJudicialPart = nameOfJudicialPart;
 	}
 
 	/**

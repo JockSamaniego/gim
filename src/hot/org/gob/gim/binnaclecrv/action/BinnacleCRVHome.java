@@ -1,5 +1,12 @@
 package org.gob.gim.binnaclecrv.action;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,12 +18,15 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.MessageContext;
 
 import org.gob.gim.binnaclecrv.facade.BinnacleCRVService;
+import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -110,6 +120,10 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 
 	private boolean hasRoleUCOT;
 	private boolean hasRoleCRV;
+	
+	private File fileNameOfJudicialPart;
+	private byte[] byteNameOfJudicialPart;
+	private boolean isNewFileNameOfJudicialPart;
 	
 	public void setBinnacleCRVId(Long id) {
 		setId(id);
@@ -550,11 +564,112 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 			} else if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.JUDICIAL_PART){
 				instance.setBallotPart(ballotPart);
 			}
-
+			chargeFile();
 		}
 		return super.persist();
 	}
 
+	private void chargeFile(){
+		if (isNewFileNameOfJudicialPart){
+			if (systemParameterService == null) systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+			String dirBase = systemParameterService.findParameter(SystemParameterService.PATH_FILES_BINNACLE_CRV);
+			if (byteNameOfJudicialPart != null){
+				String fileName = dirBase + File.separator + DateUtils.formatDate(instance.getAdmissionDate());
+				System.out.println(fileName);
+				File f = new File(fileName);
+				if ((!f.exists()) || (!f.isDirectory()))
+					f.mkdir();
+				fileName = fileName + File.separator + instance.getId() + ".pdf";
+				System.out.println(fileName);
+				saveFile(fileName, byteNameOfJudicialPart);
+			}
+		}
+	}
+	
+	private void saveFile(String fileName, byte[] file){
+        BufferedOutputStream bos = null;
+        FileOutputStream fos;
+        try {
+            fos = new FileOutputStream(fileName);
+            bos = new BufferedOutputStream(fos); 
+            bos.write(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if(bos != null) {
+                try  {
+                    bos.flush();
+                    bos.close();
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+	}
+	
+	private void saveFile(String fileName, File file){
+        BufferedOutputStream bos = null;
+        FileOutputStream fos;
+        try {
+            fos = new FileOutputStream(fileName);
+            byte[] b = getBytesFromFile(file);
+            bos = new BufferedOutputStream(fos); 
+            bos.write(b);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if(bos != null) {
+                try  {
+                    bos.flush();
+                    bos.close();
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+	}
+	
+    public byte[] getBytesFromFile(File file) throws IOException {
+        // Get the size of the file
+        long length = file.length();
+
+        // You cannot create an array using a long type.
+        // It needs to be an int type.
+        // Before converting to an int type, check
+        // to ensure that file is not larger than Integer.MAX_VALUE.
+        if (length > Integer.MAX_VALUE) {
+			facesMessages.add("El archivo es demasiado grande para procesar.");
+            throw new IOException("El archivo es demasiado grande para procesar.");
+        }
+
+        // Create the byte array to hold the data
+        byte[] bytes = new byte[(int)length];
+
+        // Read in the bytes
+        int offset = 0;
+        int numRead = 0;
+
+        InputStream is = new FileInputStream(file);
+        try {
+            while (offset < bytes.length
+                   && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+                offset += numRead;
+            }
+        } finally {
+            is.close();
+        }
+        // Ensure all the bytes have been read in
+        if (offset < bytes.length) {
+			facesMessages.add("No se pudo leer el archivo completamente. Archivo " + file.getName());
+            throw new IOException("Could not completely read file " + file.getName());
+        }
+        return bytes;
+    }
+    
 	public void loadInventory() throws Exception {
 		if (binnacleCRVService == null)
 			binnacleCRVService = ServiceLocator.getInstance().findResource(BinnacleCRVService.LOCAL_NAME);
@@ -593,6 +708,9 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		ballotPart = null;
 		hasJudicialDocument = false;
 		admissionTimeString = "";
+		fileNameOfJudicialPart = null;
+		byteNameOfJudicialPart = null;
+		isNewFileNameOfJudicialPart = false;
 	}
 	
 	public void editBinnacleCRV() {
@@ -660,6 +778,9 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 			}
 		}
 		hasJudicialDocument = instance.isHasJudicialDocument();
+		isNewFileNameOfJudicialPart = false;
+		fileNameOfJudicialPart = null;
+		byteNameOfJudicialPart = null;
 	}
 	
 	public void createVehicleItem() {
@@ -891,6 +1012,34 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	public void clearImage2() {
 		PhotographicEvidence evidence = getInstance().getPhotographicEvidences().get(1);
 		evidence.setPhoto(null);
+	}
+	
+	public void fileListener(UploadEvent event) {
+		System.out.println("---------------------------------");
+		int tamanio = 5767168; //5.5MB
+		UploadItem item = event.getUploadItem();		
+		if (item != null && item.getData() != null) {
+			logger.info(item.getFileName() + ", size: " + item.getFileSize());
+			if (item.getFileSize() > tamanio){ 
+				facesMessages.add("El archivo ingresado es demasiado grande. Máximo permitido " + tamanio + " bytes.");
+				item = null;
+			} else {
+				if (item.getFileName().length() > 100)
+					instance.setNameOfJudicialPart(item.getFileName().substring(0, 100));
+				else
+					instance.setNameOfJudicialPart(item.getFileName());
+				fileNameOfJudicialPart = item.getFile();
+				byteNameOfJudicialPart = item.getData();
+				isNewFileNameOfJudicialPart = true;
+			}
+		}
+	}
+
+	public void clearFile() {
+		instance.setNameOfJudicialPart("");
+		fileNameOfJudicialPart = null;
+		byteNameOfJudicialPart = null;
+		isNewFileNameOfJudicialPart = false;
 	}
 	
 	public List<AdmissionCategory> findAdmissionCategories(){
@@ -1174,6 +1323,7 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	@Override
 	@Transactional
 	public String update() {
+		chargeFile();
 		return super.update();
 	}
 	
@@ -1282,6 +1432,50 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	
 	public void findRoleCRV(){
 		hasRoleCRV = hasRole(SystemParameterService.ROLE_NAME_CRV_SYSTEM);
+	}
+	
+	public void downloadPart(){
+		if (instance.getNameOfJudicialPart().length() == 0){
+			return;
+		} else {
+			if (systemParameterService == null) systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+			String dirBase = systemParameterService.findParameter(SystemParameterService.PATH_FILES_BINNACLE_CRV);
+//			String dirBase = "d:\\catastroimg";
+			String fileName = dirBase + File.separator + DateUtils.formatDate(instance.getAdmissionDate());
+			fileName = fileName + File.separator + instance.getId() + ".pdf";
+			File file = new File(fileName);
+			downloadFile(file);
+		}
+	}
+	
+	public void downloadFile(File file) {   
+	    FacesContext facesContext = FacesContext.getCurrentInstance();
+	    HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+	    response.setHeader("Content-Type", "application/pdf");
+	    response.setHeader("Content-Disposition", "attachment;filename=\"" + instance.getNameOfJudicialPart() + "\"");
+	    response.setContentLength((int) file.length());
+	    FileInputStream input= null;
+	    try {
+	        int i= 0;
+	        input = new FileInputStream(file);  
+	        byte[] buffer = new byte[1024];
+	        while ((i = input.read(buffer)) != -1) {  
+	            response.getOutputStream().write(buffer);  
+	            response.getOutputStream().flush();  
+	        }
+	        facesContext.responseComplete();
+	        facesContext.renderResponse();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if(input != null) {
+	                input.close();
+	            }
+	        } catch(IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
 	
 }

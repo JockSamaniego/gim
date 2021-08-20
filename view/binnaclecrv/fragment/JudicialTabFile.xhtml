@@ -1,0 +1,84 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:rich="http://richfaces.org/rich">
+
+    <f:facet name="header">#{messages['binnacleCRV.judicialTab']}</f:facet>
+
+    <ui:include src="VehicleInformationCRV.xhtml" />
+    
+    <rich:panel id="judicialTabImagePanel">
+        <f:facet name="header">Información del Parte Judicial</f:facet>
+        
+        <s:decorate template="../../layout/edit.xhtml" rendered="#{binnacleCRVHome.hasRoleUCOT}">
+            <ui:define name="label">Nombre de Documento</ui:define>
+
+            <h:inputText id="nameOfJudicialPart" 
+                value="#{binnacleCRVHome.instance.nameOfJudicialPart}" 
+                readonly="true"/>
+
+            <h:commandButton id="chargeDocumentImage" 
+                action="#{binnacleCRVHome.downloadPart}"
+                ajaxSingle="true"
+                eventsQueue="gimEventsQueue" 
+                value="#{messages['common.download']}" />
+        </s:decorate>
+
+        <s:decorate id="partImageField" template="../../layout/edit.xhtml">
+            <rich:fileUpload fileUploadListener="#{binnacleCRVHome.fileListener}"
+                disabled="#{!binnacleCRVHome.hasRoleCRV}"
+                maxFilesQuantity="1" id="uploadFile" immediateUpload="true"
+                acceptedTypes="pdf"
+                uploadControlLabel="#{messages['binnacleCRV.photoEvidence']}"
+                addControlLabel="#{messages['common.uploadFile']}"
+                progressLabel="#{messages['common.uploading']}"
+                doneLabel="#{messages['common.done']}"
+                clearAllControlLabel="#{messages['common.clearAll']}"
+                clearControlLabel="#{messages['common.clear']}"
+                stopControlLabel="#{messages['common.stop']}" ajaxSingle="true"
+                listHeight="75px" rendered="#{binnacleCRVHome.instance.nameOfJudicialPart.length() == 0}">
+                <f:facet name="label">
+                    <h:outputText value="{_KB}KB desde {MB}MB uploaded --- {mm}:{ss}" />
+                </f:facet>
+                <a:support event="onclear" reRender="uploadFile, nameOfJudicialPart"
+                    action="#{binnacleCRVHome.clearFile()}" />
+            </rich:fileUpload>
+
+        </s:decorate>
+        <div style="clear: both">
+            <span class="required"></span>
+        </div>
+    </rich:panel>
+
+    <div></div>
+        
+    <div class="actionButtons">
+
+        <h:commandButton value="#{messages['common.save']}"
+            action="#{binnacleCRVHome.persist}" disabled="#{!binnacleCRVHome.wired}"
+            rendered="#{!binnacleCRVHome.managed}" />
+
+        <h:commandButton value="#{messages['common.save']}"
+            action="#{binnacleCRVHome.update}" rendered="#{binnacleCRVHome.managed and binnacleCRVHome.hasRoleUCOT}" />
+
+        <h:commandButton value="#{messages['common.delete']}"
+            action="#{binnacleCRVHome.remove}" immediate="true"
+            rendered="#{binnacleCRVHome.managed and false}" />
+
+        <s:button value="#{messages['common.cancel']}"
+            propagation="end" view="/binnaclecrv/BinnacleCRVList.xhtml"
+            rendered="#{binnacleCRVHome.managed}" />
+
+        <s:button value="#{messages['common.cancel']}"
+            propagation="end"
+            view="/binnaclecrv/#{empty binnacleCRVFrom ? 'BinnacleCRVList' : binnacleCRVFrom}.xhtml"
+            rendered="#{!binnacleCRVHome.managed}" />
+
+    </div>
+</ui:composition>
