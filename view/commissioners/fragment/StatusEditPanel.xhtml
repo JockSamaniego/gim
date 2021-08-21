@@ -1,0 +1,92 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="statusEditPanel" width="300" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Crear Estado"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="statusEditPanel" attachTo="hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="blockLimit" styleClass="edit">
+
+			<rich:panel>
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+
+				<div style="clear: both">
+					#{messages['local.name']}
+					<rich:separator height="1" />
+				</div>
+
+				<h:panelGrid columns="1" width="100%">
+					
+					<s:decorate id="registerDateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Fecha de Creación</ui:define>
+                <rich:calendar id="registerDate"
+                          value="#{commissionerBallotHome.registerDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                </rich:calendar>
+            </s:decorate>
+            
+            <s:decorate id="statusNameField"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">Estado:</ui:define>
+				<h:selectOneMenu id="statusName" value="#{commissionerBallotHome.commissionerBallotStatus.statusName}" required="true">
+					<s:selectItems value="#{commissionerBallotHome.statusForCommissioners}" var="statusName" label="#{statusName.name}" itemValue="#{statusName}" 
+									noSelectionLabel="Seleccione uno" />
+					<a:support event="onchange" ajaxSingle="true" />
+					<s:convertEntity></s:convertEntity>
+				</h:selectOneMenu>
+			</s:decorate>
+            
+            <s:decorate id="detailField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Observaciones:</ui:define>
+                <h:inputTextarea id="detail"
+                           size="15"
+                          value="#{commissionerBallotHome.commissionerBallotStatus.observations}">
+                </h:inputTextarea>
+            </s:decorate>
+            
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos
+            </div>
+
+			</h:panelGrid>
+
+		</rich:panel>
+
+			<div class="actionButtons">
+				<a:commandButton action="#{commissionerBallotHome.addStatus()}"
+					value="#{messages['common.accept']}" reRender="itemsStatus"
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'statusEditPanel\');' : ''}"/>
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}" reRender="itemsStatus"
+					oncomplete="Richfaces.hideModalPanel('statusEditPanel');"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

@@ -1,0 +1,137 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml"
+    xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<ui:include src="../commissioners/fragment/inspectorEditPanel.xhtml" />
+    <h:form id="commissionerInspectorsSearch" styleClass="edit">
+    <h:outputText styleClass="formTitle" value="Administración de Inspectores" />
+
+    
+
+    <rich:panel id="inspectorsTablePanel">
+        <f:facet name="header">
+            <h:panelGrid columns="4" columnClasses="headerTitle,">
+                <h:outputText
+                    value="Inspectores encontrados (#{empty commissionerBallotHome.commissionerInspectors ? 0 : (commissionerBallotHome.commissionerInspectors.size)})" />
+                   <a:commandButton id="createInspector"
+									action="#{commissionerBallotHome.createCommissionerBulletin()}"
+									reRender="bulletinEditPanel" ajaxSingle="true"
+									eventsQueue="gimEventsQueue"
+									oncomplete="Richfaces.showModalPanel('bulletinEditPanel',{width:600, height:500})"
+									value="Crear Libretin" />
+                   
+            </h:panelGrid>      
+        </f:facet>
+    <div class="results" id="bulletinsList">
+
+    <h:outputText value="No se han encontrado resultados"
+               rendered="#{empty commissionerBallotHome.commissionerBulletins}"/>
+
+    <rich:dataTable id="bulletinsListTable"
+                var="_bulletin"
+              value="#{commissionerBallotHome.commissionerBulletins}"
+           rendered="#{not empty commissionerBallotHome.commissionerBulletins}">
+        <rich:column sortBy="#{_bulletin.bulletinNumber}" styleClass="center"
+                width="10%"
+				filterBy="#{_bulletin.bulletinNumber}"
+				filterEvent="onkeyup">
+				<f:facet name="header">
+                             Número
+                         </f:facet>
+				<h:outputText value="#{_bulletin.bulletinNumber}" />
+		</rich:column> 
+		<rich:column sortBy="#{_bulletin.startNumber}" styleClass="center"
+                width="10%"
+				filterBy="#{_bulletin.startNumber}"
+				filterEvent="onkeyup">
+				<f:facet name="header">
+                             Serie Inicial
+                         </f:facet>
+				<h:outputText value="#{_bulletin.startNumber}" />
+		</rich:column>  
+		<rich:column sortBy="#{_bulletin.endNumber}" styleClass="center"
+                width="10%"
+				filterBy="#{_bulletin.endNumber}"
+				filterEvent="onkeyup">
+				<f:facet name="header">
+                             Serie Final
+                         </f:facet>
+				<h:outputText value="#{_bulletin.endNumber}" />
+		</rich:column>   
+		<rich:column sortBy="#{_bulletin.inspector.name}" styleClass="center"
+                width="20%"
+				filterBy="#{_bulletin.inspector.name}"
+				filterEvent="onkeyup">
+				<f:facet name="header">
+                             Inspector
+                         </f:facet>
+				<h:outputText value="#{_bulletin.inspector.name}" />
+		</rich:column> 
+        <rich:column sortBy="#{_bulletin.deliveryDate}" styleClass="center"
+                width="10%"
+                filterBy="#{_bulletin.deliveryDate}"
+                filterEvent="onkeyup">
+                <f:facet name="header">
+                             Fecha de Entrega
+                         </f:facet>
+                <h:outputText value="#{_bulletin.deliveryDate}" />
+        </rich:column>
+        
+        <rich:column sortBy="#{_bulletin.observation}" styleClass="left"
+                width="30%"
+                filterBy="#{_bulletin.observation}"
+                filterEvent="onkeyup">
+                <f:facet name="header">
+                             Observaciones
+                         </f:facet>
+                <h:outputText value="#{_bulletin.observation}" />
+        </rich:column>
+        
+        <rich:column styleClass="action" width="10%">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+
+            <a:commandButton id="updateArticle"
+                                    action="#{commissionerBallotHome.updateCommissionerBulletin(_bulletin)}"
+                                    reRender="bulletinEditPanel" ajaxSingle="true"
+                                    eventsQueue="gimEventsQueue"
+                                    oncomplete="Richfaces.showModalPanel('bulletinEditPanel',{width:600, height:500})"
+                                    value="Editar" />
+        </rich:column>
+        
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+    <s:button   id="cancelEdit1"
+                value="#{messages['common.quit']}"
+                propagation="end"
+                view="/commissioners/HygieneBallotsList.xhtml"
+                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_HYGIENE'}" />
+    <s:button   id="cancelEdit2"
+                value="#{messages['common.quit']}"
+                propagation="end"
+                view="/commissioners/TransitBallotsList.xhtml"
+                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_TRANSIT'}" />
+    <s:button   id="cancelEdit3"
+                value="#{messages['common.quit']}"
+                propagation="end"
+                view="/commissioners/OrnamentBallotsList.xhtml"
+                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_ORNAMENT'}" />
+    <s:button   id="cancelEdit4"
+                value="#{messages['common.quit']}"
+                propagation="end"
+                view="/commissioners/AmbientBallotsList.xhtml"
+                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_AMBIENT'}" />
+ 
+</h:form>
+</ui:define>
+
+</ui:composition>

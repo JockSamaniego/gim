@@ -37,4 +37,10 @@ public class CatalogConstants {
 	 
 	 public static final String CATALOG_TYPES_CONSUME_ALCOHOLIC_BEVERAGES = "TYPE_CONSUME_ALCOHOLIC_BEVERAGES";
 	 
+	 public static final String CATALOG_HYGIENE_BALLOT_STATUS = "HYGIENE_BALLOT_STATUS";
+	 
+	 public static final String CATALOG_TRANSIT_BALLOT_STATUS = "TRANSIT_BALLOT_STATUS";
+	 
+	 public static final String CATALOG_COMMISSIONERS_TYPES = "COMMISSIONERS_TYPES_CATALOG";
+	 
 }
