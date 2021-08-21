@@ -43,4 +43,7 @@ public class CatalogConstants {
 	 
 	 public static final String CATALOG_COMMISSIONERS_TYPES = "COMMISSIONERS_TYPES_CATALOG";
 	 
+	 //macartuche 2021-07-021 10:50am
+	 //descuentos CEM tercera edad y discapacidad
+	 public static final String CATALOG_TYPES_EXEMPTION_CEM = "CATALOG_TYPES_EXEMPTION_CEM";
 }
