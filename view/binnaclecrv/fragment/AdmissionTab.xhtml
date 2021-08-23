@@ -51,9 +51,7 @@
                     value="#{binnacleCRVHome.instance.admissionDriverNames}" 
                     readonly="#{!binnacleCRVHome.hasRoleCRV}"/>
             </s:decorate>
-        </h:panelGrid>
-        
-        <h:panelGrid columns="3">
+
             <s:decorate id="admissionDateField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['binnacleCRV.admissionDate']}:</ui:define>
                 <rich:calendar id="admissionDate" disabled="#{binnacleCRVHome.managed}"
@@ -62,6 +60,15 @@
                     datePattern="yyyy-MM-dd"/>
             </s:decorate>
 
+            <s:decorate id="admissionTimeField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['binnacleCRV.admissionTime']}:</ui:define>
+                <h:inputText value="#{binnacleCRVHome.admissionTimeString}" required="true" 
+                    readonly="#{!binnacleCRVHome.hasRoleCRV}" pt:placeholder="HH:mm:ss" >
+                    <a:support event="onblur" action="#{binnacleCRVHome.validateAdmissionTime()}" 
+                        ajaxSingle="true" reRender="admissionTimeField"/>
+                </h:inputText>
+            </s:decorate>
+            
             <s:decorate template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['admissionType']}</ui:define>
                 <h:selectOneMenu id="admissionType" disabled="#{!binnacleCRVHome.hasRoleCRV}"
@@ -89,7 +96,9 @@
                     <a:support event="onchange" ajaxSingle="true" />
                 </h:selectOneMenu>
             </s:decorate>
+        </h:panelGrid>
 
+        <h:panelGrid columns="3">
             <s:decorate id="motiveArticleField" template="../../layout/edit.xhtml">
                 <ui:define name="label">#{messages['binnacleCRV.motiveArticle']}</ui:define>
                 <h:inputText id="motiveArticle" required="true" maxlength="20"

@@ -575,12 +575,10 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 			String dirBase = systemParameterService.findParameter(SystemParameterService.PATH_FILES_BINNACLE_CRV);
 			if (byteNameOfJudicialPart != null){
 				String fileName = dirBase + File.separator + DateUtils.formatDate(instance.getAdmissionDate());
-				System.out.println(fileName);
 				File f = new File(fileName);
 				if ((!f.exists()) || (!f.isDirectory()))
 					f.mkdir();
 				fileName = fileName + File.separator + instance.getId() + ".pdf";
-				System.out.println(fileName);
 				saveFile(fileName, byteNameOfJudicialPart);
 			}
 		}
@@ -715,6 +713,8 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	
 	public void editBinnacleCRV() {
 		canEditLicensePlate = false;
+		if (getInstance().getAdmissionTime() != null)
+			admissionTimeString = instance.getAdmissionTime().toString();
 		if (!getInstance().isHasJudicialDocument()){
 			if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.INFORMATIVE_PART){
 				informativePart = new InformativePart();
@@ -752,8 +752,6 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 			
 		}
 		else {
-			if (instance.getAdmissionTime() != null)
-				admissionTimeString = instance.getAdmissionTime().toString();
 			if (instance.getDocumentTypeBinnacleCRV() == DocumentTypeBinnacleCRV.INFORMATIVE_PART){
 				informativePart = instance.getInformativePart();
 				partTimeString = informativePart.getPartTime().toString();
@@ -1015,7 +1013,6 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 	
 	public void fileListener(UploadEvent event) {
-		System.out.println("---------------------------------");
 		int tamanio = 5767168; //5.5MB
 		UploadItem item = event.getUploadItem();		
 		if (item != null && item.getData() != null) {
