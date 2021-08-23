@@ -41,6 +41,10 @@ public class CatalogConstants {
 	 
 	 public static final String CATALOG_TRANSIT_BALLOT_STATUS = "TRANSIT_BALLOT_STATUS";
 	 
+	 public static final String CATALOG_ORNAMENT_BALLOT_STATUS = "ORNAMENT_BALLOT_STATUS";
+	 
+	 public static final String CATALOG_AMBIENT_BALLOT_STATUS = "AMBIENT_BALLOT_STATUS";
+	 
 	 public static final String CATALOG_COMMISSIONERS_TYPES = "COMMISSIONERS_TYPES_CATALOG";
 	 
 	 //macartuche 2021-07-021 10:50am

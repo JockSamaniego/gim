@@ -31,9 +31,17 @@ import ec.gob.gim.common.model.Person;
 @Entity
 @TableGenerator(name = "CommissionerBallotGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "CommissionerBallot", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = { @NamedQuery(name = "commissionerBallot.findAll", query = "SELECT cb FROM CommissionerBallot cb order by cb.creationDate"),
-						@NamedQuery(name = "commissionerBallot.findByNumberAndType", query = "SELECT cb FROM CommissionerBallot cb where cb.ballotNumber =:ballotNumber "),
+						@NamedQuery(name = "commissionerBallot.findByNumberAndType", query = "SELECT cb FROM CommissionerBallot cb where cb.ballotNumber =:ballotNumber and cb.commissionerBallotType.code =:commissionerType "),
 						@NamedQuery(name = "commissionerBallot.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum"),
-						@NamedQuery(name = "commissionerBallot.findResidentByIdent", query = "Select r from Resident r where r.identificationNumber = :identNum")
+						@NamedQuery(name = "commissionerBallot.findResidentByIdent", query = "Select r from Resident r where r.identificationNumber = :identNum"),
+						@NamedQuery(name = "CommissionerBallot.findGeneralReport", query = "SELECT cb FROM CommissionerBallot cb where (cb.creationDate BETWEEN :startDate and :endDate) and cb.commissionerBallotType.code =:commissionerType ORDER BY cb.creationDate, cb.ballotNumber ASC  "),
+						@NamedQuery(name = "CommissionerBallot.findGeneralReportInfractionDate", query = "SELECT cb FROM CommissionerBallot cb where (cb.infractionDate BETWEEN :startDate and :endDate) and cb.commissionerBallotType.code =:commissionerType ORDER BY cb.infractionDate, cb.ballotNumber ASC  "),
+						@NamedQuery(name = "CommissionerBallot.findGeneralReportNullified", query = "SELECT cb FROM CommissionerBallot cb where (cb.creationDate BETWEEN :startDate and :endDate) and cb.isNullified = true and cb.commissionerBallotType.code =:commissionerType ORDER BY cb.creationDate, cb.ballotNumber ASC  "),
+						@NamedQuery(name = "CommissionerBallot.findByBulletin", query = "SELECT cb FROM CommissionerBallot cb where cb.bulletin.id =:bulletinId and cb.commissionerBallotType.code =:commissionerType ORDER BY cb.ballotNumber ASC  "),
+						@NamedQuery(name = "CommissionerBallot.findForEmission", query = "SELECT cb FROM CommissionerBallot cb where cb.commissionerBallotType.code =:commissionerType and cb.isNullified = false and cb.currentStatus.statusName.code = 'READY_ISSUE' ORDER BY cb.ballotNumber ASC  "),
+						@NamedQuery(name = "commissionerBallot.findAddressByIdent", query = "Select r.currentAddress.street from Resident r where r.identificationNumber = :identNum"),
+						@NamedQuery(name = "commissionerBallot.findPhoneByIdent", query = "Select r.currentAddress.phoneNumber from Resident r where r.identificationNumber = :identNum"),
+						@NamedQuery(name = "commissionerBallot.findEmailByIdent", query = "Select r.email from Resident r where r.identificationNumber = :identNum")
 					  })
 
 public class CommissionerBallot {
@@ -47,6 +55,8 @@ public class CommissionerBallot {
 	
 	@Column(nullable = false)
 	private Date infractionDate;
+	
+	private Date nullifiedDate;
 	
 	@Column(nullable = false)
 	private Date infractionTime;
@@ -110,19 +120,25 @@ public class CommissionerBallot {
 	
 	private Boolean isActive;
 	
-	private Boolean isNullefied;
+	private Boolean isNullified;
+	
+	private String nullifiedReason;
 	
 	private String fileNumber;
 	
+	@JoinColumn(name = "responsiblenullified_user")	 
+	@Column(length = 100)	 
+	private String responsibleNullified_user;
+	
 	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
-	@JoinColumn(name="bulletin_id")
+	@JoinColumn(name="bulletin_id", nullable=false)
 	private CommissionerBulletin bulletin;
 	
 	
 	public CommissionerBallot() {
 		status = new ArrayList<CommissionerBallotStatus>();
 		isActive = Boolean.TRUE;
-		isNullefied = Boolean.FALSE;
+		isNullified = Boolean.FALSE;
 	}
 
 	public Long getId() {
@@ -333,20 +349,44 @@ public class CommissionerBallot {
 		this.isActive = isActive;
 	}
 
-	public Boolean getIsNullefied() {
-		return isNullefied;
-	}
-
-	public void setIsNullefied(Boolean isNullefied) {
-		this.isNullefied = isNullefied;
-	}
-
 	public String getFileNumber() {
 		return fileNumber;
 	}
 
 	public void setFileNumber(String fileNumber) {
 		this.fileNumber = fileNumber;
+	}
+
+	public Date getNullifiedDate() {
+		return nullifiedDate;
+	}
+
+	public void setNullifiedDate(Date nullifiedDate) {
+		this.nullifiedDate = nullifiedDate;
+	}
+
+	public Boolean getIsNullified() {
+		return isNullified;
+	}
+
+	public void setIsNullified(Boolean isNullified) {
+		this.isNullified = isNullified;
+	}
+
+	public String getNullifiedReason() {
+		return nullifiedReason;
+	}
+
+	public void setNullifiedReason(String nullifiedReason) {
+		this.nullifiedReason = nullifiedReason;
+	}
+
+	public String getResponsibleNullified_user() {
+		return responsibleNullified_user;
+	}
+
+	public void setResponsibleNullified_user(String responsibleNullified_user) {
+		this.responsibleNullified_user = responsibleNullified_user;
 	}
 
 	public void remove(CommissionerBallotStatus cbs) {

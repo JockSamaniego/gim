@@ -44,10 +44,10 @@
                 <h:inputText id="ballotNumber"
                        required="true"
                           value="#{commissionerBallotHome.instance.ballotNumber}">
-                    <a:support event="onblur" reRender="ballotNumberField" bypassUpdates="true" ajaxSingle="true"/>
+                    <a:support event="onblur" reRender="ballotNumberField, inspectorIdentificationField, inspectorNameField, bulleinField" ajaxSingle="true"
+                    action="#{commissionerBallotHome.findBulletinAndInspectorByBullet()}" />
                 </h:inputText>
             </s:decorate>
-
 
             <s:decorate id="inspectorIdentificationField" template="../layout/edit.xhtml">
                 <ui:define name="label">Cédula del Inspector</ui:define>
@@ -55,10 +55,11 @@
                               size="15"
                               maxlength="15"
                               required="true"
+                              readonly="true"
                               value="#{commissionerBallotHome.instance.inspectorIdentification}"
                               ajaxSingle="true" >
                               <f:validator validatorId="identificationNumberBallotValidator"/>
-                              <a:support event="onblur" action="#{commissionerBallotHome.findInspectorName()}" reRender="inspectorNameField, inspectorIdentificationField" ajaxSingle="true"  />            
+                              <a:support event="onblur" action="#{commissionerBallotHome.findInspectorObjectForBallot()}" reRender="inspectorNameField, inspectorIdentificationField, bulleinField" ajaxSingle="true"  />            
                 </h:inputText>              
             </s:decorate>
             
@@ -68,7 +69,19 @@
                               size="50"
                               required="true"
                               maxlength="50"
+                              readonly="true"
                               value="#{commissionerBallotHome.instance.inspectorName}"/>
+            </s:decorate>
+            
+            <s:decorate id="bulleinField"
+                template="../layout/edit.xhtml">
+                <ui:define name="label">Libretin</ui:define>
+                <h:selectOneMenu id="bulletin" value="#{commissionerBallotHome.instance.bulletin}" required="true" disabled="true">
+                  <s:selectItems value="#{commissionerBallotHome.bulletinsByInspector}" var="bulletin"
+                  label="#{bulletin.bulletinNumber} (#{bulletin.startNumber}-#{bulletin.endNumber})" itemValue="#{bulletin}" noSelectionLabel="Seleccione uno" />
+                  <s:convertEntity />
+                  <a:support event="onchange" ajaxSingle="true" reRender="articleDetailField, articleSanctionField" />
+                </h:selectOneMenu>   
             </s:decorate>
 
             <s:decorate id="citationDateField" template="../layout/edit.xhtml">
@@ -164,7 +177,7 @@
 
 	            <s:decorate id="articleDetailField" template="../layout/edit.xhtml">
 	                <ui:define name="label">Detalle del Artículo</ui:define>
-	                <h:inputTextarea id="observationPlace"
+	                <h:inputTextarea id="articleDetail"
 	                          size="15"
 	                          value="#{commissionerBallotHome.instance.sanctioningArticle.detail}"
 	                          readonly="true">
@@ -184,7 +197,7 @@
 
             <s:decorate id="valueField" template="../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.penaltyValue']} ($)</ui:define>
-                <h:inputText id="numeral"
+                <h:inputText id="value"
                            size="15"
                            required="true"
                       maxlength="10"
@@ -228,7 +241,7 @@
             <rich:panel id="statusPanel" style="border:0px">
 
 					<rich:dataTable id="itemsStatus" var="_status"
-						value="#{commissionerBallotHome.instance.status}"
+						value="#{commissionerBallotHome.findLastStatusForBallotInOrder()}"
 						columnClasses="number, number" width="100%">
 						<f:facet name="header">
 							<h:panelGrid columns="2" columnClasses="headerTitle,"
@@ -315,7 +328,7 @@
 
             <h:commandButton id="update"
                           value="#{messages['common.save']}"
-                         action="#{commissionerBallotHome.update}"
+                         action="#{commissionerBallotHome.UpdateCommissionerBallot()}"
                        rendered="#{commissionerBallotHome.managed}"/>
 
             <h:commandButton id="delete"

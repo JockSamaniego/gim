@@ -79,6 +79,18 @@
                 </h:inputTextarea>
             </s:decorate>
             
+            <s:decorate id="valueField2" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.penaltyValue']} ($)</ui:define>
+                <h:inputText id="value2"
+                           size="15"
+                           required="true"
+                      maxlength="10"
+                          value="#{commissionerBallotHome.instance.sanctionValue}"
+                          readonly="#{commissionerBallotHome.instance.appearanceDate != null}">
+                          <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/>
+                </h:inputText>
+            </s:decorate>
+            
             <div style="clear:both">
                 <span class="required">*</span>
                 campos requeridos

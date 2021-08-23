@@ -27,6 +27,7 @@ import ec.gob.gim.common.model.Person;
 						@NamedQuery(name = "CommissionerBallotStatus.findByType", query = "SELECT st FROM CommissionerBallotStatus st where st.statusName.name =:statusName "),
 						@NamedQuery(name = "CommissionerBallotStatus.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum"),
 						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallot", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId ORDER BY st.creationDate DESC "),
+						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallotInOrder", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId ORDER BY st.creationDate, st.id ASC "),
 						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallotExceptId", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId and st.id !=:statusId ORDER BY st.creationDate DESC "),
 					  })
 public class CommissionerBallotStatus {

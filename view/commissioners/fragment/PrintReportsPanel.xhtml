@@ -27,23 +27,92 @@
 		<h:form id="blockLimit2" styleClass="edit">
 
 			<rich:panel>
+
+					<s:decorate id="fromDateField" template="../../layout/edit.xhtml">
+		                <ui:define name="label">Fecha Desde:</ui:define>
+		                <rich:calendar id="fromDate"
+		                          value="#{commissionerBallotHome.fromDateReport}" datePattern="dd/MM/yyyy">
+		                          <a:support event="onchanged" ajaxSingle="true" reRender="fromDateField,printId,printId2,printId3" />
+                      				<f:validator validatorId="currentDateValidator" />
+		                </rich:calendar>
+		            </s:decorate>
+            		<s:decorate id="untilDateField" template="../../layout/edit.xhtml">
+		                <ui:define name="label">Fecha Hasta:</ui:define>
+		                <rich:calendar id="untilDate"
+		                          value="#{commissionerBallotHome.untilDateReport}" datePattern="dd/MM/yyyy">
+		                          <a:support event="onchanged" ajaxSingle="true" reRender="untilDateField,printId,printId2,printId3" />
+                      				<f:validator validatorId="currentDateValidator" />
+		                </rich:calendar>
+		            </s:decorate>
+		            
+		            <s:decorate id="inspectorField"
+		                template="../../layout/edit.xhtml">
+		                <ui:define name="label">Inspector</ui:define>
+		                <h:selectOneMenu id="inspector" value="#{commissionerBallotHome.inspectorIdentificationReport}" >
+		                  <s:selectItems value="#{commissionerBallotHome.commissionerInspectors}" var="inspector" 
+		                  label="#{inspector.numberIdentification} - #{inspector.name}" itemValue="#{inspector.numberIdentification}" noSelectionLabel="Seleccione uno" />
+		                  <a:support event="onchange" ajaxSingle="true" reRender="printId4, bulleinField" action="#{commissionerBallotHome.findBulletinsByInspectorReport()}"/>
+		                </h:selectOneMenu>   
+		            </s:decorate>
+		            
+		            <s:decorate id="bulleinField" template="../../layout/edit.xhtml">
+		                <ui:define name="label">Libretin</ui:define>
+		                <h:selectOneMenu id="bulletin" value="#{commissionerBallotHome.bulletinIdReport}" >
+		                  <s:selectItems value="#{commissionerBallotHome.bulletinsForReport}" var="bulletin"
+		                  label="#{bulletin.bulletinNumber} (#{bulletin.startNumber}-#{bulletin.endNumber})" itemValue="#{bulletin.id}" noSelectionLabel="Seleccione uno" />
+		                  <a:support event="onchange" ajaxSingle="true" reRender="printId5" />
+		                </h:selectOneMenu>   
+		            </s:decorate>
+
+		            <div style="clear: both" />
+
 					<s:button
-						view="../commissioners/report/CommissionerBallotsReportPDF.xhtml"
+						view="/commissioners/report/CommissionerBallotsReportPDF.xhtml"
 						id="printId"
-						rendered="#{not empty commissionerBallotList.resultList}"
-						propagation="join" value="Reporte General PDF" />
+						propagation="join" value="Reporte General (Registro)" 
+						disabled="#{commissionerBallotHome.fromDateReport == null or commissionerBallotHome.untilDateReport == null}"
+						action="#{commissionerBallotHome.generalBallotsReport()}"
+					/>
 					
 					<s:button
-					    view="../commissioners/report/CommissionerBallotsReportEXCEL.xhtml"
-						id="downloadExcel"
-						rendered="#{not empty commissionerBallotList.resultList}"
-						propagation="join" value="Reporte General EXCEL" />
-						
+						view="/commissioners/report/CommissionerBallotsReportPDF.xhtml"
+						id="printId2"
+						propagation="join" value="Reporte General (Infracción)" 
+						disabled="#{commissionerBallotHome.fromDateReport == null or commissionerBallotHome.untilDateReport == null}"
+						action="#{commissionerBallotHome.generalBallotsReportInfractionDate()}"
+					/>
+					
 					<s:button
-					    view="../commissioners/report/CommissionerBallotsReportEXCEL.xhtml"
-						id="downloadExcel2"
-						rendered="#{not empty commissionerBallotList.resultList}"
-						propagation="join" value="Reporte para Emisión EXCEL" />
+						view="/commissioners/report/CommissionerBallotsReportNullifiedPDF.xhtml"
+						id="printId3"
+						propagation="join" value="Reporte Boletas Anuladas" 
+						disabled="#{commissionerBallotHome.fromDateReport == null or commissionerBallotHome.untilDateReport == null}"
+						action="#{commissionerBallotHome.generalBallotsReportNullified()}"
+					/>
+					
+					<s:button
+						view="/commissioners/report/CommissionerBulletinsByInspectorReportPDF.xhtml"
+						id="printId4"
+						propagation="join" value="Libretines por Inspector" 
+						disabled="#{commissionerBallotHome.inspectorIdentificationReport == null or commissionerBallotHome.inspectorIdentificationReport == ''}"
+					/>
+					
+					<s:button
+						view="/commissioners/report/CommissionerBallotsByBulletinReportPDF.xhtml"
+						id="printId5"
+						propagation="join" value="Boletas por Libretin" 
+						disabled="#{commissionerBallotHome.bulletinIdReport == null}"
+						action="#{commissionerBallotHome.ballotsByBulletinReport()}"
+					/>
+					
+					
+					<s:button
+						view="/commissioners/report/CommissionerBallotsReportByEmissionEXCEL.xhtml"
+						id="printId6"
+						propagation="join" value="Reporte Emisión EXCEL"
+						action="#{commissionerBallotHome.ballotsForEmissionReport()}"
+					/>
+					
 
 				<div style="clear: both">
 				

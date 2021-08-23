@@ -10,7 +10,7 @@
     xmlns:a="http://richfaces.org/a4j">
 
 <ui:define name="body">
-	<ui:include src="../commissioners/fragment/bulletinEditPanel.xhtml" />
+	<ui:include src="../commissioners/fragment/BulletinEditPanel.xhtml" />
     <h:form id="commissionerBulletinsSearch" styleClass="edit">
     <h:outputText styleClass="formTitle" value="Administración de Libretines" />
 
@@ -98,7 +98,7 @@
         <rich:column styleClass="action" width="10%">
             <f:facet name="header">#{messages['common.action']}</f:facet>
 
-            <a:commandButton id="updateArticle"
+            <a:commandButton id="updateBulletin"
                                     action="#{commissionerBallotHome.updateCommissionerBulletin(_bulletin)}"
                                     reRender="bulletinEditPanel" ajaxSingle="true"
                                     eventsQueue="gimEventsQueue"

@@ -26,6 +26,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.ItemCatalog;
+import ec.gob.gim.common.model.Person;
 
 
 @Audited
@@ -40,9 +41,13 @@ import ec.gob.gim.common.model.ItemCatalog;
 )
 @NamedQueries(value = {
 		@NamedQuery(name = "CommissionerBulletin.findByType", query = "SELECT cb FROM CommissionerBulletin cb where cb.commissionerBallotType.code =:commissionerType ORDER BY cb.bulletinNumber ASC "),
-		@NamedQuery(name = "CommissionerBulletin.findBySerial", query = "Select cb from CommissionerBulletin cb where cb.startNumber <= :serial AND cb.endNumber >= :serial"),
+		@NamedQuery(name = "CommissionerBulletin.findBySerial", query = "Select cb from CommissionerBulletin cb where cb.startNumber <= :ballotNumber AND cb.endNumber >= :ballotNumber and cb.commissionerBallotType.code =:commissionerType ORDER BY cb.bulletinNumber ASC"),
 		@NamedQuery(name = "CommissionerBulletin.findByRank", query = "Select cb from CommissionerBulletin cb where cb.startNumber > :startSerial AND cb.endNumber < :endSerial"),
-		@NamedQuery(name = "CommissionerBulletin.findById", query = "Select cb from CommissionerBulletin cb where cb.id = :id")})
+		@NamedQuery(name = "CommissionerBulletin.findById", query = "Select cb from CommissionerBulletin cb where cb.id = :id"),
+		@NamedQuery(name = "CommissionerBulletin.findByNumber", query = "Select cb from CommissionerBulletin cb where cb.bulletinNumber = :number and cb.commissionerBallotType.code =:commissionerType"),
+		@NamedQuery(name = "CommissionerBulletin.findByStartSerial", query = "Select cb from CommissionerBulletin cb where cb.startNumber <= :startNumber and cb.endNumber >= :startNumber and cb.commissionerBallotType.code =:commissionerType"),
+		@NamedQuery(name = "CommissionerBulletin.findByEndSerial", query = "Select cb from CommissionerBulletin cb where cb.startNumber <= :endNumber and cb.endNumber >= :endNumber and cb.commissionerBallotType.code =:commissionerType"),
+		@NamedQuery(name = "CommissionerBulletin.findByInspector", query = "Select cb from CommissionerBulletin cb where cb.inspector.numberIdentification = :identNum  and cb.inspector.isActive = true and cb.commissionerBallotType.code =:commissionerType ORDER BY cb.bulletinNumber ASC ")})
 
 
 public class CommissionerBulletin {
@@ -71,7 +76,7 @@ public class CommissionerBulletin {
 	private Date creationDate;
 	
 	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
-	@JoinColumn(name="inspector_id")
+	@JoinColumn(name="inspector_id", nullable=false)
 	private CommissionerInspector inspector;
 	
 	@OneToMany(mappedBy = "bulletin", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -79,6 +84,14 @@ public class CommissionerBulletin {
 	private List<CommissionerBallot> ballot;
 	
 	private String observation;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "responsible_id") 
+	private Person responsible;
+	   
+	@JoinColumn(name = "responsible_user")	 
+	@Column(length = 100)	 
+	private String responsible_user;
 
 	public Long getId() {
 		return id;
@@ -158,6 +171,22 @@ public class CommissionerBulletin {
 
 	public void setObservation(String observation) {
 		this.observation = observation;
+	}
+
+	public Person getResponsible() {
+		return responsible;
+	}
+
+	public void setResponsible(Person responsible) {
+		this.responsible = responsible;
+	}
+
+	public String getResponsible_user() {
+		return responsible_user;
+	}
+
+	public void setResponsible_user(String responsible_user) {
+		this.responsible_user = responsible_user;
 	}
 
 	

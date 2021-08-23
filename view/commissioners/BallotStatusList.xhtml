@@ -166,7 +166,7 @@
 
    			<rich:dataTable id="itemsStatus" var="_status"
    						
-						value="#{commissionerBallotHome.instance.status}"
+						value="#{commissionerBallotHome.findLastStatusForBallotInOrder()}"
 						columnClasses="number, number" width="100%">
 	
 
@@ -235,12 +235,29 @@
 
             <h:commandButton id="update"
                           value="#{messages['common.save']}"
-                         action="#{commissionerBallotHome.update}"
+                         action="#{commissionerBallotHome.UpdateCommissionerBallot()}"
                        rendered="#{commissionerBallotHome.managed}"/>
-        	<s:button id="exit"
-                   value="#{messages['common.quit']}"
-             propagation="end"
-                    view="/commissioners/HygieneBallotsList.xhtml"/>
+             
+             <s:button   id="cancelEdit1"
+		                value="#{messages['common.quit']}"
+		                propagation="end"
+		                view="/commissioners/HygieneBallotsList.xhtml"
+		                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_HYGIENE'}" />
+		    <s:button   id="cancelEdit2"
+		                value="#{messages['common.quit']}"
+		                propagation="end"
+		                view="/commissioners/TransitBallotsList.xhtml"
+		                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_TRANSIT'}" />
+		    <s:button   id="cancelEdit3"
+		                value="#{messages['common.quit']}"
+		                propagation="end"
+		                view="/commissioners/OrnamentBallotsList.xhtml"
+		                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_ORNAMENT'}" />
+		    <s:button   id="cancelEdit4"
+		                value="#{messages['common.quit']}"
+		                propagation="end"
+		                view="/commissioners/AmbientBallotsList.xhtml"
+		                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_AMBIENT'}" />
 
         </div>
     </h:form>

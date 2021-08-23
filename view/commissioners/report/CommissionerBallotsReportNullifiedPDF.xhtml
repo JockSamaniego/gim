@@ -35,10 +35,10 @@
 							</p:font>
 
 							<p:font size="8" style="bold">
-								<p:paragraph alignment="center" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_TRANSIT')}">REPORTE DE BOLETAS - COMISARIA DE TRANSITO</p:paragraph>
-								<p:paragraph alignment="center" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_HYGIENE')}">REPORTE DE BOLETAS - COMISARIA DE HIGIENE</p:paragraph>
-								<p:paragraph alignment="center" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_ORNAMENT')}">REPORTE DE BOLETAS - COMISARIA DE ORNATO</p:paragraph>
-								<p:paragraph alignment="center" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_AMBIENT')}">REPORTE DE BOLETAS - COMISARIA DE AMBIENTE</p:paragraph>
+								<p:paragraph alignment="center" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_TRANSIT')}">REPORTE DE BOLETAS ANULADAS - COMISARIA DE TRANSITO</p:paragraph>
+								<p:paragraph alignment="center" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_HYGIENE')}">REPORTE DE BOLETAS ANULADAS - COMISARIA DE HIGIENE</p:paragraph>
+								<p:paragraph alignment="center" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_ORNAMENT')}">REPORTE DE BOLETAS ANULADAS - COMISARIA DE ORNATO</p:paragraph>
+								<p:paragraph alignment="center" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_AMBIENT')}">REPORTE DE BOLETAS ANULADAS - COMISARIA DE AMBIENTE</p:paragraph>
 							</p:font>
 
 						</p:cell>
@@ -116,7 +116,7 @@
 				<p:cell colspan="7">
 					<p:paragraph borderWidth="1" >
 						<p:font size="10" style="bold">
-							<p:text value="Detalle de Boletas:" />
+							<p:text value="Detalle de Boletas Anuladas:" />
 						</p:font>
 					</p:paragraph>
 				</p:cell>
@@ -124,9 +124,9 @@
 		</p:table>
 
 		<p:table rendered="#{not empty commissionerBallotHome.ballotsForReport and commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_TRANSIT')}"
-			columns="12"
+			columns="10"
 			widthPercentage="100" headerRows="0"
-			widths="0.7 0.7 1 2.2 0.8 0.7 2.2 0.7 0.7 0.7 0.9 0.7"> 
+			widths="0.7 0.7 1 1.6 0.8 0.7 1.6 0.7 1.7 2.5"> 
 			<p:font size="6" style="bold">
 				<f:facet name="defaultCell">
 					<p:cell borderWidth="0" />
@@ -176,33 +176,22 @@
 				
 				<p:cell horizontalAlignment="center" >
 					<p:paragraph>
-						<p:text value="Estado Actual" />
+						<p:text value="Fecha Anulación" />
 					</p:paragraph>
 				</p:cell>
 				
 				<p:cell horizontalAlignment="center" >
 					<p:paragraph>
-						<p:text value="Expediente" />
+						<p:text value="Responsable de Anular" />
 					</p:paragraph>
 				</p:cell>
 				
 				<p:cell horizontalAlignment="center" >
 					<p:paragraph>
-						<p:text value="Está Anulada?" />
+						<p:text value="Razón de Anulación" />
 					</p:paragraph>
 				</p:cell>
 				
-				<p:cell horizontalAlignment="center" >
-					<p:paragraph>
-						<p:text value="Hubo Comparecencia?" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center" >
-					<p:paragraph>
-						<p:text value="Sanción" />
-					</p:paragraph>
-				</p:cell>
 			</p:font>
 			
 			<p:font size="6">
@@ -256,82 +245,36 @@
 					
 					<p:cell horizontalAlignment="center">						
 						<p:paragraph>
-							<p:text value="#{_var.currentStatus.statusName.name}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="center">						
-						<p:paragraph>
-							<p:text value="#{_var.fileNumber}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="center">						
-						<p:paragraph rendered="#{_var.isNullified}">
-							<p:text value="SI" />
-						</p:paragraph>
-						<p:paragraph rendered="#{!_var.isNullified}">
-							<p:text value="NO" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="center">						
-						<p:paragraph rendered="#{_var.appearanceDate != null}">
-							<p:text value="SI" />
-						</p:paragraph>
-						<p:paragraph rendered="#{_var.appearanceDate == null}">
-							<p:text value="NO" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="right">						
-						<p:paragraph>
-							<p:text value="#{_var.sanctionValue}" >
-								<f:convertNumber pattern="#0.00" />
+							<p:text value="#{_var.nullifiedDate}" >
+								<f:convertDateTime
+									pattern="#{messages['common.datePattern']}" />
 							</p:text>
 						</p:paragraph>
 					</p:cell>
+					
+					<p:cell horizontalAlignment="left">						
+						<p:paragraph>
+							<p:text value="#{_var.responsibleNullified_user}" />
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="left">						
+						<p:paragraph>
+							<p:text value="#{_var.nullifiedReason}" />
+						</p:paragraph>
+					</p:cell>
+
+					
 				</ui:repeat>
 			</p:font>
 
-			<p:font size="8" style="bold">
-				<f:facet name="defaultCell">
-					<p:cell borderWidth="0" />
-				</f:facet>
-
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="TOTAL:" />
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{commissionerBallotHome.totalValueReport}" >
-							<f:convertNumber pattern="#0.00" />
-						</p:text>
-					</p:paragraph>
-				</p:cell>
-
-			</p:font>
 		</p:table>
 		
 		
 		<p:table rendered="#{not empty commissionerBallotHome.ballotsForReport and !commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_TRANSIT')}"
-			columns="11"
+			columns="9"
 			widthPercentage="100" headerRows="0"
-			widths="0.7 0.7 1 2.6 0.7 2.6 0.7 0.7 0.7 0.9 0.7"> 
+			widths="0.7 0.7 1 1.8 0.7 1.8 0.7 1.9 2.7"> 
 			<p:font size="6" style="bold">
 				<f:facet name="defaultCell">
 					<p:cell borderWidth="0" />
@@ -375,31 +318,19 @@
 				
 				<p:cell horizontalAlignment="center" >
 					<p:paragraph>
-						<p:text value="Estado Actual" />
+						<p:text value="Fecha Anulación" />
 					</p:paragraph>
 				</p:cell>
 				
 				<p:cell horizontalAlignment="center" >
 					<p:paragraph>
-						<p:text value="Expediente" />
+						<p:text value="Responsable de Anular" />
 					</p:paragraph>
 				</p:cell>
 				
 				<p:cell horizontalAlignment="center" >
 					<p:paragraph>
-						<p:text value="Está Anulada?" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center" >
-					<p:paragraph>
-						<p:text value="Hubo Comparecencia?" />
-					</p:paragraph>
-				</p:cell>
-				
-				<p:cell horizontalAlignment="center" >
-					<p:paragraph>
-						<p:text value="Sanción" />
+						<p:text value="Razón de Anulación" />
 					</p:paragraph>
 				</p:cell>
 			</p:font>
@@ -449,74 +380,28 @@
 					
 					<p:cell horizontalAlignment="center">						
 						<p:paragraph>
-							<p:text value="#{_var.currentStatus.statusName.name}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="center">						
-						<p:paragraph>
-							<p:text value="#{_var.fileNumber}" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="center">						
-						<p:paragraph rendered="#{_var.isNullified}">
-							<p:text value="SI" />
-						</p:paragraph>
-						<p:paragraph rendered="#{!_var.isNullified}">
-							<p:text value="NO" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="center">						
-						<p:paragraph rendered="#{_var.appearanceDate != null}">
-							<p:text value="SI" />
-						</p:paragraph>
-						<p:paragraph rendered="#{_var.appearanceDate == null}">
-							<p:text value="NO" />
-						</p:paragraph>
-					</p:cell>
-					
-					<p:cell horizontalAlignment="right">						
-						<p:paragraph>
-							<p:text value="#{_var.sanctionValue}" >
-								<f:convertNumber pattern="#0.00" />
+							<p:text value="#{_var.nullifiedDate}" >
+								<f:convertDateTime
+									pattern="#{messages['common.datePattern']}" />
 							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="left">						
+						<p:paragraph>
+							<p:text value="#{_var.responsibleNullified_user}" />
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="left">						
+						<p:paragraph>
+							<p:text value="#{_var.nullifiedReason}" />
 						</p:paragraph>
 					</p:cell>
 				</ui:repeat>
 			</p:font>
 
-			<p:font size="8" style="bold">
-				<f:facet name="defaultCell">
-					<p:cell borderWidth="0" />
-				</f:facet>
-
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				<p:cell horizontalAlignment="center" borderWidth="0" />
-				
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="TOTAL:" />
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="right">
-					<p:paragraph>
-						<p:text value="#{commissionerBallotHome.totalValueReport}" >
-							<f:convertNumber pattern="#0.00" />
-						</p:text>
-					</p:paragraph>
-				</p:cell>
-
-			</p:font>
+			
 		</p:table>
 		
 		<p:table columns="1" widthPercentage="80" headerRows="0" spacingBefore="80">

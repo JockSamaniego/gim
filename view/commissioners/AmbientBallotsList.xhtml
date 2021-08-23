@@ -14,9 +14,8 @@
     <ui:include src="../commissioners/fragment/NullifiedEditPanel.xhtml" />
     <ui:include src="../commissioners/fragment/FileNumberEditPanel.xhtml" />
     <ui:include src="../commissioners/fragment/PrintReportsPanel.xhtml" />
-    <h:form id="hygieneBallotsSearch" styleClass="edit">
-    
-    <h:outputText styleClass="formTitle" value="Administración de Boletas de Higiene" />
+    <h:form id="ambientBallotsSearch" styleClass="edit">
+    <h:outputText styleClass="formTitle" value="Administración de Boletas de Ambiente" />
 
         <rich:simpleTogglePanel label="#{messages['ucot.searchFilter']}" switchType="ajax" >
         <h:panelGrid columns="2" > 
@@ -115,30 +114,31 @@
                        size="20"
                           value="#{commissionerBallotList.commissionerBallot.plate}">
                 </h:inputText>
-            </s:decorate>
-            
+            </s:decorate>      
                         
         </h:panelGrid>
         </rich:simpleTogglePanel>
 
         <div class="actionButtons">
-            <h:commandButton id="search" value="#{messages['common.search']}" reRender="infractionTablePanel"/>
+            <h:commandButton id="search" value="#{messages['common.search']}" reRender="infractionTablePanel" />
             <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
         </div>
+
+    
 
     <rich:panel id="infractionTablePanel">
         <f:facet name="header">
             <h:panelGrid columns="7" columnClasses="headerTitle,">
                 <h:outputText
                     value=" Boletas encontradas (#{empty commissionerBallotList.resultList ? 0 : (commissionerBallotList.paginated ? commissionerBallotList.resultCount : commissionerBallotList.resultList.size)})" />
-                   <s:button view="/commissioners/HygieneBallotsEdit.xhtml"
+                   <s:button view="/commissioners/AmbientBallotsEdit.xhtml"
                                id="create"
                       propagation="none"
                             value="#{messages['common.create']} Boleta">
                        <f:param name="infractionsId" />
                    </s:button>
-                	
-                	<s:button view="/commissioners/CommissionerInspectorList.xhtml"
+                   
+                   <s:button view="/commissioners/CommissionerInspectorList.xhtml"
                                id="createInspector"
                       propagation="none"
                             value="Inspectores">
@@ -151,16 +151,15 @@
                             value="Libretines">
                        <f:param name="infractionsId" />
                     </s:button>
-                    
-                    <s:button view="/commissioners/SanctioningArticleList.xhtml"
-                               id="createArticle"
-                      propagation="none"
-                            value="Articulos Sancionadores">
-                       <f:param name="infractionsId" />
-                    </s:button>
-                   
-                  <a:commandButton    id="printReport"
-                  					action="#{commissionerBallotHome.findInspectorsByCommissioner()}"
+
+	                <s:button view="/commissioners/SanctioningArticleList.xhtml"
+	                               id="createArticle"
+	                      propagation="none"
+	                            value="Articulos Sancionadores">
+	                       <f:param name="infractionsId" />
+                   </s:button>
+                   <a:commandButton    id="printReport"
+                   					action="#{commissionerBallotHome.findInspectorsByCommissioner()}"
                                     reRender="printReportsPanel" ajaxSingle="true"
                                     eventsQueue="gimEventsQueue"
                                     oncomplete="Richfaces.showModalPanel('printReportsPanel',{width:600, height:500})"
@@ -294,7 +293,7 @@
 
         <rich:column styleClass="action" width="15%">
             <f:facet name="header">#{messages['common.action']}</f:facet>
-            <s:button view="/commissioners/HygieneBallotsEdit.xhtml"
+            <s:button view="/commissioners/TransitBallotsEdit.xhtml"
                    value="#{messages['common.edit']}"
                    action="#{commissionerBallotHome.prepareToEdit()}"
              propagation="none"
@@ -316,8 +315,7 @@
                                     eventsQueue="gimEventsQueue"
                                     oncomplete="Richfaces.showModalPanel('appearanceEditPanel',{width:600, height:500})"
                                     value="Comparecencia" />
-                                    
-                                    <br/>
+             <br/>
             <a:commandButton        id="addFileNumber"
                                     action="#{commissionerBallotHome.addFileNumberInBallot(_ballot)}"
                                     reRender="fileNumberEditPanel" ajaxSingle="true"
@@ -339,14 +337,14 @@
 
     <div class="tableControl">
 
-        <s:link view="/commissioners/HygieneBallotsList.xhtml"
+        <s:link view="/commissioners/AmbientBallotsList.xhtml"
             rendered="#{commissionerBallotList.previousExists}"
                value="#{messages.left}#{messages.left} Primera Pagina"
                   id="firstPage">
           <f:param name="firstResult" value="0"/>
         </s:link>
 
-        <s:link view="/commissioners/HygieneBallotsList.xhtml"
+        <s:link view="/commissioners/AmbientBallotsList.xhtml"
             rendered="#{commissionerBallotList.previousExists}"
                value="#{messages.left} Anterior"
                   id="previousPage">
@@ -354,7 +352,7 @@
                     value="#{commissionerBallotList.previousFirstResult}"/>
         </s:link>
 
-        <s:link view="/commissioners/HygieneBallotsList.xhtml"
+        <s:link view="/commissioners/AmbientBallotsList.xhtml"
             rendered="#{commissionerBallotList.nextExists}"
                value="Siguiente #{messages.right}"
                   id="nextPage">
@@ -362,7 +360,7 @@
                     value="#{commissionerBallotList.nextFirstResult}"/>
         </s:link>
 
-        <s:link view="/commissioners/HygieneBallotsList.xhtml"
+        <s:link view="/commissioners/AmbientBallotsList.xhtml"
             rendered="#{commissionerBallotList.nextExists}"
                value="Ultima Pagina #{messages.right}#{messages.right}"
                   id="lastPage">

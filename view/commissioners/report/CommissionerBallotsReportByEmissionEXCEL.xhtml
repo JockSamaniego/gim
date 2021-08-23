@@ -1,0 +1,79 @@
+<e:workbook xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<e:worksheet value="#{commissionerBallotHome.ballotsForReport}" var="_var">
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="NRO. EXPEDIENTE" />
+			</f:facet>
+			<e:cell value="#{_var.fileNumber}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="AÑO" />
+			</f:facet>
+			<e:cell value="#{commissionerBallotHome.returnDateFormat(_var.infractionDate)}" >
+			</e:cell>
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="NRO. BOLETA" />
+			</f:facet>
+			<e:cell value="#{_var.ballotNumber}" />
+		</e:column>		
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="FECHA DE INFRACCIÓN" />
+			</f:facet>
+			<e:cell value="#{_var.infractionDate}" />
+		</e:column>	
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="NRO. CÉDULA" />
+			</f:facet>
+			<e:cell value="#{_var.infractorIdentification}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="APELLIDOS Y NOMBRES" />
+			</f:facet>
+			<e:cell value="#{_var.infractorName}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="CONTRAVENCIÓN" />
+			</f:facet>
+			<e:cell value="#{_var.sanctioningArticle.detail}" />
+		</e:column>
+		<e:column rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_TRANSIT')}">
+			<f:facet name="header">
+				<e:cell value="PLACA" />
+			</f:facet>
+			<e:cell value="#{_var.plate}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="VALOR USD" />
+			</f:facet>
+			<e:cell value="#{_var.sanctionValue}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="DIRECCIÓN" />
+			</f:facet>
+			<e:cell value="#{commissionerBallotHome.findResidentAddress(_var.infractorIdentification)}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="TELÉFONO" />
+			</f:facet>
+			<e:cell value="#{commissionerBallotHome.findResidentPhone(_var.infractorIdentification)}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
+				<e:cell value="CORREO ELECTRÓNICO" />
+			</f:facet>
+			<e:cell value="#{commissionerBallotHome.findResidentEmail(_var.infractorIdentification)}" />
+		</e:column>
+	</e:worksheet>
+</e:workbook>
