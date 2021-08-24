@@ -17,7 +17,7 @@
         <f:facet name="header">Información del Parte Judicial</f:facet>
         
         <s:decorate template="../../layout/edit.xhtml" rendered="#{binnacleCRVHome.hasRoleUCOT}">
-            <ui:define name="label">Nombre de Documento</ui:define>
+            <ui:define name="label">#{messages['binnacleCRV.nameOfJudicialPart']}</ui:define>
 
             <h:inputText id="nameOfJudicialPart" 
                 value="#{binnacleCRVHome.instance.nameOfJudicialPart}" 
@@ -35,7 +35,7 @@
                 disabled="#{!binnacleCRVHome.hasRoleUCOT}"
                 maxFilesQuantity="1" id="uploadFile" immediateUpload="true"
                 acceptedTypes="pdf"
-                uploadControlLabel="#{messages['binnacleCRV.photoEvidence']}"
+                uploadControlLabel="#{messages['binnacleCRV.nameOfJudicialPart']}"
                 addControlLabel="#{messages['common.uploadFile']}"
                 progressLabel="#{messages['common.uploading']}"
                 doneLabel="#{messages['common.done']}"

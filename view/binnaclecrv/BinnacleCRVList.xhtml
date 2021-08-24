@@ -131,6 +131,18 @@
                             <h:outputText value="#{_binnacleCRV.admissionResponsableName}" />
                         </h:column>
     
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{binnacleCRVList}" />
+                                    <ui:param name="propertyLabel"
+                                        value="#{messages['binnacleCRV.nameOfJudicialPart']}" />
+                                    <ui:param name="propertyPath" value="binnacleCRV.nameOfJudicialPart" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_binnacleCRV.nameOfJudicialPart}" />
+                        </h:column>
+    
 						<rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
 							<s:link view="/#{empty from ? 'BinnacleCRV' : from}.xhtml"
