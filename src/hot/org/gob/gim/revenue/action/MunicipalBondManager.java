@@ -86,7 +86,7 @@ public class MunicipalBondManager extends EntityController {
 
 	protected MunicipalBondType municipalBondType = MunicipalBondType.EMISSION_ORDER;
 
-	private Boolean allBondsSelected;
+	private Boolean allBondsSelected=Boolean.FALSE;
 
 	private MunicipalBond municipalBond;
 
@@ -604,8 +604,8 @@ public class MunicipalBondManager extends EntityController {
 	}
 
 	public void selectAllBonds() {
-		
-		System.out.println("---selectAllBonds()-------------------------- "+this.allBondsSelected);
+
+		findMunicipalBondsFutureEmission();
 		
 		/* for (MunicipalBond bond : getDataModel().getMunicipalBonds()) {
 			bond.setIsSelected(getAllBondsSelected());
@@ -830,7 +830,7 @@ public class MunicipalBondManager extends EntityController {
 							userSession.getUser(), userSession.getPerson(),
 							explanation);
 			// rfam 2021-07-29 no funciona
-			// this.findMunicipalBondsFutureEmission();
+			this.findMunicipalBondsFutureEmission();
 		} catch (Exception e) {
 			System.out.println(e.getStackTrace());
 		}

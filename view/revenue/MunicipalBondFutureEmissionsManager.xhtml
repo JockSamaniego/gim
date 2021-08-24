@@ -11,7 +11,7 @@
 
 	<ui:define name="body">
 
-		<h:form id="municipalBondSearchFutureEmissions" styleClass="edit">
+		<h:form id="municipalBondSearchFutureEmissions" styleClass="edit" prependId="false">
 			<ui:debug id="debug" />
 			<h:outputText styleClass="formTitle" value="" />
 			<a:outputPanel id="searcherPanel" ajaxRendered="false">
@@ -57,14 +57,7 @@
 
 			<a:outputPanel id="resultsPanel" ajaxRendered="false">
 			
-			<h:selectBooleanCheckbox rendered="true"
-								value="#{municipalBondManager.allBondsSelected}">
-								<a:support event="onchange" ajaxSingle="true"
-									bypassUpdates="true" eventsQueue="gimQueue"
-									action="#{municipalBondManager.selectAllBonds()}"
-									reRender="municipalBondsTable,che_singular,resultsPanel,municipalBondSearchFutureEmissions:municipalBondsTable" />
-							</h:selectBooleanCheckbox>
-
+			
 				<rich:panel rendered="#{municipalBonds.rowCount == 0}">
 					<h:outputText value="#{messages['common.noResultsReturned']}"
 						rendered="#{municipalBonds.rowCount == 0}" />
@@ -74,8 +67,8 @@
 					width="100%" value="#{municipalBonds}"
 					columnClasses="center, center, left, left, center, right, center, left"
 					rows="25" rendered="#{municipalBonds.rowCount != 0}">
-					<f:facet name="header">
-						<rich:columnGroup>
+					<f:facet name="header" id="headerId">
+						<rich:columnGroup id="groupId">
 
 							<rich:column colspan="10">
 								<h:panelGrid columns="1" columnClasses="left formTitle,right,"
@@ -85,23 +78,33 @@
 								</h:panelGrid>
 							</rich:column>
 
-							<rich:column colspan="10" breakBefore="true" styleClass="right">
-								<g:dataScroller maxPages="10" for="municipalBondsTable"
+							<rich:column colspan="10" breakBefore="true" styleClass="right" id="column_paginator">
+								<h:outputText value="Resultados (#{municipalBonds.objectsNumber})" style="float:left;" />
+								<g:dataScroller maxPages="10" for="municipalBondsTable" id="topScroller_table"
 									style="float:right;" />
 							</rich:column>
 
 						</rich:columnGroup>
 					</f:facet>
 
-					<f:facet name="footer">
-						<g:dataScroller maxPages="10" for="municipalBondsTable"
+					<f:facet name="footer" id="facet_footer">
+						<g:dataScroller maxPages="10" for="municipalBondsTable" id="bottomScroller"
 							style="float:right;" />
 					</f:facet>
 
 					<rich:column
 						styleClass="#{municipalBondManager.showWarned(_municipalBond)}">
 						<f:facet name="header">
+							<h:selectBooleanCheckbox rendered="true"
+								value="#{municipalBondManager.allBondsSelected}">
+								<a:support event="onchange" ajaxSingle="true"
+									eventsQueue="gimQueue"
+									action="#{municipalBondManager.selectAllBonds()}"
+									reRender="municipalBondsTable,che_singular,resultsPanel" />
+							</h:selectBooleanCheckbox>
 						</f:facet>
+
+						
 						<h:selectBooleanCheckbox value="#{_municipalBond.isSelected}" id="che_singular">
 							<a:support event="onchange" ajaxSingle="true"
 								bypassUpdates="true" eventsQueue="gimQueue"
@@ -201,8 +204,7 @@
 					<a:commandButton id="emitButton"
 						action="#{municipalBondManager.emitFutureSelected()}"
 						value="Emitir"
-						oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelSelected\');' : ''}"
-						reRender="resultsPanel,municipalBondsTable" />
+						reRender="resultsPanel,municipalBondsTable,municipalBondsTable:topScroller_table_table" />
 
 					<a:commandButton id="cancelBtnSelected" ajaxSingle="true"
 						value="#{messages['common.cancel']}"
@@ -220,7 +222,7 @@
 
 		<rich:modalPanel id="confirmPanelSelected" width="350" height="250">
 			<f:facet name="header">#{messages['municipalBond.confirmReverseSelected']}</f:facet>
-			<h:form id="confirmReverseSelected">
+			<h:form id="confirmReverseSelected" prependId="false">
 				<h:panelGrid>
 					<s:decorate id="conceptFieldSelected"
 						template="../layout/edit.xhtml">
@@ -237,7 +239,7 @@
 								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelSelected\');' : ''}"
 								reRender="resultsPanel,municipalBondsTable" />
 
-							<a:commandButton id="cancelBtnSelected" ajaxSingle="true"
+							<a:commandButton id="cancelBtnSelected1" ajaxSingle="true"
 								value="#{messages['common.cancel']}"
 								oncomplete="Richfaces.hideModalPanel('confirmPanelSelected');"
 								bypassUpdates="true" reRender="resultsPanel" />
