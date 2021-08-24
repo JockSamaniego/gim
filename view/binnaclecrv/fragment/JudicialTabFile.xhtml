@@ -32,7 +32,7 @@
 
         <s:decorate id="partImageField" template="../../layout/edit.xhtml">
             <rich:fileUpload fileUploadListener="#{binnacleCRVHome.fileListener}"
-                disabled="#{!binnacleCRVHome.hasRoleCRV}"
+                disabled="#{!binnacleCRVHome.hasRoleUCOT}"
                 maxFilesQuantity="1" id="uploadFile" immediateUpload="true"
                 acceptedTypes="pdf"
                 uploadControlLabel="#{messages['binnacleCRV.photoEvidence']}"
