@@ -2272,17 +2272,19 @@ public class IncomeServiceBean implements IncomeService {
 	//Exoneraciones para tercera edad y discapacidad
 	@SuppressWarnings("unchecked")
 	@Override
-	public BigDecimal checkHasDiscountCEM(String itemCode, String catalogCode, Long resident) {
+	public BigDecimal checkHasDiscountCEM(String itemCode, String catalogCode, Long resident, Long propertyid) {
 		BigDecimal percentage = BigDecimal.ZERO;
 		
 		Query query = entityManager.createQuery("SELECT exemption from ExemptionCem exemption "
 												+ "WHERE exemption.type.code=:itemCode and "
 												+ "exemption.type.catalogCode=:catalogoCode and "
 												+ "exemption.resident.id=:residentid and "
+												+ "exemption.property.id=:propertyId and "
 												+ "exemption.active=true ");
 		query.setParameter("residentid", resident);
 		query.setParameter("itemCode", itemCode);
 		query.setParameter("catalogoCode", catalogCode);
+		query.setParameter("propertyId", propertyid);
 		
 		List<ExemptionCem> exemptions = query.getResultList();
 		if(!exemptions.isEmpty()) {
