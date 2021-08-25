@@ -173,6 +173,6 @@ public interface IncomeService {
 	//macartuche
 	//2021-07-22 08:04
 	//Exoneraciones para tercera edad y discapacidad
-	public BigDecimal checkHasDiscountCEM(String itemCode, String catalogCode, Long resident); 
+	public BigDecimal checkHasDiscountCEM(String itemCode, String catalogCode, Long resident, Long propertyId); 
 	
 }
