@@ -63,6 +63,7 @@
                 <h:inputTextarea id="nullifiedReason"
                            size="15"
                            required="true"
+                           readonly="#{commissionerBallotHome.instance.isNullified}"
                           value="#{commissionerBallotHome.instance.nullifiedReason}">
                 </h:inputTextarea>
             </s:decorate>
@@ -78,9 +79,10 @@
 		</rich:panel>
 
 			<div class="actionButtons">
-				<a:commandButton action="#{commissionerBallotHome.UpdateCommissionerBallot()}"
-					value="#{messages['common.accept']}" reRender="infractionsListTable"
-					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'nullifiedEditPanel\');' : ''}"/>
+				<a:commandButton action="#{commissionerBallotHome.saveNullifiedAndStatus()}"
+					value="#{messages['common.accept']}" reRender="infractionsListTable, nullifiedEditPanel"
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'nullifiedEditPanel\');' : ''}"
+					rendered="#{!commissionerBallotHome.instance.isNullified}"/>
 
 				<a:commandButton ajaxSingle="true"
 					value="#{messages['common.quit']}" reRender="infractionsListTable"

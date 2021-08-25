@@ -14,6 +14,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 
+import org.gob.gim.accounting.dto.AccountItem;
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.ItemCatalog;
@@ -30,7 +31,7 @@ import ec.gob.gim.common.model.Person;
 						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallotInOrder", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId ORDER BY st.creationDate, st.id ASC "),
 						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallotExceptId", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId and st.id !=:statusId ORDER BY st.creationDate DESC "),
 					  })
-public class CommissionerBallotStatus {
+public class CommissionerBallotStatus implements Comparable<CommissionerBallotStatus>{
 	@Id
 	@GeneratedValue(generator = "CommissionerBallotStatusGenerator", strategy = GenerationType.TABLE)
 	private Long id;
@@ -110,6 +111,12 @@ public class CommissionerBallotStatus {
 
 	public void setCommissionerBallot(CommissionerBallot commissionerBallot) {
 		this.commissionerBallot = commissionerBallot;
+	}
+
+	@Override
+	public int compareTo(CommissionerBallotStatus o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	

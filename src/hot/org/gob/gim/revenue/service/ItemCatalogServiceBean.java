@@ -37,6 +37,15 @@ public class ItemCatalogServiceBean implements ItemCatalogService {
 	@Override
 	public List<ItemCatalog> findItemsForCatalogCodeOrderById(String catalogCode) {
 		Query query = entityManager
+				.createQuery("select i from ItemCatalog i where i.catalogCode=:catalogCode and i.code != 'INITIATED' and i.code != 'SENT_ISSUE' ORDER BY i.id ASC");
+		query.setParameter("catalogCode", catalogCode);
+		List<ItemCatalog> listResult = query.getResultList();
+		return listResult;
+	}
+	
+	@Override
+	public List<ItemCatalog> findCompleteItemsForCatalogCodeOrderById(String catalogCode) {
+		Query query = entityManager
 				.createQuery("select i from ItemCatalog i where i.catalogCode=:catalogCode ORDER BY i.id ASC");
 		query.setParameter("catalogCode", catalogCode);
 		List<ItemCatalog> listResult = query.getResultList();

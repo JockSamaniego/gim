@@ -20,7 +20,7 @@ public class CommissionerBallotList extends EntityQuery<CommissionerBallot> {
 
 	private static final String[] RESTRICTIONS = {
 		"commissionerBallot.commissionerBallotType.id = #{commissionerBallotList.commissionerType}",
-		"lower(commissionerBallot.ballotNumber) like lower(concat('%',#{commissionerBallotList.commissionerBallot.ballotNumber},'%'))",
+		"commissionerBallot.ballotNumber = #{commissionerBallotList.commissionerBallot.ballotNumber}",
 		"lower(commissionerBallot.plate) like lower(concat('%',#{commissionerBallotList.commissionerBallot.plate},'%'))",
 		"commissionerBallot.sanctioningArticle.id = #{commissionerBallotList.articleId}",
 		"commissionerBallot.currentStatus.statusName.id = #{commissionerBallotList.statusId}",

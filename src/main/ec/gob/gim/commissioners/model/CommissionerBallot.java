@@ -19,6 +19,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
@@ -34,8 +36,8 @@ import ec.gob.gim.common.model.Person;
 						@NamedQuery(name = "commissionerBallot.findByNumberAndType", query = "SELECT cb FROM CommissionerBallot cb where cb.ballotNumber =:ballotNumber and cb.commissionerBallotType.code =:commissionerType "),
 						@NamedQuery(name = "commissionerBallot.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum"),
 						@NamedQuery(name = "commissionerBallot.findResidentByIdent", query = "Select r from Resident r where r.identificationNumber = :identNum"),
-						@NamedQuery(name = "CommissionerBallot.findGeneralReport", query = "SELECT cb FROM CommissionerBallot cb where (cb.creationDate BETWEEN :startDate and :endDate) and cb.commissionerBallotType.code =:commissionerType ORDER BY cb.creationDate, cb.ballotNumber ASC  "),
-						@NamedQuery(name = "CommissionerBallot.findGeneralReportInfractionDate", query = "SELECT cb FROM CommissionerBallot cb where (cb.infractionDate BETWEEN :startDate and :endDate) and cb.commissionerBallotType.code =:commissionerType ORDER BY cb.infractionDate, cb.ballotNumber ASC  "),
+						@NamedQuery(name = "CommissionerBallot.findGeneralReport", query = "SELECT cb FROM CommissionerBallot cb where (cb.creationDate BETWEEN :startDate and :endDate) and cb.commissionerBallotType.code =:commissionerType and cb.isNullified = false ORDER BY cb.creationDate, cb.ballotNumber ASC  "),
+						@NamedQuery(name = "CommissionerBallot.findGeneralReportInfractionDate", query = "SELECT cb FROM CommissionerBallot cb where (cb.infractionDate BETWEEN :startDate and :endDate) and cb.commissionerBallotType.code =:commissionerType and cb.isNullified = false ORDER BY cb.infractionDate, cb.ballotNumber ASC  "),
 						@NamedQuery(name = "CommissionerBallot.findGeneralReportNullified", query = "SELECT cb FROM CommissionerBallot cb where (cb.creationDate BETWEEN :startDate and :endDate) and cb.isNullified = true and cb.commissionerBallotType.code =:commissionerType ORDER BY cb.creationDate, cb.ballotNumber ASC  "),
 						@NamedQuery(name = "CommissionerBallot.findByBulletin", query = "SELECT cb FROM CommissionerBallot cb where cb.bulletin.id =:bulletinId and cb.commissionerBallotType.code =:commissionerType ORDER BY cb.ballotNumber ASC  "),
 						@NamedQuery(name = "CommissionerBallot.findForEmission", query = "SELECT cb FROM CommissionerBallot cb where cb.commissionerBallotType.code =:commissionerType and cb.isNullified = false and cb.currentStatus.statusName.code = 'READY_ISSUE' ORDER BY cb.ballotNumber ASC  "),
@@ -51,27 +53,38 @@ public class CommissionerBallot {
 	private Long id;
 	
 	@Column(nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate;
 	
 	@Column(nullable = false)
+	@Temporal(TemporalType.DATE)
 	private Date infractionDate;
 	
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date nullifiedDate;
 	
-	@Column(nullable = false)
+	@Temporal(TemporalType.TIME)
 	private Date infractionTime;
 	
 	private String infractorName;
 	
 	private String infractorIdentification; 
 	
+	private String infractorAddress;
+	
+	private String infractorPhone;
+	
+	private String infractorEmail;
+	
 	@Column(nullable=false)
 	private BigInteger ballotNumber;
 	
 	private String infractionPlace;
 	
+	@Temporal(TemporalType.DATE)
 	private Date appearanceDate;
 	
+	@Temporal(TemporalType.TIME)
 	private Date appearanceTime;
 	
 	private String appearanceObservation;
@@ -134,6 +147,7 @@ public class CommissionerBallot {
 	@JoinColumn(name="bulletin_id", nullable=false)
 	private CommissionerBulletin bulletin;
 	
+	private String ballotEmissionOrden;
 	
 	public CommissionerBallot() {
 		status = new ArrayList<CommissionerBallotStatus>();
@@ -388,6 +402,39 @@ public class CommissionerBallot {
 	public void setResponsibleNullified_user(String responsibleNullified_user) {
 		this.responsibleNullified_user = responsibleNullified_user;
 	}
+	
+	public String getInfractorAddress() {
+		return infractorAddress;
+	}
+
+	public void setInfractorAddress(String infractorAddress) {
+		this.infractorAddress = infractorAddress;
+	}
+
+	public String getInfractorPhone() {
+		return infractorPhone;
+	}
+
+	public void setInfractorPhone(String infractorPhone) {
+		this.infractorPhone = infractorPhone;
+	}
+
+	public String getInfractorEmail() {
+		return infractorEmail;
+	}
+
+	public void setInfractorEmail(String infractorEmail) {
+		this.infractorEmail = infractorEmail;
+	}
+
+	public String getBallotEmissionOrden() {
+		return ballotEmissionOrden;
+	}
+
+	public void setBallotEmissionOrden(String ballotEmissionOrden) {
+		this.ballotEmissionOrden = ballotEmissionOrden;
+	}
+	
 
 	public void remove(CommissionerBallotStatus cbs) {
 		boolean removed = this.status.remove(cbs);

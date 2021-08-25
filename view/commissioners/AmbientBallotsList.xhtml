@@ -103,7 +103,7 @@
                 template="../layout/edit.xhtml">
                 <ui:define name="label">Estado de la Boleta:</ui:define>
                 <h:selectOneMenu id="statusName" value="#{commissionerBallotList.statusId}">
-                    <s:selectItems value="#{commissionerBallotHome.statusForCommissioners}" var="statusName" label="#{statusName.name}" itemValue="#{statusName.id}" noSelectionLabel="Seleccione uno" />
+                    <s:selectItems value="#{commissionerBallotHome.statusCompleteForCommissioners}" var="statusName" label="#{statusName.name}" itemValue="#{statusName.id}" noSelectionLabel="Seleccione uno" />
                     <a:support event="onchange" ajaxSingle="true" />
                 </h:selectOneMenu>
             </s:decorate>
@@ -134,7 +134,8 @@
                    <s:button view="/commissioners/AmbientBallotsEdit.xhtml"
                                id="create"
                       propagation="none"
-                            value="#{messages['common.create']} Boleta">
+                            value="#{messages['common.create']} Boleta"
+                            action="#{commissionerBallotHome.createdNewBallot()}">
                        <f:param name="infractionsId" />
                    </s:button>
                    
@@ -296,6 +297,7 @@
             <s:button view="/commissioners/TransitBallotsEdit.xhtml"
                    value="#{messages['common.edit']}"
                    action="#{commissionerBallotHome.prepareToEdit()}"
+                   disabled="#{_ballot.isNullified}"
              propagation="none"
                       id="infractionsEdit">
                 <f:param name="ballotId"
@@ -314,7 +316,8 @@
                                     reRender="appearanceEditPanel" ajaxSingle="true"
                                     eventsQueue="gimEventsQueue"
                                     oncomplete="Richfaces.showModalPanel('appearanceEditPanel',{width:600, height:500})"
-                                    value="Comparecencia" />
+                                    value="Comparecencia" 
+                                    disabled="#{_ballot.isNullified}"/>
              <br/>
             <a:commandButton        id="addFileNumber"
                                     action="#{commissionerBallotHome.addFileNumberInBallot(_ballot)}"

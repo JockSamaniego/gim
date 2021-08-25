@@ -98,8 +98,7 @@
                 <ui:define name="label">Hora de la Infracción</ui:define>
                 <h:inputText id="citationTime"
                            size="15"
-                           maxlength="11"
-                           required="true"
+                           maxlength="15"
                           value="#{commissionerBallotHome.instance.infractionTime}">
                     <s:convertDateTime type="time"/>
                     <a:support event="onblur" reRender="citationTimeField" bypassUpdates="true" ajaxSingle="true"/>
@@ -138,7 +137,7 @@
                               value="#{commissionerBallotHome.instance.infractorIdentification}"
                               ajaxSingle="true" >
                               <f:validator validatorId="identificationNumberBallotValidator"/>
-                              <a:support event="onblur" action="#{commissionerBallotHome.findInfractorName()}" reRender="nameInfractorField, identificationInfractorField" ajaxSingle="true"  />            
+                              <a:support event="onblur" action="#{commissionerBallotHome.findInfractorName()}" reRender="nameInfractorField, identificationInfractorField, residentInformation" ajaxSingle="true"  />            
                 </h:inputText>              
             </s:decorate>
             
@@ -149,7 +148,37 @@
                               required="true"
                               maxlength="50"
                               value="#{commissionerBallotHome.instance.infractorName}"/>
-            </s:decorate>      
+            </s:decorate>     
+            
+            <div style="clear:both" />
+
+            <h:panelGrid columns="2" id="residentInformation" >
+
+                <s:decorate id="addressField" template="../layout/edit.xhtml">
+                    <ui:define name="label">Dirección</ui:define>
+                    <h:inputTextarea id="address"
+                              size="15"
+                              value="#{commissionerBallotHome.instance.infractorAddress}">
+                    </h:inputTextarea>
+                </s:decorate>
+                
+                <h:panelGrid columns="1" >
+                    <s:decorate id="phoneField" template="../layout/edit.xhtml">
+                        <ui:define name="label">Teléfono</ui:define>
+                        <h:inputText id="phone"
+                                  size="22"
+                                  value="#{commissionerBallotHome.instance.infractorPhone}">
+                        </h:inputText>
+                    </s:decorate>
+                    <s:decorate id="emailField" template="../layout/edit.xhtml">
+                        <ui:define name="label">Correo</ui:define>
+                        <h:inputText id="email"
+                                  size="22"
+                                  value="#{commissionerBallotHome.instance.infractorEmail}">
+                        </h:inputText>
+                    </s:decorate>
+                </h:panelGrid>
+            </h:panelGrid> 
 
             <s:decorate id="licensePlateField" template="../layout/edit.xhtml" rendered="#{commissionerBallotHome.isTransitBallot()}">
                 <ui:define name="label">#{messages['infraction.plate']}</ui:define>
@@ -240,7 +269,7 @@
             <rich:panel id="statusPanel" style="border:0px">
 
 					<rich:dataTable id="itemsStatus" var="_status"
-						value="#{commissionerBallotHome.findLastStatusForBallotInOrder()}"
+						value="#{commissionerBallotHome.instance.status}"
 						columnClasses="number, number" width="100%">
 						<f:facet name="header">
 							<h:panelGrid columns="2" columnClasses="headerTitle,"
@@ -248,18 +277,26 @@
 								<h:outputText value="Estados"
 									styleClass="left" />
 
-								<a:commandButton id="createStatus"
+								<!--  <a:commandButton id="createStatus"
 									
 									action="#{commissionerBallotHome.createCommissionerBallotStatus()}"
 									reRender="statusEditPanel" ajaxSingle="true"
 									eventsQueue="gimEventsQueue"
 									oncomplete="Richfaces.showModalPanel('statusEditPanel',{width:600, height:500})"
-									value="Crear Estado" />
+									value="Crear Estado" /> -->
 							</h:panelGrid>
 						</f:facet>
 
 						<h:outputText value="#{messages['items.resultsItemNotFound']}"
 							rendered="#{empty commissionerBallotHome.instance.status}" />
+							
+						<rich:column rendered="#{not empty commissionerBallotHome.instance.status}"
+							styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{_status.id}" />
+						</rich:column>
 
 						<rich:column rendered="#{not empty commissionerBallotHome.instance.status}"
 							styleClass="center">

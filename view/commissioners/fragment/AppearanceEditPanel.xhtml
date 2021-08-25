@@ -61,8 +61,7 @@
                 <ui:define name="label">Hora de la Comparecencia:</ui:define>
                 <h:inputText id="appearanceTime"
                            size="15"
-                           maxlength="11"
-                           required="true"
+                           maxlength="15"
                            readonly="#{commissionerBallotHome.instance.appearanceDate != null}"
                           value="#{commissionerBallotHome.instance.appearanceTime}">
                     <s:convertDateTime type="time"/>

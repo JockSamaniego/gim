@@ -159,19 +159,28 @@
 									reRender="statusEditPanel" ajaxSingle="true"
 									eventsQueue="gimEventsQueue"
 									oncomplete="Richfaces.showModalPanel('statusEditPanel',{width:600, height:500})"
-									value="Crear Estado" />
+									value="Crear Estado" 
+									disabled="#{commissionerBallotHome.instance.isNullified}" />
             </h:panelGrid>      
         </f:facet>
     <div class="results" id="infractionSentencesList">
 
    			<rich:dataTable id="itemsStatus" var="_status"
    						
-						value="#{commissionerBallotHome.findLastStatusForBallotInOrder()}"
+						value="#{commissionerBallotHome.instance.status}"
 						columnClasses="number, number" width="100%">
 	
 
 						<h:outputText value="#{messages['items.resultsItemNotFound']}"
 							rendered="#{empty commissionerBallotHome.instance.status}" />
+							
+						<rich:column rendered="#{not empty commissionerBallotHome.instance.status}"
+							styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{_status.id}" />
+						</rich:column>
 
 						<rich:column rendered="#{not empty commissionerBallotHome.instance.status}"
 							styleClass="center">
@@ -213,7 +222,7 @@
 							</f:facet>
 
 							<a:commandButton id="removeStatus"
-								disabled="#{_status.statusName.code eq 'INITIATED'}"
+								disabled="#{_status.statusName.code eq 'INITIATED' or commissionerBallotHome.instance.isNullified}"
 								action="#{commissionerBallotHome.removeStatus(_status)}"
 								reRender="itemsStatus" ajaxSingle="true"
 								eventsQueue="gimEventsQueue"
@@ -231,12 +240,12 @@
                           value="#{messages['common.save']}"
                          action="#{commissionerBallotHome.saveHygieneBallot()}"
                        disabled="#{!commissionerBallotHome.wired}"
-                       rendered="#{!commissionerBallotHome.managed}"/>
+                       rendered="#{!commissionerBallotHome.managed and !commissionerBallotHome.instance.isNullified}"/>
 
             <h:commandButton id="update"
                           value="#{messages['common.save']}"
                          action="#{commissionerBallotHome.UpdateCommissionerBallot()}"
-                       rendered="#{commissionerBallotHome.managed}"/>
+                       rendered="#{commissionerBallotHome.managed and !commissionerBallotHome.instance.isNullified}"/>
              
              <s:button   id="cancelEdit1"
 		                value="#{messages['common.quit']}"
