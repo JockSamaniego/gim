@@ -94,6 +94,7 @@ import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.PaymentTypeSRI;
 import ec.gob.gim.revenue.model.DTO.CRTV_ORDER;
+import ec.gob.gim.revenue.model.adjunct.Urbanregeneration;
 import ec.gob.gim.security.model.MunicipalbondAux;
 import ec.gob.loja.client.clients.ElectronicClient;
 import ec.gob.loja.client.model.DataWS;
@@ -2272,33 +2273,31 @@ public class IncomeServiceBean implements IncomeService {
 	//Exoneraciones para tercera edad y discapacidad
 	@SuppressWarnings("unchecked")
 	@Override
-	public BigDecimal checkHasDiscountCEM(String itemCode, String catalogCode, Long resident, Long propertyid) {
-		BigDecimal percentage = BigDecimal.ZERO;
-		
-		if(itemCode=="DISABILITY"){
-			System.out.println("abcdef");
-		}else if(itemCode=="THIRD_AGE"){
-
-			System.out.println("123456");
-		}
-		Query query = entityManager.createQuery("SELECT exemption from ExemptionCem exemption "
-												+ "WHERE exemption.type.code=:itemCode and "
-												+ "exemption.type.catalogCode=:catalogoCode and "
-												+ "exemption.resident.id=:residentid and "
-												+ "exemption.property.id=:propertyId and "
-												+ "exemption.active=true ");
-		query.setParameter("residentid", resident);
-		query.setParameter("itemCode", itemCode);
-		query.setParameter("catalogoCode", catalogCode);
-		query.setParameter("propertyId", propertyid);
-		
-		List<ExemptionCem> exemptions = query.getResultList();
-		if(!exemptions.isEmpty()) {
-			ExemptionCem exemption = exemptions.get(0);			
-			if(exemption.getDiscountPercentage()!=null) {
-				percentage = exemption.getDiscountPercentage();
+	public BigDecimal checkHasDiscountCEM(String itemCode, String catalogCode, Long resident, Long adjunctid) {
+		BigDecimal percentage = BigDecimal.ZERO;		
+		try {
+			Urbanregeneration urbanreg = entityManager.find(Urbanregeneration.class, adjunctid);		
+			Query query = entityManager.createQuery("SELECT exemption from ExemptionCem exemption "
+													+ "WHERE exemption.type.code=:itemCode and "
+													+ "exemption.type.catalogCode=:catalogoCode and "
+													+ "exemption.resident.id=:residentid and "
+													+ "exemption.property.id=:propertyId and "
+													+ "exemption.active=true ");
+			query.setParameter("residentid", resident);
+			query.setParameter("itemCode", itemCode);
+			query.setParameter("catalogoCode", catalogCode);
+			query.setParameter("propertyId", urbanreg.getProperty().getId());		
+			List<ExemptionCem> exemptions = query.getResultList();
+			if(!exemptions.isEmpty()) {
+				ExemptionCem exemption = exemptions.get(0);			
+				if(exemption.getDiscountPercentage()!=null) {
+					percentage = exemption.getDiscountPercentage();
+				}
 			}
+		}catch (Exception e) {
+			e.printStackTrace();
 		}
+		
 		return percentage;
 	}
  
