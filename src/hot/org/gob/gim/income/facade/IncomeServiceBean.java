@@ -2275,12 +2275,12 @@ public class IncomeServiceBean implements IncomeService {
 	public BigDecimal checkHasDiscountCEM(String itemCode, String catalogCode, Long resident, Long propertyid) {
 		BigDecimal percentage = BigDecimal.ZERO;
 		
-		if(itemCode=="DISABILITY"){
+		/* if(itemCode=="DISABILITY"){
 			System.out.println("abcdef");
 		}else if(itemCode=="THIRD_AGE"){
 
 			System.out.println("123456");
-		}
+		} */
 		Query query = entityManager.createQuery("SELECT exemption from ExemptionCem exemption "
 												+ "WHERE exemption.type.code=:itemCode and "
 												+ "exemption.type.catalogCode=:catalogoCode and "
