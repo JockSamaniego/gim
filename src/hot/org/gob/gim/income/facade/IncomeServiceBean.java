@@ -2155,9 +2155,9 @@ public class IncomeServiceBean implements IncomeService {
 				return false;
 			}
 			
-			if (apply.getPagadas().intValue() > 0 || apply.getPagadasExternas().intValue() > 0) {
+			/* if (apply.getPagadas().intValue() > 0 || apply.getPagadasExternas().intValue() > 0) {
 				return false;
-			}
+			}*/
 			
 			if (apply.getFuturas().intValue() > 0) {
 				return false;
