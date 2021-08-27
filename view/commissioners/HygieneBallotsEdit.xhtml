@@ -108,7 +108,7 @@
             <s:decorate id="placeField" template="../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.place']}</ui:define>
                 <h:inputTextarea id="infractionPlace"
-                          required="true"
+                          
                           size="15"
                           value="#{commissionerBallotHome.instance.infractionPlace}">
                 </h:inputTextarea>
@@ -228,7 +228,6 @@
                 <ui:define name="label">#{messages['infraction.penaltyValue']} ($)</ui:define>
                 <h:inputText id="value"
                            size="15"
-                           required="true"
                       maxlength="10"
                           value="#{commissionerBallotHome.instance.sanctionValue}">
                           <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/>

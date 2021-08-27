@@ -52,21 +52,21 @@
 				<h:selectOneMenu id="statusName" value="#{commissionerBallotHome.commissionerBallotStatus.statusName}" required="true">
 					<s:selectItems value="#{commissionerBallotHome.statusForCommissioners}" var="statusName" label="#{statusName.name}" itemValue="#{statusName}" 
 									noSelectionLabel="Seleccione uno" />
-					<a:support event="onchange" ajaxSingle="true" reRender="ordenPanel" />
+					<a:support event="onchange" ajaxSingle="true" reRender="ordenPanel, finalValuePanel" />
 					<s:convertEntity></s:convertEntity>
 				</h:selectOneMenu>
 			</s:decorate>
 
 			<h:panelGrid id="ordenPanel">
 				<s:decorate id="ordenField" template="../../layout/edit.xhtml" rendered="#{commissionerBallotHome.commissionerBallotStatus.statusName.code == 'READY_ISSUE'}">
-	                <ui:define name="label">Orden de Emision:</ui:define>
+	                <ui:define name="label">Orden de Emision, Nro. Memorando o Nro. Trámite:</ui:define>
 	                <h:inputText id="detail"
 	                           size="15"
 	                          value="#{commissionerBallotHome.instance.ballotEmissionOrden}">
 	                </h:inputText>
 	            </s:decorate>
 	        </h:panelGrid>
-            
+	        
             <s:decorate id="detailField" template="../../layout/edit.xhtml">
                 <ui:define name="label">Observaciones:</ui:define>
                 <h:inputTextarea id="detail"
@@ -74,6 +74,17 @@
                           value="#{commissionerBallotHome.commissionerBallotStatus.observations}">
                 </h:inputTextarea>
             </s:decorate>
+            
+            <h:panelGrid id="finalValuePanel">
+				<s:decorate id="valueField" template="../../layout/edit.xhtml" rendered="#{commissionerBallotHome.commissionerBallotStatus.statusName.code == 'READY_ISSUE'}">
+	                <ui:define name="label">Valor Final de Sanción:</ui:define>
+	                <h:inputText id="detail"
+	                			required="#{commissionerBallotHome.commissionerBallotStatus.statusName.code == 'READY_ISSUE'}"
+	                           size="15"
+	                          value="#{commissionerBallotHome.instance.sanctionValue}">
+	                </h:inputText>
+	            </s:decorate>
+	        </h:panelGrid>
             
             <div style="clear:both">
                 <span class="required">*</span>

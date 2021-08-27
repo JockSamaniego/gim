@@ -269,7 +269,7 @@
             <h:outputText value="#{_ballot.inspectorName}"/>
         </rich:column>
         
-        <rich:column styleClass="action" style="align:center;"  width="10%">
+        <rich:column styleClass="action" style="align:center; background-color: #BDF0A0;"  width="10%" rendered="#{!_ballot.isNullified and _ballot.currentStatus.statusName.code == 'SENT_ISSUE'}">
             <f:facet name="header">
                 <ui:include src="../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{commissionerBallotList}"/>
@@ -277,8 +277,29 @@
                     <ui:param name="propertyPath" value="commissionerBallot.currentStatus.statusName.name"/>
                 </ui:include>
             </f:facet>
-            <h:outputText style="font-weight:bold; color:red" value="#{_ballot.currentStatus.statusName.name}" rendered="#{_ballot.isNullified}" />
-            <h:outputText style="font-weight:bold; color:black" value="#{_ballot.currentStatus.statusName.name}" rendered="#{!_ballot.isNullified}" />
+            <h:outputText style="font-weight:bold; color:black" value="#{_ballot.currentStatus.statusName.name}" />
+        </rich:column>
+        
+        <rich:column styleClass="action" style="align:center; background-color: #FAFEA7;"  width="10%"  rendered="#{!_ballot.isNullified and _ballot.currentStatus.statusName.code == 'READY_ISSUE'}">
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commissionerBallotList}"/>
+                    <ui:param name="propertyLabel" value="Estado Actual"/>
+                    <ui:param name="propertyPath" value="commissionerBallot.currentStatus.statusName.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText style="font-weight:bold; color:black" value="#{_ballot.currentStatus.statusName.name}" />
+        </rich:column>
+        
+        <rich:column styleClass="action" style="align:center; background-color: #FFB4B4;"  width="10%"  rendered="#{_ballot.isNullified}">
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commissionerBallotList}"/>
+                    <ui:param name="propertyLabel" value="Estado Actual"/>
+                    <ui:param name="propertyPath" value="commissionerBallot.currentStatus.statusName.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText style="font-weight:bold; color:black" value="ANULADA Y #{_ballot.currentStatus.statusName.name}" />
         </rich:column>
 
         <rich:column styleClass="action" style="align:right;"  width="10%">

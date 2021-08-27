@@ -101,25 +101,11 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 			if(this.instance.getId() == null){
 				createCommissionerBallotStatus();
 				this.commissionerBallotStatus.setObservations("INICIO DE PROCESO");
-				if(commissionerType.getCode().equals("COMMISSIONER_HYGIENE")){
-					this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_HYGIENE_BALLOT_STATUS, "INITIATED"));
-				}
-				if(commissionerType.getCode().equals("COMMISSIONER_TRANSIT")){
-					this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_TRANSIT_BALLOT_STATUS, "INITIATED"));
-				}
-				if(commissionerType.getCode().equals("COMMISSIONER_ORNAMENT")){
-					this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_ORNAMENT_BALLOT_STATUS, "INITIATED"));
-				}
-				if(commissionerType.getCode().equals("COMMISSIONER_AMBIENT")){
-					this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_AMBIENT_BALLOT_STATUS, "INITIATED"));
-				}
-				
+					this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_COMMISSIONER_BALLOT_STATUS, "INITIATED"));
 				addStatus();
 			}
 		}
-//		hygieneBallotStatus = new ArrayList<ItemCatalog>();
-//		hygieneBallotStatus = itemCatalogService.findItemsForCatalogCode(
-//						CatalogConstants.CATALOG_HYGIENE_BALLOT_STATUS);
+
 		isFirstTime = Boolean.FALSE;
 	}
 
@@ -622,28 +608,10 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 	public List<ItemCatalog> chargeStatusForSelect(){
 		statusForCommissioners = new ArrayList<ItemCatalog>();
 		statusCompleteForCommissioners = new ArrayList<ItemCatalog>();
-		if(commissionerType.getCode().equals("COMMISSIONER_HYGIENE")){
 			statusForCommissioners = itemCatalogService.findItemsForCatalogCodeOrderById(
-					CatalogConstants.CATALOG_HYGIENE_BALLOT_STATUS);
+					CatalogConstants.CATALOG_COMMISSIONER_BALLOT_STATUS);
 			statusCompleteForCommissioners = itemCatalogService.findCompleteItemsForCatalogCodeOrderById(
-					CatalogConstants.CATALOG_HYGIENE_BALLOT_STATUS);
-		}else if (commissionerType.getCode().equals("COMMISSIONER_TRANSIT")){
-			statusForCommissioners = itemCatalogService.findItemsForCatalogCodeOrderById(
-					CatalogConstants.CATALOG_TRANSIT_BALLOT_STATUS);
-			statusCompleteForCommissioners = itemCatalogService.findCompleteItemsForCatalogCodeOrderById(
-					CatalogConstants.CATALOG_TRANSIT_BALLOT_STATUS);
-		} else if (commissionerType.getCode().equals("COMMISSIONER_ORNAMENT")){
-			statusForCommissioners = itemCatalogService.findItemsForCatalogCodeOrderById(
-					CatalogConstants.CATALOG_ORNAMENT_BALLOT_STATUS);
-			statusCompleteForCommissioners = itemCatalogService.findCompleteItemsForCatalogCodeOrderById(
-					CatalogConstants.CATALOG_ORNAMENT_BALLOT_STATUS);
-		} else if (commissionerType.getCode().equals("COMMISSIONER_AMBIENT")){
-			statusForCommissioners = itemCatalogService.findItemsForCatalogCodeOrderById(
-					CatalogConstants.CATALOG_AMBIENT_BALLOT_STATUS);
-			statusCompleteForCommissioners = itemCatalogService.findCompleteItemsForCatalogCodeOrderById(
-					CatalogConstants.CATALOG_AMBIENT_BALLOT_STATUS);
-		}
-		
+					CatalogConstants.CATALOG_COMMISSIONER_BALLOT_STATUS);
 		return statusForCommissioners;
 	}
 	
@@ -986,7 +954,7 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 		query.setParameter("bulletinId", this.bulletinIdReport);
 		query.setParameter("commissionerType", commissionerType.getCode());
 		ballotsForReport = query.getResultList();
-		calculateTotalValueReport();
+		// calculateTotalValueReport();
 	}
 	
 	public void ballotsForEmissionReport(){
@@ -1010,26 +978,17 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 		sent.setCommissionerBallot(cb);
 		sent.setResponsible_user(userSession.getUser().getResident().getName());	 
 		sent.setResponsible(userSession.getPerson());
-		sent.setObservations("ENVIADA EN REPORTE PARA EMISION");
-		if(commissionerType.getCode().equals("COMMISSIONER_HYGIENE")){
-			sent.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_HYGIENE_BALLOT_STATUS, "SENT_ISSUE"));
-		}
-		if(commissionerType.getCode().equals("COMMISSIONER_TRANSIT")){
-			sent.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_TRANSIT_BALLOT_STATUS, "SENT_ISSUE"));
-		}
-		if(commissionerType.getCode().equals("COMMISSIONER_ORNAMENT")){
-			sent.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_ORNAMENT_BALLOT_STATUS, "SENT_ISSUE"));
-		}
-		if(commissionerType.getCode().equals("COMMISSIONER_AMBIENT")){
-			sent.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_AMBIENT_BALLOT_STATUS, "SENT_ISSUE"));
-		}
+		sent.setObservations("ENVIADA EN REPORTE PARA EMISION Y ARCHIVADA");
+			sent.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_COMMISSIONER_BALLOT_STATUS, "SENT_ISSUE"));
 		return sent;
 	}
 	
 	public void calculateTotalValueReport(){
 		totalValueReport = BigDecimal.ZERO;
 		for(CommissionerBallot ballot : this.ballotsForReport){
-			totalValueReport = totalValueReport.add(ballot.getSanctionValue());
+			if (ballot.getSanctionValue() !=null ){
+				totalValueReport = totalValueReport.add(ballot.getSanctionValue());
+			}
 		}
 	}
 	
@@ -1075,19 +1034,7 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 		if(this.instance.getId() != null){
 			createCommissionerBallotStatus();
 			this.commissionerBallotStatus.setObservations("BOLETA ANULADA");
-			if(commissionerType.getCode().equals("COMMISSIONER_HYGIENE")){
-				this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_HYGIENE_BALLOT_STATUS, "ARCHIVED"));
-			}
-			if(commissionerType.getCode().equals("COMMISSIONER_TRANSIT")){
-				this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_TRANSIT_BALLOT_STATUS, "ARCHIVED"));
-			}
-			if(commissionerType.getCode().equals("COMMISSIONER_ORNAMENT")){
-				this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_ORNAMENT_BALLOT_STATUS, "ARCHIVED"));
-			}
-			if(commissionerType.getCode().equals("COMMISSIONER_AMBIENT")){
-				this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_AMBIENT_BALLOT_STATUS, "ARCHIVED"));
-			}
-			
+				this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_COMMISSIONER_BALLOT_STATUS, "ARCHIVED"));
 			addStatus();
 		}
 		
