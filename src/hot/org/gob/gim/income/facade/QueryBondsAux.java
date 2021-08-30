@@ -24,8 +24,8 @@ public class QueryBondsAux {
 		return incomeService.verifyApplyDiscount(entryId, groupingCode, residentId);
 	}
 
-	public static BigDecimal getPercentageDiscount(String itemcode, String catalogcode, Long residentid, Long propertyId){ 
+	public static BigDecimal getPercentageDiscount(String itemcode, String catalogcode, Long residentid, Long adjunctid){ 
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
-		return incomeService.checkHasDiscountCEM(itemcode, catalogcode, residentid, propertyId);
+		return incomeService.checkHasDiscountCEM(itemcode, catalogcode, residentid, adjunctid);
 	}
 }

@@ -2296,8 +2296,7 @@ public class IncomeServiceBean implements IncomeService {
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
-		}
-		
+		}		
 		return percentage;
 	}
  
