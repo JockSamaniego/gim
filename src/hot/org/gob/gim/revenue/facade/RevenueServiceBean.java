@@ -237,8 +237,14 @@ public class RevenueServiceBean implements RevenueService {
 				
 				// rfam 2021-08-30 no dejar el groupingcode vacio
 				if (municipalBond.getGroupingCode() == null) {
-					municipalBond.setGroupingCode(municipalBond.getResident()
-							.getIdentificationNumber());
+					if(municipalBond.getResident()
+							.getIdentificationNumber()!=null){
+						municipalBond.setGroupingCode(municipalBond.getResident()
+								.getIdentificationNumber());	
+					}else{
+						municipalBond.setGroupingCode("N/A");
+					}
+					
 				}
 				
 				municipalBondService.save(municipalBond);
