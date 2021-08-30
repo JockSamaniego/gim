@@ -199,7 +199,7 @@ public class RevenueServiceBean implements RevenueService {
 			municipalBond.setEmisionTime(now);
 			municipalBond.setEmisionPeriod(fiscalPeriodService.findCurrent(now).get(0).getStartDate());
 			municipalBond.setEmitter((Person) user.getResident());
-
+			
 			// para separar multas del simert u otros rubros
 			// Jock Samaniego
 			// 05-01-2020
@@ -234,7 +234,13 @@ public class RevenueServiceBean implements RevenueService {
 						municipalBond.setGroupingCode(adjunct.getCode());
 					}
 				}
-
+				
+				// rfam 2021-08-30 no dejar el groupingcode vacio
+				if (municipalBond.getGroupingCode() == null) {
+					municipalBond.setGroupingCode(municipalBond.getResident()
+							.getIdentificationNumber());
+				}
+				
 				municipalBondService.save(municipalBond);
 
 				if (mt == MunicipalBondType.EMISSION_ORDER) {
