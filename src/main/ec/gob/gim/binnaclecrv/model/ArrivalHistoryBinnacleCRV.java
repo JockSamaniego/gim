@@ -27,7 +27,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.revenue.model.MunicipalBond;
-import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
+// import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
 import ec.gob.gim.security.model.User;
 
 /**
@@ -81,9 +81,10 @@ public class ArrivalHistoryBinnacleCRV implements Serializable {
     
 	@ManyToOne(cascade = CascadeType.MERGE)
 	private BinnacleCRV binnacleCRV;
-	@OneToMany(mappedBy = "arrivalHistoryBinnacleCRV", cascade = CascadeType.ALL)
+	
+	/*@OneToMany(mappedBy = "arrivalHistoryBinnacleCRV", cascade = CascadeType.ALL)
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<BinnacleCRVReference> binnacleCRVReferences; //Adjunto de refrerencia en la emisión del titulo
+	private List<BinnacleCRVReference> binnacleCRVReferences; //Adjunto de refrerencia en la emisión del titulo*/
 	
 	@OneToOne
 	@JoinColumn(name = "admissionType_id")
@@ -273,17 +274,17 @@ public class ArrivalHistoryBinnacleCRV implements Serializable {
 	/**
 	 * @return the binnacleCRVReferences
 	 */
-	public List<BinnacleCRVReference> getBinnacleCRVReferences() {
+	/*public List<BinnacleCRVReference> getBinnacleCRVReferences() {
 		return binnacleCRVReferences;
-	}
+	}*/
 
 	/**
 	 * @param binnacleCRVReferences the binnacleCRVReferences to set
 	 */
-	public void setBinnacleCRVReferences(
+	/*public void setBinnacleCRVReferences(
 			List<BinnacleCRVReference> binnacleCRVReferences) {
 		this.binnacleCRVReferences = binnacleCRVReferences;
-	}
+	}*/
 
 	/**
 	 * @return the admissionType

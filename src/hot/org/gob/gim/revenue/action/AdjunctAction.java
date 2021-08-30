@@ -33,7 +33,7 @@ import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.CurrencyDevaluation;
 import ec.gob.gim.revenue.model.MunicipalBond;
-import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
+// import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
 import ec.gob.gim.revenue.model.adjunct.BusinessLocalReference;
 import ec.gob.gim.revenue.model.adjunct.DomainTransfer;
 import ec.gob.gim.revenue.model.adjunct.PropertyAppraisal;
@@ -535,12 +535,12 @@ public class AdjunctAction extends EntityController{
 	}
 	
 	public void resetBinnacleCRVValues(){
-		BinnacleCRVReference binnacleCRVReference = findCurrentAdjunct();
-		binnacleCRVReference.setBinnacleCRV(null);
+		/*BinnacleCRVReference binnacleCRVReference = findCurrentAdjunct();
+		binnacleCRVReference.setBinnacleCRV(null);*/
 	}
 
 	public void resetBinnacleCRVValuesOfChange(){
-		BinnacleCRVReference binnacleCRVReference = findCurrentAdjunct();
+		/*BinnacleCRVReference binnacleCRVReference = findCurrentAdjunct();
 		binnacleCRVReference.setBinnacleCRV(null);
 		binnacleCRVReference.setArrivalHistoryBinnacleCRV(null);
 		binnacleCRVReference.setType("");
@@ -549,12 +549,12 @@ public class AdjunctAction extends EntityController{
 		binnacleCRVReference.setExitDate(null);
 		binnacleCRVReference.setExitTypeBinnacleCRV(null);
 		binnacleCRVReference.setKm(BigDecimal.ZERO);
-		binnacleCRVReference.setHasCraneService(false);
+		binnacleCRVReference.setHasCraneService(false);*/
 	}
 	
 	public void updateBinnacleCRVReference(){
 		if (systemParameterService == null) systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
-		BinnacleCRVReference binnacleCRVReference = findCurrentAdjunct();
+		/*BinnacleCRVReference binnacleCRVReference = findCurrentAdjunct();
 		if(binnacleCRVReference != null){
 			MunicipalBond municipalBond = findMunicipalBond();
 			BinnacleCRV binnacleCRV = binnacleCRVReference.getBinnacleCRV();
@@ -576,11 +576,11 @@ public class AdjunctAction extends EntityController{
 			} else if (municipalBond.getEntry().getId().compareTo(entryCraneId) == 0){
 				binnacleCRVReference.setEntryId(entryCraneId);
 			}
-		}
+		}*/
 	}
 	
 	public void resetBinnacleValues(){
-		BinnacleCRVReference binnacleCRVReference = findCurrentAdjunct();
+		/*BinnacleCRVReference binnacleCRVReference = findCurrentAdjunct();
 		binnacleCRVReference.setBinnacleCRV(null);
 		binnacleCRVReference.setArrivalHistoryBinnacleCRV(null);
 		binnacleCRVReference.setType("");
@@ -589,7 +589,7 @@ public class AdjunctAction extends EntityController{
 		binnacleCRVReference.setExitDate(null);
 		binnacleCRVReference.setExitTypeBinnacleCRV(null);
 		binnacleCRVReference.setKm(BigDecimal.ZERO);
-		binnacleCRVReference.setHasCraneService(false);
+		binnacleCRVReference.setHasCraneService(false);*/
 	}
 
 	

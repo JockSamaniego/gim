@@ -29,7 +29,7 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
-import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
+// import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
 
 /**
  * Bitácora Digital: información general de la Bitácora Digital del Centro de Retención Vehicular.
@@ -182,9 +182,9 @@ public class BinnacleCRV implements Serializable {
 	private List<PhotographicEvidence> photographicEvidences; //Imagenes que evidencien el estado del vehículo
 															  //se permitirá el ingreso de dos imagenes
 
-	@OneToMany(mappedBy = "binnacleCRV", cascade = CascadeType.ALL)
+	/*@OneToMany(mappedBy = "binnacleCRV", cascade = CascadeType.ALL)
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<BinnacleCRVReference> binnacleCRVReferences; //son los adjuntas del municipalmunicipalBond
+	private List<BinnacleCRVReference> binnacleCRVReferences; //son los adjuntas del municipalmunicipalBond*/
 
 	@OneToOne
 	@JoinColumn(name = "informativePart_id")
@@ -867,17 +867,17 @@ public class BinnacleCRV implements Serializable {
 	/**
 	 * @return the binnacleCRVReferences
 	 */
-	public List<BinnacleCRVReference> getBinnacleCRVReferences() {
+	/*public List<BinnacleCRVReference> getBinnacleCRVReferences() {
 		return binnacleCRVReferences;
-	}
+	}*/
 
 	/**
 	 * @param binnacleCRVReferences the binnacleCRVReferences to set
 	 */
-	public void setBinnacleCRVReferences(
+	/*public void setBinnacleCRVReferences(
 			List<BinnacleCRVReference> binnacleCRVReferences) {
 		this.binnacleCRVReferences = binnacleCRVReferences;
-	}
+	}*/
 
 	/**
 	 * @return the documentTypeBinnacleCRV

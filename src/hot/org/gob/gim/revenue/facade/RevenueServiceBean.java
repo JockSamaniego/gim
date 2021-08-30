@@ -43,7 +43,7 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.MunicipalBondType;
 import ec.gob.gim.revenue.model.StatusChange;
-import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
+//import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
 import ec.gob.gim.security.model.User;
 
 /**
@@ -222,12 +222,12 @@ public class RevenueServiceBean implements RevenueService {
 					adjunct = municipalBond.getAdjunct();
 					//Ronald Paladines Celi
 					//Módulo de Bitácora Digital CRV 
-					if ((adjunct != null) && (adjunct.getClass() == BinnacleCRVReference.class)){
+					/*if ((adjunct != null) && (adjunct.getClass() == BinnacleCRVReference.class)){
 						BinnacleCRVReference binnacleCRVReference = (BinnacleCRVReference) municipalBond.getAdjunct();
 						if (!binnacleCRVReference.getEmitWithoutBinnacle()){
 							binnacleCRVReference.setBond(municipalBond);
 						}
-					} 
+					}*/ 
 					if (municipalBond.getAdjunct().getId() != null) {
 						adjunct = entityManager.merge(municipalBond.getAdjunct());
 						municipalBond.setAdjunct(adjunct);
