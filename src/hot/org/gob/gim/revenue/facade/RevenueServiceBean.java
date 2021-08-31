@@ -242,7 +242,7 @@ public class RevenueServiceBean implements RevenueService {
 						municipalBond.setGroupingCode(municipalBond.getResident()
 								.getIdentificationNumber());	
 					}else{
-						municipalBond.setGroupingCode("N/A");
+						municipalBond.setGroupingCode("ID:"+municipalBond.getResident().getId());
 					}
 					
 				}
