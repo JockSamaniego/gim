@@ -362,7 +362,7 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 	
 	public void createCommissionerBallotStatus() {
 		this.commissionerBallotStatus = new CommissionerBallotStatus();
-	
+		
 	}
 	
 	public void createSanctioningArticle() {
@@ -587,6 +587,7 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 	
 	private List<ItemCatalog> statusForCommissioners;
 	private List<ItemCatalog> statusCompleteForCommissioners;
+	private List<ItemCatalog> statusForSentCommissioners;
 	
 	public List<ItemCatalog> getStatusForCommissioners() {
 		return statusForCommissioners;
@@ -605,12 +606,24 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 		this.statusCompleteForCommissioners = statusCompleteForCommissioners;
 	}
 
+	public List<ItemCatalog> getStatusForSentCommissioners() {
+		return statusForSentCommissioners;
+	}
+
+	public void setStatusForSentCommissioners(
+			List<ItemCatalog> statusForSentCommissioners) {
+		this.statusForSentCommissioners = statusForSentCommissioners;
+	}
+
 	public List<ItemCatalog> chargeStatusForSelect(){
 		statusForCommissioners = new ArrayList<ItemCatalog>();
 		statusCompleteForCommissioners = new ArrayList<ItemCatalog>();
+		statusForSentCommissioners = new ArrayList<ItemCatalog>();
 			statusForCommissioners = itemCatalogService.findItemsForCatalogCodeOrderById(
 					CatalogConstants.CATALOG_COMMISSIONER_BALLOT_STATUS);
 			statusCompleteForCommissioners = itemCatalogService.findCompleteItemsForCatalogCodeOrderById(
+					CatalogConstants.CATALOG_COMMISSIONER_BALLOT_STATUS);
+			statusForSentCommissioners = itemCatalogService.findItemsForSentStatus(
 					CatalogConstants.CATALOG_COMMISSIONER_BALLOT_STATUS);
 		return statusForCommissioners;
 	}
@@ -633,6 +646,7 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 		String query = "CommissionerBallotStatus.findLastStatusForBallotExceptId";
 		Query q = getEntityManager().createNamedQuery(query);
 		q.setParameter("commissionerBallotId", this.instance.getId());
+		q.setParameter("statusId", statusId);
 		status = q.getResultList();
 		if(status.size() > 0){
 			return status.get(0);
@@ -1033,11 +1047,18 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 		
 		if(this.instance.getId() != null){
 			createCommissionerBallotStatus();
-			this.commissionerBallotStatus.setObservations("BOLETA ANULADA");
-				this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_COMMISSIONER_BALLOT_STATUS, "ARCHIVED"));
+			this.commissionerBallotStatus.setObservations("BOLETA ANULADA Y ARCHIVADA");
+				this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_COMMISSIONER_BALLOT_STATUS, "NULLIFIED_ARCHIVED"));
 			addStatus();
 		}
 		
 		UpdateCommissionerBallot();
+	}
+	
+	public List<CommissionerBallotStatus> staturOrderByDate(){
+		List<CommissionerBallotStatus> status = new LinkedList<CommissionerBallotStatus>();
+		status.addAll(this.getInstance().getStatus());
+		Collections.sort(status);
+		return status;
 	}
 }

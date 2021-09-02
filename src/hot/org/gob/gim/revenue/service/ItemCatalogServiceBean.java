@@ -37,7 +37,7 @@ public class ItemCatalogServiceBean implements ItemCatalogService {
 	@Override
 	public List<ItemCatalog> findItemsForCatalogCodeOrderById(String catalogCode) {
 		Query query = entityManager
-				.createQuery("select i from ItemCatalog i where i.catalogCode=:catalogCode and i.code != 'INITIATED' and i.code != 'SENT_ISSUE' ORDER BY i.id ASC");
+				.createQuery("select i from ItemCatalog i where i.catalogCode=:catalogCode and i.code not in('INITIATED', 'SENT_ISSUE', 'NULLIFIED_ARCHIVED', 'FILE_NULLIFIED') ORDER BY i.id ASC");
 		query.setParameter("catalogCode", catalogCode);
 		List<ItemCatalog> listResult = query.getResultList();
 		return listResult;
@@ -47,6 +47,15 @@ public class ItemCatalogServiceBean implements ItemCatalogService {
 	public List<ItemCatalog> findCompleteItemsForCatalogCodeOrderById(String catalogCode) {
 		Query query = entityManager
 				.createQuery("select i from ItemCatalog i where i.catalogCode=:catalogCode ORDER BY i.id ASC");
+		query.setParameter("catalogCode", catalogCode);
+		List<ItemCatalog> listResult = query.getResultList();
+		return listResult;
+	}
+	
+	@Override
+	public List<ItemCatalog> findItemsForSentStatus(String catalogCode) {
+		Query query = entityManager
+				.createQuery("select i from ItemCatalog i where i.catalogCode=:catalogCode and i.code = 'FILE_NULLIFIED' ORDER BY i.id ASC");
 		query.setParameter("catalogCode", catalogCode);
 		List<ItemCatalog> listResult = query.getResultList();
 		return listResult;

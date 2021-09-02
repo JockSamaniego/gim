@@ -46,7 +46,7 @@
                 </rich:calendar>
             </s:decorate>
             
-            <s:decorate id="statusNameField"
+            <s:decorate id="statusNameField" rendered="#{commissionerBallotHome.instance.currentStatus.statusName.code != 'SENT_ISSUE'}"
 				template="../../layout/edit.xhtml">
 				<ui:define name="label">Estado:</ui:define>
 				<h:selectOneMenu id="statusName" value="#{commissionerBallotHome.commissionerBallotStatus.statusName}" required="true">
@@ -56,10 +56,21 @@
 					<s:convertEntity></s:convertEntity>
 				</h:selectOneMenu>
 			</s:decorate>
+			
+			<s:decorate id="statusNullifiedField" rendered="#{commissionerBallotHome.instance.currentStatus.statusName.code == 'SENT_ISSUE'}"
+				template="../../layout/edit.xhtml">
+				<ui:define name="label">Estado:</ui:define>
+				<h:selectOneMenu id="statusName2" value="#{commissionerBallotHome.commissionerBallotStatus.statusName}" required="true">
+					<s:selectItems value="#{commissionerBallotHome.statusForSentCommissioners}" var="statusName" label="#{statusName.name}" itemValue="#{statusName}" 
+									noSelectionLabel="Seleccione uno" />
+					<a:support event="onchange" ajaxSingle="true" reRender="ordenPanel, finalValuePanel" />
+					<s:convertEntity></s:convertEntity>
+				</h:selectOneMenu>
+			</s:decorate>
 
 			<h:panelGrid id="ordenPanel">
 				<s:decorate id="ordenField" template="../../layout/edit.xhtml" rendered="#{commissionerBallotHome.commissionerBallotStatus.statusName.code == 'READY_ISSUE'}">
-	                <ui:define name="label">Orden de Emision, Nro. Memorando o Nro. Trámite:</ui:define>
+	                <ui:define name="label">Orden de Emisión, Nro. de Memorando o Nro. de Trámite:</ui:define>
 	                <h:inputText id="detail"
 	                           size="15"
 	                          value="#{commissionerBallotHome.instance.ballotEmissionOrden}">

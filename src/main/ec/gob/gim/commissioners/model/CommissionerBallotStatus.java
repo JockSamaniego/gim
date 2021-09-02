@@ -27,9 +27,9 @@ import ec.gob.gim.common.model.Person;
 @NamedQueries(value = { @NamedQuery(name = "CommissionerBallotStatus.findAll", query = "SELECT st FROM CommissionerBallotStatus st order by st.creationDate"),
 						@NamedQuery(name = "CommissionerBallotStatus.findByType", query = "SELECT st FROM CommissionerBallotStatus st where st.statusName.name =:statusName "),
 						@NamedQuery(name = "CommissionerBallotStatus.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum"),
-						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallot", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId ORDER BY st.creationDate DESC "),
-						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallotInOrder", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId ORDER BY st.creationDate, st.id ASC "),
-						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallotExceptId", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId and st.id !=:statusId ORDER BY st.creationDate DESC "),
+						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallot", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId ORDER BY st.id DESC "),
+						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallotInOrder", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId ORDER BY st.id, st.id ASC "),
+						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallotExceptId", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId and st.id !=:statusId ORDER BY st.id DESC "),
 					  })
 public class CommissionerBallotStatus implements Comparable<CommissionerBallotStatus>{
 	@Id
@@ -115,7 +115,9 @@ public class CommissionerBallotStatus implements Comparable<CommissionerBallotSt
 
 	@Override
 	public int compareTo(CommissionerBallotStatus o) {
-		// TODO Auto-generated method stub
+		if(o != null){
+			return this.creationDate.compareTo(o.creationDate);
+		}
 		return 0;
 	}
 	
