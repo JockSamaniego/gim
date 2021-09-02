@@ -31,7 +31,6 @@ rule "Grua - moto"
         $itemBase.setValue(service.add(km.multiply($binnacleCRVReference.getKm()).setScale(2,BigDecimal.ROUND_HALF_UP)));
         $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
         $mb.setBase($itemBase.getTotal());
-        System.out.println("..................................GRUA MOTO: " + $itemBase.getTotal());
 end
 
 ######
@@ -52,10 +51,10 @@ rule "Grua - liviano"
         $itemBase.setValue(service.add(km.multiply($binnacleCRVReference.getKm()).setScale(2,BigDecimal.ROUND_HALF_UP)));
         $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
         $mb.setBase($itemBase.getTotal());
-        System.out.println("..................................GRUA LIVIANO: " + $itemBase.getTotal());
 end
 
 ######
+## Extra pesado tonelaje >= 40 memorando Nro 093-DEP-OP-UCOT-2021
 
 rule "Grua - pesado"
     no-loop false
@@ -66,7 +65,7 @@ rule "Grua - pesado"
         $binnacleCRVReference : BinnacleCRVReference(type == "PES");
         eval($binnacleCRVReference.getEmitWithoutBinnacle()==false);
         eval($binnacleCRVReference.getHasCraneService()==true);
-        eval($binnacleCRVReference.getTonnage() <= 8.0);
+        eval($binnacleCRVReference.getTonnage() < 40.0);
     then
         BigDecimal service = new BigDecimal(25.00); //Valor del servicio por vehiculo pesado
         BigDecimal km = new BigDecimal(3.00); //Valor por Km en vehiculo pesado
@@ -74,10 +73,10 @@ rule "Grua - pesado"
         $itemBase.setValue(service.add(km.multiply($binnacleCRVReference.getKm()).setScale(2,BigDecimal.ROUND_HALF_UP)));
         $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
         $mb.setBase($itemBase.getTotal());
-        System.out.println("..................................GRUA PESADO: " + $itemBase.getTotal());
 end
 
 ######
+## Extra pesado tonelaje >= 40 memorando Nro 093-DEP-OP-UCOT-2021
 
 rule "Grua - extra pesado"
     no-loop false
@@ -96,7 +95,6 @@ rule "Grua - extra pesado"
         $itemBase.setValue(service.add(km.multiply($binnacleCRVReference.getKm()).setScale(2,BigDecimal.ROUND_HALF_UP)));
         $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
         $mb.setBase($itemBase.getTotal());
-        System.out.println("..................................GRUA EXTRA PESADO: " + $itemBase.getTotal());
 end
 
 ######
@@ -110,5 +108,4 @@ rule "Grua - EMISION POR VENTANILLA"
         then
             #$itemBase.setValue($mb.getValue());
             $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
-            System.out.println("..................................GRUA EMISION POR VENTANILLA: " + $itemBase.getTotal());
 end

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.envers.Audited;
@@ -30,7 +31,7 @@ public class PropertyReferenceOptional extends Adjunct {
 	private Boolean emitWithoutProperty;
 
 	// rfam ML-JRM-2020-571-M
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	private ItemCatalog category;
 
 	private Boolean emitWithoutCategory;

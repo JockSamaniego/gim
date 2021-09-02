@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -41,10 +42,10 @@ public class WaterServiceReference extends Adjunct {
 //	private String serviceNumber; 
 //	private String serviceAddress;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	private Route route;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	private Consumption consumption;
 
 	private BigDecimal consumptionAmount;

@@ -11,6 +11,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -26,9 +27,9 @@ import ec.gob.gim.revenue.model.adjunct.detail.EarlyTransferDiscount;
 @Entity
 @DiscriminatorValue("DOM")
 public class DomainTransfer extends Adjunct{
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	private Property property;
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	private Domain domain;
 	private Date buyingDate;
 	private Date transactionDate;

@@ -11,6 +11,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -56,11 +57,11 @@ public class BinnacleCRVReference extends Adjunct{
 	private ExitTypeBinnacleCRV exitTypeBinnacleCRV;// Tipo de Salida del CRV
 	private Long entryId;// id del rubro que se emite (Servicio de Garaje o Grúa)
 	
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch=FetchType.LAZY)
 	private BinnacleCRV binnacleCRV;
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch=FetchType.LAZY)
 	private ArrivalHistoryBinnacleCRV arrivalHistoryBinnacleCRV;
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch=FetchType.LAZY)
 	private MunicipalBond bond;
 	
 	public BinnacleCRVReference() {

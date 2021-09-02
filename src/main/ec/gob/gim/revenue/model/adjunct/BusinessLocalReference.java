@@ -1,6 +1,5 @@
 package ec.gob.gim.revenue.model.adjunct;
 
-import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 

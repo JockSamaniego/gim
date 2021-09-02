@@ -30,7 +30,6 @@ rule "Garaje - moto"
         $itemBase.setValue(value);
         $itemBase.setTotal($itemBase.getAmount().multiply($itemBase.getValue()).setScale(2,BigDecimal.ROUND_HALF_UP));
         $mb.setBase($itemBase.getTotal());
-        System.out.println("..................................GARAJE MOTO: " + $itemBase.getTotal());
 end
 
 ######
@@ -50,10 +49,10 @@ rule "Garaje - liviano"
         $itemBase.setValue(value);
         $itemBase.setTotal($itemBase.getAmount().multiply($itemBase.getValue()).setScale(2,BigDecimal.ROUND_HALF_UP));
         $mb.setBase($itemBase.getTotal());
-        System.out.println("..................................GARAJE LIVIANO: " + $itemBase.getTotal());
 end
 
 ######
+## Extra pesado tonelaje >= 40 memorando Nro 093-DEP-OP-UCOT-2021
 
 rule "Garaje - pesado"
     no-loop true
@@ -63,7 +62,7 @@ rule "Garaje - pesado"
         $mb : MunicipalBond();
         $binnacleCRVReference : BinnacleCRVReference(type == "PES");
         eval($binnacleCRVReference.getEmitWithoutBinnacle()==false);
-        eval($binnacleCRVReference.getTonnage() <= 8.0);
+        eval($binnacleCRVReference.getTonnage() < 40.0);
     then
         BigDecimal value = new BigDecimal(5.00); //Valor por día en vehiculo pesado
 		int days = DateUtils.daysBetweenDates($binnacleCRVReference.getExitDate(), $binnacleCRVReference.getArrivalDate()) + 1;
@@ -71,10 +70,10 @@ rule "Garaje - pesado"
         $itemBase.setValue(value);
         $itemBase.setTotal($itemBase.getAmount().multiply($itemBase.getValue()).setScale(2,BigDecimal.ROUND_HALF_UP));
         $mb.setBase($itemBase.getTotal());
-        System.out.println("..................................GARAJE PESADO: " + $itemBase.getTotal());
 end
 
 ######
+## Extra pesado tonelaje >= 40 memorando Nro 093-DEP-OP-UCOT-2021
 
 rule "Garaje - extra pesado"
     no-loop true
@@ -92,7 +91,6 @@ rule "Garaje - extra pesado"
         $itemBase.setValue(value);
         $itemBase.setTotal($itemBase.getAmount().multiply($itemBase.getValue()).setScale(2,BigDecimal.ROUND_HALF_UP));
         $mb.setBase($itemBase.getTotal());
-        System.out.println("..................................GARAJE EXTRA PESADO: " + $itemBase.getTotal());
 end
 
 ######
@@ -106,5 +104,4 @@ rule "Garaje - EMISION POR VENTANILLA"
         then
             #$itemBase.setValue($mb.getValue());
             $itemBase.setTotal($itemBase.getValue().setScale(2,BigDecimal.ROUND_HALF_UP));
-            System.out.println("..................................GARAJE EMISION POR VENTANILLA: " + $itemBase.getTotal());
 end

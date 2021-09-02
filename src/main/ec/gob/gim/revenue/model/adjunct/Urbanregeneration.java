@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.envers.Audited;
@@ -26,16 +27,16 @@ public class Urbanregeneration extends Adjunct{
 	private BigDecimal front;
 	private BigDecimal lotArea;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	private Resident resident;
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	private Property property;
 	
 	private String cadastralCode;
 	private String previousCadastralCode;					
 	private Integer paymentsNumber;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	private ItemCatalog type;
 	
 	private String auxJson;
