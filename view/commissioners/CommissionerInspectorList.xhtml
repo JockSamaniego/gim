@@ -124,6 +124,11 @@
                 propagation="end"
                 view="/commissioners/AmbientBallotsList.xhtml"
                 rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_AMBIENT'}" />
+    <s:button   id="cancelEdit5"
+		                value="#{messages['common.quit']}"
+		                propagation="end"
+		                view="/commissioners/LeaderShepBallotsList.xhtml"
+		                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'LEADERSHIP_HYGIENE'}" />
  
 </h:form>
 </ui:define>

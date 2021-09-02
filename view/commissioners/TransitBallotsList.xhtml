@@ -160,7 +160,7 @@
                            <f:param name="infractionsId" />
                    </s:button>
                    <a:commandButton    id="printReport"
-                                    action="#{commissionerBallotHome.findInspectorsByCommissioner()}"
+                                    action="#{commissionerBallotHome.ballotsForEmissionReport()}"
                                     reRender="printReportsPanel" ajaxSingle="true"
                                     eventsQueue="gimEventsQueue"
                                     oncomplete="Richfaces.showModalPanel('printReportsPanel',{width:600, height:500})"
@@ -331,6 +331,14 @@
                                     oncomplete="Richfaces.showModalPanel('nullifiedEditPanel',{width:500, height:400})"
                                     value="Anular" 
                                     disabled="#{_ballot.currentStatus.statusName.code == 'SENT_ISSUE'}"/>
+            <br/>   
+            <a:commandButton        id="printOrden"
+                                    action="#{commissionerBallotHome.printEmissionOrdenByBallot(_ballot)}"
+                                    ajaxSingle="true"
+                                    reRender="infractionsListTable"
+                                    eventsQueue="gimEventsQueue"
+                                    value="Imprimir Orden" 
+                                    disabled="#{_ballot.isNullified or _ballot.currentStatus.statusName.code != 'READY_ISSUE'}" />
         </rich:column>
         
     </rich:dataTable>

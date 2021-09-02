@@ -17,6 +17,7 @@ import org.gob.gim.accounting.dto.AccountItem;
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
+import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -29,6 +30,8 @@ import ec.gob.gim.commissioners.model.CommissionerBallotStatus;
 import ec.gob.gim.commissioners.model.CommissionerBulletin;
 import ec.gob.gim.commissioners.model.CommissionerInspector;
 import ec.gob.gim.commissioners.model.SanctioningArticle;
+import ec.gob.gim.common.model.Charge;
+import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 
@@ -39,6 +42,8 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
 
 	
 	private List<ItemCatalog> hygieneBallotStatus;
@@ -104,6 +109,7 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 					this.commissionerBallotStatus.setStatusName(itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_COMMISSIONER_BALLOT_STATUS, "INITIATED"));
 				addStatus();
 			}
+			loadCharge();
 		}
 
 		isFirstTime = Boolean.FALSE;
@@ -139,7 +145,8 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 	 @In(scope = ScopeType.SESSION, value = "userSession") 
 	  UserSession userSession;
 	 
-	public String saveHygieneBallot(){
+	 
+	public String saveCommissionerBallot(){
 		//validaciones
 				message=null;
 
@@ -149,7 +156,20 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 				boolean exist  = serialExist(ballotNumber);
 				if(exist){
 					message="El número de boleta ya existe";
-					return "/commissioners/HygieneBallotsEdit.xhtml";
+					if(commissionerType.getCode().equals("COMMISSIONER_TRANSIT")){
+						return "/commissioners/TransitBallotsEdit.xhtml";
+					} else if (commissionerType.getCode().equals("COMMISSIONER_HYGIENE")){
+						return "/commissioners/HygieneBallotsEdit.xhtml";
+					} else if (commissionerType.getCode().equals("COMMISSIONER_ORNAMENT")){
+						return "/commissioners/OrnamentBallotsEdit.xhtml";
+					} else if (commissionerType.getCode().equals("COMMISSIONER_AMBIENT")){
+						return "/commissioners/AmbientBallotsEdit.xhtml";
+					} else if (commissionerType.getCode().equals("LEADERSHIP_HYGIENE")){
+						return "/commissioners/LeaderShipBallotsEdit.xhtml";
+					} else {
+						return null;
+					}
+					
 				}
 
 				//guardado en BD
@@ -160,81 +180,22 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 
 		
 		persist();
-		return "/commissioners/HygieneBallotsList.xhtml";
+		if(commissionerType.getCode().equals("COMMISSIONER_TRANSIT")){
+			return "/commissioners/TransitBallotsList.xhtml";
+		} else if (commissionerType.getCode().equals("COMMISSIONER_HYGIENE")){
+			return "/commissioners/HygieneBallotsList.xhtml";
+		} else if (commissionerType.getCode().equals("COMMISSIONER_ORNAMENT")){
+			return "/commissioners/OrnamentBallotsList.xhtml";
+		} else if (commissionerType.getCode().equals("COMMISSIONER_AMBIENT")){
+			return "/commissioners/AmbientBallotsList.xhtml";
+		} else if (commissionerType.getCode().equals("LEADERSHIP_HYGIENE")){
+			return "/commissioners/LeaderShipBallotsList.xhtml";
+		} else {
+			return null;
+		}
 	}
 	
-	public String saveTransitBallot(){
-		//validaciones
-				message=null;
 
-				BigInteger ballotNumber = this.instance.getBallotNumber();
-				
-
-				boolean exist  = serialExist(ballotNumber);
-				if(exist){
-					message="El número de boleta ya existe";
-					return "/commissioners/TransitBallotsEdit.xhtml";
-				}
-
-				//guardado en BD
-				this.getInstance().setCreationDate(new Date());				 
-		        this.getInstance().setResponsible_user(userSession.getUser().getResident().getName());	 
-		        this.getInstance().setResponsible(userSession.getPerson());
-		        this.getInstance().setCommissionerBallotType(commissionerType);
-
-		
-		persist();
-		return "/commissioners/TransitBallotsList.xhtml";
-	}
-	
-	public String saveOrnamentBallot(){
-		//validaciones
-				message=null;
-
-				BigInteger ballotNumber = this.instance.getBallotNumber();
-				
-
-				boolean exist  = serialExist(ballotNumber);
-				if(exist){
-					message="El número de boleta ya existe";
-					return "/commissioners/OrnamentBallotsEdit.xhtml";
-				}
-
-				//guardado en BD
-				this.getInstance().setCreationDate(new Date());				 
-		        this.getInstance().setResponsible_user(userSession.getUser().getResident().getName());	 
-		        this.getInstance().setResponsible(userSession.getPerson());
-		        this.getInstance().setCommissionerBallotType(commissionerType);
-
-		
-		persist();
-		return "/commissioners/OrnamentBallotsList.xhtml";
-	}
-	
-	public String saveAmbientBallot(){
-		//validaciones
-				message=null;
-
-				BigInteger ballotNumber = this.instance.getBallotNumber();
-				
-
-				boolean exist  = serialExist(ballotNumber);
-				if(exist){
-					message="El número de boleta ya existe";
-					return "/commissioners/AmbientBallotsEdit.xhtml";
-				}
-
-				//guardado en BD
-				this.getInstance().setCreationDate(new Date());				 
-		        this.getInstance().setResponsible_user(userSession.getUser().getResident().getName());	 
-		        this.getInstance().setResponsible(userSession.getPerson());
-		        this.getInstance().setCommissionerBallotType(commissionerType);
-
-		
-		persist();
-		return "/commissioners/AmbientBallotsList.xhtml";
-	}
-	
 	public Boolean serialExist(BigInteger ballotNumber){
 		List<CommissionerBallot> commissionerBallots = new ArrayList();
 		Query query = getEntityManager().createNamedQuery(
@@ -504,6 +465,15 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 					ItemCatalogService.LOCAL_NAME);
 		}
 		commissionerType = itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_COMMISSIONERS_TYPES, "COMMISSIONER_AMBIENT");
+		wire();
+	}
+	
+	public void setHygieneLeaderShep(){
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
+		commissionerType = itemCatalogService.findItemByCodeAndCodeCatalog(CatalogConstants.CATALOG_COMMISSIONERS_TYPES, "LEADERSHIP_HYGIENE");
 		wire();
 	}
 	
@@ -972,11 +942,15 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 	}
 	
 	public void ballotsForEmissionReport(){
+		findInspectorsByCommissioner();
 		ballotsForReport = new ArrayList<CommissionerBallot>();
 		Query query = getEntityManager().createNamedQuery(
 				"CommissionerBallot.findForEmission");
 		query.setParameter("commissionerType", commissionerType.getCode());
 		ballotsForReport = query.getResultList();
+	}
+	
+	public void printReportByEmission(){
 		for(CommissionerBallot cb : ballotsForReport){
 			CommissionerBallotStatus sent = createSentStatus(cb);
 			this.setInstance(cb);
@@ -1061,4 +1035,52 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 		Collections.sort(status);
 		return status;
 	}
+	
+	private Charge revenueCharge;	
+	private Delegate revenueDelegate;
+	
+	
+	public Charge getRevenueCharge() {
+		return revenueCharge;
+	}
+
+	public void setRevenueCharge(Charge revenueCharge) {
+		this.revenueCharge = revenueCharge;
+	}
+
+	public Delegate getRevenueDelegate() {
+		return revenueDelegate;
+	}
+
+	public void setRevenueDelegate(Delegate revenueDelegate) {
+		this.revenueDelegate = revenueDelegate;
+	}
+	
+	
+	private SystemParameterService systemParameterService;
+	
+	public Charge getCharge(String systemParameter) {
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+		Charge charge = systemParameterService.materialize(Charge.class,systemParameter);
+		return charge;
+	}
+
+	public void loadCharge() {
+		revenueCharge = getCharge("DELEGATE_ID_REVENUE");
+		if (revenueCharge != null) {
+			for (Delegate d : revenueCharge.getDelegates()) {
+				if (d.getIsActive())
+					revenueDelegate = d;
+			}
+		}	
+	}
+	
+	public String printEmissionOrdenByBallot(CommissionerBallot ballot){
+		this.ballotsForReport = new ArrayList<CommissionerBallot>();
+		this.ballotsForReport.add(ballot);
+		printReportByEmission();
+		return "/commissioners/report/CommissionerBallotsReportByEmissionPDF.xhtml";
+	}
 }
+

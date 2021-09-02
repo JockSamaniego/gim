@@ -14,8 +14,8 @@
     <ui:include src="../commissioners/fragment/NullifiedEditPanel.xhtml" />
     <ui:include src="../commissioners/fragment/FileNumberEditPanel.xhtml" />
     <ui:include src="../commissioners/fragment/PrintReportsPanel.xhtml" />
-    <h:form id="ornamentBallotsSearch" styleClass="edit">
-    <h:outputText styleClass="formTitle" value="Administración de Boletas de Ornato" />
+    <h:form id="leaderShepBallotsSearch" styleClass="edit">
+    <h:outputText styleClass="formTitle" value="Administración de Boletas de Tránsito" />
 
         <rich:simpleTogglePanel label="#{messages['ucot.searchFilter']}" switchType="ajax" >
         <h:panelGrid columns="2" > 
@@ -131,7 +131,7 @@
             <h:panelGrid columns="7" columnClasses="headerTitle,">
                 <h:outputText
                     value=" Boletas encontradas (#{empty commissionerBallotList.resultList ? 0 : (commissionerBallotList.paginated ? commissionerBallotList.resultCount : commissionerBallotList.resultList.size)})" />
-                   <s:button view="/commissioners/OrnamentBallotsEdit.xhtml"
+                   <s:button view="/commissioners/LeaderShepBallotsEdit.xhtml"
                                id="create"
                       propagation="none"
                             value="#{messages['common.create']} Boleta"
@@ -153,14 +153,14 @@
                        <f:param name="infractionsId" />
                     </s:button>
 
-	                <s:button view="/commissioners/SanctioningArticleList.xhtml"
-	                               id="createArticle"
-	                      propagation="none"
-	                            value="Articulos Sancionadores">
-	                       <f:param name="infractionsId" />
+                    <s:button view="/commissioners/SanctioningArticleList.xhtml"
+                                   id="createArticle"
+                          propagation="none"
+                                value="Articulos Sancionadores">
+                           <f:param name="infractionsId" />
                    </s:button>
                    <a:commandButton    id="printReport"
-                   					action="#{commissionerBallotHome.ballotsForEmissionReport()}"
+                                    action="#{commissionerBallotHome.ballotsForEmissionReport()}"
                                     reRender="printReportsPanel" ajaxSingle="true"
                                     eventsQueue="gimEventsQueue"
                                     oncomplete="Richfaces.showModalPanel('printReportsPanel',{width:600, height:500})"
@@ -223,7 +223,7 @@
         </rich:column>
         
         <rich:column styleClass="action" style="align:center;"
-        			rendered="#{commissionerBallotHome.isTransitBallot()}"  width="10%">
+                    rendered="#{commissionerBallotHome.isTransitBallot()}"  width="10%">
             <f:facet name="header">
                 <ui:include src="../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{commissionerBallotList}"/>
@@ -254,11 +254,11 @@
                 </ui:include>
             </f:facet>
             <h:outputText value="#{_ballot.sanctionValue}" >
-            	<f:convertNumber pattern="$ ####.00" />
-			</h:outputText>
+                <f:convertNumber pattern="$ ####.00" />
+            </h:outputText>
         </rich:column>
-		
-		<rich:column styleClass="action" style="align:center;"  width="15%">
+        
+        <rich:column styleClass="action" style="align:center;"  width="15%">
             <f:facet name="header">
                 <ui:include src="../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{commissionerBallotList}"/>
@@ -293,7 +293,7 @@
 
         <rich:column styleClass="action" width="15%">
             <f:facet name="header">#{messages['common.action']}</f:facet>
-            <s:button view="/commissioners/OrnamentBallotsEdit.xhtml"
+            <s:button view="/commissioners/LeaderShepBallotsEdit.xhtml"
                    value="#{messages['common.edit']}"
                    action="#{commissionerBallotHome.prepareToEdit()}"
                    disabled="#{_ballot.isNullified or _ballot.currentStatus.statusName.code == 'SENT_ISSUE'}"
@@ -331,7 +331,7 @@
                                     oncomplete="Richfaces.showModalPanel('nullifiedEditPanel',{width:500, height:400})"
                                     value="Anular" 
                                     disabled="#{_ballot.currentStatus.statusName.code == 'SENT_ISSUE'}"/>
-			<br/>   
+            <br/>   
             <a:commandButton        id="printOrden"
                                     action="#{commissionerBallotHome.printEmissionOrdenByBallot(_ballot)}"
                                     ajaxSingle="true"
@@ -348,14 +348,14 @@
 
     <div class="tableControl">
 
-        <s:link view="/commissioners/OrnamentBallotsList.xhtml"
+        <s:link view="/commissioners/LeaderShepBallotsList.xhtml"
             rendered="#{commissionerBallotList.previousExists}"
                value="#{messages.left}#{messages.left} Primera Pagina"
                   id="firstPage">
           <f:param name="firstResult" value="0"/>
         </s:link>
 
-        <s:link view="/commissioners/OrnamentBallotsList.xhtml"
+        <s:link view="/commissioners/LeaderShepBallotsList.xhtml"
             rendered="#{commissionerBallotList.previousExists}"
                value="#{messages.left} Anterior"
                   id="previousPage">
@@ -363,7 +363,7 @@
                     value="#{commissionerBallotList.previousFirstResult}"/>
         </s:link>
 
-        <s:link view="/commissioners/OrnamentBallotsList.xhtml"
+        <s:link view="/commissioners/LeaderShepBallotsList.xhtml"
             rendered="#{commissionerBallotList.nextExists}"
                value="Siguiente #{messages.right}"
                   id="nextPage">
@@ -371,7 +371,7 @@
                     value="#{commissionerBallotList.nextFirstResult}"/>
         </s:link>
 
-        <s:link view="/commissioners/OrnamentBallotsList.xhtml"
+        <s:link view="/commissioners/LeaderShepBallotsList.xhtml"
             rendered="#{commissionerBallotList.nextExists}"
                value="Ultima Pagina #{messages.right}#{messages.right}"
                   id="lastPage">

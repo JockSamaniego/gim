@@ -110,14 +110,18 @@
 						view="/commissioners/report/CommissionerBallotsReportByEmissionEXCEL.xhtml"
 						id="printId6"
 						propagation="join" value="Reporte Emisión EXCEL"
-						action="#{commissionerBallotHome.ballotsForEmissionReport()}"
+						action="#{commissionerBallotHome.printReportByEmission()}"
+						disabled="#{commissionerBallotHome.ballotsForReport.size == 0}"
+						rendered="#{!commissionerBallotHome.commissionerTypeCode().equals('LEADERSHIP_HYGIENE') and !commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_HYGIENE')}"
 					/>
 					
 					<s:button
 						view="/commissioners/report/CommissionerBallotsReportByEmissionPDF.xhtml"
 						id="printId7"
 						propagation="join" value="Reporte Emisión PDF"
-						action="#{commissionerBallotHome.ballotsForEmissionReport()}"
+						action="#{commissionerBallotHome.printReportByEmission()}"
+						disabled="#{commissionerBallotHome.ballotsForReport.size == 0}"
+						rendered="#{commissionerBallotHome.commissionerTypeCode().equals('LEADERSHIP_HYGIENE') or commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_HYGIENE')}"
 					/>
 
 				<div style="clear: both">

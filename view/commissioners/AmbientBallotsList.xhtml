@@ -160,7 +160,7 @@
 	                       <f:param name="infractionsId" />
                    </s:button>
                    <a:commandButton    id="printReport"
-                   					action="#{commissionerBallotHome.findInspectorsByCommissioner()}"
+                   					action="#{commissionerBallotHome.ballotsForEmissionReport()}"
                                     reRender="printReportsPanel" ajaxSingle="true"
                                     eventsQueue="gimEventsQueue"
                                     oncomplete="Richfaces.showModalPanel('printReportsPanel',{width:600, height:500})"
@@ -269,16 +269,15 @@
             <h:outputText value="#{_ballot.inspectorName}"/>
         </rich:column>
         
-        <rich:column styleClass="action" style="align:center;"  width="10%">
-            <f:facet name="header">
+        <rich:column styleClass="action" style="align:center; background-color:#{_ballot.isNullified ? '#FFB4B4' : (_ballot.currentStatus.statusName.code == 'READY_ISSUE' ? '#FAFEA7' : (_ballot.currentStatus.statusName.code == 'SENT_ISSUE' ? '#BDF0A0' : null))}"  width="10%" >
+            <f:facet name="header"> 
                 <ui:include src="../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{commissionerBallotList}"/>
                     <ui:param name="propertyLabel" value="Estado Actual"/>
                     <ui:param name="propertyPath" value="commissionerBallot.currentStatus.statusName.name"/>
                 </ui:include>
             </f:facet>
-            <h:outputText style="font-weight:bold; color:red" value="#{_ballot.currentStatus.statusName.name}" rendered="#{_ballot.isNullified}" />
-            <h:outputText style="font-weight:bold; color:black" value="#{_ballot.currentStatus.statusName.name}" rendered="#{!_ballot.isNullified}" />
+            <h:outputText style="font-weight:bold; color:black" value="#{_ballot.currentStatus.statusName.name}" />
         </rich:column>
 
         <rich:column styleClass="action" style="align:right;"  width="10%">
@@ -297,7 +296,7 @@
             <s:button view="/commissioners/AmbientBallotsEdit.xhtml"
                    value="#{messages['common.edit']}"
                    action="#{commissionerBallotHome.prepareToEdit()}"
-                   disabled="#{_ballot.isNullified}"
+                   disabled="#{_ballot.isNullified or _ballot.currentStatus.statusName.code == 'SENT_ISSUE'}"
              propagation="none"
                       id="infractionsEdit">
                 <f:param name="ballotId"
@@ -317,7 +316,7 @@
                                     eventsQueue="gimEventsQueue"
                                     oncomplete="Richfaces.showModalPanel('appearanceEditPanel',{width:600, height:500})"
                                     value="Comparecencia" 
-                                    disabled="#{_ballot.isNullified}"/>
+                                    disabled="#{_ballot.isNullified or _ballot.currentStatus.statusName.code == 'SENT_ISSUE'}" />
              <br/>
             <a:commandButton        id="addFileNumber"
                                     action="#{commissionerBallotHome.addFileNumberInBallot(_ballot)}"
@@ -330,7 +329,16 @@
                                     reRender="nullifiedEditPanel" ajaxSingle="true"
                                     eventsQueue="gimEventsQueue"
                                     oncomplete="Richfaces.showModalPanel('nullifiedEditPanel',{width:500, height:400})"
-                                    value="Anular" />
+                                    value="Anular" 
+                                    disabled="#{_ballot.currentStatus.statusName.code == 'SENT_ISSUE'}"/>
+            <br/>   
+            <a:commandButton        id="printOrden"
+                                    action="#{commissionerBallotHome.printEmissionOrdenByBallot(_ballot)}"
+                                    ajaxSingle="true"
+                                    reRender="infractionsListTable"
+                                    eventsQueue="gimEventsQueue"
+                                    value="Imprimir Orden" 
+                                    disabled="#{_ballot.isNullified or _ballot.currentStatus.statusName.code != 'READY_ISSUE'}" />
         </rich:column>
         
     </rich:dataTable>
