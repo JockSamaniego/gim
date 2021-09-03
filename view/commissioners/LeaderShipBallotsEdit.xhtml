@@ -1,0 +1,391 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="body">
+  <ui:include src="../commissioners/fragment/StatusEditPanel.xhtml" />
+    <h:form id="infractions" styleClass="edit" >
+        <rich:panel id="infractionsPanel" >
+            <f:facet name="header">
+                <h:panelGrid columns="1" columnClasses="headerTitle,">
+                  <h:outputText
+                    value="#{commissionerBallotHome.managed ? 'Editar Boleta' : 'Crear Boleta'}" />
+                </h:panelGrid>      
+            </f:facet>
+          <h:panelGrid columns="2" > 
+            <h:panelGrid columns="1" id="statusPanelGrid"> 
+            <s:decorate id="registerDateField" template="../layout/edit.xhtml"
+                  rendered="#{!commissionerBallotHome.infractionToEdit}">
+                <ui:define name="label">#{messages['infraction.registerDate']}</ui:define>
+                <rich:calendar id="registerDate"
+                          value="#{commissionerBallotHome.registerDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                </rich:calendar>
+            </s:decorate>
+            
+            <s:decorate id="creationDateField" template="../layout/edit.xhtml"
+                  rendered="#{commissionerBallotHome.infractionToEdit}">
+                <ui:define name="label">#{messages['infraction.registerDate']}</ui:define>
+                <rich:calendar id="creationDate"
+                          value="#{commissionerBallotHome.instance.creationDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                </rich:calendar>
+            </s:decorate>
+
+             <s:decorate id="ballotNumberField" template="../layout/edit.xhtml">
+                <ui:define name="label">Número de Boleta</ui:define>
+                <h:inputText id="ballotNumber"
+                       required="true"
+                          value="#{commissionerBallotHome.instance.ballotNumber}">
+                    <a:support event="onblur" reRender="ballotNumberField, inspectorIdentificationField, inspectorNameField, bulleinField" ajaxSingle="true"
+                    action="#{commissionerBallotHome.findBulletinAndInspectorByBullet()}" />
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="inspectorIdentificationField" template="../layout/edit.xhtml">
+                <ui:define name="label">Cédula del Inspector</ui:define>
+                <h:inputText id="identification"
+                              size="15"
+                              maxlength="15"
+                              required="true"
+                              readonly="true"
+                              value="#{commissionerBallotHome.instance.inspectorIdentification}"
+                              ajaxSingle="true" >
+                              <f:validator validatorId="identificationNumberBallotValidator"/>
+                              <a:support event="onblur" action="#{commissionerBallotHome.findInspectorObjectForBallot()}" reRender="inspectorNameField, inspectorIdentificationField, bulleinField" ajaxSingle="true"  />            
+                </h:inputText>              
+            </s:decorate>
+            
+            <s:decorate id="inspectorNameField" template="../layout/edit.xhtml">
+                <ui:define name="label">Nombre del Inspector</ui:define>
+                <h:inputText id="name"
+                              size="50"
+                              required="true"
+                              maxlength="50"
+                              readonly="true"
+                              value="#{commissionerBallotHome.instance.inspectorName}"/>
+            </s:decorate>
+            
+            <s:decorate id="bulleinField"
+                template="../layout/edit.xhtml">
+                <ui:define name="label">Libretin</ui:define>
+                <h:selectOneMenu id="bulletin" value="#{commissionerBallotHome.instance.bulletin}" required="true" disabled="true">
+                  <s:selectItems value="#{commissionerBallotHome.bulletinsByInspector}" var="bulletin"
+                  label="#{bulletin.bulletinNumber} (#{bulletin.startNumber}-#{bulletin.endNumber})" itemValue="#{bulletin}" noSelectionLabel="Seleccione uno" />
+                  <s:convertEntity />
+                  <a:support event="onchange" ajaxSingle="true" reRender="articleDetailField, articleSanctionField" />
+                </h:selectOneMenu>   
+            </s:decorate>
+
+            <s:decorate id="citationDateField" template="../layout/edit.xhtml">
+                <ui:define name="label">Fecha de la Infracción</ui:define>
+                <rich:calendar id="citationDate" required="true"
+                          value="#{commissionerBallotHome.instance.infractionDate}" datePattern="#{messages['common.datePattern']}" ajaxSingle="true"                          
+                          enableManualInput="true">
+                          <a:support event="ondateselected" ajaxSingle="true" />
+                      <f:validator validatorId="currentDateValidator" />
+                </rich:calendar>
+            </s:decorate>
+
+            <s:decorate id="citationTimeField" template="../layout/edit.xhtml">
+                <ui:define name="label">Hora de la Infracción</ui:define>
+                <h:inputText id="citationTime"
+                           size="15"
+                           maxlength="15"
+                          value="#{commissionerBallotHome.instance.infractionTime}">
+                    <s:convertDateTime type="time"/>
+                    <a:support event="onblur" reRender="citationTimeField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+            
+            <s:decorate id="placeField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.place']}</ui:define>
+                <h:inputTextarea id="infractionPlace"
+                         
+                          size="15"
+                          value="#{commissionerBallotHome.instance.infractionPlace}">
+                </h:inputTextarea>
+            </s:decorate>
+
+
+            
+            
+        </h:panelGrid>
+        <h:panelGrid columns="1" > 
+
+          <rich:panel id="panelInformation">
+            <f:facet name="header">
+                <h:panelGrid columns="1" columnClasses="headerTitle,">
+                  <h:outputText
+                    value="Información Adicional" />
+                </h:panelGrid>      
+            </f:facet>
+            
+            <s:decorate id="identificationInfractorField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.identification']}</ui:define>
+                <h:inputText id="identificationInfractor"
+                              size="15"
+                              maxlength="15"
+                              required="true"
+                              value="#{commissionerBallotHome.instance.infractorIdentification}"
+                              ajaxSingle="true" >
+                              <f:validator validatorId="identificationNumberBallotValidator"/>
+                              <a:support event="onblur" action="#{commissionerBallotHome.findInfractorName()}" reRender="nameInfractorField, identificationInfractorField, residentInformation" ajaxSingle="true"  />            
+                </h:inputText>              
+            </s:decorate>
+            
+            <s:decorate id="nameInfractorField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.name']}</ui:define>
+                <h:inputText id="nameInfractor"
+                              size="50"
+                              required="true"
+                              maxlength="50"
+                              value="#{commissionerBallotHome.instance.infractorName}"/>
+            </s:decorate>      
+
+            <div style="clear:both" />
+
+            <h:panelGrid columns="2" id="residentInformation">
+
+                <s:decorate id="addressField" template="../layout/edit.xhtml">
+                    <ui:define name="label">Dirección</ui:define>
+                    <h:inputTextarea id="address"
+                              size="15"
+                              value="#{commissionerBallotHome.instance.infractorAddress}">
+                    </h:inputTextarea>
+                </s:decorate>
+                
+                <h:panelGrid columns="1" >
+                    <s:decorate id="phoneField" template="../layout/edit.xhtml">
+                        <ui:define name="label">Teléfono</ui:define>
+                        <h:inputText id="phone"
+                                  size="22"
+                                  value="#{commissionerBallotHome.instance.infractorPhone}">
+                        </h:inputText>
+                    </s:decorate>
+                    <s:decorate id="emailField" template="../layout/edit.xhtml">
+                        <ui:define name="label">Correo</ui:define>
+                        <h:inputText id="email"
+                                  size="22"
+                                  value="#{commissionerBallotHome.instance.infractorEmail}">
+                        </h:inputText>
+                    </s:decorate>
+                </h:panelGrid>
+            </h:panelGrid>
+
+            <s:decorate id="licensePlateField" template="../layout/edit.xhtml" rendered="#{commissionerBallotHome.isTransitBallot()}">
+                <ui:define name="label">#{messages['infraction.plate']}</ui:define>
+                <h:inputText id="licensePlate"
+                               size="15"
+                               maxlength="10"
+                              value="#{commissionerBallotHome.instance.plate}"/>
+            </s:decorate>
+
+            <s:decorate id="articleField"
+                template="../layout/edit.xhtml">
+                <ui:define name="label">Artículo Sancionador</ui:define>
+                <h:selectOneMenu id="articleNumber" value="#{commissionerBallotHome.instance.sanctioningArticle}" required="true" >
+                  <s:selectItems value="#{commissionerBallotHome.chargeArticles()}" var="article" 
+                  label="#{article.article} - #{article.numeral}" itemValue="#{article}" noSelectionLabel="Seleccione uno" />
+                  <s:convertEntity />
+                  <a:support event="onchange" ajaxSingle="true" reRender="articleDetailField, articleSanctionField" />
+                </h:selectOneMenu>   
+            </s:decorate>
+            
+            <div style="clear:both" />
+
+            <h:panelGrid columns="2" >
+
+	            <s:decorate id="articleDetailField" template="../layout/edit.xhtml">
+	                <ui:define name="label">Detalle del Artículo</ui:define>
+	                <h:inputTextarea id="observationPlace"
+	                          size="15"
+	                          value="#{commissionerBallotHome.instance.sanctioningArticle.detail}"
+	                          readonly="true">
+	                </h:inputTextarea>
+	            </s:decorate>
+	            
+	            <s:decorate id="articleSanctionField" template="../layout/edit.xhtml">
+	                <ui:define name="label">Detalle de Sanción</ui:define>
+	                <h:inputTextarea id="articleSanction"
+	                          size="15"
+	                          value="#{commissionerBallotHome.instance.sanctioningArticle.sanction}"
+	                          readonly="true">
+	                </h:inputTextarea>
+	            </s:decorate>
+	            
+	        </h:panelGrid>
+
+            <s:decorate id="valueField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['infraction.penaltyValue']} ($)</ui:define>
+                <h:inputText id="numeral"
+                           size="15"
+                      maxlength="10"
+                          value="#{commissionerBallotHome.instance.sanctionValue}">
+                          <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/>
+                </h:inputText>
+            </s:decorate>
+
+             <s:decorate id="observationField" template="../layout/edit.xhtml">
+                <ui:define name="label">Observaciones</ui:define>
+                <h:inputTextarea id="observationPlace"
+                           size="15"
+                          value="#{commissionerBallotHome.instance.observations}">
+                </h:inputTextarea>
+            </s:decorate>
+
+
+            <div style="clear:both" />
+
+          </rich:panel>
+
+
+        
+
+    </h:panelGrid>
+  </h:panelGrid>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos
+            </div>
+            
+            <s:decorate id="infractionMessageField" template="../layout/edit.xhtml">
+                <h:outputText value="#{commissionerBallotHome.message}" rendered="#{commissionerBallotHome.message != null}" style="color:red"/>
+            </s:decorate> 
+
+            <div style="clear:both">
+            </div>
+            
+            
+            <rich:panel id="statusPanel" style="border:0px">
+
+					<rich:dataTable id="itemsStatus" var="_status"
+						value="#{commissionerBallotHome.instance.status}"
+						columnClasses="number, number" width="100%">
+						<f:facet name="header">
+							<h:panelGrid columns="2" columnClasses="headerTitle,"
+								styleClass="left">
+								<h:outputText value="Estados"
+									styleClass="left" />
+
+								<!--  <a:commandButton id="createStatus"
+									
+									action="#{commissionerBallotHome.createCommissionerBallotStatus()}"
+									reRender="statusEditPanel" ajaxSingle="true"
+									eventsQueue="gimEventsQueue"
+									oncomplete="Richfaces.showModalPanel('statusEditPanel',{width:600, height:500})"
+									value="Crear Estado" /> -->
+							</h:panelGrid>
+						</f:facet>
+
+						<h:outputText value="#{messages['items.resultsItemNotFound']}"
+							rendered="#{empty commissionerBallotHome.instance.status}" />
+							
+						<rich:column rendered="#{not empty commissionerBallotHome.instance.status}"
+							styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{_status.id}" />
+						</rich:column>
+
+						<rich:column rendered="#{not empty commissionerBallotHome.instance.status}"
+							styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="Fecha de Registro" />
+							</f:facet>
+							<h:outputText value="#{_status.creationDate}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+						</rich:column>
+						<rich:column rendered="#{not empty commissionerBallotHome.instance.status}"
+							styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="Estado" />
+							</f:facet>
+							<h:outputText value="#{_status.statusName.name}" />
+						</rich:column>
+
+						<rich:column rendered="#{not empty commissionerBallotHome.instance.status}"
+							styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="Usuario Registrador" />
+							</f:facet>
+							<h:outputText value="#{_status.responsible_user}" />
+						</rich:column>
+
+			            <rich:column rendered="#{not empty commissionerBallotHome.instance.status}"
+			              styleClass="left">
+			              <f:facet name="header">
+			                <h:outputText value="Observación" />
+			              </f:facet>
+			              <h:outputText value="#{_status.observations}" />
+			            </rich:column>
+
+						<rich:column rendered="#{not empty commissionerBallotHome.instance.status}"
+							styleClass="action">
+							<f:facet name="header">
+								<h:outputText value="#{messages['common.action']}" />
+							</f:facet>
+
+							<a:commandButton id="removeStatus"
+								disabled="#{_status.statusName.code eq 'INITIATED'}"
+								action="#{commissionerBallotHome.removeStatus(_status)}"
+								reRender="itemsStatus" ajaxSingle="true"
+								eventsQueue="gimEventsQueue"
+								value="#{messages['common.delete']}" />
+
+						</rich:column>
+					</rich:dataTable>
+
+					<div style="clear: both"></div>
+
+				</rich:panel>
+            
+
+  </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="#{messages['common.save']}"
+                         action="#{commissionerBallotHome.saveCommissionerBallot()}"
+                       disabled="#{!commissionerBallotHome.wired}"
+                       rendered="#{!commissionerBallotHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="#{messages['common.save']}"
+                         action="#{commissionerBallotHome.UpdateCommissionerBallot()}"
+                       rendered="#{commissionerBallotHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="#{messages['common.delete']}"
+                         action="#{commissionerBallotHome.remove}"
+                      immediate="true"
+                      disabled="true"
+                       rendered="#{commissionerBallotHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                rendered="#{!commissionerBallotHome.managed}"
+                    view="/commissioners/LeaderShepBallotsList.xhtml"/>
+            <s:button id="cancelEdit2"
+                   value="#{messages['common.cancel']}"
+             propagation="end"
+                rendered="#{commissionerBallotHome.managed}"
+                    view="/commissioners/LeaderShepBallotsList.xhtml"/>
+
+        </div>
+    </h:form>
+</ui:define>
+
+</ui:composition>

@@ -18,6 +18,12 @@ public interface ItemCatalogService {
 
 	public List<ItemCatalog> findItemsForCatalogCode(String catalogCode);
 	
+	public List<ItemCatalog> findItemsForCatalogCodeOrderById(String catalogCode);
+	
+	public List<ItemCatalog> findCompleteItemsForCatalogCodeOrderById(String catalogCode);
+	
+	public List<ItemCatalog> findItemsForSentStatus(String catalogCode);
+
 	public List<ItemCatalog> findItemsForCatalogCodeExceptIds(String catalogCode,List<Long> itemsIds);
 	
 	public ItemCatalog findItemByCodeAndCodeCatalog(String catalogCode, String itemCode);

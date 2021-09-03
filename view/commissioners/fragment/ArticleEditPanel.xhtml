@@ -1,0 +1,120 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="articleEditPanel" width="300" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Crear / Editar Artículo"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="articleEditPanel" attachTo="hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="blockLimit" styleClass="edit">
+
+			<rich:panel>
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+
+				<div style="clear: both">
+					#{messages['local.name']}
+					<rich:separator height="1" />
+				</div>
+
+				<h:panelGrid columns="1" width="100%">
+					
+					<s:decorate id="registerDateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Fecha de Creación</ui:define>
+                <rich:calendar id="registerDate"
+                          value="#{commissionerBallotHome.registerDate}" datePattern="dd/MM/yyyy" 
+                          disabled = "true">
+                </rich:calendar>
+            </s:decorate>
+            
+            <s:decorate id="ordinanceField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Ordenanza:</ui:define>
+                <h:inputText id="ordinance"
+                           size="20"
+                           required="true"
+                      maxlength="30"
+                          value="#{commissionerBallotHome.sanctioningArticle.ordinance}">
+                </h:inputText>
+            </s:decorate>    
+            
+            <s:decorate id="articleField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Artículo:</ui:define>
+                <h:inputText id="article"
+                           size="10"
+                           required="true"
+                      maxlength="20"
+                          value="#{commissionerBallotHome.sanctioningArticle.article}">
+                </h:inputText>
+            </s:decorate>  
+            
+            <s:decorate id="numeralField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Numeral:</ui:define>
+                <h:inputText id="numeral"
+                           size="10"
+                      maxlength="20"
+                          value="#{commissionerBallotHome.sanctioningArticle.numeral}">
+                </h:inputText>
+            </s:decorate> 
+                        
+            <s:decorate id="detailField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Detalle:</ui:define>
+                <h:inputTextarea id="detail"
+                           size="15"
+                           required="true"
+                          value="#{commissionerBallotHome.sanctioningArticle.detail}">
+                </h:inputTextarea>
+            </s:decorate>
+            
+            <s:decorate id="sanctionField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Sanción:</ui:define>
+                <h:inputTextarea id="sanction"
+                           size="15"
+                           required="true"
+                          value="#{commissionerBallotHome.sanctioningArticle.sanction}">
+                </h:inputTextarea>
+            </s:decorate>
+            
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos
+            </div>
+
+			</h:panelGrid>
+
+		</rich:panel>
+
+			<div class="actionButtons">
+				<a:commandButton action="#{commissionerBallotHome.saveSanctioningArticle()}"
+					value="#{messages['common.accept']}" reRender="articlesTablePanel"
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'articleEditPanel\');' : ''}" />
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}" reRender="articlesTablePanel"
+					oncomplete="Richfaces.hideModalPanel('articleEditPanel');"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

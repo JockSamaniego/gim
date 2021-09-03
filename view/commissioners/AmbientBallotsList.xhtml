@@ -1,0 +1,386 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml"
+    xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+    <ui:include src="../commissioners/fragment/AppearanceEditPanel.xhtml" />
+    <ui:include src="../commissioners/fragment/NullifiedEditPanel.xhtml" />
+    <ui:include src="../commissioners/fragment/FileNumberEditPanel.xhtml" />
+    <ui:include src="../commissioners/fragment/PrintReportsPanel.xhtml" />
+    <h:form id="ambientBallotsSearch" styleClass="edit">
+    <h:outputText styleClass="formTitle" value="Administración de Boletas de Ambiente" />
+
+        <rich:simpleTogglePanel label="#{messages['ucot.searchFilter']}" switchType="ajax" >
+        <h:panelGrid columns="2" > 
+
+            <s:decorate template="../layout/display.xhtml">
+                <ui:define name="label">Número de Boleta:</ui:define>
+                <h:inputText id="ballotNumber" value="#{commissionerBallotList.commissionerBallot.ballotNumber}"/>
+            </s:decorate>
+            
+            <s:decorate  template="../layout/edit.xhtml">
+                <ui:define name="label">Artículo Sancionador:</ui:define>
+                <h:selectOneMenu id="sanctioningArticle" value="#{commissionerBallotList.articleId}">
+                  <s:selectItems value="#{commissionerBallotHome.chargeArticles()}" var="article" 
+                  label="#{article.article}-#{article.numeral}" itemValue="#{article.id}" noSelectionLabel="Seleccione uno" />
+                  <a:support event="onchange" ajaxSingle="true" />
+                </h:selectOneMenu>   
+            </s:decorate>
+            
+            <s:decorate id="inspectorIdentificationField" template="../layout/edit.xhtml">
+                <ui:define name="label">Inspector Cédula:</ui:define>
+                <h:inputText id="inspectorIdentification"
+                              size="15"
+                              maxlength="15"
+                              value="#{commissionerBallotList.commissionerBallot.inspectorIdentification}"
+                              ajaxSingle="true" >
+                              <f:validator validatorId="identificationNumberBallotValidator"/>
+                              <a:support event="onblur" action="#{commissionerBallotList.findInspectorName()}" reRender="inspectorNameField, inspectorIdentificationField" ajaxSingle="true"  />            
+                </h:inputText>              
+            </s:decorate>
+            
+            <s:decorate id="infractorIdentificationField" template="../layout/edit.xhtml">
+                <ui:define name="label">Infractor Cédula:</ui:define>
+                <h:inputText id="infractorIdentification"
+                              size="15"
+                              maxlength="15"
+                              value="#{commissionerBallotList.commissionerBallot.infractorIdentification}"
+                              ajaxSingle="true" >
+                              <f:validator validatorId="identificationNumberBallotValidator"/>
+                              <a:support event="onblur" action="#{commissionerBallotList.findInfractorName()}" reRender="infractorNameField, infractorIdentificationField" ajaxSingle="true"  />            
+                </h:inputText>              
+            </s:decorate>
+            
+            <s:decorate id="inspectorNameField" template="../layout/edit.xhtml">
+                <ui:define name="label">Inspector Nombre:</ui:define>
+                <h:inputText id="inspectorName"
+                       size="40"
+                          value="#{commissionerBallotList.commissionerBallot.inspectorName}">
+                </h:inputText>
+            </s:decorate>
+            
+            <s:decorate id="infractorNameField" template="../layout/edit.xhtml">
+                <ui:define name="label">Infractor Nombre:</ui:define>
+                <h:inputText id="infractorName"
+                       size="40"
+                          value="#{commissionerBallotList.commissionerBallot.infractorName}">
+                </h:inputText>
+            </s:decorate>
+
+            
+            <s:decorate id="citationDateField" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.From']}(Infracción):</ui:define>
+                <rich:calendar id="dateFrom"
+                          value="#{commissionerBallotList.dateFrom}" datePattern="dd/MM/yyyy" />
+             </s:decorate>
+                        
+             <s:decorate id="citationDateField3" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.From']}(registro):</ui:define>
+                <rich:calendar id="dateFrom2"
+                          value="#{commissionerBallotList.dateFrom2}" datePattern="dd/MM/yyyy" />
+            </s:decorate>
+            
+            <s:decorate id="citationDateField2" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.Until']}(Infracción):</ui:define>
+                <rich:calendar id="dateUntil"
+                          value="#{commissionerBallotList.dateUntil}" datePattern="dd/MM/yyyy" />
+            </s:decorate>
+
+            <s:decorate id="citationDateField4" template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['ucot.Until']}(registro):</ui:define>
+                <rich:calendar id="dateUntil2"
+                          value="#{commissionerBallotList.dateUntil2}" datePattern="dd/MM/yyyy" />
+            </s:decorate>
+
+            <s:decorate id="statusNameField"
+                template="../layout/edit.xhtml">
+                <ui:define name="label">Estado de la Boleta:</ui:define>
+                <h:selectOneMenu id="statusName" value="#{commissionerBallotList.statusId}">
+                    <s:selectItems value="#{commissionerBallotHome.statusCompleteForCommissioners}" var="statusName" label="#{statusName.name}" itemValue="#{statusName.id}" noSelectionLabel="Seleccione uno" />
+                    <a:support event="onchange" ajaxSingle="true" />
+                </h:selectOneMenu>
+            </s:decorate>
+            
+            <s:decorate id="plateField" template="../layout/edit.xhtml" rendered="#{commissionerBallotHome.isTransitBallot()}">
+                <ui:define name="label">Placa Vehícular:</ui:define>
+                <h:inputText id="plate"
+                       size="20"
+                          value="#{commissionerBallotList.commissionerBallot.plate}">
+                </h:inputText>
+            </s:decorate>      
+                        
+        </h:panelGrid>
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="#{messages['common.search']}" reRender="infractionTablePanel" />
+            <s:button id="reset" value="#{messages['common.reset']}" includePageParams="false"/>
+        </div>
+
+    
+
+    <rich:panel id="infractionTablePanel">
+        <f:facet name="header">
+            <h:panelGrid columns="7" columnClasses="headerTitle,">
+                <h:outputText
+                    value=" Boletas encontradas (#{empty commissionerBallotList.resultList ? 0 : (commissionerBallotList.paginated ? commissionerBallotList.resultCount : commissionerBallotList.resultList.size)})" />
+                   <s:button view="/commissioners/AmbientBallotsEdit.xhtml"
+                               id="create"
+                      propagation="none"
+                            value="#{messages['common.create']} Boleta"
+                            action="#{commissionerBallotHome.createdNewBallot()}">
+                       <f:param name="infractionsId" />
+                   </s:button>
+                   
+                   <s:button view="/commissioners/CommissionerInspectorList.xhtml"
+                               id="createInspector"
+                      propagation="none"
+                            value="Inspectores">
+                       <f:param name="infractionsId" />
+                    </s:button>
+                    
+                    <s:button view="/commissioners/CommissionerBulletinList.xhtml"
+                               id="createBulletin"
+                      propagation="none"
+                            value="Libretines">
+                       <f:param name="infractionsId" />
+                    </s:button>
+
+	                <s:button view="/commissioners/SanctioningArticleList.xhtml"
+	                               id="createArticle"
+	                      propagation="none"
+	                            value="Articulos Sancionadores">
+	                       <f:param name="infractionsId" />
+                   </s:button>
+                   <a:commandButton    id="printReport"
+                   					action="#{commissionerBallotHome.ballotsForEmissionReport()}"
+                                    reRender="printReportsPanel" ajaxSingle="true"
+                                    eventsQueue="gimEventsQueue"
+                                    oncomplete="Richfaces.showModalPanel('printReportsPanel',{width:600, height:500})"
+                                    value="Reportes" />
+            </h:panelGrid>      
+        </f:facet>
+    <div class="results" id="infractionsList">
+
+    <h:outputText value="No se han encontrado resultados"
+               rendered="#{empty commissionerBallotList.resultList}"/>
+
+    <rich:dataTable id="infractionsListTable"
+                var="_ballot"
+              value="#{commissionerBallotList.resultList}"
+           rendered="#{not empty commissionerBallotList.resultList}">
+        <rich:column styleClass="action" style="align:right;"  width="10%">
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commissionerBallotList}"/>
+                    <ui:param name="propertyLabel" value="Boleta Nro."/>
+                    <ui:param name="propertyPath" value="commissionerBallot.ballotNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ballot.ballotNumber}"/>
+        </rich:column>
+
+        <rich:column styleClass="action" style="align:center;"  width="10%">
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commissionerBallotList}"/>
+                    <ui:param name="propertyLabel" value="Fecha Infracción"/>
+                    <ui:param name="propertyPath" value="commissionerBallot.infractionDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ballot.infractionDate}">
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </rich:column>
+
+        <rich:column styleClass="action" style="align:center;"  width="10%">
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commissionerBallotList}"/>
+                    <ui:param name="propertyLabel" value="Infractor"/>
+                    <ui:param name="propertyPath" value="commissionerBallot.infractorIdentification"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ballot.infractorIdentification}"/>
+        </rich:column>
+
+        <rich:column styleClass="action" style="align:center;"  width="15%">
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commissionerBallotList}"/>
+                    <ui:param name="propertyLabel" value="Infractor Nombre"/>
+                    <ui:param name="propertyPath" value="commissionerBallot.infractorName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ballot.infractorName}"/>
+        </rich:column>
+        
+        <rich:column styleClass="action" style="align:center;"
+        			rendered="#{commissionerBallotHome.isTransitBallot()}"  width="10%">
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commissionerBallotList}"/>
+                    <ui:param name="propertyLabel" value="Placa"/>
+                    <ui:param name="propertyPath" value="commissionerBallot.plate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ballot.plate}"/>
+        </rich:column>
+        
+        <rich:column styleClass="action" style="align:left;"  width="10%">
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commissionerBallotList}"/>
+                    <ui:param name="propertyLabel" value="Artículo"/>
+                    <ui:param name="propertyPath" value="commissionerBallot.sanctioningArticle.article"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ballot.sanctioningArticle.article} - #{_ballot.sanctioningArticle.numeral}"/>
+        </rich:column>
+        
+        <rich:column styleClass="action" style="align:right;"  width="10%">
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commissionerBallotList}"/>
+                    <ui:param name="propertyLabel" value="Sanción"/>
+                    <ui:param name="propertyPath" value="commissionerBallot.sanctionValue"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ballot.sanctionValue}" >
+            	<f:convertNumber pattern="$ ####.00" />
+			</h:outputText>
+        </rich:column>
+		
+		<rich:column styleClass="action" style="align:center;"  width="15%">
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commissionerBallotList}"/>
+                    <ui:param name="propertyLabel" value="Inspector"/>
+                    <ui:param name="propertyPath" value="commissionerBallot.inspectorName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ballot.inspectorName}"/>
+        </rich:column>
+        
+        <rich:column styleClass="action" style="align:center; background-color:#{_ballot.isNullified ? '#FFB4B4' : (_ballot.currentStatus.statusName.code == 'READY_ISSUE' ? '#FAFEA7' : (_ballot.currentStatus.statusName.code == 'SENT_ISSUE' ? '#BDF0A0' : null))}"  width="10%" >
+            <f:facet name="header"> 
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commissionerBallotList}"/>
+                    <ui:param name="propertyLabel" value="Estado Actual"/>
+                    <ui:param name="propertyPath" value="commissionerBallot.currentStatus.statusName.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText style="font-weight:bold; color:black" value="#{_ballot.currentStatus.statusName.name}" />
+        </rich:column>
+
+        <rich:column styleClass="action" style="align:right;"  width="10%">
+            <f:facet name="header">
+                <ui:include src="../layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commissionerBallotList}"/>
+                    <ui:param name="propertyLabel" value="Expediente"/>
+                    <ui:param name="propertyPath" value="commissionerBallot.fileNumber"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_ballot.fileNumber}"/>
+        </rich:column>
+
+        <rich:column styleClass="action" width="15%">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+            <s:button view="/commissioners/AmbientBallotsEdit.xhtml"
+                   value="#{messages['common.edit']}"
+                   action="#{commissionerBallotHome.prepareToEdit()}"
+                   disabled="#{_ballot.isNullified or _ballot.currentStatus.statusName.code == 'SENT_ISSUE'}"
+             propagation="none"
+                      id="infractionsEdit">
+                <f:param name="ballotId"
+                        value="#{_ballot.id}"/>
+            </s:button>
+            <s:button view="/commissioners/BallotStatusList.xhtml"
+                   value="Estados"
+             propagation="none"
+                      id="infractionStatus">
+                <f:param name="ballotId"
+                        value="#{_ballot.id}"/>
+            </s:button>
+            <br/>
+            <a:commandButton        id="createAppearance"
+                                    action="#{commissionerBallotHome.addAppearanceInBallot(_ballot)}"
+                                    reRender="appearanceEditPanel" ajaxSingle="true"
+                                    eventsQueue="gimEventsQueue"
+                                    oncomplete="Richfaces.showModalPanel('appearanceEditPanel',{width:600, height:500})"
+                                    value="Comparecencia" 
+                                    disabled="#{_ballot.isNullified or _ballot.currentStatus.statusName.code == 'SENT_ISSUE'}" />
+             <br/>
+            <a:commandButton        id="addFileNumber"
+                                    action="#{commissionerBallotHome.addFileNumberInBallot(_ballot)}"
+                                    reRender="fileNumberEditPanel" ajaxSingle="true"
+                                    eventsQueue="gimEventsQueue"
+                                    oncomplete="Richfaces.showModalPanel('fileNumberEditPanel',{width:400, height:300})"
+                                    value="Expediente" />
+             <a:commandButton        id="addNullified"
+                                    action="#{commissionerBallotHome.addNullifiedInBallot(_ballot)}"
+                                    reRender="nullifiedEditPanel" ajaxSingle="true"
+                                    eventsQueue="gimEventsQueue"
+                                    oncomplete="Richfaces.showModalPanel('nullifiedEditPanel',{width:500, height:400})"
+                                    value="Anular" 
+                                    disabled="#{_ballot.currentStatus.statusName.code == 'SENT_ISSUE'}"/>
+            <br/>   
+            <a:commandButton        id="printOrden"
+                                    action="#{commissionerBallotHome.printEmissionOrdenByBallot(_ballot)}"
+                                    ajaxSingle="true"
+                                    reRender="infractionsListTable"
+                                    eventsQueue="gimEventsQueue"
+                                    value="Imprimir Orden" 
+                                    disabled="#{_ballot.isNullified or _ballot.currentStatus.statusName.code != 'READY_ISSUE'}" />
+        </rich:column>
+        
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/commissioners/AmbientBallotsList.xhtml"
+            rendered="#{commissionerBallotList.previousExists}"
+               value="#{messages.left}#{messages.left} Primera Pagina"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/commissioners/AmbientBallotsList.xhtml"
+            rendered="#{commissionerBallotList.previousExists}"
+               value="#{messages.left} Anterior"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{commissionerBallotList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/commissioners/AmbientBallotsList.xhtml"
+            rendered="#{commissionerBallotList.nextExists}"
+               value="Siguiente #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{commissionerBallotList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/commissioners/AmbientBallotsList.xhtml"
+            rendered="#{commissionerBallotList.nextExists}"
+               value="Ultima Pagina #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{commissionerBallotList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+    </h:form>
+</ui:define>
+
+</ui:composition>
