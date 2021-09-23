@@ -38,6 +38,7 @@ import org.jboss.seam.log.Log;
 
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.commercial.model.Business;
+import ec.gob.gim.common.dto.DinardapResident;
 import ec.gob.gim.common.model.Address;
 import ec.gob.gim.common.model.IdentificationType;
 import ec.gob.gim.common.model.LegalEntity;
@@ -46,6 +47,8 @@ import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Contract;
 import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.loja.dinardap.dinardap.cliente.DINARDAPServiceProvider;
+import ec.gob.loja.dinardap.dinardap.cliente.ResponseContribuyente;
 
 @Name("residentHome")
 public class ResidentHome extends EntityHome<Resident> {
@@ -73,6 +76,11 @@ public class ResidentHome extends EntityHome<Resident> {
     
     @Logger
 	Log logger;
+    
+    //consutal dinardap
+    private String identificationNumber;
+    private String dinardapMessage;
+    private DinardapResident dinardapResident = new DinardapResident();
 
     public String getCountry() {
         return country;
@@ -196,7 +204,7 @@ public class ResidentHome extends EntityHome<Resident> {
         return true;
     }
 
-    public String save() {
+    public String save() {	
         String outcome = null; 
         
         //2018-08-08 rfam para el control de cuenta unica
@@ -469,6 +477,51 @@ public class ResidentHome extends EntityHome<Resident> {
 			r.render("/common/email/NewUserUniqueAccount.xhtml");
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	public String getIdentificationNumber() {
+		return identificationNumber;
+	}
+
+	public void setIdentificationNumber(String identificationNumber) {
+		this.identificationNumber = identificationNumber;
+	}
+	
+	
+	public String getDinardapMessage() {
+		return dinardapMessage;
+	}
+
+	public void setDinardapMessage(String dinardapMessage) {
+		this.dinardapMessage = dinardapMessage;
+	}
+	
+	public DinardapResident getDinardapResident() {
+		return dinardapResident;
+	}
+
+	public void setDinardapResident(DinardapResident dinardapResident) {
+		this.dinardapResident = dinardapResident;
+	}
+
+	public void dinardapSearch() {
+		if (this.identificationNumber != null && this.identificationNumber != "") {
+			DINARDAPServiceProvider dinardap = new DINARDAPServiceProvider();
+			ResponseContribuyente result = dinardap.informacionDemografica(this.identificationNumber);
+			this.dinardapMessage = "Demográfico"+result.getMessage();
+			this.dinardapResident = new DinardapResident();
+			this.dinardapResident.setData(result);
+			
+			ResponseContribuyente resultBio = dinardap.informacionBiometrica(this.identificationNumber);
+			this.dinardapMessage = this.dinardapMessage + "\nBiométrico: "+resultBio.getMessage();
+			
+			this.dinardapResident.setDiometricData(resultBio);
+			
+			
+		} else {
+			this.dinardapResident = new DinardapResident();
+			this.dinardapMessage = "Ingrese número de indentificación";
 		}
 	}
     

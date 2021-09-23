@@ -1,0 +1,184 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="body">
+
+		<style>
+.alignTop td{
+vertical-align: top;
+}
+</style>
+
+		<ui:debug />
+
+
+		<h:form id="resident" styleClass="edit">
+			<rich:panel>
+				<f:facet name="header">
+					<h:panelGrid columns="1" columnClasses="headerTitle,">
+						<h:outputText value="Consulta DINARDAP" />
+					</h:panelGrid>
+				</f:facet>
+
+				<h:panelGrid columns="2" width="50%">
+					<s:decorate id="identificationNumberField"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['resident.identificationNumber']}</ui:define>
+						<h:inputText id="email" size="50" required="true"
+							value="#{residentHome.identificationNumber}">
+						</h:inputText>
+					</s:decorate>
+
+					<a:commandButton value="#{messages['common.search']}"
+						reRender="resultsPanel,birthPlaceField,nameField"
+						actionListener="#{residentHome.dinardapSearch()}" />
+
+				</h:panelGrid>
+
+				<h:panelGrid id="resultsPanel">
+
+					<h:outputText value="#{residentHome.dinardapMessage}" id="results" />
+
+					<h:panelGrid columns="2" width="100%" styleClass="alignTop, alignTop">
+
+
+						<h:panelGrid columns="1" >
+
+							<s:decorate id="nameField" template="../layout/edit.xhtml">
+								<ui:define name="label">Nombres:</ui:define>
+								<h:inputText id="name" size="60" maxlength="40"
+									value="#{residentHome.dinardapResident.nombre}" disabled="true">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="birthDateField" template="../layout/edit.xhtml">
+								<ui:define name="label">Lugar de Nacimiento:</ui:define>
+								<h:inputText id="name" size="60" maxlength="40"
+									value="#{residentHome.dinardapResident.lugarNacimiento}"
+									disabled="true">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="birthPlaceField" template="../layout/edit.xhtml">
+								<ui:define name="label">Fecha nacimiento:</ui:define>
+								<h:inputText id="name" size="60" maxlength="40"
+									value="#{residentHome.dinardapResident.fechaNacimiento}"
+									disabled="true">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="nacionalidadField"
+								template="../layout/edit.xhtml">
+								<ui:define name="label">Nacionalidad:</ui:define>
+								<h:inputText id="name" size="60" maxlength="40"
+									value="#{residentHome.dinardapResident.nacionalidad}"
+									disabled="true">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="generoField" template="../layout/edit.xhtml">
+								<ui:define name="label">Genero:</ui:define>
+								<h:inputText id="name" size="60" maxlength="40"
+									value="#{residentHome.dinardapResident.genero}" disabled="true">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="estadoCivilField" template="../layout/edit.xhtml">
+								<ui:define name="label">Estado Civil:</ui:define>
+								<h:inputText id="name" size="60" maxlength="40"
+									value="#{residentHome.dinardapResident.estadoCivil}"
+									disabled="true">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="conyugeField" template="../layout/edit.xhtml">
+								<ui:define name="label">Conyuge:</ui:define>
+								<h:inputText id="name" size="60" maxlength="40"
+									value="#{residentHome.dinardapResident.cedulaConyuge} - #{residentHome.dinardapResident.conyuge}"
+									disabled="true">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="instruccionField" template="../layout/edit.xhtml">
+								<ui:define name="label">Instrucción:</ui:define>
+								<h:inputText id="name" size="60" maxlength="40"
+									value="#{residentHome.dinardapResident.instruccion}"
+									disabled="true">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="padreField" template="../layout/edit.xhtml">
+								<ui:define name="label">Padre:</ui:define>
+								<h:inputText id="name" size="60" maxlength="40"
+									value="#{residentHome.dinardapResident.nombrePadre}"
+									disabled="true">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="madreField" template="../layout/edit.xhtml">
+								<ui:define name="label">Madre:</ui:define>
+								<h:inputText id="name" size="60" maxlength="40"
+									value="#{residentHome.dinardapResident.nombreMadre}"
+									disabled="true">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="fechaDefuncionField"
+								template="../layout/edit.xhtml">
+								<ui:define name="label">Fecha Defunción:</ui:define>
+								<h:inputText id="name" size="60" maxlength="40"
+									value="#{residentHome.dinardapResident.fechaDefuncion}"
+									disabled="true">
+								</h:inputText>
+							</s:decorate>
+
+							<s:decorate id="direccionField" template="../layout/edit.xhtml">
+								<ui:define name="label">Domicilio:</ui:define>
+								<h:inputText id="name" size="60" maxlength="40"
+									value="#{residentHome.dinardapResident.numeroCasa} - #{residentHome.dinardapResident.domicilio}"
+									disabled="true">
+								</h:inputText>
+							</s:decorate>
+
+						</h:panelGrid>
+
+						<h:panelGrid columns="1" >
+							<s:decorate id="photoFieldDecorate"
+								template="../layout/edit.xhtml">
+								<s:graphicImage id="photoImage"
+									value="#{residentHome.dinardapResident.foto}" width="100%" />
+							</s:decorate>
+							<!--s:decorate id="firmaFieldDecorate"
+								template="../layout/edit.xhtml">
+								<s:graphicImage id="photoImage"
+									value="#{residentHome.dinardapResident.firma}" width="50%" />
+							</s:decorate-->
+						</h:panelGrid>
+
+
+					</h:panelGrid>
+				</h:panelGrid>
+
+			</rich:panel>
+
+
+			<div class="actionButtons">
+
+				<s:button id="cancelAdd" value="#{messages['common.exit']}"
+					propagation="end" view="/home.xhtml" />
+			</div>
+
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
