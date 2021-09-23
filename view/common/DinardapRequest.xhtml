@@ -154,7 +154,9 @@ vertical-align: top;
 							<s:decorate id="photoFieldDecorate"
 								template="../layout/edit.xhtml">
 								<s:graphicImage id="photoImage"
-									value="#{residentHome.dinardapResident.foto}" width="100%" />
+									value="#{residentHome.dinardapResident.foto}" width="100%"
+									rendered="#{residentHome.dinardapResident.foto != null }" 
+									/>
 							</s:decorate>
 							<!--s:decorate id="firmaFieldDecorate"
 								template="../layout/edit.xhtml">
