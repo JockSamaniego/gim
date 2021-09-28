@@ -24,7 +24,7 @@ import ec.gob.gim.common.model.Person;
 @Entity
 @TableGenerator(name = "SanctioningArticleGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "SanctioningArticle", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = { @NamedQuery(name = "SanctioningArticle.findAll", query = "SELECT sa FROM SanctioningArticle sa order by sa.creationDate"),
-						@NamedQuery(name = "SanctioningArticle.findByType", query = "SELECT sa FROM SanctioningArticle sa where sa.commissionerBallotType.code =:commissionerType ORDER BY sa.article,sa.numeral ASC "),
+						@NamedQuery(name = "SanctioningArticle.findByType", query = "SELECT sa FROM SanctioningArticle sa where sa.commissionerBallotType.code =:commissionerType and (sa.isActive = true or sa.isActive is null) ORDER BY sa.article,sa.numeral ASC "),
 						@NamedQuery(name = "SanctioningArticle.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum"),
 					  })
 public class SanctioningArticle {
@@ -46,6 +46,8 @@ public class SanctioningArticle {
 	
 	private String sanction;
 	
+	private Boolean isActive;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "responsible_id") 
 	private Person responsible;
@@ -57,6 +59,10 @@ public class SanctioningArticle {
 	@ManyToOne
 	@JoinColumn(name="itemcatalog_id")
 	private ItemCatalog commissionerBallotType;
+	
+	public SanctioningArticle(){
+		isActive = Boolean.TRUE;
+	}
 
 	public Long getId() {
 		return id;
@@ -136,6 +142,14 @@ public class SanctioningArticle {
 
 	public void setSanction(String sanction) {
 		this.sanction = sanction;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 	
 

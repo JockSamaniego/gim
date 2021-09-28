@@ -25,14 +25,14 @@
    <navigation from-action="#{commissionerBallotHome.update}">
       <rule if-outcome="updated">
          <end-conversation/>
-         <redirect view-id="/commissioners/LeaderShepBallotsList.xhtml"/>
+         <redirect view-id="/commissioners/LeaderShipBallotsList.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{commissionerBallotHome.remove}">
       <rule if-outcome="removed">
          <end-conversation/>
-         <redirect view-id="/commissioners/LeaderShepBallotsList.xhtml"/>
+         <redirect view-id="/commissioners/LeaderShipBallotsList.xhtml"/>
       </rule>
    </navigation>
 

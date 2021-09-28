@@ -103,7 +103,8 @@
 				<a:commandButton action="#{commissionerBallotHome.UpdateCommissionerBallot()}"
 					rendered="#{commissionerBallotHome.instance.appearanceDate == null}"
 					value="#{messages['common.accept']}" reRender="infractionsListTable"
-					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'appearanceEditPanel\');' : ''}"/>
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'appearanceEditPanel\');' : ''}"
+					onclick="this.disabled=true;"/>
 
 				<a:commandButton ajaxSingle="true"
 					value="#{messages['common.quit']}" reRender="infractionsListTable"

@@ -9,22 +9,22 @@
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<rich:modalPanel id="nullifiedEditPanel" width="300" height="180">
+	<rich:modalPanel id="nullifiedBulletinPanel" width="300" height="180">
 		<f:facet name="header">
 			<h:panelGroup>
-				<h:outputText value="Anular Boleta"></h:outputText>
+				<h:outputText value="Anular Libretin"></h:outputText>
 			</h:panelGroup>
 		</f:facet>
 		<f:facet name="controls">
 			<h:panelGroup>
 				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
-					id="hidelink3" />
-				<rich:componentControl for="nullifiedEditPanel" attachTo="hidelink3"
+					id="hidelink4" />
+				<rich:componentControl for="nullifiedBulletinPanel" attachTo="hidelink4"
 					operation="hide" event="onclick" />
 			</h:panelGroup>
 		</f:facet>
 
-		<h:form id="blockLimit3" styleClass="edit">
+		<h:form id="blockLimit4" styleClass="edit">
 
 			<rich:panel>
 				<rich:panel style="height:50px; width:100%; overflow:auto;">
@@ -44,7 +44,7 @@
 	                           size="40"
 	                           required="true"
 	                           readonly="true"
-	                          value="#{commissionerBallotHome.instance.responsibleNullified_user}">
+	                          value="#{commissionerBallotHome.bulletinToDelete.responsibleNullified_user}">
 	                </h:inputText>
             	</s:decorate>
 					
@@ -53,7 +53,7 @@
                 <rich:calendar id="nullifiedDate"
                 			required="true"
                 			readonly="true"
-                          value="#{commissionerBallotHome.instance.nullifiedDate}" datePattern="dd/MM/yyyy">
+                          value="#{commissionerBallotHome.bulletinToDelete.nullifiedDate}" datePattern="dd/MM/yyyy">
                 </rich:calendar>
             </s:decorate>
             
@@ -63,8 +63,8 @@
                 <h:inputTextarea id="nullifiedReason"
                            size="15"
                            required="true"
-                           readonly="#{commissionerBallotHome.instance.isNullified}"
-                          value="#{commissionerBallotHome.instance.nullifiedReason}">
+                           readonly="#{commissionerBallotHome.bulletinToDelete.isNullified}"
+                          value="#{commissionerBallotHome.bulletinToDelete.nullifiedReason}">
                 </h:inputTextarea>
             </s:decorate>
             
@@ -79,15 +79,15 @@
 		</rich:panel>
 
 			<div class="actionButtons">
-				<a:commandButton action="#{commissionerBallotHome.saveNullifiedAndStatus()}"
-					value="#{messages['common.accept']}" reRender="infractionsListTable, nullifiedEditPanel"
-					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'nullifiedEditPanel\');' : ''}"
-					rendered="#{!commissionerBallotHome.instance.isNullified}"
+				<a:commandButton action="#{commissionerBallotHome.disabledCommissionerBulletin()}"
+					value="#{messages['common.accept']}" reRender="bulletinsTablePanel, nullifiedBulletinPanel"
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'nullifiedBulletinPanel\');' : ''}"
+					rendered="#{!commissionerBallotHome.bulletinToDelete.isNullified or commissionerBallotHome.bulletinToDelete.isNullified == null}"
 					onclick="this.disabled=true;" />
 
 				<a:commandButton ajaxSingle="true"
-					value="#{messages['common.quit']}" reRender="infractionsListTable"
-					oncomplete="Richfaces.hideModalPanel('nullifiedEditPanel');"
+					value="#{messages['common.quit']}" reRender="bulletinsTablePanel"
+					oncomplete="Richfaces.hideModalPanel('nullifiedBulletinPanel');"
 					bypassUpdates="true" />
 
 			</div>

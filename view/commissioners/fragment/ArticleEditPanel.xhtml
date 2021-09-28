@@ -105,7 +105,8 @@
 			<div class="actionButtons">
 				<a:commandButton action="#{commissionerBallotHome.saveSanctioningArticle()}"
 					value="#{messages['common.accept']}" reRender="articlesTablePanel"
-					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'articleEditPanel\');' : ''}" />
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'articleEditPanel\');' : ''}" 
+					onclick="this.disabled=true;" />
 
 				<a:commandButton ajaxSingle="true"
 					value="#{messages['common.quit']}" reRender="articlesTablePanel"
