@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.envers.Audited;
@@ -22,9 +23,9 @@ public class VehicularTechnicalReview extends Adjunct{
 	private Integer year;
 	private Double cubicCentimeters;
 	private Double weightCapacity;
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	private VehicleMaker vehicleMaker;
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	private VehicleType vehicleType;
 	
 	public String getVin() {
