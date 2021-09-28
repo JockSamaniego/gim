@@ -21,10 +21,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.common.model.IdentificationType;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Person;
 
@@ -148,6 +150,9 @@ public class CommissionerBallot {
 	private CommissionerBulletin bulletin;
 	
 	private String ballotEmissionOrden;
+	
+	@Transient
+	private IdentificationType infractorIdentificationType;
 	
 	public CommissionerBallot() {
 		status = new ArrayList<CommissionerBallotStatus>();
@@ -435,6 +440,14 @@ public class CommissionerBallot {
 		this.ballotEmissionOrden = ballotEmissionOrden;
 	}
 	
+	public IdentificationType getInfractorIdentificationType() {
+		return infractorIdentificationType;
+	}
+
+	public void setInfractorIdentificationType(
+			IdentificationType infractorIdentificationType) {
+		this.infractorIdentificationType = infractorIdentificationType;
+	}
 
 	public void remove(CommissionerBallotStatus cbs) {
 		boolean removed = this.status.remove(cbs);

@@ -61,7 +61,8 @@
 			<div class="actionButtons">
 				<a:commandButton action="#{commissionerBallotHome.UpdateCommissionerBallot()}"
 					value="#{messages['common.accept']}" reRender="infractionsListTable"
-					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'fileNumberEditPanel\');' : ''}"/>
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'fileNumberEditPanel\');' : ''}"
+					onclick="this.disabled=true;" />
 
 				<a:commandButton ajaxSingle="true"
 					value="#{messages['common.quit']}" reRender="infractionsListTable"

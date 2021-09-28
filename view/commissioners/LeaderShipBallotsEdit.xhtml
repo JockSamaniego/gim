@@ -44,10 +44,16 @@
                 <h:inputText id="ballotNumber"
                        required="true"
                           value="#{commissionerBallotHome.instance.ballotNumber}">
-                    <a:support event="onblur" reRender="ballotNumberField, inspectorIdentificationField, inspectorNameField, bulleinField" ajaxSingle="true"
+                    <a:support event="onblur" reRender="ballotNumberField, inspectorIdentificationField, inspectorNameField, bulleinField, panelMessage" ajaxSingle="true"
                     action="#{commissionerBallotHome.findBulletinAndInspectorByBullet()}" />
                 </h:inputText>
             </s:decorate>
+            
+            <h:panelGrid id="panelMessage">
+                <h:outputText style="color:red;"
+                          value="#{commissionerBallotHome.bulletinErrorMessage}">
+                </h:outputText>
+            </h:panelGrid>
 
             <s:decorate id="inspectorIdentificationField" template="../layout/edit.xhtml">
                 <ui:define name="label">Cédula del Inspector</ui:define>
@@ -128,18 +134,49 @@
                 </h:panelGrid>      
             </f:facet>
             
-            <s:decorate id="identificationInfractorField" template="../layout/edit.xhtml">
-                <ui:define name="label">#{messages['infraction.identification']}</ui:define>
-                <h:inputText id="identificationInfractor"
-                              size="15"
-                              maxlength="15"
-                              required="true"
-                              value="#{commissionerBallotHome.instance.infractorIdentification}"
-                              ajaxSingle="true" >
-                              <f:validator validatorId="identificationNumberBallotValidator"/>
-                              <a:support event="onblur" action="#{commissionerBallotHome.findInfractorName()}" reRender="nameInfractorField, identificationInfractorField, residentInformation" ajaxSingle="true"  />            
-                </h:inputText>              
+            <h:panelGrid columns="2" > 
+
+            <s:decorate id="identificationTypeField"
+                template="../layout/edit.xhtml">
+                <ui:define name="label">#{messages['resident.identificationType']}:</ui:define>
+                <h:selectOneMenu id="identificationType" value="#{commissionerBallotHome.instance.infractorIdentificationType}">
+                    <s:selectItems value="#{residentHome.identificationTypes}" var="identificationType" label="#{messages[identificationType.name()]}" noSelectionLabel="Seleccione uno"/>
+                    <s:convertEnum/>
+                    <a:support event="onchange" ajaxSingle="true" reRender="infractorPanel, identificationTypeField, nameInfractorField, residentInformation"
+                    action="#{commissionerBallotHome.resetInfractorValues}"/>
+                </h:selectOneMenu>
             </s:decorate>
+
+            <h:panelGrid  id="infractorPanel"> 
+                <s:decorate id="identificationInfractorField" template="../layout/edit.xhtml" rendered="#{commissionerBallotHome.instance.infractorIdentificationType == 'NATIONAL_IDENTITY_DOCUMENT'}">
+                    <ui:define name="label">Identificación del Infractor</ui:define>
+                    <h:inputText id="identificationInfractor"
+                                  size="15"
+                                  maxlength="15"
+                                  required="true"
+                                  value="#{commissionerBallotHome.instance.infractorIdentification}"
+                                  ajaxSingle="true" 
+                                  disabled="#{commissionerBallotHome.instance.infractorIdentificationType == null}">
+                                  <f:validator validatorId="identificationNumberBallotValidator"/>
+                                  <a:support event="onblur" action="#{commissionerBallotHome.findInfractorName()}" reRender="nameInfractorField, identificationInfractorField, residentInformation" ajaxSingle="true"  />            
+                    </h:inputText>              
+                </s:decorate>
+
+                <s:decorate id="identificationInfractorField2" template="../layout/edit.xhtml" rendered="#{commissionerBallotHome.instance.infractorIdentificationType != 'NATIONAL_IDENTITY_DOCUMENT'}">
+                    <ui:define name="label">Identificación del Infractor</ui:define>
+                    <h:inputText id="identificationInfractor2"
+                                  size="15"
+                                  maxlength="15"
+                                  required="true"
+                                  value="#{commissionerBallotHome.instance.infractorIdentification}"
+                                  ajaxSingle="true" 
+                                  disabled="#{commissionerBallotHome.instance.infractorIdentificationType == null}">
+                                  <a:support event="onblur" action="#{commissionerBallotHome.findInfractorName()}" reRender="nameInfractorField, identificationInfractorField2, residentInformation" ajaxSingle="true"  />            
+                    </h:inputText>              
+                </s:decorate>
+            </h:panelGrid>
+
+        </h:panelGrid>
             
             <s:decorate id="nameInfractorField" template="../layout/edit.xhtml">
                 <ui:define name="label">#{messages['infraction.name']}</ui:define>
@@ -359,12 +396,14 @@
                           value="#{messages['common.save']}"
                          action="#{commissionerBallotHome.saveCommissionerBallot()}"
                        disabled="#{!commissionerBallotHome.wired}"
-                       rendered="#{!commissionerBallotHome.managed}"/>
+                       rendered="#{!commissionerBallotHome.managed}"
+                       onclick="this.disabled=true;" />
 
             <h:commandButton id="update"
                           value="#{messages['common.save']}"
                          action="#{commissionerBallotHome.UpdateCommissionerBallot()}"
-                       rendered="#{commissionerBallotHome.managed}"/>
+                       rendered="#{commissionerBallotHome.managed}"
+                       onclick="this.disabled=true;" />
 
             <h:commandButton id="delete"
                           value="#{messages['common.delete']}"
@@ -377,12 +416,12 @@
                    value="#{messages['common.cancel']}"
              propagation="end"
                 rendered="#{!commissionerBallotHome.managed}"
-                    view="/commissioners/LeaderShepBallotsList.xhtml"/>
+                    view="/commissioners/LeaderShipBallotsList.xhtml"/>
             <s:button id="cancelEdit2"
                    value="#{messages['common.cancel']}"
              propagation="end"
                 rendered="#{commissionerBallotHome.managed}"
-                    view="/commissioners/LeaderShepBallotsList.xhtml"/>
+                    view="/commissioners/LeaderShipBallotsList.xhtml"/>
 
         </div>
     </h:form>

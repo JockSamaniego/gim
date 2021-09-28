@@ -281,12 +281,16 @@ public class ChangePropertyAndBondsHome extends EntityHome<MunicipalBond> {
 			MunicipalBondService mbService = ServiceLocator.getInstance().findResource(MUNICIPALBOND_SERVICE_NAME);
 			for (MunicipalBond bond : bonds) {
 				bond.setResident(residentNew);
-				PropertyAppraisal pAppraisal;
+				PropertyAppraisal pAppraisal = null;
 				if (bond.getAdjunct() != null){
-					Query query = getEntityManager().createNamedQuery(
-							"PropertyAppraisal.findById");
-					query.setParameter("idPropertyAppraisal", bond.getAdjunct().getId());
-					pAppraisal =(PropertyAppraisal) (query.getSingleResult());
+					try {
+						Query query = getEntityManager().createNamedQuery(
+								"PropertyAppraisal.findById");
+						query.setParameter("idPropertyAppraisal", bond.getAdjunct().getId());
+						pAppraisal =(PropertyAppraisal) (query.getSingleResult());
+					}catch(Exception e){
+						e.printStackTrace();
+					}
 				}
 				else
 					pAppraisal = null;

@@ -72,7 +72,8 @@
                 </h:inputText>
             </s:decorate> 
             
-            <s:decorate id="inspectorIdentificationField" template="../../layout/edit.xhtml">
+            <s:decorate id="inspectorIdentificationField" template="../../layout/edit.xhtml"
+            rendered="#{commissionerBallotHome.commissionerBulletin.id == null}">
                 <ui:define name="label">Cédula del Inspector</ui:define>
                 <h:inputText id="inspectorIdentification"
                               size="15"
@@ -85,7 +86,8 @@
                 </h:inputText>              
             </s:decorate>
             
-            <s:decorate id="inspectorNameField" template="../../layout/edit.xhtml">
+            <s:decorate id="inspectorNameField" template="../../layout/edit.xhtml"
+            rendered="#{commissionerBallotHome.commissionerBulletin.id == null}">
                 <ui:define name="label">Nombre del Inspector</ui:define>
                 <h:inputText id="name"
                               size="50"
@@ -93,6 +95,31 @@
                               maxlength="50"
                               readonly="true"
                               value="#{commissionerBallotHome.inspectorName}"/>
+            </s:decorate>
+            
+            <s:decorate id="inspectorIdentificationField2" template="../../layout/edit.xhtml"
+            rendered="#{commissionerBallotHome.commissionerBulletin.id != null}">
+                <ui:define name="label">Cédula del Inspector</ui:define>
+                <h:inputText id="inspectorIdentification"
+                              size="15"
+                              maxlength="15"
+                              required="true"
+                              value="#{commissionerBallotHome.commissionerBulletin.inspector.numberIdentification}"
+                              ajaxSingle="true" >
+                              <f:validator validatorId="identificationNumberBallotValidator"/>
+                              <a:support event="onblur" action="#{commissionerBallotHome.findInspectorObject()}" reRender="inspectorNameField, inspectorIdentificationField" ajaxSingle="true"  />            
+                </h:inputText>              
+            </s:decorate>
+            
+            <s:decorate id="inspectorNameField2" template="../../layout/edit.xhtml"
+            rendered="#{commissionerBallotHome.commissionerBulletin.id != null}">
+                <ui:define name="label">Nombre del Inspector</ui:define>
+                <h:inputText id="name"
+                              size="50"
+                              required="true"
+                              maxlength="50"
+                              readonly="true"
+                              value="#{commissionerBallotHome.commissionerBulletin.inspector.name}"/>
             </s:decorate>
             
             <s:decorate id="deliveryDateField" template="../../layout/edit.xhtml">
@@ -123,7 +150,8 @@
 			<div class="actionButtons">
 				<a:commandButton action="#{commissionerBallotHome.saveCommissionerBulletin()}"
 					value="#{messages['common.accept']}" reRender="bulletinsTablePanel"
-					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'bulletinEditPanel\');' : ''}" />
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'bulletinEditPanel\');' : ''}" 
+					onclick="this.disabled=true;" />
 
 				<a:commandButton ajaxSingle="true"
 					value="#{messages['common.quit']}" reRender="bulletinsTablePanel"

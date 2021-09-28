@@ -126,16 +126,20 @@ public class CommissionerBallotList extends EntityQuery<CommissionerBallot> {
 	}
 
 	public void findInfractorName(){
-		if(this.commissionerBallot.getInfractorIdentification() != null && this.commissionerBallot.getInfractorIdentification() != ""){
-			List<String> names = new ArrayList<String>();
-			Query query = getEntityManager().createNamedQuery(
-					"commissionerBallot.findResidentNameByIdent");
-			query.setParameter("identNum", this.commissionerBallot.getInfractorIdentification());
-			names = query.getResultList();
-			if(names.size()>0){
-				this.commissionerBallot.setInfractorName(names.get(0));
+		if(this.commissionerBallot.getInfractorIdentification() != null){
+			if(this.commissionerBallot.getInfractorIdentification() != ""){
+				List<String> names = new ArrayList<String>();
+				Query query = getEntityManager().createNamedQuery(
+						"commissionerBallot.findResidentNameByIdent");
+				query.setParameter("identNum", this.commissionerBallot.getInfractorIdentification());
+				names = query.getResultList();
+				if(names.size()>0){
+					this.commissionerBallot.setInfractorName(names.get(0));
+				}else{
+					this.commissionerBallot.setInfractorName("No registrado");	
+				}
 			}else{
-				this.commissionerBallot.setInfractorName("No registrado");	
+				this.commissionerBallot.setInfractorName(null);
 			}
 		}else{
 			this.commissionerBallot.setInfractorName(null);
@@ -143,17 +147,21 @@ public class CommissionerBallotList extends EntityQuery<CommissionerBallot> {
 	}
 	
 	public void findInspectorName(){
-		if(this.commissionerBallot.getInspectorIdentification() != null && this.commissionerBallot.getInspectorIdentification() != ""){
-			List<String> names = new ArrayList<String>();
-			Query query = getEntityManager().createNamedQuery(
-					"commissionerBallot.findResidentNameByIdent");
-			query.setParameter("identNum", this.commissionerBallot.getInspectorIdentification());
-			names = query.getResultList();
-			if(names.size()>0){
-				this.commissionerBallot.setInspectorName(names.get(0));
+		if(this.commissionerBallot.getInspectorIdentification() != null){
+			if(this.commissionerBallot.getInspectorIdentification() != ""){
+				List<String> names = new ArrayList<String>();
+				Query query = getEntityManager().createNamedQuery(
+						"commissionerBallot.findResidentNameByIdent");
+				query.setParameter("identNum", this.commissionerBallot.getInspectorIdentification());
+				names = query.getResultList();
+				if(names.size()>0){
+					this.commissionerBallot.setInspectorName(names.get(0));
+				}else{
+					this.commissionerBallot.setInspectorName("No registrado");	
+				}
 			}else{
-				this.commissionerBallot.setInspectorName("No registrado");	
-			}
+				this.commissionerBallot.setInspectorName(null);
+			}	
 		}else{
 			this.commissionerBallot.setInspectorName(null);
 		}	

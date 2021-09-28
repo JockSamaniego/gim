@@ -39,6 +39,7 @@ import javax.persistence.NamedQuery;
 @NamedQueries(value = {
 		@NamedQuery(name = "CommissionerInspector.findByType", query = "SELECT ci FROM CommissionerInspector ci where ci.commissionerBallotType.code =:commissionerType ORDER BY ci.name ASC "),
 		@NamedQuery(name = "CommissionerInspector.findByIdentificationNumberAndType", query = "SELECT ci FROM CommissionerInspector ci where ci.numberIdentification =:identNum and ci.commissionerBallotType.code =:commissionerType ORDER BY ci.id ASC "),
+		@NamedQuery(name = "CommissionerInspector.findByIdentificationNumberAndTypeActives", query = "SELECT ci FROM CommissionerInspector ci where ci.numberIdentification =:identNum and ci.commissionerBallotType.code =:commissionerType and ci.isActive = true ORDER BY ci.id ASC "),
 		@NamedQuery(name = "CommissionerInspector.findByCriteria", query = "Select ci from CommissionerInspector ci where "
 		+"lower(ci.numberIdentification) like lower(concat(:criteriaSearch,'%')) OR " 
 		+"lower(ci.name) like lower(concat(:criteriaSearch,'%')) ")})

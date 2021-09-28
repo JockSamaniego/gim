@@ -3,6 +3,7 @@ package ec.gob.gim.commissioners.model;
 
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -41,7 +42,8 @@ import ec.gob.gim.common.model.Person;
 )
 @NamedQueries(value = {
 		@NamedQuery(name = "CommissionerBulletin.findByType", query = "SELECT cb FROM CommissionerBulletin cb where cb.commissionerBallotType.code =:commissionerType ORDER BY cb.bulletinNumber ASC "),
-		@NamedQuery(name = "CommissionerBulletin.findBySerial", query = "Select cb from CommissionerBulletin cb where cb.startNumber <= :ballotNumber AND cb.endNumber >= :ballotNumber and cb.commissionerBallotType.code =:commissionerType ORDER BY cb.bulletinNumber ASC"),
+		@NamedQuery(name = "CommissionerBulletin.findBySerial", query = "Select cb from CommissionerBulletin cb where cb.startNumber <= :ballotNumber AND cb.endNumber >= :ballotNumber and cb.commissionerBallotType.code =:commissionerType and (cb.isNullified = false or cb.isNullified is null)  ORDER BY cb.bulletinNumber ASC"),
+		@NamedQuery(name = "CommissionerBulletin.findBySerialNullified", query = "Select cb from CommissionerBulletin cb where cb.startNumber <= :ballotNumber AND cb.endNumber >= :ballotNumber and cb.commissionerBallotType.code =:commissionerType and (cb.isNullified = true)  ORDER BY cb.bulletinNumber ASC"),
 		@NamedQuery(name = "CommissionerBulletin.findByRank", query = "Select cb from CommissionerBulletin cb where cb.startNumber > :startSerial AND cb.endNumber < :endSerial"),
 		@NamedQuery(name = "CommissionerBulletin.findById", query = "Select cb from CommissionerBulletin cb where cb.id = :id"),
 		@NamedQuery(name = "CommissionerBulletin.findByNumber", query = "Select cb from CommissionerBulletin cb where cb.bulletinNumber = :number and cb.commissionerBallotType.code =:commissionerType"),
@@ -92,6 +94,21 @@ public class CommissionerBulletin {
 	@JoinColumn(name = "responsible_user")	 
 	@Column(length = 100)	 
 	private String responsible_user;
+	
+	private Boolean isNullified;
+	
+	private String nullifiedReason;
+	
+	@JoinColumn(name = "responsiblenullified_user")	 
+	@Column(length = 100)	 
+	private String responsibleNullified_user;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date nullifiedDate;
+	
+	public CommissionerBulletin() {
+		isNullified = Boolean.FALSE;
+	}
 
 	public Long getId() {
 		return id;
@@ -187,6 +204,38 @@ public class CommissionerBulletin {
 
 	public void setResponsible_user(String responsible_user) {
 		this.responsible_user = responsible_user;
+	}
+
+	public Boolean getIsNullified() {
+		return isNullified;
+	}
+
+	public void setIsNullified(Boolean isNullified) {
+		this.isNullified = isNullified;
+	}
+
+	public String getNullifiedReason() {
+		return nullifiedReason;
+	}
+
+	public void setNullifiedReason(String nullifiedReason) {
+		this.nullifiedReason = nullifiedReason;
+	}
+
+	public String getResponsibleNullified_user() {
+		return responsibleNullified_user;
+	}
+
+	public void setResponsibleNullified_user(String responsibleNullified_user) {
+		this.responsibleNullified_user = responsibleNullified_user;
+	}
+
+	public Date getNullifiedDate() {
+		return nullifiedDate;
+	}
+
+	public void setNullifiedDate(Date nullifiedDate) {
+		this.nullifiedDate = nullifiedDate;
 	}
 
 	

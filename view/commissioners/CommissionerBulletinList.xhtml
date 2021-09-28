@@ -10,6 +10,7 @@
     xmlns:a="http://richfaces.org/a4j">
 
 <ui:define name="body">
+	<ui:include src="../commissioners/fragment/NullifiedBulletinPanel.xhtml" />
 	<ui:include src="../commissioners/fragment/BulletinEditPanel.xhtml" />
     <h:form id="commissionerBulletinsSearch" styleClass="edit">
     <h:outputText styleClass="formTitle" value="Administración de Libretines" />
@@ -94,6 +95,18 @@
                          </f:facet>
                 <h:outputText value="#{_bulletin.observation}" />
         </rich:column>
+
+        <rich:column sortBy="#{_bulletin.isNullified}" styleClass="center"
+                style="align:center; background-color:#{_bulletin.isNullified ? '#FFB4B4' : '#BDF0A0'}"
+                width="10%"
+                filterBy="#{_bulletin.isNullified}"
+                filterEvent="onkeyup">
+                <f:facet name="header">
+                             Está Anulado?
+                         </f:facet>
+                <h:outputText rendered="#{_bulletin.isNullified}" value="SI" />
+                <h:outputText rendered="#{!_bulletin.isNullified or _bulletin.isNullified == null}" value="NO" />
+        </rich:column>
         
         <rich:column styleClass="action" width="10%">
             <f:facet name="header">#{messages['common.action']}</f:facet>
@@ -104,6 +117,12 @@
                                     eventsQueue="gimEventsQueue"
                                     oncomplete="Richfaces.showModalPanel('bulletinEditPanel',{width:600, height:500})"
                                     value="Editar" />
+             <a:commandButton id="disabledBulletin"
+                                    action="#{commissionerBallotHome.addNullifiedInBulletin(_bulletin)}"
+                                    reRender="nullifiedBulletinPanel" ajaxSingle="true"
+                                    eventsQueue="gimEventsQueue"
+                                    oncomplete="Richfaces.showModalPanel('nullifiedBulletinPanel',{width:600, height:500})"
+                                    value="Anular" />  
         </rich:column>
         
     </rich:dataTable>
@@ -133,7 +152,7 @@
      <s:button   id="cancelEdit5"
 		                value="#{messages['common.quit']}"
 		                propagation="end"
-		                view="/commissioners/LeaderShepBallotsList.xhtml"
+		                view="/commissioners/LeaderShipBallotsList.xhtml"
 		                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'LEADERSHIP_HYGIENE'}" />
  
 </h:form>

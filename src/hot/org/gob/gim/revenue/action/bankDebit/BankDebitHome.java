@@ -306,8 +306,10 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 			
 			//Generar el reporte
 			
-			dataReporte = this.bankDebitService.getDataReport();
 			createBankDebitsToFutureLiquidation();
+			
+			dataReporte = this.bankDebitService.getDataReport();
+			
 		} catch (Exception e) {
 			//System.out.println("Error al calcular los valores pendientes a pagar");
 			e.printStackTrace();
@@ -332,12 +334,19 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 				if(itsOK){
 					findPendingLiquidations();
 					//getEntityManager().flush();
+				}else{
+					errorToCreateLiquidationData();
 				}
 		}		
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	public String errorToCreateLiquidationData(){
+		return "/error.xhtml";
+	}
+	
 
 	public void prepareUpdateDebit(Long debitId) {
 		this.isRegister = Boolean.FALSE;
