@@ -83,7 +83,7 @@
 					value="#{messages['common.accept']}" reRender="bulletinsTablePanel, nullifiedBulletinPanel"
 					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'nullifiedBulletinPanel\');' : ''}"
 					rendered="#{!commissionerBallotHome.bulletinToDelete.isNullified or commissionerBallotHome.bulletinToDelete.isNullified == null}"
-					onclick="this.disabled=true;" />
+					 />
 
 				<a:commandButton ajaxSingle="true"
 					value="#{messages['common.quit']}" reRender="bulletinsTablePanel"

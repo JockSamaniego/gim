@@ -83,7 +83,7 @@
 					value="#{messages['common.accept']}" reRender="infractionsListTable, nullifiedEditPanel"
 					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'nullifiedEditPanel\');' : ''}"
 					rendered="#{!commissionerBallotHome.instance.isNullified}"
-					onclick="this.disabled=true;" />
+					 />
 
 				<a:commandButton ajaxSingle="true"
 					value="#{messages['common.quit']}" reRender="infractionsListTable"

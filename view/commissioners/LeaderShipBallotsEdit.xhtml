@@ -397,13 +397,13 @@
                          action="#{commissionerBallotHome.saveCommissionerBallot()}"
                        disabled="#{!commissionerBallotHome.wired}"
                        rendered="#{!commissionerBallotHome.managed}"
-                       onclick="this.disabled=true;" />
+                       />
 
             <h:commandButton id="update"
                           value="#{messages['common.save']}"
                          action="#{commissionerBallotHome.UpdateCommissionerBallot()}"
                        rendered="#{commissionerBallotHome.managed}"
-                       onclick="this.disabled=true;" />
+                        />
 
             <h:commandButton id="delete"
                           value="#{messages['common.delete']}"

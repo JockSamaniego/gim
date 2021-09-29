@@ -348,6 +348,8 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 	
 	public void updateCommissionerBulletin(CommissionerBulletin commissionerBulletin) {
 		this.commissionerBulletin = commissionerBulletin;
+		this.inspectorIdentification = this.commissionerBulletin.getInspector().getNumberIdentification();
+		this.inspectorName = this.commissionerBulletin.getInspector().getName();
 	
 	}
 	
@@ -521,21 +523,35 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 	
 	public void saveCommissionerInspector(){
 		joinTransaction();
-		this.commissionerInspector.setCreationDate(new Date());	
-		this.commissionerInspector.setResponsible(userSession.getPerson());
-		this.commissionerInspector.setResponsible_user(userSession.getUser().getResident().getName());
-		this.commissionerInspector.setCommissionerBallotType(this.userSession.getCommissionerType());
 		List<CommissionerInspector> inspectors = new ArrayList<CommissionerInspector>();
 		Query query = getEntityManager().createNamedQuery(
 				"CommissionerInspector.findByIdentificationNumberAndType");
 		query.setParameter("identNum", this.commissionerInspector.getNumberIdentification());
 		query.setParameter("commissionerType", this.userSession.getCommissionerType().getCode());
 		inspectors = query.getResultList();
-		if(inspectors.size()>0){
-			addFacesMessageFromResourceBundle("EL INSPECTOR YA ESTÁ REGISTRADO");
-		}else{
-			getEntityManager().merge(this.commissionerInspector);
-			getEntityManager().flush();
+		if(this.commissionerInspector.getId() == null){
+			this.commissionerInspector.setCreationDate(new Date());	
+			this.commissionerInspector.setResponsible(userSession.getPerson());
+			this.commissionerInspector.setResponsible_user(userSession.getUser().getResident().getName());
+			this.commissionerInspector.setCommissionerBallotType(this.userSession.getCommissionerType());
+			if(inspectors.size()>0){
+				addFacesMessageFromResourceBundle("EL INSPECTOR YA ESTÁ REGISTRADO");
+			}else{
+				getEntityManager().merge(this.commissionerInspector);
+				getEntityManager().flush();
+			}
+		} else {
+			if(inspectors.size()>0){
+				if(inspectors.get(0).getId() != this.commissionerInspector.getId()){
+					addFacesMessageFromResourceBundle("EL INSPECTOR YA ESTÁ REGISTRADO");
+				}else{
+					getEntityManager().merge(this.commissionerInspector);
+					getEntityManager().flush();
+				}	
+			}else{
+				getEntityManager().merge(this.commissionerInspector);
+				getEntityManager().flush();
+			}
 		}
 		findInspectorsByCommissioner();
 	}
@@ -679,7 +695,7 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 		if(this.inspectorIdentification != null && this.inspectorIdentification != ""){
 			List<CommissionerInspector> inspectors = new ArrayList<CommissionerInspector>();
 			Query query = getEntityManager().createNamedQuery(
-					"CommissionerInspector.findByIdentificationNumberAndTypeActives");
+					"CommissionerInspector.findByIdentificationNumberAndType");
 			query.setParameter("identNum", this.inspectorIdentification);
 			query.setParameter("commissionerType", this.userSession.getCommissionerType().getCode());
 			inspectors = query.getResultList();
@@ -702,6 +718,7 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 		}	
 	}
 	
+
 	public void findInspectorObjectForBallot(){
 		if(this.instance.getInspectorIdentification() != null && this.instance.getInspectorIdentification() != ""){
 			List<CommissionerInspector> inspectors = new ArrayList<CommissionerInspector>();

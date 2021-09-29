@@ -270,7 +270,7 @@
             <h:outputText value="#{_ballot.inspectorName}"/>
         </rich:column>
         
-        <rich:column styleClass="action" style="align:center; background-color:#{_ballot.isNullified ? '#FFB4B4' : (_ballot.currentStatus.statusName.code == 'READY_ISSUE' ? '#FAFEA7' : (_ballot.currentStatus.statusName.code == 'SENT_ISSUE' ? '#BDF0A0' : null))}"  width="10%" >
+        <rich:column styleClass="action" style="align:center; background-color:#{_ballot.isNullified ? '#FFB4B4' : (_ballot.currentStatus.statusName.code == 'READY_ISSUE' ? '#FAFEA7' : (_ballot.currentStatus.statusName.code == 'SENT_ISSUE' ? '#BDF0A0' : (_ballot.currentStatus.statusName.code == 'PAID_ARCHIVED' ? '#a7c0fe' : null)))}"  width="10%" >
             <f:facet name="header"> 
                 <ui:include src="../layout/sort.xhtml">
                     <ui:param name="entityList" value="#{commissionerBallotList}"/>

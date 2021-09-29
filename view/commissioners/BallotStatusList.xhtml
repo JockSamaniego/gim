@@ -168,7 +168,7 @@
                 <h:outputText
                     value=" Estados Encontrados (#{commissionerBallotHome.instance.status.size()>0 ? commissionerBallotHome.instance.status.size() : 0})" />
                    <a:commandButton id="createStatus"
-									
+									rendered="#{commissionerBallotHome.instance.currentStatus.statusName.code != 'PAID_ARCHIVED' and commissionerBallotHome.instance.currentStatus.statusName.code != 'FILE_NULLIFIED' and commissionerBallotHome.instance.currentStatus.statusName.code != 'NULLIFIED_ARCHIVED'}"
 									action="#{commissionerBallotHome.createCommissionerBallotStatus()}"
 									reRender="statusEditPanel" ajaxSingle="true"
 									eventsQueue="gimEventsQueue"
@@ -254,12 +254,12 @@
                           value="#{messages['common.save']}"
                          action="#{commissionerBallotHome.saveHygieneBallot()}"
                        disabled="#{!commissionerBallotHome.wired}"
-                       rendered="#{!commissionerBallotHome.managed and !commissionerBallotHome.instance.isNullified}"/>
+                       rendered="#{!commissionerBallotHome.managed and !commissionerBallotHome.instance.isNullified and commissionerBallotHome.instance.currentStatus.statusName.code != 'PAID_ARCHIVED' and commissionerBallotHome.instance.currentStatus.statusName.code != 'FILE_NULLIFIED'}"/>
 
             <h:commandButton id="update"
                           value="#{messages['common.save']}"
                          action="#{commissionerBallotHome.UpdateCommissionerBallot()}"
-                       rendered="#{commissionerBallotHome.managed and !commissionerBallotHome.instance.isNullified}"/>
+                       rendered="#{commissionerBallotHome.managed and !commissionerBallotHome.instance.isNullified and commissionerBallotHome.instance.currentStatus.statusName.code != 'PAID_ARCHIVED' and commissionerBallotHome.instance.currentStatus.statusName.code != 'FILE_NULLIFIED'}"/>
              
              <s:button   id="cancelEdit1"
 		                value="#{messages['common.quit']}"

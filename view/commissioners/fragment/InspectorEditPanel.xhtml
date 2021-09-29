@@ -96,11 +96,12 @@
 				<a:commandButton action="#{commissionerBallotHome.saveCommissionerInspector()}"
 					value="#{messages['common.accept']}" reRender="inspectorsTablePanel"
 					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'inspectorEditPanel\');' : ''}" 
-					onclick="this.disabled=true;" />
+					 />
 
 				<a:commandButton ajaxSingle="true"
-					value="#{messages['common.quit']}" reRender="inspectorsTablePanel"
+					value="#{messages['common.quit']}"
 					oncomplete="Richfaces.hideModalPanel('inspectorEditPanel');"
+					reRender="inspectorsTablePanel"
 					bypassUpdates="true" />
 
 			</div>

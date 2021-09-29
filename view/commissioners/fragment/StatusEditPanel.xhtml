@@ -110,7 +110,7 @@
 				<a:commandButton action="#{commissionerBallotHome.addStatus()}"
 					value="#{messages['common.accept']}" reRender="itemsStatus"
 					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'statusEditPanel\');' : ''}"
-					onclick="this.disabled=true;" />
+					 />
 
 				<a:commandButton ajaxSingle="true"
 					value="#{messages['common.quit']}" reRender="itemsStatus"
