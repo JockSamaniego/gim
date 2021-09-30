@@ -76,6 +76,7 @@
 				<h:outputText value="#{_inspector.email}" />
 		</rich:column>   
 		<rich:column sortBy="#{_inspector.isActive}" styleClass="center"
+		style="align:center; background-color:#{_inspector.isActive ? '#BDF0A0' : '#FFB4B4'}"
                 width="10%"
 				filterBy="#{_inspector.isActive}"
 				filterEvent="onkeyup">
@@ -83,11 +84,10 @@
                              Esta activo?
                          </f:facet>
 				<h:outputText 
-						rendered="#{_inspector.isActive}" value="Si" />
+						rendered="#{_inspector.isActive}" value="SI" />
 						<h:outputText 
-						rendered="#{!_inspector.isActive}" value="No" />
-		</rich:column> 
-        
+						rendered="#{!_inspector.isActive}" value="NO" />
+		</rich:column>         
 
         <rich:column styleClass="action" width="10%">
             <f:facet name="header">#{messages['common.action']}</f:facet>

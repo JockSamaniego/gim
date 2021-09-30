@@ -208,8 +208,13 @@ public class CommissionerBallotHome extends EntityHome<CommissionerBallot> {
 				res = query.getResultList();
 				if(res.size()>0){
 					this.instance.setInfractorName(res.get(0).getName());
-					this.instance.setInfractorAddress(res.get(0).getCurrentAddress().getStreet());
-					this.instance.setInfractorPhone(res.get(0).getCurrentAddress().getPhoneNumber());
+					if(res.get(0).getCurrentAddress() != null){
+						this.instance.setInfractorAddress(res.get(0).getCurrentAddress().getStreet());
+						this.instance.setInfractorPhone(res.get(0).getCurrentAddress().getPhoneNumber());
+					}else{
+						this.instance.setInfractorAddress(null);
+						this.instance.setInfractorPhone(null);
+					}
 					this.instance.setInfractorEmail(res.get(0).getEmail());
 				}else{
 					this.instance.setInfractorName("No registrado");
