@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -31,7 +32,7 @@ import ec.gob.gim.revenue.model.MunicipalBondForBankDebit;
 @Entity
 @TableGenerator(name = "BankDebitForLiquidationGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "BankDebitForLiquidation", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
-		@NamedQuery(name = "debitForLiquidation.findPending", query = "SELECT bdl from BankDebitForLiquidation bdl Where bdl.isActive = true ORDER BY bdl.residentName, bdl.service ASC "),})
+		@NamedQuery(name = "debitForLiquidation.findPending", query = "SELECT bdl from BankDebitForLiquidation bdl Where bdl.isActive = true ORDER BY bdl.bankCount ASC "),})
 public class BankDebitForLiquidation implements Serializable{
 	
 	private static final long serialVersionUID = 18386387333339876L;
@@ -95,6 +96,9 @@ public class BankDebitForLiquidation implements Serializable{
 	private List<MunicipalBondForBankDebit> mbsForBankDebit;
 	
 	private String observation;
+	
+	@Column(nullable=true)
+	private int bankCount;
 	
 	public BankDebitForLiquidation(){
 		mbsForBankDebit = new ArrayList<MunicipalBondForBankDebit>();
@@ -279,6 +283,14 @@ public class BankDebitForLiquidation implements Serializable{
 
 	public void setObservation(String observation) {
 		this.observation = observation;
+	}
+
+	public int getBankCount() {
+		return bankCount;
+	}
+
+	public void setBankCount(int bankCount) {
+		this.bankCount = bankCount;
 	}
 
 	public void add(MunicipalBondForBankDebit municipalBondForBankDebit) {

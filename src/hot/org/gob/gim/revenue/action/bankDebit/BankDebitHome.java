@@ -9,11 +9,13 @@ import javax.ejb.EJB;
 import javax.persistence.Query;
 
 import org.gob.gim.common.CatalogConstants;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.service.PaymentLocalService;
+import org.gob.gim.revenue.action.MunicipalBondManager;
 import org.gob.gim.revenue.action.bankDebit.pagination.BankDebitDataModel;
 import org.gob.gim.revenue.service.BankDebitService;
 import org.gob.gim.revenue.service.ItemCatalogService;
@@ -29,6 +31,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 
@@ -71,6 +74,8 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 	private MunicipalBondStatus pendingBondStatus;
 	
 	private MunicipalBondStatus paidBondStatus;
+	
+	private MunicipalBondStatus pendingDebitBondStatus;
 
 	/**
 	 * criterios
@@ -307,8 +312,8 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 			//Generar el reporte
 			
 			createBankDebitsToFutureLiquidation();
-			
-			dataReporte = this.bankDebitService.getDataReport();
+			changeStatusToLiquidationPending();
+			dataReporte = this.getDataReportForLiquidationTable();
 			
 		} catch (Exception e) {
 			//System.out.println("Error al calcular los valores pendientes a pagar");
@@ -340,6 +345,7 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 		}		
 		catch (Exception e) {
 			e.printStackTrace();
+			errorToCreateLiquidationData();
 		}
 	}
 	
@@ -617,13 +623,26 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 					} catch(Exception e) {
 						e.printStackTrace();
 					}
+				}else{
+					reversedToPendingStatus(bankDebitForLiquidation);
 				}
+			}else{
+				reversedToPendingStatus(bankDebitForLiquidation);
 			}
+			
 			bankDebitForLiquidation.setIsActive(Boolean.FALSE);
 			getEntityManager().merge(bankDebitForLiquidation);
 			
 		}
 		getEntityManager().flush();
+	}
+	
+	public void reversedToPendingStatus(BankDebitForLiquidation bankDebitForLiquidation){
+		for(MunicipalBondForBankDebit mb : bankDebitForLiquidation.getMbsForBankDebit()){
+			MunicipalBond municipalBond = getEntityManager().find(MunicipalBond.class, mb.getMunicipalBondId());
+			municipalBondManager.setObservation("Cambio de estado a PENDIENTE por NO LIQUIDACION POR DEBITO");
+			municipalBondManager.updateStatus(municipalBond, pendingBondStatus);
+		}
 	}
 	
 	public String viewReportExcel(){
@@ -650,7 +669,7 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 			totalDebitsSuccessful = totalDebitsSuccessful.add(bankDebitForLiquidation.getValue());
 			for(Long mbId : bondsIds){
 				MunicipalBond mbStatus = getEntityManager().find(MunicipalBond.class, mbId);
-				saveStatusChangeRecord("Pago de debito bancario en bloque", mbStatus, pendingBondStatus, paidBondStatus, userSession.getUser());
+				saveStatusChangeRecord("Pago de debito bancario en bloque", mbStatus, pendingDebitBondStatus, paidBondStatus, userSession.getUser());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -660,6 +679,7 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 			bankDebitForLiquidation.setObservation("ERROR EN LA LIQUIDACION");
 			debitsTransactionError.add(bankDebitForLiquidation);
 			totalDebitsTransactionError = totalDebitsTransactionError.add(bankDebitForLiquidation.getValue());
+			reversedToPendingStatus(bankDebitForLiquidation);
 			throw new InvalidPayout();
 		}
 		getEntityManager().flush();
@@ -715,7 +735,11 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 	}
 	
 	public Boolean checkPendingStatus(MunicipalBond mb){
-		if(mb.getMunicipalBondStatus().getId() == 3){
+		pendingDebitBondStatus = systemParameterService.materialize(
+				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING_DEBIT_LIQUIDATION");
+		pendingBondStatus = systemParameterService.materialize(
+				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING");
+		if((mb.getMunicipalBondStatus().getId().compareTo(pendingBondStatus.getId()) == 0 ) || (mb.getMunicipalBondStatus().getId().compareTo(pendingDebitBondStatus.getId()) == 0 )){
 			return Boolean.FALSE;
 		}
 		return Boolean.TRUE;
@@ -822,4 +846,49 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 		this.totalDebitsSuccessful = totalDebitsSuccessful;
 	}
 	
+	
+	public List<BankDebitReportDTO> getDataReportForLiquidationTable(){
+		List<BankDebitReportDTO> retorno = new ArrayList<BankDebitReportDTO>();
+		String qryBase = "Select "
+				+ "bdl.residentIdentification, "
+				+ "bdl.residentName, "
+				+ "bdl.accountType, "
+				+ "bdl.accountNumber, "
+				+ "bdl.accountHolder, "
+				+ "bdl.service, "
+				+ "bdl.amount, "
+				+ "bdl.value,"
+				+ "bdl.residentId, "
+				+ "bdl.bankCount "
+				+ "FROM "
+				+ "gimprod.BankDebitForLiquidation bdl "
+				+ "WHERE "
+				+ "bdl.isActive = true "
+				+ "ORDER BY bdl.bankCount ASC ";
+		Query query = getEntityManager().createNativeQuery(qryBase);
+		retorno = NativeQueryResultsMapper.map(
+				query.getResultList(), BankDebitReportDTO.class);
+		return retorno;
+	}
+	
+	@In(create = true)
+	MunicipalBondManager municipalBondManager;
+	
+	public void changeStatusToLiquidationPending(){	
+		MunicipalBondManager municipalBondManager = (MunicipalBondManager) Contexts.getConversationContext().get(MunicipalBondManager.class);
+		pendingBondStatus = systemParameterService.materialize(
+				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING");
+		pendingDebitBondStatus = systemParameterService.materialize(
+				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING_DEBIT_LIQUIDATION");
+		for (BankDebitForLiquidation bdl : previousForLiquidations){
+			for(MunicipalBondForBankDebit mb : bdl.getMbsForBankDebit()){
+				MunicipalBond municipalBond = getEntityManager().find(MunicipalBond.class, mb.getMunicipalBondId());
+				municipalBondManager.setObservation("Cambio de estado para LIQUIDACION POR DEBITO");
+				municipalBondManager.updateStatus(municipalBond, pendingDebitBondStatus);
+				// saveStatusChangeRecord("Cambio de estado para LIQUIDACION POR DEBITO", municipalBond, pendingBondStatus, pendingDebitBondStatus, userSession.getUser());
+			}
+		} 
+	}
+	
+		
 }
