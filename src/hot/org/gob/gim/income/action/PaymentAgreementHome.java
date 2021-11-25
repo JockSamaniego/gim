@@ -171,7 +171,9 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			calculateBalanceForPay();
 			calculatePayedValue();
 			loadTotalDeposit();
-		}  
+		}
+		
+		// System.out.println("en el wire---------------------->>>>>");
 	}
 	 
 	//@author macartuche
@@ -988,5 +990,18 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 				}
 			}
 		}
+	}
+	
+	public void findEntryDetail(){
+		/* String sql = "";
+		List<Alert> alerts = new ArrayList<Alert>();
+		Query query = getEntityManager().createNamedQuery("Alert.findPendingAlertsByResidentIdNum");
+		query.setParameter("residentIdNum", resident.getIdentificationNumber());
+		alerts = query.getResultList();
+		if(alerts.size() > 0){
+			residentHasAlerts = Boolean.TRUE;
+		}else{
+			residentHasAlerts = Boolean.FALSE;
+		}*/
 	}
 }
