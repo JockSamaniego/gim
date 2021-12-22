@@ -1,0 +1,141 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="bulletinEditPanel" width="300" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Crear / Editar Libretin"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="bulletinEditPanel" attachTo="hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="blockLimit" styleClass="edit">
+
+			<rich:panel>
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+
+				<div style="clear: both">
+					#{messages['local.name']}
+					<rich:separator height="1" />
+				</div>
+
+				<h:panelGrid columns="1" width="100%">
+				
+            
+            <s:decorate id="bulletinNumberField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Número de Libretin:</ui:define>
+                <h:inputText id="bulletinNumber"
+                           size="10"
+                           required="true"
+                      maxlength="20"
+                          value="#{commissionerBallotHome.commissionerBulletin.bulletinNumber}">
+                          <a:support event="onblur" action="#{commissionerBallotHome.bulletinCreatedControls()}" reRender="bulletinNumberField" ajaxSingle="true"  /> 
+                </h:inputText>
+            </s:decorate>    
+            
+            <s:decorate id="startSerialField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Serie Inicial:</ui:define>
+                <h:inputText id="startSerial"
+                           size="10"
+                           required="true"
+                      maxlength="20"
+                          value="#{commissionerBallotHome.commissionerBulletin.startNumber}">
+                          <a:support event="onblur" action="#{commissionerBallotHome.bulletinCreatedControls()}" reRender="startSerialField" ajaxSingle="true"  />
+                </h:inputText>
+            </s:decorate>  
+            
+            <s:decorate id="endSerialField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Serie Inicial:</ui:define>
+                <h:inputText id="endSerial"
+                           size="10"
+                           required="true"
+                      maxlength="20"
+                          value="#{commissionerBallotHome.commissionerBulletin.endNumber}">
+                          <a:support event="onblur" action="#{commissionerBallotHome.bulletinCreatedControls()}" reRender="endSerialField" ajaxSingle="true"  />
+                </h:inputText>
+            </s:decorate> 
+            
+            <s:decorate id="inspectorIdentificationField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Cédula del Inspector</ui:define>
+                <h:inputText id="inspectorIdentification"
+                              size="15"
+                              maxlength="15"
+                              required="true"
+                              value="#{commissionerBallotHome.inspectorIdentification}"
+                              ajaxSingle="true" >
+                              <f:validator validatorId="identificationNumberBallotValidator"/>
+                              <a:support event="onblur" action="#{commissionerBallotHome.findInspectorObject()}" reRender="inspectorNameField, inspectorIdentificationField" ajaxSingle="true"  />            
+                </h:inputText>              
+            </s:decorate>
+            
+            <s:decorate id="inspectorNameField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Nombre del Inspector</ui:define>
+                <h:inputText id="name"
+                              size="50"
+                              required="true"
+                              maxlength="50"
+                              readonly="true"
+                              value="#{commissionerBallotHome.inspectorName}"/>
+            </s:decorate>
+            
+
+            <s:decorate id="deliveryDateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Fecha de Entrega</ui:define>
+                <rich:calendar id="deliveryDate"
+                			required="true"
+                          value="#{commissionerBallotHome.commissionerBulletin.deliveryDate}" datePattern="dd/MM/yyyy">
+                </rich:calendar>
+            </s:decorate>
+                                    
+            <s:decorate id="observationField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Observación:</ui:define>
+                <h:inputTextarea id="observation"
+                           size="15"
+                          value="#{commissionerBallotHome.commissionerBulletin.observation}">
+                </h:inputTextarea>
+            </s:decorate>
+            
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos
+            </div>
+
+			</h:panelGrid>
+
+		</rich:panel>
+
+			<div class="actionButtons">
+				<a:commandButton action="#{commissionerBallotHome.saveCommissionerBulletin()}"
+					value="#{messages['common.accept']}" reRender="bulletinsTablePanel"
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'bulletinEditPanel\');' : ''}" 
+					/>
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}" reRender="bulletinsTablePanel"
+					oncomplete="Richfaces.hideModalPanel('bulletinEditPanel');"
+					action="#{commissionerBallotHome.findBulletinsByCommissioner()}"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

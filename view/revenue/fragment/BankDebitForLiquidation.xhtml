@@ -70,67 +70,38 @@
 					<rich:dataTable height="380px" width="100%" 
 						id="_bankDebitTable"  var="_var"
 						value="#{bankDebitHome.previousForLiquidations}">
-												
-						<rich:column sortBy="#{_var.creationDate}" styleClass="action" style="align:left; background-color: lightgreen;" width="120px" rendered="#{_var.isSelected}" >
-							<f:facet name="header">Fecha de Creación</f:facet>
-							<h:outputText value="#{_var.creationDate}"  >
-								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
-							</h:outputText>
-						</rich:column>	
-						<rich:column sortBy="#{_var.creationDate}" styleClass="action" style="align:left;" width="120px" rendered="#{!_var.isSelected}" >
-							<f:facet name="header">Fecha de Creación</f:facet>
-							<h:outputText value="#{_var.creationDate}" >
-								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
-							</h:outputText>
+						
+						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="120px" >
+							<f:facet name="header">Nro.</f:facet>
+							<h:outputText value="#{_var.bankCount}"  />
 						</rich:column>
-
-						<rich:column sortBy="#{_var.residentName}" styleClass="action" style="align:left; background-color: lightgreen;" width="300px" rendered="#{_var.isSelected}">
-							<f:facet name="header">Contribuyente</f:facet>
-							<h:outputText value="#{_var.residentName}" />
-						</rich:column>
-						<rich:column sortBy="#{_var.residentName}" styleClass="action" style="align:left;" width="300px" rendered="#{!_var.isSelected}">
-							<f:facet name="header">Contribuyente</f:facet>
-							<h:outputText value="#{_var.residentName}" />
-						</rich:column>
-
-
-						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:center; background-color: lightgreen;" width="120px" rendered="#{_var.isSelected}">
-							<f:facet name="header">Identificación</f:facet>
-							<h:outputText value="#{_var.residentIdentification}" />
-						</rich:column>
-						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:center;" width="120px" rendered="#{!_var.isSelected}">
+						
+						<rich:column styleClass="action" style="align:center; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="120px" >
 							<f:facet name="header">Identificación</f:facet>
 							<h:outputText value="#{_var.residentIdentification}" />
 						</rich:column>
 
-						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:center; background-color: lightgreen;" rendered="#{_var.isSelected}">
+						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="300px" >
+							<f:facet name="header">Contribuyente</f:facet>
+							<h:outputText value="#{_var.residentName}" />
+						</rich:column>
+						
+						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="300px" >
+							<f:facet name="header">Titular</f:facet>
+							<h:outputText value="#{_var.accountHolder}" />
+						</rich:column>
+
+						<rich:column styleClass="action" style="align:center; background-color: #{_var.isSelected ? 'lightgreen' : ''}" >
 							<f:facet name="header">Servicio</f:facet>
 							<h:outputText value="#{_var.service}" />
 						</rich:column>
-						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:center;" rendered="#{!_var.isSelected}">
-							<f:facet name="header">Servicio</f:facet>
-							<h:outputText value="#{_var.service}" />
-						</rich:column>
-
-						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:center; background-color: lightgreen;" rendered="#{_var.isSelected}">
-							<f:facet name="header">Valor</f:facet>
-							<h:outputText value="#{_var.value}" />
-						</rich:column>
-						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:center;" rendered="#{!_var.isSelected}">
+						
+						<rich:column styleClass="action" style="align:center; background-color: #{_var.isSelected ? 'lightgreen' : ''}" >
 							<f:facet name="header">Valor</f:facet>
 							<h:outputText value="#{_var.value}" />
 						</rich:column>
 
-						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:left; background-color: lightgreen;" width="175px" rendered="#{_var.isSelected}">
-							<f:facet name="header">Observación</f:facet>
-							<h:outputText value="#{_var.observation}" />
-						</rich:column>
-						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:left;" width="175px" rendered="#{!_var.isSelected}">
-							<f:facet name="header">Observación</f:facet>
-							<h:outputText value="#{_var.observation}" />
-						</rich:column>
-
-						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:center; background-color: lightgreen;" rendered="#{_var.isSelected}">
+						<rich:column styleClass="action" style="align:center; background-color: #{_var.isSelected ? 'lightgreen' : ''}" >
 							<f:facet name="header">Seleccionar</f:facet>
 							<h:selectBooleanCheckbox 
 								value="#{_var.isSelected}" disabled="#{_var.hasProblem}">
@@ -139,15 +110,7 @@
 									action="#{bankDebitHome.selectedCheckBox(_var)}"/>
 							</h:selectBooleanCheckbox>
 						</rich:column>
-						<rich:column sortBy="#{_var.residentIdentification}" styleClass="action" style="align:center;" rendered="#{!_var.isSelected}">
-							<f:facet name="header">Seleccionar</f:facet>
-							<h:selectBooleanCheckbox 
-								value="#{_var.isSelected}" disabled="#{_var.hasProblem}">
-								<a:support event="onchange" reRender="panelDebits, confirmLiquidation, _bankDebitTable"
-									ajaxSingle="true" 
-									action="#{bankDebitHome.selectedCheckBox(_var)}"/>
-							</h:selectBooleanCheckbox>
-						</rich:column>
+
 					</rich:dataTable>
 				</a:outputPanel>
 				</a:region>

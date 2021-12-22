@@ -35,7 +35,10 @@ public class BankDebitReportDTO {
 	
 	@NativeQueryResultColumn(index = 8)
 	private Long residentId;
-
+	
+	@NativeQueryResultColumn(index = 9)
+	private int bankCount;
+	
 	public String getIdentificacion() {
 		return identificacion;
 	}
@@ -106,6 +109,14 @@ public class BankDebitReportDTO {
 
 	public void setResidentId(Long residentId) {
 		this.residentId = residentId;
+	}
+
+	public int getBankCount() {
+		return bankCount;
+	}
+
+	public void setBankCount(int bankCount) {
+		this.bankCount = bankCount;
 	}
 
 }

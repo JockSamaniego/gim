@@ -1,0 +1,98 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="nullifiedBulletinPanel" width="300" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Anular Libretin"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink4" />
+				<rich:componentControl for="nullifiedBulletinPanel" attachTo="hidelink4"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="blockLimit4" styleClass="edit">
+
+			<rich:panel>
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+
+				<div style="clear: both">
+					#{messages['local.name']}
+					<rich:separator height="1" />
+				</div>
+
+				<h:panelGrid columns="1" width="100%">
+				
+				<s:decorate id="responsibleField" template="../../layout/edit.xhtml">
+	                <ui:define name="label">Usuario Responsable:</ui:define>
+	                <h:inputText id="responsible"
+	                           size="40"
+	                           required="true"
+	                           readonly="true"
+	                          value="#{commissionerBallotHome.bulletinToDelete.responsibleNullified_user}">
+	                </h:inputText>
+            	</s:decorate>
+					
+			<s:decorate id="nullifiedDateField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Fecha de Anulación:</ui:define>
+                <rich:calendar id="nullifiedDate"
+                			required="true"
+                			readonly="true"
+                          value="#{commissionerBallotHome.bulletinToDelete.nullifiedDate}" datePattern="dd/MM/yyyy">
+                </rich:calendar>
+            </s:decorate>
+            
+            
+            <s:decorate id="nullifiedReasonField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Razón de Anulación:</ui:define>
+                <h:inputTextarea id="nullifiedReason"
+                           size="15"
+                           required="true"
+                           readonly="#{commissionerBallotHome.bulletinToDelete.isNullified}"
+                          value="#{commissionerBallotHome.bulletinToDelete.nullifiedReason}">
+                </h:inputTextarea>
+            </s:decorate>
+            
+                      
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos
+            </div>
+
+			</h:panelGrid>
+
+		</rich:panel>
+
+			<div class="actionButtons">
+				<a:commandButton action="#{commissionerBallotHome.disabledCommissionerBulletin()}"
+					value="#{messages['common.accept']}" reRender="bulletinsTablePanel, nullifiedBulletinPanel"
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'nullifiedBulletinPanel\');' : ''}"
+					rendered="#{!commissionerBallotHome.bulletinToDelete.isNullified or commissionerBallotHome.bulletinToDelete.isNullified == null}"
+					 />
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}" reRender="bulletinsTablePanel"
+					oncomplete="Richfaces.hideModalPanel('nullifiedBulletinPanel');"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

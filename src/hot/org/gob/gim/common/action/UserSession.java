@@ -40,6 +40,7 @@ import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
 
 import ec.gob.gim.common.model.FiscalPeriod;
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.income.model.TillPermission;
 import ec.gob.gim.parking.model.Journal;
@@ -455,5 +456,18 @@ public class UserSession extends EntityController{
 		}		
         
 	}
+	
+	//para filtrar datos por comisaria
+	private ItemCatalog commissionerType;
+
+	public ItemCatalog getCommissionerType() {
+		return commissionerType;
+	}
+
+	public void setCommissionerType(ItemCatalog commissionerType) {
+		this.commissionerType = commissionerType;
+	}
+	
+	
 
 }

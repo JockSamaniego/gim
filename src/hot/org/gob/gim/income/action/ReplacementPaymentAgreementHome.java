@@ -115,7 +115,12 @@ public class ReplacementPaymentAgreementHome extends EntityHome<ReplacementPayme
 			+ "LEFT JOIN FETCH d.municipalBond mb "
 			+ "LEFT JOIN FETCH mb.receipt r " 
 			+ "LEFT JOIN FETCH d.payment p "
-			+ "WHERE mb.paymentAgreement is not null AND mb.id = :municipalBondId "
+			+ "WHERE ";
+			// rfam 2021-08-31 ML-JR-2021-741-M
+			if (this.getInstance().getMunicipalBond().getMunicipalBondStatus().getId().intValue() == 4) {
+				sqlDeposits = sqlDeposits + "mb.paymentAgreement is not null and "; 
+			}
+			sqlDeposits = sqlDeposits + "mb.id = :municipalBondId "
 			+ "AND d.status = 'VALID' AND p.status = 'VALID' ORDER BY d.id ";
 
 			Query qDeposits = this.getEntityManager().createQuery(sqlDeposits);
@@ -136,6 +141,8 @@ public class ReplacementPaymentAgreementHome extends EntityHome<ReplacementPayme
 	public List<Long> loadMunicipalBondStatuses() {
 		List<Long> status = new ArrayList<Long>();
 		status.add(new Long("4"));
+		// rfam 2021-08-31 ML-JR-2021-741-M
+		status.add(new Long("14"));
 		return status;
 	}
 	
@@ -151,7 +158,11 @@ public class ReplacementPaymentAgreementHome extends EntityHome<ReplacementPayme
 		this.getInstance().getMunicipalBond().setReversedResolution(this.getInstance().getDetail());
 		this.getInstance().getMunicipalBond().setReversedDate(new Date());
 		this.getInstance().getMunicipalBond().setReversedTime(new Date());
-		this.getInstance().setPaymentAgreement(this.getInstance().getMunicipalBond().getPaymentAgreement());
+		// rfam 2021-08-31 ML-JR-2021-741-M
+		if (this.getInstance().getMunicipalBond().getMunicipalBondStatus().getId().intValue() == 4) {
+			this.getInstance().setPaymentAgreement(this.getInstance().getMunicipalBond().getPaymentAgreement());	
+		}
+		
 		
 		return super.persist();
 	}

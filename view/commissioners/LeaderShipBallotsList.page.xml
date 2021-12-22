@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
+      
+   <begin-conversation join="true"/>
+   <action execute="#{commissionerBallotHome.setHygieneLeaderShip}"/>
+   <action execute="#{commissionerBallotList.setCommissionerType(commissionerBallotHome.commissionerTypeId())}"/>
+
+   <param name="residentFrom"/>
+   <param name="residentId" value="#{residentHome.residentId}"/>
+   <param name="firstResult" value="#{commissionerBallotList.firstResult}"/>
+   <param name="sort" value="#{commissionerBallotList.orderColumn}"/>
+   <param name="dir" value="#{commissionerBallotList.orderDirection}"/>
+   <param name="logic" value="#{commissionerBallotList.restrictionLogicOperator}"/>
+
+   <param name="from"/>
+   <param name="ballotNumber" value="#{commissionerBallotList.commissionerBallot.ballotNumber}"/>
+   <param name="sanctioningArticle" value="#{commissionerBallotList.commissionerBallot.sanctioningArticle}"/>
+   <param name="inspectorIdentification" value="#{commissionerBallotList.commissionerBallot.inspectorIdentification}"/>
+   <param name="infractorIdentification" value="#{commissionerBallotList.commissionerBallot.infractorIdentification}"/>
+   <param name="inspectorName" value="#{commissionerBallotList.commissionerBallot.inspectorName}"/>
+   <param name="infractorName" value="#{commissionerBallotList.commissionerBallot.infractorName}"/>
+   
+   <param name="dateFrom" value="#{commissionerBallotList.dateFrom}" converterId="org.jboss.seam.ui.DateTimeConverter" /> 
+   <param name="dateUntil" value="#{commissionerBallotList.dateUntil}" converterId="org.jboss.seam.ui.DateTimeConverter" />
+   
+   <param name="dateFrom2" value="#{commissionerBallotList.dateFrom2}" converterId="org.jboss.seam.ui.DateTimeConverter" /> 
+   <param name="dateUntil2" value="#{commissionerBallotList.dateUntil2}" converterId="org.jboss.seam.ui.DateTimeConverter" />
+   
+
+</page>

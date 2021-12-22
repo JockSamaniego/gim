@@ -1,0 +1,112 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="inspectorEditPanel" width="300" height="180">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Crear / Editar Inspector"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelink" />
+				<rich:componentControl for="inspectorEditPanel" attachTo="hidelink"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="blockLimit" styleClass="edit">
+
+			<rich:panel>
+				<rich:panel style="height:50px; width:100%; overflow:auto;">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+
+				<div style="clear: both">
+					#{messages['local.name']}
+					<rich:separator height="1" />
+				</div>
+
+				<h:panelGrid columns="1" width="100%">
+				
+            
+            <s:decorate id="inspectorIdentificationField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Cédula del Inspector</ui:define>
+                <h:inputText id="inspectorIdentification"
+                              size="15"
+                              maxlength="15"
+                              required="true"
+                              value="#{commissionerBallotHome.commissionerInspector.numberIdentification}"
+                              ajaxSingle="true" >
+                              <f:validator validatorId="identificationNumberBallotValidator"/>
+                              <a:support event="onblur" action="#{commissionerBallotHome.findInspectorName()}" reRender="inspectorNameField, inspectorIdentificationField" ajaxSingle="true"  />            
+                </h:inputText>              
+            </s:decorate>
+            
+            <s:decorate id="inspectorNameField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Nombre del Inspector</ui:define>
+                <h:inputText id="inspectorName"
+                              size="50"
+                              required="true"
+                              maxlength="50"
+                              value="#{commissionerBallotHome.commissionerInspector.name}"/>
+            </s:decorate>
+            
+            <s:decorate id="phoneNumberField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Teléfono</ui:define>
+                <h:inputText id="phoneNumber"
+                              size="15"
+                              maxlength="20"
+                              value="#{commissionerBallotHome.commissionerInspector.phoneNumber}"/>
+            </s:decorate>
+            
+            <s:decorate id="emailField" template="../../layout/edit.xhtml">
+                <ui:define name="label">Correo Institucional</ui:define>
+                <h:inputText id="email"
+                              size="50"
+                              maxlength="50"
+                              value="#{commissionerBallotHome.commissionerInspector.email}"/>
+            </s:decorate>
+                                    
+            <s:decorate id="inspectorActiveField" template="../../layout/edit.xhtml">
+                <ui:define name="label">#{messages['agent.isActive']}</ui:define>
+                <h:selectBooleanCheckbox id="inspectorActive"
+                value="#{commissionerBallotHome.commissionerInspector.isActive}" />
+            </s:decorate>
+            
+            <div style="clear:both">
+                <span class="required">*</span>
+                campos requeridos
+            </div>
+
+			</h:panelGrid>
+
+		</rich:panel>
+
+			<div class="actionButtons">
+				<a:commandButton action="#{commissionerBallotHome.saveCommissionerInspector()}"
+					value="#{messages['common.accept']}" reRender="inspectorsTablePanel"
+					oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'inspectorEditPanel\');' : ''}" 
+					 />
+
+				<a:commandButton ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('inspectorEditPanel');"
+					reRender="inspectorsTablePanel"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

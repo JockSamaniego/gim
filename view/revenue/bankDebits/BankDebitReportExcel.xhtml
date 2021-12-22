@@ -4,6 +4,12 @@
 	<e:worksheet value="#{bankDebitHome.dataReporte}" var="_var">
 		<e:column>
 			<f:facet name="header">
+				<e:cell value="Nro." />
+			</f:facet>
+			<e:cell value="#{_var.bankCount}" />
+		</e:column>
+		<e:column>
+			<f:facet name="header">
 				<e:cell value="Identificacion" />
 			</f:facet>
 			<e:cell value="#{_var.identificacion}" />

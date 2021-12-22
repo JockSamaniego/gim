@@ -1,0 +1,270 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	title="Boletas para Emisión" subject="report" type="pdf"
+	size="A5" keywords="mykeyword" author="gadml_ra" creator="gadml_ra"
+	orientation="portrait" margins="30 30 30 30">
+
+	
+	<a4j:repeat id="commissionerBallotForPrint"
+		value="#{commissionerBallotHome.ballotsForReport}" var="_var">
+
+		
+	<p:font size="9" name="Draft" style="NORMAL" >
+					<p:paragraph spacingAfter="10"/>
+					<p:table columns="5" widthPercentage="100" headerRows="0" widths="1.5 0.3 7.5 0.3 2.4" >
+						<p:cell borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:image value="#{gim.institution.logo}" alignment="center"
+								widht="1" height="1">
+								<s:transformImageSize height="100" maintainRatio="true" />
+							</p:image>
+						</p:cell>
+						<p:cell borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" />
+						<p:cell horizontalAlignment="center" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="center" verticalAlignment="center" spacingAfter="5" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_HYGIENE')}">
+								<p:font size="14"  style="bold">
+									<p:text value="COMISARIA MUNICIPAL DE HIGIENE Y ABASTO" /> 
+								</p:font>
+							</p:paragraph>
+							<p:paragraph alignment="center" spacingAfter="5" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('LEADERSHIP_HYGIENE')}">
+								<p:font size="14"  style="bold">
+									<p:text value="JEFATURA DE HIGIENE MUNICIPAL" /> 
+								</p:font>
+							</p:paragraph>
+							<p:paragraph horizontalAlignment="center" verticalAlignment="center" spacingAfter="5" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_TRANSIT')}">
+								<p:font size="14"  style="bold">
+									<p:text value="COMISARIA MUNICIPAL DE TRÁNSITO" /> 
+								</p:font>
+							</p:paragraph>
+							<p:paragraph horizontalAlignment="center" verticalAlignment="center" spacingAfter="5" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_ORNAMENT')}">
+								<p:font size="14"  style="bold">
+									<p:text value="COMISARIA MUNICIPAL DE ORNATO" /> 
+								</p:font>
+							</p:paragraph>
+							<p:paragraph horizontalAlignment="center" verticalAlignment="center" spacingAfter="5" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_AMBIENT')}">
+								<p:font size="14"  style="bold">
+									<p:text value="COMISARIA MUNICIPAL DE AMBIENTE Y MINERÍA" /> 
+								</p:font>
+							</p:paragraph>
+						</p:cell>
+						<p:cell borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" />
+						<p:cell horizontalAlignment="center" verticalAlignment="middle">
+							<p:paragraph horizontalAlignment="right" spacingAfter="5">
+								<p:font size="14"  style="bold">
+									<p:text value="#{_var.ballotEmissionOrden}" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+						<p:cell borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" />
+						<p:cell borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" />
+						<p:cell borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" />
+						<p:cell borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" />	
+						<p:cell borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" horizontalAlignment="center">
+							<p:paragraph alignment="right" spacingAfter="5">
+								<p:font size="12"  style="normal">
+									<p:text value="#{currentDatetime}">
+										<f:convertDateTime
+											pattern="#{messages['common.datePatternWithDay']}" />
+									</p:text>
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+					</p:table>
+
+
+
+
+							<p:paragraph spacingAfter="5" spacingBefore="10">
+								<p:font size="12"  style="normal">
+									<p:text value="#{commissionerBallotHome.revenueDelegate.name}" /> 
+								</p:font>
+							</p:paragraph>
+
+							<p:paragraph spacingAfter="5" spacingBefore="5">
+								<p:font size="13"  style="bold">
+									<p:text value="#{commissionerBallotHome.revenueCharge.name}" /> 
+								</p:font>
+							</p:paragraph>
+	
+
+							<p:paragraph spacingAfter="5" spacingBefore="5">
+								<p:font size="12"  style="bold">
+									<p:text value="En su despacho.-" /> 
+								</p:font>
+							</p:paragraph>
+				
+
+							<p:paragraph spacingAfter="20" spacingBefore="20">
+								<p:font size="12"  style="bold">
+									<p:text value="Mucho agradeceré a usted, se ordene la emisión de un TÍTULO DE CRÉDITO." /> 
+								</p:font>
+							</p:paragraph>
+
+
+
+					<p:table columns="2" widthPercentage="100" headerRows="0" widths="4 8" >
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="bold">
+									<p:text value="CONTRIBUYENTE:" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="NORMAL">
+									<p:text value="#{_var.infractorName}" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="bold">
+									<p:text value="RUC/C.C.:" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="NORMAL">
+									<p:text value="#{_var.infractorIdentification}" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_TRANSIT')}">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="bold">
+									<p:text value="PLACA:" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_TRANSIT')}">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="NORMAL">
+									<p:text value="#{_var.plate}" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="bold">
+									<p:text value="POR LA CANTIDAD DE:" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="NORMAL">
+									<p:text value="$ #{_var.sanctionValue}" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="bold">
+									<p:text value="POR CONCEPTO DE:" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="NORMAL">
+									<p:text value="#{_var.sanctioningArticle.detail}" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="bold">
+									<p:text value="LUGAR DE LA INFRACCIÓN:" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="NORMAL">
+									<p:text value="#{_var.infractionPlace}" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="bold">
+									<p:text value="ORDENANZA:" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+						<p:cell horizontalAlignment="left" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+							<p:paragraph horizontalAlignment="left" spacingAfter="5">
+								<p:font size="12"  style="NORMAL">
+									<p:text value="#{_var.sanctioningArticle.article} #{_var.sanctioningArticle.numeral} - #{_var.sanctioningArticle.ordinance}" />
+								</p:font> 
+							</p:paragraph>
+						</p:cell>
+					</p:table>
+	
+
+		<p:paragraph spacingAfter="40" />
+
+		<p:table columns="2" widthPercentage="100" headerRows="0" widths="11 1" >
+			<p:cell horizontalAlignment="right" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+				<p:paragraph spacingAfter="5" spacingBefore="5" horizontalAlignment="right">
+					<p:font size="14"  style="bold">
+						<p:text value="NOTIFICACIÓN #{_var.ballotNumber} EXPEDIENTE #{_var.fileNumber}" /> 
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" />
+		</p:table>
+
+		<p:paragraph spacingAfter="20" />
+
+		<p:table columns="2" widthPercentage="100" headerRows="0" widths="11 1" >
+			<p:cell horizontalAlignment="right" verticalAlignment="middle" borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0">
+				<p:paragraph spacingAfter="5" spacingBefore="5" horizontalAlignment="right" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_HYGIENE')}">
+					<p:font size="14"  style="bold">
+						<p:text value="COMISARIA MUNICIPAL DE HIGIENE Y ABASTO" /> 
+					</p:font>
+				</p:paragraph>
+				<p:paragraph spacingAfter="5" spacingBefore="5" horizontalAlignment="right" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('LEADERSHIP_HYGIENE')}">
+					<p:font size="14"  style="bold">
+						<p:text value="JEFATURA DE HIGIENE MUNICIPAL" /> 
+					</p:font>
+				</p:paragraph>
+				<p:paragraph spacingAfter="5" spacingBefore="5" horizontalAlignment="right" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_TRANSIT')}">
+					<p:font size="14"  style="bold">
+						<p:text value="COMISARIA MUNICIPAL DE TRÁNSITO" /> 
+					</p:font>
+				</p:paragraph>
+				<p:paragraph spacingAfter="5" spacingBefore="5" horizontalAlignment="right" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_ORNAMENT')}">
+					<p:font size="14"  style="bold">
+						<p:text value="COMISARIA MUNICIPAL DE ORNATO" /> 
+					</p:font>
+				</p:paragraph>
+				<p:paragraph spacingAfter="5" spacingBefore="5" horizontalAlignment="right" rendered="#{commissionerBallotHome.commissionerTypeCode().equals('COMMISSIONER_AMBIENT')}">
+					<p:font size="14"  style="bold">
+						<p:text value="COMISARIA MUNICIPAL DE AMBIENTE Y MINERÍA" /> 
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			<p:cell borderWidthTop="0" borderWidthBottom="0" borderWidthLeft="0" borderWidthRight="0" />
+		</p:table>
+	
+	</p:font>
+	<p:newPage />
+	</a4j:repeat>
+	
+</p:document>

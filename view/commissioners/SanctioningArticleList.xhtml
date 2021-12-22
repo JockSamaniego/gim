@@ -1,0 +1,177 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml"
+    xmlns:a="http://richfaces.org/a4j">
+
+<ui:define name="body">
+	<ui:include src="../commissioners/fragment/ArticleEditPanel.xhtml" />
+    <h:form id="articlesBallotsSearch" styleClass="edit">
+    <h:outputText styleClass="formTitle" value="Administración de Artículos Sancionadores" />
+
+    
+
+    <rich:panel id="articlesTablePanel">
+        <f:facet name="header">
+            <h:panelGrid columns="4" columnClasses="headerTitle,">
+                <h:outputText
+                    value="Artículos encontrados (#{empty commissionerBallotHome.sanctioningArticles ? 0 : (commissionerBallotHome.sanctioningArticles.size)})" />
+                   <a:commandButton id="createArticle"
+									action="#{commissionerBallotHome.createSanctioningArticle()}"
+									reRender="articleEditPanel" ajaxSingle="true"
+									eventsQueue="gimEventsQueue"
+									oncomplete="Richfaces.showModalPanel('articleEditPanel',{width:600, height:500})"
+									value="Crear Artículo" />
+                   
+            </h:panelGrid>      
+        </f:facet>
+    <div class="results" id="articlesList">
+
+    <h:outputText value="No se han encontrado resultados"
+               rendered="#{empty commissionerBallotHome.sanctioningArticles}"/>
+
+    <rich:dataTable id="articlesListTable"
+                var="_article"
+              value="#{commissionerBallotHome.sanctioningArticles}"
+           rendered="#{not empty commissionerBallotHome.sanctioningArticles}">
+        <rich:column sortBy="#{_article.ordinance}" styleClass="center"
+                width="10%"
+				filterBy="#{_article.ordinance}"
+				filterEvent="onkeyup">
+				<f:facet name="header">
+                             Ordenanza
+                         </f:facet>
+				<h:outputText value="#{_article.ordinance}" />
+		</rich:column> 
+		<rich:column sortBy="#{_article.article}" styleClass="center"
+                width="10%"
+				filterBy="#{_article.article}"
+				filterEvent="onkeyup">
+				<f:facet name="header">
+                             Artículo
+                         </f:facet>
+				<h:outputText value="#{_article.article}" />
+		</rich:column>  
+		<rich:column sortBy="#{_article.numeral}" styleClass="center"
+                width="10%"
+				filterBy="#{_article.numeral}"
+				filterEvent="onkeyup">
+				<f:facet name="header">
+                             Numeral
+                         </f:facet>
+				<h:outputText value="#{_article.numeral}" />
+		</rich:column>   
+		<rich:column sortBy="#{_article.detail}" styleClass="left"
+                width="35%"
+				filterBy="#{_article.detail}"
+				filterEvent="onkeyup">
+				<f:facet name="header">
+                             Detalle
+                         </f:facet>
+				<h:outputText value="#{_article.detail}" />
+		</rich:column> 
+        <rich:column sortBy="#{_article.sanction}" styleClass="left"
+                width="25%"
+                filterBy="#{_article.sanction}"
+                filterEvent="onkeyup">
+                <f:facet name="header">
+                             Detalle
+                         </f:facet>
+                <h:outputText value="#{_article.sanction}" />
+        </rich:column>
+        
+        <rich:column styleClass="action" width="10%">
+            <f:facet name="header">#{messages['common.action']}</f:facet>
+
+            <a:commandButton id="updateArticle"
+                                    action="#{commissionerBallotHome.updateSanctioningArticle(_article)}"
+                                    reRender="articleEditPanel" ajaxSingle="true"
+                                    eventsQueue="gimEventsQueue"
+                                    oncomplete="Richfaces.showModalPanel('articleEditPanel',{width:600, height:500})"
+                                    value="Editar" />
+            <a:commandButton id="deleteArticle"
+								action="#{commissionerBallotHome.prepareToDeleteSanctioningArticle(_article)}"
+								value="Eliminar" ajaxSingle="true"
+								oncomplete="Richfaces.showModalPanel('confirmPanelDeleted',{width:350, height:250})"
+								reRender="confirmPanelDeleted, articlesTablePanel" />
+        </rich:column>
+        
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+    <s:button   id="cancelEdit1"
+                value="#{messages['common.quit']}"
+                propagation="end"
+                view="/commissioners/HygieneBallotsList.xhtml"
+                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_HYGIENE'}" />
+    <s:button   id="cancelEdit2"
+                value="#{messages['common.quit']}"
+                propagation="end"
+                view="/commissioners/TransitBallotsList.xhtml"
+                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_TRANSIT'}" />
+    <s:button   id="cancelEdit3"
+                value="#{messages['common.quit']}"
+                propagation="end"
+                view="/commissioners/OrnamentBallotsList.xhtml"
+                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_ORNAMENT'}" />
+    <s:button   id="cancelEdit4"
+                value="#{messages['common.quit']}"
+                propagation="end"
+                view="/commissioners/AmbientBallotsList.xhtml"
+                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'COMMISSIONER_AMBIENT'}" />       
+    <s:button   id="cancelEdit5"
+		                value="#{messages['common.quit']}"
+		                propagation="end"
+		                view="/commissioners/LeaderShipBallotsList.xhtml"
+		                rendered="#{commissionerBallotHome.commissionerTypeCode() eq 'LEADERSHIP_HYGIENE'}" />
+ 
+</h:form>
+
+		<rich:modalPanel id="confirmPanelDeleted" width="350" height="300">
+			<f:facet name="header">Eliminar Artículo Sancionador</f:facet>
+			<h:form id="confirmPanelForm">
+				<h:panelGrid>
+					<s:decorate id="articleForm"
+						template="../layout/display.xhtml">
+						<ui:define name="label">Artículo:</ui:define>
+						<h:inputText id="article"
+							value="#{commissionerBallotHome.sanctionToDelete.article} - #{commissionerBallotHome.sanctionToDelete.numeral}"
+							size="20" readonly="true" />
+					</s:decorate>
+					
+					<s:decorate id="articleDetailForm"
+						template="../layout/display.xhtml">
+						<ui:define name="label">Detalle:</ui:define>
+						<h:inputTextarea id="articleDetail"
+							value="#{commissionerBallotHome.sanctionToDelete.detail}"
+							readonly="true" 
+							size="20" />
+					</s:decorate>
+				
+					<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="disabledButton"
+								action="#{commissionerBallotHome.deleteSanctioningArticle()}"
+								value="Eliminar" ajaxSingle="true"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelDeleted\');' : ''}"
+								reRender="confirmPanelDeleted, articlesTablePanel" />
+
+							<a:commandButton id="exitButton"
+								value="Cancelar" ajaxSingle="true"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'confirmPanelDeleted\');' : ''}"
+								reRender="confirmPanelDeleted, articlesTablePanel" />
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
+
+</ui:define>
+
+</ui:composition>
