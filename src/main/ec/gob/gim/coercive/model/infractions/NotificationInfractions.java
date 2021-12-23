@@ -143,14 +143,14 @@ public class NotificationInfractions {
 	public void add(Datainfraction infraction) {
 		if (!infractions.contains(infraction) && infraction != null) {
 			infractions.add(infraction);
-			//infraction.setNotification(this);
+			infraction.setNotification(this);
 		}
 	}
 
 	public void remove(Datainfraction infraction) {
 		if (infractions.contains(infraction)) {
 			infractions.remove(infraction);
-			//infraction.setNotification(null);
+			infraction.setNotification(null);
 		}
 	}
 

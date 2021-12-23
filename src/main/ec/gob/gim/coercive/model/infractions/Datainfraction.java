@@ -29,6 +29,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -167,8 +168,10 @@ public class Datainfraction {
 	@JoinColumn(name="estado_id")
 	private ItemCatalog state;
 	
-	@Column(name="notificacion_id")
-	private Long notificationid;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "notificacion_id")
+	private NotificationInfractions notification;
+
  
 	public String getTypeId() {
 		return typeId;
@@ -458,17 +461,25 @@ public class Datainfraction {
 		this.state = state;
 	}
 
-	public Long getNotificationid() {
-		return notificationid;
+	public Long getId() {
+		return id;
 	}
 
-	public void setNotificationid(Long notificationid) {
-		this.notificationid = notificationid;
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public NotificationInfractions getNotification() {
+		return notification;
+	}
+
+	public void setNotification(NotificationInfractions notification) {
+		this.notification = notification;
 	}
 
 	@Override
 	public String toString() {
-		return "Datainfraction [typeId=" + typeId + ", identification=" + identification + ", name="
+		return "Datainfraction [id=" + id + ", typeId=" + typeId + ", identification=" + identification + ", name="
 				+ name + ", licensePlate=" + licensePlate + ", debtType=" + debtType + ", ticket=" + ticket
 				+ ", stateConsortium=" + stateConsortium + ", emision=" + emision + ", register=" + register
 				+ ", expiration=" + expiration + ", article=" + article + ", articleDescription=" + articleDescription
@@ -480,9 +491,6 @@ public class Datainfraction {
 				+ ", observation=" + observation + ", generalIntensity=" + generalIntensity + ", direction=" + direction
 				+ ", locability=" + locability + ", locabilityProvince=" + locabilityProvince + ", toMigrate="
 				+ toMigrate + ", userid=" + userid + ", migrationDate=" + migrationDate + ", state=" + state
-				+ ", notificationid=" + notificationid + "]";
-	} 
-	
-	
-	
+				+ ", notification=" + notification + "]";
+	}
 }
