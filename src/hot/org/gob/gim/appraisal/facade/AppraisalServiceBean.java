@@ -96,7 +96,7 @@ public class AppraisalServiceBean implements AppraisalService {
 
 	}
 
-	public List<AffectationFactorDTO> getAffectationFactors() {
+	public List<AffectationFactorDTO> getAffectationFactors(AppraisalPeriod appraisalPeriod) {
 		Query query = entityManager
 				.createNativeQuery("select 	aff.id as affectationfactor_id, "
 						+ "aff.category as category, "
@@ -107,7 +107,10 @@ public class AppraisalServiceBean implements AppraisalService {
 						+ "inner join appraisalaffectationfactor aaf ON aaf.affectationfactor_id = aff.id "
 						+ "inner join appraisalperiod app ON app.id = aaf.appraisalperiod_id "
 						+ "inner join itemcatalog itm ON itm.id = aff.type_itm_id "
-						+ "where 1 = 1 ");
+						+ "where 1 = 1 "
+						+ "AND app.id =: periodId");
+		
+		query.setParameter("periodId", appraisalPeriod.getId());
 
 		List<AffectationFactorDTO> retorno = NativeQueryResultsMapper.map(
 				query.getResultList(), AffectationFactorDTO.class);
@@ -363,7 +366,7 @@ public class AppraisalServiceBean implements AppraisalService {
 		/*
 		 * Consultar factores de correccion bienio 2020-2021
 		 */
-		affectationFactors = getAffectationFactors();
+		affectationFactors = getAffectationFactors(appraisalPeriod);
 
 		if (systemParameterService == null)
 			systemParameterService = ServiceLocator.getInstance().findResource(
