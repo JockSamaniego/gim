@@ -96,7 +96,7 @@ public class AppraisalServiceBean implements AppraisalService {
 
 	}
 
-	public List<AffectationFactorDTO> getAffectationFactors() {
+	public List<AffectationFactorDTO> getAffectationFactors(AppraisalPeriod appraisalPeriod) {
 		Query query = entityManager
 				.createNativeQuery("select 	aff.id as affectationfactor_id, "
 						+ "aff.category as category, "
@@ -107,7 +107,8 @@ public class AppraisalServiceBean implements AppraisalService {
 						+ "inner join appraisalaffectationfactor aaf ON aaf.affectationfactor_id = aff.id "
 						+ "inner join appraisalperiod app ON app.id = aaf.appraisalperiod_id "
 						+ "inner join itemcatalog itm ON itm.id = aff.type_itm_id "
-						+ "where 1 = 1 ");
+						+ "where app.id = :appId ");
+		query.setParameter("appId", appraisalPeriod.getId());
 
 		List<AffectationFactorDTO> retorno = NativeQueryResultsMapper.map(
 				query.getResultList(), AffectationFactorDTO.class);
@@ -232,8 +233,25 @@ public class AppraisalServiceBean implements AppraisalService {
 
 	public BigDecimal getAppraisalAreaFactor(Property proper) {
 
+		
+		// rfam 2017-12-29 ordenanza bieno 2022-2023
+		if (proper.getArea().compareTo(new BigDecimal(50)) == -1)
+			return new BigDecimal(1.31);
+		else if (proper.getArea().compareTo(new BigDecimal(250)) == -1)
+			return new BigDecimal(1.17);
+		else if (proper.getArea().compareTo(new BigDecimal(500)) == -1)
+			return new BigDecimal(0.92);
+		else if (proper.getArea().compareTo(new BigDecimal(1000)) == -1)
+			return new BigDecimal(0.75);
+		else if (proper.getArea().compareTo(new BigDecimal(2500)) == -1)
+			return new BigDecimal(0.39);
+		else if (proper.getArea().compareTo(new BigDecimal(5000)) == -1)
+			return new BigDecimal(0.38);
+		else
+			return new BigDecimal(0.37);
+				
 		// rfam 2017-12-29 ordenanza bieno 2018-2019
-		if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
+		/* if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
 			return new BigDecimal(1);
 		else if (proper.getArea().compareTo(new BigDecimal(251)) == -1)
 			return new BigDecimal(1);
@@ -246,7 +264,7 @@ public class AppraisalServiceBean implements AppraisalService {
 		else if (proper.getArea().compareTo(new BigDecimal(5001)) == -1)
 			return new BigDecimal(0.75);
 		else
-			return new BigDecimal(0.70);
+			return new BigDecimal(0.70);*/
 
 		/*
 		 * if (proper.getArea().compareTo(new BigDecimal(51)) == -1) return new
@@ -363,7 +381,7 @@ public class AppraisalServiceBean implements AppraisalService {
 		/*
 		 * Consultar factores de correccion bienio 2020-2021
 		 */
-		affectationFactors = getAffectationFactors();
+		affectationFactors = getAffectationFactors(appraisalPeriod);
 
 		if (systemParameterService == null)
 			systemParameterService = ServiceLocator.getInstance().findResource(
