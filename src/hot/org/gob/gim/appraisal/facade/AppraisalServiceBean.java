@@ -256,17 +256,17 @@ public class AppraisalServiceBean implements AppraisalService {
 	public BigDecimal getAppraisalAreaFactor(Property proper) {
 		
 		// bienio 2022-2023
-		if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
+		if (proper.getArea().compareTo(new BigDecimal(50)) <= 0)
 			return new BigDecimal(1.31);
-		else if (proper.getArea().compareTo(new BigDecimal(251)) == -1)
+		else if (proper.getArea().compareTo(new BigDecimal(250)) <= 0)
 			return new BigDecimal(1.17);
-		else if (proper.getArea().compareTo(new BigDecimal(501)) == -1)
+		else if (proper.getArea().compareTo(new BigDecimal(500)) <= 0)
 			return new BigDecimal(0.92);
-		else if (proper.getArea().compareTo(new BigDecimal(1001)) == -1)
+		else if (proper.getArea().compareTo(new BigDecimal(1000)) <= 0)
 			return new BigDecimal(0.75);
-		else if (proper.getArea().compareTo(new BigDecimal(2501)) == -1)
+		else if (proper.getArea().compareTo(new BigDecimal(2500)) <= 0)
 			return new BigDecimal(0.39);
-		else if (proper.getArea().compareTo(new BigDecimal(5001)) == -1)
+		else if (proper.getArea().compareTo(new BigDecimal(5000)) <= 0)
 			return new BigDecimal(0.38);
 		else
 			return new BigDecimal(0.37);
