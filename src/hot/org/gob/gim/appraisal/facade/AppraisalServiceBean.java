@@ -108,7 +108,7 @@ public class AppraisalServiceBean implements AppraisalService {
 						+ "inner join appraisalperiod app ON app.id = aaf.appraisalperiod_id "
 						+ "inner join itemcatalog itm ON itm.id = aff.type_itm_id "
 						+ "where 1 = 1 "
-						+ "AND app.id =: periodId");
+						+ "AND app.id = :periodId");
 		
 		query.setParameter("periodId", appraisalPeriod.getId());
 
