@@ -194,9 +194,11 @@ public class ResidentWithMunicipalBondOutOfDateList extends
 		setGroupBy("resident.id,resident.identificationNumber,resident.name");		
 		setMaxResults(25);
 		Calendar now = Calendar.getInstance();
+		
 		if (this.expirationDate == null) {
 			setExpirationDate(now.getTime());
 		}
+		
 		if (!this.getDaysForOutOfDate().equals(0L)) {
 			now.add(Calendar.DAY_OF_MONTH,(int) (daysForOutOfDate.longValue() * -1L));
 			setExpirationDate(now.getTime());// la fecha menos los n días
