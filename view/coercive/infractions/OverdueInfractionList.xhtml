@@ -32,23 +32,21 @@
 
 						<s:decorate template="../../layout/edit.xhtml">
 							<ui:define name="label">Nombres:</ui:define>
-							<h:inputText id="identification"
+							<h:inputText id="names"
 								value="#{overdueInfractionsList.name}" >
 							</h:inputText>
 						</s:decorate>
 
-
 						<s:decorate template="../../layout/edit.xhtml">
 							<ui:define name="label">Placa:</ui:define>
-							<h:inputText id="identification"
+							<h:inputText id="licensePlate"
 								value="#{overdueInfractionsList.licensePlate}" >
 							</h:inputText>
 						</s:decorate>
 
-
 						<s:decorate template="../../layout/edit.xhtml">
 							<ui:define name="label">Artículo:</ui:define>
-							<h:inputText id="identification"
+							<h:inputText id="article"
 								value="#{overdueInfractionsList.article}" >
 							</h:inputText>
 						</s:decorate>
@@ -90,8 +88,8 @@
 						
 						<s:decorate template="../../layout/edit.xhtml">
 							<ui:define name="label">Nro boleta:</ui:define>
-							<h:inputText id="identification"
-								value="#{overdueInfractionsList.article}" size="10">
+							<h:inputText id="ticket"
+								value="#{overdueInfractionsList.ticket}" size="10">
 							</h:inputText>
 						</s:decorate>
 
@@ -142,11 +140,8 @@
 										ajaxSingle="true"
 										reRender="ResidentWithMunicipalBondOutOfDateListForm" />
 								</h:selectBooleanCheckbox>
-							</f:facet>
-
-							 
+							</f:facet>							
 						</h:column>
-
 
 						<rich:column
 							sortBy="#{_infraction.identification}"
@@ -158,7 +153,6 @@
 							<h:outputText value="#{_infraction.identification}" />
 						</rich:column>
 
-
 						<rich:column
 							sortBy="#{_infraction.name}">
 							<f:facet name="header">
@@ -168,69 +162,21 @@
 								value="#{_infraction.name}" />
 						</rich:column>
 
-						<rich:column
-							sortBy="#{_infraction.licensePlate}"
-							styleClass="right">
+					 	<rich:column sortBy="#{_infraction.totalinfractions}" styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="Placa" />
+								<h:outputText value="Cantidad infracciones" />
 							</f:facet>
-
-							<h:outputText value="#{_infraction.licensePlate}" />
-
+							<h:outputText value="#{_infraction.totalinfractions}" />
 						</rich:column>
+					 
 
-						<rich:column
-							sortBy="#{_infraction.emision}"
-							styleClass="right">
-							<f:facet name="header">
-								<h:outputText value="Fecha emisión" />
-							</f:facet>
-
-							<h:outputText value="#{_infraction.emision}" />
-						</rich:column>
-  
-						<rich:column sortBy="#{_infraction.register}"
-							styleClass="right">
-							<f:facet name="header">
-								<h:outputText value="Registro" />
-							</f:facet>
-							<h:outputText value="#{_infraction.register}" />
-						</rich:column>
-
-						<rich:column sortBy="#{_infraction.expiration}"
-							styleClass="right">
-							<f:facet name="header">
-								<h:outputText value="Vencimiento" />
-							</f:facet>
-							<h:outputText value="#{_infraction.expiration}" />
-						</rich:column>
-
-
-						
-						<rich:column sortBy="#{_infraction.article}"
-							styleClass="right">
-							<f:facet name="header">
-								<h:outputText value="Artículo" />
-							</f:facet>
-							<h:outputText value="#{_infraction.article}" />
-						</rich:column>
-					
-						
-						<rich:column sortBy="#{_infraction.articleDescription}"
-							styleClass="right">
-							<f:facet name="header">
-								<h:outputText value="Descripción" />
-							</f:facet>
-							<h:outputText value="#{_infraction.articleDescription}" />
-						</rich:column>
-					
 						<rich:column sortBy="#{_infraction.value}" styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="Valor" />
 							</f:facet>
 							<h:outputText value="#{_infraction.value}" />
 						</rich:column>
-
+						
 						<rich:column sortBy="#{_infraction.interest}" styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="Interés" />
@@ -238,11 +184,11 @@
 							<h:outputText value="#{_infraction.interest}" />
 						</rich:column>
 
-						<rich:column sortBy="#{_infraction.totalValue}" styleClass="right">
+						<rich:column sortBy="#{_infraction.total}" styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="Total" />
+								<h:outputText value="Total aprox." />
 							</f:facet>
-							<h:outputText value="#{_infraction.totalValue}" />
+							<h:outputText value="#{_infraction.total}" />
 						</rich:column>
 					
 						<rich:column styleClass="action">

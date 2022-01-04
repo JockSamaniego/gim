@@ -14,6 +14,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
+import org.gob.gim.coercive.view.InfractionItem;
 import org.gob.gim.coercive.view.ResidentItem;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
@@ -45,14 +46,15 @@ import ec.gob.gim.revenue.model.MunicipalBondType;
 
 @Name("overdueInfractionsList")
 @Scope(ScopeType.CONVERSATION)
-public class OverdueInfractionsList extends EntityQuery<Datainfraction> {
+public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2904627074665502302L;
 
-	private static final String EJBQL = "select di from Datainfraction di";
+	private static final String EJBQL = "select NEW org.gob.gim.coercive.view.InfractionItem(di.identification, di.name, count(di), sum(di.value), sum(di.interest), sum(di.totalValue)) "+
+										"from Datainfraction di ";
 
 	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
 
@@ -98,7 +100,7 @@ public class OverdueInfractionsList extends EntityQuery<Datainfraction> {
 
 		String subject;
 		if (getGroupBy() != null) {
-			subject = "distinct resident.id";
+			subject = "distinct di.identification";
 		}
 		// to be JPA-compliant, we need to make this query like "select count(u) from
 		// User u"
@@ -121,13 +123,13 @@ public class OverdueInfractionsList extends EntityQuery<Datainfraction> {
 	private static final String[] RESTRICTIONS = { 		
 			"di.identification = #{overdueInfractionsList.identification}",
 			"di.name = #{overdueInfractionsList.name}", 
-			"di.licensePlate = #{overdueInfractionsList.licensePlate}",
+			/*"di.licensePlate = #{overdueInfractionsList.licensePlate}",
 			"di.article = #{overdueInfractionsList.article}",			
 			"di.ticket = #{overdueInfractionsList.ticket}",
 			"di.emision >= #{overdueInfractionsList.emisionFrom} ",
 			"di.emision <= #{overdueInfractionsList.emisionUntil} ", 
 			"di.expiration >= #{overdueInfractionsList.expirationFrom}",
-			"di.expiration <= #{overdueInfractionsList.expirationUntil}",
+			"di.expiration <= #{overdueInfractionsList.expirationUntil}",*/
 	};
 
 	public OverdueInfractionsList() {
@@ -137,8 +139,9 @@ public class OverdueInfractionsList extends EntityQuery<Datainfraction> {
 		// System.out.println(getRestrictionExpressionStrings());
 		// System.out.println("EJB:"+EJBQL);
 		// System.out.println("REstricciones"+RESTRICTIONS);
-		setOrder("di.expiration");
-		// setGroupBy("resident.id,resident.identificationNumber,resident.name");
+		setOrder("sum(di.totalValue) DESC");
+		//setGroupBy("di.resident.id,resident.identificationNumber,resident.name");
+		setGroupBy("di.identification, di.name");
 		setMaxResults(25);
 		Calendar now = Calendar.getInstance();
 
