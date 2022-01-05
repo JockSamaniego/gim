@@ -1,11 +1,8 @@
 package ec.gob.gim.coercive.model.infractions;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,35 +11,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
-import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.common.model.ItemCatalog;
-import ec.gob.gim.common.model.Person;
-import ec.gob.gim.common.model.Resident;
-import ec.gob.gim.revenue.model.Entry;
-import ec.gob.gim.revenue.model.MunicipalBond;
 
-/**
- * Negocio: Notificación de vencimiento de obligación
- * 
- * @author jlgranda
- * @version 1.0
- * @created 23-Nov-2011 11:57:27
- */
 @Audited
 @Entity
 @Table(name = "data_excel", schema = "infracciones")

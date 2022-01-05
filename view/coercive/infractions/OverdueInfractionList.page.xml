@@ -13,4 +13,26 @@
 
    <param name="from"/>  
 
+   <navigation from-action="#{overdueInfractionsListHome.createNotification()}">
+   	 	<end-conversation before-redirect="true"/>
+		<rule if-outcome="sendToPrint">
+			<redirect view-id="/coercive/report/InfractionNotificationReport.xhtml">
+         		<param name="selectedItems" value="#{overdueInfractionsListHome.generatedNotificationIds}"/>
+         		<param name="withCopy" value="#{true}"/>
+         	</redirect>
+		</rule>
+		<rule if-outcome="failed">
+         <end-conversation/>
+         <redirect view-id="/coercive/infractions/OverdueInfractionList.xhtml">
+         </redirect>
+      </rule>
+	</navigation>
+
+   <navigation from-action="#{overdueInfractionsListHome.confirmPrinting}">
+		<rule if-outcome="printed">
+			<end-conversation before-redirect="true"/>
+			<redirect view-id="/coercive/infractions/OverdueInfractionList.xhtml"/>
+		</rule>
+	</navigation>
+
 </page>

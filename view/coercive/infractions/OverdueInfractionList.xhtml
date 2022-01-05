@@ -106,6 +106,7 @@
 							<s:button id="printDepositsBtn"
 								rendered="#{not empty overdueInfractionsList.resultList}"
 								propagation="join"
+								action="#{overdueInfractionsListHome.createNotification()}"
 								value="#{messages['coercive.generateNotificacions']}"
 								onclick="Richfaces.showModalPanel('detailPanel',{width:250, height:150})" />
 						</a4j:region>

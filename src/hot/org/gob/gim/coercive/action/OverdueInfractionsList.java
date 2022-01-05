@@ -15,6 +15,7 @@ import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
 import org.gob.gim.coercive.view.InfractionItem;
+import org.gob.gim.coercive.view.ResidentItem;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -73,6 +74,22 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 			"\\s(group)(\\s)+by\\s", Pattern.CASE_INSENSITIVE);
 	
 	private boolean allResidentsSelected = false;
+	
+	private List<InfractionItem> selectedList;
+	
+	/**
+	 * @return the selectedList
+	 */
+	public List<InfractionItem> getSelectedList() {
+		return selectedList;
+	}
+
+	/**
+	 * @param selectedList the selectedList to set
+	 */
+	public void setSelectedList(List<InfractionItem> selectedList) {
+		this.selectedList = selectedList;
+	}
 
 	@Override
 	protected String getCountEjbql() {
@@ -185,8 +202,6 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	public void cleanSelectedList() {
 		selectedList = new ArrayList<InfractionItem>();
 	}
-
-	private List<InfractionItem> selectedList;
 
 	public void addResidentItem(InfractionItem ri) {
 		if (allResidentsSelected && !ri.isSelected())

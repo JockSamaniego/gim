@@ -2,6 +2,7 @@ package ec.gob.gim.coercive.model.infractions;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -69,6 +70,7 @@ public class NotificationInfractions {
 
 	public NotificationInfractions() {
 		infractions = new ArrayList<Datainfraction>(); 
+		this.creationTimeStamp = Calendar.getInstance().getTime();
 	}
 
 	public Long getId() {
