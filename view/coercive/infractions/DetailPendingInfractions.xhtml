@@ -1,4 +1,5 @@
-	<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:s="http://jboss.com/products/seam/taglib"
@@ -13,7 +14,7 @@
 
 	<ui:define name="body">
 
-		<a:form id="municipalBondSearch" styleClass="edit" >
+		<a:form id="municipalBondSearch" styleClass="edit">
 			<ui:debug id="uiDebug" />
 			<h:outputText styleClass="formTitle" value="" />
 
@@ -52,8 +53,7 @@
 					</rich:panel>
 
 					<rich:dataTable id="municipalBondsTable" var="_infraction"
-						width="100%"
-						value="#{overdueInfractionsList.infractions}"
+						width="100%" value="#{overdueInfractionsList.infractions}"
 						columnClasses="center, center, left, left, center, right, center, left"
 						rows="25"
 						rendered="#{overdueInfractionsList.infractions.size() != 0}">
@@ -69,8 +69,8 @@
 						</f:facet>
 
 						<f:facet name="footer">
-							<g:dataScroller id="scroller1" maxPages="10" for="municipalBondsTable"
-								style="float:right;" />
+							<g:dataScroller id="scroller1" maxPages="10"
+								for="municipalBondsTable" style="float:right;" />
 						</f:facet>
 
 						<rich:column>
@@ -283,7 +283,7 @@
 			 	</h:panelGroup>
 		 	</h:form>
 		</rich:modalPanel>
-			
+
 
 	</ui:define>
 

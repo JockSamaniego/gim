@@ -1,0 +1,75 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	title="#{messages['notifications']}" subject="report" type="pdf"
+	pageSize="A5" margins="15 15 15 15" keywords="mykeyword"
+	creator="loxageek">
+
+	<f:facet name="header">
+		<p:font size="7" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="3" widthPercentage="100" spacingAfter="15"
+						widths="1.5 6 1.5">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:image value="#{gim.institution.logo}" alignment="center"
+								widht="1" height="1"
+								rendered="#{receiptPrintingManager.showShield()}">
+								<s:transformImageSize height="70" maintainRatio="true" />
+							</p:image>
+						</p:cell>
+						<p:cell>
+							<p:font size="8" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+							</p:font>
+
+							<p:font size="7" style="bold">
+								<p:paragraph alignment="center">#{messages['DIRECCION FINANCIERA']}</p:paragraph>
+							</p:font>
+						</p:cell>
+						<p:cell>
+							<p:paragraph alignment="right" spacingAfter="10"
+								rendered="#{receiptPrintingManager.showShield()}">
+								<p:font size="6" name="HELVETICA">
+									<p:text value="#{messages['Loja']}," />
+									<p:text value="#{currentDatetime}">
+										<f:convertDateTime
+											pattern="#{messages['common.dateFullTimePattern']}" />
+									</p:text>
+								</p:font>
+							</p:paragraph>
+
+						</p:cell>						
+
+						<p:cell>
+							<p:paragraph alignment="center" spacingAfter="2">
+								<p:html value="#{notificationReport.notificationType.name}"></p:html>
+							</p:paragraph>
+						</p:cell>
+
+
+					</p:table>
+				</p:paragraph>
+			</p:header>
+			<p:font size="6">
+				<p:footer borderWidthBottom="0" borderWidthTop="0.3"
+					alignment="right">
+					<p:paragraph>#{messages['receipt.printingResponsible']}: #{userSession.person.name} (#{userSession.user.name})</p:paragraph>
+				</p:footer>
+			</p:font>
+		</p:font>
+	</f:facet>
+
+	
+	
+</p:document>
