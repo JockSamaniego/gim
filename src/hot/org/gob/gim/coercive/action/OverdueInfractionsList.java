@@ -67,7 +67,13 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private Date expirationUntil;
 	private String ticket;
 	private String article;
-
+	
+	//
+	private String identificationNumber;
+	private Boolean isFirstTime = Boolean.TRUE;
+	private Boolean detailFromNotification = Boolean.FALSE;
+	private BigDecimal total = BigDecimal.ZERO;
+	
 	private static final Pattern SUBJECT_PATTERN = Pattern.compile(
 			"^select\\s+(\\w+(?:\\s*\\.\\s*\\w+)*?)(?:\\s*,\\s*(\\w+(?:\\s*\\.\\s*\\w+)*?))*?\\s+from",
 			Pattern.CASE_INSENSITIVE);
@@ -234,15 +240,9 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		this.entry = entry;
 	}
 
-	private List<MunicipalBond> municipalBonds;
+	private List<Datainfraction> infractions;
 
-	public List<MunicipalBond> getMunicipalBonds() {
-		return municipalBonds;
-	}
-
-	public void setMunicipalBonds(List<MunicipalBond> municipalBonds) {
-		this.municipalBonds = municipalBonds;
-	}
+	 
 
 	private Long residentId;
 
@@ -264,9 +264,6 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		this.residentId = residentId;
 	}
 
-	private Boolean isFirstTime = Boolean.TRUE;
-
-	private Boolean detailFromNotification = Boolean.FALSE;
 
 	public Boolean getDetailFromNotification() {
 		return detailFromNotification;
@@ -277,17 +274,38 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	}
 
 	/**
-	 * Recupera todos los municipalBonds pendientes por contribuyente y/o por rubro
+	 * Recupera todos las infracciones x identificacion 
 	 */
-	public void loadPendingBonds() {
+	@SuppressWarnings("unchecked")
+	public void loadPendingInfractions() {
 		if (!isFirstTime)
 			return;
 		isFirstTime = Boolean.FALSE;
 
 		 
+		if(!detailFromNotification && identificationNumber != null){		
+			Query query = getEntityManager().createQuery("Select di from Datainfraction di where di.identification=:identificationNumber");					
+			query.setParameter("identificationNumber", identificationNumber);
+		 
+			infractions = query.getResultList();
+			
+			totalPending();
+		}
+	}
+	
+	
+	private void totalPending(){
+		total = BigDecimal.ZERO;
+		if(infractions == null) return;
+		 
+		for(Datainfraction infraction :infractions){
+			// TO DO verificar a futuro los estados
+			//if(mb.getMunicipalBondStatus().equals(pending) || mb.getMunicipalBondStatus().equals(agreement)){
+				total = total.add(infraction.getTotalValue());
+			//}
+		}
 	}
 
-	private String identificationNumber;
 
 	public String getIdentificationNumber() {
 		return identificationNumber;
@@ -432,8 +450,8 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 
 	public String loadBondsForPrintReport(Long notificationId) {
 		Notification not = getEntityManager().find(Notification.class, notificationId);
-		this.setMunicipalBonds(not.getMunicipalBonds());
-		this.loadPendingBonds();
+		//this.setMunicipalBonds(not.getMunicipalBonds());
+		this.loadPendingInfractions();
 		this.printAll();
 		return "/income/report/CreditTitleForNotification.xhtml";
 	}
@@ -509,4 +527,23 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	public void setArticle(String article) {
 		this.article = article;
 	}
+
+	public List<Datainfraction> getInfractions() {
+		return infractions;
+	}
+
+	public void setInfractions(List<Datainfraction> infractions) {
+		this.infractions = infractions;
+	}
+
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}
+	 
+	
+	
 }

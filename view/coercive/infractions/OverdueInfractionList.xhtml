@@ -5,6 +5,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
 	template="../../layout/template.xhtml">
@@ -189,11 +190,19 @@
 								<h:outputText value="Total aprox." />
 							</f:facet>
 							<h:outputText value="#{_infraction.total}" />
-						</rich:column>
-					
+						</rich:column>					
+						
 						<rich:column styleClass="action">
-							<f:facet name="header">#{messages['common.action']}</f:facet>							
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<s:button view="/coercive/infractions/DetailPendingInfractions.xhtml"
+								value="#{messages['common.detail']}"
+								propagation="join" id="infractionsListButton">
+								<f:param name="identificationNumber" value="#{_infraction.identification}"/>
+								<f:param name="from" value="/coercive/infractions/OverdueInfractionList.xhtml"/>
+								
+							</s:button>
 						</rich:column>
+						
 					</rich:dataTable>
 
 
@@ -243,7 +252,7 @@
 
 
 
-		<rich:modalPanel id="printConfirmPanel" width="250" height="150">
+		<rich:modalPanel id="detailPanel" width="250" height="150">
 			<f:facet name="header">#{messages['common.printingConfirmation']}</f:facet>
 			<h:form id="printConfirm">
 				<h:panelGrid>
@@ -252,6 +261,9 @@
 						<h:outputText value="#{messages['common.isPrintingReady']}"
 							style="font-size:large;" />
 					</h:panelGrid>
+					<h:panelGroup>
+						
+					</h:panelGroup>
 					<h:panelGroup>
 						<div style="">
 							<a4j:commandButton style="width:50px" id="printingSuccessBtn"
