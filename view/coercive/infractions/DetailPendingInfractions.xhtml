@@ -1,4 +1,5 @@
-	<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:s="http://jboss.com/products/seam/taglib"
@@ -11,7 +12,7 @@
 
 	<ui:define name="body">
 
-		<a:form id="municipalBondSearch" styleClass="edit" >
+		<a:form id="municipalBondSearch" styleClass="edit">
 			<ui:debug id="uiDebug" />
 			<h:outputText styleClass="formTitle" value="" />
 
@@ -22,7 +23,7 @@
 						styleClass="formTitle" />
 				</f:facet>
 
-				 
+
 
 
 				<div style="clear: both" />
@@ -38,34 +39,32 @@
 					</rich:panel>
 
 					<rich:dataTable id="municipalBondsTable" var="_infraction"
-						width="100%"
-						value="#{overdueInfractionsList.infractions}"
+						width="100%" value="#{overdueInfractionsList.infractions}"
 						columnClasses="center, center, left, left, center, right, center, left"
 						rows="25"
 						rendered="#{overdueInfractionsList.infractions.size() != 0}">
 
 						<f:facet name="header">
-						<h:panelGrid columns="2" columnClasses="headerTitle,">
-							<h:outputText id="title"
-								value="#{messages['municipalBondOutOfDate']} - #{messages['income.totalPendingBonds'].toUpperCase()}: #{residentWithMunicipalBondOutOfDateList.total}"
-								styleClass="formTitle" />
-							<s:div styleClass="actionButtons">
-							
-							<a:region>
-							<s:button id="printAllBtn"
-								rendered="#{!from.equals('/coercive/ResidentWithMunicipalBondOutOfDateList.xhtml')}"
-								action="#{residentWithMunicipalBondOutOfDateList.printAll()}"
-								propagation="join"
-								value="#{messages['common.printAll']}"
-								onclick="Richfaces.showModalPanel('printConfirmPanel',{width:250, height:150})" />
-							</a:region>
-							</s:div>
-						</h:panelGrid>
+							<h:panelGrid columns="2" columnClasses="headerTitle,">
+								<h:outputText id="title"
+									value="#{messages['municipalBondOutOfDate']} - #{messages['income.totalPendingBonds'].toUpperCase()}: #{residentWithMunicipalBondOutOfDateList.total}"
+									styleClass="formTitle" />
+								<s:div styleClass="actionButtons">
+
+									<a:region>
+										<s:button id="printAllBtn"
+											rendered="#{!from.equals('/coercive/ResidentWithMunicipalBondOutOfDateList.xhtml')}"
+											action="#{residentWithMunicipalBondOutOfDateList.printAll()}"
+											propagation="join" value="#{messages['common.printAll']}"
+											onclick="Richfaces.showModalPanel('printConfirmPanel',{width:250, height:150})" />
+									</a:region>
+								</s:div>
+							</h:panelGrid>
 						</f:facet>
 
 						<f:facet name="footer">
-							<g:dataScroller id="scroller1" maxPages="10" for="municipalBondsTable"
-								style="float:right;" />
+							<g:dataScroller id="scroller1" maxPages="10"
+								for="municipalBondsTable" style="float:right;" />
 						</f:facet>
 
 						<rich:column>
@@ -137,7 +136,7 @@
 							<a:commandButton id="reprintId" ajaxSingle="true"
 								rendered="#{!from.equals('/coercive/ResidentWithMunicipalBondOutOfDateList.xhtml')}"
 								action="#{residentWithMunicipalBondOutOfDateList.print(_municipalBond.id)}"
-								value="#{messages['common.print']}"/>
+								value="#{messages['common.print']}" />
 
 						</rich:column>
 
@@ -145,19 +144,11 @@
 				</a:outputPanel>
 			</a:region>
 		</a:form>
-		
-		     <s:button view="#{from}"
-		                   value="#{messages['common.back']}"
-		             propagation="none"
-		                      id="GotoNotificationList"
-		                rendered="#{true}">
-			</s:button>
 
-		<g:municipalBondViewer
-			resident="#{municipalBondsViewerHome.resident}"
-			municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}"
-			deposits="#{municipalBondsViewerHome.deposits}" />
-			
+		<s:button view="#{from}" value="#{messages['common.back']}"
+			propagation="none" id="GotoNotificationList" rendered="#{true}">
+		</s:button>
+
 		<rich:modalPanel id="printConfirmPanel" width="250" height="150">
 			<f:facet name="header">#{messages['common.printingConfirmation']}</f:facet>
 			<h:form id="printConfirm">
@@ -179,7 +170,7 @@
 			</h:form>
 
 		</rich:modalPanel>
-			
+
 
 	</ui:define>
 
