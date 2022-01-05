@@ -8,6 +8,7 @@
 	<action execute="#{overdueInfractionsList.loadPendingInfractions()}"/>
 	
 	<param name="identificationNumber" value="#{overdueInfractionsList.identificationNumber}"/>			
+	<param name="nameResident" value="#{overdueInfractionsList.nameResident}"/>			
 	<param name="fromNotificationDetail" value="#{overdueInfractionsList.detailFromNotification}"/>	
 	<param name="from"/>
 	

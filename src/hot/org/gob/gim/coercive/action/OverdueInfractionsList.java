@@ -73,6 +73,8 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private Boolean isFirstTime = Boolean.TRUE;
 	private Boolean detailFromNotification = Boolean.FALSE;
 	private BigDecimal total = BigDecimal.ZERO;
+	private String nameResident;
+	private Datainfraction infraction;
 	
 	private static final Pattern SUBJECT_PATTERN = Pattern.compile(
 			"^select\\s+(\\w+(?:\\s*\\.\\s*\\w+)*?)(?:\\s*,\\s*(\\w+(?:\\s*\\.\\s*\\w+)*?))*?\\s+from",
@@ -306,6 +308,10 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		}
 	}
 
+	
+	public void loadInfraction(Long infractionid) {		
+		this.infraction = getEntityManager().find(Datainfraction.class, infractionid);
+	}
 
 	public String getIdentificationNumber() {
 		return identificationNumber;
@@ -543,7 +549,20 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
-	 
-	
-	
+
+	public String getNameResident() {
+		return nameResident;
+	}
+
+	public void setNameResident(String nameResident) {
+		this.nameResident = nameResident;
+	}
+
+	public Datainfraction getInfraction() {
+		return infraction;
+	}
+
+	public void setInfraction(Datainfraction infraction) {
+		this.infraction = infraction;
+	}  
 }

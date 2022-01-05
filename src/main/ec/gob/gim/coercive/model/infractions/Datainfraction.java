@@ -91,7 +91,7 @@ public class Datainfraction {
 	@Column(name="articulo")
 	private String article;
 	
-	@Column(name="articulo_description")
+	@Column(name="articulo_descripcion")
 	private String articleDescription;
 	
 	@Column(name="valor")
@@ -128,9 +128,9 @@ public class Datainfraction {
 	@Column(name="correo")	
 	private String email;
 	
-	@Column(name="ivr")		
-	
+	@Column(name="ivr")			
 	private Integer ivr;
+	
 	@Column(name="telefono_ivr")
 	private String phoneivr;
 	

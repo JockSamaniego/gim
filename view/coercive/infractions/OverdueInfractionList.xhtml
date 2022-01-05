@@ -198,6 +198,7 @@
 								value="#{messages['common.detail']}"
 								propagation="join" id="infractionsListButton">
 								<f:param name="identificationNumber" value="#{_infraction.identification}"/>
+								<f:param name="nameResident" value="#{_infraction.name}"/>
 								<f:param name="from" value="/coercive/infractions/OverdueInfractionList.xhtml"/>
 								
 							</s:button>
