@@ -149,15 +149,13 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private static final String[] RESTRICTIONS = {
 			"di.identification = #{overdueInfractionsList.identification}",
 			"di.name = #{overdueInfractionsList.name}",
-	/*
-	 * "di.licensePlate = #{overdueInfractionsList.licensePlate}",
-	 * "di.article = #{overdueInfractionsList.article}",
-	 * "di.ticket = #{overdueInfractionsList.ticket}",
-	 * "di.emision >= #{overdueInfractionsList.emisionFrom} ",
-	 * "di.emision <= #{overdueInfractionsList.emisionUntil} ",
-	 * "di.expiration >= #{overdueInfractionsList.expirationFrom}",
-	 * "di.expiration <= #{overdueInfractionsList.expirationUntil}",
-	 */
+			"di.licensePlate = #{overdueInfractionsList.licensePlate}",
+			"di.article = #{overdueInfractionsList.article}",
+			"di.ticket = #{overdueInfractionsList.ticket}",
+			"di.emision >= #{overdueInfractionsList.emisionFrom} ",
+			"di.emision <= #{overdueInfractionsList.emisionUntil} ",
+			/*"di.expiration >= #{overdueInfractionsList.expirationFrom}",
+			"di.expiration <= #{overdueInfractionsList.expirationUntil}",*/	 
 	};
 
 	public OverdueInfractionsList() {
