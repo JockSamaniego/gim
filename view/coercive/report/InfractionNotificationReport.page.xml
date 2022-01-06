@@ -4,12 +4,7 @@
       xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd" 
       login-required="true">
 
-   <param name="firstResult" value="#{notificationReport.firstResult}"/>
-   <param name="sort" value="#{notificationReport.orderColumn}"/>
-   <param name="dir" value="#{notificationReport.orderDirection}"/>
-   <param name="logic" value="#{notificationReport.restrictionLogicOperator}"/>
+   <action execute="#{overdueInfractionsNotificationReport.initialize()}"/>
 
-   <param name="from"/>
-   <param name="selectedItems" value="#{notificationReport.selectedItems}"/>
-   <param name="withCopy" value="#{notificationHome.withCopy}"/>
+   <param name="selectedItems" value="#{overdueInfractionsNotificationReport.selectedItems}"/>
 </page>

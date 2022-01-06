@@ -38,7 +38,7 @@ public class OverdueInfractionsListHome extends
 	private List<Long> generatedNotificationIds = new ArrayList<Long>();
 
 	private String selectedItems;
-
+	
 	@In(required = true, create = true)
 	OverdueInfractionsList overdueInfractionsList;
 
