@@ -10,6 +10,7 @@ import javax.ejb.Local;
 import javax.persistence.Query;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 
 /**
  * @author René
@@ -23,5 +24,7 @@ public interface DatainfractionService {
 	public List<Datainfraction> findInfractionsByIdentification(String identification);
 	
 	public Long getNextValue();
+	
+	public List<NotificationInfractions> getNotifications(List<Long> ids);
 
 }

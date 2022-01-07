@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 
 /**
  * @author René
@@ -44,6 +45,14 @@ public class DatainfractionServiceBean implements DatainfractionService {
 				.createNativeQuery("SELECT nextval('infracciones.notificationInfraction_seq')");
 		BigInteger _ret = (BigInteger) query.getSingleResult();
 		return _ret.longValue();
+	}
+
+	@Override
+	public List<NotificationInfractions> getNotifications(List<Long> ids) {
+		Query query = this.entityManager
+				.createQuery("SELECT n FROM NotificationInfractions n WHERE n.id IN (:ids)");
+		query.setParameter("ids", ids);
+		return query.getResultList();
 	}
 
 }

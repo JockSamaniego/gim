@@ -52,7 +52,7 @@ public class NotificationInfractions {
 	 * Detalle de <tt>MunicipalBond</tt> afectados por esta
 	 * <tt>Notification</tt>
 	 */
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.EAGER)
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	@JoinColumn(name = "notification_id")
 	@OrderBy("id asc")
