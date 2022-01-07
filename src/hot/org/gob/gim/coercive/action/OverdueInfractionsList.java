@@ -59,6 +59,8 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private Boolean isFirstTime = Boolean.TRUE;
 	private Boolean detailFromNotification = Boolean.FALSE;
 	private BigDecimal total = BigDecimal.ZERO;
+	private String nameResident;
+	private Datainfraction infraction;
 
 	private static final Pattern SUBJECT_PATTERN = Pattern
 			.compile(
@@ -147,15 +149,13 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private static final String[] RESTRICTIONS = {
 			"di.identification = #{overdueInfractionsList.identification}",
 			"di.name = #{overdueInfractionsList.name}",
-	/*
-	 * "di.licensePlate = #{overdueInfractionsList.licensePlate}",
-	 * "di.article = #{overdueInfractionsList.article}",
-	 * "di.ticket = #{overdueInfractionsList.ticket}",
-	 * "di.emision >= #{overdueInfractionsList.emisionFrom} ",
-	 * "di.emision <= #{overdueInfractionsList.emisionUntil} ",
-	 * "di.expiration >= #{overdueInfractionsList.expirationFrom}",
-	 * "di.expiration <= #{overdueInfractionsList.expirationUntil}",
-	 */
+			"di.licensePlate = #{overdueInfractionsList.licensePlate}",
+			"di.article = #{overdueInfractionsList.article}",
+			"di.ticket = #{overdueInfractionsList.ticket}",
+			"di.emision >= #{overdueInfractionsList.emisionFrom} ",
+			"di.emision <= #{overdueInfractionsList.emisionUntil} ",
+			/*"di.expiration >= #{overdueInfractionsList.expirationFrom}",
+			"di.expiration <= #{overdueInfractionsList.expirationUntil}",*/	 
 	};
 
 	public OverdueInfractionsList() {
@@ -332,6 +332,11 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 			total = total.add(infraction.getTotalValue());
 			// }
 		}
+	}
+
+	
+	public void loadInfraction(Long infractionid) {		
+		this.infraction = getEntityManager().find(Datainfraction.class, infractionid);
 	}
 
 	public String getIdentificationNumber() {
@@ -578,4 +583,19 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		this.total = total;
 	}
 
+	public String getNameResident() {
+		return nameResident;
+	}
+
+	public void setNameResident(String nameResident) {
+		this.nameResident = nameResident;
+	}
+
+	public Datainfraction getInfraction() {
+		return infraction;
+	}
+
+	public void setInfraction(Datainfraction infraction) {
+		this.infraction = infraction;
+	}  
 }
