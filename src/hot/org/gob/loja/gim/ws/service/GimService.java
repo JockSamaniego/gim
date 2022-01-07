@@ -10,6 +10,7 @@ import javax.ejb.Local;
 import org.gob.gim.ws.service.EmisionResponse;
 import org.gob.gim.ws.service.GeneralResponse;
 import org.gob.gim.ws.service.InfringementEmisionResponse;
+import org.gob.gim.ws.service.MailBondResponse;
 import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
 import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
@@ -121,6 +122,6 @@ public interface GimService {
 	 * @param request
 	 * @return
 	 */
-	GeneralResponse bondsTosendMail(ServiceRequest request);
+	MailBondResponse bondsTosendMail(ServiceRequest request);
 		
 }

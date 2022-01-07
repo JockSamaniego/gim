@@ -42,7 +42,7 @@ public class BondMailInformation{
 	
 	private String emailSendit;
 	
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date sendmailDate;
 	
 	@ManyToOne(fetch=FetchType.LAZY)

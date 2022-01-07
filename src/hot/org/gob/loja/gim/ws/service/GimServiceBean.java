@@ -46,9 +46,11 @@ import org.gob.gim.ws.service.BondItemPrint;
 import org.gob.gim.ws.service.BondPrintReport;
 import org.gob.gim.ws.service.BondPrintRequest;
 import org.gob.gim.ws.service.BondPrintUpdate;
+import org.gob.gim.ws.service.BondSendMail;
 import org.gob.gim.ws.service.EmisionResponse;
 import org.gob.gim.ws.service.GeneralResponse;
 import org.gob.gim.ws.service.InfringementEmisionResponse;
+import org.gob.gim.ws.service.MailBondResponse;
 import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.BondReport;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
@@ -1671,10 +1673,8 @@ public class GimServiceBean implements GimService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public GeneralResponse bondsTosendMail(ServiceRequest request) {
-		
-		
-
+	public MailBondResponse bondsTosendMail(ServiceRequest request) {
+				
 		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
 		List<Long> entries_id = systemParameterService.findListIds("ENTRIES_TO_EMAIL");		 		 
 		
@@ -1682,6 +1682,7 @@ public class GimServiceBean implements GimService {
 				+ "	mb.id,  "
 				+ "	re.identificationNumber, "
 				+ "	re.name,  "
+				+ "	re.email ,"
 				+ "	mb.number,  "
 				+ "	mb.emisionDate, "
 				+ "	mb.serviceDate,  "
@@ -1720,22 +1721,27 @@ public class GimServiceBean implements GimService {
 				+ "		) as rubro_principal "
 				+ "	) as rubro, "
 				+ "mb.printingsNumber printingsNumber "
+				+ "b.emailsendit, "
+				+ "b.sendmaildate "
 				+ "FROM municipalbond mb "
 				+ "inner join PropertyAppraisal pa on mb.adjunct_id = pa.id  "
 				+ "inner join resident re on mb.resident_id = re.id "
 				+ "LEFT OUTER JOIN address addr on re.currentaddress_id = addr.id "
+				+ "left join gimprod.bondmailinformation b on b.bond_id = mb.id  "
 				+ "where entry_id in :entries_ids  "
-				+ "and re.identificationNumber like :identification "
+				+ "and re.email is not null "
+				+ "and re.email <> '' "
+				+ "and b.emailsendit is null "
 				+ "and mb.municipalbondstatus_id in (11,6) "
-				+ "order by mb.entry_id, mb.liquidationdate, mb.liquidationtime ";
+				+ "order by mb.entry_id, mb.liquidationdate, mb.liquidationtime limit 3";
 		Query query = em.createNativeQuery(sql);
 		
 		
 		query.setParameter("entries_ids", entries_id);
 
-		List<BondPrintReport> lista = NativeQueryResultsMapper.map(query.getResultList(), BondPrintReport.class);
+		List<BondSendMail> lista = NativeQueryResultsMapper.map(query.getResultList(), BondSendMail.class);
 
-		for (BondPrintReport bp : lista) {
+		for (BondSendMail bp : lista) {
 			try {
 				List<BondItemPrint> asList = new ObjectMapper().readValue(
 						bp.getItems(),
@@ -1769,7 +1775,7 @@ public class GimServiceBean implements GimService {
 			}
 		}
 
-		GeneralResponse response = new GeneralResponse();
+		MailBondResponse response = new MailBondResponse();
 		response.setBonds(lista);
 
 		return response;

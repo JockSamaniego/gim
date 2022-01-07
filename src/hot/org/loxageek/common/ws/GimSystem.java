@@ -20,6 +20,7 @@ import org.gob.gim.ws.service.BondPrintRequest;
 import org.gob.gim.ws.service.EmisionResponse;
 import org.gob.gim.ws.service.GeneralResponse;
 import org.gob.gim.ws.service.InfringementEmisionResponse;
+import org.gob.gim.ws.service.MailBondResponse;
 import org.gob.gim.ws.service.UserResponse;
 import org.gob.loja.gim.ws.dto.EmisionDetail;
 import org.gob.loja.gim.ws.dto.InfringementEmisionDetail;
@@ -368,6 +369,12 @@ public class GimSystem {
 	@WebMethod
 	public GeneralResponse updateBondPrinterNumber(ServiceRequest request, BondPrintRequest bonds) {
 		return gimService.updateBondPrinterNumber(request, bonds);
+	}
+	
+	
+	@WebMethod
+	public MailBondResponse bondsToSendMail(ServiceRequest request) {
+		return gimService.bondsTosendMail(request);
 	}
 
 }
