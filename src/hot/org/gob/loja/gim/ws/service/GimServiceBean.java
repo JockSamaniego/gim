@@ -19,6 +19,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -26,6 +27,7 @@ import org.codehaus.jackson.type.TypeReference;
 import org.gob.gim.cadaster.facade.CadasterService;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.NativeQueryResultsMapper;
+import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.exception.IdentificationNumberExistsException;
 import org.gob.gim.common.exception.IdentificationNumberSizeException;
 import org.gob.gim.common.exception.IdentificationNumberWrongException;
@@ -76,6 +78,7 @@ import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.LegalEntity;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.income.model.Account;
 import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -1585,6 +1588,9 @@ public class GimServiceBean implements GimService {
 		return response;
 	}
 
+	
+	
+	
 	@Override
 	public GeneralResponse updateBondPrinterNumber(ServiceRequest request,
 			BondPrintRequest bonds) {
@@ -1660,5 +1666,115 @@ public class GimServiceBean implements GimService {
 		response.setBonds(lista);
 		return response;
 	}
+	
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public GeneralResponse bondsTosendMail(ServiceRequest request) {
+		
+		
+
+		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
+		List<Long> entries_id = systemParameterService.findListIds("ENTRIES_TO_EMAIL");		 		 
+		
+		String sql = "SELECT  "
+				+ "	mb.id,  "
+				+ "	re.identificationNumber, "
+				+ "	re.name,  "
+				+ "	mb.number,  "
+				+ "	mb.emisionDate, "
+				+ "	mb.serviceDate,  "
+				+ "	mb.liquidationdate, "
+				+ "	mb.liquidationtime,  "
+				+ "	mb.description, "
+				+ "	mb.reference, "
+				+ "	mb.address, "
+				+ "	pa.lotappraisal, pa.buildingappraisal, "
+				+ "	pa.commercialappraisal, pa.exemptionvalue, "
+				+ "	mb.expirationdate, mb.nontaxabletotal, "
+				+ "	mb.discount, mb.interest, "
+				+ "	mb.surcharge, mb.paidtotal, "
+				+ "	mb.entry_id, mb.groupingcode, "
+				+ "	addr.street, "
+				+ "	pa.cadastralCode, "
+				+ "	pa.previousCadastralCode, "
+				+ "	(  "
+				+ "		select CAST(COALESCE(array_to_json(array_agg(row_to_json(items_bond))), '[]') AS TEXT) from  "
+				+ "		( "
+				+ "			select "
+				+ "				it.id, it.amount, it.istaxable, it.ordernumber, it.value, it.total, it.entry_id, it.municipalbond_id, "
+				+ "				ent.code, ent.description, ent.name, ent.reason, ent.datepattern "
+				+ "			from item it "
+				+ "			inner join entry ent on it.entry_id = ent.id "
+				+ "			where it.municipalbond_id = mb.id  "
+				+ "			order by it.ordernumber "
+				+ "		) as items_bond "
+				+ "	) as items, "
+				+ "	(  "
+				+ "		select cast(to_json(rubro_principal) as text) from "
+				+ "		( "
+				+ "			SELECT id, code, datepattern, name, reason  "
+				+ "			FROM entry  "
+				+ "			WHERE id = mb.entry_id  "
+				+ "		) as rubro_principal "
+				+ "	) as rubro, "
+				+ "mb.printingsNumber printingsNumber "
+				+ "FROM municipalbond mb "
+				+ "inner join PropertyAppraisal pa on mb.adjunct_id = pa.id  "
+				+ "inner join resident re on mb.resident_id = re.id "
+				+ "LEFT OUTER JOIN address addr on re.currentaddress_id = addr.id "
+				+ "where entry_id in :entries_ids  "
+				+ "and re.identificationNumber like :identification "
+				+ "and mb.municipalbondstatus_id in (11,6) "
+				+ "order by mb.entry_id, mb.liquidationdate, mb.liquidationtime ";
+		Query query = em.createNativeQuery(sql);
+		
+		
+		query.setParameter("entries_ids", entries_id);
+
+		List<BondPrintReport> lista = NativeQueryResultsMapper.map(query.getResultList(), BondPrintReport.class);
+
+		for (BondPrintReport bp : lista) {
+			try {
+				List<BondItemPrint> asList = new ObjectMapper().readValue(
+						bp.getItems(),
+						new TypeReference<List<BondItemPrint>>() {
+						});
+				bp.setItemList(asList);
+
+				for (BondItemPrint item : asList) {
+					BondEntryPrint entry = new BondEntryPrint();
+					entry.setCode(item.getCode());
+					entry.setDatepattern(item.getDatepattern());
+					entry.setId(item.getEntry_id());
+					entry.setName(item.getName());
+					entry.setReason(item.getReason());
+					item.setEntry(entry);
+				}
+
+				BondEntryPrint entries = new ObjectMapper().readValue(
+						bp.getRubro(), BondEntryPrint.class);
+				bp.setEntry(entries);
+
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		GeneralResponse response = new GeneralResponse();
+		response.setBonds(lista);
+
+		return response;
+	}
+
+	
 
 }

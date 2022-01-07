@@ -116,5 +116,11 @@ public interface GimService {
 	GeneralResponse bondsByExternalPayment(ServiceRequest request);
 	
 	GeneralResponse updateBondPrinterNumber(ServiceRequest request, BondPrintRequest bonds);
+	/**
+	 * Envio de correo de titulos de credito
+	 * @param request
+	 * @return
+	 */
+	GeneralResponse bondsTosendMail(ServiceRequest request);
 		
 }
