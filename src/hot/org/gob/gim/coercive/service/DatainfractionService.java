@@ -3,11 +3,11 @@
  */
 package org.gob.gim.coercive.service;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import javax.ejb.Local;
-import javax.persistence.Query;
+
+import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
@@ -26,5 +26,11 @@ public interface DatainfractionService {
 	public Long getNextValue();
 	
 	public List<NotificationInfractions> getNotifications(List<Long> ids);
+	
+	public List<NotificationInfractions> findNotificationInfractionByCriteria(NotificationInfractionSearchCriteria criteria, Integer firstRow,Integer numberOfRows);
+	
+	public NotificationInfractions findObjectById(Long id);
+	
+	public Integer findNotificationInfractionsNumber(NotificationInfractionSearchCriteria criteria);
 
 }
