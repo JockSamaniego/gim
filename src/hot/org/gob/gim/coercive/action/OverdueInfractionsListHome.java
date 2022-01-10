@@ -94,6 +94,7 @@ public class OverdueInfractionsListHome extends
 	}
 
 	public String createNotification() throws IOException {
+		this.generatedNotificationIds = new ArrayList<Long>();
 
 		if (this.getResidentSelectedItems().isEmpty()) {
 			addFacesMessageFromResourceBundle("common.noSelectedItems");

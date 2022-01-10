@@ -41,7 +41,6 @@ public class OverdueInfractionsNotificationReport extends EntityController{
 						datainfractionService.LOCAL_NAME);
 			}
 			this.notifications = this.datainfractionService.getNotifications(this.getSelectedItemAsList());
-			System.out.println(this.notifications);
 		}
 		
 	}
@@ -85,7 +84,7 @@ public class OverdueInfractionsNotificationReport extends EntityController{
 	public BigDecimal getTotal(NotificationInfractions notification){
 		BigDecimal total = BigDecimal.ZERO;
 		for (Datainfraction infraction : notification.getInfractions()) {
-			total = total.add(infraction.getTotalValue());
+			total = total.add(infraction.getValue());
 		}
 		return total;
 	}
