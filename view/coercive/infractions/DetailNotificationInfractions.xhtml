@@ -17,21 +17,168 @@
 				</f:facet>
 
 				<h:panelGrid columns="1">
+				
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Número:</ui:define>
+						<h:outputText id="number"
+							value="#{detailNotificationInfractionsHome.notification.year} - #{detailNotificationInfractionsHome.notification.number}">
+						</h:outputText>
+					</s:decorate>
+
 					<s:decorate template="../../layout/edit.xhtml">
 						<ui:define name="label">Identificacion:</ui:define>
-						<h:outputText id="identif" value="#{detailNotificationInfractionsHome.notification.infractions[0].identification}">
+						<h:outputText id="identif"
+							value="#{detailNotificationInfractionsHome.notification.infractions[0].identification}">
 						</h:outputText>
 					</s:decorate>
 
 					<s:decorate template="../../layout/edit.xhtml">
 						<ui:define name="label">Nombres:</ui:define>
-						<h:outputText id="names" value="#{detailNotificationInfractionsHome.notification.infractions[0].name}"></h:outputText>
+						<h:outputText id="names"
+							value="#{detailNotificationInfractionsHome.notification.infractions[0].name}">
+						</h:outputText>
 					</s:decorate>
+
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Fecha Creación:</ui:define>
+						<h:outputText value="#{detailNotificationInfractionsHome.notification.creationTimeStamp}">
+								<f:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+					</s:decorate>
+
 				</h:panelGrid>
 
 
 				<div style="clear: both" />
 			</rich:panel>
+
+			<a:region>
+
+				<a:outputPanel id="resultsPanel" ajaxRendered="true">
+					<rich:panel rendered="#{detailNotificationInfractionsHome.notification.infractions.size() == 0}">
+						<h:outputText value="#{messages['common.noResultsReturned']}"
+							rendered="#{detailNotificationInfractionsHome.notification.infractions.size() == 0}" />
+
+					</rich:panel>
+
+					<rich:dataTable id="infractionsTable" var="_infraction" width="100%"
+						value="#{detailNotificationInfractionsHome.notification.infractions}"
+						rows="25"
+						rendered="#{detailNotificationInfractionsHome.notification.infractions.size()!= 0}">
+
+						<f:facet name="header">
+							<h:panelGrid columns="2" columnClasses="headerTitle,">
+								<h:outputText id="title"
+									value="Infracciones vencidas - #{messages['income.totalPendingBonds'].toUpperCase()}: #{detailNotificationInfractionsHome.notification.infractions.size()}"
+									styleClass="formTitle" />
+								<s:div styleClass="actionButtons">
+								</s:div>
+							</h:panelGrid>
+						</f:facet>
+
+						<f:facet name="footer">
+							<g:dataScroller id="scroller1" maxPages="10" for="infractionsTable"
+								style="float:right;" />
+						</f:facet>
+
+						<rich:column>
+							<f:facet name="header">
+								Boleta nro.
+							</f:facet>
+							<h:outputText value="#{_infraction.ticket}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Placa
+							</f:facet>
+							<h:outputText value="#{_infraction.licensePlate}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Estado Yoveri
+							</f:facet>
+							<h:outputText value="#{_infraction.stateConsortium}" />
+						</rich:column>
+
+
+						<rich:column>
+							<f:facet name="header">
+								#{messages['municipalBond.emision']}
+							</f:facet>
+							<h:outputText value="#{_infraction.emision}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+
+
+						<rich:column>
+							<f:facet name="header">
+								Fecha registro
+							</f:facet>
+							<h:outputText value="#{_infraction.register}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								Fecha expiración
+							</f:facet>
+							<h:outputText value="#{_infraction.expiration}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								#{messages['municipalBond.value']}
+							</f:facet>
+							<h:outputText value="#{_infraction.value}">
+								<f:convertNumber maxFractionDigits="2" pattern="#,##,##0.00" />
+							</h:outputText>
+						</rich:column>
+
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								Interes
+							</f:facet>
+							<h:outputText value="#{_infraction.interest}">
+								<f:convertNumber maxFractionDigits="2" pattern="#,##,##0.00" />
+							</h:outputText>
+						</rich:column>
+
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								#{messages['municipalBond.total']}
+							</f:facet>
+							<h:outputText value="#{_infraction.totalValue}">
+								<f:convertNumber maxFractionDigits="2" pattern="#,##,##0.00" />
+							</h:outputText>
+						</rich:column>
+
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+
+							<a:commandButton id="viewer" ajaxSingle="true"
+								action="#{overdueInfractionsList.loadInfraction(_infraction.id)}"
+								eventsQueue="gimEventsQueue" reRender="detailInfractionPanel"
+								oncomplete="Richfaces.showModalPanel('detailInfractionPanel',{width:600, height:500})"
+								value="#{messages['common.view']}" />
+						</rich:column>
+
+					</rich:dataTable>
+				</a:outputPanel>
+			</a:region>
 		</a:form>
 
 		<s:button view="#{from}" value="#{messages['common.back']}" propagation="none" id="GotoNotificationList"
