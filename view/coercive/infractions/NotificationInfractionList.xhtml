@@ -106,11 +106,10 @@
 						
 						<rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
-							<s:button view="/coercive/infractions/DetailPendingInfractions.xhtml"
+							<s:button view="/coercive/infractions/DetailNotificationInfractions.xhtml"
 								value="#{messages['common.detail']}"
 								propagation="join" id="infractionsListButton">
-								<f:param name="identificationNumber" value="#{_infraction.identification}"/>
-								<f:param name="nameResident" value="#{_infraction.name}"/>
+								<f:param name="notificationId" value="#{_notification.id}"/>
 								<f:param name="from" value="/coercive/infractions/NotificationInfractionList.xhtml"/>
 								
 							</s:button>

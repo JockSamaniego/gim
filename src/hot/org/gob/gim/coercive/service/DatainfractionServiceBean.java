@@ -84,7 +84,7 @@ public class DatainfractionServiceBean implements DatainfractionService {
 
 	@Override
 	public NotificationInfractions findObjectById(Long id) {
-		Query query = entityManager.createQuery("SELECT n FROM NotificationInfractions n JOIN n.infractions i WHERE n.id:=id");
+		Query query = entityManager.createQuery("SELECT n FROM NotificationInfractions n JOIN n.infractions i WHERE n.id=:id");
 		query.setParameter("id", id);
 		// query.setFirstResult(rowCount.intValue()).setMaxResults(12);
 		return (NotificationInfractions) query.getSingleResult();

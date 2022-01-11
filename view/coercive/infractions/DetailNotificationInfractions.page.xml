@@ -5,15 +5,9 @@
 	
 	<begin-conversation join="true" flush-mode="MANUAL"/>
 	
-	<action execute="#{overdueInfractionsList.loadPendingInfractions()}"/>
+	<action execute="#{detailNotificationInfractionsHome.loadNotificationInfraction()}"/>
 	
-	<param name="identificationNumber" value="#{overdueInfractionsList.identificationNumber}"/>			
-	<param name="nameResident" value="#{overdueInfractionsList.nameResident}"/>			
-	<param name="fromNotificationDetail" value="#{overdueInfractionsList.detailFromNotification}"/>	
+	<param name="notificationId" value="#{detailNotificationInfractionsHome.notificationId}"/>
 	<param name="from"/>
 	
 </page>
-
-
-
-
