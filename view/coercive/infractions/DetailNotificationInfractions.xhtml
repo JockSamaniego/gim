@@ -1,0 +1,144 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"	
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:g="http://gim.gob.ec/jsf"
+	template="../../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<a:form id="notification_header" styleClass="edit">
+			<ui:debug id="uiDebug" />
+			<h:outputText styleClass="formTitle" value="" />
+
+			<rich:panel>
+				<f:facet name="header">
+					<h:outputText id="title"
+						value="NOTIFICACION INFRACCIONES"
+						styleClass="formTitle" />
+				</f:facet>
+
+				<div style="clear: both" />
+			</rich:panel>
+		</a:form>
+		
+		<s:button view="#{from}" value="#{messages['common.back']}"
+			propagation="none" id="GotoNotificationList" rendered="#{true}">
+		</s:button>
+
+
+
+		<rich:modalPanel id="detailInfractionPanel" width="250" height="150">
+			<f:facet name="header">Detalle de infracción</f:facet>
+			<h:form id="infractionform">
+				<h:panelGrid columns="1">
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Identificacion:</ui:define>
+						<h:outputText id="identifModal" value="#{overdueInfractionsList.identificationNumber}" ></h:outputText>
+					</s:decorate>
+						
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Nombres:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.nameResident}" ></h:outputText>
+					</s:decorate>
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Boleto nro:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.ticket}" ></h:outputText>
+					</s:decorate>
+					
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Placa:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.licensePlate}" ></h:outputText>
+					</s:decorate>
+					
+					
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Emisión:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.emision}" ></h:outputText>
+					</s:decorate>
+					
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Registro:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.register}" ></h:outputText>
+					</s:decorate>				
+									
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Vencimiento:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.expiration}" ></h:outputText>
+					</s:decorate>
+															
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Contacto general:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.contactGeneral}" ></h:outputText>
+					</s:decorate>
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Mejor gestión:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.betterManagement}" ></h:outputText>
+					</s:decorate>										
+									
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Gestión telefónica:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.telephoneManagement}" ></h:outputText>
+					</s:decorate>
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Teléfono marcado:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.dialedPhone}" ></h:outputText>
+					</s:decorate>		
+												
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Intensidad telefónica:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.telephoneIntensity}" ></h:outputText>
+					</s:decorate>
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Intensidad de correo:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.emailIntensity}" ></h:outputText>
+					</s:decorate>		
+									
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Correo:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.email}" ></h:outputText>
+					</s:decorate>
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">IVR:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.ivr}" ></h:outputText>
+					</s:decorate>																		
+				</h:panelGrid>
+				
+				<h:panelGrid columns="1">
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Artículo:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.article}" ></h:outputText>
+					</s:decorate>
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Descripción:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.articleDescription}" ></h:outputText>
+					</s:decorate>
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Observación:</ui:define>
+						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.observation}" ></h:outputText>
+					</s:decorate> 	
+				</h:panelGrid>
+				
+				<h:panelGroup>
+					<div style="">
+						<a4j:commandButton style="width:50px" id="closeBtn" 
+							value="Cerrar"
+							oncomplete="Richfaces.hideModalPanel('detailInfractionPanel')"/>
+					</div>
+			 	</h:panelGroup>
+		 	</h:form>
+		</rich:modalPanel>
+
+
+	</ui:define>
+
+</ui:composition>
