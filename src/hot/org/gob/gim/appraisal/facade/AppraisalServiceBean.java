@@ -96,7 +96,7 @@ public class AppraisalServiceBean implements AppraisalService {
 
 	}
 
-	public List<AffectationFactorDTO> getAffectationFactors() {
+	public List<AffectationFactorDTO> getAffectationFactors(AppraisalPeriod appraisalPeriod) {
 		Query query = entityManager
 				.createNativeQuery("select 	aff.id as affectationfactor_id, "
 						+ "aff.category as category, "
@@ -107,7 +107,10 @@ public class AppraisalServiceBean implements AppraisalService {
 						+ "inner join appraisalaffectationfactor aaf ON aaf.affectationfactor_id = aff.id "
 						+ "inner join appraisalperiod app ON app.id = aaf.appraisalperiod_id "
 						+ "inner join itemcatalog itm ON itm.id = aff.type_itm_id "
-						+ "where 1 = 1 ");
+						+ "where 1 = 1 "
+						+ "AND app.id = :periodId");
+		
+		query.setParameter("periodId", appraisalPeriod.getId());
 
 		List<AffectationFactorDTO> retorno = NativeQueryResultsMapper.map(
 				query.getResultList(), AffectationFactorDTO.class);
@@ -176,6 +179,26 @@ public class AppraisalServiceBean implements AppraisalService {
 		// equivalencia.doubleValue());
 
 		// rfam 2017-12-26
+		/*if (equivalencia.compareTo(new BigDecimal(0.3300)) == 1)
+			return new BigDecimal(1);
+		else if (equivalencia.compareTo(new BigDecimal(0.2500)) == 1)
+			return new BigDecimal(0.9925);
+		else if (equivalencia.compareTo(new BigDecimal(0.2000)) == 1)
+			return new BigDecimal(0.9850);
+		else if (equivalencia.compareTo(new BigDecimal(0.1667)) == 1)
+			return new BigDecimal(0.9775);
+		else if (equivalencia.compareTo(new BigDecimal(0.1429)) == 1)
+			return new BigDecimal(0.9700);
+		else if (equivalencia.compareTo(new BigDecimal(0.1250)) == 1)
+			return new BigDecimal(0.9625);
+		else if (equivalencia.compareTo(new BigDecimal(0.1111)) == 1)
+			return new BigDecimal(0.9550);
+		else if (equivalencia.compareTo(new BigDecimal(0.1000)) == 1)
+			return new BigDecimal(0.9475);
+		else
+			return new BigDecimal(0.9400);*/
+		
+		// bienio 2022-2023
 		if (equivalencia.compareTo(new BigDecimal(0.3300)) == 1)
 			return new BigDecimal(1);
 		else if (equivalencia.compareTo(new BigDecimal(0.2500)) == 1)
@@ -231,9 +254,28 @@ public class AppraisalServiceBean implements AppraisalService {
 	}
 
 	public BigDecimal getAppraisalAreaFactor(Property proper) {
+		
+		// bienio 2022-2023
+		if (proper.getArea().compareTo(new BigDecimal(50)) <= 0)
+			return new BigDecimal(1.31);
+		else if (proper.getArea().compareTo(new BigDecimal(250)) <= 0)
+			return new BigDecimal(1.17);
+		else if (proper.getArea().compareTo(new BigDecimal(500)) <= 0)
+			return new BigDecimal(0.92);
+		else if (proper.getArea().compareTo(new BigDecimal(1000)) <= 0)
+			return new BigDecimal(0.75);
+		else if (proper.getArea().compareTo(new BigDecimal(2500)) <= 0)
+			return new BigDecimal(0.39);
+		else if (proper.getArea().compareTo(new BigDecimal(5000)) <= 0)
+			return new BigDecimal(0.38);
+		else
+			return new BigDecimal(0.37);
 
+	
+				
 		// rfam 2017-12-29 ordenanza bieno 2018-2019
-		if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
+		/* if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
+		/*if (proper.getArea().compareTo(new BigDecimal(51)) == -1)
 			return new BigDecimal(1);
 		else if (proper.getArea().compareTo(new BigDecimal(251)) == -1)
 			return new BigDecimal(1);
@@ -246,7 +288,7 @@ public class AppraisalServiceBean implements AppraisalService {
 		else if (proper.getArea().compareTo(new BigDecimal(5001)) == -1)
 			return new BigDecimal(0.75);
 		else
-			return new BigDecimal(0.70);
+			return new BigDecimal(0.70);*/
 
 		/*
 		 * if (proper.getArea().compareTo(new BigDecimal(51)) == -1) return new
@@ -363,7 +405,7 @@ public class AppraisalServiceBean implements AppraisalService {
 		/*
 		 * Consultar factores de correccion bienio 2020-2021
 		 */
-		affectationFactors = getAffectationFactors();
+		affectationFactors = getAffectationFactors(appraisalPeriod);
 
 		if (systemParameterService == null)
 			systemParameterService = ServiceLocator.getInstance().findResource(
