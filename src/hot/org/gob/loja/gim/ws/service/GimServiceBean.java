@@ -1680,7 +1680,7 @@ public class GimServiceBean implements GimService {
 		
 		String sql = "SELECT  "
 				+ "	mb.id,  "
-				+ "	re.identificationNumber, "
+				+ "	re.identificationNumber as identificationnumber, "
 				+ "	re.name,  "
 				+ "	re.email ,"
 				+ "	mb.number,  "
@@ -1691,12 +1691,18 @@ public class GimServiceBean implements GimService {
 				+ "	mb.description, "
 				+ "	mb.reference, "
 				+ "	mb.address, "
-				+ "	pa.lotappraisal, pa.buildingappraisal, "
-				+ "	pa.commercialappraisal, pa.exemptionvalue, "
-				+ "	mb.expirationdate, mb.nontaxabletotal, "
-				+ "	mb.discount, mb.interest, "
-				+ "	mb.surcharge, mb.paidtotal, "
-				+ "	mb.entry_id, mb.groupingcode, "
+				+ "	pa.lotappraisal,"
+				+ " pa.buildingappraisal, "
+				+ "	pa.commercialappraisal,"
+				+ " pa.exemptionvalue, "
+				+ "	mb.expirationdate,"
+				+ " mb.nontaxabletotal, "
+				+ "	mb.discount,"
+				+ " mb.interest, "
+				+ "	mb.surcharge,"
+				+ " mb.paidtotal, "
+				+ "	mb.entry_id as entryid,"
+				+ " mb.groupingcode, "
 				+ "	addr.street, "
 				+ "	pa.cadastralCode, "
 				+ "	pa.previousCadastralCode, "
@@ -1720,7 +1726,7 @@ public class GimServiceBean implements GimService {
 				+ "			WHERE id = mb.entry_id  "
 				+ "		) as rubro_principal "
 				+ "	) as rubro, "
-				+ "mb.printingsNumber printingsNumber "
+				+ "mb.printingsNumber, "
 				+ "b.emailsendit, "
 				+ "b.sendmaildate "
 				+ "FROM municipalbond mb "
@@ -1738,8 +1744,8 @@ public class GimServiceBean implements GimService {
 		
 		
 		query.setParameter("entries_ids", entries_id);
-
-		List<BondSendMail> lista = NativeQueryResultsMapper.map(query.getResultList(), BondSendMail.class);
+		List<Object[]>list = query.getResultList();
+		List<BondSendMail> lista = NativeQueryResultsMapper.map(list, BondSendMail.class);
 
 		for (BondSendMail bp : lista) {
 			try {

@@ -14,12 +14,9 @@ public class BondSendMail {
 	@NativeQueryResultColumn(index = 1)
 	private String identificationnumber;
 	@NativeQueryResultColumn(index = 2)
-	private String name;
-	
+	private String name;	
 	@NativeQueryResultColumn(index = 3)
-	private String email;
-	
-	
+	private String email;	
 	@NativeQueryResultColumn(index = 4)
 	private Long number;
 	@NativeQueryResultColumn(index = 5)
@@ -57,20 +54,19 @@ public class BondSendMail {
 	@NativeQueryResultColumn(index = 21)
 	private BigDecimal paidtotal;
 	@NativeQueryResultColumn(index = 22)
-	private String groupingcode;
-	@NativeQueryResultColumn(index = 23)
-	private String street;
-	@NativeQueryResultColumn(index = 24)
 	private Long entryid;
+	@NativeQueryResultColumn(index = 23)
+	private String groupingcode;
+	@NativeQueryResultColumn(index = 24)
+	private String street;
 	@NativeQueryResultColumn(index = 25)
-	private String territorialCode;
+	private String cadastralCode;
 	@NativeQueryResultColumn(index = 26)
-	private String catastralKey;
+	private String previouscadastralcode;
 	@NativeQueryResultColumn(index = 27)
 	private String items;
 	@NativeQueryResultColumn(index = 28)
-	private String rubro;
-	
+	private String rubro;	
 	@NativeQueryResultColumn(index = 29)
 	private Integer printingsNumber;	
 	@NativeQueryResultColumn(index = 30)
@@ -283,20 +279,46 @@ public class BondSendMail {
 		this.entryid = entryid;
 	}
 
-	public String getTerritorialCode() {
-		return territorialCode;
+  
+
+	public String getEmail() {
+		return email;
 	}
 
-	public void setTerritorialCode(String territorialCode) {
-		this.territorialCode = territorialCode;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
-	public String getCatastralKey() {
-		return catastralKey;
+	public String getCadastralCode() {
+		return cadastralCode;
 	}
 
-	public void setCatastralKey(String catastralKey) {
-		this.catastralKey = catastralKey;
+	public void setCadastralCode(String cadastralCode) {
+		this.cadastralCode = cadastralCode;
+	}
+
+	public String getPreviouscadastralcode() {
+		return previouscadastralcode;
+	}
+
+	public void setPreviouscadastralcode(String previouscadastralcode) {
+		this.previouscadastralcode = previouscadastralcode;
+	}
+
+	public String getEmailsendit() {
+		return emailsendit;
+	}
+
+	public void setEmailsendit(String emailsendit) {
+		this.emailsendit = emailsendit;
+	}
+
+	public Date getSendmaildate() {
+		return sendmaildate;
+	}
+
+	public void setSendmaildate(Date sendmaildate) {
+		this.sendmaildate = sendmaildate;
 	}
 
 	public String getItems() {
