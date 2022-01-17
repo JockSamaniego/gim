@@ -17,6 +17,7 @@ import javax.xml.ws.handler.MessageContext;
 
 import org.gob.gim.ws.service.BondPrintReport;
 import org.gob.gim.ws.service.BondPrintRequest;
+import org.gob.gim.ws.service.BondUpdateMail;
 import org.gob.gim.ws.service.EmisionResponse;
 import org.gob.gim.ws.service.GeneralResponse;
 import org.gob.gim.ws.service.InfringementEmisionResponse;
@@ -373,8 +374,13 @@ public class GimSystem {
 	
 	
 	@WebMethod
-	public MailBondResponse bondsToSendMail(ServiceRequest request) {
-		return gimService.bondsTosendMail(request);
+	public MailBondResponse bondsToSendMail(ServiceRequest request, Integer max) {
+		return gimService.bondsTosendMail(request, max);
 	}
 
+	
+	@WebMethod
+	public void updateMailInformation(ServiceRequest request, List<BondUpdateMail> listUpdate) {
+		 gimService.updateBondPrinterNumber(request, listUpdate);
+	}
 }

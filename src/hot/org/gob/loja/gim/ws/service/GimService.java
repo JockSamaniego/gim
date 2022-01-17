@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.ejb.Local;
 
+import org.gob.gim.ws.service.BondUpdateMail;
 import org.gob.gim.ws.service.EmisionResponse;
 import org.gob.gim.ws.service.GeneralResponse;
 import org.gob.gim.ws.service.InfringementEmisionResponse;
@@ -122,6 +123,8 @@ public interface GimService {
 	 * @param request
 	 * @return
 	 */
-	MailBondResponse bondsTosendMail(ServiceRequest request);
+	MailBondResponse bondsTosendMail(ServiceRequest request, Integer maximum);
+	GeneralResponse updateBondPrinterNumber(ServiceRequest request,
+			List<BondUpdateMail> listBonds);
 		
 }

@@ -47,6 +47,7 @@ import org.gob.gim.ws.service.BondPrintReport;
 import org.gob.gim.ws.service.BondPrintRequest;
 import org.gob.gim.ws.service.BondPrintUpdate;
 import org.gob.gim.ws.service.BondSendMail;
+import org.gob.gim.ws.service.BondUpdateMail;
 import org.gob.gim.ws.service.EmisionResponse;
 import org.gob.gim.ws.service.GeneralResponse;
 import org.gob.gim.ws.service.InfringementEmisionResponse;
@@ -81,6 +82,7 @@ import ec.gob.gim.common.model.LegalEntity;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.Account;
+import ec.gob.gim.revenue.model.BondMailInformation;
 import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -1673,7 +1675,7 @@ public class GimServiceBean implements GimService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public MailBondResponse bondsTosendMail(ServiceRequest request) {
+	public MailBondResponse bondsTosendMail(ServiceRequest request, Integer maximum) {
 				
 		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
 		List<Long> entries_id = systemParameterService.findListIds("ENTRIES_TO_EMAIL");		 		 
@@ -1734,16 +1736,19 @@ public class GimServiceBean implements GimService {
 				+ "inner join resident re on mb.resident_id = re.id "
 				+ "LEFT OUTER JOIN address addr on re.currentaddress_id = addr.id "
 				+ "left join gimprod.bondmailinformation b on b.bond_id = mb.id  "
-				+ "where entry_id in :entries_ids  "
+				+ "inner join fiscalperiod fp on fp.id = mb.fiscalperiod_id "
+				+ " where entry_id in :entries_ids  "
 				+ "and re.email is not null "
 				+ "and re.email <> '' "
 				+ "and b.emailsendit is null "
 				+ "and mb.municipalbondstatus_id in (11,6) "
-				+ "order by mb.entry_id, mb.liquidationdate, mb.liquidationtime limit 3";
+				+ "and cast(now() as date) between fp.startdate and fp.enddate "
+				+ "order by mb.entry_id, mb.liquidationdate, mb.liquidationtime limit :maximum";
 		Query query = em.createNativeQuery(sql);
 		
 		
 		query.setParameter("entries_ids", entries_id);
+		query.setParameter("maximum", maximum);
 		List<Object[]>list = query.getResultList();
 		List<BondSendMail> lista = NativeQueryResultsMapper.map(list, BondSendMail.class);
 
@@ -1788,5 +1793,26 @@ public class GimServiceBean implements GimService {
 	}
 
 	
+	
+	@Override
+	public GeneralResponse updateBondPrinterNumber(ServiceRequest request,
+			List<BondUpdateMail> listBonds) {
+		
+		for (BondUpdateMail bondUpdateMail : listBonds) {
+			
+			MunicipalBond bond = em.find(MunicipalBond.class, bondUpdateMail.getBondid());
+			
+			BondMailInformation info = new BondMailInformation();
+			info.setBond(bond);
+			info.setEmailSendit(bondUpdateMail.getMailsend());
+			info.setSendmailDate(bondUpdateMail.getSendmaildate());
+			
+			em.persist(info);
+		}
+		
+	
+		return null;
+
+	}
 
 }
