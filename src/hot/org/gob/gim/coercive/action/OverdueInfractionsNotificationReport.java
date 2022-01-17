@@ -40,9 +40,8 @@ public class OverdueInfractionsNotificationReport extends EntityController{
 				datainfractionService = ServiceLocator.getInstance().findResource(
 						datainfractionService.LOCAL_NAME);
 			}
-			this.notifications = this.datainfractionService.getNotifications(this.getSelectedItemAsList());
 		}
-		
+		this.notifications = this.datainfractionService.getNotifications(this.getSelectedItemAsList());
 	}
 	
 	/**

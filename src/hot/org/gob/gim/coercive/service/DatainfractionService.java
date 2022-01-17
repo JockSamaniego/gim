@@ -32,5 +32,9 @@ public interface DatainfractionService {
 	public NotificationInfractions findObjectById(Long id);
 	
 	public Integer findNotificationInfractionsNumber(NotificationInfractionSearchCriteria criteria);
+	
+	public Datainfraction getDataInfractionById(Long id);
+	
+	public Datainfraction updateDataInfraction(Datainfraction data);
 
 }

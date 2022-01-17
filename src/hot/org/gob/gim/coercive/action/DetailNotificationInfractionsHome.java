@@ -3,6 +3,8 @@
  */
 package org.gob.gim.coercive.action;
 
+import java.math.BigDecimal;
+
 import org.gob.gim.coercive.service.DatainfractionService;
 import org.gob.gim.common.ServiceLocator;
 import org.jboss.seam.ScopeType;
@@ -10,6 +12,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.framework.EntityController;
 
+import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 
 /**
@@ -77,6 +80,14 @@ public class DetailNotificationInfractionsHome extends EntityController{
 	 */
 	public void setNotification(NotificationInfractions notification) {
 		this.notification = notification;
+	}
+	
+	public BigDecimal getTotal(){
+		BigDecimal total = BigDecimal.ZERO;
+		for (Datainfraction infraction : this.notification.getInfractions()) {
+			total = total.add(infraction.getValue());
+		}
+		return total;
 	}
 	
 }

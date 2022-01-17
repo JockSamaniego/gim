@@ -40,7 +40,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private static final long serialVersionUID = -2904627074665502302L;
 
 	private static final String EJBQL = "select NEW org.gob.gim.coercive.view.InfractionItem(di.identification, di.name, count(di), sum(di.value), sum(di.interest), sum(di.totalValue)) "
-			+ "from Datainfraction di ";
+			+ "from Datainfraction di JOIN di.state s";
 
 	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
 
@@ -53,6 +53,8 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private Date expirationUntil;
 	private String ticket;
 	private String article;
+	
+	private final String codePending = "PENDING";
 
 	//
 	private String identificationNumber;
@@ -154,6 +156,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 			"di.ticket = #{overdueInfractionsList.ticket}",
 			"di.emision >= #{overdueInfractionsList.emisionFrom} ",
 			"di.emision <= #{overdueInfractionsList.emisionUntil} ",
+			"s.code = #{overdueInfractionsList.codePending} ",
 			/*"di.expiration >= #{overdueInfractionsList.expirationFrom}",
 			"di.expiration <= #{overdueInfractionsList.expirationUntil}",*/	 
 	};
@@ -311,8 +314,9 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		if (!detailFromNotification && identificationNumber != null) {
 			Query query = getEntityManager()
 					.createQuery(
-							"Select di from Datainfraction di where di.identification=:identificationNumber");
+							"Select di from Datainfraction di JOIN di.state s where di.identification=:identificationNumber AND s.code=:code");
 			query.setParameter("identificationNumber", identificationNumber);
+			query.setParameter("code", this.codePending);
 
 			infractions = query.getResultList();
 
@@ -597,5 +601,13 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 
 	public void setInfraction(Datainfraction infraction) {
 		this.infraction = infraction;
-	}  
+	}
+
+	/**
+	 * @return the codePending
+	 */
+	public String getCodePending() {
+		return codePending;
+	}
+	
 }

@@ -70,7 +70,7 @@
 						<f:facet name="header">
 							<h:panelGrid columns="2" columnClasses="headerTitle,">
 								<h:outputText id="title"
-									value="Infracciones vencidas - #{messages['income.totalPendingBonds'].toUpperCase()}: #{detailNotificationInfractionsHome.notification.infractions.size()}"
+									value="Infracciones vencidas - #{messages['income.totalPendingBonds'].toUpperCase()}: #{detailNotificationInfractionsHome.getTotal()}"
 									styleClass="formTitle" />
 								<s:div styleClass="actionButtons">
 								</s:div>
@@ -158,7 +158,7 @@
 
 						<rich:column styleClass="right">
 							<f:facet name="header">
-								#{messages['municipalBond.total']}
+								Total
 							</f:facet>
 							<h:outputText value="#{_infraction.totalValue}">
 								<f:convertNumber maxFractionDigits="2" pattern="#,##,##0.00" />

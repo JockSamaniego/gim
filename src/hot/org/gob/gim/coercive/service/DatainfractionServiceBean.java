@@ -15,7 +15,6 @@ import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
-import ec.gob.gim.revenue.model.MunicipalBond;
 
 /**
  * @author René
@@ -23,7 +22,7 @@ import ec.gob.gim.revenue.model.MunicipalBond;
  */
 @Stateless(name = "DatainfractionService")
 public class DatainfractionServiceBean implements DatainfractionService {
-
+	
 	@PersistenceContext
 	EntityManager entityManager;
 
@@ -55,6 +54,7 @@ public class DatainfractionServiceBean implements DatainfractionService {
 		Query query = this.entityManager
 				.createQuery("SELECT n FROM NotificationInfractions n WHERE n.id IN (:ids)");
 		query.setParameter("ids", ids);
+		List<NotificationInfractions> l = query.getResultList();
 		return query.getResultList();
 	}
 
@@ -107,6 +107,22 @@ public class DatainfractionServiceBean implements DatainfractionService {
 		Long size = (Long) query.getSingleResult();
 
 		return size.intValue();
+	}
+
+	@Override
+	public Datainfraction updateDataInfraction(Datainfraction data) {
+		
+		Datainfraction dat = this.entityManager.merge(data);
+		this.entityManager.flush();
+		return dat;
+		
+	}
+
+	@Override
+	public Datainfraction getDataInfractionById(Long id) {
+		Query query = entityManager.createQuery("SELECT d FROM Datainfraction d WHERE d.id=:id");
+		query.setParameter("id", id);
+		return (Datainfraction) query.getSingleResult();	
 	}
 
 }

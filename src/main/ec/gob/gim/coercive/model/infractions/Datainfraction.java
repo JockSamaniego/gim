@@ -146,7 +146,7 @@ public class Datainfraction {
 	private ItemCatalog state;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "notificacion_id")
+	@JoinColumn(name = "notification_id")
 	private NotificationInfractions notification;
 
  
