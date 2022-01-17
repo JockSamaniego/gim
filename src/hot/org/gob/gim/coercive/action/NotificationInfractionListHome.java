@@ -32,6 +32,7 @@ public class NotificationInfractionListHome extends EntityController{
 	public NotificationInfractionListHome() {
 		super();
 		this.criteria = new NotificationInfractionSearchCriteria();
+		this.search();
 	}
 
 	public NotificationInfractionSearchCriteria getCriteria() {
