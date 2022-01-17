@@ -173,9 +173,11 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		setGroupBy("di.identification, di.name");
 		setMaxResults(25);
 		Calendar now = Calendar.getInstance();
+		Calendar from = Calendar.getInstance();
+		from.set(2010,0,01);
 
 		if (this.expirationFrom == null) {
-			setExpirationFrom(now.getTime());
+			setExpirationFrom(from.getTime());
 		}
 
 		if (this.expirationUntil == null) {
@@ -183,7 +185,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		}
 
 		if (this.emisionFrom == null) {
-			setEmisionFrom(now.getTime());
+			setEmisionFrom(from.getTime());
 		}
 
 		if (this.emisionUntil == null) {
