@@ -24,8 +24,17 @@
 								value="#{notificationInfractionListHome.criteria.identification}">
 							</h:inputText>
 						</s:decorate>
-
 					</h:panelGrid>
+					
+					<h:panelGrid columns="2">
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Número:</ui:define>
+							<h:inputText id="number"
+								value="#{notificationInfractionListHome.criteria.number}">
+							</h:inputText>
+						</s:decorate>
+					</h:panelGrid>
+					
 					<div style="clear: both" />
 				</rich:panel>
 			</a4j:outputPanel>
@@ -68,16 +77,9 @@
 
 						<rich:column styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="ID" />
-							</f:facet>
-							<h:outputText value="#{_notification.id}" />
-						</rich:column>
-
-						<rich:column styleClass="right">
-							<f:facet name="header">
 								<h:outputText value="NÚMERO" />
 							</f:facet>
-							<h:outputText value="#{_notification.year} - #{_notification.number}" />
+							<h:outputText value="#{_notification.year}-#{_notification.number}" />
 						</rich:column>
 
 						<rich:column styleClass="right">

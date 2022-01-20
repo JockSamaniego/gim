@@ -64,16 +64,24 @@ public class DatainfractionServiceBean implements DatainfractionService {
 			Integer numberOfRows) {
 		
 		String qry = "SELECT DISTINCT n FROM NotificationInfractions n JOIN n.infractions i WHERE 1=1 ";
-		if(criteria.getIdentification() != null && criteria.getIdentification() != ""){
+		if(criteria.getIdentification() != null && criteria.getIdentification().trim() != ""){
 			qry += "AND i.identification =:identification ";
+		}
+		
+		if(criteria.getNumber() != null && criteria.getNumber().trim() != ""){
+			qry += "AND (n.year || '-' || n.number) like :num ";
 		}
 		
 		qry+= "ORDER BY n.year, n.number ASC ";
 		Query query = this.entityManager
 				.createQuery(qry);
 		
-		if(criteria.getIdentification() != null && criteria.getIdentification() != ""){
-			query.setParameter("identification", criteria.getIdentification());
+		if(criteria.getIdentification() != null && criteria.getIdentification().trim() != ""){
+			query.setParameter("identification", criteria.getIdentification().trim());
+		}
+		
+		if(criteria.getNumber() != null && criteria.getNumber().trim() != ""){
+			query.setParameter("num", "%"+criteria.getNumber().trim()+"%");
 		}
 		
 		query.setFirstResult(firstRow);
@@ -95,15 +103,25 @@ public class DatainfractionServiceBean implements DatainfractionService {
 			NotificationInfractionSearchCriteria criteria) {
 		String qry = "SELECT count(DISTINCT n.id) FROM NotificationInfractions n JOIN n.infractions i WHERE 1=1 ";
 		
-		if(criteria.getIdentification() != null && criteria.getIdentification() != ""){
+		if(criteria.getIdentification() != null && criteria.getIdentification().trim() != ""){
 			qry += "AND i.identification =:identification ";
 		}
+		
+		if(criteria.getNumber() != null && criteria.getNumber().trim() != ""){
+			qry += "AND (n.year || '-' || n.number) like :num ";
+		}
+		
 		Query query = this.entityManager
 				.createQuery(qry);
 		
-		if(criteria.getIdentification() != null && criteria.getIdentification() != ""){
-			query.setParameter("identification", criteria.getIdentification());
+		if(criteria.getIdentification() != null && criteria.getIdentification().trim() != ""){
+			query.setParameter("identification", criteria.getIdentification().trim());
 		}
+		
+		if(criteria.getNumber() != null && criteria.getNumber() != ""){
+			query.setParameter("num", "%" + criteria.getNumber().trim()+"%");
+		}
+		
 		Long size = (Long) query.getSingleResult();
 
 		return size.intValue();
