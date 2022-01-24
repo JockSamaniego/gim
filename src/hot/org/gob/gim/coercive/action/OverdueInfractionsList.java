@@ -25,6 +25,7 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityQuery;
 
+import bsh.This;
 import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.common.model.Resident;
@@ -58,7 +59,6 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 
 	//
 	private String identificationNumber;
-	private Boolean isFirstTime = Boolean.TRUE;
 	private Boolean detailFromNotification = Boolean.FALSE;
 	private BigDecimal total = BigDecimal.ZERO;
 	private String nameResident;
@@ -259,8 +259,9 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	FacesMessages facesMessages;
 
 	public void searchBonds() {
-		isFirstTime = Boolean.TRUE;
 		allResidentsSelected = Boolean.FALSE;
+		cleanSelectedList();
+		this.clearDataModel();
 		getResultList();
 	}
 
@@ -309,9 +310,9 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	 */
 	@SuppressWarnings("unchecked")
 	public void loadPendingInfractions() {
-		if (!isFirstTime)
-			return;
-		isFirstTime = Boolean.FALSE;
+		//if (!isFirstTime)
+		//return;
+		//isFirstTime = Boolean.FALSE;
 
 		if (!detailFromNotification && identificationNumber != null) {
 			Query query = getEntityManager()

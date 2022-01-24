@@ -98,7 +98,7 @@ public class InfractionItem {
 
 	@Override
 	public String toString() {
-		return "InfractionItem [isSelected=" + isSelected + ", name=" + name + ", identification"
+		return "InfractionItem [isSelected=" + isSelected + ", name=" + name + ", identification="
 				+ identification + ", value=" + value + ", interest=" + interest + ", total=" + total + "]";
 	}
 	
