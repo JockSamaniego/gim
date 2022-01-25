@@ -100,7 +100,7 @@
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
 						<h:outputText
-							value="Infracciones (#{empty overdueInfractionsList.resultList ? 0 : (overdueInfractionsList.paginated ? overdueInfractionsList.resultCount : overdueInfractionsList.resultList.size)})" />
+							value="Contribuyentes (#{empty overdueInfractionsList.resultList ? 0 : (overdueInfractionsList.paginated ? overdueInfractionsList.resultCount : overdueInfractionsList.resultList.size)})" />
 
 						<a4j:region>
 							<s:button id="printDepositsBtn"
@@ -108,7 +108,7 @@
 								propagation="join"
 								action="#{overdueInfractionsListHome.createNotification()}"
 								value="#{messages['coercive.generateNotificacions']}"
-								onclick="Richfaces.showModalPanel('detailPanel',{width:250, height:150})" />
+								reRender="overdueInfractionsForm, table, messages, overdueInfractionsList1,municipalBondList"/>
 						</a4j:region>
 
 					</h:panelGrid>
@@ -230,32 +230,6 @@
 				</div>
 			</rich:panel>
 		</h:form>
-
-
-
-		<rich:modalPanel id="detailPanel" width="250" height="150">
-			<f:facet name="header">#{messages['common.printingConfirmation']}</f:facet>
-			<h:form id="printConfirm">
-				<h:panelGrid>
-					<h:panelGrid columns="2">
-						<h:graphicImage value="/img/alert.png" />
-						<h:outputText value="#{messages['common.isPrintingReady']}" style="font-size:large;" />
-					</h:panelGrid>
-					<h:panelGroup>
-
-					</h:panelGroup>
-					<h:panelGroup>
-						<div style="">
-							<a4j:commandButton style="width:50px" id="printingSuccessBtn"
-								action="#{notificationHome.confirmPrinting}" value="#{messages['common.yes']}"
-								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'detailPanel\');' : ''}" />
-
-						</div>
-					</h:panelGroup>
-				</h:panelGrid>
-			</h:form>
-
-		</rich:modalPanel>
 
 	</ui:define>
 
