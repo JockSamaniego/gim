@@ -939,7 +939,7 @@ import ec.gob.gim.revenue.model.impugnment.Impugnment;
 				+ "    mb.resident.id=:residentId AND "
 				+ "    mb.municipalBondStatus.id in (3,13) AND "
 				+ "    lower(mb.groupingCode) like lower(concat('%',:groupingCode,'%')) AND "
-				+ "    mb.entry.id in (56,57,61,823) "
+				+ "    mb.entry.id in (:entries) "
 				+ "  ORDER BY mb.entry.id, mb.expirationDate desc"),
 
 		@NamedQuery(name = "MunicipalBond.changeBondOfResident", query = "UPDATE MunicipalBond mb "

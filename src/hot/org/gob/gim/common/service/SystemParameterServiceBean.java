@@ -75,7 +75,7 @@ public class SystemParameterServiceBean implements SystemParameterService{
 		String findParameter = this.findParameter(name);
 		String[] idsAux =  findParameter.trim().split(",");
 		for(String e : idsAux){
-			ids.add(Long.parseLong(e));
+			ids.add(Long.parseLong(e.trim()));
 		}
 		return ids;
 		
