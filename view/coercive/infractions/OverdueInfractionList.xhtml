@@ -1,0 +1,262 @@
+<!DOCTYPE composition
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:a="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="infractionSearch" styleClass="edit">
+			<ui:debug id="debug" />
+
+			<a4j:outputPanel id="searcherPanel" ajaxRendered="false">
+				<rich:messages errorClass="errors" id="messages" />
+				<rich:panel>
+					<f:facet name="header">
+						<h:outputText id="title" value="Infracciones migradas" styleClass="formTitle" />
+					</f:facet>
+
+					<h:panelGrid columns="2">
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Identificación:</ui:define>
+							<h:inputText id="identification" value="#{overdueInfractionsList.identification}">
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Nombres:</ui:define>
+							<h:inputText id="names" value="#{overdueInfractionsList.name}">
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Placa:</ui:define>
+							<h:inputText id="licensePlate" value="#{overdueInfractionsList.licensePlate}">
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Artículo:</ui:define>
+							<h:inputText id="article" value="#{overdueInfractionsList.article}">
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Emisión desde:</ui:define>
+							<rich:calendar id="emisionFrom" value="#{overdueInfractionsList.emisionFrom}"
+								datePattern="yyyy-MM-dd">
+							</rich:calendar>
+						</s:decorate>
+
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Emisión hasta:</ui:define>
+							<rich:calendar id="emisionUntil" value="#{overdueInfractionsList.emisionUntil}"
+								datePattern="yyyy-MM-dd">
+							</rich:calendar>
+						</s:decorate>
+
+
+
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Vencimiento desde:</ui:define>
+							<rich:calendar id="expirationFrom" value="#{overdueInfractionsList.expirationFrom}"
+								datePattern="yyyy-MM-dd">
+							</rich:calendar>
+						</s:decorate>
+
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Vencimiento hasta:</ui:define>
+							<rich:calendar id="expirationUntil" value="#{overdueInfractionsList.expirationUntil}"
+								datePattern="yyyy-MM-dd">
+							</rich:calendar>
+						</s:decorate>
+
+
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Nro boleta:</ui:define>
+							<h:inputText id="ticket" value="#{overdueInfractionsList.ticket}" size="10">
+							</h:inputText>
+						</s:decorate>
+
+					</h:panelGrid>
+					<div style="clear: both" />
+				</rich:panel>
+			</a4j:outputPanel>
+
+			<div class="actionButtons">
+				<a4j:commandButton id="search" value="#{messages['common.search']}"
+					action="#{overdueInfractionsList.searchBonds()}"
+					reRender="overdueInfractionsForm, table, messages" />
+
+				<s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" propagation="none">
+				</s:button>
+			</div>
+
+		</h:form>
+
+		<h:form id="overdueInfractionsForm" styleClass="edit">
+			<rich:panel id="table">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText
+							value="Infracciones (#{empty overdueInfractionsList.resultList ? 0 : (overdueInfractionsList.paginated ? overdueInfractionsList.resultCount : overdueInfractionsList.resultList.size)})" />
+
+						<a4j:region>
+							<s:button id="printDepositsBtn"
+								rendered="#{not empty overdueInfractionsList.resultList}"
+								propagation="join"
+								action="#{overdueInfractionsListHome.createNotification()}"
+								value="#{messages['coercive.generateNotificacions']}"
+								onclick="Richfaces.showModalPanel('detailPanel',{width:250, height:150})" />
+						</a4j:region>
+
+					</h:panelGrid>
+				</f:facet>
+
+				<div class="results" id="municipalBondList">
+					<h:outputText value="#{messages['municipalBond.searchReturnedNoResults']}."
+						rendered="#{empty overdueInfractionsList.resultList}" />
+
+
+					<rich:dataTable id="overdueInfractionsList1" var="_infraction"
+						value="#{overdueInfractionsList.resultList}"
+						rendered="#{not empty overdueInfractionsList.resultList}">
+
+						<h:column>
+							<f:facet name="header">
+								<h:selectBooleanCheckbox value="#{overdueInfractionsList.allResidentsSelected}">
+									<a4j:support event="onchange" eventsQueue="gimQueue"
+										action="#{overdueInfractionsList.selectAllResidentItems()}" ajaxSingle="true"
+										reRender="overdueInfractionsForm" />
+								</h:selectBooleanCheckbox>
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{_infraction.selected}">
+								<a4j:support event="onchange" ajaxSingle="true"
+									action="#{overdueInfractionsList.addResidentItem(_infraction)}" />
+							</h:selectBooleanCheckbox>
+						</h:column>
+
+						<rich:column sortBy="#{_infraction.identification}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="#{messages['resident.identificationNumber']}" />
+							</f:facet>
+							<h:outputText value="#{_infraction.identification}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_infraction.name}">
+							<f:facet name="header">
+								<h:outputText value="#{messages['resident.name']}" />
+							</f:facet>
+							<h:outputText value="#{_infraction.name}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_infraction.totalinfractions}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Cantidad infracciones" />
+							</f:facet>
+							<h:outputText value="#{_infraction.totalinfractions}" />
+						</rich:column>
+
+
+						<rich:column sortBy="#{_infraction.value}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Valor" />
+							</f:facet>
+							<h:outputText value="#{_infraction.value}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_infraction.interest}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Interés" />
+							</f:facet>
+							<h:outputText value="#{_infraction.interest}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_infraction.total}" styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Total aprox." />
+							</f:facet>
+							<h:outputText value="#{_infraction.total}" />
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<s:button view="/coercive/infractions/DetailPendingInfractions.xhtml"
+								value="#{messages['common.detail']}"
+								propagation="join" id="infractionsListButton">
+								<f:param name="identificationNumber" value="#{_infraction.identification}"/>
+								<f:param name="nameResident" value="#{_infraction.name}"/>
+								<f:param name="from" value="/coercive/infractions/OverdueInfractionList.xhtml"/>
+								
+							</s:button>
+						</rich:column>
+
+					</rich:dataTable>
+
+
+				</div>
+
+				<div class="tableControl">
+
+					<s:link view="/coercive/infractions/OverdueInfractionList.html"
+						action="#{overdueInfractionsList.cleanSelectedList()}"
+						rendered="#{overdueInfractionsList.previousExists}"
+						value="#{messages.left}#{messages.left} #{messages['common.firstPage']}" id="firstPage">
+						<f:param name="firstResult" value="0" />
+					</s:link>
+
+					<s:link view="/coercive/infractions/OverdueInfractionList.html"
+						action="#{overdueInfractionsList.cleanSelectedList()}"
+						rendered="#{overdueInfractionsList.previousExists}"
+						value="#{messages.left} #{messages['common.previousPage']}" id="previousPage">
+						<f:param name="firstResult" value="#{overdueInfractionsList.previousFirstResult}" />
+					</s:link>
+
+					<s:link view="/coercive/infractions/OverdueInfractionList.html"
+						rendered="#{overdueInfractionsList.nextExists}"
+						value="#{messages['common.nextPage']} #{messages.right}"
+						action="#{overdueInfractionsList.cleanSelectedList()}" id="nextPage">
+						<f:param name="firstResult" value="#{overdueInfractionsList.nextFirstResult}" />
+					</s:link>
+
+					<s:link view="/coercive/infractions/OverdueInfractionList.html"
+						action="#{overdueInfractionsList.cleanSelectedList()}"
+						rendered="#{overdueInfractionsList.nextExists}"
+						value="#{messages['common.lastPage']} #{messages.right}#{messages.right}" id="lastPage">
+						<f:param name="firstResult" value="#{overdueInfractionsList.lastFirstResult}" />
+					</s:link>
+
+				</div>
+			</rich:panel>
+		</h:form>
+
+
+
+		<rich:modalPanel id="detailPanel" width="250" height="150">
+			<f:facet name="header">#{messages['common.printingConfirmation']}</f:facet>
+			<h:form id="printConfirm">
+				<h:panelGrid>
+					<h:panelGrid columns="2">
+						<h:graphicImage value="/img/alert.png" />
+						<h:outputText value="#{messages['common.isPrintingReady']}" style="font-size:large;" />
+					</h:panelGrid>
+					<h:panelGroup>
+
+					</h:panelGroup>
+					<h:panelGroup>
+						<div style="">
+							<a4j:commandButton style="width:50px" id="printingSuccessBtn"
+								action="#{notificationHome.confirmPrinting}" value="#{messages['common.yes']}"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'detailPanel\');' : ''}" />
+
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+
+		</rich:modalPanel>
+
+	</ui:define>
+
+</ui:composition>

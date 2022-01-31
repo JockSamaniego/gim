@@ -9,6 +9,7 @@ import javax.persistence.Query;
 
 import org.gob.gim.cadaster.facade.CadasterService;
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.action.AdjunctAction;
 import org.gob.gim.revenue.action.AdjunctHome;
 import org.gob.gim.revenue.service.MunicipalBondService;
@@ -52,6 +53,10 @@ public class ChangePropertyAndBondsHome extends EntityHome<MunicipalBond> {
 
 	public static String MUNICIPALBOND_SERVICE_NAME = "/gim/MunicipalBondService/local";
 	public static String CADASTER_SERVICE_NAME = "/gim/CadasterService/local";
+	
+	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
+	
+	private SystemParameterService systemParameterService;
 
 	public void load() {
 		if (isIdDefined()) {
@@ -153,6 +158,11 @@ public class ChangePropertyAndBondsHome extends EntityHome<MunicipalBond> {
 
 	@SuppressWarnings("unchecked")
 	public void findBondsByResidentAndGroupingCode(){
+		if (systemParameterService == null)systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);			
+		
+		List<Long> entries = systemParameterService.findListIds("ENTRIES_CHANGE_AVALOS");
+		// List<Long> bondIds = pendingBonds(taxpayer.getId(), statusPermit);
+		
 		bonds.clear();
 		properties.clear();
 		this.setResidentNew(null);
@@ -161,6 +171,7 @@ public class ChangePropertyAndBondsHome extends EntityHome<MunicipalBond> {
 			"MunicipalBond.findBondsCadastralByResidentAndGroupingCode");
 			query.setParameter("residentId", residentLast.getId());
 			query.setParameter("groupingCode", groupingCode);
+			query.setParameter("entries", entries);
 			bonds = query.getResultList();
 			
 			query = this.getEntityManager().createNamedQuery(
