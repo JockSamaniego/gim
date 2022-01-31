@@ -18,6 +18,7 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Transactional;
+import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityHome;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
@@ -132,6 +133,12 @@ public class OverdueInfractionsListHome extends
 
 			List<Datainfraction> infractions = this.datainfractionService
 					.findInfractionsByIdentification(identification);
+			
+			if(infractions.size() == 0) {
+				overdueInfractionsList.searchBonds();
+				addFacesMessage("Recargue la página");
+				return "failed";
+			};
 
 			notification = new NotificationInfractions();
 			notification.setInfractions(infractions);
@@ -147,6 +154,11 @@ public class OverdueInfractionsListHome extends
 			generatedNotificationIds.add((Long) getId());
 
 		}
+		
+		Contexts.removeFromAllContexts("overdueInfractionsList");
+		overdueInfractionsList.refresh();
+		
+		overdueInfractionsList.searchBonds();
 
 		return "sendToPrint";
 	}
