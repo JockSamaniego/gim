@@ -1,0 +1,153 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h1>#{messages['factoryLineRoad.title']}</h1>
+		<h:form id="factoryLineRoadSearch" styleClass="edit">
+			<rich:simpleTogglePanel label="#{messages['factoryLineRoad.Filter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['factoryLineRoad.Criteria']}</ui:define>
+					<h:inputText id="name" value="#{factoryLineRoadList.name}" >
+                    </h:inputText>
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}" ajaxSingle="true"
+                    reRender="factoryLineRoadPanel">
+					<f:param name="firstResult" value="0" />
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+			<rich:panel id = "factoryLineRoadPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['factoryLineRoad.Results']}(#{empty factoryLineRoadList.resultList ? 0 : (factoryLineRoadList.paginated ? factoryLineRoadList.resultCount : factoryLineRoadList.resultList.size)})" />
+						<h:panelGroup>
+							<s:div styleClass="actionButtons" >
+								<s:button view="/factoryline/FactoryLineRoadEdit.xhtml" id="create"
+									propagation="none"
+									value="#{messages['common.create']} #{messages['factoryLineRoad.create']}" >
+									<f:param name="factoryLineRoadId" />
+								</s:button>
+							</s:div>
+						</h:panelGroup>
+					</h:panelGrid>
+				</f:facet>
+				<div class="results" id="factoryLineRoadList">
+	
+					<h:outputText value="#{messages['factoryLineRoad.ResultsNotFound']}"
+						rendered="#{empty factoryLineRoadList.resultList}" />
+	
+					<rich:dataTable id="factoryLineRoadListTable" var="_factoryLineRoad"
+						value="#{factoryLineRoadList.resultList}"
+						rendered="#{not empty factoryLineRoadList.resultList}"
+						onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{factoryLineRoadList}" />
+                                    <ui:param name="propertyLabel" value="#{messages['factoryLineRoad.denomination']}" />
+                                    <ui:param name="propertyPath" value="factoryLineRoad.denomination" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_factoryLineRoad.denomination}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{factoryLineRoadList}" />
+                                    <ui:param name="propertyLabel" value="#{messages['factoryLineRoad.location']}" />
+                                    <ui:param name="propertyPath" value="factoryLineRoad.location" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_factoryLineRoad.location}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{factoryLineRoadList}" />
+                                    <ui:param name="propertyLabel" value="#{messages['factoryLineRoad.reference']}" />
+                                    <ui:param name="propertyPath" value="factoryLineRoad.reference" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_factoryLineRoad.reference}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{factoryLineRoadList}" />
+                                    <ui:param name="propertyLabel" value="#{messages['factoryLineRoad.obs']}" />
+                                    <ui:param name="propertyPath" value="factoryLineRoad.obs" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_factoryLineRoad.obs}" />
+                        </h:column>
+                        
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+                            <s:button view="/factoryline/FactoryLineRoadEdit.xhtml"
+                                value="#{messages['common.edit']}" propagation="none"
+                                id="factoryLineRoadEdit" rendered="#{empty from}">
+                                <f:param name="factoryLineRoadId" value="#{_factoryLineRoad.id}" />
+                            </s:button>
+                            #{' '}
+						</rich:column>
+					</rich:dataTable>
+	
+				</div>
+			</rich:panel>
+
+			<div class="tableControl">
+	
+				<s:link view="/factoryline/FactoryLineList.xhtml"
+					rendered="#{factoryLineRoadList.previousExists}"
+					value="#{messages.left}#{messages.left} #{messages['common.firstPage']}" id="firstPage">
+					<f:param name="firstResult" value="0" />
+				</s:link>
+	
+				<s:link view="/factoryline/FactoryLineList.xhtml"
+					rendered="#{factoryLineRoadList.previousExists}"
+					value="#{messages.left} #{messages['common.previousPage']}" id="previousPage">
+					<f:param name="firstResult"
+						value="#{factoryLineRoadList.previousFirstResult}" />
+				</s:link>
+	
+				<s:link view="/factoryline/FactoryLineList.xhtml"
+					rendered="#{factoryLineRoadList.nextExists}"
+					value="#{messages['common.nextPage']} #{messages.right}" id="nextPage">
+					<f:param name="firstResult" value="#{factoryLineRoadList.nextFirstResult}" />
+				</s:link>
+	
+				<s:link view="/factoryline/FactoryLineList.seam"
+					rendered="#{factoryLineRoadList.nextExists}"
+					value="#{messages['common.lastPage']} #{messages.right}#{messages.right}" id="lastPage">
+					<f:param name="firstResult" value="#{factoryLineRoadList.lastFirstResult}" />
+				</s:link>
+	
+			</div>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

@@ -11,6 +11,7 @@ import javax.persistence.Query;
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
+import org.gob.gim.factoryline.action.FactoryLineList;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
@@ -72,6 +73,10 @@ import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.LegalEntityType;
 import ec.gob.gim.common.model.MaritalStatus;
 import ec.gob.gim.common.model.Person;
+import ec.gob.gim.factoryline.DepartmentName;
+import ec.gob.gim.factoryline.FactoryLineRoad;
+import ec.gob.gim.factoryline.SectorType;
+import ec.gob.gim.factoryline.TerritorialPolygon;
 import ec.gob.gim.income.model.CreditNoteType;
 import ec.gob.gim.income.model.LegalStatus;
 import ec.gob.gim.income.model.MoneyType;
@@ -865,6 +870,32 @@ public class FactoryController  extends EntityController{
 		return Arrays.asList(ExitTypeBinnacleCRV.values());
 	}
 	
+	@Factory("departmentNames")
+	public List<DepartmentName> loadDepartmentNames() {
+		return Arrays.asList(DepartmentName.values());
+	}
+	
+	@Factory("sectorTypes")
+	public List<SectorType> loadSectorTypes() {
+		return Arrays.asList(SectorType.values());
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Factory("territorialPolygons")
+	public List<TerritorialPolygon> territorialPolygons() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"TerritorialPolygon.findAllActive");
+		return (List<TerritorialPolygon>) query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Factory("factoryLineRoads")
+	public List<FactoryLineRoad> factoryLineRoads() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"FactoryLineRoad.findAll");
+		return (List<FactoryLineRoad>) query.getResultList();
+	}
+
 
 	//macartuche 2021-07-021 10:50am
 	//descuentos CEM tercera edad y discapacidad

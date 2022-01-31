@@ -1,0 +1,207 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h1>#{messages['factoryLine.title']}</h1>
+		<h:form id="factoryLineSearch" styleClass="edit">
+			<rich:simpleTogglePanel label="#{messages['factoryLine.Filter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['factoryLine.Criteria']}</ui:define>
+					<h:inputText id="name" value="#{factoryLineList.name}" >
+                    </h:inputText>
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}" ajaxSingle="true"
+                    reRender="factoryLinePanel">
+					<f:param name="firstResult" value="0" />
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+			<rich:panel id = "factoryLinePanel">
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="#{messages['factoryLine.Results']}(#{empty factoryLineList.resultList ? 0 : (factoryLineList.paginated ? factoryLineList.resultCount : factoryLineList.resultList.size)})" />
+						<h:panelGroup>
+							<s:div styleClass="actionButtons" >
+								<s:button view="/factoryline/FactoryLineEdit.xhtml" id="create"
+								    action="#{factoryLineHome.createFactoryLine()}"
+									propagation="none" rendered="#{factoryLineHome.hasRole('ROLE_NAME_CRV_SYSTEM')}"
+									value="#{messages['common.create']} #{messages['factoryLine.create']}" >
+									<f:param name="factoryLineId" />
+								</s:button>
+							</s:div>
+						</h:panelGroup>
+					</h:panelGrid>
+				</f:facet>
+				<div class="results" id="factoryLineList">
+	
+					<h:outputText value="#{messages['factoryLine.ResultsNotFound']}"
+						rendered="#{empty factoryLineList.resultList}" />
+	
+					<rich:dataTable id="factoryLineListTable" var="_factoryLine"
+						value="#{factoryLineList.resultList}"
+						rendered="#{not empty factoryLineList.resultList}"
+						onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{factoryLineList}" />
+                                    <ui:param name="propertyLabel" value="#{messages['factoryLine.factoryLineNumber']}" />
+                                    <ui:param name="propertyPath" value="factoryLine.factoryLineNumber" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_factoryLine.factoryLineNumber}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{factoryLineList}" />
+                                    <ui:param name="propertyLabel" value="#{messages['factoryLine.creationDate']}" />
+                                    <ui:param name="propertyPath" value="factoryLine.creationDate" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_factoryLine.creationDate}">
+                                <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                            </h:outputText>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{factoryLineList}" />
+                                    <ui:param name="propertyLabel" value="#{messages['factoryLine.sectorType']}" />
+                                    <ui:param name="propertyPath" value="factoryLine.sectorType" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_factoryLine.sectorType}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{factoryLineList}" />
+                                    <ui:param name="propertyLabel" value="#{messages['factoryLine.polygonCode']}" />
+                                    <ui:param name="propertyPath" value="factoryLine.territorialPolygon.polygonCode" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_factoryLine.territorialPolygon.polygonCode}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{factoryLineList}" />
+                                    <ui:param name="propertyLabel" value="#{messages['factoryLine.polygonName']}" />
+                                    <ui:param name="propertyPath" value="factoryLine.territorialPolygon.polygonName" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_factoryLine.territorialPolygon.polygonName}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{factoryLineList}" />
+                                    <ui:param name="propertyLabel" value="#{messages['factoryLine.identification']}" />
+                                    <ui:param name="propertyPath" value="factoryLine.identification" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_factoryLine.identification}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <ui:include src="../layout/sort.xhtml">
+                                    <ui:param name="entityList" value="#{factoryLineList}" />
+                                    <ui:param name="propertyLabel" value="#{messages['factoryLine.owner']}" />
+                                    <ui:param name="propertyPath" value="factoryLine.owner" />
+                                </ui:include>
+                            </f:facet>
+                            <h:outputText value="#{_factoryLine.owner}" />
+                        </h:column>
+                        
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+                            <s:button view="/factoryline/FactoryLineEdit.xhtml"
+                                action="#{factoryLineHome.editFactoryLine()}"
+                                value="#{messages['common.view']}" propagation="none"
+                                id="factoryLineEdit" rendered="#{empty from}">
+                                <f:param name="factoryLineId" value="#{_factoryLine.id}" />
+                                <f:param name="duplicate" value="false" />
+                            </s:button>
+                            #{' '}
+                            <s:button view="/factoryline/report/FactoryLineReport.xhtml"
+                                action="#{factoryLineHome.generateReport(_factoryLine)}"
+                                value="#{messages['common.print']}" propagation="none"
+                                id="factoryLinePrint" >
+                                <f:param name="factoryLineId" value="#{_factoryLine.id}" />
+                                <f:param name="duplicate" value="false" />
+                            </s:button>
+                            #{' '}
+                            <s:button view="/factoryline/FactoryLineEdit.xhtml"
+                                action="#{factoryLineHome.duplicateFactoryLine(_factoryLine)}"
+                                value="#{messages['common.duplicate']}" propagation="none"
+                                id="factoryLineDuplicate" rendered="#{empty from}">
+                                <f:param name="factoryLineId" value="#{_factoryLine.id}" />
+                                <f:param name="duplicate" value="true" />
+                            </s:button>
+                            #{' '}
+						</rich:column>
+					</rich:dataTable>
+	
+				</div>
+			</rich:panel>
+
+			<div class="tableControl">
+	
+				<s:link view="/factoryline/FactoryLineList.xhtml"
+					rendered="#{factoryLineList.previousExists}"
+					value="#{messages.left}#{messages.left} #{messages['common.firstPage']}" id="firstPage">
+					<f:param name="firstResult" value="0" />
+				</s:link>
+	
+				<s:link view="/factoryline/FactoryLineList.xhtml"
+					rendered="#{factoryLineList.previousExists}"
+					value="#{messages.left} #{messages['common.previousPage']}" id="previousPage">
+					<f:param name="firstResult"
+						value="#{factoryLineList.previousFirstResult}" />
+				</s:link>
+	
+				<s:link view="/factoryline/FactoryLineList.xhtml"
+					rendered="#{factoryLineList.nextExists}"
+					value="#{messages['common.nextPage']} #{messages.right}" id="nextPage">
+					<f:param name="firstResult" value="#{factoryLineList.nextFirstResult}" />
+				</s:link>
+	
+				<s:link view="/factoryline/FactoryLineList.seam"
+					rendered="#{factoryLineList.nextExists}"
+					value="#{messages['common.lastPage']} #{messages.right}#{messages.right}" id="lastPage">
+					<f:param name="firstResult" value="#{factoryLineList.lastFirstResult}" />
+				</s:link>
+	
+			</div>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,69 @@
+    <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:g="http://gim.gob.ec/jsf"
+    template="../layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <h:form id="factoryLineRoadEditForm" >
+            <h:outputText styleClass="formTitle"
+                value="#{factoryLineRoadHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['factoryLineRoad.nameTitle']}" />
+
+            <rich:panel>
+                <f:facet name="header">Datos de Vía/Hidrografía</f:facet>
+                <h:panelGrid columns="1" width="100%">
+                    <s:decorate id="locationField" template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['factoryLineRoad.location']}:</ui:define>
+                        <h:inputText id="itemLocation" required="true" 
+                            value="#{factoryLineRoadHome.instance.location}" maxlength="30" />
+                    </s:decorate>
+
+                    <s:decorate id="denominationField" template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['factoryLineRoad.denomination']}:</ui:define>
+                        <h:inputText id="itemDenomination" required="true" 
+                            value="#{factoryLineRoadHome.instance.denomination}" maxlength="50" />
+                    </s:decorate>
+
+                    <s:decorate id="widthField" template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['factoryLineRoad.width']}:</ui:define>
+                        <h:inputText id="itemWidth" required="true" maxlength="10"
+                            value="#{factoryLineRoadHome.instance.width}" />
+                    </s:decorate>
+
+                    <s:decorate id="referenceField" template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['factoryLineRoad.reference']}:</ui:define>
+                        <h:inputText id="itemReference" required="true" maxlength="100"
+                            value="#{factoryLineRoadHome.instance.reference}" />
+                    </s:decorate>
+
+                    <s:decorate id="obsField" template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['factoryLineRoad.obs']}:</ui:define>
+                        <h:inputText id="itemObs" required="true" maxlength="200"
+                            value="#{factoryLineRoadHome.instance.obs}" />
+                    </s:decorate>
+
+                </h:panelGrid>
+                
+                <h:commandButton id="save" value="#{messages['common.save']}"
+                    action="#{factoryLineRoadHome.persist}" disabled="#{!factoryLineRoadHome.wired}"
+                    rendered="#{!factoryLineRoadHome.managed}" />
+
+                <h:commandButton id="update" value="#{messages['common.save']}"
+                    propagation="end" reRender="factoryLineRoadList"
+                    action="#{factoryLineRoadHome.update}" rendered="#{factoryLineRoadHome.managed}" />
+
+                <s:button id="cancelEdit" value="#{messages['common.cancel']}"
+                    propagation="end" view="/factoryline/FactoryLineRoadList.xhtml" />
+
+            </rich:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

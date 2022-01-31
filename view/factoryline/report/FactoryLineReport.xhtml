@@ -1,0 +1,1969 @@
+<p:document xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	title="#{messages['FactoryLineReport']}" subject="report" type="pdf" orientation="portrait"
+	pageSize="A4" margins="15 10 10 10" author="Municipio de Loja"
+	creator="Municipio de Loja">
+
+	<f:facet name="header">
+		<p:font size="9" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph>
+					<p:table columns="3" widthPercentage="100" spacingAfter="15"
+						widths="0.5 5 1">
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+						<p:cell>
+							<p:image value="#{gim.institution.logo}" alignment="center" width="1" height="1">
+                                <s:transformImageSize height="60" maintainRatio="true"/>
+                            </p:image>
+                        </p:cell>
+						<p:cell>
+                            <p:font size="11" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+					        </p:font>
+                            <p:font size="9" style="bold">
+                                <p:paragraph alignment="center">#{messages[factoryLineHome.instance.department.name()]}</p:paragraph>
+                            </p:font>
+                            <p:font size="7" style="bold">
+                                <p:paragraph alignment="center">CERTIFICADO DE REGULACIÓN - #{factoryLineHome.instance.sectorType.name()}</p:paragraph>
+                            </p:font>
+						</p:cell>
+                        <p:cell>
+                            <p:font size="8" style="bold">
+                                <p:paragraph alignment="center">#{messages['Trámite Nro. ']}</p:paragraph>
+                                <p:paragraph alignment="center">#{factoryLineHome.instance.factoryLineNumber}</p:paragraph>
+                            </p:font>
+                        </p:cell>
+					</p:table>
+				</p:paragraph>
+			</p:header>
+			<p:footer borderWidthTop="0" 
+				borderWidthBottom="0" alignment="center">
+	 			[<p:pageNumber />] - #{factoryLineHome.instance.factoryLineNumber}
+			</p:footer>
+		</p:font>
+	</f:facet>
+
+     <p:font size="8" name="HELVETICA">
+        <p:table columns="1" widthPercentage="100" headerRows="0" spacingBefore="5">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" backgroundColor="lightgray" />
+            </f:facet>
+            <p:cell colspan="1" horizontalAlignment="center">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="A. INFORMACIÓN CATASTRAL DEL PREDIO" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Clave Catastral" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="7">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.cadastralCode}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Propietario" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="3">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.owner}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Cédula" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="3">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.identification}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Parroquia" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.parish}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Barrio" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.neighborhood}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Manzana" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.block}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Lote" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.propertyNumber}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Calle Principal" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="5">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.street}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Ubicación" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.lotPosition.name}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Y / Entre" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="3">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.streetBetween}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Y " />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="3">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.streetBetweenTwo}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Área" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.area}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Frente" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.front}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Fondo" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.lotBackground}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Tipo" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="URBANO" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+	</p:font>
+
+     <p:font size="8" name="HELVETICA">
+        <p:table columns="1" widthPercentage="100" headerRows="0" >
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" backgroundColor="lightgray" />
+            </f:facet>
+            <p:cell colspan="1" horizontalAlignment="center">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="B. OCUPACIÓN DEL SUELO" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Clasificación" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.classiffication}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Subclasificación" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.subclassiffication}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Polígono" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.polygonCode}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Categoría" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.category}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="PIT" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="4">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.polygonName}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Código Uso General" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.generalUseCode}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Uso General" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="4">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.generalUseName}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Uso Principal" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.principalUse.code.concat(' - ').concat(factoryLineHome.instance.territorialPolygon.principalUse.name)}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Uso Prohibido" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="4">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.prohibitedUses.size() > 0 ? factoryLineHome.instance.territorialPolygon.prohibitedUses.get(0).code.concat(' - ').concat(factoryLineHome.instance.territorialPolygon.prohibitedUses.get(0).name) : ''}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Usos Complementarios" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="7">
+            <p:table widthPercentage="100" >
+                <ui:repeat value="#{factoryLineHome.instance.territorialPolygon.complementaryUses}" var="_com">
+                <p:font size="7">
+                    <p:cell borderWidth="0">
+                        <p:paragraph>
+                            <p:text value="#{_com.code} - #{_com.name}"/>
+                        </p:paragraph>
+                    </p:cell>
+                </p:font>
+                </ui:repeat>
+                </p:table>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Lote mínimo (m2)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.minimumLot}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Frente mínimo (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.minFront}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Retiro Frontal (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.frontalRetreat}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Fondo 1/2" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.middleBackground}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Lote promedio (m2)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.averageLot}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Frente promedio (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.averageFront}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Retiro Lateral (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.sideRetreat}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="COS (%)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.cos}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Lote máximo (m2)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.maxLot}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Frente máximo (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.maxFront}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Retiro posterior (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.laterWithdrawal}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="CUS (%)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.cus}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Implantación" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="5">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.implantation}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="No. de pisos" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon.floorHeight}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+    </p:font>
+
+     <p:font size="8" name="HELVETICA" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('RURAL')}">
+        <p:table columns="1" widthPercentage="100" headerRows="0" >
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" backgroundColor="lightgray" />
+            </f:facet>
+            <p:cell colspan="1" horizontalAlignment="center">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="B1. OCUPACIÓN DEL SUELO 1" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Clasificación" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.classiffication}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Subclasificación" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.subclassiffication}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Polígono" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.polygonCode}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Categoría" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.category}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="PIT" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="4">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.polygonName}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Código Uso General" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.generalUseCode}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Uso General" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="4">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.generalUseName}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Uso Principal" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.principalUse.code.concat(' - ').concat(factoryLineHome.instance.territorialPolygon1.principalUse.name)}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Uso Prohibido" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="4">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.prohibitedUses.size() > 0 ? factoryLineHome.instance.territorialPolygon1.prohibitedUses.get(0).code.concat(' - ').concat(factoryLineHome.instance.territorialPolygon1.prohibitedUses.get(0).name) : ''}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Usos Complementarios" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="7">
+            <p:table widthPercentage="100" >
+                <ui:repeat value="#{factoryLineHome.instance.territorialPolygon1.complementaryUses}" var="_com">
+                <p:font size="7">
+                    <p:cell borderWidth="0">
+                        <p:paragraph>
+                            <p:text value="#{_com.code} - #{_com.name}"/>
+                        </p:paragraph>
+                    </p:cell>
+                </p:font>
+                </ui:repeat>
+                </p:table>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Lote mínimo (m2)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.minimumLot}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Frente mínimo (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.minFront}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Retiro Frontal (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.frontalRetreat}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Fondo 1/2" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.middleBackground}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Lote promedio (m2)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.averageLot}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Frente promedio (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.averageFront}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Retiro Lateral (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.sideRetreat}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="COS (%)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.cos}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Lote máximo (m2)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.maxLot}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Frente máximo (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.maxFront}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Retiro posterior (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.laterWithdrawal}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="CUS (%)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.cus}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Implantación" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="5">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.implantation}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="No. de pisos" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon1.floorHeight}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+    </p:font>
+
+     <p:font size="8" name="HELVETICA" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('RURAL')}">
+        <p:table columns="1" widthPercentage="100" headerRows="0" >
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" backgroundColor="lightgray" />
+            </f:facet>
+            <p:cell colspan="1" horizontalAlignment="center">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="B2. OCUPACIÓN DEL SUELO 2" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Clasificación" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.classiffication}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Subclasificación" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.subclassiffication}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Polígono" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.polygonCode}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Categoría" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.category}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="PIT" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="4">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.polygonName}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Código Uso General" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.generalUseCode}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Uso General" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="4">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.generalUseName}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Uso Principal" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.principalUse.code.concat(' - ').concat(factoryLineHome.instance.territorialPolygon2.principalUse.name)}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Uso Prohibido" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="4">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.prohibitedUses.size() > 0 ? factoryLineHome.instance.territorialPolygon2.prohibitedUses.get(0).code.concat(' - ').concat(factoryLineHome.instance.territorialPolygon2.prohibitedUses.get(0).name) : ''}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Usos Complementarios" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="7">
+            <p:table widthPercentage="100" >
+                <ui:repeat value="#{factoryLineHome.instance.territorialPolygon2.complementaryUses}" var="_com">
+                <p:font size="7">
+                    <p:cell borderWidth="0">
+                        <p:paragraph>
+                            <p:text value="#{_com.code} - #{_com.name}"/>
+                        </p:paragraph>
+                    </p:cell>
+                </p:font>
+                </ui:repeat>
+                </p:table>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Lote mínimo (m2)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.minimumLot}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Frente mínimo (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.minFront}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Retiro Frontal (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.frontalRetreat}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Fondo 1/2" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.middleBackground}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Lote promedio (m2)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.averageLot}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Frente promedio (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.averageFront}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Retiro Lateral (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.sideRetreat}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="COS (%)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.cos}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Lote máximo (m2)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.maxLot}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Frente máximo (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.maxFront}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Retiro posterior (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.laterWithdrawal}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="CUS (%)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.cus}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Implantación" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="5">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.implantation}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="No. de pisos" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.territorialPolygon2.floorHeight}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+    </p:font>
+
+    <p:font size="8" name="HELVETICA">
+        <p:table columns="1" widthPercentage="100" headerRows="0" >
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" backgroundColor="lightgray" />
+            </f:facet>
+            <p:cell colspan="1" horizontalAlignment="center">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="C. RIESGOS" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="No mitigable" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="3" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.notMitigable}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Tratamiento" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="3" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.notMitigableTreatment}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Descripción" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="7">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.notMitigableDescription}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Mitigable" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="3" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.mitigable}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Tipo de Estudio" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="3" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.mitigableTreatment}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Descripción" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="7" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.mitigableDescription}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+    </p:font>
+
+     <p:font size="8" name="HELVETICA" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+        <p:table columns="1" widthPercentage="100" headerRows="0" >
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" backgroundColor="lightgray" />
+            </f:facet>
+            <p:cell colspan="1" horizontalAlignment="center">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="D. ZONA PATRIMONIAL" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Área Central" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Primer Orden" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Segundo Orden" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Subconjunto Histórico Plaza El Valle" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Primer Orden" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Segundo Orden" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="2">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Eje Vial Cultural" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="7">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="8" widthPercentage="100" headerRows="0" widths="0.9 1.1 1 1 1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Eje Vial de Influencia" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="7">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+    </p:font>
+
+     <p:font size="8" name="HELVETICA">
+        <p:table columns="1" widthPercentage="100" headerRows="0" >
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" backgroundColor="lightgray" />
+            </f:facet>
+            <p:cell colspan="1" horizontalAlignment="center">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="E. VÍAS E HIDROGRAFÍA" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="3" widthPercentage="100" headerRows="0" widths="1 1 1">
+            <p:font size="7">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7"  horizontalAlignment="center"/>
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold" horizontalAlignment="center">
+                        <p:text value="Denominación" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold" horizontalAlignment="center">
+                        <p:text value="Ancho (m)" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold" horizontalAlignment="center">
+                        <p:text value="Referencia de Línea de Fábrica" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            </p:font>
+
+            <ui:repeat value="#{factoryLineHome.roadsHome}" var="_obj">
+                <p:font size="7">
+                    <p:cell >
+                        <p:paragraph>
+                            <p:text value="#{_obj.denomination}"/>
+                        </p:paragraph>
+                    </p:cell>
+                    <p:cell >
+                        <p:paragraph>
+                            <p:text value="#{_obj.width}"/>
+                        </p:paragraph>
+                    </p:cell>
+                    <p:cell >
+                        <p:paragraph>
+                            <p:text value="#{_obj.reference}"/>
+                        </p:paragraph>
+                    </p:cell>
+                </p:font>
+            </ui:repeat>
+        </p:table>
+    </p:font>
+
+     <p:font size="8" name="HELVETICA">
+        <p:table columns="1" widthPercentage="100" headerRows="0" >
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" backgroundColor="lightgray" />
+            </f:facet>
+            <p:cell colspan="1" horizontalAlignment="center">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="F. INFRAESTRUCTURA BÁSICA" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+        <p:table columns="4" widthPercentage="100" headerRows="0" widths="1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" size="7" />
+            </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Agua Potable" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.hasWater == true ? 'SI TIENE' : 'NO TIENE'}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" style="bold">
+                        <p:text value="Alcantarilado" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="7" >
+                        <p:text value="#{factoryLineHome.instance.hasSewer == true ? 'SI TIENE' : 'NO TIENE'}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+    </p:font>
+
+     <p:font size="8" name="HELVETICA">
+        <p:table columns="2" widthPercentage="100" headerRows="0" >
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" backgroundColor="lightgray" />
+            </f:facet>
+            <p:cell colspan="1" horizontalAlignment="center">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="SELLOS Y FIRMAS DE AUTORIZACIÓN" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            <p:cell colspan="1" horizontalAlignment="center">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="OBSERVACIONES" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+        </p:table>
+    </p:font>
+
+     <p:font size="8" name="HELVETICA">
+        <p:table columns="2" widthPercentage="100" headerRows="0" >
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0.5" />
+            </f:facet>
+            <p:cell colspan="1" horizontalAlignment="center">
+                <p:paragraph/>
+            </p:cell>
+	        <p:table columns="1" widthPercentage="100" headerRows="0" >
+	            <f:facet name="defaultCell">
+	                <p:cell borderWidth="0" />
+	            </f:facet>
+                <p:cell colspan="1" horizontalAlignment="justify" >
+                    <p:paragraph>
+                        <p:font size="7" >
+                            <p:text value="#{factoryLineHome.getAllObservations()}" />
+                        </p:font>
+                    </p:paragraph>
+                </p:cell>
+                <p:cell colspan="1" horizontalAlignment="center">
+                    <p:paragraph>
+                        <p:font size="8" style="bold">
+                            <p:paragraph rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}"/>
+                            <p:paragraph rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}"/>
+                            <p:paragraph/>
+                            <p:paragraph/>
+                            <p:paragraph/>
+                            <p:paragraph/>
+                            <p:text value="#{factoryLineHome.instance.user.resident.name}" />
+                            <p:paragraph/>
+                            <p:text value="Técnico de Línea de Fábrica" />
+                        </p:font>
+                    </p:paragraph>
+                </p:cell>
+                <p:cell colspan="1" >
+                    <p:paragraph>
+                        <p:font size="6" >
+                            <p:text value="1. Este documento tiene un año de validez." />
+                            <p:paragraph/>
+                            <p:text value="2. Cualquier enmendación o enmendadura lo anulará" />
+                            <p:paragraph/>
+                            <p:text value="3. Este documento no autoriza ningún trabajo" />
+                            <p:paragraph/>
+                            <p:paragraph/>
+                            <p:text value="FECHA DE ENTREGA: " />
+                            <p:text value="#{factoryLineHome.instance.creationDate}" >
+                                <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                            </p:text>
+                        </p:font>
+                    </p:paragraph>
+                </p:cell>
+            </p:table>
+        </p:table>
+    </p:font>
+
+</p:document>

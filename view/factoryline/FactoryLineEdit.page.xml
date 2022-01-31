@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      no-conversation-view-id="/factoryline/FactoryLineList.xhtml"
+      login-required="true">
+      
+  
+   <begin-conversation join="true" flush-mode="MANUAL"/>
+
+   <action execute="#{factoryLineHome.wire}"/>
+
+   <param name="factoryLineFrom"/>
+   <param name="factoryLineId" value="#{factoryLineHome.factoryLineId}"/>
+   <param name="duplicate" value="#{factoryLineList.duplicate}"/>
+
+   <navigation from-action="#{factoryLineHome.persist}">
+      <rule if-outcome="persisted">
+         <end-conversation/>
+         <end-conversation before-redirect="true"/>
+         <redirect view-id="/factoryline/FactoryLineList.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{factoryLineHome.update}">
+      <rule if-outcome="updated">
+         <end-conversation/>
+         <end-conversation before-redirect="true"/>
+         <redirect view-id="/factoryline/FactoryLineList.xhtml"/>
+      </rule>
+   </navigation>
+
+</page>

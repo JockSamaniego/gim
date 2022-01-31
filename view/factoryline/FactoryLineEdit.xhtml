@@ -1,0 +1,1027 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:g="http://gim.gob.ec/jsf"
+    template="../layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <h:form id="factoryLineEditForm" >
+            <h:outputText styleClass="formTitle"
+                value="#{factoryLineHome.managed ? messages['common.edit'] : messages['common.create']} #{messages['factoryLine.nameTitle']}" />
+
+            <rich:panel>
+                <f:facet name="header">Datos de Línea de Fábrica</f:facet>
+                <h:panelGrid columns="2">
+                    <s:decorate template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['factoryLine.department']}</ui:define>
+                        <h:selectOneMenu id="department" 
+                            value="#{factoryLineHome.instance.department}" required="true">
+                            <ui:debug id="debugExternal"/>
+                            <s:selectItems value="#{departmentNames}" var="_department"
+                                label="#{messages[_department.name()]}" 
+                                noSelectionLabel="Seleccione una opción" />
+                            <s:convertEnum />
+                            <a:support event="onblur" ajaxSingle="true" reRender="department" />
+                        </h:selectOneMenu>
+                    </s:decorate>
+                
+                    <s:decorate template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['factoryLine.sectorType']}</ui:define>
+                        <h:selectOneMenu id="sectorType" 
+                            value="#{factoryLineHome.instance.sectorType}" required="true">
+                            <ui:debug id="debugExternal"/>
+                            <s:selectItems value="#{sectorTypes}" var="_sectorType"
+                                label="#{_sectorType.name()}" 
+                                noSelectionLabel="Seleccione una opción" />
+                            <s:convertEnum />
+                            <a:support event="onblur" ajaxSingle="true" 
+                                reRender="factoryLineEditForm" 
+                                action="#{factoryLineHome.loadPolygons()}" />
+                        </h:selectOneMenu>
+                    </s:decorate>
+                
+                </h:panelGrid>
+                
+                <br/>
+                <h:panelGrid >
+	                    <s:decorate template="../layout/edit.xhtml" id="withoutCadastralInfoField">
+	                        <ui:define name="label">#{messages['factoryLine.withoutCadastralInfo']}:</ui:define>
+	                        <h:selectBooleanCheckbox value="#{factoryLineHome.instance.withoutCadastralInfo}" 
+	                        disabled="#{factoryLineHome.isIdDefined()}">
+		                    <a:support event="onblur" reRender="withoutCadastralInfoField, propertyChooserField, contentPanel, polygonData"
+		                         ajaxSingle="true" eventsQueue="gimQueue" action="#{factoryLineHome.clearDataInstance}"/>
+	                        </h:selectBooleanCheckbox>
+	                    </s:decorate>
+	                    
+                    <s:decorate template="../layout/edit.xhtml" id="propertyChooserField">
+                        <g:propertyChooser id="propertyChooser" disabled="#{factoryLineHome.instance.withoutCadastralInfo}"
+                        property="#{factoryLineHome.property}" 
+                        criteria="#{factoryLineHome.criteriaProperty}"
+                        bean="#{factoryLineHome}" searchAction="searchProperty"
+                        propertyList="#{factoryLineHome.properties}"
+                        searchByCriteriaAction="searchPropertyByCriteria"
+                        clearSearchPanelAction="clearSearchPropertyPanel" reRender="contentPanel, propertyChooserField"
+                        propertyChosenListenerName="propertySelectedListener" />
+                    </s:decorate>
+            
+	                <h:panelGrid columns="3" id="contentPanel">
+	                    <s:decorate template="../layout/edit.xhtml">
+	                        <ui:define name="label">#{messages['factoryLine.factoryLineNumber']}:</ui:define>
+	                        <h:inputText style="text-align: left" required="true"
+	                            value="#{factoryLineHome.instance.factoryLineNumber}" />
+	                    </s:decorate>
+	
+	                    <s:decorate template="../layout/edit.xhtml">
+	                        <ui:define name="label">#{messages['factoryLine.cadastralCode']}:</ui:define>
+	                        <h:inputText id="cadastralCode" required="true" style="text-align: left" 
+	                            value="#{factoryLineHome.instance.cadastralCode}" />
+	                    </s:decorate>
+	
+	                    <s:decorate template="../layout/edit.xhtml">
+	                        <ui:define name="label">#{messages['factoryLine.identification']}:</ui:define>
+	                        <h:inputText required="true" style="text-align: left" 
+	                            value="#{factoryLineHome.instance.identification}" />
+	                    </s:decorate>
+	
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.owner']}:</ui:define>
+                            <h:inputText required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.owner}" />
+                        </s:decorate>
+                        
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.parish']}:</ui:define>
+                            <h:inputText required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.parish}" />
+                        </s:decorate>
+                        
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.neighborhood']}:</ui:define>
+                            <h:inputText required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.neighborhood}" />
+                        </s:decorate>
+                        
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.block']}:</ui:define>
+                            <h:inputText required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.block}" />
+                        </s:decorate>
+                        
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.street']}:</ui:define>
+                            <h:inputText required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.street}" />
+                        </s:decorate>
+                        
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.streetBetween']}:</ui:define>
+                            <h:inputText required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.streetBetween}" />
+                        </s:decorate>
+                        
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.streetBetweenTwo']}:</ui:define>
+                            <h:inputText required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.streetBetweenTwo}" />
+                        </s:decorate>
+                        
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.propertyNumber']}:</ui:define>
+                            <h:inputText required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.propertyNumber}" />
+                        </s:decorate>
+                        
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.lotPosition']}</ui:define>
+                            <h:selectOneMenu id="lotPosition" 
+                                value="#{factoryLineHome.instance.lotPosition}" required="true">
+                                <ui:debug id="debugExternal"/>
+                                <s:selectItems value="#{lotPositions}" var="_lotPosition"
+                                    label="#{_lotPosition.name}" 
+                                    noSelectionLabel="Seleccione una opción" />
+                                <s:convertEntity />
+                            </h:selectOneMenu>
+                        </s:decorate>
+                
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.area']}:</ui:define>
+                            <h:inputText required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.area}" />
+                        </s:decorate>
+                        
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.front']}:</ui:define>
+                            <h:inputText required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.front}" />
+                        </s:decorate>
+                        
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.lotBackground']}:</ui:define>
+                            <h:inputText required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.lotBackground}" />
+                        </s:decorate>
+                        
+                    </h:panelGrid>
+
+                    <h:panelGrid id="polygonData" >
+                        <f:facet name="header">OCUPACIÓN DEL SUELO</f:facet>
+			            <s:decorate template="../layout/edit.xhtml">
+			                <ui:define name="label">#{messages['factoryLine.territorialPolygon']}</ui:define>
+			                <h:selectOneMenu id="territorialPolygon" 
+			                    value="#{factoryLineHome.instance.territorialPolygon}" required="true">
+			                    <ui:debug id="debugExternal"/>
+			                    <s:selectItems value="#{factoryLineHome.territorialPolygons}" var="_territorialPolygon"
+			                        label="#{_territorialPolygon.polygonCode} - #{_territorialPolygon.polygonName}" 
+			                        noSelectionLabel="Seleccione una opción" />
+			                    <s:convertEntity />
+			                    <a:support event="onchange" ajaxSingle="true" reRender="polygonData" />
+			                </h:selectOneMenu>
+			            </s:decorate>
+
+                        <h:panelGrid columns="4">
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.classiffication']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon.classiffication}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.subclassiffication']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon.subclassiffication}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.polygonCode']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon.polygonCode}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.polygonName']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon.polygonName}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.generalUseCode']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon.generalUseCode}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.generalUseName']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon.generalUseName}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.principalUse']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon.principalUse.code}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.principalUseName']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon.principalUse.name}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.minimumLot']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon.minimumLot}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.minFront']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon.minFront}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.frontalRetreat']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon.frontalRetreat}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.middleBackground']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon.middleBackground}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.averageLot']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon.averageLot}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.averageFront']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon.averageFront}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.sideRetreat']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon.sideRetreat}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.cos']} (%):</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon.cos}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.maxLot']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon.minimumLot}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.maxFront']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon.maxFront}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.laterWithdrawal']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon.laterWithdrawal}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.cus']} (%):</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon.cus}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.implantation']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon.implantation}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.floorHeight']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon.floorHeight}" />
+                            </s:decorate>
+                        
+                        </h:panelGrid>
+                        
+                        <h:panelGrid>
+                            <h:outputLabel>#{messages['factoryLine.prohibitedUses']}:</h:outputLabel>
+                            <h:outputText value="#{messages['factoryLine.prohibitedUses.ResultsNotFound']}"
+                                rendered="#{empty factoryLineHome.instance.territorialPolygon.prohibitedUses}" />
+                            <rich:dataTable id="prohibitedLanduses" var="_plu"
+                                value="#{factoryLineHome.instance.territorialPolygon.prohibitedUses}"
+                                rendered="#{not empty factoryLineHome.instance.territorialPolygon.prohibitedUses}"
+                                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.code']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_plu.code}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.name']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_plu.name}" />
+                                </rich:column>
+                                
+                            </rich:dataTable>
+                        </h:panelGrid>
+
+                        <h:panelGrid>
+                            <h:outputLabel>#{messages['factoryLine.complementaryUses']}:</h:outputLabel>
+				            <h:outputText value="#{messages['factoryLine.complementaryUses.ResultsNotFound']}"
+				                rendered="#{empty factoryLineHome.instance.territorialPolygon.complementaryUses}" />
+
+                            <rich:dataTable id="complementedLanduses" var="_clu"
+                                value="#{factoryLineHome.instance.territorialPolygon.complementaryUses}"
+                                rendered="#{not empty factoryLineHome.instance.territorialPolygon.complementaryUses}"
+                                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.code']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_clu.code}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.name']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_clu.name}" />
+                                </rich:column>
+                                
+                            </rich:dataTable>
+                        </h:panelGrid>
+
+                        <h:panelGrid>
+                            <h:outputLabel>#{messages['factoryLine.restrictedUses']}:</h:outputLabel>
+                            <h:outputText value="#{messages['factoryLine.restrictedUses.ResultsNotFound']}"
+                                rendered="#{empty factoryLineHome.instance.territorialPolygon.restrictedUses}" />
+                            <rich:dataTable id="rectrictedLanduses" var="_rlu"
+                                value="#{factoryLineHome.instance.territorialPolygon.restrictedUses}"
+                                rendered="#{not empty factoryLineHome.instance.territorialPolygon.restrictedUses}"
+                                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.code']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_rlu.code}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.name']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_rlu.name}" />
+                                </rich:column>
+                                
+                            </rich:dataTable>
+                        </h:panelGrid>
+
+                    </h:panelGrid>
+
+                    <h:panelGrid id="polygonData1" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('RURAL')}">
+                        <f:facet name="header">OCUPACIÓN DEL SUELO 1</f:facet>
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.territorialPolygon']}</ui:define>
+                            <h:selectOneMenu id="territorialPolygon1" 
+                                value="#{factoryLineHome.instance.territorialPolygon1}" required="true">
+                                <ui:debug id="debugExternal"/>
+                                <s:selectItems value="#{factoryLineHome.territorialPolygons}" var="_territorialPolygon"
+                                    label="#{_territorialPolygon.polygonCode} - #{_territorialPolygon.polygonName}" 
+                                    noSelectionLabel="Seleccione una opción" />
+                                <s:convertEntity />
+                                <a:support event="onchange" ajaxSingle="true" reRender="polygonData1" />
+                            </h:selectOneMenu>
+                        </s:decorate>
+
+                        <h:panelGrid columns="4">
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.classiffication']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon1.classiffication}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.subclassiffication']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon1.subclassiffication}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.polygonCode']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon1.polygonCode}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.polygonName']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon1.polygonName}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.generalUseCode']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon1.generalUseCode}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.generalUseName']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon1.generalUseName}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.principalUse']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon1.principalUse.code}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.principalUseName']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon1.principalUse.name}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.minimumLot']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon1.minimumLot}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.minFront']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon1.minFront}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.frontalRetreat']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon1.frontalRetreat}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.middleBackground']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon1.middleBackground}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.averageLot']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon1.averageLot}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.averageFront']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon1.averageFront}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.sideRetreat']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon1.sideRetreat}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.cos']} (%):</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon1.cos}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.maxLot']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon1.minimumLot}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.maxFront']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon1.maxFront}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.laterWithdrawal']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon1.laterWithdrawal}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.cus']} (%):</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon1.cus}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.implantation']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon1.implantation}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.floorHeight']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon1.floorHeight}" />
+                            </s:decorate>
+                        
+                        </h:panelGrid>
+                        
+                        <h:panelGrid>
+                            <h:outputLabel>#{messages['factoryLine.prohibitedUses']}:</h:outputLabel>
+                            <h:outputText value="#{messages['factoryLine.prohibitedUses.ResultsNotFound']}"
+                                rendered="#{empty factoryLineHome.instance.territorialPolygon1.prohibitedUses}" />
+                            <rich:dataTable id="prohibitedLanduses1" var="_plu1"
+                                value="#{factoryLineHome.instance.territorialPolygon1.prohibitedUses}"
+                                rendered="#{not empty factoryLineHome.instance.territorialPolygon1.prohibitedUses}"
+                                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.code']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_plu1.code}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.name']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_plu1.name}" />
+                                </rich:column>
+                                
+                            </rich:dataTable>
+                        </h:panelGrid>
+
+                        <h:panelGrid>
+                            <h:outputLabel>#{messages['factoryLine.complementaryUses']}:</h:outputLabel>
+                            <h:outputText value="#{messages['factoryLine.complementaryUses.ResultsNotFound']}"
+                                rendered="#{empty factoryLineHome.instance.territorialPolygon1.complementaryUses}" />
+
+                            <rich:dataTable id="complementedLanduses1" var="_clu1"
+                                value="#{factoryLineHome.instance.territorialPolygon1.complementaryUses}"
+                                rendered="#{not empty factoryLineHome.instance.territorialPolygon1.complementaryUses}"
+                                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.code']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_clu1.code}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.name']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_clu1.name}" />
+                                </rich:column>
+                                
+                            </rich:dataTable>
+                        </h:panelGrid>
+
+                        <h:panelGrid>
+                            <h:outputLabel>#{messages['factoryLine.restrictedUses']}:</h:outputLabel>
+                            <h:outputText value="#{messages['factoryLine.restrictedUses.ResultsNotFound']}"
+                                rendered="#{empty factoryLineHome.instance.territorialPolygon1.restrictedUses}" />
+                            <rich:dataTable id="rectrictedLanduses1" var="_rlu1"
+                                value="#{factoryLineHome.instance.territorialPolygon1.restrictedUses}"
+                                rendered="#{not empty factoryLineHome.instance.territorialPolygon1.restrictedUses}"
+                                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.code']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_rlu1.code}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.name']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_rlu1.name}" />
+                                </rich:column>
+                                
+                            </rich:dataTable>
+                        </h:panelGrid>
+
+                    </h:panelGrid>
+
+                    <h:panelGrid id="polygonData2" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('RURAL')}">
+                        <f:facet name="header" styleClass="formTitle">OCUPACIÓN DEL SUELO 2</f:facet>
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.territorialPolygon']}</ui:define>
+                            <h:selectOneMenu id="territorialPolygon2" 
+                                value="#{factoryLineHome.instance.territorialPolygon2}" required="true">
+                                <ui:debug id="debugExternal"/>
+                                <s:selectItems value="#{factoryLineHome.territorialPolygons}" var="_territorialPolygon2"
+                                    label="#{_territorialPolygon2.polygonCode} - #{_territorialPolygon2.polygonName}" 
+                                    noSelectionLabel="Seleccione una opción" />
+                                <s:convertEntity />
+                                <a:support event="onchange" ajaxSingle="true" reRender="polygonData2" />
+                            </h:selectOneMenu>
+                        </s:decorate>
+
+                        <h:panelGrid columns="4">
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.classiffication']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon2.classiffication}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.subclassiffication']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon2.subclassiffication}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.polygonCode']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon2.polygonCode}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.polygonName']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon2.polygonName}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.generalUseCode']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon2.generalUseCode}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.generalUseName']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon2.generalUseName}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.principalUse']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon2.principalUse.code}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.principalUseName']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon2.principalUse.name}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.minimumLot']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon2.minimumLot}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.minFront']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon2.minFront}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.frontalRetreat']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon2.frontalRetreat}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.middleBackground']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon2.middleBackground}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.averageLot']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon2.averageLot}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.averageFront']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon2.averageFront}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.sideRetreat']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon2.sideRetreat}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.cos']} (%):</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon2.cos}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.maxLot']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon2.minimumLot}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.maxFront']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon2.maxFront}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.laterWithdrawal']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true"
+                                    value="#{factoryLineHome.instance.territorialPolygon2.laterWithdrawal}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.cus']} (%):</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon2.cus}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.implantation']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon2.implantation}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.floorHeight']}:</ui:define>
+                                <h:inputText required="true" style="text-align: left" readonly="true" 
+                                    value="#{factoryLineHome.instance.territorialPolygon2.floorHeight}" />
+                            </s:decorate>
+                        
+                        </h:panelGrid>
+                        
+                        <h:panelGrid>
+                            <h:outputLabel>#{messages['factoryLine.prohibitedUses']}:</h:outputLabel>
+                            <h:outputText value="#{messages['factoryLine.prohibitedUses.ResultsNotFound']}"
+                                rendered="#{empty factoryLineHome.instance.territorialPolygon2.prohibitedUses}" />
+                            <rich:dataTable id="prohibitedLanduses2" var="_plu2"
+                                value="#{factoryLineHome.instance.territorialPolygon2.prohibitedUses}"
+                                rendered="#{not empty factoryLineHome.instance.territorialPolygon2.prohibitedUses}"
+                                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.code']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_plu2.code}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.name']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_plu2.name}" />
+                                </rich:column>
+                                
+                            </rich:dataTable>
+                        </h:panelGrid>
+
+                        <h:panelGrid>
+                            <h:outputLabel>#{messages['factoryLine.complementaryUses']}:</h:outputLabel>
+                            <h:outputText value="#{messages['factoryLine.complementaryUses.ResultsNotFound']}"
+                                rendered="#{empty factoryLineHome.instance.territorialPolygon2.complementaryUses}" />
+
+                            <rich:dataTable id="complementedLanduses2" var="_clu2"
+                                value="#{factoryLineHome.instance.territorialPolygon2.complementaryUses}"
+                                rendered="#{not empty factoryLineHome.instance.territorialPolygon2.complementaryUses}"
+                                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.code']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_clu2.code}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.name']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_clu2.name}" />
+                                </rich:column>
+                                
+                            </rich:dataTable>
+                        </h:panelGrid>
+
+                        <h:panelGrid>
+                            <h:outputLabel>#{messages['factoryLine.restrictedUses']}:</h:outputLabel>
+                            <h:outputText value="#{messages['factoryLine.restrictedUses.ResultsNotFound']}"
+                                rendered="#{empty factoryLineHome.instance.territorialPolygon2.restrictedUses}" />
+                            <rich:dataTable id="rectrictedLanduses2" var="_rlu2"
+                                value="#{factoryLineHome.instance.territorialPolygon2.restrictedUses}"
+                                rendered="#{not empty factoryLineHome.instance.territorialPolygon2.restrictedUses}"
+                                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.code']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_rlu2.code}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['landUseFactoryLine.name']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_rlu2.name}" />
+                                </rich:column>
+                                
+                            </rich:dataTable>
+                        </h:panelGrid>
+
+                    </h:panelGrid>
+
+                    <br/>
+                    <h:panelGrid id="riskData" columns="1">
+                        <f:facet name="header">#{messages['factoryLine.risk']}:</f:facet>
+                            <s:decorate template="../layout/edit.xhtml" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                                <ui:define name="label">#{messages['factoryLine.notMitigable']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="100" size="80"
+                                    value="#{factoryLineHome.instance.notMitigable}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                                <ui:define name="label">#{messages['factoryLine.notMitigableTreatment']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="100" size="80"
+                                    value="#{factoryLineHome.instance.notMitigableTreatment}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.notMitigableDescription']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="200" size="80" 
+                                    value="#{factoryLineHome.instance.notMitigableDescription}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                                <ui:define name="label">#{messages['factoryLine.mitigable']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="100" size="80"
+                                    value="#{factoryLineHome.instance.mitigable}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                                <ui:define name="label">#{messages['factoryLine.mitigableTreatment']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="100" size="80" 
+                                    value="#{factoryLineHome.instance.mitigableTreatment}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
+                                <ui:define name="label">#{messages['factoryLine.mitigableDescription']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="200" size="80" 
+                                    value="#{factoryLineHome.instance.mitigableDescription}" />
+                            </s:decorate>
+                        
+                    </h:panelGrid>
+                    
+                    <br/>
+                    <h:panelGrid id="roadData" >
+                        <h:panelGrid>
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLineRoad.roadHydrography']}:</ui:define>
+                                
+	                            <h:selectOneMenu id="roads" 
+	                                value="#{factoryLineHome.road}" >
+	                                <ui:debug id="debugExternal"/>
+	                                <s:selectItems value="#{factoryLineRoads}" var="_road"
+	                                    label="#{_road.denomination} - #{_road.location}" 
+	                                    noSelectionLabel="Seleccione una opción" />
+	                                <s:convertEntity />
+	                                <a:support event="onchange" ajaxSingle="true"
+	                                    reRender="roadData" />
+	                            </h:selectOneMenu>
+				                <a:commandButton id="createItem" 
+				                    action="#{factoryLineHome.addRoad(factoryLineHome.road)}"
+				                    reRender="roadData, roads" ajaxSingle="true"
+				                    eventsQueue="gimEventsQueue"
+				                    value="#{messages['factoryLineRoad.addRoad']}" />
+                            </s:decorate>
+                            <rich:dataTable id="roads" var="_road"
+                                value="#{factoryLineHome.roadsHome}"
+                                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['factoryLineRoad.denomination']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_road.denomination}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['factoryLineRoad.width']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_road.width}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['factoryLineRoad.reference']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_road.reference}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['factoryLineRoad.obs']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{_road.obs}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['common.action']}" />
+                                    </f:facet>
+				                    <a:commandButton id="removeRoad"
+				                        action="#{factoryLineHome.removeRoad(_road)}"
+				                        reRender="roadData" ajaxSingle="true"
+				                        value="#{messages['common.delete']}" />
+                                </rich:column>
+                                
+                            </rich:dataTable>
+                        </h:panelGrid>
+
+                    </h:panelGrid>
+                    
+                    <br/>
+                    <h:panelGrid id="serviceData" columns="2">
+                        <f:facet name="header">INFRAESTRUCTURA BÁSICA</f:facet>
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.hasWater']}:</ui:define>
+                            <h:selectBooleanCheckbox value="#{factoryLineHome.instance.hasWater}" />
+                        </s:decorate>
+                    
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.hasSewer']}:</ui:define>
+                            <h:selectBooleanCheckbox value="#{factoryLineHome.instance.hasSewer}" />
+                        </s:decorate>
+                    </h:panelGrid>
+                    
+                    <br/>
+                    <h:panelGrid id="obsData" columns="2">
+                        <f:facet name="header">OBSERVACIONES ESPECÍFICAS</f:facet>
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.specificRemark']}:</ui:define>
+                            <h:inputText style="text-align: left" maxlength="200" size="100" 
+                            value="#{factoryLineHome.instance.specificRemark}" />
+                        </s:decorate>
+                    
+                    </h:panelGrid>
+                    
+                </h:panelGrid>
+                <h:commandButton id="save" value="#{messages['common.save']}"
+                    action="#{factoryLineHome.persist}" disabled="#{!factoryLineHome.wired}"
+                    rendered="#{!factoryLineHome.managed}" />
+
+                <h:commandButton id="update" value="#{messages['common.save']}"
+                    propagation="end" reRender="factoryLineList"
+                    action="#{factoryLineHome.update}" rendered="false" />
+
+                <s:button id="cancelEdit" value="#{messages['common.cancel']}"
+                    propagation="end" view="/factoryline/FactoryLineList.xhtml" />
+
+            </rich:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>
