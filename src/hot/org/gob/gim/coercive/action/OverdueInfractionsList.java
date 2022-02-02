@@ -15,7 +15,6 @@ import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
 import org.gob.gim.coercive.view.InfractionItem;
-import org.gob.gim.coercive.view.ResidentItem;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -25,7 +24,6 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityQuery;
 
-import bsh.This;
 import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.common.model.Resident;
@@ -54,7 +52,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private Date expirationUntil;
 	private String ticket;
 	private String article;
-	
+
 	private final String codePending = "PENDING";
 
 	//
@@ -63,6 +61,8 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private BigDecimal total = BigDecimal.ZERO;
 	private String nameResident;
 	private Datainfraction infraction;
+	
+	private Long totalSync = new Long(0);
 
 	private static final Pattern SUBJECT_PATTERN = Pattern
 			.compile(
@@ -76,11 +76,11 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 			"\\s(order)(\\s)+by\\s", Pattern.CASE_INSENSITIVE);
 	private static final Pattern GROUP_PATTERN = Pattern.compile(
 			"\\s(group)(\\s)+by\\s", Pattern.CASE_INSENSITIVE);
-	
+
 	private boolean allResidentsSelected = false;
-	
+
 	private List<InfractionItem> selectedList;
-	
+
 	/**
 	 * @return the selectedList
 	 */
@@ -89,7 +89,8 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	}
 
 	/**
-	 * @param selectedList the selectedList to set
+	 * @param selectedList
+	 *            the selectedList to set
 	 */
 	public void setSelectedList(List<InfractionItem> selectedList) {
 		this.selectedList = selectedList;
@@ -157,8 +158,10 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 			"di.emision >= #{overdueInfractionsList.emisionFrom} ",
 			"di.emision <= #{overdueInfractionsList.emisionUntil} ",
 			"s.code = #{overdueInfractionsList.codePending} ",
-			/*"di.expiration >= #{overdueInfractionsList.expirationFrom}",
-			"di.expiration <= #{overdueInfractionsList.expirationUntil}",*/	 
+	/*
+	 * "di.expiration >= #{overdueInfractionsList.expirationFrom}",
+	 * "di.expiration <= #{overdueInfractionsList.expirationUntil}",
+	 */
 	};
 
 	public OverdueInfractionsList() {
@@ -174,7 +177,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		setMaxResults(25);
 		Calendar now = Calendar.getInstance();
 		Calendar from = Calendar.getInstance();
-		from.set(2010,0,01);
+		from.set(2010, 0, 01);
 
 		if (this.expirationFrom == null) {
 			setExpirationFrom(from.getTime());
@@ -191,7 +194,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		if (this.emisionUntil == null) {
 			setEmisionUntil(now.getTime());
 		}
-
+		
 	}
 
 	private boolean rebuiltRequired = false;
@@ -246,7 +249,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		addFacesMessageFromResourceBundle("selectItemsLocked");
 
 	}
-	
+
 	public void setAllResidentsSelected(boolean allResidentsSelected) {
 		this.allResidentsSelected = allResidentsSelected;
 	}
@@ -310,9 +313,9 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	 */
 	@SuppressWarnings("unchecked")
 	public void loadPendingInfractions() {
-		//if (!isFirstTime)
-		//return;
-		//isFirstTime = Boolean.FALSE;
+		// if (!isFirstTime)
+		// return;
+		// isFirstTime = Boolean.FALSE;
 
 		if (!detailFromNotification && identificationNumber != null) {
 			Query query = getEntityManager()
@@ -341,9 +344,9 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		}
 	}
 
-	
-	public void loadInfraction(Long infractionid) {		
-		this.infraction = getEntityManager().find(Datainfraction.class, infractionid);
+	public void loadInfraction(Long infractionid) {
+		this.infraction = getEntityManager().find(Datainfraction.class,
+				infractionid);
 	}
 
 	public String getIdentificationNumber() {
@@ -613,4 +616,29 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		return codePending;
 	}
 	
+	/**
+	 * @return the totalSync
+	 */
+	public Long getTotalSync() {
+		return totalSync;
+	}
+
+	/**
+	 * @param totalSync the totalSync to set
+	 */
+	public void setTotalSync(Long totalSync) {
+		this.totalSync = totalSync;
+	}
+
+	public void loadTotalSyncInfractions() {
+
+		Query query = getEntityManager().createQuery(
+				"Select count(*) from Datainfraction di ");
+
+		Long size = (Long) query.getSingleResult();
+		
+		this.totalSync = size;
+
+	}
+
 }
