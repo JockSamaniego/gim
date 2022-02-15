@@ -1,0 +1,130 @@
+<!DOCTYPE composition
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="infractionSearch" styleClass="edit">
+			<ui:debug id="debug" />
+
+			<a4j:outputPanel id="searcherPanel" ajaxRendered="false">
+				<rich:messages errorClass="errors" id="messages" />
+				<rich:panel>
+					<f:facet name="header">
+						<h:outputText id="title" value="Notificaciones Infracciones" styleClass="formTitle" />
+					</f:facet>
+
+					<h:panelGrid columns="2">
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Identificación:</ui:define>
+							<h:inputText id="identification"
+								value="#{notificationInfractionListHome.criteria.identification}">
+							</h:inputText>
+						</s:decorate>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="2">
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Número:</ui:define>
+							<h:inputText id="number"
+								value="#{notificationInfractionListHome.criteria.number}">
+							</h:inputText>
+						</s:decorate>
+					</h:panelGrid>
+					
+					<div style="clear: both" />
+				</rich:panel>
+			</a4j:outputPanel>
+
+			<div class="actionButtons">
+				<a4j:commandButton id="search" value="#{messages['common.search']}"
+					action="#{notificationInfractionListHome.search()}"
+					reRender="notificationsInfractionsForm, table, messages" />
+
+				<s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" propagation="none">
+				</s:button>
+			</div>
+
+		</h:form>
+
+		<h:form id="notificationsInfractionsForm" styleClass="edit">
+			<rich:panel id="table">
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText value="Notificaciones Totales #{notificationsInfractions.rowCount}" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<div class="results" id="notifications">
+
+					<rich:panel rendered="#{notificationsInfractions.rowCount == 0}">
+						<h:outputText value="#{messages['common.noResultsReturned']}"
+							rendered="#{notificationsInfractions.rowCount == 0}" />
+					</rich:panel>
+
+
+					<rich:dataTable id="notificationsList" var="_notification" value="#{notificationsInfractions}"
+						rows="25" rendered="#{notificationsInfractions.rowCount != 0}">
+
+						<f:facet name="footer">
+							<g:dataScroller id="scroller" maxPages="10" for="notificationsList"
+								style="float:right;" />
+						</f:facet>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="NÚMERO" />
+							</f:facet>
+							<h:outputText value="#{_notification.year}-#{_notification.number}" />
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="IDENTIFICACIÓN" />
+							</f:facet>
+							<h:outputText value="#{_notification.infractions.get(0).identification}" />
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="INFRACTOR" />
+							</f:facet>
+							<h:outputText value="#{_notification.infractions.get(0).name}" />
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="FECHA CREACIÓN" />
+							</f:facet>
+							<h:outputText value="#{_notification.creationTimeStamp}">
+								<f:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+						
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<s:button view="/coercive/infractions/DetailNotificationInfractions.xhtml"
+								value="#{messages['common.detail']}"
+								propagation="join" id="infractionsListButton">
+								<f:param name="notificationId" value="#{_notification.id}"/>
+								<f:param name="from" value="/coercive/infractions/NotificationInfractionList.xhtml"/>
+								
+							</s:button>
+						</rich:column>
+
+					</rich:dataTable>
+
+				</div>
+
+				
+			</rich:panel>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

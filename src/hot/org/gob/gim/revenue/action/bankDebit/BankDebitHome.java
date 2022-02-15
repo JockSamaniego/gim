@@ -584,6 +584,10 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 	}
 	
 	public void liquidateDebitsSelected(){
+		if(systemParameterService == null){
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SystemParameterService.LOCAL_NAME);
+		}
 		pendingBondStatus = systemParameterService.materialize(
 				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING");
 		paidBondStatus = systemParameterService.materialize(
@@ -735,6 +739,10 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 	}
 	
 	public Boolean checkPendingStatus(MunicipalBond mb){
+		if(systemParameterService == null){
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SystemParameterService.LOCAL_NAME);
+		}
 		pendingDebitBondStatus = systemParameterService.materialize(
 				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING_DEBIT_LIQUIDATION");
 		pendingBondStatus = systemParameterService.materialize(
@@ -875,6 +883,10 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 	MunicipalBondManager municipalBondManager;
 	
 	public void changeStatusToLiquidationPending(){	
+		if(systemParameterService == null){
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SystemParameterService.LOCAL_NAME);
+		}
 		MunicipalBondManager municipalBondManager = (MunicipalBondManager) Contexts.getConversationContext().get(MunicipalBondManager.class);
 		pendingBondStatus = systemParameterService.materialize(
 				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING");

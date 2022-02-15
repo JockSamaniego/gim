@@ -155,8 +155,7 @@
 				</p:paragraph>
 			</p:cell>	
 		
-		</p:table>	
-		
+		</p:table>				
 		
 		<p:table rendered="#{not empty paymentAgreementHome.instance.dividends}"
 			columns="3" widthPercentage="70" headerRows="0"
@@ -205,9 +204,90 @@
 
 				</ui:repeat>
 			</p:font>
+		</p:table>
+		
+		<p:paragraph spacingAfter="15" spacingBefore="20" alignment="center" verticalAlignment="10" leading="25">
+			<p:font size="12">
+				<p:text
+					value="Resumen de convenio de pago" />
+			</p:font>
+		</p:paragraph>
+		
+		<p:table rendered="#{not empty paymentAgreementHome.summaries}"
+			columns="5" widthPercentage="70" headerRows="0"
+			widths="3 2 2 1 2">
+			<p:font size="8" style="bold">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" />
+				</f:facet>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Rubro" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="F. Mínima" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="F Máxima" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Cantidad" />
+					</p:paragraph>
+				</p:cell>
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="Valor" />
+					</p:paragraph>
+				</p:cell>
+			</p:font>
 			
-						
-			
+			<p:font size="6" style="bold">
+				<ui:repeat value="#{paymentAgreementHome.summaries}" var="_var">
+					
+					<p:cell horizontalAlignment="center">
+						<p:paragraph alignment="center">
+							<p:text value="#{_var.rubro}">
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="center">
+						<p:paragraph alignment="center">
+							<p:text value="#{_var.f_min}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="center">
+						<p:paragraph alignment="center">
+							<p:text value="#{_var.f_max}">
+								<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+							</p:text>
+						</p:paragraph>
+					</p:cell>
+					
+					<p:cell horizontalAlignment="right">
+						<p:paragraph alignment="right">
+							<p:text value="#{_var.cantidad}" />
+						</p:paragraph>
+					</p:cell>
+
+					<p:cell horizontalAlignment="right">
+						<p:paragraph alignment="right">
+							<p:text value="#{_var.sum_total}" />
+						</p:paragraph>
+					</p:cell>
+
+				</ui:repeat>
+			</p:font>
+								
 		</p:table>
 
 	</p:font>

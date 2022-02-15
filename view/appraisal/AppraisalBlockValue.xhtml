@@ -195,7 +195,7 @@
 							rendered="#{!appraisalBlockHome.lotValues and !appraisalBlockHome.reviewValues}" >
 							<ui:define name="label">#{messages['appraisal.yearAppraisal']}:</ui:define>
 							<rich:inputNumberSpinner id="yearAppraisal" minValue="2000"
-								inputSize="4" maxValue="2020" value="#{appraisalBlockHome.anioAppraisal}">
+								inputSize="4" maxValue="2030" value="#{appraisalBlockHome.anioAppraisal}">
 								<a:support event="onchange" ajaxSingle="true" action = "#{appraisalBlockHome.resetProperties()}"
 								reRender="listLotPanel, listAppraisalPanel" ></a:support>
 							</rich:inputNumberSpinner>

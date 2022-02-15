@@ -16,11 +16,13 @@ import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.facade.IncomeService;
 import org.gob.gim.income.facade.IncomeServiceBean;
+import org.gob.gim.income.view.AgreementSummaryDTO;
 import org.gob.gim.income.view.MunicipalBondItem;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
@@ -171,7 +173,10 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			calculateBalanceForPay();
 			calculatePayedValue();
 			loadTotalDeposit();
-		}  
+			loadAgreementSummary();
+		}
+		
+		// System.out.println("en el wire---------------------->>>>>");
 	}
 	 
 	//@author macartuche
@@ -412,6 +417,10 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			List<Long> selectedBondIds = getSelectedBondIds();
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			incomeService.save(getInstance(), selectedBondIds);
+			
+			//rfam 2021-12-07
+			findEntryDetail(selectedBondIds);
+			
 			outcome = "persisted";
 			readyForPrint = Boolean.TRUE;
 		} catch (Exception e){
@@ -989,4 +998,46 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			}
 		}
 	}
+	
+	// @author rfam
+	// @tag resumen de convenio
+	// @date 2021-12-07
+	private List<AgreementSummaryDTO> summaries;
+
+	public void findEntryDetail(List<Long> selectedBondId) {
+		String sql = "select " + "	e.code || ' - '|| e.name rubro, "
+				+ "	min(mb.expirationdate) f_min, "
+				+ "	max(mb.expirationdate) f_max, " + "	count(mb) cantidad, "
+				+ "	sum(mb.value) sum_val, " + "	sum(mb.paidtotal) sum_total "
+				+ "from municipalbond mb "
+				+ "join paymentagreement pa on mb.paymentagreement_id = pa.id "
+				+ "join entry e on mb.entry_id = e.id " +
+				// "where pa.id = :agreementId "+
+				" where mb.id in (:bondIds) " + "group by 1 " + "order by 1";
+		List<Alert> alerts = new ArrayList<Alert>();
+		Query query = getEntityManager().createNativeQuery(sql);
+		query.setParameter("bondIds", selectedBondId);
+		alerts = query.getResultList();
+
+		this.summaries = NativeQueryResultsMapper.map(query.getResultList(),
+				AgreementSummaryDTO.class);
+
+	}
+
+	public List<AgreementSummaryDTO> getSummaries() {
+		return summaries;
+	}
+
+	public void setSummaries(List<AgreementSummaryDTO> summaries) {
+		this.summaries = summaries;
+	}
+	
+	public void loadAgreementSummary(){
+		List<Long> selectedIds = new ArrayList<Long>();
+		for(MunicipalBond mb : this.getInstance().getMunicipalBonds()){
+			selectedIds.add(mb.getId());
+		}
+		findEntryDetail(selectedIds);
+	}
+	
 }
