@@ -111,7 +111,7 @@ public class DisableVoucherHome extends EntityHome<Object> {
 		q.setParameter("startDate", this.startDate);
 		q.setParameter("endDate", this.endDate);
 		q.setParameter("compensation", Boolean.TRUE);
-		q.setParameter("sequential", "%001-022%");
+		q.setParameter("sequential", "%001-0%");
 		if (!ruc.trim().isEmpty()) {
 			q.setParameter("identification", this.ruc);
 		}
