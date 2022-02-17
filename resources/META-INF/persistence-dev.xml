@@ -18,7 +18,8 @@
 			<property name="hibernate.format_sql" value="true" />
 			<property name="hibernate.default_schema" value="gimprod" />
 			<property name="javax.persistence.query.timeout" value="180000" />
-			
+            <property name="hibernate.max_fetch_depth" value="0"></property>
+            
 			<property name="hibernate.generate_statistics" value="false" />
 			
 			<property name="hibernate.jdbc.use_streams_for_binary"
