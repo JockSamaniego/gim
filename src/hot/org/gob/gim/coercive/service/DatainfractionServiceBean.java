@@ -72,7 +72,7 @@ public class DatainfractionServiceBean implements DatainfractionService {
 			qry += "AND (n.year || '-' || n.number) like :num ";
 		}
 		
-		qry+= "ORDER BY n.year, n.number ASC ";
+		qry+= "ORDER BY n.year, n.number DESC ";
 		Query query = this.entityManager
 				.createQuery(qry);
 		
