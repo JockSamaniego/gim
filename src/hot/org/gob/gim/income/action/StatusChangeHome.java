@@ -1186,6 +1186,9 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 		q.setParameter("startDate", correctionStartDate);
 		q.setParameter("endDate", correctionEndDate);
 		bondsWithCorrectionDTO = NativeQueryResultsMapper.map(q.getResultList(), MunicipalBondErrorsCorrectionDTO.class);
+		for(MunicipalBondErrorsCorrectionDTO mbDTO: bondsWithCorrectionDTO){
+			totalWithCorrection = totalWithCorrection.add(mbDTO.getValue()).add(mbDTO.getTaxesTotal());
+		}
 	}
 	
 	public void findBondsInErrorsCorrectionDetail(){
