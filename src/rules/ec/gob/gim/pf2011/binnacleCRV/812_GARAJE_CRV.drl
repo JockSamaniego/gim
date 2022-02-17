@@ -63,7 +63,7 @@ rule "Garaje - pesado"
         $mb : MunicipalBond();
         $binnacleCRVReference : BinnacleCRVReference(type == "PES");
         eval($binnacleCRVReference.getEmitWithoutBinnacle()==false);
-        eval($binnacleCRVReference.getTonnage() <= 8.0);
+        eval($binnacleCRVReference.getTonnage() < 40.0);
     then
         BigDecimal value = new BigDecimal(5.00); //Valor por día en vehiculo pesado
 		int days = DateUtils.daysBetweenDates($binnacleCRVReference.getExitDate(), $binnacleCRVReference.getArrivalDate()) + 1;

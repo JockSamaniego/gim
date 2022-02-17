@@ -43,7 +43,7 @@
 							<s:div styleClass="actionButtons" >
 								<s:button view="/factoryline/FactoryLineEdit.xhtml" id="create"
 								    action="#{factoryLineHome.createFactoryLine()}"
-									propagation="none" rendered="#{factoryLineHome.hasRole('ROLE_NAME_CRV_SYSTEM')}"
+									propagation="none" 
 									value="#{messages['common.create']} #{messages['factoryLine.create']}" >
 									<f:param name="factoryLineId" />
 								</s:button>

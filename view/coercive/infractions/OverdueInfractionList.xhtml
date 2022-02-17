@@ -98,9 +98,11 @@
 		<h:form id="overdueInfractionsForm" styleClass="edit">
 			<rich:panel id="table">
 				<f:facet name="header">
-					<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:panelGrid columns="3" style="width: 100%;" columnClasses="lef,center,right">
 						<h:outputText
 							value="Contribuyentes (#{empty overdueInfractionsList.resultList ? 0 : (overdueInfractionsList.paginated ? overdueInfractionsList.resultCount : overdueInfractionsList.resultList.size)})" />
+						<h:outputText
+							value="Total infracciones cargadas (#{overdueInfractionsList.totalSync})" />
 
 						<a4j:region>
 							<s:button id="printDepositsBtn"

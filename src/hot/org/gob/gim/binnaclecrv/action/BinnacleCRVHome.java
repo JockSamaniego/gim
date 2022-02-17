@@ -61,6 +61,7 @@ import ec.gob.gim.binnaclecrv.model.VehicleInventory;
 import ec.gob.gim.binnaclecrv.model.VehicleInventoryBase;
 import ec.gob.gim.binnaclecrv.model.VehicleItem;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
 // import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
 import ec.gob.loja.middleapp.InfractionWSV2;
 import ec.gob.loja.middleapp.InfractionWSV2Service;
@@ -1362,7 +1363,7 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		}
 	}
 	
-	/*@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	private BinnacleCRVReference findBinnacleCRVReference(ArrivalHistoryBinnacleCRV arrivalHistoryBinnacleCRV, Long entryId){
 		Query query = getEntityManager().createNamedQuery("BinnacleCRVReference.findByArrivalAndEntryId");
 		query.setParameter("arrivalHistoryBinnacleCRV", arrivalHistoryBinnacleCRV);
@@ -1374,7 +1375,7 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 			return binnacleCRVReference;
 		}
 		return null;
-	}*/
+	}
 	
 	public void reviewExitVehicle(){
 		canSaveExitVehicle = true;
@@ -1383,7 +1384,7 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		ArrivalHistoryBinnacleCRV arrival = getInstance().getLastArrivalHistoryBinnacleCRV();
 		if (systemParameterService == null) systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
 		Long entryGarajeId = systemParameterService.findParameter(SystemParameterService.ENTRY_ID_GARAJE_SERVICE_UMTTT);
-		/*BinnacleCRVReference binnacleCRVReference = findBinnacleCRVReference(arrival, entryGarajeId);
+		BinnacleCRVReference binnacleCRVReference = findBinnacleCRVReference(arrival, entryGarajeId);
 		if (binnacleCRVReference == null){
 			facesMessages.add("Es necesario emitir y/o cancelar los títulos por el Servicio de Garaje.");
 		} else{
@@ -1392,19 +1393,19 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 			arrival.setExitTypeBinnacleCRV(binnacleCRVReference.getExitTypeBinnacleCRV());
 			arrival.setBondGaraje(binnacleCRVReference.getBond());
 			isEmmitedGaraje = true;
-		}*/
+		}
 		if (arrival.isHasCraneService()) {
 			Long entryCraneId = systemParameterService.findParameter(SystemParameterService.ENTRY_ID_GRUA_SERVICE_UMTTT);
-			/*binnacleCRVReference = findBinnacleCRVReference(arrival, entryCraneId);
+			binnacleCRVReference = findBinnacleCRVReference(arrival, entryCraneId);
 			if (binnacleCRVReference == null){
 				facesMessages.add("Es necesario emitir y/o cancelar los títulos por el Servicio de Grúa.");
 				isEmmitedCrane = false;
 			} else {
 				arrival.setExitDateCrane(binnacleCRVReference.getExitDate());
 				arrival.setBondCrane(binnacleCRVReference.getBond());
-			}*/
+			}
 		}
-		if ((!isEmmitedGaraje) || (!isEmmitedGaraje))
+		if ((!isEmmitedGaraje) || (!isEmmitedCrane))
 			canSaveExitVehicle = false;
 			
 		this.arrivalHistoryBinnacleCRV = arrival;
