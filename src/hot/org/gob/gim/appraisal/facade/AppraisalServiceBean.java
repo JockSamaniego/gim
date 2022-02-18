@@ -442,14 +442,18 @@ public class AppraisalServiceBean implements AppraisalService {
 
 			affectationFactorLot = property.getAppraisalRelationFactor()
 					.multiply(property.getAppraisalAreaFactor());
-			// System.out.println("======= affectationFactorLot: "+affectationFactorLot);
+			
+			// System.out.println("======= AppraisalAreaFactor: "+affectationFactorLot);
+			
 			// System.out.println("======= LotPosition: "+property.getLotPosition().getFactor());
 			affectationFactorLot = affectationFactorLot.multiply(property
 					.getLotPosition().getFactor());
+			
 			// System.out.println("======= affectationFactorLot: "+affectationFactorLot);
 			// System.out.println("======= Lottopography: "+property.getLotTopography().getFactor());
 			affectationFactorLot = affectationFactorLot.multiply(property
 					.getLotTopography().getFactor());
+			
 			// System.out.println("======= affectationFactorLot: "+affectationFactorLot);
 			// System.out.println("======= StreetMaterial: "+property.getStreetMaterial().getFactor());
 			affectationFactorLot = affectationFactorLot.multiply(property
@@ -457,27 +461,36 @@ public class AppraisalServiceBean implements AppraisalService {
 			// System.out.println("======= affectationFactorLot: "+affectationFactorLot);
 
 			// INFRAESTRUCTURA
-			if (property.getHasWaterService())
+			if (property.getHasWaterService()){
 				affectationFactorLot = affectationFactorLot
-						.multiply(appraisalPeriod.getFactorHasWater());
-			else
+						.multiply(appraisalPeriod.getFactorHasWater()); 
+				// System.out.println("======= WaterService: "+appraisalPeriod.getFactorHasWater());
+			}else{
 				affectationFactorLot = affectationFactorLot
-						.multiply(appraisalPeriod.getFactorHasntWater());
+						.multiply(appraisalPeriod.getFactorHasntWater()); 
+				// System.out.println("======= WaterService: "+appraisalPeriod.getFactorHasntWater());
+			}
 
-			if (property.getSewerage().compareTo(Sewerage.NOT_AVAILABLE) == 0)
+			if (property.getSewerage().compareTo(Sewerage.NOT_AVAILABLE) == 0){
 				affectationFactorLot = affectationFactorLot
 						.multiply(appraisalPeriod.getFactorHasntSewerage());
-			else
+				// System.out.println("======= Sewerage: "+appraisalPeriod.getFactorHasntSewerage());
+			}else{
 				affectationFactorLot = affectationFactorLot
 						.multiply(appraisalPeriod.getFactorHasSewerage());
-
-			if (property.getHasElectricity())
+				// System.out.println("======= Sewerage: "+appraisalPeriod.getFactorHasSewerage());
+			}
+			
+			if (property.getHasElectricity()){
 				affectationFactorLot = affectationFactorLot
 						.multiply(appraisalPeriod.getFactorHasEnergy());
-			else
+				// System.out.println("======= Energy: "+appraisalPeriod.getFactorHasEnergy());
+			}else{
 				affectationFactorLot = affectationFactorLot
 						.multiply(appraisalPeriod.getFactorHasntEnergy());
-
+				// System.out.println("======= Energy: "+appraisalPeriod.getFactorHasntEnergy());
+			}
+			
 			/*
 			 * Calculo con nuevos factores de correccion bienio 2020-2021
 			 * 2019-12-02 rortega
@@ -495,6 +508,9 @@ public class AppraisalServiceBean implements AppraisalService {
 				System.out
 						.println("NO SE ENCUENTRA PARROQUIA, POSIBLE CLAVE SIN MIGRACION");
 			}
+			
+			// System.out.println("======= RiskFactor: "+property.getAppraisalRiskFactor());
+			// System.out.println("======= ThreatFactor: "+property.getAppraisalThreatFactor());
 
 			// Riesgo
 			affectationFactorLot = affectationFactorLot.multiply(property
@@ -508,17 +524,25 @@ public class AppraisalServiceBean implements AppraisalService {
 			affectationFactorLot = affectationFactorLot
 					.multiply(getAppraisalSidewalkFactor(property));
 			
+			// System.out.println("======= SidewalkFactor: "+getAppraisalSidewalkFactor(property));
+			
 			// Bordillo
 			affectationFactorLot = affectationFactorLot
 					.multiply(getAppraisalCurbFactor(property));
 			
+			// System.out.println("======= CurbFactor: "+getAppraisalCurbFactor(property));
+			
 			// Recoleccion de basura
 			affectationFactorLot = affectationFactorLot
 					.multiply(getAppraisalGarbageCollectionFactor(property));
+			
+			// System.out.println("======= lGarbageCollection: "+getAppraisalGarbageCollectionFactor(property));
 
 			affectationFactorLot = affectationFactorLot
 					.round(new MathContext(4));
 			property.setAffectationFactorLot(affectationFactorLot);
+			
+			// System.out.println("======= affectationFactorLot: "+affectationFactorLot);
 
 			if (!temporalValues) {
 				lotAppraisal = property.getCurrentDomain()

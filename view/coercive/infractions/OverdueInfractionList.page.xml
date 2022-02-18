@@ -1,37 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<page xmlns="http://jboss.com/products/seam/pages"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd" 
-      login-required="true">
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	login-required="true">
 
-      
-      <begin-conversation join="true" flush-mode="MANUAL" />
-   <param name="firstResult" value="#{overdueInfractionsList.firstResult}"/>
-   <param name="sort" value="#{overdueInfractionsList.orderColumn}"/>
-   <param name="dir" value="#{overdueInfractionsList.orderDirection}"/>
-   <param name="logic" value="#{overdueInfractionsList.restrictionLogicOperator}"/>
 
-   <param name="from"/>  
+	<begin-conversation join="true" flush-mode="MANUAL" />
 
-   <navigation from-action="#{overdueInfractionsListHome.createNotification()}">
-   	 	<end-conversation before-redirect="true"/>
+	<action execute="#{overdueInfractionsList.loadTotalSyncInfractions()}" />
+	<param name="firstResult" value="#{overdueInfractionsList.firstResult}" />
+	<param name="sort" value="#{overdueInfractionsList.orderColumn}" />
+	<param name="dir" value="#{overdueInfractionsList.orderDirection}" />
+	<param name="logic" value="#{overdueInfractionsList.restrictionLogicOperator}" />
+
+	<param name="from" />
+
+	<navigation from-action="#{overdueInfractionsListHome.createNotification()}">
+		<end-conversation before-redirect="true" />
 		<rule if-outcome="sendToPrint">
 			<redirect view-id="/coercive/report/InfractionNotificationReport.xhtml">
-         		<param name="selectedItems" value="#{overdueInfractionsListHome.generatedNotificationIds}"/>
-         		<param name="withCopy" value="#{true}"/>
-         	</redirect>
+				<param name="selectedItems"
+					value="#{overdueInfractionsListHome.generatedNotificationIds}" />
+				<param name="withCopy" value="#{true}" />
+			</redirect>
 		</rule>
 		<rule if-outcome="failed">
-         <end-conversation/>
-         <redirect view-id="/coercive/infractions/OverdueInfractionList.xhtml">
-         </redirect>
-      </rule>
+			<end-conversation />
+			<redirect view-id="/coercive/infractions/OverdueInfractionList.xhtml">
+			</redirect>
+		</rule>
 	</navigation>
 
-   <navigation from-action="#{overdueInfractionsListHome.confirmPrinting}">
+	<navigation from-action="#{overdueInfractionsListHome.confirmPrinting}">
 		<rule if-outcome="printed">
-			<end-conversation before-redirect="true"/>
-			<redirect view-id="/coercive/infractions/OverdueInfractionList.xhtml"/>
+			<end-conversation before-redirect="true" />
+			<redirect view-id="/coercive/infractions/OverdueInfractionList.xhtml" />
 		</rule>
 	</navigation>
 
