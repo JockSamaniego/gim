@@ -23,6 +23,7 @@ import ec.gob.gim.revenue.model.Adjunct;
 		@NamedQuery(name = "InfringementANTReference.countInfringementByCitationNumber", query = "select count(infrig.citationNumber) from InfringementANTReference infrig "
 				+ "where lower(infrig.citationNumber) = lower(:citationNumber)") })
 
+@Deprecated
 @Entity
 @DiscriminatorValue("IANTR")
 public class InfringementANTReference extends Adjunct {

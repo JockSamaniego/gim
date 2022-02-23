@@ -62,8 +62,8 @@ public class Provider{
 	@Column(length=255)
 	private String address;
 	 
-	@OneToOne(mappedBy="provider", fetch = FetchType.LAZY)
-	private ElectronicVoucher electronicVoucher;
+//	@OneToOne(mappedBy="provider", fetch = FetchType.LAZY)
+//	private ElectronicVoucher electronicVoucher;
 
 	public Long getId() {
 		return id;
@@ -129,11 +129,11 @@ public class Provider{
 		this.address = address;
 	}
  
-	public ElectronicVoucher getElectronicVoucher() {
-		return electronicVoucher;
-	}
-
-	public void setElectronicVoucher(ElectronicVoucher electronicVoucher) {
-		this.electronicVoucher = electronicVoucher;
-	}
+//	public ElectronicVoucher getElectronicVoucher() {
+//		return electronicVoucher;
+//	}
+//
+//	public void setElectronicVoucher(ElectronicVoucher electronicVoucher) {
+//		this.electronicVoucher = electronicVoucher;
+//	}
 }

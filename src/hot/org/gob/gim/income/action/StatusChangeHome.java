@@ -1176,7 +1176,8 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 				+ "LEFT JOIN gimprod._user usr On usr.id = stc.user_id "
 				+ "LEFT JOIN gimprod.resident res On res.id = mb.resident_id "
 				+ "LEFT JOIN gimprod.entry ent On ent.id = mb.entry_id "
-				+ "where mb.municipalbondstatus_id = :status "
+				+ "where stc.municipalbondstatus_id = :status "
+				+ "and stc.previousbondstatus_id = 3 "
 				+ "and stc.date BETWEEN :startDate and :endDate "
 				+ "ORDER BY stc.date,mb.emisiondate,res.name ASC";
 		
@@ -1185,6 +1186,9 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 		q.setParameter("startDate", correctionStartDate);
 		q.setParameter("endDate", correctionEndDate);
 		bondsWithCorrectionDTO = NativeQueryResultsMapper.map(q.getResultList(), MunicipalBondErrorsCorrectionDTO.class);
+		for(MunicipalBondErrorsCorrectionDTO mbDTO: bondsWithCorrectionDTO){
+			totalWithCorrection = totalWithCorrection.add(mbDTO.getValue()).add(mbDTO.getTaxesTotal());
+		}
 	}
 	
 	public void findBondsInErrorsCorrectionDetail(){
@@ -1213,7 +1217,8 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 				+ "LEFT JOIN gimprod._user usr On usr.id = stc.user_id "
 				+ "LEFT JOIN gimprod.resident res On res.id = mb.resident_id "
 				+ "LEFT JOIN gimprod.entry ent On ent.id = mb.entry_id "
-				+ "where mb.municipalbondstatus_id = :status "
+				+ "where stc.municipalbondstatus_id = :status "
+				+ "and stc.previousbondstatus_id = 3 "
 				+ "and stc.date BETWEEN :startDate and :endDate "
 				+ "ORDER BY stc.date,mb.emisiondate,res.name ASC";
 		
@@ -1248,6 +1253,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
                 + "left join gimprod.account ac "
                 + "on ac.id = e.account_id "
                 + "where sc.municipalbondstatus_id ="+ correctionBondStatus.getId() +" "
+                + "and sc.previousbondstatus_id = 3 "
                 + "and sc.date between '"
                 + dateToStr(correctionStartDate)
                 + "' AND '"
@@ -1281,6 +1287,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
                 + "left join gimprod.account ac "
                 + "on ac.id = e.account_id "
                 + "where sc.municipalbondstatus_id ="+ correctionBondStatus.getId() +" "
+                + "and sc.previousbondstatus_id = 3 "
                 + "and sc.date between '"
                 + dateToStr(correctionStartDate)
                 + "' AND '"
@@ -1313,6 +1320,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
                 + "left join gimprod.account ac "
                 + "on ac.id = t.taxaccount_id "
                 + "where sc.municipalbondstatus_id ="+ correctionBondStatus.getId() +" "
+                + "and sc.previousbondstatus_id = 3 "
                 + "and sc.date between '"
                 + dateToStr(correctionStartDate)
                 + "' AND '"

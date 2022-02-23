@@ -12,6 +12,7 @@ import org.jboss.seam.core.Interpolator;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.ConcessionType;
 
+@Deprecated
 @Audited
 @Entity
 @DiscriminatorValue("CONC") 

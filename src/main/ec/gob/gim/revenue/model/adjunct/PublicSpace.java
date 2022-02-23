@@ -11,6 +11,7 @@ import org.hibernate.envers.Audited;
 
 import ec.gob.gim.revenue.model.Adjunct;
 
+@Deprecated
 @Audited
 @Entity
 @DiscriminatorValue("PS") 
