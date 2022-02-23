@@ -57,6 +57,8 @@ public class WaterSupplyCategory {
 	private Long subscriber_damaged_total = new Long(0);
 	@Transient
 	private Long subscriber_unmetered_total = new Long(0);
+	@Transient
+	private Long subscriber_sewerage_total = new Long(0);
 
 	// //// consumo en metros cubicos
 	@Transient
@@ -162,6 +164,20 @@ public class WaterSupplyCategory {
 		this.subscriber_unmetered_total = subscriber_unmetered_total;
 	}
 
+	/**
+	 * @return the subscriber_sewerage_total
+	 */
+	public Long getSubscriber_sewerage_total() {
+		return subscriber_sewerage_total;
+	}
+
+	/**
+	 * @param subscriber_sewerage_total the subscriber_sewerage_total to set
+	 */
+	public void setSubscriber_sewerage_total(Long subscriber_sewerage_total) {
+		this.subscriber_sewerage_total = subscriber_sewerage_total;
+	}
+
 	public BigDecimal getConsumption_good_total() {
 		return consumption_good_total;
 	}
@@ -255,6 +271,7 @@ public class WaterSupplyCategory {
 		subscriber_good_total = new Long(0);
 		subscriber_damaged_total = new Long(0);
 		subscriber_unmetered_total = new Long(0);
+		subscriber_sewerage_total = new Long(0);
 
 		// //// consumo en metros cubicos
 		consumption_good_total = new BigDecimal(0);
