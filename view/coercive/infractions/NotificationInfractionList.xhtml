@@ -106,6 +106,14 @@
 							</h:outputText>
 						</rich:column>
 						
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="ID" />
+							</f:facet>
+							<h:outputText value="#{_notification.id}">
+							</h:outputText>
+						</rich:column>
+						
 						<rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
 							<s:button view="/coercive/infractions/DetailNotificationInfractions.xhtml"
@@ -113,15 +121,18 @@
 								propagation="join" id="infractionsListButton">
 								<f:param name="notificationId" value="#{_notification.id}"/>
 								<f:param name="from" value="/coercive/infractions/NotificationInfractionList.xhtml"/>
-								
 							</s:button>
+
+							<h:commandButton value="Reimprimir" id="reprintButton" 
+								action="#{notificationInfractionListHome.prepareRePrint(_notification.id)}"> 
+								<s:conversationPropagation type="join" /> 
+							</h:commandButton>
 						</rich:column>
 
 					</rich:dataTable>
 
 				</div>
 
-				
 			</rich:panel>
 		</h:form>
 

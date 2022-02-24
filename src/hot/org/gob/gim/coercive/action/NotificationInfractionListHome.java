@@ -3,6 +3,9 @@
  */
 package org.gob.gim.coercive.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
 import org.gob.gim.coercive.pagination.NotificationInfractionsDataModel;
 import org.jboss.seam.annotations.Name;
@@ -26,6 +29,8 @@ public class NotificationInfractionListHome extends EntityController{
 	private static final long serialVersionUID = 1L;
 	private NotificationInfractionSearchCriteria criteria;
 	
+	private List<Long> generatedNotificationIds = new ArrayList<Long>();
+	
 	/**
 	 * 
 	 */
@@ -43,6 +48,20 @@ public class NotificationInfractionListHome extends EntityController{
 		this.criteria = criteria;
 	}
 	
+	/**
+	 * @return the generatedNotificationIds
+	 */
+	public List<Long> getGeneratedNotificationIds() {
+		return generatedNotificationIds;
+	}
+
+	/**
+	 * @param generatedNotificationIds the generatedNotificationIds to set
+	 */
+	public void setGeneratedNotificationIds(List<Long> generatedNotificationIds) {
+		this.generatedNotificationIds = generatedNotificationIds;
+	}
+
 	public void search() {
 		getDataModel().setCriteria(this.criteria);
 		getDataModel().setRowCount(getDataModel().getObjectsNumber());
@@ -55,5 +74,15 @@ public class NotificationInfractionListHome extends EntityController{
 
 		return dataModel;
 	}
+	
+	public String prepareRePrint(Long notificationId){
+		
+		this.generatedNotificationIds = new ArrayList<Long>();
+		this.generatedNotificationIds.add(notificationId);
+		
+		return "sendToPrint";
+	}
+	
+	
 	
 }
