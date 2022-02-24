@@ -79,6 +79,8 @@ public class RouteReport extends EntityHome<Route> {
 	//para consultas por  numero de servicio
 	private String serviceNumber;
 
+	private boolean includeSewerageCount;
+	
 	public void setRouteId(Long id) {
 		setId(id);
 	}
@@ -100,6 +102,7 @@ public class RouteReport extends EntityHome<Route> {
 		getInstance();
 		loadConsumptionStates();
 		isFirstTime = false;
+		includeSewerageCount = false;
 		if (meterStatus == null) {
 			loadWaterMeterStatus();
 		}
@@ -1166,7 +1169,6 @@ public class RouteReport extends EntityHome<Route> {
 	}
 
 	public void startSubscriberAndConsumption() {
-		System.out.println("----INICIO de proceso");
 		WaterConsumptionIndicator consumptionIndicator;
 		String categoryName = "";
 		for (WaterSupplyCategory wsc : categories) {
@@ -1371,32 +1373,16 @@ public class RouteReport extends EntityHome<Route> {
 		}
 		//findFooterValues(wsc);
 		findFooterValuesBestWay();
-		System.out.println("----FIN de proceso");
 	}
 	
 	private void fillSewerageNumber(WaterConsumptionIndicator consumptionIndicator, String categoryName){
+		if (!includeSewerageCount){
+			consumptionIndicator.setSubscriber_sewerage(Long.parseLong("0"));
+			return;
+		}
 		if (startDate == null) {
 			startDates();
 		}
-//		String sentencia = "select COUNT(i) from Item i "
-//				+ "left join i.municipalBond mb "
-//				+ "left join mb.adjunct a "
-//				+ "left join a.waterServiceReference wsr "
-//				+ "left join wsr.route route "
-//				+ "where item.entry.id = 459 " 
-//				+ "and mb.municipalbondstatus.id in (3,4,6,7,11) " 
-//				+ "and mb.serviceDate between :startDate and :endDate "
-//				+ "and wsr.waterSupplyCategory = :categoryName " 
-//				+ "and wsr.amount between :startRange and :endRange " 
-//				+ "and wsr.route.id IN (:routeIds)";
-//		Query q=this.getEntityManager().createQuery(sentencia);
-//		q.setParameter("startDate", startDate);
-//		q.setParameter("endDate", endDate);
-//		q.setParameter("categoryName", categoryName);
-//		q.setParameter("routeIds", routeIds);
-//		q.setParameter("startRange", consumptionIndicator.getConsumptionRange().getFrom());
-//		q.setParameter("endRange", consumptionIndicator.getConsumptionRange().getTo());
-
 		String sentencia = "select count(item.id) from gimprod.item as item " +
 				"inner join gimprod.municipalBond as mb on item.municipalbond_id = mb.id " +
 				"inner join gimprod.WaterServiceReference as wsr on mb.adjunct_id = wsr.id " +
@@ -1414,12 +1400,6 @@ public class RouteReport extends EntityHome<Route> {
 		qq.setParameter("startRange", consumptionIndicator.getConsumptionRange().getFrom());
 		qq.setParameter("endRange", consumptionIndicator.getConsumptionRange().getTo());
 				
-//		System.out.println("routeIds: "+ routeIds.toString());
-//		System.out.println("startDate: "+ startDate);
-//		System.out.println("endDate: "+ endDate);
-//		System.out.println("categoryName: "+ categoryName);
-//		System.out.println("startRange: "+ consumptionIndicator.getConsumptionRange().getFrom());
-//		System.out.println("endRange: "+ consumptionIndicator.getConsumptionRange().getTo());
 		BigInteger counterSewerage = (BigInteger) qq.getSingleResult();
 		consumptionIndicator.setSubscriber_sewerage(Long.parseLong(counterSewerage.toString()));
 	}
@@ -1558,6 +1538,20 @@ public class RouteReport extends EntityHome<Route> {
 
 	public void setServiceNumber(String serviceNumber) {
 		this.serviceNumber = serviceNumber;
+	}
+
+	/**
+	 * @return the includeSewerageCount
+	 */
+	public boolean isIncludeSewerageCount() {
+		return includeSewerageCount;
+	}
+
+	/**
+	 * @param includeSewerageCount the includeSewerageCount to set
+	 */
+	public void setIncludeSewerageCount(boolean includeSewerageCount) {
+		this.includeSewerageCount = includeSewerageCount;
 	}
 
 	public Date getStartDate() {

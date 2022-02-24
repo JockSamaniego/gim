@@ -110,10 +110,14 @@
 							<s:convertEnum />
 							<a:support event="onchange" reRender="monthField" />
 						</h:selectOneMenu>
+                        <h:selectBooleanCheckbox id="includeSewerage" value="#{routeReport.includeSewerageCount}" > Incluir Abonados de Alcantarillado
+                        <a:support event="onchange" disabled="#{routeReport.newLoad}"
+                             ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:selectBooleanCheckbox>
 						<a:commandButton value="#{messages['route.loadServices']}"
 							rendered="#{!routeReport.newLoad}"
 							action="#{routeReport.loadRecordReadings()}"
-							reRender="monthField, yearField, reportTable, reportPanel,bt_print" />
+							reRender="monthField, yearField, reportTable, reportPanel,bt_print, includeSewerage" />
 
 						<s:button id="newLoad" value="#{messages['route.newLoad']}"
 							rendered="#{routeReport.newLoad}" includePageParams="false"
