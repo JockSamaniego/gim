@@ -11,6 +11,7 @@ public class WaterConsumptionIndicator {
 	private Long subscriber_good;
 	private Long subscriber_damaged;
 	private Long subscriber_unmetered;
+	private Long subscriber_sewerage;
 
 	// //// consumo en metros cubicos
 	private BigDecimal consumption_good;
@@ -59,7 +60,19 @@ public class WaterConsumptionIndicator {
 		this.subscriber_unmetered = subscriber_unmetered;
 	}
 
-	
+	/**
+	 * @return the subscriber_sewerage
+	 */
+	public Long getSubscriber_sewerage() {
+		return subscriber_sewerage;
+	}
+
+	/**
+	 * @param subscriber_sewerage the subscriber_sewerage to set
+	 */
+	public void setSubscriber_sewerage(Long subscriber_sewerage) {
+		this.subscriber_sewerage = subscriber_sewerage;
+	}
 
 	public BigDecimal getAgua() {
 		return agua;
