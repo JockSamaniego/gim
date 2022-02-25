@@ -48,7 +48,7 @@
 					rendered="#{statusChangeHome.bondsWithCorrectionDTO.size() > 0}">
 
 					<f:facet name="header">
-						<h:panelGrid columns="4" columnClasses="headerTitle left, ">
+						<h:panelGrid columns="5" columnClasses="headerTitle left, ">
 							<h:outputText
 								value="Listado de Obligaciones" />
 
@@ -57,6 +57,12 @@
 								id="printId"
 								rendered="#{statusChangeHome.bondsWithCorrectionDTO.size() > 0}"
 								propagation="join" value="Imprimir" />
+								
+							<s:button
+								view="/revenue/report/ErrorsCorrectionReportDetailPDF.xhtml"
+								id="printId2"
+								rendered="#{statusChangeHome.bondsWithCorrectionDetailDTO.size() > 0}"
+								propagation="join" value="Imprimir Detallado" />
 								
 							<a:commandButton id="detailByResident"
 								action="#{statusChangeHome.findBondsInErrorsCorrectionDetail()}"
