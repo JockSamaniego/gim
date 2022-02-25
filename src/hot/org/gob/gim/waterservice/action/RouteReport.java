@@ -1,6 +1,7 @@
 package org.gob.gim.waterservice.action;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -78,6 +79,8 @@ public class RouteReport extends EntityHome<Route> {
 	//para consultas por  numero de servicio
 	private String serviceNumber;
 
+	private boolean includeSewerageCount;
+	
 	public void setRouteId(Long id) {
 		setId(id);
 	}
@@ -99,6 +102,7 @@ public class RouteReport extends EntityHome<Route> {
 		getInstance();
 		loadConsumptionStates();
 		isFirstTime = false;
+		includeSewerageCount = false;
 		if (meterStatus == null) {
 			loadWaterMeterStatus();
 		}
@@ -626,7 +630,6 @@ public class RouteReport extends EntityHome<Route> {
 		 workingMeterStatus = systemParameterService.materialize(WaterMeterStatus.class, "WATER_METER_STATUS_ID_WORKING");
 		 withoutMeterStatus = systemParameterService.materialize(WaterMeterStatus.class, "WATER_METER_STATUS_ID_WITHOUT");
 		 damagedMeterStatus = systemParameterService.materialize(WaterMeterStatus.class, "WATER_METER_STATUS_ID_DAMAGED");
-		 
 						
 		 this.meterStatus.add(workingMeterStatus);
 		 this.meterStatus.add(withoutMeterStatus);		 
@@ -987,7 +990,7 @@ public class RouteReport extends EntityHome<Route> {
 				String category = ob[1].toString();
 				BigDecimal subTotal=new BigDecimal(ob[2].toString());
 				
-				//System.out.println(":::::::::::::datos "+entry_id+"    "+category+"   "+subTotal+" se compara con : "+wsc.getName());
+//				System.out.println(":::::::::::::datos "+entry_id+"    "+category+"   "+subTotal+" se compara con : "+wsc.getName());
 				
 				if(wsc.getName().equals(category)){
 					if(entry_id.equals("43")){
@@ -1082,7 +1085,7 @@ public class RouteReport extends EntityHome<Route> {
 	
 	public List<Object[]> subscribersNumber(WaterSupplyCategory wsc, WaterMeterStatus wms, ConsumptionRange cr, boolean isGoodConsumption) {
 		//amount
-		//System.out.println("::::::::::::::::::::::::::: consulta number: "+wsc.getName()+" .... "+wms.getName()+" ..  "+cr.getFrom()+" . . . ."+cr.getTo()+" q es "+isGoodConsumption);
+//		System.out.println("::::::::::::::::::::::::::: consulta number: "+wsc.getName()+" .... "+wms.getName()+" ..  "+cr.getFrom()+" . . . ."+cr.getTo()+" q es "+isGoodConsumption);
 		int monthInt = month.getMonthInt();
 		int yearInt = this.year;
 		//SUM(c.amount)
@@ -1167,8 +1170,10 @@ public class RouteReport extends EntityHome<Route> {
 
 	public void startSubscriberAndConsumption() {
 		WaterConsumptionIndicator consumptionIndicator;
+		String categoryName = "";
 		for (WaterSupplyCategory wsc : categories) {
 			wsc.waxingValues();
+			categoryName = wsc.getName();
 			consumptionIndicators = new ArrayList<WaterConsumptionIndicator>();
 			if (wsc.equals(residentialWaterSupplyCategory) || wsc.equals(oldPeopleWaterSupplyCategory)) {
 				for (ConsumptionRange cr : residencialConsumption) {
@@ -1180,7 +1185,7 @@ public class RouteReport extends EntityHome<Route> {
 							List<Object[]> data = subscribersNumber(wsc, wms, cr,true);
 							if (data.size() > 0) {
 								Object[] data_ob = data.get(0);
-								//System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
+//								System.out.println("------estos son los datosssssssssssssssssss workingMeterStatus "+data_ob[0]+"    "+data_ob[1]);
 								if (data_ob[0] != null)
 									consumptionIndicator.setSubscriber_good(Long.parseLong(data_ob[0].toString()));
 								else
@@ -1244,7 +1249,33 @@ public class RouteReport extends EntityHome<Route> {
 							wsc.setConsumption_damaged_total(wsc.getConsumption_damaged_total().add(consumptionIndicator.getConsumption_damaged()));
 							//findValues(consumptionIndicator, wsc, wms, cr, false);
 						}
+//						if(wms.equals(sewerageClientStatus)){
+//							consumptionIndicator.setWms(wms);
+//							List<Object[]> data = subscribersNumber(wsc, wms, cr, false);
+//							if (data.size() > 0) {
+//								Object[] data_ob = data.get(0);
+//								//System.out.println("estos son los datosssssssssssssssssss "+data_ob[0]+"    "+data_ob[1]);
+//								if (data_ob[0] != null)
+//									consumptionIndicator.setSubscriber_unmetered(Long.parseLong(data_ob[0].toString()));
+//								else
+//									consumptionIndicator.setSubscriber_unmetered(Long.parseLong("0"));
+//								if (data_ob[1] != null)
+//									consumptionIndicator.setConsumption_unmetered(new BigDecimal(data_ob[1].toString()));
+//								else
+//									consumptionIndicator.setConsumption_unmetered(BigDecimal.ZERO);
+//							}else{
+//								
+//							}
+//							//consumptionIndicator.setSubscriber_unmetered(subscribersNumber(wsc, wms, cr, false));
+//							//consumptionIndicator.setConsumption_unmetered(amountBy(wsc, wms, cr, false));
+//							//sumas para  los footers
+//							wsc.setSubscriber_unmetered_total(wsc.getSubscriber_unmetered_total() + consumptionIndicator.getSubscriber_unmetered());
+//							wsc.setConsumption_unmetered_total(wsc.getConsumption_unmetered_total().add(consumptionIndicator.getConsumption_unmetered()));
+//							//findValues(consumptionIndicator, wsc, wms, cr, false);
+//						}
 					}
+					fillSewerageNumber(consumptionIndicator, categoryName);
+					wsc.setSubscriber_sewerage_total(wsc.getSubscriber_sewerage_total() + consumptionIndicator.getSubscriber_sewerage());
 					consumptionIndicators.add(consumptionIndicator);
 				}
 				//findFooterValues(wsc );
@@ -1331,15 +1362,46 @@ public class RouteReport extends EntityHome<Route> {
 							
 							//findValues(consumptionIndicator, wsc, wms, cr, false);
 						}
-					}					
+					}
+					fillSewerageNumber(consumptionIndicator, categoryName);
+					wsc.setSubscriber_sewerage_total(wsc.getSubscriber_sewerage_total() + consumptionIndicator.getSubscriber_sewerage());
 					consumptionIndicators.add(consumptionIndicator);
-				}				
+				}
 				//findFooterValues(wsc );
 				wsc.setConsumptionIndicators(consumptionIndicators);
 			}
 		}
 		//findFooterValues(wsc);
 		findFooterValuesBestWay();
+	}
+	
+	private void fillSewerageNumber(WaterConsumptionIndicator consumptionIndicator, String categoryName){
+		if (!includeSewerageCount){
+			consumptionIndicator.setSubscriber_sewerage(Long.parseLong("0"));
+			return;
+		}
+		if (startDate == null) {
+			startDates();
+		}
+		String sentencia = "select count(item.id) from gimprod.item as item " +
+				"inner join gimprod.municipalBond as mb on item.municipalbond_id = mb.id " +
+				"inner join gimprod.WaterServiceReference as wsr on mb.adjunct_id = wsr.id " +
+				"where item.entry_id = 459 " +
+ 				"and mb.municipalbondstatus_id in (3,4,6,7,11) " +
+				"and mb.serviceDate between :startDate and :endDate " +
+				"and wsr.waterSupplyCategory = :categoryName " +
+				"and wsr.consumptionamount between :startRange and :endRange " +
+				"and wsr.route_id IN (:routeIds) ";
+		qq=this.entityManager.createNativeQuery(sentencia);
+		qq.setParameter("startDate", startDate);
+		qq.setParameter("endDate", endDate);
+		qq.setParameter("categoryName", categoryName);
+		qq.setParameter("routeIds", routeIds);
+		qq.setParameter("startRange", consumptionIndicator.getConsumptionRange().getFrom());
+		qq.setParameter("endRange", consumptionIndicator.getConsumptionRange().getTo());
+				
+		BigInteger counterSewerage = (BigInteger) qq.getSingleResult();
+		consumptionIndicator.setSubscriber_sewerage(Long.parseLong(counterSewerage.toString()));
 	}
 	
 	/*public void loadWaterValues() {
@@ -1476,6 +1538,20 @@ public class RouteReport extends EntityHome<Route> {
 
 	public void setServiceNumber(String serviceNumber) {
 		this.serviceNumber = serviceNumber;
+	}
+
+	/**
+	 * @return the includeSewerageCount
+	 */
+	public boolean isIncludeSewerageCount() {
+		return includeSewerageCount;
+	}
+
+	/**
+	 * @param includeSewerageCount the includeSewerageCount to set
+	 */
+	public void setIncludeSewerageCount(boolean includeSewerageCount) {
+		this.includeSewerageCount = includeSewerageCount;
 	}
 
 	public Date getStartDate() {

@@ -110,10 +110,14 @@
 							<s:convertEnum />
 							<a:support event="onchange" reRender="monthField" />
 						</h:selectOneMenu>
+                        <h:selectBooleanCheckbox id="includeSewerage" value="#{routeReport.includeSewerageCount}" > Incluir Abonados de Alcantarillado
+                        <a:support event="onchange" disabled="#{routeReport.newLoad}"
+                             ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:selectBooleanCheckbox>
 						<a:commandButton value="#{messages['route.loadServices']}"
 							rendered="#{!routeReport.newLoad}"
 							action="#{routeReport.loadRecordReadings()}"
-							reRender="monthField, yearField, reportTable, reportPanel,bt_print" />
+							reRender="monthField, yearField, reportTable, reportPanel,bt_print, includeSewerage" />
 
 						<s:button id="newLoad" value="#{messages['route.newLoad']}"
 							rendered="#{routeReport.newLoad}" includePageParams="false"
@@ -163,7 +167,7 @@
 						<h:outputText value="Categoría: #{_category.name}" />
 					</rich:column>
 
-					<rich:column colspan="3"
+					<rich:column colspan="4"
 						style="background-color:#F1E1D1;text-align: center;">
 						<h:outputText value="N° Abonados" />
 					</rich:column>
@@ -213,16 +217,27 @@
 							</f:facet>
 						</rich:column>
 
-						<rich:column style="text-align:right;">
-							<f:facet name="header">#{messages['S.Medidor']}</f:facet>
-							<h:outputText value="#{_indicator.subscriber_unmetered}" />
-							<f:facet name="footer">
-								<h:panelGroup
-									style="display:block; text-align:right; width:100%">
-									<h:outputText value="#{_category.subscriber_unmetered_total}" />
-								</h:panelGroup>
-							</f:facet>
-						</rich:column>
+                        <rich:column style="text-align:right;">
+                            <f:facet name="header">#{messages['S.Medidor']}</f:facet>
+                            <h:outputText value="#{_indicator.subscriber_unmetered}" />
+                            <f:facet name="footer">
+                                <h:panelGroup
+                                    style="display:block; text-align:right; width:100%">
+                                    <h:outputText value="#{_category.subscriber_unmetered_total}" />
+                                </h:panelGroup>
+                            </f:facet>
+                        </rich:column>
+
+                        <rich:column style="text-align:right;">
+                            <f:facet name="header">#{messages['N. Alcant']}</f:facet>
+                            <h:outputText value="#{_indicator.subscriber_sewerage}" />
+                            <f:facet name="footer">
+                                <h:panelGroup
+                                    style="display:block; text-align:right; width:100%">
+                                    <h:outputText value="#{_category.subscriber_sewerage_total}" />
+                                </h:panelGroup>
+                            </f:facet>
+                        </rich:column>
 
 						<rich:column style="text-align:right;">
 							<f:facet name="header">#{messages['Bueno']}</f:facet>

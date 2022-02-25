@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
+encoding//resources/iml_binnaclecrv.properties=UTF-8
+encoding//resources/iml_factoryline.properties=UTF-8
 encoding//resources/import-dev.sql=UTF-8
 encoding//src/hot/SMTATM/ConsultaRTVws.java=UTF-8
 encoding//src/hot/SMTATM/ConsultaRTVwsExecute.java=UTF-8
