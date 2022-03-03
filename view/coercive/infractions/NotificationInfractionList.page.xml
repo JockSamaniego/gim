@@ -6,7 +6,7 @@
       
       <begin-conversation join="true" flush-mode="MANUAL" />
 
-      <navigation from-action="#{notificationInfractionListHome.prepareRePrint}">
+      <navigation>
 		<end-conversation before-redirect="true" />
 		<rule if-outcome="sendToPrint">
 			<redirect view-id="/coercive/report/InfractionNotificationReport.xhtml">
