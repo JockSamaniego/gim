@@ -35,6 +35,7 @@ public class ReportBinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	private Date endDate;
 	private List<BinnacleCRV> list = new ArrayList<BinnacleCRV>();
 	ArrivalHistoryBinnacleCRV arrival = null;
+	private String dateSelected = "ingreso";
 
 	@In
 	FacesMessages facesMessages;
@@ -96,6 +97,20 @@ public class ReportBinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	}
 	
 	/**
+	 * @return the dateSelected
+	 */
+	public String getDateSelected() {
+		return dateSelected;
+	}
+
+	/**
+	 * @param dateSelected the dateSelected to set
+	 */
+	public void setDateSelected(String dateSelected) {
+		this.dateSelected = dateSelected;
+	}
+
+	/**
 	 * @return the list
 	 */
 	public List<BinnacleCRV> getList() {
@@ -156,34 +171,35 @@ public class ReportBinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		Query query = null;
 		if (vehicle.equals(TODOS)){
 			sql = "select b from BinnacleCRV b " +
-					"join b.arrivalHistoryBinnacleCRVs a " +
-					"where a.arrivalDate >= :startDate and " +
-					"a.arrivalDate <= :endDate order by b.serialNumber asc";
-			query = getEntityManager().createQuery(sql);
-			query.setParameter("startDate", startDate);
-			query.setParameter("endDate", endDate);
-			list = query.getResultList();
+					"join b.arrivalHistoryBinnacleCRVs a where ";
+			if (dateSelected.equalsIgnoreCase("ingreso"))
+			    sql = sql + " a.arrivalDate >= :startDate and " + "a.arrivalDate <= :endDate ";
+			else
+			    sql = sql + " a.exitDate >= :startDate and " + "a.exitDate <= :endDate ";
+			sql = sql + "order by b.serialNumber asc";
 		} else if (vehicle.equals(RETENIDOS)){
 			sql = "select b from BinnacleCRV b " +
-					"join b.arrivalHistoryBinnacleCRVs a " +
-					"where a.arrivalDate >= :startDate and " +
-					"a.arrivalDate <= :endDate " +
-					"and a.exitDate = null order by b.serialNumber asc";
-			query = getEntityManager().createQuery(sql);
-			query.setParameter("startDate", startDate);
-			query.setParameter("endDate", endDate);
-			list = query.getResultList();
+    				"join b.arrivalHistoryBinnacleCRVs a where ";
+			if (dateSelected.equalsIgnoreCase("ingreso"))
+			    sql = sql + " a.arrivalDate >= :startDate and " + "a.arrivalDate <= :endDate ";
+			else
+			    sql = sql + " a.exitDate >= :startDate and " + "a.exitDate <= :endDate ";
+			sql = sql + "order by b.serialNumber asc";
 		} else if (vehicle.equals(LIBERADOS)){
 			sql = "select b from BinnacleCRV b " +
-					"join b.arrivalHistoryBinnacleCRVs a " +
-					"where a.arrivalDate >= :startDate and " +
-					"a.arrivalDate <= :endDate " +
-					"and a.exitDate <> null order by b.serialNumber asc";
+					"join b.arrivalHistoryBinnacleCRVs a where ";
+			if (dateSelected.equalsIgnoreCase("ingreso"))
+			    sql = sql + " a.arrivalDate >= :startDate and " + "a.arrivalDate <= :endDate ";
+			else
+			    sql = sql + " a.exitDate >= :startDate and " + "a.exitDate <= :endDate ";
+			sql = sql + "order by b.serialNumber asc";
+		};
+		if (sql.length() > 0){
 			query = getEntityManager().createQuery(sql);
 			query.setParameter("startDate", startDate);
 			query.setParameter("endDate", endDate);
 			list = query.getResultList();
-		} else return;
+		}
 	}
 	
 	public int calculateDays(BinnacleCRV binnacleCRV) {
