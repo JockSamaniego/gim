@@ -167,8 +167,14 @@
                             </s:button>
                             #{' '}
                             <s:button view="/binnaclecrv/ExitBinnacleCRVEdit.xhtml"
-                                value="#{messages['binnacleCRV.registerExit']}" propagation="none"
+                                value="#{messages['binnacleCRV.registerExit']}" propagation="none" action="#{binnacleCRVHome.setManualExit(false)}" 
                                 id="binnacleCRVExitVehicle" rendered="#{binnacleCRVHome.canVehicleExit(_binnacleCRV) and binnacleCRVHome.hasRole('ROLE_NAME_CRV_SYSTEM')}">
+                                <f:param name="binnacleCRVId" value="#{_binnacleCRV.id}" />
+                            </s:button>
+                            #{' '}
+                            <s:button view="/binnaclecrv/ExitBinnacleCRVEdit.xhtml"
+                                value="#{messages['binnacleCRV.registerExitManual']}" propagation="none" action="#{binnacleCRVHome.setManualExit(true)}" 
+                                id="binnacleCRVExitManualVehicle" rendered="#{binnacleCRVHome.canVehicleExit(_binnacleCRV) and binnacleCRVHome.hasRole('ROLE_NAME_CRV_SYSTEM')}">
                                 <f:param name="binnacleCRVId" value="#{_binnacleCRV.id}" />
                             </s:button>
 						</rich:column>

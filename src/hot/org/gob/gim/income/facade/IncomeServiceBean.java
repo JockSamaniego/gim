@@ -1937,7 +1937,7 @@ public class IncomeServiceBean implements IncomeService {
 	 * @author macartuche
 	 * @date 2016-07-08T15:33
 	 * @tag recaudacionCoactivas Obtener una lista de municipalbondAux por el
-	 *      estado, municipalbondId y si cubre o no el interes
+	 *      estado, municipalbondId y si cubre o no el interes/recargo/iva
 	 */
 	public List<MunicipalbondAux> getBondsAuxByIdAndStatus(Long municipalbondId, Boolean coverInterest, String status,
 			String type, String paymentType) {
@@ -1952,13 +1952,14 @@ public class IncomeServiceBean implements IncomeService {
 			query += " and mba.anotherItem is null ";
 		}
 		
-		query += "and mba.typepayment=:paymentType ";
+		
+//		query += "and mba.typepayment=:paymentType ";
 
 		Query interestIsPayedQuery = entityManager.createQuery(query);
 		interestIsPayedQuery.setParameter("munid", municipalbondId);
 		interestIsPayedQuery.setParameter("status", status);
 		interestIsPayedQuery.setParameter("type", type);
-		interestIsPayedQuery.setParameter("paymentType", paymentType);
+//		interestIsPayedQuery.setParameter("paymentType", paymentType);
 		
 		if (coverInterest != null) {
 			interestIsPayedQuery.setParameter("cover", coverInterest);
@@ -1983,13 +1984,13 @@ public class IncomeServiceBean implements IncomeService {
 			query += "and mba.anotherItem is null ";
 		}
 		
-		query += "and mba.typepayment=:typepayment ";
+//		query += "and mba.typepayment=:typepayment ";
 		Query sumInterest = entityManager.createQuery(query);
 		sumInterest.setParameter("munid", municipalbondId);
 		sumInterest.setParameter("cover", coverInterest);
 		sumInterest.setParameter("status", status);
 		sumInterest.setParameter("type", type);
-		sumInterest.setParameter("typepayment", paymentType);
+//		sumInterest.setParameter("typepayment", paymentType);
 		
 		return (BigDecimal) sumInterest.getSingleResult();
 	}

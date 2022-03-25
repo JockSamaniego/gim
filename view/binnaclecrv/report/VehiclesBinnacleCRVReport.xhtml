@@ -79,11 +79,22 @@
             </p:cell>
         </p:table>
 
-        <p:table columns="3" widthPercentage="100" headerRows="0" widths="1 1 1"
+        <p:table columns="4" widthPercentage="100" headerRows="0" widths="1 1 1 1"
             spacingAfter="10">
             <f:facet name="defaultCell">
                 <p:cell borderWidth="0" />
             </f:facet>
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="Filtro de Fecha: " />
+                    </p:font>
+                    <p:font size="8">
+                        <p:text value="#{reportBinnacleCRVHome.dateSelected.equalsIgnoreCase('ingreso') ? 'Fecha de Ingreso' : 'Fecha de Salida'}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+
             <p:cell colspan="1">
                 <p:paragraph>
                     <p:font size="8" style="bold">
