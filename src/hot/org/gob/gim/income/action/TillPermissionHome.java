@@ -1,6 +1,7 @@
 package org.gob.gim.income.action;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -201,7 +202,9 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 				setTillPermissionId(userSession.getTillPermission().getId());
 			}
 			getInstance();
+			//TillPermission tillp = getEntityManager().find(TillPermission.class, 185030L);
 			findTotalInstitutionCollected(getInstance());
+			//findTotalInstitutionCollected(tillp);
 			Calendar now = Calendar.getInstance();
 			if (getInstance().getOpeningTime() == null) {
 				getInstance().setOpeningTime(now.getTime());
@@ -2050,6 +2053,8 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		query.setParameter("paymentStartDate", startDate);
 		query.setParameter("paymentEndDate", endDate);
 		ReversedDeposits = query.getResultList();
+		//
+		this.getPaymentsWithChecks();
 	}
 
 	public Long getPaidStatusExternalChannel() {
@@ -2116,10 +2121,10 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	// Jock Samaniego
 	
 	public void getPaymentsWithChecks(){
-		if(this.fractionValues.get("CHECK") != null){
+		//if(this.fractionValues.get("CHECK") != null){
 			if(this.fractionValues.get("CHECK").compareTo(BigDecimal.ZERO) > 0 && this.fractionValues.get("CHECK") != null){
 				this.detailByPaymentType(PaymentType.CHECK);
 			}
-		}
+		//}
 	}
 }
