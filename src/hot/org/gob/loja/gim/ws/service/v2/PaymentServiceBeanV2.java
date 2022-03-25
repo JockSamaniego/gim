@@ -159,7 +159,8 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 						return statement;
 					}
 				}
-				statement.setData(taxpayer, bonds, workDayDate);
+				// statement.setData(taxpayer, bonds, workDayDate);
+				statement.setData(taxpayer, bonds, new Date());
 				statement.setMessage("ok");
 				statement.setCode("ML.FS.7200");
 				persisBankingEntityLog(true, statement.toString());
@@ -202,6 +203,16 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			if (workDayDate == null) {
 				statement.setMessage("Jornada de trabajo no activa");
 				statement.setCode("ML.RD.7002");
+				persisBankingEntityLog(false, statement.toString());
+				return statement;
+			}
+			
+			// buscar id transaccions
+			// rfam 2022-03-08
+			Boolean idTransacction = checkTransactionId(payout, cashier);
+			if(idTransacction){
+				statement.setMessage("externalTransactionId duplicado");
+				statement.setCode("ML.RD.7201");
 				persisBankingEntityLog(false, statement.toString());
 				return statement;
 			}
@@ -276,9 +287,7 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 									return statement;
 								}
 							}
-
 						}
-
 					}
 				}
 
@@ -378,6 +387,7 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			persisBankingEntityLog(false, statement.toString());
 			return statement;
 		} catch (Exception e) {
+			e.printStackTrace();
 			statement.setMessage(e.getMessage());
 			statement.setCode("ML.RD.7013");
 			persisBankingEntityLog(false, statement.toString());
@@ -454,6 +464,17 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			persisBankingEntityLog(false, statement.toString());
 			return statement;
 		}
+		
+		BigDecimal value=  findDepositValue(payout);
+		
+		//rfam 2022-03-10 comprobar que los valores a reversar sean los correctos 
+		if(value.doubleValue() != payout.getAmount().doubleValue()){
+			statement.setMessage("Valor a reversar no concuerda");
+			statement.setCode("ML.RS.7030");
+			persisBankingEntityLog(false, statement.toString());
+			return statement;
+		}
+		
 		Query query = this.em.createNativeQuery("SELECT "
 				+ "dep.municipalbond_id " + "FROM " + "gimprod.payment pay, "
 				+ "gimprod.deposit dep " + "WHERE "
@@ -520,6 +541,19 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			return statement;
 		}
 	}
+	
+	private BigDecimal findDepositValue(Payout payout){
+		
+		Query query = em.createNativeQuery("select COALESCE(sum(de.value),0) valor_comprobar "
+				+ "from deposit de "
+				+ "where de.municipalbond_id in (:ids) "
+				+ "and de.status='VALID' ");
+		query.setParameter("ids", payout.getBondIds());
+		
+		BigDecimal value = (BigDecimal) query.getSingleResult();
+				
+		return value;		
+	}
 
 	private Boolean controlAlertResident(String identificationNumber) {
 		List<Alert> alerts = new ArrayList<Alert>();
@@ -557,6 +591,28 @@ public class PaymentServiceBeanV2 implements PaymentServiceV2 {
 			// throw new NotActiveWorkday();
 			return null;
 		}
+	}
+	
+	/***
+	 * comprueba si existe el id de transaccion para un cajeron de sw en especifico
+	 * @param payout
+	 * @param cashier
+	 * @return
+	 */
+	private Boolean checkTransactionId(Payout payout, Person cashier){
+		Query query = em.createNativeQuery("select count(*) "
+				+ "from payment p "
+				+ "where p.cashier_id = :cashierId "
+				+ "and p.externaltransactionid = :transactionId ");
+		query.setParameter("cashierId", cashier.getId());
+		query.setParameter("transactionId", payout.getTransactionId());
+		
+		BigInteger amount = (BigInteger) query.getSingleResult();
+		
+		if(amount.intValue()>0){
+			return true;
+		}
+		return false;
 	}
 
 	private Long findInPaymentAgreementBondsNumber(Long taxpayerId) {
