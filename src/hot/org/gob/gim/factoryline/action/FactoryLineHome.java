@@ -25,7 +25,6 @@ import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.factoryline.FactoryLine;
 import ec.gob.gim.factoryline.FactoryLineRoad;
-import ec.gob.gim.factoryline.SectorType;
 import ec.gob.gim.factoryline.TerritorialPolygon;
 
 
