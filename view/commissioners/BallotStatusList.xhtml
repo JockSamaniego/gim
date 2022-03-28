@@ -252,14 +252,14 @@
         <div class="actionButtons">
             <h:commandButton id="save"
                           value="#{messages['common.save']}"
-                         action="#{commissionerBallotHome.saveHygieneBallot()}"
+                         action="#{commissionerBallotHome.saveCommissionerBallot()}"
                        disabled="#{!commissionerBallotHome.wired}"
-                       rendered="#{!commissionerBallotHome.managed and !commissionerBallotHome.instance.isNullified and commissionerBallotHome.instance.currentStatus.statusName.code != 'PAID_ARCHIVED' and commissionerBallotHome.instance.currentStatus.statusName.code != 'FILE_NULLIFIED'}"/>
+                       rendered="#{!commissionerBallotHome.managed and !commissionerBallotHome.instance.isNullified}"/>
 
             <h:commandButton id="update"
                           value="#{messages['common.save']}"
                          action="#{commissionerBallotHome.UpdateCommissionerBallot()}"
-                       rendered="#{commissionerBallotHome.managed and !commissionerBallotHome.instance.isNullified and commissionerBallotHome.instance.currentStatus.statusName.code != 'PAID_ARCHIVED' and commissionerBallotHome.instance.currentStatus.statusName.code != 'FILE_NULLIFIED'}"/>
+                       rendered="#{commissionerBallotHome.managed and !commissionerBallotHome.instance.isNullified}"/>
              
              <s:button   id="cancelEdit1"
 		                value="#{messages['common.quit']}"

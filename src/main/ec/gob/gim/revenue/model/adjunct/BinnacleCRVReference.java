@@ -59,7 +59,7 @@ public class BinnacleCRVReference extends Adjunct{
 	private ExitTypeBinnacleCRV exitTypeBinnacleCRV;// Tipo de Salida del CRV
 	private Long entryId;// id del rubro que se emite (Servicio de Garaje o Grúa)
 	
-	@ManyToOne(cascade = CascadeType.MERGE, fetch=FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.MERGE)
 	private BinnacleCRV binnacleCRV;
 	@OneToOne
 	@JoinColumn(name = "arrivalHistoryBinnacleCRV_id")

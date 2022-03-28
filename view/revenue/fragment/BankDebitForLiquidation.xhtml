@@ -9,7 +9,7 @@
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<rich:modalPanel id="bankDebitForLiquidation" width="1070" height="550" style="overflow-y:scroll">
+	<rich:modalPanel id="bankDebitForLiquidation" width="940" height="550" style="overflow-y:scroll">
 		<f:facet name="header">
 			<h:panelGroup>
 				<h:outputText value="Débitos Bancarios para LIQUIDAR"></h:outputText>
@@ -71,7 +71,7 @@
 						id="_bankDebitTable"  var="_var"
 						value="#{bankDebitHome.previousForLiquidations}">
 						
-						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="120px" >
+						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="100px" >
 							<f:facet name="header">Nro.</f:facet>
 							<h:outputText value="#{_var.bankCount}"  />
 						</rich:column>
@@ -81,12 +81,12 @@
 							<h:outputText value="#{_var.residentIdentification}" />
 						</rich:column>
 
-						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="300px" >
+						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="250px" >
 							<f:facet name="header">Contribuyente</f:facet>
 							<h:outputText value="#{_var.residentName}" />
 						</rich:column>
 						
-						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="300px" >
+						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="250px" >
 							<f:facet name="header">Titular</f:facet>
 							<h:outputText value="#{_var.accountHolder}" />
 						</rich:column>

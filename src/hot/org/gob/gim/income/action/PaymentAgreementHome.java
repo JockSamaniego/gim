@@ -15,6 +15,9 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.type.TypeReference;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
@@ -37,6 +40,7 @@ import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.finances.model.DTO.MetadataBondDTO;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.Dividend;
 import ec.gob.gim.income.model.Payment;
@@ -416,11 +420,12 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			
 			List<Long> selectedBondIds = getSelectedBondIds();
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
-			incomeService.save(getInstance(), selectedBondIds);
 			
 			//rfam 2021-12-07
-			findEntryDetail(selectedBondIds);
+			findEntryDetail();
 			
+			incomeService.save(getInstance(), selectedBondIds);
+					
 			outcome = "persisted";
 			readyForPrint = Boolean.TRUE;
 		} catch (Exception e){
@@ -1004,24 +1009,27 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	// @date 2021-12-07
 	private List<AgreementSummaryDTO> summaries;
 
-	public void findEntryDetail(List<Long> selectedBondId) {
-		String sql = "select " + "	e.code || ' - '|| e.name rubro, "
-				+ "	min(mb.expirationdate) f_min, "
-				+ "	max(mb.expirationdate) f_max, " + "	count(mb) cantidad, "
-				+ "	sum(mb.value) sum_val, " + "	sum(mb.paidtotal) sum_total "
-				+ "from municipalbond mb "
-				+ "join paymentagreement pa on mb.paymentagreement_id = pa.id "
-				+ "join entry e on mb.entry_id = e.id " +
-				// "where pa.id = :agreementId "+
-				" where mb.id in (:bondIds) " + "group by 1 " + "order by 1";
-		List<Alert> alerts = new ArrayList<Alert>();
-		Query query = getEntityManager().createNativeQuery(sql);
-		query.setParameter("bondIds", selectedBondId);
-		alerts = query.getResultList();
-
-		this.summaries = NativeQueryResultsMapper.map(query.getResultList(),
-				AgreementSummaryDTO.class);
-
+	public void findEntryDetail() {			
+		AgreementSummaryDTO dto;
+		this.summaries = new ArrayList<AgreementSummaryDTO>();
+		for(MunicipalBondItem mbi : municipalBondItems){
+			if(mbi.calculatePaymentTotal().doubleValue()>Double.parseDouble("0.0")){
+				dto = new AgreementSummaryDTO();
+				dto.setRubro(mbi.getMunicipalBond().getEntry().getCode()+"-"+mbi.getMunicipalBond().getEntry().getName());
+				dto.setSum_total(mbi.calculatePaymentTotal());
+				this.summaries.add(dto);
+			}
+		}
+		
+		String json = "";
+		try {
+			ObjectWriter ow = new ObjectMapper().writer()
+					.withDefaultPrettyPrinter();
+			json = ow.writeValueAsString(this.summaries);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		this.getInstance().setBondDetail(json);
 	}
 
 	public List<AgreementSummaryDTO> getSummaries() {
@@ -1033,11 +1041,16 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	}
 	
 	public void loadAgreementSummary(){
-		List<Long> selectedIds = new ArrayList<Long>();
-		for(MunicipalBond mb : this.getInstance().getMunicipalBonds()){
-			selectedIds.add(mb.getId());
+		this.summaries = new ArrayList<AgreementSummaryDTO>();
+		if(getInstance().getBondDetail() !=null && !getInstance().getBondDetail().isEmpty()) {
+			try {
+				this.summaries = new ObjectMapper()
+						.readValue(getInstance().getBondDetail(),
+								new TypeReference<List<AgreementSummaryDTO>>(){});
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
-		findEntryDetail(selectedIds);
 	}
 	
 }
