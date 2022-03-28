@@ -202,9 +202,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 				setTillPermissionId(userSession.getTillPermission().getId());
 			}
 			getInstance();
-			//TillPermission tillp = getEntityManager().find(TillPermission.class, 185030L);
 			findTotalInstitutionCollected(getInstance());
-			//findTotalInstitutionCollected(tillp);
 			Calendar now = Calendar.getInstance();
 			if (getInstance().getOpeningTime() == null) {
 				getInstance().setOpeningTime(now.getTime());
@@ -275,8 +273,7 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	public void generateCashiersTillReport() {
 		//macartuchef @tag cierreCajas
 		this.observationAll = "";
-		this.openTill = Boolean.FALSE;
-		
+		this.openTill = Boolean.FALSE;		
 		// getEntityManager().clear();
 		tillPermissionsDetails = null;
 		Query query = null;
@@ -2054,6 +2051,9 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 		query.setParameter("paymentEndDate", endDate);
 		ReversedDeposits = query.getResultList();
 
+		//macartuche 2022-03-28
+		//llamada a metodo JS
+		this.getPaymentsWithChecks();
 	}
 
 	public Long getPaidStatusExternalChannel() {
@@ -2120,10 +2120,12 @@ public class TillPermissionHome extends EntityHome<TillPermission> {
 	// Jock Samaniego
 	
 	public void getPaymentsWithChecks(){
-		if(this.fractionValues.get("CHECK") != null){
-			if(this.fractionValues.get("CHECK").compareTo(BigDecimal.ZERO) > 0 && this.fractionValues.get("CHECK") != null){
-				this.detailByPaymentType(PaymentType.CHECK);
+		if(!this.fractionValues.isEmpty() && this.fractionValues != null){
+			if(this.fractionValues.get("CHECK") != null){
+				if(this.fractionValues.get("CHECK").compareTo(BigDecimal.ZERO) > 0){
+					this.detailByPaymentType(PaymentType.CHECK);
+				}
 			}
-		}
+		}		
 	}
 }
