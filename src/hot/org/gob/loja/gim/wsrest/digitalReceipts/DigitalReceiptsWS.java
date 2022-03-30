@@ -3,10 +3,6 @@
  */
 package org.gob.loja.gim.wsrest.digitalReceipts;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.List;
 
 import javax.validation.Valid;
