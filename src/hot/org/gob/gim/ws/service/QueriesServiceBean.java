@@ -376,8 +376,10 @@ public class QueriesServiceBean implements QueriesService {
 		}
 		
 		bondDto.setDeposits(deposits);
+		
 		TaxpayerRecord inst = incomeService.findDefaultInstitution();
 		TaxpayerRecordDTO instDTO = new TaxpayerRecordDTO();
+		
 		instDTO.setAddress(inst.getAddress());
 		instDTO.setFax(inst.getFax());
 		instDTO.setFlag(inst.getFlag());

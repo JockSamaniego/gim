@@ -117,6 +117,8 @@ public class DigitalReceiptsWS {
 			BondResponse respAux  = queriesService.getBondDto(request.getBondId());
 			resp.setBond(respAux.getBond());
 			resp.setDeposits(respAux.getDeposits());
+			
+			resp.setInstitution(respAux.getInstitution());
 
 			resp.setMessage("OK");
 
