@@ -8,6 +8,9 @@ import java.util.List;
 import javax.ejb.Local;
 
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
+import org.gob.loja.gim.ws.dto.digitalReceipts.BondShortDTO;
+import org.gob.loja.gim.ws.dto.digitalReceipts.request.ExternalPaidsRequest;
+import org.gob.loja.gim.ws.dto.digitalReceipts.response.BondResponse;
 import org.gob.loja.gim.ws.dto.queries.DebtsDTO;
 import org.gob.loja.gim.ws.dto.queries.EntryDTO;
 import org.gob.loja.gim.ws.dto.queries.LocalDTO;
@@ -27,5 +30,9 @@ public interface QueriesService {
 	List<LocalDTO> findLocals(String cedRuc);
 	EntryDTO findEntry(String code);
 	DebtsDTO findDebts(String identification);
+	
+	List<BondShortDTO> getExternalPayments(ExternalPaidsRequest criteria);
+	
+	BondResponse getBondDto(Long municipalBondId);
 	
 }

@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.gob.loja.gim.wsrest.Hygiene.HygieneWS;
 import org.gob.loja.gim.wsrest.cadaster.CadasterWS;
+import org.gob.loja.gim.wsrest.digitalReceipts.DigitalReceiptsWS;
 import org.gob.loja.gim.wsrest.income.preemission.PreemissionWS;
 import org.gob.loja.gim.wsrest.queries.QueriesWS;
 
@@ -26,6 +27,7 @@ public class RESTApplication extends javax.ws.rs.core.Application{
 	    singletons.add(new HygieneWS());
 	    singletons.add(new PreemissionWS());
 	    singletons.add(new QueriesWS());
+	    singletons.add(new DigitalReceiptsWS());
 	    //singletons.add(new EmissionWS());
 	}
 	
