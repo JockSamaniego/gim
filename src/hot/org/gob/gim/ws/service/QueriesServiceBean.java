@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -39,6 +40,7 @@ import org.gob.loja.gim.ws.dto.queries.OperatingPermitDTO;
 import org.gob.loja.gim.ws.dto.queries.response.BondDTO;
 import org.jboss.seam.annotations.In;
 
+import ec.gob.gim.income.model.Branch;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.TaxpayerRecord;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -395,6 +397,24 @@ public class QueriesServiceBean implements QueriesService {
 		instDTO.setSpecialTaxpayerResolution(inst.getSpecialTaxpayerResolution());
 		
 		bondDto.setInstitution(instDTO);
+		
+		if(municipalBond.getReceipt()!= null){
+			Query query = this.entityManager.createNamedQuery("Branch.findByNumer").setParameter("number", municipalBond.getReceipt().getBranch());
+			List<Branch> list = query.getResultList();		
+			if(list != null && list.size() >0 ){
+				bondDto.setBranchMain(Boolean.TRUE);
+				bondDto.setBranchOfficeName(list.get(0).getName());
+				bondDto.setBranchOfficeAddress(list.get(0).getAddress());
+			}else {
+				bondDto.setBranchMain(Boolean.FALSE);
+				bondDto.setBranchOfficeName(null);
+				bondDto.setBranchOfficeAddress(null);
+			}
+		}else {
+			bondDto.setBranchMain(Boolean.FALSE);
+			bondDto.setBranchOfficeName(null);
+			bondDto.setBranchOfficeAddress(null);
+		}
 		
 		return bondDto;
 		

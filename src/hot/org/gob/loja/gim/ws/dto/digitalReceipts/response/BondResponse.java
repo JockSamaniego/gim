@@ -22,7 +22,13 @@ public class BondResponse extends CommonResponseWS {
 	private BondDTO bond;
 	
 	private List<DepositDTO> deposits = new ArrayList<DepositDTO>();
-
+	
+	private boolean branchMain;
+	
+	private String branchOfficeName;
+	
+	private String branchOfficeAddress;
+	
 	/**
 	 * @return the bond
 	 */
@@ -63,6 +69,48 @@ public class BondResponse extends CommonResponseWS {
 	 */
 	public void setInstitution(TaxpayerRecordDTO institution) {
 		this.institution = institution;
+	}
+	
+	/**
+	 * @return the branchMain
+	 */
+	public boolean isBranchMain() {
+		return branchMain;
+	}
+
+	/**
+	 * @param branchMain the branchMain to set
+	 */
+	public void setBranchMain(boolean branchMain) {
+		this.branchMain = branchMain;
+	}
+
+	/**
+	 * @return the branchOfficeName
+	 */
+	public String getBranchOfficeName() {
+		return branchOfficeName;
+	}
+
+	/**
+	 * @param branchOfficeName the branchOfficeName to set
+	 */
+	public void setBranchOfficeName(String branchOfficeName) {
+		this.branchOfficeName = branchOfficeName;
+	}
+	
+	/**
+	 * @return the branchOfficeAddress
+	 */
+	public String getBranchOfficeAddress() {
+		return branchOfficeAddress;
+	}
+
+	/**
+	 * @param branchOfficeAddress the branchOfficeAddress to set
+	 */
+	public void setBranchOfficeAddress(String branchOfficeAddress) {
+		this.branchOfficeAddress = branchOfficeAddress;
 	}
 
 	/* (non-Javadoc)

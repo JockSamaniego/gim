@@ -115,6 +115,10 @@ public class DigitalReceiptsWS {
 			resp.setDeposits(respAux.getDeposits());
 			
 			resp.setInstitution(respAux.getInstitution());
+			
+			resp.setBranchMain(respAux.isBranchMain());
+			resp.setBranchOfficeAddress(respAux.getBranchOfficeAddress());
+			resp.setBranchOfficeName(respAux.getBranchOfficeName());
 
 			resp.setMessage("OK");
 
