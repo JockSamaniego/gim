@@ -11,6 +11,8 @@ import org.gob.loja.gim.ws.dto.digitalReceipts.DepositDTO;
 import org.gob.loja.gim.ws.dto.digitalReceipts.TaxpayerRecordDTO;
 import org.gob.loja.gim.ws.dto.queries.response.BondDTO;
 
+import ec.gob.gim.revenue.model.adjunct.ValuePair;
+
 /**
  * @author René
  *
@@ -28,6 +30,8 @@ public class BondResponse extends CommonResponseWS {
 	private String branchOfficeName;
 	
 	private String branchOfficeAddress;
+	
+	private List<ValuePair> adjunctDetails = new ArrayList<ValuePair>();
 	
 	/**
 	 * @return the bond
@@ -111,6 +115,20 @@ public class BondResponse extends CommonResponseWS {
 	 */
 	public void setBranchOfficeAddress(String branchOfficeAddress) {
 		this.branchOfficeAddress = branchOfficeAddress;
+	}
+	
+	/**
+	 * @return the adjunctDetails
+	 */
+	public List<ValuePair> getAdjunctDetails() {
+		return adjunctDetails;
+	}
+
+	/**
+	 * @param adjunctDetails the adjunctDetails to set
+	 */
+	public void setAdjunctDetails(List<ValuePair> adjunctDetails) {
+		this.adjunctDetails = adjunctDetails;
 	}
 
 	/* (non-Javadoc)

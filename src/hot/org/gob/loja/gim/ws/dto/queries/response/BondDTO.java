@@ -114,6 +114,9 @@ public class BondDTO {
 	private String emitter;
 	
 	private String legalStatus;
+	
+	private BigDecimal subtotal;
+	
 
 	// private Adjunct adjunct;
 
@@ -184,6 +187,7 @@ public class BondDTO {
 		this.totalCancelled = municipalBond.getTotalCancelled();
 		this.value = municipalBond.getValue();
 		this.legalStatus = municipalBond.getLegalStatus().name();
+		this.subtotal = municipalBond.getSubTotal();
 
 	}
 
@@ -642,6 +646,21 @@ public class BondDTO {
 	 */
 	public void setEntryAmountLabel(String entryAmountLabel) {
 		this.entryAmountLabel = entryAmountLabel;
+	}
+	
+
+	/**
+	 * @return the subtotal
+	 */
+	public BigDecimal getSubtotal() {
+		return subtotal;
+	}
+
+	/**
+	 * @param subtotal the subtotal to set
+	 */
+	public void setSubtotal(BigDecimal subtotal) {
+		this.subtotal = subtotal;
 	}
 
 	/*

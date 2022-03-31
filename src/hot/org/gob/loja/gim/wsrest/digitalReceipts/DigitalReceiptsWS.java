@@ -119,6 +119,8 @@ public class DigitalReceiptsWS {
 			resp.setBranchMain(respAux.isBranchMain());
 			resp.setBranchOfficeAddress(respAux.getBranchOfficeAddress());
 			resp.setBranchOfficeName(respAux.getBranchOfficeName());
+			
+			resp.setAdjunctDetails(respAux.getAdjunctDetails());
 
 			resp.setMessage("OK");
 

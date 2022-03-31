@@ -416,6 +416,10 @@ public class QueriesServiceBean implements QueriesService {
 			bondDto.setBranchOfficeAddress(null);
 		}
 		
+		if(municipalBond.getAdjunct()!= null){
+			bondDto.setAdjunctDetails(municipalBond.getAdjunct().getDetails());
+		}
+		
 		return bondDto;
 		
 	}
