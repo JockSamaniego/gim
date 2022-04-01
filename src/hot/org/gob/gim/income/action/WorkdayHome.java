@@ -5,11 +5,17 @@ package org.gob.gim.income.action;
  * Actualizaci√≥n Ronald Paladines Celi GAD Municipal de Loja
  * 
  * se actualiza el c√°lculo de intereses para diferenciar por instituci√≥n: del GAD Municipal y la EMAALEP
+ *
  * 
+ * 2022-03-29
+ * ActualizaciÛn Ronald Paladines Celi GAD Municipal de Loja
+ * 
+ * se genera reporte agrupado por emisor de tarjeta de crÈdito
  * 
  */
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -253,6 +259,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private List<ReplacementAgreementDTO> replacementAgreements;
 	private List<ReplacementAccountDTO> replacementAccountDTOs;
 
+	private Map<String, List<MunicipalBondView>> municipalBondViewCreditCards = new HashMap<String, List<MunicipalBondView>>();
+	
 	@In
 	UserSession userSession;
 
@@ -751,6 +759,45 @@ public class WorkdayHome extends EntityHome<Workday> {
 		municipalBondViews = getMunicipalBondsViewBetweenDatesByCashier(person
 				.getId());
 		totalCollected = sumTotal(municipalBondViews);
+	}
+
+	public void findDetailedCreditCardByCashier() {
+		String sql = "select distinct r.identificationNumber, r.\"name\" as contribuyente , mb.\"number\", e.\"name\" as rubro, " +
+				"d.\"date\", d.\"time\", f.\"name\" as tarjeta, pf.documentnumber, pf.paidamount, pf.id " +
+				"from gimprod.resident r " +
+				"inner join gimprod.municipalbond mb on r.id = mb.resident_id " +
+				"inner join gimprod.entry as e on e.id = mb.entry_id " +
+				"inner join gimprod.deposit d on d.municipalbond_id = mb.id " +
+				"inner join gimprod.payment p on r.id = p.cashier_id " +
+				"inner join gimprod.paymentfraction pf on d.payment_id = pf.payment_id " +
+				"inner join gimprod.financialinstitution as f on f.id = pf.finantialinstitution_id " +
+				"WHERE pf.paymenttype = 'CREDIT_CARD' and d.status = 'VALID' AND " +
+				"d.date BETWEEN :startDate and :endDate AND " +
+				"p.cashier_id = :cashierId " +
+				"ORDER BY f.name, mb.number, d.date, d.time;";
+		Query query = getEntityManager().createNativeQuery(sql);
+		query.setParameter("startDate", startDate);
+		query.setParameter("endDate", endDate);
+		query.setParameter("cashierId", person.getId());
+		List<Object[]> results = query.getResultList();
+		String cardGroup = "";
+		municipalBondViewCreditCards.clear();
+		List<MunicipalBondView> list = new ArrayList<MunicipalBondView>();
+		BigInteger num = BigInteger.ZERO;
+		for(Object[] row : results){
+			num = (BigInteger)row[2];
+			MunicipalBondView obj = new MunicipalBondView((String)row[0], (String)row[3], (String)row[1], 
+					Long.parseLong(num.toString()), (Date)row[4], (Date)row[5], (BigDecimal) row[8]);
+			if (!cardGroup.equalsIgnoreCase((String)row[6])){
+				if (list.size() > 0) municipalBondViewCreditCards.put(cardGroup, list);
+				cardGroup = (String)row[6];
+				list = new ArrayList<MunicipalBondView>();
+				list.add(obj);
+			} else {
+				list.add(obj);
+			}
+		}
+		if (list.size() > 0) municipalBondViewCreditCards.put(cardGroup, list);
 	}
 
 	public BigDecimal sumTotal(List<MunicipalBondView> list) {
@@ -4884,8 +4931,10 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 	public void generateCashiersReport() {
 		totalByCashier = getTotalTransactionsBetweenDates();
-		if (person != null)
+		if (person != null){
 			findDetailedDepositsByCashier();
+			findDetailedCreditCardByCashier();
+		}
 	}
 
 	public List<ReportView> getTotalTransactionsBetweenDates() {
@@ -7197,6 +7246,21 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 	public void setMunicipalBondViews(List<MunicipalBondView> municipalBondViews) {
 		this.municipalBondViews = municipalBondViews;
+	}
+
+	/**
+	 * @return the municipalBondViewCreditCards
+	 */
+	public Map<String, List<MunicipalBondView>> getMunicipalBondViewCreditCards() {
+		return municipalBondViewCreditCards;
+	}
+
+	/**
+	 * @param municipalBondViewCreditCards the municipalBondViewCreditCards to set
+	 */
+	public void setMunicipalBondViewCreditCards(
+			Map<String, List<MunicipalBondView>> municipalBondViewCreditCards) {
+		this.municipalBondViewCreditCards = municipalBondViewCreditCards;
 	}
 
 	public Long getExternalPaidStatus() {
