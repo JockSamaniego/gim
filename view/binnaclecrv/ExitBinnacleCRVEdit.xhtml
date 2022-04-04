@@ -21,7 +21,7 @@
                 <h:panelGrid columns="2" width="100%">
                     <s:decorate id="exitDateField" template="../layout/edit.xhtml">
                     <ui:define name="label">#{messages['arrivalHistory.exitDate']}:</ui:define>
-                    <rich:calendar id="exitDate" readonly="true"
+                    <rich:calendar id="exitDate" readonly="#{!binnacleCRVHome.isManualExit()}"
                         value="#{binnacleCRVHome.arrivalHistoryBinnacleCRV.exitDate}"
                         enableManualInput="false" required="true" ajaxSingle="true"
                         datePattern="yyyy-MM-dd"/>
@@ -34,8 +34,14 @@
             
                     <s:decorate template="../layout/edit.xhtml">
                         <ui:define name="label">#{messages['arrivalHistory.exitTypeBinnacleCRV']}:</ui:define>
-                        <h:inputText id="exitDetail" required="true" readonly="true"
-                            value="#{binnacleCRVHome.arrivalHistoryBinnacleCRV.exitTypeBinnacleCRV}" />
+                        <h:selectOneMenu  
+                            value="#{binnacleCRVHome.arrivalHistoryBinnacleCRV.exitTypeBinnacleCRV}" required="true"
+                            disabled="#{!binnacleCRVHome.isManualExit()}">
+                            <s:selectItems value="#{exitTypesBinnacleCRV}" var="_exitType"
+                            label="#{_exitType.name()}" 
+                            noSelectionLabel="Seleccione una opción" />
+                            <s:convertEnum />
+                        </h:selectOneMenu>
                     </s:decorate>
 
                     <s:decorate template="../layout/edit.xhtml">
@@ -62,7 +68,7 @@
                         <s:decorate template="../layout/edit.xhtml">
                             <ui:define name="label">#{messages['arrivalHistory.km']}:</ui:define>
                             <h:inputText id="arrivalKm" required="true" style="text-align: right" 
-                                value="#{binnacleCRVHome.arrivalHistoryBinnacleCRV.km}" readonly="true"/>
+                                value="#{binnacleCRVHome.arrivalHistoryBinnacleCRV.km}" readonly="#{!binnacleCRVHome.isManualExit()}"/>
                         </s:decorate>
 
                     </h:panelGrid>

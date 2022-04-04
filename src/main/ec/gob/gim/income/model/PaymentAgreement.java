@@ -123,6 +123,8 @@ public class PaymentAgreement {
 	
 	private Long userUpdate;
 	
+	private String bondDetail;
+	
 	
 	public AgreementType getAgreementType() {
 		return agreementType;
@@ -340,6 +342,14 @@ public class PaymentAgreement {
 
 	public void setUserNullified(Long userNullified) {
 		this.userNullified = userNullified;
+	}
+
+	public String getBondDetail() {
+		return bondDetail;
+	}
+
+	public void setBondDetail(String bondDetail) {
+		this.bondDetail = bondDetail;
 	}
 	
 	

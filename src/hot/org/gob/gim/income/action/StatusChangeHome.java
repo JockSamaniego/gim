@@ -30,6 +30,7 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.StatusChange;
 import ec.gob.gim.revenue.model.DTO.MunicipalBondErrorsCorrectionDTO;
+import ec.gob.gim.revenue.model.DTO.MunicipalBondErrorsCorrectionDetailDTO;
 
 @Name("statusChangeHome")
 public class StatusChangeHome extends EntityHome<StatusChange> {
@@ -1081,12 +1082,14 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
     //Jock Samaniego
     
     private List<MunicipalBondErrorsCorrectionDTO> bondsWithCorrectionDTO = new ArrayList<MunicipalBondErrorsCorrectionDTO>();
+    private List<MunicipalBondErrorsCorrectionDetailDTO> bondsWithCorrectionDetailDTO = new ArrayList<MunicipalBondErrorsCorrectionDetailDTO>();
     private List<MunicipalBondErrorsCorrectionDTO> bondsWithCorrection = new LinkedList<MunicipalBondErrorsCorrectionDTO>();
     private List<BondDownStatus> bondsWithCorrectionAccount = new ArrayList<BondDownStatus>();
     private MunicipalBondStatus correctionBondStatus;
     private Date correctionStartDate;
 	private Date correctionEndDate;
 	private BigDecimal totalWithCorrection;
+	private BigDecimal totalWithCorrectionWithoutTaxes;
     
     public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
 
@@ -1148,7 +1151,23 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 		this.totalWithCorrection = totalWithCorrection;
 	}
 	
-	
+	public BigDecimal getTotalWithCorrectionWithoutTaxes() {
+		return totalWithCorrectionWithoutTaxes;
+	}
+
+	public void setTotalWithCorrectionWithoutTaxes(
+			BigDecimal totalWithCorrectionWithoutTaxes) {
+		this.totalWithCorrectionWithoutTaxes = totalWithCorrectionWithoutTaxes;
+	}
+
+	public List<MunicipalBondErrorsCorrectionDetailDTO> getBondsWithCorrectionDetailDTO() {
+		return bondsWithCorrectionDetailDTO;
+	}
+
+	public void setBondsWithCorrectionDetailDTO(
+			List<MunicipalBondErrorsCorrectionDetailDTO> bondsWithCorrectionDetailDTO) {
+		this.bondsWithCorrectionDetailDTO = bondsWithCorrectionDetailDTO;
+	}
 
 	public void findBondsInErrorsCorrection(){
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
@@ -1160,6 +1179,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 		bondsWithCorrection.clear();
 		bondsWithCorrectionAccount.clear();
 		totalWithCorrection = BigDecimal.ZERO;
+		totalWithCorrectionWithoutTaxes = BigDecimal.ZERO;
 		
 		String query = "SELECT mb.number as mbNumber,"
 				+ "mb.emisiondate as emission,"
@@ -1188,7 +1208,30 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 		bondsWithCorrectionDTO = NativeQueryResultsMapper.map(q.getResultList(), MunicipalBondErrorsCorrectionDTO.class);
 		for(MunicipalBondErrorsCorrectionDTO mbDTO: bondsWithCorrectionDTO){
 			totalWithCorrection = totalWithCorrection.add(mbDTO.getValue()).add(mbDTO.getTaxesTotal());
+			totalWithCorrectionWithoutTaxes = totalWithCorrectionWithoutTaxes.add(mbDTO.getValue());
 		}
+		
+		String query2 = "SELECT  mb.number as mbNumber, "
+				+ "ent.name as entry, "
+				+ "itm.total as valueTotal, "
+				+ "acc.accountcode as accountCode, "
+				+ "acc.accountname as accountName, "
+				+ "itm.ordernumber as orderNumber "
+				+ "FROM gimprod.item itm  "
+				+ "LEFT JOIN gimprod.municipalbond mb ON mb.id = itm.municipalbond_id "
+				+ "LEFT JOIN gimprod.statuschange stc On stc.municipalbond_id = mb.id  "
+				+ "LEFT JOIN gimprod.entry ent On ent.id = itm.entry_id "
+				+ "left Join gimprod.account acc On acc.id = ent.account_id "
+				+ "where stc.municipalbondstatus_id = :status "
+				+ "and stc.previousbondstatus_id = 3  "
+				+ "and stc.date BETWEEN :startDate and :endDate "
+				+ "ORDER BY stc.date, itm.municipalbond_id, itm.ordernumber ASC ";
+				
+		Query q2 = this.getEntityManager().createNativeQuery(query2);
+		q2.setParameter("status", correctionBondStatus.getId());
+		q2.setParameter("startDate", correctionStartDate);
+		q2.setParameter("endDate", correctionEndDate);
+		bondsWithCorrectionDetailDTO = NativeQueryResultsMapper.map(q2.getResultList(), MunicipalBondErrorsCorrectionDetailDTO.class);
 	}
 	
 	public void findBondsInErrorsCorrectionDetail(){
@@ -1198,6 +1241,7 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 				MunicipalBondStatus.class,
 				"MUNICIPAL_BOND_STATUS_ID_ERRORS_CORRECTION");
 		bondsWithCorrectionDTO.clear();
+		bondsWithCorrectionDetailDTO.clear();
 		bondsWithCorrection.clear();
 		bondsWithCorrectionAccount.clear();
 		totalWithCorrection = BigDecimal.ZERO;
@@ -1230,7 +1274,9 @@ public class StatusChangeHome extends EntityHome<StatusChange> {
 		for(MunicipalBondErrorsCorrectionDTO mbDTO: bondsWithCorrection){
 			totalWithCorrection = totalWithCorrection.add(mbDTO.getValue()).add(mbDTO.getTaxesTotal());
 		}
+		
 	}
+	
 	
 	public void findBondsInErrorsCorrectionByAccount(){
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()

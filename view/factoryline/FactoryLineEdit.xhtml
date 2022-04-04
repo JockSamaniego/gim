@@ -51,15 +51,15 @@
                 
                 <br/>
                 <h:panelGrid >
-	                    <s:decorate template="../layout/edit.xhtml" id="withoutCadastralInfoField">
-	                        <ui:define name="label">#{messages['factoryLine.withoutCadastralInfo']}:</ui:define>
-	                        <h:selectBooleanCheckbox value="#{factoryLineHome.instance.withoutCadastralInfo}" 
-	                        disabled="#{factoryLineHome.isIdDefined()}">
-		                    <a:support event="onblur" reRender="withoutCadastralInfoField, propertyChooserField, contentPanel, polygonData"
-		                         ajaxSingle="true" eventsQueue="gimQueue" action="#{factoryLineHome.clearDataInstance}"/>
-	                        </h:selectBooleanCheckbox>
-	                    </s:decorate>
-	                    
+                        <s:decorate template="../layout/edit.xhtml" id="withoutCadastralInfoField">
+                            <ui:define name="label">#{messages['factoryLine.withoutCadastralInfo']}:</ui:define>
+                            <h:selectBooleanCheckbox value="#{factoryLineHome.instance.withoutCadastralInfo}" 
+                            disabled="#{factoryLineHome.isIdDefined()}">
+                            <a:support event="onblur" reRender="withoutCadastralInfoField, propertyChooserField, contentPanel, polygonData"
+                                 ajaxSingle="true" eventsQueue="gimQueue" action="#{factoryLineHome.clearDataInstance}"/>
+                            </h:selectBooleanCheckbox>
+                        </s:decorate>
+                        
                     <s:decorate template="../layout/edit.xhtml" id="propertyChooserField">
                         <g:propertyChooser id="propertyChooser" disabled="#{factoryLineHome.instance.withoutCadastralInfo}"
                         property="#{factoryLineHome.property}" 
@@ -71,25 +71,25 @@
                         propertyChosenListenerName="propertySelectedListener" />
                     </s:decorate>
             
-	                <h:panelGrid columns="3" id="contentPanel">
-	                    <s:decorate template="../layout/edit.xhtml">
-	                        <ui:define name="label">#{messages['factoryLine.factoryLineNumber']}:</ui:define>
-	                        <h:inputText style="text-align: left" required="true"
-	                            value="#{factoryLineHome.instance.factoryLineNumber}" />
-	                    </s:decorate>
-	
-	                    <s:decorate template="../layout/edit.xhtml">
-	                        <ui:define name="label">#{messages['factoryLine.cadastralCode']}:</ui:define>
-	                        <h:inputText id="cadastralCode" required="true" style="text-align: left" 
-	                            value="#{factoryLineHome.instance.cadastralCode}" />
-	                    </s:decorate>
-	
-	                    <s:decorate template="../layout/edit.xhtml">
-	                        <ui:define name="label">#{messages['factoryLine.identification']}:</ui:define>
-	                        <h:inputText required="true" style="text-align: left" 
-	                            value="#{factoryLineHome.instance.identification}" />
-	                    </s:decorate>
-	
+                    <h:panelGrid columns="3" id="contentPanel">
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.factoryLineNumber']}:</ui:define>
+                            <h:inputText style="text-align: left" required="true"
+                                value="#{factoryLineHome.instance.factoryLineNumber}" />
+                        </s:decorate>
+    
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.cadastralCode']}:</ui:define>
+                            <h:inputText id="cadastralCode" required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.cadastralCode}" />
+                        </s:decorate>
+    
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.identification']}:</ui:define>
+                            <h:inputText required="true" style="text-align: left" 
+                                value="#{factoryLineHome.instance.identification}" />
+                        </s:decorate>
+    
                         <s:decorate template="../layout/edit.xhtml">
                             <ui:define name="label">#{messages['factoryLine.owner']}:</ui:define>
                             <h:inputText required="true" style="text-align: left" 
@@ -172,18 +172,18 @@
 
                     <h:panelGrid id="polygonData" >
                         <f:facet name="header">OCUPACIÓN DEL SUELO</f:facet>
-			            <s:decorate template="../layout/edit.xhtml">
-			                <ui:define name="label">#{messages['factoryLine.territorialPolygon']}</ui:define>
-			                <h:selectOneMenu id="territorialPolygon" 
-			                    value="#{factoryLineHome.instance.territorialPolygon}" required="true">
-			                    <ui:debug id="debugExternal"/>
-			                    <s:selectItems value="#{factoryLineHome.territorialPolygons}" var="_territorialPolygon"
-			                        label="#{_territorialPolygon.polygonCode} - #{_territorialPolygon.polygonName}" 
-			                        noSelectionLabel="Seleccione una opción" />
-			                    <s:convertEntity />
-			                    <a:support event="onchange" ajaxSingle="true" reRender="polygonData" />
-			                </h:selectOneMenu>
-			            </s:decorate>
+                        <s:decorate template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['factoryLine.territorialPolygon']}</ui:define>
+                            <h:selectOneMenu id="territorialPolygon" 
+                                value="#{factoryLineHome.instance.territorialPolygon}" required="true">
+                                <ui:debug id="debugExternal"/>
+                                <s:selectItems value="#{factoryLineHome.territorialPolygons}" var="_territorialPolygon"
+                                    label="#{_territorialPolygon.polygonCode} - #{_territorialPolygon.polygonName}" 
+                                    noSelectionLabel="Seleccione una opción" />
+                                <s:convertEntity />
+                                <a:support event="onchange" ajaxSingle="true" reRender="polygonData" />
+                            </h:selectOneMenu>
+                        </s:decorate>
 
                         <h:panelGrid columns="4">
                             <s:decorate template="../layout/edit.xhtml">
@@ -349,8 +349,8 @@
 
                         <h:panelGrid>
                             <h:outputLabel>#{messages['factoryLine.complementaryUses']}:</h:outputLabel>
-				            <h:outputText value="#{messages['factoryLine.complementaryUses.ResultsNotFound']}"
-				                rendered="#{empty factoryLineHome.instance.territorialPolygon.complementaryUses}" />
+                            <h:outputText value="#{messages['factoryLine.complementaryUses.ResultsNotFound']}"
+                                rendered="#{empty factoryLineHome.instance.territorialPolygon.complementaryUses}" />
 
                             <rich:dataTable id="complementedLanduses" var="_clu"
                                 value="#{factoryLineHome.instance.territorialPolygon.complementaryUses}"
@@ -873,6 +873,64 @@
                     </h:panelGrid>
 
                     <br/>
+                    <h:panelGrid id="patrimonialData" columns="3">
+                        <f:facet name="header">#{messages['factoryLine.patrimonial']}:</f:facet>
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.centralArea']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="80" size="40" 
+                                    value="#{factoryLineHome.instance.centralArea}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.caFirstOrder']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="80" size="40" 
+                                    value="#{factoryLineHome.instance.caFirstOrder}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.caSecondOrder']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="80" size="40" 
+                                    value="#{factoryLineHome.instance.caSecondOrder}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.elValle']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="80" size="40" 
+                                    value="#{factoryLineHome.instance.elValle}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.elValleFirstOrder']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="80" size="40" 
+                                    value="#{factoryLineHome.instance.elValleFirstOrder}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.elValleSecondOrder']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="80" size="40" 
+                                    value="#{factoryLineHome.instance.elValleSecondOrder}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.culturalRoad']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="80" size="40" 
+                                    value="#{factoryLineHome.instance.culturalRoad}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml">
+                                <ui:define name="label">#{messages['factoryLine.influenceRoad']}:</ui:define>
+                                <h:inputText style="text-align: left" maxlength="80" size="40" 
+                                    value="#{factoryLineHome.instance.influenceRoad}" />
+                            </s:decorate>
+                        
+                            <s:decorate template="../layout/edit.xhtml" >
+                                <ui:define name="label">#{messages['factoryLine.inventoried']}:</ui:define>
+                                <h:selectBooleanCheckbox value="#{factoryLineHome.instance.inventoried}" />
+                            </s:decorate>
+                        
+                    </h:panelGrid>
+                    
+                    <br/>
                     <h:panelGrid id="riskData" columns="1">
                         <f:facet name="header">#{messages['factoryLine.risk']}:</f:facet>
                             <s:decorate template="../layout/edit.xhtml" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('URBANO')}">
@@ -919,21 +977,21 @@
                             <s:decorate template="../layout/edit.xhtml">
                                 <ui:define name="label">#{messages['factoryLineRoad.roadHydrography']}:</ui:define>
                                 
-	                            <h:selectOneMenu id="roads" 
-	                                value="#{factoryLineHome.road}" >
-	                                <ui:debug id="debugExternal"/>
-	                                <s:selectItems value="#{factoryLineRoads}" var="_road"
-	                                    label="#{_road.denomination} - #{_road.location}" 
-	                                    noSelectionLabel="Seleccione una opción" />
-	                                <s:convertEntity />
-	                                <a:support event="onchange" ajaxSingle="true"
-	                                    reRender="roadData" />
-	                            </h:selectOneMenu>
-				                <a:commandButton id="createItem" 
-				                    action="#{factoryLineHome.addRoad(factoryLineHome.road)}"
-				                    reRender="roadData, roads" ajaxSingle="true"
-				                    eventsQueue="gimEventsQueue"
-				                    value="#{messages['factoryLineRoad.addRoad']}" />
+                                <h:selectOneMenu id="roads" 
+                                    value="#{factoryLineHome.road}" >
+                                    <ui:debug id="debugExternal"/>
+                                    <s:selectItems value="#{factoryLineRoads}" var="_road"
+                                        label="#{_road.denomination} - #{_road.location}" 
+                                        noSelectionLabel="Seleccione una opción" />
+                                    <s:convertEntity />
+                                    <a:support event="onchange" ajaxSingle="true"
+                                        reRender="roadData" />
+                                </h:selectOneMenu>
+                                <a:commandButton id="createItem" 
+                                    action="#{factoryLineHome.addRoad(factoryLineHome.road)}"
+                                    reRender="roadData, roads" ajaxSingle="true"
+                                    eventsQueue="gimEventsQueue"
+                                    value="#{messages['factoryLineRoad.addRoad']}" />
                             </s:decorate>
                             <rich:dataTable id="roads" var="_road"
                                 value="#{factoryLineHome.roadsHome}"
@@ -972,10 +1030,10 @@
                                     <f:facet name="header">
                                         <h:outputText value="#{messages['common.action']}" />
                                     </f:facet>
-				                    <a:commandButton id="removeRoad"
-				                        action="#{factoryLineHome.removeRoad(_road)}"
-				                        reRender="roadData" ajaxSingle="true"
-				                        value="#{messages['common.delete']}" />
+                                    <a:commandButton id="removeRoad"
+                                        action="#{factoryLineHome.removeRoad(_road)}"
+                                        reRender="roadData" ajaxSingle="true"
+                                        value="#{messages['common.delete']}" />
                                 </rich:column>
                                 
                             </rich:dataTable>
