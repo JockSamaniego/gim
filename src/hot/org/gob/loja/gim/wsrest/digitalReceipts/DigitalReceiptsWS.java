@@ -3,6 +3,7 @@
  */
 package org.gob.loja.gim.wsrest.digitalReceipts;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -17,6 +18,7 @@ import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.ws.service.QueriesService;
 import org.gob.loja.gim.ws.dto.digitalReceipts.BondShortDTO;
+import org.gob.loja.gim.ws.dto.digitalReceipts.DateFormatException;
 import org.gob.loja.gim.ws.dto.digitalReceipts.request.ExternalPaidsRequest;
 import org.gob.loja.gim.ws.dto.digitalReceipts.request.PDFBondRequest;
 import org.gob.loja.gim.ws.dto.digitalReceipts.response.BondResponse;
@@ -43,15 +45,19 @@ public class DigitalReceiptsWS {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response getExternalPaids(@Valid ExternalPaidsRequest request) {
+		
+		ExternalPaidsResponse resp = new ExternalPaidsResponse();
+		
 		try {
 			// System.out.println(request);
-
-			ExternalPaidsResponse resp = new ExternalPaidsResponse();
+			//System.out.println(request.getFromDate());
+			//System.out.println(request.getToDate());
 
 			List<String> errorsValidation = GimUtils.validateRequest(request);
 			if (errorsValidation.size() > 0) {
 				resp.setMessage("Error en validaciones de request");
 				resp.setErrors(errorsValidation);
+				resp.setBonds(null);
 				return Response.ok(resp)
 						.header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
@@ -76,7 +82,16 @@ public class DigitalReceiptsWS {
 
 			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
 					.header("Content-Language", "es-EC").build();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
+			if(e instanceof DateFormatException){
+				List<String> errors = new ArrayList<String>();
+				errors.add("Formato de fechas incorrecto. Formato permitido yyyy-MM-dd");
+				resp.setErrors(errors);
+				resp.setBonds(null);
+				return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
 			e.printStackTrace();
 			return Response.serverError()
 					.header("Access-Control-Allow-Origin", "*")
@@ -93,9 +108,10 @@ public class DigitalReceiptsWS {
 			// System.out.println(request);
 
 			BondResponse resp = new BondResponse();
-			
-            System.out.println("Your PDF file has been generated!(¡Se ha generado tu hoja PDF!");
-			
+
+			System.out
+					.println("Your PDF file has been generated!(¡Se ha generado tu hoja PDF!");
+
 			List<String> errorsValidation = GimUtils.validateRequest(request);
 			if (errorsValidation.size() > 0) {
 				resp.setMessage("Error en validaciones de request");
@@ -109,17 +125,18 @@ public class DigitalReceiptsWS {
 				queriesService = ServiceLocator.getInstance().findResource(
 						queriesService.LOCAL_NAME);
 			}
-			
-			BondResponse respAux  = queriesService.getBondDto(request.getBondId());
+
+			BondResponse respAux = queriesService.getBondDto(request
+					.getBondId());
 			resp.setBond(respAux.getBond());
 			resp.setDeposits(respAux.getDeposits());
-			
+
 			resp.setInstitution(respAux.getInstitution());
-			
+
 			resp.setBranchMain(respAux.isBranchMain());
 			resp.setBranchOfficeAddress(respAux.getBranchOfficeAddress());
 			resp.setBranchOfficeName(respAux.getBranchOfficeName());
-			
+
 			resp.setAdjunctDetails(respAux.getAdjunctDetails());
 
 			resp.setMessage("OK");

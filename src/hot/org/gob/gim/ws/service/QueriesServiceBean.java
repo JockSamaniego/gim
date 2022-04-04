@@ -4,6 +4,7 @@
 package org.gob.gim.ws.service;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -29,6 +30,7 @@ import org.gob.loja.gim.ws.dto.BondDetail;
 import org.gob.loja.gim.ws.dto.BondWS;
 import org.gob.loja.gim.ws.dto.Taxpayer;
 import org.gob.loja.gim.ws.dto.digitalReceipts.BondShortDTO;
+import org.gob.loja.gim.ws.dto.digitalReceipts.DateFormatException;
 import org.gob.loja.gim.ws.dto.digitalReceipts.DepositDTO;
 import org.gob.loja.gim.ws.dto.digitalReceipts.TaxpayerRecordDTO;
 import org.gob.loja.gim.ws.dto.digitalReceipts.request.ExternalPaidsRequest;
@@ -276,21 +278,29 @@ public class QueriesServiceBean implements QueriesService {
 	}
 
 	@Override
-	public List<BondShortDTO> getExternalPayments(ExternalPaidsRequest criteria) {
+	public List<BondShortDTO> getExternalPayments(ExternalPaidsRequest criteria) throws ParseException, DateFormatException {
 
 		String sql = "SELECT mb.id, " + "mb.liquidationdate, "
 				+ "mb.liquidationtime, " + "mb.emisiondate, "
 				+ "mb.emisiontime, " + "mb.expirationdate, "
 				+ "mb.servicedate, " + "mb.number, " + "mb.description, "
 				+ "mb.reference, " + "mb.paidtotal, " + "ent.id as entryId, "
-				+ "ent.name as entryName " + "FROM municipalbond mb "
+				+ "ent.name as entryName, "
+				+ "mb.printingsNumber as printingsNumber "
+				+ "FROM municipalbond mb "
 				+ "INNER JOIN resident res ON res.id = mb.resident_id "
 				+ "INNER JOIN entry ent ON ent.id = mb.entry_id "
-				+ "WHERE res.identificationnumber = :identification ";
+				+ "WHERE res.identificationnumber = :identification "
+				+ "AND mb.liquidationdate BETWEEN :from AND :to  "
+				+ "AND mb.taxesTotal = 0.00 "
+				+ "AND mb.taxabletotal = 0.00 "
+				+ "AND mb.municipalbondstatus_id IN (11) ";
 
 		Query query = entityManager.createNativeQuery(sql);
 
 		query.setParameter("identification", criteria.getIdentification());
+		query.setParameter("from", criteria.getFromDate());
+		query.setParameter("to", criteria.getToDate());
 
 		List<BondShortDTO> lista = NativeQueryResultsMapper.map(
 				query.getResultList(), BondShortDTO.class);

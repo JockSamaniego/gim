@@ -54,6 +54,9 @@ public class BondShortDTO {
 
 	@NativeQueryResultColumn(index = 12)
 	private String entryName;
+	
+	@NativeQueryResultColumn(index = 13)
+	private Integer printingsNumber; 
 
 	/**
 	 * @return the id
@@ -235,6 +238,20 @@ public class BondShortDTO {
 	 */
 	public void setEntryName(String entryName) {
 		this.entryName = entryName;
+	}
+	
+	/**
+	 * @return the printingsNumber
+	 */
+	public Integer getPrintingsNumber() {
+		return printingsNumber;
+	}
+
+	/**
+	 * @param printingsNumber the printingsNumber to set
+	 */
+	public void setPrintingsNumber(Integer printingsNumber) {
+		this.printingsNumber = printingsNumber;
 	}
 
 	/* (non-Javadoc)
