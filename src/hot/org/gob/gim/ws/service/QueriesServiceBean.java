@@ -294,7 +294,8 @@ public class QueriesServiceBean implements QueriesService {
 				+ "AND mb.liquidationdate BETWEEN :from AND :to  "
 				+ "AND mb.taxesTotal = 0.00 "
 				+ "AND mb.taxabletotal = 0.00 "
-				+ "AND mb.municipalbondstatus_id IN (11) ";
+				+ "AND mb.municipalbondstatus_id IN (11) "
+				+  "ORDER BY mb.liquidationdate, mb.liquidationtime DESC";
 
 		Query query = entityManager.createNativeQuery(sql);
 
