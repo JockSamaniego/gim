@@ -9,6 +9,7 @@ import java.util.List;
 import org.gob.loja.gim.ws.dto.CommonResponseWS;
 import org.gob.loja.gim.ws.dto.digitalReceipts.BondShortDTO;
 import org.gob.loja.gim.ws.dto.queries.response.BondDTO;
+import org.gob.loja.gim.ws.dto.queries.response.ResidentDTO;
 
 /**
  * @author René
@@ -17,6 +18,8 @@ import org.gob.loja.gim.ws.dto.queries.response.BondDTO;
 public class ExternalPaidsResponse extends CommonResponseWS {
 	
 	private List<BondShortDTO> bonds = new ArrayList<BondShortDTO>();
+	
+	private ResidentDTO resident;
 
 	/**
 	 * @return the bonds
@@ -30,6 +33,20 @@ public class ExternalPaidsResponse extends CommonResponseWS {
 	 */
 	public void setBonds(List<BondShortDTO> bonds) {
 		this.bonds = bonds;
+	}
+	
+	/**
+	 * @return the resident
+	 */
+	public ResidentDTO getResident() {
+		return resident;
+	}
+
+	/**
+	 * @param resident the resident to set
+	 */
+	public void setResident(ResidentDTO resident) {
+		this.resident = resident;
 	}
 
 	/* (non-Javadoc)

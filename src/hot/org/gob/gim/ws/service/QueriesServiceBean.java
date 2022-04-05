@@ -40,8 +40,10 @@ import org.gob.loja.gim.ws.dto.queries.EntryDTO;
 import org.gob.loja.gim.ws.dto.queries.LocalDTO;
 import org.gob.loja.gim.ws.dto.queries.OperatingPermitDTO;
 import org.gob.loja.gim.ws.dto.queries.response.BondDTO;
+import org.gob.loja.gim.ws.dto.queries.response.ResidentDTO;
 import org.jboss.seam.annotations.In;
 
+import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.Branch;
 import ec.gob.gim.income.model.Deposit;
 import ec.gob.gim.income.model.TaxpayerRecord;
@@ -54,7 +56,7 @@ import ec.gob.gim.revenue.model.MunicipalBondType;
  */
 @Stateless(name = "QueriesService")
 public class QueriesServiceBean implements QueriesService {
-
+	
 	@PersistenceContext
 	EntityManager entityManager;
 
@@ -295,7 +297,7 @@ public class QueriesServiceBean implements QueriesService {
 				+ "AND mb.taxesTotal = 0.00 "
 				+ "AND mb.taxabletotal = 0.00 "
 				+ "AND mb.municipalbondstatus_id IN (11) "
-				+  "ORDER BY mb.liquidationdate, mb.liquidationtime DESC";
+				+  "ORDER BY mb.liquidationdate DESC, mb.liquidationtime DESC";
 
 		Query query = entityManager.createNativeQuery(sql);
 
@@ -433,6 +435,18 @@ public class QueriesServiceBean implements QueriesService {
 		
 		return bondDto;
 		
+	}
+
+	@Override
+	public ResidentDTO getResidentByIdentification(String identification) {
+		try{
+			Query query = this.entityManager.createNamedQuery("Resident.findByIdentificationNumber");
+			query.setParameter("identificationNumber", identification);
+			Resident resident = (Resident) query.getSingleResult();
+			return new ResidentDTO(resident);
+		}catch(Exception e){
+			return null;
+		}
 	}
 
 }

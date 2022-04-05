@@ -18,6 +18,7 @@ import org.gob.loja.gim.ws.dto.queries.EntryDTO;
 import org.gob.loja.gim.ws.dto.queries.LocalDTO;
 import org.gob.loja.gim.ws.dto.queries.OperatingPermitDTO;
 import org.gob.loja.gim.ws.dto.queries.response.BondDTO;
+import org.gob.loja.gim.ws.dto.queries.response.ResidentDTO;
 
 /**
  * @author René
@@ -36,5 +37,7 @@ public interface QueriesService {
 	List<BondShortDTO> getExternalPayments(ExternalPaidsRequest criteria) throws ParseException, DateFormatException;
 	
 	BondResponse getBondDto(Long municipalBondId);
+	
+	ResidentDTO getResidentByIdentification(String identification);
 	
 }

@@ -23,6 +23,7 @@ import org.gob.loja.gim.ws.dto.digitalReceipts.request.ExternalPaidsRequest;
 import org.gob.loja.gim.ws.dto.digitalReceipts.request.PDFBondRequest;
 import org.gob.loja.gim.ws.dto.digitalReceipts.response.BondResponse;
 import org.gob.loja.gim.ws.dto.digitalReceipts.response.ExternalPaidsResponse;
+import org.gob.loja.gim.ws.dto.queries.response.ResidentDTO;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
@@ -68,17 +69,19 @@ public class DigitalReceiptsWS {
 						queriesService.LOCAL_NAME);
 			}
 
-			List<BondShortDTO> bonds = queriesService
-					.getExternalPayments(request);
-			resp.setBonds(bonds);
-
-			/*
-			 * List<OperatingPermitDTO> permits = this.queriesService
-			 * .findOperatingPermits(request.getIdentification());
-			 * resp.setPermits(permits);
-			 */
-
-			resp.setMessage("OK");
+			
+			ResidentDTO res = queriesService.getResidentByIdentification(request.getIdentification());
+			resp.setResident(res);
+			
+			if(res == null) {
+				resp.setMessage("No existe contribuyente con la identificación "+request.getIdentification());
+				resp.setBonds(null);
+			}else {
+				List<BondShortDTO> bonds = queriesService
+						.getExternalPayments(request);
+				resp.setBonds(bonds);
+				resp.setMessage("OK");
+			}
 
 			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
 					.header("Content-Language", "es-EC").build();
@@ -89,6 +92,7 @@ public class DigitalReceiptsWS {
 				errors.add("Formato de fechas incorrecto. Formato permitido yyyy-MM-dd");
 				resp.setErrors(errors);
 				resp.setBonds(null);
+				resp.setResident(null);
 				return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
 						.header("Content-Language", "es-EC").build();
 			}
