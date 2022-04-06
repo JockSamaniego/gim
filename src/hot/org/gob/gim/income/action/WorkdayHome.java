@@ -8,9 +8,9 @@ package org.gob.gim.income.action;
  *
  * 
  * 2022-03-29
- * Actualización Ronald Paladines Celi GAD Municipal de Loja
+ * Actualizaciï¿½n Ronald Paladines Celi GAD Municipal de Loja
  * 
- * se genera reporte agrupado por emisor de tarjeta de crédito
+ * se genera reporte agrupado por emisor de tarjeta de crï¿½dito
  * 
  */
 import java.io.File;
@@ -33,6 +33,7 @@ import javax.naming.NamingException;
 import javax.persistence.Query;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gob.gim.accounting.dto.ReportType;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.NativeQueryResultsMapper;
@@ -102,6 +103,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	// private RevenueService revenueService;
 
 	private boolean isFirstTime = true;
+	private boolean isFirstTimeCreditCard = true;
 	private boolean renderPanel = true;
 	private boolean isFromIncome = true;
 	private boolean existOpenedTills = false;
@@ -260,6 +262,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private List<ReplacementAccountDTO> replacementAccountDTOs;
 
 	private Map<String, List<MunicipalBondView>> municipalBondViewCreditCards = new HashMap<String, List<MunicipalBondView>>();
+	public boolean hasRoleSystemJefeRecaudaciones;
+	public boolean viewReportCreditCard = false;
 	
 	@In
 	UserSession userSession;
@@ -762,23 +766,24 @@ public class WorkdayHome extends EntityHome<Workday> {
 	}
 
 	public void findDetailedCreditCardByCashier() {
-		String sql = "select distinct r.identificationNumber, r.\"name\" as contribuyente , mb.\"number\", e.\"name\" as rubro, " +
+		String sql = "select distinct r.identificationNumber, r.\"name\" as contribuyente , r.id, r.firstname, " +
 				"d.\"date\", d.\"time\", f.\"name\" as tarjeta, pf.documentnumber, pf.paidamount, pf.id " +
 				"from gimprod.resident r " +
 				"inner join gimprod.municipalbond mb on r.id = mb.resident_id " +
-				"inner join gimprod.entry as e on e.id = mb.entry_id " +
 				"inner join gimprod.deposit d on d.municipalbond_id = mb.id " +
-				"inner join gimprod.payment p on r.id = p.cashier_id " +
 				"inner join gimprod.paymentfraction pf on d.payment_id = pf.payment_id " +
+				"inner join gimprod.payment p on p.id = pf.payment_id " +
 				"inner join gimprod.financialinstitution as f on f.id = pf.finantialinstitution_id " +
 				"WHERE pf.paymenttype = 'CREDIT_CARD' and d.status = 'VALID' AND " +
-				"d.date BETWEEN :startDate and :endDate AND " +
-				"p.cashier_id = :cashierId " +
-				"ORDER BY f.name, mb.number, d.date, d.time;";
+				"d.date BETWEEN :startDate and :endDate ";
+		if (person != null)
+			sql = sql + "AND p.cashier_id = :cashierId ";
+		sql = sql + "ORDER BY f.name, d.date, d.time;";
 		Query query = getEntityManager().createNativeQuery(sql);
 		query.setParameter("startDate", startDate);
 		query.setParameter("endDate", endDate);
-		query.setParameter("cashierId", person.getId());
+		if (person != null)
+			query.setParameter("cashierId", person.getId());
 		List<Object[]> results = query.getResultList();
 		String cardGroup = "";
 		municipalBondViewCreditCards.clear();
@@ -786,7 +791,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 		BigInteger num = BigInteger.ZERO;
 		for(Object[] row : results){
 			num = (BigInteger)row[2];
-			MunicipalBondView obj = new MunicipalBondView((String)row[0], (String)row[3], (String)row[1], 
+			MunicipalBondView obj = new MunicipalBondView((String)row[0], (String)row[7], (String)row[1], 
 					Long.parseLong(num.toString()), (Date)row[4], (Date)row[5], (BigDecimal) row[8]);
 			if (!cardGroup.equalsIgnoreCase((String)row[6])){
 				if (list.size() > 0) municipalBondViewCreditCards.put(cardGroup, list);
@@ -4466,12 +4471,54 @@ public class WorkdayHome extends EntityHome<Workday> {
 			groupBy = "ac.accountCode";
 			loadCharge();
 			isFirstTime = false;
+			viewReportCreditCard = false;
 			explanation = systemParameterService
 					.findParameter("STATUS_CHANGE_FUTURE_EMISSION_EXPLANATION");
 
 			explanationFormalize = systemParameterService
 					.findParameter("STATUS_CHANGE_FOMALIZE_EMISSION_EXPLANATION");
 		}
+	}
+
+	public void loadCreditCardPermission() {
+		if (isFirstTimeCreditCard){
+			isFirstTimeCreditCard = false;
+			if (userSession.getUser().hasRole("ROLE_NAME_INCOME_BOSS")) {
+				hasRoleSystemJefeRecaudaciones = true;
+			} else {
+				hasRoleSystemJefeRecaudaciones = false;
+				this.person = userSession.getPerson();
+			}
+		}
+	}
+	
+	/**
+	 * @return the hasRoleSystemJefeRecaudaciones
+	 */
+	public boolean isHasRoleSystemJefeRecaudaciones() {
+		return hasRoleSystemJefeRecaudaciones;
+	}
+
+	/**
+	 * @param hasRoleSystemJefeRecaudaciones the hasRoleSystemJefeRecaudaciones to set
+	 */
+	public void setHasRoleSystemJefeRecaudaciones(
+			boolean hasRoleSystemJefeRecaudaciones) {
+		this.hasRoleSystemJefeRecaudaciones = hasRoleSystemJefeRecaudaciones;
+	}
+
+	/**
+	 * @return the viewReportCreditCard
+	 */
+	public boolean isViewReportCreditCard() {
+		return viewReportCreditCard;
+	}
+
+	/**
+	 * @param viewReportCreditCard the viewReportCreditCard to set
+	 */
+	public void setViewReportCreditCard(boolean viewReportCreditCard) {
+		this.viewReportCreditCard = viewReportCreditCard;
 	}
 
 	private void loadInterestAccount() {
@@ -4933,10 +4980,14 @@ public class WorkdayHome extends EntityHome<Workday> {
 		totalByCashier = getTotalTransactionsBetweenDates();
 		if (person != null){
 			findDetailedDepositsByCashier();
-			findDetailedCreditCardByCashier();
 		}
 	}
-
+	
+	public void generateCreditCardCashiersReport() {
+		findDetailedCreditCardByCashier();
+		viewReportCreditCard = true;
+	}
+	
 	public List<ReportView> getTotalTransactionsBetweenDates() {
 		List<ReportView> totalReversed = new ArrayList<ReportView>();
 
@@ -6406,6 +6457,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
+		viewReportCreditCard = false;
 	}
 
 	public Date getStartDate() {
@@ -6414,6 +6466,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+		viewReportCreditCard = false;
 	}
 
 	public Date getEndDate() {

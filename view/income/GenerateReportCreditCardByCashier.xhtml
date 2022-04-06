@@ -1,0 +1,82 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="report" styleClass="edit">
+
+			<ui:debug id="uiDebug" />
+			<rich:panel>
+
+				<f:facet name="header">
+            	#{messages['report']}
+            </f:facet>
+
+				<s:decorate id="startDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['report.startDate']}:</ui:define>
+					<rich:calendar value="#{workdayHome.startDate}" required="true"
+						enableManualInput="false"
+						datePattern="#{messages['common.datePattern']}" ajaxSingle="true" >
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate id="endDateField" template="../layout/edit.xhtml">
+					<ui:define name="label">#{messages['report.endDate']}:</ui:define>
+					<rich:calendar value="#{workdayHome.endDate}" required="true"
+						enableManualInput="false"
+						datePattern="#{messages['common.datePattern']}" ajaxSingle="true" 
+                        reRender="detailPanel2" >
+					</rich:calendar>
+				</s:decorate>
+
+				<s:decorate id="personField" template="../layout/edit.xhtml" >
+					<ui:define name="label">#{messages['payment.cashier']}: </ui:define>
+					<h:selectOneMenu id="person" value="#{workdayHome.person}" >
+						<s:selectItems value="#{cashiers}" var="_cashier"
+						noSelectionLabel="TODOS LOS CAJEROS"
+							label="#{_cashier.name}" />
+						<s:convertEntity />
+                        <a:support event="onblur" reRender="detailPanel2" action="#{workdayHome.setViewReportCreditCard(false)}"
+                            ajaxSingle="true" eventsQueue="gimQueue" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+
+				<div class="actionButtons">
+
+					<a:commandButton id="generateReport"
+						reRender="detailPanel2"
+						value="#{messages['income.generateReport']}"
+						action="#{workdayHome.generateCreditCardCashiersReport()}" />
+
+				</div>
+
+			</rich:panel>
+
+			<h:panelGrid id="detailPanel2" columns="4">
+
+                <s:button id="printByCreditCard" disabled="#{!workdayHome.viewReportCreditCard}"
+                    value="#{messages['report.printByDepositCreditCard']}" propagation="join"
+                    view="/income/report/CreditCardCashierReportByDeposit.xhtml" />
+
+				<s:button id="back" value="#{messages['common.back']}"
+					propagation="end" view="/home.xhtml" />
+			</h:panelGrid>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
