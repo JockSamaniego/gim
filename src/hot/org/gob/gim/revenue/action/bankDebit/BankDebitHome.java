@@ -744,7 +744,7 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 					SystemParameterService.LOCAL_NAME);
 		}
 		pendingDebitBondStatus = systemParameterService.materialize(
-				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING_DEBIT_LIQUIDATION");
+				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_BLOCKED");
 		pendingBondStatus = systemParameterService.materialize(
 				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING");
 		if((mb.getMunicipalBondStatus().getId().compareTo(pendingBondStatus.getId()) == 0 ) || (mb.getMunicipalBondStatus().getId().compareTo(pendingDebitBondStatus.getId()) == 0 )){
@@ -891,11 +891,11 @@ public class BankDebitHome extends EntityHome<MunicipalBondForBankDebit> {
 		pendingBondStatus = systemParameterService.materialize(
 				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING");
 		pendingDebitBondStatus = systemParameterService.materialize(
-				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_PENDING_DEBIT_LIQUIDATION");
+				MunicipalBondStatus.class, "MUNICIPAL_BOND_STATUS_ID_BLOCKED");
 		for (BankDebitForLiquidation bdl : previousForLiquidations){
 			for(MunicipalBondForBankDebit mb : bdl.getMbsForBankDebit()){
 				MunicipalBond municipalBond = getEntityManager().find(MunicipalBond.class, mb.getMunicipalBondId());
-				municipalBondManager.setObservation("Cambio de estado para LIQUIDACION POR DEBITO");
+				municipalBondManager.setObservation("BLOQUEADA PARA LIQUIDACION POR DEBITO BANCARIO");
 				municipalBondManager.updateStatus(municipalBond, pendingDebitBondStatus);
 				// saveStatusChangeRecord("Cambio de estado para LIQUIDACION POR DEBITO", municipalBond, pendingBondStatus, pendingDebitBondStatus, userSession.getUser());
 			}

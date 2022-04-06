@@ -181,7 +181,7 @@ public class Urbanregeneration extends Adjunct{
 			details.add(pair);
 		}
 		
-		pair = new ValuePair("Area", lotArea.toString());		
+		pair = new ValuePair("Area", lotArea != null ? lotArea.toString() : "-");		
 		details.add(pair);
 
 		return details;	
