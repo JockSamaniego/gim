@@ -40,4 +40,6 @@ public interface QueriesService {
 	
 	ResidentDTO getResidentByIdentification(String identification);
 	
+	Boolean updateBondPrintNumber(Long bondId);
+	
 }

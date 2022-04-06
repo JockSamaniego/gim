@@ -21,8 +21,10 @@ import org.gob.loja.gim.ws.dto.digitalReceipts.BondShortDTO;
 import org.gob.loja.gim.ws.dto.digitalReceipts.DateFormatException;
 import org.gob.loja.gim.ws.dto.digitalReceipts.request.ExternalPaidsRequest;
 import org.gob.loja.gim.ws.dto.digitalReceipts.request.PDFBondRequest;
+import org.gob.loja.gim.ws.dto.digitalReceipts.request.UpdateBondPrintNumberRequest;
 import org.gob.loja.gim.ws.dto.digitalReceipts.response.BondResponse;
 import org.gob.loja.gim.ws.dto.digitalReceipts.response.ExternalPaidsResponse;
+import org.gob.loja.gim.ws.dto.digitalReceipts.response.UpdateBondPrintNumberResponse;
 import org.gob.loja.gim.ws.dto.queries.response.ResidentDTO;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -113,8 +115,6 @@ public class DigitalReceiptsWS {
 
 			BondResponse resp = new BondResponse();
 
-			System.out
-					.println("Your PDF file has been generated!(¡Se ha generado tu hoja PDF!");
 
 			List<String> errorsValidation = GimUtils.validateRequest(request);
 			if (errorsValidation.size() > 0) {
@@ -143,6 +143,44 @@ public class DigitalReceiptsWS {
 
 			resp.setAdjunctDetails(respAux.getAdjunctDetails());
 
+			resp.setMessage("OK");
+
+			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.header("Access-Control-Allow-Origin", "*")
+					.header("Content-Language", "es-EC").build();
+		}
+	}
+	
+	@POST
+	@Path("/updateBondPrintNumber")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response updateBondPrintNumber(@Valid UpdateBondPrintNumberRequest request) {
+		try {
+
+			UpdateBondPrintNumberResponse resp = new UpdateBondPrintNumberResponse();
+
+			List<String> errorsValidation = GimUtils.validateRequest(request);
+			if (errorsValidation.size() > 0) {
+				resp.setMessage("Error en validaciones de request");
+				resp.setErrors(errorsValidation);
+				return Response.ok(resp)
+						.header("Access-Control-Allow-Origin", "*")
+						.header("Content-Language", "es-EC").build();
+			}
+
+			if (queriesService == null) {
+				queriesService = ServiceLocator.getInstance().findResource(
+						queriesService.LOCAL_NAME);
+			}
+
+			Boolean result = queriesService.updateBondPrintNumber(request
+					.getBondId());
+			resp.setOk(result);
 			resp.setMessage("OK");
 
 			return Response.ok(resp).header("Access-Control-Allow-Origin", "*")

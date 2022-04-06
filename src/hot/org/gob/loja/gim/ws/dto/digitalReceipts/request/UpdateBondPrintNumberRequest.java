@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
  * @author René
  *
  */
-public class PDFBondRequest {
+public class UpdateBondPrintNumberRequest {
 	
 	@NotNull(message = "bondId no puede ser nulo")
 	private Long bondId;
@@ -33,8 +33,7 @@ public class PDFBondRequest {
 	 */
 	@Override
 	public String toString() {
-		return "PDFBondRequest [bondId=" + bondId + "]";
+		return "UpdateBondPrintNumberRequest [bondId=" + bondId + "]";
 	}
 	
-
 }

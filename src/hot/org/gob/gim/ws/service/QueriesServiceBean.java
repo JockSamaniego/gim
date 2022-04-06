@@ -20,6 +20,8 @@ import javax.persistence.Query;
 
 import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.service.CrudService;
+import org.gob.gim.common.service.CrudServiceBean;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.income.action.ReceiptPrintingManager;
 import org.gob.gim.income.facade.IncomeService;
@@ -65,6 +67,9 @@ public class QueriesServiceBean implements QueriesService {
 
 	@EJB
 	SystemParameterService systemParameterService;
+	
+	@EJB
+	CrudService crudService;
 
 	@In(create = true)
 	ReceiptPrintingManager receiptPrintingManager;
@@ -446,6 +451,19 @@ public class QueriesServiceBean implements QueriesService {
 			return new ResidentDTO(resident);
 		}catch(Exception e){
 			return null;
+		}
+	}
+
+	@Override
+	public Boolean updateBondPrintNumber(Long bondId) {
+		
+		try{
+			MunicipalBond bond = municipalBondService.findById(bondId);
+			bond.setPrintingsNumber(bond.getPrintingsNumber()+1);
+			this.crudService.update(bond);
+			return Boolean.TRUE;
+		}catch(Exception e){
+			return Boolean.FALSE;
 		}
 	}
 
