@@ -150,11 +150,6 @@
                     value="#{messages['report.printByDeposit']}" propagation="join"
                     view="/income/report/CashierReportByDeposit.xhtml" />
 
-                <s:button id="printByCreditCard"
-                    rendered="#{not empty workdayHome.person}"
-                    value="#{messages['report.printByDepositCreditCard']}" propagation="join"
-                    view="/income/report/CreditCardCashierReportByDeposit.xhtml" />
-
 				<s:button id="back" value="#{messages['common.back']}"
 					propagation="end" view="/home.xhtml" />
 			</h:panelGrid>
