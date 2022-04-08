@@ -137,7 +137,7 @@
 
 			</h:panelGrid>
 			
-			<h:panelGrid id="detailPanel2" columns="3">
+			<h:panelGrid id="detailPanel2" columns="4">
 
 				<s:button id="printId"
 					rendered="#{not empty workdayHome.totalByCashier}"
@@ -145,10 +145,15 @@
 					view="/income/report/TransactionReportByCashier.xhtml" />
 					
 							
-				<s:button id="printByDepositId"
-					rendered="#{not empty workdayHome.person and not empty workdayHome.totalByCashier}"
-					value="#{messages['report.printByDeposit']}" propagation="join"
-					view="/income/report/CashierReportByDeposit.xhtml" />
+                <s:button id="printByDepositId"
+                    rendered="#{not empty workdayHome.person and not empty workdayHome.totalByCashier}"
+                    value="#{messages['report.printByDeposit']}" propagation="join"
+                    view="/income/report/CashierReportByDeposit.xhtml" />
+
+                <s:button id="printByCreditCard"
+                    rendered="#{not empty workdayHome.person}"
+                    value="#{messages['report.printByDepositCreditCard']}" propagation="join"
+                    view="/income/report/CreditCardCashierReportByDeposit.xhtml" />
 
 				<s:button id="back" value="#{messages['common.back']}"
 					propagation="end" view="/home.xhtml" />

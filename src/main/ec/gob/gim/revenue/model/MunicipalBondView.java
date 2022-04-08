@@ -142,4 +142,18 @@ public class MunicipalBondView {
 		this.total = total;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "MunicipalBondView [entry=" + entry + ", description="
+				+ description + ", id=" + id + ", resident=" + resident
+				+ ", identification=" + identification
+				+ ", municipalBondNumber=" + municipalBondNumber + ", entryId="
+				+ entryId + ", address=" + address + ", value=" + value
+				+ ", date=" + date + ", time=" + time + ", total=" + total
+				+ "]";
+	}
+
 }

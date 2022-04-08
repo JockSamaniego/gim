@@ -10,7 +10,10 @@ import ec.gob.gim.revenue.model.FinancialInstitution;
 @Name("financialInstitutionList")
 public class FinancialInstitutionList extends EntityQuery<FinancialInstitution> {
 
-	private static final String EJBQL = "select financialInstitution from FinancialInstitution financialInstitution";
+	private static final long serialVersionUID = 4724358314849069961L;
+
+	private static final String EJBQL = "select financialInstitution from FinancialInstitution financialInstitution " +
+			"order by financialInstitution.name";
 
 	private static final String[] RESTRICTIONS = {
 			"lower(financialInstitution.name) like lower(concat('%',#{financialInstitutionList.financialInstitution.name},'%'))",};
