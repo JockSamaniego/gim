@@ -32,6 +32,8 @@ public class ItemDTO {
 	
 	private String entryName;
 	
+	private String entryCode;
+	
 	private Long entryId;
 	
 	public ItemDTO(Item item) {
@@ -44,6 +46,7 @@ public class ItemDTO {
 		this.orderNumber = item.getOrderNumber();
 		this.total = item.getTotal();
 		this.value = item.getValue();
+		this.entryCode = item.getEntry().getCode();
 	}
 
 	/**
@@ -170,6 +173,20 @@ public class ItemDTO {
 	 */
 	public void setEntryId(Long entryId) {
 		this.entryId = entryId;
+	}
+
+	/**
+	 * @return the entryCode
+	 */
+	public String getEntryCode() {
+		return entryCode;
+	}
+
+	/**
+	 * @param entryCode the entryCode to set
+	 */
+	public void setEntryCode(String entryCode) {
+		this.entryCode = entryCode;
 	}
 	
 	

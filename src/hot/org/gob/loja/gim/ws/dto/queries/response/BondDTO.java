@@ -96,7 +96,15 @@ public class BondDTO {
 	private Long entryId;
 
 	private String entryName;
-
+	
+	private String entryCode;
+	
+	private String entryGroupingCodeLabel;
+	
+	private String entryReason;
+	
+	private String entryAmountLabel;
+	
 	private List<TaxItemDTO> taxItems = new ArrayList<TaxItemDTO>();
 
 	private ResidentDTO resident;
@@ -104,6 +112,11 @@ public class BondDTO {
 	private String timePeriod;
 
 	private String emitter;
+	
+	private String legalStatus;
+	
+	private BigDecimal subtotal;
+	
 
 	// private Adjunct adjunct;
 
@@ -129,6 +142,10 @@ public class BondDTO {
 		this.emitter = municipalBond.getEmitter().getName();
 		this.entryId = municipalBond.getEntry().getId();
 		this.entryName = municipalBond.getEntry().getName();
+		this.entryCode = municipalBond.getEntry().getCode();
+		this.entryReason = municipalBond.getEntry().getReason();
+		this.entryGroupingCodeLabel = municipalBond.getEntry().getGroupingCodeLabel();
+		this.entryAmountLabel = municipalBond.getEntry().getAmountLabel();
 		this.exempt = municipalBond.getExempt();
 		this.expirationDate = municipalBond.getExpirationDate();
 		this.groupingCode = municipalBond.getGroupingCode();
@@ -169,6 +186,8 @@ public class BondDTO {
 		this.timePeriod = municipalBond.getTimePeriod().getName();
 		this.totalCancelled = municipalBond.getTotalCancelled();
 		this.value = municipalBond.getValue();
+		this.legalStatus = municipalBond.getLegalStatus().name();
+		this.subtotal = municipalBond.getSubTotal();
 
 	}
 
@@ -557,6 +576,91 @@ public class BondDTO {
 	 */
 	public void setTaxItems(List<TaxItemDTO> taxItems) {
 		this.taxItems = taxItems;
+	}
+	
+	/**
+	 * @return the legalStatus
+	 */
+	public String getLegalStatus() {
+		return legalStatus;
+	}
+
+	/**
+	 * @param legalStatus the legalStatus to set
+	 */
+	public void setLegalStatus(String legalStatus) {
+		this.legalStatus = legalStatus;
+	}
+	
+	/**
+	 * @return the entryCode
+	 */
+	public String getEntryCode() {
+		return entryCode;
+	}
+
+	/**
+	 * @param entryCode the entryCode to set
+	 */
+	public void setEntryCode(String entryCode) {
+		this.entryCode = entryCode;
+	}
+	
+	/**
+	 * @return the entryGroupingCodeLabel
+	 */
+	public String getEntryGroupingCodeLabel() {
+		return entryGroupingCodeLabel;
+	}
+
+	/**
+	 * @param entryGroupingCodeLabel the entryGroupingCodeLabel to set
+	 */
+	public void setEntryGroupingCodeLabel(String entryGroupingCodeLabel) {
+		this.entryGroupingCodeLabel = entryGroupingCodeLabel;
+	}
+
+	/**
+	 * @return the entryReason
+	 */
+	public String getEntryReason() {
+		return entryReason;
+	}
+
+	/**
+	 * @param entryReason the entryReason to set
+	 */
+	public void setEntryReason(String entryReason) {
+		this.entryReason = entryReason;
+	}
+
+	/**
+	 * @return the entryAmountLabel
+	 */
+	public String getEntryAmountLabel() {
+		return entryAmountLabel;
+	}
+
+	/**
+	 * @param entryAmountLabel the entryAmountLabel to set
+	 */
+	public void setEntryAmountLabel(String entryAmountLabel) {
+		this.entryAmountLabel = entryAmountLabel;
+	}
+	
+
+	/**
+	 * @return the subtotal
+	 */
+	public BigDecimal getSubtotal() {
+		return subtotal;
+	}
+
+	/**
+	 * @param subtotal the subtotal to set
+	 */
+	public void setSubtotal(BigDecimal subtotal) {
+		this.subtotal = subtotal;
 	}
 
 	/*
