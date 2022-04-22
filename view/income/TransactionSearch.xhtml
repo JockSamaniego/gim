@@ -40,177 +40,190 @@
                 </div>
             </rich:panel>
         </a:form>
+        <h:form>
+            <rich:panel id="contentPanel">
+                <f:facet name="header">
+                    <h:panelGrid columns="1" columnClasses="headerTitle">
+                        <h:outputText
+                            value="#{messages['municipalBond.transaction.info']}" />
+                    </h:panelGrid>
+                </f:facet>
+                <div class="results" id="transactionList">
+                    <h:outputText value="#{messages['municipalBond.transaction.ResultsNotFound']}"
+                        rendered="#{transactionHome.payment == null}" />
+    
+                    <rich:dataTable id="paymentTable" var="_payment"
+                        value="#{transactionHome.payment}"
+                        rendered="#{not empty transactionHome.payment}"
+                        onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                        onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+    
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['municipalBond.transaction']}" />
+                        </f:facet>
+    
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['municipalBond.transactionId']}" />
+                            </f:facet>
+                            <h:outputText value="#{_payment.id}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['common.date']}" />
+                            </f:facet>
+                            <h:outputText value="#{_payment.date}" >
+                                <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                            </h:outputText>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['common.time']}" />
+                            </f:facet>
+                            <h:outputText value="#{_payment.time}" >
+                                <f:convertDateTime pattern="#{messages['common.timePattern']}" />
+                            </h:outputText>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['payment.cashier']}" />
+                            </f:facet>
+                            <h:outputText value="#{_payment.cashier.name}" />
+                        </h:column>
+                        
+                        <rich:column styleClass="right">
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['payment.value']}" />
+                            </f:facet>
+                            <h:outputText value="#{_payment.value}" />
+                        </rich:column>
+                        
+                        <rich:column styleClass="center">
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['payment.status']}" />
+                            </f:facet>
+                            <h:outputText value="#{messages[_payment.status.name()]}" />
+                        </rich:column>
+                        
+                    </rich:dataTable>
+    
+                    <br/>
+                    <br/>
+                    <rich:dataTable id="fractionsTable" var="_fraction"
+                        value="#{transactionHome.payment.paymentFractions}"
+                        rendered="#{not empty transactionHome.payment}"
+                        onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                        onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+    
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['municipalBond.moneys']}" />
+                        </f:facet>
+    
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['payment.paymentType']}" />
+                            </f:facet>
+                            <h:outputText value="#{messages[_fraction.paymentType.name()]}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['payment.cardProvider']}" />
+                            </f:facet>
+                            <h:outputText value="#{_fraction.finantialInstitution.name}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['payment.documentNumber']}" />
+                            </f:facet>
+                            <h:outputText value="#{_fraction.documentNumber}" />
+                        </h:column>
+                        
+                        <rich:column styleClass="right">
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['payment.value']}" />
+                            </f:facet>
+                            <h:outputText value="#{_fraction.paidAmount}" />
+                        </rich:column>
+                        
+                    </rich:dataTable>
+    
+                    <br/>
+                    <br/>
+                <a:outputPanel ajaxRendered="false">
+                    <rich:dataTable id="depositsTable" var="_deposit"
+                        value="#{transactionHome.payment.deposits}"
+                        rendered="#{not empty transactionHome.payment}"
+                        onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                        onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+    
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['municipalBond.deposits']}" />
+                        </f:facet>
+    
+                        <rich:column styleClass="center">
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['municipalBond.number']}" />
+                            </f:facet>
+                            <a:commandLink id="viewer" ajaxSingle="true" 
+                                    action="#{municipalBondsViewerHome.loadMunicipalBond(_deposit.municipalBond.id)}"
+                                    eventsQueue="gimEventsQueue" reRender="_municipalBondViewer"
+                                    oncomplete="Richfaces.showModalPanel('_municipalBondViewer',{width:600, height:500})"
+                                    value="#{_deposit.municipalBond.number}" />
+                        </rich:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['resident.identificationNumber']}" />
+                            </f:facet>
+                            <h:outputText value="#{_deposit.municipalBond.resident.identificationNumber}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['resident.name']}" />
+                            </f:facet>
+                            <h:outputText value="#{_deposit.municipalBond.resident.name}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['municipalBond.entry']}" />
+                            </f:facet>
+                            <h:outputText value="#{_deposit.municipalBond.entry.name}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['municipalBond.description']}" />
+                            </f:facet>
+                            <h:outputText value="#{_deposit.municipalBond.description}" />
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['municipalBond.emisionDate']}" />
+                            </f:facet>
+                            <h:outputText value="#{_deposit.municipalBond.emisionDate}" >
+                                <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                            </h:outputText>
+                        </h:column>
+                        
+                    </rich:dataTable>
+                </a:outputPanel>
+                </div>
+            </rich:panel>
+        </h:form>
         
-        <rich:panel id="contentPanel">
-            <f:facet name="header">
-                <h:panelGrid columns="1" columnClasses="headerTitle">
-                    <h:outputText
-                        value="#{messages['municipalBond.transaction.info']}" />
-                </h:panelGrid>
-            </f:facet>
-            <div class="results" id="transactionList">
-                <h:outputText value="#{messages['municipalBond.transaction.ResultsNotFound']}"
-                    rendered="#{transactionHome.payment == null}" />
+        <g:municipalBondViewer
+            resident="#{municipalBondsViewerHome.resident}"
+            municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}"
+            deposits="#{municipalBondsViewerHome.deposits}" />
 
-                <rich:dataTable id="paymentTable" var="_payment"
-                    value="#{transactionHome.payment}"
-                    rendered="#{not empty transactionHome.payment}"
-                    onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
-                    onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
-
-                    <f:facet name="header">
-                        <h:outputText value="#{messages['municipalBond.transaction']}" />
-                    </f:facet>
-
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['municipalBond.transactionId']}" />
-                        </f:facet>
-                        <h:outputText value="#{_payment.id}" />
-                    </h:column>
-                    
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['common.date']}" />
-                        </f:facet>
-                        <h:outputText value="#{_payment.date}" >
-                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
-                        </h:outputText>
-                    </h:column>
-                    
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['common.time']}" />
-                        </f:facet>
-                        <h:outputText value="#{_payment.time}" >
-                            <f:convertDateTime pattern="#{messages['common.timePattern']}" />
-                        </h:outputText>
-                    </h:column>
-                    
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['payment.cashier']}" />
-                        </f:facet>
-                        <h:outputText value="#{_payment.cashier.name}" />
-                    </h:column>
-                    
-                    <rich:column styleClass="right">
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['payment.value']}" />
-                        </f:facet>
-                        <h:outputText value="#{_payment.value}" />
-                    </rich:column>
-                    
-                    <rich:column styleClass="center">
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['payment.status']}" />
-                        </f:facet>
-                        <h:outputText value="#{messages[_payment.status.name()]}" />
-                    </rich:column>
-                    
-                </rich:dataTable>
-
-                <br/>
-                <br/>
-                <rich:dataTable id="fractionsTable" var="_fraction"
-                    value="#{transactionHome.payment.paymentFractions}"
-                    rendered="#{not empty transactionHome.payment}"
-                    onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
-                    onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
-
-                    <f:facet name="header">
-                        <h:outputText value="#{messages['municipalBond.moneys']}" />
-                    </f:facet>
-
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['payment.paymentType']}" />
-                        </f:facet>
-                        <h:outputText value="#{messages[_fraction.paymentType.name()]}" />
-                    </h:column>
-                    
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['payment.cardProvider']}" />
-                        </f:facet>
-                        <h:outputText value="#{_fraction.finantialInstitution.name}" />
-                    </h:column>
-                    
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['payment.documentNumber']}" />
-                        </f:facet>
-                        <h:outputText value="#{_fraction.documentNumber}" />
-                    </h:column>
-                    
-                    <rich:column styleClass="right">
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['payment.value']}" />
-                        </f:facet>
-                        <h:outputText value="#{_fraction.paidAmount}" />
-                    </rich:column>
-                    
-                </rich:dataTable>
-
-                <br/>
-                <br/>
-                <rich:dataTable id="depositsTable" var="_deposit"
-                    value="#{transactionHome.payment.deposits}"
-                    rendered="#{not empty transactionHome.payment}"
-                    onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
-                    onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
-
-                    <f:facet name="header">
-                        <h:outputText value="#{messages['municipalBond.deposits']}" />
-                    </f:facet>
-
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['municipalBond.number']}" />
-                        </f:facet>
-                        <h:outputText value="#{_deposit.municipalBond.number}" />
-                    </h:column>
-                    
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['resident.identificationNumber']}" />
-                        </f:facet>
-                        <h:outputText value="#{_deposit.municipalBond.resident.identificationNumber}" />
-                    </h:column>
-                    
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['resident.name']}" />
-                        </f:facet>
-                        <h:outputText value="#{_deposit.municipalBond.resident.name}" />
-                    </h:column>
-                    
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['municipalBond.entry']}" />
-                        </f:facet>
-                        <h:outputText value="#{_deposit.municipalBond.entry.name}" />
-                    </h:column>
-                    
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['municipalBond.description']}" />
-                        </f:facet>
-                        <h:outputText value="#{_deposit.municipalBond.description}" />
-                    </h:column>
-                    
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="#{messages['municipalBond.emisionDate']}" />
-                        </f:facet>
-                        <h:outputText value="#{_deposit.municipalBond.emisionDate}" >
-                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
-                        </h:outputText>
-                    </h:column>
-                    
-                </rich:dataTable>
-            </div>
-        </rich:panel>
     </ui:define>
 
 </ui:composition>
