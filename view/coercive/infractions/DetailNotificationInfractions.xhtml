@@ -1,9 +1,13 @@
 <!DOCTYPE composition
 	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:a="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:a="http://richfaces.org/a4j"
+	xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
 
 	<ui:define name="body">
 
@@ -13,11 +17,12 @@
 
 			<rich:panel>
 				<f:facet name="header">
-					<h:outputText id="title" value="NOTIFICACION INFRACCIONES" styleClass="formTitle" />
+					<h:outputText id="title" value="NOTIFICACION INFRACCIONES"
+						styleClass="formTitle" />
 				</f:facet>
 
 				<h:panelGrid columns="1">
-				
+
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Número:</ui:define>
 						<h:outputText id="number"
@@ -41,10 +46,11 @@
 
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Fecha Creación:</ui:define>
-						<h:outputText value="#{detailNotificationInfractionsHome.notification.creationTimeStamp}">
-								<f:convertDateTime type="date"
-									pattern="#{messages['common.datePattern']}" />
-							</h:outputText>
+						<h:outputText
+							value="#{detailNotificationInfractionsHome.notification.creationTimeStamp}">
+							<f:convertDateTime type="date"
+								pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
 					</s:decorate>
 
 				</h:panelGrid>
@@ -56,13 +62,15 @@
 			<a:region>
 
 				<a:outputPanel id="resultsPanel" ajaxRendered="true">
-					<rich:panel rendered="#{detailNotificationInfractionsHome.notification.infractions.size() == 0}">
+					<rich:panel
+						rendered="#{detailNotificationInfractionsHome.notification.infractions.size() == 0}">
 						<h:outputText value="#{messages['common.noResultsReturned']}"
 							rendered="#{detailNotificationInfractionsHome.notification.infractions.size() == 0}" />
 
 					</rich:panel>
 
-					<rich:dataTable id="infractionsTable" var="_infraction" width="100%"
+					<rich:dataTable id="infractionsTable" var="_infraction"
+						width="100%"
 						value="#{detailNotificationInfractionsHome.notification.infractions}"
 						rows="25"
 						rendered="#{detailNotificationInfractionsHome.notification.infractions.size()!= 0}">
@@ -78,8 +86,8 @@
 						</f:facet>
 
 						<f:facet name="footer">
-							<g:dataScroller id="scroller1" maxPages="10" for="infractionsTable"
-								style="float:right;" />
+							<g:dataScroller id="scroller1" maxPages="10"
+								for="infractionsTable" style="float:right;" />
 						</f:facet>
 
 						<rich:column>
@@ -181,8 +189,8 @@
 			</a:region>
 		</a:form>
 
-		<s:button view="#{from}" value="#{messages['common.back']}" propagation="none" id="GotoNotificationList"
-			rendered="#{true}">
+		<s:button view="#{from}" value="#{messages['common.back']}"
+			propagation="none" id="GotoNotificationList" rendered="#{true}">
 		</s:button>
 
 
@@ -193,104 +201,122 @@
 				<h:panelGrid columns="1">
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Identificacion:</ui:define>
-						<h:outputText id="identifModal" value="#{overdueInfractionsList.identificationNumber}">
+						<h:outputText id="identifModal"
+							value="#{overdueInfractionsList.identificationNumber}">
 						</h:outputText>
 					</s:decorate>
 
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Nombres:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.nameResident}"></h:outputText>
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.nameResident}"></h:outputText>
 					</s:decorate>
 				</h:panelGrid>
 				<h:panelGrid columns="2">
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Boleto nro:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.ticket}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.ticket}">
 						</h:outputText>
 					</s:decorate>
 
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Placa:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.licensePlate}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.licensePlate}">
 						</h:outputText>
 					</s:decorate>
 
 
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Emisión:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.emision}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.emision}">
 						</h:outputText>
 					</s:decorate>
 
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Registro:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.register}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.register}">
 						</h:outputText>
 					</s:decorate>
 
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Vencimiento:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.expiration}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.expiration}">
 						</h:outputText>
 					</s:decorate>
 
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Contacto general:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.contactGeneral}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.contactGeneral}">
 						</h:outputText>
 					</s:decorate>
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Mejor gestión:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.betterManagement}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.betterManagement}">
 						</h:outputText>
 					</s:decorate>
 
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Gestión telefónica:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.telephoneManagement}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.telephoneManagement}">
 						</h:outputText>
 					</s:decorate>
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Teléfono marcado:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.dialedPhone}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.dialedPhone}">
 						</h:outputText>
 					</s:decorate>
 
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Intensidad telefónica:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.telephoneIntensity}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.telephoneIntensity}">
 						</h:outputText>
 					</s:decorate>
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Intensidad de correo:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.emailIntensity}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.emailIntensity}">
 						</h:outputText>
 					</s:decorate>
 
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Correo:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.email}"></h:outputText>
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.email}"></h:outputText>
 					</s:decorate>
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">IVR:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.ivr}"></h:outputText>
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.ivr}"></h:outputText>
 					</s:decorate>
 				</h:panelGrid>
 
 				<h:panelGrid columns="1">
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Artículo:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.article}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.article}">
 						</h:outputText>
 					</s:decorate>
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Descripción:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.articleDescription}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.articleDescription}">
 						</h:outputText>
 					</s:decorate>
 					<s:decorate template="../../layout/display.xhtml">
 						<ui:define name="label">Observación:</ui:define>
-						<h:outputText id="namesModal" value="#{overdueInfractionsList.infraction.observation}">
+						<h:outputText id="namesModal"
+							value="#{overdueInfractionsList.infraction.observation}">
 						</h:outputText>
 					</s:decorate>
 				</h:panelGrid>

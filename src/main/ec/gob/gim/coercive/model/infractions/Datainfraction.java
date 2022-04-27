@@ -148,8 +148,9 @@ public class Datainfraction {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "notification_id")
 	private NotificationInfractions notification;
-
- 
+	
+	private String changeStatusExplanation;
+	
 	public String getTypeId() {
 		return typeId;
 	}
@@ -452,6 +453,14 @@ public class Datainfraction {
 
 	public void setNotification(NotificationInfractions notification) {
 		this.notification = notification;
+	}
+	
+	public String getChangeStatusExplanation() {
+		return changeStatusExplanation;
+	}
+
+	public void setChangeStatusExplanation(String changeStatusExplanation) {
+		this.changeStatusExplanation = changeStatusExplanation;
 	}
 
 	@Override

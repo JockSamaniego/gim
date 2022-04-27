@@ -6,6 +6,8 @@
 	xmlns:a4j="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
 
 	<ui:define name="body">
+	
+		<ui:include src="dialogs/ChangeStatusInfraction.xhtml" />
 
 		<h:form id="infractionSearch" styleClass="edit">
 			<ui:debug id="debug" />
@@ -192,6 +194,13 @@
 								<f:param name="from" value="/coercive/infractions/OverdueInfractionList.xhtml"/>
 								
 							</s:button>
+							
+							<a:commandButton id="changeStatus"
+								reRender="changeStatusInfraction,changeStatusInfractionForm" ajaxSingle="true"
+								eventsQueue="gimQueue"
+								oncomplete="Richfaces.showModalPanel('changeStatusInfraction',{width:450, height:250})"
+								value="Cambiar Estado"
+								actionListener="#{overdueInfractionsList.prepareChangeStatusInfractionsResident(_infraction)}" />
 						</rich:column>
 
 					</rich:dataTable>

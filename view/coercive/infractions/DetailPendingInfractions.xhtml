@@ -13,6 +13,8 @@
 	template="../../layout/template.xhtml">
 
 	<ui:define name="body">
+	
+		<ui:include src="dialogs/ChangeStatusInfraction.xhtml" />
 
 		<a:form id="municipalBondSearch" styleClass="edit">
 			<ui:debug id="uiDebug" />
@@ -165,6 +167,14 @@
 								eventsQueue="gimEventsQueue" reRender="detailInfractionPanel"
 								oncomplete="Richfaces.showModalPanel('detailInfractionPanel',{width:600, height:500})"
 								value="#{messages['common.view']}" />
+								
+							<a:commandButton id="changeStatus"
+								reRender="changeStatusInfraction" ajaxSingle="true"
+								eventsQueue="gimQueue"
+								oncomplete="Richfaces.showModalPanel('changeStatusInfraction',{width:450, height:250})"
+								value="Cambiar Estado"
+								actionListener="#{overdueInfractionsList.prepareChangeStatus(_infraction)}"/>
+								
 						</rich:column>
 
 					</rich:dataTable>

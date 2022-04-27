@@ -6,13 +6,23 @@ package org.gob.gim.coercive.action;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+
+import org.gob.gim.coercive.dto.InfractionItemDTO;
+import org.gob.gim.coercive.dto.criteria.OverdueInfractionsSearchCriteria;
+import org.gob.gim.coercive.pagination.OverdueInfractionsDataModel;
 import org.gob.gim.coercive.service.DatainfractionService;
+import org.gob.gim.coercive.service.OverdueInfractionsService;
 import org.gob.gim.coercive.view.InfractionItem;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.Util;
 import org.gob.gim.revenue.service.ItemCatalogService;
+import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -24,6 +34,7 @@ import org.jboss.seam.framework.EntityHome;
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 import ec.gob.gim.common.model.ItemCatalog;
+import ec.gob.gim.revenue.model.MunicipalBond;
 
 /**
  * @author René
@@ -31,8 +42,7 @@ import ec.gob.gim.common.model.ItemCatalog;
  */
 @Name("overdueInfractionsListHome")
 @Scope(ScopeType.CONVERSATION)
-public class OverdueInfractionsListHome extends
-		EntityHome<NotificationInfractions> {
+public class OverdueInfractionsListHome extends EntityHome<NotificationInfractions> {
 
 	/**
 	 * 
@@ -42,6 +52,10 @@ public class OverdueInfractionsListHome extends
 	private List<Long> generatedNotificationIds = new ArrayList<Long>();
 
 	private String selectedItems;
+	
+	private List<InfractionItemDTO> selectedList;
+	
+	private OverdueInfractionsSearchCriteria criteria; 
 
 	@In(required = true, create = true)
 	OverdueInfractionsList overdueInfractionsList;
@@ -49,6 +63,14 @@ public class OverdueInfractionsListHome extends
 	private DatainfractionService datainfractionService;
 
 	private ItemCatalogService itemCatalogService;
+	
+	private OverdueInfractionsService overdueInfractionsService;
+	
+	private boolean allResidentsSelected = false;
+	
+	private boolean rebuiltRequired = false;
+	
+	private Integer totalSync = new Integer(0);
 
 	/**
 	 * 
@@ -56,6 +78,9 @@ public class OverdueInfractionsListHome extends
 	public OverdueInfractionsListHome() {
 		super();
 		this.initializeService();
+		this.criteria = new OverdueInfractionsSearchCriteria();
+		this.totalSync = this.overdueInfractionsService.getTotalSyncInfractions();
+		this.search();
 	}
 
 	public void initializeService() {
@@ -66,6 +91,10 @@ public class OverdueInfractionsListHome extends
 		if (itemCatalogService == null) {
 			itemCatalogService = ServiceLocator.getInstance().findResource(
 					ItemCatalogService.LOCAL_NAME);
+		}
+		if (overdueInfractionsService == null) {
+			overdueInfractionsService = ServiceLocator.getInstance().findResource(
+					OverdueInfractionsService.LOCAL_NAME);
 		}
 	}
 
@@ -98,13 +127,69 @@ public class OverdueInfractionsListHome extends
 	public void setSelectedItems(String selectedItems) {
 		this.selectedItems = selectedItems;
 	}
+	
+	/**
+	 * @return the criteria
+	 */
+	public OverdueInfractionsSearchCriteria getCriteria() {
+		return criteria;
+	}
+
+	/**
+	 * @param criteria the criteria to set
+	 */
+	public void setCriteria(OverdueInfractionsSearchCriteria criteria) {
+		this.criteria = criteria;
+	}
+	
+	/**
+	 * @return the selectedList
+	 */
+	public List<InfractionItemDTO> getSelectedList() {
+		return selectedList;
+	}
+
+	/**
+	 * @param selectedList the selectedList to set
+	 */
+	public void setSelectedList(List<InfractionItemDTO> selectedList) {
+		this.selectedList = selectedList;
+	}
+
+	/**
+	 * @return the rebuiltRequired
+	 */
+	public boolean isRebuiltRequired() {
+		return rebuiltRequired;
+	}
+
+	/**
+	 * @param rebuiltRequired the rebuiltRequired to set
+	 */
+	public void setRebuiltRequired(boolean rebuiltRequired) {
+		this.rebuiltRequired = rebuiltRequired;
+	}
+	
+	/**
+	 * @return the totalSync
+	 */
+	public Integer getTotalSync() {
+		return totalSync;
+	}
+
+	/**
+	 * @param totalSync the totalSync to set
+	 */
+	public void setTotalSync(Integer totalSync) {
+		this.totalSync = totalSync;
+	}
 
 	public String confirmPrinting() {
 		return "printed";
 	}
 
 	@Transactional
-	public String createNotification() {
+	public String createNotification() throws IOException {
 		this.generatedNotificationIds = new ArrayList<Long>();
 
 		if (this.getResidentSelectedItems().isEmpty()) {
@@ -159,6 +244,8 @@ public class OverdueInfractionsListHome extends
 		overdueInfractionsList.refresh();
 		
 		overdueInfractionsList.searchBonds();
+		
+		// this.reload();
 
 		return "sendToPrint";
 	}
@@ -181,7 +268,78 @@ public class OverdueInfractionsListHome extends
 					selectedItems.add(ri.getIdentification());
 			}
 		}
+		// System.out.println(selectedItems);
 		return selectedItems;
+	}
+	
+	public void search(){
+		getDataModel().setCriteria(this.criteria);
+		getDataModel().setRowCount(getDataModel().getObjectsNumber());
+	}
+	
+	private OverdueInfractionsDataModel getDataModel() {
+
+		OverdueInfractionsDataModel dataModel = (OverdueInfractionsDataModel) Component
+				.getInstance(OverdueInfractionsDataModel.class, true);
+
+		return dataModel;
+	}
+	
+	public void selectAllResidentItems() {
+		for (InfractionItemDTO dto : getDataModel().getItems()) {
+			dto.setSelected(allResidentsSelected);
+		}
+	}
+
+	public void setAllResidentsSelected(boolean allResidentsSelected) {
+		this.allResidentsSelected = allResidentsSelected;
+	}
+
+	public boolean isAllResidentsSelected() {
+		return allResidentsSelected;
+	}
+	
+	private void fillSelectedList(List<InfractionItemDTO> list) {
+		if (selectedList == null)
+			selectedList = new ArrayList<InfractionItemDTO>();
+		for (InfractionItemDTO ri : list) {
+			selectedList.add(ri);
+		}
+	}
+	
+	public void addResidentItem(InfractionItemDTO ri) {
+		if (allResidentsSelected && !ri.isSelected())
+			allResidentsSelected = Boolean.FALSE;
+		if (selectedList == null)
+			selectedList = new ArrayList<InfractionItemDTO>();
+
+		if (ri.isSelected()) {
+			selectedList.add(ri);
+		} else {
+			selectedList.remove(ri);
+		}
+
+	}
+	
+	public void changeSelectedItem(InfractionItemDTO item,
+			boolean selected) {
+		System.out.println("Llega al changeSelectedItem");
+		item.setSelected(!selected);
+		for (InfractionItemDTO itm : getDataModel().getItems()) {
+			System.out.println("["+itm.getName()+": "+itm.isSelected()+"]");
+		}
+	}
+	
+	public void printSelects(){
+		// System.out.println(this.getDataModel().getItems());
+		for (InfractionItemDTO item : getDataModel().getItems()) {
+			System.out.println("["+item.getName()+": "+item.isSelected()+"]");
+		}
+	}
+	
+	public void reload() throws IOException {
+	    ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+	    ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
 	}
 
 }

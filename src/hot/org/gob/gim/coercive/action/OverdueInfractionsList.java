@@ -11,10 +11,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 
+import org.gob.gim.coercive.service.DatainfractionService;
 import org.gob.gim.coercive.view.InfractionItem;
+import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -26,6 +32,7 @@ import org.jboss.seam.framework.EntityQuery;
 
 import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Entry;
 
@@ -61,8 +68,19 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private BigDecimal total = BigDecimal.ZERO;
 	private String nameResident;
 	private Datainfraction infraction;
-	
+
 	private Long totalSync = new Long(0);
+	
+	private ItemCatalogService itemCatalogService;
+	
+	private List<ItemCatalog> statuses = new ArrayList<ItemCatalog>();
+	private ItemCatalog status;
+	
+	private Datainfraction currentItem;
+	
+	private String changeStatusExplanation;
+	
+	private DatainfractionService datainfractionService;
 
 	private static final Pattern SUBJECT_PATTERN = Pattern
 			.compile(
@@ -80,6 +98,12 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private boolean allResidentsSelected = false;
 
 	private List<InfractionItem> selectedList;
+	
+	private Boolean singleChangeStatus = Boolean.FALSE;
+	
+	private Boolean residentChangeStatus = Boolean.FALSE;
+	
+	private Boolean selectionResidentChangeStatus = Boolean.FALSE;
 
 	/**
 	 * @return the selectedList
@@ -171,13 +195,16 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		// System.out.println(getRestrictionExpressionStrings());
 		// System.out.println("EJB:"+EJBQL);
 		// System.out.println("REstricciones"+RESTRICTIONS);
-		setOrder("sum(di.totalValue) DESC");
+		setOrder("di.name ASC");
 		// setGroupBy("di.resident.id,resident.identificationNumber,resident.name");
 		setGroupBy("di.identification, di.name");
 		setMaxResults(25);
 		Calendar now = Calendar.getInstance();
+		int lastDayMonth = now.getActualMaximum(Calendar.DATE);
+		now.set(Calendar.DATE, lastDayMonth);
+		int yearCurrent = now.get(Calendar.YEAR);
 		Calendar from = Calendar.getInstance();
-		from.set(2010, 0, 01);
+		from.set(Calendar.YEAR, yearCurrent - 5);
 
 		if (this.expirationFrom == null) {
 			setExpirationFrom(from.getTime());
@@ -195,6 +222,16 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 			setEmisionUntil(now.getTime());
 		}
 		
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
+		
+		if (datainfractionService == null) {
+			datainfractionService = ServiceLocator.getInstance().findResource(
+					datainfractionService.LOCAL_NAME);
+		}
+
 	}
 
 	private boolean rebuiltRequired = false;
@@ -320,9 +357,11 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		if (!detailFromNotification && identificationNumber != null) {
 			Query query = getEntityManager()
 					.createQuery(
-							"Select di from Datainfraction di JOIN di.state s where di.identification=:identificationNumber AND s.code=:code");
+							"Select di from Datainfraction di JOIN di.state s where di.identification=:identificationNumber AND s.code=:code AND di.emision BETWEEN :emisionFrom AND :emisionUntil");
 			query.setParameter("identificationNumber", identificationNumber);
 			query.setParameter("code", this.codePending);
+			query.setParameter("emisionFrom", this.emisionFrom);
+			query.setParameter("emisionUntil", this.emisionUntil);
 
 			infractions = query.getResultList();
 
@@ -615,7 +654,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	public String getCodePending() {
 		return codePending;
 	}
-	
+
 	/**
 	 * @return the totalSync
 	 */
@@ -624,7 +663,8 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	}
 
 	/**
-	 * @param totalSync the totalSync to set
+	 * @param totalSync
+	 *            the totalSync to set
 	 */
 	public void setTotalSync(Long totalSync) {
 		this.totalSync = totalSync;
@@ -636,9 +676,136 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 				"Select count(*) from Datainfraction di ");
 
 		Long size = (Long) query.getSingleResult();
-		
+
 		this.totalSync = size;
 
 	}
 
+	public List<ItemCatalog> getStatuses() {
+		return statuses;
+	}
+
+	public void setStatuses(List<ItemCatalog> statuses) {
+		this.statuses = statuses;
+	}
+
+	public ItemCatalog getStatus() {
+		return status;
+	}
+
+	public void setStatus(ItemCatalog status) {
+		this.status = status;
+	}
+	
+	public String getChangeStatusExplanation() {
+		return changeStatusExplanation;
+	}
+
+	public void setChangeStatusExplanation(String changeStatusExplanation) {
+		this.changeStatusExplanation = changeStatusExplanation;
+	}
+	
+	public Datainfraction getCurrentItem() {
+		return currentItem;
+	}
+
+	public void setCurrentItem(Datainfraction currentItem) {
+		this.currentItem = currentItem;
+	}
+	
+	public Boolean getSingleChangeStatus() {
+		return singleChangeStatus;
+	}
+
+	public void setSingleChangeStatus(Boolean singleChangeStatus) {
+		this.singleChangeStatus = singleChangeStatus;
+	}
+
+	public Boolean getResidentChangeStatus() {
+		return residentChangeStatus;
+	}
+
+	public void setResidentChangeStatus(Boolean residentChangeStatus) {
+		this.residentChangeStatus = residentChangeStatus;
+	}
+
+	public Boolean getSelectionResidentChangeStatus() {
+		return selectionResidentChangeStatus;
+	}
+
+	public void setSelectionResidentChangeStatus(
+			Boolean selectionResidentChangeStatus) {
+		this.selectionResidentChangeStatus = selectionResidentChangeStatus;
+	}
+
+	public void prepareChangeStatus(Datainfraction item) {
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
+		
+		this.currentItem = item;
+		
+		this.statuses = this.itemCatalogService.findItemsForCatalogCodeOrderById("CATALOG_STATUS_INFRACTIONS");
+		singleChangeStatus = Boolean.TRUE;
+		residentChangeStatus = Boolean.FALSE;
+		selectionResidentChangeStatus = Boolean.FALSE;
+		this.status = null;
+		this.changeStatusExplanation = null;
+	}
+	
+	public void save() {
+		System.out.println("SAVE");
+		if (datainfractionService == null) {
+			datainfractionService = ServiceLocator.getInstance().findResource(
+					datainfractionService.LOCAL_NAME);
+		}
+		
+		this.currentItem.setState(this.status);
+		this.currentItem.setChangeStatusExplanation(this.changeStatusExplanation);
+		this.datainfractionService.updateDataInfraction(this.currentItem);
+		
+	}
+	
+	public void prepareChangeStatusInfractionsResident(InfractionItem item) {
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
+		
+		this.identificationNumber =  item.getIdentification();
+		
+		this.loadPendingInfractions();
+		
+		this.statuses = this.itemCatalogService.findItemsForCatalogCodeOrderById("CATALOG_STATUS_INFRACTIONS");
+		singleChangeStatus = Boolean.FALSE;
+		residentChangeStatus = Boolean.TRUE;
+		selectionResidentChangeStatus = Boolean.FALSE;
+		this.status = null;
+		this.changeStatusExplanation = null;
+	}
+	
+	public void saveChangeStatusInfractionsResident() throws IOException {
+		System.out.println("SAVE ALL RESIDENT");
+		if (datainfractionService == null) {
+			datainfractionService = ServiceLocator.getInstance().findResource(
+					datainfractionService.LOCAL_NAME);
+		}
+		
+		for (int i = 0; i < this.infractions.size(); i++) {
+			Datainfraction dat = this.infractions.get(i);
+			dat.setState(this.status);
+			dat.setChangeStatusExplanation(this.changeStatusExplanation);
+			this.datainfractionService.updateDataInfraction(dat);
+		}
+		
+		// this.reload();
+		
+	}
+	
+	public void reload() throws IOException {
+	    ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+	    ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+	}
+	
 }

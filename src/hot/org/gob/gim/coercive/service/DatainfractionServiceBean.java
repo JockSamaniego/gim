@@ -22,7 +22,7 @@ import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
  */
 @Stateless(name = "DatainfractionService")
 public class DatainfractionServiceBean implements DatainfractionService {
-	
+
 	@PersistenceContext
 	EntityManager entityManager;
 
@@ -62,28 +62,30 @@ public class DatainfractionServiceBean implements DatainfractionService {
 	public List<NotificationInfractions> findNotificationInfractionByCriteria(
 			NotificationInfractionSearchCriteria criteria, Integer firstRow,
 			Integer numberOfRows) {
-		
+
 		String qry = "SELECT DISTINCT n FROM NotificationInfractions n JOIN n.infractions i WHERE 1=1 ";
-		if(criteria.getIdentification() != null && criteria.getIdentification().trim() != ""){
+		if (criteria.getIdentification() != null
+				&& criteria.getIdentification().trim() != "") {
 			qry += "AND i.identification =:identification ";
 		}
-		
-		if(criteria.getNumber() != null && criteria.getNumber().trim() != ""){
+
+		if (criteria.getNumber() != null && criteria.getNumber().trim() != "") {
 			qry += "AND (n.year || '-' || n.number) like :num ";
 		}
-		
-		qry+= "ORDER BY n.year, n.number DESC ";
-		Query query = this.entityManager
-				.createQuery(qry);
-		
-		if(criteria.getIdentification() != null && criteria.getIdentification().trim() != ""){
-			query.setParameter("identification", criteria.getIdentification().trim());
+
+		qry += "ORDER BY n.year, n.number DESC ";
+		Query query = this.entityManager.createQuery(qry);
+
+		if (criteria.getIdentification() != null
+				&& criteria.getIdentification().trim() != "") {
+			query.setParameter("identification", criteria.getIdentification()
+					.trim());
 		}
-		
-		if(criteria.getNumber() != null && criteria.getNumber().trim() != ""){
-			query.setParameter("num", "%"+criteria.getNumber().trim()+"%");
+
+		if (criteria.getNumber() != null && criteria.getNumber().trim() != "") {
+			query.setParameter("num", "%" + criteria.getNumber().trim() + "%");
 		}
-		
+
 		query.setFirstResult(firstRow);
 		query.setMaxResults(numberOfRows);
 
@@ -92,7 +94,8 @@ public class DatainfractionServiceBean implements DatainfractionService {
 
 	@Override
 	public NotificationInfractions findObjectById(Long id) {
-		Query query = entityManager.createQuery("SELECT n FROM NotificationInfractions n JOIN n.infractions i WHERE n.id=:id");
+		Query query = entityManager
+				.createQuery("SELECT n FROM NotificationInfractions n JOIN n.infractions i WHERE n.id=:id");
 		query.setParameter("id", id);
 		// query.setFirstResult(rowCount.intValue()).setMaxResults(12);
 		return (NotificationInfractions) query.getSingleResult();
@@ -102,26 +105,28 @@ public class DatainfractionServiceBean implements DatainfractionService {
 	public Integer findNotificationInfractionsNumber(
 			NotificationInfractionSearchCriteria criteria) {
 		String qry = "SELECT count(DISTINCT n.id) FROM NotificationInfractions n JOIN n.infractions i WHERE 1=1 ";
-		
-		if(criteria.getIdentification() != null && criteria.getIdentification().trim() != ""){
+
+		if (criteria.getIdentification() != null
+				&& criteria.getIdentification().trim() != "") {
 			qry += "AND i.identification =:identification ";
 		}
-		
-		if(criteria.getNumber() != null && criteria.getNumber().trim() != ""){
+
+		if (criteria.getNumber() != null && criteria.getNumber().trim() != "") {
 			qry += "AND (n.year || '-' || n.number) like :num ";
 		}
-		
-		Query query = this.entityManager
-				.createQuery(qry);
-		
-		if(criteria.getIdentification() != null && criteria.getIdentification().trim() != ""){
-			query.setParameter("identification", criteria.getIdentification().trim());
+
+		Query query = this.entityManager.createQuery(qry);
+
+		if (criteria.getIdentification() != null
+				&& criteria.getIdentification().trim() != "") {
+			query.setParameter("identification", criteria.getIdentification()
+					.trim());
 		}
-		
-		if(criteria.getNumber() != null && criteria.getNumber() != ""){
-			query.setParameter("num", "%" + criteria.getNumber().trim()+"%");
+
+		if (criteria.getNumber() != null && criteria.getNumber() != "") {
+			query.setParameter("num", "%" + criteria.getNumber().trim() + "%");
 		}
-		
+
 		Long size = (Long) query.getSingleResult();
 
 		return size.intValue();
@@ -129,18 +134,19 @@ public class DatainfractionServiceBean implements DatainfractionService {
 
 	@Override
 	public Datainfraction updateDataInfraction(Datainfraction data) {
-		
+
 		Datainfraction dat = this.entityManager.merge(data);
 		this.entityManager.flush();
 		return dat;
-		
+
 	}
 
 	@Override
 	public Datainfraction getDataInfractionById(Long id) {
-		Query query = entityManager.createQuery("SELECT d FROM Datainfraction d WHERE d.id=:id");
+		Query query = entityManager
+				.createQuery("SELECT d FROM Datainfraction d WHERE d.id=:id");
 		query.setParameter("id", id);
-		return (Datainfraction) query.getSingleResult();	
+		return (Datainfraction) query.getSingleResult();
 	}
 
 }

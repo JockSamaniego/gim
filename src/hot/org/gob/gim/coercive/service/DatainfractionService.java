@@ -7,7 +7,9 @@ import java.util.List;
 
 import javax.ejb.Local;
 
+import org.gob.gim.coercive.dto.InfractionItemDTO;
 import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
+import org.gob.gim.coercive.dto.criteria.OverdueInfractionsSearchCriteria;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
@@ -36,5 +38,5 @@ public interface DatainfractionService {
 	public Datainfraction getDataInfractionById(Long id);
 	
 	public Datainfraction updateDataInfraction(Datainfraction data);
-
+	
 }
