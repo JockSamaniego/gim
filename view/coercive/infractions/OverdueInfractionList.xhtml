@@ -113,6 +113,12 @@
 								action="#{overdueInfractionsListHome.createNotification()}"
 								value="#{messages['coercive.generateNotificacions']}"
 								reRender="overdueInfractionsForm, table, messages, overdueInfractionsList1,municipalBondList"/>
+							<a:commandButton id="changeStatusSelection"
+								reRender="changeStatusInfraction,changeStatusInfractionForm" ajaxSingle="true"
+								eventsQueue="gimQueue"
+								oncomplete="Richfaces.showModalPanel('changeStatusInfraction',{width:450, height:250})"
+								value="Cambiar Estado"
+								actionListener="#{overdueInfractionsList.prepareChangeStatusInfractionsSelection()}" />
 						</a4j:region>
 
 					</h:panelGrid>

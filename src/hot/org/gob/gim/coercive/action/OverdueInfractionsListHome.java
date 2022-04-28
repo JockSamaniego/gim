@@ -42,7 +42,8 @@ import ec.gob.gim.revenue.model.MunicipalBond;
  */
 @Name("overdueInfractionsListHome")
 @Scope(ScopeType.CONVERSATION)
-public class OverdueInfractionsListHome extends EntityHome<NotificationInfractions> {
+public class OverdueInfractionsListHome extends
+		EntityHome<NotificationInfractions> {
 
 	/**
 	 * 
@@ -52,10 +53,10 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 	private List<Long> generatedNotificationIds = new ArrayList<Long>();
 
 	private String selectedItems;
-	
+
 	private List<InfractionItemDTO> selectedList;
-	
-	private OverdueInfractionsSearchCriteria criteria; 
+
+	private OverdueInfractionsSearchCriteria criteria;
 
 	@In(required = true, create = true)
 	OverdueInfractionsList overdueInfractionsList;
@@ -63,13 +64,13 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 	private DatainfractionService datainfractionService;
 
 	private ItemCatalogService itemCatalogService;
-	
+
 	private OverdueInfractionsService overdueInfractionsService;
-	
+
 	private boolean allResidentsSelected = false;
-	
+
 	private boolean rebuiltRequired = false;
-	
+
 	private Integer totalSync = new Integer(0);
 
 	/**
@@ -79,7 +80,8 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 		super();
 		this.initializeService();
 		this.criteria = new OverdueInfractionsSearchCriteria();
-		this.totalSync = this.overdueInfractionsService.getTotalSyncInfractions();
+		this.totalSync = this.overdueInfractionsService
+				.getTotalSyncInfractions();
 		this.search();
 	}
 
@@ -93,8 +95,8 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 					ItemCatalogService.LOCAL_NAME);
 		}
 		if (overdueInfractionsService == null) {
-			overdueInfractionsService = ServiceLocator.getInstance().findResource(
-					OverdueInfractionsService.LOCAL_NAME);
+			overdueInfractionsService = ServiceLocator.getInstance()
+					.findResource(OverdueInfractionsService.LOCAL_NAME);
 		}
 	}
 
@@ -127,7 +129,7 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 	public void setSelectedItems(String selectedItems) {
 		this.selectedItems = selectedItems;
 	}
-	
+
 	/**
 	 * @return the criteria
 	 */
@@ -136,12 +138,13 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 	}
 
 	/**
-	 * @param criteria the criteria to set
+	 * @param criteria
+	 *            the criteria to set
 	 */
 	public void setCriteria(OverdueInfractionsSearchCriteria criteria) {
 		this.criteria = criteria;
 	}
-	
+
 	/**
 	 * @return the selectedList
 	 */
@@ -150,7 +153,8 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 	}
 
 	/**
-	 * @param selectedList the selectedList to set
+	 * @param selectedList
+	 *            the selectedList to set
 	 */
 	public void setSelectedList(List<InfractionItemDTO> selectedList) {
 		this.selectedList = selectedList;
@@ -164,12 +168,13 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 	}
 
 	/**
-	 * @param rebuiltRequired the rebuiltRequired to set
+	 * @param rebuiltRequired
+	 *            the rebuiltRequired to set
 	 */
 	public void setRebuiltRequired(boolean rebuiltRequired) {
 		this.rebuiltRequired = rebuiltRequired;
 	}
-	
+
 	/**
 	 * @return the totalSync
 	 */
@@ -178,7 +183,8 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 	}
 
 	/**
-	 * @param totalSync the totalSync to set
+	 * @param totalSync
+	 *            the totalSync to set
 	 */
 	public void setTotalSync(Integer totalSync) {
 		this.totalSync = totalSync;
@@ -218,12 +224,13 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 
 			List<Datainfraction> infractions = this.datainfractionService
 					.findInfractionsByIdentification(identification);
-			
-			if(infractions.size() == 0) {
+
+			if (infractions.size() == 0) {
 				overdueInfractionsList.searchBonds();
 				addFacesMessage("Recargue la página");
 				return "failed";
-			};
+			}
+			;
 
 			notification = new NotificationInfractions();
 			notification.setInfractions(infractions);
@@ -239,12 +246,12 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 			generatedNotificationIds.add((Long) getId());
 
 		}
-		
+
 		Contexts.removeFromAllContexts("overdueInfractionsList");
 		overdueInfractionsList.refresh();
-		
+
 		overdueInfractionsList.searchBonds();
-		
+
 		// this.reload();
 
 		return "sendToPrint";
@@ -271,12 +278,12 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 		// System.out.println(selectedItems);
 		return selectedItems;
 	}
-	
-	public void search(){
+
+	public void search() {
 		getDataModel().setCriteria(this.criteria);
 		getDataModel().setRowCount(getDataModel().getObjectsNumber());
 	}
-	
+
 	private OverdueInfractionsDataModel getDataModel() {
 
 		OverdueInfractionsDataModel dataModel = (OverdueInfractionsDataModel) Component
@@ -284,7 +291,7 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 
 		return dataModel;
 	}
-	
+
 	public void selectAllResidentItems() {
 		for (InfractionItemDTO dto : getDataModel().getItems()) {
 			dto.setSelected(allResidentsSelected);
@@ -298,7 +305,7 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 	public boolean isAllResidentsSelected() {
 		return allResidentsSelected;
 	}
-	
+
 	private void fillSelectedList(List<InfractionItemDTO> list) {
 		if (selectedList == null)
 			selectedList = new ArrayList<InfractionItemDTO>();
@@ -306,7 +313,7 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 			selectedList.add(ri);
 		}
 	}
-	
+
 	public void addResidentItem(InfractionItemDTO ri) {
 		if (allResidentsSelected && !ri.isSelected())
 			allResidentsSelected = Boolean.FALSE;
@@ -320,26 +327,61 @@ public class OverdueInfractionsListHome extends EntityHome<NotificationInfractio
 		}
 
 	}
-	
-	public void changeSelectedItem(InfractionItemDTO item,
-			boolean selected) {
+
+	public void changeSelectedItem(InfractionItemDTO item, boolean selected) {
 		System.out.println("Llega al changeSelectedItem");
 		item.setSelected(!selected);
 		for (InfractionItemDTO itm : getDataModel().getItems()) {
-			System.out.println("["+itm.getName()+": "+itm.isSelected()+"]");
+			System.out.println("[" + itm.getName() + ": " + itm.isSelected()
+					+ "]");
 		}
 	}
-	
-	public void printSelects(){
+
+	public void printSelects() {
 		// System.out.println(this.getDataModel().getItems());
 		for (InfractionItemDTO item : getDataModel().getItems()) {
-			System.out.println("["+item.getName()+": "+item.isSelected()+"]");
+			System.out.println("[" + item.getName() + ": " + item.isSelected()
+					+ "]");
 		}
 	}
-	
+
 	public void reload() throws IOException {
-	    ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-	    ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+		ExternalContext ec = FacesContext.getCurrentInstance()
+				.getExternalContext();
+		ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+	}
+
+	public void changeStatusSelecteds() {
+		this.generatedNotificationIds = new ArrayList<Long>();
+
+		if (this.getResidentSelectedItems().isEmpty()) {
+			addFacesMessageFromResourceBundle("common.noSelectedItems");
+			//return "failed";
+		}
+
+		setSelectedItems(Util.listToString(this.getResidentSelectedItems()));
+
+		/*
+		 * this.setExpirationDate(residentWithMunicipalBondOutOfDateList
+		 * .getExpirationDate());
+		 * this.setAmount(residentWithMunicipalBondOutOfDateList.getAmount());
+		 */
+
+		NotificationInfractions notification = null;
+
+		ItemCatalog itemPending = this.itemCatalogService
+				.findItemByCodeAndCodeCatalog("CATALOG_STATUS_INFRACTIONS",
+						"NOTIFIED");
+
+		for (String identification : getResidentSelectedItems()) { // son los
+																	// id's de
+																	// todos
+		}
+
+		Contexts.removeFromAllContexts("overdueInfractionsList");
+		overdueInfractionsList.refresh();
+
+		overdueInfractionsList.searchBonds();
 	}
 
 }

@@ -70,16 +70,16 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private Datainfraction infraction;
 
 	private Long totalSync = new Long(0);
-	
+
 	private ItemCatalogService itemCatalogService;
-	
+
 	private List<ItemCatalog> statuses = new ArrayList<ItemCatalog>();
 	private ItemCatalog status;
-	
+
 	private Datainfraction currentItem;
-	
+
 	private String changeStatusExplanation;
-	
+
 	private DatainfractionService datainfractionService;
 
 	private static final Pattern SUBJECT_PATTERN = Pattern
@@ -98,11 +98,11 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private boolean allResidentsSelected = false;
 
 	private List<InfractionItem> selectedList;
-	
+
 	private Boolean singleChangeStatus = Boolean.FALSE;
-	
+
 	private Boolean residentChangeStatus = Boolean.FALSE;
-	
+
 	private Boolean selectionResidentChangeStatus = Boolean.FALSE;
 
 	/**
@@ -221,12 +221,12 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		if (this.emisionUntil == null) {
 			setEmisionUntil(now.getTime());
 		}
-		
+
 		if (itemCatalogService == null) {
 			itemCatalogService = ServiceLocator.getInstance().findResource(
 					ItemCatalogService.LOCAL_NAME);
 		}
-		
+
 		if (datainfractionService == null) {
 			datainfractionService = ServiceLocator.getInstance().findResource(
 					datainfractionService.LOCAL_NAME);
@@ -696,7 +696,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	public void setStatus(ItemCatalog status) {
 		this.status = status;
 	}
-	
+
 	public String getChangeStatusExplanation() {
 		return changeStatusExplanation;
 	}
@@ -704,7 +704,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	public void setChangeStatusExplanation(String changeStatusExplanation) {
 		this.changeStatusExplanation = changeStatusExplanation;
 	}
-	
+
 	public Datainfraction getCurrentItem() {
 		return currentItem;
 	}
@@ -712,7 +712,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	public void setCurrentItem(Datainfraction currentItem) {
 		this.currentItem = currentItem;
 	}
-	
+
 	public Boolean getSingleChangeStatus() {
 		return singleChangeStatus;
 	}
@@ -743,69 +743,133 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 			itemCatalogService = ServiceLocator.getInstance().findResource(
 					ItemCatalogService.LOCAL_NAME);
 		}
-		
+
 		this.currentItem = item;
-		
-		this.statuses = this.itemCatalogService.findItemsForCatalogCodeOrderById("CATALOG_STATUS_INFRACTIONS");
+
+		this.statuses = this.itemCatalogService
+				.findItemsForCatalogCodeOrderById("CATALOG_STATUS_INFRACTIONS");
 		singleChangeStatus = Boolean.TRUE;
 		residentChangeStatus = Boolean.FALSE;
 		selectionResidentChangeStatus = Boolean.FALSE;
 		this.status = null;
 		this.changeStatusExplanation = null;
 	}
-	
+
 	public void save() {
 		System.out.println("SAVE");
 		if (datainfractionService == null) {
 			datainfractionService = ServiceLocator.getInstance().findResource(
 					datainfractionService.LOCAL_NAME);
 		}
-		
+
 		this.currentItem.setState(this.status);
-		this.currentItem.setChangeStatusExplanation(this.changeStatusExplanation);
+		this.currentItem
+				.setChangeStatusExplanation(this.changeStatusExplanation);
 		this.datainfractionService.updateDataInfraction(this.currentItem);
-		
+
 	}
-	
+
 	public void prepareChangeStatusInfractionsResident(InfractionItem item) {
 		if (itemCatalogService == null) {
 			itemCatalogService = ServiceLocator.getInstance().findResource(
 					ItemCatalogService.LOCAL_NAME);
 		}
-		
-		this.identificationNumber =  item.getIdentification();
-		
+
+		this.identificationNumber = item.getIdentification();
+
 		this.loadPendingInfractions();
-		
-		this.statuses = this.itemCatalogService.findItemsForCatalogCodeOrderById("CATALOG_STATUS_INFRACTIONS");
+
+		this.statuses = this.itemCatalogService
+				.findItemsForCatalogCodeOrderById("CATALOG_STATUS_INFRACTIONS");
 		singleChangeStatus = Boolean.FALSE;
 		residentChangeStatus = Boolean.TRUE;
 		selectionResidentChangeStatus = Boolean.FALSE;
 		this.status = null;
 		this.changeStatusExplanation = null;
 	}
-	
+
+	public void prepareChangeStatusInfractionsSelection() {
+		if (itemCatalogService == null) {
+			itemCatalogService = ServiceLocator.getInstance().findResource(
+					ItemCatalogService.LOCAL_NAME);
+		}
+		this.statuses = this.itemCatalogService
+				.findItemsForCatalogCodeOrderById("CATALOG_STATUS_INFRACTIONS");
+		singleChangeStatus = Boolean.FALSE;
+		residentChangeStatus = Boolean.FALSE;
+		selectionResidentChangeStatus = Boolean.TRUE;
+		this.status = null;
+		this.changeStatusExplanation = null;
+	}
+
 	public void saveChangeStatusInfractionsResident() throws IOException {
 		System.out.println("SAVE ALL RESIDENT");
 		if (datainfractionService == null) {
 			datainfractionService = ServiceLocator.getInstance().findResource(
 					datainfractionService.LOCAL_NAME);
 		}
-		
+
 		for (int i = 0; i < this.infractions.size(); i++) {
 			Datainfraction dat = this.infractions.get(i);
 			dat.setState(this.status);
 			dat.setChangeStatusExplanation(this.changeStatusExplanation);
 			this.datainfractionService.updateDataInfraction(dat);
 		}
-		
+
 		// this.reload();
-		
+
 	}
-	
+
+	public void saveChangeStatusSelectedResidents() {
+		System.out.println("SAVE ALL SELECTEDS");
+		if (datainfractionService == null) {
+			datainfractionService = ServiceLocator.getInstance().findResource(
+					datainfractionService.LOCAL_NAME);
+		}
+
+		for (int i = 0; i < this.selectedList.size(); i++) {
+			InfractionItem inf = this.selectedList.get(i);
+			System.out.println(inf.getIdentification());
+			// TODO CONSULTAR POR RESIDENT
+			List<Datainfraction> infrac = loadPendingInfractions(inf
+					.getIdentification());
+			for (int j = 0; j < infrac.size(); j++) {
+				Datainfraction dat = infrac.get(j);
+				dat.setState(this.status);
+				dat.setChangeStatusExplanation(this.changeStatusExplanation);
+				this.datainfractionService.updateDataInfraction(dat);
+			}
+
+		}
+	}
+
+	/**
+	 * Recupera todos las infracciones x identificacion
+	 */
+	public List<Datainfraction> loadPendingInfractions(String identification) {
+		// if (!isFirstTime)
+		// return;
+		// isFirstTime = Boolean.FALSE;
+
+		List<Datainfraction> result = new ArrayList<Datainfraction>();
+
+		Query query = getEntityManager()
+				.createQuery(
+						"Select di from Datainfraction di JOIN di.state s where di.identification=:identificationNumber AND s.code=:code AND di.emision BETWEEN :emisionFrom AND :emisionUntil");
+		query.setParameter("identificationNumber", identification);
+		query.setParameter("code", this.codePending);
+		query.setParameter("emisionFrom", this.emisionFrom);
+		query.setParameter("emisionUntil", this.emisionUntil);
+
+		result = query.getResultList();
+
+		return result;
+	}
+
 	public void reload() throws IOException {
-	    ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-	    ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+		ExternalContext ec = FacesContext.getCurrentInstance()
+				.getExternalContext();
+		ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
 	}
-	
+
 }
