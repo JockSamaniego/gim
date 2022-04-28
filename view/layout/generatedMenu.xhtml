@@ -1,65 +1,51 @@
-<h:panelGrid xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich" border="0" width="100%"
+<h:panelGrid xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:s="http://jboss.com/products/seam/taglib" xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core" xmlns:rich="http://richfaces.org/rich" border="0" width="100%"
 	cellpadding="0" cellspacing="0" bgcolor="#e0ebf4">
 	<rich:toolBar bypassDisabled="true" style="background-color: #cfcfcf; background-image: none; border: 0px solid;">
 		<rich:toolBarGroup>
-			<h:graphicImage value="/img/gim_a.png" alt="System logo"
-				style="border:15px solid transparent" />
+			<h:graphicImage value="/img/gim_a.png" alt="System logo" style="border:15px solid transparent" />
 		</rich:toolBarGroup>
-		<rich:toolBarGroup location="right" style="vertical-align: top; color:#000000;" >
+		<rich:toolBarGroup location="right" style="vertical-align: top; color:#000000;">
 
 			<h:panelGrid columnClasses="rightAligned">
 
-				<h:panelGrid columns="4" style="font-weight: normal; font-size: x-small; float:right;" >
-						<s:link id="menuHomeId" view="/home.xhtml"
-							style="margin-left:15px;"
-							title="#{messages['common.home']}" propagation="none" styleClass="text-align:center;">
-							<h:graphicImage value="/img/home.png" style="border:2px solid transparent"/>
-						</s:link>
-						<s:link id="securitySettingsId" view="/common/ChangePassword.xhtml"
-							style="margin-left:15px;"
-							title="#{messages['security.changePassword']}" 
-							rendered="#{identity.loggedIn}" 
-							propagation="none" 
-							styleClass="text-align:center;">
-							<h:graphicImage value="/img/changePassword.png" style="border:2px solid transparent"/>
-						</s:link>
-						<s:link id="menuLoginId" view="/login.xhtml" style="margin-left:15px;"
-							title="#{messages['common.login']}"
-							rendered="#{not identity.loggedIn}" propagation="none" >
-							<h:graphicImage value="/img/login.png" style="border:2px solid transparent"/>
-						</s:link>
-						<s:link id="menuLogoutId" view="/home.xhtml" style="margin-left:15px;"
-							action="#{userSession.logout}" title="#{messages['common.logout']}"
-							rendered="#{identity.loggedIn}" propagation="end" >
-							<h:graphicImage value="/img/logout.png" style="border:2px solid transparent"/>
-						</s:link>
+				<h:panelGrid columns="4" style="font-weight: normal; font-size: x-small; float:right;">
+					<s:link id="menuHomeId" view="/home.xhtml" style="margin-left:15px;"
+						title="#{messages['common.home']}" propagation="none" styleClass="text-align:center;">
+						<h:graphicImage value="/img/home.png" style="border:2px solid transparent" />
+					</s:link>
+					<s:link id="securitySettingsId" view="/common/ChangePassword.xhtml" style="margin-left:15px;"
+						title="#{messages['security.changePassword']}" rendered="#{identity.loggedIn}"
+						propagation="none" styleClass="text-align:center;">
+						<h:graphicImage value="/img/changePassword.png" style="border:2px solid transparent" />
+					</s:link>
+					<s:link id="menuLoginId" view="/login.xhtml" style="margin-left:15px;"
+						title="#{messages['common.login']}" rendered="#{not identity.loggedIn}" propagation="none">
+						<h:graphicImage value="/img/login.png" style="border:2px solid transparent" />
+					</s:link>
+					<s:link id="menuLogoutId" view="/home.xhtml" style="margin-left:15px;"
+						action="#{userSession.logout}" title="#{messages['common.logout']}"
+						rendered="#{identity.loggedIn}" propagation="end">
+						<h:graphicImage value="/img/logout.png" style="border:2px solid transparent" />
+					</s:link>
 				</h:panelGrid>
 
-				
-				<h:outputText id="menuWelcomeId"
-					value="#{userSession.person != null ? userSession.person.name : ''}"
-					rendered="#{identity.loggedIn}" 
-					style="font-size: xx-small" />
-					
-				<h:outputText id="ipAddress1"
-					value="#{userSession.user.ipAddress}"
-					rendered="#{identity.loggedIn}" 
-					style="font-size: x-small"/>
+
+				<h:outputText id="menuWelcomeId" value="#{userSession.person != null ? userSession.person.name : ''}"
+					rendered="#{identity.loggedIn}" style="font-size: xx-small" />
+
+				<h:outputText id="ipAddress1" value="#{userSession.user.ipAddress}" rendered="#{identity.loggedIn}"
+					style="font-size: x-small" />
 			</h:panelGrid>
 
 		</rich:toolBarGroup>
 	</rich:toolBar>
-	
+
 	<rich:toolBar bypassDisabled="true">
 		<s:div style="height:25px; vertical-align:middle;" rendered="#{userSession.user == null}">
-			<h:outputLabel value="#{' '}"/>
+			<h:outputLabel value="#{' '}" />
 		</s:div>
 		<c:forEach items="#{userSession.getPermissions(0)}" var="rootPermission">
 			<rich:dropDownMenu showDelay="250" hideDelay="0" submitMode="none">
@@ -69,24 +55,54 @@
 						<c:when test="#{permission.action.url != null and not empty permission.action.url}">
 							<rich:menuItem>
 								<s:link view="#{permission.action.url}" value="#{permission.action.name}"
-										includePageParams="false" propagation="none" title="#{permission.action.url}">
-									 <c:forEach items="${permission.action.parameters.entrySet()}" var="entry">
-										<f:param name="#{entry.key}" value="#{entry.value}"/>
+									includePageParams="false" propagation="none" title="#{permission.action.url}">
+									<c:forEach items="${permission.action.parameters.entrySet()}" var="entry">
+										<f:param name="#{entry.key}" value="#{entry.value}" />
 									</c:forEach>
 								</s:link>
 							</rich:menuItem>
 						</c:when>
 						<c:when test="#{permission.action.url == null or empty permission.action.url}">
-							 <rich:menuGroup value="#{permission.action.name}">
-								<c:forEach items="#{userSession.getPermissions(permission.action.id)}" var="_permission">
-									<rich:menuItem >
-										<s:link view="#{_permission.action.url}" value="#{_permission.action.name}"
-												includePageParams="false" propagation="none" title="#{_permission.action.url}">
-											<c:forEach items="${_permission.action.parameters.entrySet()}" var="entry">
-												<f:param name="#{entry.key}" value="#{entry.value}"/>
-											</c:forEach>
-										</s:link>
-									</rich:menuItem>
+							<rich:menuGroup value="#{permission.action.name}">
+								<c:forEach items="#{userSession.getPermissions(permission.action.id)}"
+									var="_permission">
+
+									<c:choose>
+										<c:when
+											test="#{_permission.action.url != null and not empty _permission.action.url}">
+											<rich:menuItem>
+												<s:link view="#{_permission.action.url}"
+													value="#{_permission.action.name}" includePageParams="false"
+													propagation="none" title="#{_permission.action.url}">
+													<c:forEach items="${_permission.action.parameters.entrySet()}"
+														var="entry">
+														<f:param name="#{entry.key}" value="#{entry.value}" />
+													</c:forEach>
+												</s:link>
+											</rich:menuItem>
+										</c:when>
+										<c:when
+											test="#{_permission.action.url == null or empty _permission.action.url}">
+											<rich:menuGroup value="#{_permission.action.name}">
+												<c:forEach items="#{userSession.getPermissions(_permission.action.id)}"
+													var="_permission2">
+													<rich:menuItem>
+														<s:link view="#{_permission2.action.url}"
+															value="#{_permission2.action.name}"
+															includePageParams="false" propagation="none"
+															title="#{_permission2.action.url}">
+															<c:forEach
+																items="${_permission2.action.parameters.entrySet()}"
+																var="entry2">
+																<f:param name="#{entry2.key}" value="#{entry2.value}" />
+															</c:forEach>
+														</s:link>
+													</rich:menuItem>
+												</c:forEach>
+
+											</rich:menuGroup>
+										</c:when>
+									</c:choose>
 								</c:forEach>
 							</rich:menuGroup>
 						</c:when>
@@ -94,13 +110,11 @@
 				</c:forEach>
 			</rich:dropDownMenu>
 		</c:forEach>
-		<rich:toolBarGroup location="right" rendered="#{userSession.user != null}" >
+		<rich:toolBarGroup location="right" rendered="#{userSession.user != null}">
 			<h:form>
-			#{messages['common.currentPeriod']}:#{' '}
-			<h:selectOneMenu id="currentFiscalPeriod" disabled="true"
-					value="#{userSession.fiscalPeriod}">
-					<s:selectItems value="#{fiscalPeriods}" var="fiscalPeriod"
-						label="#{fiscalPeriod.name}" />
+				#{messages['common.currentPeriod']}:#{' '}
+				<h:selectOneMenu id="currentFiscalPeriod" disabled="true" value="#{userSession.fiscalPeriod}">
+					<s:selectItems value="#{fiscalPeriods}" var="fiscalPeriod" label="#{fiscalPeriod.name}" />
 					<s:convertEntity />
 					<a:support event="onchange" ajaxSingle="true" />
 				</h:selectOneMenu>

@@ -1,0 +1,66 @@
+<!DOCTYPE composition
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:a="http://richfaces.org/a4j" xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="changeStatusDataInfraction">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Cambiar estado"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer" id="hidelinkImpugnment" />
+				<rich:componentControl for="changeStatusDataInfraction" attachTo="hidelinkImpugnment" operation="hide"
+					event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+		<h:form id="changeStatusDataInfractionForm">
+			<rich:messages errorClass="errors" style="color:red" />
+
+			<h:panelGrid columns="1">
+				<s:decorate id="statusField" template="../../../layout/edit.xhtml">
+					<ui:define name="label">Estado</ui:define>
+					<h:selectOneMenu id="cmbStatus" value="#{dataInfractionListHome.status}" required="true">
+						<f:selectItem itemLabel="#{messages['common.selectOne']}" itemValue="#{null}"
+							noSelectionOption="true" />
+						<f:selectItems value="#{dataInfractionListHome.statuses}" var="status"
+							itemLabel="#{status.name}" itemValue="#{status}" />
+						<a:support event="onchange" ajaxSingle="true" />
+						<s:convertEntity></s:convertEntity>
+					</h:selectOneMenu>
+
+				</s:decorate>
+
+				<s:decorate id="observationField" template="../../../layout/edit.xhtml">
+					<ui:define name="label">Explicación de cambio</ui:define>
+					<h:inputTextarea id="observation" value="#{dataInfractionListHome.changeStatusExplanation}" rows="5"
+						cols="34" maxlength="255">
+						<a:support ajaxSingle="true" event="onblur"></a:support>
+					</h:inputTextarea>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+			</h:panelGrid>
+			<div class="actionButtonsDialog">
+				<a:region>
+
+					<a:commandButton id="saveButton" ajaxSingle="true" value="Guardar"
+						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('changeStatusDataInfraction')}.hide();window.location.reload();"
+						bypassUpdates="true" actionListener="#{dataInfractionListHome.saveChangeStatus()}"
+						reRender="dataInfractionForm"/>
+
+					<a:commandButton ajaxSingle="true" value="#{messages['common.cancel']}"
+						oncomplete="Richfaces.hideModalPanel('changeStatusDataInfraction');" bypassUpdates="true"
+						immediate="true" />
+				</a:region>
+			</div>
+		</h:form>
+	</rich:modalPanel>
+</ui:composition>

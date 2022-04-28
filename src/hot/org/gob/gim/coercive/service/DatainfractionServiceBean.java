@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.gob.gim.coercive.dto.criteria.DataInfractionSearchCriteria;
 import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
@@ -147,6 +148,68 @@ public class DatainfractionServiceBean implements DatainfractionService {
 				.createQuery("SELECT d FROM Datainfraction d WHERE d.id=:id");
 		query.setParameter("id", id);
 		return (Datainfraction) query.getSingleResult();
+	}
+
+	@Override
+	public List<Datainfraction> findDataInfractionByCriteria(
+			DataInfractionSearchCriteria criteria, Integer firstRow,
+			Integer numberOfRows) {
+		
+		String strQry = "SELECT d FROM Datainfraction d WHERE 1 = 1 ";
+		
+		if(criteria.getIdentification() != null){
+			strQry += "AND d.identification =:identification ";
+		}
+		
+		if(criteria.getName() != null){
+			strQry += "AND UPPER(d.name) like :name ";
+		}
+		
+		if(criteria.getLicensePlate() != null){
+			strQry += "AND d.licensePlate =:licensePlate ";
+		}
+		
+		if(criteria.getTicket() != null){
+			strQry += "AND d.ticket =:ticket ";
+		}
+		
+		strQry += "ORDER BY d.name ASC "; 
+		
+		Query query = this.entityManager
+				.createQuery(strQry);
+		//query.setParameter("identification", identification);
+		
+		if(criteria.getIdentification() != null){
+			query.setParameter("identification", criteria.getIdentification().trim());
+		}
+		
+		if(criteria.getName() != null){
+			query.setParameter("name", "%"+ criteria.getName().trim().toUpperCase()+"%");
+		}
+		
+		if(criteria.getLicensePlate() != null){
+			query.setParameter("licensePlate", criteria.getLicensePlate().trim());
+		}
+		
+		if(criteria.getTicket() != null){
+			query.setParameter("ticket", criteria.getTicket().trim());
+		}
+		
+		query.setFirstResult(firstRow);
+		query.setMaxResults(numberOfRows);
+		
+		return query.getResultList();
+	}
+
+	@Override
+	public Integer findDataInfractionNumber(
+			DataInfractionSearchCriteria criteria) {
+		Query query = this.entityManager
+				.createQuery("SELECT COUNT(d) FROM Datainfraction d");
+		//query.setParameter("identification", identification);
+		Long size = (Long) query.getSingleResult();
+
+		return size.intValue();
 	}
 
 }
