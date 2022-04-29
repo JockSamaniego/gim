@@ -53,6 +53,8 @@ public class DataInfractionListHome extends EntityController {
 		super();
 		this.criteria = new DataInfractionSearchCriteria();
 		this.initializeService();
+		this.statuses = this.itemCatalogService
+				.findItemsForCatalogCodeOrderById("CATALOG_STATUS_INFRACTIONS");
 		this.search();
 	}
 
@@ -152,9 +154,6 @@ public class DataInfractionListHome extends EntityController {
 		this.currentItem = infraction;
 		this.status = null;
 		this.changeStatusExplanation = null;
-		this.statuses = this.itemCatalogService
-				.findItemsForCatalogCodeOrderById("CATALOG_STATUS_INFRACTIONS");
-
 	}
 
 	public void saveChangeStatus() {

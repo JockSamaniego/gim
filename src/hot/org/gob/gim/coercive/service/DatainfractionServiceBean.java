@@ -155,22 +155,26 @@ public class DatainfractionServiceBean implements DatainfractionService {
 			DataInfractionSearchCriteria criteria, Integer firstRow,
 			Integer numberOfRows) {
 		
-		String strQry = "SELECT d FROM Datainfraction d WHERE 1 = 1 ";
+		String strQry = "SELECT d FROM Datainfraction d JOIN d.state s WHERE 1 = 1 ";
 		
-		if(criteria.getIdentification() != null){
+		if(criteria.getIdentification() != null && !criteria.getIdentification().isEmpty()){
 			strQry += "AND d.identification =:identification ";
 		}
 		
-		if(criteria.getName() != null){
+		if(criteria.getName() != null && !criteria.getName().isEmpty()){
 			strQry += "AND UPPER(d.name) like :name ";
 		}
 		
-		if(criteria.getLicensePlate() != null){
+		if(criteria.getLicensePlate() != null && !criteria.getLicensePlate().isEmpty()){
 			strQry += "AND d.licensePlate =:licensePlate ";
 		}
 		
-		if(criteria.getTicket() != null){
+		if(criteria.getTicket() != null && !criteria.getTicket().isEmpty()){
 			strQry += "AND d.ticket =:ticket ";
+		}
+		
+		if(criteria.getStatus() != null){
+			strQry += "AND s.id =:statusId ";
 		}
 		
 		strQry += "ORDER BY d.name ASC "; 
@@ -179,20 +183,24 @@ public class DatainfractionServiceBean implements DatainfractionService {
 				.createQuery(strQry);
 		//query.setParameter("identification", identification);
 		
-		if(criteria.getIdentification() != null){
+		if(criteria.getIdentification() != null && !criteria.getIdentification().isEmpty()){
 			query.setParameter("identification", criteria.getIdentification().trim());
 		}
 		
-		if(criteria.getName() != null){
+		if(criteria.getName() != null && !criteria.getName().isEmpty()){
 			query.setParameter("name", "%"+ criteria.getName().trim().toUpperCase()+"%");
 		}
 		
-		if(criteria.getLicensePlate() != null){
+		if(criteria.getLicensePlate() != null && !criteria.getLicensePlate().isEmpty()){
 			query.setParameter("licensePlate", criteria.getLicensePlate().trim());
 		}
 		
-		if(criteria.getTicket() != null){
+		if(criteria.getTicket() != null && !criteria.getTicket().isEmpty()){
 			query.setParameter("ticket", criteria.getTicket().trim());
+		}
+		
+		if(criteria.getStatus() != null){
+			query.setParameter("statusId", criteria.getStatus().getId());
 		}
 		
 		query.setFirstResult(firstRow);
@@ -204,9 +212,55 @@ public class DatainfractionServiceBean implements DatainfractionService {
 	@Override
 	public Integer findDataInfractionNumber(
 			DataInfractionSearchCriteria criteria) {
+		
+		String strQry = "SELECT COUNT(*) FROM Datainfraction d JOIN d.state s WHERE 1 = 1 ";
+		
+		if(criteria.getIdentification() != null && !criteria.getIdentification().isEmpty()){
+			strQry += "AND d.identification =:identification ";
+		}
+			
+		if(criteria.getName() != null && !criteria.getName().isEmpty()){
+			strQry += "AND UPPER(d.name) like :name ";
+		}
+		
+		if(criteria.getLicensePlate() != null && !criteria.getLicensePlate().isEmpty()){
+			strQry += "AND d.licensePlate =:licensePlate ";
+		}
+		
+		if(criteria.getTicket() != null && !criteria.getTicket().isEmpty()){
+			strQry += "AND d.ticket =:ticket ";
+		}
+		
+		if(criteria.getStatus() != null){
+			strQry += "AND s.id =:statusId ";
+		}
+		
+		
 		Query query = this.entityManager
-				.createQuery("SELECT COUNT(d) FROM Datainfraction d");
+				.createQuery(strQry);
 		//query.setParameter("identification", identification);
+		
+		if(criteria.getIdentification() != null && !criteria.getIdentification().isEmpty()){
+			query.setParameter("identification", criteria.getIdentification().trim());
+		}
+		
+		if(criteria.getName() != null && !criteria.getName().isEmpty()){
+			query.setParameter("name", "%"+ criteria.getName().trim().toUpperCase()+"%");
+		}
+		
+		if(criteria.getLicensePlate() != null && !criteria.getLicensePlate().isEmpty()){
+			query.setParameter("licensePlate", criteria.getLicensePlate().trim());
+		}
+		
+		if(criteria.getTicket() != null && !criteria.getTicket().isEmpty()){
+			query.setParameter("ticket", criteria.getTicket().trim());
+		}
+		
+		if(criteria.getStatus() != null){
+			query.setParameter("statusId", criteria.getStatus().getId());
+		}
+		
+		
 		Long size = (Long) query.getSingleResult();
 
 		return size.intValue();

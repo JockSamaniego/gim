@@ -2,8 +2,8 @@
 	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:a="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:a="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
 
 	<ui:define name="body">
 
@@ -18,37 +18,43 @@
 						<h:outputText id="title" value="Infracciones Vencidas Migradas" styleClass="formTitle" />
 					</f:facet>
 
-					<h:panelGrid columns="2">
-						<s:decorate template="../../layout/edit.xhtml">
-							<ui:define name="label">Identificación:</ui:define>
-							<h:inputText id="identification" value="#{dataInfractionListHome.criteria.identification}">
-							</h:inputText>
-						</s:decorate>
-					</h:panelGrid>
 
-					<h:panelGrid columns="2">
-						<s:decorate template="../../layout/edit.xhtml">
-							<ui:define name="label">Nombre:</ui:define>
-							<h:inputText id="number" value="#{dataInfractionListHome.criteria.name}">
-							</h:inputText>
-						</s:decorate>
-					</h:panelGrid>
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Identificación:</ui:define>
+						<h:inputText id="identification" value="#{dataInfractionListHome.criteria.identification}">
+						</h:inputText>
+					</s:decorate>
 
-					<h:panelGrid columns="2">
-						<s:decorate template="../../layout/edit.xhtml">
-							<ui:define name="label">Placa:</ui:define>
-							<h:inputText id="number" value="#{dataInfractionListHome.criteria.licensePlate}">
-							</h:inputText>
-						</s:decorate>
-					</h:panelGrid>
 
-					<h:panelGrid columns="2">
-						<s:decorate template="../../layout/edit.xhtml">
-							<ui:define name="label">Nro boleta:</ui:define>
-							<h:inputText id="number" value="#{dataInfractionListHome.criteria.ticket}">
-							</h:inputText>
-						</s:decorate>
-					</h:panelGrid>
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Nombre:</ui:define>
+						<h:inputText id="number" value="#{dataInfractionListHome.criteria.name}">
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Placa:</ui:define>
+						<h:inputText id="number" value="#{dataInfractionListHome.criteria.licensePlate}">
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Nro boleta:</ui:define>
+						<h:inputText id="number" value="#{dataInfractionListHome.criteria.ticket}">
+						</h:inputText>
+					</s:decorate>
+
+					<s:decorate template="../../layout/edit.xhtml">
+						<ui:define name="label">Estado:</ui:define>
+						<h:selectOneMenu id="statusCmb" value="#{dataInfractionListHome.criteria.status}">
+							<f:selectItem itemLabel="#{messages['common.selectOne']}" itemValue="#{null}"
+								noSelectionOption="true" />
+							<f:selectItems value="#{dataInfractionListHome.statuses}" var="status"
+								itemLabel="#{status.name}" itemValue="#{status}" />
+							<a:support event="onchange" ajaxSingle="true" />
+							<s:convertEntity></s:convertEntity>
+						</h:selectOneMenu>
+					</s:decorate>
 
 					<div style="clear: both" />
 				</rich:panel>
@@ -56,8 +62,8 @@
 
 			<div class="actionButtons">
 				<a4j:commandButton id="search" value="#{messages['common.search']}"
-					action="#{dataInfractionListHome.search()}" reRender="messages" />
-
+					action="#{dataInfractionListHome.search()}"
+					reRender="messages, dataInfractionForm, infractionsList, scroller, table" />
 				<s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" propagation="none">
 				</s:button>
 			</div>
@@ -135,6 +141,14 @@
 							</h:outputText>
 						</rich:column>
 
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="ESTADO" />
+							</f:facet>
+							<h:outputText value="#{_infraction.state.name}">
+							</h:outputText>
+						</rich:column>
+
 						<rich:column styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="VALOR" />
@@ -161,11 +175,10 @@
 
 						<rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
-							<a:commandButton id="changeStatus" AjaxSingle="true" eventsQueue="gimQueue"
-								value="Cambiar Estado" 
-								reRender="changeStatusDataInfraction"
+							<a:commandButton id="changeStatus" ajaxSingle="true" eventsQueue="gimQueue"
+								value="Cambiar Estado" reRender="changeStatusDataInfraction"
 								oncomplete="Richfaces.showModalPanel('changeStatusDataInfraction',{width:450, height:250})"
-								actionListener="#{dataInfractionListHome.prepareChangeStatus(_infraction)}"/>
+								actionListener="#{dataInfractionListHome.prepareChangeStatus(_infraction)}" />
 						</rich:column>
 
 					</rich:dataTable>
