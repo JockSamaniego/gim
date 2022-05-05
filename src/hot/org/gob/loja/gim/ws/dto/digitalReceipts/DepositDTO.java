@@ -15,8 +15,6 @@ import javax.persistence.Id;
  */
 public class DepositDTO {
 	
-	@Id
-	@GeneratedValue(generator="DepositGenerator",strategy=GenerationType.TABLE)
 	private Long id;
 	
 	private Integer number;
