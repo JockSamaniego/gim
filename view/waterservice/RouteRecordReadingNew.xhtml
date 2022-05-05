@@ -209,7 +209,7 @@
 									<h:outputText value="#{service.previousReading}"
 										rendered="#{!routeHome.hasEditionReadingRole}" />
 									<h:inputText id="preRead" value="#{service.previousReading}"
-										disabled="#{!service.disabled}" size="8"
+										disabled="true" size="8"
 										style="text-align:right;"
 										rendered="#{routeHome.hasEditionReadingRole}">
 										<a:support event="onblur" ajaxSingle="true" />
