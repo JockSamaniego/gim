@@ -25,7 +25,7 @@
 				<s:decorate id="statusField" template="../../../layout/edit.xhtml">
 					<ui:define name="label">Estado</ui:define>
 					<h:selectOneMenu id="cmbStatus" value="#{overdueInfractionsList.status}" required="true">
-						<f:selectItem itemLabel="#{messages['common.selectOne']}" itemValue="#{null}"
+						<f:selectItem itemLabel="#{messages['common.selectOne']}" itemValue=""
 							noSelectionOption="true" />
 						<f:selectItems value="#{overdueInfractionsList.statuses}" var="status"
 							itemLabel="#{status.name}" itemValue="#{status}" />
@@ -38,7 +38,7 @@
 				<s:decorate id="observationField" template="../../../layout/edit.xhtml">
 					<ui:define name="label">Explicación de cambio</ui:define>
 					<h:inputTextarea id="observation" value="#{overdueInfractionsList.changeStatusExplanation}" rows="5"
-						cols="34" maxlength="255">
+						cols="34" maxlength="255" required="true">
 						<a:support ajaxSingle="true" event="onblur"></a:support>
 					</h:inputTextarea>
 				</s:decorate>
@@ -52,18 +52,18 @@
 				<a:region>
 
 					<a:commandButton id="saveButton" ajaxSingle="true" value="Guardar"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('changeStatusInfraction')}.hide();"
+						oncomplete="if (#{facesContext.maximumSeverity==null}){ #{rich:component('changeStatusInfraction')}.hide();}"
 						bypassUpdates="true" actionListener="#{overdueInfractionsList.save()}"
 						reRender="municipalBondsTable" rendered="#{overdueInfractionsList.singleChangeStatus}" />
 
 					<a:commandButton id="saveResidentButton" ajaxSingle="true" value="Guardar todos"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('changeStatusInfraction')}.hide();window.location.reload();"
+						oncomplete="if (#{facesContext.maximumSeverity==null}){#{rich:component('changeStatusInfraction')}.hide();window.location.reload();}"
 						bypassUpdates="true"
 						actionListener="#{overdueInfractionsList.saveChangeStatusInfractionsResident()}"
 						reRender="overdueInfractionsForm, table, messages" rendered="#{overdueInfractionsList.residentChangeStatus}" />
 						
 					<a:commandButton id="saveResidentSelection" ajaxSingle="true" value="Guardar Seleccion"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('changeStatusInfraction')}.hide();window.location.reload();"
+						oncomplete="if (#{facesContext.maximumSeverity==null}){#{rich:component('changeStatusInfraction')}.hide();window.location.reload();}"
 						bypassUpdates="true"
 						reRender="overdueInfractionsForm, table, messages" rendered="#{overdueInfractionsList.selectionResidentChangeStatus}" 
 						actionListener="#{overdueInfractionsList.saveChangeStatusSelectedResidents()}"/>

@@ -13,8 +13,10 @@ import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityController;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
@@ -33,6 +35,10 @@ public class DataInfractionListHome extends EntityController {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	@In
+	FacesMessages facesMessages;
+
 	private DataInfractionSearchCriteria criteria;
 
 	private List<ItemCatalog> statuses = new ArrayList<ItemCatalog>();
@@ -158,15 +164,23 @@ public class DataInfractionListHome extends EntityController {
 
 	public void saveChangeStatus() {
 
-		if (datainfractionService == null) {
-			datainfractionService = ServiceLocator.getInstance().findResource(
-					datainfractionService.LOCAL_NAME);
-		}
+		if (this.status == null
+				|| (this.changeStatusExplanation == null && this.changeStatusExplanation
+						.isEmpty())) {
+			facesMessages.addToControl("",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
+					"Campos obligatorios vacios");
+		} else {
+			if (datainfractionService == null) {
+				datainfractionService = ServiceLocator.getInstance()
+						.findResource(datainfractionService.LOCAL_NAME);
+			}
 
-		this.currentItem.setState(this.status);
-		this.currentItem
-				.setChangeStatusExplanation(this.changeStatusExplanation);
-		this.datainfractionService.updateDataInfraction(this.currentItem);
+			this.currentItem.setState(this.status);
+			this.currentItem
+					.setChangeStatusExplanation(this.changeStatusExplanation);
+			this.datainfractionService.updateDataInfraction(this.currentItem);
+		}
 
 	}
 

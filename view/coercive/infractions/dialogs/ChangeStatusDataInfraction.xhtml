@@ -22,10 +22,14 @@
 			<rich:messages errorClass="errors" style="color:red" />
 
 			<h:panelGrid columns="1">
+				<s:decorate id="currentStatusField" template="../../../layout/edit.xhtml">
+					<ui:define name="label">Estado Actual:</ui:define>
+					<h:outputText value="#{dataInfractionListHome.currentItem.state.name}" /> 
+				</s:decorate>
 				<s:decorate id="statusField" template="../../../layout/edit.xhtml">
 					<ui:define name="label">Estado</ui:define>
 					<h:selectOneMenu id="cmbStatus" value="#{dataInfractionListHome.status}" required="true">
-						<f:selectItem itemLabel="#{messages['common.selectOne']}" itemValue="#{null}"
+						<f:selectItem itemLabel="#{messages['common.selectOne']}" itemValue=""
 							noSelectionOption="true" />
 						<f:selectItems value="#{dataInfractionListHome.statuses}" var="status"
 							itemLabel="#{status.name}" itemValue="#{status}" />
@@ -38,7 +42,7 @@
 				<s:decorate id="observationField" template="../../../layout/edit.xhtml">
 					<ui:define name="label">Explicación de cambio</ui:define>
 					<h:inputTextarea id="observation" value="#{dataInfractionListHome.changeStatusExplanation}" rows="5"
-						cols="34" maxlength="255">
+						cols="34" maxlength="255" required="true">
 						<a:support ajaxSingle="true" event="onblur"></a:support>
 					</h:inputTextarea>
 				</s:decorate>
@@ -52,7 +56,7 @@
 				<a:region>
 
 					<a:commandButton id="saveButton" ajaxSingle="true" value="Guardar"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('changeStatusDataInfraction')}.hide();window.location.reload();"
+						oncomplete="if (#{facesContext.maximumSeverity==null}){ #{rich:component('changeStatusDataInfraction')}.hide();window.location.reload();}"
 						bypassUpdates="true" actionListener="#{dataInfractionListHome.saveChangeStatus()}"
 						reRender="dataInfractionForm"/>
 

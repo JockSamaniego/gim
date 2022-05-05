@@ -157,6 +157,14 @@
 								<f:convertNumber maxFractionDigits="2" pattern="#,##,##0.00" />
 							</h:outputText>
 						</rich:column>
+						
+						<rich:column styleClass="right">
+							<f:facet name="header">
+							Estado GIM
+						</f:facet>
+							<h:outputText value="#{_infraction.state.name}">
+							</h:outputText>
+						</rich:column>
 
 
 						<rich:column styleClass="action">

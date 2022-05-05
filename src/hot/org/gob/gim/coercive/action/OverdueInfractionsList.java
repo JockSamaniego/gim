@@ -756,16 +756,25 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	}
 
 	public void save() {
-		System.out.println("SAVE");
-		if (datainfractionService == null) {
-			datainfractionService = ServiceLocator.getInstance().findResource(
-					datainfractionService.LOCAL_NAME);
-		}
 
-		this.currentItem.setState(this.status);
-		this.currentItem
-				.setChangeStatusExplanation(this.changeStatusExplanation);
-		this.datainfractionService.updateDataInfraction(this.currentItem);
+		if (this.status == null
+				|| (this.changeStatusExplanation == null && this.changeStatusExplanation
+						.isEmpty())) {
+			facesMessages.addToControl("",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
+					"Campos obligatorios vacios");
+		} else {
+			if (datainfractionService == null) {
+				datainfractionService = ServiceLocator.getInstance()
+						.findResource(datainfractionService.LOCAL_NAME);
+			}
+
+			this.currentItem.setState(this.status);
+			this.currentItem
+					.setChangeStatusExplanation(this.changeStatusExplanation);
+			this.datainfractionService.updateDataInfraction(this.currentItem);
+
+		}
 
 	}
 
@@ -803,44 +812,58 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	}
 
 	public void saveChangeStatusInfractionsResident() throws IOException {
-		System.out.println("SAVE ALL RESIDENT");
-		if (datainfractionService == null) {
-			datainfractionService = ServiceLocator.getInstance().findResource(
-					datainfractionService.LOCAL_NAME);
-		}
 
-		for (int i = 0; i < this.infractions.size(); i++) {
-			Datainfraction dat = this.infractions.get(i);
-			dat.setState(this.status);
-			dat.setChangeStatusExplanation(this.changeStatusExplanation);
-			this.datainfractionService.updateDataInfraction(dat);
-		}
+		if (this.status == null
+				|| (this.changeStatusExplanation == null && this.changeStatusExplanation
+						.isEmpty())) {
+			facesMessages.addToControl("",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
+					"Campos obligatorios vacios");
+		} else {
+			if (datainfractionService == null) {
+				datainfractionService = ServiceLocator.getInstance()
+						.findResource(datainfractionService.LOCAL_NAME);
+			}
 
-		// this.reload();
-
-	}
-
-	public void saveChangeStatusSelectedResidents() {
-		System.out.println("SAVE ALL SELECTEDS");
-		if (datainfractionService == null) {
-			datainfractionService = ServiceLocator.getInstance().findResource(
-					datainfractionService.LOCAL_NAME);
-		}
-
-		for (int i = 0; i < this.selectedList.size(); i++) {
-			InfractionItem inf = this.selectedList.get(i);
-			System.out.println(inf.getIdentification());
-			// TODO CONSULTAR POR RESIDENT
-			List<Datainfraction> infrac = loadPendingInfractions(inf
-					.getIdentification());
-			for (int j = 0; j < infrac.size(); j++) {
-				Datainfraction dat = infrac.get(j);
+			for (int i = 0; i < this.infractions.size(); i++) {
+				Datainfraction dat = this.infractions.get(i);
 				dat.setState(this.status);
 				dat.setChangeStatusExplanation(this.changeStatusExplanation);
 				this.datainfractionService.updateDataInfraction(dat);
 			}
-
 		}
+
+	}
+
+	public void saveChangeStatusSelectedResidents() {
+		if (this.status == null
+				|| (this.changeStatusExplanation == null && this.changeStatusExplanation
+						.isEmpty())) {
+			facesMessages.addToControl("",
+					org.jboss.seam.international.StatusMessage.Severity.ERROR,
+					"Campos obligatorios vacios");
+		} else {
+			if (datainfractionService == null) {
+				datainfractionService = ServiceLocator.getInstance()
+						.findResource(datainfractionService.LOCAL_NAME);
+			}
+
+			for (int i = 0; i < this.selectedList.size(); i++) {
+				InfractionItem inf = this.selectedList.get(i);
+				System.out.println(inf.getIdentification());
+				// TODO CONSULTAR POR RESIDENT
+				List<Datainfraction> infrac = loadPendingInfractions(inf
+						.getIdentification());
+				for (int j = 0; j < infrac.size(); j++) {
+					Datainfraction dat = infrac.get(j);
+					dat.setState(this.status);
+					dat.setChangeStatusExplanation(this.changeStatusExplanation);
+					this.datainfractionService.updateDataInfraction(dat);
+				}
+
+			}
+		}
+
 	}
 
 	/**
@@ -864,12 +887,6 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		result = query.getResultList();
 
 		return result;
-	}
-
-	public void reload() throws IOException {
-		ExternalContext ec = FacesContext.getCurrentInstance()
-				.getExternalContext();
-		ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
 	}
 
 }
