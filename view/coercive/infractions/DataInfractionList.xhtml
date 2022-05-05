@@ -47,7 +47,7 @@
 					<s:decorate template="../../layout/edit.xhtml">
 						<ui:define name="label">Estado:</ui:define>
 						<h:selectOneMenu id="statusCmb" value="#{dataInfractionListHome.criteria.status}">
-							<f:selectItem itemLabel="#{messages['common.selectOne']}" itemValue="#{null}"
+							<f:selectItem itemLabel="#{messages['common.selectOne']}" itemValue=""
 								noSelectionOption="true" />
 							<f:selectItems value="#{dataInfractionListHome.statuses}" var="status"
 								itemLabel="#{status.name}" itemValue="#{status}" />
