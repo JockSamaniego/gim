@@ -698,6 +698,7 @@ public class PropertyHome extends EntityHome<Property> {
 	private BigDecimal ABDValue = new BigDecimal(0);	
 	private BigDecimal ACDValue = new BigDecimal(0);
 	private Property propertyDocument;
+	private Domain domainDocument;
 	
 	public TransferDomainComplement getTDC() {
 		return TDC;
@@ -730,6 +731,14 @@ public class PropertyHome extends EntityHome<Property> {
 	public void setPropertyDocument(Property propertyDocument) {
 		this.propertyDocument = propertyDocument;
 	}
+	
+	public Domain getDomainDocument() {
+		return domainDocument;
+	}
+
+	public void setDomainDocument(Domain domainDocument) {
+		this.domainDocument = domainDocument;
+	}
 
 	public void calculateDomainValues(BigDecimal valueA, BigDecimal valueB, BigDecimal valueC, BigDecimal valueD){
 		ABDValue = new BigDecimal(0);
@@ -751,12 +760,16 @@ public class PropertyHome extends EntityHome<Property> {
 	}
 	
 	public void chargeDomainsToPrintDocument(Long property_id){
-		this.propertyDocument = getEntityManager().find(Property.class, property_id);	
+		this.propertyDocument = getEntityManager().find(Property.class, property_id);
+		Query query2 = getEntityManager().createNamedQuery(
+				"Domain.findPendingTransfersByPropertyId");
+		query2.setParameter("propertyId", this.propertyDocument.getId());
+		this.domainDocument =  (Domain) query2.getSingleResult();
 		TDC = new TransferDomainComplement();
 		TransferDomainComplement TDCaux = new TransferDomainComplement();
 		Query query = getEntityManager().createNamedQuery(
 				"DomainComplement.findFinalByDomain");
-		query.setParameter("domain_id", this.propertyDocument.getCurrentDomain().getId());
+		query.setParameter("domain_id", this.domainDocument.getId());
 		try {
 			TDCaux = (TransferDomainComplement) query.getSingleResult();
 			TDC.setAcquisitionValue(TDCaux.getAcquisitionValue());
@@ -797,7 +810,7 @@ public class PropertyHome extends EntityHome<Property> {
 	
 	public String saveDomainTransferComplement(){
 		EntityManager em = getEntityManager();
-		TDC.setDomain(this.propertyDocument.getCurrentDomain());
+		TDC.setDomain(this.domainDocument);
 		TDC.setUserDocument(userSession.getPerson().getName());
 		em.persist(TDC);
 		em.flush();

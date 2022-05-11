@@ -45,7 +45,7 @@
 
 					<h:inputText id="input01" size="15" maxlength="15"
 						style="margin-left: 2em" disabled="true"
-						value="#{propertyHome.propertyDocument.currentDomain.tramitNumber}" />
+						value="#{propertyHome.domainDocument.tramitNumber}" />
 
 					<h:outputText value="FICHA REGISTRAL:" style="margin-left: 6em"></h:outputText>
 
@@ -57,7 +57,7 @@
 
 					<h:inputText id="input03" size="15" maxlength="15"
 						style="margin-left: 2em"
-						value="#{propertyHome.propertyDocument.currentDomain.property.propertyType.name}" 
+						value="#{propertyHome.domainDocument.property.propertyType.name}" 
 						disabled = "true"/>
 
 					<br />
@@ -73,7 +73,7 @@
 
 					<h:inputText id="input05" size="54" maxlength="54"
 						style="margin-left: 1em"
-						value="#{propertyHome.propertyDocument.currentDomain.purchaseType.name}"
+						value="#{propertyHome.domainDocument.purchaseType.name}"
 						disabled = "true" />
 
 				</rich:panel>
@@ -96,14 +96,14 @@
 				
 				<h:inputText id="input06" size="30" maxlength="30"
 					style="margin-left: 2em"
-					value="#{propertyHome.propertyDocument.currentDomain.property.previousCadastralCode}"
+					value="#{propertyHome.domainDocument.property.previousCadastralCode}"
 					disabled="true" />
 					
 				<h:outputText value="Clave catastral actual:" style="margin-left: 6em"></h:outputText>
 				
 				<h:inputText id="input07" size="40" maxlength="40"
 					style="margin-left: 2em"
-					value="#{propertyHome.propertyDocument.currentDomain.property.cadastralCode}"
+					value="#{propertyHome.domainDocument.property.cadastralCode}"
 					disabled="true" />
 					
 				<br />
@@ -122,14 +122,14 @@
 				
 				<h:inputText id="input08" size="60" maxlength="60"
 					style="margin-left: 2em"
-					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.resident.name}"
+					value="#{propertyHome.domainDocument.previousDomain.resident.name}"
 					disabled="true" />
 					
 				<h:outputText value="CI/RUC/PASP:" style="margin-left: 10em"></h:outputText>
 				
 				<h:inputText id="input09" size="20" maxlength="15"
 					style="margin-left: 2em"
-					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.resident.identificationNumber}"
+					value="#{propertyHome.domainDocument.previousDomain.resident.identificationNumber}"
 					disabled="true" />	
 				<br />
 				<br />
@@ -173,14 +173,14 @@
 				
 				<h:inputText id="input13" size="60" maxlength="60"
 					style="margin-left: 2em"
-					value="#{propertyHome.propertyDocument.currentDomain.resident.name}"
+					value="#{propertyHome.domainDocument.resident.name}"
 					disabled="true" />
 					
 				<h:outputText value="CI/RUC/PASP:" style="margin-left: 10em"></h:outputText>
 				
 				<h:inputText id="input14" size="20" maxlength="15"
 					style="margin-left: 2em"
-					value="#{propertyHome.propertyDocument.currentDomain.resident.identificationNumber}"
+					value="#{propertyHome.domainDocument.resident.identificationNumber}"
 					disabled="true" />	
 				<br />
 				<br />
@@ -229,14 +229,14 @@
 				<h:outputText value="El propietario ha adquirido su inmueble por:"></h:outputText>
 				<h:inputText id="input18" size="54" maxlength="54"
 					style="margin-left: 6em"
-					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.purchaseType.name}"
+					value="#{propertyHome.domainDocument.previousDomain.purchaseType.name}"
 					disabled="true" />
 				<br />
 				<br />
 
 				<h:outputText value="Fecha de adquisición:" style="margin-right: 2em"></h:outputText>
 					<rich:calendar id="adquisitionDate" 
-	                          value="#{propertyHome.propertyDocument.currentDomain.previousDomain.acquisitionDate}" datePattern="dd/MM/yyyy" 
+	                          value="#{propertyHome.domainDocument.previousDomain.acquisitionDate}" datePattern="dd/MM/yyyy" 
 	                          disabled = "true" ajaxSingle="true" >
 	                          <a:support event="onchanged" ajaxSingle="true" reRender="adquisitionDate"/>
 	                </rich:calendar>
@@ -261,7 +261,7 @@
 
 				<h:outputText value="Fecha de inscripción:" style="margin-right: 2.3em"></h:outputText>
 				<rich:calendar id="inscriptionDate"
-                          value="#{propertyHome.propertyDocument.currentDomain.previousDomain.date}" datePattern="dd/MM/yyyy" 
+                          value="#{propertyHome.domainDocument.previousDomain.date}" datePattern="dd/MM/yyyy" 
                           disabled = "true">
                 </rich:calendar>
 
@@ -371,7 +371,7 @@
 				<h:outputText value="Área de construcción:" style="margin-left: 9em"></h:outputText>
 				<h:inputText id="input32" size="30" maxlength="30"
 					style="margin-left: 4em"
-					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.totalAreaConstruction}"
+					value="#{propertyHome.domainDocument.previousDomain.totalAreaConstruction}"
 					disabled="true">
 					<f:convertNumber pattern="#0.00" />
 				</h:inputText>
@@ -523,7 +523,7 @@
 				<h:outputText value="Avalúo terreno:" style="margin-left: 8em"></h:outputText>
 				<h:inputText id="input45" size="25" maxlength="25"
 					style="margin-left: 9.8em"
-					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.lotAppraisal}"
+					value="#{propertyHome.domainDocument.previousDomain.lotAppraisal}"
 					disabled="true" >
 					<f:convertNumber pattern="#0.00" />
 				</h:inputText>
@@ -534,7 +534,7 @@
 				<h:outputText value="Avalúo construcción:"></h:outputText>
 				<h:inputText id="input46" size="25" maxlength="25"
 					style="margin-left: 8.4em"
-					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.buildingAppraisal}"
+					value="#{propertyHome.domainDocument.previousDomain.buildingAppraisal}"
 					disabled="true" >
 					<f:convertNumber pattern="#0.00" />
 				</h:inputText>
@@ -542,7 +542,7 @@
 				<h:outputText value="Avalúo total:" style="margin-left: 8em"></h:outputText>
 				<h:inputText id="input47" size="25" maxlength="25"
 					style="margin-left: 11.1em"
-					value="#{propertyHome.propertyDocument.currentDomain.previousDomain.commercialAppraisal}"
+					value="#{propertyHome.domainDocument.previousDomain.commercialAppraisal}"
 					disabled="true" >
 					<f:convertNumber pattern="#0.00" />
 				</h:inputText>
@@ -587,34 +587,6 @@
 				<div style="clear: both"></div>
 
 			</rich:panel>
-
-			<br />
-
-			<rich:panel id="contentPanelb">
-
-				<f:facet name="header">
-
-					<h:panelGrid columns="1" columnClasses="headerTitle,">
-
-						<h:outputText value="LINDEROS" />
-
-					</h:panelGrid>
-				</f:facet>
-
-				<h:outputText value="DESCRIPCIÓN DOCUMENTOS:" style="margin-left: 6em"></h:outputText>
-				<br />
-				<br />
-				<h:inputTextarea id="areaText1" cols="80" rows="5"
-					style="margin-left: 6em"
-					value="#{propertyHome.TDC.documentsDescription}">
-					<f:validateLength maximum="255" />
-					<a:support event="onblur" ajaxSingle="true" />
-				</h:inputTextarea>
-
-				<div style="clear: both"></div>
-
-			</rich:panel>
-
 
 			<br />
 
