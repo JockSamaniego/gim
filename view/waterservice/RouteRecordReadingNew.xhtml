@@ -209,12 +209,13 @@
 									<h:outputText value="#{service.previousReading}"
 										rendered="#{!routeHome.hasEditionReadingRole}" />
 									<h:inputText id="preRead" value="#{service.previousReading}"
-										disabled="true" size="8"
+										disabled="#{!service.disabled}" size="8"
 										style="text-align:right;"
 										rendered="#{routeHome.hasEditionReadingRole}">
 										<a:support event="onblur" ajaxSingle="true" />
 									</h:inputText>
 								</rich:column>
+								
 
 								<rich:column style="text-align:right;">
 									<f:facet name="header">#{messages['route.currentReading']}</f:facet>
