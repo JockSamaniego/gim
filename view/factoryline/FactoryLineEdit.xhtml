@@ -404,7 +404,13 @@
 
                     </h:panelGrid>
 
-                    <h:panelGrid id="polygonData1" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('RURAL')}">
+                    <h:panelGrid id="addPolygon2" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('RURAL')}">
+                        <h:selectBooleanCheckbox value="#{factoryLineHome.addSecondPolygon}" >
+                            <a:support event="onchange" ajaxSingle="true" reRender="factoryLineEditForm" />AGREGAR OCUPACIÓN DEL SUELO 1
+                        </h:selectBooleanCheckbox>
+                    </h:panelGrid>
+                    
+                    <h:panelGrid id="polygonData1" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('RURAL') and factoryLineHome.addSecondPolygon}" >
                         <f:facet name="header">OCUPACIÓN DEL SUELO 1</f:facet>
                         <s:decorate template="../layout/edit.xhtml">
                             <ui:define name="label">#{messages['factoryLine.territorialPolygon']}</ui:define>
@@ -415,7 +421,7 @@
                                     label="#{_territorialPolygon.polygonCode} - #{_territorialPolygon.polygonName}" 
                                     noSelectionLabel="Seleccione una opción" />
                                 <s:convertEntity />
-                                <a:support event="onchange" ajaxSingle="true" reRender="polygonData1" />
+                                <a:support event="onchange" ajaxSingle="true" reRender="contentPanel" />
                             </h:selectOneMenu>
                         </s:decorate>
 
@@ -637,8 +643,14 @@
                         </h:panelGrid>
 
                     </h:panelGrid>
-
-                    <h:panelGrid id="polygonData2" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('RURAL')}">
+                    
+                    <h:panelGrid id="addPolygon3" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('RURAL')}">
+                        <h:selectBooleanCheckbox value="#{factoryLineHome.addThirdPolygon}" >
+                            <a:support event="onchange" ajaxSingle="true" reRender="factoryLineEditForm" />AGREGAR OCUPACIÓN DEL SUELO 2
+                        </h:selectBooleanCheckbox>
+                    </h:panelGrid>
+                    
+                    <h:panelGrid id="polygonData2" rendered="#{factoryLineHome.instance.sectorType.name().equalsIgnoreCase('RURAL') and factoryLineHome.addThirdPolygon}">
                         <f:facet name="header" styleClass="formTitle">OCUPACIÓN DEL SUELO 2</f:facet>
                         <s:decorate template="../layout/edit.xhtml">
                             <ui:define name="label">#{messages['factoryLine.territorialPolygon']}</ui:define>
