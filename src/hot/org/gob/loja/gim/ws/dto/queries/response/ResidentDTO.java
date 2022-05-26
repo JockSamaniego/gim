@@ -29,7 +29,7 @@ public class ResidentDTO {
 		this.identificationNumber = resident.getIdentificationNumber();
 		this.identificationType = resident.getIdentificationType().name();
 		this.name = resident.getName();
-		this.street = resident.getCurrentAddress().getStreet();
+		this.street = resident.getCurrentAddress() == null ? "" : resident.getCurrentAddress().getStreet();
 	}
 
 	/**

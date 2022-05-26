@@ -61,6 +61,7 @@ import ec.gob.gim.binnaclecrv.model.VehicleInventory;
 import ec.gob.gim.binnaclecrv.model.VehicleInventoryBase;
 import ec.gob.gim.binnaclecrv.model.VehicleItem;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.revenue.model.MunicipalBond;
 import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
 // import ec.gob.gim.revenue.model.adjunct.BinnacleCRVReference;
 import ec.gob.loja.middleapp.InfractionWSV2;
@@ -118,6 +119,7 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	ArrivalHistoryBinnacleCRV arrivalHistoryBinnacleCRV;
 	
 	private boolean canSaveExitVehicle;
+	private boolean manualExit;
 
 	private boolean hasRoleUCOT;
 	private boolean hasRoleCRV;
@@ -504,6 +506,20 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 	 */
 	public void setCanSaveExitVehicle(boolean canSaveExitVehicle) {
 		this.canSaveExitVehicle = canSaveExitVehicle;
+	}
+
+	/**
+	 * @return the manualExit
+	 */
+	public boolean isManualExit() {
+		return manualExit;
+	}
+
+	/**
+	 * @param manualExit the manualExit to set
+	 */
+	public void setManualExit(boolean manualExit) {
+		this.manualExit = manualExit;
 	}
 
 	/**
@@ -1372,7 +1388,13 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		if (list.size() > 0){
 			BinnacleCRVReference binnacleCRVReference = list.get(0);
 			query = null;
-			return binnacleCRVReference;
+			query = getEntityManager().createNamedQuery("Bond.findByAdjunctId");
+			query.setParameter("adjunctId", binnacleCRVReference.getId());
+			MunicipalBond bond = (MunicipalBond) query.getSingleResult();
+			if ((bond.getMunicipalBondStatus().getId() == 6) || (bond.getMunicipalBondStatus().getId() == 11))
+				return binnacleCRVReference;
+			else
+				return null;
 		}
 		return null;
 	}
@@ -1386,7 +1408,7 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		Long entryGarajeId = systemParameterService.findParameter(SystemParameterService.ENTRY_ID_GARAJE_SERVICE_UMTTT);
 		BinnacleCRVReference binnacleCRVReference = findBinnacleCRVReference(arrival, entryGarajeId);
 		if (binnacleCRVReference == null){
-			facesMessages.add("Es necesario emitir y/o cancelar los títulos por el Servicio de Garaje.");
+			if (!manualExit) facesMessages.add("Es necesario emitir y/o cancelar los títulos por el Servicio de Garaje.");
 		} else{
 			arrival.setExitDate(binnacleCRVReference.getExitDate());
 			if (!arrival.isHasCraneService()) arrival.setExitDateCrane(binnacleCRVReference.getExitDate());
@@ -1398,7 +1420,7 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 			Long entryCraneId = systemParameterService.findParameter(SystemParameterService.ENTRY_ID_GRUA_SERVICE_UMTTT);
 			binnacleCRVReference = findBinnacleCRVReference(arrival, entryCraneId);
 			if (binnacleCRVReference == null){
-				facesMessages.add("Es necesario emitir y/o cancelar los títulos por el Servicio de Grúa.");
+				if (!manualExit) facesMessages.add("Es necesario emitir y/o cancelar los títulos por el Servicio de Grúa.");
 				isEmmitedCrane = false;
 			} else {
 				arrival.setExitDateCrane(binnacleCRVReference.getExitDate());
@@ -1407,7 +1429,7 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		}
 		if ((!isEmmitedGaraje) || (!isEmmitedCrane))
 			canSaveExitVehicle = false;
-			
+		if (manualExit) canSaveExitVehicle = true;
 		this.arrivalHistoryBinnacleCRV = arrival;
 	}
 	

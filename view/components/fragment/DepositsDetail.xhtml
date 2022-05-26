@@ -17,19 +17,26 @@
 		<h:panelGrid id="#{id}_depositsTable" width="100%" rendered="#{not empty deposits}">
 		
 			<rich:dataTable value="#{deposits}" var="_dep"
-			columnClasses="center, left, right">				
+			columnClasses="center, center, left, right">				
 				<f:facet name="header">
 							<h:outputText value="#{messages['depositsDetail']}" />
 				</f:facet>
-				<rich:column>
-						<f:facet name="header">
-							<h:outputText value="#{messages['municipalBond.paymentDate']}" />
-						</f:facet>
-						<h:outputText value="#{_dep.date}">
-							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
-						</h:outputText>
-				</rich:column>
-				
+                <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['municipalBond.transactionId']}" />
+                        </f:facet>
+                        <h:outputText value="#{_dep.payment.id}" />
+                </rich:column>
+                
+                <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['municipalBond.paymentDate']}" />
+                        </f:facet>
+                        <h:outputText value="#{_dep.date}">
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+                        </h:outputText>
+                </rich:column>
+                
 				<rich:column>
 						<f:facet name="header">
 							<h:outputText value="#{messages['payment.cashier']}" />

@@ -81,6 +81,28 @@
 				</h:inputText>
 			</s:decorate>
 			
+			<s:decorate id="dateNewDomainIdField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.inscriptionDate']}:</ui:define>
+					<rich:calendar id="dateNewDomainIdNumber" required="true" disabled="#{addMortgage or propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}"
+						ajaxSingle="true"
+						value="#{domainHome.instance.date}"
+						currentDate="#{currentDate}" immediate="true"
+						datePattern="#{messages['common.datePattern']}">
+						<a:support event="ondateseleted" ajaxSingle="true" reRender="dateDomainIdField"></a:support>
+						</rich:calendar>
+			</s:decorate>
+			
+			<s:decorate id="acquisitionDateNewDomainField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['domain.acquisitionDate']}:</ui:define>
+					<rich:calendar id="acquisitionDateNewDomainNumber" required="true" disabled="#{addMortgage or propertyHome.confirmChangeOwner or propertyHome.changedOwnerComplete}"
+						ajaxSingle="true"
+						value="#{domainHome.instance.acquisitionDate}"
+						currentDate="#{currentDate}" immediate="true"
+						datePattern="#{messages['common.datePattern']}">
+						<a:support event="ondateseleted" ajaxSingle="true" reRender="acquisitionDateDomainField"></a:support>
+						</rich:calendar>
+			</s:decorate>
+			
 			<s:decorate id="valueBySquareMeterField"
 				template="../../layout/edit.xhtml">
 				<ui:define name="label">#{messages['domain.landValue']}:</ui:define>

@@ -17,7 +17,7 @@ import org.hibernate.envers.Audited;
 @TableGenerator(name = "FinancialInstitutionGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "FinancialInstitution", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
 		@NamedQuery(name = "FinancialInstitution.findAll", query = "select f from FinancialInstitution f order by f.name"),
-		@NamedQuery(name = "FinancialInstitution.findByType", query = "select f from FinancialInstitution f where f.financialInstitutionType = :type"),
+		@NamedQuery(name = "FinancialInstitution.findByType", query = "select f from FinancialInstitution f where f.financialInstitutionType = :type order by f.name"),
 		@NamedQuery(name = "FinancialInstitution.findById", query = "select f from FinancialInstitution f where f.id = :id")})
 public class FinancialInstitution {
 

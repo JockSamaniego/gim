@@ -875,7 +875,8 @@ import ec.gob.gim.revenue.model.impugnment.Impugnment;
 				+ "    mb.resident.id=:residentId AND "
 				+ "    mb.municipalBondType=:municipalBondType AND "
 				+ "    mb.municipalBondStatus.id = :pendingBondStatusId AND "
-				+ "	   mb.entry.id not in :entries"),
+				+ "	   mb.entry.id not in :entries "
+				+ "	   order by mb.entry.id, mb.groupingCode, mb.expirationDate "),
 
 		@NamedQuery(name = "BondDetail.findBondDetailById", query = "SELECT NEW org.gob.loja.gim.ws.dto.BondDetail("
 				+ "    mb.id, a.budgetCertificateName, i.entry.name, i.total)"
@@ -981,6 +982,11 @@ import ec.gob.gim.revenue.model.impugnment.Impugnment;
 				+ "    mb.resident.id=:residentId AND "
 				+ "    mb.municipalBondType=:municipalBondType AND "
 				+ "    mb.municipalBondStatus.id IN (:statusIds)"),
+				
+		@NamedQuery(name = "Bond.findByAdjunctId", query = "SELECT mb FROM "
+				+ "    MunicipalBond mb "
+				+ "  WHERE "
+				+ "    mb.adjunct.id=:adjunctId"),
 				
 		@NamedQuery(name = "Bond.findByListIds", query = "SELECT NEW org.gob.loja.gim.ws.dto.BondWS("
 				+ "    mb.id, mb.number, e.name, mb.groupingCode, mb.paidTotal, mb.serviceDate, mb.expirationDate, "

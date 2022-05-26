@@ -7,7 +7,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
 	title="Reporte Emisión" subject="report" type="pdf"
-	pageSize="A4" margins="20 10 20 20" author="loxageek"
+	pageSize="A4" margins="20 25 20 20" author="loxageek"
 	orientation="portrait" creator="René">
 
 	<f:facet name="header">
@@ -883,7 +883,7 @@
 					</p:cell>
 					<p:cell  horizontalAlignment="right">
 						<p:paragraph>
-							<p:text value="#{emissionReportHome.total_valor_emision + emissionReportHome.total_valor_correction}">
+							<p:text value="#{emissionReportHome.total_valor_emision}">
 								<f:convertNumber  type="number"  pattern="###,###,###,###.##" />
 							</p:text>
 						</p:paragraph>
@@ -916,7 +916,7 @@
 				
 				<p:cell horizontalAlignment="right">
 					<p:paragraph>
-						<p:text value="#{emissionReportHome.total_valor_emision + emissionReportHome.total_valor_bajas + emissionReportHome.total_valor_correction}">
+						<p:text value="#{emissionReportHome.total_valor_emision + emissionReportHome.total_valor_bajas}">
 							<f:convertNumber  type="number"  pattern="$ ###,###,###,###.##" />
 						</p:text>
 					</p:paragraph>

@@ -83,12 +83,14 @@ public final class IdentificationNumberUtil {
 			verifyDigit(identificationNumber);
 		} else if (rucType == 6) {
 			//System.out.println("THIS DISTANCE IN MY VOICE: PERSONA JURIDICA PUBLICA "+rucType);
-			int[] coeficientes = { 3, 2, 7, 6, 5, 4, 3, 2 };
-			verifyTaxpayerNumber(identificationNumber, coeficientes);
+			// int[] coeficientes = { 3, 2, 7, 6, 5, 4, 3, 2 };
+			// verifyTaxpayerNumber(identificationNumber, coeficientes);
+			return true;
 		} else if (rucType == 9) {
 			//System.out.println("THIS DISTANCE IN MY VOICE: PERSONA JURIDICA PRIVADA O EXTRANJERO "+rucType);
-			int[] coeficientes = { 4, 3, 2, 7, 6, 5, 4, 3, 2 };
-			verifyTaxpayerNumber(identificationNumber, coeficientes);
+			// int[] coeficientes = { 4, 3, 2, 7, 6, 5, 4, 3, 2 };
+			// verifyTaxpayerNumber(identificationNumber, coeficientes);
+			return true;
 		} else {
 			throw new IdentificationNumberWrongException();
 		}
