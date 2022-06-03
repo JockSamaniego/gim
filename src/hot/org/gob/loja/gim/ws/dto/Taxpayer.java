@@ -8,7 +8,6 @@ public class Taxpayer {
 	private String email;
 	private String street;
 	private String phoneNumber;
-	private String fullName;
 	
 	public Taxpayer() {
 	}
@@ -20,7 +19,6 @@ public class Taxpayer {
 		this.firstName = name; 
 		this.lastName = name; // Tambien se fija en para los EntityLegal
 		this.email = email;
-		this.fullName = name;
 	}
 	
 	/**
@@ -31,7 +29,7 @@ public class Taxpayer {
 	 */
 	@Deprecated
 	public Taxpayer(Long id, String identificationNumber, String name, 
-			String email, String street, String phoneNumber, String fullName) {
+			String email, String street, String phoneNumber) {
 		this();
 		this.id = id;
 		this.identificationNumber = identificationNumber;
@@ -39,7 +37,6 @@ public class Taxpayer {
 		this.email = email;
 		this.street = street;
 		this.phoneNumber = phoneNumber;
-		this.fullName = fullName;
 	}
 	
 	/**
@@ -50,7 +47,7 @@ public class Taxpayer {
 	 */
 	//@Deprecated 2020-02-03 rfam se habilita, la informacion del contribuyente debe estar actulizada y tambien retornar lo q hay del contribuyente
 	public Taxpayer(Long id, String identificationNumber, String firstName, String lastName, 
-			String email, String street, String phoneNumber, String fullName) {
+			String email, String street, String phoneNumber) {
 		this();
 		this.id = id;
 		this.identificationNumber = identificationNumber;
@@ -59,18 +56,16 @@ public class Taxpayer {
 		this.email = email;
 		this.street = street;
 		this.phoneNumber = phoneNumber;
-		this.fullName = fullName;
 	}
 	
 	public Taxpayer(Long id, String identificationNumber, String firstName, String lastName, 
-			String email, String fullName) {
+			String email) {
 		this();
 		this.id = id;
 		this.identificationNumber = identificationNumber;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
-		this.fullName = fullName;
 	}
 		
 	public Long getId() {
@@ -123,12 +118,5 @@ public class Taxpayer {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	} 
+		
 }
