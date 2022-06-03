@@ -60,6 +60,7 @@ import org.gob.loja.gim.ws.dto.RealEstate;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.StatementReport;
 import org.gob.loja.gim.ws.dto.Taxpayer;
+import org.gob.loja.gim.ws.dto.TaxpayerWP;
 import org.gob.loja.gim.ws.exception.AccountIsBlocked;
 import org.gob.loja.gim.ws.exception.AccountIsNotActive;
 import org.gob.loja.gim.ws.exception.EmissionOrderNotGenerate;
@@ -1813,6 +1814,68 @@ public class GimServiceBean implements GimService {
 	
 		return null;
 
+	}
+	
+	
+	
+	@Override
+	public TaxpayerWP findTaxpayerWP(ServiceRequest request)
+			throws TaxpayerNotFound, TaxpayerNonUnique, InvalidUser,
+			AccountIsNotActive, AccountIsBlocked {
+		String identificationNumber = request.getIdentificationNumber();
+		TaxpayerWP taxpayer = findTaxpayerWP(identificationNumber);
+		return taxpayer;
+	}
+	
+	
+	
+	private TaxpayerWP findTaxpayerWP(String identificationNumber)
+			throws TaxpayerNotFound, TaxpayerNonUnique {
+		Query query;
+		TaxpayerWP taxpayer = null;
+		if (identificationNumber.length() > 10) {
+			query = em.createNamedQuery("TaxpayerWP.findPersonByIdentification");
+			query.setParameter("identificationNumber",
+					identificationNumber.substring(0, 10));
+			// taxpayer = (Taxpayer) query.getResultList();
+			if (query.getResultList().size() <= 0) {
+				query = em
+						.createNamedQuery("TaxpayerWP.findByIdentificationNumber");
+				query.setParameter("identificationNumber", identificationNumber);
+				if (query.getResultList().size() > 0) {
+					taxpayer = (TaxpayerWP) query.getResultList().get(0);
+				}
+			} else {
+				taxpayer = (TaxpayerWP) query.getResultList().get(0);
+			}
+		} else {
+			query = em.createNamedQuery("TaxpayerWP.findPersonByIdentification");
+			query.setParameter("identificationNumber", identificationNumber);
+			// query =
+			// em.createNamedQuery("Taxpayer.findByIdentificationNumber");//query
+			// =
+			// em.createNamedQuery("Taxpayer.findLegalEntityFullByIdentification");
+		}
+		try {
+			taxpayer = (TaxpayerWP) query.getSingleResult();
+			if (taxpayer != null) {
+				Address currentAddress = findCurrentAddressByTaxpayerId(taxpayer
+						.getId());
+				if (currentAddress != null) {
+					taxpayer.setStreet(currentAddress.getStreet());
+					taxpayer.setPhoneNumber(currentAddress.getPhoneNumber());
+				}
+				return taxpayer;
+			} else {
+				throw new TaxpayerNotFound();
+			}
+		} catch (NoResultException e) {
+			throw new TaxpayerNotFound();
+		} catch (NonUniqueResultException e) {
+			throw new TaxpayerNonUnique();
+		} catch (IllegalStateException e) {
+			throw new TaxpayerNotFound();
+		}
 	}
 
 }

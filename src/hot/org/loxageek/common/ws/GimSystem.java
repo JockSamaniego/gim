@@ -29,6 +29,7 @@ import org.gob.loja.gim.ws.dto.RealEstate;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.StatementReport;
 import org.gob.loja.gim.ws.dto.Taxpayer;
+import org.gob.loja.gim.ws.dto.TaxpayerWP;
 import org.gob.loja.gim.ws.exception.AccountIsBlocked;
 import org.gob.loja.gim.ws.exception.AccountIsNotActive;
 import org.gob.loja.gim.ws.exception.EmissionOrderNotGenerate;
@@ -382,5 +383,25 @@ public class GimSystem {
 	@WebMethod
 	public void updateMailInformation(ServiceRequest request, List<BondUpdateMail> listUpdate) {
 		 gimService.updateBondPrinterNumber(request, listUpdate);
+	}
+	
+	/**
+	 * Para envio desde la pagina web GAD LOJA
+	 * @param request
+	 * @return
+	 * @throws TaxpayerNotFound
+	 * @throws InvalidUser
+	 * @throws AccountIsNotActive
+	 * @throws AccountIsBlocked
+	 * @throws TaxpayerNonUnique
+	 */
+	@WebMethod
+	public TaxpayerWP findTaxpayerWP(ServiceRequest request)
+			throws TaxpayerNotFound, InvalidUser, AccountIsNotActive,
+			AccountIsBlocked, TaxpayerNonUnique {
+		System.out.println("====> FINDING TAXPAYERWP FOR: "
+				+ request.getIdentificationNumber());
+		TaxpayerWP taxpayer = gimService.findTaxpayerWP(request);
+		return taxpayer;
 	}
 }
