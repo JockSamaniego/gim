@@ -223,6 +223,19 @@
 				<rich:calendar id="validityDate" required="true" ajaxSingle="true"
 					value="#{businessHome.validityDate}" disabled="true"
 					datePattern="#{messages['common.datePattern']}" />
+					
+				<br />
+				<br />
+				<h:outputText value="Autoriza:" style="margin-right: 2em"></h:outputText>
+				
+				<h:selectOneMenu id="signatureResponsible"  required="true"
+						value="#{businessHome.sanitationCharge}">
+						<s:selectItems value="#{businessHome.responsableCharges}"
+							var="charge" noSelectionLabel="#{messages['common.chooseOption']}"
+							label="#{charge.name}" />
+						<a:support event="onchange" ajaxSingle="true" />
+						<s:convertEntity></s:convertEntity>
+				</h:selectOneMenu>
 
 				<div style="clear: both"></div>
 
@@ -381,7 +394,7 @@
 							<f:convertDateTime pattern="#{messages['common.datePattern']}" />
 						</h:outputText>
 
-						<h:outputText value="Director(a) del departamento de higiene:"
+						<h:outputText value="Jefe de la #{businessHome.sanitationCharge.department.toUpperCase()}:"
 							style="margin-left: 1em;font-size:large"></h:outputText>
 
 						<h:outputText
