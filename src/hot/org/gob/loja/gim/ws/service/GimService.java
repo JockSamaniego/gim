@@ -19,6 +19,7 @@ import org.gob.loja.gim.ws.dto.RealEstate;
 import org.gob.loja.gim.ws.dto.ServiceRequest;
 import org.gob.loja.gim.ws.dto.StatementReport;
 import org.gob.loja.gim.ws.dto.Taxpayer;
+import org.gob.loja.gim.ws.dto.TaxpayerWP;
 import org.gob.gim.ws.service.BondPrintRequest;
 import org.gob.loja.gim.ws.exception.AccountIsBlocked;
 import org.gob.loja.gim.ws.exception.AccountIsNotActive;
@@ -127,4 +128,17 @@ public interface GimService {
 	GeneralResponse updateBondPrinterNumber(ServiceRequest request,
 			List<BondUpdateMail> listBonds);
 		
+	/**
+	 * Para pagina web
+	 * @param request
+	 * @return
+	 * @throws TaxpayerNotFound
+	 * @throws TaxpayerNonUnique
+	 * @throws InvalidUser
+	 * @throws AccountIsNotActive
+	 * @throws AccountIsBlocked
+	 */
+	TaxpayerWP findTaxpayerWP(ServiceRequest request)
+			throws TaxpayerNotFound, TaxpayerNonUnique, InvalidUser,
+			AccountIsNotActive, AccountIsBlocked;
 }

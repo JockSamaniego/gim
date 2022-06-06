@@ -92,10 +92,10 @@ import ec.gob.gim.security.model.User;
 				query="SELECT NEW org.gob.loja.gim.ws.dto.Taxpayer(r.id, r.identificationNumber, r.name, r.email) " +
 					  "FROM Resident r " +
 					  "WHERE r.identificationNumber = upper(:identificationNumber)"),
-		 @NamedQuery(name="Taxpayer.findPersonByIdentification", 
+		@NamedQuery(name="Taxpayer.findPersonByIdentification", 
 				query="SELECT " +
 						"NEW org.gob.loja.gim.ws.dto.Taxpayer(" +
-						"p.id, p.identificationNumber, p.firstName, p.lastName, p.email, p.name) " +
+						"p.id, p.identificationNumber, p.firstName, p.lastName, p.email) " +
 					  "FROM Person p " +
 					  "WHERE p.identificationNumber LIKE upper(:identificationNumber)"),
 		@NamedQuery(name = "Resident.findResidentByIds", query = "SELECT "
@@ -104,7 +104,7 @@ import ec.gob.gim.security.model.User;
 		@NamedQuery(name="Taxpayer.findResidentFullByIdentification", 
 				query="SELECT " +
 				"NEW org.gob.loja.gim.ws.dto.Taxpayer( " +
-				"r.id, r.identificationNumber, r.name, r.name, COALESCE(r.email, 'S/E', r.email), COALESCE(currentAddress.street, 'S/C', currentAddress.street), COALESCE(currentAddress.phoneNumber, 'S/N', currentAddress.phoneNumber), r.name ) " +
+				"r.id, r.identificationNumber, r.name, r.name, COALESCE(r.email, 'S/E', r.email), COALESCE(currentAddress.street, 'S/C', currentAddress.street), COALESCE(currentAddress.phoneNumber, 'S/N', currentAddress.phoneNumber) ) " +
 				"FROM Resident r " + 
 				"left join r.currentAddress currentAddress " +
 				"WHERE r.identificationNumber = upper(:identificationNumber) "),
@@ -118,8 +118,21 @@ import ec.gob.gim.security.model.User;
 				query = "SELECT DISTINCT res, cn From MunicipalBond mb "
 						+ "LEFT JOIN mb.resident res "
 						+ "LEFT JOIN mb.creditNote cn "
-						+ "WHERE mb.id in :mbIds ")
-		
+						+ "WHERE mb.id in :mbIds "),
+		//macartuche
+		//taxpayerwp para mostrar info en pagina web
+		@NamedQuery(name="TaxpayerWP.findPersonByIdentification", 
+					query="SELECT " +
+							"NEW org.gob.loja.gim.ws.dto.TaxpayerWP(" +
+							"p.id, p.identificationNumber, p.firstName, p.lastName, p.email, p.name) " +
+							"FROM Person p " +
+							"WHERE p.identificationNumber LIKE upper(:identificationNumber)"),
+							
+		@NamedQuery(name="TaxpayerWP.findByIdentificationNumber", 		
+					query="SELECT NEW org.gob.loja.gim.ws.dto.TaxpayerWP(r.id, r.identificationNumber, r.name, r.email, r.name) " +
+						  "FROM Resident r " +
+						  "WHERE r.identificationNumber = upper(:identificationNumber)"),	
+ 
 			  /*@NamedQuery(name="Taxpayer.findLegalEntityFullByIdentification", 
 						query="SELECT " +
 								"NEW org.gob.loja.gim.ws.dto.Taxpayer(" +
