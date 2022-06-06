@@ -37,6 +37,8 @@ import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
 import ec.gob.gim.common.model.Alert;
+import ec.gob.gim.common.model.Charge;
+import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FinancialStatus;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
@@ -181,6 +183,8 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		}
 		
 		// System.out.println("en el wire---------------------->>>>>");
+		//macartuche
+		this.loadCharge();
 	}
 	 
 	//@author macartuche
@@ -1052,5 +1056,39 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 			}
 		}
 	}
+	
+	/**
+	 * @author macartuche
+	 * se agrega firmantes en convenio de pago
+	 */
+	private Charge incomeCharge=null;
+	private Delegate incomeDelegate = null;
+	public void loadCharge() {
+		incomeCharge = getCharge("DELEGATE_ID_INCOME");
+		if (incomeCharge != null) {
+			for (Delegate d : incomeCharge.getDelegates()) {
+				if (d.getIsActive())
+					this.incomeDelegate = d;
+			}
+		} 		
+	}
+	
+	private Charge getCharge(String systemParameter) {
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SYSTEM_PARAMETER_SERVICE_NAME);
+		Charge charge = systemParameterService.materialize(Charge.class,
+				systemParameter);
+		return charge;
+	}
+
+	public Delegate getIncomeDelegate() {
+		return incomeDelegate;
+	}
+
+	public void setIncomeDelegate(Delegate incomeDelegate) {
+		this.incomeDelegate = incomeDelegate;
+	}
+	
 	
 }
