@@ -149,7 +149,7 @@ public class BusinessHome extends EntityHome<Business> {
 	private Delegate sanitationDelegate;
 
 	public void loadCharge() {
-		sanitationCharge = getCharge("DELEGATE_ID_SANITATION");
+		//sanitationCharge = getCharge("DELEGATE_ID_SANITATION");
 		if (sanitationCharge != null) {
 			for (Delegate d : sanitationCharge.getDelegates()) {
 				if (d.getIsActive())
@@ -595,6 +595,7 @@ public class BusinessHome extends EntityHome<Business> {
 	}
 
 	public void dates() {
+		findResponsableChargeList();
 		Calendar cal = Calendar.getInstance();
 		cal.set(Integer.parseInt(fiscalYear), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 		emissionDate = cal.getTime();
@@ -910,4 +911,38 @@ public class BusinessHome extends EntityHome<Business> {
 		}
 			
 	}
+	
+	// Jock Samaniego
+	// Para emisión de permisos de funcionamiento por mas de 1 departamento
+	
+	private List<Charge> responsableCharges;
+	private String[] chargeIds;
+	
+	public List<Charge> getResponsableCharges() {
+		return responsableCharges;
+	}
+
+	public void setResponsableCharges(List<Charge> responsableCharges) {
+		this.responsableCharges = responsableCharges;
+	}
+
+	private void findResponsableChargeList(){
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+		responsableCharges = new ArrayList<Charge>();
+		String  ids = systemParameterService.findParameter("RESPONSABLE_CHARGE_OPERATING_LICENSE");
+		chargeIds = ids.trim().split(",");
+		List<Long> idCharges = new ArrayList<Long>();
+		for(String ch: chargeIds){
+			idCharges.add(Long.parseLong(ch));
+		}
+		Query query = getEntityManager().createNamedQuery("Charge.findChargesByIds");
+		query.setParameter("idCharges", idCharges);
+		try {
+			responsableCharges = query.getResultList();
+			
+		} catch (Exception e) {
+			addFacesMessageFromResourceBundle("resident.notFound");
+		}
+	}		
 }
