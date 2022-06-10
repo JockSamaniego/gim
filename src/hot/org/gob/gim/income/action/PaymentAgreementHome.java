@@ -959,6 +959,8 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	private int pendingQuotas;
 	private int expiredQuotas;
 	private int paidQuotas;
+	private List<Dividend> dividendsInOrder;
+	private BigDecimal expiredBalance;
 
 	public int getPendingQuotas() {
 		return pendingQuotas;
@@ -983,9 +985,25 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 	public void setPaidQuotas(int paidQuotas) {
 		this.paidQuotas = paidQuotas;
 	}
-	
+
+	public List<Dividend> getDividendsInOrder() {
+		return dividendsInOrder;
+	}
+
+	public void setDividendsInOrder(List<Dividend> dividendsInOrder) {
+		this.dividendsInOrder = dividendsInOrder;
+	}
+
+	public BigDecimal getExpiredBalance() {
+		return expiredBalance;
+	}
+
+	public void setExpiredBalance(BigDecimal expiredBalance) {
+		this.expiredBalance = expiredBalance;
+	}
 
 	public void chargeValuesOfPaymentAgreement(){
+		expiredBalance = BigDecimal.ZERO;
 		BigDecimal totalDeposit = BigDecimal.ZERO;
 		BigDecimal totalQuotasValue = BigDecimal.ZERO;
 		paidQuotas = 0;
@@ -994,19 +1012,30 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		for (Payment pay : payments){
 			totalDeposit = totalDeposit.add(pay.getValue());
 		}
-		for (Dividend div : this.instance.getDividends()){
+		dividendsInOrder = new ArrayList();
+		dividendsInOrder = findDividendsInOrder();
+		for (Dividend div : dividendsInOrder){
 			totalQuotasValue = totalQuotasValue.add(div.getAmount());
 			if(totalQuotasValue.compareTo(totalDeposit)<=0){
 				paidQuotas++;
 			}else{
 				if(div.getDate().compareTo(new Date()) < 0){
 					expiredQuotas++;
+					expiredBalance = totalQuotasValue.subtract(totalDeposit);
 				}else{
 					pendingQuotas++;
 				}
 			}
 		}
 	}
+	
+	public List<Dividend> findDividendsInOrder(){
+	String query = "Select * FROM Dividend div WHERE div.paymentagreement_id =:paymentAgreementId "
+				+ "ORDER BY div.date ASC";
+		Query q = getEntityManager().createNativeQuery(query, ec.gob.gim.income.model.Dividend.class);
+		q.setParameter("paymentAgreementId", this.getInstance().getId());
+		return (List<Dividend>)q.getResultList();
+	} 
 	
 	// @author rfam
 	// @tag resumen de convenio

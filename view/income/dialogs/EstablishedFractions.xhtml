@@ -60,6 +60,15 @@
 						</h:outputText>
 					</s:decorate>
 				</h:panelGrid>
+				<h:panelGrid rendered="#{paymentAgreementHome.expiredQuotas > 0}" >
+					<s:decorate id="expiredBalanceField" template="../../layout/edit.xhtml">
+						<ui:define name="label">Saldo Expirado:</ui:define>
+						<h:outputText id="expiredBalance" value="#{paymentAgreementHome.expiredBalance}"
+							styleClass="right"
+							style="font-size:12px; font-weight:bold; color:red">
+						</h:outputText>
+					</s:decorate>
+				</h:panelGrid>
 			</h:panelGrid>
 			<div style="clear: both" />
 		</rich:panel>
@@ -67,7 +76,7 @@
 		<rich:spacer height="10" />
 
 		<rich:dataTable id="dividends" var="_dividend"
-				value="#{paymentHome.paymentAgreement.dividends}"
+				value="#{paymentAgreementHome.dividendsInOrder}"
 				columnClasses="center, center, right, right" rowKeyVar="index">
 
 				<rich:column width="10%">
