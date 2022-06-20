@@ -770,8 +770,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 			}
 
 			this.currentItem.setState(this.status);
-			this.currentItem
-					.setChangeStatusExplanation(this.changeStatusExplanation);
+			// this.currentItem.setChangeStatusExplanation(this.changeStatusExplanation);
 			this.datainfractionService.updateDataInfraction(this.currentItem);
 
 		}
@@ -828,7 +827,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 			for (int i = 0; i < this.infractions.size(); i++) {
 				Datainfraction dat = this.infractions.get(i);
 				dat.setState(this.status);
-				dat.setChangeStatusExplanation(this.changeStatusExplanation);
+				//dat.setChangeStatusExplanation(this.changeStatusExplanation);
 				this.datainfractionService.updateDataInfraction(dat);
 			}
 		}
@@ -857,7 +856,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 				for (int j = 0; j < infrac.size(); j++) {
 					Datainfraction dat = infrac.get(j);
 					dat.setState(this.status);
-					dat.setChangeStatusExplanation(this.changeStatusExplanation);
+					//dat.setChangeStatusExplanation(this.changeStatusExplanation);
 					this.datainfractionService.updateDataInfraction(dat);
 				}
 
