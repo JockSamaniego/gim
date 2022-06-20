@@ -14,12 +14,13 @@
 		<f:facet name="controls">
 			<h:panelGroup>
 				<h:graphicImage value="/img/error.gif" style="cursor:pointer" id="hidelinkImpugnment" />
-				<rich:componentControl for="changeStatusInfraction" attachTo="hidelinkImpugnment" operation="hide"
+				<rich:componentControl for="paymentsInfraction" attachTo="hidelinkImpugnment" operation="hide"
 					event="onclick" />
 			</h:panelGroup>
 		</f:facet>
 		<h:form id="changeStatusInfractionForm">
 			<rich:messages errorClass="errors" style="color:red" /> 
+			
 		</h:form>
 	</rich:modalPanel>
 </ui:composition>
