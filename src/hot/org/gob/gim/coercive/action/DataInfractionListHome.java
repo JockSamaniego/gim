@@ -177,8 +177,7 @@ public class DataInfractionListHome extends EntityController {
 			}
 
 			this.currentItem.setState(this.status);
-			this.currentItem
-					.setChangeStatusExplanation(this.changeStatusExplanation);
+			//this.currentItem.setChangeStatusExplanation(this.changeStatusExplanation);
 			this.datainfractionService.updateDataInfraction(this.currentItem);
 		}
 

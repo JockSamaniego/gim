@@ -2,6 +2,7 @@ package ec.gob.gim.coercive.model.infractions;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,11 +12,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
 import ec.gob.gim.common.model.ItemCatalog;
@@ -149,7 +154,14 @@ public class Datainfraction {
 	@JoinColumn(name = "notification_id")
 	private NotificationInfractions notification;
 	
-	private String changeStatusExplanation;
+	@OneToMany(fetch = FetchType.EAGER)
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	@JoinColumn(name = "infraction_id")
+	@OrderBy("id asc")
+	private List<HistoryStatusInfraction> statusChange;
+	
+	@Version
+	private Long version = 0L;
 	
 	public String getTypeId() {
 		return typeId;
@@ -455,28 +467,47 @@ public class Datainfraction {
 		this.notification = notification;
 	}
 	
-	public String getChangeStatusExplanation() {
-		return changeStatusExplanation;
+	/**
+	 * @return the statusChange
+	 */
+	public List<HistoryStatusInfraction> getStatusChange() {
+		return statusChange;
 	}
 
-	public void setChangeStatusExplanation(String changeStatusExplanation) {
-		this.changeStatusExplanation = changeStatusExplanation;
+	/**
+	 * @param statusChange the statusChange to set
+	 */
+	public void setStatusChange(List<HistoryStatusInfraction> statusChange) {
+		this.statusChange = statusChange;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "Datainfraction [id=" + id + ", typeId=" + typeId + ", identification=" + identification + ", name="
-				+ name + ", licensePlate=" + licensePlate + ", debtType=" + debtType + ", ticket=" + ticket
-				+ ", stateConsortium=" + stateConsortium + ", emision=" + emision + ", register=" + register
-				+ ", expiration=" + expiration + ", article=" + article + ", articleDescription=" + articleDescription
-				+ ", value=" + value + ", interest=" + interest + ", totalValue=" + totalValue + ", dataDate="
-				+ dataDate + ", betterManagement=" + betterManagement + ", contactGeneral=" + contactGeneral
-				+ ", telephoneManagement=" + telephoneManagement + ", dialedPhone=" + dialedPhone
-				+ ", telephoneIntensity=" + telephoneIntensity + ", emailIntensity=" + emailIntensity + ", email="
-				+ email + ", ivr=" + ivr + ", phoneivr=" + phoneivr + ", sms=" + sms + ", phoneSms=" + phoneSms
-				+ ", observation=" + observation + ", generalIntensity=" + generalIntensity + ", direction=" + direction
-				+ ", locability=" + locability + ", locabilityProvince=" + locabilityProvince + ", toMigrate="
-				+ toMigrate + ", userid=" + userid + ", migrationDate=" + migrationDate + ", state=" + state
-				+ ", notification=" + notification + "]";
+		return "Datainfraction [id=" + id + ", typeId=" + typeId
+				+ ", identification=" + identification + ", name=" + name
+				+ ", licensePlate=" + licensePlate + ", debtType=" + debtType
+				+ ", ticket=" + ticket + ", stateConsortium=" + stateConsortium
+				+ ", emision=" + emision + ", register=" + register
+				+ ", expiration=" + expiration + ", article=" + article
+				+ ", articleDescription=" + articleDescription + ", value="
+				+ value + ", interest=" + interest + ", totalValue="
+				+ totalValue + ", dataDate=" + dataDate + ", betterManagement="
+				+ betterManagement + ", contactGeneral=" + contactGeneral
+				+ ", telephoneManagement=" + telephoneManagement
+				+ ", dialedPhone=" + dialedPhone + ", telephoneIntensity="
+				+ telephoneIntensity + ", emailIntensity=" + emailIntensity
+				+ ", email=" + email + ", ivr=" + ivr + ", phoneivr="
+				+ phoneivr + ", sms=" + sms + ", phoneSms=" + phoneSms
+				+ ", observation=" + observation + ", generalIntensity="
+				+ generalIntensity + ", direction=" + direction
+				+ ", locability=" + locability + ", locabilityProvince="
+				+ locabilityProvince + ", toMigrate=" + toMigrate + ", userid="
+				+ userid + ", migrationDate=" + migrationDate + ", state="
+				+ state + ", notification=" + notification + ", statusChange="
+				+ statusChange + "]";
 	}
+
 }

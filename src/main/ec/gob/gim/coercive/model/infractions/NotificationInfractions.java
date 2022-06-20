@@ -29,6 +29,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Entry;
@@ -36,12 +37,9 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 
 @Audited
 @Entity
-@TableGenerator(name = "NotificationInfractionGenerator", table = "IdentityGenerator", 
-				pkColumnName = "name", valueColumnName = "value", 
-				pkColumnValue = "NotificationInfraction", 
-				initialValue = 1, allocationSize = 1)
-@Table(name = "notificationinfraction", schema = "infracciones", uniqueConstraints={ @UniqueConstraint(columnNames={"year","number"})})
-
+@TableGenerator(name = "NotificationInfractionGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "NotificationInfraction", initialValue = 1, allocationSize = 1)
+@Table(name = "notificationinfraction", schema = "infracciones", uniqueConstraints = { @UniqueConstraint(columnNames = {
+		"year", "number" }) })
 public class NotificationInfractions {
 
 	@Id
@@ -58,6 +56,11 @@ public class NotificationInfractions {
 	@OrderBy("id asc")
 	private List<Datainfraction> infractions;
 
+	@OneToMany(fetch = FetchType.EAGER)
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	@JoinColumn(name = "notification_id")
+	@OrderBy("id asc")
+	private List<HistoryStatusNotification> statusChange;
 
 	@Temporal(TemporalType.DATE)
 	private Date creationTimeStamp;
@@ -68,8 +71,12 @@ public class NotificationInfractions {
 	@Column
 	private int number;
 
+	@ManyToOne
+	@JoinColumn(name = "status_id")
+	private ItemCatalog status;
+
 	public NotificationInfractions() {
-		infractions = new ArrayList<Datainfraction>(); 
+		infractions = new ArrayList<Datainfraction>();
 		this.creationTimeStamp = Calendar.getInstance().getTime();
 	}
 
@@ -80,7 +87,7 @@ public class NotificationInfractions {
 	public void setId(Long id) {
 		this.id = id;
 	}
-  
+
 	public Date getCreationTimeStamp() {
 		return creationTimeStamp;
 	}
@@ -131,7 +138,7 @@ public class NotificationInfractions {
 	public BigDecimal getTotal() {
 		BigDecimal sum = new BigDecimal(0);
 		for (Datainfraction di : this.infractions) {
-				sum = sum.add(di.getTotalValue()); 
+			sum = sum.add(di.getTotalValue());
 		}
 		return sum;
 	}
@@ -154,6 +161,49 @@ public class NotificationInfractions {
 			infractions.remove(infraction);
 			infraction.setNotification(null);
 		}
+	}
+
+	/**
+	 * @return the statusChange
+	 */
+	public List<HistoryStatusNotification> getStatusChange() {
+		return statusChange;
+	}
+
+	/**
+	 * @param statusChange
+	 *            the statusChange to set
+	 */
+	public void setStatusChange(List<HistoryStatusNotification> statusChange) {
+		this.statusChange = statusChange;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public ItemCatalog getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status
+	 *            the status to set
+	 */
+	public void setStatus(ItemCatalog status) {
+		this.status = status;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "NotificationInfractions [id=" + id + ", infractions="
+				+ infractions + ", statusChange=" + statusChange
+				+ ", creationTimeStamp=" + creationTimeStamp + ", year=" + year
+				+ ", number=" + number + ", status=" + status + "]";
 	}
 
 }
