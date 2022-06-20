@@ -84,5 +84,16 @@ public class NotificationInfractionListHome extends EntityController{
 	}
 	
 	
+	/**
+	 * Ver abonos
+	 * @param notificationId
+	 * @return
+	 */
+	public void viewPayments(Long notificationId){		
+		this.generatedNotificationIds = new ArrayList<Long>();
+		this.generatedNotificationIds.add(notificationId);		
+	}
+	
+	
 	
 }
