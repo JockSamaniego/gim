@@ -25,6 +25,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
@@ -60,7 +61,13 @@ public class NotificationInfractions {
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	@JoinColumn(name = "notification_id")
 	@OrderBy("id asc")
-	private List<HistoryStatusNotification> statusChange;
+	private List<HistoryStatusNotification> statusChange = new ArrayList<HistoryStatusNotification>();
+
+	@OneToMany(fetch = FetchType.EAGER)
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	@JoinColumn(name = "notification_id")
+	@OrderBy("id asc")
+	private List<PaymentNotification> payments = new ArrayList<PaymentNotification>();
 
 	@Temporal(TemporalType.DATE)
 	private Date creationTimeStamp;
@@ -74,6 +81,9 @@ public class NotificationInfractions {
 	@ManyToOne
 	@JoinColumn(name = "status_id")
 	private ItemCatalog status;
+
+	@Version
+	private Long version = 0L;
 
 	public NotificationInfractions() {
 		infractions = new ArrayList<Datainfraction>();
@@ -193,6 +203,21 @@ public class NotificationInfractions {
 		this.status = status;
 	}
 
+	/**
+	 * @return the payments
+	 */
+	public List<PaymentNotification> getPayments() {
+		return payments;
+	}
+
+	/**
+	 * @param payments
+	 *            the payments to set
+	 */
+	public void setPayments(List<PaymentNotification> payments) {
+		this.payments = payments;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -202,8 +227,9 @@ public class NotificationInfractions {
 	public String toString() {
 		return "NotificationInfractions [id=" + id + ", infractions="
 				+ infractions + ", statusChange=" + statusChange
-				+ ", creationTimeStamp=" + creationTimeStamp + ", year=" + year
-				+ ", number=" + number + ", status=" + status + "]";
+				+ ", payments=" + payments + ", creationTimeStamp="
+				+ creationTimeStamp + ", year=" + year + ", number=" + number
+				+ ", status=" + status + "]";
 	}
 
 }
