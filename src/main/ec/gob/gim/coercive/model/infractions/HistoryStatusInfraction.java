@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
@@ -35,6 +37,7 @@ public class HistoryStatusInfraction {
 	@GeneratedValue(generator = "HistoryStatusInfractionGenerator", strategy = GenerationType.TABLE)
 	private Long id;
 
+	@Temporal(TemporalType.DATE)
 	private Date date;
 
 	@ManyToOne
@@ -53,6 +56,15 @@ public class HistoryStatusInfraction {
 	
 	@Version
 	private Long version = 0L;
+	
+
+	/**
+	 * 
+	 */
+	public HistoryStatusInfraction() {
+		super();
+		this.date = new Date();
+	}
 
 	/**
 	 * @return the id

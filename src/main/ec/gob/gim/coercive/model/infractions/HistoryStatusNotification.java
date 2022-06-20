@@ -3,6 +3,7 @@
  */
 package ec.gob.gim.coercive.model.infractions;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -14,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
@@ -28,7 +31,7 @@ import ec.gob.gim.security.model.User;
  */
 @Audited
 @Entity
-@TableGenerator(name = "HistoryStatusNotificationGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "HistoryStatusInfraction", initialValue = 1, allocationSize = 1)
+@TableGenerator(name = "HistoryStatusNotificationGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "HistoryStatusNotification", initialValue = 1, allocationSize = 1)
 @Table(name = "historystatusnotification", schema = "infracciones")
 public class HistoryStatusNotification {
 
@@ -36,16 +39,17 @@ public class HistoryStatusNotification {
 	@GeneratedValue(generator = "HistoryStatusNotificationGenerator", strategy = GenerationType.TABLE)
 	private Long id;
 
+	@Temporal(TemporalType.DATE)
 	private Date date;
 
 	@ManyToOne
-	@JoinColumn(name="status_id")
+	@JoinColumn(name = "status_id")
 	private ItemCatalog status;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "responsible_id")
 	private Resident responsible;
@@ -55,9 +59,18 @@ public class HistoryStatusNotification {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "notification_id")
 	private NotificationInfractions notification;
-	
+
 	@Version
 	private Long version = 0L;
+	
+
+	/**
+	 * 
+	 */
+	public HistoryStatusNotification() {
+		super();
+		this.date = new Date();
+	}
 
 	/**
 	 * @return the id
@@ -142,7 +155,8 @@ public class HistoryStatusNotification {
 	}
 
 	/**
-	 * @param responsible the responsible to set
+	 * @param responsible
+	 *            the responsible to set
 	 */
 	public void setResponsible(Resident responsible) {
 		this.responsible = responsible;
@@ -156,13 +170,16 @@ public class HistoryStatusNotification {
 	}
 
 	/**
-	 * @param notification the notification to set
+	 * @param notification
+	 *            the notification to set
 	 */
 	public void setNotification(NotificationInfractions notification) {
 		this.notification = notification;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
