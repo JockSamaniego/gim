@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gob.gim.coercive.service.DatainfractionService;
+import org.gob.gim.coercive.service.NotificationInfractionsService;
 import org.gob.gim.common.ServiceLocator;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityController;
@@ -22,7 +22,7 @@ import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 @Name("overdueInfractionsNotificationReport")
 public class OverdueInfractionsNotificationReport extends EntityController{
 	
-	private DatainfractionService datainfractionService;
+	private NotificationInfractionsService notificationInfractionsService;
 	
 	/**
 	 * 
@@ -36,12 +36,12 @@ public class OverdueInfractionsNotificationReport extends EntityController{
 	
 	public void initialize(){
 		if (isFirstTime) {
-			if (datainfractionService == null) {
-				datainfractionService = ServiceLocator.getInstance().findResource(
-						datainfractionService.LOCAL_NAME);
+			if (notificationInfractionsService == null) {
+				notificationInfractionsService = ServiceLocator.getInstance().findResource(
+						notificationInfractionsService.LOCAL_NAME);
 			}
 		}
-		this.notifications = this.datainfractionService.getNotifications(this.getSelectedItemAsList());
+		this.notifications = this.notificationInfractionsService.getNotifications(this.getSelectedItemAsList());
 	}
 	
 	/**

@@ -28,13 +28,6 @@ public interface DatainfractionService {
 	
 	public Long getNextValue();
 	
-	public List<NotificationInfractions> getNotifications(List<Long> ids);
-	
-	public List<NotificationInfractions> findNotificationInfractionByCriteria(NotificationInfractionSearchCriteria criteria, Integer firstRow,Integer numberOfRows);
-	
-	public NotificationInfractions findObjectById(Long id);
-	
-	public Integer findNotificationInfractionsNumber(NotificationInfractionSearchCriteria criteria);
 	
 	public Datainfraction getDataInfractionById(Long id);
 	
