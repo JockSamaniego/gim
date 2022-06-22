@@ -1,0 +1,96 @@
+<!DOCTYPE composition
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="changeStatusNotification">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Cambiar estado Notificación"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkImpugnment" />
+				<rich:componentControl for="changeStatusNotification"
+					attachTo="hidelinkImpugnment" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+		<h:form id="changeStatusNotificationForm">
+			<rich:messages errorClass="errors" style="color:red" />
+			<h:panelGrid columns="1">
+				<s:decorate id="statusField" template="../../../layout/edit.xhtml">
+					<ui:define name="label">Estado</ui:define>
+					<h:selectOneMenu id="cmbStatus"
+						value="#{notificationInfractionListHome.status}" required="true">
+						<f:selectItem itemLabel="#{messages['common.selectOne']}"
+							itemValue="" noSelectionOption="true" />
+						<f:selectItems value="#{notificationInfractionListHome.statuses}"
+							var="status" itemLabel="#{status.name}" itemValue="#{status}" />
+						<a:support event="onchange" ajaxSingle="true" />
+						<s:convertEntity></s:convertEntity>
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate template="../../../layout/edit.xhtml">
+					<ui:define name="label">Fecha:</ui:define>
+					<rich:calendar id="date"
+						value="#{notificationInfractionListHome.date}"
+						datePattern="yyyy-MM-dd">
+					</rich:calendar>
+				</s:decorate>
+				
+				<s:decorate id="personField" template="../../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['notification.responsible']}</ui:define>
+					<h:selectOneMenu id="person" value="#{notificationInfractionListHome.person}"
+						required="true" 
+						requiredMessage="responsable requerido">
+						<s:selectItems value="#{usersCoercives}" var="_user"
+							noSelectionLabel="#{messages['common.chooseOption']}"
+							label="#{_user.name}" />
+						<a:support event="onchange"	
+							ajaxSingle="true" />
+						<s:convertEntity></s:convertEntity>
+					</h:selectOneMenu>
+				</s:decorate>
+
+				<s:decorate id="observationField"
+					template="../../../layout/edit.xhtml">
+					<ui:define name="label">Explicación de cambio</ui:define>
+					<h:inputTextarea id="observation"
+						value="#{notificationInfractionListHome.changeStatusExplanation}"
+						rows="5" cols="40" maxlength="255" required="true">
+						<a:support ajaxSingle="true" event="onblur"></a:support>
+					</h:inputTextarea>
+				</s:decorate>
+
+				<div style="clear: both">
+					<span class="required">*</span>
+					#{messages['common.requiredFields']}
+				</div>
+			</h:panelGrid>
+			<div class="actionButtonsDialog">
+				<a:region>
+
+					<a:commandButton id="saveChangeStatusButton" ajaxSingle="true" value="Guardar"
+						oncomplete="if (#{facesContext.maximumSeverity==null}){#{rich:component('changeStatusNotification')}.hide();window.location.reload();}"
+						bypassUpdates="true"
+						actionListener="#{notificationInfractionListHome.saveChangeStatus()}"
+						reRender="notificationsInfractionsForm, table, messages"/>
+
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.cancel']}"
+						oncomplete="Richfaces.hideModalPanel('changeStatusNotification');"
+						bypassUpdates="true" immediate="true" />
+				</a:region>
+			</div>
+		</h:form>
+	</rich:modalPanel>
+</ui:composition>

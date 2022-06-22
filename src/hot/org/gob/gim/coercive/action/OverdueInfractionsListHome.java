@@ -6,6 +6,7 @@ package org.gob.gim.coercive.action;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,10 +18,12 @@ import org.gob.gim.coercive.dto.InfractionItemDTO;
 import org.gob.gim.coercive.dto.criteria.OverdueInfractionsSearchCriteria;
 import org.gob.gim.coercive.pagination.OverdueInfractionsDataModel;
 import org.gob.gim.coercive.service.DatainfractionService;
+import org.gob.gim.coercive.service.NotificationInfractionsService;
 import org.gob.gim.coercive.service.OverdueInfractionsService;
 import org.gob.gim.coercive.view.InfractionItem;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.Util;
+import org.gob.gim.common.action.UserSession;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -32,6 +35,7 @@ import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityHome;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.coercive.model.infractions.HistoryStatusNotification;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.revenue.model.MunicipalBond;
@@ -44,6 +48,9 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 @Scope(ScopeType.CONVERSATION)
 public class OverdueInfractionsListHome extends
 		EntityHome<NotificationInfractions> {
+	
+	@In(scope = ScopeType.SESSION, value = "userSession")
+	UserSession userSession;
 
 	/**
 	 * 
@@ -66,6 +73,8 @@ public class OverdueInfractionsListHome extends
 	private ItemCatalogService itemCatalogService;
 
 	private OverdueInfractionsService overdueInfractionsService;
+	
+	private NotificationInfractionsService notificationInfractionsService;
 
 	private boolean allResidentsSelected = false;
 
@@ -97,6 +106,11 @@ public class OverdueInfractionsListHome extends
 		if (overdueInfractionsService == null) {
 			overdueInfractionsService = ServiceLocator.getInstance()
 					.findResource(OverdueInfractionsService.LOCAL_NAME);
+		}
+		
+		if (notificationInfractionsService == null) {
+			notificationInfractionsService = ServiceLocator.getInstance()
+					.findResource(NotificationInfractionsService.LOCAL_NAME);
 		}
 	}
 
@@ -216,6 +230,10 @@ public class OverdueInfractionsListHome extends
 		ItemCatalog itemPending = this.itemCatalogService
 				.findItemByCodeAndCodeCatalog("CATALOG_STATUS_INFRACTIONS",
 						"NOTIFIED");
+		
+		ItemCatalog itemPrint = this.itemCatalogService
+				.findItemByCodeAndCodeCatalog("CAT_STATUS_NOTIF_INFRACCCIONS",
+						"PRINT");
 
 		for (String identification : getResidentSelectedItems()) { // son los
 																	// id's de
@@ -230,9 +248,10 @@ public class OverdueInfractionsListHome extends
 				addFacesMessage("Recargue la página");
 				return "failed";
 			}
-			;
+			
 
 			notification = new NotificationInfractions();
+			notification.setStatus(itemPrint);
 			notification.setInfractions(infractions);
 			notification.setNumber(this.datainfractionService.getNextValue()
 					.intValue());
@@ -243,6 +262,18 @@ public class OverdueInfractionsListHome extends
 			}
 			setInstance(notification);
 			persist();
+			
+			
+			HistoryStatusNotification record = new HistoryStatusNotification();
+			record.setDate(new Date());
+			record.setNotification(this.instance);
+			record.setObservation("Generada por usuario");
+			record.setResponsible(this.userSession.getPerson());
+			record.setStatus(itemPrint);
+			record.setUser(this.userSession.getUser());
+			
+			notificationInfractionsService.saveHistoryStatus(record);
+			
 			generatedNotificationIds.add((Long) getId());
 
 		}

@@ -6,7 +6,7 @@ package org.gob.gim.coercive.pagination;
 import java.util.List;
 
 import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
-import org.gob.gim.coercive.service.DatainfractionService;
+import org.gob.gim.coercive.service.NotificationInfractionsService;
 import org.gob.gim.common.PageableDataModel;
 import org.gob.gim.common.ServiceLocator;
 import org.jboss.seam.ScopeType;
@@ -32,7 +32,7 @@ public class NotificationInfractionsDataModel extends
 	// Criteria
 	private NotificationInfractionSearchCriteria criteria;
 
-	private DatainfractionService datainfractionService;
+	private NotificationInfractionsService notificationInfractionsService;
 
 	/**
 	 * 
@@ -44,9 +44,9 @@ public class NotificationInfractionsDataModel extends
 	}
 
 	public void initializeService() {
-		if (datainfractionService == null) {
-			datainfractionService = ServiceLocator.getInstance()
-					.findResource(datainfractionService.LOCAL_NAME);
+		if (notificationInfractionsService == null) {
+			notificationInfractionsService = ServiceLocator.getInstance()
+					.findResource(notificationInfractionsService.LOCAL_NAME);
 		}
 	}
 
@@ -73,13 +73,13 @@ public class NotificationInfractionsDataModel extends
 	@Override
 	public List<NotificationInfractions> findObjects(int firstRow,
 			int numberOfRows, String sortField, boolean descending) {
-		List<NotificationInfractions> debits = datainfractionService.findNotificationInfractionByCriteria(criteria, firstRow, numberOfRows);
-		return debits;
+		List<NotificationInfractions> notifications = notificationInfractionsService.findNotificationInfractionByCriteria(criteria, firstRow, numberOfRows);
+		return notifications;
 	}
 
 	@Override
 	public NotificationInfractions getObjectById(Long id) {
-		return this.datainfractionService.findObjectById(id);
+		return this.notificationInfractionsService.findObjectById(id);
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class NotificationInfractionsDataModel extends
 
 	@Override
 	public int getObjectsNumber() {
-		return datainfractionService.findNotificationInfractionsNumber(criteria)
+		return notificationInfractionsService.findNotificationInfractionsNumber(criteria)
 				.intValue();
 	}
 

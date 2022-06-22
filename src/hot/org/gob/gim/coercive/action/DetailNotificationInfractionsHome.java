@@ -5,7 +5,7 @@ package org.gob.gim.coercive.action;
 
 import java.math.BigDecimal;
 
-import org.gob.gim.coercive.service.DatainfractionService;
+import org.gob.gim.coercive.service.NotificationInfractionsService;
 import org.gob.gim.common.ServiceLocator;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
@@ -28,7 +28,7 @@ public class DetailNotificationInfractionsHome extends EntityController{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private DatainfractionService datainfractionService;
+	private NotificationInfractionsService notificationInfractionsService;
 	
 	private Long notificationId;
 	
@@ -45,12 +45,12 @@ public class DetailNotificationInfractionsHome extends EntityController{
 	
 	public void loadNotificationInfraction(){
 		if (isFirstTime) {
-			if (datainfractionService == null) {
-				datainfractionService = ServiceLocator.getInstance().findResource(
-						datainfractionService.LOCAL_NAME);
+			if (notificationInfractionsService == null) {
+				notificationInfractionsService = ServiceLocator.getInstance().findResource(
+						notificationInfractionsService.LOCAL_NAME);
 			}
 			// this.notifications = this.datainfractionService.getNotifications(this.getSelectedItemAsList());
-			this.notification = this.datainfractionService.findObjectById(this.notificationId);
+			this.notification = this.notificationInfractionsService.findObjectById(this.notificationId);
 		}
 	}
 	
