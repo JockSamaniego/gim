@@ -190,7 +190,12 @@ public class DatainfractionServiceBean implements DatainfractionService {
 	@Override
 	public List<PaymentNotification> findPaymentsByNotification(Long notificationId) {
 		Query query = entityManager
-				.createQuery("SELECT pnotif FROM PaymentNotification pnotif WHERE pnotif.notification.id=:notificationId order by pnotif.date, pnotif.time");
+				.createQuery("SELECT pnotif FROM PaymentNotification pnotif "
+						+ "JOIN fetch pnotif.finantialInstitution "
+						+ "JOIN fetch pnotif.cashier "
+						+ "JOIN fetch pnotif.paymentType "
+						+ "WHERE pnotif.notification.id=:notificationId "
+						+ "order by pnotif.date, pnotif.time");
 		query.setParameter("notificationId", notificationId);		
 		return query.getResultList();
 	}

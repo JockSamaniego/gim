@@ -10,6 +10,8 @@
 
 	<ui:define name="body">
 		<ui:include src="dialogs/PaymentsInfraction.xhtml" />
+		<ui:include src="dialogs/ChangeStatusNotification.xhtml" />
+		<ui:include src="dialogs/HistoryChangeStatusNotification.xhtml" />
 		
 		<h:form id="infractionSearch" styleClass="edit">
 			<ui:debug id="debug" />
@@ -127,6 +129,18 @@
 								<f:param name="from" value="/coercive/infractions/NotificationInfractionList.xhtml"/>
 							</s:button>
 
+							<a:commandButton id="changeStatus" ajaxSingle="true" eventsQueue="gimQueue"
+								value="Cambiar Estado"
+								oncomplete="Richfaces.showModalPanel('changeStatusNotification',{width:500, height:350})"
+								actionListener="#{notificationInfractionListHome.prepareChangeStatus(_notification)}" 
+								reRender="changeStatusNotification, changeStatusNotificationForm"/>
+
+							<a:commandButton id="histotyChangeStatus" ajaxSingle="true" eventsQueue="gimQueue"
+								value="Seguimiento"
+								oncomplete="Richfaces.showModalPanel('historyChangeStatusNotification')"
+								actionListener="#{notificationInfractionListHome.prepareViewHistoryChangeStatus(_notification)}"
+								reRender="historyChangeStatusNotificationForm, historyChangeStatusNotification"/>
+								
 							<h:commandButton value="Reimprimir" id="reprintButton" 
 								action="#{notificationInfractionListHome.prepareRePrint(_notification.id)}"> 
 								<s:conversationPropagation type="join" /> 

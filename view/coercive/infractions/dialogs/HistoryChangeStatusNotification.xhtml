@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<rich:modalPanel id="changeStatusNotification">
+	<rich:modalPanel id="changeStatusNotification1">
 		<f:facet name="header">
 			<h:panelGroup>
 				<h:outputText value="Cambiar estado Notificación #{notificationInfractionListHome.currentNotification.year}-#{notificationInfractionListHome.currentNotification.number}"></h:outputText>
@@ -18,12 +18,12 @@
 		<f:facet name="controls">
 			<h:panelGroup>
 				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
-					id="hidelinkImpugnment" />
+					id="hidelinkImpugnment3" />
 				<rich:componentControl for="changeStatusNotification"
-					attachTo="hidelinkImpugnment" operation="hide" event="onclick" />
+					attachTo="hidelinkImpugnment3" operation="hide" event="onclick" />
 			</h:panelGroup>
 		</f:facet>
-		<h:form id="changeStatusNotificationForm">
+		<h:form id="changeStatusNotificationForm3">
 			<rich:messages errorClass="errors" style="color:red" />
 			<h:panelGrid columns="1">
 				<s:decorate id="statusField" template="../../../layout/edit.xhtml">
