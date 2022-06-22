@@ -13,9 +13,11 @@ import javax.persistence.Query;
 
 import org.gob.gim.coercive.dto.criteria.DataInfractionSearchCriteria;
 import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
+import org.gob.gim.coercive.view.InfractionUserData;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
+import ec.gob.gim.coercive.model.infractions.PaymentNotification;
 
 /**
  * @author René
@@ -266,4 +268,38 @@ public class DatainfractionServiceBean implements DatainfractionService {
 		return size.intValue();
 	}
 
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PaymentNotification> findPaymentsByNotification(Long notificationId) {
+		Query query = entityManager
+				.createQuery("SELECT pnotif FROM PaymentNotification pnotif WHERE pnotif.notification.id=:notificationId order by pnotif.date, pnotif.time");
+		query.setParameter("notificationId", notificationId);		
+		return query.getResultList();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public InfractionUserData userData(Long notificationId) {
+		Query query = entityManager
+				.createQuery("SELECT distinct "
+							+"NEW org.gob.gim.coercive.view.InfractionUserData(di.name, di.identification, di.email, di.phoneSms, count(di)) "
+							+"FROM Datainfraction di "
+							+"WHERE di.notification.id=:notificationId "
+							+"GROUP BY di.name, di.identification, di.email, di.phoneSms ");
+		query.setParameter("notificationId", notificationId);		
+		List<InfractionUserData>list =  query.getResultList();
+		return (!list.isEmpty())? list.get(0): null;
+	}
+	
+	
+	/**
+	 * Grabar un nuevo abono de coactiva-infraccion
+	 * @param payment
+	 */
+	@Override
+	public void savePaymentNotification(PaymentNotification payment){
+		entityManager.persist(payment);
+	}
 }

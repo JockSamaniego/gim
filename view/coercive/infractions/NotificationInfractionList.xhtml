@@ -132,15 +132,17 @@
 								<s:conversationPropagation type="join" /> 
 							</h:commandButton>
 							
-							
 							<a:commandButton 
 								value="Ver abonos" 
 								id="abonosButton" 
 								action="#{notificationInfractionListHome.viewPayments(_notification.id)}"
 								ajaxSingle="true"
 								eventsQueue="gimQueue"
-								oncomplete="Richfaces.showModalPanel('paymentsInfraction',{width:450, height:250})"> 
+								oncomplete="Richfaces.showModalPanel('paymentsInfraction',{width:650, height:450})"
+								reRender="paymentsInfraction" 
+								> 
 							</a:commandButton>
+							
 						</rich:column>
 
 					</rich:dataTable>

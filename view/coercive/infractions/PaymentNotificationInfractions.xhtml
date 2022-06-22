@@ -1,0 +1,29 @@
+<!DOCTYPE composition
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:a="http://richfaces.org/a4j"
+	xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="payment_header" styleClass="edit">
+			<ui:debug id="uiDebug" />
+			<h:outputText styleClass="formTitle" value="" />
+ 			<rich:panel bodyClass="topAligned">
+				<f:facet name="header">#{messages['paymentAgreement.title']}</f:facet>
+				<h:panelGrid columns="2" width="100%" columnClasses="topAligned, topAligned right">
+					<h:outputText value="Nombres: " style="font-size:40px; font-weight:bold;"></h:outputText>
+					<h:outputText value="Tal persona"></h:outputText>
+				</h:panelGrid>
+			</rich:panel>
+		</h:form> 
+
+
+	</ui:define>
+
+</ui:composition>

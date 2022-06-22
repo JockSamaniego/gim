@@ -11,9 +11,11 @@ import org.gob.gim.coercive.dto.InfractionItemDTO;
 import org.gob.gim.coercive.dto.criteria.DataInfractionSearchCriteria;
 import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
 import org.gob.gim.coercive.dto.criteria.OverdueInfractionsSearchCriteria;
+import org.gob.gim.coercive.view.InfractionUserData;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
+import ec.gob.gim.coercive.model.infractions.PaymentNotification;
 
 /**
  * @author René
@@ -43,5 +45,11 @@ public interface DatainfractionService {
 	public List<Datainfraction> findDataInfractionByCriteria(DataInfractionSearchCriteria criteria, Integer firstRow,Integer numberOfRows);
 	
 	public Integer findDataInfractionNumber(DataInfractionSearchCriteria criteria);
+
+	public List<PaymentNotification> findPaymentsByNotification(Long notificationId);
+
+	public InfractionUserData userData(Long notificationId);
+
+	public void savePaymentNotification(PaymentNotification payment);
 	
 }
