@@ -124,7 +124,8 @@
 							<a:commandButton id="changeStatus" ajaxSingle="true" eventsQueue="gimQueue"
 								value="Cambiar Estado"
 								oncomplete="Richfaces.showModalPanel('changeStatusNotification',{width:500, height:350})"
-								actionListener="#{notificationInfractionListHome.prepareChangeStatus(_notification)}" />
+								actionListener="#{notificationInfractionListHome.prepareChangeStatus(_notification)}" 
+								reRender="changeStatusNotification, changeStatusNotificationForm"/>
 
 							<a:commandButton id="histotyChangeStatus" ajaxSingle="true" eventsQueue="gimQueue"
 								value="Seguimiento"
