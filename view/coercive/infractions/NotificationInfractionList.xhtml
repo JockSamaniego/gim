@@ -1,19 +1,15 @@
 <!DOCTYPE composition
 	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
-	xmlns:a="http://richfaces.org/a4j"
-	template="../../layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:g="http://gim.gob.ec/jsf" xmlns:a="http://richfaces.org/a4j" template="../../layout/template.xhtml">
 
 	<ui:define name="body">
-	
+
 		<ui:include src="dialogs/ChangeStatusNotification.xhtml" />
-	
+		<ui:include src="dialogs/HistoryChangeStatusNotification.xhtml" />
+
 		<h:form id="infractionSearch" styleClass="edit">
 			<ui:debug id="debug" />
 
@@ -21,8 +17,7 @@
 				<rich:messages errorClass="errors" id="messages" />
 				<rich:panel>
 					<f:facet name="header">
-						<h:outputText id="title" value="Notificaciones Infracciones"
-							styleClass="formTitle" />
+						<h:outputText id="title" value="Notificaciones Infracciones" styleClass="formTitle" />
 					</f:facet>
 
 					<h:panelGrid columns="2">
@@ -37,8 +32,7 @@
 					<h:panelGrid columns="2">
 						<s:decorate template="../../layout/edit.xhtml">
 							<ui:define name="label">Número:</ui:define>
-							<h:inputText id="number"
-								value="#{notificationInfractionListHome.criteria.number}">
+							<h:inputText id="number" value="#{notificationInfractionListHome.criteria.number}">
 							</h:inputText>
 						</s:decorate>
 					</h:panelGrid>
@@ -52,8 +46,7 @@
 					action="#{notificationInfractionListHome.search()}"
 					reRender="notificationsInfractionsForm, table, messages" />
 
-				<s:button id="reset" value="#{messages['common.reset']}"
-					includePageParams="false" propagation="none">
+				<s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" propagation="none">
 				</s:button>
 			</div>
 
@@ -63,8 +56,7 @@
 			<rich:panel id="table">
 				<f:facet name="header">
 					<h:panelGrid columns="3" columnClasses="headerTitle,">
-						<h:outputText
-							value="Notificaciones Totales #{notificationsInfractions.rowCount}" />
+						<h:outputText value="Notificaciones Totales #{notificationsInfractions.rowCount}" />
 
 					</h:panelGrid>
 				</f:facet>
@@ -77,29 +69,25 @@
 					</rich:panel>
 
 
-					<rich:dataTable id="notificationsList" var="_notification"
-						value="#{notificationsInfractions}" rows="25"
-						rendered="#{notificationsInfractions.rowCount != 0}">
+					<rich:dataTable id="notificationsList" var="_notification" value="#{notificationsInfractions}"
+						rows="25" rendered="#{notificationsInfractions.rowCount != 0}">
 
 						<f:facet name="footer">
-							<g:dataScroller id="scroller" maxPages="10"
-								for="notificationsList" style="float:right;" />
+							<g:dataScroller id="scroller" maxPages="10" for="notificationsList" style="float:right;" />
 						</f:facet>
 
 						<rich:column styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="NÚMERO" />
 							</f:facet>
-							<h:outputText
-								value="#{_notification.year}-#{_notification.number}" />
+							<h:outputText value="#{_notification.year}-#{_notification.number}" />
 						</rich:column>
 
 						<rich:column styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="IDENTIFICACIÓN" />
 							</f:facet>
-							<h:outputText
-								value="#{_notification.infractions.get(0).identification}" />
+							<h:outputText value="#{_notification.infractions.get(0).identification}" />
 						</rich:column>
 
 						<rich:column styleClass="right">
@@ -108,13 +96,12 @@
 							</f:facet>
 							<h:outputText value="#{_notification.infractions.get(0).name}" />
 						</rich:column>
-						
+
 						<rich:column styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="ESTADO" />
 							</f:facet>
-							<h:outputText
-								value="#{_notification.status.name}" />
+							<h:outputText value="#{_notification.status.name}" />
 						</rich:column>
 
 						<rich:column styleClass="right">
@@ -122,26 +109,28 @@
 								<h:outputText value="FECHA CREACIÓN" />
 							</f:facet>
 							<h:outputText value="#{_notification.creationTimeStamp}">
-								<f:convertDateTime type="date"
-									pattern="#{messages['common.datePattern']}" />
+								<f:convertDateTime type="date" pattern="#{messages['common.datePattern']}" />
 							</h:outputText>
 						</rich:column>
 
 						<rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
-							<s:button
-								view="/coercive/infractions/DetailNotificationInfractions.xhtml"
-								value="#{messages['common.detail']}" propagation="join"
-								id="infractionsListButton">
-								<f:param name="notificationId" value="#{_notification.id}" />
-								<f:param name="from"
-									value="/coercive/infractions/NotificationInfractionList.xhtml" />
-							</s:button>
 
-							<a:commandButton id="changeStatus" ajaxSingle="true"
-								eventsQueue="gimQueue" value="Cambiar Estado" 
+							<s:button view="/coercive/infractions/DetailNotificationInfractions.xhtml"
+								value="#{messages['common.detail']}" propagation="join" id="infractionsListButton">
+								<f:param name="notificationId" value="#{_notification.id}" />
+								<f:param name="from" value="/coercive/infractions/NotificationInfractionList.xhtml" />
+							</s:button>
+							<a:commandButton id="changeStatus" ajaxSingle="true" eventsQueue="gimQueue"
+								value="Cambiar Estado"
 								oncomplete="Richfaces.showModalPanel('changeStatusNotification',{width:500, height:350})"
 								actionListener="#{notificationInfractionListHome.prepareChangeStatus(_notification)}" />
+
+							<a:commandButton id="histotyChangeStatus" ajaxSingle="true" eventsQueue="gimQueue"
+								value="Seguimiento"
+								oncomplete="Richfaces.showModalPanel('historyChangeStatusNotification')"
+								actionListener="#{notificationInfractionListHome.prepareViewHistoryChangeStatus(_notification)}"
+								reRender="historyChangeStatusNotificationForm, historyChangeStatusNotification"/>
 
 							<h:commandButton value="Reimprimir" id="reprintButton"
 								action="#{notificationInfractionListHome.prepareRePrint(_notification.id)}">

@@ -1,0 +1,88 @@
+<!DOCTYPE composition
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="historyChangeStatusNotification" width="1200"
+		height="550">
+
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Historial cambios estado"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkInformation" />
+				<rich:componentControl for="historyChangeStatusNotification"
+					attachTo="hidelinkInformation" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="historyChangeStatusNotificationForm">
+		
+			<h:panelGrid>
+				<f:facet name="header">Detalle de Notificación</f:facet>
+
+				<s:decorate template="../../../layout/display.xhtml">
+					<ui:define name="label">Número:</ui:define>
+						<h:outputText value="#{notificationInfractionListHome.currentNotification.year}-#{notificationInfractionListHome.currentNotification.number}" />
+				</s:decorate>
+
+			</h:panelGrid>
+			
+			<rich:spacer title="Listado de Bajas" />
+
+			<rich:extendedDataTable height="400px" width="1175px" readOnly="true"
+				id="historyTable" var="_record" rows="20"
+				value="#{notificationInfractionListHome.currentNotification.statusChange}"
+				noDataLabel="NO EXISTEN HISTORIAL ASOCIADO"
+				>
+				<f:facet name="header">
+					<h:outputText
+						value="Historial" />
+				</f:facet>
+
+				<rich:column width="12%" styleClass="center">
+					<f:facet name="header">Fecha</f:facet>
+					<h:outputText value="#{_record.date}">
+						<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+					</h:outputText>
+				</rich:column>
+
+				<rich:column width="13%" styleClass="center">
+					<f:facet name="header">Estado</f:facet>
+					<h:outputText value="#{_record.status.name}">
+					</h:outputText>
+				</rich:column>
+
+				<rich:column width="20%" styleClass="center">
+					<f:facet name="header">Usuario</f:facet>
+					<h:outputText value="#{_record.user.resident.name}">
+					</h:outputText>
+				</rich:column>
+
+				<rich:column width="20%" styleClass="center">
+					<f:facet name="header">Responsable</f:facet>
+					<h:outputText value="#{_record.responsible.name}" />
+				</rich:column>
+
+				<rich:column width="35%" styleClass="center">
+					<f:facet name="header">Explicación de cambio</f:facet>
+					<h:outputText value="#{_record.observation}" />
+				</rich:column>
+
+			</rich:extendedDataTable>
+			<rich:datascroller id="tableScroller" page="1"
+				renderIfSinglePage="false" align="right" for="historyTable"
+				maxPages="10" rendered="#{not empty notificationInfractionListHome.currentNotification.statusChange}" />
+		</h:form>
+	</rich:modalPanel>
+</ui:composition>

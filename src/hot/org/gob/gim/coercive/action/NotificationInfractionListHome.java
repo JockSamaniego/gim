@@ -230,6 +230,10 @@ public class NotificationInfractionListHome extends EntityController {
 		this.date = new Date();
 		this.person = null;
 	}
+	
+	public void prepareViewHistoryChangeStatus(NotificationInfractions notification) {
+		this.currentNotification = notificationInfractionsService.findWithHistoryById(notification.getId());
+	}
 
 	public void saveChangeStatus() {
 		

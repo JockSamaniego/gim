@@ -23,7 +23,7 @@ import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
  */
 @Stateless(name = "NotificationInfractionsService")
 public class NotificationInfractionsServiceBean implements NotificationInfractionsService{
-	
+		
 	@PersistenceContext
 	EntityManager entityManager;
 	
@@ -123,6 +123,15 @@ public class NotificationInfractionsServiceBean implements NotificationInfractio
 	public NotificationInfractions updateNotification(
 			NotificationInfractions notification) {
 		return crudService.update(notification);
+	}
+
+	@Override
+	public NotificationInfractions findWithHistoryById(Long id) {
+		Query query = entityManager
+				.createQuery("SELECT n FROM NotificationInfractions n LEFT JOIN n.statusChange s WHERE n.id=:id");
+		query.setParameter("id", id);
+		// query.setFirstResult(rowCount.intValue()).setMaxResults(12);
+		return (NotificationInfractions) query.getSingleResult();
 	}
 	
 }

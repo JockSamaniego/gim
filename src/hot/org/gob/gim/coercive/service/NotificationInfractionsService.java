@@ -28,6 +28,8 @@ public interface NotificationInfractionsService {
 			Integer numberOfRows);
 
 	public NotificationInfractions findObjectById(Long id);
+	
+	public NotificationInfractions findWithHistoryById(Long id);
 
 	public Integer findNotificationInfractionsNumber(
 			NotificationInfractionSearchCriteria criteria);
