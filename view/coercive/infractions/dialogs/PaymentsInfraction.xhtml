@@ -3,12 +3,11 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:a="http://richfaces.org/a4j" xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:g="http://gim.gob.ec/jsf" >
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf">
 
 
 	<ui:include src="DepositCoerciveInfractionsPanel.xhtml" />
-		
+
 	<rich:modalPanel id="paymentsInfraction">
 		<f:facet name="header">
 			<h:panelGroup>
@@ -23,19 +22,38 @@
 			</h:panelGroup>
 		</f:facet>
 		<h:form id="paymentsInfractionForm">
-			<rich:messages errorClass="errors" style="color:red" /> 
-			<h:panelGrid  columns="2">
-				<h:outputText value="Nombres:" style="font-weight:bold;"></h:outputText>
-				<h:outputText value="#{notificationInfractionListHome.userData.name}"></h:outputText>
-				<h:outputText value="Identificación:" style="font-weight:bold;"></h:outputText>
-				<h:outputText value="#{notificationInfractionListHome.userData.identification}"></h:outputText>
-				<h:outputText value="Correo electrónico:" style="font-weight:bold;"></h:outputText>
-				<h:outputText value="#{notificationInfractionListHome.userData.mail}"></h:outputText>
-				<h:outputText value="Teléfono:" style="font-weight:bold;"></h:outputText>
-				<h:outputText value="#{notificationInfractionListHome.userData.phone}"></h:outputText>
+			<rich:messages errorClass="errors" style="color:red" />
+			<h:panelGrid columns="2" style="width:100%">
+				<h:panelGrid columns="2">
+					<h:outputText value="Nombres:" style="font-weight:bold; font-size: 14px;"></h:outputText>
+					<h:outputText value="#{notificationInfractionListHome.userData.name}"></h:outputText>
+					<h:outputText value="Identificación:" style="font-weight:bold; font-size: 14px"></h:outputText>
+					<h:outputText value="#{notificationInfractionListHome.userData.identification}"></h:outputText>
+					<h:outputText value="Correo electrónico:" style="font-weight:bold; font-size: 14px"></h:outputText>
+					<h:outputText value="#{notificationInfractionListHome.userData.mail}"></h:outputText>
+					<h:outputText value="Teléfono:" style="font-weight:bold; font-size: 14px"></h:outputText>
+					<h:outputText value="#{notificationInfractionListHome.userData.phone}"></h:outputText>
+					<h:outputText value="Nro. notificación:" style="font-weight:bold; font-size: 14px"></h:outputText>
+					<h:outputText value="#{notificationInfractionListHome.notificationSelected.year}-#{notificationInfractionListHome.notificationSelected.number}"></h:outputText>
+				</h:panelGrid>
+				<h:panelGrid columns="2"  columnClasses="right, right" style="width:100%">
+					<h:outputText value="Subtotal" style="font-weight:bold; font-size: 22px;"></h:outputText>
+					<h:outputText value="#{notificationInfractionListHome.userData.value}" style="font-weight:bold; font-size: 22px;">
+						<f:convertNumber pattern="$####.00" />
+					</h:outputText>
+					<h:outputText value="Interes" style="font-weight:bold; font-size: 22px;"></h:outputText>
+					<h:outputText value="#{notificationInfractionListHome.userData.interest}" style="font-weight:bold; font-size: 22px;">
+						<f:convertNumber pattern="$####.00" />
+					</h:outputText>
+					<h:outputText value="Total" style="font-weight:bold; font-size: 22px;"></h:outputText>
+					<h:outputText value="#{notificationInfractionListHome.userData.total}" style="font-weight:bold; font-size: 22px;">
+						<f:convertNumber pattern="$####.00" />
+					</h:outputText>					
+				</h:panelGrid>
 			</h:panelGrid>
- 
-			<rich:panel  >
+			<h:outputText value="*No se realizan cálculos de interés" styleClass="right"  style="font-style: italic;"></h:outputText>
+			<div style="height:20px"></div>
+			<rich:panel>
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
 						<h:outputText value="Abonos realizados" />
@@ -47,10 +65,10 @@
 				</f:facet>
 				<div class="results" id="paymentAgreementAgreementList">
 					<h:outputText value="#{messages['common.noResultsReturned']}"
-					rendered="#{notificationInfractionListHome.payments.size == 0}" />
-		
+						rendered="#{notificationInfractionListHome.payments.size == 0}" />
+
 					<rich:dataTable id="paymentList" var="_payment" value="#{notificationInfractionListHome.payments}"
-							rows="25" rendered="#{notificationInfractionListHome.payments.size != 0}">
+						rows="25" rendered="#{notificationInfractionListHome.payments.size != 0}">
 						<f:facet name="footer">
 							<g:dataScroller id="scroller" maxPages="10" for="paymentList" style="float:right;" />
 						</f:facet>
@@ -60,54 +78,62 @@
 							</f:facet>
 							<h:outputText value="#{_payment.date} #{_payment.time}" />
 						</rich:column>
-						
+
 						<rich:column styleClass="left">
 							<f:facet name="header">
 								<h:outputText value="Tipo de pago" />
 							</f:facet>
 							<h:outputText value="#{_payment.paymentType.name}" />
 						</rich:column>
-						
-										
+
+
 						<rich:column styleClass="left">
 							<f:facet name="header">
 								<h:outputText value="Institución" />
 							</f:facet>
 							<h:outputText value="#{_payment.finantialInstitution.name}" />
 						</rich:column>
-						
+
 						<rich:column styleClass="left">
 							<f:facet name="header">
 								<h:outputText value="Cuenta" />
 							</f:facet>
 							<h:outputText value="#{_payment.accountNumber}" />
 						</rich:column>
-						
-						
+
+
 						<rich:column styleClass="left">
 							<f:facet name="header">
 								<h:outputText value="Cuenta" />
 							</f:facet>
 							<h:outputText value="#{_payment.documentNumber}" />
 						</rich:column>
-						
+
 						<rich:column styleClass="left">
 							<f:facet name="header">
 								<h:outputText value="Cajero" />
 							</f:facet>
 							<h:outputText value="#{_payment.cashier.name}" />
 						</rich:column>
-						
+
 						<rich:column styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="Cajero" />
+								<h:outputText value="Valor" />
 							</f:facet>
 							<h:outputText value="#{_payment.value}" />
 						</rich:column>
-						
+						<f:facet name="footer">
+							<rich:columnGroup>
+								<rich:column colspan="7" styleClass="right">
+									<h:outputText value="#{notificationInfractionListHome.totalPayments}">
+										<f:convertNumber pattern="$####.00" />
+									</h:outputText>
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
 					</rich:dataTable>
 				</div>
-		</rich:panel>
+			</rich:panel>
 		</h:form>
 	</rich:modalPanel>
 </ui:composition>

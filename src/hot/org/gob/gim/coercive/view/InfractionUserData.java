@@ -2,39 +2,38 @@ package org.gob.gim.coercive.view;
 
 import java.math.BigDecimal;
 
+public class InfractionUserData {
 
-public class InfractionUserData{
- 
 	private String name;
 	private String identification;
 	private String mail;
 	private String phone;
 	private Long totalinfractions;
-//	private BigDecimal value;
-//	private BigDecimal interest;
-//	private BigDecimal total;
-		
-	public InfractionUserData() { 
+	private BigDecimal value;
+	private BigDecimal interest;
+	private BigDecimal total;
+
+	public InfractionUserData() {
 		this.identification = "";
 		this.name = "";
 		this.totalinfractions = 0L;
-//		this.value = BigDecimal.ZERO;
-//		this.interest = BigDecimal.ZERO;
-//		this.total = BigDecimal.ZERO;				
+		this.value = BigDecimal.ZERO;
+		this.interest = BigDecimal.ZERO;
+		this.total = BigDecimal.ZERO;
 	}
-	
-	
 
+ 
 	public InfractionUserData(String name, String identification, String mail,
-		String phone, Long totalinfractions) { 
-	this.name = name;
-	this.identification = identification;
-	this.mail = mail;
-	this.phone = phone;
-	this.totalinfractions = totalinfractions;
-}
-
-
+			String phone, Long totalinfractions, BigDecimal value, BigDecimal interest, BigDecimal total) {
+		this.name = name;
+		this.identification = identification;
+		this.mail = mail;
+		this.phone = phone;
+		this.totalinfractions = totalinfractions;
+		this.value = value;
+		this.interest = interest;
+		this.total = total;
+	}
 
 	public String getName() {
 		return name;
@@ -75,5 +74,28 @@ public class InfractionUserData{
 	public void setTotalinfractions(Long totalinfractions) {
 		this.totalinfractions = totalinfractions;
 	}
-}
 
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;
+	}
+
+	public BigDecimal getInterest() {
+		return interest;
+	}
+
+	public void setInterest(BigDecimal interest) {
+		this.interest = interest;
+	}
+
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}
+}

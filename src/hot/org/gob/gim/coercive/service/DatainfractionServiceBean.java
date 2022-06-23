@@ -208,7 +208,8 @@ public class DatainfractionServiceBean implements DatainfractionService {
 	public InfractionUserData userData(Long notificationId) {
 		Query query = entityManager
 				.createQuery("SELECT distinct "
-							+"NEW org.gob.gim.coercive.view.InfractionUserData(di.name, di.identification, di.email, di.phoneSms, count(di)) "
+							+"NEW org.gob.gim.coercive.view.InfractionUserData(di.name, di.identification, di.email, "
+							+ " di.phoneSms, count(di), sum(di.value), sum(di.interest), sum(di.totalValue)) "
 							+"FROM Datainfraction di "
 							+"WHERE di.notification.id=:notificationId "
 							+"GROUP BY di.name, di.identification, di.email, di.phoneSms ");

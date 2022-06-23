@@ -75,6 +75,7 @@ public class NotificationInfractionListHome extends EntityController{
 	private InfractionUserData userData = null;
 	private List<PaymentNotification> newPayments = new ArrayList<PaymentNotification>();
 	private List<ItemCatalog> paymentTypes = new ArrayList<ItemCatalog>();
+	private ItemCatalog validStatus;
 	private BigDecimal change = BigDecimal.ZERO;
 	private BigDecimal totalToPay = BigDecimal.ZERO;
 	private List<FinancialInstitution> banks;
@@ -82,9 +83,11 @@ public class NotificationInfractionListHome extends EntityController{
 	private List<FinancialInstitution> creditCardEmitors;
 	private Boolean invalidAmount = Boolean.TRUE;
 	private NotificationInfractions notificationSelected=null;
+	private BigDecimal totalPayments = BigDecimal.ZERO;
 	private final String PAYMENTS_TYPE_CATALOG = "PAYMENT_TYPES";
 	private final String STATUS_PAYMENT_COERCIVE = "COERCIVE_PAYMENT_STATUS";
 	private final String STATUS_PAYMENT_COERCIVE_VALID = "VALID";
+	
 
 	@In(create = true)
 	UserSession userSession;
@@ -100,6 +103,8 @@ public class NotificationInfractionListHome extends EntityController{
 				.findItemsForCatalogCodeOrderById("CAT_STATUS_NOTIF_INFRACCCIONS");
 		//macartuche
 		this.paymentTypes = itemCatalogService.findItemsForCatalogCode(PAYMENTS_TYPE_CATALOG);
+		this.validStatus = itemCatalogService.findItemByCodeAndCodeCatalog(STATUS_PAYMENT_COERCIVE, STATUS_PAYMENT_COERCIVE_VALID);
+		
 		//
 		this.search();
 	}
@@ -202,6 +207,7 @@ public class NotificationInfractionListHome extends EntityController{
 		
 		//limpiar data
 		this.newPayments.clear();
+		this.totalPayments = BigDecimal.ZERO;
 		
 		if (datainfractionService == null) {
 			datainfractionService = ServiceLocator.getInstance().findResource(
@@ -211,14 +217,17 @@ public class NotificationInfractionListHome extends EntityController{
 		if (itemCatalogService == null) {
 			itemCatalogService = ServiceLocator.getInstance().findResource(itemCatalogService.LOCAL_NAME);
 		}
-		ItemCatalog validStatus = itemCatalogService.findItemByCodeAndCodeCatalog(STATUS_PAYMENT_COERCIVE, STATUS_PAYMENT_COERCIVE_VALID);
-		
 		
 		this.userData = this.datainfractionService.userData(notificationId);
-		this.payments = this.datainfractionService.findPaymentsByNotification(notificationId, validStatus.getId());	
+		this.payments = this.datainfractionService.findPaymentsByNotification(notificationId, this.validStatus.getId());	
 		this.notificationSelected = notificationInfractionsService.findObjectById(notificationId);
 		
+		for (PaymentNotification payment : this.payments) {
+			this.totalPayments = this.totalPayments.add(payment.getValue());
+		}
 		
+		
+		//agregar por defecto una fraccion de pago
 		ItemCatalog CASH = itemCatalogService.findItemByCodeAndCodeCatalog(PAYMENTS_TYPE_CATALOG, "CASH");
 		this.loadLists();
 		
@@ -293,9 +302,6 @@ public class NotificationInfractionListHome extends EntityController{
 	}
 	
 	public void calculateChange(){
-		//TO-DO
-		System.out.println("TO-DO");
-
 		this.invalidAmount = Boolean.FALSE;
 	}
 	
@@ -310,6 +316,7 @@ public class NotificationInfractionListHome extends EntityController{
 		for (PaymentNotification payment : this.newPayments) {
 			payment.setCashier(userSession.getUser());
 			payment.setNotification(this.notificationSelected);
+			payment.setStatus(this.validStatus);
 			this.datainfractionService.savePaymentNotification(payment);
 		}
 	}
@@ -462,6 +469,21 @@ public class NotificationInfractionListHome extends EntityController{
 		this.person = person;
 	}
 
-	 
+	public BigDecimal getTotalPayments() {
+		return totalPayments;
+	}
+
+	public void setTotalPayments(BigDecimal totalPayments) {
+		this.totalPayments = totalPayments;
+	}
+
+	public NotificationInfractions getNotificationSelected() {
+		return notificationSelected;
+	}
+
+	public void setNotificationSelected(NotificationInfractions notificationSelected) {
+		this.notificationSelected = notificationSelected;
+	}
+ 
 
 }
