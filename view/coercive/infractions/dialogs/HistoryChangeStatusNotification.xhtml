@@ -9,88 +9,80 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<rich:modalPanel id="changeStatusNotification1">
+	<rich:modalPanel id="historyChangeStatusNotification" width="1200"
+		height="550">
+
 		<f:facet name="header">
 			<h:panelGroup>
-				<h:outputText value="Cambiar estado Notificación #{notificationInfractionListHome.currentNotification.year}-#{notificationInfractionListHome.currentNotification.number}"></h:outputText>
+				<h:outputText value="Historial cambios estado"></h:outputText>
 			</h:panelGroup>
 		</f:facet>
 		<f:facet name="controls">
 			<h:panelGroup>
 				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
-					id="hidelinkImpugnment3" />
-				<rich:componentControl for="changeStatusNotification"
-					attachTo="hidelinkImpugnment3" operation="hide" event="onclick" />
+					id="hidelinkInformation1" />
+				<rich:componentControl for="historyChangeStatusNotification"
+					attachTo="hidelinkInformation1" operation="hide" event="onclick" />
 			</h:panelGroup>
 		</f:facet>
-		<h:form id="changeStatusNotificationForm3">
-			<rich:messages errorClass="errors" style="color:red" />
-			<h:panelGrid columns="1">
-				<s:decorate id="statusField" template="../../../layout/edit.xhtml">
-					<ui:define name="label">Estado</ui:define>
-					<h:selectOneMenu id="cmbStatus"
-						value="#{notificationInfractionListHome.status}" required="true">
-						<f:selectItem itemLabel="#{messages['common.selectOne']}"
-							itemValue="" noSelectionOption="true" />
-						<f:selectItems value="#{notificationInfractionListHome.statuses}"
-							var="status" itemLabel="#{status.name}" itemValue="#{status}" />
-						<a:support event="onchange" ajaxSingle="true" />
-						<s:convertEntity></s:convertEntity>
-					</h:selectOneMenu>
+
+		<h:form id="historyChangeStatusNotificationForm">
+		
+			<h:panelGrid>
+				<f:facet name="header">Detalle de Notificación</f:facet>
+
+				<s:decorate template="../../../layout/display.xhtml">
+					<ui:define name="label">Número:</ui:define>
+						<h:outputText value="#{notificationInfractionListHome.currentNotification.year}-#{notificationInfractionListHome.currentNotification.number}" />
 				</s:decorate>
 
-				<s:decorate template="../../../layout/edit.xhtml">
-					<ui:define name="label">Fecha:</ui:define>
-					<rich:calendar id="date"
-						value="#{notificationInfractionListHome.date}"
-						datePattern="yyyy-MM-dd">
-					</rich:calendar>
-				</s:decorate>
-				
-				<s:decorate id="personField" template="../../../layout/edit.xhtml">
-					<ui:define name="label">#{messages['notification.responsible']}</ui:define>
-					<h:selectOneMenu id="person" value="#{notificationInfractionListHome.person}"
-						required="true" 
-						requiredMessage="responsable requerido">
-						<s:selectItems value="#{usersCoercives}" var="_user"
-							noSelectionLabel="#{messages['common.chooseOption']}"
-							label="#{_user.name}" />
-						<a:support event="onchange"	
-							ajaxSingle="true" />
-						<s:convertEntity></s:convertEntity>
-					</h:selectOneMenu>
-				</s:decorate>
-
-				<s:decorate id="observationField"
-					template="../../../layout/edit.xhtml">
-					<ui:define name="label">Explicación de cambio</ui:define>
-					<h:inputTextarea id="observation"
-						value="#{notificationInfractionListHome.changeStatusExplanation}"
-						rows="5" cols="40" maxlength="255" required="true">
-						<a:support ajaxSingle="true" event="onblur"></a:support>
-					</h:inputTextarea>
-				</s:decorate>
-
-				<div style="clear: both">
-					<span class="required">*</span>
-					#{messages['common.requiredFields']}
-				</div>
 			</h:panelGrid>
-			<div class="actionButtonsDialog">
-				<a:region>
+			
+			<rich:spacer title="Listado de Bajas" />
 
-					<a:commandButton id="saveChangeStatusButton" ajaxSingle="true" value="Guardar"
-						oncomplete="if (#{facesContext.maximumSeverity==null}){#{rich:component('changeStatusNotification')}.hide();window.location.reload();}"
-						bypassUpdates="true"
-						actionListener="#{notificationInfractionListHome.saveChangeStatus()}"
-						reRender="notificationsInfractionsForm, table, messages"/>
+			<rich:extendedDataTable height="400px" width="1175px" readOnly="true"
+				id="historyTable" var="_record" rows="20"
+				value="#{notificationInfractionListHome.currentNotification.statusChange}"
+				noDataLabel="NO EXISTE HISTORIAL ASOCIADO"
+				>
+				<f:facet name="header">
+					<h:outputText
+						value="Historial" />
+				</f:facet>
 
-					<a:commandButton ajaxSingle="true"
-						value="#{messages['common.cancel']}"
-						oncomplete="Richfaces.hideModalPanel('changeStatusNotification');"
-						bypassUpdates="true" immediate="true" />
-				</a:region>
-			</div>
+				<rich:column width="12%" styleClass="center">
+					<f:facet name="header">Fecha</f:facet>
+					<h:outputText value="#{_record.date}">
+						<f:convertDateTime pattern="#{messages['common.datePattern']}" />
+					</h:outputText>
+				</rich:column>
+
+				<rich:column width="13%" styleClass="center">
+					<f:facet name="header">Estado</f:facet>
+					<h:outputText value="#{_record.status.name}">
+					</h:outputText>
+				</rich:column>
+
+				<rich:column width="20%" styleClass="center">
+					<f:facet name="header">Usuario</f:facet>
+					<h:outputText value="#{_record.user.resident.name}">
+					</h:outputText>
+				</rich:column>
+
+				<rich:column width="20%" styleClass="center">
+					<f:facet name="header">Responsable</f:facet>
+					<h:outputText value="#{_record.responsible.name}" />
+				</rich:column>
+
+				<rich:column width="35%" styleClass="center">
+					<f:facet name="header">Explicación de cambio</f:facet>
+					<h:outputText value="#{_record.observation}" />
+				</rich:column>
+
+			</rich:extendedDataTable>
+			<rich:datascroller id="tableScroller" page="1"
+				renderIfSinglePage="false" align="right" for="historyTable"
+				maxPages="10" rendered="#{not empty notificationInfractionListHome.currentNotification.statusChange}" />
 		</h:form>
 	</rich:modalPanel>
 </ui:composition>
