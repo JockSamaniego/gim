@@ -6,6 +6,7 @@ package org.gob.gim.coercive.service;
 import java.math.BigInteger;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,8 +15,10 @@ import javax.persistence.Query;
 import org.gob.gim.coercive.dto.criteria.DataInfractionSearchCriteria;
 import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
 import org.gob.gim.coercive.view.InfractionUserData;
+import org.gob.gim.common.service.CrudService;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.coercive.model.infractions.HistoryStatusInfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 import ec.gob.gim.coercive.model.infractions.PaymentNotification;
 
@@ -25,9 +28,12 @@ import ec.gob.gim.coercive.model.infractions.PaymentNotification;
  */
 @Stateless(name = "DatainfractionService")
 public class DatainfractionServiceBean implements DatainfractionService {
-
+	
 	@PersistenceContext
 	EntityManager entityManager;
+	
+	@EJB
+	CrudService crudService;
 
 	/*
 	 * (non-Javadoc)
@@ -226,5 +232,19 @@ public class DatainfractionServiceBean implements DatainfractionService {
 	@Override
 	public void savePaymentNotification(PaymentNotification payment){
 		entityManager.persist(payment);
+	}
+
+	@Override
+	public HistoryStatusInfraction saveHIstoryRecord(
+			HistoryStatusInfraction record) {
+		return this.crudService.create(record);
+	}
+
+	@Override
+	public Datainfraction getDataInfractionWithHistoryById(Long id) {
+		Query query = entityManager
+				.createQuery("SELECT d FROM Datainfraction d LEFT JOIN d.statusChange s WHERE d.id=:id");
+		query.setParameter("id", id);
+		return (Datainfraction) query.getSingleResult();
 	}
 }

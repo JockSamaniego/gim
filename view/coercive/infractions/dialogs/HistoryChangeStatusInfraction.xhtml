@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<rich:modalPanel id="historyChangeStatusNotification" width="1200"
+	<rich:modalPanel id="historyChangeStatusInfraction" width="1200"
 		height="550">
 
 		<f:facet name="header">
@@ -20,27 +20,27 @@
 		<f:facet name="controls">
 			<h:panelGroup>
 				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
-					id="hidelinkInformation1" />
-				<rich:componentControl for="historyChangeStatusNotification"
-					attachTo="hidelinkInformation1" operation="hide" event="onclick" />
+					id="hidelinkInformation3" />
+				<rich:componentControl for="historyChangeStatusInfraction"
+					attachTo="hidelinkInformation3" operation="hide" event="onclick" />
 			</h:panelGroup>
 		</f:facet>
 
-		<h:form id="historyChangeStatusNotificationForm">
+		<h:form id="historyChangeStatusInfractionForm">
 		
 			<h:panelGrid>
-				<f:facet name="header">Detalle de Notificación</f:facet>
+				<f:facet name="header">Detalle de Infraccion</f:facet>
 
 				<s:decorate template="../../../layout/display.xhtml">
-					<ui:define name="label">Número:</ui:define>
-						<h:outputText value="#{notificationInfractionListHome.currentNotification.year}-#{notificationInfractionListHome.currentNotification.number}" />
+					<ui:define name="label">NRO. BOLETA:</ui:define>
+						<h:outputText value="#{dataInfractionListHome.currentItem.ticket}" />
 				</s:decorate>
 
 			</h:panelGrid>
 			
 			<rich:extendedDataTable height="400px" width="1175px" readOnly="true"
 				id="historyTable" var="_record" rows="20"
-				value="#{notificationInfractionListHome.currentNotification.statusChange}"
+				value="#{dataInfractionListHome.currentItem.statusChange}"
 				noDataLabel="NO EXISTE HISTORIAL ASOCIADO"
 				>
 				<f:facet name="header">
@@ -67,12 +67,7 @@
 					</h:outputText>
 				</rich:column>
 
-				<rich:column width="20%" styleClass="center">
-					<f:facet name="header">Responsable</f:facet>
-					<h:outputText value="#{_record.responsible.name}" />
-				</rich:column>
-
-				<rich:column width="35%" styleClass="center">
+				<rich:column width="55%" styleClass="center">
 					<f:facet name="header">Explicación de cambio</f:facet>
 					<h:outputText value="#{_record.observation}" />
 				</rich:column>
@@ -80,7 +75,7 @@
 			</rich:extendedDataTable>
 			<rich:datascroller id="tableScroller" page="1"
 				renderIfSinglePage="false" align="right" for="historyTable"
-				maxPages="10" rendered="#{not empty notificationInfractionListHome.currentNotification.statusChange}" />
+				maxPages="10" rendered="#{not empty dataInfractionListHome.currentItem.statusChange}" />
 		</h:form>
 	</rich:modalPanel>
 </ui:composition>
