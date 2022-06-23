@@ -194,15 +194,17 @@ public class DatainfractionServiceBean implements DatainfractionService {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PaymentNotification> findPaymentsByNotification(Long notificationId) {
+	public List<PaymentNotification> findPaymentsByNotification(Long notificationId, Long statusid) {
 		Query query = entityManager
 				.createQuery("SELECT pnotif FROM PaymentNotification pnotif "
 						+ "JOIN fetch pnotif.finantialInstitution "
 						+ "JOIN fetch pnotif.cashier "
 						+ "JOIN fetch pnotif.paymentType "
 						+ "WHERE pnotif.notification.id=:notificationId "
-						+ "order by pnotif.date, pnotif.time");
-		query.setParameter("notificationId", notificationId);		
+						+ "	and pnotif.status.id=:statusid	"
+						+ "	order by pnotif.date desc, pnotif.time desc");
+		query.setParameter("notificationId", notificationId);
+		query.setParameter("statusid", statusid);		
 		return query.getResultList();
 	}
 	
