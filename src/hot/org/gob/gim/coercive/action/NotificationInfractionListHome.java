@@ -83,6 +83,8 @@ public class NotificationInfractionListHome extends EntityController{
 	private Boolean invalidAmount = Boolean.TRUE;
 	private NotificationInfractions notificationSelected=null;
 	private final String PAYMENTS_TYPE_CATALOG = "PAYMENT_TYPES";
+	private final String STATUS_PAYMENT_COERCIVE = "COERCIVE_PAYMENT_STATUS";
+	private final String STATUS_PAYMENT_COERCIVE_VALID = "VALID";
 
 	@In(create = true)
 	UserSession userSession;
@@ -198,19 +200,25 @@ public class NotificationInfractionListHome extends EntityController{
 	 */
 	public void viewPayments(Long notificationId){		
 		
+		//limpiar data
+		this.newPayments.clear();
+		
 		if (datainfractionService == null) {
 			datainfractionService = ServiceLocator.getInstance().findResource(
 					datainfractionService.LOCAL_NAME);
 		}
-	 
-		this.userData = this.datainfractionService.userData(notificationId);
-		this.payments = this.datainfractionService.findPaymentsByNotification(notificationId);	
-		this.notificationSelected = notificationInfractionsService.findObjectById(notificationId);
-		
 		//consultar los tipos de pago de catalogo NO ENUMERADOR
 		if (itemCatalogService == null) {
 			itemCatalogService = ServiceLocator.getInstance().findResource(itemCatalogService.LOCAL_NAME);
 		}
+		ItemCatalog validStatus = itemCatalogService.findItemByCodeAndCodeCatalog(STATUS_PAYMENT_COERCIVE, STATUS_PAYMENT_COERCIVE_VALID);
+		
+		
+		this.userData = this.datainfractionService.userData(notificationId);
+		this.payments = this.datainfractionService.findPaymentsByNotification(notificationId, validStatus.getId());	
+		this.notificationSelected = notificationInfractionsService.findObjectById(notificationId);
+		
+		
 		ItemCatalog CASH = itemCatalogService.findItemByCodeAndCodeCatalog(PAYMENTS_TYPE_CATALOG, "CASH");
 		this.loadLists();
 		

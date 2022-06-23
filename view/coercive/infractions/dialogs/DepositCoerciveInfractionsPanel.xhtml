@@ -47,8 +47,7 @@
 					
 					<div style="clear: both" />
 					
-					<!-- BEGIN TABLE -->
-					
+					<!-- BEGIN TABLE -->					
 					<rich:extendedDataTable  height="280px" 
 						id="paymentCoerciveInfractionDetails" var="_fraction"
 						value="#{notificationInfractionListHome.newPayments}"
@@ -156,18 +155,6 @@
 					</rich:extendedDataTable>
 					
 					<!-- END TABLE -->
-					
-					<h:panelGrid width="100%" columns="2" columnClasses="headerTitle right, right">
-						<h:outputText value="#{messages['payment.change']}:" style="font-size:35px; font-weight:bold;"/>
-						<h:inputText id="changeField" value="#{notificationInfractionListHome.change}"
-							styleClass="right" style="font-size:35px; font-weight:bold;"
-							size="12" readonly="true">
-							<f:convertNumber
-								maxFractionDigits="#{messages['common.maxFractionDigits']}"
-								minFractionDigits="#{messages['common.minFractionDigits']}" />
-						</h:inputText>
-					</h:panelGrid>
-					
 					<div style="clear: both" />
 				</rich:panel>
 	
@@ -176,6 +163,7 @@
 						id="savePaymentBtn" ajaxSingle="true"
 						action="#{notificationInfractionListHome.savePayment()}"
 						value="#{messages['payment.save']}"
+						oncomplete="Richfaces.hideModalPanel('coerciveInfractionsPanel');"
 						disabled="#{notificationInfractionListHome.invalidAmount}"
 						onclick="this.disabled=true;" />
 

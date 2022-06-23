@@ -39,7 +39,7 @@ public interface DatainfractionService {
 	
 	public Integer findDataInfractionNumber(DataInfractionSearchCriteria criteria);
 
-	public List<PaymentNotification> findPaymentsByNotification(Long notificationId);
+	public List<PaymentNotification> findPaymentsByNotification(Long notificationId, Long statusid);
 
 	public InfractionUserData userData(Long notificationId);
 
