@@ -92,8 +92,11 @@ public class PaymentInfractionHome extends EntityController {
 	public void search() {
 		getDataModel().setCriteria(this.criteria);		
 		getDataModel().setRowCount(getDataModel().getObjectsNumber()); 
-		System.out.println(getDataModel().getTotal());
-		
+		 
+	}
+	
+	public String sendToPrint(){
+		return "sendToPrint";
 	}
 
 	private PaymentInfractionsDataModel getDataModel() {

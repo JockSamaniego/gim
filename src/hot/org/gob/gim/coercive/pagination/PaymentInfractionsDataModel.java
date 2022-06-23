@@ -33,6 +33,7 @@ public class PaymentInfractionsDataModel extends
 	private PaymentInfractionsSearchCriteria criteria;
 	private PaymentInfractionsService paymentInfractionsService;
 	private BigDecimal total=BigDecimal.ZERO;
+	private  List<PaymentNotification> payments;
 	/**
 	 * 
 	 */
@@ -58,10 +59,7 @@ public class PaymentInfractionsDataModel extends
 	public List<PaymentNotification> findObjects(int firstRow,
 			int numberOfRows, String sortField, boolean descending) {
 		List<PaymentNotification> payments = paymentInfractionsService.findPaymentInfractionByCriteria(criteria, firstRow, numberOfRows);
-		this.total = BigDecimal.ZERO;
-		for (PaymentNotification paymentNotification : payments) {
-			this.total = this.total.add(paymentNotification.getValue());
-		}
+		this.payments= payments;
 		return payments;
 	}
 
@@ -99,6 +97,13 @@ public class PaymentInfractionsDataModel extends
 	}
 
 	public BigDecimal getTotal() {
+		this.total = BigDecimal.ZERO;
+		if(this.payments!=null && !this.payments.isEmpty()){
+			for (PaymentNotification paymentNotification : this.payments) {
+				this.total = this.total.add(paymentNotification.getValue());
+			}
+		}
+		
 		return total;
 	}
 

@@ -4,4 +4,10 @@
 	login-required="true">
 	
 	<begin-conversation join="true" flush-mode="MANUAL" />
+	 <navigation>
+		<end-conversation before-redirect="true" />
+		<rule if-outcome="sendToPrint">
+			<redirect view-id="/coercive/infractions/report/PrintPaymentsInfraction.xhtml"></redirect>
+		</rule>
+	</navigation>
 </page>

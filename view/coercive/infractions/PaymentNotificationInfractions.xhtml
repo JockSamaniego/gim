@@ -7,8 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j" xmlns:a="http://richfaces.org/a4j"
-	xmlns:g="http://gim.gob.ec/jsf" 
-	template="../../layout/template.xhtml">
+	xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
 
 	<ui:define name="body">
 
@@ -19,22 +18,23 @@
 				<rich:messages errorClass="errors" id="messages" />
 				<rich:panel>
 					<f:facet name="header">
-						<h:outputText id="title" value="Abonos de notificaciones de infracciones"
+						<h:outputText id="title"
+							value="Abonos de notificaciones de infracciones"
 							styleClass="formTitle" />
 					</f:facet>
 
 					<s:decorate id="startDateField" template="../../layout/edit.xhtml">
 						<ui:define name="label">#{messages['report.startDate']}:</ui:define>
-						<rich:calendar value="#{paymentInfractionHome.criteria.from}" required="true"
-							enableManualInput="false"
+						<rich:calendar value="#{paymentInfractionHome.criteria.from}"
+							required="true" enableManualInput="false"
 							datePattern="#{messages['common.datePattern']}">
 						</rich:calendar>
 					</s:decorate>
 
 					<s:decorate id="endDateField" template="../../layout/edit.xhtml">
 						<ui:define name="label">#{messages['report.endDate']}:</ui:define>
-						<rich:calendar value="#{paymentInfractionHome.criteria.until}" required="true"
-							enableManualInput="false"
+						<rich:calendar value="#{paymentInfractionHome.criteria.until}"
+							required="true" enableManualInput="false"
 							datePattern="#{messages['common.datePattern']}">
 						</rich:calendar>
 					</s:decorate>
@@ -48,7 +48,8 @@
 					action="#{paymentInfractionHome.search()}"
 					reRender="paymentsInfractionsForm table, messages" />
 
-				<s:button id="reset" value="#{messages['common.reset']}" includePageParams="false" propagation="none">
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none">
 				</s:button>
 			</div>
 
@@ -77,27 +78,25 @@
 						rendered="#{paymentInfractions.rowCount != 0}">
 
 						<f:facet name="footer">
-							<g:dataScroller id="scroller" maxPages="10"
-								for="paymentsList" style="float:right;" />
+							<g:dataScroller id="scroller" maxPages="10" for="paymentsList"
+								style="float:right;" />
 						</f:facet>
 
 						<rich:column styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="Fecha" />
 							</f:facet>
-							<h:outputText
-								value="#{_payment.date}" >
+							<h:outputText value="#{_payment.date}">
 								<f:convertDateTime type="date"
-									pattern="#{messages['common.datePattern']}" />	
+									pattern="#{messages['common.datePattern']}" />
 							</h:outputText>
 						</rich:column>
-						
+
 						<rich:column styleClass="right">
 							<f:facet name="header">
 								<h:outputText value="Hora" />
 							</f:facet>
-							<h:outputText
-								value="#{_payment.time}" />
+							<h:outputText value="#{_payment.time}" />
 						</rich:column>
 
 						<rich:column styleClass="right">
@@ -114,14 +113,14 @@
 							</f:facet>
 							<h:outputText value="#{_payment.paymentType.name}" />
 						</rich:column>
-						
+
 						<rich:column styleClass="left">
 							<f:facet name="header">
 								<h:outputText value="Institución" />
 							</f:facet>
 							<h:outputText value="#{_payment.finantialInstitution.name}" />
 						</rich:column>
- 
+
 						<rich:column styleClass="left">
 							<f:facet name="header">
 								<h:outputText value="Cuenta" />
@@ -150,7 +149,7 @@
 							</f:facet>
 							<h:outputText value="#{_payment.value}" />
 						</rich:column>
- 
+
 						<f:facet name="footer">
 							<rich:columnGroup>
 								<rich:column colspan="9" styleClass="right">
@@ -163,6 +162,12 @@
 					</rich:dataTable>
 				</div>
 			</rich:panel>
+
+			<s:button id="printId1"
+				action="#{paymentInfractionHome.sendToPrint()}"
+				value="#{messages['common.print']}" >
+				<s:conversationPropagation type="join" /> 
+			</s:button>
 		</h:form>
 	</ui:define>
 </ui:composition>
