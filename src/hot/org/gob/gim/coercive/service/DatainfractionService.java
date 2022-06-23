@@ -14,6 +14,7 @@ import org.gob.gim.coercive.dto.criteria.OverdueInfractionsSearchCriteria;
 import org.gob.gim.coercive.view.InfractionUserData;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.coercive.model.infractions.HistoryStatusInfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 import ec.gob.gim.coercive.model.infractions.PaymentNotification;
 
@@ -33,6 +34,8 @@ public interface DatainfractionService {
 	
 	public Datainfraction getDataInfractionById(Long id);
 	
+	public Datainfraction getDataInfractionWithHistoryById(Long id);
+	
 	public Datainfraction updateDataInfraction(Datainfraction data);
 	
 	public List<Datainfraction> findDataInfractionByCriteria(DataInfractionSearchCriteria criteria, Integer firstRow,Integer numberOfRows);
@@ -44,5 +47,7 @@ public interface DatainfractionService {
 	public InfractionUserData userData(Long notificationId);
 
 	public void savePaymentNotification(PaymentNotification payment);
+	
+	public HistoryStatusInfraction saveHIstoryRecord(HistoryStatusInfraction record);
 	
 }

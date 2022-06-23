@@ -135,7 +135,7 @@
 								actionListener="#{notificationInfractionListHome.prepareChangeStatus(_notification)}" 
 								reRender="changeStatusNotification, changeStatusNotificationForm"/>
 
-							<a:commandButton id="histotyChangeStatus" ajaxSingle="true" eventsQueue="gimQueue"
+							<a:commandButton id="historyChangeStatus" ajaxSingle="true" eventsQueue="gimQueue"
 								value="Seguimiento"
 								oncomplete="Richfaces.showModalPanel('historyChangeStatusNotification')"
 								actionListener="#{notificationInfractionListHome.prepareViewHistoryChangeStatus(_notification)}"

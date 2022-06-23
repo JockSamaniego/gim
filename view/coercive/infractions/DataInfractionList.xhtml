@@ -8,7 +8,9 @@
 	<ui:define name="body">
 
 		<ui:include src="dialogs/ChangeStatusDataInfraction.xhtml" />
-
+		
+		<ui:include src="dialogs/HistoryChangeStatusInfraction.xhtml" />
+		
 		<h:form id="dataInfractionSearch" styleClass="edit" prependId="false">
 			<ui:debug id="debug" />
 			<a4j:outputPanel id="searcherPanel" ajaxRendered="false">
@@ -179,6 +181,11 @@
 								value="Cambiar Estado" reRender="changeStatusDataInfraction"
 								oncomplete="Richfaces.showModalPanel('changeStatusDataInfraction',{width:450, height:280})"
 								actionListener="#{dataInfractionListHome.prepareChangeStatus(_infraction)}" />
+							<a:commandButton id="historyChangeStatus" ajaxSingle="true" eventsQueue="gimQueue"
+								value="Seguimiento"
+								oncomplete="Richfaces.showModalPanel('historyChangeStatusInfraction')"
+								actionListener="#{dataInfractionListHome.prepareViewHistoryChangeStatus(_infraction)}"
+								reRender="historyChangeStatusInfractionForm, historyChangeStatusInfraction"/>
 						</rich:column>
 
 					</rich:dataTable>

@@ -4,12 +4,14 @@
 package org.gob.gim.coercive.action;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.gob.gim.coercive.dto.criteria.DataInfractionSearchCriteria;
 import org.gob.gim.coercive.pagination.DataInfractionDataModel;
 import org.gob.gim.coercive.service.DatainfractionService;
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.UserSession;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -20,6 +22,8 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityController;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.coercive.model.infractions.HistoryStatusInfraction;
+import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 import ec.gob.gim.common.model.ItemCatalog;
 
 /**
@@ -51,6 +55,9 @@ public class DataInfractionListHome extends EntityController {
 	private ItemCatalogService itemCatalogService;
 
 	private DatainfractionService datainfractionService;
+	
+	@In(create = true)
+	UserSession userSession;
 
 	/**
 	 * 
@@ -161,6 +168,11 @@ public class DataInfractionListHome extends EntityController {
 		this.status = null;
 		this.changeStatusExplanation = null;
 	}
+	
+	public void prepareViewHistoryChangeStatus(Datainfraction infraction) {
+		this.currentItem = this.datainfractionService.getDataInfractionWithHistoryById(infraction.getId());
+	}
+	
 
 	public void saveChangeStatus() {
 
@@ -177,8 +189,17 @@ public class DataInfractionListHome extends EntityController {
 			}
 
 			this.currentItem.setState(this.status);
-			//this.currentItem.setChangeStatusExplanation(this.changeStatusExplanation);
-			this.datainfractionService.updateDataInfraction(this.currentItem);
+			this.currentItem = this.datainfractionService.updateDataInfraction(this.currentItem);
+			
+			// agregar al historial
+			HistoryStatusInfraction record = new HistoryStatusInfraction();
+			record.setDate(new Date());
+			record.setInfraction(this.currentItem);
+			record.setObservation(this.changeStatusExplanation);
+			record.setStatus(this.status);
+			record.setUser(this.userSession.getUser());
+			
+			this.datainfractionService.saveHIstoryRecord(record);
 		}
 
 	}

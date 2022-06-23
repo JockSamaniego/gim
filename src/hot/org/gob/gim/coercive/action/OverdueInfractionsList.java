@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.gob.gim.coercive.service.DatainfractionService;
 import org.gob.gim.coercive.view.InfractionItem;
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.UserSession;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -32,6 +33,7 @@ import org.jboss.seam.framework.EntityQuery;
 
 import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.coercive.model.infractions.HistoryStatusInfraction;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Entry;
@@ -81,6 +83,9 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	private String changeStatusExplanation;
 
 	private DatainfractionService datainfractionService;
+	
+	@In(create = true)
+	UserSession userSession;
 
 	private static final Pattern SUBJECT_PATTERN = Pattern
 			.compile(
@@ -771,7 +776,18 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 
 			this.currentItem.setState(this.status);
 			// this.currentItem.setChangeStatusExplanation(this.changeStatusExplanation);
-			this.datainfractionService.updateDataInfraction(this.currentItem);
+			this.currentItem = this.datainfractionService
+					.updateDataInfraction(this.currentItem);
+
+			// agregar al historial
+			HistoryStatusInfraction record = new HistoryStatusInfraction();
+			record.setDate(new Date());
+			record.setInfraction(this.currentItem);
+			record.setObservation(this.changeStatusExplanation);
+			record.setStatus(this.status);
+			record.setUser(this.userSession.getUser());
+
+			this.datainfractionService.saveHIstoryRecord(record);
 
 		}
 
@@ -827,8 +843,18 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 			for (int i = 0; i < this.infractions.size(); i++) {
 				Datainfraction dat = this.infractions.get(i);
 				dat.setState(this.status);
-				//dat.setChangeStatusExplanation(this.changeStatusExplanation);
-				this.datainfractionService.updateDataInfraction(dat);
+				// dat.setChangeStatusExplanation(this.changeStatusExplanation);
+				dat = this.datainfractionService.updateDataInfraction(dat);
+				
+				// agregar al historial
+				HistoryStatusInfraction record = new HistoryStatusInfraction();
+				record.setDate(new Date());
+				record.setInfraction(dat);
+				record.setObservation(this.changeStatusExplanation);
+				record.setStatus(this.status);
+				record.setUser(this.userSession.getUser());
+
+				this.datainfractionService.saveHIstoryRecord(record);
 			}
 		}
 
@@ -856,8 +882,18 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 				for (int j = 0; j < infrac.size(); j++) {
 					Datainfraction dat = infrac.get(j);
 					dat.setState(this.status);
-					//dat.setChangeStatusExplanation(this.changeStatusExplanation);
-					this.datainfractionService.updateDataInfraction(dat);
+					// dat.setChangeStatusExplanation(this.changeStatusExplanation);
+					dat = this.datainfractionService.updateDataInfraction(dat);
+					
+					// agregar al historial
+					HistoryStatusInfraction record = new HistoryStatusInfraction();
+					record.setDate(new Date());
+					record.setInfraction(dat);
+					record.setObservation(this.changeStatusExplanation);
+					record.setStatus(this.status);
+					record.setUser(this.userSession.getUser());
+
+					this.datainfractionService.saveHIstoryRecord(record);
 				}
 
 			}
