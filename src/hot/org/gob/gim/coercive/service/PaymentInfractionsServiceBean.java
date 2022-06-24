@@ -34,11 +34,20 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService{
 	 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PaymentNotification> getPaymentsByNotification(Long notificationid, Long statusid) {
-		Query query = this.entityManager
-				.createQuery(" SELECT payn FROM PaymentNotification payn"
-						+ " WHERE payn.notification.id=:notificationid and payn.status.id=:statusid");
-		query.setParameter("notificationid", notificationid);
+	public List<PaymentNotification> getPaymentsByCriteria(PaymentInfractionsSearchCriteria criteria, Long statusid) {
+
+		String qry = "SELECT pnotif FROM PaymentNotification pnotif "
+				+ "JOIN FETCH pnotif.notification "
+				+ "JOIN FETCH pnotif.finantialInstitution "
+				+ "JOIN FETCH pnotif.cashier"
+				+ " WHERE 1=1 "
+				+ " and pnotif.date between :from and :until "
+				+ " and pnotif.status.id=:statusid";			 
+		qry += " ORDER BY pnotif.date desc, pnotif.time DESC ";
+		
+		Query query = this.entityManager.createQuery(qry);
+		query.setParameter("from", criteria.getFrom()); 
+		query.setParameter("until", criteria.getUntil()); 
 		query.setParameter("statusid", statusid); 
 		return query.getResultList();
 	}
@@ -76,7 +85,7 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService{
 	}
 
 	@Override
-	public Integer findNotificationInfractionsNumber(
+	public Integer findPaymentsNumber(
 			PaymentInfractionsSearchCriteria criteria) {
 		String qry = "SELECT count(DISTINCT pnotif.id) FROM PaymentNotification pnotif "
 					+ " WHERE 1=1 "

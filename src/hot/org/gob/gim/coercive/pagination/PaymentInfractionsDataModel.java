@@ -29,11 +29,12 @@ public class PaymentInfractionsDataModel extends
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
- 
+
 	private PaymentInfractionsSearchCriteria criteria;
 	private PaymentInfractionsService paymentInfractionsService;
-	private BigDecimal total=BigDecimal.ZERO;
-	private  List<PaymentNotification> payments;
+	private BigDecimal total = BigDecimal.ZERO;
+	private List<PaymentNotification> payments;
+
 	/**
 	 * 
 	 */
@@ -49,7 +50,7 @@ public class PaymentInfractionsDataModel extends
 					.findResource(paymentInfractionsService.LOCAL_NAME);
 		}
 	}
- 
+
 	@Override
 	public Long getId(PaymentNotification object) {
 		return object.getId();
@@ -58,8 +59,16 @@ public class PaymentInfractionsDataModel extends
 	@Override
 	public List<PaymentNotification> findObjects(int firstRow,
 			int numberOfRows, String sortField, boolean descending) {
-		List<PaymentNotification> payments = paymentInfractionsService.findPaymentInfractionByCriteria(criteria, firstRow, numberOfRows);
-		this.payments= payments;
+		List<PaymentNotification> payments = paymentInfractionsService
+				.findPaymentInfractionByCriteria(criteria, firstRow,
+						numberOfRows);
+		this.total = BigDecimal.ZERO;
+
+		for (PaymentNotification paymentNotification : payments) {
+			this.total = this.total.add(paymentNotification.getValue());
+		}
+
+		this.payments = payments;
 		return payments;
 	}
 
@@ -75,7 +84,7 @@ public class PaymentInfractionsDataModel extends
 
 	@Override
 	public int getObjectsNumber() {
-		return paymentInfractionsService.findNotificationInfractionsNumber(criteria)
+		return paymentInfractionsService.findPaymentsNumber(criteria)
 				.intValue();
 	}
 
@@ -83,7 +92,7 @@ public class PaymentInfractionsDataModel extends
 	public int getRowCount() {
 		return rowCount.intValue();
 	}
-	
+
 	public void setRowCount(Integer rowCount) {
 		this.rowCount = rowCount;
 	}
@@ -97,13 +106,7 @@ public class PaymentInfractionsDataModel extends
 	}
 
 	public BigDecimal getTotal() {
-		this.total = BigDecimal.ZERO;
-		if(this.payments!=null && !this.payments.isEmpty()){
-			for (PaymentNotification paymentNotification : this.payments) {
-				this.total = this.total.add(paymentNotification.getValue());
-			}
-		}
-		
+
 		return total;
 	}
 

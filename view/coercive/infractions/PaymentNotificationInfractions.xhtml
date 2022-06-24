@@ -46,7 +46,7 @@
 			<div class="actionButtons">
 				<a4j:commandButton id="search" value="#{messages['common.search']}"
 					action="#{paymentInfractionHome.search()}"
-					reRender="paymentsInfractionsForm table, messages" />
+					reRender="paymentsInfractionsForm, paymentsList, messages" />
 
 				<s:button id="reset" value="#{messages['common.reset']}"
 					includePageParams="false" propagation="none">
@@ -128,7 +128,6 @@
 							<h:outputText value="#{_payment.accountNumber}" />
 						</rich:column>
 
-
 						<rich:column styleClass="left">
 							<f:facet name="header">
 								<h:outputText value="Nro documento" />
@@ -147,7 +146,9 @@
 							<f:facet name="header">
 								<h:outputText value="Valor" />
 							</f:facet>
-							<h:outputText value="#{_payment.value}" />
+							<h:outputText value="#{_payment.value}">
+								<f:convertNumber pattern="$####.00" />
+							</h:outputText>
 						</rich:column>
 
 						<f:facet name="footer">

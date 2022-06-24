@@ -23,7 +23,7 @@ public interface PaymentInfractionsService {
 	
 	public String LOCAL_NAME = "/gim/PaymentInfractionsService/local";
 
-	public List<PaymentNotification> getPaymentsByNotification(Long notificationid, Long statusid);
+	public List<PaymentNotification> getPaymentsByCriteria(PaymentInfractionsSearchCriteria criteria, Long statusid);
 
 	public List<PaymentNotification> findPaymentInfractionByCriteria(
 			PaymentInfractionsSearchCriteria criteria, Integer firstRow,
@@ -31,7 +31,7 @@ public interface PaymentInfractionsService {
 
 	public PaymentNotification findObjectById(Long id);
 	  
-	public Integer findNotificationInfractionsNumber(
+	public Integer findPaymentsNumber(
 			PaymentInfractionsSearchCriteria criteria);
 	 
 

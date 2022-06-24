@@ -57,6 +57,7 @@ public class PaymentInfractionHome extends EntityController {
 	private PaymentInfractionsService paymentInfractionService;
 	private final String STATUS_PAYMENT_COERCIVE = "COERCIVE_PAYMENT_STATUS";
 	private final String STATUS_PAYMENT_COERCIVE_VALID = "VALID";
+	private List<PaymentNotification> payments= new ArrayList<PaymentNotification>();
 	
 	
 	@In(create = true)
@@ -96,6 +97,9 @@ public class PaymentInfractionHome extends EntityController {
 	}
 	
 	public String sendToPrint(){
+		
+		ItemCatalog validStatus = itemCatalogService.findItemByCodeAndCodeCatalog(STATUS_PAYMENT_COERCIVE, STATUS_PAYMENT_COERCIVE_VALID);
+		this.payments = paymentInfractionService.getPaymentsByCriteria(criteria, validStatus.getId());
 		return "sendToPrint";
 	}
 
@@ -113,5 +117,11 @@ public class PaymentInfractionHome extends EntityController {
 		this.criteria = criteria;
 	}
 
-	 
+	public List<PaymentNotification> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<PaymentNotification> payments) {
+		this.payments = payments;
+	}
 }
