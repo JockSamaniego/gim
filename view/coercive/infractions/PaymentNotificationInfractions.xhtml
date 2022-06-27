@@ -72,7 +72,6 @@
 							rendered="#{paymentInfractions.rowCount == 0}" />
 					</rich:panel>
 
-
 					<rich:dataTable id="paymentsList" var="_payment"
 						value="#{paymentInfractions}" rows="25"
 						rendered="#{paymentInfractions.rowCount != 0}">
@@ -166,7 +165,8 @@
 
 			<s:button id="printId1"
 				action="#{paymentInfractionHome.sendToPrint()}"
-				value="#{messages['common.print']}" >
+				value="#{messages['common.print']}"
+				disabled="#{paymentInfractions.rowCount == 0}" >
 				<s:conversationPropagation type="join" /> 
 			</s:button>
 		</h:form>
