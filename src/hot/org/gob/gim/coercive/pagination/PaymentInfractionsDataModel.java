@@ -4,6 +4,7 @@
 package org.gob.gim.coercive.pagination;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.gob.gim.coercive.dto.criteria.PaymentInfractionsSearchCriteria;
@@ -32,8 +33,6 @@ public class PaymentInfractionsDataModel extends
 
 	private PaymentInfractionsSearchCriteria criteria;
 	private PaymentInfractionsService paymentInfractionsService;
-	private BigDecimal total = BigDecimal.ZERO;
-	private List<PaymentNotification> payments;
 
 	/**
 	 * 
@@ -62,13 +61,7 @@ public class PaymentInfractionsDataModel extends
 		List<PaymentNotification> payments = paymentInfractionsService
 				.findPaymentInfractionByCriteria(criteria, firstRow,
 						numberOfRows);
-		this.total = BigDecimal.ZERO;
 
-		for (PaymentNotification paymentNotification : payments) {
-			this.total = this.total.add(paymentNotification.getValue());
-		}
-
-		this.payments = payments;
 		return payments;
 	}
 
@@ -105,12 +98,4 @@ public class PaymentInfractionsDataModel extends
 		this.criteria = criteria;
 	}
 
-	public BigDecimal getTotal() {
-
-		return total;
-	}
-
-	public void setTotal(BigDecimal total) {
-		this.total = total;
-	}
 }

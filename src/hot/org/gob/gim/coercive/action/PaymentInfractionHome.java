@@ -59,6 +59,7 @@ public class PaymentInfractionHome extends EntityController {
 	private final String STATUS_PAYMENT_COERCIVE_VALID = "VALID";
 	private List<PaymentNotification> payments= new ArrayList<PaymentNotification>();
 	private BigDecimal totalPrint = BigDecimal.ZERO;
+	private BigDecimal total = BigDecimal.ZERO;
 	
 	
 	@In(create = true)
@@ -93,7 +94,8 @@ public class PaymentInfractionHome extends EntityController {
  
 	public void search() {
 		getDataModel().setCriteria(this.criteria);		
-		getDataModel().setRowCount(getDataModel().getObjectsNumber()); 
+		getDataModel().setRowCount(getDataModel().getObjectsNumber());
+		this.total = this.paymentInfractionService.getTotalByCriteriaSearch(criteria);
 		 
 	}
 	
@@ -136,6 +138,19 @@ public class PaymentInfractionHome extends EntityController {
 	public void setTotalPrint(BigDecimal totalPrint) {
 		this.totalPrint = totalPrint;
 	}
-	
+
+	/**
+	 * @return the total
+	 */
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	/**
+	 * @param total the total to set
+	 */
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}	
 	
 }

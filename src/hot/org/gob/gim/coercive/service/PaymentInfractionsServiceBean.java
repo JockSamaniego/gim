@@ -3,6 +3,7 @@
  */
 package org.gob.gim.coercive.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -24,31 +25,31 @@ import ec.gob.gim.coercive.model.infractions.PaymentNotification;
  *
  */
 @Stateless(name = "PaymentInfractionsService")
-public class PaymentInfractionsServiceBean implements PaymentInfractionsService{
-		
+public class PaymentInfractionsServiceBean implements PaymentInfractionsService {
+
 	@PersistenceContext
 	EntityManager entityManager;
-	
+
 	@EJB
 	CrudService crudService;
-	 
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PaymentNotification> getPaymentsByCriteria(PaymentInfractionsSearchCriteria criteria, Long statusid) {
+	public List<PaymentNotification> getPaymentsByCriteria(
+			PaymentInfractionsSearchCriteria criteria, Long statusid) {
 
 		String qry = "SELECT pnotif FROM PaymentNotification pnotif "
 				+ "JOIN FETCH pnotif.notification "
 				+ "JOIN FETCH pnotif.finantialInstitution "
-				+ "JOIN FETCH pnotif.cashier"
-				+ " WHERE 1=1 "
+				+ "JOIN FETCH pnotif.cashier" + " WHERE 1=1 "
 				+ " and pnotif.date between :from and :until "
-				+ " and pnotif.status.id=:statusid";			 
+				+ " and pnotif.status.id=:statusid";
 		qry += " ORDER BY pnotif.date desc, pnotif.time DESC ";
-		
+
 		Query query = this.entityManager.createQuery(qry);
-		query.setParameter("from", criteria.getFrom()); 
-		query.setParameter("until", criteria.getUntil()); 
-		query.setParameter("statusid", statusid); 
+		query.setParameter("from", criteria.getFrom());
+		query.setParameter("until", criteria.getUntil());
+		query.setParameter("statusid", statusid);
 		return query.getResultList();
 	}
 
@@ -59,16 +60,15 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService{
 			Integer numberOfRows) {
 
 		String qry = "SELECT pnotif FROM PaymentNotification pnotif "
-				+ " WHERE 1=1 "
-				+ " and pnotif.date between :from and :until "
-				+ " and pnotif.status.id=:statusid";			 
+				+ " WHERE 1=1 " + " and pnotif.date between :from and :until "
+				+ " and pnotif.status.id=:statusid";
 		qry += " ORDER BY pnotif.date desc, pnotif.time DESC ";
-		
+
 		Query query = this.entityManager.createQuery(qry);
-		query.setParameter("from", criteria.getFrom()); 
-		query.setParameter("until", criteria.getUntil()); 
-		query.setParameter("statusid", criteria.getStatusid()); 
-		
+		query.setParameter("from", criteria.getFrom());
+		query.setParameter("until", criteria.getUntil());
+		query.setParameter("statusid", criteria.getStatusid());
+
 		query.setFirstResult(firstRow);
 		query.setMaxResults(numberOfRows);
 
@@ -85,19 +85,35 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService{
 	}
 
 	@Override
-	public Integer findPaymentsNumber(
-			PaymentInfractionsSearchCriteria criteria) {
+	public Integer findPaymentsNumber(PaymentInfractionsSearchCriteria criteria) {
 		String qry = "SELECT count(DISTINCT pnotif.id) FROM PaymentNotification pnotif "
-					+ " WHERE 1=1 "
-					+ " and pnotif.date between :from and :until "
-					+ " and pnotif.status.id=:statusid";	
+				+ " WHERE 1=1 "
+				+ " and pnotif.date between :from and :until "
+				+ " and pnotif.status.id=:statusid";
 
 		Query query = this.entityManager.createQuery(qry);
-		query.setParameter("from", criteria.getFrom()); 
-		query.setParameter("until", criteria.getUntil()); 
-		query.setParameter("statusid", criteria.getStatusid());  
+		query.setParameter("from", criteria.getFrom());
+		query.setParameter("until", criteria.getUntil());
+		query.setParameter("statusid", criteria.getStatusid());
 		Long size = (Long) query.getSingleResult();
 
 		return size.intValue();
 	}
- }
+
+	@Override
+	public BigDecimal getTotalByCriteriaSearch(
+			PaymentInfractionsSearchCriteria criteria) {
+		
+		String qry = "SELECT SUM(pnotif.value) FROM PaymentNotification pnotif "
+				+ " WHERE 1=1 " + " and pnotif.date between :from and :until "
+				+ " and pnotif.status.id=:statusid";
+
+		Query query = this.entityManager.createQuery(qry);
+		query.setParameter("from", criteria.getFrom());
+		query.setParameter("until", criteria.getUntil());
+		query.setParameter("statusid", criteria.getStatusid());
+		
+		return (BigDecimal) query.getSingleResult();
+		
+	}
+}

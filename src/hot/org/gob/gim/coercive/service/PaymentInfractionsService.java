@@ -3,6 +3,7 @@
  */
 package org.gob.gim.coercive.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.ejb.Local;
@@ -33,6 +34,8 @@ public interface PaymentInfractionsService {
 	  
 	public Integer findPaymentsNumber(
 			PaymentInfractionsSearchCriteria criteria);
+	
+	public BigDecimal getTotalByCriteriaSearch(PaymentInfractionsSearchCriteria criteria);
 	 
 
 }
