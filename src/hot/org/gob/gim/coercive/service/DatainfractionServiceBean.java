@@ -6,6 +6,7 @@ package org.gob.gim.coercive.service;
 import java.math.BigInteger;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -13,9 +14,13 @@ import javax.persistence.Query;
 
 import org.gob.gim.coercive.dto.criteria.DataInfractionSearchCriteria;
 import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
+import org.gob.gim.coercive.view.InfractionUserData;
+import org.gob.gim.common.service.CrudService;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.coercive.model.infractions.HistoryStatusInfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
+import ec.gob.gim.coercive.model.infractions.PaymentNotification;
 
 /**
  * @author René
@@ -23,9 +28,12 @@ import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
  */
 @Stateless(name = "DatainfractionService")
 public class DatainfractionServiceBean implements DatainfractionService {
-
+	
 	@PersistenceContext
 	EntityManager entityManager;
+	
+	@EJB
+	CrudService crudService;
 
 	/*
 	 * (non-Javadoc)
@@ -48,89 +56,6 @@ public class DatainfractionServiceBean implements DatainfractionService {
 				.createNativeQuery("SELECT nextval('infracciones.notificationInfraction_seq')");
 		BigInteger _ret = (BigInteger) query.getSingleResult();
 		return _ret.longValue();
-	}
-
-	@Override
-	public List<NotificationInfractions> getNotifications(List<Long> ids) {
-		Query query = this.entityManager
-				.createQuery("SELECT n FROM NotificationInfractions n WHERE n.id IN (:ids)");
-		query.setParameter("ids", ids);
-		List<NotificationInfractions> l = query.getResultList();
-		return query.getResultList();
-	}
-
-	@Override
-	public List<NotificationInfractions> findNotificationInfractionByCriteria(
-			NotificationInfractionSearchCriteria criteria, Integer firstRow,
-			Integer numberOfRows) {
-
-		String qry = "SELECT DISTINCT n FROM NotificationInfractions n JOIN n.infractions i WHERE 1=1 ";
-		if (criteria.getIdentification() != null
-				&& criteria.getIdentification().trim() != "") {
-			qry += "AND i.identification =:identification ";
-		}
-
-		if (criteria.getNumber() != null && criteria.getNumber().trim() != "") {
-			qry += "AND (n.year || '-' || n.number) like :num ";
-		}
-
-		qry += "ORDER BY n.year, n.number DESC ";
-		Query query = this.entityManager.createQuery(qry);
-
-		if (criteria.getIdentification() != null
-				&& criteria.getIdentification().trim() != "") {
-			query.setParameter("identification", criteria.getIdentification()
-					.trim());
-		}
-
-		if (criteria.getNumber() != null && criteria.getNumber().trim() != "") {
-			query.setParameter("num", "%" + criteria.getNumber().trim() + "%");
-		}
-
-		query.setFirstResult(firstRow);
-		query.setMaxResults(numberOfRows);
-
-		return query.getResultList();
-	}
-
-	@Override
-	public NotificationInfractions findObjectById(Long id) {
-		Query query = entityManager
-				.createQuery("SELECT n FROM NotificationInfractions n JOIN n.infractions i WHERE n.id=:id");
-		query.setParameter("id", id);
-		// query.setFirstResult(rowCount.intValue()).setMaxResults(12);
-		return (NotificationInfractions) query.getSingleResult();
-	}
-
-	@Override
-	public Integer findNotificationInfractionsNumber(
-			NotificationInfractionSearchCriteria criteria) {
-		String qry = "SELECT count(DISTINCT n.id) FROM NotificationInfractions n JOIN n.infractions i WHERE 1=1 ";
-
-		if (criteria.getIdentification() != null
-				&& criteria.getIdentification().trim() != "") {
-			qry += "AND i.identification =:identification ";
-		}
-
-		if (criteria.getNumber() != null && criteria.getNumber().trim() != "") {
-			qry += "AND (n.year || '-' || n.number) like :num ";
-		}
-
-		Query query = this.entityManager.createQuery(qry);
-
-		if (criteria.getIdentification() != null
-				&& criteria.getIdentification().trim() != "") {
-			query.setParameter("identification", criteria.getIdentification()
-					.trim());
-		}
-
-		if (criteria.getNumber() != null && criteria.getNumber() != "") {
-			query.setParameter("num", "%" + criteria.getNumber().trim() + "%");
-		}
-
-		Long size = (Long) query.getSingleResult();
-
-		return size.intValue();
 	}
 
 	@Override
@@ -266,4 +191,60 @@ public class DatainfractionServiceBean implements DatainfractionService {
 		return size.intValue();
 	}
 
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PaymentNotification> findPaymentsByNotification(Long notificationId, Long statusid) {
+		Query query = entityManager
+				.createQuery("SELECT pnotif FROM PaymentNotification pnotif "
+						+ "JOIN fetch pnotif.finantialInstitution "
+						+ "JOIN fetch pnotif.cashier "
+						+ "JOIN fetch pnotif.paymentType "
+						+ "WHERE pnotif.notification.id=:notificationId "
+						+ "	and pnotif.status.id=:statusid	"
+						+ "	order by pnotif.date desc, pnotif.time desc");
+		query.setParameter("notificationId", notificationId);
+		query.setParameter("statusid", statusid);		
+		return query.getResultList();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public InfractionUserData userData(Long notificationId) {
+		Query query = entityManager
+				.createQuery("SELECT distinct "
+							+"NEW org.gob.gim.coercive.view.InfractionUserData(di.name, di.identification, di.email, "
+							+ " di.phoneSms, count(di), sum(di.value), sum(di.interest), sum(di.totalValue)) "
+							+"FROM Datainfraction di "
+							+"WHERE di.notification.id=:notificationId "
+							+"GROUP BY di.name, di.identification, di.email, di.phoneSms ");
+		query.setParameter("notificationId", notificationId);		
+		List<InfractionUserData>list =  query.getResultList();
+		return (!list.isEmpty())? list.get(0): null;
+	}
+	
+	
+	/**
+	 * Grabar un nuevo abono de coactiva-infraccion
+	 * @param payment
+	 */
+	@Override
+	public void savePaymentNotification(PaymentNotification payment){
+		entityManager.persist(payment);
+	}
+
+	@Override
+	public HistoryStatusInfraction saveHIstoryRecord(
+			HistoryStatusInfraction record) {
+		return this.crudService.create(record);
+	}
+
+	@Override
+	public Datainfraction getDataInfractionWithHistoryById(Long id) {
+		Query query = entityManager
+				.createQuery("SELECT d FROM Datainfraction d LEFT JOIN d.statusChange s WHERE d.id=:id");
+		query.setParameter("id", id);
+		return (Datainfraction) query.getSingleResult();
+	}
 }

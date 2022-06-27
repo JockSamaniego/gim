@@ -11,9 +11,12 @@ import org.gob.gim.coercive.dto.InfractionItemDTO;
 import org.gob.gim.coercive.dto.criteria.DataInfractionSearchCriteria;
 import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
 import org.gob.gim.coercive.dto.criteria.OverdueInfractionsSearchCriteria;
+import org.gob.gim.coercive.view.InfractionUserData;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.coercive.model.infractions.HistoryStatusInfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
+import ec.gob.gim.coercive.model.infractions.PaymentNotification;
 
 /**
  * @author René
@@ -28,20 +31,23 @@ public interface DatainfractionService {
 	
 	public Long getNextValue();
 	
-	public List<NotificationInfractions> getNotifications(List<Long> ids);
-	
-	public List<NotificationInfractions> findNotificationInfractionByCriteria(NotificationInfractionSearchCriteria criteria, Integer firstRow,Integer numberOfRows);
-	
-	public NotificationInfractions findObjectById(Long id);
-	
-	public Integer findNotificationInfractionsNumber(NotificationInfractionSearchCriteria criteria);
 	
 	public Datainfraction getDataInfractionById(Long id);
+	
+	public Datainfraction getDataInfractionWithHistoryById(Long id);
 	
 	public Datainfraction updateDataInfraction(Datainfraction data);
 	
 	public List<Datainfraction> findDataInfractionByCriteria(DataInfractionSearchCriteria criteria, Integer firstRow,Integer numberOfRows);
 	
 	public Integer findDataInfractionNumber(DataInfractionSearchCriteria criteria);
+
+	public List<PaymentNotification> findPaymentsByNotification(Long notificationId, Long statusid);
+
+	public InfractionUserData userData(Long notificationId);
+
+	public void savePaymentNotification(PaymentNotification payment);
+	
+	public HistoryStatusInfraction saveHIstoryRecord(HistoryStatusInfraction record);
 	
 }

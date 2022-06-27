@@ -1,0 +1,174 @@
+<!DOCTYPE composition
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:a="http://richfaces.org/a4j"
+	xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="paymentsInfractionSearch" styleClass="edit">
+			<ui:debug id="debug" />
+
+			<a4j:outputPanel id="searcherPanel" ajaxRendered="false">
+				<rich:messages errorClass="errors" id="messages" />
+				<rich:panel>
+					<f:facet name="header">
+						<h:outputText id="title"
+							value="Abonos de notificaciones de infracciones"
+							styleClass="formTitle" />
+					</f:facet>
+
+					<s:decorate id="startDateField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['report.startDate']}:</ui:define>
+						<rich:calendar value="#{paymentInfractionHome.criteria.from}"
+							required="true" enableManualInput="false"
+							datePattern="#{messages['common.datePattern']}">
+						</rich:calendar>
+					</s:decorate>
+
+					<s:decorate id="endDateField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['report.endDate']}:</ui:define>
+						<rich:calendar value="#{paymentInfractionHome.criteria.until}"
+							required="true" enableManualInput="false"
+							datePattern="#{messages['common.datePattern']}">
+						</rich:calendar>
+					</s:decorate>
+
+					<div style="clear: both" />
+				</rich:panel>
+			</a4j:outputPanel>
+
+			<div class="actionButtons">
+				<a4j:commandButton id="search" value="#{messages['common.search']}"
+					action="#{paymentInfractionHome.search()}"
+					reRender="paymentsInfractionsForm, paymentsList, messages" />
+
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none">
+				</s:button>
+			</div>
+
+		</h:form>
+
+		<h:form id="paymentsInfractionsForm" styleClass="edit">
+			<rich:panel id="table">
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="Abonos Totales #{paymentInfractions.rowCount}" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<div class="results" id="payments">
+
+					<rich:panel rendered="#{paymentInfractions.rowCount == 0}">
+						<h:outputText value="#{messages['common.noResultsReturned']}"
+							rendered="#{paymentInfractions.rowCount == 0}" />
+					</rich:panel>
+
+					<rich:dataTable id="paymentsList" var="_payment"
+						value="#{paymentInfractions}" rows="25"
+						rendered="#{paymentInfractions.rowCount != 0}">
+
+						<f:facet name="footer">
+							<g:dataScroller id="scroller" maxPages="10" for="paymentsList"
+								style="float:right;" />
+						</f:facet>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Fecha" />
+							</f:facet>
+							<h:outputText value="#{_payment.date}">
+								<f:convertDateTime type="date"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Hora" />
+							</f:facet>
+							<h:outputText value="#{_payment.time}" />
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Notificación" />
+							</f:facet>
+							<h:outputText
+								value="#{_payment.notification.year}-#{_payment.notification.number}" />
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Tipo pago" />
+							</f:facet>
+							<h:outputText value="#{_payment.paymentType.name}" />
+						</rich:column>
+
+						<rich:column styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="Institución" />
+							</f:facet>
+							<h:outputText value="#{_payment.finantialInstitution.name}" />
+						</rich:column>
+
+						<rich:column styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="Cuenta" />
+							</f:facet>
+							<h:outputText value="#{_payment.accountNumber}" />
+						</rich:column>
+
+						<rich:column styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="Nro documento" />
+							</f:facet>
+							<h:outputText value="#{_payment.documentNumber}" />
+						</rich:column>
+
+						<rich:column styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="Cajero" />
+							</f:facet>
+							<h:outputText value="#{_payment.cashier.name}" />
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="Valor" />
+							</f:facet>
+							<h:outputText value="#{_payment.value}">
+								<f:convertNumber pattern="$####.00" />
+							</h:outputText>
+						</rich:column>
+
+						<f:facet name="footer">
+							<rich:columnGroup>
+								<rich:column colspan="9" styleClass="right">
+									<h:outputText value="#{paymentInfractionHome.total}">
+										<f:convertNumber pattern="$####.00" />
+									</h:outputText>
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+					</rich:dataTable>
+				</div>
+			</rich:panel>
+
+			<s:button id="printId1"
+				action="#{paymentInfractionHome.sendToPrint()}"
+				value="#{messages['common.print']}"
+				disabled="#{paymentInfractions.rowCount == 0}" >
+				<s:conversationPropagation type="join" /> 
+			</s:button>
+		</h:form>
+	</ui:define>
+</ui:composition>

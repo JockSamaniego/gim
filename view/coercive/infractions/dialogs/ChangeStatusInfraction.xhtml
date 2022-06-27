@@ -13,8 +13,8 @@
 		</f:facet>
 		<f:facet name="controls">
 			<h:panelGroup>
-				<h:graphicImage value="/img/error.gif" style="cursor:pointer" id="hidelinkImpugnment" />
-				<rich:componentControl for="changeStatusInfraction" attachTo="hidelinkImpugnment" operation="hide"
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer" id="hidelinkImpugnment1" />
+				<rich:componentControl for="changeStatusInfraction" attachTo="hidelinkImpugnment1" operation="hide"
 					event="onclick" />
 			</h:panelGroup>
 		</f:facet>
@@ -56,13 +56,13 @@
 						bypassUpdates="true" actionListener="#{overdueInfractionsList.save()}"
 						reRender="municipalBondsTable" rendered="#{overdueInfractionsList.singleChangeStatus}" />
 
-					<a:commandButton id="saveResidentButton" ajaxSingle="true" value="Guardar todos"
+					<a:commandButton id="saveResidentButton" ajaxSingle="true" value="Guardar"
 						oncomplete="if (#{facesContext.maximumSeverity==null}){#{rich:component('changeStatusInfraction')}.hide();window.location.reload();}"
 						bypassUpdates="true"
 						actionListener="#{overdueInfractionsList.saveChangeStatusInfractionsResident()}"
 						reRender="overdueInfractionsForm, table, messages" rendered="#{overdueInfractionsList.residentChangeStatus}" />
 						
-					<a:commandButton id="saveResidentSelection" ajaxSingle="true" value="Guardar Seleccion"
+					<a:commandButton id="saveResidentSelection" ajaxSingle="true" value="Guardar"
 						oncomplete="if (#{facesContext.maximumSeverity==null}){#{rich:component('changeStatusInfraction')}.hide();window.location.reload();}"
 						bypassUpdates="true"
 						reRender="overdueInfractionsForm, table, messages" rendered="#{overdueInfractionsList.selectionResidentChangeStatus}" 

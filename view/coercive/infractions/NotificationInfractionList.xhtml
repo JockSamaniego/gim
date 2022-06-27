@@ -2,11 +2,17 @@
 	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:rich="http://richfaces.org/rich" 
+	xmlns:a4j="http://richfaces.org/a4j"	
+	xmlns:a="http://richfaces.org/a4j"
 	xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
 
 	<ui:define name="body">
-
+		<ui:include src="dialogs/PaymentsInfraction.xhtml" />
+		<ui:include src="dialogs/ChangeStatusNotification.xhtml" />
+		<ui:include src="dialogs/HistoryChangeStatusNotification.xhtml" />
+		
 		<h:form id="infractionSearch" styleClass="edit">
 			<ui:debug id="debug" />
 
@@ -123,10 +129,34 @@
 								<f:param name="from" value="/coercive/infractions/NotificationInfractionList.xhtml"/>
 							</s:button>
 
+							<a:commandButton id="changeStatus" ajaxSingle="true" eventsQueue="gimQueue"
+								value="Cambiar Estado"
+								oncomplete="Richfaces.showModalPanel('changeStatusNotification',{width:500, height:350})"
+								actionListener="#{notificationInfractionListHome.prepareChangeStatus(_notification)}" 
+								reRender="changeStatusNotification, changeStatusNotificationForm"/>
+
+							<a:commandButton id="historyChangeStatus" ajaxSingle="true" eventsQueue="gimQueue"
+								value="Seguimiento"
+								oncomplete="Richfaces.showModalPanel('historyChangeStatusNotification')"
+								actionListener="#{notificationInfractionListHome.prepareViewHistoryChangeStatus(_notification)}"
+								reRender="historyChangeStatusNotificationForm, historyChangeStatusNotification"/>
+								
 							<h:commandButton value="Reimprimir" id="reprintButton" 
 								action="#{notificationInfractionListHome.prepareRePrint(_notification.id)}"> 
 								<s:conversationPropagation type="join" /> 
 							</h:commandButton>
+							
+							<a:commandButton 
+								value="Ver abonos" 
+								id="abonosButton" 
+								action="#{notificationInfractionListHome.viewPayments(_notification.id)}"
+								ajaxSingle="true"
+								eventsQueue="gimQueue"
+								oncomplete="Richfaces.showModalPanel('paymentsInfraction',{width:850, height:450})"
+								reRender="paymentsInfraction" 
+								> 
+							</a:commandButton>
+							
 						</rich:column>
 
 					</rich:dataTable>

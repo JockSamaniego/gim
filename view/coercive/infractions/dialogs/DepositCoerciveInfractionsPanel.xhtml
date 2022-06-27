@@ -1,0 +1,179 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<!-- ui:debug /-->
+	<rich:modalPanel 
+		id="coerciveInfractionsPanel"
+		minHeight="540" minWidth="800"
+		height="540" width="800">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="ABONOS POR JUICIOS COACTIVOS - INFRACCIONES"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkSubsc" />
+				<rich:componentControl for="coerciveInfractionsPanel" attachTo="hidelinkSubsc"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="paymentCoerciveInfractionsConfirm" styleClass="edit">
+			<a:region id="paymentPanel">
+				<rich:panel style="height:460px;">
+					<rich:panel id="errorCoerciveInfractionPanel" style="height:50px; width:100%; overflow:auto;">
+						<rich:messages errorClass="errors" ajaxRendered="true" style="padding-top:0px; margin-top:0px; font-size:small;"/>
+					</rich:panel>
+	
+					<h:panelGrid width="100%" columns="2" columnClasses="headerTitle right, right">
+						<h:outputText value="#{messages['payment.value']}:" style="font-size:35px; font-weight:bold;"/>
+						<h:inputText id="value" value="#{notificationInfractionListHome.userData.total}"
+							styleClass="right" style="font-size:35px; font-weight:bold;"
+							size="12" readonly="true">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:inputText>
+					</h:panelGrid>
+					
+					<div style="clear: both" />
+					
+					<!-- BEGIN TABLE -->					
+					<rich:extendedDataTable  height="280px" 
+						id="paymentCoerciveInfractionDetails" var="_fraction"
+						value="#{notificationInfractionListHome.newPayments}"
+						columnClasses="center, center, right">
+						<f:facet name="header">
+							<h:panelGrid columns="2" columnClasses="left headerTitle,">
+								<h:outputText value="#{messages['payment.detail']}" />
+								<a:commandButton value="#{messages['common.add']}"
+									action="#{notificationInfractionListHome.addnewPayment()}"
+									reRender="paymentCoerciveInfractionDetails"/>
+							</h:panelGrid>
+							
+						</f:facet>
+	
+						<rich:column width="110" sortable="false">
+							<f:facet name="header">
+								#{messages['payment.type']}
+							</f:facet>
+							<h:selectOneMenu id="paymentType"
+								value="#{_fraction.paymentType}"
+								style="font-size:15px; width:102px;">
+								<s:selectItems value="#{notificationInfractionListHome.paymentTypes}"
+									var="_paymentType" 
+									label="#{_paymentType.getName()}" />
+									<s:convertEntity />
+								<a:support event="onblur" action="#{notificationInfractionListHome.calculateChange()}" reRender="changeField" />
+								<a:support event="onchange"
+									eventsQueue="gimQueue"
+									action="#{notificationInfractionListHome.clearValues(_fraction)}"
+									reRender="receivedAmountColumn, finantialInstitutionColumn, documentNumberColumn, accountNumberColumn" />
+							</h:selectOneMenu>
+						</rich:column>
+						
+						<rich:column id="receivedAmountColumn" width="140" sortable="false">
+							<f:facet name="header">
+								#{messages['payment.receivedAmount']}
+							</f:facet>
+							<h:inputText id="receivedAmount"
+								value="#{_fraction.value}" styleClass="right"
+								style="font-size:15px; font-weight:bold;" size="7">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+								<a:support event="onblur"
+									actionListener="#{notificationInfractionListHome.calculateChange()}"
+									reRender="changeField, receivedAmount, savePaymentBtn"
+									ajaxSingle="true" /> 
+							</h:inputText>
+						</rich:column>
+						
+						
+						<rich:column id="finantialInstitutionColumn" width="160" sortable="false">
+							<f:facet name="header">
+								#{messages['payment.emitter']}
+							</f:facet>
+							
+							<h:selectOneMenu id="finantialInstitution"
+								value="#{_fraction.finantialInstitution}"
+								rendered="#{_fraction.paymentType.getCode() == 'CREDIT_CARD' || _fraction.paymentType.getCode()  == 'CHECK' || _fraction.paymentType.getCode() == 'TRANSFER'}"
+								style="font-size:15px; width:152px;">
+								<a:support event="onblur" ajaxSingle="true" focus="documentNumber"/>
+								<s:selectItems value="#{notificationInfractionListHome.getFinantialInstitutions(_fraction.paymentType)}" 
+									var="_finantialInstitution"
+									label="#{_finantialInstitution.name}"
+									noSelectionLabel="#{messages['common.choose']}" />
+								<s:convertEntity />
+							</h:selectOneMenu>
+						</rich:column>						
+						
+						<rich:column id="documentNumberColumn" width="140" sortable="false">
+							<f:facet name="header">
+								#{messages['payment.documentNumber']}
+							</f:facet>
+							<h:inputText id="documentNumber"
+								style="font-size:15px; font-weight:bold;" size="10"
+								value="#{_fraction.documentNumber}"
+								rendered="#{_fraction.paymentType.getCode() == 'CREDIT_CARD' || _fraction.paymentType.getCode()  == 'CHECK' || _fraction.paymentType.getCode()  == 'TRANSFER'}">
+								<a:support event="onblur" ajaxSingle="true"/>
+							</h:inputText>
+						</rich:column>
+						
+						<rich:column id="accountNumberColumn" width="140" sortable="false">
+							<f:facet name="header">
+								#{messages['payment.accountNumber']}
+							</f:facet>
+							<h:inputText id="accountNumber"
+								style="font-size:15px; 
+								font-weight:bold;" size="10"
+								value="#{_fraction.accountNumber}"
+								rendered="#{_fraction.paymentType.getCode() == 'CHECK'}">
+								<a:support event="onblur" ajaxSingle="true"/>
+							</h:inputText>
+						</rich:column>
+						
+						<rich:column width="60" sortable="false">
+							<f:facet name="header">
+								#{messages['common.action']}
+							</f:facet>
+							<a:commandButton value="#{messages['common.remove']}"
+								actionListener="#{notificationInfractionListHome.removePayment(_fraction)}"
+								action="#{notificationInfractionListHome.calculateChange()}"
+								reRender="paymentCoerciveInfractionDetails" />
+						</rich:column>
+						
+					</rich:extendedDataTable>
+					
+					<!-- END TABLE -->
+					<div style="clear: both" />
+				</rich:panel>
+	
+				<div class="actionButtons">
+					<a:commandButton
+						id="savePaymentBtn" ajaxSingle="true"
+						action="#{notificationInfractionListHome.savePayment()}"
+						value="#{messages['payment.save']}"
+						oncomplete="Richfaces.hideModalPanel('coerciveInfractionsPanel');"
+						disabled="#{notificationInfractionListHome.invalidAmount}"
+						onclick="this.disabled=true;" />
+
+					<a:commandButton ajaxSingle="true"
+						value="#{messages['common.quit']}"
+						oncomplete="Richfaces.hideModalPanel('coerciveInfractionsPanel');"
+						bypassUpdates="true" />
+	
+				</div>
+			</a:region>
+		</h:form>
+	</rich:modalPanel> 
+</ui:composition>
