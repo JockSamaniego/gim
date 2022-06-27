@@ -1,0 +1,75 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="../../layout/template.xhtml" login-required="true">
+
+	<ui:define name="body">
+
+		<h:form id="errorsCorrectionSearch" styleClass="edit">
+					
+			<rich:simpleTogglePanel label="MIGRACIÓN DE INFRACCIONES DE TRÁNSITO" switchType="ajax">
+
+				<s:decorate template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['errorCorrection.startDate']}</ui:define>
+					<rich:calendar id="start" value="#{dataInfractionHome.initDate}" required="true" datePattern="#{messages['common.datePattern']}"/>
+				</s:decorate>
+
+				<s:decorate template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['errorCorrection.endDate']}</ui:define>
+					<rich:calendar id="end" value="#{dataInfractionHome.lastDate}" required="true" datePattern="#{messages['common.datePattern']}"/>
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<a:commandButton id="search" value="Migrar"
+					action="#{dataInfractionHome.findInfractionsBetweenDates()}"
+					reRender="resultsPanel, printButton" />
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none" />
+				<s:button id="home" view="/home.xhtml"
+					value="#{messages['common.quit']}" propagation="end" />
+			</div>
+
+			<a:outputPanel id="resultsPanel" ajaxRendered="true">
+				<h:panelGrid rendered="#{dataInfractionHome.itWasMigrated}">
+					<s:decorate id="totalInfractions" template="../../layout/edit.xhtml">
+						<ui:define name="label">Infracciones TOTALES:</ui:define>
+						<h:outputText value="#{dataInfractionHome.idsForMigration.size()}" style="font-weight:bold; font-size:14px; color:black" />
+					</s:decorate>
+					<s:decorate id="migratedINfractions" template="../../layout/edit.xhtml">
+						<ui:define name="label">Infracciones MIGRADAS:</ui:define>
+						<h:outputText value="#{dataInfractionHome.idsMigrated.size()}" style="font-weight:bold; font-size:14px; color:green" />
+					</s:decorate>
+					<s:decorate id="totalNotFound" template="../../layout/edit.xhtml">
+						<ui:define name="label">Infracciones NO ENCONTRADAS:</ui:define>
+						<h:outputText value="#{dataInfractionHome.idsNotFound.size()}" style="font-weight:bold; font-size:14px; color:red" />
+					</s:decorate>
+					<s:decorate id="NotPendingInfractions" template="../../layout/edit.xhtml">
+						<ui:define name="label">Infracciones NO PENDIENTES:</ui:define>
+						<h:outputText value="#{dataInfractionHome.idsNotPending.size()}" style="font-weight:bold; font-size:14px; color:black" />
+					</s:decorate>
+					<s:decorate id="registredInfractions" template="../../layout/edit.xhtml">
+						<ui:define name="label">Infracciones YA REGISTRADAS:</ui:define>
+						<h:outputText value="#{dataInfractionHome.idsPreviousRegistred.size()}" style="font-weight:bold; font-size:14px; color:black" />
+					</s:decorate>
+				</h:panelGrid>
+				<h:panelGrid id="printButton">
+					<s:button
+								view="/coercive/infractions/reports/MigrationDetailReportPDF.xhtml"
+								id="printId"
+								rendered="#{dataInfractionHome.itWasMigrated}"
+								propagation="join" value="Imprimir Resultados" />
+				</h:panelGrid>
+
+			</a:outputPanel>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

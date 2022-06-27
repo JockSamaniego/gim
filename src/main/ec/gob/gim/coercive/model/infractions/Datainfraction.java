@@ -160,6 +160,10 @@ public class Datainfraction {
 	@OrderBy("id asc")
 	private List<HistoryStatusInfraction> statusChange;
 	
+	private Boolean migratedByDepartment;
+	
+	private String id_factura;
+	
 	@Version
 	private Long version = 0L;
 	
@@ -481,6 +485,23 @@ public class Datainfraction {
 		this.statusChange = statusChange;
 	}
 
+	
+	public Boolean getMigratedByDepartment() {
+		return migratedByDepartment;
+	}
+
+	public void setMigratedByDepartment(Boolean migratedByDepartment) {
+		this.migratedByDepartment = migratedByDepartment;
+	}
+
+	public String getId_factura() {
+		return id_factura;
+	}
+
+	public void setId_factura(String id_factura) {
+		this.id_factura = id_factura;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -507,7 +528,7 @@ public class Datainfraction {
 				+ locabilityProvince + ", toMigrate=" + toMigrate + ", userid="
 				+ userid + ", migrationDate=" + migrationDate + ", state="
 				+ state + ", notification=" + notification + ", statusChange="
-				+ statusChange + "]";
+				+ statusChange + ", migratedByDepartment=" + migratedByDepartment + ", id_factura=" + id_factura + "]";
 	}
 
 }
