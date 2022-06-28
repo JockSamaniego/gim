@@ -95,7 +95,10 @@
 							<f:facet name="header">
 								<h:outputText value="Hora" />
 							</f:facet>
-							<h:outputText value="#{_payment.time}" />
+							<h:outputText value="#{_payment.time}" >
+							<f:convertDateTime type="date"
+									pattern="#{messages['common.fullTimePattern']}" />								
+							</h:outputText>
 						</rich:column>
 
 						<rich:column styleClass="right">

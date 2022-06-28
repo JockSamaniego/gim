@@ -176,7 +176,10 @@
 				 
 					<p:cell horizontalAlignment="right">
 						<p:paragraph>
-							<p:text value="#{_var.time}" />
+							<p:text value="#{_var.time}" >
+								<f:convertDateTime type="date"
+										pattern="#{messages['common.fullTimePattern']}" />			
+							</p:text>
 						</p:paragraph>
 					</p:cell>
 
