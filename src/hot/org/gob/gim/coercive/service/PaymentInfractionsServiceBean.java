@@ -40,8 +40,9 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 
 		String qry = "SELECT pnotif FROM PaymentNotification pnotif "
 				+ "JOIN FETCH pnotif.notification "
-				+ "JOIN FETCH pnotif.finantialInstitution "
-				+ "JOIN FETCH pnotif.cashier" + " WHERE 1=1 "
+				+ "LEFT JOIN FETCH pnotif.finantialInstitution "
+				+ "JOIN FETCH pnotif.cashier" 
+				+ " WHERE 1=1 "
 				+ " and pnotif.date between :from and :until "
 				+ " and pnotif.status.id=:statusid";
 		qry += " ORDER BY pnotif.date desc, pnotif.time DESC ";
