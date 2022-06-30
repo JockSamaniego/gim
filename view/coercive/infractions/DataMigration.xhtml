@@ -28,7 +28,7 @@
 			</rich:simpleTogglePanel>
 
 			<div class="actionButtons">
-				<a:commandButton id="search" value="Migrar"
+				<a:commandButton id="search" value="#{messages['common.search']}"
 					action="#{dataInfractionHome.findInfractionsBetweenDates()}"
 					reRender="resultsPanel, printButton" />
 				<s:button id="reset" value="#{messages['common.reset']}"
@@ -38,38 +38,69 @@
 			</div>
 
 			<a:outputPanel id="resultsPanel" ajaxRendered="true">
-				<h:panelGrid rendered="#{dataInfractionHome.itWasMigrated}">
-					<s:decorate id="totalInfractions" template="../../layout/edit.xhtml">
-						<ui:define name="label">Infracciones TOTALES:</ui:define>
-						<h:outputText value="#{dataInfractionHome.idsForMigration.size()}" style="font-weight:bold; font-size:14px; color:black" />
-					</s:decorate>
-					<s:decorate id="migratedINfractions" template="../../layout/edit.xhtml">
-						<ui:define name="label">Infracciones MIGRADAS:</ui:define>
-						<h:outputText value="#{dataInfractionHome.idsMigrated.size()}" style="font-weight:bold; font-size:14px; color:green" />
-					</s:decorate>
-					<s:decorate id="totalNotFound" template="../../layout/edit.xhtml">
-						<ui:define name="label">Infracciones NO ENCONTRADAS:</ui:define>
-						<h:outputText value="#{dataInfractionHome.idsNotFound.size()}" style="font-weight:bold; font-size:14px; color:red" />
-					</s:decorate>
-					<s:decorate id="NotPendingInfractions" template="../../layout/edit.xhtml">
-						<ui:define name="label">Infracciones NO PENDIENTES:</ui:define>
-						<h:outputText value="#{dataInfractionHome.idsNotPending.size()}" style="font-weight:bold; font-size:14px; color:black" />
-					</s:decorate>
-					<s:decorate id="registredInfractions" template="../../layout/edit.xhtml">
-						<ui:define name="label">Infracciones YA REGISTRADAS:</ui:define>
-						<h:outputText value="#{dataInfractionHome.idsPreviousRegistred.size()}" style="font-weight:bold; font-size:14px; color:black" />
-					</s:decorate>
+				<h:panelGrid rendered="#{dataInfractionHome.readyToMigration}">
+					<rich:panel style="padding">
+						<s:decorate id="totalInfractions" template="../../layout/edit.xhtml">
+							<ui:define name="label">Infracciones TOTALES:</ui:define>
+							<h:outputText value="#{dataInfractionHome.idsForMigration.size()}" style="font-weight:bold; font-size:14px; color:black" />
+						</s:decorate>
+						<s:decorate id="migratedInfractions" template="../../layout/edit.xhtml">
+							<ui:define name="label">Infracciones LISTAS PARA MIGRAR:</ui:define>
+							<h:outputText value="#{dataInfractionHome.idsMigrated.size()}" style="font-weight:bold; font-size:14px; color:green" />
+						</s:decorate>
+						<s:decorate id="totalNotFound" template="../../layout/edit.xhtml">
+							<ui:define name="label">Infracciones NO ENCONTRADAS:</ui:define>
+							<h:outputText value="#{dataInfractionHome.idsNotFound.size()}" style="font-weight:bold; font-size:14px; color:red" />
+						</s:decorate>
+						<s:decorate id="NotPendingInfractions" template="../../layout/edit.xhtml">
+							<ui:define name="label">Infracciones NO PENDIENTES:</ui:define>
+							<h:outputText value="#{dataInfractionHome.idsNotPending.size()}" style="font-weight:bold; font-size:14px; color:black" />
+						</s:decorate>
+						<s:decorate id="registredInfractions" template="../../layout/edit.xhtml">
+							<ui:define name="label">Infracciones YA REGISTRADAS:</ui:define>
+							<h:outputText value="#{dataInfractionHome.idsPreviousRegistred.size()}" style="font-weight:bold; font-size:14px; color:black" />
+						</s:decorate>
+						<div style="clear: both" />
+					</rich:panel>
 				</h:panelGrid>
 				<h:panelGrid id="printButton">
-					<s:button
-								view="/coercive/infractions/reports/MigrationDetailReportPDF.xhtml"
-								id="printId"
-								rendered="#{dataInfractionHome.itWasMigrated}"
-								propagation="join" value="Imprimir Resultados" />
+					<a:commandButton id="migrate" value="MIGRAR INFRACCIONES"
+						action="#{dataInfractionHome.saveInfractionInDataExcel()}"
+						rendered="#{dataInfractionHome.readyToMigration and dataInfractionHome.idsMigrated.size() > 0}"
+						oncomplete="Richfaces.showModalPanel('migrationInformationPanel',{width:500, height:180})"
+						reRender="migrationInformationPanel" />
 				</h:panelGrid>
 
 			</a:outputPanel>
 		</h:form>
+		<rich:modalPanel id="migrationInformationPanel" width="500" height="180">
+			<f:facet name="header">Resultado de Migración</f:facet>
+			<h:form id="migrationInformationForm">
+				<h:panelGrid>
+					<s:decorate id="resultText"
+						template="../../layout/edit.xhtml">
+						<h:outputText id="detail1" cols="40" rows="6" style="color:green; font-size:16px; font-weight:bold"
+							value="ÉXITO! Se han migrado correctamente las #{dataInfractionHome.idsMigrated.size()} infracciones." 
+							rendered = "#{dataInfractionHome.migrationSuccessful}"/>
+						<h:outputText id="detail2" cols="40" rows="6" style="color:red; font-size:16px; font-weight:bold"
+							value="ERROR! No se guardaron registros. Por favor comuníquese con soporte técnico." 
+							rendered = "#{!dataInfractionHome.migrationSuccessful}"/>
+					</s:decorate>
+					<h:panelGroup>
+						<div class="actionButtons">
+							<s:button
+							    view="/coercive/infractions/reports/MigrationDetailReportPDF.xhtml"
+								id="reportPDF"
+								propagation="join" value="Imprimir Resultados" />
+							<a:commandButton id="exitButton"
+								value="Salir" ajaxSingle="true"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'migrationInformationPanel\');' : ''}"
+								reRender="resultsPanel, printButton, migrationInformationPanel" />
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
 	</ui:define>
 
 </ui:composition>

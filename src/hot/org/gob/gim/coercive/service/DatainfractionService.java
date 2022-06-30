@@ -17,6 +17,8 @@ import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.HistoryStatusInfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 import ec.gob.gim.coercive.model.infractions.PaymentNotification;
+import ec.gob.loja.middleapp.InfractionWSV2;
+import ec.gob.loja.middleapp.ResponseInfraccion;
 
 /**
  * @author René
@@ -49,5 +51,9 @@ public interface DatainfractionService {
 	public void savePaymentNotification(PaymentNotification payment);
 	
 	public HistoryStatusInfraction saveHIstoryRecord(HistoryStatusInfraction record);
+	
+	public InfractionWSV2 getInfractionWSV2Instance();
+	
+	public ResponseInfraccion findInfractionByIdANT(String idANT);
 	
 }

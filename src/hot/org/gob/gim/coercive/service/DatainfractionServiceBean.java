@@ -4,23 +4,36 @@
 package org.gob.gim.coercive.service;
 
 import java.math.BigInteger;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.handler.MessageContext;
 
 import org.gob.gim.coercive.dto.criteria.DataInfractionSearchCriteria;
 import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
 import org.gob.gim.coercive.view.InfractionUserData;
+import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.CrudService;
+import org.gob.gim.common.service.SystemParameterService;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.faces.FacesMessages;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.HistoryStatusInfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 import ec.gob.gim.coercive.model.infractions.PaymentNotification;
+import ec.gob.loja.middleapp.InfractionWSV2;
+import ec.gob.loja.middleapp.InfractionWSV2Service;
+import ec.gob.loja.middleapp.ResponseInfraccion;
 
 /**
  * @author René
@@ -246,5 +259,44 @@ public class DatainfractionServiceBean implements DatainfractionService {
 				.createQuery("SELECT d FROM Datainfraction d LEFT JOIN d.statusChange s WHERE d.id=:id");
 		query.setParameter("id", id);
 		return (Datainfraction) query.getSingleResult();
+	}
+	
+	//para obtener una instancia del web service ANT
+	@In
+	FacesMessages facesMessages;
+	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
+	private SystemParameterService systemParameterService;
+	InfractionWSV2 infractionWSV2;
+	
+	public InfractionWSV2 getInfractionWSV2Instance() {
+		if (systemParameterService == null) systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+		try{
+			InfractionWSV2Service service = new InfractionWSV2Service();
+			InfractionWSV2 infractionWSV2 = service.getInfractionWSV2Port();
+			Map<String, List<String>> headers = new HashMap<String, List<String>>();
+			String usernameANT = systemParameterService.findParameter(SystemParameterService.USER_NAME_ANT_MIGRATION);
+			String passwordANT = systemParameterService.findParameter(SystemParameterService.PASSWORD_ANT_MIGRATION);
+	        headers.put("username", Collections.singletonList(usernameANT));
+	        headers.put("password", Collections.singletonList(passwordANT));
+	        Map<String, Object> req_ctx = ((BindingProvider)infractionWSV2).getRequestContext();
+	        req_ctx.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
+	        ((BindingProvider)infractionWSV2).getRequestContext().putAll(req_ctx);
+	        return infractionWSV2;
+		} catch (WebServiceException e){
+			e.printStackTrace();
+			facesMessages.add("Error de conexión al Servicio de Datos de ANT. Comuníquese con el Administrador del Sistema");
+		} catch (Exception e){
+			facesMessages.add("Error desconocido. Comuníquese con el Administrador del Sistema");
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	//Para consultar un infraccion en la ANT por medio de su id..
+	public ResponseInfraccion findInfractionByIdANT(String idANT){
+		if(infractionWSV2 == null){
+			infractionWSV2 = getInfractionWSV2Instance();
+		}
+		return infractionWSV2.consultarInfraccion(idANT);
 	}
 }
