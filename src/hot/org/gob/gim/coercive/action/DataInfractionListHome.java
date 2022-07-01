@@ -23,7 +23,6 @@ import org.jboss.seam.framework.EntityController;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.HistoryStatusInfraction;
-import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 import ec.gob.gim.common.model.ItemCatalog;
 
 /**

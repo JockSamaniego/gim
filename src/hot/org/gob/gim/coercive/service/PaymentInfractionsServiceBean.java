@@ -38,7 +38,7 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 	public List<PaymentInfraction> getPaymentsByCriteria(
 			PaymentInfractionsSearchCriteria criteria, Long statusid) {
 
-		String qry = "SELECT pnotif FROM PaymentInfraction pay "
+		String qry = "SELECT pay FROM PaymentInfraction pay "
 				+ "JOIN FETCH pay.infraction "
 				+ "LEFT JOIN FETCH pay.finantialInstitution "
 				+ "JOIN FETCH pay.cashier" 
@@ -60,7 +60,7 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 			PaymentInfractionsSearchCriteria criteria, Integer firstRow,
 			Integer numberOfRows) {
 
-		String qry = "SELECT pnotif FROM PaymentInfraction pay "
+		String qry = "SELECT pay FROM PaymentInfraction pay "
 				+ " WHERE 1=1 " + " and pay.date between :from and :until "
 				+ " and pay.status.id=:statusid";
 		qry += " ORDER BY pay.date desc, pay.time DESC ";
@@ -79,7 +79,7 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 	@Override
 	public PaymentInfraction findObjectById(Long id) {
 		Query query = entityManager
-				.createQuery("SELECT pnotif FROM PaymentInfraction pay "
+				.createQuery("SELECT pay FROM PaymentInfraction pay "
 						+ "WHERE pay.id=:id");
 		query.setParameter("id", id);
 		return (PaymentInfraction) query.getSingleResult();
@@ -87,10 +87,10 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 
 	@Override
 	public Integer findPaymentsNumber(PaymentInfractionsSearchCriteria criteria) {
-		String qry = "SELECT count(DISTINCT pnotif.id) FROM PaymentNotification pnotif "
+		String qry = "SELECT count(DISTINCT pay.id) FROM PaymentInfraction pay "
 				+ " WHERE 1=1 "
-				+ " and pnotif.date between :from and :until "
-				+ " and pnotif.status.id=:statusid";
+				+ " and pay.date between :from and :until "
+				+ " and pay.status.id=:statusid";
 
 		Query query = this.entityManager.createQuery(qry);
 		query.setParameter("from", criteria.getFrom());
@@ -105,9 +105,9 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 	public BigDecimal getTotalByCriteriaSearch(
 			PaymentInfractionsSearchCriteria criteria) {
 		
-		String qry = "SELECT SUM(pnotif.value) FROM PaymentNotification pnotif "
-				+ " WHERE 1=1 " + " and pnotif.date between :from and :until "
-				+ " and pnotif.status.id=:statusid";
+		String qry = "SELECT SUM(pay.value) FROM PaymentInfraction pay "
+				+ " WHERE 1=1 " + " and pay.date between :from and :until "
+				+ " and pay.status.id=:statusid";
 
 		Query query = this.entityManager.createQuery(qry);
 		query.setParameter("from", criteria.getFrom());

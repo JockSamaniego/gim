@@ -209,11 +209,11 @@ public class DatainfractionServiceBean implements DatainfractionService {
 	@Override
 	public List<PaymentInfraction> findPaymentsByInfraction(Long infractionId, Long statusid) {
 		Query query = entityManager
-				.createQuery("SELECT pnotif FROM PaymentInfraction pay "
-						+ "JOIN fetch pay.finantialInstitution "
+				.createQuery("SELECT pay FROM PaymentInfraction pay "
+						+ "LEFT JOIN fetch pay.finantialInstitution "
 						+ "JOIN fetch pay.cashier "
 						+ "JOIN fetch pay.paymentType "
-						+ "WHERE pnotif.infraction.id=:infractionId "
+						+ "WHERE pay.infraction.id=:infractionId "
 						+ "	and pay.status.id=:statusid	"
 						+ "	order by pay.date desc, pay.time desc");
 		query.setParameter("infractionId", infractionId);

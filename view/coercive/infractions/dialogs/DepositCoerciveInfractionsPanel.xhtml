@@ -36,7 +36,7 @@
 	
 					<h:panelGrid width="100%" columns="2" columnClasses="headerTitle right, right">
 						<h:outputText value="#{messages['payment.value']}:" style="font-size:35px; font-weight:bold;"/>
-						<h:inputText id="value" value="#{notificationInfractionListHome.userData.total}"
+						<h:inputText id="value" value="#{registerPaymentInfractionHome.infractionSelected.totalValue}"
 							styleClass="right" style="font-size:35px; font-weight:bold;"
 							size="12" readonly="true">
 							<f:convertNumber
@@ -50,13 +50,13 @@
 					<!-- BEGIN TABLE -->					
 					<rich:extendedDataTable  height="280px" 
 						id="paymentCoerciveInfractionDetails" var="_fraction"
-						value="#{notificationInfractionListHome.newPayments}"
+						value="#{registerPaymentInfractionHome.newPayments}"
 						columnClasses="center, center, right">
 						<f:facet name="header">
 							<h:panelGrid columns="2" columnClasses="left headerTitle,">
 								<h:outputText value="#{messages['payment.detail']}" />
 								<a:commandButton value="#{messages['common.add']}"
-									action="#{notificationInfractionListHome.addnewPayment()}"
+									action="#{registerPaymentInfractionHome.addnewPayment()}"
 									reRender="paymentCoerciveInfractionDetails"/>
 							</h:panelGrid>
 							
@@ -69,14 +69,14 @@
 							<h:selectOneMenu id="paymentType"
 								value="#{_fraction.paymentType}"
 								style="font-size:15px; width:102px;">
-								<s:selectItems value="#{notificationInfractionListHome.paymentTypes}"
+								<s:selectItems value="#{registerPaymentInfractionHome.paymentTypes}"
 									var="_paymentType" 
 									label="#{_paymentType.getName()}" />
 									<s:convertEntity />
-								<a:support event="onblur" action="#{notificationInfractionListHome.calculateChange()}" reRender="changeField" />
+								<a:support event="onblur" action="#{registerPaymentInfractionHome.calculateChange()}" reRender="changeField" />
 								<a:support event="onchange"
 									eventsQueue="gimQueue"
-									action="#{notificationInfractionListHome.clearValues(_fraction)}"
+									action="#{registerPaymentInfractionHome.clearValues(_fraction)}"
 									reRender="receivedAmountColumn, finantialInstitutionColumn, documentNumberColumn, accountNumberColumn" />
 							</h:selectOneMenu>
 						</rich:column>
@@ -92,7 +92,7 @@
 									maxFractionDigits="#{messages['common.maxFractionDigits']}"
 									minFractionDigits="#{messages['common.minFractionDigits']}" />
 								<a:support event="onblur"
-									actionListener="#{notificationInfractionListHome.calculateChange()}"
+									actionListener="#{registerPaymentInfractionHome.calculateChange()}"
 									reRender="changeField, receivedAmount, savePaymentBtn"
 									ajaxSingle="true" /> 
 							</h:inputText>
@@ -109,7 +109,7 @@
 								rendered="#{_fraction.paymentType.getCode() == 'CREDIT_CARD' || _fraction.paymentType.getCode()  == 'CHECK' || _fraction.paymentType.getCode() == 'TRANSFER'}"
 								style="font-size:15px; width:152px;">
 								<a:support event="onblur" ajaxSingle="true" focus="documentNumber"/>
-								<s:selectItems value="#{notificationInfractionListHome.getFinantialInstitutions(_fraction.paymentType)}" 
+								<s:selectItems value="#{registerPaymentInfractionHome.getFinantialInstitutions(_fraction.paymentType)}" 
 									var="_finantialInstitution"
 									label="#{_finantialInstitution.name}"
 									noSelectionLabel="#{messages['common.choose']}" />
@@ -147,8 +147,8 @@
 								#{messages['common.action']}
 							</f:facet>
 							<a:commandButton value="#{messages['common.remove']}"
-								actionListener="#{notificationInfractionListHome.removePayment(_fraction)}"
-								action="#{notificationInfractionListHome.calculateChange()}"
+								actionListener="#{registerPaymentInfractionHome.removePayment(_fraction)}"
+								action="#{registerPaymentInfractionHome.calculateChange()}"
 								reRender="paymentCoerciveInfractionDetails" />
 						</rich:column>
 						
@@ -161,10 +161,10 @@
 				<div class="actionButtons">
 					<a:commandButton
 						id="savePaymentBtn" ajaxSingle="true"
-						action="#{notificationInfractionListHome.savePayment()}"
+						action="#{registerPaymentInfractionHome.savePayment()}"
 						value="#{messages['payment.save']}"
 						oncomplete="Richfaces.hideModalPanel('coerciveInfractionsPanel');"
-						disabled="#{notificationInfractionListHome.invalidAmount}"
+						disabled="#{registerPaymentInfractionHome.invalidAmount}"
 						onclick="this.disabled=true;" />
 
 					<a:commandButton ajaxSingle="true"

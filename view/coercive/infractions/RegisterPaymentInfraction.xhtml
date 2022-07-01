@@ -1,0 +1,178 @@
+<!DOCTYPE composition
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:a="http://richfaces.org/a4j"
+	xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
+
+	<ui:define name="body">
+	
+		<ui:include src="dialogs/PaymentsInfraction.xhtml" />
+
+		<h:form id="registerPaymentInfractionSearch" styleClass="edit">
+			<ui:debug id="debug" />
+
+			<a4j:outputPanel id="searcherPanel" ajaxRendered="false">
+				<rich:messages errorClass="errors" id="messages" />
+				<rich:panel>
+					<f:facet name="header">
+						<h:outputText id="title" value="Registro de pagos Infracciones"
+							styleClass="formTitle" />
+					</f:facet>
+
+					<h:panelGrid columns="1">
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Identificación:</ui:define>
+							<h:inputText id="identification"
+								value="#{registerPaymentInfractionHome.criteria.identification}">
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Nombres:</ui:define>
+							<h:inputText id="names"
+								value="#{registerPaymentInfractionHome.criteria.name}">
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Placa:</ui:define>
+							<h:inputText id="licensePlate"
+								value="#{registerPaymentInfractionHome.criteria.licensePlate}">
+							</h:inputText>
+						</s:decorate>
+
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Nro boleta:</ui:define>
+							<h:inputText id="ticket"
+								value="#{registerPaymentInfractionHome.criteria.ticket}">
+							</h:inputText>
+						</s:decorate>
+
+					</h:panelGrid>
+					<div style="clear: both" />
+				</rich:panel>
+			</a4j:outputPanel>
+
+			<div class="actionButtons">
+				<a4j:commandButton id="search" value="#{messages['common.search']}"
+					action="#{registerPaymentInfractionHome.search()}"
+					reRender="messages, dataInfractionForm, infractionsList, scroller, table"/>
+
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" propagation="none">
+				</s:button>
+			</div>
+
+		</h:form>
+
+		<h:form id="dataInfractionForm" styleClass="edit" prependId="false">
+			<rich:panel id="table">
+				<f:facet name="header">
+					<h:panelGrid columns="3" columnClasses="headerTitle,">
+						<h:outputText
+							value="Infracciones Consultadas #{dataInfraction.rowCount}" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<div class="results" id="infractions">
+
+					<rich:panel rendered="#{dataInfraction.rowCount == 0}">
+						<h:outputText value="#{messages['common.noResultsReturned']}"
+							rendered="#{dataInfraction.rowCount == 0}" />
+					</rich:panel>
+
+
+					<rich:dataTable id="infractionsList" var="_infraction"
+						value="#{dataInfraction}" rows="25"
+						rendered="#{dataInfraction.rowCount != 0}">
+
+						<f:facet name="footer">
+							<g:dataScroller id="scroller" maxPages="10" for="infractionsList"
+								style="float:right;" />
+						</f:facet>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="IDENTIFICACIÓN" />
+							</f:facet>
+							<h:outputText value="#{_infraction.identification}" />
+						</rich:column>
+
+						<rich:column styleClass="left">
+							<f:facet name="header">
+								<h:outputText value="NOMBRE" />
+							</f:facet>
+							<h:outputText value="#{_infraction.name}" />
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="PLACA" />
+							</f:facet>
+							<h:outputText value="#{_infraction.licensePlate}" />
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="NRO. BOLETA" />
+							</f:facet>
+							<h:outputText value="#{_infraction.ticket}" />
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="EMISIÓN" />
+							</f:facet>
+							<h:outputText value="#{_infraction.emision}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="right">
+							<f:facet name="header">
+								<h:outputText value="VENCIMIENTO" />
+							</f:facet>
+							<h:outputText value="#{_infraction.expiration}">
+								<s:convertDateTime type="date" dateStyle="short"
+									pattern="#{messages['common.datePattern']}" />
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="center">
+							<f:facet name="header">
+								<h:outputText value="ESTADO" />
+							</f:facet>
+							<h:outputText value="#{_infraction.state.name}">
+							</h:outputText>
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<a:commandButton 
+								value="Ver Pagos" 
+								id="abonosButton" 
+								action="#{registerPaymentInfractionHome.viewPayments(_infraction.id)}"
+								ajaxSingle="true"
+								eventsQueue="gimQueue"
+								oncomplete="Richfaces.showModalPanel('paymentsInfraction',{width:850, height:450})"
+								reRender="paymentsInfraction" 
+								> 
+							</a:commandButton>
+						</rich:column>
+
+					</rich:dataTable>
+
+				</div>
+
+			</rich:panel>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

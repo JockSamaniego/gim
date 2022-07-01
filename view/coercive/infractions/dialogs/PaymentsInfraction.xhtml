@@ -11,7 +11,7 @@
 	<rich:modalPanel id="paymentsInfraction">
 		<f:facet name="header">
 			<h:panelGroup>
-				<h:outputText value="Pagos/abonos a notificación"></h:outputText>
+				<h:outputText value="Pagos/abonos a infracción"></h:outputText>
 			</h:panelGroup>
 		</f:facet>
 		<f:facet name="controls">
@@ -26,27 +26,27 @@
 			<h:panelGrid columns="2" style="width:100%">
 				<h:panelGrid columns="2">
 					<h:outputText value="Nombres:" style="font-weight:bold; font-size: 14px;"></h:outputText>
-					<h:outputText value="#{notificationInfractionListHome.userData.name}"></h:outputText>
+					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.name}"></h:outputText>
 					<h:outputText value="Identificación:" style="font-weight:bold; font-size: 14px"></h:outputText>
-					<h:outputText value="#{notificationInfractionListHome.userData.identification}"></h:outputText>
+					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.identification}"></h:outputText>
 					<h:outputText value="Correo electrónico:" style="font-weight:bold; font-size: 14px"></h:outputText>
-					<h:outputText value="#{notificationInfractionListHome.userData.mail}"></h:outputText>
+					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.email}"></h:outputText>
 					<h:outputText value="Teléfono:" style="font-weight:bold; font-size: 14px"></h:outputText>
-					<h:outputText value="#{notificationInfractionListHome.userData.phone}"></h:outputText>
-					<h:outputText value="Nro. notificación:" style="font-weight:bold; font-size: 14px"></h:outputText>
-					<h:outputText value="#{notificationInfractionListHome.notificationSelected.year}-#{notificationInfractionListHome.notificationSelected.number}"></h:outputText>
+					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.phoneSms}"></h:outputText>
+					<h:outputText value="Nro. boleta:" style="font-weight:bold; font-size: 14px"></h:outputText>
+					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.ticket}"></h:outputText>
 				</h:panelGrid>
 				<h:panelGrid columns="2"  columnClasses="right, right" style="width:100%">
 					<h:outputText value="Subtotal" style="font-weight:bold; font-size: 22px;"></h:outputText>
-					<h:outputText value="#{notificationInfractionListHome.userData.value}" style="font-weight:bold; font-size: 22px;">
+					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.value}" style="font-weight:bold; font-size: 22px;">
 						<f:convertNumber pattern="$####.00" />
 					</h:outputText>
 					<h:outputText value="Interes" style="font-weight:bold; font-size: 22px;"></h:outputText>
-					<h:outputText value="#{notificationInfractionListHome.userData.interest}" style="font-weight:bold; font-size: 22px;">
+					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.interest}" style="font-weight:bold; font-size: 22px;">
 						<f:convertNumber pattern="$####.00" />
 					</h:outputText>
 					<h:outputText value="Total" style="font-weight:bold; font-size: 22px;"></h:outputText>
-					<h:outputText value="#{notificationInfractionListHome.userData.total}" style="font-weight:bold; font-size: 22px;">
+					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.totalValue}" style="font-weight:bold; font-size: 22px;">
 						<f:convertNumber pattern="$####.00" />
 					</h:outputText>					
 				</h:panelGrid>
@@ -65,10 +65,10 @@
 				</f:facet>
 				<div class="results" id="paymentAgreementAgreementList">
 					<h:outputText value="#{messages['common.noResultsReturned']}"
-						rendered="#{notificationInfractionListHome.payments.size == 0}" />
+						rendered="#{registerPaymentInfractionHome.payments.size == 0}" />
 
-					<rich:dataTable id="paymentList" var="_payment" value="#{notificationInfractionListHome.payments}"
-						rows="25" rendered="#{notificationInfractionListHome.payments.size != 0}">
+					<rich:dataTable id="paymentList" var="_payment" value="#{registerPaymentInfractionHome.payments}"
+						rows="25" rendered="#{registerPaymentInfractionHome.payments.size != 0}">
 						<f:facet name="footer">
 							<g:dataScroller id="scroller" maxPages="10" for="paymentList" style="float:right;" />
 						</f:facet>
@@ -125,7 +125,7 @@
 						<f:facet name="footer">
 							<rich:columnGroup>
 								<rich:column colspan="7" styleClass="right">
-									<h:outputText value="#{notificationInfractionListHome.totalPayments}">
+									<h:outputText value="#{registerPaymentInfractionHome.totalPayments}">
 										<f:convertNumber pattern="$####.00" />
 									</h:outputText>
 								</rich:column>
