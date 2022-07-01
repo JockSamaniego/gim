@@ -15,7 +15,8 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
-import ec.gob.gim.coercive.model.infractions.PaymentNotification;
+import ec.gob.gim.coercive.model.infractions.PaymentInfraction;
+
 
 /**
  * @author macartuche
@@ -24,7 +25,7 @@ import ec.gob.gim.coercive.model.infractions.PaymentNotification;
 @Name("paymentInfractions")
 @Scope(ScopeType.CONVERSATION)
 public class PaymentInfractionsDataModel extends
-		PageableDataModel<PaymentNotification, Long> {
+		PageableDataModel<PaymentInfraction, Long> {
 
 	/**
 	 * 
@@ -51,14 +52,14 @@ public class PaymentInfractionsDataModel extends
 	}
 
 	@Override
-	public Long getId(PaymentNotification object) {
+	public Long getId(PaymentInfraction object) {
 		return object.getId();
 	}
 
 	@Override
-	public List<PaymentNotification> findObjects(int firstRow,
+	public List<PaymentInfraction> findObjects(int firstRow,
 			int numberOfRows, String sortField, boolean descending) {
-		List<PaymentNotification> payments = paymentInfractionsService
+		List<PaymentInfraction> payments = paymentInfractionsService
 				.findPaymentInfractionByCriteria(criteria, firstRow,
 						numberOfRows);
 
@@ -66,7 +67,7 @@ public class PaymentInfractionsDataModel extends
 	}
 
 	@Override
-	public PaymentNotification getObjectById(Long id) {
+	public PaymentInfraction getObjectById(Long id) {
 		return this.paymentInfractionsService.findObjectById(id);
 	}
 

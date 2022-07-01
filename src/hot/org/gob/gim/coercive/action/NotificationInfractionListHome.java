@@ -13,31 +13,26 @@ import javax.transaction.Transactional;
 
 import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
 import org.gob.gim.coercive.pagination.NotificationInfractionsDataModel;
-import org.gob.gim.coercive.service.NotificationInfractionsService;
 import org.gob.gim.coercive.service.DatainfractionService;
+import org.gob.gim.coercive.service.NotificationInfractionsService;
 import org.gob.gim.coercive.view.InfractionUserData;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.revenue.service.ItemCatalogService;
+import org.jboss.seam.Component;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.framework.EntityController;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
 
-import ec.gob.gim.coercive.model.Notification;
-import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
-import ec.gob.gim.coercive.model.infractions.PaymentNotification;
-import ec.gob.gim.common.model.ItemCatalog;
-import ec.gob.gim.income.model.PaymentFraction;
-import ec.gob.gim.income.model.PaymentType;
-import ec.gob.gim.revenue.model.FinancialInstitution;
-import ec.gob.gim.revenue.model.FinancialInstitutionType;
 import ec.gob.gim.coercive.model.infractions.HistoryStatusNotification;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Person;
+import ec.gob.gim.income.model.PaymentType;
+import ec.gob.gim.revenue.model.FinancialInstitution;
+import ec.gob.gim.revenue.model.FinancialInstitutionType;
 
 /**
  * @author René
@@ -70,10 +65,10 @@ public class NotificationInfractionListHome extends EntityController{
 	
 	private NotificationInfractionsService notificationInfractionsService;
 	
-	private List<PaymentNotification> payments = null;
+	//private List<PaymentNotification> payments = null;
 	private DatainfractionService datainfractionService; 
 	private InfractionUserData userData = null;
-	private List<PaymentNotification> newPayments = new ArrayList<PaymentNotification>();
+	//private List<PaymentNotification> newPayments = new ArrayList<PaymentNotification>();
 	private List<ItemCatalog> paymentTypes = new ArrayList<ItemCatalog>();
 	private ItemCatalog validStatus;
 	private BigDecimal change = BigDecimal.ZERO;
@@ -207,7 +202,7 @@ public class NotificationInfractionListHome extends EntityController{
 	public void viewPayments(Long notificationId){		
 		
 		//limpiar data
-		this.newPayments.clear();
+		//this.newPayments.clear();
 		this.totalPayments = BigDecimal.ZERO;
 		
 		if (datainfractionService == null) {
@@ -220,22 +215,22 @@ public class NotificationInfractionListHome extends EntityController{
 		}
 		
 		this.userData = this.datainfractionService.userData(notificationId);
-		this.payments = this.datainfractionService.findPaymentsByNotification(notificationId, this.validStatus.getId());	
+		//this.payments = this.datainfractionService.findPaymentsByNotification(notificationId, this.validStatus.getId());	
 		this.notificationSelected = notificationInfractionsService.findObjectById(notificationId);
 		
-		for (PaymentNotification payment : this.payments) {
+		/*for (PaymentNotification payment : this.payments) {
 			this.totalPayments = this.totalPayments.add(payment.getValue());
-		}
+		}*/
 		
 		
 		//agregar por defecto una fraccion de pago
 		ItemCatalog CASH = itemCatalogService.findItemByCodeAndCodeCatalog(PAYMENTS_TYPE_CATALOG, "CASH");
 		this.loadLists();
 		
-		PaymentNotification payment = new PaymentNotification();
+		/*PaymentNotification payment = new PaymentNotification();
 		payment.setPaymentType(CASH);
 		payment.setValue(BigDecimal.ZERO);
-		this.newPayments.add(payment);
+		this.newPayments.add(payment);*/
 		
 		this.invalidAmount=Boolean.TRUE;
 		
@@ -277,30 +272,30 @@ public class NotificationInfractionListHome extends EntityController{
 		return query.getResultList();
 	}
 	
-	public void clearValues(PaymentNotification fraction) {
+	/*public void clearValues(PaymentNotification fraction) {
 		// System.out.println("VALUES CLEARED");
 		fraction.setValue(BigDecimal.ZERO);
 		fraction.setFinantialInstitution(null);
 		fraction.setDocumentNumber(null);
 		fraction.setAccountNumber(null);
 		calculateChange();
-	}
+	}*/
 
 	
 	/**
 	 * Quitar fraccion-abono
 	 */
-	public void removePayment(PaymentNotification payment){
+	/*public void removePayment(PaymentNotification payment){
 		this.getNewPayments().remove(payment);
 		
-	}
+	}*/
 
 	/**
 	 * Nueva fraccion-abono
 	 */
-	public void addnewPayment() {
+	/*public void addnewPayment() {
 		this.getNewPayments().add(new PaymentNotification());
-	}
+	}*/
 	
 	public void calculateChange(){
 		this.invalidAmount = Boolean.FALSE;
@@ -314,21 +309,21 @@ public class NotificationInfractionListHome extends EntityController{
 		}
 		
 		//recorrer todas los abonos		
-		for (PaymentNotification payment : this.newPayments) {
+		/*for (PaymentNotification payment : this.newPayments) {
 			payment.setCashier(userSession.getUser());
 			payment.setNotification(this.notificationSelected);
 			payment.setStatus(this.validStatus);
 			this.datainfractionService.savePaymentNotification(payment);
-		}
+		}*/
 	}
 	
-	public List<PaymentNotification> getPayments() {
+	/*public List<PaymentNotification> getPayments() {
 		return payments;
 	}
 
 	public void setPayments(List<PaymentNotification> payments) {
 		this.payments = payments;
-	}
+	}*/
 
 	public InfractionUserData getUserData() {
 		return userData;
@@ -338,13 +333,13 @@ public class NotificationInfractionListHome extends EntityController{
 		this.userData = userData;
 	}
 
-	public List<PaymentNotification> getNewPayments() {
+	/*public List<PaymentNotification> getNewPayments() {
 		return newPayments;
 	}
 
 	public void setNewPayments(List<PaymentNotification> newPayments) {
 		this.newPayments = newPayments;
-	}
+	}*/
 
 	public List<ItemCatalog> getPaymentTypes() {
 		return paymentTypes;

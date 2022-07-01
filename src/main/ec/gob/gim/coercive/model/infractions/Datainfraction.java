@@ -1,6 +1,7 @@
 package ec.gob.gim.coercive.model.infractions;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -163,6 +164,12 @@ public class Datainfraction {
 	private Boolean migratedByDepartment;
 	
 	private String id_factura;
+	
+	@OneToMany(fetch = FetchType.EAGER)
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	@JoinColumn(name = "infraction_id")
+	@OrderBy("id asc")
+	private List<PaymentInfraction> payments = new ArrayList<PaymentInfraction>();
 	
 	@Version
 	private Long version = 0L;
@@ -500,6 +507,20 @@ public class Datainfraction {
 
 	public void setId_factura(String id_factura) {
 		this.id_factura = id_factura;
+	}
+	
+	/**
+	 * @return the payments
+	 */
+	public List<PaymentInfraction> getPayments() {
+		return payments;
+	}
+
+	/**
+	 * @param payments the payments to set
+	 */
+	public void setPayments(List<PaymentInfraction> payments) {
+		this.payments = payments;
 	}
 
 	/* (non-Javadoc)

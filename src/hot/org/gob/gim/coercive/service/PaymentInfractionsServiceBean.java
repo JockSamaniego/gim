@@ -18,7 +18,7 @@ import org.gob.gim.common.service.CrudService;
 
 import ec.gob.gim.coercive.model.infractions.HistoryStatusNotification;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
-import ec.gob.gim.coercive.model.infractions.PaymentNotification;
+import ec.gob.gim.coercive.model.infractions.PaymentInfraction;
 
 /**
  * @author René
@@ -35,17 +35,17 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PaymentNotification> getPaymentsByCriteria(
+	public List<PaymentInfraction> getPaymentsByCriteria(
 			PaymentInfractionsSearchCriteria criteria, Long statusid) {
 
-		String qry = "SELECT pnotif FROM PaymentNotification pnotif "
-				+ "JOIN FETCH pnotif.notification "
-				+ "LEFT JOIN FETCH pnotif.finantialInstitution "
-				+ "JOIN FETCH pnotif.cashier" 
+		String qry = "SELECT pnotif FROM PaymentInfraction pay "
+				+ "JOIN FETCH pay.infraction "
+				+ "LEFT JOIN FETCH pay.finantialInstitution "
+				+ "JOIN FETCH pay.cashier" 
 				+ " WHERE 1=1 "
-				+ " and pnotif.date between :from and :until "
-				+ " and pnotif.status.id=:statusid";
-		qry += " ORDER BY pnotif.date desc, pnotif.time DESC ";
+				+ " and pay.date between :from and :until "
+				+ " and pay.status.id=:statusid";
+		qry += " ORDER BY pay.date desc, pay.time DESC ";
 
 		Query query = this.entityManager.createQuery(qry);
 		query.setParameter("from", criteria.getFrom());
@@ -56,14 +56,14 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PaymentNotification> findPaymentInfractionByCriteria(
+	public List<PaymentInfraction> findPaymentInfractionByCriteria(
 			PaymentInfractionsSearchCriteria criteria, Integer firstRow,
 			Integer numberOfRows) {
 
-		String qry = "SELECT pnotif FROM PaymentNotification pnotif "
-				+ " WHERE 1=1 " + " and pnotif.date between :from and :until "
-				+ " and pnotif.status.id=:statusid";
-		qry += " ORDER BY pnotif.date desc, pnotif.time DESC ";
+		String qry = "SELECT pnotif FROM PaymentInfraction pay "
+				+ " WHERE 1=1 " + " and pay.date between :from and :until "
+				+ " and pay.status.id=:statusid";
+		qry += " ORDER BY pay.date desc, pay.time DESC ";
 
 		Query query = this.entityManager.createQuery(qry);
 		query.setParameter("from", criteria.getFrom());
@@ -77,12 +77,12 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 	}
 
 	@Override
-	public PaymentNotification findObjectById(Long id) {
+	public PaymentInfraction findObjectById(Long id) {
 		Query query = entityManager
-				.createQuery("SELECT pnotif FROM PaymentNotification pnotif "
-						+ "WHERE pnotif.id=:id");
+				.createQuery("SELECT pnotif FROM PaymentInfraction pay "
+						+ "WHERE pay.id=:id");
 		query.setParameter("id", id);
-		return (PaymentNotification) query.getSingleResult();
+		return (PaymentInfraction) query.getSingleResult();
 	}
 
 	@Override

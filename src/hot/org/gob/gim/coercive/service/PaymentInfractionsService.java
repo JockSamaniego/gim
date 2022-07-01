@@ -8,12 +8,9 @@ import java.util.List;
 
 import javax.ejb.Local;
 
-import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
 import org.gob.gim.coercive.dto.criteria.PaymentInfractionsSearchCriteria;
 
-import ec.gob.gim.coercive.model.infractions.HistoryStatusNotification;
-import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
-import ec.gob.gim.coercive.model.infractions.PaymentNotification;
+import ec.gob.gim.coercive.model.infractions.PaymentInfraction;
 
 /**
  * @author René
@@ -24,13 +21,13 @@ public interface PaymentInfractionsService {
 	
 	public String LOCAL_NAME = "/gim/PaymentInfractionsService/local";
 
-	public List<PaymentNotification> getPaymentsByCriteria(PaymentInfractionsSearchCriteria criteria, Long statusid);
+	public List<PaymentInfraction> getPaymentsByCriteria(PaymentInfractionsSearchCriteria criteria, Long statusid);
 
-	public List<PaymentNotification> findPaymentInfractionByCriteria(
+	public List<PaymentInfraction> findPaymentInfractionByCriteria(
 			PaymentInfractionsSearchCriteria criteria, Integer firstRow,
 			Integer numberOfRows);
 
-	public PaymentNotification findObjectById(Long id);
+	public PaymentInfraction findObjectById(Long id);
 	  
 	public Integer findPaymentsNumber(
 			PaymentInfractionsSearchCriteria criteria);

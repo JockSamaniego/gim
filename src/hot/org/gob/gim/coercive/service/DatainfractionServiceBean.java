@@ -30,7 +30,7 @@ import org.jboss.seam.faces.FacesMessages;
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.HistoryStatusInfraction;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
-import ec.gob.gim.coercive.model.infractions.PaymentNotification;
+import ec.gob.gim.coercive.model.infractions.PaymentInfraction;
 import ec.gob.loja.middleapp.InfractionWSV2;
 import ec.gob.loja.middleapp.InfractionWSV2Service;
 import ec.gob.loja.middleapp.ResponseInfraccion;
@@ -207,16 +207,16 @@ public class DatainfractionServiceBean implements DatainfractionService {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PaymentNotification> findPaymentsByNotification(Long notificationId, Long statusid) {
+	public List<PaymentInfraction> findPaymentsByInfraction(Long infractionId, Long statusid) {
 		Query query = entityManager
-				.createQuery("SELECT pnotif FROM PaymentNotification pnotif "
-						+ "JOIN fetch pnotif.finantialInstitution "
-						+ "JOIN fetch pnotif.cashier "
-						+ "JOIN fetch pnotif.paymentType "
-						+ "WHERE pnotif.notification.id=:notificationId "
-						+ "	and pnotif.status.id=:statusid	"
-						+ "	order by pnotif.date desc, pnotif.time desc");
-		query.setParameter("notificationId", notificationId);
+				.createQuery("SELECT pnotif FROM PaymentInfraction pay "
+						+ "JOIN fetch pay.finantialInstitution "
+						+ "JOIN fetch pay.cashier "
+						+ "JOIN fetch pay.paymentType "
+						+ "WHERE pnotif.infraction.id=:infractionId "
+						+ "	and pay.status.id=:statusid	"
+						+ "	order by pay.date desc, pay.time desc");
+		query.setParameter("infractionId", infractionId);
 		query.setParameter("statusid", statusid);		
 		return query.getResultList();
 	}
@@ -243,7 +243,7 @@ public class DatainfractionServiceBean implements DatainfractionService {
 	 * @param payment
 	 */
 	@Override
-	public void savePaymentNotification(PaymentNotification payment){
+	public void savePaymentInfraction(PaymentInfraction payment){
 		entityManager.persist(payment);
 	}
 

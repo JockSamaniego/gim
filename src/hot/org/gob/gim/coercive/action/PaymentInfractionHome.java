@@ -31,7 +31,6 @@ import org.jboss.seam.ScopeType;
 
 import ec.gob.gim.coercive.model.Notification;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
-import ec.gob.gim.coercive.model.infractions.PaymentNotification;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.income.model.PaymentFraction;
 import ec.gob.gim.income.model.PaymentType;
@@ -57,7 +56,7 @@ public class PaymentInfractionHome extends EntityController {
 	private PaymentInfractionsService paymentInfractionService;
 	private final String STATUS_PAYMENT_COERCIVE = "COERCIVE_PAYMENT_STATUS";
 	private final String STATUS_PAYMENT_COERCIVE_VALID = "VALID";
-	private List<PaymentNotification> payments= new ArrayList<PaymentNotification>();
+	// private List<PaymentNotification> payments= new ArrayList<PaymentNotification>();
 	private BigDecimal totalPrint = BigDecimal.ZERO;
 	private BigDecimal total = BigDecimal.ZERO;
 	
@@ -102,10 +101,10 @@ public class PaymentInfractionHome extends EntityController {
 	public String sendToPrint(){
 		this.totalPrint = BigDecimal.ZERO;
 		ItemCatalog validStatus = itemCatalogService.findItemByCodeAndCodeCatalog(STATUS_PAYMENT_COERCIVE, STATUS_PAYMENT_COERCIVE_VALID);
-		this.payments = paymentInfractionService.getPaymentsByCriteria(criteria, validStatus.getId());
+		/*this.payments = paymentInfractionService.getPaymentsByCriteria(criteria, validStatus.getId());
 		for (PaymentNotification paymentNotification : payments) {
 			this.totalPrint = this.totalPrint.add(paymentNotification.getValue());
-		}
+		}*/
 		return "sendToPrint";
 	}
 
@@ -123,13 +122,13 @@ public class PaymentInfractionHome extends EntityController {
 		this.criteria = criteria;
 	}
 
-	public List<PaymentNotification> getPayments() {
+	/*public List<PaymentNotification> getPayments() {
 		return payments;
 	}
 
 	public void setPayments(List<PaymentNotification> payments) {
 		this.payments = payments;
-	}
+	}*/
 
 	public BigDecimal getTotalPrint() {
 		return totalPrint;

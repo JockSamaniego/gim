@@ -63,12 +63,6 @@ public class NotificationInfractions {
 	@OrderBy("id asc")
 	private List<HistoryStatusNotification> statusChange = new ArrayList<HistoryStatusNotification>();
 
-	@OneToMany(fetch = FetchType.EAGER)
-	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	@JoinColumn(name = "notification_id")
-	@OrderBy("id asc")
-	private List<PaymentNotification> payments = new ArrayList<PaymentNotification>();
-
 	@Temporal(TemporalType.DATE)
 	private Date creationTimeStamp;
 
@@ -203,21 +197,6 @@ public class NotificationInfractions {
 		this.status = status;
 	}
 
-	/**
-	 * @return the payments
-	 */
-	public List<PaymentNotification> getPayments() {
-		return payments;
-	}
-
-	/**
-	 * @param payments
-	 *            the payments to set
-	 */
-	public void setPayments(List<PaymentNotification> payments) {
-		this.payments = payments;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -227,7 +206,7 @@ public class NotificationInfractions {
 	public String toString() {
 		return "NotificationInfractions [id=" + id + ", infractions="
 				+ infractions + ", statusChange=" + statusChange
-				+ ", payments=" + payments + ", creationTimeStamp="
+				+ ", creationTimeStamp="
 				+ creationTimeStamp + ", year=" + year + ", number=" + number
 				+ ", status=" + status + "]";
 	}

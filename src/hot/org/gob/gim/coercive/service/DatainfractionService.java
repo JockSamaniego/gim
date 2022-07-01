@@ -7,16 +7,12 @@ import java.util.List;
 
 import javax.ejb.Local;
 
-import org.gob.gim.coercive.dto.InfractionItemDTO;
 import org.gob.gim.coercive.dto.criteria.DataInfractionSearchCriteria;
-import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
-import org.gob.gim.coercive.dto.criteria.OverdueInfractionsSearchCriteria;
 import org.gob.gim.coercive.view.InfractionUserData;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.HistoryStatusInfraction;
-import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
-import ec.gob.gim.coercive.model.infractions.PaymentNotification;
+import ec.gob.gim.coercive.model.infractions.PaymentInfraction;
 import ec.gob.loja.middleapp.InfractionWSV2;
 import ec.gob.loja.middleapp.ResponseInfraccion;
 
@@ -44,11 +40,11 @@ public interface DatainfractionService {
 	
 	public Integer findDataInfractionNumber(DataInfractionSearchCriteria criteria);
 
-	public List<PaymentNotification> findPaymentsByNotification(Long notificationId, Long statusid);
+	public List<PaymentInfraction> findPaymentsByInfraction(Long infractionId, Long statusid);
 
 	public InfractionUserData userData(Long notificationId);
 
-	public void savePaymentNotification(PaymentNotification payment);
+	public void savePaymentInfraction(PaymentInfraction payment);
 	
 	public HistoryStatusInfraction saveHIstoryRecord(HistoryStatusInfraction record);
 	

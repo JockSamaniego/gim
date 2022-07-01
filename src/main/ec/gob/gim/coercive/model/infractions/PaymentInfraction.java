@@ -36,11 +36,11 @@ import ec.gob.gim.security.model.User;
  */
 @Audited
 @Entity
-@TableGenerator(name = "PaymentNotificationGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "PaymentNotification", initialValue = 1, allocationSize = 1)
-@Table(name = "paymentNotification", schema = "infracciones")
-public class PaymentNotification {
+@TableGenerator(name = "PaymentInfractionGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "PaymentInfraction", initialValue = 1, allocationSize = 1)
+@Table(name = "paymentInfraction", schema = "infracciones")
+public class PaymentInfraction {
 	@Id
-	@GeneratedValue(generator = "PaymentNotificationGenerator", strategy = GenerationType.TABLE)
+	@GeneratedValue(generator = "PaymentInfractionGenerator", strategy = GenerationType.TABLE)
 	private Long id;
 	
 	private BigDecimal value;
@@ -64,8 +64,8 @@ public class PaymentNotification {
 	private ItemCatalog status;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "notification_id")
-	private NotificationInfractions notification;
+	@JoinColumn(name = "infraction_id")
+	private Datainfraction infraction;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "finantialInstitution_id")
@@ -82,7 +82,7 @@ public class PaymentNotification {
 	/**
 	 * 
 	 */
-	public PaymentNotification() {
+	public PaymentInfraction() {
 		super();
 		this.date = new Date();
 		this.time = new Date();
@@ -188,17 +188,17 @@ public class PaymentNotification {
 	}
 
 	/**
-	 * @return the notification
+	 * @return the infraction
 	 */
-	public NotificationInfractions getNotification() {
-		return notification;
+	public Datainfraction getInfraction() {
+		return infraction;
 	}
 
 	/**
-	 * @param notification the notification to set
+	 * @param infraction the infraction to set
 	 */
-	public void setNotification(NotificationInfractions notification) {
-		this.notification = notification;
+	public void setInfraction(Datainfraction infraction) {
+		this.infraction = infraction;
 	}
 
 	/**
@@ -251,7 +251,7 @@ public class PaymentNotification {
 		return "PaymentNotification [id=" + id + ", value=" + value + ", date="
 				+ date + ", time=" + time + ", paymentType=" + paymentType
 				+ ", cashier=" + cashier + ", status=" + status
-				+ ", notification=" + notification + ", finantialInstitution="
+				+ ", infraction=" + infraction + ", finantialInstitution="
 				+ finantialInstitution + ", accountNumber=" + accountNumber
 				+ ", documentNumber=" + documentNumber + "]";
 	}
