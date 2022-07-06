@@ -1,8 +1,12 @@
 <!DOCTYPE composition
 	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:a="http://richfaces.org/a4j" xmlns:c="http://java.sun.com/jstl/core"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf">
 
 
@@ -16,48 +20,88 @@
 		</f:facet>
 		<f:facet name="controls">
 			<h:panelGroup>
-				<h:graphicImage value="/img/error.gif" style="cursor:pointer" id="hidelinkImpugnment4" />
-				<rich:componentControl for="paymentsInfraction" attachTo="hidelinkImpugnment4" operation="hide"
-					event="onclick" />
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkImpugnment4" />
+				<rich:componentControl for="paymentsInfraction"
+					attachTo="hidelinkImpugnment4" operation="hide" event="onclick" />
 			</h:panelGroup>
 		</f:facet>
 		<h:form id="paymentsInfractionForm">
 			<rich:messages errorClass="errors" style="color:red" />
+
+			<h:panelGrid columns="2" style="width:100%">
+				<h:outputText rendered="#{registerPaymentInfractionHome.queryAntOk}"
+					value="Valores consultados de ANT"
+					style="font-weight:bold; font-size: 14px; color: red;"></h:outputText>
+				<h:outputText
+					rendered="#{!registerPaymentInfractionHome.queryAntOk}"
+					value="Valores migrados"
+					style="font-weight:bold; font-size: 14px; color: red;"></h:outputText>
+				<h:outputText
+					rendered="#{registerPaymentInfractionHome.queryAntOk}"
+					value="ESTADO ANT: #{registerPaymentInfractionHome.statusANT}"
+					style="font-weight:bold; font-size: 14px;"></h:outputText>
+			</h:panelGrid>
+
+
+
 			<h:panelGrid columns="2" style="width:100%">
 				<h:panelGrid columns="2">
-					<h:outputText value="Nombres:" style="font-weight:bold; font-size: 14px;"></h:outputText>
-					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.name}"></h:outputText>
-					<h:outputText value="Identificación:" style="font-weight:bold; font-size: 14px"></h:outputText>
-					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.identification}"></h:outputText>
-					<h:outputText value="Correo electrónico:" style="font-weight:bold; font-size: 14px"></h:outputText>
-					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.email}"></h:outputText>
-					<h:outputText value="Teléfono:" style="font-weight:bold; font-size: 14px"></h:outputText>
-					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.phoneSms}"></h:outputText>
-					<h:outputText value="Nro. boleta:" style="font-weight:bold; font-size: 14px"></h:outputText>
-					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.ticket}"></h:outputText>
+					<h:outputText value="Nombres:"
+						style="font-weight:bold; font-size: 14px;"></h:outputText>
+					<h:outputText
+						value="#{registerPaymentInfractionHome.infractionSelected.name}"></h:outputText>
+					<h:outputText value="Identificación:"
+						style="font-weight:bold; font-size: 14px"></h:outputText>
+					<h:outputText
+						value="#{registerPaymentInfractionHome.infractionSelected.identification}"></h:outputText>
+					<h:outputText value="Correo electrónico:"
+						style="font-weight:bold; font-size: 14px"></h:outputText>
+					<h:outputText
+						value="#{registerPaymentInfractionHome.infractionSelected.email}"></h:outputText>
+					<h:outputText value="Teléfono:"
+						style="font-weight:bold; font-size: 14px"></h:outputText>
+					<h:outputText
+						value="#{registerPaymentInfractionHome.infractionSelected.phoneSms}"></h:outputText>
+					<h:outputText value="Nro. boleta:"
+						style="font-weight:bold; font-size: 14px"></h:outputText>
+					<h:outputText
+						value="#{registerPaymentInfractionHome.infractionSelected.ticket}"></h:outputText>
 				</h:panelGrid>
-				<h:panelGrid columns="2"  columnClasses="right, right" style="width:100%">
-					<h:outputText value="Subtotal" style="font-weight:bold; font-size: 22px;"></h:outputText>
-					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.value}" style="font-weight:bold; font-size: 22px;">
+				<h:panelGrid columns="2" columnClasses="right, right"
+					style="width:100%">
+					<h:outputText value="Subtotal"
+						style="font-weight:bold; font-size: 22px;"></h:outputText>
+					<h:outputText
+						value="#{registerPaymentInfractionHome.infractionValue}"
+						style="font-weight:bold; font-size: 22px;">
 						<f:convertNumber pattern="$####.00" />
 					</h:outputText>
-					<h:outputText value="Interes" style="font-weight:bold; font-size: 22px;"></h:outputText>
-					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.interest}" style="font-weight:bold; font-size: 22px;">
+					<h:outputText value="Interes"
+						style="font-weight:bold; font-size: 22px;"></h:outputText>
+					<h:outputText
+						value="#{registerPaymentInfractionHome.infractionInterest}"
+						style="font-weight:bold; font-size: 22px;">
 						<f:convertNumber pattern="$####.00" />
 					</h:outputText>
-					<h:outputText value="Total" style="font-weight:bold; font-size: 22px;"></h:outputText>
-					<h:outputText value="#{registerPaymentInfractionHome.infractionSelected.totalValue}" style="font-weight:bold; font-size: 22px;">
+					<h:outputText value="Total"
+						style="font-weight:bold; font-size: 22px;"></h:outputText>
+					<h:outputText
+						value="#{registerPaymentInfractionHome.infractionTotal}"
+						style="font-weight:bold; font-size: 22px;">
 						<f:convertNumber pattern="$####.00" />
-					</h:outputText>					
+					</h:outputText>
 				</h:panelGrid>
 			</h:panelGrid>
-			<h:outputText value="*No se realizan cálculos de interés" styleClass="right"  style="font-style: italic;"></h:outputText>
-			<div style="height:20px"></div>
+			<h:outputText value="*No se realizan cálculos de interés"
+				styleClass="right" style="font-style: italic;"></h:outputText>
+			<div style="height: 20px"></div>
 			<rich:panel>
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
 						<h:outputText value="Abonos realizados" />
-						<a:commandButton value="Agregar" id="newPayment" ajaxSingle="true" eventsQueue="gimQueue"
+						<a:commandButton value="Agregar" id="newPayment" ajaxSingle="true"
+							eventsQueue="gimQueue"
 							oncomplete="Richfaces.showModalPanel('coerciveInfractionsPanel',{width:650, height:450})"
 							reRender="paymentsInfraction, coerciveInfractionsPanel">
 						</a:commandButton>
@@ -67,10 +111,12 @@
 					<h:outputText value="#{messages['common.noResultsReturned']}"
 						rendered="#{registerPaymentInfractionHome.payments.size == 0}" />
 
-					<rich:dataTable id="paymentList" var="_payment" value="#{registerPaymentInfractionHome.payments}"
-						rows="25" rendered="#{registerPaymentInfractionHome.payments.size != 0}">
+					<rich:dataTable id="paymentList" var="_payment"
+						value="#{registerPaymentInfractionHome.payments}" rows="25"
+						rendered="#{registerPaymentInfractionHome.payments.size != 0}">
 						<f:facet name="footer">
-							<g:dataScroller id="scroller" maxPages="10" for="paymentList" style="float:right;" />
+							<g:dataScroller id="scroller" maxPages="10" for="paymentList"
+								style="float:right;" />
 						</f:facet>
 						<rich:column styleClass="left">
 							<f:facet name="header">
@@ -125,7 +171,8 @@
 						<f:facet name="footer">
 							<rich:columnGroup>
 								<rich:column colspan="7" styleClass="right">
-									<h:outputText value="#{registerPaymentInfractionHome.totalPayments}">
+									<h:outputText
+										value="#{registerPaymentInfractionHome.totalPayments}">
 										<f:convertNumber pattern="$####.00" />
 									</h:outputText>
 								</rich:column>

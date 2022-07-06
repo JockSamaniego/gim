@@ -28,6 +28,7 @@ import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.income.model.PaymentType;
 import ec.gob.gim.revenue.model.FinancialInstitution;
 import ec.gob.gim.revenue.model.FinancialInstitutionType;
+import ec.gob.loja.middleapp.ResponseInfraccion;
 
 import javax.transaction.Transactional;
 
@@ -71,6 +72,11 @@ public class RegisterPaymentInfractionHome extends EntityController {
 	private final String STATUS_PAYMENT_COERCIVE = "COERCIVE_PAYMENT_STATUS";
 	private final String STATUS_PAYMENT_COERCIVE_VALID = "VALID";
 	private final String PAYMENTS_TYPE_CATALOG = "PAYMENT_TYPES";
+	private Boolean queryAntOk = Boolean.FALSE;
+	private BigDecimal infractionValue = BigDecimal.ZERO;
+	private BigDecimal infractionInterest = BigDecimal.ZERO;
+	private BigDecimal infractionTotal = BigDecimal.ZERO;
+	private String statusANT;
 
 	/**
 	 * 
@@ -80,8 +86,9 @@ public class RegisterPaymentInfractionHome extends EntityController {
 		initializeService();
 		this.validStatus = itemCatalogService.findItemByCodeAndCodeCatalog(
 				STATUS_PAYMENT_COERCIVE, STATUS_PAYMENT_COERCIVE_VALID);
-		
-		this.paymentTypes = itemCatalogService.findItemsForCatalogCode(PAYMENTS_TYPE_CATALOG);
+
+		this.paymentTypes = itemCatalogService
+				.findItemsForCatalogCode(PAYMENTS_TYPE_CATALOG);
 		this.criteria = new DataInfractionSearchCriteria();
 	}
 
@@ -164,6 +171,62 @@ public class RegisterPaymentInfractionHome extends EntityController {
 
 		this.invalidAmount = Boolean.TRUE;
 
+		try {
+
+			if (this.infractionSelected.getId_factura() == null) {
+				this.queryAntOk = Boolean.FALSE;
+				this.infractionValue = this.infractionSelected.getValue();
+				this.infractionInterest = this.infractionSelected.getInterest();
+				this.infractionTotal = this.infractionSelected.getTotalValue();
+			} else {
+				ResponseInfraccion responseAnt = this.datainfractionService
+						.findInfractionByIdANT(this.infractionSelected
+								.getId_factura());
+
+				if (responseAnt.getCode() == 200) {
+
+					if (responseAnt.getInfraccion().getResultado()
+							.getCodError() == null) {
+						this.queryAntOk = Boolean.TRUE;
+						this.infractionValue = new BigDecimal(responseAnt
+								.getInfraccion().getValor());
+						this.infractionInterest = responseAnt.getInfraccion()
+								.getPagada().equals("S") ? new BigDecimal(
+								responseAnt.getInfraccion().getIntereses())
+								: new BigDecimal(responseAnt.getInfraccion()
+										.getSaldoMultas());
+						this.infractionTotal = this.infractionValue
+								.add(this.infractionInterest);
+						this.statusANT = responseAnt.getInfraccion().getEstado();
+					} else {
+						this.queryAntOk = Boolean.FALSE;
+						this.infractionValue = this.infractionSelected
+								.getValue();
+						this.infractionInterest = this.infractionSelected
+								.getInterest();
+						this.infractionTotal = this.infractionSelected
+								.getTotalValue();
+						this.statusANT = null;
+					}
+				} else {
+					this.queryAntOk = Boolean.FALSE;
+					this.infractionValue = this.infractionSelected.getValue();
+					this.infractionInterest = this.infractionSelected
+							.getInterest();
+					this.infractionTotal = this.infractionSelected
+							.getTotalValue();
+					this.statusANT = null;
+				}
+			}
+
+		} catch (Exception e) {
+			this.queryAntOk = Boolean.FALSE;
+			this.infractionValue = this.infractionSelected.getValue();
+			this.infractionInterest = this.infractionSelected.getInterest();
+			this.infractionTotal = this.infractionSelected.getTotalValue();
+			this.statusANT = null;
+		}
+
 	}
 
 	private void loadLists() {
@@ -174,13 +237,13 @@ public class RegisterPaymentInfractionHome extends EntityController {
 		if (stateBanks == null)
 			stateBanks = findFinantialInstitutions(FinancialInstitutionType.STATE_BANK);
 	}
-	
-	public List<FinancialInstitution> getFinantialInstitutions(ItemCatalog paymentType) {
-		if(paymentType == null){
+
+	public List<FinancialInstitution> getFinantialInstitutions(
+			ItemCatalog paymentType) {
+		if (paymentType == null) {
 			return new ArrayList<FinancialInstitution>();
 		}
-		
-		System.out.println(PaymentType.CHECK.name());
+
 		if (paymentType.getCode().equals(PaymentType.CHECK.name().toString())) {
 			return banks;
 		} else {
@@ -438,10 +501,85 @@ public class RegisterPaymentInfractionHome extends EntityController {
 	}
 
 	/**
-	 * @param paymentTypes the paymentTypes to set
+	 * @param paymentTypes
+	 *            the paymentTypes to set
 	 */
 	public void setPaymentTypes(List<ItemCatalog> paymentTypes) {
 		this.paymentTypes = paymentTypes;
 	}
-	
+
+	/**
+	 * @return the queryAntOk
+	 */
+	public Boolean getQueryAntOk() {
+		return queryAntOk;
+	}
+
+	/**
+	 * @param queryAntOk
+	 *            the queryAntOk to set
+	 */
+	public void setQueryAntOk(Boolean queryAntOk) {
+		this.queryAntOk = queryAntOk;
+	}
+
+	/**
+	 * @return the infractionValue
+	 */
+	public BigDecimal getInfractionValue() {
+		return infractionValue;
+	}
+
+	/**
+	 * @param infractionValue
+	 *            the infractionValue to set
+	 */
+	public void setInfractionValue(BigDecimal infractionValue) {
+		this.infractionValue = infractionValue;
+	}
+
+	/**
+	 * @return the infractionInterest
+	 */
+	public BigDecimal getInfractionInterest() {
+		return infractionInterest;
+	}
+
+	/**
+	 * @param infractionInterest
+	 *            the infractionInterest to set
+	 */
+	public void setInfractionInterest(BigDecimal infractionInterest) {
+		this.infractionInterest = infractionInterest;
+	}
+
+	/**
+	 * @return the infractionTotal
+	 */
+	public BigDecimal getInfractionTotal() {
+		return infractionTotal;
+	}
+
+	/**
+	 * @param infractionTotal
+	 *            the infractionTotal to set
+	 */
+	public void setInfractionTotal(BigDecimal infractionTotal) {
+		this.infractionTotal = infractionTotal;
+	}
+
+	/**
+	 * @return the statusANT
+	 */
+	public String getStatusANT() {
+		return statusANT;
+	}
+
+	/**
+	 * @param statusANT the statusANT to set
+	 */
+	public void setStatusANT(String statusANT) {
+		this.statusANT = statusANT;
+	}
+
 }
