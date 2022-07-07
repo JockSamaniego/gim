@@ -177,6 +177,7 @@
 							</a:commandButton>
 
 							<a:commandButton id="changeStatus" ajaxSingle="true"
+								rendered="#{_infraction.state.code == 'PENDING'}"
 								eventsQueue="gimQueue" value="Cambiar Estado"
 								oncomplete="Richfaces.showModalPanel('changeStatusPaidInfraction',{width:500, height:250})"
 								actionListener="#{registerPaymentInfractionHome.prepareChangeToPaid(_infraction)}"
