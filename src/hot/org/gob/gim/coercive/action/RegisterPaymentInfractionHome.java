@@ -77,6 +77,9 @@ public class RegisterPaymentInfractionHome extends EntityController {
 	private BigDecimal infractionInterest = BigDecimal.ZERO;
 	private BigDecimal infractionTotal = BigDecimal.ZERO;
 	private String statusANT;
+	
+	private BigDecimal totalPayed = BigDecimal.ZERO;
+	
 
 	/**
 	 * 
@@ -227,6 +230,19 @@ public class RegisterPaymentInfractionHome extends EntityController {
 			this.statusANT = null;
 		}
 
+	}
+	
+	/**
+	 * @author macartuche	
+	 * @param infractionId Long
+	 */
+	public String printPayments(Long infractionId){
+		this.payments = this.datainfractionService.findPaymentsByInfraction(infractionId, this.validStatus.getId());
+		this.totalPayed = BigDecimal.ZERO;
+		for(PaymentInfraction payment: this.payments){
+			this.totalPayed = this.totalPayed.add(payment.getValue());
+		}
+		return "printPayment";
 	}
 
 	private void loadLists() {
@@ -582,4 +598,11 @@ public class RegisterPaymentInfractionHome extends EntityController {
 		this.statusANT = statusANT;
 	}
 
+	public BigDecimal getTotalPayed() {
+		return totalPayed;
+	}
+
+	public void setTotalPayed(BigDecimal totalPayed) {
+		this.totalPayed = totalPayed;
+	}
 }

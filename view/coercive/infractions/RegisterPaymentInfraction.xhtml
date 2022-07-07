@@ -165,6 +165,17 @@
 								reRender="paymentsInfraction" 
 								> 
 							</a:commandButton>
+							
+							<a:commandButton 
+								value="Imprimir Pagos" 
+								id="printAbonosButton" 
+								action="#{registerPaymentInfractionHome.printPayments(_infraction.id)}"
+								ajaxSingle="true"
+								eventsQueue="gimQueue" 
+								> 
+							</a:commandButton>
+							
+							 
 						</rich:column>
 
 					</rich:dataTable>

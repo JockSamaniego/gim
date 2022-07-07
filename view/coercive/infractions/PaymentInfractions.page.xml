@@ -9,5 +9,10 @@
 		<rule if-outcome="sendToPrint">
 			<redirect view-id="/coercive/infractions/report/PrintPaymentsInfraction.xhtml"></redirect>
 		</rule>
+		<rule if-outcome="printPayment">
+			<redirect view-id="/coercive/report/PrintPaymentsInfraction.xhtml">
+				<param name="withCopy" value="#{true}" />
+			</redirect>
+		</rule>
 	</navigation>
 </page>
