@@ -87,10 +87,12 @@ public class RegisterPaymentInfractionHome extends EntityController {
 	private String observationPaid;
 
 	private ItemCatalog itemPaid;
-	
+
 	private ItemCatalog itemPending;
 
 	private List<ItemCatalog> statuses = new ArrayList<ItemCatalog>();
+
+	private BigDecimal totalPayed;
 
 	/**
 	 * 
@@ -108,7 +110,7 @@ public class RegisterPaymentInfractionHome extends EntityController {
 			itemPaid = this.itemCatalogService.findItemByCodeAndCodeCatalog(
 					"CATALOG_STATUS_INFRACTIONS", "PAID");
 		}
-		
+
 		if (itemPending == null) {
 			itemPending = this.itemCatalogService.findItemByCodeAndCodeCatalog(
 					"CATALOG_STATUS_INFRACTIONS", "PENDING");
@@ -674,6 +676,29 @@ public class RegisterPaymentInfractionHome extends EntityController {
 
 			this.datainfractionService.saveHIstoryRecord(record);
 		}
+	}
+
+	/**
+	 * @author macartuche
+	 * @param infractionId
+	 *            Long
+	 */
+	public String printPayments(Long infractionId) {
+		this.payments = this.datainfractionService.findPaymentsByInfraction(
+				infractionId, this.validStatus.getId());
+		this.totalPayed = BigDecimal.ZERO;
+		for (PaymentInfraction payment : this.payments) {
+			this.totalPayed = this.totalPayed.add(payment.getValue());
+		}
+		return "printPayment";
+	}
+
+	public BigDecimal getTotalPayed() {
+		return totalPayed;
+	}
+
+	public void setTotalPayed(BigDecimal totalPayed) {
+		this.totalPayed = totalPayed;
 	}
 
 }
