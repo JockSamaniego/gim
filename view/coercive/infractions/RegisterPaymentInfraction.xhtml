@@ -185,11 +185,11 @@
 
 					    	<a:commandButton 
 							    value="Imprimir Pagos" 
+							    rendered="#{_infraction.state.code == 'PAID'}"
 							    id="printAbonosButton" 
 							    action="#{registerPaymentInfractionHome.printPayments(_infraction.id)}"
 							    ajaxSingle="true"
-							    eventsQueue="gimQueue" 
-							    > 
+							    eventsQueue="gimQueue"> 
 							</a:commandButton>
 						</rich:column>
 

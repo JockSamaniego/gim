@@ -18,8 +18,7 @@
 				<rich:messages errorClass="errors" id="messages" />
 				<rich:panel>
 					<f:facet name="header">
-						<h:outputText id="title"
-							value="Abonos de infracciones"
+						<h:outputText id="title" value="Reporte de abonos de infracciones"
 							styleClass="formTitle" />
 					</f:facet>
 
@@ -37,6 +36,18 @@
 							required="true" enableManualInput="false"
 							datePattern="#{messages['common.datePattern']}">
 						</rich:calendar>
+					</s:decorate>
+
+
+					<s:decorate id="personField" template="../../layout/edit.xhtml">
+						<ui:define name="label">#{messages['payment.cashier']}: </ui:define>
+						<h:selectOneMenu id="person" value="#{paymentInfractionHome.criteria.person}">
+							<s:selectItems value="#{cashiers}" var="_cashier"
+								noSelectionLabel="#{messages['common.chooseOption']}"
+								label="#{_cashier.name}" />
+								
+							<s:convertEntity />
+						</h:selectOneMenu>
 					</s:decorate>
 
 					<div style="clear: both" />
@@ -95,9 +106,9 @@
 							<f:facet name="header">
 								<h:outputText value="Hora" />
 							</f:facet>
-							<h:outputText value="#{_payment.time}" >
-							<f:convertDateTime type="date"
-									pattern="#{messages['common.fullTimePattern']}" />								
+							<h:outputText value="#{_payment.time}">
+								<f:convertDateTime type="date"
+									pattern="#{messages['common.fullTimePattern']}" />
 							</h:outputText>
 						</rich:column>
 
@@ -106,7 +117,7 @@
 								<h:outputText value="Notificación" />
 							</f:facet>
 							<h:outputText
-								value="#{_payment.notification.year}-#{_payment.notification.number}" />
+								value="#{_payment.infraction.ticket}" />
 						</rich:column>
 
 						<rich:column styleClass="right">
@@ -169,8 +180,8 @@
 			<s:button id="printId1"
 				action="#{paymentInfractionHome.sendToPrint()}"
 				value="#{messages['common.print']}"
-				disabled="#{paymentInfractions.rowCount == 0}" >
-				<s:conversationPropagation type="join" /> 
+				disabled="#{paymentInfractions.rowCount == 0}">
+				<s:conversationPropagation type="join" />
 			</s:button>
 		</h:form>
 	</ui:define>

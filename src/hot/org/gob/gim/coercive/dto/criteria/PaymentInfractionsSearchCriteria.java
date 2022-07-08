@@ -5,7 +5,7 @@ package org.gob.gim.coercive.dto.criteria;
 
 import java.util.Calendar;
 import java.util.Date;
-
+import ec.gob.gim.common.model.Person;
 /**
  * @author macartuche
  *
@@ -15,6 +15,7 @@ public class PaymentInfractionsSearchCriteria {
 	private Date from;
 	private Date until;
 	private Long statusid;
+	private Person person;
 		
 	/**
 	 * 
@@ -50,6 +51,15 @@ public class PaymentInfractionsSearchCriteria {
 		this.until = until;
 	}
 
+	public Person getPerson() {
+		return person;
+	}
+
+
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+
 
 	public Long getStatusid() {
 		return statusid;
@@ -58,5 +68,5 @@ public class PaymentInfractionsSearchCriteria {
 
 	public void setStatusid(Long statusid) {
 		this.statusid = statusid;
-	} 
+	}
 }
