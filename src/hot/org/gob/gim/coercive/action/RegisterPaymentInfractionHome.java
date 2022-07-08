@@ -700,5 +700,7 @@ public class RegisterPaymentInfractionHome extends EntityController {
 	public void setTotalPayed(BigDecimal totalPayed) {
 		this.totalPayed = totalPayed;
 	}
+	
+	
 
 }

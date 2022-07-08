@@ -213,6 +213,7 @@ public class DatainfractionServiceBean implements DatainfractionService {
 						+ "LEFT JOIN fetch pay.finantialInstitution "
 						+ "JOIN fetch pay.cashier "
 						+ "JOIN fetch pay.paymentType "
+						+ "JOIN fetch pay.infraction "
 						+ "WHERE pay.infraction.id=:infractionId "
 						+ "	and pay.status.id=:statusid	"
 						+ "	order by pay.date desc, pay.time desc");

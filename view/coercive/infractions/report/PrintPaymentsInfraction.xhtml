@@ -144,7 +144,7 @@
 			</p:font>
 
 			<p:font size="6" style="bold">
-				<ui:repeat value="#{paymentInfractionHome.payments}" var="_var">
+				<ui:repeat value="#{registerPaymentInfractionHome.payments}" var="_var">
 
 					<p:cell horizontalAlignment="left">
 						<p:paragraph>
@@ -216,7 +216,7 @@
 							<p:text value="#{messages['item.total']}: " />
 						</p:font>
 						<p:font size="8">
-							<p:text value="#{paymentInfractionHome.totalPayed}">
+							<p:text value="#{registerPaymentInfractionHome.totalPayed}">
 								<f:convertNumber pattern="$####.00" />
 							</p:text>
 						</p:font>
