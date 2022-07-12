@@ -91,6 +91,13 @@
 						style="font-weight:bold; font-size: 22px;">
 						<f:convertNumber pattern="$####.00" />
 					</h:outputText>
+					<h:outputText value="Total Abonado"
+						style="font-weight:bold; font-size: 22px;"></h:outputText>
+					<h:outputText
+						value="#{registerPaymentInfractionHome.totalPayments}"
+						style="font-weight:bold; font-size: 22px;">
+						<f:convertNumber pattern="$####.00" />
+					</h:outputText>
 				</h:panelGrid>
 			</h:panelGrid>
 			<h:outputText value="*No se realizan cálculos de interés"
@@ -100,8 +107,10 @@
 				<f:facet name="header">
 					<h:panelGrid columns="2" columnClasses="headerTitle,">
 						<h:outputText value="Abonos realizados" />
+						
 						<a:commandButton value="Agregar" id="newPayment" ajaxSingle="true"
 							eventsQueue="gimQueue"
+							disabled="#{not registerPaymentInfractionHome.permitPay}"
 							oncomplete="Richfaces.showModalPanel('coerciveInfractionsPanel',{width:650, height:450})"
 							reRender="paymentsInfraction, coerciveInfractionsPanel">
 						</a:commandButton>
@@ -111,21 +120,21 @@
 					<h:outputText value="#{messages['common.noResultsReturned']}"
 						rendered="#{registerPaymentInfractionHome.payments.size == 0}" />
 
-					<rich:dataTable id="paymentList" var="_payment"
+					<rich:extendedDataTable height="200px" width="800px" id="paymentList" var="_payment"
 						value="#{registerPaymentInfractionHome.payments}" rows="25"
 						rendered="#{registerPaymentInfractionHome.payments.size != 0}">
 						<f:facet name="footer">
 							<g:dataScroller id="scroller" maxPages="10" for="paymentList"
 								style="float:right;" />
 						</f:facet>
-						<rich:column styleClass="left">
+						<rich:column styleClass="left" width="120">
 							<f:facet name="header">
 								<h:outputText value="Fecha" />
 							</f:facet>
 							<h:outputText value="#{_payment.date} #{_payment.time}" />
 						</rich:column>
 
-						<rich:column styleClass="left">
+						<rich:column styleClass="left" width="80">
 							<f:facet name="header">
 								<h:outputText value="Tipo de pago" />
 							</f:facet>
@@ -133,14 +142,14 @@
 						</rich:column>
 
 
-						<rich:column styleClass="left">
+						<rich:column styleClass="left" width="200">
 							<f:facet name="header">
 								<h:outputText value="Institución" />
 							</f:facet>
 							<h:outputText value="#{_payment.finantialInstitution.name}" />
 						</rich:column>
 
-						<rich:column styleClass="left">
+						<rich:column styleClass="left" width="120">
 							<f:facet name="header">
 								<h:outputText value="Cuenta" />
 							</f:facet>
@@ -148,21 +157,21 @@
 						</rich:column>
 
 
-						<rich:column styleClass="left">
+						<rich:column styleClass="left" width="120">
 							<f:facet name="header">
 								<h:outputText value="Nro. documento" />
 							</f:facet>
 							<h:outputText value="#{_payment.documentNumber}" />
 						</rich:column>
 
-						<rich:column styleClass="left">
+						<rich:column styleClass="left" width="80">
 							<f:facet name="header">
 								<h:outputText value="Cajero" />
 							</f:facet>
 							<h:outputText value="#{_payment.cashier.name}" />
 						</rich:column>
 
-						<rich:column styleClass="right">
+						<rich:column styleClass="right" width="80">
 							<f:facet name="header">
 								<h:outputText value="Valor" />
 							</f:facet>
@@ -178,7 +187,7 @@
 								</rich:column>
 							</rich:columnGroup>
 						</f:facet>
-					</rich:dataTable>
+					</rich:extendedDataTable>
 				</div>
 			</rich:panel>
 		</h:form>

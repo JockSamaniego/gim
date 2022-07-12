@@ -168,6 +168,10 @@ public class DataInfractionListHome extends EntityController {
 		this.changeStatusExplanation = null;
 	}
 	
+	public void prepareViewDetail(Datainfraction infraction) {
+		this.currentItem = infraction;
+	}
+	
 	public void prepareViewHistoryChangeStatus(Datainfraction infraction) {
 		this.currentItem = this.datainfractionService.getDataInfractionWithHistoryById(infraction.getId());
 	}
