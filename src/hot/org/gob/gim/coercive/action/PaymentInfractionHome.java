@@ -107,22 +107,7 @@ public class PaymentInfractionHome extends EntityController {
 		return "sendToPrint";
 	}
 
-	public List<Person> findCashiers() {
-		if (cashiers == null) {
-			if (systemParameterService == null) {
-				systemParameterService = ServiceLocator.getInstance()
-						.findResource(SYSTEM_PARAMETER_SERVICE_NAME);
-			}
-
-			String role_name = systemParameterService
-					.findParameter("ROLE_NAME_CASHIER");
-			Query query = getPersistenceContext().createNamedQuery(
-					"Person.findByRoleName")
-					.setParameter("roleName", role_name);
-			cashiers = (List<Person>) query.getResultList();
-		}
-		return cashiers != null ? cashiers : new ArrayList<Person>();
-	}
+	 
 
 	private PaymentInfractionsDataModel getDataModel() {
 		PaymentInfractionsDataModel dataModel = (PaymentInfractionsDataModel) Component

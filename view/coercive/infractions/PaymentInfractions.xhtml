@@ -42,7 +42,7 @@
 					<s:decorate id="personField" template="../../layout/edit.xhtml">
 						<ui:define name="label">#{messages['payment.cashier']}: </ui:define>
 						<h:selectOneMenu id="person" value="#{paymentInfractionHome.criteria.person}">
-							<s:selectItems value="#{cashiers}" var="_cashier"
+							<s:selectItems value="#{cashiers_infractions}" var="_cashier"
 								noSelectionLabel="#{messages['common.chooseOption']}"
 								label="#{_cashier.name}" />
 								
@@ -94,7 +94,7 @@
 
 						<rich:column styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="Fecha" />
+								<h:outputText value="#{messages['payment.date']}" />
 							</f:facet>
 							<h:outputText value="#{_payment.date}">
 								<f:convertDateTime type="date"
@@ -104,7 +104,7 @@
 
 						<rich:column styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="Hora" />
+								<h:outputText value="#{messages['payment.time']}" />
 							</f:facet>
 							<h:outputText value="#{_payment.time}">
 								<f:convertDateTime type="date"
@@ -114,7 +114,7 @@
 
 						<rich:column styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="Notificación" />
+								<h:outputText value="#{messages['infraction.ticket']}" />
 							</f:facet>
 							<h:outputText
 								value="#{_payment.infraction.ticket}" />
@@ -122,42 +122,42 @@
 
 						<rich:column styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="Tipo pago" />
+								<h:outputText value="#{messages['infraction.paymentType']}" />
 							</f:facet>
 							<h:outputText value="#{_payment.paymentType.name}" />
 						</rich:column>
 
 						<rich:column styleClass="left">
 							<f:facet name="header">
-								<h:outputText value="Institución" />
+								<h:outputText value="#{messages['infraction.paymentInstitution']}" />
 							</f:facet>
 							<h:outputText value="#{_payment.finantialInstitution.name}" />
 						</rich:column>
 
 						<rich:column styleClass="left">
 							<f:facet name="header">
-								<h:outputText value="Cuenta" />
+								<h:outputText value="#{messages['futureBond.account']}" />
 							</f:facet>
 							<h:outputText value="#{_payment.accountNumber}" />
 						</rich:column>
 
 						<rich:column styleClass="left">
 							<f:facet name="header">
-								<h:outputText value="Nro documento" />
+								<h:outputText value="#{messages['electronicVoucher.documentNumber']}" />
 							</f:facet>
 							<h:outputText value="#{_payment.documentNumber}" />
 						</rich:column>
 
 						<rich:column styleClass="left">
 							<f:facet name="header">
-								<h:outputText value="Cajero" />
+								<h:outputText value="#{messages['payment.cashier']}" />
 							</f:facet>
 							<h:outputText value="#{_payment.cashier.name}" />
 						</rich:column>
 
 						<rich:column styleClass="right">
 							<f:facet name="header">
-								<h:outputText value="Valor" />
+								<h:outputText value="#{messages['payment.collectedValue']}" />
 							</f:facet>
 							<h:outputText value="#{_payment.value}">
 								<f:convertNumber pattern="$####.00" />
