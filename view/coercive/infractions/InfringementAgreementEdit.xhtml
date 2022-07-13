@@ -52,47 +52,6 @@
                             value="#{infringementAgreementHome.instance.infractorName}" />
                     </s:decorate>
 
-                    <s:decorate template="../../layout/edit.xhtml">
-                        <ui:define name="label">Total Aproximado:</ui:define>
-                        <h:inputText id="total" style="text-align: right" required="true" 
-                            value="#{infringementAgreementHome.instance.total}" />
-                    </s:decorate>
-
-                    <s:decorate template="../../layout/edit.xhtml">
-                        <ui:define name="label">Porcentaje de Cuota Inicial:</ui:define>
-                        <h:selectOneMenu id="percentages" value="#{infringementAgreementHome.instance.percentage}" >
-                            <ui:debug id="debugExternal"/>
-                            <s:selectItems value="#{infringementAgreementHome.percentages}" var="_percentage"
-                                label="#{_percentage}" />
-                            <a:support event="onblur" reRender="dataInfraction" action="#{infringementAgreementHome.calculateAgreement()}"
-                                 ajaxSingle="true" eventsQueue="gimQueue" />
-                        </h:selectOneMenu>
-                    </s:decorate>
-
-                    <s:decorate template="../../layout/edit.xhtml">
-                        <ui:define name="label">Cuota Inicial:</ui:define>
-                        <h:inputText id="inicial" style="text-align: right" required="true"
-                            value="#{infringementAgreementHome.instance.initialFee}" />
-                    </s:decorate>
-
-                    <s:decorate template="../../layout/edit.xhtml">
-                        <ui:define name="label">Nombre del Responsable:</ui:define>
-                        <h:inputText id="responsableName" style="text-align: left" required="true" 
-                            value="#{infringementAgreementHome.instance.responsableName}" >
-                            <a:support event="onblur" reRender="dataInfraction"
-                                ajaxSingle="true" eventsQueue="gimQueue" />
-                        </h:inputText>
-                    </s:decorate>
-
-                    <s:decorate template="../../layout/edit.xhtml">
-                        <ui:define name="label">Cargo del Responsable:</ui:define>
-                        <h:inputText id="responsableCharge" style="text-align: left" required="true" 
-                            value="#{infringementAgreementHome.instance.responsableCharge}" >
-                            <a:support event="onblur" reRender="dataInfraction"
-                                ajaxSingle="true" eventsQueue="gimQueue" />
-                        </h:inputText>
-                    </s:decorate>
-
                     <rich:panel id="infractionsPanel">
                         <f:facet name="header">
                             <h:panelGrid columns="3" columnClasses="headerTitle">
@@ -156,7 +115,58 @@
                         </div>
                     </rich:panel>
 
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Total Aproximado:</ui:define>
+                        <h:inputText id="total" style="text-align: right" required="true" 
+                            value="#{infringementAgreementHome.instance.total}" />
+                    </s:decorate>
+
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Porcentaje de Cuota Inicial:</ui:define>
+                        <h:selectOneMenu id="percentages" value="#{infringementAgreementHome.instance.percentage}" >
+                            <ui:debug id="debugExternal"/>
+                            <s:selectItems value="#{infringementAgreementHome.percentages}" var="_percentage"
+                                label="#{_percentage}" />
+                            <a:support event="onblur" reRender="dataInfraction" action="#{infringementAgreementHome.calculateAgreement()}"
+                                 ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:selectOneMenu>
+                    </s:decorate>
+
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Cuota Inicial:</ui:define>
+                        <h:inputText id="inicial" style="text-align: right" required="true"
+                            value="#{infringementAgreementHome.instance.initialFee}" />
+                    </s:decorate>
+
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Cuotas:</ui:define>
+                        <h:inputText id="cuotas" style="text-align: right" required="true"
+                            value="#{infringementAgreementHome.instance.months}" >
+                            <a:support event="onblur" reRender="cuotas"
+                                ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:inputText>
+                    </s:decorate>
+
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Nombre del Responsable:</ui:define>
+                        <h:inputText id="responsableName" style="text-align: left" required="true" 
+                            value="#{infringementAgreementHome.instance.responsableName}" >
+                            <a:support event="onblur" reRender="responsableName"
+                                ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:inputText>
+                    </s:decorate>
+
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Cargo del Responsable:</ui:define>
+                        <h:inputText id="responsableCharge" style="text-align: left" required="true" 
+                            value="#{infringementAgreementHome.instance.responsableCharge}" >
+                            <a:support event="onblur" reRender="responsableCharge"
+                                ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:inputText>
+                    </s:decorate>
+
                 </h:panelGrid>
+
                 <h:commandButton id="save" value="#{messages['common.save']}"
                     action="#{infringementAgreementHome.persist}" disabled="#{!infringementAgreementHome.wired}"
                     rendered="#{!infringementAgreementHome.managed}" />
