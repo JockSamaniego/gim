@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.gob.gim.coercive.service.NotificationInfractionsService;
 import org.gob.gim.common.ServiceLocator;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityController;
 
@@ -32,6 +33,9 @@ public class OverdueInfractionsNotificationReport extends EntityController{
 	
 	private boolean isFirstTime = true;
 	
+	@In(required = true, create = true)
+	OverdueInfractionsListHome overdueInfractionsListHome;
+	
 	private List<NotificationInfractions> notifications = new ArrayList<NotificationInfractions>();
 	
 	public void initialize(){
@@ -41,7 +45,7 @@ public class OverdueInfractionsNotificationReport extends EntityController{
 						notificationInfractionsService.LOCAL_NAME);
 			}
 		}
-		this.notifications = this.notificationInfractionsService.getNotifications(this.getSelectedItemAsList());
+		this.notifications = this.notificationInfractionsService.getNotifications(overdueInfractionsListHome.getGeneratedNotificationIds());
 	}
 	
 	/**
