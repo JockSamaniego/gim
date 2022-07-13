@@ -36,7 +36,8 @@ public class CommissionerBallotList extends EntityQuery<CommissionerBallot> {
 		
 		
 		"DATE(commissionerBallot.creationDate) >= DATE(#{commissionerBallotList.dateFrom2})",
-		"DATE(commissionerBallot.creationDate) <= DATE(#{commissionerBallotList.dateUntil2})"};
+		"DATE(commissionerBallot.creationDate) <= DATE(#{commissionerBallotList.dateUntil2})",
+		"lower(commissionerBallot.fileNumber) like lower(concat('%',#{commissionerBallotList.commissionerBallot.fileNumber},'%'))",};
 
 	private CommissionerBallot commissionerBallot = new CommissionerBallot();
 	private Long articleId;

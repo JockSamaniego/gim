@@ -147,7 +147,7 @@ public class Datainfraction {
 	@Column(name="fecha_migracion")		
 	private Date migrationDate;
 	
-	@ManyToOne (fetch=FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name="estado_id")
 	private ItemCatalog state;
 	

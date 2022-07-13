@@ -9,7 +9,7 @@
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<rich:modalPanel id="bankDebitForLiquidation" width="940" height="550" style="overflow-y:scroll">
+	<rich:modalPanel id="bankDebitForLiquidation" width="1000" height="550" style="overflow-y:scroll">
 		<f:facet name="header">
 			<h:panelGroup>
 				<h:outputText value="Débitos Bancarios para LIQUIDAR"></h:outputText>
@@ -71,37 +71,37 @@
 						id="_bankDebitTable"  var="_var"
 						value="#{bankDebitHome.previousForLiquidations}">
 						
-						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="100px" >
+						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="5%" >
 							<f:facet name="header">Nro.</f:facet>
 							<h:outputText value="#{_var.bankCount}"  />
 						</rich:column>
 						
-						<rich:column styleClass="action" style="align:center; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="120px" >
+						<rich:column styleClass="action" style="align:center; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="15%" >
 							<f:facet name="header">Identificación</f:facet>
 							<h:outputText value="#{_var.residentIdentification}" />
 						</rich:column>
 
-						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="250px" >
+						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="25%" >
 							<f:facet name="header">Contribuyente</f:facet>
 							<h:outputText value="#{_var.residentName}" />
 						</rich:column>
 						
-						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="250px" >
+						<rich:column styleClass="action" style="align:left; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="25%" >
 							<f:facet name="header">Titular</f:facet>
 							<h:outputText value="#{_var.accountHolder}" />
 						</rich:column>
 
-						<rich:column styleClass="action" style="align:center; background-color: #{_var.isSelected ? 'lightgreen' : ''}" >
+						<rich:column styleClass="action" style="align:center; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="10%">
 							<f:facet name="header">Servicio</f:facet>
 							<h:outputText value="#{_var.service}" />
 						</rich:column>
 						
-						<rich:column styleClass="action" style="align:center; background-color: #{_var.isSelected ? 'lightgreen' : ''}" >
+						<rich:column styleClass="action" style="align:center; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="10%">
 							<f:facet name="header">Valor</f:facet>
 							<h:outputText value="#{_var.value}" />
 						</rich:column>
 
-						<rich:column styleClass="action" style="align:center; background-color: #{_var.isSelected ? 'lightgreen' : ''}" >
+						<rich:column styleClass="action" style="align:center; background-color: #{_var.isSelected ? 'lightgreen' : ''}" width="10%">
 							<f:facet name="header">Seleccionar</f:facet>
 							<h:selectBooleanCheckbox 
 								value="#{_var.isSelected}" disabled="#{_var.hasProblem}">

@@ -1,0 +1,199 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="infractionsToNotify" width="1000" height="500" style="overflow-y:scroll">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Infracciones Listas para Notificar"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="#{id}_hidelink2" />
+				<rich:componentControl for="infractionsToNotify" attachTo="#{id}_hidelink2"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+<h:form id="sectionNotifications">
+		<rich:panel rendered = "#{overdueInfractionsListHome.selectedItemsList.size() > 0}">
+			<h:panelGrid columns="1" id="panelNotifications">
+				<s:decorate id="residents" template="../../layout/edit.xhtml">
+					<ui:define name="label">Contribuyentes Seleccionados:</ui:define>
+					<h:outputText id="residents1" value="#{overdueInfractionsListHome.totalResidentsSelected}" style="font-weight:bold; font-size:14px; color:black" />
+				</s:decorate>
+				<s:decorate id="infractiones" template="../../layout/edit.xhtml">
+					<ui:define name="label">Infracciones Encontradas:</ui:define>
+					<h:outputText id="infractiones1" value="#{overdueInfractionsListHome.totalInfractionsSelected}" style="font-weight:bold; font-size:14px; color:black" />
+				</s:decorate>
+			</h:panelGrid>
+			<div style="clear: both" />
+		</rich:panel>
+	
+
+	<rich:panel id="contentPanel" width="100%">
+				<f:facet name="header">
+					<h:panelGrid columns="2" columnClasses="headerTitle,">
+						<h:outputText value="Notificaciones Por Generar: (#{overdueInfractionsListHome.notificationsToCreated.size()})" />
+					</h:panelGrid>
+				</f:facet>
+				
+				<a:region>
+				<a:outputPanel styleClass="results" id="unitsPanel">
+					<h:outputText value="No hay contribuyentes seleccionados" 
+					rendered = "#{overdueInfractionsListHome.selectedItemsList.size() == 0}"/>
+					<ui:repeat value="#{overdueInfractionsListHome.notificationsToCreated}" var="columnName"
+								rendered = "#{overdueInfractionsListHome.selectedItemsList.size() > 0}">			
+							
+							<rich:dataTable width="100%"
+									id="_notificationsTable"  var="_var"
+									value="#{columnName.pendingInfractions}"
+									rendered = "#{columnName.pendingInfractions.size() > 0}">
+								<f:facet name="header">
+									<h:panelGrid columns="2" columnClasses="left, left">
+										
+										<h:outputText value="CONTRIBUYENTE: #{columnName.identificationNumber}"  />
+										<h:outputText value=" - #{columnName.name}"  />
+									</h:panelGrid>
+								</f:facet>
+								
+								<rich:column styleClass="action" style="align:center;" width="15%" >
+									<f:facet name="header">Boleta Nro:</f:facet>
+									<h:outputText value="#{_var.ticket}"  />
+								</rich:column>
+								<rich:column styleClass="action" style="align:center;" width="10%" >
+									<f:facet name="header">Placa:</f:facet>
+									<h:outputText value="#{_var.licensePlate}"  />
+								</rich:column>
+								<rich:column styleClass="action" style="align:center;" width="10%" >
+									<f:facet name="header">Estado GIM:</f:facet>
+									<h:outputText value="#{_var.state.name}"  />
+								</rich:column>
+								<rich:column styleClass="action" style="align:center; background-color: lightgreen;" width="10%" >
+									<f:facet name="header">Estado Anterior Yoveri:</f:facet>
+									<h:outputText value="#{_var.stateConsortium}"  />
+								</rich:column>
+								<rich:column styleClass="action" style="align:center; background-color: lightcoral;" width="10%" >
+									<f:facet name="header">Estado Actual Yoveri:</f:facet>
+									<h:outputText value="#{overdueInfractionsListHome.requestInfractionCurrentStatus(_var.id_factura)}"  />
+								</rich:column>
+								<rich:column styleClass="action" style="align:center;" width="10%">
+									<f:facet name="header">
+									#{messages['municipalBond.emision']}
+									</f:facet>
+									<h:outputText value="#{_var.emision}">
+										<s:convertDateTime type="date" dateStyle="short"
+											pattern="#{messages['common.datePattern']}" />
+									</h:outputText>
+								</rich:column>
+								<rich:column styleClass="action" style="align:center;" width="10%">
+									<f:facet name="header">
+										Fecha registro
+									</f:facet>
+									<h:outputText value="#{_var.register}">
+										<s:convertDateTime type="date" dateStyle="short"
+											pattern="#{messages['common.datePattern']}" />
+									</h:outputText>
+								</rich:column>
+								<rich:column styleClass="action" style="align:center;" width="10%">
+									<f:facet name="header">
+										Fecha expiración
+									</f:facet>
+										<h:outputText value="#{_var.expiration}">
+											<s:convertDateTime type="date" dateStyle="short"
+												pattern="#{messages['common.datePattern']}" />
+										</h:outputText>
+								</rich:column>
+								<rich:column styleClass="right" style="align:center;" width="5%">
+									<f:facet name="header">
+									#{messages['municipalBond.value']}
+								</f:facet>
+									<h:outputText value="#{_var.value}">
+										<f:convertNumber maxFractionDigits="2" pattern="#,##,##0.00" />
+									</h:outputText>
+								</rich:column>
+								
+								
+								<rich:column styleClass="right" style="align:center;" width="5%">
+									<f:facet name="header">
+									Interés
+								</f:facet>
+									<h:outputText value="#{_var.interest}">
+										<f:convertNumber maxFractionDigits="2" pattern="#,##,##0.00" />
+									</h:outputText>
+								</rich:column>
+								
+								
+								<rich:column styleClass="right" style="align:center;" width="5%">
+									<f:facet name="header">
+									Total
+								</f:facet>
+									<h:outputText value="#{_var.totalValue}">
+										<f:convertNumber maxFractionDigits="2" pattern="#,##,##0.00" />
+									</h:outputText>
+								</rich:column>
+							</rich:dataTable> 
+							<br />
+					</ui:repeat>
+				</a:outputPanel>
+				</a:region>
+			</rich:panel>
+
+		<div class="actionButtons">
+			<a:commandButton 	id="generateNotification" value="#{messages['coercive.generateNotificacions']}"
+								action="#{overdueInfractionsListHome.confirmCreateNotification()}"
+	                            onclick="this.disabled=true;"  	
+	                            oncomplete="Richfaces.hideModalPanel('infractionsToNotify');Richfaces.showModalPanel('confirmPanelSelected',{width:350, height:150})"
+	                            propagation="join" ajaxSingle="true"
+	                            reRender="confirmPanelSelected,infractionsToNotify,infractionSearch"
+	                            disabled="#{overdueInfractionsListHome.selectedItemsList.size() == 0}" >
+	         </a:commandButton>
+
+			<a:commandButton 
+				ajaxSingle="true" 
+				value="#{messages['common.quit']}"
+				oncomplete="Richfaces.hideModalPanel('infractionsToNotify');"
+				bypassUpdates="true" />
+
+		</div>
+	</h:form>
+	</rich:modalPanel>
+	
+	<rich:modalPanel id="confirmPanelSelected" width="350" height="150">
+			<f:facet name="header">Notificacion(es) de Infracciones Vencidas</f:facet>
+			<h:form id="confirmPanelForm">
+				<h:panelGrid>
+						<h:outputText id="detail"
+							value="Se han generado #{overdueInfractionsListHome.notificationsToCreated.size()} notificacion(es)." />
+						<br />
+					<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="confirmNotification" value="Imprimir Notificaciones"
+	                            includePageParams="false" propagation="join"
+	                            oncomplete="Richfaces.hideModalPanel('confirmPanelSelected')"
+	                            onclick="openForPrint('#{conversation.id}');"
+	                            reRender="confirmPanelSelected,municipalBondList,overdueInfractionsForm">
+	                        </a:commandButton>
+							<rich:spacer width="50" />
+							<a:commandButton id="home" value="#{messages['common.quit']}"
+	                            includePageParams="false" propagation="join"
+	                            oncomplete="Richfaces.hideModalPanel('confirmPanelSelected')"
+	                            reRender="confirmPanelSelected,municipalBondList,overdueInfractionsForm">
+	                        </a:commandButton>
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
+
+</ui:composition>

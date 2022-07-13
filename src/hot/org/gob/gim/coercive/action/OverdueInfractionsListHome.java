@@ -37,8 +37,10 @@ import org.jboss.seam.framework.EntityHome;
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
 import ec.gob.gim.coercive.model.infractions.HistoryStatusNotification;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
+import ec.gob.gim.coercive.model.infractions.NotificationInfractionsDTO;
 import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.loja.middleapp.ResponseInfraccion;
 
 /**
  * @author René
@@ -46,8 +48,7 @@ import ec.gob.gim.revenue.model.MunicipalBond;
  */
 @Name("overdueInfractionsListHome")
 @Scope(ScopeType.CONVERSATION)
-public class OverdueInfractionsListHome extends
-		EntityHome<NotificationInfractions> {
+public class OverdueInfractionsListHome extends	EntityHome<NotificationInfractions> {
 	
 	@In(scope = ScopeType.SESSION, value = "userSession")
 	UserSession userSession;
@@ -81,13 +82,21 @@ public class OverdueInfractionsListHome extends
 	private boolean rebuiltRequired = false;
 
 	private Integer totalSync = new Integer(0);
+	
+	private Boolean notItems = Boolean.FALSE;
+	private List<NotificationInfractionsDTO> notificationsToCreated;
+	private int totalResidentsSelected = 0;
+	private int totalInfractionsSelected = 0;
+	private List<String> selectedItemsList;
+	private Boolean isFirstTime = Boolean.TRUE;
+	private NotificationInfractions notification;
 
 	/**
 	 * 
 	 */
-	public OverdueInfractionsListHome() {
+	public OverdueInfractionsListHome() {		
 		super();
-		this.initializeService();
+		this.initializeService();	
 		this.criteria = new OverdueInfractionsSearchCriteria();
 		this.totalSync = this.overdueInfractionsService
 				.getTotalSyncInfractions();
@@ -112,6 +121,14 @@ public class OverdueInfractionsListHome extends
 			notificationInfractionsService = ServiceLocator.getInstance()
 					.findResource(NotificationInfractionsService.LOCAL_NAME);
 		}
+	}
+	
+	public void wire(){
+		if (isFirstTime){
+			overdueInfractionsList.setSelectedList(new ArrayList<InfractionItem>());
+			notificationsToCreated = new ArrayList<NotificationInfractionsDTO>();
+			isFirstTime = Boolean.FALSE;
+		}	
 	}
 
 	/**
@@ -207,62 +224,115 @@ public class OverdueInfractionsListHome extends
 	public String confirmPrinting() {
 		return "printed";
 	}
+	
+	
+
+	public Boolean getNotItems() {
+		return notItems;
+	}
+
+	public void setNotItems(Boolean notItems) {
+		this.notItems = notItems;
+	}
+
+	public List<NotificationInfractionsDTO> getNotificationsToCreated() {
+		return notificationsToCreated;
+	}
+
+	public void setNotificationsToCreated(
+			List<NotificationInfractionsDTO> notificationsToCreated) {
+		this.notificationsToCreated = notificationsToCreated;
+	}
+
+	public int getTotalResidentsSelected() {
+		return totalResidentsSelected;
+	}
+
+	public void setTotalResidentsSelected(int totalResidentsSelected) {
+		this.totalResidentsSelected = totalResidentsSelected;
+	}
+
+	public List<String> getSelectedItemsList() {
+		return selectedItemsList;
+	}
+
+	public void setSelectedItemsList(List<String> selectedItemsList) {
+		this.selectedItemsList = selectedItemsList;
+	}
+
+	public int getTotalInfractionsSelected() {
+		return totalInfractionsSelected;
+	}
+
+	public void setTotalInfractionsSelected(int totalInfractionsSelected) {
+		this.totalInfractionsSelected = totalInfractionsSelected;
+	}
+
+	public NotificationInfractions getNotification() {
+		return notification;
+	}
+
+	public void setNotification(NotificationInfractions notification) {
+		this.notification = notification;
+	}
 
 	@Transactional
-	public String createNotification() throws IOException {
-		this.generatedNotificationIds = new ArrayList<Long>();
+	public void createNotification() throws IOException {
+		notificationsToCreated = new ArrayList<NotificationInfractionsDTO>();
+		selectedItemsList = this.getResidentSelectedItems();
+		totalInfractionsSelected = 0;
+		if (selectedItemsList.isEmpty()) {
+			notItems = Boolean.TRUE;
+			overdueInfractionsList.searchBonds();
+		} else {		
+			setSelectedItems(Util.listToString(selectedItemsList));
+			for (String identification : selectedItemsList) { 
 
-		if (this.getResidentSelectedItems().isEmpty()) {
-			addFacesMessageFromResourceBundle("common.noSelectedItems");
-			return "failed";
+				List<Datainfraction> infractions = this.datainfractionService
+						.findInfractionsPendingByIdentification(identification);
+	
+				if (infractions.size() > 0) {
+					NotificationInfractionsDTO notificationDTO = new NotificationInfractionsDTO();
+					notificationDTO.setPendingInfractions(infractions);
+					notificationDTO.setIdentificationNumber(identification);
+					notificationDTO.setName(infractions.get(0).getName());
+					totalInfractionsSelected = totalInfractionsSelected + infractions.size();
+					this.notificationsToCreated.add(notificationDTO);
+				}
+			}
+			
 		}
-
-		setSelectedItems(Util.listToString(this.getResidentSelectedItems()));
-
-		/*
-		 * this.setExpirationDate(residentWithMunicipalBondOutOfDateList
-		 * .getExpirationDate());
-		 * this.setAmount(residentWithMunicipalBondOutOfDateList.getAmount());
-		 */
-
-		NotificationInfractions notification = null;
-
-		ItemCatalog itemPending = this.itemCatalogService
+	}
+	
+	@Transactional
+	public void confirmCreateNotification() throws IOException {
+		notification = null;
+		this.generatedNotificationIds = new ArrayList<Long>();
+		ItemCatalog itemNotificated = this.itemCatalogService
 				.findItemByCodeAndCodeCatalog("CATALOG_STATUS_INFRACTIONS",
 						"NOTIFIED");
 		
 		ItemCatalog itemPrint = this.itemCatalogService
 				.findItemByCodeAndCodeCatalog("CAT_STATUS_NOTIF_INFRACCCIONS",
 						"PRINT");
-
-		for (String identification : getResidentSelectedItems()) { // son los
-																	// id's de
-																	// todos
-			// los resident's
-
-			List<Datainfraction> infractions = this.datainfractionService
-					.findInfractionsByIdentification(identification);
-
-			if (infractions.size() == 0) {
-				overdueInfractionsList.searchBonds();
-				addFacesMessage("Recargue la página");
-				return "failed";
-			}
-			
-
+		
+		for(NotificationInfractionsDTO notificationDTO : notificationsToCreated){
 			notification = new NotificationInfractions();
 			notification.setStatus(itemPrint);
-			notification.setInfractions(infractions);
+			notification.setInfractions(notificationDTO.getPendingInfractions());
 			notification.setNumber(this.datainfractionService.getNextValue()
 					.intValue());
 			notification.setYear(Calendar.getInstance().get(Calendar.YEAR));
-			for (int i = 0; i < infractions.size(); i++) {
-				infractions.get(i).setState(itemPending);
-				infractions.get(i).setNotification(notification);
-			}
 			setInstance(notification);
-			persist();
+			super.persist();
 			
+			for (int i = 0; i < notification.getInfractions().size(); i++) {
+				Datainfraction data = notification.getInfractions().get(i);
+				data.setState(itemNotificated);
+				data.setNotification(notification);
+				datainfractionService.updateDataInfraction(data);
+				
+			}
 			
 			HistoryStatusNotification record = new HistoryStatusNotification();
 			record.setDate(new Date());
@@ -271,21 +341,28 @@ public class OverdueInfractionsListHome extends
 			record.setResponsible(this.userSession.getPerson());
 			record.setStatus(itemPrint);
 			record.setUser(this.userSession.getUser());
-			
 			notificationInfractionsService.saveHistoryStatus(record);
-			
 			generatedNotificationIds.add((Long) getId());
-
 		}
-
+		
 		Contexts.removeFromAllContexts("overdueInfractionsList");
 		overdueInfractionsList.refresh();
-
 		overdueInfractionsList.searchBonds();
-
-		// this.reload();
-
-		return "sendToPrint";
+	}
+	
+	public String requestInfractionCurrentStatus(String id_factura){
+		if(id_factura == null || id_factura.equals("")){
+			return "No se pudo consultar";
+		}else{
+			ResponseInfraccion responseInfraccion = this.datainfractionService.findInfractionByIdANT(id_factura);
+			if(responseInfraccion != null && responseInfraccion.getCode() == 200){
+				if(responseInfraccion.getInfraccion() != null){
+					return responseInfraccion.getInfraccion().getEstado();
+				}
+				return "No se pudo consultar";
+			}
+			return "No se pudo consultar";
+		}
 	}
 
 	/**
@@ -295,19 +372,20 @@ public class OverdueInfractionsListHome extends
 	 * @return List<Long>
 	 */
 	public List<String> getResidentSelectedItems() {
-		List<String> selectedItems = new ArrayList<String>();
+		selectedItemsList = new ArrayList<String>();
 		overdueInfractionsList.setAllResidentsSelected(Boolean.FALSE);
-		if (overdueInfractionsList.getSelectedList() == null
-				|| overdueInfractionsList.getSelectedList().size() == 0)
-			return selectedItems;
-		for (InfractionItem ri : overdueInfractionsList.getSelectedList()) {
-			if (ri.isSelected()) {
-				if (!selectedItems.contains(ri.getIdentification()))
-					selectedItems.add(ri.getIdentification());
+		if (overdueInfractionsList.getSelectedList() != null
+				&& overdueInfractionsList.getSelectedList().size() > 0){
+			for (InfractionItem ri : overdueInfractionsList.getSelectedList()) {
+				if (ri.isSelected()) {
+					if (!selectedItemsList.contains(ri.getIdentification()))
+						selectedItemsList.add(ri.getIdentification());
+				}
 			}
 		}
 		// System.out.println(selectedItems);
-		return selectedItems;
+		this.totalResidentsSelected = selectedItemsList.size();
+		return selectedItemsList;
 	}
 
 	public void search() {
@@ -383,14 +461,15 @@ public class OverdueInfractionsListHome extends
 	}
 
 	public void changeStatusSelecteds() {
+		selectedItemsList = this.getResidentSelectedItems();
 		this.generatedNotificationIds = new ArrayList<Long>();
 
-		if (this.getResidentSelectedItems().isEmpty()) {
+		if (selectedItemsList.isEmpty()) {
 			addFacesMessageFromResourceBundle("common.noSelectedItems");
 			//return "failed";
 		}
 
-		setSelectedItems(Util.listToString(this.getResidentSelectedItems()));
+		setSelectedItems(Util.listToString(selectedItemsList));
 
 		/*
 		 * this.setExpirationDate(residentWithMunicipalBondOutOfDateList
@@ -404,7 +483,7 @@ public class OverdueInfractionsListHome extends
 				.findItemByCodeAndCodeCatalog("CATALOG_STATUS_INFRACTIONS",
 						"NOTIFIED");
 
-		for (String identification : getResidentSelectedItems()) { // son los
+		for (String identification : selectedItemsList) { // son los
 																	// id's de
 																	// todos
 		}

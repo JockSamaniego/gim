@@ -62,6 +62,15 @@ public class DatainfractionServiceBean implements DatainfractionService {
 		query.setParameter("identification", identification);
 		return query.getResultList();
 	}
+	
+	@Override
+	public List<Datainfraction> findInfractionsPendingByIdentification(
+			String identification) {
+		Query query = this.entityManager
+				.createQuery("SELECT d FROM Datainfraction d JOIN d.state s WHERE d.identification=:identification AND d.notification IS NULL AND s.code='PENDING' ");
+		query.setParameter("identification", identification);
+		return query.getResultList();
+	}
 
 	@Override
 	public Long getNextValue() {

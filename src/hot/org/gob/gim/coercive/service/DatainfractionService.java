@@ -52,4 +52,6 @@ public interface DatainfractionService {
 	
 	public ResponseInfraccion findInfractionByIdANT(String idANT);
 	
+	public List<Datainfraction> findInfractionsPendingByIdentification(String identification);
+	
 }

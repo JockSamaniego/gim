@@ -205,11 +205,13 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 		setGroupBy("di.identification, di.name");
 		setMaxResults(25);
 		Calendar now = Calendar.getInstance();
-		int lastDayMonth = now.getActualMaximum(Calendar.DATE);
-		now.set(Calendar.DATE, lastDayMonth);
-		int yearCurrent = now.get(Calendar.YEAR);
+//		int lastDayMonth = now.getActualMaximum(Calendar.DATE);
+//		now.set(Calendar.DATE, lastDayMonth);
+//		int yearCurrent = now.get(Calendar.YEAR);
 		Calendar from = Calendar.getInstance();
-		from.set(Calendar.YEAR, yearCurrent - 5);
+		from.set(Calendar.YEAR, 2010);
+		from.set(Calendar.MONTH, 1);
+		from.set(Calendar.DAY_OF_MONTH, 1);
 
 		if (this.expirationFrom == null) {
 			setExpirationFrom(from.getTime());
@@ -678,7 +680,7 @@ public class OverdueInfractionsList extends EntityQuery<InfractionItem> {
 	public void loadTotalSyncInfractions() {
 
 		Query query = getEntityManager().createQuery(
-				"Select count(*) from Datainfraction di ");
+				"Select count(*) from Datainfraction di JOIN di.state s WHERE di.notification IS NULL AND s.code='PENDING'");
 
 		Long size = (Long) query.getSingleResult();
 
