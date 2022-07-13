@@ -1,0 +1,243 @@
+package org.gob.gim.coercive.action;
+
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Query;
+
+import org.gob.gim.common.action.UserSession;
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Transactional;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.framework.EntityHome;
+import org.jboss.seam.log.Log;
+
+import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.coercive.model.infractions.InfringementAgreement;
+
+@Name("infringementAgreementHome")
+public class InfringementAgreementHome extends EntityHome<InfringementAgreement> {
+
+	private static final long serialVersionUID = 62094782221905843L;
+
+	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
+
+	@Logger
+	Log logger;
+
+	@In
+	FacesMessages facesMessages;
+
+	@In(scope = ScopeType.SESSION, value = "userSession")
+	UserSession userSession;
+
+	private boolean isFirstTime = true;
+	
+	private String criteria;
+	private String identificationSearch;
+	
+	private List<Datainfraction> infractionsList = new ArrayList<Datainfraction>();
+	private Datainfraction infractionSelected;
+
+	private List<Integer> percentages = new ArrayList<Integer>();
+	
+	private InfringementAgreement infringementAgreementRep;
+	
+	public void setInfringementAgreementId(Long id) {
+		setId(id);
+	}
+
+	public Long getInfringementAgreementId() {
+		return (Long) getId();
+	}
+
+	public void load() {
+		if (isIdDefined()) {
+			wire();
+		}
+	}
+
+	public void wire() {
+		if (!isFirstTime)
+			return;
+		identificationSearch = "";
+		isFirstTime = false;
+		for (int i = 20; i <= 30; i++) {
+			percentages.add(i);
+		}
+	}
+
+	public boolean isWired() {
+		return true;
+	}
+
+	public InfringementAgreement getDefinedInstance() {
+		return isIdDefined() ? getInstance() : null;
+	}
+
+	public void setCriteria(String criteria) {
+		this.criteria = criteria;
+	}
+
+	public String getCriteria() {
+		return criteria;
+	}
+
+	/**
+	 * @return the identificationSearch
+	 */
+	public String getIdentificationSearch() {
+		return identificationSearch;
+	}
+
+	/**
+	 * @param identificationSearch the identificationSearch to set
+	 */
+	public void setIdentificationSearch(String identificationSearch) {
+		this.identificationSearch = identificationSearch;
+	}
+
+	/**
+	 * @return the infractionsList
+	 */
+	public List<Datainfraction> getInfractionsList() {
+		return infractionsList;
+	}
+
+	/**
+	 * @param infractionsList the infractionsList to set
+	 */
+	public void setInfractionsList(List<Datainfraction> infractionsList) {
+		this.infractionsList = infractionsList;
+	}
+
+	/**
+	 * @return the infractionSelected
+	 */
+	public Datainfraction getInfractionSelected() {
+		return infractionSelected;
+	}
+
+	/**
+	 * @param infractionSelected the infractionSelected to set
+	 */
+	public void setInfractionSelected(Datainfraction infractionSelected) {
+		this.infractionSelected = infractionSelected;
+	}
+
+	/**
+	 * @return the percentages
+	 */
+	public List<Integer> getPercentages() {
+		return percentages;
+	}
+
+	/**
+	 * @param percentages the percentages to set
+	 */
+	public void setPercentages(List<Integer> percentages) {
+		this.percentages = percentages;
+	}
+
+	/**
+	 * @return the infringementAgreementRep
+	 */
+	public InfringementAgreement getInfringementAgreementRep() {
+		return infringementAgreementRep;
+	}
+
+	/**
+	 * @param infringementAgreementRep the infringementAgreementRep to set
+	 */
+	public void setInfringementAgreementRep(
+			InfringementAgreement infringementAgreementRep) {
+		this.infringementAgreementRep = infringementAgreementRep;
+	}
+
+	/**
+	 * @return the isFirstTime
+	 */
+	public boolean isFirstTime() {
+		return isFirstTime;
+	}
+
+	/**
+	 * @param isFirstTime the isFirstTime to set
+	 */
+	public void setFirstTime(boolean isFirstTime) {
+		this.isFirstTime = isFirstTime;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jboss.seam.framework.EntityHome#persist()
+	 */
+	@Override
+	public String persist() {
+		if (!isIdDefined()) {
+			instance.setCreator(userSession.getUser());
+		}
+		return super.persist();
+	}
+
+	public void createInfringementAgreement() {
+	}
+	
+	public void editInfringementAgreement() {
+	}
+	
+	@Override
+	@Transactional
+	public String update() {
+		return super.update();
+	}
+	
+	public void searchByIdentification(){
+		infractionsList.clear();
+		Query query = getEntityManager().createNamedQuery("Datainfraction.findByIdentification");
+		query.setParameter("identification", identificationSearch);
+		infractionsList = query.getResultList();
+		if ((infractionsList != null) && (infractionsList.size() > 0)){
+			Datainfraction inf = infractionsList.get(0);
+			instance.setInfractorIdentification(inf.getIdentification());
+			instance.setInfractorName(inf.getName());
+		} else {
+			facesMessages.add("No se encontró infracciones para " + identificationSearch);
+			instance = new InfringementAgreement();
+		}
+	}
+	
+	public void addInfraction(){
+		if (infractionSelected != null){
+			instance.add(infractionSelected);
+			infractionSelected.setInAgreement(true);
+			calculateAgreement();
+		}
+	}
+	
+	public void removeInfraction(Datainfraction datainfraction){
+		if (datainfraction != null){
+			instance.remove(datainfraction);
+			infractionSelected.setInAgreement(false);
+			calculateAgreement();
+		}
+	}
+	
+	public void calculateAgreement(){
+		instance.setTotal(BigDecimal.ZERO);
+		for (Datainfraction datainfraction : instance.getInfractions()) {
+			instance.setTotal(instance.getTotal().add(datainfraction.getTotalValue()));
+		}
+		BigDecimal percentage = new BigDecimal(instance.getPercentage()).divide(new BigDecimal(100));
+		instance.setInitialFee(instance.getTotal().multiply(percentage).round(new MathContext(2)));
+	}
+	
+	public void generateReport(InfringementAgreement infringementAgreement) {
+		this.infringementAgreementRep = infringementAgreement;
+	}
+
+}
