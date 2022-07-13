@@ -10,8 +10,9 @@
 	xmlns:g="http://gim.gob.ec/jsf" template="../../layout/template.xhtml">
 
 	<ui:define name="body">
-	
+
 		<ui:include src="dialogs/PaymentsInfraction.xhtml" />
+		<ui:include src="dialogs/ChangeStatusPaidInfraction.xhtml" />
 
 		<h:form id="registerPaymentInfractionSearch" styleClass="edit">
 			<ui:debug id="debug" />
@@ -53,6 +54,19 @@
 							</h:inputText>
 						</s:decorate>
 
+						<s:decorate template="../../layout/edit.xhtml">
+							<ui:define name="label">Estado:</ui:define>
+							<h:selectOneMenu id="statusCmb"
+								value="#{registerPaymentInfractionHome.criteria.status}">
+								<f:selectItem itemLabel="#{messages['common.selectOne']}"
+									itemValue="" noSelectionOption="true" />
+								<f:selectItems value="#{registerPaymentInfractionHome.statuses}"
+									var="status" itemLabel="#{status.name}" itemValue="#{status}" />
+								<a:support event="onchange" ajaxSingle="true" />
+								<s:convertEntity></s:convertEntity>
+							</h:selectOneMenu>
+						</s:decorate>
+
 					</h:panelGrid>
 					<div style="clear: both" />
 				</rich:panel>
@@ -61,7 +75,7 @@
 			<div class="actionButtons">
 				<a4j:commandButton id="search" value="#{messages['common.search']}"
 					action="#{registerPaymentInfractionHome.search()}"
-					reRender="messages, dataInfractionForm, infractionsList, scroller, table"/>
+					reRender="messages, dataInfractionForm, infractionsList, scroller, table" />
 
 				<s:button id="reset" value="#{messages['common.reset']}"
 					includePageParams="false" propagation="none">
@@ -155,15 +169,27 @@
 
 						<rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
-							<a:commandButton 
-								value="Ver Pagos" 
-								id="abonosButton" 
+							<a:commandButton value="Ver Pagos" id="abonosButton"
 								action="#{registerPaymentInfractionHome.viewPayments(_infraction.id)}"
-								ajaxSingle="true"
-								eventsQueue="gimQueue"
-								oncomplete="Richfaces.showModalPanel('paymentsInfraction',{width:850, height:450})"
-								reRender="paymentsInfraction" 
-								> 
+								ajaxSingle="true" eventsQueue="gimQueue"
+								oncomplete="Richfaces.showModalPanel('paymentsInfraction',{width:850, height:500})"
+								reRender="paymentsInfraction">
+							</a:commandButton>
+
+							<a:commandButton id="changeStatus" ajaxSingle="true"
+								rendered="#{_infraction.state.code == 'PENDING'}"
+								eventsQueue="gimQueue" value="Liquidar"
+								oncomplete="Richfaces.showModalPanel('changeStatusPaidInfraction',{width:500, height:250})"
+								actionListener="#{registerPaymentInfractionHome.prepareChangeToPaid(_infraction)}"
+								reRender="changeStatusPaidInfraction, changeStatusPaidInfractionForm" />
+
+					    	<a:commandButton 
+							    value="Imprimir Pagos" 
+							    rendered="#{_infraction.state.code == 'PAID'}"
+							    id="printAbonosButton" 
+							    action="#{registerPaymentInfractionHome.printPayments(_infraction.id)}"
+							    ajaxSingle="true"
+							    eventsQueue="gimQueue"> 
 							</a:commandButton>
 						</rich:column>
 

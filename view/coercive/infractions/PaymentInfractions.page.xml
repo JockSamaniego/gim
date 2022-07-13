@@ -7,7 +7,7 @@
 	 <navigation>
 		<end-conversation before-redirect="true" />
 		<rule if-outcome="sendToPrint">
-			<redirect view-id="/coercive/infractions/report/PrintPaymentsInfraction.xhtml"></redirect>
-		</rule>
+			<redirect view-id="/coercive/infractions/report/PaymentsInfractionReport.xhtml"></redirect>
+		</rule> 
 	</navigation>
 </page>

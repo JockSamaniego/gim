@@ -44,13 +44,19 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 				+ "JOIN FETCH pay.cashier" 
 				+ " WHERE 1=1 "
 				+ " and pay.date between :from and :until "
-				+ " and pay.status.id=:statusid";
+				+ " and pay.status.id=:statusid ";
+		if(criteria.getPerson()!=null){
+			qry += " and pay.cashier.id=:cashierid";
+		}
 		qry += " ORDER BY pay.date desc, pay.time DESC ";
 
 		Query query = this.entityManager.createQuery(qry);
 		query.setParameter("from", criteria.getFrom());
-		query.setParameter("until", criteria.getUntil());
-		query.setParameter("statusid", statusid);
+		query.setParameter("until", criteria.getUntil()); 
+		query.setParameter("statusid", criteria.getStatusid()); 
+		if(criteria.getPerson()!=null){
+			query.setParameter("cashierid", criteria.getPerson().getUser().getId());
+		}
 		return query.getResultList();
 	}
 
@@ -61,15 +67,23 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 			Integer numberOfRows) {
 
 		String qry = "SELECT pay FROM PaymentInfraction pay "
-				+ " WHERE 1=1 " + " and pay.date between :from and :until "
-				+ " and pay.status.id=:statusid";
+				+ " WHERE 1=1 " 
+				+ " and pay.date between :from and :until "
+				+ " and pay.status.id=:statusid ";
+		
+		if(criteria.getPerson()!=null){
+			qry += " and pay.cashier.id=:cashierid";
+		}
 		qry += " ORDER BY pay.date desc, pay.time DESC ";
 
 		Query query = this.entityManager.createQuery(qry);
 		query.setParameter("from", criteria.getFrom());
 		query.setParameter("until", criteria.getUntil());
-		query.setParameter("statusid", criteria.getStatusid());
-
+		query.setParameter("statusid", criteria.getStatusid()); 
+		
+		if(criteria.getPerson()!=null){
+			query.setParameter("cashierid", criteria.getPerson().getUser().getId());
+		}
 		query.setFirstResult(firstRow);
 		query.setMaxResults(numberOfRows);
 
@@ -90,12 +104,20 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 		String qry = "SELECT count(DISTINCT pay.id) FROM PaymentInfraction pay "
 				+ " WHERE 1=1 "
 				+ " and pay.date between :from and :until "
-				+ " and pay.status.id=:statusid";
+				+ " and pay.status.id=:statusid ";
+		
+		if(criteria.getPerson()!=null){
+			qry += " and pay.cashier.id=:cashierid";
+		}
 
 		Query query = this.entityManager.createQuery(qry);
 		query.setParameter("from", criteria.getFrom());
 		query.setParameter("until", criteria.getUntil());
-		query.setParameter("statusid", criteria.getStatusid());
+		query.setParameter("statusid", criteria.getStatusid()); 
+		
+		if(criteria.getPerson()!=null){
+			query.setParameter("cashierid", criteria.getPerson().getUser().getId());
+		}
 		Long size = (Long) query.getSingleResult();
 
 		return size.intValue();
@@ -106,13 +128,19 @@ public class PaymentInfractionsServiceBean implements PaymentInfractionsService 
 			PaymentInfractionsSearchCriteria criteria) {
 		
 		String qry = "SELECT SUM(pay.value) FROM PaymentInfraction pay "
-				+ " WHERE 1=1 " + " and pay.date between :from and :until "
-				+ " and pay.status.id=:statusid";
-
+				+ " WHERE 1=1 " 
+				+ " and pay.date between :from and :until "
+				+ " and pay.status.id=:statusid ";
+		if(criteria.getPerson()!=null){
+			qry += " and pay.cashier.id=:cashierid";
+		}
 		Query query = this.entityManager.createQuery(qry);
 		query.setParameter("from", criteria.getFrom());
-		query.setParameter("until", criteria.getUntil());
-		query.setParameter("statusid", criteria.getStatusid());
+		query.setParameter("until", criteria.getUntil()); 
+		query.setParameter("statusid", criteria.getStatusid()); 
+		if(criteria.getPerson()!=null){
+			query.setParameter("cashierid", criteria.getPerson().getUser().getId());
+		}
 		
 		return (BigDecimal) query.getSingleResult();
 		

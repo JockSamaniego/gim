@@ -36,7 +36,7 @@
 	
 					<h:panelGrid width="100%" columns="2" columnClasses="headerTitle right, right">
 						<h:outputText value="#{messages['payment.value']}:" style="font-size:35px; font-weight:bold;"/>
-						<h:inputText id="value" value="#{registerPaymentInfractionHome.infractionSelected.totalValue}"
+						<h:inputText id="value" value="#{registerPaymentInfractionHome.infractionTotal}"
 							styleClass="right" style="font-size:35px; font-weight:bold;"
 							size="12" readonly="true">
 							<f:convertNumber
@@ -93,7 +93,7 @@
 									minFractionDigits="#{messages['common.minFractionDigits']}" />
 								<a:support event="onblur"
 									actionListener="#{registerPaymentInfractionHome.calculateChange()}"
-									reRender="changeField, receivedAmount, savePaymentBtn"
+									reRender="receivedAmount, savePaymentBtn"
 									ajaxSingle="true" /> 
 							</h:inputText>
 						</rich:column>
@@ -163,8 +163,9 @@
 						id="savePaymentBtn" ajaxSingle="true"
 						action="#{registerPaymentInfractionHome.savePayment()}"
 						value="#{messages['payment.save']}"
-						oncomplete="Richfaces.hideModalPanel('coerciveInfractionsPanel');"
+						oncomplete="Richfaces.hideModalPanel('coerciveInfractionsPanel'); Richfaces.showModalPanel('paymentsInfraction',{width:850, height:500})"
 						disabled="#{registerPaymentInfractionHome.invalidAmount}"
+						reRender="paymentsInfraction,paymentsInfractionForm,paymentList"
 						onclick="this.disabled=true;" />
 
 					<a:commandButton ajaxSingle="true"

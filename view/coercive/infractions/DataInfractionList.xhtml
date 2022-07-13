@@ -177,6 +177,11 @@
 
 						<rich:column styleClass="action">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
+							<a:commandButton id="detailInfraction" ajaxSingle="true" eventsQueue="gimQueue"
+								value="Detalle" 
+								oncomplete="Richfaces.showModalPanel('detailInfractionPanel',{width:600, height:500})"
+								actionListener="#{dataInfractionListHome.prepareViewDetail(_infraction)}" 
+								reRender="detailInfractionPanel"/>
 							<a:commandButton id="changeStatus" ajaxSingle="true" eventsQueue="gimQueue"
 								value="Cambiar Estado" reRender="changeStatusDataInfraction"
 								oncomplete="Richfaces.showModalPanel('changeStatusDataInfraction',{width:450, height:280})"
@@ -194,6 +199,109 @@
 
 			</rich:panel>
 		</h:form>
+		
+		<rich:modalPanel id="detailInfractionPanel">
+			<f:facet name="header">Detalle de infracción</f:facet>
+			<h:form id="infractionform">
+				<h:panelGrid columns="1">
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Identificacion:</ui:define>
+						<h:outputText id="identifModal" value="#{dataInfractionListHome.currentItem.identification}" ></h:outputText>
+					</s:decorate>
+						
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Nombres:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.name}" ></h:outputText>
+					</s:decorate>
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Boleto nro:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.ticket}" ></h:outputText>
+					</s:decorate>
+					
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Placa:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.licensePlate}" ></h:outputText>
+					</s:decorate>
+					
+					
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Emisión:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.emision}" ></h:outputText>
+					</s:decorate>
+					
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Registro:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.register}" ></h:outputText>
+					</s:decorate>				
+									
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Vencimiento:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.expiration}" ></h:outputText>
+					</s:decorate>
+															
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Contacto general:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.contactGeneral}" ></h:outputText>
+					</s:decorate>
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Mejor gestión:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.betterManagement}" ></h:outputText>
+					</s:decorate>										
+									
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Gestión telefónica:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.telephoneManagement}" ></h:outputText>
+					</s:decorate>
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Teléfono marcado:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.dialedPhone}" ></h:outputText>
+					</s:decorate>		
+												
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Intensidad telefónica:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.telephoneIntensity}" ></h:outputText>
+					</s:decorate>
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Intensidad de correo:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.emailIntensity}" ></h:outputText>
+					</s:decorate>		
+									
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Correo:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.email}" ></h:outputText>
+					</s:decorate>
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">IVR:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.ivr}" ></h:outputText>
+					</s:decorate>																		
+				</h:panelGrid>
+				
+				<h:panelGrid columns="1">
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Artículo:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.article}" ></h:outputText>
+					</s:decorate>
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Descripción:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.articleDescription}" ></h:outputText>
+					</s:decorate>
+					<s:decorate template="../../layout/display.xhtml">
+						<ui:define name="label">Observación:</ui:define>
+						<h:outputText id="namesModal" value="#{dataInfractionListHome.currentItem.observation}" ></h:outputText>
+					</s:decorate> 	
+				</h:panelGrid>
+				
+				<h:panelGroup>
+					<div style="">
+						<a4j:commandButton style="width:50px" id="closeBtn" 
+							value="Cerrar"
+							oncomplete="Richfaces.hideModalPanel('detailInfractionPanel')"/>
+					</div>
+			 	</h:panelGroup>
+		 	</h:form>
+		</rich:modalPanel>
 
 	</ui:define>
 
