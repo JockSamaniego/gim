@@ -16,6 +16,7 @@ import org.gob.gim.coercive.service.DatainfractionService;
 import org.gob.gim.coercive.view.InfractionData;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
+import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -58,6 +59,8 @@ public class RegisterPaymentInfractionHome extends EntityController {
 	private DatainfractionService datainfractionService;
 
 	private ItemCatalogService itemCatalogService;
+	
+	private SystemParameterService systemParameterService;
 
 	private DataInfractionSearchCriteria criteria;
 
@@ -95,6 +98,12 @@ public class RegisterPaymentInfractionHome extends EntityController {
 
 	private BigDecimal totalPayed;
 	private InfractionData infractionData;
+	
+	private String cashierInfractionsRoleName;
+	
+	private List<Long> statusPermitPayment;
+	
+	private Boolean permitPay;
 
 	/**
 	 * 
@@ -123,6 +132,11 @@ public class RegisterPaymentInfractionHome extends EntityController {
 					.findItemsForCatalogCodeOrderById("CATALOG_STATUS_INFRACTIONS");
 		}
 		this.criteria.setStatus(itemPending);
+		
+		cashierInfractionsRoleName = systemParameterService
+				.findParameter("ROLE_NAME_CASHIER_INFRACTIONS");
+		
+		statusPermitPayment = systemParameterService.findListIds("PAYMENT_INFRACTIONS_STATUS_IDS");
 
 	}
 
@@ -136,6 +150,13 @@ public class RegisterPaymentInfractionHome extends EntityController {
 			itemCatalogService = ServiceLocator.getInstance().findResource(
 					itemCatalogService.LOCAL_NAME);
 		}
+		
+		if (systemParameterService == null) {
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SystemParameterService.LOCAL_NAME);
+		}
+
+		
 	}
 
 	/**
@@ -489,6 +510,14 @@ public class RegisterPaymentInfractionHome extends EntityController {
 				infractionId, this.validStatus.getId());
 		this.infractionSelected = datainfractionService
 				.getDataInfractionById(infractionId);
+		
+		
+		
+		Boolean hasRole = userSession.getUser().hasRole(cashierInfractionsRoleName);
+		Boolean hasStatus = this.statusPermitPayment.contains(this.infractionSelected.getState().getId());
+		this.permitPay = hasRole && hasStatus; 
+		
+		
 
 		for (PaymentInfraction payment : this.payments) {
 			this.totalPayments = this.totalPayments.add(payment.getValue());
@@ -604,7 +633,6 @@ public class RegisterPaymentInfractionHome extends EntityController {
 	}
 
 	public void clearValues(PaymentInfraction fraction) {
-		// System.out.println("VALUES CLEARED");
 		fraction.setValue(BigDecimal.ZERO);
 		fraction.setFinantialInstitution(null);
 		fraction.setDocumentNumber(null);
@@ -645,6 +673,10 @@ public class RegisterPaymentInfractionHome extends EntityController {
 			payment.setStatus(this.validStatus);
 			this.datainfractionService.savePaymentInfraction(payment);
 		}
+		this.infractionSelected = datainfractionService
+				.getDataInfractionById(this.infractionSelected.getId());
+		
+		this.viewPayments(this.infractionSelected.getId());
 	}
 
 	public void prepareChangeToPaid(Datainfraction infraction) {
@@ -715,4 +747,18 @@ public class RegisterPaymentInfractionHome extends EntityController {
 		this.infractionData = infractionData;
 	}
 
+	/**
+	 * @return the permitPay
+	 */
+	public Boolean getPermitPay() {
+		return permitPay;
+	}
+
+	/**
+	 * @param permitPay the permitPay to set
+	 */
+	public void setPermitPay(Boolean permitPay) {
+		this.permitPay = permitPay;
+	}
+	
 }

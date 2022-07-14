@@ -117,6 +117,14 @@
                 </h:inputText>
             </s:decorate>
             
+            <s:decorate id="fileNumberField" template="../layout/edit.xhtml">
+                <ui:define name="label">Nro. Expediente:</ui:define>
+                <h:inputText id="fileNumber"
+                       size="20"
+                          value="#{commissionerBallotList.commissionerBallot.fileNumber}">
+                </h:inputText>
+            </s:decorate>
+            
                         
         </h:panelGrid>
         </rich:simpleTogglePanel>

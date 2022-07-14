@@ -1,0 +1,181 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../../layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <h:form id="infringementAgreementEditForm" >
+            <h:outputText styleClass="formTitle"
+                value="#{infringementAgreementHome.managed ? messages['common.edit'] : messages['common.create']} Convenio de Pago por Infracciones" />
+
+            <rich:panel>
+                <f:facet name="header">Datos de Búsqueda</f:facet>
+                <h:panelGrid >
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Identificación:</ui:define>
+                        <h:inputText id="infractorIdentificationSearch" required="true" style="text-align: left" 
+                            value="#{infringementAgreementHome.identificationSearch}" >
+                            <a:support event="onblur" reRender="dataInfraction"
+                                 ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:inputText>
+                        #{' '}
+                        <a:commandButton id="search" 
+                            action="#{infringementAgreementHome.searchByIdentification()}"
+                            reRender="dataInfraction, messages" ajaxSingle="true"
+                            eventsQueue="gimEventsQueue" 
+                            value="#{messages['common.search']}" />
+        
+                    </s:decorate>
+
+                </h:panelGrid>
+            </rich:panel>
+
+            <rich:panel id="dataInfraction">
+                <f:facet name="header">Datos del Convenio</f:facet>
+                <h:panelGrid >
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Identificación:</ui:define>
+                        <h:inputText id="infractorIdentification" required="true" style="text-align: left" readonly="true" 
+                            value="#{infringementAgreementHome.instance.infractorIdentification}" />
+                    </s:decorate>
+
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Nombres:</ui:define>
+                        <h:inputText id="infractorName" required="true" style="text-align: left" readonly="true" size="50"
+                            value="#{infringementAgreementHome.instance.infractorName}" />
+                    </s:decorate>
+
+                    <rich:panel id="infractionsPanel">
+                        <f:facet name="header">
+                            <h:panelGrid columns="3" columnClasses="headerTitle">
+                                <h:outputText value="Infracciones" />
+                                <h:selectOneMenu id="infractions" value="#{infringementAgreementHome.infractionSelected}" >
+                                    <ui:debug id="debugExternal"/>
+                                    <s:selectItems value="#{infringementAgreementHome.infractionsList}" var="_infractionSel"
+                                        label="#{_infractionSel.licensePlate} - #{_infractionSel.ticket}" 
+                                        noSelectionLabel="Seleccione una opción" />
+                                    <s:convertEntity />
+                                    <a:support event="onblur" reRender="infractions"
+                                         ajaxSingle="true" eventsQueue="gimQueue" />
+                                </h:selectOneMenu>
+                                <a:commandButton id="addItem" 
+                                    action="#{infringementAgreementHome.addInfraction()}"
+                                    reRender="dataInfraction, infractionsTable" ajaxSingle="true"
+                                    eventsQueue="gimEventsQueue"
+                                    value="Agregar Infracción" />
+                            </h:panelGrid>
+                        </f:facet>
+                        
+                        <div class="results" id="infractionsList">
+                
+                            <h:outputText value="No se encontraron infracciones en el Convenio"
+                                rendered="#{empty infringementAgreementHome.instance.infractions}" />
+                
+                            <rich:dataTable id="infractionsTable" var="_infractionItem"
+                                value="#{infringementAgreementHome.instance.infractions}"
+                                rendered="#{not empty infringementAgreementHome.instance.infractions}"
+                                onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+                                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Placa" />
+                                    </f:facet>
+                                    <h:outputText value="#{_infractionItem.licensePlate}" />
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Boleta" />
+                                    </f:facet>
+                                    <h:outputText value="#{_infractionItem.ticket}" styleClass="rigth"/>
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['common.action']}" />
+                                    </f:facet>
+                                    <a:commandButton id="removeItem"
+                                        action="#{infringementAgreementHome.removeInfraction(_infractionItem)}"
+                                        reRender="dataInfraction, infractionsTable" ajaxSingle="true"
+                                        value="#{messages['common.delete']}" />
+                                </rich:column>
+                            </rich:dataTable>
+                        </div>
+                        
+                        <div style="clear: both">
+                            <span class="required"></span>
+                        </div>
+                    </rich:panel>
+
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Total Aproximado:</ui:define>
+                        <h:inputText id="total" style="text-align: right" required="true" 
+                            value="#{infringementAgreementHome.instance.total}" />
+                    </s:decorate>
+
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Porcentaje de Cuota Inicial:</ui:define>
+                        <h:selectOneMenu id="percentages" value="#{infringementAgreementHome.instance.percentage}" >
+                            <ui:debug id="debugExternal"/>
+                            <s:selectItems value="#{infringementAgreementHome.percentages}" var="_percentage"
+                                label="#{_percentage}" />
+                            <a:support event="onblur" reRender="dataInfraction" action="#{infringementAgreementHome.calculateAgreement()}"
+                                 ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:selectOneMenu>
+                    </s:decorate>
+
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Cuota Inicial:</ui:define>
+                        <h:inputText id="inicial" style="text-align: right" required="true"
+                            value="#{infringementAgreementHome.instance.initialFee}" />
+                    </s:decorate>
+
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Cuotas:</ui:define>
+                        <h:inputText id="cuotas" style="text-align: right" required="true"
+                            value="#{infringementAgreementHome.instance.months}" >
+                            <a:support event="onblur" reRender="cuotas"
+                                ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:inputText>
+                    </s:decorate>
+
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Nombre del Responsable:</ui:define>
+                        <h:inputText id="responsableName" style="text-align: left" required="true" 
+                            value="#{infringementAgreementHome.instance.responsableName}" >
+                            <a:support event="onblur" reRender="responsableName"
+                                ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:inputText>
+                    </s:decorate>
+
+                    <s:decorate template="../../layout/edit.xhtml">
+                        <ui:define name="label">Cargo del Responsable:</ui:define>
+                        <h:inputText id="responsableCharge" style="text-align: left" required="true" 
+                            value="#{infringementAgreementHome.instance.responsableCharge}" >
+                            <a:support event="onblur" reRender="responsableCharge"
+                                ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:inputText>
+                    </s:decorate>
+
+                </h:panelGrid>
+
+                <h:commandButton id="save" value="#{messages['common.save']}"
+                    action="#{infringementAgreementHome.persist}" disabled="#{!infringementAgreementHome.wired}"
+                    rendered="#{!infringementAgreementHome.managed}" />
+
+                <s:button id="cancelEdit" value="#{messages['common.cancel']}"
+                    propagation="end" view="/coercive/infractions/InfringementAgreementList.xhtml" />
+
+            </rich:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

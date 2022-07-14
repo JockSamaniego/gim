@@ -7,7 +7,32 @@
 
 	<ui:define name="body">
 	
+	<script type="text/javascript">
+        function openForPrint(conversationId){
+             x2=900;
+             y2=600;
+             x=screen.width;
+             x=(x-x2)/2;
+             y=screen.height;
+             y=(y-y2)/2;
+    
+             var wi=x2;
+             var he=y2;
+             opts = 'width='+wi + ',height=' + he + ',location=no,menubar=no,toolbars=no,scrollbars=yes,status=no,titlebar=no,resizable=no,top=+'+y+',left='+x;
+             try {
+                 var la_url=document.URL;
+                 var el_host=la_url.indexOf("gim",0)+8;
+                 var fin_url=la_url.substr(0, el_host);
+                 var v = window.open('../report/InfractionNotificationReport.seam'+ '?cid=' + conversationId, "Reporte Notificación de Infracciones",opts);
+                 v.focus();
+             } catch (e) {
+                 alert("No es posible presentar el reporte.  Revise opción de Ventanas Emergentes en su navegador.");
+             }
+         }
+        </script>
+	
 		<ui:include src="dialogs/ChangeStatusInfraction.xhtml" />
+		<ui:include src="../fragment/InfractionsToNotifyPostRevision.xhtml" />
 
 		<h:form id="infractionSearch" styleClass="edit">
 			<ui:debug id="debug" />
@@ -100,26 +125,31 @@
 		<h:form id="overdueInfractionsForm" styleClass="edit">
 			<rich:panel id="table">
 				<f:facet name="header">
-					<h:panelGrid columns="3" style="width: 100%;" columnClasses="lef,center,right">
+					<h:panelGrid columns="4" style="width: 100%;" columnClasses="left,center,right,right">
 						<h:outputText
 							value="Contribuyentes (#{empty overdueInfractionsList.resultList ? 0 : (overdueInfractionsList.paginated ? overdueInfractionsList.resultCount : overdueInfractionsList.resultList.size)})" />
 						<h:outputText
-							value="Total infracciones cargadas (#{overdueInfractionsList.totalSync})" />
+							value="Total Infracciones Encontradas (#{overdueInfractionsList.totalSync})" />
 
-						<a4j:region>
-							<s:button id="printDepositsBtn"
-								rendered="#{not empty overdueInfractionsList.resultList}"
-								propagation="join"
-								action="#{overdueInfractionsListHome.createNotification()}"
-								value="#{messages['coercive.generateNotificacions']}"
-								reRender="overdueInfractionsForm, table, messages, overdueInfractionsList1,municipalBondList"/>
-							<a:commandButton id="changeStatusSelection"
-								reRender="changeStatusInfraction,changeStatusInfractionForm" ajaxSingle="true"
-								eventsQueue="gimQueue"
-								oncomplete="Richfaces.showModalPanel('changeStatusInfraction',{width:450, height:250})"
-								value="Cambiar Estado"
-								actionListener="#{overdueInfractionsList.prepareChangeStatusInfractionsSelection()}" />
-						</a4j:region>
+						<h:panelGrid columns="3" style="width: 100%;" columnClasses="headerTitle,">
+							<div class="actionButtons">	                        
+		                        <a:commandButton id="printDepositsBtn"
+									  rendered="#{not empty overdueInfractionsList.resultList}"
+					                  actionListener="#{overdueInfractionsListHome.createNotification()}"
+					                  reRender="overdueInfractionsForm,table,messages,overdueInfractionsList1,infractionsToNotify"
+					                  ajaxSingle="true"
+					                  eventsQueue="gimQueue"
+					                  oncomplete="Richfaces.showModalPanel('infractionsToNotify',{width:1000, height:600})"
+					                  value="#{messages['coercive.generateNotificacions']}" />
+		                        
+								<a:commandButton id="changeStatusSelection"
+									reRender="changeStatusInfraction,changeStatusInfractionForm" ajaxSingle="true"
+									eventsQueue="gimQueue"
+									oncomplete="Richfaces.showModalPanel('changeStatusInfraction',{width:450, height:250})"
+									value="Cambiar Estado"
+									actionListener="#{overdueInfractionsList.prepareChangeStatusInfractionsSelection()}" />
+							</div>
+						</h:panelGrid>
 
 					</h:panelGrid>
 				</f:facet>
@@ -129,7 +159,7 @@
 						rendered="#{empty overdueInfractionsList.resultList}" />
 
 
-					<rich:dataTable id="overdueInfractionsList1" var="_infraction"
+					<rich:dataTable id="municipalBondList" var="_infraction"
 						value="#{overdueInfractionsList.resultList}"
 						rendered="#{not empty overdueInfractionsList.resultList}">
 

@@ -55,4 +55,6 @@ public interface DatainfractionService {
 
 	public InfractionData infractionData(Long infractionId);
 	
+	public List<Datainfraction> findInfractionsPendingByIdentification(String identification);
+	
 }

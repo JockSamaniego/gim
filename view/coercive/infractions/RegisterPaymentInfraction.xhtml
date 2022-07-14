@@ -172,13 +172,13 @@
 							<a:commandButton value="Ver Pagos" id="abonosButton"
 								action="#{registerPaymentInfractionHome.viewPayments(_infraction.id)}"
 								ajaxSingle="true" eventsQueue="gimQueue"
-								oncomplete="Richfaces.showModalPanel('paymentsInfraction',{width:850, height:450})"
+								oncomplete="Richfaces.showModalPanel('paymentsInfraction',{width:850, height:500})"
 								reRender="paymentsInfraction">
 							</a:commandButton>
 
 							<a:commandButton id="changeStatus" ajaxSingle="true"
 								rendered="#{_infraction.state.code == 'PENDING'}"
-								eventsQueue="gimQueue" value="Cambiar Estado"
+								eventsQueue="gimQueue" value="Liquidar"
 								oncomplete="Richfaces.showModalPanel('changeStatusPaidInfraction',{width:500, height:250})"
 								actionListener="#{registerPaymentInfractionHome.prepareChangeToPaid(_infraction)}"
 								reRender="changeStatusPaidInfraction, changeStatusPaidInfractionForm" />

@@ -163,10 +163,10 @@ public class DataInfractionHome extends EntityHome<Datainfraction>{
 			idsNotPending = new ArrayList<Datainfraction>();
 			idsPreviousRegistred = new ArrayList<Datainfraction>();
 			
-			String query = "Select \"ID_FACTURA\" "
-						 + "FROM ant_migracion.\"LOJ_FACTURAS\" "
-						 + "WHERE CAST(\"FECHA_EMISION\" AS DATE) BETWEEN :initDate and :lastDate "
-						 + "ORDER BY \"ID_FACTURA\" ASC ";
+			String query = "Select \"id_factura\" "
+						 + "FROM ant_migracion.\"loj_facturas\" "
+						 + "WHERE CAST(\"fecha_emision\" AS DATE) BETWEEN :initDate and :lastDate "
+						 + "ORDER BY \"id_factura\" ASC ";
 			Query q = getEntityManager().createNativeQuery(query);
 			q.setParameter("initDate", this.initDate);
 			q.setParameter("lastDate", this.lastDate);

@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
@@ -29,6 +31,13 @@ import ec.gob.gim.common.model.ItemCatalog;
 @Audited
 @Entity
 @Table(name = "data_excel", schema = "infracciones")
+@NamedQueries(value = {
+	@NamedQuery(name = "Datainfraction.findByIdentification", 
+		query = "SELECT d FROM Datainfraction d " +
+			"WHERE d.identification = :identification " +
+			"AND inAgreement = false " +
+			"order by d.emision")
+	})
 public class Datainfraction {
 	
 	@Id
@@ -147,7 +156,7 @@ public class Datainfraction {
 	@Column(name="fecha_migracion")		
 	private Date migrationDate;
 	
-	@ManyToOne (fetch=FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name="estado_id")
 	private ItemCatalog state;
 	
@@ -170,6 +179,11 @@ public class Datainfraction {
 	@JoinColumn(name = "infraction_id")
 	@OrderBy("id asc")
 	private List<PaymentInfraction> payments = new ArrayList<PaymentInfraction>();
+	
+	private Boolean inAgreement;
+
+	@ManyToOne
+	private InfringementAgreement infringementAgreement;
 	
 	@Version
 	private Long version = 0L;
@@ -523,6 +537,34 @@ public class Datainfraction {
 		this.payments = payments;
 	}
 
+	/**
+	 * @return the inAgreement
+	 */
+	public Boolean getInAgreement() {
+		return inAgreement;
+	}
+
+	/**
+	 * @param inAgreement the inAgreement to set
+	 */
+	public void setInAgreement(Boolean inAgreement) {
+		this.inAgreement = inAgreement;
+	}
+
+	/**
+	 * @return the infringementAgreement
+	 */
+	public InfringementAgreement getInfringementAgreement() {
+		return infringementAgreement;
+	}
+
+	/**
+	 * @param infringementAgreement the infringementAgreement to set
+	 */
+	public void setInfringementAgreement(InfringementAgreement infringementAgreement) {
+		this.infringementAgreement = infringementAgreement;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -549,7 +591,9 @@ public class Datainfraction {
 				+ locabilityProvince + ", toMigrate=" + toMigrate + ", userid="
 				+ userid + ", migrationDate=" + migrationDate + ", state="
 				+ state + ", notification=" + notification + ", statusChange="
-				+ statusChange + ", migratedByDepartment=" + migratedByDepartment + ", id_factura=" + id_factura + "]";
+				+ statusChange + ", migratedByDepartment=" + migratedByDepartment 
+				+ ", id_factura=" + id_factura 
+				+ ", inAgreement=" + inAgreement + "]";
 	}
 
 }
