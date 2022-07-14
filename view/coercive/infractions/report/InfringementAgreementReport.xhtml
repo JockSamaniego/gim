@@ -46,7 +46,7 @@
             </p:header>
             <p:footer borderWidthTop="0" 
                 borderWidthBottom="0" alignment="center">
-                 [<p:pageNumber />] - #{infringementAgreementHome.instance.id}
+                 [<p:pageNumber />] - Convenio #{infringementAgreementHome.instance.id}
             </p:footer>
         </p:font>
     </f:facet>
@@ -169,7 +169,76 @@
                     </p:font>
                 </p:paragraph>
             </p:cell>
+        </p:table>
+        
+        <p:table rendered="#{not empty infringementAgreementHome.instance.dividends}"
+            columns="3" widthPercentage="70" headerRows="0" spacingBefore="15"
+            widths="2 2 2">
+            <p:font size="8" style="bold">
+                <f:facet name="defaultCell">
+                    <p:cell borderWidth="0" />
+                </f:facet>
+                <p:cell horizontalAlignment="center">
+                    <p:paragraph>
+                        <p:text value="#{messages['date']}" />
+                    </p:paragraph>
+                </p:cell>
+                <p:cell horizontalAlignment="center">
+                    <p:paragraph>
+                        <p:text value="#{messages['dividend.balance']}" />
+                    </p:paragraph>
+                </p:cell>
+                <p:cell horizontalAlignment="center">
+                    <p:paragraph>
+                        <p:text value="#{messages['dividend.amount']}" />
+                    </p:paragraph>
+                </p:cell>
+            </p:font>
+            
+            <p:font size="7" >
+                <ui:repeat value="#{infringementAgreementHome.instance.dividends}" var="_var">
+                    <p:cell horizontalAlignment="center">
+                        <p:paragraph alignment="center">
+                            <p:text value="#{_var.date}">
+                                <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                            </p:text>
+                        </p:paragraph>
+                    </p:cell>
+                    <p:cell horizontalAlignment="right">
+                        <p:paragraph alignment="right">
+                            <p:text value="#{_var.balance}" />
+                        </p:paragraph>
+                    </p:cell>
 
+                    <p:cell horizontalAlignment="right">
+                        <p:paragraph alignment="right">
+                            <p:text value="#{_var.amount}" />
+                        </p:paragraph>
+                    </p:cell>
+
+                </ui:repeat>
+            </p:font>
+        </p:table>
+        
+        <p:table columns="4" widthPercentage="100" headerRows="0" widths="1 1 1 1">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0" size="7" />
+            </f:facet>
+            <p:cell colspan="4">
+                <p:paragraph />
+                <p:paragraph spacingAfter="15" spacingBefore="5" alignment="justify" >
+                    <p:font size="10" style="bold">
+                        <p:text
+                            value="NOTA: " />
+                    </p:font>
+                    
+                    <p:font size="10">
+                        <p:text
+                            value=" El Valor TOTAL del Convenio estará sujeto a cambios sin previo aviso, debido al cálculo de intereses y recargos." />
+                    </p:font>
+                    <p:paragraph />
+                </p:paragraph>
+            </p:cell>
         </p:table>
     </p:font>
 

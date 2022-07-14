@@ -11,6 +11,7 @@
 	template="../../layout/template.xhtml">
 
 	<ui:define name="body">
+        <ui:include src="dialogs/DetailPanel.xhtml" />
 
 		<h1>Convenio de pago para Infracciones</h1>
 		<h:form id="infringementAgreementSearch" styleClass="edit">
@@ -68,6 +69,14 @@
                         </h:column>
                         
                         <h:column>
+                            <f:facet name="header">Fecha
+                            </f:facet>
+                            <h:outputText value="#{_infringementAgreement.date}" styleClass="rigth" >
+                                <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                            </h:outputText>
+                        </h:column>
+                        
+                        <h:column>
                             <f:facet name="header">Identificacion
                             </f:facet>
                             <h:outputText value="#{_infringementAgreement.infractorIdentification}" />
@@ -100,6 +109,12 @@
                                 <f:param name="infringementAgreementId" value="#{_infringementAgreement.id}" />
                             </s:button>
                             #{' '}
+                            <a:commandButton id="detail"
+                                    action="#{infringementAgreementHome.setInstance(_infringementAgreement)}"
+                                    reRender="detailPanel" ajaxSingle="true"
+                                    eventsQueue="gimEventsQueue"
+                                    oncomplete="Richfaces.showModalPanel('detailPanel')"
+                                    value="Detalle" />
 						</rich:column>
 					</rich:dataTable>
 	

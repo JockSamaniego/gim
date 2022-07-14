@@ -23,7 +23,8 @@ public class InfringementAgreementList extends EntityQuery<InfringementAgreement
 
 	private static final String EJBQL = "select infringementAgreement from InfringementAgreement infringementAgreement";
 
-	private static final String[] RESTRICTIONS = {"lower(infringementAgreement.identificacion) like lower(concat('%', #{infringementAgreementList.name},'%'))"};
+	private static final String[] RESTRICTIONS = {"lower(infringementAgreement.infractorIdentification) like lower(concat('%', #{infringementAgreementList.name},'%'))",
+		"lower(infringementAgreement.infractorName) like lower(concat('%', #{infringementAgreementList.name},'%'))"};
 
 	private InfringementAgreement infringementAgreement = new InfringementAgreement();
 	
@@ -32,8 +33,8 @@ public class InfringementAgreementList extends EntityQuery<InfringementAgreement
 	public InfringementAgreementList() {
 		setEjbql(EJBQL);
 		setRestrictionExpressionStrings(Arrays.asList(RESTRICTIONS));
-		setOrderColumn("infringementAgreement.infractorName");
-		setOrderDirection("asc");
+		setOrderColumn("infringementAgreement.id");
+		setOrderDirection("desc");
 		setMaxResults(25);
 	}
 	

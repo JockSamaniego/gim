@@ -3,10 +3,14 @@ package org.gob.gim.coercive.action;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
 
+import org.gob.gim.coercive.service.DatainfractionService;
+import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.action.UserSession;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -18,6 +22,7 @@ import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.log.Log;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.coercive.model.infractions.DividendInfraction;
 import ec.gob.gim.coercive.model.infractions.InfringementAgreement;
 
 @Name("infringementAgreementHome")
@@ -47,6 +52,7 @@ public class InfringementAgreementHome extends EntityHome<InfringementAgreement>
 	private List<Integer> percentages = new ArrayList<Integer>();
 	
 	private InfringementAgreement infringementAgreementRep;
+	private DatainfractionService datainfractionService;
 	
 	public void setInfringementAgreementId(Long id) {
 		setId(id);
@@ -180,6 +186,7 @@ public class InfringementAgreementHome extends EntityHome<InfringementAgreement>
 	public String persist() {
 		if (!isIdDefined()) {
 			instance.setCreator(userSession.getUser());
+			generateDividends();
 		}
 		return super.persist();
 	}
@@ -197,7 +204,7 @@ public class InfringementAgreementHome extends EntityHome<InfringementAgreement>
 	}
 	
 	public void searchByIdentification(){
-		infractionsList.clear();
+		clearInstance();
 		Query query = getEntityManager().createNamedQuery("Datainfraction.findByIdentification");
 		query.setParameter("identification", identificationSearch);
 		infractionsList = query.getResultList();
@@ -205,39 +212,68 @@ public class InfringementAgreementHome extends EntityHome<InfringementAgreement>
 			Datainfraction inf = infractionsList.get(0);
 			instance.setInfractorIdentification(inf.getIdentification());
 			instance.setInfractorName(inf.getName());
+			instance.getInfractions().addAll(infractionsList);
+			calculateAgreement();
 		} else {
 			facesMessages.add("No se encontró infracciones para " + identificationSearch);
 			instance = new InfringementAgreement();
 		}
 	}
 	
-	public void addInfraction(){
-		if (infractionSelected != null){
-			instance.add(infractionSelected);
-			infractionSelected.setInAgreement(true);
-			calculateAgreement();
-		}
-	}
-	
 	public void removeInfraction(Datainfraction datainfraction){
 		if (datainfraction != null){
-			instance.remove(datainfraction);
-			infractionSelected.setInAgreement(false);
+			instance.getInfractions().remove(datainfraction);
+			datainfraction.setInAgreement(false);
 			calculateAgreement();
 		}
 	}
 	
 	public void calculateAgreement(){
+		MathContext context = new MathContext(2);
 		instance.setTotal(BigDecimal.ZERO);
 		for (Datainfraction datainfraction : instance.getInfractions()) {
 			instance.setTotal(instance.getTotal().add(datainfraction.getTotalValue()));
 		}
-		BigDecimal percentage = new BigDecimal(instance.getPercentage()).divide(new BigDecimal(100));
-		instance.setInitialFee(instance.getTotal().multiply(percentage).round(new MathContext(2)));
+		BigDecimal percentage = new BigDecimal(instance.getPercentage()).divide(new BigDecimal(100), context);
+		instance.setInitialFee(instance.getTotal().multiply(percentage, context));
 	}
 	
 	public void generateReport(InfringementAgreement infringementAgreement) {
 		this.infringementAgreementRep = infringementAgreement;
 	}
 
+	public void clearInstance(){
+		instance = new InfringementAgreement();
+		infractionsList.clear();
+	}
+	
+	public void generateDividends(){
+		MathContext context = new MathContext(3);
+		
+		Calendar calendar = DateUtils.getTruncatedInstance(new Date());
+		
+		if(instance.getMonths() > 0) {
+			DividendInfraction dividend = createDividend(this.getInstance().getTotal(), this.getInstance().getInitialFee(), calendar.getTime());
+			BigDecimal share = this.getInstance().getTotal().subtract(instance.getInitialFee()).divide(new BigDecimal(instance.getMonths()), context);
+			for(Integer dividendNumber = 1; dividendNumber <= instance.getMonths() ; dividendNumber++){
+				calendar.add(Calendar.MONTH, 1);
+				BigDecimal balance = dividend.getBalance().subtract(dividend.getAmount());
+				if(dividendNumber < instance.getMonths()){
+					dividend = createDividend(balance, share, calendar.getTime());
+				} else {
+					dividend = createDividend(balance, balance, calendar.getTime());
+				}
+				instance.getDividends().add(dividend);
+			}
+		}
+	}
+
+	private DividendInfraction createDividend(BigDecimal balance, BigDecimal amount, Date date){
+		DividendInfraction dividend = new DividendInfraction();
+		dividend.setDate(date);
+		dividend.setBalance(balance);
+		dividend.setAmount(amount);
+		return dividend;
+	}
+	
 }

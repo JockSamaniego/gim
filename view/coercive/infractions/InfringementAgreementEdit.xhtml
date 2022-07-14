@@ -13,7 +13,7 @@
 
         <h:form id="infringementAgreementEditForm" >
             <h:outputText styleClass="formTitle"
-                value="#{infringementAgreementHome.managed ? messages['common.edit'] : messages['common.create']} Convenio de Pago por Infracciones" />
+                value="#{infringementAgreementHome.managed ? 'Ver' : messages['common.create']} Convenio de Pago por Infracciones" />
 
             <rich:panel>
                 <f:facet name="header">Datos de Búsqueda</f:facet>
@@ -22,7 +22,7 @@
                         <ui:define name="label">Identificación:</ui:define>
                         <h:inputText id="infractorIdentificationSearch" required="true" style="text-align: left" 
                             value="#{infringementAgreementHome.identificationSearch}" >
-                            <a:support event="onblur" reRender="dataInfraction"
+                            <a:support event="onblur" reRender="dataInfraction" action="#{infringementAgreementHome.clearInstance()}"
                                  ajaxSingle="true" eventsQueue="gimQueue" />
                         </h:inputText>
                         #{' '}
@@ -54,23 +54,7 @@
 
                     <rich:panel id="infractionsPanel">
                         <f:facet name="header">
-                            <h:panelGrid columns="3" columnClasses="headerTitle">
-                                <h:outputText value="Infracciones" />
-                                <h:selectOneMenu id="infractions" value="#{infringementAgreementHome.infractionSelected}" >
-                                    <ui:debug id="debugExternal"/>
-                                    <s:selectItems value="#{infringementAgreementHome.infractionsList}" var="_infractionSel"
-                                        label="#{_infractionSel.licensePlate} - #{_infractionSel.ticket}" 
-                                        noSelectionLabel="Seleccione una opción" />
-                                    <s:convertEntity />
-                                    <a:support event="onblur" reRender="infractions"
-                                         ajaxSingle="true" eventsQueue="gimQueue" />
-                                </h:selectOneMenu>
-                                <a:commandButton id="addItem" 
-                                    action="#{infringementAgreementHome.addInfraction()}"
-                                    reRender="dataInfraction, infractionsTable" ajaxSingle="true"
-                                    eventsQueue="gimEventsQueue"
-                                    value="Agregar Infracción" />
-                            </h:panelGrid>
+                            <h:outputText value="Infracciones (#{empty infringementAgreementHome.instance.infractions ? 0 : infringementAgreementHome.instance.infractions.size()})" />
                         </f:facet>
                         
                         <div class="results" id="infractionsList">
@@ -84,6 +68,33 @@
                                 onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
                                 onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
                 
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Emisión" />
+                                    </f:facet>
+                                    <h:outputText value="#{_infractionItem.emision}" styleClass="rigth" >
+                                        <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                                    </h:outputText>
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Registro" />
+                                    </f:facet>
+                                    <h:outputText value="#{_infractionItem.register}" styleClass="rigth" >
+                                        <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                                    </h:outputText>
+                                </rich:column>
+                                
+                                <rich:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Vencimiento" />
+                                    </f:facet>
+                                    <h:outputText value="#{_infractionItem.expiration}" styleClass="rigth" >
+                                        <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                                    </h:outputText>
+                                </rich:column>
+                                
                                 <rich:column>
                                     <f:facet name="header">
                                         <h:outputText value="Placa" />
@@ -118,7 +129,11 @@
                     <s:decorate template="../../layout/edit.xhtml">
                         <ui:define name="label">Total Aproximado:</ui:define>
                         <h:inputText id="total" style="text-align: right" required="true" 
-                            value="#{infringementAgreementHome.instance.total}" />
+                            value="#{infringementAgreementHome.instance.total}" >
+                            <f:convertNumber
+                                maxFractionDigits="#{messages['common.maxFractionDigits']}"
+                                minFractionDigits="#{messages['common.minFractionDigits']}" />
+                        </h:inputText>
                     </s:decorate>
 
                     <s:decorate template="../../layout/edit.xhtml">
@@ -135,7 +150,11 @@
                     <s:decorate template="../../layout/edit.xhtml">
                         <ui:define name="label">Cuota Inicial:</ui:define>
                         <h:inputText id="inicial" style="text-align: right" required="true"
-                            value="#{infringementAgreementHome.instance.initialFee}" />
+                            value="#{infringementAgreementHome.instance.initialFee}" >
+                            <f:convertNumber
+                                maxFractionDigits="#{messages['common.maxFractionDigits']}"
+                                minFractionDigits="#{messages['common.minFractionDigits']}" />
+                        </h:inputText>
                     </s:decorate>
 
                     <s:decorate template="../../layout/edit.xhtml">

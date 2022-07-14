@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -28,6 +29,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.income.model.Dividend;
 import ec.gob.gim.security.model.User;
 
 /**
@@ -80,6 +82,10 @@ public class InfringementAgreement implements Serializable{
 	@OrderBy(value = "id desc")
 	private List<Datainfraction> infractions;
 	
+	@OneToMany(cascade={CascadeType.MERGE, CascadeType.PERSIST})
+	@JoinColumn(name="infringementAgreement_id")
+	private List<DividendInfraction> dividends;
+	
 	/**
 	 * 
 	 */
@@ -88,6 +94,7 @@ public class InfringementAgreement implements Serializable{
 		this.date = new Date();
 		active = true;
 		infractions = new ArrayList<Datainfraction>();
+		dividends = new ArrayList<DividendInfraction>();
 		total = BigDecimal.ZERO;
 		initialFee = BigDecimal.ZERO;
 		percentage = 30;
@@ -318,6 +325,20 @@ public class InfringementAgreement implements Serializable{
 		}
 	}
 	
+	/**
+	 * @return the dividends
+	 */
+	public List<DividendInfraction> getDividends() {
+		return dividends;
+	}
+
+	/**
+	 * @param dividends the dividends to set
+	 */
+	public void setDividends(List<DividendInfraction> dividends) {
+		this.dividends = dividends;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
