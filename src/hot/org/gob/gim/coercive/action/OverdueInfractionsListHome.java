@@ -35,6 +35,7 @@ import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityHome;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
+import ec.gob.gim.coercive.model.infractions.HistoryStatusInfraction;
 import ec.gob.gim.coercive.model.infractions.HistoryStatusNotification;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractions;
 import ec.gob.gim.coercive.model.infractions.NotificationInfractionsDTO;
@@ -332,6 +333,15 @@ public class OverdueInfractionsListHome extends	EntityHome<NotificationInfractio
 				data.setNotification(notification);
 				datainfractionService.updateDataInfraction(data);
 				
+				HistoryStatusInfraction recordInfraction = new HistoryStatusInfraction();
+				recordInfraction.setDate(new Date());
+				recordInfraction.setInfraction(data);
+				recordInfraction.setObservation("Infracción notificada con número: "+notification.getNumber());
+				recordInfraction.setStatus(itemNotificated);
+				recordInfraction.setUser(this.userSession.getUser());
+				
+				this.datainfractionService.saveHIstoryRecord(recordInfraction);
+				
 			}
 			
 			HistoryStatusNotification record = new HistoryStatusNotification();
@@ -351,17 +361,21 @@ public class OverdueInfractionsListHome extends	EntityHome<NotificationInfractio
 	}
 	
 	public String requestInfractionCurrentStatus(String id_factura){
-		if(id_factura == null || id_factura.equals("")){
+		if(id_factura == null){
 			return "No se pudo consultar";
 		}else{
-			ResponseInfraccion responseInfraccion = this.datainfractionService.findInfractionByIdANT(id_factura);
-			if(responseInfraccion != null && responseInfraccion.getCode() == 200){
-				if(responseInfraccion.getInfraccion() != null){
-					return responseInfraccion.getInfraccion().getEstado();
+			if(id_factura.equals("")){
+				return "No se pudo consultar";
+			} else {
+				ResponseInfraccion responseInfraccion = this.datainfractionService.findInfractionByIdANT(id_factura);
+				if(responseInfraccion != null && responseInfraccion.getCode() == 200){
+					if(responseInfraccion.getInfraccion() != null){
+						return responseInfraccion.getInfraccion().getEstado();
+					}
+					return "No se pudo consultar";
 				}
 				return "No se pudo consultar";
 			}
-			return "No se pudo consultar";
 		}
 	}
 

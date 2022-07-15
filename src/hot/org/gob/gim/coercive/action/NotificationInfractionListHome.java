@@ -87,6 +87,9 @@ public class NotificationInfractionListHome extends EntityController{
 	@In(create = true)
 	UserSession userSession;
 	
+	@In(required = true, create = true)
+	OverdueInfractionsListHome overdueInfractionsListHome;
+	
 	/**
 	 * 
 	 */
@@ -154,7 +157,8 @@ public class NotificationInfractionListHome extends EntityController{
 	
 	public String prepareRePrint(Long notificationId){		
 		this.generatedNotificationIds = new ArrayList<Long>();
-		this.generatedNotificationIds.add(notificationId);		
+		this.generatedNotificationIds.add(notificationId);	
+		overdueInfractionsListHome.setGeneratedNotificationIds(generatedNotificationIds);
 		return "sendToPrint";
 	}
 	

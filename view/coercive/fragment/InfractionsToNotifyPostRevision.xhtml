@@ -27,11 +27,12 @@
 
 <h:form id="sectionNotifications">
 		<rich:panel rendered = "#{overdueInfractionsListHome.selectedItemsList.size() > 0}">
-			<h:panelGrid columns="1" id="panelNotifications">
+			<h:panelGrid columns="3" id="panelNotifications">
 				<s:decorate id="residents" template="../../layout/edit.xhtml">
 					<ui:define name="label">Contribuyentes Seleccionados:</ui:define>
 					<h:outputText id="residents1" value="#{overdueInfractionsListHome.totalResidentsSelected}" style="font-weight:bold; font-size:14px; color:black" />
 				</s:decorate>
+				<rich:spacer width="150" />
 				<s:decorate id="infractiones" template="../../layout/edit.xhtml">
 					<ui:define name="label">Infracciones Encontradas:</ui:define>
 					<h:outputText id="infractiones1" value="#{overdueInfractionsListHome.totalInfractionsSelected}" style="font-weight:bold; font-size:14px; color:black" />
@@ -84,7 +85,7 @@
 									<h:outputText value="#{_var.stateConsortium}"  />
 								</rich:column>
 								<rich:column styleClass="action" style="align:center; background-color: lightcoral;" width="10%" >
-									<f:facet name="header">Estado Actual Yoveri:</f:facet>
+									<f:facet name="header">Estado Actual ANT:</f:facet>
 									<h:outputText value="#{overdueInfractionsListHome.requestInfractionCurrentStatus(_var.id_factura)}"  />
 								</rich:column>
 								<rich:column styleClass="action" style="align:center;" width="10%">
