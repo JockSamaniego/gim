@@ -55,7 +55,7 @@
 					<a:commandButton id="saveButton" ajaxSingle="true" value="Guardar"
 						oncomplete="if (#{facesContext.maximumSeverity==null}){ #{rich:component('changeStatusInfraction')}.hide();}"
 						bypassUpdates="true" actionListener="#{overdueInfractionsList.save()}"
-						reRender="municipalBondsTable" rendered="#{overdueInfractionsList.singleChangeStatus}" />
+						reRender="municipalBondsTable, municipalBondSearch" rendered="#{overdueInfractionsList.singleChangeStatus}" />
 
 					<a:commandButton id="saveResidentButton" ajaxSingle="true" value="Guardar"
 						oncomplete="if (#{facesContext.maximumSeverity==null}){#{rich:component('changeStatusInfraction')}.hide();window.location.reload();}"
