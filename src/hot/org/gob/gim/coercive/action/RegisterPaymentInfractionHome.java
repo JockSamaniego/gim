@@ -13,6 +13,7 @@ import javax.persistence.Query;
 import org.gob.gim.coercive.dto.criteria.DataInfractionSearchCriteria;
 import org.gob.gim.coercive.pagination.DataInfractionDataModel;
 import org.gob.gim.coercive.service.DatainfractionService;
+import org.gob.gim.coercive.view.InfractionData;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -96,6 +97,7 @@ public class RegisterPaymentInfractionHome extends EntityController {
 	private List<ItemCatalog> statuses = new ArrayList<ItemCatalog>();
 
 	private BigDecimal totalPayed;
+	private InfractionData infractionData;
 	
 	private String cashierInfractionsRoleName;
 	
@@ -716,8 +718,12 @@ public class RegisterPaymentInfractionHome extends EntityController {
 	 *            Long
 	 */
 	public String printPayments(Long infractionId) {
+
+		//info de la infraccion
+		this.infractionData = datainfractionService.infractionData(infractionId);		
 		this.payments = this.datainfractionService.findPaymentsByInfraction(
 				infractionId, this.validStatus.getId());
+		
 		this.totalPayed = BigDecimal.ZERO;
 		for (PaymentInfraction payment : this.payments) {
 			this.totalPayed = this.totalPayed.add(payment.getValue());
@@ -731,6 +737,14 @@ public class RegisterPaymentInfractionHome extends EntityController {
 
 	public void setTotalPayed(BigDecimal totalPayed) {
 		this.totalPayed = totalPayed;
+	}
+
+	public InfractionData getInfractionData() {
+		return infractionData;
+	}
+
+	public void setInfractionData(InfractionData infractionData) {
+		this.infractionData = infractionData;
 	}
 
 	/**

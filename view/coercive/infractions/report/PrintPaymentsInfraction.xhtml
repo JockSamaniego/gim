@@ -70,7 +70,7 @@
 				<p:cell borderWidth="0" />
 			</f:facet>
 
-			<p:cell colspan="2">
+			<p:cell>
 				<p:paragraph>
 					<p:font size="8" style="bold">
 						<p:text value="#{messages['tillPermission.printReportBy']}: " />
@@ -80,71 +80,173 @@
 					</p:font>
 				</p:paragraph>
 			</p:cell>
+
+			<p:cell>
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['infraction.ticket']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{registerPaymentInfractionHome.infractionData.ticket}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['resident']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{registerPaymentInfractionHome.infractionData.name}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+
+			<p:cell>
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['resident.dni']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{registerPaymentInfractionHome.infractionData.identification}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['vehicle.plate']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{registerPaymentInfractionHome.infractionData.licensePlate}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['municipalBond.emisionDate']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{registerPaymentInfractionHome.infractionData.emision}">
+							<f:convertDateTime type="date"
+								pattern="#{messages['common.datePattern']}" />
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['resident.registerDate']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{registerPaymentInfractionHome.infractionData.register}">
+							<f:convertDateTime type="date"
+								pattern="#{messages['common.datePattern']}" />
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['paymentAgreement.MaxDate']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{registerPaymentInfractionHome.infractionData.expiration}">
+							<f:convertDateTime type="date"
+								pattern="#{messages['common.datePattern']}" />
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell>
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['binnacleCRV.motiveArticle']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text
+							value="#{registerPaymentInfractionHome.infractionData.article}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
 		</p:table>
 
 
-		<p:table rendered="#{registerPaymentInfractionHome.payments.size() > 0}"
-			columns="9" widthPercentage="100" headerRows="0"
-			widths="1 1 1 1 2 1.4 1.4 1 1">
+		<p:table
+			rendered="#{registerPaymentInfractionHome.payments.size() > 0}"
+			columns="8" widthPercentage="100" headerRows="0"
+			widths="0.8 0.8 1 1.6 1.2 1.2 1 1 ">
 			<p:font size="8" style="bold">
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Fecha" />
+						<p:text value="#{messages['payment.date']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Hora" />
+						<p:text value="#{messages['payment.time']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Infracción" />
+						<p:text value="#{messages['deposit.type']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Tipo pago" />
+						<p:text value="#{messages['electronicRetention.institution']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Institución" />
+						<p:text value="#{messages['futureBond.account']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Cuenta" />
+						<p:text value="#{messages['electronicVoucher.documentNumber']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Nro documento" />
+						<p:text value="#{messages['payment.cashier']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Cajero" />
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="Valor" />
+						<p:text value="#{messages['payment.collectedValue']}" />
 					</p:paragraph>
 				</p:cell>
 			</p:font>
 
-			<p:font size="6" style="bold">
-				<ui:repeat value="#{registerPaymentInfractionHome.payments}" var="_var">
+			<p:font size="7">
+				<ui:repeat value="#{registerPaymentInfractionHome.payments}"
+					var="_var">
 
 					<p:cell horizontalAlignment="left">
 						<p:paragraph>
@@ -161,13 +263,6 @@
 								<f:convertDateTime type="date"
 									pattern="#{messages['common.fullTimePattern']}" />
 							</p:text>
-						</p:paragraph>
-					</p:cell>
-
-					<p:cell horizontalAlignment="right">
-						<p:paragraph>
-							<p:text
-								value="#{_var.infraction.ticket}" />
 						</p:paragraph>
 					</p:cell>
 
@@ -215,7 +310,7 @@
 						<p:font size="8" style="bold">
 							<p:text value="#{messages['item.total']}: " />
 						</p:font>
-						<p:font size="8">
+						<p:font size="8" style="bold">
 							<p:text value="#{registerPaymentInfractionHome.totalPayed}">
 								<f:convertNumber pattern="$####.00" />
 							</p:text>

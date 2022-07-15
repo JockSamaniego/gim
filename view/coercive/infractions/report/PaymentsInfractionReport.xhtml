@@ -29,7 +29,7 @@
 							</p:font>
 
 							<p:font size="8" style="bold">
-								<p:paragraph alignment="center">Abonos a notificaciones de infracciones</p:paragraph>
+								<p:paragraph alignment="center">Reporte de abonos a infracciones</p:paragraph>
 							</p:font>
 						</p:cell>
 					</p:table>
@@ -105,64 +105,65 @@
 
 		<p:table rendered="#{paymentInfractionHome.payments.size() > 0}" columns="9" widthPercentage="100" headerRows="0"
 			widths="1 1 1 1 2 1.4 1.4 1 1">
-			<p:font size="8" style="bold">
+			<p:font size="9" style="bold">
 				 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Fecha" />
+						<p:text value="#{messages['payment.date']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Hora" />
+						<p:text value="#{messages['payment.time']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Notificación" />
+						<p:text value="#{messages['infraction.ticket']}" />
+					</p:paragraph>
+				</p:cell>
+ 
+
+				<p:cell horizontalAlignment="center">
+					<p:paragraph>
+						<p:text value="#{messages['infraction.paymentType']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Tipo pago" />
+						<p:text value="#{messages['infraction.paymentInstitution']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Institución" />
+						<p:text value="#{messages['futureBond.account']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Cuenta" />
+						<p:text value="#{messages['electronicVoucher.documentNumber']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Nro documento" />
+						<p:text value="#{messages['payment.cashier']}" />
 					</p:paragraph>
 				</p:cell>
 
 				<p:cell horizontalAlignment="center">
 					<p:paragraph>
-						<p:text value="Cajero" />
-					</p:paragraph>
-				</p:cell>
-
-				<p:cell horizontalAlignment="center">
-					<p:paragraph>
-						<p:text value="Valor" />
+						<p:text value="#{messages['payment.collectedValue']}" />
 					</p:paragraph>
 				</p:cell>
 			</p:font>
 
-			<p:font size="6" style="bold">
+			<p:font size="6">
 				<ui:repeat value="#{paymentInfractionHome.payments}" var="_var">
 					
 					<p:cell horizontalAlignment="left">
@@ -233,8 +234,8 @@
 						<p:font size="8" style="bold">
 							<p:text value="#{messages['item.total']}: " />
 						</p:font>
-						<p:font size="8">
-							<p:text value="#{paymentInfractionHome.totalPrint}">
+						<p:font size="8" style="bold">
+							<p:text value="#{paymentInfractionHome.totalPrint}"  >
 								<f:convertNumber pattern="$####.00" />
 							</p:text>
 						</p:font>

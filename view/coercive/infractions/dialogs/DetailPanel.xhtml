@@ -1,0 +1,96 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:modalPanel id="detailPanel" width="900" height="400">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText
+					value="Detalle del Convenio"></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkInformation" />
+				<rich:componentControl for="detailPanel" attachTo="hidelinkInformation"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form id="detailInfrigementForm" styleClass="edit">
+
+			<rich:panel>
+				<f:facet name="header">Infracciones de #{infringementAgreementHome.instance.infractorIdentification} #{infringementAgreementHome.instance.infractorName}</f:facet>
+				<div class="results" id="infractionsList">
+					<h:outputText value="No se encontraron infracciones"
+						rendered="#{empty infringementAgreementHome.instance.infractions}" />
+				</div>
+				<rich:dataTable id="detailTable" var="_infraction"
+					value="#{infringementAgreementHome.instance.infractions}"
+					rendered="#{not empty infringementAgreementHome.instance.infractions}">
+					<rich:column >
+						<f:facet name="header">ID</f:facet>
+						<h:outputText value="#{_infraction.id}" />
+					</rich:column>
+					
+                    <rich:column >
+                        <f:facet name="header">Emision</f:facet>
+                        <h:outputText value="#{_infraction.emision}" >
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                        </h:outputText>
+                    </rich:column>
+                    
+                    <rich:column >
+                        <f:facet name="header">Registro</f:facet>
+                        <h:outputText value="#{_infraction.register}" >
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                        </h:outputText>
+                    </rich:column>
+                    
+                    <rich:column >
+                        <f:facet name="header">Vencimiento</f:facet>
+                        <h:outputText value="#{_infraction.expiration}" >
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                        </h:outputText>
+                    </rich:column>
+                    
+                    <rich:column >
+                        <f:facet name="header">Placa</f:facet>
+                        <h:outputText value="#{_infraction.licensePlate}" />
+                    </rich:column>
+                    
+                    <rich:column >
+                        <f:facet name="header">Boleta</f:facet>
+                        <h:outputText value="#{_infraction.ticket}" />
+                    </rich:column>
+                    
+                    <rich:column >
+                        <f:facet name="header">Estado</f:facet>
+                        <h:outputText value="#{_infraction.stateConsortium}" />
+                    </rich:column>
+                    
+				</rich:dataTable>
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<a:commandButton 
+					ajaxSingle="true" 
+					value="#{messages['common.quit']}"
+					oncomplete="Richfaces.hideModalPanel('detailPanel');"
+					bypassUpdates="true" />
+
+			</div>
+		</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

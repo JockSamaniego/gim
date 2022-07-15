@@ -8,6 +8,7 @@ import java.util.List;
 import javax.ejb.Local;
 
 import org.gob.gim.coercive.dto.criteria.DataInfractionSearchCriteria;
+import org.gob.gim.coercive.view.InfractionData;
 import org.gob.gim.coercive.view.InfractionUserData;
 
 import ec.gob.gim.coercive.model.infractions.Datainfraction;
@@ -51,6 +52,8 @@ public interface DatainfractionService {
 	public InfractionWSV2 getInfractionWSV2Instance();
 	
 	public ResponseInfraccion findInfractionByIdANT(String idANT);
+
+	public InfractionData infractionData(Long infractionId);
 	
 	public List<Datainfraction> findInfractionsPendingByIdentification(String identification);
 	

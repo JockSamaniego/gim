@@ -327,6 +327,15 @@ public class FactoryController  extends EntityController{
 		 return query.getResultList();
 	}
 	
+	@Factory("cashiers_infractions")
+	public List<Person> findCashiersInfractions(){		 
+		 if (systemParameterService == null) systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+		 String emisorRole = systemParameterService.findParameter("ROLE_NAME_CASHIER_INFRACTIONS");	 
+		 Query query = this.getEntityManager().createNamedQuery("Person.findByRoleName");
+		 query.setParameter("roleName", emisorRole);
+		 return query.getResultList();
+	}
+	
 	@Factory("compassPoints")
 	@SuppressWarnings("unchecked")
 	public List<CompassPoint> findCompassPoints() {

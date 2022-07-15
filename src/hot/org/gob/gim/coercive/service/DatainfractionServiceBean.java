@@ -5,6 +5,7 @@ package org.gob.gim.coercive.service;
 
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import javax.xml.ws.handler.MessageContext;
 
 import org.gob.gim.coercive.dto.criteria.DataInfractionSearchCriteria;
 import org.gob.gim.coercive.dto.criteria.NotificationInfractionSearchCriteria;
+import org.gob.gim.coercive.view.InfractionData;
 import org.gob.gim.coercive.view.InfractionUserData;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.CrudService;
@@ -231,6 +233,26 @@ public class DatainfractionServiceBean implements DatainfractionService {
 		return query.getResultList();
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public InfractionData infractionData(Long infractionId) {
+		Query query = entityManager
+				.createQuery("SELECT "
+							+"NEW org.gob.gim.coercive.view.InfractionData(di.name, di.identification, di.email, "
+							+ " di.licensePlate, di.ticket, di.emision,  di.register, di.expiration, di.article)"
+							+"FROM Datainfraction di "
+							+"WHERE di.id=:infractionId ");
+		query.setParameter("infractionId", infractionId);		
+		List<InfractionData>list =  query.getResultList();
+		return (!list.isEmpty())? list.get(0): null;
+	}
+	
+	/*
+	 InfractionData(String name, String identification, String mail,
+				String licensePlate, String ticket, Date emision, Date register,
+				Date expiration, String article)
+	*/
 	
 	@SuppressWarnings("unchecked")
 	@Override
