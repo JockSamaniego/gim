@@ -35,6 +35,7 @@ import ec.gob.gim.common.model.ItemCatalog;
 	@NamedQuery(name = "Datainfraction.findByIdentification", 
 		query = "SELECT d FROM Datainfraction d " +
 			"WHERE d.identification = :identification " +
+			"and d.state.id in (:statusPending)" +
 			"AND inAgreement = false " +
 			"order by d.emision")
 	})

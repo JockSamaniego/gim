@@ -11,7 +11,9 @@ import javax.persistence.Query;
 
 import org.gob.gim.coercive.service.DatainfractionService;
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
+import org.gob.gim.common.service.SystemParameterService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -41,6 +43,8 @@ public class InfringementAgreementHome extends EntityHome<InfringementAgreement>
 	@In(scope = ScopeType.SESSION, value = "userSession")
 	UserSession userSession;
 
+	private SystemParameterService systemParameterService;
+
 	private boolean isFirstTime = true;
 	
 	private String criteria;
@@ -53,6 +57,9 @@ public class InfringementAgreementHome extends EntityHome<InfringementAgreement>
 	
 	private InfringementAgreement infringementAgreementRep;
 	private DatainfractionService datainfractionService;
+	private List<Long> statusPending = new ArrayList<Long>();
+	
+	public BigDecimal minFee = BigDecimal.ZERO;
 	
 	public void setInfringementAgreementId(Long id) {
 		setId(id);
@@ -71,6 +78,9 @@ public class InfringementAgreementHome extends EntityHome<InfringementAgreement>
 	public void wire() {
 		if (!isFirstTime)
 			return;
+		if (systemParameterService == null) 
+			systemParameterService = ServiceLocator.getInstance().findResource(
+					SystemParameterService.LOCAL_NAME);
 		identificationSearch = "";
 		isFirstTime = false;
 		for (int i = 20; i <= 30; i++) {
@@ -166,6 +176,20 @@ public class InfringementAgreementHome extends EntityHome<InfringementAgreement>
 	}
 
 	/**
+	 * @return the minFee
+	 */
+	public BigDecimal getMinFee() {
+		return minFee;
+	}
+
+	/**
+	 * @param minFee the minFee to set
+	 */
+	public void setMinFee(BigDecimal minFee) {
+		this.minFee = minFee;
+	}
+
+	/**
 	 * @return the isFirstTime
 	 */
 	public boolean isFirstTime() {
@@ -185,6 +209,10 @@ public class InfringementAgreementHome extends EntityHome<InfringementAgreement>
 	@Override
 	public String persist() {
 		if (!isIdDefined()) {
+			if (instance.getInitialFee().compareTo(minFee) == -1){
+				facesMessages.add("El valor de la cuota inicial no puede ser menor a: " + minFee.doubleValue());
+				return null;
+			}
 			instance.setCreator(userSession.getUser());
 			generateDividends();
 		}
@@ -204,15 +232,21 @@ public class InfringementAgreementHome extends EntityHome<InfringementAgreement>
 	}
 	
 	public void searchByIdentification(){
+		statusPending = systemParameterService.findListIds("PAYMENT_INFRACTIONS_STATUS_IDS");
 		clearInstance();
 		Query query = getEntityManager().createNamedQuery("Datainfraction.findByIdentification");
 		query.setParameter("identification", identificationSearch);
+		query.setParameter("statusPending", statusPending);
 		infractionsList = query.getResultList();
 		if ((infractionsList != null) && (infractionsList.size() > 0)){
 			Datainfraction inf = infractionsList.get(0);
 			instance.setInfractorIdentification(inf.getIdentification());
 			instance.setInfractorName(inf.getName());
 			instance.getInfractions().addAll(infractionsList);
+			for (Datainfraction datainfraction : instance.getInfractions()) {
+				datainfraction.setInAgreement(true);
+				datainfraction.setInfringementAgreement(instance);
+			}
 			calculateAgreement();
 		} else {
 			facesMessages.add("No se encontró infracciones para " + identificationSearch);
@@ -224,6 +258,7 @@ public class InfringementAgreementHome extends EntityHome<InfringementAgreement>
 		if (datainfraction != null){
 			instance.getInfractions().remove(datainfraction);
 			datainfraction.setInAgreement(false);
+			datainfraction.setInfringementAgreement(null);
 			calculateAgreement();
 		}
 	}
@@ -234,8 +269,9 @@ public class InfringementAgreementHome extends EntityHome<InfringementAgreement>
 		for (Datainfraction datainfraction : instance.getInfractions()) {
 			instance.setTotal(instance.getTotal().add(datainfraction.getTotalValue()));
 		}
-		BigDecimal percentage = new BigDecimal(instance.getPercentage()).divide(new BigDecimal(100), context);
-		instance.setInitialFee(instance.getTotal().multiply(percentage, context));
+		BigDecimal percentage = new BigDecimal(instance.getPercentage());
+		instance.setInitialFee(instance.getTotal().multiply(percentage).divide(new BigDecimal(100)).round(context));
+		minFee = instance.getInitialFee();
 	}
 	
 	public void generateReport(InfringementAgreement infringementAgreement) {

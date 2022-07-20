@@ -97,7 +97,7 @@ public class InfringementAgreement implements Serializable{
 		dividends = new ArrayList<DividendInfraction>();
 		total = BigDecimal.ZERO;
 		initialFee = BigDecimal.ZERO;
-		percentage = 30;
+		percentage = 20;
 		months = 1;
 	}
 
