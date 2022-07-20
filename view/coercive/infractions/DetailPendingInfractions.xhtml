@@ -75,29 +75,33 @@
 								for="municipalBondsTable" style="float:right;" />
 						</f:facet>
 
-						<rich:column>
+						<rich:column styleClass="action" style="align:center;" width="10%">
 							<f:facet name="header">
 							Boleta nro.
 						</f:facet>
 							<h:outputText value="#{_infraction.ticket}" />
 						</rich:column>
 
-						<rich:column>
+						<rich:column styleClass="action" style="align:center;" width="8%">
 							<f:facet name="header">
 							Placa
 						</f:facet>
 							<h:outputText value="#{_infraction.licensePlate}" />
 						</rich:column>
  
-						<rich:column>
+						<rich:column styleClass="action" style="align:center;" width="8%">
 							<f:facet name="header">
 							Estado Yoveri
 						</f:facet>
 							<h:outputText value="#{_infraction.stateConsortium}" />
 						</rich:column>
 						
+						<rich:column styleClass="action" style="align:center; background-color: lightcoral;" width="8%" >
+									<f:facet name="header">Estado Actual ANT:</f:facet>
+									<h:outputText value="#{overdueInfractionsListHome.requestInfractionCurrentStatus(_infraction.id_factura)}"  />
+						</rich:column>
 						
-						<rich:column>
+						<rich:column styleClass="action" style="align:center;" width="8%">
 							<f:facet name="header">
 							#{messages['municipalBond.emision']}
 						</f:facet>
@@ -109,7 +113,7 @@
 						
 						
 						
-						<rich:column>
+						<rich:column styleClass="action" style="align:center;" width="8%">
 							<f:facet name="header">
 							Fecha registro
 						</f:facet>
@@ -119,7 +123,7 @@
 							</h:outputText>
 						</rich:column>
 
-						<rich:column>
+						<rich:column styleClass="action" style="align:center;" width="8%">
 							<f:facet name="header">
 							Fecha expiración
 						</f:facet>
@@ -129,7 +133,7 @@
 							</h:outputText>
 						</rich:column>
 
-						<rich:column styleClass="right">
+						<rich:column styleClass="action" style="align:right;" width="8%">
 							<f:facet name="header">
 							#{messages['municipalBond.value']}
 						</f:facet>
@@ -139,7 +143,7 @@
 						</rich:column>
 						
 						
-						<rich:column styleClass="right">
+						<rich:column styleClass="action" style="align:right;" width="8%">
 							<f:facet name="header">
 							Interes
 						</f:facet>
@@ -149,7 +153,7 @@
 						</rich:column>
 						
 						
-						<rich:column styleClass="right">
+						<rich:column styleClass="action" style="align:right;" width="8%">
 							<f:facet name="header">
 							Total
 						</f:facet>
@@ -158,7 +162,7 @@
 							</h:outputText>
 						</rich:column>
 						
-						<rich:column styleClass="right">
+						<rich:column styleClass="action" style="align:center;" width="8%">
 							<f:facet name="header">
 							Estado GIM
 						</f:facet>
@@ -167,7 +171,7 @@
 						</rich:column>
 
 
-						<rich:column styleClass="action">
+						<rich:column styleClass="action" width="10%">
 							<f:facet name="header">#{messages['common.action']}</f:facet>
 
 							<a:commandButton id="viewer" ajaxSingle="true"
