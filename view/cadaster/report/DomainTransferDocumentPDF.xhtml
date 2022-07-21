@@ -104,7 +104,7 @@
 				colspan="1" verticalAlignment="middle">
 					<p:font size="8">
 						<p:paragraph spacingAfter="10.0">
-							<p:text value="#{propertyHome.propertyDocument.currentDomain.tramitNumber}" />
+							<p:text value="#{propertyHome.domainDocument.tramitNumber}" />
 						</p:paragraph>
 					</p:font>
 			</p:cell>
@@ -159,7 +159,7 @@
 				colspan="1" verticalAlignment="middle">
 					<p:font size="8">
 						<p:paragraph spacingAfter="10.0">
-							<p:text value="#{propertyHome.propertyDocument.currentDomain.property.propertyType.name}" />
+							<p:text value="#{propertyHome.domainDocument.property.propertyType.name}" />
 						</p:paragraph>
 					</p:font>
 			</p:cell>
@@ -210,7 +210,7 @@
 				verticalAlignment="middle">
 					<p:font size="8">
 						<p:paragraph>
-							<p:text value="#{propertyHome.propertyDocument.currentDomain.purchaseType.name}" >
+							<p:text value="#{propertyHome.domainDocument.purchaseType.name}" >
 							</p:text>
 						</p:paragraph>
 					</p:font>
@@ -271,7 +271,7 @@
 			<p:cell horizontalAlignment="left" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10">
-					<p:text value="#{propertyHome.propertyDocument.currentDomain.property.previousCadastralCode}" />
+					<p:text value="#{propertyHome.domainDocument.property.previousCadastralCode}" />
 				</p:paragraph>
 			</p:cell>
 
@@ -286,7 +286,7 @@
 			<p:cell horizontalAlignment="left" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10">
-					<p:text value="#{propertyHome.propertyDocument.currentDomain.property.cadastralCode}" />
+					<p:text value="#{propertyHome.domainDocument.property.cadastralCode}" />
 				</p:paragraph>
 			</p:cell>
 
@@ -324,7 +324,7 @@
 			<p:cell horizontalAlignment="left" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10">
-					<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.resident.name}" />
+					<p:text value="#{propertyHome.domainDocument.previousDomain.resident.name}" />
 				</p:paragraph>
 			</p:cell>
 			<p:cell horizontalAlignment="center" borderWidth="1"
@@ -339,7 +339,7 @@
 			<p:cell horizontalAlignment="center" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10">
-					<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.resident.identificationNumber}" />
+					<p:text value="#{propertyHome.domainDocument.previousDomain.resident.identificationNumber}" />
 				</p:paragraph>
 			</p:cell>
 
@@ -360,7 +360,7 @@
 			<p:cell horizontalAlignment="left" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10">
-					<p:text value="#{propertyHome.TDC.secondSellerName}" />
+					<p:text value="#{propertyHome.TDC.secondSellerName.toUpperCase()}" />
 				</p:paragraph>
 			</p:cell>
 			<p:cell horizontalAlignment="center" borderWidth="1"
@@ -413,7 +413,7 @@
 			<p:cell horizontalAlignment="left" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10">
-					<p:text value="#{propertyHome.propertyDocument.currentDomain.resident.name}" />
+					<p:text value="#{propertyHome.domainDocument.resident.name}" />
 				</p:paragraph>
 			</p:cell>
 			<p:cell horizontalAlignment="center" borderWidth="1"
@@ -428,7 +428,7 @@
 			<p:cell horizontalAlignment="center" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10">
-					<p:text value="#{propertyHome.propertyDocument.currentDomain.resident.identificationNumber}" />
+					<p:text value="#{propertyHome.domainDocument.resident.identificationNumber}" />
 				</p:paragraph>
 			</p:cell>
 
@@ -449,7 +449,7 @@
 			<p:cell horizontalAlignment="left" borderWidth="1"
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:paragraph spacingAfter="10">
-					<p:text value="#{propertyHome.TDC.secondBuyerName}" />
+					<p:text value="#{propertyHome.TDC.secondBuyerName.toUpperCase()}" />
 				</p:paragraph>
 			</p:cell>
 			<p:cell horizontalAlignment="center" borderWidth="1"
@@ -504,7 +504,7 @@
 				borderColorTop="#000000" colspan="3" verticalAlignment="middle">
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.purchaseType.name}" />
+						<p:text value="#{propertyHome.domainDocument.previousDomain.purchaseType.name}" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
@@ -567,7 +567,7 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.acquisitionDate}" >
+						<p:text value="#{propertyHome.domainDocument.previousDomain.acquisitionDate}" >
 							<f:convertDateTime
 									pattern="dd/MM/yyyy" />
 						</p:text>
@@ -597,7 +597,7 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.date}" >
+						<p:text value="#{propertyHome.domainDocument.previousDomain.date}" >
 							<f:convertDateTime
 									pattern="dd/MM/yyyy" />
 						</p:text>
@@ -659,7 +659,7 @@
 				borderColorTop="#000000" colspan="3" verticalAlignment="middle">
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="#{propertyHome.TDC.previousParish}" />
+						<p:text value="#{propertyHome.TDC.previousParish.toUpperCase()}" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
@@ -832,10 +832,10 @@
 				borderColorTop="#000000" colspan="3" verticalAlignment="middle">
 				<p:font  size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.totalAreaConstruction}">
+						<p:text value="#{propertyHome.domainDocument.previousDomain.totalAreaConstruction}">
 							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
-						<p:text value=" m²" rendered="#{propertyHome.propertyDocument.currentDomain.previousDomain.totalAreaConstruction != null}" />
+						<p:text value=" m²" rendered="#{propertyHome.domainDocument.previousDomain.totalAreaConstruction != null}" />
 					</p:paragraph>
 				</p:font>
 			</p:cell>
@@ -1132,7 +1132,7 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.lotAppraisal}" >
+						<p:text value="#{propertyHome.domainDocument.previousDomain.lotAppraisal}" >
 							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
@@ -1152,7 +1152,7 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.buildingAppraisal}" >
+						<p:text value="#{propertyHome.domainDocument.previousDomain.buildingAppraisal}" >
 							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>
@@ -1172,7 +1172,7 @@
 				borderColorTop="#000000" colspan="1" verticalAlignment="middle">
 				<p:font size="8">
 					<p:paragraph spacingAfter="10.0">
-						<p:text value="#{propertyHome.propertyDocument.currentDomain.previousDomain.commercialAppraisal}" >
+						<p:text value="#{propertyHome.domainDocument.previousDomain.commercialAppraisal}" >
 							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
 						</p:text>
 					</p:paragraph>

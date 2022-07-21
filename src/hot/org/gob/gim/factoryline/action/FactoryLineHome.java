@@ -65,7 +65,10 @@ public class FactoryLineHome extends EntityHome<FactoryLine> {
 	private List<TerritorialPolygon> territorialPolygons = new ArrayList<TerritorialPolygon>();
 	private List<FactoryLineRoad> roadsHome = new ArrayList<FactoryLineRoad>();
 
-   private boolean duplicate;
+    private boolean duplicate;
+   
+    public boolean addSecondPolygon = true;
+    public boolean addThirdPolygon = true;
    
 	public void setFactoryLineId(Long id) {
 		setId(id);
@@ -365,6 +368,34 @@ public class FactoryLineHome extends EntityHome<FactoryLine> {
 	 */
 	public void setDuplicate(boolean duplicate) {
 		this.duplicate = duplicate;
+	}
+
+	/**
+	 * @return the addSecondPolygon
+	 */
+	public boolean isAddSecondPolygon() {
+		return addSecondPolygon;
+	}
+
+	/**
+	 * @param addSecondPolygon the addSecondPolygon to set
+	 */
+	public void setAddSecondPolygon(boolean addSecondPolygon) {
+		this.addSecondPolygon = addSecondPolygon;
+	}
+
+	/**
+	 * @return the addThirdPolygon
+	 */
+	public boolean isAddThirdPolygon() {
+		return addThirdPolygon;
+	}
+
+	/**
+	 * @param addThirdPolygon the addThirdPolygon to set
+	 */
+	public void setAddThirdPolygon(boolean addThirdPolygon) {
+		this.addThirdPolygon = addThirdPolygon;
 	}
 
 	private void loadRoads(){

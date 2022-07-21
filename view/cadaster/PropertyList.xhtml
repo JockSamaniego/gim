@@ -293,12 +293,12 @@
 								value="Cédula Catastral" target="_blank" rendered="#{_property.propertyType.id == 1}"/>
 							<br />
 							<a:commandButton id="printDocument"
-								rendered="#{!propertyHome.needConfirmChangeOwner(_property) and not _property.deleted and _property.currentDomain.previousDomain != null}"
+								rendered="#{propertyHome.needConfirmChangeOwner(_property) and not _property.deleted}"
 								action="#{propertyHome.chargeDomainsToPrintDocument(_property.id)}"
 								reRender="domainTransferComplement" ajaxSingle="true"
 								eventsQueue="gimEventsQueue"
 								oncomplete="Richfaces.showModalPanel('domainTransferComplement')"
-								value="Imprimir Último Traspaso"
+								value="Imprimir Ficha de Traspaso"
 								propagation="join" />
 						</rich:column>
 					</rich:dataTable>

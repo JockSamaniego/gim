@@ -156,7 +156,7 @@ public class Urbanregeneration extends Adjunct{
 
 		
 		
-		ValuePair pair = new ValuePair("Clave catastral", cadastralCode); 
+		ValuePair pair = new ValuePair("Clave catastral", cadastralCode != null ? cadastralCode : ""); 
 		details.add(pair);		
 
 		if(resident!= null) {
@@ -164,17 +164,21 @@ public class Urbanregeneration extends Adjunct{
 			details.add(pair);
 		}
 		
+		if(previousCadastralCode!=null){
+			pair = new ValuePair("Clave catastral anterior: ", previousCadastralCode);
+			details.add(pair);
+		}
 				
-		pair = new ValuePair("Clave catastral anterior: ", previousCadastralCode);
-		details.add(pair);
-		
 		if(paymentsNumber != null) {
 			pair = new ValuePair("Numero cuotas", paymentsNumber.toString());
 			details.add(pair);
 		}
+
+		if(commercialAppraisal != null){
+			pair = new ValuePair("Avalúo comercial", commercialAppraisal.toString());		
+			details.add(pair);
+		}
 		
-		pair = new ValuePair("Avalúo comercial", commercialAppraisal.toString());		
-		details.add(pair);
 		
 		if(front!=null) {
 			pair = new ValuePair("Frente", front.toString());		

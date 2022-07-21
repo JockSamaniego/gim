@@ -766,7 +766,7 @@ public class WorkdayHome extends EntityHome<Workday> {
 	}
 
 	public void findDetailedCreditCardByCashier() {
-		String sql = "select distinct r.identificationNumber, r.\"name\" as contribuyente , r.id, r.firstname, " +
+		String sql = "select distinct r.identificationNumber, r.\"name\" as contribuyente , p.id, r.firstname, " +
 				"d.\"date\", d.\"time\", f.\"name\" as tarjeta, pf.documentnumber, pf.paidamount, pf.id " +
 				"from gimprod.resident r " +
 				"inner join gimprod.municipalbond mb on r.id = mb.resident_id " +

@@ -1728,7 +1728,7 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		queryBuilder = queryBuilder.delete(start, queryBuilder.length());
 
 		queryBuilder
-				.append(" ORDER BY municipalBond.entry, municipalBond.id desc");
+				.append(" ORDER BY municipalBond.entry, municipalBond.id asc");
 
 		// System.out.println("QUERY GENERADO findMunicipalBonds---->
 		// \n\n\n"+queryBuilder.toString());
@@ -1780,7 +1780,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		queryBuilder = queryBuilder.delete(start, queryBuilder.length());
 
 		queryBuilder
-				.append(" ORDER BY municipalBond.entry, municipalBond.id desc");
+				.append(" ORDER BY municipalBond.entry, municipalBond.id asc");
+		
 
 		// System.out.println("QUERY GENERADO findMunicipalBonds---->
 		// \n\n\n"+queryBuilder.toString());
