@@ -9,7 +9,7 @@
    <param name="logic" value="#{financialInstitutionList.restrictionLogicOperator}"/>
 
    <param name="from"/>
-   <param name="name" value="#{financialInstitutionList.financialInstitution.name}"/>
+   <param name="name" value="#{financialInstitutionList.name}"/>
 
 
 </page>
