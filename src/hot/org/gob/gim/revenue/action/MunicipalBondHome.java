@@ -54,6 +54,7 @@ import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.income.model.dto.FutureEmissionDTO;
 import ec.gob.gim.revenue.model.Adjunct;
+import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.EntryType;
 import ec.gob.gim.revenue.model.Item;
@@ -62,6 +63,7 @@ import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.DTO.CRTV_MunicipalBonds;
 import ec.gob.gim.revenue.model.DTO.MunicipalBondErrorsCorrectionDTO;
 import ec.gob.gim.revenue.model.adjunct.ANTReference;
+import ec.gob.gim.revenue.model.adjunct.BusinessLocalReference;
 import ec.gob.gim.security.model.Role;
 //macartuche
 //antclient
@@ -134,6 +136,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		adjunctUri = EMPTY_ADJUNCT_URI;
 		entryValueItems = new ArrayList<EntryValueItem>();
 		municipalBonds = new ArrayList<MunicipalBond>();
+		orderPatent = new EmissionOrder();
 		// loadBondStatus();
 	}
 
@@ -1864,5 +1867,67 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	 */
 	public void setUserSession(UserSession userSession) {
 		this.userSession = userSession;
+	}
+	
+	private EmissionOrder orderPatent;
+	
+	
+	
+	public void addToEmissionOrderPatente() {
+		Boolean emissionValid = isEmissionValid();
+		if (!emissionValid) {
+			// enviar mensaje
+		}
+
+		Person emitter = userSession.getPerson();
+
+		for (MunicipalBond mb : municipalBonds) {
+			mb.setEmitter(emitter);
+			mb.setOriginator(emitter);
+			if (mb.getResident().getCurrentAddress() != null) {
+				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
+			}
+			orderPatent.add(mb);
+			// BusinessLocalReference lr= (BusinessLocalReference) mb.getAdjunct();
+			// System.out.println("---------------------------------- "+lr.getBusinessName());
+		}
+		
+		// System.out.println("la cantidD ESSSSSSSSSS ---------------- "+orderPatent.getMunicipalBonds().size());
+		
+		this.cleanList();
+
+		/*String persisted = null;
+		RevenueService revenueService = ServiceLocator.getInstance()
+				.findResource(REVENUE_SERVICE_NAME);
+		try {
+			revenueService.emit(municipalBonds, userSession.getUser());
+			setInstance(null);
+			setIdentificationNumber(null);
+			setEntryCode(null);
+			Conversation.instance().leave();
+			//logger.info("VALORES FIJADOS A NULL");
+			addFacesMessageFromResourceBundle("municipalBond.persited");
+			this.cleanList();
+			persisted = "persisted";
+
+		} catch (InvalidEmissionException iee) {
+			addFacesMessageFromResourceBundle(iee.getClass().getSimpleName());
+		} catch (Exception e) {
+			StatusMessages.instance().add(Severity.ERROR,
+					"ERROR al persitir el(los) titulo(s) de credito(s): #0",
+					e.getMessage());
+			//logger.error(					"===> ERROR AL PERSISTIR EL TITULO DE CREDITO :( == #0", e);
+			e.printStackTrace();
+		}*/
+	
+
+	}
+
+	public EmissionOrder getOrderPatent() {
+		return orderPatent;
+	}
+
+	public void setOrderPatent(EmissionOrder orderPatent) {
+		this.orderPatent = orderPatent;
 	}
 }
