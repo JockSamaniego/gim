@@ -1212,6 +1212,9 @@ public class MunicipalBond implements Serializable {
 	@Transient //for print
 	private BigDecimal surchargeRemission=BigDecimal.ZERO;
 	
+	@Transient //for print
+	private String adjuntDetail;
+	
 
 	public MunicipalBond() {
 		// creationDate = Calendar.getInstance().getTime();
@@ -1985,6 +1988,14 @@ public class MunicipalBond implements Serializable {
 
 	public void setExchangeDate(Date exchangeDate) {
 		this.exchangeDate = exchangeDate;
+	}
+
+	public String getAdjuntDetail() {
+		return adjuntDetail;
+	}
+
+	public void setAdjuntDetail(String adjuntDetail) {
+		this.adjuntDetail = adjuntDetail;
 	}
 	
 	

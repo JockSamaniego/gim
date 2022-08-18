@@ -7,8 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:g="http://gim.gob.ec/jsf">
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf">
 
 	<rich:modalPanel id="addEntryPatent" width="1000" height="600"
 		style="overflow-y:scroll">
@@ -30,14 +29,6 @@
 
 		<h:form>
 
-
-			<rich:panel>
-				<f:facet name="header">
-					<h:outputText styleClass="formTitle"
-						value="#{messages['revenue.emissionMunicipalBond']}" />
-				</f:facet>
-			</rich:panel>
-
 			<a:region>
 
 				<h:panelGrid id="emitPanel" columns="1" width="100%"
@@ -46,21 +37,9 @@
 						<f:facet name="header">
 							<h:panelGrid columns="1" width="100%"
 								columnClasses="left headerTitle,">
-								<h:outputText value="#{messages['municipalBond.detail']}" />
-								<!--  <a:commandButton value="Activar locales"  id="active"
-											    disabled="#{municipalBondHome.instance.resident == null}"
-												propagation="join"
-												action="#{localFeatureHome.viewTableLocals()}"
-												style="float:right"
-												reRender="activeLocals" ajaxSingle="true"
-												oncomplete="Richfaces.showModalPanel('activeLocals')" />
-												
-											<s:button view="/commercial/BusinessEdit.xhtml" id="create"
-												propagation="join"
-												value="#{messages['common.create']} #{messages['commercial.bussines']}"	
-												action="#{businessHome.navegation('municipal')}">
-												<f:param name="businessId" />
-											</s:button> -->
+								<h:outputText
+									value="#{messages['municipalBond.detail']} - #{municipalBondHome.entry.code} - #{municipalBondHome.entry.name}"
+									style="font-weight:bold; font-size:12px; color:red" />
 							</h:panelGrid>
 						</f:facet>
 
@@ -143,7 +122,8 @@
 									<ui:define name="label">Liquidar Actividad</ui:define>
 								</s:decorate>
 
-								<s:decorate id="settleActivity1" template="../../layout/edit.xhtml"
+								<s:decorate id="settleActivity1"
+									template="../../layout/edit.xhtml"
 									rendered="#{municipalBondHome.entry.id == '8'}"
 									style="margin-right:30px;">
 									<ui:define name="label">#{messages['local.isActive']}?: </ui:define>
@@ -154,7 +134,8 @@
 											reRender="tableEntryValueItems,settleMessage" />
 									</h:selectBooleanCheckbox>
 								</s:decorate>
-								<s:decorate id="settleActivity2" template="../../layout/edit.xhtml"
+								<s:decorate id="settleActivity2"
+									template="../../layout/edit.xhtml"
 									rendered="#{municipalBondHome.entry.id == '2'}"
 									style="margin-right:30px;">
 									<ui:define name="label">#{messages['local.isActive']}?: </ui:define>
@@ -166,7 +147,8 @@
 									</h:selectBooleanCheckbox>
 								</s:decorate>
 
-								<s:decorate id="settleMessage" template="../../layout/edit.xhtml"
+								<s:decorate id="settleMessage"
+									template="../../layout/edit.xhtml"
 									rendered="#{municipalBondHome.entry.id == '8' or municipalBondHome.entry.id == '2'}"
 									style="margin-right:30px;">
 									<h:outputText value="#{municipalBondHome.getMessage()} "
@@ -253,7 +235,8 @@
 
 										</h:inputTextarea>
 									</s:decorate>
-									<s:decorate id="referenceField" template="../../layout/edit.xhtml">
+									<s:decorate id="referenceField"
+										template="../../layout/edit.xhtml">
 										<ui:define name="label">#{messages['municipalBond.reference']}: </ui:define>
 										<h:inputTextarea id="reference"
 											value="#{municipalBondHome.entryValueItems.get(0).reference}"
@@ -287,7 +270,8 @@
 									</h:selectOneMenu>
 								</s:decorate>
 
-								<s:decorate id="fireRateField" template="../../layout/edit.xhtml"
+								<s:decorate id="fireRateField"
+									template="../../layout/edit.xhtml"
 									rendered="#{municipalBondHome.entry.id == '654'}">
 									<ui:define name="label">Tipo de Actividad:</ui:define>
 									<h:selectOneMenu id="fireRate"
@@ -362,8 +346,7 @@
 												value="#{not empty municipalBondHome.entry.amountLabel? municipalBondHome.entry.amountLabel : messages['municipalBond.taxableTotal']}" />
 										</f:facet>
 										<h:inputText id="mainValue"
-											value="#{_entryValueItem.mainValue}"
-											styleClass="right ">
+											value="#{_entryValueItem.mainValue}" styleClass="right ">
 											<a:support ajaxSingle="true" event="onblur"></a:support>
 										</h:inputText>
 										<rich:message for="mainValue" styleClass="errors">
@@ -379,8 +362,7 @@
 											<h:outputText value="#{messages['item.amount']}" />
 										</f:facet>
 										<h:inputText id="amountValue"
-											value="#{_entryValueItem.amount}"
-											styleClass="right ">
+											value="#{_entryValueItem.amount}" styleClass="right ">
 											<a:support ajaxSingle="true" event="onblur"></a:support>
 										</h:inputText>
 										<rich:message for="amountValue" styleClass="errors">
@@ -473,14 +455,15 @@
 			</a:region>
 
 			<g:municipalBondItemsTable
-				municipalBondItemsForView="#{municipalBondHome.municipalBonds}"  />
+				municipalBondItemsForView="#{municipalBondHome.municipalBonds}" />
 
 			<div class="actionButtons">
 				<a:region>
-				<a:commandButton reRender="obligationsList, save, messages, _itemsTable, tableEntryValueItems"
-									action="#{municipalBondHome.addToEmissionOrderPatente()}"
-									value="Agregar" />
-									
+					<a:commandButton
+						reRender="obligationsList, save, messages, _itemsTable, tableEntryValueItems"
+						action="#{municipalBondHome.addToEmissionOrderPatente()}"
+						value="Agregar obligaciones" />
+
 					<a:commandButton id="cancelx" ajaxSingle="true"
 						value="#{messages['common.quit']}"
 						reRender="addEntryPatent, detailsTable"

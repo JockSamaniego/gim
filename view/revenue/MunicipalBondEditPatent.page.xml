@@ -16,17 +16,17 @@
    <param name="backToEmissionOrderList"/>   
    <param name="readOnly"/>
    
-   <navigation from-action="#{municipalBondHome.persist}">
+   <navigation from-action="#{municipalBondHome.persistPatent}">
    	  <rule if-outcome="persisted">
          <end-conversation before-redirect="true" root="true"/>
-         <redirect view-id="/revenue/MunicipalBondEdit.xhtml"/>   
+         <redirect view-id="/revenue/MunicipalBondEditPatent.xhtml"/>   
       </rule>
    </navigation>
    
-   <navigation from-action="#{municipalBondHome.cancelEmit}">
-   	  <rule if-outcome="cancelEmit">
+   <navigation from-action="#{municipalBondHome.cancelEmitPatent}">
+   	  <rule if-outcome="cancelEmitPatent">
          <end-conversation before-redirect="true" root="true"/>
-         <redirect view-id="/revenue/MunicipalBondEdit.xhtml"/>   
+         <redirect view-id="/revenue/MunicipalBondEditPatent.xhtml"/>   
       </rule>
    </navigation>
 
