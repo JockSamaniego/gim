@@ -1,5 +1,9 @@
 package org.gob.gim.common.action;
 
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -103,6 +107,50 @@ public class ResidentChooserHome extends EntityController{
 	
 	public String getHandicapedPercentage(Resident resident){		
 		return resident instanceof Person ? ((Person)resident).getHandicapedPercentage() != null ? ((Person)resident).getHandicapedPercentage().toString() : "" : "";
+	}
+	
+	//para calcular la edad de los contribuyentes
+	
+	public String calculateAge(Resident resident){
+		if (resident == null){
+			return null;
+		}
+		try {
+			Person person = (Person)resident;
+			Date bornDate = person.getBirthday();
+			Date currentDate = new Date();
+			if(currentDate!=null && bornDate!=null){
+				SimpleDateFormat getYearFormat = new SimpleDateFormat("yyyy");
+			    int currentYear = Integer.parseInt(getYearFormat.format(currentDate));
+			    int bornYear = Integer.parseInt(getYearFormat.format(bornDate));
+			    int years = currentYear - (bornYear + 1);
+			    
+			    SimpleDateFormat getMonthFormat = new SimpleDateFormat("MM");
+			    int currentMonth = Integer.parseInt(getMonthFormat.format(currentDate));
+			    int bornMonth = Integer.parseInt(getMonthFormat.format(bornDate));
+			    int months = currentMonth - bornMonth;
+			    if(months > 0){
+			    	years = years + 1;
+			    } else {
+			    	if(months == 0) {
+			    		SimpleDateFormat getDayFormat = new SimpleDateFormat("dd");
+				        int currentDay = Integer.parseInt(getDayFormat.format(currentDate));
+				        int bornDay = Integer.parseInt(getDayFormat.format(bornDate));
+				        int days = currentDay - bornDay;
+				        if(days >= 0) {
+				        	years = years + 1;
+				        }
+			    	}
+			    	
+			    }
+			     return String.valueOf(years) + " años ";
+			}
+			return "No disponible";
+
+		} catch (Exception e) {
+			return "No disponible";
+		}	 
+		
 	}
 
 }
