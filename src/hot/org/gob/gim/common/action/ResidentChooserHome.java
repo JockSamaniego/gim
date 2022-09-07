@@ -111,7 +111,59 @@ public class ResidentChooserHome extends EntityController{
 	
 	//para calcular la edad de los contribuyentes
 	
+	private String fontColor = "black";
+	private Boolean resultExist = Boolean.FALSE;
+	private Boolean residentIsDead = Boolean.FALSE;
+	private int ageMonths;
+	private int ageDays;
+	
+	public String getFontColor() {
+		return fontColor;
+	}
+
+	public void setFontColor(String fontColor) {
+		this.fontColor = fontColor;
+	}
+
+	public Boolean getResultExist() {
+		return resultExist;
+	}
+
+	public void setResultExist(Boolean resultExist) {
+		this.resultExist = resultExist;
+	}
+
+	public Boolean getResidentIsDead() {
+		return residentIsDead;
+	}
+
+	public void setResidentIsDead(Boolean residentIsDead) {
+		this.residentIsDead = residentIsDead;
+	}
+
+	public int getAgeMonths() {
+		return ageMonths;
+	}
+
+	public void setAgeMonths(int ageMonths) {
+		this.ageMonths = ageMonths;
+	}
+
+	public int getAgeDays() {
+		return ageDays;
+	}
+
+	public void setAgeDays(int ageDays) {
+		this.ageDays = ageDays;
+	}
+	
+
 	public String calculateAge(Resident resident){
+		ageMonths = 0;
+		ageDays = 0;
+		resultExist = Boolean.FALSE;
+		residentIsDead = Boolean.FALSE;
+		fontColor = "black";
 		if (resident == null){
 			return null;
 		}
@@ -129,21 +181,46 @@ public class ResidentChooserHome extends EntityController{
 			    int currentMonth = Integer.parseInt(getMonthFormat.format(currentDate));
 			    int bornMonth = Integer.parseInt(getMonthFormat.format(bornDate));
 			    int months = currentMonth - bornMonth;
+			    
+			    SimpleDateFormat getDayFormat = new SimpleDateFormat("dd");
+		        int currentDay = Integer.parseInt(getDayFormat.format(currentDate));
+		        int bornDay = Integer.parseInt(getDayFormat.format(bornDate));
+		        int days = currentDay - bornDay;
+			    
+			    ageMonths = months - 1;
+			    ageDays = days;
 			    if(months > 0){
 			    	years = years + 1;
-			    } else {
-			    	if(months == 0) {
-			    		SimpleDateFormat getDayFormat = new SimpleDateFormat("dd");
-				        int currentDay = Integer.parseInt(getDayFormat.format(currentDate));
-				        int bornDay = Integer.parseInt(getDayFormat.format(bornDate));
-				        int days = currentDay - bornDay;
-				        if(days >= 0) {
-				        	years = years + 1;
-				        }
+			    	if(days >= 0) {
+			    		ageMonths = ageMonths + 1;
+			        } else {
+			        	ageDays = ageDays + 30;
+			        }
+			    } else if(months == 0){ 
+			        if(days >= 0) {
+			        	ageMonths = ageMonths + 1;
+			        	years = years + 1;
+			        } else {
+			        	ageMonths = ageMonths + 12;
+			        	ageDays = ageDays + 30;
+			        }	    	
+			    }  else if(months < 0){
+			    	ageMonths = ageMonths + 12;
+			    	if(days < 0){
+			    		ageDays = ageDays + 30;
 			    	}
-			    	
 			    }
-			     return String.valueOf(years) + " años ";
+			    
+			    
+			    if(years >= 65 && !person.getIsDead()){
+			    	fontColor = "red";
+			    } else if(person.getIsDead()){
+			    	fontColor = "black";
+			    	residentIsDead = Boolean.TRUE;
+			    	//return String.valueOf(years) + " años (fallecido/a)";
+			    }
+			    resultExist = Boolean.TRUE;
+			    return String.valueOf(years);
 			}
 			return "No disponible";
 
