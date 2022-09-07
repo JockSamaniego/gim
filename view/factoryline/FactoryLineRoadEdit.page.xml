@@ -15,16 +15,14 @@
 
    <navigation from-action="#{factoryLineRoadHome.persist}">
       <rule if-outcome="persisted">
-         <end-conversation/>
-         <end-conversation before-redirect="true"/>
+         <end-conversation />
          <redirect view-id="/factoryline/FactoryLineRoadList.xhtml"/>
       </rule>
    </navigation>
 
    <navigation from-action="#{factoryLineRoadHome.update}">
       <rule if-outcome="updated">
-         <end-conversation/>
-         <end-conversation before-redirect="true"/>
+         <end-conversation />
          <redirect view-id="/factoryline/FactoryLineRoadList.xhtml"/>
       </rule>
    </navigation>

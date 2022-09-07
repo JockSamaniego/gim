@@ -238,7 +238,7 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 	
 	@NamedQuery(name="Deposit.findByExternalTransaccionId",
 				query=  "SELECT d FROM Deposit d " 
-						+ " WHERE d.payment.externalTransactionId= :transactionId"),
+						+ " WHERE d.payment.externalTransactionId= :transactionId")
 
 	
 })

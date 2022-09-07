@@ -25,7 +25,7 @@ import ec.gob.gim.common.model.Person;
 @TableGenerator(name = "SanctioningArticleGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "SanctioningArticle", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = { @NamedQuery(name = "SanctioningArticle.findAll", query = "SELECT sa FROM SanctioningArticle sa order by sa.creationDate"),
 						@NamedQuery(name = "SanctioningArticle.findByType", query = "SELECT sa FROM SanctioningArticle sa where sa.commissionerBallotType.code =:commissionerType and (sa.isActive = true or sa.isActive is null) ORDER BY sa.article,sa.numeral ASC "),
-						@NamedQuery(name = "SanctioningArticle.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum"),
+						@NamedQuery(name = "SanctioningArticle.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum")
 					  })
 public class SanctioningArticle {
 

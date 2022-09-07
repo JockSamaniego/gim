@@ -42,7 +42,7 @@ import ec.gob.gim.revenue.model.Contract;
  )
 
 @NamedQueries(value = {
-		@NamedQuery(name = "Death.FindById", query = "Select d from Death d where d.id=:id"),})
+		@NamedQuery(name = "Death.FindById", query = "Select d from Death d where d.id=:id")})
 
  public class Death {
 

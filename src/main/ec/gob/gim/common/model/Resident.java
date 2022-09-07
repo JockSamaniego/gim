@@ -131,7 +131,7 @@ import ec.gob.gim.security.model.User;
 		@NamedQuery(name="TaxpayerWP.findByIdentificationNumber", 		
 					query="SELECT NEW org.gob.loja.gim.ws.dto.TaxpayerWP(r.id, r.identificationNumber, r.name, r.email, r.name) " +
 						  "FROM Resident r " +
-						  "WHERE r.identificationNumber = upper(:identificationNumber)"),	
+						  "WHERE r.identificationNumber = upper(:identificationNumber)")
  
 			  /*@NamedQuery(name="Taxpayer.findLegalEntityFullByIdentification", 
 						query="SELECT " +

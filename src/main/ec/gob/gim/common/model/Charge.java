@@ -32,7 +32,7 @@ import ec.gob.gim.income.model.TaxpayerRecord;
 		@NamedQuery(name="Charge.findDepartments", 
 				query="select charge.department from Charge charge "),
 		@NamedQuery(name = "Charge.findChargesByIds", query = "SELECT "
-				+ "charge FROM Charge charge WHERE charge.id in (:idCharges)"),
+				+ "charge FROM Charge charge WHERE charge.id in (:idCharges)")
 })
 public class Charge {
 	

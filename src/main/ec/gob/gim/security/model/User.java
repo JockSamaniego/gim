@@ -38,7 +38,7 @@ import ec.gob.gim.common.model.Resident;
 		@NamedQuery(name = "User.findRolesByUserId", query = "select u.roles from User u where u.id = :userId"),
 		@NamedQuery(name = "User.lockAll", query = "update User u set u.isBlocked = true where not lower(u.name) = lower(:rootRoleName)"),
 		@NamedQuery(name = "User.unlockAll", query = "update User u set u.isBlocked = false  where not lower(u.name) = lower(:rootRoleName)"),
-		@NamedQuery(name = "User.findByResidentId", query = "select u from User u inner join fetch u.resident r where r.id = :residentId"),
+		@NamedQuery(name = "User.findByResidentId", query = "select u from User u inner join fetch u.resident r where r.id = :residentId")
 		})
 public class User implements Comparable<User> {
 

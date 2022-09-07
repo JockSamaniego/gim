@@ -41,7 +41,7 @@ import org.hibernate.envers.Audited;
 
 @NamedQueries(value = {
 	@NamedQuery(name = "FactoryLineRoad.findAll", query = "select f from FactoryLineRoad f " +
-			"order by f.denomination, f.location"),
+			"order by f.denomination, f.location")
 })
 
 public class FactoryLineRoad implements Serializable{

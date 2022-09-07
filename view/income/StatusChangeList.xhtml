@@ -12,110 +12,106 @@
 	<ui:define name="body">
 
 		<h:form id="statusChangeForm" styleClass="edit">
-		
+
 			<ui:include src="fragment/DetailForResolution.xhtml" />
 
-        	<rich:panel id="searchPanel" >
+			<rich:panel id="searchPanel">
 				<f:facet name="header">
-					<h:outputText styleClass="formTitle" value="#{messages['statusChange.title']}" />
+					<h:outputText styleClass="formTitle"
+						value="#{messages['statusChange.title']}" />
 				</f:facet>
-				
-				<h:selectOneRadio value="#{statusChangeHome.viewByResolution}" styleClass="radio">
-					<f:selectItem itemLabel="Vista por Resolucion" itemValue="#{statusChangeHome.viewByResolution}" />
-					<f:selectItem itemLabel="Vista por Fechas" itemValue="#{!statusChangeHome.viewByResolution}" />
-					<a:support event="onchange" action="#{statusChangeHome.cambiarViewByResolution(statusChangeHome.viewByResolution)}"
-			    		ajaxSingle="true" inmediate="true" 
-			    		reRender="byResolutionPanel, resultsPanelByResolution, byResolutionDatesPanel" 
-			    		/>
+
+				<h:selectOneRadio value="#{statusChangeHome.viewByResolution}"
+					styleClass="radio">
+					<f:selectItem itemLabel="Vista por Resolucion"
+						itemValue="#{statusChangeHome.viewByResolution}" />
+					<f:selectItem itemLabel="Vista por Fechas"
+						itemValue="#{!statusChangeHome.viewByResolution}" />
+					<a:support event="onchange"
+						action="#{statusChangeHome.cambiarViewByResolution(statusChangeHome.viewByResolution)}"
+						ajaxSingle="true" inmediate="true"
+						reRender="byResolutionPanel, resultsPanelByResolution, byResolutionDatesPanel" />
 				</h:selectOneRadio>
 				<div style="clear: both" />
 			</rich:panel>
 
-        	<a:outputPanel id="byResolutionPanel" ajaxRendered="#{statusChangeHome.viewByResolution}">
-				<rich:panel id="byResolution" 
-					rendered = "#{statusChangeHome.viewByResolution}">
+			<a:outputPanel id="byResolutionPanel"
+				ajaxRendered="#{statusChangeHome.viewByResolution}">
+				<rich:panel id="byResolution"
+					rendered="#{statusChangeHome.viewByResolution}">
 					<f:facet name="header">
 						<h:outputText value="Por Nombre" />
 					</f:facet>
-					
+
 					<s:decorate template="../layout/display.xhtml">
 						<ui:define name="label">#{messages['statusChange.resolution']}:</ui:define>
 						<h:inputText id="criteria" value="#{statusChangeHome.resolution}" />
 					</s:decorate>
-					
+
 					<div style="clear: both" />
-	
+
 					<div class="actionButtons">
-						<a:commandButton id="search" 
-										 value="#{messages['common.search']}"
-										 action="#{statusChangeHome.findBondDownStatus()}"
-										 reRender="resultsPanelByResolution, statusChangeTable" />
-						<s:button id="reset" 
-								  value="#{messages['common.reset']}"
-								  includePageParams="false" 
-								  propagation="none" />
-						<s:button id="home" 
-								  view="/home.xhtml"
-								  value="#{messages['common.quit']}"
-								  propagation="end" />
-					</div>			
-		
+						<a:commandButton id="search" value="#{messages['common.search']}"
+							action="#{statusChangeHome.findBondDownStatus()}"
+							reRender="resultsPanelByResolution, statusChangeTable" />
+						<s:button id="reset" value="#{messages['common.reset']}"
+							includePageParams="false" propagation="none" />
+						<s:button id="home" view="/home.xhtml"
+							value="#{messages['common.quit']}" propagation="end" />
+					</div>
+
 				</rich:panel>
 			</a:outputPanel>
 
-        	<a:outputPanel id="byResolutionDatesPanel" ajaxRendered="#{!statusChangeHome.viewByResolution}">
-				<rich:panel id="byDate" 
-					rendered = "#{!statusChangeHome.viewByResolution}">
+			<a:outputPanel id="byResolutionDatesPanel"
+				ajaxRendered="#{!statusChangeHome.viewByResolution}">
+				<rich:panel id="byDate"
+					rendered="#{!statusChangeHome.viewByResolution}">
 					<f:facet name="header">
 						<h:outputText value="Por Fecha" />
 					</f:facet>
-					
+
 					<s:decorate template="../layout/display.xhtml">
 						<ui:define name="label">#{messages['Fecha desde:']}:</ui:define>
-						<rich:calendar  id="startDate" 
-										value="#{statusChangeHome.startDate}" 
-										datePattern="#{messages['common.datePattern']}" 
-										inputSize="10">
-							<f:convertDateTime type="date" pattern="#{messages['common.datePattern']}"/>
+						<rich:calendar id="startDate"
+							value="#{statusChangeHome.startDate}"
+							datePattern="#{messages['common.datePattern']}" inputSize="10">
+							<f:convertDateTime type="date"
+								pattern="#{messages['common.datePattern']}" />
 						</rich:calendar>
 					</s:decorate>
-					
+
 					<s:decorate template="../layout/display.xhtml">
 						<ui:define name="label">#{messages['Fecha hasta:']}:</ui:define>
-						<rich:calendar  id="endDate" 
-										value="#{statusChangeHome.endDate}" 
-										datePattern="#{messages['common.datePattern']}"
-										inputSize="10">
-							<f:convertDateTime type="date" pattern="#{messages['common.datePattern']}"/>
+						<rich:calendar id="endDate" value="#{statusChangeHome.endDate}"
+							datePattern="#{messages['common.datePattern']}" inputSize="10">
+							<f:convertDateTime type="date"
+								pattern="#{messages['common.datePattern']}" />
 						</rich:calendar>
 					</s:decorate>
-					
-					
+
+
 					<div style="clear: both" />
-	
+
 					<div class="actionButtons">
-						<a:commandButton id="search1" 
-										 value="#{messages['common.search']}"
-										 action="#{statusChangeHome.loadBondDownStatusByDates()}"
-										 reRender="resultsPanelByResolution, statusChangeTable" />
-						<s:button id="reset1" 
-								  value="#{messages['common.reset']}"
-								  includePageParams="false" 
-								  propagation="none" />
-						<s:button id="home1" 
-								  view="/home.xhtml"
-								  value="#{messages['common.quit']}"
-								  propagation="end" />
-					</div>			
-		
+						<a:commandButton id="search1" value="#{messages['common.search']}"
+							action="#{statusChangeHome.loadBondDownStatusByDates()}"
+							reRender="resultsPanelByResolution, statusChangeTable" />
+						<s:button id="reset1" value="#{messages['common.reset']}"
+							includePageParams="false" propagation="none" />
+						<s:button id="home1" view="/home.xhtml"
+							value="#{messages['common.quit']}" propagation="end" />
+					</div>
+
 				</rich:panel>
 			</a:outputPanel>
 
-			<a:outputPanel id="resultsPanelByResolution" ajaxRendered="#{not empty statusChangeHome.bondsDownStatus}" >
-				<rich:dataTable id="statusChangeTable" rendered = "#{not empty statusChangeHome.bondsDownStatus}"
-					value="#{statusChangeHome.bondsDownStatus}"
-					var="_bondDownStatus">
-					
+			<a:outputPanel id="resultsPanelByResolution"
+				ajaxRendered="#{not empty statusChangeHome.bondsDownStatus}">
+				<rich:dataTable id="statusChangeTable"
+					rendered="#{not empty statusChangeHome.bondsDownStatus}"
+					value="#{statusChangeHome.bondsDownStatus}" var="_bondDownStatus">
+
 					<f:facet name="header">
 						<h:panelGrid columns="3" columnClasses="headerTitle left, ">
 							<h:outputText value="#{messages['statusChange.resolutionList']}" />
@@ -124,27 +120,38 @@
 								reRender="byResolutionPanel, resultsPanelByResolution, byResolutionDatesPanel, resultsPanelByDates, statusChangeTableByDates, detailForResolutionPanel, byResolutionDatesPanel"
 								oncomplete="Richfaces.showModalPanel('detailForResolutionPanel')"
 								value="#{messages['bondDownStatus.detailByResident']}"
-								rendered = "#{!statusChangeHome.viewByResolution}" >
+								rendered="#{!statusChangeHome.viewByResolution}">
 							</a:commandButton>
-	
+
 							<a:commandButton id="detailResolutionWithAccountByDates"
 								action="#{statusChangeHome.findDownBondsWithAccountByDates()}"
 								reRender="byResolutionPanel, resultsPanelByResolution, byResolutionDatesPanel, resultsPanelByDates, statusChangeTableByDates, detailForResolutionPanel, byResolutionDatesPanel"
 								oncomplete="Richfaces.showModalPanel('detailForResolutionPanel')"
 								value="#{messages['bondDownStatus.detailByAccount']}"
-								rendered = "#{!statusChangeHome.viewByResolution}" >
+								rendered="#{!statusChangeHome.viewByResolution}">
 							</a:commandButton>
 						</h:panelGrid>
 					</f:facet>
-		
-					<rich:column sortBy="#{_bondDownStatus.resolutionNumber}" styleClass="action">
+
+					<rich:column sortBy="#{_bondDownStatus.resolutionNumber}"
+						styleClass="action">
 						<f:facet name="header">#{messages['bondDownStatus.resolutionNumber']}</f:facet>
 						<h:outputText value="#{_bondDownStatus.resolutionNumber}" />
 					</rich:column>
 
-					<rich:column sortBy="#{_bondDownStatus.resolutionTotal}" styleClass="action">
+					<rich:column sortBy="#{_bondDownStatus.resolutionTotal}"
+						styleClass="action">
 						<f:facet name="header">#{messages['bondDownStatus.resolutionTotal']}</f:facet>
 						<h:outputText value="#{_bondDownStatus.resolutionTotal}" />
+					</rich:column>
+
+					<rich:column sortBy="#{_bondDownStatus.resolutionDate}"
+						styleClass="action">
+						<f:facet name="header">#{messages['common.date']}</f:facet>
+						<h:outputText value="#{_bondDownStatus.resolutionDate}">
+							<s:convertDateTime type="date"
+								pattern="#{messages['common.datePattern']}" />
+						</h:outputText>
 					</rich:column>
 
 					<rich:column styleClass="action">
@@ -154,7 +161,7 @@
 							ajaxSingle="true" reRender="detailForResolutionPanel"
 							oncomplete="Richfaces.showModalPanel('detailForResolutionPanel')"
 							value="#{messages['bondDownStatus.detailByResident']}"
-							rendered ="#{statusChangeHome.viewByResolution}">
+							rendered="#{statusChangeHome.viewByResolution}">
 						</a:commandButton>
 
 						<a:commandButton id="detailResolutionWithAccount"
@@ -162,15 +169,22 @@
 							ajaxSingle="true" reRender="detailForResolutionPanel"
 							oncomplete="Richfaces.showModalPanel('detailForResolutionPanel')"
 							value="#{messages['bondDownStatus.detailByAccount']}"
-							rendered ="#{statusChangeHome.viewByResolution}">
+							rendered="#{statusChangeHome.viewByResolution}">
+						</a:commandButton>
+
+						<a:commandButton id="reverse"
+							action="#{statusChangeHome.reverseStatusChangeDown(_bondDownStatus.resolutionNumber)}"
+							ajaxSingle="true" reRender="resultsPanelByResolution"
+							value="#{messages['deposit.reverse']}"
+							rendered="#{!statusChangeHome.viewByResolution and statusChangeHome.reverseActive}">
 						</a:commandButton>
 
 					</rich:column>
-					
+
 				</rich:dataTable>
 			</a:outputPanel>
 
 		</h:form>
-		
+
 	</ui:define>
 </ui:composition>

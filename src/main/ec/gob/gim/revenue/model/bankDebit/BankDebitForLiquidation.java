@@ -32,7 +32,7 @@ import ec.gob.gim.revenue.model.MunicipalBondForBankDebit;
 @Entity
 @TableGenerator(name = "BankDebitForLiquidationGenerator", table = "IdentityGenerator", pkColumnName = "name", valueColumnName = "value", pkColumnValue = "BankDebitForLiquidation", initialValue = 1, allocationSize = 1)
 @NamedQueries(value = {
-		@NamedQuery(name = "debitForLiquidation.findPending", query = "SELECT bdl from BankDebitForLiquidation bdl Where bdl.isActive = true ORDER BY bdl.bankCount ASC "),})
+		@NamedQuery(name = "debitForLiquidation.findPending", query = "SELECT bdl from BankDebitForLiquidation bdl Where bdl.isActive = true ORDER BY bdl.bankCount ASC ") })
 public class BankDebitForLiquidation implements Serializable{
 	
 	private static final long serialVersionUID = 18386387333339876L;

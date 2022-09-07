@@ -16,7 +16,6 @@
    <navigation from-action="#{binnacleCRVCraneHome.persist}">
       <rule if-outcome="persisted">
          <end-conversation/>
-         <end-conversation before-redirect="true"/>
          <redirect view-id="/binnaclecrv/BinnacleCRVCraneList.xhtml"/>
       </rule>
    </navigation>
@@ -24,7 +23,6 @@
    <navigation from-action="#{binnacleCRVCraneHome.update}">
       <rule if-outcome="updated">
          <end-conversation/>
-         <end-conversation before-redirect="true"/>
          <redirect view-id="/binnaclecrv/BinnacleCRVCraneList.xhtml"/>
       </rule>
    </navigation>

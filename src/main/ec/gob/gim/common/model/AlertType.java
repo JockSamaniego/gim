@@ -41,7 +41,7 @@ import ec.gob.gim.security.model.User;
 	@NamedQuery(name="AlertType.findAll", 
 		query = "select alertType from AlertType alertType order by id desc"),
 	@NamedQuery(name="AlertType.findAllByActive", 
-		query = "select alertType from AlertType alertType where alertType.isActive = true order by id desc"),
+		query = "select alertType from AlertType alertType where alertType.isActive = true order by id desc")
 		
 	}
 )

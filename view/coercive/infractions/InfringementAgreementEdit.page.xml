@@ -16,7 +16,6 @@
    <navigation from-action="#{infringementAgreementHome.persist}">
       <rule if-outcome="persisted">
          <end-conversation/>
-         <end-conversation before-redirect="true"/>
          <redirect view-id="/coercive/infractions/InfringementAgreementList.xhtml"/>
       </rule>
    </navigation>
@@ -24,7 +23,6 @@
    <navigation from-action="#{infringementAgreementHome.update}">
       <rule if-outcome="updated">
          <end-conversation/>
-         <end-conversation before-redirect="true"/>
          <redirect view-id="/coercive/infractions/InfringementAgreementList.xhtml"/>
       </rule>
    </navigation>

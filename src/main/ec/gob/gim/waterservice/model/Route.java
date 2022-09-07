@@ -38,7 +38,7 @@ import ec.gob.gim.cadaster.model.TerritorialDivision;
 		@NamedQuery(name = "Route.findByName", 
 		query = "SELECT route FROM Route route " +
 				"left join fetch route.routePeriods rp " +								
-				"WHERE lower(route.name) LIKE lower(concat(:routeName,'%')) ORDER BY route.name"),
+				"WHERE lower(route.name) LIKE lower(concat(:routeName,'%')) ORDER BY route.name")
 //		@NamedQuery(name = "Route.findPendingRouteByReadingMan", 
 //			query = "SELECT new ec.gob.gim.wsrest.dto.DtoRoute(r.id, r.name, rp.readingMan.id, c.month, c.year) "
 //					+ "FROM WaterSupply ws "

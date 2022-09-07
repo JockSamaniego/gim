@@ -47,10 +47,10 @@ import ec.gob.gim.security.model.User;
 		// Enlista todas las resoluciones de baja agrupadas
 		@NamedQuery(name = "StatusChange.findAllGrouped",
 //		query = "select NEW org.gob.gim.income.dto.BondDownStatus(sc.explanation, sum(sc.municipalBond.value+sc.municipalBond.taxesTotal-sc.municipalBond.discount)) " +
-				query = "select NEW org.gob.gim.income.dto.BondDownStatus(sc.explanation, sum(sc.municipalBond.value+sc.municipalBond.taxesTotal)) "
+				query = "select NEW org.gob.gim.income.dto.BondDownStatus(sc.explanation, sc.date, sum(sc.municipalBond.value+sc.municipalBond.taxesTotal)) "
 						+ "from StatusChange sc " + "where sc.municipalBondStatus.id=9 "
 						+ "and sc.date between :startDateFiscalPeriod and :endDateFiscalPeriod "
-						+ "group by sc.explanation " + "order by sc.explanation"),
+						+ "group by sc.explanation, sc.date " + "order by sc.explanation"),
 		@NamedQuery(name = "StatusChange.findAllGroupedByResolution",
 //		query = "select NEW org.gob.gim.income.dto.BondDownStatus(sc.explanation, sum(sc.municipalBond.value+sc.municipalBond.taxesTotal-sc.municipalBond.discount)) " +
 				query = "select NEW org.gob.gim.income.dto.BondDownStatus(sc.explanation, sum(sc.municipalBond.value+sc.municipalBond.taxesTotal)) "
@@ -60,9 +60,9 @@ import ec.gob.gim.security.model.User;
 						+ "group by sc.explanation " + "order by sc.explanation"),
 		@NamedQuery(name = "StatusChange.findAllGroupedByDates",
 //			query = "select NEW org.gob.gim.income.dto.BondDownStatus(sc.explanation, sum(sc.municipalBond.value+sc.municipalBond.taxesTotal-sc.municipalBond.discount)) " +
-				query = "select NEW org.gob.gim.income.dto.BondDownStatus(sc.explanation, sum(sc.municipalBond.value+sc.municipalBond.taxesTotal)) "
+				query = "select NEW org.gob.gim.income.dto.BondDownStatus(sc.explanation, sc.date, sum(sc.municipalBond.value+sc.municipalBond.taxesTotal)) "
 						+ "from StatusChange sc " + "where sc.municipalBondStatus.id=9 "
-						+ "and sc.date between :startDate and :endDate " + "group by sc.explanation "
+						+ "and sc.date between :startDate and :endDate " + "group by sc.explanation, sc.date "
 						+ "order by sc.explanation"),
 		@NamedQuery(name = "StatusChange.findByResolution", query = "select NEW org.gob.gim.income.dto.BondDownStatus(sc.explanation, sc.date, sum(sc.municipalBond.value+sc.municipalBond.taxesTotal)) "
 				+ "from StatusChange sc " + "where sc.municipalBondStatus.id=9 "
@@ -109,7 +109,10 @@ import ec.gob.gim.security.model.User;
 				+ "group by ac.accountCode, ac.accountName " + "order by ac.accountCode"),
 
 		@NamedQuery(name = "StatusChange.findLastChangeByMunicipalBond", query = "select sc from StatusChange sc "
-				+ "where sc.municipalBond = :municipalBond " + "order by sc.date+sc.time desc limit 1")
+				+ "where sc.municipalBond = :municipalBond " + "order by sc.date+sc.time desc limit 1"),
+
+		@NamedQuery(name = "StatusChange.findStatusChangeDownByResolution", query = "select sc from StatusChange sc "
+				+ "where sc.municipalBondStatus.id=9 and lower(sc.explanation) like lower(:resolution)")
 
 })
 

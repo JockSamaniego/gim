@@ -44,7 +44,7 @@ import org.hibernate.envers.Audited;
 			"order by t.polygonCode"),
 	@NamedQuery(name = "TerritorialPolygon.findAllActiveBySectorType", query = "select t from TerritorialPolygon t " +
 			"where t.active = true and t.sectorType = :sectorType " +
-			"order by t.polygonCode"),
+			"order by t.polygonCode")
 })
 public class TerritorialPolygon implements Serializable{
 

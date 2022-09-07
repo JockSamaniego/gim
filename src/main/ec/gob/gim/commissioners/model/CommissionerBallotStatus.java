@@ -29,7 +29,7 @@ import ec.gob.gim.common.model.Person;
 						@NamedQuery(name = "CommissionerBallotStatus.findResidentNameByIdent", query = "Select r.name from Resident r where r.identificationNumber = :identNum"),
 						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallot", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId ORDER BY st.id DESC "),
 						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallotInOrder", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId ORDER BY st.id, st.id ASC "),
-						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallotExceptId", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId and st.id !=:statusId ORDER BY st.id DESC "),
+						@NamedQuery(name = "CommissionerBallotStatus.findLastStatusForBallotExceptId", query = "SELECT st FROM CommissionerBallotStatus st where st.commissionerBallot.id =:commissionerBallotId and st.id !=:statusId ORDER BY st.id DESC ")
 					  })
 public class CommissionerBallotStatus implements Comparable<CommissionerBallotStatus>{
 	@Id

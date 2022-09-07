@@ -335,7 +335,7 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 				+ "left join fetch property.propertyType pt "
 				+ "left join fetch currentDomain.resident resident "
 				+ "where property.cadastralCode = :cadastralCode "
-				+ "and property.deleted = false"),
+				+ "and property.deleted = false")
 				
 })
 

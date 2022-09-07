@@ -15,8 +15,7 @@
 
    <navigation from-action="#{binnacleCRVHome.updateReArrival}">
       <rule if-outcome="updated">
-         <end-conversation/>
-         <end-conversation before-redirect="true"/>
+         <end-conversation />
          <redirect view-id="/binnaclecrv/BinnacleCRVList.xhtml"/>
       </rule>
    </navigation>

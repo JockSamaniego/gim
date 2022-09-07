@@ -30,7 +30,7 @@ import org.hibernate.envers.NotAudited;
 		@NamedQuery(name = "RetentionCode.findByType", query = "SELECT rc FROM RetentionCode rc "
 				+ "where (lower(rc.name) like :name  or lower(rc.formCode) like :name) and rc.typeRetention =:type  order by rc.code"), 
 				@NamedQuery(name = "RetentionCode.findByPercentage", query = "SELECT rc FROM RetentionCode rc "
-						+ "where  rc.percentage=:percentage and rc.typeRetention =:type order by rc.code"), })
+						+ "where  rc.percentage=:percentage and rc.typeRetention =:type order by rc.code") })
 public class RetentionCode {
 
 	@Id

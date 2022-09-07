@@ -997,7 +997,7 @@ import ec.gob.gim.revenue.model.impugnment.Impugnment;
 				+ "    JOIN mb.entry e "
 				+ "    JOIN mb.municipalBondStatus mbs "
 				+ "  WHERE "
-				+ "    mb.id IN (:ids)"),
+				+ "    mb.id IN (:ids)")
 })
 //
 public class MunicipalBond implements Serializable {

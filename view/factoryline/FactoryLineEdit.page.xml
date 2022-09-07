@@ -17,7 +17,6 @@
    <navigation from-action="#{factoryLineHome.persist}">
       <rule if-outcome="persisted">
          <end-conversation/>
-         <end-conversation before-redirect="true"/>
          <redirect view-id="/factoryline/FactoryLineList.xhtml"/>
       </rule>
    </navigation>
@@ -25,7 +24,6 @@
    <navigation from-action="#{factoryLineHome.update}">
       <rule if-outcome="updated">
          <end-conversation/>
-         <end-conversation before-redirect="true"/>
          <redirect view-id="/factoryline/FactoryLineList.xhtml"/>
       </rule>
    </navigation>
