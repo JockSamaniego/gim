@@ -20,7 +20,7 @@
 			style="font-size: 16px; font-weight:bold;">
 			<a:support event="onblur"
 				reRender="#{id}_handicapedPercentageField, #{id}_residentField, #{id}_nameField, #{id}_phoneField, #{id}_emailField, 
-				#{id}_addressField 
+				#{id}_addressField, #{id}_ageField
 					#{not empty reRender ? ',' : ''} #{not empty reRender ? reRender : ''}"
 				ajaxSingle="true" eventsQueue="gimQueue"
 				action="#{bean[searchAction]}" />
@@ -76,8 +76,16 @@
 
 	<s:decorate id="#{id}_emailField" template="../layout/edit.xhtml">
 		<ui:define name="label">#{messages['resident.email']}:</ui:define>
-		<h:inputText id="#{id}_phone" size="40" maxlength="10"
+		<h:inputText id="#{id}_email" size="50" maxlength="10"
 			value="#{resident.email}" readonly="true">
+		</h:inputText>
+	</s:decorate>
+	
+	<s:decorate id="#{id}_ageField" template="../layout/edit.xhtml">
+		<ui:define name="label">#{messages['resident.age']}:</ui:define>
+		<h:inputText id="#{id}_age" size="35" maxlength="10"
+			value="#{residentChooserHome.calculateAge(resident)} #{residentChooserHome.resultExist ? messages['resident.years'] : ''} #{residentChooserHome.resultExist ? residentChooserHome.ageMonths : ''} #{residentChooserHome.resultExist ? messages['resident.months'] : ''} #{residentChooserHome.resultExist ? residentChooserHome.ageDays : ''} #{residentChooserHome.resultExist ? messages['resident.days'] : ''} #{residentChooserHome.residentIsDead ? '(fallecido)' : ''}"  readonly="true"
+			style="color:#{residentChooserHome.fontColor}; font-size:16px; font-weight:bold" >
 		</h:inputText>
 	</s:decorate>
 
