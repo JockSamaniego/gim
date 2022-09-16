@@ -206,7 +206,6 @@
                 <include name="dom4j.jar"/>
                 <include name="hibernate.jar"/>
                 <include name="hibernate-*.jar"/>
-                <exclude name="hibernate-search.jar"/>
                 <include name="javassist.jar"/>
                 <include name="jboss-common-core.jar"/>
                 <include name="jta.jar"/>

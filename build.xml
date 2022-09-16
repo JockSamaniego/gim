@@ -24,12 +24,12 @@
     <property name="test.dir" value="test-build"/>
     <property name="bootstrap.dir" value="${basedir}/bootstrap"/>
     <property name="jboss.domain" value="default"/>
-    <property name="deploy.dir" value="${jboss.home}/server/${jboss.domain}/deploy"/>
+    <property name="deploy.dir" value="${jboss.home}/standalone/deployments"/>
     <property name="ear.deploy.dir" value="${deploy.dir}/${project.name}.ear"/>
     <property name="jar.deploy.dir" value="${ear.deploy.dir}/${project.name}.jar"/>
     <property name="war.deploy.dir" value="${ear.deploy.dir}/${project.name}.war"/>
     <property name="packaged.archive" value="${dist.dir}/${project.name}.ear"/>
-    <property name="testng.jar" value="${basedir}/lib/testng-jdk15.jar"/>
+    <!-- <property name="testng.jar" value="${basedir}/lib/testng-jdk15.jar"/> -->
     <property name="javac.debug" value="true"/>
     <property name="javac.deprecation" value="false"/>
     <property name="debug" value="false"/>
@@ -38,7 +38,7 @@
     <property name="validate.resources.dir" value="${basedir}/exploded-archives"/>
     <property name="schema.dir" value="${basedir}/exploded-archives/schemas"/>
     <property name="src.schema.dir" value="${schema.dir}/org/jboss/seam"/>
-    <property name="schema.version" value="2.2"/>
+    <property name="schema.version" value="2.3"/>
 
     <fileset id="lib" dir="${lib.dir}">
         <include name="*.jar"/>
@@ -64,7 +64,7 @@
             <istrue value="${debug}"/>
         </condition>
         <property name="transactionManagerLookupClass" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
-        <property name="ejbJndiPattern" value="${project.name}/#{ejbName}/local"/>
+        <property name="ejbJndiPattern" value="java:app/${project.name}/#{ejbName}"/>
         <property name="seamBootstrapsPu" value="false"/>
         <property name="seamEmfRef" value="#{null}"/>
         <condition property="puJndiName" value="java:comp/env/${project.name}/pu" else="java:/${project.name}EntityManagerFactory">
@@ -269,6 +269,7 @@
             <fileset dir="${basedir}/resources/META-INF">
                 <include name="application.xml"/>
                 <include name="jboss-app.xml"/>
+                <include name="jboss-deployment-structure.xml"/>
             </fileset>
         </copy>
     </target>
@@ -321,9 +322,11 @@
         <copy todir="${war.deploy.dir}">
             <fileset dir="${war.dir}"/>
         </copy>
+        <touch file="${deploy.dir}/${project.name}.ear.dodeploy"/>
     </target>
 
     <target name="unexplode" description="Undeploy the exploded archive">
+        <delete file="${deploy.dir}/${project.name}.ear.deployed"/>
         <delete failonerror="no">
             <fileset dir="${ear.deploy.dir}">
                 <exclude name="**/*.jar"/>
@@ -345,7 +348,8 @@
 
     <target name="restart-exploded" unless="archive.deployed" description="Deploy exploded archive if not deployed as packaged archive">
         <antcall target="explode"/>
-        <touch file="${ear.deploy.dir}/META-INF/application.xml"/>
+        <!-- <touch file="${ear.deploy.dir}/META-INF/application.xml"/> -->
+        <touch file="${deploy.dir}/${project.name}.ear.dodeploy"/>
     </target>
 
     <target name="restart-deployed" if="archive.deployed" description="Deploy packaged archive if deployed as packaged archive">
@@ -443,36 +447,49 @@
                 <include name="**/*Test.xml"/>
             </fileset>
         </copy>
+        <copy tofile="${test.dir}/components.properties"
+            file="${basedir}/resources/components-test.properties"/>	
     </target>
 
     <target name="test" depends="buildtest" description="Run the tests">
-        <fail message="Cannot run tests because path to project contains spaces.">
-            <condition>
-                <contains string="${basedir}" substring=" "/>
-            </condition>
-        </fail>
-        <condition property="incompatible.jdk" value="true">
+		<fail message="Test target is currently not supported"/>
+		<fail message="Cannot run tests because path to project contains spaces.">
+			<condition>
+				<contains string="${basedir}" substring=" "/>
+			</condition>
+		</fail>
+		<!--      <condition property="incompatible.jdk" value="true">
             <and>
                 <equals arg1="${ant.java.version}" arg2="1.6"/>
                 <not><available classname="javax.xml.bind.JAXB"/></not>
             </and>
-        </condition>
+        </condition> 
         <fail if="incompatible.jdk">You are using an incompatible JDK 6. Please use Sun JDK 6 Update 4 (1.6.0_04) or newer or use Open JDK 6.</fail>
-        <taskdef resource="testngtasks" classpath="${testng.jar}"/>
-        <path id="test.path">
-            <path path="${test.dir}"/>
-            <fileset dir="${lib.dir}/test">
-                <include name="*.jar"/>
-            </fileset>
-            <path path="${bootstrap.dir}"/>
-            <path refid="build.classpath"/>
-        </path>
-        <testng outputdir="${basedir}/test-report">
-            <jvmarg line="-Dsun.lang.ClassLoader.allowArraySyntax=true"/>
-            <classpath refid="test.path"/>
-            <xmlfileset dir="${test.dir}" includes="*Test.xml"/>
-        </testng>
-    </target>
+        -->
+		<!--<taskdef resource="testngtasks" classpath="${testng.jar}"/>-->
+		<path id="test.path">
+			<path path="${test.dir}"/>
+			<fileset dir="${lib.dir}/test">
+				<include name="*.jar"/>
+			</fileset>
+			<path refid="build.classpath"/>
+		</path>
+		<junit printsummary="yes">
+			<!--outputdir="${basedir}/test-report">-->
+			<!--<jvmarg line="-Dsun.lang.ClassLoader.allowArraySyntax=true"/>-->
+			<classpath refid="test.path"/>
+			<batchtest todir="${basedir}/test-report">
+				<fileset dir="${test.dir}">
+					<include name="**/*Test.class"/>
+				</fileset>
+		   </batchtest>
+		</junit>
+		<junitreport todir="${basedir}/test-report">
+			<fileset dir="${basedir}/test-report"/>
+			<report todir="${basedir}/test-report"/>
+		</junitreport>
+	</target>
+
 
     <target name="javadoc" depends="compile">
         <mkdir dir="${dist.dir}/apidoc"/>
@@ -501,11 +518,11 @@
     </target>
 
     <target name="purge" depends="undeploy" description="Clean out JBoss AS temporary deployment files">
-        <delete dir="${jboss.home}/server/default/tmp/deploy"/>
-        <mkdir dir="${jboss.home}/server/default/tmp/deploy/"/>
-        <delete dir="${jboss.home}/server/default/tmp/sessions"/>
-        <mkdir dir="${jboss.home}/server/default/tmp/sessions"/>
-        <delete dir="${jboss.home}/server/default/work/jboss.web/localhost/${project.name}"/>
+        <delete dir="${deploy.dir}/${project.name}.ear.undeployed"/>
+    	<delete dir="${deploy.dir}/${project.name}.ear.failed"/>
+        <delete dir="${deploy.dir}/${project.name}-ds.xml.undeployed"/>
+    	<delete dir="${deploy.dir}/${project.name}-ds.xml.failed"/>
+    	<delete dir="${deploy.dir}/${project.name}.ear"/>
     </target>
 
 </project>

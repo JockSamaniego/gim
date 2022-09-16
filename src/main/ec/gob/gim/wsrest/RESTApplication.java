@@ -13,12 +13,11 @@ import org.gob.loja.gim.wsrest.income.preemission.PreemissionWS;
 import org.gob.loja.gim.wsrest.queries.QueriesWS;
 
 
-
 /**
  * @author Rene
  *
  */
-public class RESTApplication extends javax.ws.rs.core.Application{
+public class RESTApplication extends javax.ws.rs.core.Application {
 	
 	private Set<Object> singletons = new HashSet<Object>();
 	

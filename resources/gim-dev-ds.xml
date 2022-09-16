@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE datasources
-    PUBLIC "-//JBoss//DTD JBOSS JCA Config 1.5//EN"
-    "http://www.jboss.org/j2ee/dtd/jboss-ds_1_5.dtd">
-<datasources>
-	<local-tx-datasource>
-		<jndi-name>gimDatasource</jndi-name>
-		<use-java-context>false</use-java-context>
-		<connection-url>jdbc:postgresql://localhost:5432/diario_20220701_0005</connection-url>
-		<!--connection-url>jdbc:postgresql://192.168.1.17:5432/gim_20220520</connection-url-->
-		<driver-class>org.postgresql.Driver</driver-class>
-		<user-name>rolgimloja</user-name>
-      	<password>server</password>
-	</local-tx-datasource>
+<datasources xmlns="http://www.jboss.org/ironjacamar/schema">
+	<datasource 
+        jndi-name="java:jboss/datasources/gimDatasource"
+        enabled="true" 
+        use-java-context="true" 
+        pool-name="gimDatasource_pool">
+        <connection-url>jdbc:postgresql://192.168.1.17:5432/gim_20220316_0005</connection-url>
+        <driver>postgresql</driver>
+        <security>
+		    <user-name>rolgimloja</user-name>
+      		<password>servergim:AJOL</password>
+        </security>
+    </datasource>
 </datasources>

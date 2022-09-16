@@ -19,3 +19,5 @@ richfaces-ui.jar
 
 resteasy-jaxrs.jar
 jboss-seam-resteasy.jar
+gwt-servlet.jar
+gwt-user.jar

@@ -30,7 +30,7 @@ public class WorkDayWs {
     @Resource
     WebServiceContext wsContext;
 
-    @EJB
+    //@EJB
 //    private WorkDay service;
 
     /**

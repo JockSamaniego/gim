@@ -17,10 +17,13 @@ public class ServiceLocator {
 
     private ServiceLocator(){
         try {
+        	//SeCoContai .newInstance().initialize()
             Properties p = System.getProperties();
             //System.out.println("POLICY ADDED");
             this.initialContext = new InitialContext(p);
             this.cache = Collections.synchronizedMap(new HashMap<String, Object>());
+            System.out.println("--------------------------------------***********************-------------------------------------");
+            System.out.println(this.cache);
         } catch (NamingException ex) {
             System.err.printf("ERROR IN CONTEXT LOOKING UP %s because of %s while %s",
                     ex.getRemainingName(), ex.getCause(), ex.getExplanation());

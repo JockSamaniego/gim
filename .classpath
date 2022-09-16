@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/hot"/>
-	<classpathentry kind="src" path="src/main"/>
+	<classpathentry kind="src" output="classes/hot" path="src/hot"/>
+	<classpathentry kind="src" output="classes/main" path="src/main"/>
 	<classpathentry kind="lib" path="lib/antlr-3.3.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-runtime-3.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
@@ -13,12 +13,10 @@
 	<classpathentry kind="lib" path="lib/drools-templates-5.5.0.Final.jar"/>
 	<classpathentry kind="lib" path="lib/ejb-api.jar"/>
 	<classpathentry kind="lib" path="lib/el-api.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate-annotations.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-commons-annotations.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-core.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-entitymanager.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate-envers-3.6.9.Final.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate-search.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-envers-4.1.4.Final.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-validator.jar"/>
 	<classpathentry kind="lib" path="lib/InvoiceClient.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-asl-1.9.11.jar"/>
@@ -38,6 +36,7 @@
 	<classpathentry kind="lib" path="lib/jboss-seam-ui.jar"/>
 	<classpathentry kind="lib" path="lib/jboss-seam.jar"/>
 	<classpathentry kind="lib" path="lib/jbpm-jpdl.jar"/>
+	<classpathentry kind="lib" path="lib/jettison.jar"/>
 	<classpathentry kind="lib" path="lib/jgroups.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time.jar"/>
 	<classpathentry kind="lib" path="lib/jsf-api.jar"/>
@@ -66,9 +65,9 @@
 	<classpathentry kind="lib" path="lib/resteasy-jaxb-provider.jar"/>
 	<classpathentry kind="lib" path="lib/resteasy-jaxrs.jar"/>
 	<classpathentry kind="lib" path="lib/resteasy-jettison-provider.jar"/>
-	<classpathentry kind="lib" path="lib/richfaces-api.jar"/>
-	<classpathentry kind="lib" path="lib/richfaces-impl.jar"/>
-	<classpathentry kind="lib" path="lib/richfaces-ui.jar"/>
+	<classpathentry kind="lib" path="lib/richfaces-api-3.3.4.Final.jar"/>
+	<classpathentry kind="lib" path="lib/richfaces-impl-jsf2-3.3.4.Final.jar"/>
+	<classpathentry kind="lib" path="lib/richfaces-ui-3.3.4.Final.jar"/>
 	<classpathentry kind="lib" path="lib/saaj-api.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
@@ -81,7 +80,11 @@
 	<classpathentry kind="lib" path="lib/axis2-kernel-1.6.4.jar"/>
 	<classpathentry kind="lib" path="lib/axis-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-discovery-0.5.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_80">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/dinardap-cliente-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/postgres.jar"/>
 	<classpathentry kind="output" path="test-build"/>

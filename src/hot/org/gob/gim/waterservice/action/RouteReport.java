@@ -17,7 +17,7 @@ import javax.persistence.Query;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
-import org.hibernate.validator.InvalidValue;
+// import org.hibernate.validator.InvalidValue;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.faces.FacesMessages;
@@ -437,8 +437,8 @@ public class RouteReport extends EntityHome<Route> {
 			municipalBondsNotPayed = q.getResultList();
 		}else{
 			String message = "Ingrese el número de servicio";
-			InvalidValue iv = new InvalidValue(message, MunicipalBond.class, "code", null, this);
-			facesMessages.addToControl("legalEntityCode", iv);	
+			//InvalidValue iv = new InvalidValue(message, MunicipalBond.class, "code", null, this);
+			//facesMessages.addToControl("legalEntityCode", iv);	
 		}
 	}
 

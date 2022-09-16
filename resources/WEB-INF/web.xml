@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 	<!-- Facelets development mode (disable in production) -->
 	<context-param>
 		<param-name>facelets.DEVELOPMENT</param-name>
@@ -69,6 +69,11 @@
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>glassX</param-value>
+	</context-param>
+	
+	<context-param>
+	     <param-name>javax.faces.DISABLE_FACELET_JSF_VIEWHANDLER</param-name>
+	     <param-value>true</param-value>
 	</context-param>
 	<filter>
 		<filter-name>Seam Filter</filter-name>
@@ -176,11 +181,11 @@
 		<ejb-ref-type>Session</ejb-ref-type> <local-home/> <local>org.loxageek.gim.action.Authenticator</local> 
 		</ejb-local-ref> Add entries for each EJB session bean which is also a Seam 
 		component (not required on JBoss AS) -->
-	<persistence-unit-ref>
+	<!-- <persistence-unit-ref>
 		<persistence-unit-ref-name>gim/pu</persistence-unit-ref-name>
-		<persistence-unit-name>../gim.jar#gim</persistence-unit-name>
+		<persistence-unit-name>../gim.jar#gim</persistence-unit-name> -->
 		<!-- The relative reference doesn't work on GlassFish. Instead, set the 
 			<persistence-unit-name> to "gim", package persistence.xml in the WAR, and 
 			add a <jar-file> element in persistence.xml with value "../../gim.jar". <persistence-unit-name>gim</persistence-unit-name> -->
-	</persistence-unit-ref>
+	<!-- </persistence-unit-ref> -->
 </web-app>

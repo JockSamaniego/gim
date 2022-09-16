@@ -66,7 +66,6 @@
             <value>commons-discovery.jar</value>
             <value>jboss-annotations-ejb3.jar</value>
             <value>jaxen-1.1-beta-4.jar</value>
-            <value>hibernate-annotations.jar</value>
             <value>commons-httpclient.jar</value>
             <value>commons-logging.jar</value>
             <value>commons-vfs.jar</value>

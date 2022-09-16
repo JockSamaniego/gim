@@ -24,7 +24,11 @@ import org.gob.gim.common.dto.HistoryChangeResident;
 import org.gob.gim.common.dto.UserWS;
 import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
-import org.hibernate.validator.InvalidValue;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+//import org.hibernate.validator.InvalidValue;
+import javax.validation.constraints.*;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -195,8 +199,9 @@ public class ResidentHome extends EntityHome<Resident> {
                 //System.out.println("LEADING YOU A CHOICE: code " + code);
                 if (code == null || code.isEmpty()) {
                     String message = ResourceBundle.instance().getString("InvalidPublicEntityCodeException");
-                    InvalidValue iv = new InvalidValue(message, LegalEntityType.class, "code", null, legalEntity);
-                    facesMessages.addToControl("legalEntityCode", iv);
+                    //ConstraintViolation constraintViolation = (ConstraintViolation) new ConstraintViolationException(null);
+                    //InvalidValue iv = new InvalidValue(message, LegalEntityType.class, "code", null, legalEntity);
+                    //facesMessages.addToControl("legalEntityCode", iv);
                     return false;
                 }
             }

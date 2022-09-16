@@ -88,15 +88,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/hibernate-annotations.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/hibernate-commons-annotations.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -245,7 +236,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/drools-api.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/knowledge-api.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -371,7 +362,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/hibernate-search.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/richfaces-api-3.3.4.Final.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -380,16 +371,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/richfaces-api.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/postgres.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/postgresql.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
