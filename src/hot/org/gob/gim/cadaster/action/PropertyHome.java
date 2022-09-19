@@ -60,6 +60,7 @@ import ec.gob.gim.cadaster.model.Location;
 import ec.gob.gim.cadaster.model.LotPosition;
 import ec.gob.gim.cadaster.model.Neighborhood;
 import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.PropertyEquipments;
 import ec.gob.gim.cadaster.model.PropertyLandUse;
 import ec.gob.gim.cadaster.model.PropertyType;
 import ec.gob.gim.cadaster.model.StreetMaterial;
@@ -1228,6 +1229,22 @@ public class PropertyHome extends EntityHome<Property> {
 		}
 
 	}
+	
+	
+	private void createPropertyEquipments(List<PropertyEquipments> list,
+			Property property) {
+		if (list == null || list.size() == 0)
+			return;
+
+		for (PropertyEquipments pe : list) {
+			PropertyEquipments peq = new PropertyEquipments();
+			peq.setEnabled(pe.getEnabled());
+			peq.setEquipments(pe.getEquipments());
+			peq.setAmount(pe.getAmount());
+			property.add(peq);
+		}
+
+	}
 
 	/**
 	 * Crea y agrega Boundary a Domain
@@ -1305,6 +1322,7 @@ public class PropertyHome extends EntityHome<Property> {
 		p.setHousingUnitNumber(this.getInstance().getHousingUnitNumber());
 		p.setLocation(createLocation(this.getInstance().getLocation()));
 		createPropertyLandUse(this.getInstance().getPropertyLandUses(), p);
+		createPropertyEquipments(this.getInstance().getPropertyEquipments(), p);
 		createBuildingCopy(this.getInstance().getBuildings(), p);
 		p.setLotPosition(this.getInstance().getLotPosition());
 		p.setLotTopography(this.getInstance().getLotTopography());
@@ -1561,6 +1579,11 @@ public class PropertyHome extends EntityHome<Property> {
 	public List<PropertyLandUse> getPropertyLandUses() {
 		return getInstance() == null ? null : new ArrayList<PropertyLandUse>(
 				getInstance().getPropertyLandUses());
+	}
+	
+	public List<PropertyEquipments> getPropertyEquipments() {
+		return getInstance() == null ? null : new ArrayList<PropertyEquipments>(
+				getInstance().getPropertyEquipments());
 	}
 
 	public List<WaterSupply> getWaterSupplies() {
@@ -1890,6 +1913,12 @@ public class PropertyHome extends EntityHome<Property> {
 		//logger.info("======= INGRESO A AGREGAR PropertyLandUse", this);
 		getInstance().add(new PropertyLandUse());
 	}
+	
+	public void addPropertyEquipment() {
+		PropertyEquipments pe = new PropertyEquipments();
+		pe.setEnabled(Boolean.TRUE);
+		getInstance().add(pe);
+	}
 
 	/**
 	 * Calcula el avalúo comercial
@@ -1908,6 +1937,10 @@ public class PropertyHome extends EntityHome<Property> {
 
 	public void remove(PropertyLandUse propertyLandUse) {
 		this.getInstance().remove(propertyLandUse);
+	}
+	
+	public void remove(PropertyEquipments propertyEquipments) {
+		this.getInstance().remove(propertyEquipments);
 	}
 
 	public void addBoundary() {

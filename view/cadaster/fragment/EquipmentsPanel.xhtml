@@ -1,0 +1,98 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel>
+		<f:facet name="header">
+			<h:panelGrid columns="2" columnClasses="headerTitle,">
+				<h:outputText
+					value="#{messages['propertyEquipments']} (#{empty propertyHome.propertyEquipments ? 0 : propertyHome.propertyEquipments.size})" />
+				<s:div styleClass="actionButtons" rendered="#{empty from}">					
+					<a:commandButton value="#{messages['common.add']}"
+						action="#{propertyHome.addPropertyEquipment()}"
+						reRender="propertyEquipmentList" ajaxSingle="true" immediate="true">
+					</a:commandButton>
+				</s:div>
+			</h:panelGrid>
+		</f:facet>
+		
+		<a:region>
+		<a:outputPanel styleClass="results" id="propertyEquipmentList">
+			<h:outputText value="#{messages['property.noPropertyEquipments']}"
+				rendered="#{empty propertyHome.propertyEquipments}" />
+			
+			
+
+			<rich:dataTable id="propertyEquipmentsTable" var="_propertyEquipment"
+				value="#{propertyHome.propertyEquipments}"
+				rowClasses="rvgRowOne,rvgRowTwo"
+				rendered="#{not empty propertyHome.propertyEquipments}">
+				<rich:column sortBy="#{_propertyEquipment.equipments.name}"
+					styleClass="action">					
+					<f:facet name="header">
+						<h:outputText value="#{messages['equipmentsType']}" />
+					</f:facet>
+					<h:selectOneMenu value="#{_propertyEquipment.equipments}"
+						required="true">
+						<s:selectItems value="#{equipments}" var="_equipment" 
+							label="#{_equipment.name}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+						<a:support event="onchange" ajaxSingle="true" reRender="unitColumn"/>
+					</h:selectOneMenu>
+
+				</rich:column>
+				<rich:column styleClass="action" style="align:center;">
+					<f:facet name="header">
+						<h:outputText
+							value="#{messages['equipments.enable']}" />
+					</f:facet>
+					<h:selectBooleanCheckbox
+						value="#{_propertyEquipment.enabled}">
+						<a:support event="onchange" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>
+				</rich:column>
+				<rich:column id="unitColumn" styleClass="action" style="align:center;">
+						<f:facet name="header">
+							<h:outputText value="#{messages['equipments.measurementUnit']}" />
+						</f:facet>
+						<h:inputText value="#{_propertyEquipment.equipments.unit}" required="true"
+							size="5" maxlength="5" readonly="true">
+							<a:support event="onblur" ajaxSingle="true"/>
+						</h:inputText>					
+				</rich:column>
+				<rich:column sortBy="#{_propertyEquipment.amount}" styleClass="action">
+						<f:facet name="header">
+							<h:outputText value="#{messages['equipments.amount']}" />
+						</f:facet>
+						<h:inputText value="#{_propertyEquipment.amount}" required="true"
+							size="5" maxlength="5">
+							<a:support event="onblur" ajaxSingle="true"/>
+						</h:inputText>					
+				</rich:column>
+				<rich:column styleClass="action">
+					<f:facet name="header">#{messages['common.action']}</f:facet>
+					<a:commandButton action="#{propertyHome.remove(_propertyEquipment)}"
+						id="removePropertyEquipment" value="#{messages['common.remove']}"
+						immediate="true" reRender="propertyEquipmentList" ajaxSingle="true">
+					</a:commandButton>
+				</rich:column>
+
+			</rich:dataTable>
+
+		</a:outputPanel>
+		</a:region>
+		<div style="clear: both">
+			<span class="required">*</span> #{messages['common.requiredFields']}
+		</div>
+
+	</rich:panel>
+</ui:composition>

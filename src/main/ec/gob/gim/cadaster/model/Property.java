@@ -57,6 +57,7 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 				+ "left join fetch bl.streetMaterial streetMaterial "
 				+ "left join fetch bl.streetType streetType "
 				+ "left join fetch property.lotPosition lp "
+				+ "left join fetch property.lotOccupancy lo "
 				+ "left join fetch property.fenceMaterial fm "
 				+ "left join fetch property.block block "
 				+ "left join fetch block.sector sector "
@@ -91,6 +92,7 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 				+ "left join fetch bl.streetMaterial streetMaterial "
 				+ "left join fetch bl.streetType streetType "
 				+ "left join fetch property.lotPosition lp "
+				+ "left join fetch property.lotOccupancy lo "
 				+ "left join fetch property.fenceMaterial fm "
 				+ "left join fetch property.block block "
 				+ "left join fetch block.sector sector "
@@ -118,6 +120,7 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 				+ "left join fetch bl.streetMaterial streetMaterial "
 				+ "left join fetch bl.streetType streetType "
 				+ "left join fetch property.lotPosition lp "
+				+ "left join fetch property.lotOccupancy lo "
 				+ "left join fetch property.fenceMaterial fm "
 				+ "left join fetch property.block block "
 				+ "left join fetch block.sector sector "
@@ -144,6 +147,7 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 				+ "left join fetch bl.streetMaterial streetMaterial "
 				+ "left join fetch bl.streetType streetType "
 				+ "left join fetch property.lotPosition lp "
+				+ "left join fetch property.lotOccupancy lo "
 				+ "left join fetch property.fenceMaterial fm "
 				+ "left join fetch property.block block "
 				+ "left join fetch block.sector sector "
@@ -169,6 +173,7 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 				+ "left join fetch bl.streetMaterial streetMaterial "
 				+ "left join fetch bl.streetType streetType "
 				+ "left join fetch property.lotPosition lp "
+				+ "left join fetch property.lotOccupancy lo "
 				+ "left join fetch property.fenceMaterial fm "
 				+ "left join fetch property.block block "
 				+ "left join fetch block.sector sector "
@@ -246,6 +251,7 @@ import ec.gob.gim.waterservice.model.WaterSupply;
 				+ "left join fetch bl.streetMaterial streetMaterial "
 				+ "left join fetch bl.streetType streetType "
 				+ "left join fetch property.lotPosition lp "
+				+ "left join fetch property.lotOccupancy lo "
 				+ "left join fetch property.fenceMaterial fm "
 				+ "left join fetch property.block block "
 				+ "left join fetch block.sector sector "
@@ -453,6 +459,10 @@ public class Property {
 	@ManyToOne
 	@JoinColumn(name = "lotPosition_id")
 	private LotPosition lotPosition;
+	
+	@ManyToOne
+	@JoinColumn(name = "lotOccupancy_id")
+	private LotOccupancy lotOccupancy;
 
 	@ManyToOne
 	@JoinColumn(name = "fenceMaterial_id")
@@ -475,6 +485,10 @@ public class Property {
 	@OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<PropertyLandUse> propertyLandUses;
+	
+	@OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private List<PropertyEquipments> propertyEquipments;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "property")
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
@@ -545,6 +559,7 @@ public class Property {
 
 	public Property() {
 		this.propertyLandUses = new ArrayList<PropertyLandUse>();
+		this.propertyEquipments = new ArrayList<PropertyEquipments>();
 		this.checkingRecords = new ArrayList<CheckingRecord>();
 		this.waterSupplies = new ArrayList<WaterSupply>();
 		this.domains = new ArrayList<Domain>();
@@ -876,6 +891,14 @@ public class Property {
 		this.lotPosition = lotPosition;
 	}
 
+	public LotOccupancy getLotOccupancy() {
+		return lotOccupancy;
+	}
+
+	public void setLotOccupancy(LotOccupancy lotOccupancy) {
+		this.lotOccupancy = lotOccupancy;
+	}
+
 	public List<CheckingRecord> getCheckingRecords() {
 		return checkingRecords;
 	}
@@ -1016,6 +1039,15 @@ public class Property {
 	public void setPropertyLandUses(List<PropertyLandUse> propertyLandUses) {
 		this.propertyLandUses = propertyLandUses;
 	}
+	
+
+	public List<PropertyEquipments> getPropertyEquipments() {
+		return propertyEquipments;
+	}
+
+	public void setPropertyEquipments(List<PropertyEquipments> propertyEquipments) {
+		this.propertyEquipments = propertyEquipments;
+	}
 
 	/**
 	 * @return the buildingNumber
@@ -1088,6 +1120,19 @@ public class Property {
 		boolean removed = this.propertyLandUses.remove(propertyLandUse);
 		if (removed)
 			propertyLandUse.setProperty((Property) null);
+	}
+	
+	public void add(PropertyEquipments propertyEquipments) {
+		if (!this.propertyEquipments.contains(propertyEquipments)) {
+			this.propertyEquipments.add(propertyEquipments);
+			propertyEquipments.setProperty(this);
+		}
+	}
+
+	public void remove(PropertyEquipments propertyEquipments) {
+		boolean removed = this.propertyEquipments.remove(propertyEquipments);
+		if (removed)
+			propertyEquipments.setProperty((Property) null);
 	}
 
 	public void add(CheckingRecord checkingRecord) {

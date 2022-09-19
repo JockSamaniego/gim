@@ -352,6 +352,21 @@
 						<s:convertEntity />
 					</h:selectOneMenu>
 				</s:decorate>
+				
+				<h:outputText styleClass="separatorTitle"
+					value="#{messages['cadaster.lotOccupancy']}" />
+				<rich:separator lineType="solid" height="2px" />
+
+				<s:decorate id="lotOccupancyField" template="../../layout/edit.xhtml">
+					<ui:define name="label">#{messages['lotOccupancy']}:</ui:define>
+					<h:selectOneMenu value="#{propertyHome.instance.lotOccupancy}"
+						id="lotOccupancy" required="true">
+						<s:selectItems value="#{lotOccupancys}" var="_lotOccupancy"
+							label="#{_lotOccupancy.id} - #{_lotOccupancy.name}"
+							noSelectionLabel="#{messages['common.oneSelected']}" />
+						<s:convertEntity />
+					</h:selectOneMenu>
+				</s:decorate>
 
 			</h:panelGrid>
 		</rich:panel>

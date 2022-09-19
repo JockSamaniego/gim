@@ -7,6 +7,7 @@ package ec.gob.gim.cadaster.model;
  * @created 04-Ago-2011 16:30:34
  */
 public enum ExternalFinishing {
+	DOESNT_HAVE,
 	BAD,
 	REGULAR,
 	GOOD,

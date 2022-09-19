@@ -31,11 +31,13 @@ import ec.gob.gim.binnaclecrv.model.SkyBinnacleCRV;
 import ec.gob.gim.cadaster.model.AffectationFactor;
 import ec.gob.gim.cadaster.model.CompassPoint;
 import ec.gob.gim.cadaster.model.DispatchReasonType;
+import ec.gob.gim.cadaster.model.Equipments;
 import ec.gob.gim.cadaster.model.ExternalFinishing;
 import ec.gob.gim.cadaster.model.FenceMaterial;
 import ec.gob.gim.cadaster.model.GarbageCollection;
 import ec.gob.gim.cadaster.model.LandUse;
 import ec.gob.gim.cadaster.model.LineType;
+import ec.gob.gim.cadaster.model.LotOccupancy;
 import ec.gob.gim.cadaster.model.LotPosition;
 import ec.gob.gim.cadaster.model.LotTopography;
 import ec.gob.gim.cadaster.model.MortgageType;
@@ -352,6 +354,14 @@ public class FactoryController  extends EntityController{
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Factory("equipments")
+	public List<Equipments> getEquipmentsList() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"Equipments.findAll");
+		return (List<Equipments>) query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
 	@Factory("roles")
 	public List<Role> getRoles() {
 		Query query = this.getEntityManager().createNamedQuery(
@@ -373,6 +383,14 @@ public class FactoryController  extends EntityController{
 		Query query = this.getEntityManager().createNamedQuery(
 				"LotPosition.findAllOrderById");
 		return (List<LotPosition>) query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Factory("lotOccupancys")
+	public List<LotOccupancy> loadLotOccupancys() {
+		Query query = this.getEntityManager().createNamedQuery(
+				"LotOccupancy.findAllOrderById");
+		return (List<LotOccupancy>) query.getResultList();
 	}
 
 	@Factory("sewerages")

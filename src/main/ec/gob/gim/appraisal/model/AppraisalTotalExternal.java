@@ -44,6 +44,8 @@ public class AppraisalTotalExternal {
 	private Long id;
 	private BigDecimal total;
 	
+	private BigDecimal coefficient;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(length=15)
 	private ExternalFinishing externalFinishing;
@@ -100,6 +102,14 @@ public class AppraisalTotalExternal {
 
 	public void setAppraisalPeriod(AppraisalPeriod appraisalPeriod) {
 		this.appraisalPeriod = appraisalPeriod;
+	}
+
+	public BigDecimal getCoefficient() {
+		return coefficient;
+	}
+
+	public void setCoefficient(BigDecimal coefficient) {
+		this.coefficient = coefficient;
 	}
 
 	public void add(AppraisalItemExternal appraisalItemExternal){

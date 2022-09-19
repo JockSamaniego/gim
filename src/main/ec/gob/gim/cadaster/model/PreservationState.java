@@ -7,7 +7,9 @@ package ec.gob.gim.cadaster.model;
  * @created 04-Ago-2011 16:30:40
  */
 public enum PreservationState {
+	OUTDATED,
 	BAD,
 	REGULAR,
-	GOOD
+	GOOD,
+	VERY_GOOD
 }
