@@ -1,5 +1,7 @@
 package ec.gob.gim.cadaster.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,7 +34,7 @@ import org.hibernate.envers.Audited;
 
 	private Boolean enabled;
 
-	private Integer amount;
+	private BigDecimal amount;
 	
 	@ManyToOne
 	@JoinColumn(name="equipment_id")
@@ -69,11 +71,11 @@ import org.hibernate.envers.Audited;
 		this.enabled = enabled;
 	}
 
-	public Integer getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(Integer amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 
