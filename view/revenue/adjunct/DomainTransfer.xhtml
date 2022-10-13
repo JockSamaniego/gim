@@ -9,7 +9,7 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 	<a:outputPanel id="domainTransferPanel">
-			
+		
 		<h:panelGrid columns="2">
 			<h:selectBooleanCheckbox id="emitWithoutReport"
 				value="#{adjunctHome.instance.emitWithoutReport}">
@@ -238,6 +238,40 @@
 					<h:inputText id="notaryNumber" styleClass="right"
 						value="#{adjunctHome.instance.notaryNumber}" size="5"
 						disabled="#{!adjunctHome.instance.emitWithoutReport}" />
+				</s:decorate>
+			</h:panelGrid>
+
+			<h:panelGrid columns="4" id="seniorDiscountPanel">
+				<h:selectBooleanCheckbox id="seniorDiscountEnabled"
+					value="#{adjunctHome.instance.seniorDiscountEnabled}"
+					disabled="#{!municipalBondHome.instance.resident.isElderly()}">
+					<a:support event="onchange" ajaxSingle="true"
+						action="#{adjunctAction.resetSeniorValues}"
+						reRender="seniorDiscountPanel" />
+				</h:selectBooleanCheckbox>
+				<h:outputLabel
+					value="Descuento Tercera Edad" />
+	
+				<s:decorate id="seniorDiscountPercentageField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">Porcentaje</ui:define>
+					<rich:inputNumberSpinner id="transactionValue" minValue="0"
+						inputSize="3" maxValue="100" value="#{adjunctHome.instance.seniorDiscountPercentage}"
+						disabled="#{adjunctHome.instance.seniorDiscountEnabled}">
+					<a:support event="onchange" ajaxSingle="true"
+						action="#{adjunctAction.changeTaxableBase}"
+						reRender="seniorDiscountPanel" />
+					</rich:inputNumberSpinner>
+				</s:decorate>
+				
+
+				<s:decorate id="seniorDiscountValueField"
+					template="../../layout/vertical-edit.xhtml">
+					<ui:define name="label">Descuento Base Imponible</ui:define>
+					<h:inputText id="improvementsContribution" styleClass="right"
+						value="#{adjunctHome.instance.seniorDiscountValue}" size="10"
+						disabled="true" >
+					</h:inputText>
 				</s:decorate>
 			</h:panelGrid>
 

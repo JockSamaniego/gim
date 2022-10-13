@@ -214,17 +214,21 @@ public class ResidentChooserHome extends EntityController{
 			    
 			    if(years >= 65 && !person.getIsDead()){
 			    	fontColor = "red";
+			    	resident.setElderly(true);
 			    } else if(person.getIsDead()){
 			    	fontColor = "black";
 			    	residentIsDead = Boolean.TRUE;
+			    	resident.setElderly(false);
 			    	//return String.valueOf(years) + " años (fallecido/a)";
 			    }
 			    resultExist = Boolean.TRUE;
 			    return String.valueOf(years);
 			}
+	    	resident.setElderly(false);
 			return "No disponible";
 
 		} catch (Exception e) {
+	    	resident.setElderly(false);
 			return "No disponible";
 		}	 
 		

@@ -228,6 +228,14 @@ public class AdjunctAction extends EntityController{
 		domainTransfer.setDomain(null);
 	}
 	
+	public void resetSeniorValues(){
+		DomainTransfer domainTransfer = findCurrentAdjunct();
+		if (!domainTransfer.getSeniorDiscountEnabled()){
+			domainTransfer.setSeniorDiscountPercentage(BigDecimal.ZERO);
+			domainTransfer.setSeniorDiscountValue(BigDecimal.ZERO);
+		}
+	}
+	
 	private BigDecimal calculateTaxableBase(MunicipalBondHome municipalBondHome){
 		DomainTransfer domainTransfer = findCurrentAdjunct();
 		BigDecimal taxableBase = domainTransfer.getTaxableBase();
@@ -247,6 +255,14 @@ public class AdjunctAction extends EntityController{
 			} else {
 				taxableBase = BigDecimal.ZERO;
 			}
+		}
+		if (domainTransfer.getSeniorDiscountEnabled()){
+			BigDecimal discountValue = taxableBase.multiply(domainTransfer.getSeniorDiscountPercentage()).divide(new BigDecimal(100));
+			discountValue = discountValue.setScale(2, RoundingMode.HALF_UP);
+			domainTransfer.setSeniorDiscountValue(discountValue);
+		} else {
+			domainTransfer.setSeniorDiscountValue(BigDecimal.ZERO);
+			domainTransfer.setSeniorDiscountPercentage(BigDecimal.ZERO);
 		}
 		return taxableBase.setScale(2, RoundingMode.HALF_UP);
 	}

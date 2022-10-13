@@ -56,7 +56,12 @@ public class DomainTransfer extends Adjunct{
 	//rfam 2017-11-29 pedido de la parra sin memo, se pasara por parte de informatica
 	private Boolean isHalfDiscount;
 	private BigDecimal halfDiscountAmount;
-	
+
+	// Descuento por Tercera Edad en alcabalas y Utilidades
+    private Boolean seniorDiscountEnabled;
+    private BigDecimal seniorDiscountPercentage;
+    private BigDecimal seniorDiscountValue;
+    
 	/*@ManyToOne
 	@JoinColumn(name="itemcatalog_id")
 	private ItemCatalog domainTransferType;*/
@@ -71,6 +76,9 @@ public class DomainTransfer extends Adjunct{
 		buyingDate = new Date();
 		transactionDate = new Date();
 		isHalfDiscount = Boolean.FALSE;
+		seniorDiscountEnabled = Boolean.FALSE;
+		seniorDiscountPercentage = BigDecimal.ZERO;
+		seniorDiscountValue = BigDecimal.ZERO;
 	}
 	
 	@Transient
@@ -118,7 +126,12 @@ public class DomainTransfer extends Adjunct{
 		
 		if(isHalfDiscount!=null && isHalfDiscount) {
 			pair = new ValuePair("Descuento 50%", ""+halfDiscountAmount );
-			details.add(pair);	
+			details.add(pair);
+		}
+
+		if(seniorDiscountEnabled!=null && seniorDiscountEnabled) {
+			pair = new ValuePair("Tercera Edad/Discapacidad " + seniorDiscountPercentage.doubleValue() + "%", ""+seniorDiscountValue );
+			details.add(pair);
 		}
 
 		return details;
@@ -313,6 +326,30 @@ public class DomainTransfer extends Adjunct{
 
 	public void setIsHalfDiscount(Boolean isHalfDiscount) {
 		this.isHalfDiscount = isHalfDiscount;
+	}
+
+	public Boolean getSeniorDiscountEnabled() {
+		return seniorDiscountEnabled;
+	}
+
+	public void setSeniorDiscountEnabled(Boolean seniorDiscountEnabled) {
+		this.seniorDiscountEnabled = seniorDiscountEnabled;
+	}
+
+	public BigDecimal getSeniorDiscountPercentage() {
+		return seniorDiscountPercentage;
+	}
+
+	public void setSeniorDiscountPercentage(BigDecimal seniorDiscountPercentage) {
+		this.seniorDiscountPercentage = seniorDiscountPercentage;
+	}
+
+	public BigDecimal getSeniorDiscountValue() {
+		return seniorDiscountValue;
+	}
+
+	public void setSeniorDiscountValue(BigDecimal seniorDiscountValue) {
+		this.seniorDiscountValue = seniorDiscountValue;
 	}
 
 	public void setBuyingTransactionValue(BigDecimal buyingTransactionValue) {

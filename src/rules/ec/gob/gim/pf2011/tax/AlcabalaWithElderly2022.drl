@@ -1,0 +1,46 @@
+#created on: Oct 12, 2022
+package gim.src.rules.ec.gob.gim.pf2011.tax
+
+#list any import classes here.
+import ec.gob.gim.revenue.model.Entry;
+import ec.gob.gim.cadaster.model.Property;
+import ec.gob.gim.cadaster.model.Domain;
+import ec.gob.gim.revenue.model.adjunct.DomainTransfer;
+import ec.gob.gim.revenue.model.MunicipalBond;
+import ec.gob.gim.revenue.model.Adjunct;
+import ec.gob.gim.revenue.model.Item;
+import java.math.BigDecimal;
+
+#declare any global variables here
+rule "Impuesto alcabala calculo de exento"
+	no-loop true
+	salience 50
+	when
+		$itemBase : Item(entry.code == "00058");
+		$mb : MunicipalBond();
+		eval(($mb.getExempt() != null && $mb.getExempt()) || ($mb.getIsNoPasiveSubject() != null && $mb.getIsNoPasiveSubject()))
+	then
+		$itemBase.setValue(new BigDecimal(1.0));
+		$itemBase.setTotal(new BigDecimal(1.0));
+		$mb.setDescription("Pago por servicios administrativos");
+end
+
+rule "Impuesto alcabala calculo normal"
+	no-loop true
+	salience 40
+	when
+		$itemBase : Item(entry.code == "00058");
+		$mb : MunicipalBond();
+		$transfer : DomainTransfer();
+		eval(!$mb.getExempt() && !$mb.getIsNoPasiveSubject())
+	then
+#		System.out.println("INSIDE RULE Mb "+$mb);
+#		System.out.println("INSIDE RULE DomainTransfer "+$transfer);
+#		System.out.println("INSIDE RULE MORTGAGE DISCOUNT "+$transfer.getMortgageDiscount());
+
+        BigDecimal $alcabala = new BigDecimal(0.01).multiply($itemBase.getValue()); 
+        if ($transfer.getSeniorDiscountEnabled()) {
+            $alcabala = new BigDecimal(0.01).multiply($itemBase.getValue().subtract($transfer.getSeniorDiscountValue()));
+        }
+        $itemBase.setTotal($alcabala);
+end

@@ -25,6 +25,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.gob.gim.common.exception.IdentificationNumberExistsException;
 import org.gob.gim.common.exception.IdentificationNumberSizeException;
@@ -231,6 +232,9 @@ public abstract class Resident extends Identifiable{
 	@OneToMany(mappedBy = "resident", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	//@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Agent> agents;
+	
+	@Transient
+	private boolean elderly; //Adulto Mayor
 
 	public Resident(){
 		isEnabledForDeferredPayments = Boolean.FALSE;
@@ -503,6 +507,8 @@ public abstract class Resident extends Identifiable{
 	public void setAgents(List<Agent> agents) {
 		this.agents = agents;
 	}
+	
+	
 //
 //	@Override
 //	public boolean equals(Object object) {		
@@ -519,6 +525,14 @@ public abstract class Resident extends Identifiable{
 //	}
 	
 	
+
+	public boolean isElderly() {
+		return elderly;
+	}
+
+	public void setElderly(boolean elderly) {
+		this.elderly = elderly;
+	}
 
 	public Boolean getIsEnabledForDeferredPayments() {
 		return isEnabledForDeferredPayments;
