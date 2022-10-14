@@ -280,6 +280,11 @@
 								<p:paragraph alignment="center">Jefatura de Rentas</p:paragraph>
 							</p:font>
 						</p:cell>
+						
+						<p:cell horizontalAlignment="left" colspan="2">
+
+						</p:cell>
+						
 					</p:font>
 			</p:table>
 
@@ -353,6 +358,17 @@
 			<p:paragraph><p:font size="8">#{_deposit.municipalBond.entry.explanatoryNote}</p:font></p:paragraph>
 		</p:cell>
 	</p:table>
+
+	<p:font size="6">
+		<p:paragraph>#{messages['receipt.printingResponsible']}: #{userSession.person.name} (#{userSession.user.name})</p:paragraph>
+		<p:paragraph rendered="#{receiptPrintingManager.copiesNumber > 0 and !receiptPrintingManager.isExchange}">
+			<p:font size="6" style="bold">
+					<p:text value="SECRETARIA" />
+			</p:font>
+		</p:paragraph>
+	</p:font>
+
+
 	<p:paragraph rendered="#{receiptPrintingManager.copiesNumber == 0}">
 		<p:barCode  type="code128" barHeight="25" textSize="10" rendered="#{not receiptPrintingManager.isCertificate and !_deposit.municipalBond.receipt.electronicReceipt}"
 					code="#{_deposit.municipalBond.receipt.authorizationNumber}-#{_deposit.municipalBond.receipt.sequential}" codeType="CODE128_UCC"
