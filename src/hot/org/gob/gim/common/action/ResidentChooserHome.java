@@ -205,7 +205,7 @@ public class ResidentChooserHome extends EntityController{
 			        	ageDays = ageDays + 30;
 			        }	    	
 			    }  else if(months < 0){
-			    	ageMonths = ageMonths + 12;
+			    	ageMonths = ageMonths + 13;
 			    	if(days < 0){
 			    		ageDays = ageDays + 30;
 			    	}

@@ -41,16 +41,16 @@ import ec.gob.gim.common.model.Person;
 		@NamedQuery(name="TillPermission.findByBranchTillBetweenDates", 
 				query="select t from TillPermission t left join t.till till left join till.branch b " +
 						"where "+
-						"till.id=:tillId and t.workday.date BETWEEN :startDate AND :endDate and b.id=:branchId ORDER BY t.workday.date DESC)"),
+						"till.id=:tillId and t.workday.date BETWEEN :startDate AND :endDate and b.id=:branchId ORDER BY t.workday.date, b.number, till.number )"),
 		@NamedQuery(name="TillPermission.findByBranchBetweenDates", 
 				query="select t from TillPermission t left join t.till till left join till.branch b " +
 						"where "+
-						"t.workday.date BETWEEN :startDate AND :endDate and b.id=:branchId ORDER BY t.workday.date DESC)"),
+						"t.workday.date BETWEEN :startDate AND :endDate and b.id=:branchId ORDER BY t.workday.date, b.number, till.number )"),
 		
 		@NamedQuery(name="TillPermission.findBetweenDates", 
 				query="select t from TillPermission t left join t.till till left join till.branch b " +
 					"where "+
-					"t.workday.date BETWEEN :startDate AND :endDate ORDER BY t.workday.date, b.id "),
+					"t.workday.date BETWEEN :startDate AND :endDate ORDER BY t.workday.date, b.number, till.number "),
                 
 		@NamedQuery(name="TillPermission.findWorkId", 
 				query="select t from TillPermission t " +
