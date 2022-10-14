@@ -47,8 +47,6 @@ import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.Contract;
 import ec.gob.gim.revenue.model.MunicipalBond;
-import ec.gob.loja.dinardap.dinardap.cliente.DINARDAPServiceProvider;
-import ec.gob.loja.dinardap.dinardap.cliente.ResponseContribuyente;
 
 @Name("residentHome")
 public class ResidentHome extends EntityHome<Resident> {
@@ -507,13 +505,13 @@ public class ResidentHome extends EntityHome<Resident> {
 
 	public void dinardapSearch() {
 		if (this.identificationNumber != null && this.identificationNumber != "") {
-			DINARDAPServiceProvider dinardap = new DINARDAPServiceProvider();
-			ResponseContribuyente result = dinardap.informacionDemografica(this.identificationNumber);
+			ec.gob.loja.dinardap.cliente.DINARDAPServiceProvider dinardap = new ec.gob.loja.dinardap.cliente.DINARDAPServiceProvider();
+			ec.gob.loja.dinardap.cliente.ResponseContribuyente result = dinardap.informacionDemografica(this.identificationNumber);
 			this.dinardapMessage = "Demográfico"+result.getMessage();
 			this.dinardapResident = new DinardapResident();
 			this.dinardapResident.setData(result);
 			
-			ResponseContribuyente resultBio = dinardap.informacionBiometrica(this.identificationNumber);
+			ec.gob.loja.dinardap.cliente.ResponseContribuyente resultBio = dinardap.informacionBiometrica(this.identificationNumber);
 			this.dinardapMessage = this.dinardapMessage + "\nBiométrico: "+resultBio.getMessage();
 			
 			this.dinardapResident.setDiometricData(resultBio);
