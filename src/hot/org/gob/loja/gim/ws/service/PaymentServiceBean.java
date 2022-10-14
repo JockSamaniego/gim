@@ -211,7 +211,7 @@ public class PaymentServiceBean implements PaymentService {
 						bonds = findPendingBonds(taxpayer.getId());
 						// esta imprimiendo el log de lo q se retorna quitar
 						// luego de las pruebas						
-						Boolean control = comparateBondsDates(bonds);
+						// Boolean control = comparateBondsDates(bonds);
 						loadBondsDetail(bonds);
 					} catch (EntryDefinitionNotFoundException e) {
 						e.printStackTrace();
