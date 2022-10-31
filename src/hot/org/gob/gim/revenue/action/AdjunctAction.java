@@ -1,6 +1,7 @@
 package org.gob.gim.revenue.action;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,10 +15,12 @@ import org.gob.gim.commercial.action.BusinessHome;
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.action.MunicipalBondHome;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.jboss.seam.annotations.Factory;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.framework.EntityController;
@@ -50,6 +53,9 @@ public class AdjunctAction extends EntityController{
 	private int recursive = 1;
 	public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
 	private SystemParameterService systemParameterService;
+
+	@In
+	UserSession userSession;
 
 	@SuppressWarnings("unchecked")
 	public void loadPendingDomainTransfers(){
@@ -256,17 +262,38 @@ public class AdjunctAction extends EntityController{
 				taxableBase = BigDecimal.ZERO;
 			}
 		}
-		if (domainTransfer.getSeniorDiscountEnabled()){
-			BigDecimal discountValue = taxableBase.multiply(domainTransfer.getSeniorDiscountPercentage()).divide(new BigDecimal(100));
-			discountValue = discountValue.setScale(2, RoundingMode.HALF_UP);
-			domainTransfer.setSeniorDiscountValue(discountValue);
-		} else {
+		if ((domainTransfer.getSeniorDiscountEnabled()) 
+				&& (previousNumDiscount(municipalBondHome.getInstance()) > 0)){
+			domainTransfer.setPreviousSeniorDiscount(true);
 			domainTransfer.setSeniorDiscountValue(BigDecimal.ZERO);
 			domainTransfer.setSeniorDiscountPercentage(BigDecimal.ZERO);
+		} else {
+			domainTransfer.setPreviousSeniorDiscount(false);
+			BigDecimal discountLimit = userSession.getFiscalPeriod().getBasicSalaryUnifiedForRevenue().multiply(new BigDecimal("500"));
+			BigDecimal discountValue = BigDecimal.ZERO;
+			if (taxableBase.compareTo(discountLimit) == -1)
+				discountValue = taxableBase.multiply(domainTransfer.getSeniorDiscountPercentage()).divide(new BigDecimal(100));
+			else
+				discountValue = discountLimit.multiply(domainTransfer.getSeniorDiscountPercentage()).divide(new BigDecimal(100));
+			discountValue = discountValue.setScale(2, RoundingMode.HALF_UP);
+			domainTransfer.setSeniorDiscountValue(discountValue);
 		}
 		return taxableBase.setScale(2, RoundingMode.HALF_UP);
 	}
-		
+	
+	private int previousNumDiscount(MunicipalBond municipalBond){
+		String sql = "select count(mb.id) from resident r "
+				+ "inner join municipalbond mb on r.id = mb.resident_id "
+				+ "inner join domaintransfer dt on dt.id = mb.adjunct_id "
+				+ "where r.identificationnumber = '" + municipalBond.getResident().getIdentificationNumber() + "' "
+				+ "and dt.seniordiscountenabled = true "
+				+ "and mb.entry_id = " + municipalBond.getEntry().getId()
+				+ "and mb.emisiondate >= '2022-08-01';";
+		Query query = getEntityManager().createNativeQuery(sql);
+		BigInteger valueBI = (BigInteger) query.getSingleResult();
+		return valueBI.intValue();
+	}
+	
 /*
  * se deberán evaluar primero las fechas más nuevas
  * para retornar el factor del porcentaje de descuento 

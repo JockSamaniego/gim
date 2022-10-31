@@ -242,22 +242,24 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="4" id="seniorDiscountPanel">
-				<h:selectBooleanCheckbox id="seniorDiscountEnabled"
-					value="#{adjunctHome.instance.seniorDiscountEnabled}"
-					disabled="#{!municipalBondHome.instance.resident.isElderly()}">
-					<a:support event="onchange" ajaxSingle="true"
-						action="#{adjunctAction.resetSeniorValues}"
-						reRender="seniorDiscountPanel" />
-				</h:selectBooleanCheckbox>
-				<h:outputLabel
-					value="Descuento Tercera Edad" />
+				<s:decorate id="seniorDiscountField"
+					template="../../layout/edit.xhtml">
+					<ui:define name="label">Descuento Tercera Edad</ui:define>
+					<h:selectBooleanCheckbox id="seniorDiscountEnabled"
+						value="#{adjunctHome.instance.seniorDiscountEnabled}"
+						disabled="#{!municipalBondHome.instance.resident.isElderly()}">
+						<a:support event="onchange" ajaxSingle="true"
+							action="#{adjunctAction.resetSeniorValues}"
+							reRender="seniorDiscountPanel" />
+					</h:selectBooleanCheckbox>
+				</s:decorate>
 	
 				<s:decorate id="seniorDiscountPercentageField"
 					template="../../layout/vertical-edit.xhtml">
 					<ui:define name="label">Porcentaje</ui:define>
 					<rich:inputNumberSpinner id="transactionValue" minValue="0"
 						inputSize="3" maxValue="100" value="#{adjunctHome.instance.seniorDiscountPercentage}"
-						disabled="#{adjunctHome.instance.seniorDiscountEnabled}">
+						disabled="#{!adjunctHome.instance.seniorDiscountEnabled}">
 					<a:support event="onchange" ajaxSingle="true"
 						action="#{adjunctAction.changeTaxableBase}"
 						reRender="seniorDiscountPanel" />
@@ -268,11 +270,19 @@
 				<s:decorate id="seniorDiscountValueField"
 					template="../../layout/vertical-edit.xhtml">
 					<ui:define name="label">Descuento Base Imponible</ui:define>
-					<h:inputText id="improvementsContribution" styleClass="right"
+					<h:inputText id="seniorDiscountValue" styleClass="right"
 						value="#{adjunctHome.instance.seniorDiscountValue}" size="10"
 						disabled="true" >
 					</h:inputText>
 				</s:decorate>
+
+			</h:panelGrid>
+
+			<h:panelGrid>
+				<h:outputText id="previousSeniorDiscountValue" styleClass="right"
+					value="El contribuytente ya se ha beneficiado anteriormente del descuento" size="10"
+					style="font-size:20px; font-weight:bold;" rendered="#{adjunctHome.instance.previousSeniorDiscount}">
+				</h:outputText>
 			</h:panelGrid>
 
 		</a:outputPanel>

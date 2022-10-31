@@ -61,6 +61,7 @@ public class DomainTransfer extends Adjunct{
     private Boolean seniorDiscountEnabled;
     private BigDecimal seniorDiscountPercentage;
     private BigDecimal seniorDiscountValue;
+    private boolean previousSeniorDiscount;
     
 	/*@ManyToOne
 	@JoinColumn(name="itemcatalog_id")
@@ -79,6 +80,7 @@ public class DomainTransfer extends Adjunct{
 		seniorDiscountEnabled = Boolean.FALSE;
 		seniorDiscountPercentage = BigDecimal.ZERO;
 		seniorDiscountValue = BigDecimal.ZERO;
+		previousSeniorDiscount = false;
 	}
 	
 	@Transient
@@ -129,7 +131,7 @@ public class DomainTransfer extends Adjunct{
 			details.add(pair);
 		}
 
-		if(seniorDiscountEnabled!=null && seniorDiscountEnabled) {
+		if(seniorDiscountEnabled && seniorDiscountValue.compareTo(BigDecimal.ZERO) > 0) {
 			pair = new ValuePair("Tercera Edad/Discapacidad " + seniorDiscountPercentage.doubleValue() + "%", ""+seniorDiscountValue );
 			details.add(pair);
 		}
@@ -350,6 +352,14 @@ public class DomainTransfer extends Adjunct{
 
 	public void setSeniorDiscountValue(BigDecimal seniorDiscountValue) {
 		this.seniorDiscountValue = seniorDiscountValue;
+	}
+
+	public boolean isPreviousSeniorDiscount() {
+		return previousSeniorDiscount;
+	}
+
+	public void setPreviousSeniorDiscount(boolean previousSeniorDiscount) {
+		this.previousSeniorDiscount = previousSeniorDiscount;
 	}
 
 	public void setBuyingTransactionValue(BigDecimal buyingTransactionValue) {
