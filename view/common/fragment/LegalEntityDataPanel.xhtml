@@ -14,13 +14,13 @@
 
 		<s:decorate id="nameField" template="../../layout/edit.xhtml">
 			<ui:define name="label">#{messages['resident.businessName']}:</ui:define>
-			<h:inputText id="name" required="true" size="80" maxlength="100"
+			<h:inputText id="name" required="true" size="80" maxlength="200"
 				value="#{residentHome.instance.name}" style="text-transform: uppercase">
 				<a:support event="onchange" reRender="nameField" ajaxSingle="true" />
 			</h:inputText>
 		</s:decorate>
 
-		<s:decorate id="constitutionDateField"
+		<s:decorate id="cRonstitutionDateField"
 			template="../../layout/edit.xhtml">
 			<ui:define name="label">#{messages['resident.constitutionDate']}:</ui:define>
 			<rich:calendar id="constitutionDate"
