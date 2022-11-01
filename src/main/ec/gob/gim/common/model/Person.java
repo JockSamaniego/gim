@@ -54,10 +54,10 @@ public class Person extends Resident {
 	public static final String MONTH = "MONTH";
 	public static final String DATE = "DATE";
 
-	@Column(length = 50)
+	@Column(length = 100)
 	private String firstName;
 
-	@Column(length = 50)
+	@Column(length = 100)
 	private String lastName;
 
 	@Temporal(TemporalType.DATE)
