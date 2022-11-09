@@ -6,7 +6,7 @@
     xmlns:s="http://jboss.com/products/seam/taglib"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:c="http://java.sun.com/jstl/core"
-    title="#{messages['closingTill']}" subject="report" type="pdf"
+    title="Reporte de Tarjeta - Otros Valores" subject="report" type="pdf"
     pageSize="A4" margins="20 20 20 20" author="GAD Loja"
     orientation="portrait" creator="GAD Loja">
 
@@ -34,7 +34,7 @@
                             </p:font>
 
                             <p:font size="8" style="bold">
-                                <p:paragraph alignment="center">#{messages['detailByCreditCard'].toUpperCase()}</p:paragraph>
+                                <p:paragraph alignment="center">#{messages['detailByCreditCard'].toUpperCase()} #{messages[workdayHome.paymentTypeSelected.name()]}</p:paragraph>
                             </p:font>
                         </p:cell>
                     </p:table>
@@ -122,11 +122,11 @@
         <c:forEach items="${workdayHome.municipalBondViewCreditCards}" var="_creditCard">
             <c:set var="sumPartial" value="0" />
             <p:font size="8" style="bold">
-                <p:paragraph alignment="center">Tarjeta Emisor: #{_creditCard.key}</p:paragraph>
+                <p:paragraph alignment="center">Emisor/Resolución: #{_creditCard.key}</p:paragraph>
             </p:font>
             <p:table rendered="#{not empty workdayHome.municipalBondViewCreditCards}"
                 columns="7" widthPercentage="100" headerRows="0" spacingAfter="10" spacingBefore="5"
-                widths="1 1 1 1.5 6 3 2">
+                widths="1.2 1 1 1.5 6 3 2">
                 <p:font size="6" style="bold">
                     <f:facet name="defaultCell">
                         <p:cell borderWidth="0" />
@@ -164,7 +164,7 @@
                     
                     <p:cell horizontalAlignment="center">
                         <p:paragraph>
-                            <p:text value="#{messages['payment.accountNumber']}" />
+                            <p:text value="#{messages['common.reference']}" />
                         </p:paragraph>
                     </p:cell>               
                     
@@ -261,7 +261,7 @@
         </c:forEach>
         <p:paragraph>
             <p:font size="8" style="bold">
-                <p:text value="TOTAL RECAUDADO CON TARJETA: " />
+                <p:text value="TOTAL RECAUDADO MEDIANTE #{messages[workdayHome.paymentTypeSelected.name()]}: "/>
                 <p:text value="#{sumTotal}">
                     <f:convertNumber pattern="#0.00" />
                 </p:text>

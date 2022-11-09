@@ -20,6 +20,17 @@
             	#{messages['report']}
             </f:facet>
 
+				<s:decorate id="reportTypeField" template="../layout/edit.xhtml" >
+					<ui:define name="label">Reporte por: </ui:define>
+					<h:selectOneMenu id="reportType" value="#{workdayHome.paymentTypeSelected}" >
+						<s:selectItems value="#{workdayHome.paymentTypeList}" var="_paymentType"
+							label="#{messages[_paymentType.name()]}" />
+						<s:convertEnum />
+                        <a:support event="onblur" reRender="detailPanel2" action="#{workdayHome.setViewReportCreditCard(false)}"
+                            ajaxSingle="true" eventsQueue="gimQueue" />
+					</h:selectOneMenu>
+				</s:decorate>
+
 				<s:decorate id="startDateField" template="../layout/edit.xhtml">
 					<ui:define name="label">#{messages['report.startDate']}:</ui:define>
 					<rich:calendar value="#{workdayHome.startDate}" required="true"
@@ -69,7 +80,7 @@
 			<h:panelGrid id="detailPanel2" columns="4">
 
                 <s:button id="printByCreditCard" disabled="#{!workdayHome.viewReportCreditCard}"
-                    value="#{messages['report.printByDepositCreditCard']}" propagation="join"
+                    value="#{messages['common.print']}" propagation="join"
                     view="/income/report/CreditCardCashierReportByDeposit.xhtml" />
 
 				<s:button id="back" value="#{messages['common.back']}"
