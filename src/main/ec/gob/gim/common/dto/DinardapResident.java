@@ -1,11 +1,10 @@
 package ec.gob.gim.common.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.seam.util.Base64;
 
-import ec.gob.loja.dinardap.dinardap.cliente.Columna;
-import ec.gob.loja.dinardap.dinardap.cliente.Entidad;
-import ec.gob.loja.dinardap.dinardap.cliente.Fila;
-import ec.gob.loja.dinardap.dinardap.cliente.ResponseContribuyente;
 
 public class DinardapResident {
 
@@ -27,6 +26,8 @@ public class DinardapResident {
 	private byte[] foto;
 	
 	private byte[] firma;
+	
+	private List<SRIEconomicActivity> actividades = new ArrayList<SRIEconomicActivity>(); 
 
 	public String getConyuge() {
 		return conyuge;
@@ -156,11 +157,11 @@ public class DinardapResident {
 		this.firma = firma;
 	}
 
-	public void setData(ResponseContribuyente result) {
+	public void setData(ec.gob.loja.dinardap.cliente.ResponseContribuyente result) {
 
-		for (Entidad ent : result.getPaquete().getEntidades().getEntidad()) {
-			for (Fila fil : ent.getFilas().getFila()) {
-				for (Columna col : fil.getColumnas().getColumna()) {
+		for (ec.gob.loja.dinardap.cliente.Entidad ent : result.getPaquete().getEntidades().getEntidad()) {
+			for (ec.gob.loja.dinardap.cliente.Fila fil : ent.getFilas().getFila()) {
+				for (ec.gob.loja.dinardap.cliente.Columna col : fil.getColumnas().getColumna()) {
 					if (col.getCampo().equals("conyuge")) {
 						this.conyuge = col.getValor();
 					}
@@ -209,11 +210,11 @@ public class DinardapResident {
 		}
 	}
 	
-	public void setDiometricData(ResponseContribuyente result) {
+	public void setDiometricData(ec.gob.loja.dinardap.cliente.ResponseContribuyente result) {
 
-		for (Entidad ent : result.getPaquete().getEntidades().getEntidad()) {
-			for (Fila fil : ent.getFilas().getFila()) {
-				for (Columna col : fil.getColumnas().getColumna()) {
+		for (ec.gob.loja.dinardap.cliente.Entidad ent : result.getPaquete().getEntidades().getEntidad()) {
+			for (ec.gob.loja.dinardap.cliente.Fila fil : ent.getFilas().getFila()) {
+				for (ec.gob.loja.dinardap.cliente.Columna col : fil.getColumnas().getColumna()) {
 					if (col.getCampo().equals("firma")) {
 						this.firma = Base64.decode(col.getValor());
 					}
@@ -221,6 +222,37 @@ public class DinardapResident {
 						this.foto = Base64.decode(col.getValor());
 					}
 				}
+			}
+		}
+	}
+
+	public List<SRIEconomicActivity> getActividades() {
+		return actividades;
+	}
+
+	public void setActividades(List<SRIEconomicActivity> actividades) {
+		this.actividades = actividades;
+	}
+	
+	public void setSRIActivity(ec.gob.loja.dinardap.cliente.ResponseContribuyente result){
+		SRIEconomicActivity sriData;
+		for (ec.gob.loja.dinardap.cliente.Entidad ent : result.getPaquete().getEntidades().getEntidad()) {
+			for (ec.gob.loja.dinardap.cliente.Fila fil : ent.getFilas().getFila()) {
+				sriData = new SRIEconomicActivity();
+				for (ec.gob.loja.dinardap.cliente.Columna col : fil.getColumnas().getColumna()) {
+					
+					if (col.getCampo().equals("actividadEconomica")) {
+						sriData.setActividadEconomica(col.getValor());
+					}
+					if (col.getCampo().equals("numeroEstablecimiento")) {
+						sriData.setNumeroEstablecimiento(col.getValor());
+					}
+					if (col.getCampo().equals("numeroRuc")) {
+						sriData.setNumeroRuc(col.getValor());
+					}
+					
+				}
+				this.actividades.add(sriData);
 			}
 		}
 	}

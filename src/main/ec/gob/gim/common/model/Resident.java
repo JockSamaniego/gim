@@ -170,7 +170,7 @@ public abstract class Resident extends Identifiable{
 	protected String identificationNumber;
 	
 //	@Column(length=100, nullable=false)
-	@Column(length=100)
+	@Column(length=200)
 	private String name;
 	
 	private String email;

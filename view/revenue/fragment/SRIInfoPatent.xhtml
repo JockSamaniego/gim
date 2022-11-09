@@ -1,0 +1,125 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf">
+
+	<rich:modalPanel id="sriInfoPatent" width="800" height="600"
+		style="overflow-y:scroll">
+
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Información SRI" />
+			</h:panelGroup>
+		</f:facet>
+
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkSRI" />
+				<rich:componentControl for="sriInfoPatent" attachTo="hidelinkSRI"
+					operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form>
+			<rich:panel>
+				<f:facet name="header">
+					<h:outputText styleClass="formTitle" value="Información SRI" />
+				</f:facet>
+
+				<h:panelGrid styleClass="full" id="panelEmitBonds" columns="3">
+					<h:panelGrid columns="2" width="100%"
+						columnClasses="topAligned, topAligned right">
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<rich:tabPanel switchType="client">
+					<rich:tab header="Declaraciones"  label="Declaraciones">
+						<rich:dataTable id="sriInfoList" var="_item"
+							value="#{municipalBondHome.sriResult}"
+							columnClasses="none,none,none,none,right,right,right"
+							onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+							onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+							<rich:column>
+								<f:facet name="header">Tipo</f:facet>
+								<h:outputText value="#{_item.type}" />
+							</rich:column>
+
+							<rich:column>
+								<f:facet name="header">Año</f:facet>
+								<h:outputText value="#{_item.year}">
+								</h:outputText>
+							</rich:column>
+
+							<rich:column>
+								<f:facet name="header">Campo</f:facet>
+								<h:outputText value="#{_item.field}">
+								</h:outputText>
+							</rich:column>
+
+							<rich:column styleClass="right">
+								<f:facet name="header">Valor</f:facet>
+								<h:outputText value="#{_item.value}">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+
+						</rich:dataTable>
+					</rich:tab>
+					<rich:tab header="Actividades"  label="Actividades">
+						<rich:dataTable id="sriActivityList" var="_item"
+							value="#{municipalBondHome.dinardapResident.actividades}"
+							columnClasses="none,none,none,none,right,right,right"
+							onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+							onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+							<rich:column>
+								<f:facet name="header">Establecimiento</f:facet>
+								<h:outputText value="#{_item.numeroEstablecimiento}" />
+							</rich:column>
+
+							<rich:column>
+								<f:facet name="header">Actividad</f:facet>
+								<h:outputText value="#{_item.actividadEconomica}">
+								</h:outputText>
+							</rich:column>
+
+							<!--  rich:column>
+								<f:facet name="header">RUC</f:facet>
+								<h:outputText value="#{_item.numeroRuc}">
+								</h:outputText>
+							</rich:column-->
+
+						</rich:dataTable>
+					</rich:tab>
+				</rich:tabPanel>
+
+
+				<div style="clear: both" />
+
+			</rich:panel>
+
+			<div class="actionButtons">
+				<a:region>
+					<a:commandButton id="cancelx" ajaxSingle="true"
+						value="#{messages['common.quit']}"
+						reRender="addEntryPatent, detailsTable"
+						oncomplete="Richfaces.hideModalPanel('sriInfoPatent');"
+						bypassUpdates="true" />
+
+				</a:region>
+			</div>
+
+		</h:form>
+
+	</rich:modalPanel>
+</ui:composition>
