@@ -1201,4 +1201,12 @@ public class MunicipalBondManager extends EntityController {
 		findMunicipalBonds();
 	}
 	
+	public void updatePullApart(){
+		try {
+			revenueService.pullApartMunicipalBond(this.municipalBond);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
@@ -20,6 +21,7 @@ import org.gob.gim.commercial.action.BusinessHome;
 import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
+import org.gob.gim.common.dto.SRIDeclaration;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.InvalidEmissionException;
 import org.gob.gim.income.facade.CallCRTV;
@@ -46,6 +48,7 @@ import SMTATM.ConsultaRTVwsExecuteResponse;
 import SMTATM.WsPagoSolicitudExecuteResponse;
 import ec.gob.gim.commercial.model.FireNames;
 import ec.gob.gim.commercial.model.FireRates;
+import ec.gob.gim.common.dto.DinardapResident;
 import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
@@ -68,6 +71,7 @@ import ec.gob.gim.security.model.Role;
 //antclient
 //import ec.gob.loja.antclient.DatosMatricula;
 //import ec.gob.loja.antclient.MetodosProxy;
+
 
 @Name("municipalBondHome")
 public class MunicipalBondHome extends EntityHome<MunicipalBond> {
@@ -1988,4 +1992,229 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		return persisted;
 
 	}
+	
+	private List<SRIDeclaration> sriResult = new ArrayList<SRIDeclaration>();
+	
+	public List<SRIDeclaration> getSriResult() {
+		return sriResult;
+	}
+
+	public void setSriResult(List<SRIDeclaration> sriResult) {
+		this.sriResult = sriResult;
+	}
+
+	public void checkSRIInformation() {
+		this.dinardapSearch();
+		sriResult = new ArrayList<SRIDeclaration>();
+
+		SRIDeclaration sri;
+		Random rand = new Random();
+		int value = rand.nextInt(2);
+		if (value == 1) {
+			int year = 2018;
+			for (int i = 0; i < 3; i++) {
+
+				sri = new SRIDeclaration();
+				sri.setType("101");
+				sri.setYear(String.valueOf(year));
+				sri.setField("TOTAL_ACTIVOS_FIJOS");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("101");
+				sri.setYear(String.valueOf(year));
+				sri.setField("TOTAL_ACTIVO");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("101");
+				sri.setYear(String.valueOf(year));
+				sri.setField("TOTAL_INGRESOS");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("101");
+				sri.setYear(String.valueOf(year));
+				sri.setField("TOTAL_GASTOS");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("101");
+				sri.setYear(String.valueOf(year));
+				sri.setField("PERDIDA_DEL_EJERCICIO");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("101");
+				sri.setYear(String.valueOf(year));
+				sri.setField("UTILIDAD_GRAVABLE");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("101");
+				sri.setYear(String.valueOf(year));
+				sri.setField("PERDIDA");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("101");
+				sri.setYear(String.valueOf(year));
+				sri.setField("TOTAL_ACTIVO_CORRIENTE");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("101");
+				sri.setYear(String.valueOf(year));
+				sri.setField("TOTAL_PASIVOS");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("101");
+				sri.setYear(String.valueOf(year));
+				sri.setField("TOTAL_PATRIMONIO_NETO");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+				
+				year = year +1;
+
+			}
+		} else {
+			int year = 2018;
+			for (int i = 0; i < 3; i++) {
+
+				sri = new SRIDeclaration();
+				sri.setType("102");
+				sri.setYear(String.valueOf(year));
+				sri.setField("TOTAL_ACTIVO_FIJO");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("102");
+				sri.setYear(String.valueOf(year));
+				sri.setField("TOTAL_DEL_ACTIVO");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("102");
+				sri.setYear(String.valueOf(year));
+				sri.setField("TOTAL_INGRESOS");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("102");
+				sri.setYear(String.valueOf(year));
+				sri.setField("UTILIDAD_GRAVABLE");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("102");
+				sri.setYear(String.valueOf(year));
+				sri.setField("PERDIDA");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("102");
+				sri.setYear(String.valueOf(year));
+				sri.setField("AVALUO_DE_ARRIENDO_DE_INMUEBLES");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("102");
+				sri.setYear(String.valueOf(year));
+				sri.setField("INGRESOS_DE_LIBRE_EJERCICIO");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("102");
+				sri.setYear(String.valueOf(year));
+				sri.setField("TOTAL_PASIVO_Y_PATRIMONIO");
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("102");
+				sri.setField("TOTAL_PATRIMONIO_NETO");
+				sri.setYear(String.valueOf(year));
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+
+				sri = new SRIDeclaration();
+				sri.setType("102");
+				sri.setField("TOTAL_DEL_PASIVO");
+				sri.setYear(String.valueOf(year));
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+				
+				sri = new SRIDeclaration();
+				sri.setType("102");
+				sri.setField("TOTAL_PASIVO_CORRIENTE");
+				sri.setYear(String.valueOf(year));
+				sri.setValue(String.valueOf(generarRandom()));
+				sriResult.add(sri);
+				year = year +1;
+
+			}
+		}
+	}
+	
+	private double generarRandom() {
+		double leftLimit = 1D;
+		double rightLimit = 1000D;
+		double generatedDouble = leftLimit + new Random().nextDouble()
+				* (rightLimit - leftLimit);
+		double roundDbl = Math.round(generatedDouble*100.0)/100.0;
+		return roundDbl;
+	}
+	
+	private String dinardapMessage;
+    private DinardapResident dinardapResident = new DinardapResident();
+	
+	public void dinardapSearch() {
+		if (this.identificationNumber != null && this.identificationNumber != "") {
+			ec.gob.loja.dinardap.cliente.DINARDAPServiceProvider dinardap = new ec.gob.loja.dinardap.cliente.DINARDAPServiceProvider();
+			ec.gob.loja.dinardap.cliente.ResponseContribuyente result = dinardap.informacionActividadesSRI(this.identificationNumber);
+				
+			this.dinardapMessage = "Demográfico"+result.getMessage();
+			this.dinardapResident = new DinardapResident();
+			this.dinardapResident.setSRIActivity(result);
+			
+		} else {
+			this.dinardapResident = new DinardapResident();
+			this.dinardapMessage = "Ingrese número de indentificación";
+		}
+	}
+
+	public String getDinardapMessage() {
+		return dinardapMessage;
+	}
+
+	public void setDinardapMessage(String dinardapMessage) {
+		this.dinardapMessage = dinardapMessage;
+	}
+
+	public DinardapResident getDinardapResident() {
+		return dinardapResident;
+	}
+
+	public void setDinardapResident(DinardapResident dinardapResident) {
+		this.dinardapResident = dinardapResident;
+	}
+	
+	
 }

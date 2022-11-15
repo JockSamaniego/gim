@@ -10,6 +10,8 @@
 	template="../layout/template.xhtml">
 
 	<ui:define name="body">
+	
+	<ui:include src="fragment/PullApartMunicipalBond.xhtml" />
 
 		<h:form id="municipalBondSearch" styleClass="edit">
 			<ui:debug id="debug" />
@@ -132,6 +134,7 @@
 										rendered="#{not empty municipalBondManager.municipalBondStatus}" />
 
 									<h:panelGrid columns="4">
+									
 										<a:commandButton id="confirmBlockedAll"
 											value="#{messages['municipalBond.block']}"
 											action="#{municipalBondManager.changeListForBlocked()}"
@@ -281,6 +284,15 @@
 
 					<rich:column styleClass="action">
 						<f:facet name="header">#{messages['common.action']}</f:facet>
+						
+						<a:commandButton id="pullApart"
+						rendered="#{municipalBondManager.hasRole('ROLE_NAME_PULL_APART') and _municipalBond.municipalBondStatus.equals(municipalBondManager.pendingBondStatus)}"
+											value="#{messages['municipalBond.pullApart']}"
+											action="#{municipalBondManager.setForReverse(_municipalBond)}"
+											ajaxSingle="true"
+											oncomplete="Richfaces.showModalPanel('pullApartMunicipalBondPanel',{width:350, height:250})"
+											focus="observationAllBlocked" 
+											reRender="bondPanel"/>
 
 						<a:commandButton id="viewer" ajaxSingle="true"
 							action="#{municipalBondsViewerHome.loadMunicipalBond(_municipalBond.id)}"

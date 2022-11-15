@@ -8,9 +8,14 @@ package org.gob.gim.income.action;
  *
  * 
  * 2022-03-29
- * Actualizaci�n Ronald Paladines Celi GAD Municipal de Loja
+ * Actualización Ronald Paladines Celi GAD Municipal de Loja
  * 
- * se genera reporte agrupado por emisor de tarjeta de cr�dito
+ * se genera reporte agrupado por emisor de tarjeta de crédito
+ * 
+ * 2022-11-09
+ * Actualización Ronald Paladines Celi GAD Municipal de Loja
+ * 
+ * se genera reporte agrupado por otros valores
  * 
  */
 import java.io.File;
@@ -33,7 +38,6 @@ import javax.naming.NamingException;
 import javax.persistence.Query;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.gob.gim.accounting.dto.ReportType;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.NativeQueryResultsMapper;
@@ -264,6 +268,8 @@ public class WorkdayHome extends EntityHome<Workday> {
 	private Map<String, List<MunicipalBondView>> municipalBondViewCreditCards = new HashMap<String, List<MunicipalBondView>>();
 	public boolean hasRoleSystemJefeRecaudaciones;
 	public boolean viewReportCreditCard = false;
+	public PaymentType paymentTypeSelected = PaymentType.CREDIT_CARD;
+	public List<PaymentType> paymentTypeList = new ArrayList<PaymentType>();
 	
 	@In
 	UserSession userSession;
@@ -765,20 +771,40 @@ public class WorkdayHome extends EntityHome<Workday> {
 		totalCollected = sumTotal(municipalBondViews);
 	}
 
+	private String getSQLReport(){
+		String sql = "";
+		if (paymentTypeSelected == PaymentType.CREDIT_CARD){
+			sql = "select distinct r.identificationNumber, r.\"name\" as contribuyente , p.id, r.firstname, " +
+					"d.\"date\", d.\"time\", f.\"name\" as tarjeta, pf.documentnumber, pf.paidamount, pf.id " +
+					"from gimprod.resident r " +
+					"inner join gimprod.municipalbond mb on r.id = mb.resident_id " +
+					"inner join gimprod.deposit d on d.municipalbond_id = mb.id " +
+					"inner join gimprod.paymentfraction pf on d.payment_id = pf.payment_id " +
+					"inner join gimprod.payment p on p.id = pf.payment_id " +
+					"inner join gimprod.financialinstitution as f on f.id = pf.finantialinstitution_id " +
+					"WHERE pf.paymenttype = '" + paymentTypeSelected.name() + "' and d.status = 'VALID' AND " +
+					"d.date BETWEEN :startDate and :endDate ";
+		} else if (paymentTypeSelected == PaymentType.CREDIT_NOTE){
+			sql = "select distinct r.identificationNumber, r.\"name\" as contribuyente , p.id, r.firstname, " +
+					"d.\"date\", d.\"time\", f.resolutionnumber as tarjeta, f.reference, pf.paidamount, pf.id " +
+					"from gimprod.resident r " +
+					"inner join gimprod.municipalbond mb on r.id = mb.resident_id " +
+					"inner join gimprod.deposit d on d.municipalbond_id = mb.id " +
+					"inner join gimprod.paymentfraction pf on d.payment_id = pf.payment_id " +
+					"inner join gimprod.payment p on p.id = pf.payment_id " +
+					"inner join gimprod.creditnote as f on f.id = pf.creditnote_id " +
+					"WHERE pf.paymenttype = '" + paymentTypeSelected.name() + "' and d.status = 'VALID' AND " +
+					"d.date BETWEEN :startDate and :endDate ";
+		}
+		return sql;
+	}
+	
 	public void findDetailedCreditCardByCashier() {
-		String sql = "select distinct r.identificationNumber, r.\"name\" as contribuyente , p.id, r.firstname, " +
-				"d.\"date\", d.\"time\", f.\"name\" as tarjeta, pf.documentnumber, pf.paidamount, pf.id " +
-				"from gimprod.resident r " +
-				"inner join gimprod.municipalbond mb on r.id = mb.resident_id " +
-				"inner join gimprod.deposit d on d.municipalbond_id = mb.id " +
-				"inner join gimprod.paymentfraction pf on d.payment_id = pf.payment_id " +
-				"inner join gimprod.payment p on p.id = pf.payment_id " +
-				"inner join gimprod.financialinstitution as f on f.id = pf.finantialinstitution_id " +
-				"WHERE pf.paymenttype = 'CREDIT_CARD' and d.status = 'VALID' AND " +
-				"d.date BETWEEN :startDate and :endDate ";
+		String sql = getSQLReport();
+		if (sql == "") return;
 		if (person != null)
 			sql = sql + "AND p.cashier_id = :cashierId ";
-		sql = sql + "ORDER BY f.name, d.date, d.time;";
+		sql = sql + "ORDER BY tarjeta, d.date, d.time;";
 		Query query = getEntityManager().createNativeQuery(sql);
 		query.setParameter("startDate", startDate);
 		query.setParameter("endDate", endDate);
@@ -4472,6 +4498,9 @@ public class WorkdayHome extends EntityHome<Workday> {
 			loadCharge();
 			isFirstTime = false;
 			viewReportCreditCard = false;
+			paymentTypeList.clear();
+			paymentTypeList.add(PaymentType.CREDIT_CARD);
+			paymentTypeList.add(PaymentType.CREDIT_NOTE);
 			explanation = systemParameterService
 					.findParameter("STATUS_CHANGE_FUTURE_EMISSION_EXPLANATION");
 
@@ -4519,6 +4548,22 @@ public class WorkdayHome extends EntityHome<Workday> {
 	 */
 	public void setViewReportCreditCard(boolean viewReportCreditCard) {
 		this.viewReportCreditCard = viewReportCreditCard;
+	}
+
+	public PaymentType getPaymentTypeSelected() {
+		return paymentTypeSelected;
+	}
+
+	public void setPaymentTypeSelected(PaymentType paymentTypeSelected) {
+		this.paymentTypeSelected = paymentTypeSelected;
+	}
+
+	public List<PaymentType> getPaymentTypeList() {
+		return paymentTypeList;
+	}
+
+	public void setPaymentTypeList(List<PaymentType> paymentTypeList) {
+		this.paymentTypeList = paymentTypeList;
 	}
 
 	private void loadInterestAccount() {

@@ -26,15 +26,15 @@
 
 		<s:decorate id="firstNameField" template="../../layout/edit.xhtml">
 			<ui:define name="label">#{messages['resident.firstName']}:</ui:define>
-			<h:inputText id="firstName" required="true" size="25" maxlength="50"
-				value="#{residentHome.instance.firstName}" 
+			<h:inputText id="firstName" required="true" size="25" maxlength="100"
+				value="#{residentHome.instance.firstName}"
 				style="text-transform: uppercase">
 			</h:inputText>
 		</s:decorate>
 
 		<s:decorate id="lastNameField" template="../../layout/edit.xhtml">
 			<ui:define name="label">#{messages['resident.lastName']}:</ui:define>
-			<h:inputText id="lastName" required="true" size="25" maxlength="50"
+			<h:inputText id="lastName" required="true" size="25" maxlength="100"
 				value="#{residentHome.instance.lastName}"
 				style="text-transform: uppercase">
 			</h:inputText>

@@ -13,6 +13,7 @@
 		<ui:include src="fragment/ActiveLocals.xhtml"></ui:include>
 		<ui:include src="../income/fragment/AlertListPanel.xhtml" />
 		<ui:include src="fragment/AddEntryPatent.xhtml" />
+		<ui:include src="fragment/SRIInfoPatent.xhtml" />
 
 		<h:form id="municipalBondEditTitle" styleClass="edit">
 			<a:queue requestDelay="10" ignoreDupResponses="true" />
@@ -76,6 +77,13 @@
 				<f:facet name="header">
 					<h:panelGrid columns="4" columnClasses="headerTitle left, ">
 						<h:outputText value="Locales y rubros" />
+						
+						<a:commandButton value="Información SRI" id="btSRI"
+							disabled="#{municipalBondHome.instance.resident == null}"
+							propagation="join" action="#{municipalBondHome.checkSRIInformation()}"
+							style="float:right" reRender="sriInfoList,sriInfoPatent"
+							ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('sriInfoPatent')" />
 
 						<a:commandButton value="Agregar" id="active"
 							disabled="#{municipalBondHome.instance.resident == null}"
