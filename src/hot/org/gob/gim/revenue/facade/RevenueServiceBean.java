@@ -715,5 +715,12 @@ public class RevenueServiceBean implements RevenueService {
 		}
 		return null;
 	}
+	
+	public MunicipalBond pullApartMunicipalBond(MunicipalBond municipalBond) throws Exception{
+		String newGroupingCode = municipalBond.getGroupingCode()+ " - " + municipalBond.getNumber();
+		municipalBond.setGroupingCode(newGroupingCode);
+		MunicipalBond updatedBond = municipalBondService.update(municipalBond);
+		return updatedBond;
+	}
 
 }
