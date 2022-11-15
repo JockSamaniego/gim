@@ -1476,6 +1476,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		}
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 		incomeService.setAsPrinted(printedDepositIds);
+		this.deactivatePaymentAgreement = Boolean.FALSE;
 		return "printed";
 	}
 
