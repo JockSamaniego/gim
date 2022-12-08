@@ -13,6 +13,7 @@ import javax.persistence.Query;
 
 import org.gob.gim.common.CatalogConstants;
 import org.gob.gim.common.ServiceLocator;
+import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.revenue.service.ItemCatalogService;
 import org.gob.gim.revenue.service.PropertyService;
@@ -38,9 +39,6 @@ import ec.gob.gim.revenue.model.DTO.PropertyDTO;
 @Scope(ScopeType.CONVERSATION)
 public class ExemptionHome extends EntityHome<Exemption> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private Resident resident;
@@ -90,6 +88,17 @@ public class ExemptionHome extends EntityHome<Exemption> {
 
 	@In
 	FacesMessages facesMessages;
+
+	@In(scope = ScopeType.SESSION, value = "userSession")
+	UserSession userSession;
+
+	public UserSession getUserSession() {
+		return userSession;
+	}
+
+	public void setUserSession(UserSession userSession) {
+		this.userSession = userSession;
+	}
 
 	public List<PropertyDTO> getPropertiesForSelection() {
 		return propertiesForSelection;
