@@ -1,0 +1,286 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+	template="../layout/template.xhtml">
+
+	<ui:define name="body">
+		<!-- ui:include src="fragment/ActiveLocals.xhtml"></ui:include-->
+		<ui:include src="../income/fragment/AlertListPanel.xhtml" />
+		<ui:include src="fragment/AddEntryPatent.xhtml" />
+		<ui:include src="fragment/SRIInfoPatent.xhtml" />
+		<ui:include src="fragment/AddResident.xhtml" />
+		<ui:include src="fragment/AddLocalFirefighter.xhtml" />
+		<ui:include src="fragment/FireRateSearch.xhtml" />
+
+		<h:form id="municipalBondEditTitle" styleClass="edit">
+			<a:queue requestDelay="10" ignoreDupResponses="true" />
+
+
+			<div style="clear: both; height: 20px" />
+
+			<rich:panel>
+				<f:facet name="header">
+
+					<h:panelGrid columns="4" columnClasses="headerTitle left, ">
+						<h:outputText value="#{messages['revenue.emissionMunicipalBond']}" />
+
+						<a:commandButton value="Crear contribuyente" id="btAddResident"
+							propagation="join"
+							action="#{municipalBondHome.checkSRIInformation()}"
+							style="float:right" reRender="sriInfoList,sriInfoPatent"
+							ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('addResidentPanel')" />
+						<a:commandButton value="Agregar Dirección" id="btAddAddress"
+							disabled="#{municipalBondHome.instance.resident == null}"
+							propagation="join" action="#{localFeatureHome.viewTableLocals()}"
+							style="float:right" reRender="activeLocals" ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('addLocalFirefighterPanel')" />
+
+					</h:panelGrid>
+				</f:facet>
+
+				<h:panelGrid styleClass="full" id="panelEmitBonds" columns="3">
+					<h:panelGrid columns="3" width="100%"
+						columnClasses="topAligned, topAligned right">
+
+						<a:outputPanel id="searchPanel">
+							<g:residentChooser id="residentChooser"
+								resident="#{municipalBondHome.instance.resident}"
+								criteria="#{municipalBondHome.criteria}"
+								bean="#{municipalBondHome}" searchAction="searchResident"
+								residentsList="#{municipalBondHome.residents}"
+								identificationNumber="#{municipalBondHome.identificationNumber}"
+								searchByCriteriaAction="searchResidentByCriteria"
+								clearSearchPanelAction="clearSearchResidentPanel"
+								residentChosenListenerName="residentSelectedListener"
+								reRender="entryChooser-reason,entryChooser-name, _itemsTable, entryChooser-entryCode, entryChooser-openSearchPanelBtn, detailsTable, emitPanel, alertPanel,readingManPanel,btAddAddress,panelEmitBonds" />
+
+							<!--  g:entryChooser id="entryChooser" label="#{messages['entry']}"
+								reasonLabel="#{messages['entry.reason']}" showReason="true"
+								criteria="#{municipalBondHome.criteriaEntry}"
+								entry="#{municipalBondHome.entry}"
+								entryCode="#{municipalBondHome.entryCode}"
+								disabled="#{municipalBondHome.instance.resident == null}"
+								bean="#{municipalBondHome}" searchAction="searchEntry"
+								entriesList="#{municipalBondHome.entries}"
+								searchByCriteriaAction="searchEntryByCriteria"
+								clearSearchPanelAction="clearSearchEntryPanel"
+								entryChosenListenerName="entrySelectedListener"
+								reRender="fieldsPanel, adjunctPanel,messages, _itemsTable, serviceDateShortPanel, municipalBondEditTitle,emitPanel" /-->
+
+
+						</a:outputPanel>
+
+						<a:outputPanel id="alertPanel" ajaxRendered="true">
+							<a:commandLink id="alertField"
+								value="#{municipalBondHome.blocketMessage}"
+								rendered="#{municipalBondHome.pendingAlerts.size()==0 ? false : true}"
+								style="font-size:40px; font-weight:bold;color:#{municipalBondHome.colorMessage}"
+								styleClass="center" reRender="alertListPanel"
+								oncomplete="Richfaces.showModalPanel('alertListPanel')">
+							</a:commandLink>
+
+						</a:outputPanel>
+
+						<a:outputPanel id="addressPanel"
+							rendered="#{municipalBondHome.localsFire.size()==0 ? false : true}">
+
+							<rich:panel>
+								<f:facet name="header">
+									<h:panelGrid columns="4" columnClasses="headerTitle left, ">
+										<h:outputText value="Direcciones" />
+									</h:panelGrid>
+								</f:facet>
+
+								<rich:dataTable id="localsTable" var="_local" rows="4"
+									value="#{municipalBondHome.localsFire}" width="100%">
+									<rich:column sortBy="#{_waterMeters.serial}"
+										styleClass="action">
+										<f:facet name="header">Número</f:facet>
+										<h:outputText value="#{_local.name}" />
+									</rich:column>
+
+									<rich:column sortBy="#{_waterMeters.isActive}">
+										<f:facet name="header">Dirección</f:facet>
+										<h:outputText value="#{_local.address}" />
+									</rich:column>
+
+									<rich:column styleClass="action">
+										<f:facet name="header">#{messages['common.action']}</f:facet>
+										<a:commandButton id="btSelectLocal"
+											action="#{municipalBondHome.selectBusinessEmit(_local)}"
+											reRender="selectedAddressField,readingManPanel,btActive"
+											ajaxSingle="true" value="Usar" />
+									</rich:column>
+
+								</rich:dataTable>
+
+								<rich:datascroller align="center" for="localsTable"
+									maxPages="20" id="dsLocal" />
+
+							</rich:panel>
+
+						</a:outputPanel>
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<div style="clear: both" />
+
+			</rich:panel>
+
+			<rich:panel id="readingManPanel">
+				<f:facet name="header">
+					<h:panelGrid columns="4" columnClasses="headerTitle left, ">
+						<h:outputText value="Locales y rubros" />
+
+						<a:commandButton value="Información SRI" id="btSRI"
+							disabled="#{municipalBondHome.instance.resident == null}"
+							propagation="join"
+							action="#{municipalBondHome.checkSRIInformation()}"
+							style="float:right" reRender="sriInfoList,sriInfoPatent"
+							ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('sriInfoPatent')" />
+
+						<a:commandButton value="Agregar rubro" id="btActive"
+							disabled="#{municipalBondHome.businessEmit == null}"
+							propagation="join" action="#{localFeatureHome.viewTableLocals()}"
+							style="float:right" reRender="activeLocals" ajaxSingle="true"
+							oncomplete="Richfaces.showModalPanel('addEntryPatent')" />
+
+					</h:panelGrid>
+				</f:facet>
+
+
+				<s:decorate id="selectedAddressField"
+					template="../layout/edit.xhtml">
+					<ui:define name="label">Dirección Seleccionada:</ui:define>
+					<h:outputText value="#{municipalBondHome.businessEmit.address}" />
+				</s:decorate>
+
+				<rich:dataTable id="obligationsList" var="_item"
+					value="#{municipalBondHome.orderPatent.municipalBonds}" rows="20"
+					columnClasses="none,none,none,none,right,right,right"
+					onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+					<rich:column sortBy="#{_expired.paymentAgreementID}">
+						<f:facet name="header">#{messages['entry.code']}</f:facet>
+						<h:outputText value="#{_item.entry.code}" />
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">Local-Actividad</f:facet>
+						<h:outputText value="#{_item.adjuntDetail}">
+						</h:outputText>
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['municipalBond.description']}</f:facet>
+						<h:outputText value="#{_item.description}">
+						</h:outputText>
+					</rich:column>
+
+					<rich:column styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.value']}</f:facet>
+						<h:outputText value="#{_item.value}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.interests']}</f:facet>
+						<h:outputText value="#{_item.interest}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column styleClass="right">
+						<f:facet name="header">#{messages['municipalBond.paidTotal']}</f:facet>
+						<h:outputText value="#{_item.paidTotal}">
+							<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+
+
+					<rich:column>
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+
+						<!-- a:commandButton id="accountDetailBtn"
+							value="#{messages['finantialStatement.detail']}"
+							action="# 
+							coerciveReportHome.selectPaymentAgreement(_expired)}"
+							eventsQueue="gimEventsQueue" ajaxSingle="true"
+							reRender="paymentAgreementList,sc3,paymentAgrrementDetailPanel"
+							oncomplete="Richfaces.showModalPanel('paymentAgrrementDetailPanel')" /-->
+					</rich:column>
+
+				</rich:dataTable>
+				<rich:datascroller align="center" for="obligationsList"
+					maxPages="20" id="sc2" />
+				<div style="clear: both" />
+			</rich:panel>
+
+
+			<div class="actionButtons">
+
+				<h:commandButton id="save" value="#{messages['common.emit']}"
+					action="#{municipalBondHome.persistPatent}"
+					disabled="#{(empty municipalBondHome.municipalBonds and !municipalBondHome.isEmissionValid()) or municipalBondHome.entry.id == null }"
+					rendered="#{!municipalBondHome.managed and municipalBondHome.entry.id != '8' and municipalBondHome.entry.id != '2'}" />
+
+				<h:commandButton id="save2" value="#{messages['common.emit']}"
+					action="#{municipalBondHome.persist}"
+					disabled="#{(empty municipalBondHome.municipalBonds and !municipalBondHome.isEmissionValid()) or municipalBondHome.entry.id == null }"
+					rendered="#{!municipalBondHome.managed and municipalBondHome.entry.id == '8'}"
+					actionListener="#{businessHome.settle()}" />
+
+				<h:commandButton id="save3" value="#{messages['common.emit']}"
+					action="#{municipalBondHome.persist}"
+					disabled="#{(empty municipalBondHome.municipalBonds and !municipalBondHome.isEmissionValid()) or municipalBondHome.entry.id == null }"
+					rendered="#{!municipalBondHome.managed and municipalBondHome.entry.id == '2'}"
+					actionListener="#{businessHome.settle2()}" />
+
+				<h:commandButton id="cancelAdd" value="#{messages['common.cancel']}"
+					action="#{municipalBondHome.cancelEmitPatent}"
+					rendered="#{!municipalBondHome.managed}" />
+
+				<s:button id="backEmissionOrderEdit"
+					value="#{messages['common.back']}" propagation="end"
+					bypassDisabled="true" view="/revenue/#{municipalBondFrom}.xhtml"
+					rendered="#{municipalBondHome.managed and emissionOrderId != null}">
+					<f:param name="emissionOrderId" value="#{emissionOrderId}" />
+				</s:button>
+
+				<s:button id="backEmissionOrderList"
+					value="#{messages['common.back']}" propagation="none"
+					bypassDisabled="true" view="/revenue/EmissionOrderList.xhtml"
+					rendered="#{municipalBondHome.managed and backToEmissionOrderList}">
+					<f:param name="isDispatched" value="#{false}" />
+				</s:button>
+
+				<s:button id="backPreEmissionUrbanPropertyTaxt"
+					value="#{messages['common.back']}" propagation="join"
+					bypassDisabled="true"
+					view="/cadaster/PreEmissionPropertyTax.seam?isUrban=true"
+					rendered="#{municipalBondHome.fromUrbanProperty}">
+
+				</s:button>
+
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

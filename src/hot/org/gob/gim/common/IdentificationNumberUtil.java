@@ -127,6 +127,71 @@ public final class IdentificationNumberUtil {
 			throw new InvalidIdentificationNumberFinishedException();
 		}
 	}	
+	
+	public Boolean isTaxpayerNumberValidNoException(String identificationNumber){
+		if (identificationNumber.length() < 13) {
+			return false;
+		}
+		if (!Pattern.matches("[0-9]{13}", identificationNumber)) {
+			return false;
+		}
+
+		identificationNumber = identificationNumber.trim();
+		String rucTypeSelector = identificationNumber.substring(2,3);
+		int rucType = Integer.parseInt(rucTypeSelector);
+				
+		if (rucType < 6) {
+			//System.out.println("THIS DISTANCE IN MY VOICE: PERSONA NATURAL "+rucType);
+			verifyDigitNoException(identificationNumber);
+		} else if (rucType == 6) {
+			//System.out.println("THIS DISTANCE IN MY VOICE: PERSONA JURIDICA PUBLICA "+rucType);
+			// int[] coeficientes = { 3, 2, 7, 6, 5, 4, 3, 2 };
+			// verifyTaxpayerNumber(identificationNumber, coeficientes);
+			return true;
+		} else if (rucType == 9) {
+			//System.out.println("THIS DISTANCE IN MY VOICE: PERSONA JURIDICA PRIVADA O EXTRANJERO "+rucType);
+			// int[] coeficientes = { 4, 3, 2, 7, 6, 5, 4, 3, 2 };
+			// verifyTaxpayerNumber(identificationNumber, coeficientes);
+			return true;
+		} else {
+			return false;
+		}
+
+		return true;
+	}
+	
+	private void verifyDigitNoException(String identificationNumber) {
+		String wced = identificationNumber.substring(0, 9);
+		String verif = identificationNumber.substring(9, 10);
+		double wd = 0;
+		double wc = 0;
+		double wa = 0;
+		double wb = 0;
+
+		for (int i = 0; i <= wced.length() - 1; i = i + 2) {
+			wa = Double.parseDouble(wced.substring(i, i + 1));
+			wb = wa * 2;
+			wc = wb;
+			if (wb > 9) {
+				wc = wb - 9;
+			}
+			wd = wd + wc;
+		}
+
+		for (int i = 1; i <= wced.length() - 1; i = i + 2) {
+			wa = Double.parseDouble(wced.substring(i, i + 1));
+			wd = wd + wa;
+		}
+		double wn;
+		wn = wd / 10;
+		double wn2 = Math.ceil(wn);
+		wn2 = wn2 * 10;
+		double digit = wn2 - wd;
+
+		if (digit != Double.parseDouble(verif)) {
+			// throw new InvalidIdentificationNumberException();
+		}
+	}
 
 
 }

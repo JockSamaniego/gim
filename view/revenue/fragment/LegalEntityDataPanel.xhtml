@@ -1,0 +1,61 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+
+	<rich:panel rendered="#{municipalBondHome.residentCreate.class.simpleName.equalsIgnoreCase('LegalEntity')}">
+		<f:facet name="header">#{messages['resident.legalEntityData']}</f:facet>
+
+		<s:decorate id="nameField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.businessName']}:</ui:define>
+			<h:inputText id="name" required="true" size="80" maxlength="200"
+				value="#{municipalBondHome.residentCreate.name}" style="text-transform: uppercase">
+				<a:support event="onchange" reRender="nameField" ajaxSingle="true" />
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="cRonstitutionDateField"
+			template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.constitutionDate']}:</ui:define>
+			<rich:calendar id="constitutionDate"
+				value="#{municipalBondHome.residentCreate.constitutionDate}"
+				datePattern="#{messages['common.datePattern']}" />
+		</s:decorate>
+
+		<s:decorate id="legalEntityTypeField"
+			template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.legalEntityType']}:</ui:define>
+			<h:selectOneMenu id="legalEntityType" required="true"
+				value="#{municipalBondHome.residentCreate.legalEntityType}" >
+				<s:selectItems 
+					value="#{legalEntityTypes}" 
+					var="legalEntityType" 
+					label="#{messages[legalEntityType.name()]}" 
+					noSelectionLabel="#{messages['common.chooseOption']}"/>
+				<s:convertEnum/>
+				<a:support event="onchange" reRender="legalEntityCodeField" ajaxSingle="true"/>
+			</h:selectOneMenu>
+		</s:decorate>
+
+		<s:decorate id="legalEntityCodeField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.legalEntityCode']}:</ui:define>
+			<h:inputText 
+				id="legalEntityCode" 
+				size="20" 
+				maxlength="20"
+				value="#{municipalBondHome.residentCreate.code}"
+				disabled="#{not municipalBondHome.residentCreate.legalEntityType.name().equalsIgnoreCase('PUBLIC')}" />
+		</s:decorate>
+		
+		<div style="clear: both"><span class="required">*</span>
+		#{messages['common.requiredFields']}</div>
+
+	</rich:panel>
+
+</ui:composition>

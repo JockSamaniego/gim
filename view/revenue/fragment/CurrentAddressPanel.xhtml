@@ -1,0 +1,89 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel name="editCurrentAddressPanel">
+		<f:facet name="header">#{messages['resident.addressCurrent']}</f:facet>
+		
+		<s:decorate id="streetField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.street']}:</ui:define>
+			<h:inputText id="street" required="true" size="60" maxlength="60" style="text-transform: uppercase"
+				value="#{municipalBondHome.residentCreate.currentAddress.street}">
+				<a:support event="onchange" reRender="streetField" ajaxSingle="true" />
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="neighborhoodField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.neighborhood']}:</ui:define>
+			<h:inputText id="neighborhood" size="60" maxlength="60" style="text-transform: uppercase"
+				value="#{municipalBondHome.residentCreate.currentAddress.neighborhood}">
+				<a:support event="onchange" reRender="neighborhoodField" ajaxSingle="true" />
+			</h:inputText>
+		</s:decorate>
+		
+		<!-- s:decorate id="street2Field" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.streetPlace']}:</ui:define>
+			<h:inputText id="street2" required="true" size="60" maxlength="60" style="text-transform: uppercase"
+				value="#{municipalBondHome.residentCreate.currentAddress.street2}">
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="neighborhood2Field" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.neighborhoodPlace']}:</ui:define>
+			<h:inputText id="neighborhood2" size="60" maxlength="60" style="text-transform: uppercase"
+				value="#{municipalBondHome.residentCreate.currentAddress.neighborhood2}">
+			</h:inputText>
+		</s:decorate-->
+
+		<s:decorate id="cityField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.city']}:</ui:define>
+			<h:inputText id="city" required="true" size="25" maxlength="25" style="text-transform: uppercase"
+				value="#{municipalBondHome.residentCreate.currentAddress.city}">
+				<a:support event="onchange" reRender="cityField" ajaxSingle="true" />
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="countryField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.country']}:</ui:define>
+			<h:inputText id="country" required="true" size="25" maxlength="25" style="text-transform: uppercase"
+				value="#{municipalBondHome.residentCreate.currentAddress.country}">
+				<a:support event="onchange" reRender="countryField" ajaxSingle="true" />
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="postalCodeField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.postalCode']}:</ui:define>
+			<h:inputText id="postalCode" size="10" maxlength="10"
+				value="#{municipalBondHome.residentCreate.currentAddress.postalCode}">
+				<a:support event="onchange" reRender="postalCodeField" ajaxSingle="true" />
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="phoneNumberField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.phone']}:</ui:define>
+			<h:inputText id="phoneNumber" size="15" maxlength="15"
+				value="#{municipalBondHome.residentCreate.currentAddress.phoneNumber}">
+				<a:support event="onchange" reRender="phoneNumberField" ajaxSingle="true" />
+			</h:inputText>
+		</s:decorate>
+
+		<s:decorate id="mobileNumberField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.cellphone']}:</ui:define>
+			<h:inputText id="mobileNumber" size="15" maxlength="15"
+				value="#{municipalBondHome.residentCreate.currentAddress.mobileNumber}">
+				<a:support event="onchange" reRender="mobileNumberField" ajaxSingle="true" />
+			</h:inputText>
+		</s:decorate>
+
+		<div style="clear: both"><span class="required">*</span>
+		#{messages['common.requiredFields']}</div>
+
+	</rich:panel>
+
+</ui:composition>

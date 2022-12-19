@@ -1,0 +1,97 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf">
+
+	<rich:modalPanel id="fireRateSearchPanel" width="500" height="500"
+		style="overflow-y:scroll">
+
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Buscador tasas" />
+			</h:panelGroup>
+		</f:facet>
+
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkFireSearch" />
+				<rich:componentControl for="fireRateSearchPanel"
+					attachTo="hidelinkFireSearch" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form>
+			<a:region>
+
+				<rich:simpleTogglePanel label="Buscador" switchType="ajax">
+					<h:inputText id="criteria"
+						value="#{municipalBondHome.criteriaFireRate}" size="40"
+						maxlength="40">
+						<a:support event="onblur" ajaxSingle="true" />
+					</h:inputText>
+				</rich:simpleTogglePanel>
+
+				<div class="actionButtons">
+					<a:commandButton id="search" value="#{messages['common.search']}"
+						action="#{municipalBondHome.searchFireRates()}"
+						eventsQueue="gimEventsQueue" ajaxSingle="true"
+						reRender="fireRateList">
+					</a:commandButton>
+				</div>
+
+
+				<rich:dataTable id="fireRateList" var="_item"
+					value="#{municipalBondHome.fireRatesResult}" rows="20"
+					columnClasses="none,none,none,none,right,right,right"
+					onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+					<rich:column sortBy="#{_expired.paymentAgreementID}">
+						<f:facet name="header">Actividad</f:facet>
+						<h:outputText value="#{_item.activity}" />
+					</rich:column>
+
+					<rich:column styleClass="right">
+						<f:facet name="header">Valor</f:facet>
+						<h:outputText value="#{_item.value}">
+						<f:convertNumber
+								maxFractionDigits="#{messages['common.maxFractionDigits']}"
+								minFractionDigits="#{messages['common.minFractionDigits']}" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column>
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+
+						<a:commandButton id="btAddFireRate"
+							value="Agregar"
+							action="#{municipalBondHome.addFireRate(_item)}"
+							eventsQueue="gimEventsQueue" ajaxSingle="true"
+							reRender="selectedRatesList,emitPanel,tableEntryValueItems" />
+					</rich:column>
+
+				</rich:dataTable>
+				<rich:datascroller align="center" for="obligationsList"
+					maxPages="20" id="sc2" />
+				<div style="clear: both" />
+
+
+				<!-- div class="actionButtons">
+
+					<a:commandButton id="cancelx" ajaxSingle="true"
+						value="#{messages['common.quit']}"
+						reRender="fireRateSearchPanel, detailsTable"
+						oncomplete="Richfaces.hideModalPanel('fireRateSearchPanel');"
+						bypassUpdates="true" />
+				</div-->
+			</a:region>
+		</h:form>
+	</rich:modalPanel>
+</ui:composition>

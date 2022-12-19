@@ -1,0 +1,87 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf">
+
+	<rich:modalPanel id="addLocalFirefighterPanel" width="550"
+		height="290" style="overflow-y:scroll">
+
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Crear Local" />
+			</h:panelGroup>
+		</f:facet>
+
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkAddLocal" />
+				<rich:componentControl for="addLocalFirefighterPanel"
+					attachTo="hidelinkAddLocal" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+		<a:form id="account" styleClass="edit">
+
+			<rich:panel id="dataPanel">
+				<rich:panel style="height:40px; width:100%; overflow:auto;"
+					id="errorsPanel">
+					<rich:messages errorClass="errors" />
+				</rich:panel>
+
+				<s:decorate id="nameField" template="../../layout/edit.xhtml">
+					<ui:define name="label">Local Nro:</ui:define>
+					<h:inputText id="parent"
+						value="#{municipalBondHome.business.name}" size="50">
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="addressField" template="../../layout/edit.xhtml">
+					<ui:define name="label">Dirección:</ui:define>
+					<h:inputText id="parent" required="true"
+						value="#{municipalBondHome.business.address}" size="50">
+					</h:inputText>
+				</s:decorate>
+				
+				<s:decorate id="referenceField" template="../../layout/edit.xhtml">
+					<ui:define name="label">Referencia:</ui:define>
+					<h:inputText id="parent"
+						value="#{municipalBondHome.business.reference}" size="50">
+					</h:inputText>
+				</s:decorate>
+				
+				<a:outputPanel>
+					<s:decorate id="isActiveField" template="../../layout/edit.xhtml">
+						<ui:define name="label">Activo?:</ui:define>
+						<h:selectBooleanCheckbox value="#{municipalBondHome.business.isActive}" />
+					</s:decorate>	
+				</a:outputPanel>
+
+				<div style="clear: both"></div>
+
+			</rich:panel>
+
+			<div class="actionButtons">
+
+				<a:commandButton 
+					id="btSaveResident"
+					action="#{municipalBondHome.addBusinessLocal()}"
+					value="#{messages['common.save']}"
+					oncomplete="#{(facesContext.maximumSeverity == null || facesContext.maximumSeverity == 'INFO 0') ? 'Richfaces.hideModalPanel(\'addLocalFirefighterPanel\');' : ''}" 
+					reRender="localsTable, addressPanel"
+					/>
+
+				<a:commandButton id="cancelx" ajaxSingle="true"
+					value="#{messages['common.quit']}"
+					reRender="addLocalFirefighterPanel, detailsTable"
+					oncomplete="Richfaces.hideModalPanel('addLocalFirefighterPanel');"
+					bypassUpdates="true" />
+			</div>
+		</a:form>
+	</rich:modalPanel>
+</ui:composition>

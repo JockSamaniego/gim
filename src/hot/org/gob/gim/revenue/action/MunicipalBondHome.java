@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.EntityManager;
@@ -22,12 +23,15 @@ import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.dto.SRIDeclaration;
+import org.gob.gim.common.dto.UserWS;
+import org.gob.gim.common.service.ResidentService;
 import org.gob.gim.common.service.SystemParameterService;
 import org.gob.gim.exception.InvalidEmissionException;
 import org.gob.gim.income.facade.CallCRTV;
 import org.gob.gim.income.facade.FutureEmissionBalance;
 import org.gob.gim.revenue.exception.EntryDefinitionNotFoundException;
 import org.gob.gim.revenue.facade.RevenueService;
+import org.gob.gim.revenue.service.BusinessService;
 import org.gob.gim.revenue.service.MunicipalBondService;
 import org.gob.gim.revenue.view.EntryValueItem;
 import org.gob.loja.gim.ws.dto.ObligationsHistoryFotoMulta;
@@ -46,6 +50,7 @@ import org.jboss.seam.log.Log;
 
 import SMTATM.ConsultaRTVwsExecuteResponse;
 import SMTATM.WsPagoSolicitudExecuteResponse;
+import ec.gob.gim.commercial.model.Business;
 import ec.gob.gim.commercial.model.FireNames;
 import ec.gob.gim.commercial.model.FireRates;
 import ec.gob.gim.common.dto.DinardapResident;
@@ -53,8 +58,12 @@ import ec.gob.gim.common.model.Alert;
 import ec.gob.gim.common.model.Charge;
 import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FiscalPeriod;
+import ec.gob.gim.common.model.IdentificationType;
+import ec.gob.gim.common.model.LegalEntity;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.firestation.model.EmisionFireRate;
+import ec.gob.gim.firestation.model.LocalFireRate;
 import ec.gob.gim.income.model.dto.FutureEmissionDTO;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.EmissionOrder;
@@ -66,6 +75,7 @@ import ec.gob.gim.revenue.model.MunicipalBondStatus;
 import ec.gob.gim.revenue.model.DTO.CRTV_MunicipalBonds;
 import ec.gob.gim.revenue.model.adjunct.ANTReference;
 import ec.gob.gim.revenue.model.adjunct.BusinessLocalReference;
+import ec.gob.gim.revenue.model.adjunct.FireRateReference;
 import ec.gob.gim.security.model.Role;
 //macartuche
 //antclient
@@ -134,18 +144,38 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 	@In(scope = ScopeType.SESSION, value = "userSession")
 	UserSession userSession;
-
+	
+	// crear contribuyente bomberos
+	private Resident residentCreate;
+	private Business business;
+	private List<Business> localsFire = new ArrayList<Business>();
+	private Business businessEmit;
+	private List<FireRates> fireRatesResult = new ArrayList<FireRates>();
+	private String criteriaFireRate;
+	private List<FireRates> fireRatesSelected = new ArrayList<FireRates>();
+ 
 	public MunicipalBondHome() {
 		adjunctUri = EMPTY_ADJUNCT_URI;
 		entryValueItems = new ArrayList<EntryValueItem>();
 		municipalBonds = new ArrayList<MunicipalBond>();
 		orderPatent = new EmissionOrder();
 		// loadBondStatus();
+		
+		residentCreate = new LegalEntity();
+		residentCreate.setIdentificationType(IdentificationType.TAXPAYER_DOCUMENT);
+		
+		business = new Business();
+		// businessEmit = new Business();
 	}
 
 	private void cleanList() {
 		entryValueItems.clear();
 		municipalBonds.clear();
+		
+		if (entry !=null && entry.getId() == 841) {
+			this.businessEmit = null;
+			this.fireRatesSelected.clear();
+		}
 	}
 
 	public Boolean getIsTaxSectionRendered() {
@@ -307,6 +337,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				.get("resident");
 		this.setResident(resident);
 		this.setIdentificationNumber(resident.getIdentificationNumber());
+		loadLocals();
 		findPendingAlerts(resident.getId());
 	}
 
@@ -465,6 +496,8 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			setEntry(null);
 			setEntryCode(null);
 			adjunctUri = EMPTY_ADJUNCT_URI;
+			
+			loadLocals();
 
 			if (resident.getId() == null) {
 				addFacesMessageFromResourceBundle("resident.notFound");
@@ -718,6 +751,11 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				this.getRenderedCalendarFull());
 		entryValueItem.setDescription(entry.getDescription());
 		entryValueItems.add(entryValueItem);
+		
+		if (entry.getId() == 841) {
+			this.evaluateValues();
+		}
+		
 	}
 
 	public void load() {
@@ -1887,7 +1925,9 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		}
 
 		Person emitter = userSession.getPerson();
-		BusinessLocalReference lr;
+		// BusinessLocalReference lr;
+		
+		FireRateReference frr;
 
 		for (MunicipalBond mb : municipalBonds) {
 			mb.setEmitter(emitter);
@@ -1895,12 +1935,30 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			if (mb.getResident().getCurrentAddress() != null) {
 				mb.setAddress(mb.getResident().getCurrentAddress().getStreet());
 			}
-			try{
+			/* try{
 				lr= (BusinessLocalReference) mb.getAdjunct();
 				mb.setAdjuntDetail(lr.getBusinessName()+"-"+lr.getLocalName());
 			}catch(Exception e){
 				mb.setAdjuntDetail("-");
+			}*/
+			
+			EmisionFireRate efr = new EmisionFireRate();
+			efr.setAsignationDate(new Date());
+			efr.setBusiness(this.businessEmit);
+			
+			LocalFireRate lfr;
+			for(FireRates frs: fireRatesSelected){
+				lfr = new LocalFireRate();
+				lfr.setBusiness(this.businessEmit);
+				lfr.setFireRates(frs);
+				efr.add(lfr);
 			}
+				
+			frr = new FireRateReference();
+			frr.setEmisionFireRate(efr);
+			frr.setAddress(this.businessEmit.getAddress());
+			mb.setAdjunct(frr);
+			
 			orderPatent.add(mb);
 		}
 		
@@ -1935,7 +1993,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			//logger.error(					"===> ERROR AL PERSISTIR EL TITULO DE CREDITO :( == #0", e);
 			e.printStackTrace();
 		}*/
-	
+		this.fireRatesSelected.clear();
 
 	}
 
@@ -2214,6 +2272,201 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 	public void setDinardapResident(DinardapResident dinardapResident) {
 		this.dinardapResident = dinardapResident;
+	}
+
+	public Resident getResidentCreate() {
+		return residentCreate;
+	}
+
+	public void setResidentCreate(Resident residentCreate) {
+		this.residentCreate = residentCreate;
+	}
+	
+	
+	// bomberos
+	public void saveResident() {	
+        String outcome = null; 
+        
+        try {
+         
+            ResidentService residentService = ServiceLocator.getInstance().findResource(ResidentService.LOCAL_NAME);
+            residentService.save(this.residentCreate);
+            if (this.getInstance().getId() != null) {
+                outcome = "updated";
+            } else {
+                outcome = "persisted";
+            }
+           
+            try {
+                UserWS userws = new UserWS();
+                
+                userws.setIdentification(((LegalEntity) this.residentCreate).getIdentificationNumber());
+                userws.setName(((LegalEntity) this.residentCreate).getName());
+                userws.setSurname("");
+                userws.setActive(Boolean.TRUE);
+                userws.setEmail(((LegalEntity) this.residentCreate).getEmail());
+                userws.setPassword(((LegalEntity) this.residentCreate).getIdentificationNumber());
+                try {
+                    userws.setPhone(((LegalEntity) this.residentCreate).getCurrentAddress().getPhoneNumber());
+                } catch (Exception ex) {
+                    //System.out.println(" setPhone sri >>> error >>>>> <<<<<<");
+                    ex.printStackTrace();
+                    userws.setPhone("");
+                }
+                
+                residentService.updateUserIntoEBilling(userws);
+                addFacesMessageFromResourceBundle("update.mail.sri");
+                this.resident = this.residentCreate;
+            } catch (Exception e) {
+                //System.out.println("save sri >>> error >>>>> " + e.getStackTrace().toString());
+                e.printStackTrace();
+                getFacesMessages().addFromResourceBundle(FacesMessage.SEVERITY_ERROR, "noUpdate.mail.sri");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            addFacesMessageFromResourceBundle(e.getClass().getSimpleName());
+        }
+        // return outcome;
+    }
+	
+	private Boolean uniquenesssIdentificaciton = false;
+	
+	public void validateUniquenesssIdentificaciton() {
+		this.uniquenesssIdentificaciton = false;
+		// IdentificationNumberUtil valid= new IdentificationNumberUtil();
+		if (this.residentCreate.getIdentificationNumber() != null) {
+			Query query = em
+					.createNamedQuery("Resident.findByIdentificationNumber");
+			query.setParameter("identificationNumber",
+					this.residentCreate.getIdentificationNumber());
+			try {
+				Resident r = (Resident) query.getSingleResult();
+				if (r.getId() != null) {
+					uniquenesssIdentificaciton = true;
+				}
+			} catch (Exception e) {
+				uniquenesssIdentificaciton = false;
+				
+				
+				/* if (valid.isTaxpayerNumberValidNoException(this.residentCreate
+						.getIdentificationNumber())) {
+					uniquenesssIdentificaciton = true;
+				} else {
+					uniquenesssIdentificaciton = false;
+				}*/
+
+			}
+		}
+		
+	}
+
+	public Boolean getUniquenesssIdentificaciton() {
+		return uniquenesssIdentificaciton;
+	}
+
+	public void setUniquenesssIdentificaciton(Boolean uniquenesssIdentificaciton) {
+		this.uniquenesssIdentificaciton = uniquenesssIdentificaciton;
+	}
+
+	public Business getBusiness() {
+		return business;
+	}
+
+	public void setBusiness(Business business) {
+		this.business = business;
+	}
+	
+	public void addBusinessLocal(){
+		BusinessService businessService = ServiceLocator.getInstance().findResource(BusinessService.LOCAL_NAME);
+		this.business.setOwner(this.instance.getResident());
+		
+		try {
+			businessService.save(this.business);
+			this.business = new Business();
+			loadLocals();
+		} catch (Exception e) {
+			 e.printStackTrace();
+             getFacesMessages().addFromResourceBundle(FacesMessage.SEVERITY_ERROR, "No se pudo crear");
+		}
+	}	
+	
+	public List<Business> getLocalsFire() {
+		return localsFire;
+	}
+
+	public void setLocalsFire(List<Business> localsFire) {
+		this.localsFire = localsFire;
+	}
+
+	public void loadLocals(){
+		BusinessService businessService = ServiceLocator.getInstance().findResource(BusinessService.LOCAL_NAME);
+		this.localsFire = businessService.listLocals(this.instance.getResident().getId());
+	}
+
+	public Business getBusinessEmit() {
+		return businessEmit;
+	}
+
+	public void setBusinessEmit(Business businessEmit) {
+		this.businessEmit = businessEmit;
+	}
+	
+	public void selectBusinessEmit(Business business){
+		this.businessEmit = business;
+		this.instance.setBondAddress(business.getAddress());
+		// System.out.println(this.businessEmit.getAddress());
+	}
+	
+	public List<FireRates> getFireRatesResult() {
+		return fireRatesResult;
+	}
+
+	public void setFireRatesResult(List<FireRates> fireRatesResult) {
+		this.fireRatesResult = fireRatesResult;
+	}
+
+	public String getCriteriaFireRate() {
+		return criteriaFireRate;
+	}
+
+	public void setCriteriaFireRate(String criteriaFireRate) {
+		this.criteriaFireRate = criteriaFireRate;
+	}
+
+	public void searchFireRates(){
+		BusinessService businessService = ServiceLocator.getInstance().findResource(BusinessService.LOCAL_NAME);
+		this.fireRatesResult = businessService.searchFireRates(this.criteriaFireRate);
+	}
+	
+	public void addFireRate(FireRates rate){
+		if (!this.fireRatesSelected.contains(rate)) {
+			this.fireRatesSelected.add(rate);
+		}
+		this.evaluateValues();
+	}
+	
+	public void remove(FireRates rate) {
+		boolean removed = this.fireRatesSelected.remove(rate);
+		this.evaluateValues();
+	}
+	
+	public void evaluateValues(){
+		BigDecimal total = BigDecimal.ZERO;
+		for(FireRates fr: this.fireRatesSelected){
+			total = total.add(fr.getValue());
+		}
+		
+		for(EntryValueItem evi: entryValueItems){
+			evi.setMainValue(total);
+		}
+	}
+
+	public List<FireRates> getFireRatesSelected() {
+		return fireRatesSelected;
+	}
+
+	public void setFireRatesSelected(List<FireRates> fireRatesSelected) {
+		this.fireRatesSelected = fireRatesSelected;
 	}
 	
 	

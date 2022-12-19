@@ -1,0 +1,59 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf">
+
+	<rich:modalPanel id="addResidentPanel" width="1000" height="600"
+		style="overflow-y:scroll">
+
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Crear contribuyente" />
+			</h:panelGroup>
+		</f:facet>
+
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkAddResident" />
+				<rich:componentControl for="addResidentPanel"
+					attachTo="hidelinkAddResident" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+
+		<h:form>
+			<a:region>
+
+				<ui:include src="./ResidentGeneralDataPanel.xhtml" />
+
+				<ui:include src="./LegalEntityDataPanel.xhtml" />
+
+				<ui:include src="./CurrentAddressPanel.xhtml" />
+
+				<div class="actionButtons">
+
+					<a:commandButton
+						reRender="panelEmitBonds,residentChooser"
+						id="btSaveResident"
+						action="#{municipalBondHome.saveResident()}"
+						value="#{messages['common.save']}"
+						oncomplete="Richfaces.hideModalPanel('addResidentPanel');"
+						disabled="#{municipalBondHome.uniquenesssIdentificaciton}"
+						ajaxSingle="true" />
+
+					<a:commandButton id="cancelx" ajaxSingle="true"
+						value="#{messages['common.quit']}"
+						reRender="addResidentPanel, detailsTable"
+						oncomplete="Richfaces.hideModalPanel('addResidentPanel');"
+						bypassUpdates="true" />
+				</div>
+			</a:region>
+		</h:form>
+	</rich:modalPanel>
+</ui:composition>

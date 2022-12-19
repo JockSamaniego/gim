@@ -133,14 +133,15 @@ public class ResidentHome extends EntityHome<Resident> {
 
     @Override
     protected Resident createInstance() {
-        Resident resident;
-        if (residentType.equalsIgnoreCase("Person")) {
+        Resident resident = new LegalEntity();
+        resident.setIdentificationType(IdentificationType.TAXPAYER_DOCUMENT);
+        /* if (residentType.equalsIgnoreCase("Person")) {
             resident = new Person();
             resident.setIdentificationType(IdentificationType.NATIONAL_IDENTITY_DOCUMENT);
         } else {
             resident = new LegalEntity();
             resident.setIdentificationType(IdentificationType.TAXPAYER_DOCUMENT);
-        }
+        }*/
         // disableAddressControls = false;
         return resident;
     }

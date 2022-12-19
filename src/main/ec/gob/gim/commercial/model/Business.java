@@ -18,6 +18,7 @@ import javax.persistence.TableGenerator;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.common.model.Address;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 
@@ -63,11 +64,21 @@ public class Business {
 
 	@ManyToOne
 	private Resident owner;
+	
+	// bomberos
+	
+	private String address;
+	
+	@Column(length = 120)
+	private String reference;
+
+	private Boolean isActive;
 
 	public Business() {
 		locales = new ArrayList<Local>();
 		economicActivities = new ArrayList<EconomicActivity>();
 		businessCatalogs = new ArrayList<BusinessCatalog>();
+		this.isActive = Boolean.TRUE;
 	}
 
 	/**
@@ -227,6 +238,30 @@ public class Business {
 
 	public void setCedruc(String cedruc) {
 		this.cedruc = cedruc;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 	
 	

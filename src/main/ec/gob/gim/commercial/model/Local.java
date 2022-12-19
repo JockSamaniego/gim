@@ -52,7 +52,7 @@ import ec.gob.gim.commercial.model.Local;
 				+ "LEFT JOIN FETCH l.business b "
 				+ "LEFT JOIN FETCH l.address a "
 				+ "LEFT JOIN FETCH b.owner o "
-				+ "WHERE o.id = :ownerId AND isActive = false"),		
+				+ "WHERE o.id = :ownerId AND l.isActive = false"),		
 		@NamedQuery(name = "Local.findByOwnerId", query = "SELECT l FROM Local l "
 				+ "LEFT JOIN FETCH l.business b "
 				+ "LEFT JOIN FETCH l.address a "

@@ -29,7 +29,7 @@
 
 		<h:form>
 
-		<rich:panel>
+			<rich:panel>
 				<f:facet name="header">
 					<h:outputText styleClass="formTitle"
 						value="#{messages['revenue.emissionMunicipalBond']}" />
@@ -40,7 +40,7 @@
 						columnClasses="topAligned, topAligned right">
 
 						<a:outputPanel id="searchPanel">
-							
+
 							<g:entryChooser id="entryChooser" label="#{messages['entry']}"
 								reasonLabel="#{messages['entry.reason']}" showReason="true"
 								criteria="#{municipalBondHome.criteriaEntry}"
@@ -75,15 +75,49 @@
 
 				<h:panelGrid id="emitPanel" columns="1" width="100%"
 					rendered="#{!municipalBondHome.isBlocketToEmit}">
-					<rich:panel style="width:100%" id="detailsTable">
+
+					<rich:panel id="searchGeneralPanel">
 						<f:facet name="header">
-							<h:panelGrid columns="1" width="100%"
-								columnClasses="left headerTitle,">
-								<h:outputText
-									value="Rubro a emitir"
-									style="font-weight:bold; font-size:12px; color:red" />
+							<h:panelGrid columns="4" columnClasses="headerTitle left, ">
+								<h:outputText value="Locales y rubros" />
+
+								<a:commandButton value="Agregar tasa" id="btTasa"
+									propagation="join" style="float:right" ajaxSingle="true"
+									oncomplete="Richfaces.showModalPanel('fireRateSearchPanel')" />
+
 							</h:panelGrid>
 						</f:facet>
+
+						<rich:dataTable id="selectedRatesList" var="_item"
+							value="#{municipalBondHome.fireRatesSelected}" rows="20"
+							columnClasses="none,none,none,none,right,right,right"
+							onRowMouseOver="this.style.backgroundColor='#B5F3FB'"
+							onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+
+							<rich:column>
+								<f:facet name="header">Actividad</f:facet>
+								<h:outputText value="#{_item.activity}" />
+							</rich:column>
+
+							<rich:column styleClass="right">
+								<f:facet name="header">Valor</f:facet>
+								<h:outputText value="#{_item.value}">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+
+							<rich:column>
+								<f:facet name="header">#{messages['common.action']}</f:facet>
+
+								<a:commandButton id="deleteRateSelected" value="Eliminar"
+									action="#{municipalBondHome.remove(_item)}"
+									eventsQueue="gimEventsQueue" ajaxSingle="true"
+									reRender="selectedRatesList" />
+							</rich:column>
+
+						</rich:dataTable>
 
 						<a:outputPanel id="serviceDateShortPanel" ajaxRendered="false">
 							<h:panelGrid
