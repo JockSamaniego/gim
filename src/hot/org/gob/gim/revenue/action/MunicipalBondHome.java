@@ -2061,7 +2061,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		this.sriResult = sriResult;
 	}
 
-	public void checkSRIInformation() {
+	/* public void checkSRIInformation() {
 		this.dinardapSearch();
 		sriResult = new ArrayList<SRIDeclaration>();
 
@@ -2238,7 +2238,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				* (rightLimit - leftLimit);
 		double roundDbl = Math.round(generatedDouble*100.0)/100.0;
 		return roundDbl;
-	}
+	}*/
 	
 	private String dinardapMessage;
     private DinardapResident dinardapResident = new DinardapResident();
@@ -2252,6 +2252,14 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			this.dinardapResident = new DinardapResident();
 			this.dinardapResident.setSRIActivity(result);
 			
+			this.dinardapResident.setSRIDeclarations(dinardap.sri_F101(this.identificationNumber));
+			if(this.dinardapResident.getDeclarations().size()>0){
+				this.sriResult = this.dinardapResident.getDeclarations();
+			}else{
+				this.dinardapResident.setSRIDeclarations(dinardap.sri_F102(this.identificationNumber));
+				this.sriResult = this.dinardapResident.getDeclarations();
+			}
+				
 		} else {
 			this.dinardapResident = new DinardapResident();
 			this.dinardapMessage = "Ingrese número de indentificación";
