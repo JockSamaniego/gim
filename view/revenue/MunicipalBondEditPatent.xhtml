@@ -80,7 +80,7 @@
 						
 						<a:commandButton value="Información SRI" id="btSRI"
 							disabled="#{municipalBondHome.instance.resident == null}"
-							propagation="join" action="#{municipalBondHome.checkSRIInformation()}"
+							propagation="join" action="#{municipalBondHome.dinardapSearch()}"
 							style="float:right" reRender="sriInfoList,sriInfoPatent"
 							ajaxSingle="true"
 							oncomplete="Richfaces.showModalPanel('sriInfoPatent')" />
