@@ -32,14 +32,14 @@
 
 						<a:commandButton value="Crear contribuyente" id="btAddResident"
 							propagation="join"
-							action="#{municipalBondHome.checkSRIInformation()}"
+							action="#{municipalBondHome.dinardapSearch()}"
 							style="float:right" reRender="sriInfoList,sriInfoPatent"
 							ajaxSingle="true"
 							oncomplete="Richfaces.showModalPanel('addResidentPanel')" />
 						<a:commandButton value="Agregar Dirección" id="btAddAddress"
 							disabled="#{municipalBondHome.instance.resident == null}"
-							propagation="join" action="#{localFeatureHome.viewTableLocals()}"
-							style="float:right" reRender="activeLocals" ajaxSingle="true"
+							propagation="join" action="#{municipalBondHome.crateAddress()}"
+							style="float:right" reRender="addLocalFirefighterPanel" ajaxSingle="true"
 							oncomplete="Richfaces.showModalPanel('addLocalFirefighterPanel')" />
 
 					</h:panelGrid>

@@ -744,6 +744,10 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 	public void remove(EntryValueItem entryValueItem) {
 		entryValueItems.remove(entryValueItem);
+		
+		if (entry.getId() == 841) {
+			this.evaluateValues();
+		}
 	}
 
 	public void addEntryValueItem() {
@@ -2382,6 +2386,10 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 
 	public void setBusiness(Business business) {
 		this.business = business;
+	}
+	
+	public void crateAddress(){
+		this.business = new Business();
 	}
 	
 	public void addBusinessLocal(){
