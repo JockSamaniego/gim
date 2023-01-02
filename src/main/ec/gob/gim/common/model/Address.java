@@ -79,6 +79,11 @@ public class Address {
 	@JoinColumn(name="parish")
 	@Column(length = 30)
 	private String parish;
+	
+	// rfam ML-DF-JRM-2022-661-M
+	// 2022-12-27
+	@Column(length=200)
+	private String reference;
 
 	public Address(){
 
@@ -225,6 +230,14 @@ public class Address {
 
 	public void setParish(String parish) {
 		this.parish = parish;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 	
 	
