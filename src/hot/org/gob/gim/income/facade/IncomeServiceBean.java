@@ -31,6 +31,7 @@ import javax.persistence.Query;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.NativeQueryResultsMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.Gim;
@@ -1575,7 +1576,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public List<MunicipalBond> findPendingBonds(Long residentId) {
+	public List<MunicipalBond> findPendingBonds(Long residentId, boolean includeCEMs) {
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
 		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
@@ -1586,10 +1587,19 @@ public class IncomeServiceBean implements IncomeService {
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(compensationMunicipalBondStatusId);
 
+		boolean enabledIncludeCEMs = (Boolean) systemParameterService.findParameter("ENABLE_EXCLUDE_CEMS");
+		List<Long> entriesCEMExclusionIds = new ArrayList<Long>();
+		entriesCEMExclusionIds.add(new Long(0));
+		if ((enabledIncludeCEMs) &&(!includeCEMs)){
+			String str = systemParameterService.findParameter("ENTRIES_CEM_EXCLUSION_LIST");
+			entriesCEMExclusionIds = GimUtils.convertStringWithCommaToListLong(str);
+		}
+
 		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
+		query.setParameter("entriesCEMExclusionIds", entriesCEMExclusionIds);
 		
 		//System.out.println(residentId);
 		//System.out.println(statuses);
@@ -1615,7 +1625,7 @@ public class IncomeServiceBean implements IncomeService {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public List<MunicipalBond> findOnlyPendingBonds(Long residentId) {
+	public List<MunicipalBond> findOnlyPendingBonds(Long residentId, boolean includeCEMs) {
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
 		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
@@ -1623,16 +1633,26 @@ public class IncomeServiceBean implements IncomeService {
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 
+		boolean enabledIncludeCEMs = (Boolean) systemParameterService.findParameter("ENABLE_EXCLUDE_CEMS");
+		List<Long> entriesCEMExclusionIds = new ArrayList<Long>();
+		entriesCEMExclusionIds.add(new Long(0));
+		if ((enabledIncludeCEMs) &&(!includeCEMs)){
+			String str = systemParameterService.findParameter("ENTRIES_CEM_EXCLUSION_LIST");
+			entriesCEMExclusionIds = GimUtils.convertStringWithCommaToListLong(str);
+		}
+
 		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
+		query.setParameter("entriesCEMExclusionIds", entriesCEMExclusionIds);
+		
 		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public List<MunicipalBond> findOnlyPendingAndInAgreementBonds(Long residentId) {
+	public List<MunicipalBond> findOnlyPendingAndInAgreementBonds(Long residentId, boolean includeCEMs) {
 		SystemParameterService systemParameterService = ServiceLocator.getInstance()
 				.findResource(SystemParameterService.LOCAL_NAME);
 		Long pendingMunicipalBondStatusId = systemParameterService.findParameter("MUNICIPAL_BOND_STATUS_ID_PENDING");
@@ -1649,10 +1669,20 @@ public class IncomeServiceBean implements IncomeService {
 		statuses.add(agreementMunicipalBondStatusId);
 		statuses.add(subscriptionMunicipalBondStatusId);
 
+		boolean enabledIncludeCEMs = (Boolean) systemParameterService.findParameter("ENABLE_EXCLUDE_CEMS");
+		List<Long> entriesCEMExclusionIds = new ArrayList<Long>();
+		entriesCEMExclusionIds.add(new Long(0));
+		if ((enabledIncludeCEMs) &&(!includeCEMs)){
+			String str = systemParameterService.findParameter("ENTRIES_CEM_EXCLUSION_LIST");
+			entriesCEMExclusionIds = GimUtils.convertStringWithCommaToListLong(str);
+		}
+
 		Query query = entityManager.createNamedQuery("MunicipalBond.findByResidentIdAndTypeAndStatus");
 		query.setParameter("residentId", residentId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
+		query.setParameter("entriesCEMExclusionIds", entriesCEMExclusionIds);
+		
 		return query.getResultList();
 	}
 

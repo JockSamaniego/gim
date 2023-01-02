@@ -19,6 +19,7 @@ import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.MunicipalBondUtil;
 import org.gob.gim.common.action.UserSession;
@@ -59,6 +60,8 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private String MUNICIPAL_BOND_STATUS_ID_COMPENSATION_NAME = "MUNICIPAL_BOND_STATUS_ID_COMPENSATION";
 	private String MUNICIPAL_BOND_STATUS_ID_PAID_NAME = "MUNICIPAL_BOND_STATUS_ID_PAID";
 	private String MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL_NAME = "MUNICIPAL_BOND_STATUS_ID_PAID_FROM_EXTERNAL_CHANNEL";
+	private String ENTRIES_CEM_EXCLUSION_LIST = "ENTRIES_CEM_EXCLUSION_LIST";
+	private String ENABLE_EXCLUDE_CEMS = "ENABLE_EXCLUDE_CEMS";
 	//private String MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION_NAME = "MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION";
 	//rfam 2018-05-03 abonos
 	//private String MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION_NAME = "MUNICIPAL_BOND_STATUS_ID_SUBSCRIPTION";
@@ -80,6 +83,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 
 	private MunicipalBondType municipalBondType;
 	private List<Long> municipalBondStatusIds;
+	private List<Long> entriesCEMExclusionIds;
 	
 	private List<MunicipalBond> result;
 	
@@ -135,12 +139,15 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 			"municipalBond.emisionDate >= #{municipalBondCondition.startDate}",
 			"municipalBond.emisionDate <= #{municipalBondCondition.endDate}",
 			"municipalBond.municipalBondType = #{municipalBondCondition.municipalBondType}",
-			"municipalBond.municipalBondStatus.id IN (#{municipalBondCondition.municipalBondStatusIds})" };
+			"municipalBond.municipalBondStatus.id IN (#{municipalBondCondition.municipalBondStatusIds})",
+			"municipalBond.entry.id NOT IN (#{municipalBondCondition.entriesCEMExclusionIds})" };
 
 	public MunicipalBondCondition() {
 		this.findMunicipalBonds();
 		municipalBondType = MunicipalBondType.CREDIT_ORDER;
 		municipalBondStatusIds = new ArrayList<Long>();
+		entriesCEMExclusionIds = new ArrayList<Long>();
+		entriesCEMExclusionIds.add(new Long(0));
 		
 		SystemParameterService systemParameterService = ServiceLocator.getInstance().findResource(SystemParameterService.LOCAL_NAME);
 		Long MUNICIPAL_BOND_STATUS_ID_BLOCKED = systemParameterService.findParameter(MUNICIPAL_BOND_STATUS_ID_BLOCKED_NAME);		
@@ -159,10 +166,18 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 
 		//rfam 2018-10-02 se qita porq las futuras se presentan en el esta normla del cuenta
 		//municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION);
-		
+
+		enabledIncludeCEMs = (Boolean) systemParameterService.findParameter(ENABLE_EXCLUDE_CEMS);
+		if ((enabledIncludeCEMs) &&(!includeCEMs)){
+			String str = systemParameterService.findParameter(ENTRIES_CEM_EXCLUSION_LIST);
+			entriesCEMExclusionIds = GimUtils.convertStringWithCommaToListLong(str);
+		}
+
 		systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
 	}
 	
+	private boolean enabledIncludeCEMs;
+	private boolean includeCEMs = false;
 	private boolean isFirstTime = true;
 	
 	private Boolean isFromNotifications;
@@ -173,6 +188,30 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 
 	public void setIsFromNotifications(Boolean isFromNotifications) {
 		this.isFromNotifications = isFromNotifications;
+	}
+
+	public boolean isIncludeCEMs() {
+		return includeCEMs;
+	}
+
+	public void setIncludeCEMs(boolean includeCEMs) {
+		this.includeCEMs = includeCEMs;
+	}
+
+	public boolean isEnabledIncludeCEMs() {
+		return enabledIncludeCEMs;
+	}
+
+	public void setEnabledIncludeCEMs(boolean enabledIncludeCEMs) {
+		this.enabledIncludeCEMs = enabledIncludeCEMs;
+	}
+
+	public List<Long> getEntriesCEMExclusionIds() {
+		return entriesCEMExclusionIds;
+	}
+
+	public void setEntriesCEMExclusionIds(List<Long> entriesCEMExclusionIds) {
+		this.entriesCEMExclusionIds = entriesCEMExclusionIds;
 	}
 
 	public void initDates() {		
@@ -212,7 +251,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
 			List<MunicipalBond> pendingBonds = null;			
 			if(entry == null){
-				pendingBonds = incomeService.findOnlyPendingAndInAgreementBonds(resident.getId());
+				pendingBonds = incomeService.findOnlyPendingAndInAgreementBonds(resident.getId(), includeCEMs);
 			}else{
 				pendingBonds = incomeService.findOnlyPendingAndInAgreementBonds(resident.getId(), entry.getId());
 			}
@@ -277,7 +316,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		List<MunicipalBond> mbs = null;
 		
 		if(entry == null) {
-			mbs = incomeService.findPendingBonds(residentId);
+			mbs = incomeService.findPendingBonds(residentId, includeCEMs);
 		}else{
 			mbs = incomeService.findOnlyPendingAndInAgreementBonds(resident.getId(), entry.getId());			
 		}
