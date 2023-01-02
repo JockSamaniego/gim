@@ -141,7 +141,8 @@
 					<p:font size="6">
 						<p:paragraph alignment="left">
 							<p:text value="Loja, "/>
-							<p:text value="#{_deposit.municipalBond.emisionDate}"><f:convertDateTime pattern="#{messages['common.SRIDatePattern']}" /></p:text>
+							<p:text value="#{_deposit.municipalBond.emisionDate}"><f:convertDateTime pattern="#{messages['common.SRIDatePattern']}" /></p:text> #{'  '}
+							<p:text value="#{_deposit.municipalBond.emisionTime}"><f:convertDateTime pattern="#{messages['common.timePattern']}" /></p:text>
 						</p:paragraph>
 					</p:font>
 				</p:cell>

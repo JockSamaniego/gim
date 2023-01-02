@@ -41,12 +41,6 @@
 							<p:paragraph alignment="center">#{messages['institution.ruc']}: #{gim.institution.number}</p:paragraph>
 						</p:font>
 						
-						<ui:repeat value="#{gim.institution.isSpecialTaxpayer ? 1 : null}">
-							<p:font size="5" style="bold">
-								<p:paragraph alignment="center">#{messages['receipt.specialTaxpayer']}: #{interpolator.interpolate(messages['receipt.specialTaxpayerResolution'], gim.institution.specialTaxpayerResolution,gim.institution.specialTaxpayerDateString)}</p:paragraph>
-							</p:font>
-						</ui:repeat>
-						
 						<p:font size="5">
 							<p:paragraph alignment="center">#{messages['branch.main']}: #{gim.institution.address}. #{messages['institution.phone']}: #{gim.institution.phone} -  #{messages['institution.fax']}: #{gim.institution.fax}</p:paragraph>
 							<ui:repeat value="#{_deposit.municipalBond.receipt != null ? 1 : null}">

@@ -265,7 +265,7 @@
 						
 						<p:cell horizontalAlignment="left">
 							<p:font size="7">
-								<p:paragraph alignment="center">Dirección Financiera</p:paragraph>
+								<p:paragraph alignment="center">Jefatura Financiera</p:paragraph>
 							</p:font>
 						</p:cell>
 			
@@ -277,12 +277,8 @@
 						
 						<p:cell horizontalAlignment="left">
 							<p:font size="7">
-								<p:paragraph alignment="center">Jefatura de Rentas</p:paragraph>
+								<p:paragraph alignment="center">Tesorería</p:paragraph>
 							</p:font>
-						</p:cell>
-						
-						<p:cell horizontalAlignment="left" colspan="2">
-
 						</p:cell>
 						
 					</p:font>
@@ -304,11 +300,11 @@
 					<p:cell horizontalAlignment="center" borderWidthTop="1">
 						<p:paragraph alignment="center">#{messages['receipt.authorizedSignature']}</p:paragraph>
 					</p:cell>
-					<p:cell horizontalAlignment="center" >
+					<p:cell horizontalAlignment="center" colspan="2">
 						#{' '}
 					</p:cell>
 					<p:cell horizontalAlignment="center" borderWidthTop="1">
-						<p:paragraph alignment="center">#{messages['receipt.clientSignature']}</p:paragraph>
+						#{' '}
 					</p:cell>
 				</p:font>
 			</p:table>
@@ -367,8 +363,7 @@
 			</p:font>
 		</p:paragraph>
 	</p:font>
-
-
+	
 	<p:paragraph rendered="#{receiptPrintingManager.copiesNumber == 0}">
 		<p:barCode  type="code128" barHeight="25" textSize="10" rendered="#{not receiptPrintingManager.isCertificate and !_deposit.municipalBond.receipt.electronicReceipt}"
 					code="#{_deposit.municipalBond.receipt.authorizationNumber}-#{_deposit.municipalBond.receipt.sequential}" codeType="CODE128_UCC"
