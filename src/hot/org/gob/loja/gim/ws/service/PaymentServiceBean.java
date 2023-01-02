@@ -203,12 +203,26 @@ public class PaymentServiceBean implements PaymentService {
 				em.persist(serverLog);
 				throw new PayoutNotAllowed();
 			} else {
-				List<Long> pendingBondIds = hasPendingBonds(taxpayer.getId());
+				boolean excludeCEMs = false;
+				boolean ENABLE_EXCLUDE_CEMS = (Boolean) systemParameterService.findParameter("ENABLE_EXCLUDE_CEMS");
+				List<Long> entriesCEMExclusionIds = new ArrayList<Long>();
+				entriesCEMExclusionIds.add(new Long(0));
+				if (ENABLE_EXCLUDE_CEMS){
+					List<String> usersNotExcludeCEMs = new ArrayList<String>();
+					String users = systemParameterService.findParameter("USERS_ONLINE_NOT_EXCLUDE_CEMS");
+					usersNotExcludeCEMs = GimUtils.convertStringWithCommaToListString(users);
+					if (!usersNotExcludeCEMs.contains(request.getUsername())) { 
+						excludeCEMs = true;
+						String entriesList = systemParameterService.findParameter("ENTRIES_CEM_EXCLUSION_LIST");
+						entriesCEMExclusionIds = GimUtils.convertStringWithCommaToListLong(entriesList);
+					}
+				}
+				List<Long> pendingBondIds = hasPendingBonds(taxpayer.getId(), entriesCEMExclusionIds);
 				List<Bond> bonds = new ArrayList<Bond>();
 				if (pendingBondIds.size() > 0) {
 					try {
 						incomeService.calculatePayment(workDayDate, pendingBondIds, true, true);
-						bonds = findPendingBonds(taxpayer.getId());
+						bonds = findPendingBonds(taxpayer.getId(), excludeCEMs);
 						// esta imprimiendo el log de lo q se retorna quitar
 						// luego de las pruebas						
 						// Boolean control = comparateBondsDates(bonds);
@@ -540,21 +554,26 @@ public class PaymentServiceBean implements PaymentService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Long> hasPendingBonds(Long taxpayerId) {
+	private List<Long> hasPendingBonds(Long taxpayerId, List<Long> entriesCEMExclusionIds) {
 		Long pendingBondStatusId = systemParameterService
 				.findParameter(IncomeServiceBean.PENDING_BOND_STATUS);
 		Query query = em.createNamedQuery("Bond.findIdsByStatusAndResidentId");
 		query.setParameter("residentId", taxpayerId);
 		query.setParameter("municipalBondType", MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("pendingBondStatusId", pendingBondStatusId);
+		query.setParameter("entriesCEMExclusionIds", entriesCEMExclusionIds);
 		List<Long> ids = query.getResultList();
 		//System.out.println("PENDING BONDS TOTAL ---->" + ids.size());
 		return ids;
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Bond> findPendingBonds(Long taxpayerId) {
+	private List<Bond> findPendingBonds(Long taxpayerId, boolean excludeEntries) {
 		String entries = systemParameterService.findParameter("AVOID_PAYMENT_ENTRIES");
+		if (excludeEntries){
+			String entries2 = systemParameterService.findParameter("ENTRIES_CEM_EXCLUSION_LIST");
+			entries = entries + "," + entries2;
+		}
 		List<Long> entryList = GimUtils.convertStringWithCommaToListLong(entries);
 		Long pendingBondStatusId = systemParameterService
 				.findParameter(IncomeServiceBean.PENDING_BOND_STATUS);
@@ -872,13 +891,27 @@ public class PaymentServiceBean implements PaymentService {
 		* if (inPaymentAgreementBondsNumber > 0) { throw new
 		* PayoutNotAllowed(); } else {
 		*/
-		List<Long> pendingBondIds = hasPendingBonds(taxpayer.getId());
+		boolean excludeCEMs = false;
+		boolean ENABLE_EXCLUDE_CEMS = (Boolean) systemParameterService.findParameter("ENABLE_EXCLUDE_CEMS");
+		List<Long> entriesCEMExclusionIds = new ArrayList<Long>();
+		entriesCEMExclusionIds.add(new Long(0));
+		if (ENABLE_EXCLUDE_CEMS){
+			List<String> usersNotExcludeCEMs = new ArrayList<String>();
+			String users = systemParameterService.findParameter("USERS_ONLINE_NOT_EXCLUDE_CEMS");
+			usersNotExcludeCEMs = GimUtils.convertStringWithCommaToListString(users);
+			if (!usersNotExcludeCEMs.contains(request.getUsername())) { 
+				excludeCEMs = true;
+				String entriesList = systemParameterService.findParameter("ENTRIES_CEM_EXCLUSION_LIST");
+				entriesCEMExclusionIds = GimUtils.convertStringWithCommaToListLong(entriesList);
+			}
+		}
+		List<Long> pendingBondIds = hasPendingBonds(taxpayer.getId(), entriesCEMExclusionIds);
 		List<Bond> bonds = new ArrayList<Bond>();
 		if (pendingBondIds.size() > 0) {
 			try {
 				incomeService.calculatePayment(workDayDate, pendingBondIds,
 						true, true);
-				bonds = findPendingBonds(taxpayer.getId());				
+				bonds = findPendingBonds(taxpayer.getId(), excludeCEMs);				
 				loadBondsDetail(bonds);
 			} catch (EntryDefinitionNotFoundException e) {
 				e.printStackTrace();
