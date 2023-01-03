@@ -168,10 +168,10 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		//municipalBondStatusIds.add(MUNICIPAL_BOND_STATUS_ID_FUTURE_EMISION);
 
 		enabledIncludeCEMs = (Boolean) systemParameterService.findParameter(ENABLE_EXCLUDE_CEMS);
-		if ((enabledIncludeCEMs) &&(!includeCEMs)){
-			String str = systemParameterService.findParameter(ENTRIES_CEM_EXCLUSION_LIST);
-			entriesCEMExclusionIds = GimUtils.convertStringWithCommaToListLong(str);
-		}
+//		if ((enabledIncludeCEMs) &&(!includeCEMs)){
+//			String str = systemParameterService.findParameter(ENTRIES_CEM_EXCLUSION_LIST);
+//			entriesCEMExclusionIds = GimUtils.convertStringWithCommaToListLong(str);
+//		}
 
 		systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
 	}
