@@ -83,7 +83,7 @@
 		
 		<s:decorate id="referenceField" template="../../layout/edit.xhtml">
 			<ui:define name="label">#{messages['resident.reference']}:</ui:define>
-			<h:inputTextarea id="street" required="true"  style="text-transform: uppercase"
+			<h:inputTextarea id="street" style="text-transform: uppercase"
 				value="#{residentHome.instance.currentAddress.reference}" >
 				 <f:validateLength maximum="200" />
 			</h:inputTextarea>
