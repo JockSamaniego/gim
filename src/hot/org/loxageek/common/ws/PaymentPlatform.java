@@ -60,8 +60,8 @@ public class PaymentPlatform {
 	@WebMethod
 	public Statement findStatement(ServiceRequest request)
 			throws PayoutNotAllowed, TaxpayerNotFound, InvalidUser, NotActiveWorkday, HasNoObligations {
-		// System.out.println(
-			//	"FINDING SATATEMENT FOR " + request.getIdentificationNumber() + " with USER: " + request.getUsername());
+		 System.out.println(
+				"FINDING SATATEMENT FOR " + request.getIdentificationNumber() + " with USER: " + request.getUsername());
 		Statement statement = new Statement();
 		try {
 			statement = service.findStatement(request);

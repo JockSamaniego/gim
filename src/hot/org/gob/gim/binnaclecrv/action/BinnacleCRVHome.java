@@ -301,6 +301,13 @@ public class BinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		isFirstTime = false;
 	}
 
+	public void wireVehicleConsult() {
+		if (!isFirstTime)
+			return;
+		canEditLicensePlate = true;
+		isFirstTime = false;
+	}
+
 	public void wireArrival() {
 		if (!isFirstTime)
 			return;

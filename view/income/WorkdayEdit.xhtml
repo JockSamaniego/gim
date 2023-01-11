@@ -163,6 +163,15 @@
 							</h:outputText>
 						</rich:column>
 	
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['tillPermission.closingTime']}" />
+							</f:facet>
+							<h:outputText value="#{_tillPermission.closingTime}">
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+							</h:outputText>
+						</rich:column>
+	
 						<rich:column sortBy="#{_tillPermission.person}"
 							styleClass="action">
 							<f:facet name="header">
