@@ -51,8 +51,11 @@ public class BusinessServiceBean implements BusinessService {
 	public List<FireRates> searchFireRates(String criteria) {
 		String qry = "SELECT fr from FireRates fr where lower(fr.activity) like ?1 order by fr.activity ";
 
+		if(criteria==null)
+			criteria="";
+		
 		Query query = entityManager.createQuery(qry);
-		query.setParameter(1, criteria.toLowerCase());
+		query.setParameter(1, "%"+criteria.toLowerCase()+"%");
 
 		return query.getResultList();
 	}

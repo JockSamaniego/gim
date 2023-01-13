@@ -45,8 +45,8 @@ public class FireRateReference extends Adjunct {
 		List<ValuePair> details = new LinkedList<ValuePair>();
 		ValuePair pair;
 		for (LocalFireRate lfr : emisionFireRate.getRates()) {
-			pair = new ValuePair(lfr.getFireRates().getActivity(), " \t "+myFormatter.format(lfr
-					.getFireRates().getValue()));
+			pair = new ValuePair(lfr.getActivity(), " \t "+myFormatter.format(lfr
+					.getTotal()));
 			details.add(pair);
 		}
 		return details;

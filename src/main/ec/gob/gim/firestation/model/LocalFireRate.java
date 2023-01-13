@@ -1,5 +1,7 @@
 package ec.gob.gim.firestation.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -24,6 +26,20 @@ public class LocalFireRate implements Comparable<LocalFireRate>{
 	@Id
 	@GeneratedValue(generator = "LocalFireRate", strategy = GenerationType.TABLE)
 	private Long id;
+	
+	/**
+	 * cantidad de emisión, por defecto 1
+	 */
+	private Integer amount;
+	
+	/**
+	 * campor editable para poiner el nombre de la actividad
+	 */
+	private String activity;
+	
+	private BigDecimal value;
+	
+	private BigDecimal total;
 
 	@ManyToOne
 	private Business business;
@@ -33,6 +49,12 @@ public class LocalFireRate implements Comparable<LocalFireRate>{
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private EmisionFireRate emisionFireRate;
+	
+	
+
+	public LocalFireRate() {
+		this.amount = 1;
+	}
 
 	public Long getId() {
 		return id;
@@ -66,12 +88,56 @@ public class LocalFireRate implements Comparable<LocalFireRate>{
 		this.emisionFireRate = emisionFireRate;
 	}
 
+	public Integer getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Integer amount) {
+		this.amount = amount;
+	}
+
+	public String getActivity() {
+		return activity;
+	}
+
+	public void setActivity(String activity) {
+		this.activity = activity;
+	}
+
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;
+	}
+	
+
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}
+
 	@Override
 	public int compareTo(LocalFireRate o) {
 		if(o != null){ 
 			return this.fireRates.getId().intValue() - o.fireRates.getId().intValue();
 		}
 		return 0;
+	}
+	
+	public void setSelectedFireRate(FireRates fireRates){
+		this.fireRates = fireRates;
+		this.activity = fireRates.getActivity();
+		this.value = fireRates.getValue();
+		this.total = this.value.multiply(BigDecimal.valueOf(this.amount));
+	}
+	
+	public void updateTotal(){
+		this.total = this.value.multiply(BigDecimal.valueOf(this.amount));
 	}
 
 }

@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -152,7 +153,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	private Business businessEmit;
 	private List<FireRates> fireRatesResult = new ArrayList<FireRates>();
 	private String criteriaFireRate;
-	private List<FireRates> fireRatesSelected = new ArrayList<FireRates>();
+	private List<LocalFireRate> fireRatesSelected = new ArrayList<LocalFireRate>();
  
 	public MunicipalBondHome() {
 		adjunctUri = EMPTY_ADJUNCT_URI;
@@ -1949,14 +1950,19 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			EmisionFireRate efr = new EmisionFireRate();
 			efr.setAsignationDate(new Date());
 			efr.setBusiness(this.businessEmit);
+			for(LocalFireRate frs: this.fireRatesSelected){
+				frs.setEmisionFireRate(efr);
+			}
+			efr.setRates(new HashSet<LocalFireRate>(this.fireRatesSelected));
 			
-			LocalFireRate lfr;
+			
+			/* LocalFireRate lfr;
 			for(FireRates frs: fireRatesSelected){
 				lfr = new LocalFireRate();
 				lfr.setBusiness(this.businessEmit);
 				lfr.setFireRates(frs);
 				efr.add(lfr);
-			}
+			}*/
 				
 			frr = new FireRateReference();
 			frr.setEmisionFireRate(efr);
@@ -2455,21 +2461,30 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	}
 	
 	public void addFireRate(FireRates rate){
-		if (!this.fireRatesSelected.contains(rate)) {
+		
+		LocalFireRate lfr = new LocalFireRate();
+		lfr.setBusiness(this.businessEmit);
+		lfr.setSelectedFireRate(rate);
+		
+		this.fireRatesSelected.add(lfr);
+		
+
+		/*if (!this.fireRatesSelected.contains(rate)) {
 			this.fireRatesSelected.add(rate);
 		}
+		this.evaluateValues();*/
 		this.evaluateValues();
 	}
 	
-	public void remove(FireRates rate) {
+	public void remove(LocalFireRate rate) {
 		boolean removed = this.fireRatesSelected.remove(rate);
 		this.evaluateValues();
 	}
 	
 	public void evaluateValues(){
 		BigDecimal total = BigDecimal.ZERO;
-		for(FireRates fr: this.fireRatesSelected){
-			total = total.add(fr.getValue());
+		for(LocalFireRate fr: this.fireRatesSelected){
+			total = total.add(fr.getTotal());
 		}
 		
 		for(EntryValueItem evi: entryValueItems){
@@ -2477,12 +2492,22 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		}
 	}
 
-	public List<FireRates> getFireRatesSelected() {
+	public List<LocalFireRate> getFireRatesSelected() {
 		return fireRatesSelected;
 	}
 
-	public void setFireRatesSelected(List<FireRates> fireRatesSelected) {
+	public void setFireRatesSelected(List<LocalFireRate> fireRatesSelected) {
 		this.fireRatesSelected = fireRatesSelected;
+	}
+	
+	public void updateTotal(){
+		for(LocalFireRate lfr:fireRatesSelected){
+			lfr.updateTotal();
+		}
+		
+		if (entry.getId() == 841) {
+			this.evaluateValues();
+		}
 	}
 	
 	

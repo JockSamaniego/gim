@@ -96,12 +96,31 @@
 
 							<rich:column>
 								<f:facet name="header">Actividad</f:facet>
-								<h:outputText value="#{_item.activity}" />
+								<h:inputText value="#{_item.activity}"  size="55" maxlength="100" >
+									<a:support event="onblur" ajaxSingle="true" />
+								</h:inputText>
 							</rich:column>
 
 							<rich:column styleClass="right">
 								<f:facet name="header">Valor</f:facet>
 								<h:outputText value="#{_item.value}">
+									<f:convertNumber
+										maxFractionDigits="#{messages['common.maxFractionDigits']}"
+										minFractionDigits="#{messages['common.minFractionDigits']}" />
+								</h:outputText>
+							</rich:column>
+							
+							<rich:column styleClass="right">
+								<f:facet name="header">Cantidad</f:facet>
+								<h:inputText value="#{_item.amount}" styleClass="right">
+										<a:support event="onblur" ajaxSingle="true" action="#{municipalBondHome.updateTotal()}"
+										reRender="selectedRatesList,tableEntryValueItems"/>
+								</h:inputText>
+							</rich:column>
+							
+							<rich:column styleClass="right">
+								<f:facet name="header">Total</f:facet>
+								<h:outputText value="#{_item.total}">
 									<f:convertNumber
 										maxFractionDigits="#{messages['common.maxFractionDigits']}"
 										minFractionDigits="#{messages['common.minFractionDigits']}" />
