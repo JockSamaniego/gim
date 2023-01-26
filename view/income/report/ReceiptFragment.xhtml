@@ -245,9 +245,9 @@
 			</p:table>			
 
 			<ui:repeat value="#{_deposit.municipalBond.adjunct != null ? 1 : null}">
-				<p:table columns="4" widthPercentage="100" spacingAfter="5" widths="1 2 1 2">
+				<p:table columns="2" widthPercentage="100" spacingAfter="5">
 					<f:facet name="defaultCell">
-						<p:cell borderWidth="0" />
+						<p:cell borderWidth="1" />
 					</f:facet>					
 					<ui:repeat value="#{_deposit.municipalBond.adjunct.details}" var="_detail" >
 						<p:cell horizontalAlignment="right">
@@ -259,15 +259,6 @@
 							<p:paragraph alignment="right">#{_detail.value}</p:paragraph>
 						</p:cell>
 					</ui:repeat>
-					
-					<p:cell horizontalAlignment="right" rendered="#{not paymentHome.isPair(_deposit.municipalBond.adjunct.details.size())}">
-						<p:font size="6" style="bold">
-							<p:paragraph alignment="right">#{_detail.label}</p:paragraph> 
-						</p:font>
-					</p:cell>
-					<p:cell rendered="#{_deposit.municipalBond.adjunct.details.size() > 6}">
-						<p:paragraph alignment="right">#{_detail.value}</p:paragraph>
-					</p:cell>
 				</p:table>
 			</ui:repeat>				
 			

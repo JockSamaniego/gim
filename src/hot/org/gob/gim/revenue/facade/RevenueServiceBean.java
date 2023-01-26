@@ -33,6 +33,7 @@ import org.gob.gim.revenue.view.EntryValueItem;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.firestation.model.EmisionFireRate;
 import ec.gob.gim.revenue.model.Adjunct;
 import ec.gob.gim.revenue.model.EmissionOrder;
 import ec.gob.gim.revenue.model.Entry;
@@ -721,6 +722,13 @@ public class RevenueServiceBean implements RevenueService {
 		municipalBond.setGroupingCode(newGroupingCode);
 		MunicipalBond updatedBond = municipalBondService.update(municipalBond);
 		return updatedBond;
+	}
+
+	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public EmisionFireRate saveEmisionFireRate(EmisionFireRate efr) {
+		entityManager.persist(efr);
+		return efr;
 	}
 
 }

@@ -149,8 +149,8 @@
 
 						<a:commandButton value="Agregar rubro" id="btActive"
 							disabled="#{municipalBondHome.businessEmit == null}"
-							propagation="join" action="#{localFeatureHome.viewTableLocals()}"
-							style="float:right" reRender="activeLocals" ajaxSingle="true"
+							propagation="join" action="#{municipalBondHome.setDefaultEntry()}"
+							style="float:right" reRender="activeLocals,addEntryPatent" ajaxSingle="true"
 							oncomplete="Richfaces.showModalPanel('addEntryPatent')" />
 
 					</h:panelGrid>

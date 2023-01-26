@@ -19,14 +19,14 @@
    <navigation from-action="#{municipalBondHome.persistPatent}">
    	  <rule if-outcome="persisted">
          <end-conversation before-redirect="true" root="true"/>
-         <redirect view-id="/revenue/MunicipalBondEditPatent.xhtml"/>   
+         <redirect view-id="/revenue/MunicipalBondEditFirefighters.xhtml"/>   
       </rule>
    </navigation>
    
    <navigation from-action="#{municipalBondHome.cancelEmitPatent}">
    	  <rule if-outcome="cancelEmitPatent">
          <end-conversation before-redirect="true" root="true"/>
-         <redirect view-id="/revenue/MunicipalBondEditPatent.xhtml"/>   
+         <redirect view-id="/revenue/MunicipalBondEditFirefighters.xhtml"/>   
       </rule>
    </navigation>
 

@@ -27,7 +27,7 @@ public class FireRateReference extends Adjunct {
 
 	private String address;
 
-	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@ManyToOne(cascade = { CascadeType.MERGE, CascadeType.ALL })
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private EmisionFireRate emisionFireRate;
 

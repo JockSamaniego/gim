@@ -12,6 +12,7 @@ import org.gob.gim.revenue.view.EntryValueItem;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.firestation.model.EmisionFireRate;
 import ec.gob.gim.revenue.model.Entry;
 import ec.gob.gim.revenue.model.EntryStructure;
 import ec.gob.gim.revenue.model.EntryStructureType;
@@ -177,4 +178,6 @@ public interface RevenueService {
 	MunicipalBond update(MunicipalBond municipalBond, MunicipalBondStatus previousStatus, MunicipalBondStatus currentStatus, User user, String explanation) throws Exception;
 	
 	MunicipalBond pullApartMunicipalBond(MunicipalBond municipalBond) throws Exception;
+	
+	public EmisionFireRate saveEmisionFireRate(EmisionFireRate efr);
 }

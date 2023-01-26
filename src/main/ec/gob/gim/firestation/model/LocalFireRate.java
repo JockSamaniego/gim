@@ -139,5 +139,13 @@ public class LocalFireRate implements Comparable<LocalFireRate>{
 	public void updateTotal(){
 		this.total = this.value.multiply(BigDecimal.valueOf(this.amount));
 	}
+	
+	public void setData(LocalFireRate lfr){
+		this.fireRates = lfr.getFireRates();
+		this.activity = lfr.getActivity();
+		this.value = lfr.getValue();
+		this.total = lfr.getTotal();
+		this.amount = lfr.getAmount();
+	}
 
 }

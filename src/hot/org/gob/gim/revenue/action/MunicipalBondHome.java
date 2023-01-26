@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
@@ -708,31 +710,9 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		clearEntryValues();
 	}
 
-	public void entrySelectedListener(ActionEvent event) {
-		UIComponent component = event.getComponent();
-		Entry entry = (Entry) component.getAttributes().get("entry");
-		this.setEntry(entry);
-		cleanList();
-		this.instance.setEntry(entry);
-		clearEntryValues();
-		if (entry.getAccount() == null) {
-			setEntryCode(entry.getCode());
-		} else {
-			setEntryCode(entry.getAccount().getAccountCode());
-		}
-
-		Adjunct adjunct = createAdjunct(entry);
-		if (adjunct != null) {
-			adjunctHome.setId(adjunct.getId());
-			adjunctHome.setInstance(adjunct);
-		}
-
-		entryValueItems.clear();
-		EntryValueItem entryValueItem = new EntryValueItem(
-				this.getRenderedCalendarFull());
-		entryValueItem.setDescription(entry.getDescription());
-		entryValueItems.add(entryValueItem);
-
+	public void setDefaultEntry() {
+		this.entryCode= "00841";
+		searchEntry();
 	}
 
 	private void clearEntryValues() {
@@ -1933,6 +1913,10 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		// BusinessLocalReference lr;
 		
 		FireRateReference frr;
+		EmisionFireRate efr;
+		List<LocalFireRate> fireRatesToSave;
+		RevenueService revenueService = ServiceLocator.getInstance()
+				.findResource(REVENUE_SERVICE_NAME);
 
 		for (MunicipalBond mb : municipalBonds) {
 			mb.setEmitter(emitter);
@@ -1947,13 +1931,21 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				mb.setAdjuntDetail("-");
 			}*/
 			
-			EmisionFireRate efr = new EmisionFireRate();
+			efr = new EmisionFireRate();
 			efr.setAsignationDate(new Date());
 			efr.setBusiness(this.businessEmit);
+			
+			fireRatesToSave = new ArrayList<LocalFireRate>();
+			LocalFireRate frLocal;
 			for(LocalFireRate frs: this.fireRatesSelected){
-				frs.setEmisionFireRate(efr);
+				
+				frLocal = new LocalFireRate();
+				frLocal.setEmisionFireRate(efr);
+				frLocal.setData(frs);
+				// frs.setEmisionFireRate(efr);
+				fireRatesToSave.add(frLocal);
 			}
-			efr.setRates(new HashSet<LocalFireRate>(this.fireRatesSelected));
+			efr.setRates(new HashSet<LocalFireRate>(fireRatesToSave));
 			
 			
 			/* LocalFireRate lfr;
@@ -1963,7 +1955,11 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 				lfr.setFireRates(frs);
 				efr.add(lfr);
 			}*/
-				
+			
+			// efr = revenueService.saveEmisionFireRate(efr);
+			
+			System.out.print("---------------- "+ efr.getId());
+			
 			frr = new FireRateReference();
 			frr.setEmisionFireRate(efr);
 			frr.setAddress(this.businessEmit.getAddress());
@@ -2004,6 +2000,13 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			e.printStackTrace();
 		}*/
 		this.fireRatesSelected.clear();
+
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void saveEmisionFireRate(EmisionFireRate efr) {
+		em.persist(efr);
+		em.flush();
 
 	}
 
@@ -2508,6 +2511,33 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		if (entry.getId() == 841) {
 			this.evaluateValues();
 		}
+	}
+	
+	public void entrySelectedListener(ActionEvent event) {
+		UIComponent component = event.getComponent();
+		Entry entry = (Entry) component.getAttributes().get("entry");
+		this.setEntry(entry);
+		cleanList();
+		this.instance.setEntry(entry);
+		clearEntryValues();
+		if (entry.getAccount() == null) {
+			setEntryCode(entry.getCode());
+		} else {
+			setEntryCode(entry.getAccount().getAccountCode());
+		}
+
+		Adjunct adjunct = createAdjunct(entry);
+		if (adjunct != null) {
+			adjunctHome.setId(adjunct.getId());
+			adjunctHome.setInstance(adjunct);
+		}
+
+		entryValueItems.clear();
+		EntryValueItem entryValueItem = new EntryValueItem(
+				this.getRenderedCalendarFull());
+		entryValueItem.setDescription(entry.getDescription());
+		entryValueItems.add(entryValueItem);
+
 	}
 	
 	
