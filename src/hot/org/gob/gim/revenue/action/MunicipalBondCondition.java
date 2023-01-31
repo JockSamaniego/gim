@@ -19,6 +19,7 @@ import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
 import org.gob.gim.common.DateUtils;
+import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.MunicipalBondUtil;
 import org.gob.gim.common.action.UserSession;
@@ -42,6 +43,8 @@ import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.framework.EntityQuery;
 import org.jboss.seam.log.Log;
 
+import ec.gob.gim.common.model.Charge;
+import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.finances.model.DTO.MetadataBondDTO;
@@ -92,6 +95,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private BigDecimal totalInterestRemision= BigDecimal.ZERO;
 	private BigDecimal totalSurchargeRemision = BigDecimal.ZERO ;
 	
+	private String memo;
 	
 
 
@@ -111,6 +115,8 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	
 	@In(create = true)
 	private Renderer renderer;
+	
+	private GimUtils gimUtils;
 
 	private static final long serialVersionUID = 1L;
 	private static final String EJBQL = "select distinct(municipalBond) from MunicipalBond municipalBond "
@@ -715,4 +721,38 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		}
 	}
 
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
+
+	public UserSession getUserSession() {
+		return userSession;
+	}
+
+	public String letterValues(String value){
+		return GimUtils.Convertir(value, "dólar", "dólares", "centavo", "centavos", "con", true);
+	}
+
+	public String getIncomeName() {
+		Charge incomeCharge = getCharge("DELEGATE_ID_INCOME");
+		if (incomeCharge != null) {
+			for (Delegate d : incomeCharge.getDelegates()) {
+				if (d.getIsActive())
+					return d.getName();
+			}
+		}
+		return "";
+	}
+	
+	public Charge getCharge(String systemParameter) {
+		if (systemParameterService == null)
+			systemParameterService = ServiceLocator.getInstance().findResource(SYSTEM_PARAMETER_SERVICE_NAME);
+		Charge charge = systemParameterService.materialize(Charge.class,systemParameter);
+		return charge;
+	}
+	
 }

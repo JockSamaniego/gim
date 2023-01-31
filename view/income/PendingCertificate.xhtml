@@ -1,0 +1,175 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j" xmlns:g="http://gim.gob.ec/jsf"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="../layout/template.xhtml">
+
+    <ui:define name="body">
+        <a:form id="municipalBondSearch" styleClass="edit">
+            <ui:debug id="uiDebug" />
+
+            <rich:panel>
+                <f:facet name="header">
+                    <h:outputText value="Certificado de Deudas del Contribuyente"
+                        styleClass="formTitle" />
+                </f:facet>
+
+                <g:residentChooser resident="#{municipalBondCondition.resident}"
+                    criteria="#{municipalBondCondition.criteria}"
+                    bean="#{municipalBondCondition}" searchAction="searchResident"
+                    residentsList="#{municipalBondCondition.residents}"
+                    identificationNumber="#{municipalBondCondition.identificationNumber}"
+                    searchByCriteriaAction="searchResidentByCriteria"
+                    clearSearchPanelAction="clearSearchResidentPanel"
+                    residentChosenListenerName="residentSelectedListener"
+                    reRender="entryChooserPanel,contentPanel">
+                    <s:convertEntity />
+                </g:residentChooser>
+
+                <a:outputPanel id="entryChooserPanel" ajaxRendered="false">
+                <g:entryChooser id="entryChooser" label="#{messages['entry']}"
+                    criteria="#{municipalBondCondition.criteriaEntry}"
+                    entry="#{municipalBondCondition.entry}"
+                    entryCode="#{municipalBondCondition.entryCode}"
+                    bean="#{municipalBondCondition}" searchAction="searchEntry"
+                    entriesList="#{municipalBondCondition.entries}"
+                    searchByCriteriaAction="searchEntryByCriteria"
+                    clearSearchPanelAction="clearSearchEntryPanel" reRender="contentPanel"
+                    entryChosenListenerName="entrySelectedListener" 
+                    disabled="#{empty municipalBondCondition.resident}">
+                    <s:convertEntity />
+                </g:entryChooser>
+
+				<s:decorate id="memoField" template="../layout/edit.xhtml">
+					<ui:define name="label">Memorando:</ui:define>
+					<h:inputText id="memo" size="25" maxlength="40"
+						value="#{municipalBondCondition.memo}" required="true" />
+				</s:decorate>
+
+                </a:outputPanel>
+
+                <div style="clear: both" />
+            </rich:panel>
+
+            <div class="actionButtons">
+                <a:outputPanel ajaxRendered="true">                    
+                    
+                    <a:commandButton id="search" value="#{messages['common.search']}"
+                        action="#{municipalBondCondition.chargeResults()}" 
+                        reRender="contentPanel, messages" 
+                        disabled="#{municipalBondCondition.resident == null}">                        
+                    </a:commandButton>
+                    
+                    <s:button id="print" disabled="#{empty municipalBondCondition.municipalBondItemsResult}"
+                        value="#{messages['common.print']}" propagation="join"
+                        view="/income/report/PendingCertificateReport.xhtml" />
+                    
+                    <s:button id="reset" value="#{messages['common.reset']}"
+                        includePageParams="false" propagation="none" />
+                </a:outputPanel>
+            </div>
+
+        </a:form>
+        <h:form>
+            <div class="results">
+                
+                <rich:panel id="contentPanel">
+                    <a:outputPanel ajaxRendered="false">        
+                <h:outputText
+                    value="#{messages['municipalBond.searchReturnedNoResults']}."
+                    rendered="#{empty municipalBondCondition.result}" />
+
+                <rich:dataTable 
+                    rendered="#{not empty municipalBondCondition.municipalBondItemsResult}" >
+                    <f:facet name="header">
+                        <h:outputText styleClass="tableTitle" value="Valores Emitidos Pendientes de Pago"/>
+                    </f:facet>
+                </rich:dataTable>
+
+
+                <rich:dataTable value="#{municipalBondCondition.municipalBondItemsResult}"
+                    var="_entryItem"
+                    rendered="#{not empty municipalBondCondition.municipalBondItemsResult}"
+                    rowClasses="rvgRowOne,rvgRowTwo" id="#{id}_itemsTable" >
+            
+                    <f:facet name="header">
+                        <rich:columnGroup>
+                            <rich:column styleClass="left">
+                                <h:outputText value="#{messages['entry']}" />
+                            </rich:column>
+                            <rich:column>
+                                <h:outputText value="#{messages['common.value']}" />
+                            </rich:column>
+                        </rich:columnGroup>
+                    </f:facet>
+                    
+                    <rich:columnGroup rendered="#{_entryItem.municipalBond.paidTotal > 0 or municipalBondCondition.entry != null}">
+                        <rich:column styleClass="left" >
+                            <h:outputText value="#{_entryItem.municipalBond.entry.name}">
+                            </h:outputText>
+                        </rich:column>
+            
+                        <rich:column styleClass="right">
+                            <h:outputText value="#{_entryItem.municipalBond.paidTotal}">
+                                <f:convertNumber
+                                    maxFractionDigits="#{messages['common.maxFractionDigits']}"
+                                    minFractionDigits="#{messages['common.minFractionDigits']}" />
+                            </h:outputText>
+                        </rich:column>
+                    </rich:columnGroup>
+                </rich:dataTable>
+                <br />
+                <br />
+                <rich:dataTable value="#{municipalBondCondition.futureBonds}"
+                    rendered="#{not empty municipalBondCondition.futureBonds}" >
+                    <f:facet name="header">
+                        <h:outputText styleClass="tableTitle" value="Valores Pendientes de Emisión"/>
+                    </f:facet>
+                </rich:dataTable>
+
+                <rich:dataTable value="#{municipalBondCondition.futureBonds}"
+                    rendered="#{not empty municipalBondCondition.futureBonds}"
+                    var="_futureBond">
+                    
+                    <rich:column>
+                        <f:facet name="header">#{messages['futureBond.account']}</f:facet>
+                        <h:outputText value="#{_futureBond.account}" />
+                    </rich:column>
+                    
+                    <rich:column>
+                        <f:facet name="header">#{messages['futureBond.serviceCode']}</f:facet>
+                        <h:outputText value="#{_futureBond.serviceCode}" />
+                    </rich:column>
+                    
+                    <rich:column styleClass="right">
+                        <f:facet name="header">#{messages['futureBond.quantity']}</f:facet>
+                        <h:outputText value="#{_futureBond.quantity}" />
+                    </rich:column>
+                    
+                    <rich:column styleClass="right">
+                        <f:facet name="header">#{messages['futureBond.total']}</f:facet>
+                        <h:outputText value="#{_futureBond.total}" />
+                    </rich:column>
+                    
+                </rich:dataTable>
+        
+                </a:outputPanel>
+                </rich:panel>
+            </div>
+        </h:form>
+        
+        <g:municipalBondViewer
+            resident="#{municipalBondsViewerHome.resident}"
+            municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}"
+            deposits="#{municipalBondsViewerHome.deposits}" />
+        
+
+    </ui:define>
+
+</ui:composition>
