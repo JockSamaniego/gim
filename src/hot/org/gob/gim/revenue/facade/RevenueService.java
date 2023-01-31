@@ -176,4 +176,5 @@ public interface RevenueService {
 	
 	MunicipalBond update(MunicipalBond municipalBond, MunicipalBondStatus previousStatus, MunicipalBondStatus currentStatus, User user, String explanation) throws Exception;
 	
+	MunicipalBond pullApartMunicipalBond(MunicipalBond municipalBond) throws Exception;
 }
