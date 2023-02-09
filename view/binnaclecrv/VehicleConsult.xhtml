@@ -1,0 +1,45 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <h:form id="vehicleConsultForm" styleClass="edit">
+            <h:outputText styleClass="formTitle"
+                value="Consulta Vehicular" />
+
+            <rich:panel>
+                <f:facet name="header">#{messages['binnacleCRV.generalData']}</f:facet>
+                
+                <h:panelGrid columns="4">
+                    <s:decorate id="licensePlateField" template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['binnacleCRV.licensePlate']}</ui:define>
+                        <h:inputText id="licensePlate" required="true" maxlength="20" ajaxSingle="true"
+                            value="#{binnacleCRVHome.instance.licensePlate}" 
+                            readonly="#{!binnacleCRVHome.canEditLicensePlate}" >
+                            <a:support event="onblur" reRender="licensePlateField"
+                                 ajaxSingle="true" eventsQueue="gimQueue" />
+                        </h:inputText>
+                        <a:commandButton id="searchVehicle" 
+                            action="#{binnacleCRVHome.searchVehicle()}"
+                            reRender="vehicleConsultForm, messages" ajaxSingle="true"
+                            eventsQueue="gimEventsQueue" 
+                            value="#{messages['common.search']}" />
+                        <s:button id="reset" value="#{messages['common.reset']}"
+                            includePageParams="false" propagation="none" />
+                    </s:decorate>
+                </h:panelGrid>
+                <ui:include src="fragment/VehicleInformationCRV.xhtml" />
+            </rich:panel>
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>

@@ -75,7 +75,7 @@
 		<s:decorate id="emailField" template="../../layout/edit.xhtml">
 			<ui:define name="label">#{messages['resident.email']}</ui:define>
 			<h:inputText id="email" size="50"
-				value="#{residentHome.instance.email}">
+				value="#{residentHome.instance.email}" required="true">
 				<f:validator validatorId="emailValidator" />
 			</h:inputText>
 		</s:decorate>

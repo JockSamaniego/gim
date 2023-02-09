@@ -242,7 +242,7 @@ public class SeniorExemptionHome extends EntityHome<Exemption> {
 				Adjunct adjunct = createAdjunct(property, discountPercentage);
 //				System.out.println("------------------");
 				MunicipalBond mb = revenueService.createMunicipalBond(
-						instance.getResident(), entry, fiscalPeriod,
+						property.getCurrentDomain().getResident(), entry, fiscalPeriod,
 						entryValueItem, true, adjunct);
 				if (mb.getGroupingCode() == null)
 					mb.setGroupingCode(groupingCode);

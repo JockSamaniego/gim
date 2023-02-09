@@ -188,7 +188,7 @@
 							searchByCriteriaAction="searchByCriteria"
 							clearSearchPanelAction="clearSearchPanel" searchAction="search"
 							residentChosenListenerName="residentSelectedListener"
-							reRender="municipalBondsPanel, totalsPanel, newPaymentBtn, messages, alertPanel" />
+							reRender="municipalBondsPanel, totalsPanel, newPaymentBtn, messages, alertPanel, includeCEMsField" />
 					</a:outputPanel>
 
 					<a:outputPanel id="alertPanel" ajaxRendered="true">
@@ -207,6 +207,15 @@
 							reRender="impugnmentListPanel"
 							oncomplete="Richfaces.showModalPanel('impugnmentListPanel')">
 						</a:commandLink>
+						<s:decorate id="includeCEMsField" template="../layout/edit.xhtml" 
+						    rendered="#{paymentHome.enabledIncludeCEMs}" >
+							<ui:define name="label">#{messages['common.includeCEMs']}:</ui:define>
+							<h:selectBooleanCheckbox id="includeCEMs" value="#{paymentHome.includeCEMs}" 
+							    disabled="#{paymentHome.resident != null}">
+							    <a:support event="onchange" reRender="includeCEMsField" />
+							</h:selectBooleanCheckbox>
+						</s:decorate>
+	
 					</a:outputPanel>
 				
 

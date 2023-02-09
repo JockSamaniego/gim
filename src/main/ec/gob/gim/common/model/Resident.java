@@ -235,6 +235,7 @@ public abstract class Resident extends Identifiable{
 	
 	@Transient
 	private boolean elderly; //Adulto Mayor
+	
 
 	public Resident(){
 		isEnabledForDeferredPayments = Boolean.FALSE;

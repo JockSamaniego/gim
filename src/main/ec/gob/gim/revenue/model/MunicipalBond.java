@@ -90,7 +90,8 @@ import ec.gob.gim.revenue.model.impugnment.Impugnment;
 				+ "LEFT JOIN FETCH mb.adjunct "
 				+ "WHERE mb.resident.id=:residentId AND "
 				+ "mb.municipalBondType=:municipalBondType AND "
-				+ "mbs.id IN (:municipalBondStatusIds) "
+				+ "mbs.id IN (:municipalBondStatusIds) AND "
+				+ "e.id NOT IN (:entriesCEMExclusionIds) "
 				+ "ORDER BY mb.entry.id, mb.groupingCode, mb.expirationDate, mb.id, mb.municipalBondStatus.id"),
 
 		@NamedQuery(name = "MunicipalBond.findByFiscalPeriodResidentsEntryAndStatus", query = "SELECT DISTINCT mb FROM MunicipalBond mb "
@@ -902,6 +903,7 @@ import ec.gob.gim.revenue.model.impugnment.Impugnment;
 				+ "  WHERE "
 				+ "    mb.resident.id=:residentId AND "
 				+ "    mb.municipalBondType=:municipalBondType AND "
+				+ "    e.id NOT IN (:entriesCEMExclusionIds) AND "
 				+ "    mb.municipalBondStatus.id = :pendingBondStatusId"),
 				
 		@NamedQuery(name = "Bond.findIdsByStatusResidentIdAndEntries", query = "SELECT mb.id  FROM "

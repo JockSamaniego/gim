@@ -57,6 +57,14 @@
 					disabled="#{empty municipalBondCondition.resident}">
 					<s:convertEntity />
 				</g:entryChooser>
+
+				<s:decorate id="includeCEMsField" template="../layout/edit.xhtml" rendered="#{municipalBondCondition.enabledIncludeCEMs}">
+					<ui:define name="label">#{messages['common.includeCEMs']}:</ui:define>
+					<h:selectBooleanCheckbox id="includeCEMs" value="#{municipalBondCondition.includeCEMs}" >
+					    <a:support event="onchange" reRender="includeCEMsField,contentPanel" action="#{municipalBondCondition.searchResident()}" />
+					</h:selectBooleanCheckbox>
+				</s:decorate>
+
 				</a:outputPanel>
 
 				<div style="clear: both" />
@@ -80,7 +88,7 @@
 		<h:form>
 			<div class="results">
 				
-				<rich:panel id="remisionPanel">
+				<rich:panel id="remisionPanel" rendered="false">
 					<f:facet name="header">
 						<h:outputText value="Valores de remisión"
 							styleClass="formTitle right" />
@@ -104,6 +112,7 @@
 						</div>
 					</div>									
 				</rich:panel>
+				
 				<rich:panel id="contentPanel">
 					<a:outputPanel ajaxRendered="false">		
 				<h:outputText

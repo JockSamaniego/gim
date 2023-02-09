@@ -32,6 +32,7 @@ import javax.persistence.Query;
 import javax.servlet.ServletContext;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
@@ -92,6 +93,9 @@ import ec.gob.gim.security.model.User;
 public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	private String ENTRIES_CEM_EXCLUSION_LIST = "ENTRIES_CEM_EXCLUSION_LIST";
+	private String ENABLE_EXCLUDE_CEMS = "ENABLE_EXCLUDE_CEMS";
 
 	@In
 	FacesMessages facesMessages;
@@ -185,6 +189,9 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	// que sea mayor o igual al monto de cobro
 	private Boolean canRegisterPayment = true;
 	
+	private boolean enabledIncludeCEMs;
+	private boolean includeCEMs = false;
+	private List<Long> entriesCEMExclusionIds = new ArrayList<Long>();
 	
 	private List<PaymentTypeSRI> sriTypes;
 	
@@ -272,6 +279,15 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				+ userSession.getPerson().getId() + ".pdf";
 		chargeControlImpugnmentStates();
 		bondIsWire = Boolean.TRUE;
+
+		enabledIncludeCEMs = (Boolean) systemParameterService.findParameter(ENABLE_EXCLUDE_CEMS);
+		entriesCEMExclusionIds.clear();
+		entriesCEMExclusionIds.add(new Long(0));
+		if ((enabledIncludeCEMs) &&(!includeCEMs)){
+			String str = systemParameterService.findParameter(ENTRIES_CEM_EXCLUSION_LIST);
+			entriesCEMExclusionIds = GimUtils.convertStringWithCommaToListLong(str);
+		}
+		
 	}
 
 	public void search() {
@@ -714,9 +730,8 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	private List<MunicipalBondItem> findPendingMunicipalBondItems(Long residentId) throws Exception {
 
 		MunicipalBondItem root = new MunicipalBondItem(null);
-
 		IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);
-		List<MunicipalBond> mbs = incomeService.findPendingBonds(residentId);
+		List<MunicipalBond> mbs = incomeService.findPendingBonds(residentId, includeCEMs);
 		incomeService.calculatePayment(mbs, new Date(), true, true); //remision
 		impugnmentsTotal = new ArrayList<Impugnment>();
 		for (MunicipalBond municipalBond : mbs) {
@@ -3513,4 +3528,21 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		}
 		
 	}
+
+	public boolean isEnabledIncludeCEMs() {
+		return enabledIncludeCEMs;
+	}
+
+	public void setEnabledIncludeCEMs(boolean enabledIncludeCEMs) {
+		this.enabledIncludeCEMs = enabledIncludeCEMs;
+	}
+
+	public boolean isIncludeCEMs() {
+		return includeCEMs;
+	}
+
+	public void setIncludeCEMs(boolean includeCEMs) {
+		this.includeCEMs = includeCEMs;
+	}
+	
 }

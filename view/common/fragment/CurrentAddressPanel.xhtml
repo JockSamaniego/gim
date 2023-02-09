@@ -34,7 +34,7 @@
 		
 		<s:decorate id="street2Field" template="../../layout/edit.xhtml">
 			<ui:define name="label">#{messages['resident.streetPlace']}:</ui:define>
-			<h:inputText id="street2" required="true" size="60" maxlength="60" style="text-transform: uppercase"
+			<h:inputText id="street2" size="60" maxlength="60" style="text-transform: uppercase"
 				value="#{residentHome.instance.currentAddress.street2}">
 			</h:inputText>
 		</s:decorate>
@@ -79,6 +79,14 @@
 			<h:inputText id="mobileNumber" size="15" maxlength="15"
 				value="#{residentHome.instance.currentAddress.mobileNumber}">
 			</h:inputText>
+		</s:decorate>
+		
+		<s:decorate id="referenceField" template="../../layout/edit.xhtml">
+			<ui:define name="label">#{messages['resident.reference']}:</ui:define>
+			<h:inputTextarea id="street" style="text-transform: uppercase"
+				value="#{residentHome.instance.currentAddress.reference}" >
+				 <f:validateLength maximum="200" />
+			</h:inputTextarea>
 		</s:decorate>
 
 		<div style="clear: both"><span class="required">*</span>

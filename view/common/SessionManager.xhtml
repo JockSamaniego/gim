@@ -13,7 +13,7 @@
 
 		<rich:panel>
 			<f:facet name="header">
-				<h:outputText value="#{messages['security.activeSessions']}" />
+				<h:outputText value="#{messages['security.activeSessions']} (#{gim.activeSessions.size()})" />
 			</f:facet>
 
 			<rich:dataTable id="sessionList" var="_user"
