@@ -15,9 +15,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.service.SystemParameterService;
 
-import sun.misc.BASE64Encoder;
+//import sun.misc.BASE64Encoder;
 
-@Stateless(name = "PropertyRegistrationService")
+/* @Stateless(name = "PropertyRegistrationService")
 public class PropertyRegistrationServiceBean implements
 		PropertyRegistrationService {
 
@@ -74,7 +74,7 @@ public class PropertyRegistrationServiceBean implements
 		System.out.println("media " + response.getMediaType());
 		
 		System.out.println("read Str " + output);
-		System.out.println("============== end ");*/
+		System.out.println("============== end ");
 		String output = response.readEntity(String.class);
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -86,7 +86,7 @@ public class PropertyRegistrationServiceBean implements
 			 * System.out.println(pro); for (FichaPropietario fp :
 			 * pro.getFichaPropietarios()) { System.out.println("------------");
 			 * System.out.println(fp.toString()); }
-			 */
+			 
 
 			return pro;
 
@@ -97,4 +97,4 @@ public class PropertyRegistrationServiceBean implements
 		return null;
 	}
 
-}
+}*/

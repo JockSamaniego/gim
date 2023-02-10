@@ -29,6 +29,7 @@ import javax.persistence.Transient;
 import org.gob.gim.income.action.AgreementType;
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.MunicipalBond;
 
@@ -124,6 +125,10 @@ public class PaymentAgreement {
 	private Long userUpdate;
 	
 	private String bondDetail;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "type_id", nullable = true, referencedColumnName = "id")
+	private ItemCatalog type;
 	
 	
 	public AgreementType getAgreementType() {
@@ -351,6 +356,13 @@ public class PaymentAgreement {
 	public void setBondDetail(String bondDetail) {
 		this.bondDetail = bondDetail;
 	}
-	
+
+	public ItemCatalog getType() {
+		return type;
+	}
+
+	public void setType(ItemCatalog type) {
+		this.type = type;
+	}
 	
 }
