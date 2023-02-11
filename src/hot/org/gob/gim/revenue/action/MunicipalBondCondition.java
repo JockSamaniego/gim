@@ -597,6 +597,23 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	public void residentSelectedListener(ActionEvent event) {
 		UIComponent component = event.getComponent();
 		Resident resident = (Resident) component.getAttributes().get("resident");
+		// TIPO DE CONVENIO
+		PaymentAgreementService agreementService = ServiceLocator.getInstance()
+				.findResource(PaymentAgreementService.LOCAL_NAME);
+		Integer numberPayments = agreementService.numberAgreementsActivesByResident(resident.getId());
+		if (numberPayments > 0) {
+			showAgreementInfo = Boolean.TRUE;
+			PaymentAgreement agreement = agreementService.findActivePaymentResident(resident.getId());
+			this.calculatePayedValue(agreement.getId());
+			this.calculateCanceledBonds(agreement.getId());
+			paymentHome.setPaymentAgreement(agreement);
+			this.calculateBalanceForPay();
+			this.dividendsSize = agreement.getDividends().size();
+			this.loadTotalDeposit(agreement.getId());
+			this.agreementType = agreement.getAgreementType().name();
+		} else {
+			showAgreementInfo = Boolean.FALSE;
+		}
 		setResident(resident);
 		this.setIdentificationNumber(resident.getIdentificationNumber());
 		municipalBondItemsResult = null;
