@@ -126,10 +126,6 @@ public class PaymentAgreement {
 	
 	private String bondDetail;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "type_id", nullable = true, referencedColumnName = "id")
-	private ItemCatalog type;
-	
 	
 	public AgreementType getAgreementType() {
 		return agreementType;
@@ -357,12 +353,5 @@ public class PaymentAgreement {
 		this.bondDetail = bondDetail;
 	}
 
-	public ItemCatalog getType() {
-		return type;
-	}
-
-	public void setType(ItemCatalog type) {
-		this.type = type;
-	}
 	
 }
