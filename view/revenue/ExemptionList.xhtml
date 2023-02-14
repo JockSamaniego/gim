@@ -179,6 +179,14 @@
 							actionListener="#{exemptionHome.prepareEditExcemption(exemption)}">
 							<f:param name="exemptionId" value="#{_exemption.id}" />
 						</s:button>
+
+						<s:button view="/revenue/SeniorExemptionEmit.xhtml"
+						    rendered="#{_exemption.active and _exemption.fiscalPeriod == exemptionHome.userSession.fiscalPeriod}"
+							value="#{messages['common.emit']}" propagation="none"
+							id="seniorExemptionEdit" 
+							actionListener="#{seniorExemptionHome.prepareEditExcemption(exemption)}">
+							<f:param name="exemptionId" value="#{_exemption.id}" />
+						</s:button>
 					</rich:column>
 				</rich:dataTable>
 

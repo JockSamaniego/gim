@@ -154,19 +154,37 @@
 								styleClass="right" required="true" />
 						</rich:column>
 
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['tillPermission.openingTime']}" />
+							</f:facet>
+							<h:outputText value="#{_tillPermission.openingTime}">
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+							</h:outputText>
+						</rich:column>
+	
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['tillPermission.closingTime']}" />
+							</f:facet>
+							<h:outputText value="#{_tillPermission.closingTime}">
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+							</h:outputText>
+						</rich:column>
+	
 						<rich:column sortBy="#{_tillPermission.person}"
 							styleClass="action">
 							<f:facet name="header">
 								<h:outputText value="#{messages['user']}" />
-							</f:facet>							
+							</f:facet>
 							<h:selectOneMenu id="user" required="true" converter="org.gob.gim.common.IdentifiableConverter"
 								disabled="#{_tillPermission.openingTime != null}"
 								value="#{_tillPermission.person}">
 								<s:selectItems value="#{workdayHome.findCashiers()}" required="true"
 									var="_person" label="#{messages[_person.name]}"
-									noSelectionLabel="#{messages['common.chooseOption']}" />								
-								<a:support event="onchange" ajaxSingle="true"/>								
-							</h:selectOneMenu>																			
+									noSelectionLabel="#{messages['common.chooseOption']}" />
+								<a:support event="onchange" ajaxSingle="true"/>
+							</h:selectOneMenu>
 						</rich:column>
 
 					</rich:dataTable>

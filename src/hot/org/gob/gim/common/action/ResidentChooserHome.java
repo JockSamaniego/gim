@@ -169,64 +169,69 @@ public class ResidentChooserHome extends EntityController{
 		}
 		try {
 			Person person = (Person)resident;
-			Date bornDate = person.getBirthday();
-			Date currentDate = new Date();
-			if(currentDate!=null && bornDate!=null){
-				SimpleDateFormat getYearFormat = new SimpleDateFormat("yyyy");
-			    int currentYear = Integer.parseInt(getYearFormat.format(currentDate));
-			    int bornYear = Integer.parseInt(getYearFormat.format(bornDate));
-			    int years = currentYear - (bornYear + 1);
-			    
-			    SimpleDateFormat getMonthFormat = new SimpleDateFormat("MM");
-			    int currentMonth = Integer.parseInt(getMonthFormat.format(currentDate));
-			    int bornMonth = Integer.parseInt(getMonthFormat.format(bornDate));
-			    int months = currentMonth - bornMonth;
-			    
-			    SimpleDateFormat getDayFormat = new SimpleDateFormat("dd");
-		        int currentDay = Integer.parseInt(getDayFormat.format(currentDate));
-		        int bornDay = Integer.parseInt(getDayFormat.format(bornDate));
-		        int days = currentDay - bornDay;
-			    
-			    ageMonths = months - 1;
-			    ageDays = days;
-			    if(months > 0){
-			    	years = years + 1;
-			    	if(days >= 0) {
-			    		ageMonths = ageMonths + 1;
-			        } else {
-			        	ageDays = ageDays + 30;
-			        }
-			    } else if(months == 0){ 
-			        if(days >= 0) {
-			        	ageMonths = ageMonths + 1;
-			        	years = years + 1;
-			        } else {
-			        	ageMonths = ageMonths + 12;
-			        	ageDays = ageDays + 30;
-			        }	    	
-			    }  else if(months < 0){
-			    	ageMonths = ageMonths + 13;
-			    	if(days < 0){
-			    		ageDays = ageDays + 30;
-			    	}
-			    }
-			    
-			    
-			    if(years >= 65 && !person.getIsDead()){
-			    	fontColor = "red";
-			    	resident.setElderly(true);
-			    } else if(person.getIsDead()){
-			    	fontColor = "black";
-			    	residentIsDead = Boolean.TRUE;
-			    	resident.setElderly(false);
-			    	//return String.valueOf(years) + " años (fallecido/a)";
-			    }
-			    resultExist = Boolean.TRUE;
-			    return String.valueOf(years);
+			if(!person.getIsDead()){
+				Date bornDate = person.getBirthday();
+				Date currentDate = new Date();
+				if(currentDate!=null && bornDate!=null){
+					SimpleDateFormat getYearFormat = new SimpleDateFormat("yyyy");
+				    int currentYear = Integer.parseInt(getYearFormat.format(currentDate));
+				    int bornYear = Integer.parseInt(getYearFormat.format(bornDate));
+				    int years = currentYear - (bornYear + 1);
+				    
+				    SimpleDateFormat getMonthFormat = new SimpleDateFormat("MM");
+				    int currentMonth = Integer.parseInt(getMonthFormat.format(currentDate));
+				    int bornMonth = Integer.parseInt(getMonthFormat.format(bornDate));
+				    int months = currentMonth - bornMonth;
+				    
+				    SimpleDateFormat getDayFormat = new SimpleDateFormat("dd");
+			        int currentDay = Integer.parseInt(getDayFormat.format(currentDate));
+			        int bornDay = Integer.parseInt(getDayFormat.format(bornDate));
+			        int days = currentDay - bornDay;
+				    
+				    ageMonths = months - 1;
+				    ageDays = days;
+				    if(months > 0){
+				    	years = years + 1;
+				    	if(days >= 0) {
+				    		ageMonths = ageMonths + 1;
+				        } else {
+				        	ageDays = ageDays + 30;
+				        }
+				    } else if(months == 0){ 
+				        if(days >= 0) {
+				        	ageMonths = ageMonths + 1;
+				        	years = years + 1;
+				        } else {
+				        	ageMonths = ageMonths + 12;
+				        	ageDays = ageDays + 30;
+				        }	    	
+				    }  else if(months < 0){
+				    	ageMonths = ageMonths + 13;
+				    	if(days < 0){
+				    		ageDays = ageDays + 30;
+				    	}
+				    }
+				    
+				    
+				    if(years >= 65 && !person.getIsDead()){
+				    	fontColor = "red";
+				    	resident.setElderly(true);
+				    } else if(person.getIsDead()){
+				    	fontColor = "black";
+				    	residentIsDead = Boolean.TRUE;
+				    	resident.setElderly(false);
+				    	//return String.valueOf(years) + " años (fallecido/a)";
+				    }
+				    resultExist = Boolean.TRUE;
+				    return String.valueOf(years);
+				}
+		    	resident.setElderly(false);
+				return "No disponible";
+			} else {
+				resultExist = Boolean.FALSE;
+				residentIsDead = Boolean.TRUE;
+				return "";
 			}
-	    	resident.setElderly(false);
-			return "No disponible";
-
 		} catch (Exception e) {
 	    	resident.setElderly(false);
 			return "No disponible";

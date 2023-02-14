@@ -88,11 +88,11 @@ public interface IncomeService {
 	public void updateReprintings(Long municipalBondId);
 	public void updateMunicipalBonds(List<MunicipalBond> bonds);
 	
-	public List<MunicipalBond> findPendingBonds(Long residentId);
+	public List<MunicipalBond> findPendingBonds(Long residentId, boolean includeCEMs);
 	public List<MunicipalBond> findPendingBondsSubscriptions(Long residentId);
-	public List<MunicipalBond> findOnlyPendingBonds(Long residentId);
+	public List<MunicipalBond> findOnlyPendingBonds(Long residentId, boolean includeCEMs);
 	public List<MunicipalBond> findOnlyPendingBonds(Long residentId, Long EntryId);	
-	public List<MunicipalBond> findOnlyPendingAndInAgreementBonds(Long residentId);
+	public List<MunicipalBond> findOnlyPendingAndInAgreementBonds(Long residentId, boolean includeCEMs);
 	public List<MunicipalBond> findOnlyPendingAndInAgreementBonds(Long residentId, Long EntryId);
 	public List<MunicipalBond> findPendingBondsBetweenDates(Long residentId, Date startDate, Date endDate);
 	public List<MunicipalBond> findPendingBondsBetweenDates(Long residentId, Long entryId, Date startDate, Date endDate);

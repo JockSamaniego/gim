@@ -13,7 +13,7 @@
 		<p:font size="7" name="HELVETICA">
 			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
 				<p:paragraph>
-					<p:table columns="2" widthPercentage="100" spacingAfter="15"
+					<p:table columns="2" widthPercentage="100" spacingAfter="10"
 						widths="1 10">
 						<f:facet name="defaultCell">
 							<p:cell borderWidth="0" />
@@ -24,7 +24,7 @@
                             </p:image>
                         </p:cell>
 						<p:cell>
-							<p:font size="8" style="bold">
+							<p:font size="10" style="bold">
 								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
 							</p:font>
 
@@ -49,7 +49,7 @@
 	<p:font size="8" name="HELVETICA">
 
 
-		<p:paragraph alignment="right" spacingAfter="10">
+		<p:paragraph alignment="right" spacingAfter="5">
 			<p:font size="8" name="HELVETICA">
 				<p:text value="#{messages['common.date']}: " style="bold"/>
 				<p:text value="#{currentDatetime}">
@@ -61,7 +61,7 @@
 
 
 		<p:table columns="2" widthPercentage="100" headerRows="0" widths="1 1"
-			spacingAfter="10">
+			spacingAfter="5">
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="0" />
 			</f:facet>
@@ -95,6 +95,32 @@
 					</p:font>
 					<p:font size="8">
 						<p:text value="#{tillPermissionHome.tillPermission.person.name}" />
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['tillPermission.openingTime']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{tillPermissionHome.tillPermission.openingTime}" >
+							<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+						</p:text>
+					</p:font>
+				</p:paragraph>
+			</p:cell>
+			
+			<p:cell colspan="1">
+				<p:paragraph>
+					<p:font size="8" style="bold">
+						<p:text value="#{messages['tillPermission.closingTime']}: " />
+					</p:font>
+					<p:font size="8">
+						<p:text value="#{tillPermissionHome.tillPermission.closingTime}" >
+							<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+						</p:text>
 					</p:font>
 				</p:paragraph>
 			</p:cell>
@@ -166,7 +192,7 @@
 
 		</p:table>
 		
-			<p:table columns="1" widthPercentage="40" headerRows="0" spacingBefore="15">
+			<p:table columns="1" widthPercentage="40" headerRows="0" spacingBefore="10">
 					<p:font size="9" style="bold">
 						<p:cell>
 							<p:paragraph borderWidth="1">
@@ -286,7 +312,7 @@
 			
 		
 			<p:table columns="2" widthPercentage="50" headerRows="0"
-					widths="4 2" spacingBefore="20">
+					widths="4 2" spacingBefore="15">
 					<p:font size="8" style="bold">
 						<p:cell>
 							<p:paragraph borderWidth="1">
@@ -331,7 +357,7 @@
 			</c:forEach>
 		
 		<p:table columns="1" widthPercentage="100" headerRows="0" rendered="#{not empty tillPermissionHome.bills and not empty tillPermissionHome.coins}"
-			spacingBefore="20">
+			spacingBefore="15">
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="0" />
 			</f:facet>
@@ -351,7 +377,7 @@
 			</p:font>
 		</p:table>
 
-		<p:table columns="2" widthPercentage="100" headerRows="0" border="0" spacingAfter="20">
+		<p:table columns="2" widthPercentage="100" headerRows="0" border="0" spacingAfter="15">
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="0" />
 			</f:facet>
@@ -543,14 +569,14 @@
 			</p:font>
 		</p:table>
 
-		<p:table columns="1" widthPercentage="100" headerRows="0" border="0" spacingAfter="20"
+		<p:table columns="1" widthPercentage="100" headerRows="0" border="0" spacingAfter="15"
 				rendered="#{tillPermissionHome.fractionValues.get('CHECK') > 0 and not empty tillPermissionHome.fractionValues.get('CHECK')}">
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="0" />
 			</f:facet>
 
 			<p:table 
-					columns="4" widthPercentage="85" headerRows="0" border="1" spacingAfter="15" widths="2.5 2 2 1.5">
+					columns="4" widthPercentage="85" headerRows="0" border="1" spacingAfter="10" widths="2.5 2 2 1.5">
 				<f:facet name="defaultCell">
 					<p:cell borderWidth="0.5" />
 				</f:facet>
@@ -634,7 +660,7 @@
 		</p:table>
 		
 		<p:table 
-				columns="4" widthPercentage="75" headerRows="0" border="1" spacingAfter="15" widths="2.5 1 1 1.5">
+				columns="4" widthPercentage="75" headerRows="0" border="1" spacingAfter="10" widths="2.5 1 1 1.5">
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="0.5" />
 			</f:facet>
@@ -716,7 +742,7 @@
 				</p:cell>
 			</p:font>
 		</p:table>
-		<p:table columns="9" widthPercentage="100" headerRows="0" border="1" spacingAfter="15" widths="1 1 1 1 1 2 1 1 2">
+		<p:table columns="9" widthPercentage="100" headerRows="0" border="1" spacingAfter="10" widths="1 1 1 1 1 2 1 1 2">
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="0.5" />
 			</f:facet>
@@ -833,7 +859,7 @@
 		</p:table>
 
 
-		<p:table columns="1" widthPercentage="30" headerRows="0" spacingBefore="50" >
+		<p:table columns="1" widthPercentage="30" headerRows="0" spacingBefore="45" >
 			<f:facet name="defaultCell">
 				<p:cell borderWidth="0" horizontalAlignment="center" />
 			</f:facet>

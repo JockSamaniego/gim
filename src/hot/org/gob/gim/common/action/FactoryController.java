@@ -766,6 +766,20 @@ public class FactoryController  extends EntityController{
 		return query.getResultList();
 	}
 
+	@Factory("futuresFiscalPeriodsAndActual")
+	public List<FiscalPeriod> findFutureFiscalPeriodsAndActual(){
+		Query query1 = this.getEntityManager().createNamedQuery("FiscalPeriod.findCurrent");
+		query1.setParameter("currentDate", new Date());
+		FiscalPeriod currentFiscalPeriod = (FiscalPeriod) query1.getSingleResult();		
+		if(currentFiscalPeriod==null){
+			return null;
+		}
+		Query query = this.getEntityManager().createQuery("select f from FiscalPeriod f "
+				+ "where f.startDate>=:startDateCurrentFiscalP order by f.startDate");
+		query.setParameter("startDateCurrentFiscalP", currentFiscalPeriod.getStartDate());
+		return query.getResultList();
+	}
+
 	//macartuche
 	//emision2020
 	@SuppressWarnings("unchecked")

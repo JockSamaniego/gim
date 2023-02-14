@@ -29,6 +29,7 @@ import javax.persistence.Transient;
 import org.gob.gim.income.action.AgreementType;
 import org.hibernate.envers.Audited;
 
+import ec.gob.gim.common.model.ItemCatalog;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.revenue.model.MunicipalBond;
 
@@ -351,6 +352,6 @@ public class PaymentAgreement {
 	public void setBondDetail(String bondDetail) {
 		this.bondDetail = bondDetail;
 	}
-	
+
 	
 }

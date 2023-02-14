@@ -14,7 +14,7 @@
 	<param name="fiscalPeriod" value="#{exemptionList.fiscalPeriod}"
 		converterId="org.jboss.seam.ui.EntityConverter" />
 	<param name="exemptionType" value="#{exemptionList.exemptionType}"
-		converterId="#{org.jboss.seam.ui.EntityConverter}" />
+		converterId="org.jboss.seam.ui.EntityConverter" />
 	<param name="resident" value="#{exemptionList.resident}" />
 	<param name="partner" value="#{exemptionList.partner}" />
 

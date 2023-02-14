@@ -1,0 +1,243 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+    template="../layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <ui:include src="fragment/PropertyExemptionPanel.xhtml" />
+
+        <h:form id="exemption" styleClass="edit">
+            <ui:debug id="debug" />
+
+            <h:outputText styleClass="formTitle"
+                value="Emisión de Impuesto Predial con Exoneración" />
+
+            <rich:panel id="richPanelId" disabled="true">
+
+                <h:panelGrid columns="2" styleClass="center" width="100%"
+                    columnClasses="topAligned,topAligned">
+
+                    <h:panelGrid columns="1" width="100%" disabled="true">
+                        <rich:panel styleClass="left" >
+                            <f:facet name="header">#{messages['resident']}</f:facet>
+                            <g:residentChooser id="ownerChooser" required="true" disabled="true"
+                                resident="#{seniorExemptionHome.instance.resident}"
+                                criteria="#{exemptionHome.criteria}" bean="#{exemptionHome}"
+                                label="#{messages['resident']}" searchAction="searchResident"
+                                residentsList="#{exemptionHome.residents}"
+                                identificationNumber="#{seniorExemptionHome.instance.resident.identificationNumber}"
+                                searchByCriteriaAction="searchResidentByCriteria"
+                                clearSearchPanelAction="clearSearchResidentPanel"
+                                residentChosenListenerName="residentSelectedListener"
+                                reRender="richPanelId, ownerChooser_residentField, buttonsId" />
+                            <div style="clear: both" />
+                        </rich:panel>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="1" width="100%">
+                        <rich:panel styleClass="left">
+                            <f:facet name="header">#{messages['exemption.partner']}</f:facet>
+                            <g:residentChooser id="partnerChooser" disabled="true"
+                                resident="#{seniorExemptionHome.instance.partner}"
+                                criteria="#{exemptionHome.criteria}" bean="#{exemptionHome}"
+                                label="#{messages['partner']}" searchAction="searchPartner"
+                                residentsList="#{exemptionHome.residents}"
+                                identificationNumber="#{seniorExemptionHome.instance.partner.identificationNumber}"
+                                searchByCriteriaAction="searchResidentByCriteria"
+                                clearSearchPanelAction="clearSearchResidentPanel"
+                                residentChosenListenerName="partnerSelectedListener"
+                                reRender="richPanelId, partnerChooser_residentField, buttonsId" />
+                            <div style="clear: both" />
+                        </rich:panel>
+                    </h:panelGrid>
+
+                </h:panelGrid>
+
+                <h:panelGrid columns="2" width="100%"
+                    columnClasses="topAligned, topAligned right">
+                    <s:decorate id="exemptionTypeField" template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['exemption.type']}</ui:define>
+                        <h:inputText id="exemptionTypeId" readonly="true"
+                            value="#{seniorExemptionHome.instance.exemptionType.name}" />
+                    </s:decorate>
+
+                    <s:decorate id="typeField" template="../layout/edit.xhtml">
+                        <ui:define name="label">#{messages['fiscalPeriod.title']}</ui:define>
+                        <h:inputText id="fiscalPeriodId" readonly="true"
+                            value="#{seniorExemptionHome.instance.fiscalPeriod.name}" />
+                    </s:decorate>
+                    <div style="clear: both" />
+                </h:panelGrid>
+
+                <h:panelGrid columns="2" width="100%"
+                    columnClasses="topAligned, topAligned right" id="panelBottom">
+
+                    <h:panelGroup>
+                        <s:decorate id="propertiesName" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['exemption.propertiesAppraisal']}</ui:define>
+                            <h:inputText id="properties" size="15" readonly="true"
+                                style="text-align: right"
+                                value="#{seniorExemptionHome.instance.propertiesAppraisal}"
+                                required="true">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:inputText>
+                        </s:decorate>
+
+                        <s:decorate id="personalName" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['exemption.personalAssets']}</ui:define>
+                            <h:inputText id="name" size="15" style="text-align: right"
+                                value="#{seniorExemptionHome.instance.personalAssets}" readonly="true">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:inputText>
+                        </s:decorate>
+                        <s:decorate id="exemptionPercentage"
+                            template="../layout/edit.xhtml" >
+                            <ui:define name="label">#{messages['exemption.percentage']}</ui:define>
+                            <h:inputText id="name" size="15" required="true"
+                                style="text-align: right"
+                                value="#{seniorExemptionHome.instance.exemptionPercentage}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:inputText>%
+                        </s:decorate>
+                        <s:decorate id="explanationField" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['exemption.explanation']}:</ui:define>
+                            <h:inputTextarea id="explanation" cols="40" rows="4"
+                                readonly="true" value="#{seniorExemptionHome.instance.explanation}" />
+                        </s:decorate>
+
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <s:decorate id="vehiclesName" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['exemption.vehiclesAppraisal']}</ui:define>
+                            <h:inputText id="vehicles" size="15" style="text-align: right"
+                                value="#{seniorExemptionHome.instance.vehiclesAppraisal}"
+                                readonly="true">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:inputText>
+                        </s:decorate>
+                        <s:decorate id="commercialName" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['exemption.commercialValues']}</ui:define>
+                            <h:inputText id="name" size="15" style="text-align: right"
+                                value="#{seniorExemptionHome.instance.commercialValues}"
+                                readonly="true">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:inputText>
+                        </s:decorate>
+                        <s:decorate id="patrimonyName" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['exemption.patrimony']}</ui:define>
+                            <h:inputText id="name" size="15" readonly="true"
+                                style="text-align: right"
+                                value="#{seniorExemptionHome.instance.patrimony}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:inputText>
+                        </s:decorate>
+                        <s:decorate id="exemptionActive" template="../layout/edit.xhtml" >
+                            <ui:define name="label">#{messages['exemption.active']}</ui:define>
+                            <h:selectBooleanCheckbox value="#{seniorExemptionHome.instance.active}" disabled="true"/>
+                        </s:decorate>
+
+                        <s:decorate id="referenceField" template="../layout/edit.xhtml">
+                            <ui:define name="label">#{messages['exemption.reference']}:</ui:define>
+                            <h:inputTextarea id="reference" cols="40" rows="4"
+                                readonly="true" value="#{seniorExemptionHome.instance.reference}" />
+                        </s:decorate>
+
+                    </h:panelGroup>
+                        <rich:dataTable id="municipalBondList" var="_mb" width="100%"
+                            value="#{seniorExemptionHome.municipalBonds}"
+                            rendered="#{not empty seniorExemptionHome.municipalBonds}">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['resident.identificationNumber']}" />
+                                </f:facet>
+                                <h:outputText value="#{_mb.resident.identificationNumber}" />
+                            </h:column>
+    
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['resident.name']}" />
+                                </f:facet>
+                                <h:outputText value="#{_mb.resident.name}" />
+                            </h:column>
+    
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['entry']}" />
+                                </f:facet>
+                                <h:outputText value="#{_mb.entry.name}" />
+                            </h:column>
+    
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['property.cadastralCode']}" />
+                                </f:facet>
+                                <h:outputText value="#{_mb.groupingCode}" />
+                            </h:column>
+    
+                            <rich:column styleClass="right">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['municipalBond.taxableTotal']}" />
+                                </f:facet>
+                                <h:outputText value="#{_mb.base}">
+                                    <f:convertNumber pattern="#0.00" />
+                                </h:outputText>
+                            </rich:column>
+    
+                            <rich:column styleClass="right">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['common.value']}" />
+                                </f:facet>
+                                <h:outputText value="#{_mb.paidTotal}">
+                                    <f:convertNumber pattern="#0.00" />
+                                </h:outputText>
+                            </rich:column>
+    
+                            <rich:column styleClass="action">
+                                <f:facet name="header">#{messages['common.action']}</f:facet>
+                                <a:commandButton value="#{messages['common.delete']}" id="delete_mb" 
+                                    action="#{seniorExemptionHome.remove(_mb)}" reRender="richPanelId,buttonsId"/>
+                            </rich:column>
+    
+                        </rich:dataTable>
+                    <h:panelGroup>
+                    
+                    </h:panelGroup>
+                </h:panelGrid>
+
+                <a:commandButton id="calculate" value="#{messages['common.calculate']}"
+                    action="#{seniorExemptionHome.calculateEmission()}" reRender="richPanelId,buttonsId"
+                    rendered="#{seniorExemptionHome.instance.active}"/>
+
+            </rich:panel>
+
+            <a:outputPanel ajaxRendered="false" id="buttonsId">
+
+                <div class="actionButtons">
+
+                    <h:commandButton id="update" value="#{messages['common.emit']}"
+                        rendered="#{not empty seniorExemptionHome.municipalBonds and seniorExemptionHome.hasRoles()}"
+                        action="#{seniorExemptionHome.emitMunicipalBonds()}" reRender="richPanelId, messages, calculate" />
+
+                    <s:button id="cancelEdit" value="#{messages['common.cancel']}"
+                        rendered="#{not empty seniorExemptionHome.municipalBonds}"
+                        propagation="end" view="/revenue/ExemptionList.xhtml" />
+
+                    <s:button id="back" value="#{messages['common.back']}"
+                        rendered="#{empty seniorExemptionHome.municipalBonds}"
+                        propagation="end" view="/revenue/ExemptionList.xhtml" />
+
+                </div>
+            </a:outputPanel>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

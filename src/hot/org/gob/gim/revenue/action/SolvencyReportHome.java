@@ -271,7 +271,7 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		
 		//rfam 2018-05-15 para soportar pagos en abonos
 		Long subscriptionBondStatusId = systemParameterService.findParameter(IncomeService.SUBSCRIPTION_BOND_STATUS);
-				
+		
 		List<Long> statuses = new ArrayList<Long>();
 		statuses.add(pendingMunicipalBondStatusId);
 		statuses.add(payment_agreementBondStatusId);
@@ -295,6 +295,11 @@ public class SolvencyReportHome extends EntityHome<MunicipalBond> {
 		query.setParameter("residentId", resident.getId());
 		query.setParameter("municipalBondType",MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusIds", statuses);
+
+		List<Long> entriesCEMExclusionIds = new ArrayList<Long>();
+		entriesCEMExclusionIds.add(new Long(0));
+		query.setParameter("entriesCEMExclusionIds", entriesCEMExclusionIds);
+
 		return query.getResultList();
 	}
 	
