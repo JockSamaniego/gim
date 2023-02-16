@@ -32,8 +32,8 @@
 							<ui:define name="label">#{messages['common.startDate']}:</ui:define>
 							<rich:calendar id="startDate" enableManualInput="false"
 								value="#{municipalBondCondition.startDate}"
-								datePattern="#{messages['common.datePattern']}"
-								ajaxSingle="true">
+								datePattern="#{messages['common.datePattern']}">
+								<a:support event="onchanged" ajaxSingle="true" />
 							</rich:calendar>
 						</s:decorate>
 
