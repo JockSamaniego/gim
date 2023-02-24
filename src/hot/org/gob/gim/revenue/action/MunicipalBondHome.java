@@ -708,10 +708,13 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		setEntryCode(null);
 		adjunctUri = EMPTY_ADJUNCT_URI;
 		clearEntryValues();
+		
+		loadLocals();
 	}
 
 	public void setDefaultEntry() {
 		this.entryCode= "00841";
+		this.entry = null;
 		searchEntry();
 	}
 
