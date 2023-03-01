@@ -205,7 +205,7 @@ public class RevenueServiceBean implements RevenueService {
 			// 05-01-2020
 			String simertCodes = (String) systemParameterService.findParameter("SEPARATE_SIMERT_BONDS_CODES");
 			if (simertCodes.indexOf(municipalBond.getEntry().getCode()) != -1) {
-				String newGroupingCode = "Obligación " + municipalBond.getNumber();
+				String newGroupingCode = "Obligaci\u00F3n " + municipalBond.getNumber();
 				municipalBond.setGroupingCode(newGroupingCode);
 			}
 
