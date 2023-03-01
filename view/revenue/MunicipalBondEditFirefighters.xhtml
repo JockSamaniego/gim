@@ -36,6 +36,7 @@
 							style="float:right" reRender="sriInfoList,sriInfoPatent"
 							ajaxSingle="true"
 							oncomplete="Richfaces.showModalPanel('addResidentPanel')" />
+							
 						<a:commandButton value="Agregar Dirección" id="btAddAddress"
 							disabled="#{municipalBondHome.instance.resident == null}"
 							propagation="join" action="#{municipalBondHome.crateAddress()}"
@@ -117,6 +118,19 @@
 											action="#{municipalBondHome.selectBusinessEmit(_local)}"
 											reRender="selectedAddressField,readingManPanel,btActive"
 											ajaxSingle="true" value="Usar" />
+
+										<a:commandButton value="Editar" id="btAddAddressEdit"
+											propagation="join"
+											action="#{municipalBondHome.editAddress(_loca)}"
+											style="float:right" reRender="addLocalFirefighterPanel"
+											ajaxSingle="true"
+											oncomplete="Richfaces.showModalPanel('addLocalFirefighterPanel')" />
+
+										<a:commandButton value="Eliminar" id="btAddAddressDelete"
+											propagation="join"
+											action="#{municipalBondHome.deleteAddress(_local)}"
+											style="float:right"
+											ajaxSingle="true" />
 									</rich:column>
 
 								</rich:dataTable>

@@ -2404,6 +2404,25 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		this.business = new Business();
 	}
 	
+	public void editAddress(Business business){
+		this.business = business;
+		System.out.print(this.business.getId()+" -- "+this.business.getName());
+	}
+	
+	public void deleteAddress(Business business){
+		business.setIsActive(false);
+		
+		BusinessService businessService = ServiceLocator.getInstance().findResource(BusinessService.LOCAL_NAME);
+		try {
+			businessService.update(business);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		this.loadLocals();
+	}
+	
 	public void addBusinessLocal(){
 		BusinessService businessService = ServiceLocator.getInstance().findResource(BusinessService.LOCAL_NAME);
 		this.business.setOwner(this.instance.getResident());
