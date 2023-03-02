@@ -1,0 +1,261 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf"
+    template="../layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <h:form id="propertyRegisterEditForm" styleClass="edit">
+
+            <h:outputText styleClass="formTitle"
+                value="Actualizar Catastro - #{messages['propertyRegister']}" />
+
+            <rich:panel id="dataPropertyRegister">
+
+                <f:facet name="header">
+                    <h:panelGrid columns="2" columnClasses="headerTitle,">
+                        <h:outputText value="#{messages['propertyRegister']}" />
+                        <f:facet name="header"></f:facet>
+                    </h:panelGrid>
+                </f:facet>
+
+                <h:panelGrid columns="6" >
+
+                    <s:decorate id="calidadField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['propertyRegister.calidad']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.instance.calidad}" size="15" readonly="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="identificationNumberField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['propertyRegister.identificationNumber']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.instance.identificationNumber}" size="15" readonly="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="intervenerNameField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['propertyRegister.intervenerName']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.instance.intervenerName}" size="35" readonly="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="cadastralCodeField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['propertyRegister.cadastralCode']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.instance.cadastralCode}" size="30" readonly="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="locationField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['propertyRegister.location']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.instance.location}" size="45" readonly="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="amountField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['propertyRegister.amount']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.instance.amount}" readonly="true" style="text-align:right;"/>
+                    </s:decorate>
+                    
+
+
+                    <s:decorate id="inscriptionTypeField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['propertyRegister.inscriptionType']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.instance.inscriptionType}" size="15" readonly="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="recordNumberField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['propertyRegister.recordNumber']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.instance.recordNumber}" readonly="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="inscriptionNumberField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['propertyRegister.inscriptionNumber']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.instance.inscriptionNumber}" readonly="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="inscriptionDateField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['propertyRegister.inscriptionDate']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.instance.inscriptionDate}" readonly="true">
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                        </h:inputText>
+                    </s:decorate>
+                    
+                    <s:decorate id="notaryField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['propertyRegister.notary']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.instance.notary}" readonly="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="notaryDateField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['propertyRegister.notaryDate']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.instance.notaryDate}" readonly="true" >
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                        </h:inputText>
+                    </s:decorate>
+                    
+                </h:panelGrid>
+
+                <rich:dataTable id="propertyRegisterItemList" var="_propertyRegisterItem"
+                    value="#{propertyRegisterHome.instance.propertyRegisterItems}">
+                    <f:facet name="header">
+                        <rich:columnGroup>
+                            <rich:column colspan="5">
+                                <h:outputText value="#{messages['propertyRegister.propertyRegisterItems']}" />
+                            </rich:column>
+                        </rich:columnGroup>
+                    </f:facet>
+
+                    <rich:column>
+                        <f:facet name="header">#{messages['propertyRegisterItem.id']}</f:facet>
+                        <h:outputText value="#{_propertyRegisterItem.id}" />
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">#{messages['propertyRegisterItem.identificationNumber']}</f:facet>
+                        <h:outputText value="#{_propertyRegisterItem.identificationNumber}" />
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">#{messages['propertyRegisterItem.intervenerName']}</f:facet>
+                        <h:outputText value="#{_propertyRegisterItem.intervenerName}" />
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">#{messages['propertyRegisterItem.calidad']}</f:facet>
+                        <h:outputText value="#{_propertyRegisterItem.calidad}" />
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">#{messages['propertyRegisterItem.obs']}</f:facet>
+                        <h:outputText value="#{_propertyRegisterItem.obs}" />
+                    </rich:column>
+                </rich:dataTable>
+
+                <a:commandButton id="search" 
+                    action="#{propertyRegisterHome.searchData()}"
+                    reRender="messages, currentDomain, newDomain" ajaxSingle="true"
+                    eventsQueue="gimEventsQueue" 
+                    value="Buscar Información Predial" />
+
+            </rich:panel>
+
+            <rich:panel id="currentDomain">
+
+                <f:facet name="header">
+                    <h:panelGrid columns="2" columnClasses="headerTitle,">
+                        <h:outputText value="Dominio actual de la Propiedad" />
+                        <f:facet name="header"></f:facet>
+                    </h:panelGrid>
+                </f:facet>
+
+                <h:panelGrid columns="6" >
+
+                    <s:decorate id="propertyTypeField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['property.propertyType']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.property.propertyType.name}" size="15" readonly="true"
+                            required="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="propertyCadastralCodeField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['property.cadastralCode']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.property.cadastralCode}" size="30" readonly="true"
+                            required="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="residentIdentificationNumberField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['resident.identificationNumber']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.property.currentDomain.resident.identificationNumber}" size="15" readonly="true"
+                            required="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="residentNameField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['resident.name']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.property.currentDomain.resident.name}" size="35" readonly="true"
+                            required="true"/>
+                    </s:decorate>
+                    
+                </h:panelGrid>
+            </rich:panel>
+
+            <rich:panel id="newDomain">
+
+                <f:facet name="header">
+                    <h:panelGrid columns="2" columnClasses="headerTitle,">
+                        <h:outputText value="Nuevo Dominio de la Propiedad" />
+                        <f:facet name="header"></f:facet>
+                    </h:panelGrid>
+                </f:facet>
+
+                <h:panelGrid columns="6" >
+
+                    <s:decorate id="newresidentIdentificationNumberField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['resident.identificationNumber']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.resident.identificationNumber}" size="15" readonly="true"
+                            required="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="newresidentNameField" template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['resident.name']}:</ui:define>
+                        <h:inputText value="#{propertyRegisterHome.resident.name}" size="35" readonly="true"
+                            required="true"/>
+                    </s:decorate>
+                    
+                    <s:decorate id="purchaseTypeField"
+                        template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['domain.purchaseType']}:</ui:define>
+                        <h:selectOneMenu id="purchaseType" required="true"
+                            value="#{propertyRegisterHome.newDomain.purchaseType}">
+                            <s:selectItems value="#{purchaseTypes}" var="purchaseType"
+                                label="#{purchaseType.id} - #{purchaseType.name}"
+                                noSelectionLabel="#{messages['common.chooseOption']}" />
+                            <s:convertEntity />
+                        </h:selectOneMenu>
+                    </s:decorate>
+    
+                    <s:decorate id="notaryNumberField"
+                        template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['domain.notaryNumber']}:</ui:define>
+                        <h:inputText id="notaryNumber" size="10"
+                            maxlength="10" style="text-align: right"
+                            value="#{propertyRegisterHome.newDomain.notaryNumber}"/>
+                    </s:decorate>
+    
+                    <s:decorate id="inscriptionProvinceField"
+                        template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['domain.inscriptionProvince']}:</ui:define>
+                        <h:selectOneMenu id="inscriptionProvince" required="true"
+                            value="#{propertyRegisterHome.newDomain.notarysProvince}">
+                            <s:selectItems value="#{provinces}" var="notarysProvince"
+                                label="#{notarysProvince.name}"
+                                noSelectionLabel="#{messages['common.chooseOption']}" />
+                            <s:convertEntity />
+                            <a:support event="onchange" ajaxSingle="true"
+                                reRender="inscriptionCanton" />
+                        </h:selectOneMenu>
+                    </s:decorate>
+    
+                    <s:decorate id="inscriptionCantonField"
+                        template="../layout/vertical-edit.xhtml">
+                        <ui:define name="label">#{messages['domain.inscriptionCanton']}:</ui:define>
+                        <h:selectOneMenu id="inscriptionCanton" required="true"
+                            value="#{propertyRegisterHome.newDomain.notarysCity}">
+                            <s:selectItems value="#{propertyRegisterHome.cantons}" var="notarysCity"
+                                label="#{notarysCity.name}"
+                                noSelectionLabel="#{messages['common.chooseOption']}" />
+                            <s:convertEntity />
+                        </h:selectOneMenu>
+                    </s:decorate>
+    
+                </h:panelGrid>
+            </rich:panel>
+
+            <div class="actionButtons">
+                <h:commandButton id="update" value="#{messages['common.update']}"
+                    action="#{propertyRegisterHome.update}" rendered="#{propertyRegisterHome.managed and propertyRegisterHome.instance.registeredChange.equalsIgnoreCase('NO')}" />
+
+                <s:button id="cancelEdit" value="#{messages['common.cancel']}"
+                    propagation="end" view="/propertyregister/PropertyRegisterList.xhtml" />
+
+            </div>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

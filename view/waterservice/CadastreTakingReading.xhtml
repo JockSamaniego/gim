@@ -55,12 +55,10 @@
 			</rich:panel>
 
 			<div class="actionButtons">
-				<a:region>
-					<a:commandButton value="#{messages['common.print']}"
-						reRender="messages, contentPanel"
-						action="#{routeHome.loadPreviousRecordReading()}" />
-				</a:region>
-				
+				<a:commandButton value="#{messages['common.print']}"
+					reRender="messages, contentPanel"
+					action="#{routeHome.loadPreviousRecordReading()}" />
+			
 				<s:button id="bt_cance" value="#{messages['common.exit']}"
 					propagation="end"
 					view="/waterservice/#{empty routeFrom ? 'RouteList' : routeFrom}.xhtml" />

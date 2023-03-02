@@ -469,7 +469,7 @@ public class Property {
 	@ManyToOne
 	private Block block;
 
-	@OneToOne(mappedBy = "currentProperty")
+	@OneToOne(mappedBy = "currentProperty", cascade = { CascadeType.PERSIST, CascadeType.REFRESH })
 	private Domain currentDomain;
 
 	@OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
