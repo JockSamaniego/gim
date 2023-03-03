@@ -60,4 +60,17 @@ public class BusinessServiceBean implements BusinessService {
 		return query.getResultList();
 	}
 
+	@Override
+	public List<Business> listNoactiveLocals(Long residentId) {
+		String qry = "SELECT bu from Business bu where bu.owner.id = ?1 and bu.isActive is false";
+
+		Query query = entityManager.createQuery(qry);
+		query.setParameter(1, residentId);
+
+		/*List<EmissionOrderDTO> retorno = NativeQueryResultsMapper.map(
+			query.getResultList(), EmissionOrderDTO.class);*/
+		List<Business> resultList = query.getResultList();
+		return resultList;
+	}
+
 }

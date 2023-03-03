@@ -17,6 +17,7 @@
 		<ui:include src="fragment/AddResident.xhtml" />
 		<ui:include src="fragment/AddLocalFirefighter.xhtml" />
 		<ui:include src="fragment/FireRateSearch.xhtml" />
+		<ui:include src="fragment/ListLocalFirefighter.xhtml" />
 
 		<h:form id="municipalBondEditTitle" styleClass="edit">
 			<a:queue requestDelay="10" ignoreDupResponses="true" />
@@ -90,17 +91,25 @@
 						</a:outputPanel>
 
 						<a:outputPanel id="addressPanel"
-							rendered="#{municipalBondHome.localsFire.size()==0 ? false : true}">
+							rendered="#{municipalBondHome.localsFire.size()==0 ? false : true}" style=" width:100%">
 
-							<rich:panel>
+							<rich:panel style=" width:100%">
 								<f:facet name="header">
 									<h:panelGrid columns="4" columnClasses="headerTitle left, ">
 										<h:outputText value="Direcciones" />
+
+										<a:commandButton value="No activas" id="btNoActive"
+											propagation="join"
+											action="#{municipalBondHome.loadLocalsNoactive()}"
+											style="float:right" reRender="addressPanelNoActive,listLocalFirefighterPanel"
+											ajaxSingle="true"
+											oncomplete="Richfaces.showModalPanel('listLocalFirefighterPanel')" />
+
 									</h:panelGrid>
 								</f:facet>
 
 								<rich:dataTable id="localsTable" var="_local" rows="4"
-									value="#{municipalBondHome.localsFire}" width="100%">
+									value="#{municipalBondHome.localsFire}" width="700">
 									<rich:column sortBy="#{_waterMeters.serial}"
 										styleClass="action">
 										<f:facet name="header">Número</f:facet>
@@ -121,7 +130,7 @@
 
 										<a:commandButton value="Editar" id="btAddAddressEdit"
 											propagation="join"
-											action="#{municipalBondHome.editAddress(_loca)}"
+											action="#{municipalBondHome.editAddress(_local)}"
 											style="float:right" reRender="addLocalFirefighterPanel"
 											ajaxSingle="true"
 											oncomplete="Richfaces.showModalPanel('addLocalFirefighterPanel')" />
@@ -130,6 +139,7 @@
 											propagation="join"
 											action="#{municipalBondHome.deleteAddress(_local)}"
 											style="float:right"
+											reRender="addressPanel"
 											ajaxSingle="true" />
 									</rich:column>
 

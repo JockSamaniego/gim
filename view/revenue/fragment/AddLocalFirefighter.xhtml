@@ -74,6 +74,16 @@
 					value="#{messages['common.save']}"
 					oncomplete="#{(facesContext.maximumSeverity == null || facesContext.maximumSeverity == 'INFO 0') ? 'Richfaces.hideModalPanel(\'addLocalFirefighterPanel\');' : ''}" 
 					reRender="localsTable, addressPanel"
+					rendered="#{municipalBondHome.business.id==null}"
+					/>
+					
+					<a:commandButton 
+					id="btUpdateResident"
+					action="#{municipalBondHome.updateBusinessLocal()}"
+					value="#{messages['common.save']}"
+					oncomplete="#{(facesContext.maximumSeverity == null || facesContext.maximumSeverity == 'INFO 0') ? 'Richfaces.hideModalPanel(\'addLocalFirefighterPanel\');' : ''}" 
+					reRender="localsTable, addressPanel"
+					rendered="#{municipalBondHome.business.id!=null}"
 					/>
 
 				<a:commandButton id="cancelx" ajaxSingle="true"

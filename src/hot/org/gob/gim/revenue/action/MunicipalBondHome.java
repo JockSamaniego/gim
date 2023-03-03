@@ -156,6 +156,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	private List<FireRates> fireRatesResult = new ArrayList<FireRates>();
 	private String criteriaFireRate;
 	private List<LocalFireRate> fireRatesSelected = new ArrayList<LocalFireRate>();
+	private List<Business> localsFireNoActive = new ArrayList<Business>();
  
 	public MunicipalBondHome() {
 		adjunctUri = EMPTY_ADJUNCT_URI;
@@ -2406,7 +2407,7 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	
 	public void editAddress(Business business){
 		this.business = business;
-		System.out.print(this.business.getId()+" -- "+this.business.getName());
+		// System.out.print(this.business.getId()+" -- "+this.business.getName());
 	}
 	
 	public void deleteAddress(Business business){
@@ -2423,6 +2424,21 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		this.loadLocals();
 	}
 	
+	public void activeAddress(Business business){
+		business.setIsActive(true);
+		
+		BusinessService businessService = ServiceLocator.getInstance().findResource(BusinessService.LOCAL_NAME);
+		try {
+			businessService.update(business);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		this.loadLocals();
+		this.loadLocalsNoactive();
+	}
+	
 	public void addBusinessLocal(){
 		BusinessService businessService = ServiceLocator.getInstance().findResource(BusinessService.LOCAL_NAME);
 		this.business.setOwner(this.instance.getResident());
@@ -2437,6 +2453,19 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		}
 	}	
 	
+	public void updateBusinessLocal(){
+		BusinessService businessService = ServiceLocator.getInstance().findResource(BusinessService.LOCAL_NAME);
+		
+		try {
+			businessService.update(this.business);
+			this.business = new Business();
+			loadLocals();
+		} catch (Exception e) {
+			 e.printStackTrace();
+             getFacesMessages().addFromResourceBundle(FacesMessage.SEVERITY_ERROR, "No se pudo crear");
+		}
+	}
+	
 	public List<Business> getLocalsFire() {
 		return localsFire;
 	}
@@ -2448,6 +2477,11 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 	public void loadLocals(){
 		BusinessService businessService = ServiceLocator.getInstance().findResource(BusinessService.LOCAL_NAME);
 		this.localsFire = businessService.listLocals(this.instance.getResident().getId());
+	}
+	
+	public void loadLocalsNoactive(){
+		BusinessService businessService = ServiceLocator.getInstance().findResource(BusinessService.LOCAL_NAME);
+		this.localsFireNoActive = businessService.listNoactiveLocals(this.instance.getResident().getId());
 	}
 
 	public Business getBusinessEmit() {
@@ -2561,6 +2595,13 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 		entryValueItems.add(entryValueItem);
 
 	}
-	
+
+	public List<Business> getLocalsFireNoActive() {
+		return localsFireNoActive;
+	}
+
+	public void setLocalsFireNoActive(List<Business> localsFireNoActive) {
+		this.localsFireNoActive = localsFireNoActive;
+	}
 	
 }

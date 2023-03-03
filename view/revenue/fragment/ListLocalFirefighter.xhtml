@@ -1,0 +1,76 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich" xmlns:g="http://gim.gob.ec/jsf">
+
+	<rich:modalPanel id="listLocalFirefighterPanel" width="550"
+		height="290" style="overflow-y:scroll">
+
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Locales desactivados" />
+			</h:panelGroup>
+		</f:facet>
+
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/img/error.gif" style="cursor:pointer"
+					id="hidelinkListLocal" />
+				<rich:componentControl for="listLocalFirefighterPanel"
+					attachTo="hidelinkListLocal" operation="hide" event="onclick" />
+			</h:panelGroup>
+		</f:facet>
+		<a:form id="accountNoActive" styleClass="edit">
+
+			<a:outputPanel id="addressPanelNoActive"
+				rendered="#{municipalBondHome.localsFireNoActive.size()==0 ? false : true}">
+
+				<rich:panel>
+					<f:facet name="header">
+						<h:panelGrid columns="4" columnClasses="headerTitle left, ">
+							<h:outputText value="Direcciones inactivas" />
+						</h:panelGrid>
+					</f:facet>
+
+					<rich:dataTable id="localsTableNoActive" var="_local" rows="4"
+						value="#{municipalBondHome.localsFireNoActive}" width="100%">
+						<rich:column sortBy="#{_waterMeters.serial}" styleClass="action">
+							<f:facet name="header">Número</f:facet>
+							<h:outputText value="#{_local.name}" />
+						</rich:column>
+
+						<rich:column sortBy="#{_waterMeters.isActive}">
+							<f:facet name="header">Dirección</f:facet>
+							<h:outputText value="#{_local.address}" />
+						</rich:column>
+
+						<rich:column styleClass="action">
+							<f:facet name="header">#{messages['common.action']}</f:facet>
+
+							<a:commandButton value="Activar" id="btAddAddressActive"
+								propagation="join"
+								action="#{municipalBondHome.activeAddress(_local)}"
+								reRender="addressPanel, listLocalFirefighterPanel" ajaxSingle="true" />
+						</rich:column>
+
+					</rich:dataTable>
+
+					<rich:datascroller align="center" for="localsTableNoActive" maxPages="20"
+						id="dsLocalNoActive" />
+
+				</rich:panel>
+
+			</a:outputPanel>
+
+			<div style="clear: both"></div>
+
+
+		</a:form>
+	</rich:modalPanel>
+</ui:composition>
