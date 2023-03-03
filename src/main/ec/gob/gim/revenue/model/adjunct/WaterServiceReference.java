@@ -93,10 +93,10 @@ public class WaterServiceReference extends Adjunct {
 		pair = new ValuePair("Consumo (m3)", consumptionAmount != null ? consumptionAmount.toString() : "0");
 		details.add(pair);
 		
-		pair = new ValuePair("Tipo exención", exemptionType);
+		pair = new ValuePair("Tipo exenci\u00F3n", exemptionType);
 		details.add(pair);
 		
-		pair = new ValuePair("Valor exención", exemptionValue != null ? exemptionValue.toString() : "0");
+		pair = new ValuePair("Valor exenci\u00F3n", exemptionValue != null ? exemptionValue.toString() : "0");
 		details.add(pair);
 		
 //		pair = new ValuePair("Ubicación", serviceAddress != null ? serviceAddress : "-");

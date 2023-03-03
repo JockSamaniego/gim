@@ -126,17 +126,17 @@ public class ANTReference extends Adjunct {
 		/*pair = new ValuePair("Fecha citación", citationDate != null ? DateUtils.formatFullDate(citationDate) : "-");
 		details.add(pair);*/
 		
-		pair = new ValuePair("Fecha infracción", infractionDate != null ? DateUtils.formatFullDate(infractionDate) : "-");
+		pair = new ValuePair("Fecha infracci\u00F3n", infractionDate != null ? DateUtils.formatFullDate(infractionDate) : "-");
 		details.add(pair);
 		
-		pair = new ValuePair("Fecha notificación", notificationDate != null ? DateUtils.formatFullDate(notificationDate) : "-");
+		pair = new ValuePair("Fecha notificaci\u00F3n", notificationDate != null ? DateUtils.formatFullDate(notificationDate) : "-");
 		details.add(pair);
 		
-		pair = new ValuePair("Nro. Infracción", contraventionNumber != null ? contraventionNumber.toUpperCase() : "-");
+		pair = new ValuePair("Nro. Infracci\u00F3n", contraventionNumber != null ? contraventionNumber.toUpperCase() : "-");
 		details.add(pair);
 		
 		if (physicalInfractionNumber != null && physicalInfractionNumber.equals("")) {
-			pair = new ValuePair("Boleta Infracción", physicalInfractionNumber != null ? physicalInfractionNumber.toUpperCase() : "-");
+			pair = new ValuePair("Boleta Infracci\u00F3n", physicalInfractionNumber != null ? physicalInfractionNumber.toUpperCase() : "-");
 			details.add(pair);
 		}
 		

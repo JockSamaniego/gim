@@ -143,13 +143,13 @@ public class PropertyAppraisal extends Adjunct{
 		pair = new ValuePair("Área Lote",lotArea != null ? lotArea.toString() : "-");
 		details.add(pair);
 		
-		pair = new ValuePair("Área Construcción",constructionArea != null ? constructionArea.toString() : "-");
+		pair = new ValuePair("Área Construcci\u00F3n",constructionArea != null ? constructionArea.toString() : "-");
 		details.add(pair);		
 		
 		
 		pair = new ValuePair("Avaluo terreno", lotAppraisal != null ? lotAppraisal.toString() : "");
 		details.add(pair);
-		pair = new ValuePair("Avaluo construcción",buildingAppraisal != null ? buildingAppraisal.toString() : "");
+		pair = new ValuePair("Avaluo construcci\u00F3n",buildingAppraisal != null ? buildingAppraisal.toString() : "");
 		details.add(pair);
 		
 		//rfam 2018-12-26 se presenta solo en el caso de ser mayor a cero
@@ -160,7 +160,7 @@ public class PropertyAppraisal extends Adjunct{
 		
 		pair = new ValuePair("Avaluo comercial",commercialAppraisal != null ? commercialAppraisal.toString() : "");
 		details.add(pair);
-		pair = new ValuePair("Valor de exencion",exemptionValue != null ? exemptionValue.toString() : "");
+		pair = new ValuePair("Valor de exenci\u00F3n",exemptionValue != null ? exemptionValue.toString() : "");
 		details.add(pair);
 		return details;
 	}
