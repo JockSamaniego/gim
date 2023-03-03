@@ -1,0 +1,172 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" template="../layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="propertyRegisterSearch" styleClass="edit">
+
+			<ui:debug id="uidebug" />
+
+			<h:outputText styleClass="formTitle"
+				value="#{messages['propertyRegister.manager']}" />
+
+			<rich:simpleTogglePanel label="#{messages['propertyRegister.searchFilter']}"
+				switchType="ajax">
+
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['common.resident']}</ui:define>
+					<h:inputText id="resident" value="#{propertyRegisterList.resident}"
+						size="50" maxlength="50" />
+				</s:decorate>
+				
+				<s:decorate template="../layout/display.xhtml">
+					<ui:define name="label">#{messages['propertyRegister.registeredChange']}: </ui:define>
+					<h:selectOneMenu id="registered"
+						value="#{propertyRegisterList.registered}">
+						<s:selectItems value="#{propertyRegisterList.registeredList}" var="_registered" noSelectionLabel="#{messages['common.selectOne']}"
+							label="#{_registered}" />
+					</h:selectOneMenu>
+				</s:decorate>
+
+			</rich:simpleTogglePanel>
+
+			<div class="actionButtons">
+				<h:commandButton id="search" value="#{messages['common.search']}"
+					action="/propertyregister/PropertyRegisterList.xhtml">
+					<f:param name="firstResult" value="0" />
+				</h:commandButton>
+				<s:button id="reset" value="#{messages['common.reset']}"
+					includePageParams="false" />
+			</div>
+
+		</h:form>
+
+		<rich:panel>
+			<f:facet name="header">
+				<h:panelGrid columns="2" columnClasses="headerTitle,">
+					<h:outputText
+						value="#{messages['propertyRegister.searchResults']} (#{empty propertyRegisterList.resultList ? 0 : (propertyRegisterList.paginated ? propertyRegisterList.resultCount : propertyRegisterList.resultList.size)})" />
+				</h:panelGrid>
+			</f:facet>
+
+			<div class="results" id="list">
+
+				<h:outputText value="#{messages['common.noResultsReturned']}"
+					rendered="#{empty propertyRegisterList.resultList}" />
+
+				<rich:dataTable id="tableList" var="_propertyRegister"
+					value="#{propertyRegisterList.resultList}"
+					rendered="#{not empty propertyRegisterList.resultList}">
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{propertyRegisterList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['propertyRegister.id']}" />
+								<ui:param name="propertyPath" value="propertyRegister.id" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_propertyRegister.id}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{propertyRegisterList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['resident.dni']}" />
+								<ui:param name="propertyPath" value="propertyRegister.identificationNumber" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_propertyRegister.identificationNumber}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{propertyRegisterList}" />
+								<ui:param name="propertyLabel" value="#{messages['propertyRegister.intervenerName']}" />
+								<ui:param name="propertyPath" value="propertyRegister.intervenerName" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_propertyRegister.intervenerName}" />
+					</h:column>
+					
+					<rich:column styleClass="right">
+						<f:facet name="header">#{messages['propertyRegister.amount']}</f:facet>
+						<h:outputText value="#{_propertyRegister.amount}" />
+					</rich:column>
+					
+					<rich:column styleClass="right">
+						<f:facet name="header">#{messages['propertyRegister.cadastralCode']}</f:facet>
+						<h:outputText value="#{_propertyRegister.cadastralCode}" />
+					</rich:column>
+					
+					<h:column style="text-align: center;">
+						<f:facet name="header">
+							<ui:include src="../layout/sort.xhtml">
+								<ui:param name="entityList" value="#{propertyRegisterList}" />
+								<ui:param name="propertyLabel"
+									value="#{messages['propertyRegister.registeredChange']}" />
+								<ui:param name="propertyPath" value="propertyRegister.registeredChange" />
+							</ui:include>
+						</f:facet>
+						<h:outputText value="#{_propertyRegister.registeredChange}" />
+					</h:column>
+					<rich:column styleClass="action">
+						<f:facet name="header">#{messages['common.action']}</f:facet>
+						<s:button view="/propertyregister/PropertyRegisterEdit.xhtml"
+							value="#{messages['common.update']}" propagation="none"
+							id="propertyRegisterEdit" rendered="#{_propertyRegister.registeredChange.equalsIgnoreCase('NO')}"
+							actionListener="#{propertyRegisterHome.prepareEdit(_propertyRegister)}">
+							<f:param name="propertyRegisterId" value="#{_propertyRegister.id}" />
+						</s:button>
+
+					</rich:column>
+				</rich:dataTable>
+
+			</div>
+		</rich:panel>
+
+		<div class="tableControl">
+
+			<s:link view="/propertyregister/PropertyRegisterList.xhtml"
+				rendered="#{propertyRegisterList.previousExists}"
+				value="#{messages.left}#{messages.left} #{messages['common.firstPage']}"
+				id="firstPage">
+				<f:param name="firstResult" value="0" />
+			</s:link>
+
+			<s:link view="/propertyregister/PropertyRegisterList.xhtml"
+				rendered="#{propertyRegisterList.previousExists}"
+				value="#{messages.left} #{messages['common.previousPage']}"
+				id="previousPage">
+				<f:param name="firstResult"
+					value="#{propertyRegisterList.previousFirstResult}" />
+			</s:link>
+
+			<s:link view="/propertyregister/PropertyRegisterList.xhtml"
+				rendered="#{propertyRegisterList.nextExists}"
+				value="#{messages['common.nextPage']} #{messages.right}"
+				id="nextPage">
+				<f:param name="firstResult" value="#{propertyRegisterList.nextFirstResult}" />
+			</s:link>
+
+			<s:link view="/propertyregister/PropertyRegisterList.xhtml"
+				rendered="#{propertyRegisterList.nextExists}"
+				value="#{messages['common.lastPage']} #{messages.right}#{messages.right}"
+				id="lastPage">
+				<f:param name="firstResult" value="#{propertyRegisterList.lastFirstResult}" />
+			</s:link>
+
+		</div>
+
+
+	</ui:define>
+
+</ui:composition>
