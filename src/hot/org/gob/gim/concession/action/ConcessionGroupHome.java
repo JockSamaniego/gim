@@ -311,7 +311,8 @@ public class ConcessionGroupHome extends EntityHome<ConcessionGroup> {
 			this.concessionPlace.setResident(resident);
 			this.getInstance().add(concessionPlace);
 		}
-		this.update();
+		
+		this.persist();
 
 		this.concessionItemHome.getInstance().setIsFirst(Boolean.TRUE);
 		this.concessionItemHome.getInstance().setYear(yearInt);
@@ -338,9 +339,6 @@ public class ConcessionGroupHome extends EntityHome<ConcessionGroup> {
 		
 		if (this.resident != null) {
 
-			System.out
-					.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>entra a crear un contrato");
-
 			Contract c = generateContract();
 
 			this.concessionItem.setIsFirst(Boolean.TRUE);
@@ -356,13 +354,15 @@ public class ConcessionGroupHome extends EntityHome<ConcessionGroup> {
 			this.concessionPlaceHome.getInstance().setIsActive(Boolean.TRUE);
 			this.concessionPlaceHome.getInstance().setCurrentContract(c);
 			this.concessionPlaceHome.getInstance().setResident(resident);
-			logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>el id "+this.concessionPlaceHome.getInstance().getId());
+			// logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>el id "+this.concessionPlaceHome.getInstance().getId());
 			this.concessionPlaceHome.update();
 		}
 		// this.concessionItemHome.getInstance().setPlace(this.concessionPlaceHome.getInstance());
 		// this.concessionItemHome.persist();
 
 		generateRecords(this.concessionPlaceType);
+		
+		this.resident = null;
 	}
 
 	public void updatePlaceItem() {
@@ -386,7 +386,7 @@ public class ConcessionGroupHome extends EntityHome<ConcessionGroup> {
 		this.concessionItemHome.getInstance().setIsOldItem(Boolean.TRUE);
 		this.concessionItemHome.getInstance().getPreviousConcessionItem().setIsOldItem(Boolean.TRUE);
 		this.concessionItemHome.update();
-		logger.warn("entra  a ahcer el updae de item>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><");
+		// logger.warn("entra  a ahcer el updae de item>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><");
 		/*
 		 * this.concessionItemHome.setInstance(ci);
 		 * this.concessionItemHome.getInstance().set
@@ -608,23 +608,23 @@ public class ConcessionGroupHome extends EntityHome<ConcessionGroup> {
 				if (itemsAlreadyGenerated.size() > 0) {
 					missingItems = findMissingItemIds(placesIds,
 							itemsAlreadyGenerated, yearInt, monthInt);// sacar2
-					logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> el total faltente es "
-							+ missingItems.size());
+					//logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> el total faltente es "
+						//	+ missingItems.size());
 				} else {
 					missingItems = findConcessionItemIds(placesIds, yearInt,
 							monthInt);
-					logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> No ha sido creado ninguna auns los nuevo son: "
-							+ missingItems.size());
+					//logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> No ha sido creado ninguna auns los nuevo son: "
+						//	+ missingItems.size());
 				}
 				if (missingItems.size() > 0) {
 					generateNewRecords(findByIds(missingItems));
 				}
 				// cargo los del mes seleccionado porq ya los creo anteriormente
 				findItemsByPlacesIds(placesIds, year, month.getMonthInt());
-			} else {
+			}/* else {
 				logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> No existen ubicaciones "
 						+ placesIds.size());
-			}
+			}*/
 		}
 	}
 
@@ -720,8 +720,8 @@ public class ConcessionGroupHome extends EntityHome<ConcessionGroup> {
 		q.setParameter("cgId", this.getInstance().getId());
 		q.setParameter("isActive", Boolean.FALSE);
 		q.setParameter("idCpt", this.concessionPlaceType.getId());
-		logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> la nueva cantidad es de libre es = "
-				+ q.getResultList().size());
+		//logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> la nueva cantidad es de libre es = "
+			//	+ q.getResultList().size());
 		return q.getResultList();
 	}
 

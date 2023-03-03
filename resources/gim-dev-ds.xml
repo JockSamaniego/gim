@@ -6,6 +6,8 @@
 	<local-tx-datasource>
 		<jndi-name>gimDatasource</jndi-name>
 		<use-java-context>false</use-java-context>
+		<!--connection-url>jdbc:postgresql://192.168.1.17:5432/gim_20221228_2238</connection-url-->
+
 		<connection-url>jdbc:postgresql://192.168.1.149:5432/gimlojaDB</connection-url>
 		<!--connection-url>jdbc:postgresql://192.168.1.17:5432/gim_20220520</connection-url-->
 		<driver-class>org.postgresql.Driver</driver-class>

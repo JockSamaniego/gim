@@ -4,6 +4,6 @@ public enum AgreementType {
 
 	REGULAR,
 	COERCIVEJUDGEMENT,
-	REMISSION;
-	
+	REMISSION,
+	EMBARGO;
 }

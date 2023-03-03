@@ -62,34 +62,39 @@
 					</h:panelGrid>
 					
 					<h:panelGrid columns="2" width="100%" columnClasses="right,topAligned,right,topAligned" rendered="#{not empty paymentAgreementHome.instance.id}">
-						<h:outputText value="#{messages['dividend.balance']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
-						<h:outputText value="#{paymentAgreementHome.balanceForPay}" style="font-size:40px; font-weight:bold;">
+						<h:outputText value="Tipo: "
+								style="font-size:30px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{messages[paymentAgreementHome.instance.agreementType.name()]}"
+								style="font-size:30px; font-weight:bold;">
+							</h:outputText>
+						<h:outputText value="#{messages['dividend.balance']}: " style="font-size:30px; font-weight:bold;"></h:outputText>
+						<h:outputText value="#{paymentAgreementHome.balanceForPay}" style="font-size:30px; font-weight:bold;">
 							<f:convertNumber
 									maxFractionDigits="#{messages['common.maxFractionDigits']}"
 									minFractionDigits="#{messages['common.minFractionDigits']}" />
 						</h:outputText>			
-						<h:outputText value="#{messages['municipalBond.totalCancelled']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
-						<h:outputText value="#{paymentAgreementHome.payed}" style="font-size:40px; font-weight:bold;">
+						<h:outputText value="#{messages['municipalBond.totalCancelled']}: " style="font-size:30px; font-weight:bold;"></h:outputText>
+						<h:outputText value="#{paymentAgreementHome.payed}" style="font-size:30px; font-weight:bold;">
 							<f:convertNumber
 									maxFractionDigits="#{messages['common.maxFractionDigits']}"
 									minFractionDigits="#{messages['common.minFractionDigits']}" />
 						</h:outputText>				
-						<h:outputText value="#{messages['VOID']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
-						<h:outputText value="#{paymentAgreementHome.canceledValue}" style="font-size:40px; font-weight:bold;">
+						<h:outputText value="#{messages['VOID']}: " style="font-size:30px; font-weight:bold;"></h:outputText>
+						<h:outputText value="#{paymentAgreementHome.canceledValue}" style="font-size:30px; font-weight:bold;">
 							<f:convertNumber
 									maxFractionDigits="#{messages['common.maxFractionDigits']}"
 									minFractionDigits="#{messages['common.minFractionDigits']}" />
 						</h:outputText>		
 						
-						<h:outputText value="#{messages['dividens.totals']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
-						<h:outputText value="#{paymentAgreementHome.instance.dividends.size()}" style="font-size:40px; font-weight:bold;">
+						<h:outputText value="#{messages['dividens.totals']}: " style="font-size:30px; font-weight:bold;"></h:outputText>
+						<h:outputText value="#{paymentAgreementHome.instance.dividends.size()}" style="font-size:30px; font-weight:bold;">
 							<f:convertNumber
 									maxFractionDigits="#{messages['common.maxFractionDigits']}"
 									minFractionDigits="#{messages['common.minFractionDigits']}" />
 						</h:outputText>	
 						
-						<h:outputText value="#{messages['dividens.deposits']}: " style="font-size:40px; font-weight:bold;"></h:outputText>
-						<h:outputText value="#{paymentAgreementHome.totalPayments}" style="font-size:40px; font-weight:bold;">
+						<h:outputText value="#{messages['dividens.deposits']}: " style="font-size:30px; font-weight:bold;"></h:outputText>
+						<h:outputText value="#{paymentAgreementHome.totalPayments}" style="font-size:30px; font-weight:bold;">
 							<f:convertNumber
 									maxFractionDigits="#{messages['common.maxFractionDigits']}"
 									minFractionDigits="#{messages['common.minFractionDigits']}" />

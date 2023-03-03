@@ -106,7 +106,7 @@
 					</s:decorate>
 
 					<s:decorate id="amountField" template="../../layout/edit.xhtml">
-						<ui:define name="label">Amount</ui:define>
+						<ui:define name="label">#{messages['concessionItem.amount']}</ui:define>
 						<h:inputText id="amount"
 							value="#{concessionGroupHome.concessionItem.amount}" size="26">
 							<a:support event="onblur" reRender="amountField"
@@ -115,7 +115,7 @@
 					</s:decorate>
 
 					<s:decorate id="conceptField" template="../../layout/edit.xhtml">
-						<ui:define name="label">Concept</ui:define>
+						<ui:define name="label">#{messages['concessionItem.concept']}</ui:define>
 						<h:inputText id="concept" required="true" size="45" maxlength="80"
 							value="#{concessionGroupHome.concessionItem.concept}"
 							style="text-transform: uppercase">
@@ -127,7 +127,7 @@
 
 					<s:decorate id="explanationField"
 						template="../../layout/edit.xhtml">
-						<ui:define name="label">Explanation</ui:define>
+						<ui:define name="label">#{messages['concessionItem.explanation']}</ui:define>
 						<h:inputText id="explanation" required="true" size="45"
 							maxlength="80" value="#{concessionGroupHome.concessionItem.explanation}"
 							style="text-transform: uppercase">
@@ -137,7 +137,7 @@
 					</s:decorate>
 
 					<s:decorate id="addressField" template="../../layout/edit.xhtml">
-						<ui:define name="label">Address</ui:define>
+						<ui:define name="label">#{messages['concessionItem.explanationAddress']}</ui:define>
 						<h:inputText id="address" size="45" maxlength="80"
 							value="#{concessionGroupHome.concessionItem.address}"
 							style="text-transform: uppercase">
@@ -155,7 +155,7 @@
 
 			<h:panelGrid columns="10" style="text-align:right">
 
-				<a:commandButton value="#{messages['common.savess']}"
+				<a:commandButton value="#{messages['common.save']}"
 					reRender="concessionItemList,concessionPlaceList" ajaxSingle="true"
 					oncomplete="Richfaces.hideModalPanel('editConcessionItemPlacePanel');"
 					action="#{concessionGroupHome.updatePlacePersistItem()}" />
