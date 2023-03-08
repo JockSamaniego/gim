@@ -90,7 +90,7 @@ public class PropertyRegister {
 	@JoinColumn(name = "responsableupdate_id")
 	private User responsableUpdate;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private Domain domain;
 
 	@OneToMany(mappedBy = "propertyRegister", cascade = CascadeType.ALL)

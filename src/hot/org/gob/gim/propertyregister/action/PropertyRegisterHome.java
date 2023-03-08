@@ -2,9 +2,7 @@ package org.gob.gim.propertyregister.action;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -14,7 +12,6 @@ import javax.persistence.Query;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
 import org.gob.gim.common.service.SystemParameterService;
-import org.gob.gim.revenue.service.PropertyService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -28,6 +25,8 @@ import org.jboss.seam.log.Log;
 import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.cadaster.model.Property;
 import ec.gob.gim.cadaster.model.TerritorialDivision;
+import ec.gob.gim.common.model.CheckingRecord;
+import ec.gob.gim.common.model.CheckingRecordType;
 import ec.gob.gim.common.model.Resident;
 import ec.gob.gim.propertyregister.model.PropertyRegister;
 
@@ -36,6 +35,7 @@ import ec.gob.gim.propertyregister.model.PropertyRegister;
 public class PropertyRegisterHome extends EntityHome<PropertyRegister> {
 
     private static final long serialVersionUID = -2586577925050672565L;
+    private static String messageObs = "Se registra el Traspaso de Dominio según información del Registro de la Propiedad";
     private Resident resident;
     private String criteria;
     private String identificationNumber;
@@ -50,8 +50,6 @@ public class PropertyRegisterHome extends EntityHome<PropertyRegister> {
 
     public static String SYSTEM_PARAMETER_SERVICE_NAME = "/gim/SystemParameterService/local";
 
-    private PropertyService propertyService;
-    
     private Domain newDomain;
     
     @Logger
@@ -102,19 +100,6 @@ public class PropertyRegisterHome extends EntityHome<PropertyRegister> {
 //            reCalculateValues();
             addFacesMessageFromResourceBundle("resident.notFound");
         }
-    }
-
-    public String save() {
-
-        if (this.instance.getId() == null) {
-            Calendar cal = new GregorianCalendar();
-            this.instance.setDateUpdate(cal.getTime());
-            this.instance.setRegisteredChange("SI");
-        }
-        if (this.isManaged())
-            return super.update();
-
-        return super.persist();
     }
 
     @SuppressWarnings("unchecked")
@@ -283,6 +268,13 @@ public class PropertyRegisterHome extends EntityHome<PropertyRegister> {
         instance.setResponsableUpdate(userSession.getUser());
         instance.setRegisteredChange("SI");
         instance.setDomain(newDomain);
+        CheckingRecord cr = new CheckingRecord();
+        cr.setChecker(userSession.getPerson());
+        cr.setCheckingRecordType(CheckingRecordType.DOMAIN_TRANSFER);
+        cr.setDate(new Date());
+        cr.setTime(new Date());
+        cr.setObservation(messageObs);
+        this.instance.getDomain().getCurrentProperty().add(cr);
         return super.update();
     }
 
@@ -310,7 +302,9 @@ public class PropertyRegisterHome extends EntityHome<PropertyRegister> {
         newDomain.setProperty(property);
         newDomain.setResident(resident);
         newDomain.setBuildingAreaTransfer(property.getCurrentDomain().getBuildingAreaTransfer());
+        newDomain.setTotalAreaConstruction(property.getCurrentDomain().getTotalAreaConstruction());
         newDomain.setLotAreaTransfer(property.getCurrentDomain().getLotAreaTransfer());
+        newDomain.setObservations(messageObs);
         newDomain.setPreviousDomain(property.getCurrentDomain());
         property.getCurrentDomain().setIsActive(false);
         property.getCurrentDomain().setCurrentProperty(null);
