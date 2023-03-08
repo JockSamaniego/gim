@@ -11,12 +11,13 @@
 	template="../layout/template.xhtml">
 
 	<ui:define name="body">
-	<ui:include src="../components/InfractionNotificationViewer.xhtml" />
-	<ui:include src="fragment/BondsDownStatusPanel.xhtml" />
-	
+		<ui:include src="../components/InfractionNotificationViewer.xhtml" />
+		<ui:include src="fragment/BondsDownStatusPanel.xhtml" />
+
 
 		<a:form id="municipalBondSearch" styleClass="edit">
 			<ui:debug id="uiDebug" />
+
 
 			<rich:panel>
 				<f:facet name="header">
@@ -24,61 +25,129 @@
 						styleClass="formTitle" />
 				</f:facet>
 
-				<s:decorate id="startDateField" template="../layout/edit.xhtml">
-					<ui:define name="label">#{messages['common.startDate']}:</ui:define>
-					<rich:calendar id="startDate" enableManualInput="false"
-						value="#{municipalBondCondition.startDate}"
-						datePattern="#{messages['common.datePattern']}" ajaxSingle="true">
-					</rich:calendar>
-				</s:decorate>
+				<h:panelGrid columns="2" width="100%" id="panelInfo">
 
-				<g:residentChooser resident="#{municipalBondCondition.resident}"
-					criteria="#{municipalBondCondition.criteria}"
-					bean="#{municipalBondCondition}" searchAction="searchResident"
-					residentsList="#{municipalBondCondition.residents}"
-					identificationNumber="#{municipalBondCondition.identificationNumber}"
-					searchByCriteriaAction="searchResidentByCriteria"
-					clearSearchPanelAction="clearSearchResidentPanel"
-					residentChosenListenerName="residentSelectedListener"
-					reRender="entryChooserPanel,contentPanel, remisionPanel">
-					<s:convertEntity />
-				</g:residentChooser>
+					<a:outputPanel id="panelLeft">
+						<s:decorate id="startDateField" template="../layout/edit.xhtml">
+							<ui:define name="label">#{messages['common.startDate']}:</ui:define>
+							<rich:calendar id="startDate" enableManualInput="false"
+								value="#{municipalBondCondition.startDate}"
+								datePattern="#{messages['common.datePattern']}">
+								<a:support event="onchanged" ajaxSingle="true" />
+							</rich:calendar>
+						</s:decorate>
 
-				<a:outputPanel id="entryChooserPanel" ajaxRendered="false">
-				<g:entryChooser id="entryChooser" label="#{messages['entry']}"
-					criteria="#{municipalBondCondition.criteriaEntry}"
-					entry="#{municipalBondCondition.entry}"
-					entryCode="#{municipalBondCondition.entryCode}"
-					bean="#{municipalBondCondition}" searchAction="searchEntry"
-					entriesList="#{municipalBondCondition.entries}"
-					searchByCriteriaAction="searchEntryByCriteria"
-					clearSearchPanelAction="clearSearchEntryPanel" reRender="contentPanel"
-					entryChosenListenerName="entrySelectedListener" 
-					disabled="#{empty municipalBondCondition.resident}">
-					<s:convertEntity />
-				</g:entryChooser>
+						<g:residentChooser resident="#{municipalBondCondition.resident}"
+							criteria="#{municipalBondCondition.criteria}"
+							bean="#{municipalBondCondition}" searchAction="searchResident"
+							residentsList="#{municipalBondCondition.residents}"
+							identificationNumber="#{municipalBondCondition.identificationNumber}"
+							searchByCriteriaAction="searchResidentByCriteria"
+							clearSearchPanelAction="clearSearchResidentPanel"
+							residentChosenListenerName="residentSelectedListener"
+							reRender="entryChooserPanel,contentPanel, remisionPanel, municipalBondSearch:panelRight, panelInfo">
+							<s:convertEntity />
+						</g:residentChooser>
 
-				<s:decorate id="includeCEMsField" template="../layout/edit.xhtml" rendered="#{municipalBondCondition.enabledIncludeCEMs}">
-					<ui:define name="label">#{messages['common.includeCEMs']}:</ui:define>
-					<h:selectBooleanCheckbox id="includeCEMs" value="#{municipalBondCondition.includeCEMs}" >
-					    <a:support event="onchange" reRender="includeCEMsField,contentPanel" action="#{municipalBondCondition.searchResident()}" />
-					</h:selectBooleanCheckbox>
-				</s:decorate>
+						<a:outputPanel id="entryChooserPanel" ajaxRendered="false">
+							<g:entryChooser id="entryChooser" label="#{messages['entry']}"
+								criteria="#{municipalBondCondition.criteriaEntry}"
+								entry="#{municipalBondCondition.entry}"
+								entryCode="#{municipalBondCondition.entryCode}"
+								bean="#{municipalBondCondition}" searchAction="searchEntry"
+								entriesList="#{municipalBondCondition.entries}"
+								searchByCriteriaAction="searchEntryByCriteria"
+								clearSearchPanelAction="clearSearchEntryPanel"
+								reRender="contentPanel"
+								entryChosenListenerName="entrySelectedListener"
+								disabled="#{empty municipalBondCondition.resident}">
+								<s:convertEntity />
+							</g:entryChooser>
 
-				</a:outputPanel>
+							<s:decorate id="includeCEMsField" template="../layout/edit.xhtml"
+								rendered="#{municipalBondCondition.enabledIncludeCEMs}">
+								<ui:define name="label">#{messages['common.includeCEMs']}:</ui:define>
+								<h:selectBooleanCheckbox id="includeCEMs"
+									value="#{municipalBondCondition.includeCEMs}">
+									<a:support event="onchange"
+										reRender="includeCEMsField,contentPanel"
+										action="#{municipalBondCondition.searchResident()}" />
+								</h:selectBooleanCheckbox>
+							</s:decorate>
+
+						</a:outputPanel>
+
+					</a:outputPanel>
+
+					<a:outputPanel id="panelRight"
+						rendered="#{municipalBondCondition.showAgreementInfo}">
+						<h:panelGrid columns="2" width="100%" columnClasses="right,right">
+							<h:outputText value="Tipo: "
+								style="font-size:30px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{messages[municipalBondCondition.agreementType]}"
+								style="font-size:30px;">
+							</h:outputText>
+							<h:outputText value="#{messages['dividend.balance']}: "
+								style="font-size:30px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{municipalBondCondition.balanceForPay}"
+								style="font-size:30px;">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+							<h:outputText
+								value="#{messages['municipalBond.totalCancelled']}: "
+								style="font-size:30px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{municipalBondCondition.payed}"
+								style="font-size:30px;">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+							<h:outputText value="#{messages['VOID']}: "
+								style="font-size:30px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{municipalBondCondition.canceledValue}"
+								style="font-size:30px;">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+
+							<h:outputText value="#{messages['dividens.totals']}: "
+								style="font-size:30px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{municipalBondCondition.dividendsSize}"
+								style="font-size:30px;">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+
+							<h:outputText value="#{messages['dividens.deposits']}: "
+								style="font-size:30px; font-weight:bold;"></h:outputText>
+							<h:outputText value="#{municipalBondCondition.totalPayments}"
+								style="font-size:30px;">
+								<f:convertNumber
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
+							</h:outputText>
+						</h:panelGrid>
+					</a:outputPanel>
+
+				</h:panelGrid>
 
 				<div style="clear: both" />
 			</rich:panel>
 
+
 			<div class="actionButtons">
-				<a:outputPanel ajaxRendered="true">					
-					
+				<a:outputPanel ajaxRendered="true">
+
 					<a:commandButton id="search" value="#{messages['common.search']}"
-						action="#{municipalBondCondition.chargeResults()}" 
-						reRender="remisionPanel, txtInterest,txtSurcharged, contentPanel, messages" 
-						disabled="#{municipalBondCondition.resident == null}">						
+						action="#{municipalBondCondition.chargeResults()}"
+						reRender="remisionPanel, txtInterest,txtSurcharged, contentPanel, messages"
+						disabled="#{municipalBondCondition.resident == null}">
 					</a:commandButton>
-					
+
 					<s:button id="reset" value="#{messages['common.reset']}"
 						includePageParams="false" propagation="none" />
 				</a:outputPanel>
@@ -87,7 +156,7 @@
 		</a:form>
 		<h:form>
 			<div class="results">
-				
+
 				<rich:panel id="remisionPanel" rendered="false">
 					<f:facet name="header">
 						<h:outputText value="Valores de remisión"
@@ -95,77 +164,83 @@
 					</f:facet>
 					<div class="right">
 						<div>
-							<h:outputText value="Interes: " style="font-size:20px; font-weight:bold;"/>			
-							<h:outputText id="txtInterest" value="#{municipalBondCondition.totalInterestRemision}" style="font-size:20px; font-weight:bold; " styleClass="right" >
+							<h:outputText value="Interes: "
+								style="font-size:20px; font-weight:bold;" />
+							<h:outputText id="txtInterest"
+								value="#{municipalBondCondition.totalInterestRemision}"
+								style="font-size:20px; font-weight:bold; " styleClass="right">
 								<f:convertNumber
-								maxFractionDigits="#{messages['common.maxFractionDigits']}"
-								minFractionDigits="#{messages['common.minFractionDigits']}" />
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
 							</h:outputText>
 						</div>
 						<div>
-							<h:outputText value="Recargo: " style="font-size:20px; font-weight:bold;"/>
-							<h:outputText id="txtSurcharged" value="#{municipalBondCondition.totalSurchargeRemision}" style="font-size:20px; font-weight:bold; " styleClass="right">
+							<h:outputText value="Recargo: "
+								style="font-size:20px; font-weight:bold;" />
+							<h:outputText id="txtSurcharged"
+								value="#{municipalBondCondition.totalSurchargeRemision}"
+								style="font-size:20px; font-weight:bold; " styleClass="right">
 								<f:convertNumber
-								maxFractionDigits="#{messages['common.maxFractionDigits']}"
-								minFractionDigits="#{messages['common.minFractionDigits']}" />
+									maxFractionDigits="#{messages['common.maxFractionDigits']}"
+									minFractionDigits="#{messages['common.minFractionDigits']}" />
 							</h:outputText>
 						</div>
-					</div>									
+					</div>
 				</rich:panel>
-				
+
 				<rich:panel id="contentPanel">
-					<a:outputPanel ajaxRendered="false">		
-				<h:outputText
-					value="#{messages['municipalBond.searchReturnedNoResults']}."
-					rendered="#{empty municipalBondCondition.result}" />
+					<a:outputPanel ajaxRendered="false">
+						<h:outputText
+							value="#{messages['municipalBond.searchReturnedNoResults']}."
+							rendered="#{empty municipalBondCondition.result}" />
 
 
-				<g:municipalBondsViewer id="municipalBondsViewerCmp"
-					title="#{messages['municipalBond.list']} --> #{messages['income.totalPendingBonds']}: #{municipalBondCondition.pendingTotal}"
-					bean="municipalBondCondition"
-					municipalBondItems="#{municipalBondCondition.municipalBondItemsResult}"
-					selectable="false"
-					allBondsSelectedProperty="#{municipalBondsViewer.allBondsSelected}"
-					allBondsSelectedAction="selectAllItems"
-					onSelectAction="calculatePaidTotal"
-					reRender="municipalBondsViewerCmp" disabled="false">
-					<s:div styleClass="actionButtons"
-						rendered="#{not empty municipalBondCondition.result}">
-						<h:panelGrid columns="4">
-							<s:button
-								view="/revenue/report/ResidentMunicipalBondConditionReport.xhtml"
-								id="print" propagation="join" value="#{messages['common.print']}">
-							</s:button>
-							
-							<h:commandButton id="senMail" 
-								value="#{messages['common.sendAccountState']}"
-								action="#{municipalBondCondition.notifyPendingBonds()}" 
-								disabled="#{empty municipalBondCondition.resident.email}"/>
+						<g:municipalBondsViewer id="municipalBondsViewerCmp"
+							title="#{messages['municipalBond.list']} --> #{messages['income.totalPendingBonds']}: #{municipalBondCondition.pendingTotal}"
+							bean="municipalBondCondition"
+							municipalBondItems="#{municipalBondCondition.municipalBondItemsResult}"
+							selectable="false"
+							allBondsSelectedProperty="#{municipalBondsViewer.allBondsSelected}"
+							allBondsSelectedAction="selectAllItems"
+							onSelectAction="calculatePaidTotal"
+							reRender="municipalBondsViewerCmp" disabled="false">
+							<s:div styleClass="actionButtons"
+								rendered="#{not empty municipalBondCondition.result}">
+								<h:panelGrid columns="4">
+									<s:button
+										view="/revenue/report/ResidentMunicipalBondConditionReport.xhtml"
+										id="print" propagation="join"
+										value="#{messages['common.print']}">
+									</s:button>
 
-							<!--rfam 2018-08-31 ML-JC-2048-267 visualizar bajas  -->
-							<a:commandButton id="viewerNotification" ajaxSingle="true"
-								action="#{municipalBondCondition.findBondsDown()}"
-								eventsQueue="gimEventsQueue"
-								reRender="bondsDownStatusPanel, downBondsTable"
-								oncomplete="Richfaces.showModalPanel('bondsDownStatusPanel',{width:700, height:450})"
-								value="Bajas">
-							</a:commandButton>
+									<h:commandButton id="senMail"
+										value="#{messages['common.sendAccountState']}"
+										action="#{municipalBondCondition.notifyPendingBonds()}"
+										disabled="#{empty municipalBondCondition.resident.email}" />
 
-						</h:panelGrid>
-												
-					</s:div>
-				</g:municipalBondsViewer>
-				<ui:include src="fragment/MunicipalBondsFutureTable.xhtml" />
-				</a:outputPanel>
+									<!--rfam 2018-08-31 ML-JC-2048-267 visualizar bajas  -->
+									<a:commandButton id="viewerNotification" ajaxSingle="true"
+										action="#{municipalBondCondition.findBondsDown()}"
+										eventsQueue="gimEventsQueue"
+										reRender="bondsDownStatusPanel, downBondsTable"
+										oncomplete="Richfaces.showModalPanel('bondsDownStatusPanel',{width:700, height:450})"
+										value="Bajas">
+									</a:commandButton>
+
+								</h:panelGrid>
+
+							</s:div>
+						</g:municipalBondsViewer>
+						<ui:include src="fragment/MunicipalBondsFutureTable.xhtml" />
+					</a:outputPanel>
 				</rich:panel>
 			</div>
 		</h:form>
-		
-		<g:municipalBondViewer
-			resident="#{municipalBondsViewerHome.resident}"
+
+		<g:municipalBondViewer resident="#{municipalBondsViewerHome.resident}"
 			municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}"
 			deposits="#{municipalBondsViewerHome.deposits}" />
-		
+
 
 	</ui:define>
 

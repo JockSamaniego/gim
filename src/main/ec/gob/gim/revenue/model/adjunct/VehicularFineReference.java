@@ -49,13 +49,13 @@ public class VehicularFineReference extends Adjunct {
 	@Override
 	public List<ValuePair> getDetails() {
 		List<ValuePair> details = new LinkedList<ValuePair>();
-		ValuePair pair = new ValuePair("Placa N°", numberPlate != null ? numberPlate : "-");
+		ValuePair pair = new ValuePair("Placa Nro.: ", numberPlate != null ? numberPlate : "-");
 		details.add(pair);
 
-		pair = new ValuePair("Nro. Infracción", notificationNumber != null ? notificationNumber.toUpperCase() : "-");
+		pair = new ValuePair("Nro. Infracci\u00F3n", notificationNumber != null ? notificationNumber.toUpperCase() : "-");
 		details.add(pair);
 		
-		pair = new ValuePair("Fecha citación",
+		pair = new ValuePair("Fecha citaci\u00F3n",
 				infringementDate != null ? DateUtils.formatFullDate(infringementDate) : "-");
 		details.add(pair);
 		
