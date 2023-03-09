@@ -135,10 +135,10 @@ public class BusinessLocalReference extends Adjunct{
 			details.add(pair);
 		}
 		if ((location != null) && (location.trim().length() > 0)){
-			pair = new ValuePair("Ubicación", location);
+			pair = new ValuePair("Ubicaci\u00F3n", location);
 			details.add(pair);
 		} else {
-			pair = new ValuePair("Ubicación", local.getAddress().toString());
+			pair = new ValuePair("Ubicaci\u00F3n", local.getAddress().toString());
 			details.add(pair);			
 		}
 		return details;
