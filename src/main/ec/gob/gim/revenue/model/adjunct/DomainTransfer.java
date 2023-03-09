@@ -110,7 +110,7 @@ public class DomainTransfer extends Adjunct{
 	public List<ValuePair> getDetails(){
 		List<ValuePair> details = new LinkedList<ValuePair>();		
 //		ValuePair pair = new ValuePair("Clave catastral",cadastralCode);
-		ValuePair pair = new ValuePair("Codigo Territorial",cadastralCode);
+		ValuePair pair = new ValuePair("C\u00F3digo Territorial",cadastralCode);
 		details.add(pair);
 //		pair = new ValuePair("Clave anterior",previousCadastralCode);
 		pair = new ValuePair("Clave Catastral",previousCadastralCode);
@@ -119,11 +119,11 @@ public class DomainTransfer extends Adjunct{
 		details.add(pair);
 		pair = new ValuePair("Comprador", buyer);
 		details.add(pair);
-		pair = new ValuePair("Dirección", address);
+		pair = new ValuePair("Direcci\u00F3n", address);
 		details.add(pair);
 		pair = new ValuePair("Tipo transferencia", domain!=null ? domain.getPurchaseType().getName() : "" );
 		details.add(pair);
-		pair = new ValuePair("Informacion Adicional", getAditionalInformation() );
+		pair = new ValuePair("Informaci\u00F3n Adicional", getAditionalInformation() );
 		details.add(pair);
 		
 		if(isHalfDiscount!=null && isHalfDiscount) {

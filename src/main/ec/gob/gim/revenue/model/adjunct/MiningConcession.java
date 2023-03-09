@@ -28,7 +28,7 @@ public class MiningConcession extends Adjunct{
 	public List<ValuePair> getDetails(){
 		List<ValuePair> details = new LinkedList<ValuePair>();
 		String name = Interpolator.instance().interpolate("#{messages['"+ concessionType.name() + "']}", new Object[0]);
-		ValuePair pair = new ValuePair("Tipo de Concesión", name);
+		ValuePair pair = new ValuePair("Tipo de Concesi\u00F3n", name);
 		details.add(pair);		
 		return details;
 	}

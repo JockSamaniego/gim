@@ -80,9 +80,9 @@ public class VehicularTechnicalReview extends Adjunct{
 		List<ValuePair> details = new LinkedList<ValuePair>();
 		ValuePair pair = new ValuePair("Marca", vehicleMaker.getName());
 		details.add(pair);
-		pair = new ValuePair("Numero chasis", vin);
+		pair = new ValuePair("Número chasis", vin);
 		details.add(pair);
-		pair = new ValuePair("Numero motor: ", engineNumber);
+		pair = new ValuePair("Número motor: ", engineNumber);
 		details.add(pair);
 		pair = new ValuePair("Año", year!=null ? year.toString(): "");
 		details.add(pair);

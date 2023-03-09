@@ -65,7 +65,7 @@ public class ConcessionGroupReference extends Adjunct {
 		List<ValuePair> details = new LinkedList<ValuePair>();
 		ValuePair pair = new ValuePair("Grupo", concessionGroupName);
 		details.add(pair);
-		pair = new ValuePair("Ubicación #", concessionPlaceNumber);
+		pair = new ValuePair("Ubicaci\u00F3n #", concessionPlaceNumber);
 		details.add(pair);
 		pair = new ValuePair("Tipo", productType);
 		details.add(pair);

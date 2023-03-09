@@ -45,7 +45,7 @@ public class PropertyReference extends Adjunct{
 		ValuePair pair = new ValuePair("Propietario", owner);
 		details.add(pair);
 		if ((location != null) && (location.trim().length() > 0)){
-			pair = new ValuePair("Ubicación", location.trim());
+			pair = new ValuePair("Ubicaci\u00F3n", location.trim());
 			details.add(pair);
 		}
 		return details;
