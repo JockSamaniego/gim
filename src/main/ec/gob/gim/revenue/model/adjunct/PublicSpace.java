@@ -25,12 +25,12 @@ public class PublicSpace extends Adjunct{
 	
 	@Override
 	public String toString() {	
-		return "Numero de dias" + daysNumber;
+		return "Número de días" + daysNumber;
 	}
 	
 	public List<ValuePair> getDetails(){
 		List<ValuePair> details = new LinkedList<ValuePair>();
-		ValuePair pair = new ValuePair("Numero de dias", daysNumber.toString());
+		ValuePair pair = new ValuePair("Número de días", daysNumber.toString());
 		details.add(pair);		
 		return details;
 	}

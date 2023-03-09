@@ -61,7 +61,7 @@ public class InfringementANTReference extends Adjunct {
 		pair = new ValuePair("Placa", numberPlate != null ? numberPlate : "-");
 		details.add(pair);
 
-		pair = new ValuePair("infringementType", infringementType != null ? infringementType.toUpperCase() : "-");
+		pair = new ValuePair("Tipo", infringementType != null ? infringementType.toUpperCase() : "-");
 		details.add(pair);
 
 		pair = new ValuePair("Fecha infracci\u00F3n",
