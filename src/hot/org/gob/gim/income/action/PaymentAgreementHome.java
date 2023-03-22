@@ -312,9 +312,9 @@ public class PaymentAgreementHome extends EntityHome<PaymentAgreement> {
 		query.setParameter("municipalBondType",MunicipalBondType.CREDIT_ORDER);
 		query.setParameter("municipalBondStatusId", pendingMunicipalBondStatusId);
 		
-		logger.info("PARAMETERS -----> residentId "+residentId);
-		logger.info("PARAMETERS -----> municipalBondType "+MunicipalBondType.CREDIT_ORDER.name());
-		logger.info("PARAMETERS -----> municipalBondStatusId "+pendingMunicipalBondStatusId);
+//		logger.info("PARAMETERS -----> residentId "+residentId);
+//		logger.info("PARAMETERS -----> municipalBondType "+MunicipalBondType.CREDIT_ORDER.name());
+//		logger.info("PARAMETERS -----> municipalBondStatusId "+pendingMunicipalBondStatusId);
 		List<MunicipalBond> mbs = query.getResultList();
 		
 		MunicipalBondItem root = new MunicipalBondItem(null);

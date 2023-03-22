@@ -74,7 +74,7 @@ public class PropertyRegister {
 	@Column
 	private Double amount;
 	
-	@Column(length=5)
+	@Column(length=15)
 	private String registeredChange;
 	
 	@Column(length=200)
@@ -90,7 +90,7 @@ public class PropertyRegister {
 	@JoinColumn(name = "responsableupdate_id")
 	private User responsableUpdate;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private Domain domain;
 
 	@OneToMany(mappedBy = "propertyRegister", cascade = CascadeType.ALL)

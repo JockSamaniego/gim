@@ -96,9 +96,9 @@ public class TerritorialDivisionHome extends EntityHome<TerritorialDivision> {
 		if(childrenTerritorialDivisionType==null){
 			TerritorialDivisionType currentTerritorialDivisionType = getInstance().getTerritorialDivisionType();
 			List<TerritorialDivisionType> territorialDivisionTypes = (List<TerritorialDivisionType>) getSessionContext().get("territorialDivisionTypes");
-			logger.info("LOXAGEEK 2011-08-28 ---> NULL?: "+territorialDivisionTypes==null);
+//			logger.info("LOXAGEEK 2011-08-28 ---> NULL?: "+territorialDivisionTypes==null);
 			if(territorialDivisionTypes!=null){
-				logger.info("LOXAGEEK 2011-08-28 ---> Tamaño: "+territorialDivisionTypes.size());
+//				logger.info("LOXAGEEK 2011-08-28 ---> Tamaño: "+territorialDivisionTypes.size());
 				for(int i = 0; i<territorialDivisionTypes.size(); i++){
 					if(currentTerritorialDivisionType.equals(territorialDivisionTypes.get(i))){
 						if(i < (territorialDivisionTypes.size() - 1)){
@@ -113,7 +113,7 @@ public class TerritorialDivisionHome extends EntityHome<TerritorialDivision> {
 	}
 	
 	public void add(){
-		logger.info("Children of type "+getChildrenTerritorialDivisionType().getName()+" added ");
+//		logger.info("Children of type "+getChildrenTerritorialDivisionType().getName()+" added ");
 		TerritorialDivision child = new TerritorialDivision();
 		child.setTerritorialDivisionType(getChildrenTerritorialDivisionType());
 		getInstance().add(child);

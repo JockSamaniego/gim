@@ -17,6 +17,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -63,7 +65,12 @@ import ec.gob.gim.revenue.model.MunicipalBond;
 						"SET pa.isActive = true, " +
 						"    pa.closingDate = null, " +
 						"    pa.closingTime = null " +
-						"WHERE pa.id = :paymentAgreementId ")
+						"WHERE pa.id = :paymentAgreementId "),
+		@NamedQuery(name = "PaymentAgreement.pendingPaymentsMB", 
+		query = "SELECT count(mb) " +
+				"FROM MunicipalBond mb " +
+				"WHERE mb.paymentAgreement.id = :paymentAgreementId " +
+				"and mb.municipalBondStatus.id in (4,14) ")
 })
 public class PaymentAgreement {
 	@Id

@@ -169,7 +169,7 @@ public class ReportBinnacleCRVHome extends EntityHome<BinnacleCRV> {
 		list.clear();
 		String sql = "";
 		Query query = null;
-		if (vehicle.equals(TODOS)){
+		if (vehicle.equalsIgnoreCase(TODOS)){
 			sql = "select b from BinnacleCRV b " +
 					"join b.arrivalHistoryBinnacleCRVs a where ";
 			if (dateSelected.equalsIgnoreCase("ingreso"))
@@ -177,21 +177,21 @@ public class ReportBinnacleCRVHome extends EntityHome<BinnacleCRV> {
 			else
 			    sql = sql + " a.exitDate >= :startDate and " + "a.exitDate <= :endDate ";
 			sql = sql + "order by b.serialNumber asc";
-		} else if (vehicle.equals(RETENIDOS)){
+		} else if (vehicle.equalsIgnoreCase(RETENIDOS)){
 			sql = "select b from BinnacleCRV b " +
     				"join b.arrivalHistoryBinnacleCRVs a where ";
 			if (dateSelected.equalsIgnoreCase("ingreso"))
-			    sql = sql + " a.arrivalDate >= :startDate and " + "a.arrivalDate <= :endDate ";
+			    sql = sql + " a.arrivalDate >= :startDate and " + "a.arrivalDate <= :endDate and a.exitDate is null ";
 			else
-			    sql = sql + " a.exitDate >= :startDate and " + "a.exitDate <= :endDate ";
+			    sql = sql + " a.exitDate >= :startDate and " + "a.exitDate <= :endDate and a.exitDate is null ";
 			sql = sql + "order by b.serialNumber asc";
-		} else if (vehicle.equals(LIBERADOS)){
+		} else if (vehicle.equalsIgnoreCase(LIBERADOS)){
 			sql = "select b from BinnacleCRV b " +
 					"join b.arrivalHistoryBinnacleCRVs a where ";
 			if (dateSelected.equalsIgnoreCase("ingreso"))
-			    sql = sql + " a.arrivalDate >= :startDate and " + "a.arrivalDate <= :endDate ";
+			    sql = sql + " a.arrivalDate >= :startDate and " + "a.arrivalDate <= :endDate and a.exitDate is not null ";
 			else
-			    sql = sql + " a.exitDate >= :startDate and " + "a.exitDate <= :endDate ";
+			    sql = sql + " a.exitDate >= :startDate and " + "a.exitDate <= :endDate and a.exitDate is not null ";
 			sql = sql + "order by b.serialNumber asc";
 		};
 		if (sql.length() > 0){

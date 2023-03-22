@@ -20,7 +20,7 @@
 
                 <f:facet name="header">
                     <h:panelGrid columns="2" columnClasses="headerTitle,">
-                        <h:outputText value="#{messages['propertyRegister']}" />
+                        <h:outputText value="#{messages['propertyRegister']} (#{propertyRegisterHome.instance.id})" />
                         <f:facet name="header"></f:facet>
                     </h:panelGrid>
                 </f:facet>
@@ -248,6 +248,9 @@
             <div class="actionButtons">
                 <h:commandButton id="update" value="#{messages['common.update']}"
                     action="#{propertyRegisterHome.update}" rendered="#{propertyRegisterHome.managed and propertyRegisterHome.instance.registeredChange.equalsIgnoreCase('NO')}" />
+
+                <h:commandButton id="updatePrevious" value="Actualizado Previamente"
+                    action="#{propertyRegisterHome.updatePrevious}" rendered="#{propertyRegisterHome.managed and propertyRegisterHome.instance.registeredChange.equalsIgnoreCase('NO')}" />
 
                 <s:button id="cancelEdit" value="#{messages['common.cancel']}"
                     propagation="end" view="/propertyregister/PropertyRegisterList.xhtml" />

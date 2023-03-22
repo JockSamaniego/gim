@@ -1,0 +1,279 @@
+<p:document xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://jboss.com/products/seam/pdf"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:c="http://java.sun.com/jstl/core"
+    title="Reporte de convenios expirados" subject="report" type="pdf"
+    pageSize="A4" margins="20 20 20 20" author="GAD Loja"
+    orientation="portrait" creator="GAD Loja">
+
+    <f:facet name="header">
+        <p:font size="7" name="HELVETICA">
+            <p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+                <p:paragraph>
+                    <p:table columns="2" widthPercentage="100" spacingAfter="15"
+                        widths="1 10">
+                        <f:facet name="defaultCell">
+                            <p:cell borderWidth="0" />
+                        </f:facet>
+                        <p:cell>
+                            <p:image value="#{gim.institution.logo}" alignment="center" widht="1" height="1">
+                                <s:transformImageSize height="70" maintainRatio="true"/>
+                            </p:image>
+                        </p:cell>
+                        <p:cell>
+                            <p:font size="8" style="bold">
+                                <p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+                            </p:font>
+
+                            <p:font size="7" style="bold">
+                                <p:paragraph alignment="center">#{gim.institution.address}. #{messages['institution.phone']}: #{gim.institution.phone} -  #{messages['institution.fax']}: #{gim.institution.fax}</p:paragraph>
+                            </p:font>
+
+                            <p:font size="8" style="bold">
+                                <p:paragraph alignment="center">REPORTE DE CONVENIOS VENCIDOS</p:paragraph>
+                            </p:font>
+                        </p:cell>
+                    </p:table>
+                </p:paragraph>
+            </p:header>
+            <p:footer borderWidthTop="1" borderColorTop="blue"
+                borderWidthBottom="0" alignment="center">
+                 [<p:pageNumber />]
+            </p:footer>
+        </p:font>
+    </f:facet>
+
+    <p:font size="8" name="HELVETICA">
+
+
+        <p:paragraph alignment="right" spacingAfter="10">
+            <p:font size="8" name="HELVETICA">
+                <p:text value="#{messages['common.date']}: " style="bold"/>
+                <p:text value="#{currentDatetime}">
+                    <f:convertDateTime
+                        pattern="#{messages['common.dateFullTimePattern']}" />
+                </p:text>
+            </p:font>
+        </p:paragraph>
+
+
+        <p:table columns="3" widthPercentage="100" headerRows="0" widths="1 1 1"
+            spacingAfter="10">
+            <f:facet name="defaultCell">
+                <p:cell borderWidth="0" />
+            </f:facet>
+            
+            <p:cell colspan="3">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="#{messages['tillPermission.printReportBy']}: " />
+                    </p:font>
+                    <p:font size="8">
+                        <p:text value="#{userSession.user.resident.name}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="#{messages['report.startDate']}: " />
+                    </p:font>
+                    <p:font size="8">
+                        <p:text value="#{paymentAgreementReport.beginDate}">
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                        </p:text>
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="#{messages['report.endDate']}: " />
+                    </p:font>
+                    <p:font size="8">
+                        <p:text value="#{paymentAgreementReport.endDate}">
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                        </p:text>
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            
+            <p:cell colspan="1">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="Ultimo pago: " />
+                    </p:font>
+                    <p:font size="8">
+                        <p:text value="#{paymentAgreementReport.expirationDate}">
+                            <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                        </p:text>
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            
+            <p:cell colspan="3">
+                <p:paragraph>
+                    <p:font size="8" style="bold">
+                        <p:text value="Rubro: " />
+                    </p:font>
+                    <p:font size="8">
+                        <p:text value="#{paymentAgreementReport.entry != null ? paymentAgreementReport.entry.name : 'TODOS'}" />
+                    </p:font>
+                </p:paragraph>
+            </p:cell>
+            
+        </p:table>
+
+
+        <p:table rendered="#{not empty paymentAgreementReport.list}"
+                columns="7" widthPercentage="100" headerRows="0" spacingAfter="10" spacingBefore="5"
+                widths="1.2 1 1 6 1 1 1">
+                <p:font size="6" style="bold">
+                    <f:facet name="defaultCell">
+                        <p:cell borderWidth="0" />
+                    </f:facet>
+                    
+                    <p:cell horizontalAlignment="center">
+                        <p:paragraph>
+                            <p:text value="Tipo" />
+                        </p:paragraph>
+                    </p:cell>
+                    
+                    <p:cell horizontalAlignment="center">
+                        <p:paragraph>
+                            <p:text value="Fecha Convenio" />
+                        </p:paragraph>
+                    </p:cell>
+    
+                    <p:cell horizontalAlignment="center">
+                        <p:paragraph>
+                            <p:text value="Identificación" />
+                        </p:paragraph>
+                    </p:cell>
+                    
+                    <p:cell horizontalAlignment="center">
+                        <p:paragraph>
+                            <p:text value="Contribuyente" />
+                        </p:paragraph>
+                    </p:cell>
+                    
+                    <p:cell horizontalAlignment="center">
+                        <p:paragraph>
+                            <p:text value="Pagado" />
+                        </p:paragraph>
+                    </p:cell>
+                    
+                    <p:cell horizontalAlignment="center">
+                        <p:paragraph>
+                            <p:text value="Saldo" />
+                        </p:paragraph>
+                    </p:cell>               
+                    
+                    <p:cell horizontalAlignment="center">
+                        <p:paragraph>
+                            <p:text value="Ultimo Pago" />
+                        </p:paragraph>
+                    </p:cell>
+                </p:font>
+                
+                <p:font size="6">
+                    <c:forEach items="#{paymentAgreementReport.list}" var="_obj">
+                    <c:set var="sumPagado" value="${sumPagado + _obj[5]}" />
+                    <c:set var="sumSaldo" value="${sumSaldo + _obj[6]}" />
+                        
+                        <p:cell>
+                            <p:paragraph>
+                                <p:text value="#{messages[_obj[1]]} "/>
+                            </p:paragraph>
+                        </p:cell>
+                        
+                        <p:cell>
+                            <p:paragraph>
+                                <p:text value="#{_obj[2]} ">
+                                    <f:convertDateTime pattern="#{messages['common.datePatternReport']}" />
+                                </p:text>
+                            </p:paragraph>
+                        </p:cell>
+                        
+                        <p:cell>
+                            <p:paragraph>
+                                <p:text value="#{_obj[3]} "/>                           
+                            </p:paragraph>
+                        </p:cell>
+                        
+                        <p:cell>
+                            <p:paragraph>
+                                <p:text value="#{_obj[4]} "/>                         
+                            </p:paragraph>
+                        </p:cell>
+                        
+                        <p:cell horizontalAlignment="right">
+                            <p:paragraph>
+                                <p:text value="#{_obj[5]}">
+                                    <f:convertNumber pattern="#0.00" />
+                                </p:text>
+                            </p:paragraph>
+                        </p:cell>
+    
+                        <p:cell horizontalAlignment="right">
+                            <p:paragraph>
+                                <p:text value="#{_obj[6]}">
+                                    <f:convertNumber pattern="#0.00" />
+                                </p:text>
+                            </p:paragraph>
+                        </p:cell>
+    
+                        <p:cell>
+                            <p:paragraph>
+                                <p:text value="#{_obj[7]} ">
+                                    <f:convertDateTime pattern="#{messages['common.datePattern']}" />
+                                </p:text>
+                            </p:paragraph>
+                        </p:cell>
+                        
+                    </c:forEach>
+                </p:font>
+    
+                <p:font size="8" style="bold">
+                    <p:cell borderWidth="0" />
+    
+                    <p:cell borderWidth="0" />
+    
+                    <p:cell borderWidth="0" />
+                    
+                    <p:cell horizontalAlignment="center">
+                        <p:paragraph>
+                            <p:text value="#{messages['item.total']}" />
+                        </p:paragraph>
+                    </p:cell>
+    
+                    <p:cell horizontalAlignment="right">
+                        <p:paragraph>
+                            <p:text value="#{sumPagado}">
+                                <f:convertNumber pattern="#0.00" />
+                            </p:text>
+                        </p:paragraph>
+                    </p:cell>
+    
+                    <p:cell horizontalAlignment="right">
+                        <p:paragraph>
+                            <p:text value="#{sumSaldo}">
+                                <f:convertNumber pattern="#0.00" />
+                            </p:text>
+                        </p:paragraph>
+                    </p:cell>
+    
+                    <p:cell borderWidth="0" />
+    
+                </p:font>
+            </p:table>
+
+    </p:font>
+
+</p:document>

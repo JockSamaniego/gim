@@ -24,7 +24,7 @@ public class PropertyRegisterList extends EntityQuery<PropertyRegister> {
 
 	private PropertyRegister propertyRegister= new PropertyRegister();
 	private String registered = "NO";
-	private List<String> registeredList = new ArrayList<String>(Arrays.asList("SI", "NO"));
+	private List<String> registeredList = new ArrayList<String>(Arrays.asList("SI", "NO", "PREVIAMENTE"));
 	
 	public PropertyRegister getPropertyRegister() {
 		return propertyRegister;

@@ -18,4 +18,11 @@
 		</rule>
 	</navigation>
 
+	<navigation from-action="#{propertyRegisterHome.updatePrevious}">
+		<rule if-outcome="updated">
+			<end-conversation />
+			<redirect view-id="/propertyregister/PropertyRegisterList.xhtml" />
+		</rule>
+	</navigation>
+
 </page>

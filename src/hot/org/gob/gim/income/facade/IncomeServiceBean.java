@@ -1160,12 +1160,17 @@ public class IncomeServiceBean implements IncomeService {
 
 	private void deactivatePaymentAgreement(Long paymentAgreementId, Date rightNow) {
 		if (paymentAgreementId != null) {
-			Query query = entityManager.createNamedQuery("PaymentAgreement.deactivate");
-			query.setParameter("isActive", Boolean.FALSE);
-			query.setParameter("closingDate", rightNow);
-			query.setParameter("closingTime", rightNow);
-			query.setParameter("paymentAgreementId", paymentAgreementId);
-			query.executeUpdate();
+			Query q = entityManager.createNamedQuery("PaymentAgreement.pendingPaymentsMB");
+			q.setParameter("paymentAgreementId", paymentAgreementId);
+			Long count =(Long) q.getSingleResult();
+			if (count <= 0){
+				Query query = entityManager.createNamedQuery("PaymentAgreement.deactivate");
+				query.setParameter("isActive", Boolean.FALSE);
+				query.setParameter("closingDate", rightNow);
+				query.setParameter("closingTime", rightNow);
+				query.setParameter("paymentAgreementId", paymentAgreementId);
+				query.executeUpdate();
+			}
 		}
 	}
 
