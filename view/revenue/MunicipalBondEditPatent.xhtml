@@ -170,19 +170,7 @@
 				<h:commandButton id="save" value="#{messages['common.emit']}"
 					action="#{municipalBondHome.persistPatent}"
 					disabled="#{(empty municipalBondHome.municipalBonds and !municipalBondHome.isEmissionValid()) or municipalBondHome.entry.id == null }"
-					rendered="#{!municipalBondHome.managed and municipalBondHome.entry.id != '8' and municipalBondHome.entry.id != '2'}" />
-
-				<h:commandButton id="save2" value="#{messages['common.emit']}"
-					action="#{municipalBondHome.persist}"
-					disabled="#{(empty municipalBondHome.municipalBonds and !municipalBondHome.isEmissionValid()) or municipalBondHome.entry.id == null }"
-					rendered="#{!municipalBondHome.managed and municipalBondHome.entry.id == '8'}"
-					actionListener="#{businessHome.settle()}" />
-
-				<h:commandButton id="save3" value="#{messages['common.emit']}"
-					action="#{municipalBondHome.persist}"
-					disabled="#{(empty municipalBondHome.municipalBonds and !municipalBondHome.isEmissionValid()) or municipalBondHome.entry.id == null }"
-					rendered="#{!municipalBondHome.managed and municipalBondHome.entry.id == '2'}"
-					actionListener="#{businessHome.settle2()}" />
+					rendered="#{!municipalBondHome.managed}" />
 
 				<h:commandButton id="cancelAdd" value="#{messages['common.cancel']}"
 					action="#{municipalBondHome.cancelEmitPatent}"

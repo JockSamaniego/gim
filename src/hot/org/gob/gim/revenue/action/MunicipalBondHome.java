@@ -1936,6 +1936,30 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			e.printStackTrace();
 		}*/
 	
+		
+		if (this.entry != null) {
+			//logger.info("Entry found... " + entry.getName());
+			cleanList();
+			// this.entry = entry;
+			this.instance.setEntry(entry);
+			if (entry.getAccount() == null) {
+				setEntryCode(entry.getCode());
+			} else {
+				setEntryCode(entry.getAccount().getAccountCode());
+			}
+
+			Adjunct adjunct = createAdjunct(entry);
+			if (adjunct != null) {
+				adjunctHome.setId(adjunct.getId());
+				adjunctHome.setInstance(adjunct);
+			}
+
+			entryValueItems.clear();
+			EntryValueItem entryValueItem = new EntryValueItem(
+					this.getRenderedCalendarFull());
+			entryValueItem.setDescription(entry.getDescription());
+			entryValueItems.add(entryValueItem);
+		}
 
 	}
 
