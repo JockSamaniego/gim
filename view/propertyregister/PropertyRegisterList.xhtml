@@ -26,7 +26,7 @@
                     <ui:define name="label">#{messages['propertyRegister.registeredChange']}: </ui:define>
                     <h:selectOneMenu id="registered"
                         value="#{propertyRegisterList.registered}">
-                        <s:selectItems value="#{propertyRegisterList.registeredList}" var="_registered" noSelectionLabel="#{messages['common.selectOne']}"
+                        <s:selectItems value="#{propertyRegisterList.registeredList}" var="_registered"
                             label="#{_registered}" />
                     </h:selectOneMenu>
                 </s:decorate>

@@ -8,6 +8,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
+import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.revenue.facade.RevenueService;
 import org.jboss.seam.annotations.Name;
@@ -207,24 +208,26 @@ public class PaymentAgreementReport extends EntityHome<PaymentAgreement>{
                 + "(Select coalesce(SUM(d.value),0) from Deposit d join municipalbond m on m.id = d.municipalbond_id where m.paymentagreement_id=p.id and d.status='VALID' and m.entry_id = " + entry.getId() + " and m.municipalbondstatus_id in(4, 6, 11)) as pagado, "
                 + "(Select coalesce(sum(m1.value),0) from municipalbond m1 where m1.paymentagreement_id=p.id and m1.entry_id = " + entry.getId() + " and m1.municipalbondstatus_id in (4, 14)) as saldo,"
                 + "(Select max(d2.date) ultimopago from Deposit d2 join municipalbond m2 on m2.id = d2.municipalbond_id where m2.paymentagreement_id=p.id and d2.status='VALID' and m2.entry_id = " + entry.getId() + " and m2.municipalbondstatus_id in(4, 6, 11, 14)) ultimopago "
-                        + "from paymentagreement p "
-                        + "inner join resident r on r.id= p.resident_id "
-                        + "where p.isactive = true "
-                        + "and p.firstpaymentdate between '" + beginDate + "' and '" + endDate + "' "
-                        + "and (Select max(d2.date) ultimopago from Deposit d2 join municipalbond m2 on m2.id = d2.municipalbond_id where m2.paymentagreement_id=p.id and d2.status='VALID' and m2.entry_id = " + entry.getId() + " and m2.municipalbondstatus_id in(4, 6, 11, 14)) < '" + expirationDate + "' "
-                        + "order by ultimopago, p.firstpaymentdate, id";
+                    + "from paymentagreement p "
+                    + "inner join resident r on r.id= p.resident_id "
+                    + "where p.isactive = true "
+                    + "and p.firstpaymentdate between '" + DateUtils.formatDate(beginDate) + "' and '" + DateUtils.formatDate(endDate) + "' "
+                    + "and (Select max(d2.date) ultimopago from Deposit d2 join municipalbond m2 on m2.id = d2.municipalbond_id where m2.paymentagreement_id=p.id and d2.status='VALID' and m2.entry_id = " + entry.getId() 
+                    + " and m2.municipalbondstatus_id in(4, 6, 11, 14)) < '" + DateUtils.formatDate(expirationDate) + "' "
+                    + "order by ultimopago, p.firstpaymentdate, id";
         else
             sql = "select p.id, p.agreementtype, p.firstpaymentdate, r.identificationnumber, r.name,"
                     + "(Select coalesce(SUM(d.value),0) from Deposit d join municipalbond m on m.id = d.municipalbond_id where m.paymentagreement_id=p.id and d.status='VALID' and m.municipalbondstatus_id in(4, 6, 11)) as pagado, "
                     + "(Select coalesce(sum(m1.value),0) from municipalbond m1 where m1.paymentagreement_id=p.id and m1.municipalbondstatus_id in (4, 14)) as saldo,"
                     + "(Select max(d2.date) ultimopago from Deposit d2 join municipalbond m2 on m2.id = d2.municipalbond_id where m2.paymentagreement_id=p.id and d2.status='VALID' and m2.municipalbondstatus_id in(4, 6, 11, 14)) ultimopago "
-                            + "from paymentagreement p "
-                            + "inner join resident r on r.id= p.resident_id "
-                            + "where p.isactive = true "
-                            + "and p.firstpaymentdate between '" + beginDate + "' and '" + endDate + "' "
-                            + "and (Select max(d2.date) ultimopago from Deposit d2 join municipalbond m2 on m2.id = d2.municipalbond_id where m2.paymentagreement_id=p.id and d2.status='VALID' and m2.municipalbondstatus_id in(4, 6, 11, 14)) < '" + expirationDate + "' "
-                            + "order by ultimopago, p.firstpaymentdate, id";
-            
+                        + "from paymentagreement p "
+                        + "inner join resident r on r.id= p.resident_id "
+                        + "where p.isactive = true "
+                        + "and p.firstpaymentdate between '" + DateUtils.formatDate(beginDate) + "' and '" + DateUtils.formatDate(endDate) + "' "
+                        + "and (Select max(d2.date) ultimopago from Deposit d2 join municipalbond m2 on m2.id = d2.municipalbond_id where m2.paymentagreement_id=p.id and d2.status='VALID' "
+                        + "and m2.municipalbondstatus_id in(4, 6, 11, 14)) < '" + DateUtils.formatDate(expirationDate) + "' "
+                        + "order by ultimopago, p.firstpaymentdate, id";
+
         Query query = getEntityManager().createNativeQuery(sql);
         return query.getResultList();
     }

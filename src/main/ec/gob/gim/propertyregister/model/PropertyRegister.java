@@ -26,353 +26,359 @@ import ec.gob.gim.security.model.User;
 @Audited
 @Entity
 @TableGenerator(name = "PropertyRegisterGenerator", 
-	table = "IdentityGenerator", 
-	pkColumnName = "name", 
-	valueColumnName = "value", 
-	pkColumnValue = "PropertyRegister", 
-	initialValue = 1, allocationSize = 1)
+    table = "IdentityGenerator", 
+    pkColumnName = "name", 
+    valueColumnName = "value", 
+    pkColumnValue = "PropertyRegister", 
+    initialValue = 1, allocationSize = 1)
 
 public class PropertyRegister {
 
-	@Id
-	@GeneratedValue(generator = "PropertyRegisterGenerator", strategy = GenerationType.TABLE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = "PropertyRegisterGenerator", strategy = GenerationType.TABLE)
+    private Long id;
 
-	@Column(length=100)
-	private String inscriptionType;
-	
-	@Temporal(TemporalType.DATE)
-	private Date inscriptionDate;
-	
-	@Column
-	private int inscriptionNumber;
-	
-	@Column
-	private int recordNumber;
+    @Column(length=100)
+    private String inscriptionType;
+    
+    @Temporal(TemporalType.DATE)
+    private Date inscriptionDate;
+    
+    @Column
+    private int inscriptionNumber;
+    
+    @Column
+    private int recordNumber;
 
-	@Column(length=100)
-	private String notary;
-	
-	@Temporal(TemporalType.DATE)
-	private Date notaryDate;
+    @Column(length=100)
+    private String notary;
+    
+    @Temporal(TemporalType.DATE)
+    private Date notaryDate;
 
-	@Column(length=30)
-	private String identificationNumber;
-	
-	@Column(length=50)
-	private String calidad;
-	
-	@Column(length=200)
-	private String intervenerName;
-	
-	@Column(length=40)
-	private String cadastralCode;
-	
-	@Column(length=300)
-	private String location;
-	
-	@Column
-	private Double amount;
-	
-	@Column(length=15)
-	private String registeredChange;
-	
-	@Column(length=200)
-	private String obs;
+    @Column(length=30)
+    private String identificationNumber;
+    
+    @Column(length=50)
+    private String calidad;
+    
+    @Column(length=200)
+    private String intervenerName;
+    
+    @Column(length=40)
+    private String cadastralCode;
+    
+    @Column(length=300)
+    private String location;
+    
+    @Column
+    private Double amount;
+    
+    @Column(length=15)
+    private String registeredChange;
+    
+    @Column(length=200)
+    private String obs;
 
-	@Temporal(TemporalType.DATE)
-	private Date loadDate; // Fecha de carga de la información
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateUpdate;
-	
-	@ManyToOne
-	@JoinColumn(name = "responsableupdate_id")
-	private User responsableUpdate;
+    @Temporal(TemporalType.DATE)
+    private Date loadDate; // Fecha de carga de la información
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateUpdate;
+    
+    @ManyToOne
+    @JoinColumn(name = "responsableupdate_id")
+    private User responsableUpdate;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	private Domain domain;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Domain domain;
 
-	@OneToMany(mappedBy = "propertyRegister", cascade = CascadeType.ALL)
-	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<PropertyRegisterItem> propertyRegisterItems;
+    @OneToMany(mappedBy = "propertyRegister", cascade = CascadeType.ALL)
+    @Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<PropertyRegisterItem> propertyRegisterItems;
 
-	public PropertyRegister() {
-		
-	}
+    public PropertyRegister() {
+        
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public PropertyRegister(String identificationNumber, String intervenerName) {
+        super();
+        this.identificationNumber = identificationNumber;
+        this.intervenerName = intervenerName;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	/**
-	 * @return the inscriptionType
-	 */
-	public String getInscriptionType() {
-		return inscriptionType;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	/**
-	 * @param inscriptionType the inscriptionType to set
-	 */
-	public void setInscriptionType(String inscriptionType) {
-		this.inscriptionType = inscriptionType;
-	}
+    /**
+     * @return the inscriptionType
+     */
+    public String getInscriptionType() {
+        return inscriptionType;
+    }
 
-	/**
-	 * @return the inscriptionDate
-	 */
-	public Date getInscriptionDate() {
-		return inscriptionDate;
-	}
+    /**
+     * @param inscriptionType the inscriptionType to set
+     */
+    public void setInscriptionType(String inscriptionType) {
+        this.inscriptionType = inscriptionType;
+    }
 
-	/**
-	 * @param inscriptionDate the inscriptionDate to set
-	 */
-	public void setInscriptionDate(Date inscriptionDate) {
-		this.inscriptionDate = inscriptionDate;
-	}
+    /**
+     * @return the inscriptionDate
+     */
+    public Date getInscriptionDate() {
+        return inscriptionDate;
+    }
 
-	/**
-	 * @return the inscriptionNumber
-	 */
-	public int getInscriptionNumber() {
-		return inscriptionNumber;
-	}
+    /**
+     * @param inscriptionDate the inscriptionDate to set
+     */
+    public void setInscriptionDate(Date inscriptionDate) {
+        this.inscriptionDate = inscriptionDate;
+    }
 
-	/**
-	 * @param inscriptionNumber the inscriptionNumber to set
-	 */
-	public void setInscriptionNumber(int inscriptionNumber) {
-		this.inscriptionNumber = inscriptionNumber;
-	}
+    /**
+     * @return the inscriptionNumber
+     */
+    public int getInscriptionNumber() {
+        return inscriptionNumber;
+    }
 
-	/**
-	 * @return the recordNumber
-	 */
-	public int getRecordNumber() {
-		return recordNumber;
-	}
+    /**
+     * @param inscriptionNumber the inscriptionNumber to set
+     */
+    public void setInscriptionNumber(int inscriptionNumber) {
+        this.inscriptionNumber = inscriptionNumber;
+    }
 
-	/**
-	 * @param recordNumber the recordNumber to set
-	 */
-	public void setRecordNumber(int recordNumber) {
-		this.recordNumber = recordNumber;
-	}
+    /**
+     * @return the recordNumber
+     */
+    public int getRecordNumber() {
+        return recordNumber;
+    }
 
-	/**
-	 * @return the notary
-	 */
-	public String getNotary() {
-		return notary;
-	}
+    /**
+     * @param recordNumber the recordNumber to set
+     */
+    public void setRecordNumber(int recordNumber) {
+        this.recordNumber = recordNumber;
+    }
 
-	/**
-	 * @param notary the notary to set
-	 */
-	public void setNotary(String notary) {
-		this.notary = notary;
-	}
+    /**
+     * @return the notary
+     */
+    public String getNotary() {
+        return notary;
+    }
 
-	/**
-	 * @return the notaryDate
-	 */
-	public Date getNotaryDate() {
-		return notaryDate;
-	}
+    /**
+     * @param notary the notary to set
+     */
+    public void setNotary(String notary) {
+        this.notary = notary;
+    }
 
-	/**
-	 * @param notaryDate the notaryDate to set
-	 */
-	public void setNotaryDate(Date notaryDate) {
-		this.notaryDate = notaryDate;
-	}
+    /**
+     * @return the notaryDate
+     */
+    public Date getNotaryDate() {
+        return notaryDate;
+    }
 
-	/**
-	 * @return the identificationNumber
-	 */
-	public String getIdentificationNumber() {
-		return identificationNumber;
-	}
+    /**
+     * @param notaryDate the notaryDate to set
+     */
+    public void setNotaryDate(Date notaryDate) {
+        this.notaryDate = notaryDate;
+    }
 
-	/**
-	 * @param identificationNumber the identificationNumber to set
-	 */
-	public void setIdentificationNumber(String identificationNumber) {
-		this.identificationNumber = identificationNumber;
-	}
+    /**
+     * @return the identificationNumber
+     */
+    public String getIdentificationNumber() {
+        return identificationNumber;
+    }
 
-	/**
-	 * @return the calidad
-	 */
-	public String getCalidad() {
-		return calidad;
-	}
+    /**
+     * @param identificationNumber the identificationNumber to set
+     */
+    public void setIdentificationNumber(String identificationNumber) {
+        this.identificationNumber = identificationNumber;
+    }
 
-	/**
-	 * @param calidad the calidad to set
-	 */
-	public void setCalidad(String calidad) {
-		this.calidad = calidad;
-	}
+    /**
+     * @return the calidad
+     */
+    public String getCalidad() {
+        return calidad;
+    }
 
-	/**
-	 * @return the intervenerName
-	 */
-	public String getIntervenerName() {
-		return intervenerName;
-	}
+    /**
+     * @param calidad the calidad to set
+     */
+    public void setCalidad(String calidad) {
+        this.calidad = calidad;
+    }
 
-	/**
-	 * @param intervenerName the intervenerName to set
-	 */
-	public void setIntervenerName(String intervenerName) {
-		this.intervenerName = intervenerName;
-	}
+    /**
+     * @return the intervenerName
+     */
+    public String getIntervenerName() {
+        return intervenerName;
+    }
 
-	/**
-	 * @return the cadastralCode
-	 */
-	public String getCadastralCode() {
-		return cadastralCode;
-	}
+    /**
+     * @param intervenerName the intervenerName to set
+     */
+    public void setIntervenerName(String intervenerName) {
+        this.intervenerName = intervenerName;
+    }
 
-	/**
-	 * @param cadastralCode the cadastralCode to set
-	 */
-	public void setCadastralCode(String cadastralCode) {
-		this.cadastralCode = cadastralCode;
-	}
+    /**
+     * @return the cadastralCode
+     */
+    public String getCadastralCode() {
+        return cadastralCode;
+    }
 
-	/**
-	 * @return the location
-	 */
-	public String getLocation() {
-		return location;
-	}
+    /**
+     * @param cadastralCode the cadastralCode to set
+     */
+    public void setCadastralCode(String cadastralCode) {
+        this.cadastralCode = cadastralCode;
+    }
 
-	/**
-	 * @param location the location to set
-	 */
-	public void setLocation(String location) {
-		this.location = location;
-	}
+    /**
+     * @return the location
+     */
+    public String getLocation() {
+        return location;
+    }
 
-	/**
-	 * @return the amount
-	 */
-	public Double getAmount() {
-		return amount;
-	}
+    /**
+     * @param location the location to set
+     */
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
-	/**
-	 * @param amount the amount to set
-	 */
-	public void setAmount(Double amount) {
-		this.amount = amount;
-	}
+    /**
+     * @return the amount
+     */
+    public Double getAmount() {
+        return amount;
+    }
 
-	/**
-	 * @return the registeredChange
-	 */
-	public String getRegisteredChange() {
-		return registeredChange;
-	}
+    /**
+     * @param amount the amount to set
+     */
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
 
-	/**
-	 * @param registeredChange the registeredChange to set
-	 */
-	public void setRegisteredChange(String registeredChange) {
-		this.registeredChange = registeredChange;
-	}
+    /**
+     * @return the registeredChange
+     */
+    public String getRegisteredChange() {
+        return registeredChange;
+    }
 
-	/**
-	 * @return the obs
-	 */
-	public String getObs() {
-		return obs;
-	}
+    /**
+     * @param registeredChange the registeredChange to set
+     */
+    public void setRegisteredChange(String registeredChange) {
+        this.registeredChange = registeredChange;
+    }
 
-	/**
-	 * @param obs the obs to set
-	 */
-	public void setObs(String obs) {
-		this.obs = obs;
-	}
+    /**
+     * @return the obs
+     */
+    public String getObs() {
+        return obs;
+    }
 
-	/**
-	 * @return the loadDate
-	 */
-	public Date getLoadDate() {
-		return loadDate;
-	}
+    /**
+     * @param obs the obs to set
+     */
+    public void setObs(String obs) {
+        this.obs = obs;
+    }
 
-	/**
-	 * @param loadDate the loadDate to set
-	 */
-	public void setLoadDate(Date loadDate) {
-		this.loadDate = loadDate;
-	}
+    /**
+     * @return the loadDate
+     */
+    public Date getLoadDate() {
+        return loadDate;
+    }
 
-	/**
-	 * @return the dateUpdate
-	 */
-	public Date getDateUpdate() {
-		return dateUpdate;
-	}
+    /**
+     * @param loadDate the loadDate to set
+     */
+    public void setLoadDate(Date loadDate) {
+        this.loadDate = loadDate;
+    }
 
-	/**
-	 * @param dateUpdate the dateUpdate to set
-	 */
-	public void setDateUpdate(Date dateUpdate) {
-		this.dateUpdate = dateUpdate;
-	}
+    /**
+     * @return the dateUpdate
+     */
+    public Date getDateUpdate() {
+        return dateUpdate;
+    }
 
-	/**
-	 * @return the responsableUpdate
-	 */
-	public User getResponsableUpdate() {
-		return responsableUpdate;
-	}
+    /**
+     * @param dateUpdate the dateUpdate to set
+     */
+    public void setDateUpdate(Date dateUpdate) {
+        this.dateUpdate = dateUpdate;
+    }
 
-	/**
-	 * @param responsableUpdate the responsableUpdate to set
-	 */
-	public void setResponsableUpdate(User responsableUpdate) {
-		this.responsableUpdate = responsableUpdate;
-	}
+    /**
+     * @return the responsableUpdate
+     */
+    public User getResponsableUpdate() {
+        return responsableUpdate;
+    }
 
-	/**
-	 * @return the domain
-	 */
-	public Domain getDomain() {
-		return domain;
-	}
+    /**
+     * @param responsableUpdate the responsableUpdate to set
+     */
+    public void setResponsableUpdate(User responsableUpdate) {
+        this.responsableUpdate = responsableUpdate;
+    }
 
-	/**
-	 * @param domain the domain to set
-	 */
-	public void setDomain(Domain domain) {
-		this.domain = domain;
-	}
+    /**
+     * @return the domain
+     */
+    public Domain getDomain() {
+        return domain;
+    }
 
-	/**
-	 * @return the propertyRegisterItems
-	 */
-	public List<PropertyRegisterItem> getPropertyRegisterItems() {
-		return propertyRegisterItems;
-	}
+    /**
+     * @param domain the domain to set
+     */
+    public void setDomain(Domain domain) {
+        this.domain = domain;
+    }
 
-	/**
-	 * @param propertyRegisterItems the propertyRegisterItems to set
-	 */
-	public void setPropertyRegisterItems(List<PropertyRegisterItem> propertyRegisterItems) {
-		this.propertyRegisterItems = propertyRegisterItems;
-	}
+    /**
+     * @return the propertyRegisterItems
+     */
+    public List<PropertyRegisterItem> getPropertyRegisterItems() {
+        return propertyRegisterItems;
+    }
+
+    /**
+     * @param propertyRegisterItems the propertyRegisterItems to set
+     */
+    public void setPropertyRegisterItems(List<PropertyRegisterItem> propertyRegisterItems) {
+        this.propertyRegisterItems = propertyRegisterItems;
+    }
 
 }
