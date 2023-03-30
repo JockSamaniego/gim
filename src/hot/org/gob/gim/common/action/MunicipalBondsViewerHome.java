@@ -80,6 +80,18 @@ public class MunicipalBondsViewerHome extends EntityController{
 		}
 	}
 	
+	public void loadMunicipalBondView(MunicipalBond bond) throws EntryDefinitionNotFoundException {		
+		municipalBonds = new ArrayList<MunicipalBond>();		
+		if (bond != null){
+			IncomeService incomeService = ServiceLocator.getInstance().findResource(IncomeService.LOCAL_NAME);			
+			MunicipalBond municipalBond = bond;
+			// if(municipalBond != null && getStatusesForCalculate().contains(municipalBond.getMunicipalBondStatus().getId())) incomeService.calculatePayment(municipalBond, true, true);
+			municipalBonds.add(municipalBond);
+			resident = municipalBond.getResident();
+			deposits = new ArrayList<Deposit>();
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	private List<Deposit> loadDeposits(Long municipalBondId) {			
 		Query query = getEntityManager().createNamedQuery("Deposit.findByMunicipalBondId");
