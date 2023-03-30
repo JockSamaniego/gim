@@ -1935,6 +1935,8 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			//logger.error(					"===> ERROR AL PERSISTIR EL TITULO DE CREDITO :( == #0", e);
 			e.printStackTrace();
 		}*/
+		
+		// this.setInstance(new MunicipalBond());
 	
 		
 		if (this.entry != null) {
@@ -1961,6 +1963,10 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 			entryValueItems.add(entryValueItem);
 		}
 
+	}
+	
+	public void deleteBondEmissionOrderPatente(MunicipalBond bond) {
+		orderPatent.remove(bond);
 	}
 
 	public EmissionOrder getOrderPatent() {

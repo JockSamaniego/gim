@@ -144,18 +144,21 @@
 						minFractionDigits="#{messages['common.minFractionDigits']}" />
 						</h:outputText>
 					</rich:column>
-
-
+					
 					<rich:column>
 						<f:facet name="header">#{messages['common.action']}</f:facet>
 
-						<!-- a:commandButton id="accountDetailBtn"
-							value="#{messages['finantialStatement.detail']}"
-							action="# 
-							coerciveReportHome.selectPaymentAgreement(_expired)}"
-							eventsQueue="gimEventsQueue" ajaxSingle="true"
-							reRender="paymentAgreementList,sc3,paymentAgrrementDetailPanel"
-							oncomplete="Richfaces.showModalPanel('paymentAgrrementDetailPanel')" /-->
+							<a:commandButton id="viewer" ajaxSingle="true"
+							action="#{municipalBondsViewerHome.loadMunicipalBondView(_item)}"
+							eventsQueue="gimEventsQueue" reRender="_municipalBondViewer"
+							oncomplete="Richfaces.showModalPanel('_municipalBondViewer',{width:600, height:500})"
+							value="#{messages['common.view']}" />
+							
+							<a:commandButton id="deleteButton" ajaxSingle="true"
+							action="#{municipalBondHome.deleteBondEmissionOrderPatente(_item)}"
+							value="#{messages['municipalBond.delete']}" 
+							reRender="addEntryPatent, detailsTable, obligationsList" 
+							eventsQueue="gimEventsQueue" />
 					</rich:column>
 
 				</rich:dataTable>
@@ -163,6 +166,10 @@
 					maxPages="20" id="sc2" />
 				<div style="clear: both" />
 			</rich:panel>
+			
+			<g:municipalBondViewer resident="#{municipalBondsViewerHome.resident}"
+			municipalBondItemsForView="#{municipalBondsViewerHome.municipalBonds}"
+			deposits="#{municipalBondsViewerHome.deposits}" />
 
 
 			<div class="actionButtons">
