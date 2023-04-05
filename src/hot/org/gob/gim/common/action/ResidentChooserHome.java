@@ -17,6 +17,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.framework.EntityController;
 import org.jboss.seam.log.Log;
 
+import ec.gob.gim.cadaster.model.Domain;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
 
@@ -167,8 +168,9 @@ public class ResidentChooserHome extends EntityController{
 		if (resident == null){
 			return null;
 		}
+		Person person = getEntityManager().find(Person.class, resident.getId());
 		try {
-			Person person = (Person)resident;
+			//Person person = (Person)resident;
 			if(!person.getIsDead()){
 				Date bornDate = person.getBirthday();
 				Date currentDate = new Date();

@@ -365,15 +365,22 @@
 								reRender="resultsPanel" />
 						</a:region>
 
-						<a:region>
-							<a:commandButton id="printCanjeOriginalId"
+						
+							<a:commandButton id="printCanjeOriginalId" ajaxSingle="true"
 								rendered="#{_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel) and (!_municipalBond.documentIsRedeemed || _municipalBond.documentIsRedeemed == null)}"
-								action="#{municipalBondManager.reprintedForRedeemed(_municipalBond)}"
-								value="#{messages['Canje Documento']}"/>
-								<h:outputText value="Canjeado #{_municipalBond.exchangeDate}"
+								oncomplete="Richfaces.showModalPanel('ticketExchangePanel',{width:480, height:300})"
+								value="#{messages['Canje Documento']}"
+								action="#{municipalBondManager.chargeExchangeInfo(_municipalBond)}"
+								reRender="ticketExchangePanel"
+								eventsQueue="gimEventsQueue"
+								focus="ticketExchangeObservation" />
+							<a:commandButton id="viewExchangeInfo" value="Canje Info" ajaxSingle="true"
 								rendered="#{_municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel) and _municipalBond.documentIsRedeemed}"
-								style='font-size: 10px; font-weight: bold; color: red' />
-						</a:region>
+								oncomplete="Richfaces.showModalPanel('ticketExchangePanel',{width:480, height:300})"
+								action="#{municipalBondManager.chargeExchangeInfo(_municipalBond)}"
+								reRender="ticketExchangePanel"
+								eventsQueue="gimEventsQueue" />
+						
 
 						<!--  and municipalBondManager.hasRevenueCertificateRole -->
 						<a:commandButton id="certificateId" ajaxSingle="true"
@@ -550,6 +557,49 @@
 							<a:commandButton id="cancelBtnErrors" ajaxSingle="true"
 								value="#{messages['common.cancel']}"
 								oncomplete="Richfaces.hideModalPanel('confirmErrorsCorrectionPanel');"
+								bypassUpdates="true" />
+						</div>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
+		
+		<rich:modalPanel id="ticketExchangePanel" width="480" height="300">
+			<f:facet name="header">#{messages['municipalBond.ticketExchangeInfo']}</f:facet>
+			<h:form id="ticketExchange">
+				<h:panelGrid>
+					<s:decorate id="ticketExchangeDate"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['municipalBond.ticketExchangeDate']}:</ui:define>
+						<h:inputText id="exchangeDate" size="20" maxlength="20"
+							value="#{municipalBondManager.exchangeDate}" required="true" readonly="true" >
+							<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+						</h:inputText>
+					</s:decorate>
+					<s:decorate id="ticketExchangeUser"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['municipalBond.ticketExchangeUser']}:</ui:define>
+						<h:inputText id="exchangeUser" size="46" maxlength="46"
+							value="#{municipalBondManager.exchangeUser}" required="true" readonly="true" />
+					</s:decorate>
+					<s:decorate id="ticketExchangeObservation"
+						template="../layout/edit.xhtml">
+						<ui:define name="label">#{messages['municipalBond.ticketExchangeObservation']}:</ui:define>
+						<h:inputTextarea id="exchangeObservation" cols="40" rows="6"
+							value="#{municipalBondManager.exchangeObservation}" required="true" />
+					</s:decorate>
+					
+					<h:panelGroup>
+						<div class="actionButtons">
+							<a:commandButton id="ticketConfirmExchange" reRender="municipalBondsTable"
+								rendered="#{municipalBondManager.municipalBond.municipalBondStatus.equals(municipalBondManager.paidBondStatusExternalChannel) and (!municipalBondManager.municipalBond.documentIsRedeemed || municipalBondManager.municipalBond.documentIsRedeemed == null)}"
+								action="#{municipalBondManager.reprintedForRedeemed()}"
+								value="#{messages['municipalBond.ticketConfirmExchange']}"
+								oncomplete="#{facesContext.maximumSeverity == null ? 'Richfaces.hideModalPanel(\'ticketExchangePanel\');' : ''}" />
+
+							<a:commandButton id="cancelExchangePanel" ajaxSingle="true"
+								value="#{messages['common.exit']}"
+								oncomplete="Richfaces.hideModalPanel('ticketExchangePanel');"
 								bypassUpdates="true" />
 						</div>
 					</h:panelGroup>
