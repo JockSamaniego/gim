@@ -36,7 +36,7 @@
 					<f:facet name="header">#{messages['waterSupply.serviceOwner']}</f:facet>
 
 
-					<g:residentChooser id="residentChooser"
+					<g:residentChooser id="residentChooser" required = "true"
 						resident="#{waterSupplyHome.instance.serviceOwner}"
 						criteria="#{waterSupplyHome.criteria}" bean="#{waterSupplyHome}"
 						searchAction="searchResident"
@@ -52,7 +52,7 @@
 
 				<rich:panel>
 					<f:facet name="header">#{messages['waterSupply.recipeOwner']}</f:facet>
-					<g:residentChooser id="recipeOwner"
+					<g:residentChooser id="recipeOwner" required = "true"
 						resident="#{waterSupplyHome.instance.recipeOwner}"
 						criteria="#{waterSupplyHome.criteria}" bean="#{waterSupplyHome}"
 						searchAction="searchRecipeOwner"
