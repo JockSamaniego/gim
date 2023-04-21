@@ -1130,20 +1130,76 @@ public class MunicipalBondManager extends EntityController {
 	//07-01-2020
 	
 	private Boolean printForRedeemed = Boolean.FALSE;
+	private Date exchangeDate;
+	private String exchangeUser;
+	private String exchangeObservation;
 	
-	public String reprintedForRedeemed(MunicipalBond mb){
+	
+	public Date getExchangeDate() {
+		return exchangeDate;
+	}
+
+	public void setExchangeDate(Date exchangeDate) {
+		this.exchangeDate = exchangeDate;
+	}
+
+	public String getExchangeUser() {
+		return exchangeUser;
+	}
+
+	public void setExchangeUser(String exchangeUser) {
+		this.exchangeUser = exchangeUser;
+	}
+
+	public String getExchangeObservation() {
+		return exchangeObservation;
+	}
+
+	public void setExchangeObservation(String exchangeObservation) {
+		this.exchangeObservation = exchangeObservation;
+	}
+	
+	public void chargeExchangeInfo(MunicipalBond mb){
+		this.municipalBond = mb;
+		if (this.municipalBond.getDocumentIsRedeemed() != null){
+			if(this.municipalBond.getDocumentIsRedeemed()){
+				this.exchangeDate = this.municipalBond.getExchangeDate();
+				if(this.municipalBond.getExchangeUser() == null){
+					this.exchangeUser = "No Registrado";
+				} else {
+					this.exchangeUser = this.municipalBond.getExchangeUser();
+				}
+				
+				if(this.municipalBond.getExchangeObservation() == null){
+					this.exchangeObservation = "No Registrada";
+				} else {
+					this.exchangeObservation = this.municipalBond.getExchangeObservation();
+				}
+			} else {
+				this.exchangeDate = new Date();
+				this.exchangeUser = userSession.getUser().getResident().getName();
+				this.exchangeObservation = "";
+			}
+		} else {
+			this.exchangeDate = new Date();
+			this.exchangeUser = userSession.getUser().getResident().getName();
+			this.exchangeObservation = "";
+		}
+	}
+
+
+	public String reprintedForRedeemed(){
+		getEntityManager().joinTransaction();
 		this.printForRedeemed = Boolean.TRUE;
-		//Query query = getEntityManager().createNamedQuery("MunicipalBond.findById");
-		//query.setParameter("municipalBondId", mb_id);
-		//MunicipalBond mb = (MunicipalBond) query.getSingleResult();
-		if(mb.getDocumentIsRedeemed() == null || mb.getDocumentIsRedeemed()==Boolean.FALSE){			
-			//mb.setDocumentIsRedeemed(Boolean.TRUE);
-			MunicipalBond municipalBond = getEntityManager().getReference(MunicipalBond.class, mb.getId());
-			municipalBond.setDocumentIsRedeemed(Boolean.TRUE);
-			municipalBond.setExchangeDate(new Date());
-			getEntityManager().merge(municipalBond);
+		if(this.municipalBond.getDocumentIsRedeemed() == null || this.municipalBond.getDocumentIsRedeemed()==Boolean.FALSE){			
+			//MunicipalBond municipalBond = getEntityManager().getReference(MunicipalBond.class, mb.getId());
+			this.municipalBond.setDocumentIsRedeemed(Boolean.TRUE);
+			this.municipalBond.setExchangeDate(this.exchangeDate);
+			this.municipalBond.setExchangeUser(this.exchangeUser);
+			this.municipalBond.setExchangeObservation(this.exchangeObservation);
+			getEntityManager().merge(this.municipalBond);
 			getEntityManager().flush();
-			return this.printOriginal(mb.getId());
+			return this.printOriginal(this.municipalBond.getId());
 		}
 		return null;
 	}

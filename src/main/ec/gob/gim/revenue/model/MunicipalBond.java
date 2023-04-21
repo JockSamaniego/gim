@@ -1975,6 +1975,10 @@ public class MunicipalBond implements Serializable {
 	
 	@Temporal(TemporalType.DATE)
 	private Date exchangeDate;
+	
+	private String exchangeUser;
+	
+	private String exchangeObservation;
 
 	public Boolean getDocumentIsRedeemed() {
 		return documentIsRedeemed;
@@ -1999,7 +2003,23 @@ public class MunicipalBond implements Serializable {
 	public void setAdjuntDetail(String adjuntDetail) {
 		this.adjuntDetail = adjuntDetail;
 	}
-	
-	
+
+	public String getExchangeUser() {
+		return exchangeUser;
+	}
+
+	public void setExchangeUser(String exchangeUser) {
+		this.exchangeUser = exchangeUser;
+	}
+
+	public String getExchangeObservation() {
+		return exchangeObservation;
+	}
+
+	public void setExchangeObservation(String exchangeObservation) {
+		this.exchangeObservation = exchangeObservation;
+	}
+
+
 
 }// end MunicipalBond
