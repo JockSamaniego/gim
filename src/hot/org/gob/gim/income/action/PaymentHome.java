@@ -287,7 +287,6 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			String str = systemParameterService.findParameter(ENTRIES_CEM_EXCLUSION_LIST);
 			entriesCEMExclusionIds = GimUtils.convertStringWithCommaToListLong(str);
 		}
-		
 	}
 
 	public void search() {
@@ -3546,6 +3545,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 	
 	private Boolean hasCreditNote = false;
+	private Boolean creditNoteReviewed = false;
 	
 	/**
 	 * @return the hasCreditNote
@@ -3555,11 +3555,12 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	}
 
 	public boolean reviewHasCreditNote() {
-		if (resident == null) return false;
+		if ((creditNoteReviewed) || (resident == null)) return false;
 		List<CreditNote> creditNotes = new ArrayList<CreditNote>();
 		Query query = getEntityManager().createNamedQuery("CreditNote.findActiveByResidentId");
 		query.setParameter("residentId", resident.getId());
 		creditNotes = query.getResultList();
+		creditNoteReviewed = true;
 		if ((creditNotes != null) && (creditNotes.size() > 0))
 			return true;
 		else
