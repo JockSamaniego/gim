@@ -284,6 +284,12 @@
 								style="font-size:24px; font-weight:bold; color: red"
 								styleClass="right">
 							</h:outputText>
+							<h:outputText rendered="#{paymentHome.hasAgreementInfringement}"
+								id="alertPaymentInfringementMessage"	
+								value="Tiene un convenio de infracciones activo"
+								style="font-size:24px; font-weight:bold; color: red;"
+								styleClass="right">
+							</h:outputText>
 						</h:panelGrid>
 					</a:outputPanel>
 				</h:panelGrid>
