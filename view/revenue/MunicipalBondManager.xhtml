@@ -226,7 +226,8 @@
 						<f:facet name="header">
 						#{messages['municipalBond.status']}
 					</f:facet>
-						<h:outputText value="#{_municipalBond.municipalBondStatus.name}" />
+						<h:outputText value="#{_municipalBond.municipalBondStatus.name}" /><br />
+						<h:outputText value="#{messages[_municipalBond.paymentIdentify]}" styleClass="smallFont boldFont"/>
 					</rich:column>
 
 					<rich:column

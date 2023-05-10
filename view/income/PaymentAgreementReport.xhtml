@@ -143,7 +143,7 @@
                     <f:facet name="header">
                         <h:outputText value="Saldo"/>
                     </f:facet>
-                    <h:outputText value="#{_obj[6]}">
+                    <h:outputText value="#{_obj[6] - _obj[5]}">
                         <f:convertNumber
                             maxFractionDigits="#{messages['common.maxFractionDigits']}"
                             minFractionDigits="#{messages['common.minFractionDigits']}" />

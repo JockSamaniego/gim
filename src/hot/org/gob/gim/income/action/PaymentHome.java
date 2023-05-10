@@ -3551,20 +3551,21 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	 * @return the hasCreditNote
 	 */
 	public Boolean getHasCreditNote() {
-		return reviewHasCreditNote();
+		reviewHasCreditNote();
+		return this.hasCreditNote;
 	}
 
-	public boolean reviewHasCreditNote() {
-		if ((creditNoteReviewed) || (resident == null)) return false;
+	public void reviewHasCreditNote() {
+		if ((creditNoteReviewed) || (resident == null)) return;
 		List<CreditNote> creditNotes = new ArrayList<CreditNote>();
 		Query query = getEntityManager().createNamedQuery("CreditNote.findActiveByResidentId");
 		query.setParameter("residentId", resident.getId());
 		creditNotes = query.getResultList();
 		creditNoteReviewed = true;
 		if ((creditNotes != null) && (creditNotes.size() > 0))
-			return true;
+			hasCreditNote = true;
 		else
-			return false;
+			hasCreditNote = false;
 	}
 	
 }
