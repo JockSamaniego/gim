@@ -32,6 +32,7 @@ import javax.persistence.Query;
 import javax.servlet.ServletContext;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gob.gim.coercive.service.InfringementAgreementService;
 import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
@@ -307,6 +308,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				selectAllExpiredItems();
 			}
 			this.findUnfulfilledPaymentAgreement();
+			findInfringementAgreement();
 			
 		} catch (Exception e) {
 			// e.printStackTrace();
@@ -427,6 +429,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		if (paymentRestrictionValue.equals(PaymentRestriction.ALL_EXPIRED.toString())) {
 			selectAllExpiredItems();
 		}
+		
+		this.findUnfulfilledPaymentAgreement();
+		findInfringementAgreement();
+		
 	}
 
 	public void residentSelectedListener2(ActionEvent event) throws Exception {
@@ -3470,9 +3476,17 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	//06-01-2020
 	
 	private Boolean hasUnfulfilledPaymentAgreement = Boolean.FALSE;
+	
+	private Boolean hasAgreementInfringement = Boolean.FALSE;
 
 	public Boolean getHasUnfulfilledPaymentAgreement() {
 		return hasUnfulfilledPaymentAgreement;
+	}
+	
+	public void findInfringementAgreement() {
+		InfringementAgreementService infringementAgreementService = ServiceLocator.getInstance()
+				.findResource(InfringementAgreementService.LOCAL_NAME);
+		hasAgreementInfringement = infringementAgreementService.hasInfringementAgreementActive(resident.getIdentificationNumber());
 	}
 	
 	public void findUnfulfilledPaymentAgreement(){
@@ -3544,6 +3558,15 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		this.includeCEMs = includeCEMs;
 	}
 	
+	
+	public Boolean getHasAgreementInfringement() {
+		return hasAgreementInfringement;
+	}
+
+	public void setHasAgreementInfringement(Boolean hasAgreementInfringement) {
+		this.hasAgreementInfringement = hasAgreementInfringement;
+	}
+
 	private Boolean hasCreditNote = false;
 	private Boolean creditNoteReviewed = false;
 	

@@ -19,6 +19,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.persistence.Query;
 
+import org.gob.gim.coercive.service.InfringementAgreementService;
 import org.gob.gim.common.DateUtils;
 import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.ServiceLocator;
@@ -115,6 +116,8 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 	private BigInteger totalPayments = BigInteger.ZERO;
 	private Integer dividendsSize;
 	private String agreementType;
+	
+	private Boolean hasAgreementInfringement = Boolean.FALSE;
 
 	public List<MunicipalBond> getResult() {
 		return result;
@@ -239,6 +242,14 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		this.entriesCEMExclusionIds = entriesCEMExclusionIds;
 	}
 
+	public Boolean getHasAgreementInfringement() {
+		return hasAgreementInfringement;
+	}
+
+	public void setHasAgreementInfringement(Boolean hasAgreementInfringement) {
+		this.hasAgreementInfringement = hasAgreementInfringement;
+	}
+
 	public void initDates() {
 		if (!isFirstTime)
 			return;
@@ -246,7 +257,7 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		endDate = new Date();
 		if (startDate == null) {
 			FiscalPeriod fiscalPeriod = userSession.getFiscalPeriod();
-			log.info("====== Ingreso a fijar fecha de inicio");
+			// log.info("====== Ingreso a fijar fecha de inicio");
 			startDate = fiscalPeriod.getStartDate();
 		}
 		if (identificationNumber != null)
@@ -488,9 +499,15 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 					this.dividendsSize = agreement.getDividends().size();
 					this.loadTotalDeposit(agreement.getId());
 					this.agreementType = agreement.getAgreementType().name();
+					
+					
 				} else {
 					showAgreementInfo = Boolean.FALSE;
 				}
+				
+				InfringementAgreementService infringementAgreementService = ServiceLocator.getInstance()
+						.findResource(InfringementAgreementService.LOCAL_NAME);
+				hasAgreementInfringement = infringementAgreementService.hasInfringementAgreementActive(resident.getIdentificationNumber());
 
 			}
 
@@ -625,6 +642,9 @@ public class MunicipalBondCondition extends EntityQuery<MunicipalBond> {
 		this.setIdentificationNumber(resident.getIdentificationNumber());
 		municipalBondItemsResult = null;
 		futureBonds = null;
+		InfringementAgreementService infringementAgreementService = ServiceLocator.getInstance()
+				.findResource(InfringementAgreementService.LOCAL_NAME);
+		hasAgreementInfringement = infringementAgreementService.hasInfringementAgreementActive(resident.getIdentificationNumber());
 	}
 
 	public void clearSearchResidentPanel() {
