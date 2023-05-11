@@ -229,8 +229,13 @@
 						<h:graphicImage value="/img/msginfo.png" style="margin-left: 4em" />
 
 						<h:outputText
-							value="#{businessHome.local.name}"
-							style="font-size:large; color: black;margin-left: 2em" />
+							value="#{businessHome.instance.name}"
+							style="font-size:large; color: black;margin-left: 2em" 
+							rendered="#{businessHome.local != null}"/>
+						<h:outputText
+							value="No existen locales activos para este establecimiento"
+							style="font-size:large; color: black;margin-left: 2em" 
+							rendered="#{businessHome.local == null}"/>
 
 					</h:panelGrid>
 
@@ -238,7 +243,7 @@
 
 				<br />
 
-				<rich:panel>
+				<rich:panel rendered="#{businessHome.local != null}">
 
 					<h:panelGrid columns="2" width="800">
 
@@ -320,12 +325,19 @@
 
 									<rich:column styleClass="action" style="align:center;">
 										<f:facet name="header">Fecha de Emisión:</f:facet>
-										<h:outputText value="#{_license.date_emission}" />
+										<h:outputText value="#{_license.date_emission}" >
+											<f:convertDateTime pattern="#{messages['common.datePattern']}"/>
+										</h:outputText>
 									</rich:column>
 
 									<rich:column styleClass="action" style="align:center;">
 										<f:facet name="header">Emitido por:</f:facet>
 										<h:outputText value="#{_license.responsible_user}" />
+									</rich:column>
+									
+									<rich:column styleClass="action" style="align:center;">
+										<f:facet name="header">Hoja Valorada:</f:facet>
+										<h:outputText value="#{_license.paper_code}" />
 									</rich:column>
 									
 							</rich:dataTable>

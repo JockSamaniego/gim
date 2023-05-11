@@ -316,19 +316,24 @@ public class DatainfractionServiceBean implements DatainfractionService {
 	        return infractionWSV2;
 		} catch (WebServiceException e){
 			e.printStackTrace();
-			facesMessages.add("Error de conexión al Servicio de Datos de ANT. Comuníquese con el Administrador del Sistema");
+			// facesMessages.add("Error de conexión al Servicio de Datos de ANT. Comuníquese con el Administrador del Sistema");
+			return null;
 		} catch (Exception e){
-			facesMessages.add("Error desconocido. Comuníquese con el Administrador del Sistema");
+			//facesMessages.add("Error desconocido. Comuníquese con el Administrador del Sistema");
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
 	//Para consultar un infraccion en la ANT por medio de su id..
-	public ResponseInfraccion findInfractionByIdANT(String idANT){
-		if(infractionWSV2 == null){
-			infractionWSV2 = getInfractionWSV2Instance();
+	public ResponseInfraccion findInfractionByIdANT(String idANT) {
+		try {
+			if (infractionWSV2 == null) {
+				infractionWSV2 = getInfractionWSV2Instance();
+			}
+			return infractionWSV2.consultarInfraccion(idANT);
+		} catch (Exception e) {
+			return null;
 		}
-		return infractionWSV2.consultarInfraccion(idANT);
 	}
 }

@@ -620,7 +620,7 @@ public class BusinessHome extends EntityHome<Business> {
 	public void printLicense() {
 		loadCharge();
 		OperatingLicense lic;
-		Query query = getEntityManager().createNamedQuery("Local.findByPaperCode");
+		Query query = getEntityManager().createNamedQuery("OperatingLicense.findByPaperCode");
 		query.setParameter("code", codePaper);
 		try {
 			lic = (OperatingLicense) query.getSingleResult();
@@ -903,13 +903,20 @@ public class BusinessHome extends EntityHome<Business> {
 	public void chargeLocalBusiness(Business _business){
 		licenseList = new ArrayList();
 		this.setInstance(_business);
-		beforeEditLocal(_business.getLocales().get(0));
-		if(_business.getLocales().get(0).getCode() != null){
-			Query query = getEntityManager().createNamedQuery("Local.findByLocalCode");
-			query.setParameter("localCode", _business.getLocales().get(0).getCode());
-			licenseList = query.getResultList();
-		}
-			
+		for(Local l : _business.getLocales()){
+			if (l.getIsActive()){
+				beforeEditLocal(l);
+				if(l.getCode() != null){
+					Query query = getEntityManager().createNamedQuery("OperatingLicense.findByLocalCode");
+					query.setParameter("localCode", l.getCode());
+					licenseList = query.getResultList();
+					if(licenseList.size() > 0){
+						this.economic_Activity = licenseList.get(0).getEconomic_activity();
+					}
+				}
+				break;
+			}
+		}			
 	}
 	
 	// Jock Samaniego
