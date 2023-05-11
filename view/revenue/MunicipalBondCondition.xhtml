@@ -45,7 +45,7 @@
 							searchByCriteriaAction="searchResidentByCriteria"
 							clearSearchPanelAction="clearSearchResidentPanel"
 							residentChosenListenerName="residentSelectedListener"
-							reRender="entryChooserPanel,contentPanel, remisionPanel, municipalBondSearch:panelRight, panelInfo">
+							reRender="entryChooserPanel,contentPanel, municipalBondSearch:panelRight, panelInfo, municipalBondSearch:panelInfringementAgreement">
 							<s:convertEntity />
 						</g:residentChooser>
 
@@ -80,8 +80,8 @@
 					</a:outputPanel>
 
 					<a:outputPanel id="panelRight"
-						rendered="#{municipalBondCondition.showAgreementInfo}">
-						<h:panelGrid columns="2" width="100%" columnClasses="right,right">
+						>
+						<h:panelGrid columns="2" width="100%" columnClasses="right,right" rendered="#{municipalBondCondition.showAgreementInfo}">
 							<h:outputText value="Tipo: "
 								style="font-size:30px; font-weight:bold;"></h:outputText>
 							<h:outputText value="#{messages[municipalBondCondition.agreementType]}"
@@ -130,21 +130,29 @@
 									maxFractionDigits="#{messages['common.maxFractionDigits']}"
 									minFractionDigits="#{messages['common.minFractionDigits']}" />
 							</h:outputText>
+
+						</h:panelGrid>
+						<h:panelGrid columns="1" style="margin-top: 15px;" width="100%" columnClasses="right" id="panelInfringementAgreement">
+							<h:outputText rendered="#{municipalBondCondition.hasAgreementInfringement}"
+										value="Tiene un convenio de infracciones activo"
+										style="font-size:30px; font-weight:bold; color: red"
+										styleClass="right">
+							</h:outputText>
 						</h:panelGrid>
 					</a:outputPanel>
 
 				</h:panelGrid>
+				
 
 				<div style="clear: both" />
 			</rich:panel>
-
 
 			<div class="actionButtons">
 				<a:outputPanel ajaxRendered="true">
 
 					<a:commandButton id="search" value="#{messages['common.search']}"
 						action="#{municipalBondCondition.chargeResults()}"
-						reRender="remisionPanel, txtInterest,txtSurcharged, contentPanel, messages"
+						reRender="txtInterest,txtSurcharged, contentPanel, messages"
 						disabled="#{municipalBondCondition.resident == null}">
 					</a:commandButton>
 
@@ -156,37 +164,6 @@
 		</a:form>
 		<h:form>
 			<div class="results">
-
-				<rich:panel id="remisionPanel" rendered="false">
-					<f:facet name="header">
-						<h:outputText value="Valores de remisión"
-							styleClass="formTitle right" />
-					</f:facet>
-					<div class="right">
-						<div>
-							<h:outputText value="Interes: "
-								style="font-size:20px; font-weight:bold;" />
-							<h:outputText id="txtInterest"
-								value="#{municipalBondCondition.totalInterestRemision}"
-								style="font-size:20px; font-weight:bold; " styleClass="right">
-								<f:convertNumber
-									maxFractionDigits="#{messages['common.maxFractionDigits']}"
-									minFractionDigits="#{messages['common.minFractionDigits']}" />
-							</h:outputText>
-						</div>
-						<div>
-							<h:outputText value="Recargo: "
-								style="font-size:20px; font-weight:bold;" />
-							<h:outputText id="txtSurcharged"
-								value="#{municipalBondCondition.totalSurchargeRemision}"
-								style="font-size:20px; font-weight:bold; " styleClass="right">
-								<f:convertNumber
-									maxFractionDigits="#{messages['common.maxFractionDigits']}"
-									minFractionDigits="#{messages['common.minFractionDigits']}" />
-							</h:outputText>
-						</div>
-					</div>
-				</rich:panel>
 
 				<rich:panel id="contentPanel">
 					<a:outputPanel ajaxRendered="false">

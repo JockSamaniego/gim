@@ -32,6 +32,7 @@ import javax.persistence.Query;
 import javax.servlet.ServletContext;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gob.gim.coercive.service.InfringementAgreementService;
 import org.gob.gim.common.GimUtils;
 import org.gob.gim.common.ServiceLocator;
 import org.gob.gim.common.action.UserSession;
@@ -287,7 +288,6 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 			String str = systemParameterService.findParameter(ENTRIES_CEM_EXCLUSION_LIST);
 			entriesCEMExclusionIds = GimUtils.convertStringWithCommaToListLong(str);
 		}
-		
 	}
 
 	public void search() {
@@ -308,6 +308,7 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 				selectAllExpiredItems();
 			}
 			this.findUnfulfilledPaymentAgreement();
+			findInfringementAgreement();
 			
 		} catch (Exception e) {
 			// e.printStackTrace();
@@ -428,6 +429,10 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 		if (paymentRestrictionValue.equals(PaymentRestriction.ALL_EXPIRED.toString())) {
 			selectAllExpiredItems();
 		}
+		
+		this.findUnfulfilledPaymentAgreement();
+		findInfringementAgreement();
+		
 	}
 
 	public void residentSelectedListener2(ActionEvent event) throws Exception {
@@ -3471,9 +3476,17 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 	//06-01-2020
 	
 	private Boolean hasUnfulfilledPaymentAgreement = Boolean.FALSE;
+	
+	private Boolean hasAgreementInfringement = Boolean.FALSE;
 
 	public Boolean getHasUnfulfilledPaymentAgreement() {
 		return hasUnfulfilledPaymentAgreement;
+	}
+	
+	public void findInfringementAgreement() {
+		InfringementAgreementService infringementAgreementService = ServiceLocator.getInstance()
+				.findResource(InfringementAgreementService.LOCAL_NAME);
+		hasAgreementInfringement = infringementAgreementService.hasInfringementAgreementActive(resident.getIdentificationNumber());
 	}
 	
 	public void findUnfulfilledPaymentAgreement(){
@@ -3543,6 +3556,39 @@ public class PaymentHome extends EntityHome<Payment> implements Serializable {
 
 	public void setIncludeCEMs(boolean includeCEMs) {
 		this.includeCEMs = includeCEMs;
+	}
+	
+	
+	public Boolean getHasAgreementInfringement() {
+		return hasAgreementInfringement;
+	}
+
+	public void setHasAgreementInfringement(Boolean hasAgreementInfringement) {
+		this.hasAgreementInfringement = hasAgreementInfringement;
+	}
+
+	private Boolean hasCreditNote = false;
+	private Boolean creditNoteReviewed = false;
+	
+	/**
+	 * @return the hasCreditNote
+	 */
+	public Boolean getHasCreditNote() {
+		reviewHasCreditNote();
+		return this.hasCreditNote;
+	}
+
+	public void reviewHasCreditNote() {
+		if ((creditNoteReviewed) || (resident == null)) return;
+		List<CreditNote> creditNotes = new ArrayList<CreditNote>();
+		Query query = getEntityManager().createNamedQuery("CreditNote.findActiveByResidentId");
+		query.setParameter("residentId", resident.getId());
+		creditNotes = query.getResultList();
+		creditNoteReviewed = true;
+		if ((creditNotes != null) && (creditNotes.size() > 0))
+			hasCreditNote = true;
+		else
+			hasCreditNote = false;
 	}
 	
 }

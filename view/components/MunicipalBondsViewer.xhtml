@@ -256,7 +256,8 @@
 				
 				<rich:column width="4%" styleClass="center">
 					<f:facet name="header">#{messages['municipalBond.status']}</f:facet>
-					<h:outputText value="#{_municipalBondItem.municipalBond.municipalBondStatus.name}" styleClass="smallFont boldFont"/>
+					<h:outputText value="#{_municipalBondItem.municipalBond.municipalBondStatus.name}" styleClass="smallFont boldFont"/><br />
+					<h:outputText value="#{messages[_municipalBondItem.municipalBond.paymentIdentify]}" styleClass="smallFont boldFont"/>
 				</rich:column>
 
 				<rich:column width="4%" styleClass="center">
