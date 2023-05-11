@@ -133,7 +133,7 @@
 
         <p:table rendered="#{not empty paymentAgreementReport.list}"
                 columns="7" widthPercentage="100" headerRows="0" spacingAfter="10" spacingBefore="5"
-                widths="1.2 1 1 6 1 1 1">
+                widths="1.2 1 1.2 6 1 1 1">
                 <p:font size="6" style="bold">
                     <f:facet name="defaultCell">
                         <p:cell borderWidth="0" />
@@ -189,27 +189,27 @@
                         
                         <p:cell>
                             <p:paragraph>
-                                <p:text value="#{messages[_obj[1]]} "/>
+                                <p:text value="#{messages[_obj[1]]}"/>
                             </p:paragraph>
                         </p:cell>
                         
                         <p:cell>
                             <p:paragraph>
-                                <p:text value="#{_obj[2]} ">
-                                    <f:convertDateTime pattern="#{messages['common.datePatternReport']}" />
+                                <p:text value="#{_obj[2]}">
+                                    <f:convertDateTime pattern="#{messages['common.datePattern']}" />
                                 </p:text>
                             </p:paragraph>
                         </p:cell>
                         
                         <p:cell>
                             <p:paragraph>
-                                <p:text value="#{_obj[3]} "/>                           
+                                <p:text value="#{_obj[3]}"/>
                             </p:paragraph>
                         </p:cell>
                         
                         <p:cell>
                             <p:paragraph>
-                                <p:text value="#{_obj[4]} "/>                         
+                                <p:text value="#{_obj[4]}"/>
                             </p:paragraph>
                         </p:cell>
                         
@@ -231,7 +231,7 @@
     
                         <p:cell>
                             <p:paragraph>
-                                <p:text value="#{_obj[7]} ">
+                                <p:text value="#{_obj[7]}">
                                     <f:convertDateTime pattern="#{messages['common.datePattern']}" />
                                 </p:text>
                             </p:paragraph>
