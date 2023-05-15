@@ -514,6 +514,7 @@ public class RevenueServiceBean implements RevenueService {
 					}
 
 					municipalBondService.save(municipalBond);
+					saveStatusChangeRecord("FUTURA", municipalBond, null, municipalBond.getMunicipalBondStatus(), user);
 
 					if (mt == MunicipalBondType.EMISSION_ORDER) {
 						emissionOrderService.createEmissionOrder(municipalBond, user);
