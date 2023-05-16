@@ -222,7 +222,8 @@ public class MunicipalBondServiceBean implements MunicipalBondService {
 		Date serviceDate = entryValueItem.getServiceDate();
 		String reference = entryValueItem.getReference();
 		String description = entryValueItem.getDescription();
-		BigDecimal base = entryValueItem.getMainValue();
+		BigDecimal base = entryValueItem.getMainValue() != null ? entryValueItem.getMainValue() : entryValueItem.getAmount();
+		
 		Date expirationDate = null;
 		boolean aux = false;
 		if (entryValueItem.getExpirationDate() == null) {

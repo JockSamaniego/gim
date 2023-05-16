@@ -379,7 +379,9 @@ public class MunicipalBondHome extends EntityHome<MunicipalBond> {
 					mb.setGroupingCode(groupingCode);
 				mb.setAdjunct(adjunct);
 				mb.setEmisionPeriod(mb.getEmisionDate());
-				mb.setBondAddress(this.getInstance().getBondAddress());
+				// rfam 2023-05-16
+				// mb.setBondAddress(this.getInstance().getBondAddress());
+				mb.setBondAddress(this.getInstance().getBondAddress() != null ? this.getInstance().getBondAddress() : "");
 				municipalBonds.add(mb);				
 			} catch (EntryDefinitionNotFoundException e) {
 				e.printStackTrace();
