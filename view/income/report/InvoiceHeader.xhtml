@@ -26,7 +26,7 @@
 					<p:paragraph alignment="center">#{_deposit}</p:paragraph>
 				</p:font>
 				<p:font size="5">
-					<p:paragraph alignment="center">#{messages['receipt.noTaxableDocument']}</p:paragraph>
+					<p:paragraph alignment="left">#{messages['receipt.noTaxableDocument']}</p:paragraph>
 				</p:font>
 			</ui:repeat>
 			<ui:repeat value="#{_deposit.balance == 0 ? 1 : null}">
@@ -46,14 +46,18 @@
 								<f:convertDateTime pattern="#{messages['common.SRIDatePattern']}" />
 							</p:text>
 						</p:font>
-						<p:font size="2">#{''}</p:font>
 					</p:paragraph>
+					<p:paragraph alignment="left" rendered="#{_deposit.municipalBond.receipt.electronicReceipt}">
+						<p:font size="5" style="bold">#{messages['paymentIdentify.type']}:</p:font>
+						<p:font size="5"> #{messages[_deposit.municipalBond.paymentIdentify]}</p:font>
+						<p:font size="2">#{''}</p:font>
+ 					</p:paragraph>
 				</p:paragraph>
 				
 				<p:paragraph rendered="#{_deposit.municipalBond.receipt.electronicReceipt and _deposit.municipalBond.receipt.statusElectronicReceipt.name() == 'AUTHORIZED'}">
 					<p:paragraph alignment="left">
-						<p:font size="5" style="bold">#{messages['sri.authorization']}: #{_deposit.municipalBond.receipt.authorizationNumber}</p:font>
-						<p:font size="2">#{''}</p:font>
+						<p:font size="5" style="bold">#{messages['sri.authorization']}: </p:font>
+						<p:font size="5" >#{_deposit.municipalBond.receipt.authorizationNumber}</p:font>
 					</p:paragraph>
 					<p:paragraph alignment="left" rendered="#{_deposit.municipalBond.receipt.electronicReceipt}">
 						<p:font size="5" style="bold">#{messages['sri.environment']}: PRODUCCION</p:font>
@@ -68,6 +72,10 @@
 							</p:text>
 						</p:font>
 					</p:paragraph>
+					<p:paragraph alignment="left" rendered="#{_deposit.municipalBond.receipt.electronicReceipt}">
+						<p:font size="5" style="bold">#{messages['paymentIdentify.type']}:</p:font>
+						<p:font size="5"> #{messages[_deposit.municipalBond.paymentIdentify]}</p:font>
+ 					</p:paragraph>
 				</p:paragraph>
 
 				<p:paragraph rendered="#{!(_deposit.municipalBond.receipt.statusElectronicReceipt == 'AUTHORIZED' or _deposit.municipalBond.receipt.statusElectronicReceipt == 'AUTOIMPRESOR' )}">

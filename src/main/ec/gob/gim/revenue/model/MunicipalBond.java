@@ -1128,7 +1128,7 @@ public class MunicipalBond implements Serializable {
 	@JoinColumn(name = "institution_id")
 	private TaxpayerRecord institution;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private PaymentAgreement paymentAgreement;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -1217,7 +1217,9 @@ public class MunicipalBond implements Serializable {
 	@Transient //for print
 	private String adjuntDetail;
 	
-
+	@Transient // para identificar el tipo de pago
+	private String paymentIdentify;
+	
 	public MunicipalBond() {
 		// creationDate = Calendar.getInstance().getTime();
 		// emisionDate = Calendar.getInstance().getTime();
@@ -2020,6 +2022,21 @@ public class MunicipalBond implements Serializable {
 		this.exchangeObservation = exchangeObservation;
 	}
 
+	/**
+	 * @return the paymentIdentify
+	 */
+	public String getPaymentIdentify() {
+		if (paymentAgreement == null)
+			return "paymentIdentify.NORMAL";
+		else 
+			return "paymentIdentify." + paymentAgreement.getAgreementType().name();
+	}
 
+	/**
+	 * @param paymentIdentify the paymentIdentify to set
+	 */
+	public void setPaymentIdentify(String paymentIdentify) {
+		this.paymentIdentify = paymentIdentify;
+	}
 
-}// end MunicipalBond
+}

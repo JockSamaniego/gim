@@ -131,9 +131,11 @@ public class DomainTransfer extends Adjunct{
 			details.add(pair);
 		}
 
-		if(seniorDiscountEnabled && seniorDiscountValue.compareTo(BigDecimal.ZERO) > 0) {
-			pair = new ValuePair("Tercera Edad/Discapacidad " + seniorDiscountPercentage.doubleValue() + "%", ""+seniorDiscountValue );
-			details.add(pair);
+		if ((seniorDiscountPercentage != null) && (seniorDiscountValue != null)) {
+			if(seniorDiscountEnabled && seniorDiscountValue.compareTo(BigDecimal.ZERO) > 0) {
+				pair = new ValuePair("Tercera Edad/Discapacidad " + seniorDiscountPercentage.doubleValue() + "%", ""+seniorDiscountValue );
+				details.add(pair);
+			}
 		}
 
 		return details;

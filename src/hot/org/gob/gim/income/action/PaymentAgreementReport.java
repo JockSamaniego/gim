@@ -205,8 +205,8 @@ public class PaymentAgreementReport extends EntityHome<PaymentAgreement>{
         String sql = "";
         if (entry != null)
             sql = "select p.id, p.agreementtype, p.firstpaymentdate, r.identificationnumber, r.name,"
-                + "(Select coalesce(SUM(d.value),0) from Deposit d join municipalbond m on m.id = d.municipalbond_id where m.paymentagreement_id=p.id and d.status='VALID' and m.entry_id = " + entry.getId() + " and m.municipalbondstatus_id in(4, 6, 11)) as pagado, "
-                + "(Select coalesce(sum(m1.value),0) from municipalbond m1 where m1.paymentagreement_id=p.id and m1.entry_id = " + entry.getId() + " and m1.municipalbondstatus_id in (4, 14)) as saldo,"
+                + "(Select coalesce(SUM(d.value),0) from Deposit d join municipalbond m on m.id = d.municipalbond_id where m.paymentagreement_id=p.id and d.status='VALID' and m.entry_id = " + entry.getId() + " and m.municipalbondstatus_id in(4, 6, 11, 14)) as pagado, "
+                + "(Select sum(m1.value+m1.taxestotal+m1.surcharge+m1.interest) from municipalbond m1 where m1.paymentagreement_id=p.id and m1.entry_id = " + entry.getId() + " and m1.municipalbondstatus_id in (4, 6, 11, 14)) as deuda,"
                 + "(Select max(d2.date) ultimopago from Deposit d2 join municipalbond m2 on m2.id = d2.municipalbond_id where m2.paymentagreement_id=p.id and d2.status='VALID' and m2.entry_id = " + entry.getId() + " and m2.municipalbondstatus_id in(4, 6, 11, 14)) ultimopago "
                     + "from paymentagreement p "
                     + "inner join resident r on r.id= p.resident_id "
@@ -217,8 +217,8 @@ public class PaymentAgreementReport extends EntityHome<PaymentAgreement>{
                     + "order by ultimopago, p.firstpaymentdate, id";
         else
             sql = "select p.id, p.agreementtype, p.firstpaymentdate, r.identificationnumber, r.name,"
-                    + "(Select coalesce(SUM(d.value),0) from Deposit d join municipalbond m on m.id = d.municipalbond_id where m.paymentagreement_id=p.id and d.status='VALID' and m.municipalbondstatus_id in(4, 6, 11)) as pagado, "
-                    + "(Select coalesce(sum(m1.value),0) from municipalbond m1 where m1.paymentagreement_id=p.id and m1.municipalbondstatus_id in (4, 14)) as saldo,"
+                    + "(Select coalesce(SUM(d.value),0) from Deposit d join municipalbond m on m.id = d.municipalbond_id where m.paymentagreement_id=p.id and d.status='VALID' and m.municipalbondstatus_id in(4, 6, 11, 14)) as pagado, "
+                    + "(Select sum(m1.value+m1.taxestotal+m1.surcharge+m1.interest) from municipalbond m1 where m1.paymentagreement_id=p.id and m1.municipalbondstatus_id in (4, 6, 11, 14)) as deuda,"
                     + "(Select max(d2.date) ultimopago from Deposit d2 join municipalbond m2 on m2.id = d2.municipalbond_id where m2.paymentagreement_id=p.id and d2.status='VALID' and m2.municipalbondstatus_id in(4, 6, 11, 14)) ultimopago "
                         + "from paymentagreement p "
                         + "inner join resident r on r.id= p.resident_id "

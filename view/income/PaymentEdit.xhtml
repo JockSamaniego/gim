@@ -260,7 +260,7 @@
 									focus="receivedAmount"  
 									style="	background: rgba(191, 189, 63, 1) !important;"
 									/>
-								<rich:spacer width="350"/>	
+								<rich:spacer width="350"/>
 								<a:commandButton id="registerPaymentBtn"
 									action="#{paymentHome.updateHasCompensationBonds}"
 									reRender="depositConfirmPanel" ajaxSingle="true"
@@ -271,13 +271,25 @@
 									focus="receivedAmount" 
 									rendered="#{((!paymentHome.enableSubscription and !paymentHome.emissionFuture) || (paymentHome.paymentAgree)) and paymentHome.resident != null}"/>
 											
-							</h:panelGrid >			
+							</h:panelGrid >
+							<h:outputText  rendered="#{paymentHome.hasCreditNote}"
+								id="residentWithCreditNote"
+								value="#{messages['paymentHome.residentWithCreditNote']}"
+								style="font-size:24px; font-weight:bold; color: blue"
+								styleClass="right">
+							</h:outputText>
 							<h:outputText  rendered="#{paymentHome.hasUnfulfilledPaymentAgreement}"
 								id="alertPaymentAgreementMessage"	
 								value="#{messages['paymentAgreement.residentUnfulfilled']}"
 								style="font-size:24px; font-weight:bold; color: red"
 								styleClass="right">
-							</h:outputText>													
+							</h:outputText>
+							<h:outputText rendered="#{paymentHome.hasAgreementInfringement}"
+								id="alertPaymentInfringementMessage"	
+								value="Tiene un convenio de infracciones activo"
+								style="font-size:24px; font-weight:bold; color: red;"
+								styleClass="right">
+							</h:outputText>
 						</h:panelGrid>
 					</a:outputPanel>
 				</h:panelGrid>
