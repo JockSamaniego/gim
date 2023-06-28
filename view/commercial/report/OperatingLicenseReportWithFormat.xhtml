@@ -1,0 +1,382 @@
+<p:document xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	title="#{messages['commercial.operatingPermis']}" subject="report"
+	type="pdf" size="A4" margins="60 55 30 20" keywords="mykeyword"
+	creator="loxageek">
+
+	<f:facet name="header">
+		<p:font size="7" name="HELVETICA">
+			<p:header borderWidthTop="0" borderWidthBottom="0" alignment="center">
+				<p:paragraph spacingAfter="20">
+					<p:table columns="3" widthPercentage="100" spacingAfter="0"
+						widths="1 5 2">
+
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+
+						<p:cell>
+							<p:image value="#{gim.institution.logo}" alignment="center"
+                                widht="1" height="1">
+                                <s:transformImageSize height="1000" maintainRatio="true" />
+                            </p:image>
+                        </p:cell>
+
+						<p:cell fixedHeight="100">
+							<p:font size="16" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.name.toUpperCase()}</p:paragraph>
+							</p:font>
+
+							<p:font size="7" style="bold">
+								<p:paragraph alignment="center">#{gim.institution.address}. #{messages['institution.phone']}: #{gim.institution.phone} -  #{messages['institution.fax']}: #{gim.institution.fax}</p:paragraph>
+							</p:font>
+
+							<p:font size="12" style="bold">
+								<p:paragraph alignment="center">#{businessHome.sanitationCharge.department.toUpperCase()}</p:paragraph>
+							</p:font>
+						</p:cell>
+
+						<p:cell fixedHeight="100">
+							<p:font size="6" style="bold" color="red">
+								<p:paragraph alignment="center">
+									<p:text value="__________________________________" />
+								</p:paragraph>
+							</p:font>
+							<p:font size="14" style="bold" color="red">
+								<p:paragraph alignment="center">
+									<p:text value="No.: #{businessHome.codePaper}" />
+								</p:paragraph>
+							</p:font>
+							<p:font size="6" style="bold" color="red">
+								<p:paragraph alignment="center">
+									<p:text value="__________________________________" />
+								</p:paragraph>
+							</p:font>
+							<p:font size="6" color="red">
+								<p:paragraph alignment="center">
+									<p:text value="Número auto-generado por el Sistema GIM" />
+								</p:paragraph>
+							</p:font>
+						</p:cell>
+
+					</p:table>
+				</p:paragraph>
+			</p:header>
+		</p:font>
+	</f:facet>
+
+
+				<p:paragraph spacingAfter="0">
+					<p:table columns="1" widthPercentage="100" spacingAfter="0"
+						widths="8">
+
+						<f:facet name="defaultCell">
+							<p:cell borderWidth="0" />
+						</f:facet>
+
+						<p:cell fixedHeight="100">
+							<p:font size="12" style="bold" color="red">
+								<p:paragraph alignment="center" spacingAfter="2">
+									<p:text value="_____________________________________________________________________" />
+								</p:paragraph>
+							</p:font>
+							<p:font size="28" style="bold" color="red">
+								<p:paragraph alignment="center">
+									<p:text value="PERMISO DE FUNCIONAMIENTO" />
+								</p:paragraph>
+							</p:font>
+							<p:font size="12" style="bold" color="red">
+								<p:paragraph alignment="center">
+									<p:text value="_____________________________________________________________________" />
+								</p:paragraph>
+							</p:font>
+						</p:cell>
+
+					</p:table>
+				</p:paragraph>
+
+
+
+	<p:font size="9" name="HELVETICA">
+		<p:paragraph spacingAfter="0" spacingBefore="10"
+			horizontalAlignment="left" >
+			<p:table columns="2" widthPercentage="100" headerRows="0"
+				horizontalAlignment="left" >
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" horizontalAlignment="left" />
+				</f:facet>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="8" style="bold">
+						<p:text value="NOMBRE O RAZÓN SOCIAL DEL ESTABLECIMIENTO:" />
+					</p:font>
+				</p:cell>
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="11" style="bold">
+						<p:text value="#{businessHome.local.name.toUpperCase()}" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="8" style="bold">
+						<p:text value="NOMBRE DEL PROYECTO O REPRESENTANTE LEGAL:" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="11" style="bold">
+						<p:text
+							value="#{businessHome.instance.owner.name.toString().toUpperCase()}" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="8" style="bold">
+						<p:text value="N° DE R.U.C. DEL ESTABLECIMIENTO:" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="11" style="bold">
+						<p:text
+							value="#{businessHome.local.business.cedruc}" />
+					</p:font>
+				</p:cell>
+			</p:table>
+		</p:paragraph>
+
+		
+		<p:paragraph spacingAfter="0" spacingBefore="0" horizontalAlignment="left">
+			<p:table columns="4" widthPercentage="100" headerRows="0" horizontalAlignment="left">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" horizontalAlignment="left" />
+				</f:facet>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="8" style="bold">
+						<p:text value="PROVINCIA:" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="11" style="bold">
+						<p:text value="LOJA" />
+					</p:font>
+
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="8" style="bold">
+						<p:text value="CANTÓN:" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="11" style="bold">
+						<p:text value="#{businessHome.local.address.city.toUpperCase()}" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="8" style="bold">
+						<p:text value="PARROQUIA:" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="11" style="bold">
+						<p:text value="#{businessHome.local.address.parish.toUpperCase()}" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="8" style="bold">
+						<p:text value="BARRIO:" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="11" style="bold">
+						<p:text
+							value="#{businessHome.local.address.neighborhood.toUpperCase()}" />
+					</p:font>
+				</p:cell>
+
+			</p:table>
+
+		</p:paragraph>
+
+		<p:paragraph spacingAfter="0" spacingBefore="0" horizontalAlignment="left">
+			<p:table columns="4" widthPercentage="100" headerRows="0" horizontalAlignment="left">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" horizontalAlignment="left" />
+				</f:facet>
+
+				<p:cell colspan="1" fixedHeight="45" verticalAlignment="bottom">
+					<p:font size="8" style="bold">
+						<p:text value="DIRECCIÓN:" />
+					</p:font>
+				</p:cell>
+				<p:cell colspan="3" fixedHeight="45" verticalAlignment="bottom">
+					<p:paragraph spacingAfter="0" spacingBefore="0" horizontalAlignment="left">
+						<p:font size="10" style="bold">
+							<p:text value="#{businessHome.local.address.street.toUpperCase()}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+			</p:table>
+		</p:paragraph>
+
+		<p:paragraph spacingAfter="0" spacingBefore="0" horizontalAlignment="left">
+			<p:table columns="2" widthPercentage="100" headerRows="0" horizontalAlignment="left">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" horizontalAlignment="left" />
+				</f:facet>
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="8" style="bold">
+						<p:text value="CÓDIGO DEL ESTABLECIMIENTO:" />
+					</p:font>
+				</p:cell>
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="11" style="bold">
+						<p:text value="#{businessHome.local.code}" />
+					</p:font>
+				</p:cell>
+			</p:table>
+		</p:paragraph>
+
+		<p:paragraph spacingAfter="0" spacingBefore="0" horizontalAlignment="left">
+			<p:table columns="4" widthPercentage="100" headerRows="0" horizontalAlignment="left">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" horizontalAlignment="left" />
+				</f:facet>
+
+				<p:cell colspan="1" fixedHeight="45" verticalAlignment="bottom">
+					<p:font size="8" style="bold">
+						<p:text value="ACTIVIDADES/TIPO(S) DE ESTABLECIMIENTO(S):" />
+					</p:font>
+				</p:cell>
+				<p:cell colspan="3" fixedHeight="45" verticalAlignment="bottom">
+					<p:paragraph spacingAfter="0" spacingBefore="0" horizontalAlignment="left">
+						<p:font size="10" style="bold">
+							<p:text value="#{businessHome.economic_Activity.toUpperCase()}" />
+						</p:font>
+					</p:paragraph>
+				</p:cell>
+			</p:table>
+		</p:paragraph>
+
+		<p:paragraph spacingAfter="0" spacingBefore="0" horizontalAlignment="left">
+			<p:table columns="4" widthPercentage="100" headerRows="0" horizontalAlignment="left">
+
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" horizontalAlignment="left" />
+				</f:facet>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="8" style="bold">
+						<p:text value="FECHA DE EMISIÓN:" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="11" style="bold">
+						<p:text value="#{businessHome.emissionDate}" >
+							<f:convertDateTime
+								pattern="#{messages['common.datePatternReport']}" />
+						</p:text>
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="8" style="bold">
+						<p:text value="FECHA DE VIGENCIA:" />
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="1" fixedHeight="32" verticalAlignment="bottom">
+					<p:font size="11" style="bold">
+						<p:text value="#{businessHome.validityDate}" >
+							<f:convertDateTime
+								pattern="#{messages['common.datePatternReport']}" />
+						</p:text>
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="4" fixedHeight="20" verticalAlignment="top">
+					<p:font size="12" style="bold" color="red">
+						<p:paragraph alignment="center">
+							<p:text value="_____________________________________________________________________" />
+						</p:paragraph>
+					</p:font>
+				</p:cell>
+
+				<p:cell colspan="4" fixedHeight="20" verticalAlignment="top">
+					<p:font size="8" style="bold" color="red">
+						<p:paragraph alignment="left">
+							<p:text value="IMPORTANTE: Documento de uso exclusivo para la actividad económica facultada." />
+						</p:paragraph>
+					</p:font>
+				</p:cell>
+
+			</p:table>
+
+		</p:paragraph>
+		
+
+		<p:paragraph spacingAfter="0" spacingBefore="60" alignment="center"
+			verticalAlignment="10" leading="10">
+			<p:font size="8" style="bold">
+				<p:text
+					value="___________________________________________" />
+			</p:font>
+		</p:paragraph>
+
+		<p:paragraph spacingAfter="0" spacingBefore="10" alignment="center"
+			verticalAlignment="10" leading="10">
+			<p:font size="11" style="bold">
+				<p:text
+					value="#{businessHome.sanitationDelegate.name.toUpperCase()}" />
+			</p:font>
+		</p:paragraph>
+
+		<p:paragraph spacingAfter="0" spacingBefore="10" alignment="center"
+			verticalAlignment="10" leading="10">
+			<p:font size="11" style="bold">
+				<p:text
+					value="#{businessHome.sanitationCharge.name.toUpperCase()}" />
+			</p:font>
+		</p:paragraph>
+
+		<p:paragraph spacingAfter="0" spacingBefore="30" alignment="center"
+			verticalAlignment="10" leading="10">
+			<p:font size="10" style="bold">
+				<p:text
+					value="Código de seguridad:" />
+			</p:font>
+		</p:paragraph>
+
+		<p:paragraph spacingAfter="0" spacingBefore="0"
+			horizontalAlignment="center" VerticalAlignment="right">
+			<p:table columns="1" widthPercentage="100" headerRows="0"
+				horizontalAlignment="center" VerticalAlignment="center">
+				<f:facet name="defaultCell">
+					<p:cell borderWidth="0" horizontalAlignment="center" />
+				</f:facet>
+				<p:cell colspan="1" fixedHeight="35">
+					<p:barCode type="CODE128" code="#{businessHome.license.uuidNumber}" />
+				</p:cell>
+			</p:table>
+		</p:paragraph>
+
+	</p:font>
+
+</p:document>

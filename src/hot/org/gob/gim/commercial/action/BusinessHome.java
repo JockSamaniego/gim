@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
@@ -36,6 +37,7 @@ import ec.gob.gim.common.model.Delegate;
 import ec.gob.gim.common.model.FiscalPeriod;
 import ec.gob.gim.common.model.Person;
 import ec.gob.gim.common.model.Resident;
+import ec.gob.gim.revenue.model.SolvencyHistory;
 
 @Name("businessHome")
 public class BusinessHome extends EntityHome<Business> {
@@ -614,28 +616,34 @@ public class BusinessHome extends EntityHome<Business> {
 		addLicense();
 		localLicense();
 		persist();
-		return "false";
+		return this.withFormat.toString();
 	}
 
 	public void printLicense() {
 		loadCharge();
 		OperatingLicense lic;
-		Query query = getEntityManager().createNamedQuery("OperatingLicense.findByPaperCode");
-		query.setParameter("code", codePaper);
-		try {
-			lic = (OperatingLicense) query.getSingleResult();
-		} catch (Exception e) {
-			lic = null;
-		}
-		if (lic == null) {
-			validCodePaper = Boolean.TRUE;
-		} else {
-			/*
-			 * message="el número de especie ya existe"; return null;
-			 */
+		if (codePaper.equals("") || codePaper == null){
 			validCodePaper = Boolean.FALSE;
-			message = "El número de especie ya ha sido utilizado anteriormente";
+			message = "Debe digitar el número de especie";
+		} else {
+			Query query = getEntityManager().createNamedQuery("OperatingLicense.findByPaperCode");
+			query.setParameter("code", codePaper);
+			try {
+				lic = (OperatingLicense) query.getSingleResult();
+			} catch (Exception e) {
+				lic = null;
+			}
+			if (lic == null) {
+				validCodePaper = Boolean.TRUE;
+			} else {
+				/*
+				 * message="el número de especie ya existe"; return null;
+				 */
+				validCodePaper = Boolean.FALSE;
+				message = "El número de especie ya ha sido utilizado anteriormente";
+			}
 		}
+		
 	}
 
 	private Boolean validCodePaper;
@@ -689,12 +697,17 @@ public class BusinessHome extends EntityHome<Business> {
 		license.setLocal_code(this.local.getCode());
 		license.setLocal_ruc(this.local.getBusiness().getCedruc());
 		license.setLocal_id(this.local.getId());
+		license.setIsCompleteFormat(withFormat);
+		if(this.withFormat){
+			codePaper = this.operatingLicenseFormCounter();
+		}
 		license.setPaper_code(codePaper);
 		license.setResponsible_user(userSession.getUser().getResident().getName());
 		license.setResponsible(userSession.getPerson());
 		license.setEconomic_activity(economic_Activity.toUpperCase());
 		license.setNullified(Boolean.FALSE); 
 		license.setResponsible_delegate(this.sanitationDelegate.getName()); 
+		license.setUuidNumber(UUID.randomUUID().toString().replace("-", ""));
 
 		EntityManager em = getEntityManager();
 		em.persist(license);
@@ -952,4 +965,49 @@ public class BusinessHome extends EntityHome<Business> {
 			addFacesMessageFromResourceBundle("resident.notFound");
 		}
 	}		
+	
+	// jock samaniego
+	// para seleccionar formulario de permiso con o sin formato.
+	// 23-06-2023
+	
+	private Boolean withFormat = Boolean.FALSE;
+
+	public Boolean getWithFormat() {
+		return withFormat;
+	}
+
+	public void setWithFormat(Boolean withFormat) {
+		this.withFormat = withFormat;
+	}
+	
+	public String operatingLicenseFormCounter(){
+		OperatingLicense opl=lastOperatingLicense();
+		String formNumber;
+		if(opl == null){
+			formNumber=this.userSession.getFiscalPeriod().getFiscalYear().substring(1, 5)+"-000001";
+		}else if(Integer.parseInt(opl.getPaper_code().substring(0, 4))<Integer.parseInt(this.userSession.getFiscalPeriod().getFiscalYear().substring(1, 5))){
+			formNumber=this.userSession.getFiscalPeriod().getFiscalYear().substring(1, 5)+"-000001";
+		}else{
+			String s = opl.getPaper_code();
+			String number = Integer.toString(Integer.parseInt(s.substring(5, s.length()))+1);
+			String complement="";
+			for(int i=number.length();i<6;i++){complement=complement+"0";}		
+			formNumber=this.userSession.getFiscalPeriod().getFiscalYear().substring(1, 5)+"-"+complement+number;
+		}
+		return formNumber;
+	}
+	
+//para obtener el ultimo registro de permiso guardado en la tabla.
+	public OperatingLicense lastOperatingLicense(){
+		Query query2 = getEntityManager().createNamedQuery("OperatingLicense.findLastId");
+		Long n=(Long)query2.getSingleResult();
+		if (n != null) {
+			Query query = getEntityManager().createNamedQuery("OperatingLicense.findLastForm");
+			query.setParameter("id", n);
+			OperatingLicense operatingLicense=(OperatingLicense) query.getSingleResult();
+			return operatingLicense;
+		} 
+		
+		return null;
+	}	
 }

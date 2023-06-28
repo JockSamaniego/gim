@@ -28,7 +28,12 @@ import ec.gob.gim.common.model.Person;
 		@NamedQuery(name = "OperatingLicense.findByPaperCode", query = "SELECT operatingLicense from OperatingLicense operatingLicense WHERE "
 				+ "operatingLicense.paper_code = :code and operatingLicense.nullified = false "), 
 		@NamedQuery(name = "OperatingLicense.findByLocalCode", query = "SELECT operatingLicense from OperatingLicense operatingLicense WHERE "
-				+ "operatingLicense.local_code = :localCode and operatingLicense.nullified = false ORDER BY operatingLicense.date_emission DESC")
+				+ "operatingLicense.local_code = :localCode and operatingLicense.nullified = false ORDER BY operatingLicense.date_emission DESC"),
+		@NamedQuery(name = "OperatingLicense.findLastId", 
+				query = "select max(operatingLicense.id) from OperatingLicense operatingLicense WHERE operatingLicense.isCompleteFormat = true"),
+		@NamedQuery(name = "OperatingLicense.findLastForm", 
+				query = "select operatingLicense from OperatingLicense operatingLicense WHERE "+
+						"operatingLicense.id = :id")
 })
 public class OperatingLicense {
 
@@ -79,6 +84,11 @@ public class OperatingLicense {
 
 	@Column(length = 40)
 	private String responsible_delegate;
+	
+	private Boolean isCompleteFormat;
+	
+	@Column(length = 60)
+	private String uuidNumber;
 
 	public Person getResponsible() {
 		return responsible;
@@ -187,4 +197,21 @@ public class OperatingLicense {
 	public void setResponsible_delegate(String responsible_delegate) {
 		this.responsible_delegate = responsible_delegate;
 	}
+
+	public Boolean getIsCompleteFormat() {
+		return isCompleteFormat;
+	}
+
+	public void setIsCompleteFormat(Boolean isCompleteFormat) {
+		this.isCompleteFormat = isCompleteFormat;
+	}
+
+	public String getUuidNumber() {
+		return uuidNumber;
+	}
+
+	public void setUuidNumber(String uuidNumber) {
+		this.uuidNumber = uuidNumber;
+	}
+	
 }

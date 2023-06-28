@@ -221,7 +221,8 @@
 								eventsQueue="gimEventsQueue"
 								oncomplete="Richfaces.showModalPanel('operatingLicenseDates')"
 								value="#{messages['commercial.operatingPermis']}"
-								propagation="join" />
+								propagation="join" 
+								disabled="#{!_local.isActive}" />
 
 							<a:commandButton id="removeLocal"
 								action="#{businessHome.removeLocal(_local)}"

@@ -22,6 +22,10 @@
          <end-conversation/>
          <redirect view-id="/commercial/report/OperatingLicenseReport.xhtml" />
       </rule>
+      <rule if-outcome="true">
+         <end-conversation/>
+         <redirect view-id="/commercial/report/OperatingLicenseReportWithFormat.xhtml" />
+      </rule>
    </navigation>
 
 
